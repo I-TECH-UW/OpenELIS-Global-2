@@ -75,6 +75,7 @@ public class ProgramController extends BaseRestController {
              program.setTestSection(testSection);
           }
         }
+        program.setManuallyChanged(true);
         program = programService.save(program);
         questionnaire.setId(program.getQuestionnaireUUID().toString());
         fhirPersistanceService.updateFhirResourceInFhirStore(questionnaire);

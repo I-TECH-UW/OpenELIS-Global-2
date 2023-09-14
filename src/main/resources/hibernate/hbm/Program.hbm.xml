@@ -22,6 +22,9 @@
 		<property name="programName" type="java.lang.String">
 			<column name="NAME" length="50" not-null="true" />
 		</property>
+		<property name="manuallyChanged" type="java.lang.Boolean">
+			<column name="manually_changed" length="1" not-null="true" />
+		</property>
 		<property name="questionnaireUUID" type="java.util.UUID">
 			<column name="questionnaire_fhir_uuid"/>
 		</property>

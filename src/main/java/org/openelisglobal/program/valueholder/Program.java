@@ -41,8 +41,9 @@ public class Program extends BaseObject<String> {
     private String programName;
     @JsonProperty("questionnaireUUID")
     private UUID questionnaireUUID;
-    @JsonProperty("testSection")
     private TestSection testSection;
+    @JsonProperty("manuallyChanged")
+    private Boolean manuallyChanged;
 
     public Program() {
         super();
@@ -89,4 +90,12 @@ public class Program extends BaseObject<String> {
     public void setTestSection(TestSection testSection) {
         this.testSection = testSection;
     }   
+
+    public Boolean getManuallyChanged() {
+        return manuallyChanged;
+    }
+
+    public void setManuallyChanged(Boolean manuallyChanged) {
+        this.manuallyChanged = manuallyChanged;
+    }
 }

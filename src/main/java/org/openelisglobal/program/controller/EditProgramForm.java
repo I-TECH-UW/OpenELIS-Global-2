@@ -10,6 +10,7 @@ public class EditProgramForm {
     private Questionnaire additionalOrderEntryQuestions;
 
     private String testSectionId;
+    private String testSectionName;
 
     public Program getProgram() {
         return program;
@@ -34,5 +35,13 @@ public class EditProgramForm {
     public void setTestSectionId(String testSectionId) {
         this.testSectionId = testSectionId;
     }    
+
+    public String getTestSectionName() {
+        return testSectionName;
+    }
+
+    public void setTestSectionName(String testSectionName) {
+        this.testSectionName = testSectionName;
+    }
 
 }

@@ -2,11 +2,9 @@
   "program": {
     "code": "PATH",
     "programName": "Histopathology",
-    "questionnaireUUID": "73f19a23-3899-4c4f-b7a1-8f945b72ded8",
-    "testSection": {
-      "testSectionName": "Pathology"
-    }
+    "questionnaireUUID": "73f19a23-3899-4c4f-b7a1-8f945b72ded8"
   },
+  "testSectionName": "Pathology",
   "additionalOrderEntryQuestions": {
     "resourceType": "Questionnaire",
     "id": "73f19a23-3899-4c4f-b7a1-8f945b72ded8",
@@ -14,7 +12,6 @@
       "status": "generated",
       "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">\n      \n      <pre>\n            1.Comorbidity?\n              1.1 Cardial Comorbidity\n                1.1.1 Angina?\n                1.1.2 MI?\n              1.2 Vascular Comorbidity?\n              ...\n            Histopathology\n              Abdominal\n                pT category?\n              ...\n          </pre>\n    \n    </div>"
     },
-    "url": "",
     "identifier": [
       {
         "system": "urn:ietf:rfc:3986",
@@ -22,7 +19,6 @@
       }
     ],
     "name": "Pathology Reception",
-    "title": "",
     "status": "active",
     "subjectType": ["Patient", "Specimen", "ServiceRequest"],
     "description": "Extra information for Pathology workflow",

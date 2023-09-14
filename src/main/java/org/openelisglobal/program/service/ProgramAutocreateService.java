@@ -69,9 +69,13 @@ public class ProgramAutocreateService {
                     Questionnaire questionnaire = form.getAdditionalOrderEntryQuestions();
 
                     Program program = form.getProgram();
+                    program.setManuallyChanged(false);
                     if (!GenericValidator.isBlankOrNull(program.getCode())) {
                         Optional<Program> dbProgram = programService.getMatch("code", form.getProgram().getCode());
                         if (dbProgram.isPresent()) {
+                            if (dbProgram.get().getManuallyChanged()) {
+                                continue;
+                            }
                             program.setId(dbProgram.get().getId());
                             program.setLastupdated(dbProgram.get().getLastupdated());
                         }
@@ -82,8 +86,8 @@ public class ProgramAutocreateService {
                     if (questionnaire == null) {
                         questionnaire = new Questionnaire();
                     }
-                    if(form.getProgram().getTestSection() != null && StringUtils.isNotBlank(form.getProgram().getTestSection().getTestSectionName())){
-                        Optional<TestSection> testSection = testSectionService.getMatch("testSectionName", form.getProgram().getTestSection().getTestSectionName());
+                    if(StringUtils.isNotBlank(form.getTestSectionName())){
+                        Optional<TestSection> testSection = testSectionService.getMatch("testSectionName", form.getTestSectionName());
                         if(testSection.isPresent()){
                             program.setTestSection(testSection.get());
                         } else {

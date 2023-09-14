@@ -75,6 +75,18 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet author="csteele" id="2.1">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists schemaName="clinlims"
+					tableName="program" columnName="manually_changed" />
+			</not>
+		</preConditions>
+		<addColumn schemaName="clinlims" tableName="program">
+			<column name="manually_changed" type="boolean" defaultValueBoolean="false" />
+		</addColumn>
+	</changeSet>
+	
 	<changeSet author="csteele" id="3">
 	<validCheckSum>8:ab895f74386ecc421575297f4641e78b</validCheckSum>
 		<preConditions onFail="MARK_RAN">
