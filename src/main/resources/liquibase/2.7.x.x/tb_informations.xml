@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+	  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+	<changeSet author="CIV developer Group" id="202309141"
+		context="ci_recency_testing">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="0">SELECT count(*) FROM
+				clinlims.localization WHERE french = 'Sputum'
+			</sqlCheck>
+		</preConditions>
+		<update tableName="localization" schemaName="clinlims">
+			<column name="french" value="Crachat"></column>
+			<where>french='Sputum'</where>
+		</update>
+	</changeSet>
+
+	<changeSet author="CIV developer Group" id="202309142"
+		context="ci_recency_testing">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="0">SELECT count(*) FROM
+				clinlims.localization WHERE french = 'Crachat'
+			</sqlCheck>
+		</preConditions>
+		<insert tableName="localization" schemaName="clinlims">
+			<column name="id" valueSequenceNext="localization_seq" />
+			<column name="description" value="Crachat" />
+			<column name="english" value="T" />
+			<column name="french" value="Crachat" />
+			<column name="lastupdated" valueDate="now()" />
+		</insert>
+	</changeSet>
+
+
+	<changeSet author="CIV developer Group" id="202309141"
+		context="ci_TB">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="type_of_sample"
+				schemaName="clinlims" />
+			<sqlCheck expectedResult="0">SELECT count(*) FROM
+				clinlims.type_of_sample
+				WHERE description = 'menu_microbiology'
+			</sqlCheck>
+		</preConditions>
+		<comment>Add TB samples</comment>
+		<insert tableName="type_of_sample" schemaName="clinlims">
+			<column name="id" valueSequenceNext="sample_domain_seq" />
+			<column name="domain_description" value="TB SAMPLES" />
+			<column name="domain" value="T" />
+			<column name="lastupdated" valueDate="now()" />
+		</insert>
+	</changeSet>
+
+
+
+</databaseChangeLog>
