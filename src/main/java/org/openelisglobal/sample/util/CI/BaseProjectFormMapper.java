@@ -448,7 +448,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
     @Override
     public String getOrganizationId() {
         if (patientForm) {
-            if (getProjectForm().equals(ProjectForm.VL)) {
+            if (getProjectForm().equals(ProjectForm.VL) || getProjectForm().equals(ProjectForm.RECENCY_TESTING)) {
                 return getSampleCenterCode();
             } else {
                 return form.getCenterCode().toString();

@@ -36,6 +36,7 @@ import org.openelisglobal.reports.action.implementation.reportBeans.ARVInitialCo
 import org.openelisglobal.reports.action.implementation.reportBeans.CIColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.RTNColumnBuilder;
+import org.openelisglobal.reports.action.implementation.reportBeans.RTRIColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.StudyEIDColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.StudyVLColumnBuilder;
 import org.openelisglobal.reports.form.ReportForm;
@@ -195,6 +196,8 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
             return new RTNColumnBuilder(dateRange, projectStr);
         } else if (projectTag.equalsIgnoreCase("IND")) {
             return new RTNColumnBuilder(dateRange, projectStr);
+        }else if (projectTag.equalsIgnoreCase("RTRI")) {
+            return new RTRIColumnBuilder(dateRange, projectStr, dateType);
         }
         throw new IllegalArgumentException();
     }
@@ -215,6 +218,8 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
         project.setProjectName("Viral Load Results");
         projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
         project.setProjectName("Indeterminate Results");
+        projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
+        project.setProjectName("Recency Testing");
         projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
         return projects;
     }
