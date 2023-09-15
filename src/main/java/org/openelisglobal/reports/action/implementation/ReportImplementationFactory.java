@@ -194,7 +194,8 @@ public class ReportImplementationFactory {
             } else if (report.equals("patientCILNSP")) {
                 return new PatientCILNSPClinical();
             } else if (report.equals("patientCILNSP_vreduit")) {
-                return new PatientCILNSPClinical_vreduit();
+                //return new PatientCILNSPClinical_vreduit();
+            	return new PatientCILNSPClinical();
             } else if (report.equals("indicatorHaitiClinicalHIV")) {
                 return new IndicatorHIV();
             } else if (report.equals("indicatorHaitiLNSPHIV")) {

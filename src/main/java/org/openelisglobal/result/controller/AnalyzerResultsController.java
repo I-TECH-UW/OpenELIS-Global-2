@@ -729,15 +729,16 @@ public class AnalyzerResultsController extends BaseController {
         }
 
         redirectAttibutes.addFlashAttribute(FWD_SUCCESS, true);
-        if (GenericValidator.isBlankOrNull(form.getType())) {
-            return findForward(FWD_SUCCESS_INSERT, form);
-        } else {
-            Map<String, String> params = new HashMap<>();
-            params.put("type", form.getType());
-            // params.put("page", form.getPaging().getCurrentPage());
-            params.put("forward", FWD_SUCCESS_INSERT);
-            return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
-        }
+        return findForward(FWD_SUCCESS_INSERT, form);
+//        if (GenericValidator.isBlankOrNull(form.getType())) {
+//            return findForward(FWD_SUCCESS_INSERT, form);
+//        } else {
+//            Map<String, String> params = new HashMap<>();
+//            params.put("type", form.getType());
+//            // params.put("page", form.getPaging().getCurrentPage());
+//            params.put("forward", FWD_SUCCESS_INSERT);
+//            return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
+//        }
     }
 
     private Errors validateSavableItems(List<AnalyzerResultItem> savableResults, Errors errors) {

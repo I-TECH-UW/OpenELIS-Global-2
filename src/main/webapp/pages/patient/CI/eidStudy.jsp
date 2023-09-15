@@ -129,6 +129,7 @@ eid = new EidProjectChecker();
                     itemLabel="organizationName"
                     itemValue="id" />
             </form:select>
+            <div id="eid.centerNameMessage" class="blank" ></div>
         </td>
     </tr>
     <tr>
@@ -280,7 +281,7 @@ eid = new EidProjectChecker();
                 <INPUT type="text" name="ageWeek" id="eid.ageWeek" size="3"
                     onchange="eid.checkAge( this, true, 'week' ); clearField('eid.month');"
                     maxlength="2" />
-                <div id="ageMessage" class="blank" ></div>
+                <div id="eid.ageMessage" class="blank" ></div>
             </td>
         </tr>
 
@@ -464,6 +465,7 @@ eid = new EidProjectChecker();
             <form:options items="${form.dictionaryLists['YES_NO'].list}" itemLabel="localizedName"
                 itemValue="id" />
             </form:select>
+            <div id="eid.underInvestigationMessage" class="blank" ></div>
         </td>
     </tr>    
     <tr id="eid.underInvestigationCommentRow" >
@@ -474,6 +476,7 @@ eid = new EidProjectChecker();
         <td colspan="3">
             <form:input path="projectData.underInvestigationNote" maxlength="1000" size="80"
                 onchange="makeDirty();" id="eid.underInvestigationComment" />
+                <div id="eid.underInvestigationMessage" class="blank" ></div>
         </td>
     </tr>
 </table>
