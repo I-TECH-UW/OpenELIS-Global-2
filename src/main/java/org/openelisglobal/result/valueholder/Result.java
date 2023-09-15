@@ -118,6 +118,24 @@ public class Result extends EnumValueItemImpl {
         }
         return value;
     }
+    
+    public long getVLValueAsNumber() {
+		long finalResult = 0;
+		String workingResult = value.split("\\(")[0].trim();
+		if (workingResult.toLowerCase().contains("log7") || workingResult.contains(">")) {
+			finalResult = 1000000;
+		} else if (workingResult.toUpperCase().contains("L") || workingResult.contains("<")) {
+			finalResult = 20;
+		} else {
+			try {
+				finalResult = Long.parseLong(workingResult.replaceAll("[^0-9]", ""));
+			} catch (Exception e) {
+				finalResult = -1;
+			}
+		}
+		
+		return finalResult;
+    }
 
     public void setValue(String value) {
         this.value = value;

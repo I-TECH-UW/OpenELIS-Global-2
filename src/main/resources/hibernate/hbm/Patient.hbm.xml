@@ -76,6 +76,8 @@
 		</property>
 		<property name="fhirUuid"
 			column="fhir_uuid" type="java.util.UUID" />
+		<property name="upidCode"
+			column="upid_code" type="java.lang.String" />
 
 	</class>
 </hibernate-mapping>
