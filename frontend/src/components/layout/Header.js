@@ -330,6 +330,9 @@ function OEHeader(props) {
                           <SideNavMenuItem href="/validation?type=testDate">
                             <FormattedMessage id="sidenav.label.validation.testdate" />
                           </SideNavMenuItem>
+                          <SideNavMenuItem href="/validation?type=range">
+                            <FormattedMessage id="sidenav.label.results.byrange" />
+                          </SideNavMenuItem>
                         </SideNavMenu>
 
                         <SideNavMenu aria-label="Reports" title="Reports">

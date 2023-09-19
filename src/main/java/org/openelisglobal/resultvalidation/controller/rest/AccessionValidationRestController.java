@@ -1,5 +1,6 @@
 package org.openelisglobal.resultvalidation.controller.rest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
@@ -40,6 +41,7 @@ import org.openelisglobal.resultvalidation.service.ResultValidationService;
 import org.openelisglobal.resultvalidation.util.ResultValidationSaveService;
 import org.openelisglobal.resultvalidation.util.ResultsValidationUtility;
 import org.openelisglobal.role.service.RoleService;
+import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.search.service.SearchResultsService;
@@ -78,6 +80,9 @@ public class AccessionValidationRestController extends BaseResultValidationContr
 
     @Autowired
     SearchResultsService searchService;
+    @Autowired
+    private SampleService sampleService;
+
 
 
     private static final String[] ALLOWED_FIELDS = new String[]{"testSectionId", "paging.currentPage", "testSection",
@@ -126,25 +131,25 @@ public class AccessionValidationRestController extends BaseResultValidationContr
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    //    @RequestMapping(value = { "/AccessionValidationRange", "/ResultValidationByTestDate" }, method = RequestMethod.GET)
-    @GetMapping(value = "accessionValidationByRange", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "accessionValidation", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResultValidationForm showAccessionValidationRange(HttpServletRequest request,
-                                                             @ModelAttribute("form") @Validated(ResultValidationForm.ResultValidation.class) ResultValidationForm oldForm)
+            @RequestParam(required = false) String accessionNumber, @RequestParam(required = false) String date,
+            @RequestParam(required = false) String unitType, @RequestParam(defaultValue = "true") Boolean doRange)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
+        
         ResultValidationForm newForm = new ResultValidationForm();
-        if (request.getParameter("accessionNumber") != null && !Objects.equals(request.getParameter("accessionNumber"), "")) {
-            newForm.setAccessionNumber(request.getParameter("accessionNumber"));
-        } else if (request.getParameter("date") != null && !Objects.equals(request.getParameter("date"), "")) {
-            newForm.setTestDate(request.getParameter("date"));
-        }else if(request.getParameter("unitType") != null && !Objects.equals(request.getParameter("unitType"), "")){
-            newForm.setTestSectionId(request.getParameter("unitType"));
+        if (StringUtils.isNotBlank(accessionNumber)) {
+            newForm.setAccessionNumber(accessionNumber);
+        } else if (StringUtils.isNotBlank(date)) {
+            newForm.setTestDate(date);
+        } else if (StringUtils.isNotBlank(unitType)) {
+            newForm.setTestSectionId(unitType);
         }
-        return getResultValidation(request, newForm);
+        return getResultValidation(request, newForm ,doRange);
     }
 
-    private ResultValidationForm getResultValidation(HttpServletRequest request, ResultValidationForm form)
+    private ResultValidationForm getResultValidation(HttpServletRequest request, ResultValidationForm form ,Boolean doRange)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 
@@ -173,7 +178,7 @@ public class AccessionValidationRestController extends BaseResultValidationContr
                 ts = testSectionService.get(form.getTestSectionId());
             }
 
-            List<AnalysisItem> resultList;
+            List<AnalysisItem> resultList = new ArrayList<>();
 
             ResultsValidationUtility resultsValidationUtility = SpringContext.getBean(ResultsValidationUtility.class);
             if (request.getRequestURI().contains("AccessionValidationRange")) {
@@ -184,10 +189,18 @@ public class AccessionValidationRestController extends BaseResultValidationContr
             if (!(GenericValidator.isBlankOrNull(form.getTestSectionId())
                     && GenericValidator.isBlankOrNull(form.getAccessionNumber())
                     && GenericValidator.isBlankOrNull(form.getTestDate()))) {
-
-                resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
+                
+                if (doRange) {
+                    resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
                         form.getTestSectionId(), form.getAccessionNumber(), form.getTestDate());
-
+                } else {
+                    if (StringUtils.isNotBlank(form.getAccessionNumber())) {
+                        Sample sample = getSample(form.getAccessionNumber());
+                        resultList = resultsValidationUtility.getValidationAnalysisBySample(sample);
+                    }
+                    
+                }
+               
                 filteredresultList = userService.filterAnalysisResultsByLabUnitRoles(getSysUserId(request), resultList,
                         Constants.ROLE_VALIDATION);
                 request.setAttribute("pageSize", filteredresultList.size());
@@ -236,7 +249,7 @@ public class AccessionValidationRestController extends BaseResultValidationContr
         System.out.println("Post:LogbookResultsRestController:" + form);
 
         if ("true".equals(request.getParameter("pageResults"))) {
-            return getResultValidation(request, form);
+            return getResultValidation(request, form ,false);
         }
         form.setSearchFinished(false);
 
@@ -588,6 +601,14 @@ public class AccessionValidationRestController extends BaseResultValidationContr
 
     private SystemUser createSystemUser() {
         return systemUserService.get(getSysUserId(request));
+    }
+
+    private Sample getSample(String accessionNumber) {
+        return sampleService.getSampleByAccessionNumber(accessionNumber);
+    }
+
+    private Patient getPatient(Sample sample) {
+        return sampleHumanService.getPatientForSample(sample);
     }
 
     @Override
