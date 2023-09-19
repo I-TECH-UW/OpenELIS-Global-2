@@ -6,14 +6,13 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import "../Style.css";
 import { Select, SelectItem } from "@carbon/react";
 import config from "../../config.json";
-import { getFromOpenElisServer } from "../utils/Utils";
 import {
   Search,
   Notification,
   Language,
   UserAvatarFilledAlt,
   Logout,
-  Close 
+  Close,
 } from "@carbon/icons-react";
 
 import {
@@ -33,7 +32,7 @@ import {
 
 function OEHeader(props) {
   const { releaseNumber } = useContext(ConfigurationContext);
-  const {BANNER_TEXT} = useContext(ConfigurationContext);
+  const { BANNER_TEXT } = useContext(ConfigurationContext);
   const { userSessionDetails, logout } = useContext(UserSessionDetailsContext);
   const [switchCollapsed, setSwitchCollapsed] = useState(true);
   const userSwitchRef = createRef();
@@ -51,9 +50,15 @@ function OEHeader(props) {
 
   const panelSwitchIcon = () => {
     return userSessionDetails.authenticated ? (
-       switchCollapsed?<UserAvatarFilledAlt size={20} />:<Close size={20}/>
+      switchCollapsed ? (
+        <UserAvatarFilledAlt size={20} />
+      ) : (
+        <Close size={20} />
+      )
+    ) : switchCollapsed ? (
+      <Language size={20} />
     ) : (
-      switchCollapsed? <Language size={20} />:<Close size={20}/>
+      <Close size={20} />
     );
   };
 
@@ -76,7 +81,7 @@ function OEHeader(props) {
       <div className="container">
         <Theme>
           <HeaderContainer
-            render={({ isSideNavExpanded, onClickSideNavExpand}) => (
+            render={({ isSideNavExpanded, onClickSideNavExpand }) => (
               <Header id="mainHeader" className="mainHeader" aria-label="">
                 {userSessionDetails.authenticated && (
                   <HeaderMenuButton
@@ -173,7 +178,11 @@ function OEHeader(props) {
                       </Select>
                     </li>
                     <li className="userDetails">
-                      <label className="cds--label"> <FormattedMessage id="header.label.version" />: {releaseNumber}</label>
+                      <label className="cds--label">
+                        {" "}
+                        <FormattedMessage id="header.label.version" />:{" "}
+                        {releaseNumber}
+                      </label>
                     </li>
                   </ul>
                 </HeaderPanel>
@@ -321,7 +330,12 @@ function OEHeader(props) {
                           <SideNavMenuItem href="/validation?type=routine">
                             <FormattedMessage id="sidenav.label.validation.routine" />
                           </SideNavMenuItem>
-                          <SideNavMenuItem href={config.serverBaseUrl + "/ResultValidationRetroC?type=Immunology"}>
+                          <SideNavMenuItem
+                            href={
+                              config.serverBaseUrl +
+                              "/ResultValidationRetroC?type=Immunology"
+                            }
+                          >
                             <FormattedMessage id="sidenav.label.validation.study" />
                           </SideNavMenuItem>
                           <SideNavMenuItem href="/validation?type=order">

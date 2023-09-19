@@ -130,7 +130,7 @@
 		<validCheckSum>8:0fb458f9d4381982c866b642617489ba</validCheckSum>
 		<preConditions onFail="MARK_RAN">
         	<sqlCheck expectedResult="0">
-				select count(*) from clinlims.test where description = 'Immunohistochemistry examination'; 
+				select count(*) from clinlims.test where description = 'Anti-Pan Keratin'; 
 			</sqlCheck>
 		</preConditions>
 		<comment>add immunohistochemistry test and sample type info</comment>
