@@ -11,9 +11,11 @@ function ModifyOrder() {
 
   return (
     <>
+     <div className="orderLegendBody">
       <SearchPatientForm
         getSelectedPatient={getSelectedPatient}
       ></SearchPatientForm>
+      </div>
     </>
   );
 }

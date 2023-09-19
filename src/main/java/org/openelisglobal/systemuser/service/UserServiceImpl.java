@@ -172,7 +172,7 @@ public class UserServiceImpl implements UserService {
             return userTestSections;
         }
     }
-
+    
     @Override
     public List<IdValuePair> getUserSampleTypes(String systemUserId, String roleName) {
         String resultsRoleId = roleService.getRoleByName(roleName).getId();
@@ -181,22 +181,26 @@ public class UserServiceImpl implements UserService {
         if (testSections != null) {
             testSections.forEach(testSection -> testUnitIds.add(Integer.valueOf(testSection.getId())));
         }
-
+        
         List<Test> allTests = testService.getTestsByTestSectionIds(testUnitIds);
         Set<String> sampleIds = new HashSet<>();
         // clear cache to create a fresh Map of testId To TypeOfSample
         List<IdValuePair> userSampleTypes = new ArrayList<>();
-        if (allTests != null ) {
+        if (allTests != null) {
             typeOfSampleService.clearCache();
-            allTests.forEach(test -> sampleIds.addAll(typeOfSampleService.getTypeOfSampleForTest(test.getId()).stream()
-                    .map(e -> e.getId()).collect(Collectors.toList())));
+            allTests.forEach(test -> {
+                List<TypeOfSample> sampleTypes = typeOfSampleService.getTypeOfSampleForTest(test.getId());
+                if (sampleTypes != null) {
+                    sampleIds.addAll(sampleTypes.stream().map(e -> e.getId()).collect(Collectors.toList()));
+                }  
+            });
             
         }
-
-        sampleIds.forEach( id -> {
+        
+        sampleIds.forEach(id -> {
             TypeOfSample type = typeOfSampleService.get(id);
-            if(type != null){
-               userSampleTypes.add(new IdValuePair(type.getId(), type.getLocalizedName()));
+            if (type != null) {
+                userSampleTypes.add(new IdValuePair(type.getId(), type.getLocalizedName()));
             }
         });
         
