@@ -721,4 +721,9 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
         activateTests(testNames);
     }
 
+    @Override
+    public List<Test> getTestsByTestSectionIds(List<Integer> ids) {
+        return getBaseObjectDAO().getTestsByTestSectionIds(ids);
+    }
+
 }

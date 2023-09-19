@@ -276,5 +276,16 @@
     "immunohistochemistry.label.dashboard": "Tableau de bord en immunohistochimie",
     "cytology.label.dashboard": "Tableau de bord en cytologie",
     "label.button.start" : "Commencer" ,
-    "label.button.sample" : "Échantillon" 
+    "label.button.sample" : "Échantillon" ,
+    "search.label.accession" : "Saisissez le numéro d'accès",
+    "search.label.testunit" : "Sélectionnez l'unité de test",
+    "search.label.testdate" : "Saisissez la date du test",
+    "search.label.collectiondate" : "Saisissez la date de collecte",
+    "search.label.recieveddate" : "Saisissez la date de réception",
+    "search.label.fromaccession" : "Du numéro d'accès",
+    "search.label.toaccession" : "Au numéro d'accès",
+    "search.label.loadnext" : "Charger les 99 enregistrements suivants à partir du numéro de laboratoire",
+    "search.label.analysis" : "Sélectionnez l'état de l'analyse",
+    "search.label.test" : "Sélectionnez le nom du test",
+    "search.label.sample" : "Sélectionnez l'état de l'échantillon"
 }

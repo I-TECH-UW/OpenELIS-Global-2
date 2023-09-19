@@ -193,13 +193,16 @@ export function SearchResultForm(props) {
           >
             <Stack gap={2}>
               <FormattedMessage id="label.button.search" />
-              <div className="inlineDiv">
+
+              <Column lg={6}>
                 {searchBy.type === "unit" && (
                   <Field name="unitType">
                     {({ field }) => (
                       <Select
-                        className="inputText"
-                        labelText="Select Unit Type"
+                        className="inputSelect2"
+                        labelText={
+                          <FormattedMessage id="search.label.testunit" />
+                        }
                         name={field.name}
                         id={field.name}
                       >
@@ -217,21 +220,28 @@ export function SearchResultForm(props) {
                     )}
                   </Field>
                 )}
+                </Column>
+              <Column lg={10} />
 
+                <Column lg={6}>
                 {searchBy.type === "order" && (
                   <Field name="accessionNumber">
                     {({ field }) => (
                       <TextInput
-                        placeholder={"Enter LabNo"}
-                        className="searchLabNumber inputText"
+                        placeholder="Enter Accession No."
+                        className="searchLabNumber inputText2"
                         name={field.name}
                         id={field.name}
-                        labelText="Enter accession No"
+                        labelText={
+                          <FormattedMessage id="search.label.accession" />
+                        }
                       />
                     )}
                   </Field>
                 )}
-
+                </Column>
+              <Column lg={10} />
+                <div className="inlineDiv">
                 {searchBy.type === "range" && (
                   <div className="inlineDiv">
                     <Field name="startLabNo">
@@ -241,7 +251,9 @@ export function SearchResultForm(props) {
                           className="searchLabNumber inputText"
                           name={field.name}
                           id={field.name}
-                          labelText="From"
+                          labelText={
+                            <FormattedMessage id="search.label.fromaccession" />
+                          }
                         />
                       )}
                     </Field>
@@ -253,7 +265,9 @@ export function SearchResultForm(props) {
                           className="searchLabNumber inputText"
                           name={field.name}
                           id={field.name}
-                          labelText="To"
+                          labelText={
+                            <FormattedMessage id="search.label.toaccession" />
+                          }
                         />
                       )}
                     </Field>
@@ -271,7 +285,9 @@ export function SearchResultForm(props) {
                           className="collectionDate inputText"
                           name={field.name}
                           id={field.name}
-                          labelText=""
+                          labelText={
+                            <FormattedMessage id="search.label.collectiondate" />
+                          }
                         />
                       )}
                     </Field>
@@ -282,7 +298,9 @@ export function SearchResultForm(props) {
                           className="receivedDate inputText"
                           name={field.name}
                           id={field.name}
-                          labelText=""
+                          labelText={
+                            <FormattedMessage id="search.label.recieveddate" />
+                          }
                         />
                       )}
                     </Field>
@@ -292,7 +310,9 @@ export function SearchResultForm(props) {
                       {({ field }) => (
                         <Select
                           className="analysisStatus inputText"
-                          labelText="Select Test Name"
+                          labelText={
+                            <FormattedMessage id="search.label.test" />
+                          }
                           name={field.name}
                           id={field.name}
                         >
@@ -313,7 +333,9 @@ export function SearchResultForm(props) {
                       {({ field }) => (
                         <Select
                           className="analysisStatus inputText"
-                          labelText="Select Analysis Status"
+                          labelText={
+                            <FormattedMessage id="search.label.analysis" />
+                          }
                           name={field.name}
                           id={field.name}
                         >
@@ -335,7 +357,9 @@ export function SearchResultForm(props) {
                       {({ field }) => (
                         <Select
                           className="sampleStatus inputText"
-                          labelText="Select Sample Status"
+                          labelText={
+                            <FormattedMessage id="search.label.sample" />
+                          }
                           name={field.name}
                           id={field.name}
                         >

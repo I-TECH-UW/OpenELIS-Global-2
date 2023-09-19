@@ -690,4 +690,21 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
         }
         return null;
     }
+
+    @Override
+    public List<Test> getTestsByTestSectionIds(List<Integer> ids) throws LIMSRuntimeException {
+        try {
+            String sql = "from Test t where t.testSection.id IN (:ids) and t.isActive='Y'";
+            Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);
+            query.setParameterList("ids", ids);
+
+            List<Test> list = query.list();
+            return list;
+
+        } catch (RuntimeException e) {
+            handleException(e, "getTestsByTestSectionId");
+        }
+
+        return null;
+    }
 }
