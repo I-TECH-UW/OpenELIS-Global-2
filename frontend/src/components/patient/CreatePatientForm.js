@@ -3,6 +3,7 @@ import { FormattedMessage, injectIntl } from "react-intl";
 import "../Style.css";
 import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
 import { nationalityList } from "../data/countries";
+import format from 'date-fns/format'
 
 import {
   Heading,
@@ -39,13 +40,86 @@ function CreatePatientForm(props) {
   const [maritalStatuses, setMaritalStatuses] = useState([]);
   const [formAction, setFormAction] = useState("ADD");
   const componentMounted = useRef(false);
+  const [dateOfBirthFormatter,setDateOfBirthFormatter] = useState({
+    "years": "", "months": "", "days": ""
+  })
 
   const handleDatePickerChange = (values, ...e) => {
     var patient = values;
     patient.birthDateForDisplay = e[1];
     setPatientDetails(patient);
+    if (patient.birthDateForDisplay !== "") {
+      getYearsMonthsDaysFromDOB(patient.birthDateForDisplay)
+    }
   };
 
+  function getYearsMonthsDaysFromDOB(date) {
+    const selectedDate = date.split('/');
+    let today = new Date();
+
+    let year = today.getFullYear();
+    let month = today.getMonth() + 1;
+    let day = today.getDate();
+
+    let yy = parseInt(selectedDate[2]);
+    let mm = parseInt(selectedDate[1]);
+    let dd = parseInt(selectedDate[0]);
+
+    let years, months, days;
+    months = month - mm;
+    if (day < dd) {
+      months = months - 1;
+    }
+    years = year - yy;
+    if (month * 100 + day < mm * 100 + dd) {
+      years = years - 1;
+      months = months + 12;
+    }
+    days = Math.floor((today.getTime() - (new Date(yy + years, mm + months - 1, dd)).getTime()) / (24 * 60 * 60 * 1000));
+
+    setDateOfBirthFormatter({
+      ...dateOfBirthFormatter,
+      years: years, months: months, days: days
+    });
+  }
+
+  const getDOBByYearMonthsDays = () => {
+    const currentDate = new Date();
+    const pastDate = new Date();
+
+    pastDate.setFullYear(currentDate.getFullYear() - dateOfBirthFormatter.years);
+    pastDate.setMonth(currentDate.getMonth() - dateOfBirthFormatter.months);
+    pastDate.setDate(currentDate.getDate() - dateOfBirthFormatter.days);
+    const dob = format(new Date(pastDate),'dd/MM/yyyy');
+    setPatientDetails((prevState) => ({
+      ...prevState,
+      birthDateForDisplay: dob,
+    }));
+  }
+
+  function handleYearsChange(e){
+    let years = e.target.value;
+    setDateOfBirthFormatter({
+      ...dateOfBirthFormatter,
+      years: years
+    });
+  }
+
+  function handleMonthsChange(e){
+    let months = e.target.value;
+    setDateOfBirthFormatter({
+      ...dateOfBirthFormatter,
+      months: months
+    });
+  }
+
+  function handleDaysChange(e){
+    let days = e.target.value;
+    setDateOfBirthFormatter({
+      ...dateOfBirthFormatter,
+      days: days
+    });
+  }
   const handleRegionSelection = (e, values) => {
     var patient = values;
     patient.healthDistrict = "";
@@ -60,6 +134,10 @@ function CreatePatientForm(props) {
   function fethchHealthDistrictsCallback(res) {
     setHealthDistricts(res);
   }
+
+  useEffect(()=>{
+    getDOBByYearMonthsDays();
+  },[dateOfBirthFormatter])
 
   useEffect(() => {
     if (props.selectedPatient.patientPK) {
@@ -76,6 +154,7 @@ function CreatePatientForm(props) {
       const patient = props.selectedPatient;
       patient.patientUpdateStatus = "UPDATE";
       setPatientDetails(patient);
+      getYearsMonthsDaysFromDOB(patient.birthDateForDisplay);
       setFormAction("UPDATE");
     }
   }, [props.selectedPatient]);
@@ -87,6 +166,7 @@ function CreatePatientForm(props) {
         props.orderFormValues.patientProperties.guid !== ""
       ) {
         setPatientDetails(props.orderFormValues.patientProperties);
+        getYearsMonthsDaysFromDOB(props.orderFormValues.patientProperties.birthDateForDisplay);
       }
     }
   };
@@ -393,26 +473,55 @@ function CreatePatientForm(props) {
                   </DatePicker>
                 )}
               </Field>
-              <Field name="gender">
-                {({ field }) => (
-                  <RadioButtonGroup
-                    valueSelected={values.gender}
-                    legendText="Gender"
-                    name={field.name}
+
+                <TextInput
+                    value={dateOfBirthFormatter.years}
+                    name="years"
+                    labelText="Age/Years"
+                    id="years"
+                    onChange={ handleYearsChange }
                     className="inputText"
-                    id="create_patient_gender"
-                  >
-                    <RadioButton id="radio-1" labelText="Male" value="M" />
-                    <RadioButton id="radio-2" labelText="Female" value="F" />
-                  </RadioButtonGroup>
-                )}
-              </Field>
+                />
+
+                <TextInput
+                    value={dateOfBirthFormatter.months}
+                    name="months"
+                    labelText="Months"
+                    onChange={  handleMonthsChange }
+                    id="months"
+                    className="inputText"
+                />
+
+                <TextInput
+                    value={dateOfBirthFormatter.days}
+                    name="days"
+                    onChange={ handleDaysChange}
+                    labelText="Days"
+                    id="days"
+                    className="inputText"
+                />
               <div className="error">
                 <ErrorMessage name="birthDateForDisplay"></ErrorMessage>
               </div>
               <div className="error">
                 <ErrorMessage name="gender"></ErrorMessage>
               </div>
+            </div>
+            <div className="inlineDiv">
+              <Field name="gender">
+                {({ field }) => (
+                    <RadioButtonGroup
+                        valueSelected={values.gender}
+                        legendText="Gender"
+                        name={field.name}
+                        className="inputText"
+                        id="create_patient_gender"
+                    >
+                      <RadioButton id="radio-1" labelText="Male" value="M" />
+                      <RadioButton id="radio-2" labelText="Female" value="F" />
+                    </RadioButtonGroup>
+                )}
+              </Field>
             </div>
             <Accordion>
               <AccordionItem title="Additional Information">

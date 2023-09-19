@@ -278,6 +278,19 @@
     "immunohistochemistry.label.dashboard" : "Immunohistochemistry DashBoard" ,
     "cytology.label.dashboard" : "Cytology DashBoard"  ,
     "label.button.start" : "Start" ,
-    "label.button.sample" : "Sample" 
+    "label.button.sample" : "Sample" ,
+    "search.label.accession" : "Enter Accession Number" ,
+    "search.label.testunit" : "Select Test Unit" ,
+    "search.label.testdate" : "Enter Test Date" ,
+    "search.label.collectiondate" : "Enter Collection Date" ,
+    "search.label.recieveddate" : "Enter Recieved Date" ,
+    "search.label.fromaccession" : "From Accesion Number" ,
+    "search.label.toaccession" : "To Accesion Number" ,
+    "search.label.loadnext" : "Load Next 99 Records Starting at Lab Number" ,
+    "search.label.analysis" : "Select Analysis Status" ,
+    "search.label.test" : "Select Test Name" ,
+    "search.label.sample" : "Select Sample Status" 
+
+
 
 }

@@ -27,6 +27,7 @@ const SearchForm = (props) => {
   const { setNotificationVisible, setNotificationBody } = useContext(NotificationContext);
   const [searchResults, setSearchResults] = useState();
   const [searchBy, setSearchBy] = useState();
+  const [doRange, setDoRagnge] = useState(true);
   const [testSections, setTestSections] = useState([]);
   const [testDate, setTestDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -34,9 +35,9 @@ const SearchForm = (props) => {
     if (data) {
       setSearchResults(data);
       if (data.resultList.length > 0) {
-        const newResultsList = data.resultList.map((data, idx) => {
+        const newResultsList = data.resultList.map((data, id) => {
           let tempData = { ...data }
-          tempData.id = idx
+          tempData.id = id
           return tempData
         });
         setSearchResults(prevState => ({
@@ -69,10 +70,12 @@ const SearchForm = (props) => {
     var accessionNumber = values.accessionNumber ? values.accessionNumber : "";
     var unitType = values.unitType ? values.unitType : ""
     var date = testDate ? testDate : ""
-    let searchEndPoint = "/rest/accessionValidationByRange?" +
+    let searchEndPoint = "/rest/accessionValidation?" +
       "accessionNumber=" + accessionNumber +
       "&unitType=" + unitType +
-      "&date=" + date
+      "&date=" + date +
+      "&doRange=" + doRange;
+
     getFromOpenElisServer(searchEndPoint, validationResults);
   }
 
@@ -92,6 +95,9 @@ const SearchForm = (props) => {
   useEffect(() => {
     let param = (new URLSearchParams(window.location.search)).get("type")
     setSearchBy(param);
+    if(param === "order"){
+        setDoRagnge(false)
+    }
     getFromOpenElisServer('/rest/user-test-sections', fetchTestSections);
   }, []);
   return (
@@ -126,13 +132,13 @@ const SearchForm = (props) => {
               <Row lg={12}>
                 <div className="inlineDiv">
 
-                  {searchBy === "order" && <Field name="accessionNumber"
+                  {(searchBy === "order" || searchBy === "range")&& <Field name="accessionNumber"
                   >
                     {({ field }) =>
                       <TextInput
-                        placeholder={"Enter LabNo"}
+                        placeholder={"Enter Lab No"}
                         className="searchLabNumber inputText"
-                        name={field.name} id={field.name} labelText="Enter LabNo:" />
+                        name={field.name} id={field.name} labelText={searchBy == "order"? <FormattedMessage id="search.label.accession" /> : <FormattedMessage id="search.label.loadnext" />} />
                     }
                   </Field>}
                 </div>
@@ -141,7 +147,7 @@ const SearchForm = (props) => {
                     {({ field }) =>
                       <Select
                         className="inputText"
-                        labelText="Select Unit Type"
+                        labelText={ <FormattedMessage id="search.label.testunit" />}
                         name={field.name} id={field.name}>
                         <SelectItem
                           text=""
@@ -174,7 +180,10 @@ const SearchForm = (props) => {
                           }}>
                           <DatePickerInput name={field.name} id={field.id}
                             placeholder="dd/mm/yyyy" type="text"
-                            labelText="Enter Test date" />
+                            labelText={
+                              <FormattedMessage id="search.label.testdate" />
+                            }
+                          />
                         </DatePicker>
                       }
                     </Field>}

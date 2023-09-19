@@ -125,10 +125,10 @@ const Validation = (props) => {
       handleResponse,
     );
   };
-  const handleResponse = (response) => {
+  const handleResponse = (status) => {
     let message = "Oops, try gain";
     let kind = NotificationKinds.error;
-    if (response.status === 200) {
+    if (status == 200) {
       message = "Results have been validated successfully";
       kind = NotificationKinds.success;
     }

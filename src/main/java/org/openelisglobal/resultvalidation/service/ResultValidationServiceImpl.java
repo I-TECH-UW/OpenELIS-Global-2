@@ -83,7 +83,9 @@ public class ResultValidationServiceImpl implements ResultValidationService {
         for (Note note : noteUpdateList) {
             if (note != null) {
                 if (note.getId() == null) {
-                    noteService.insert(note);
+                    if (!noteService.duplicateNoteExists(note)) {
+                        noteService.insert(note);
+                    }            
                 } else {
                     noteService.update(note);
                 }
