@@ -322,8 +322,12 @@ const AddOrder = (props) => {
           receivedTime: configurationProperties.currentTimeAsText,
         },
       });
-      setAllowSiteNameOptions(configurationProperties.restrictFreeTextRefSiteEntry);
-      setAllowRequesterOptions(configurationProperties.restrictFreeTextProviderEntry);
+      setAllowSiteNameOptions(
+        configurationProperties.restrictFreeTextRefSiteEntry,
+      );
+      setAllowRequesterOptions(
+        configurationProperties.restrictFreeTextProviderEntry,
+      );
     }
     if (orderFormValues.sampleOrderItems.requestDate != "") {
       setInnitialized(true);
