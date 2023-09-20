@@ -370,7 +370,7 @@ function CytologyCaseView() {
           <Section>
             <Section>
               {pathologySampleInfo ? (
-                <div className="patient-header">
+                <div className="patient-header2">
                   <div className="patient-name">
                     <Tag type="blue">
                       {" "}
@@ -421,7 +421,7 @@ function CytologyCaseView() {
                   </div>
                 </div>
               ) : (
-                <div className="patient-header">
+                <div className="patient-header2">
                   <div className="patient-name">
                     {" "}
                     <FormattedMessage id="patient.label.nopatientid" />{" "}
@@ -432,7 +432,7 @@ function CytologyCaseView() {
           </Section>
           <Section>
             <Section>
-              <div className="patient-header">
+              <div className="patient-header2">
                 <QuestionnaireResponse
                   questionnaireResponse={
                     pathologySampleInfo.programQuestionnaireResponse
@@ -443,7 +443,7 @@ function CytologyCaseView() {
           </Section>
         </Column>
       </Grid>
-      <Grid fullWidth={true} className="gridBoundary">
+      <Grid fullWidth={true} className="orderLegendBody">
         {notificationVisible === true ? <AlertDialog /> : ""}
         {loading && <Loading description="Loading Dasboard..." />}
         <Column lg={16} md={8} sm={4}>

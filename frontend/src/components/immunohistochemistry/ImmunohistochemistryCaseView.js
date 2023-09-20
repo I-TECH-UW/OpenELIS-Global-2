@@ -267,7 +267,7 @@ function ImmunohistochemistryCaseView() {
           <Section>
             <Section>
               {immunohistochemistrySampleInfo ? (
-                <div className="patient-header">
+                <div className="patient-header2">
                   <div className="patient-name">
                     <Tag type="blue">
                       <FormattedMessage id="patient.label.name" /> :
@@ -319,7 +319,7 @@ function ImmunohistochemistryCaseView() {
                   </div>
                 </div>
               ) : (
-                <div className="patient-header">
+                <div className="patient-header2">
                   <div className="patient-name">
                     <FormattedMessage id="patient.label.nopatientid" />{" "}
                   </div>
@@ -329,7 +329,7 @@ function ImmunohistochemistryCaseView() {
           </Section>
           <Section>
             <Section>
-              <div className="patient-header">
+              <div className="patient-header2">
                 <QuestionnaireResponse
                   questionnaireResponse={
                     immunohistochemistrySampleInfo.programQuestionnaireResponse
@@ -341,7 +341,7 @@ function ImmunohistochemistryCaseView() {
         </Column>
       </Grid>
       <Stack gap={4}>
-        <Grid fullWidth={true} className="gridBoundary">
+        <Grid fullWidth={true} className="orderLegendBody">
           {notificationVisible === true ? <AlertDialog /> : ""}
           {(loading || resultsLoading) && (
             <Loading description="Loading Dasboard..." />
