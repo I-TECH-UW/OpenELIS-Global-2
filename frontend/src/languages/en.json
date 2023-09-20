@@ -289,7 +289,9 @@
     "search.label.loadnext" : "Load Next 99 Records Starting at Lab Number" ,
     "search.label.analysis" : "Select Analysis Status" ,
     "search.label.test" : "Select Test Name" ,
-    "search.label.sample" : "Select Sample Status" 
+    "search.label.sample" : "Select Sample Status" ,
+    "pathology.label.report" : "Pathology Report",
+    "patient.natioanalid":"National ID "
 
 
 

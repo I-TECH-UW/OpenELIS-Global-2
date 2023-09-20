@@ -349,7 +349,7 @@ function PathologyCaseView() {
                     />
                   </Column>
                   <Column lg={4}>
-                    Pathology Report
+                  <FormattedMessage id="pathology.label.report" />
                   </Column>
                   <Column lg={2} md={1} sm={2}>
                     {pathologySampleInfo.reports[index].image &&
