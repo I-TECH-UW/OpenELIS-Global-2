@@ -37,7 +37,6 @@ function OEHeader(props) {
   const [switchCollapsed, setSwitchCollapsed] = useState(true);
   const userSwitchRef = createRef();
   const headerPanelRef = createRef();
-  const componentMounted = createRef(false);
   const intl = useIntl();
 
   const panelSwitchLabel = () => {
@@ -96,7 +95,6 @@ function OEHeader(props) {
                   <div className="banner">
                     <h5>{BANNER_TEXT}</h5>
                     <p>
-                      {" "}
                       <FormattedMessage id="header.label.version" /> &nbsp;{" "}
                       {releaseNumber}
                     </p>
