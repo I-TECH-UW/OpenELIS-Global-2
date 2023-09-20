@@ -348,6 +348,8 @@ function ReflexRule() {
       // console.log(JSON.stringify(reflexRuleList))
       if (reflexRuleList.length > 0) {
         setRuleList(reflexRuleList);
+      } else {
+        setLoading(false);
       }
     }
   };

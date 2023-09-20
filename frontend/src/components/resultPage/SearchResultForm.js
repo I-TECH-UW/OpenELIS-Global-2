@@ -624,6 +624,7 @@ export function SearchResults(props) {
               <TextArea
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
+                style={{ width: "10px", height: "20px" }}
                 //type="text"
                 // value={resultForm.testResult[row.id].resultValue}
                 labelText=""
@@ -637,6 +638,7 @@ export function SearchResults(props) {
               <TextArea
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
+                style={{ width: "10px", height: "20px" }}
                 //type="text"
                 // value={resultForm.testResult[row.id].resultValue}
                 labelText=""
@@ -681,6 +683,34 @@ export function SearchResults(props) {
               <TextInput
                 id={"currentResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
+                //type="text"
+                value={row.resultValue}
+                labelText=""
+                // helperText="Optional help text"
+                onChange={(e) => handleChange(e, row.id)}
+              />
+            );
+
+          case "R":
+            return (
+              <TextArea
+                id={"ResultValue" + row.id}
+                name={"testResult[" + row.id + "].resultValue"}
+                style={{ width: "10px", height: "20px" }}
+                //type="text"
+                value={row.resultValue}
+                labelText=""
+                // helperText="Optional help text"
+                onChange={(e) => handleChange(e, row.id)}
+              />
+            );
+
+          case "A":
+            return (
+              <TextArea
+                id={"ResultValue" + row.id}
+                name={"testResult[" + row.id + "].resultValue"}
+                style={{ width: "10px", height: "20px" }}
                 //type="text"
                 value={row.resultValue}
                 labelText=""
