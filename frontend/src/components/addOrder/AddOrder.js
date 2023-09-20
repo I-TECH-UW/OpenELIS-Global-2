@@ -468,7 +468,7 @@ const AddOrder = (props) => {
               className="inputDate"
               labelText={<FormattedMessage id="sample.entry.nextVisit.date" />}
               value={orderFormValues.sampleOrderItems.nextVisitDate}
-              autofillDate={true}
+              autofillDate={false}
               onChange={(date) => handleDatePickerChange("nextVisitDate", date)}
             />
           </div>
