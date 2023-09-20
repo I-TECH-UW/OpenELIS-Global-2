@@ -6,6 +6,7 @@ import ReflexTestManagement from "./reflexTests/ReflexTestManagement";
 import ProgramManagement from "./program/ProgramManagement";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
+import LocationManagement from "./location/LocationManagement";
 import {
   SideNav,
   SideNavItems,
@@ -29,18 +30,24 @@ function Admin() {
               <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
             </SideNavMenuItem>
           </SideNavMenu>
-          <SideNavMenu
+          {/* <SideNavMenu
             title={intl.formatMessage({ id: "sidenav.label.admin.usermgt" })}
           >
-            <SideNavMenuItem href={config.serverBaseUrl + "/UnifiedSystemUserMenu"}> <FormattedMessage id="sidenav.label.admin.usermgt"/></SideNavMenuItem>
-          </SideNavMenu>
-          <SideNavMenu
+            <SideNavMenuItem
+              href={config.serverBaseUrl + "/UnifiedSystemUserMenu"}
+            >
+              <FormattedMessage id="sidenav.label.admin.usermgt" />
+            </SideNavMenuItem>
+          </SideNavMenu> */}
+          {/* <SideNavMenu
             title={intl.formatMessage({
               id: "sidenav.label.admin.organizationmgt",
             })}
           >
-             <SideNavMenuItem href={config.serverBaseUrl + "/OrganizationMenu"}> <FormattedMessage id="sidenav.label.admin.organizationmgt"/></SideNavMenuItem>
-          </SideNavMenu>
+            <SideNavMenuItem href={config.serverBaseUrl + "/OrganizationMenu"}>
+              <FormattedMessage id="sidenav.label.admin.organizationmgt" />
+            </SideNavMenuItem>
+          </SideNavMenu> */}
           <SideNavMenuItem href="#program">
             <FormattedMessage id="sidenav.label.admin.program" />
           </SideNavMenuItem>
@@ -60,7 +67,10 @@ function Admin() {
         <ProgramManagement />
       </PathRoute>
       <PathRoute path="#calculatedValue">
-        <CalculatedValue></CalculatedValue>
+        <CalculatedValue />
+      </PathRoute>
+      <PathRoute path="#locationManagement">
+        <LocationManagement />
       </PathRoute>
     </>
   );
