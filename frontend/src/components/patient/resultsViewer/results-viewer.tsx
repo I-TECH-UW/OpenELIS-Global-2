@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Heading, Grid, Column, Section, Loading, Breadcrumb, BreadcrumbItem, Tag} from '@carbon/react';
+import { Heading, Grid, Column, Section, Loading, Breadcrumb, BreadcrumbItem, Tag } from '@carbon/react';
 import { useTranslation } from 'react-i18next';
 import { EmptyState, ErrorState } from './commons';
 import { FilterContext, FilterProvider } from './filter';
@@ -7,7 +7,7 @@ import { useGetManyObstreeData } from './grouped-timeline';
 import './results-viewer.styles.scss';
 import { useParams } from 'react-router-dom';
 import TreeViewWrapper from './tree-view';
-import { FormattedMessage, injectIntl ,useIntl } from 'react-intl'
+import { FormattedMessage, injectIntl, useIntl } from 'react-intl'
 import config from '../../../config.json';
 import { getFromOpenElisServer } from "../../utils/Utils";
 
@@ -62,7 +62,12 @@ const RoutedResultsViewer: React.FC<ResultsViewerProps> = () => {
   const { t } = useTranslation();
 
   if (error) {
-    return <ErrorState error={error} headerTitle={t('dataLoadError', 'Data Load Error')} />;
+    return (
+      <ErrorState
+        error={error}
+        headerTitle={t("dataLoadError", "Data Load Error")}
+      />
+    );
   }
 
   if (loading) {
@@ -71,11 +76,11 @@ const RoutedResultsViewer: React.FC<ResultsViewerProps> = () => {
       <Grid fullWidth={true}>
         <Column lg={16}>
           <EmptyState
-            headerTitle={t('testResults', 'Test Results')}
-            displayText={t('testResultsData', 'Test results data')}
+              headerTitle={t("testResults", "Test Results")}
+              displayText={t("testResultsData", "Test results data")}
           />
         </Column>
-      </Grid>)
+      </Grid>
     </>
     );
   }
@@ -84,8 +89,12 @@ const RoutedResultsViewer: React.FC<ResultsViewerProps> = () => {
     <>
 
       <Breadcrumb>
-        <BreadcrumbItem href="/">{intl.formatMessage({ id: "home.label" })}</BreadcrumbItem>
-        <BreadcrumbItem href="/PatientHistory">{intl.formatMessage({ id: "label.search.patient" })}</BreadcrumbItem>
+        <BreadcrumbItem href="/">
+          {intl.formatMessage({ id: "home.label" })}
+        </BreadcrumbItem>
+        <BreadcrumbItem href="/PatientHistory">
+          {intl.formatMessage({ id: "label.search.patient" })}
+        </BreadcrumbItem>
       </Breadcrumb>
 
       <Grid fullWidth={true}>
@@ -93,13 +102,48 @@ const RoutedResultsViewer: React.FC<ResultsViewerProps> = () => {
           <Section>
             <Section>
               {patient ? (<div className="patient-header">
-                <div className="patient-name"><Tag type="blue">Name :</Tag>{patient.lastName} {patient.firstName}</div>
-                <div className="patient-dob"> <Tag type="blue">Gender :</Tag>{patient.gender === 'M'?"Male" : "Female" } <Tag type="blue">DOB :</Tag> {patient.birthDateForDisplay}</div>
-                 <div className="patient-id"><Tag type="blue">Unique Health ID number :</Tag>{patient.subjectNumber}  </div>
-                 <div className="patient-id"><Tag type="blue">National ID :</Tag>{patient.nationalId}</div>
-                </div>) : (<div className="patient-header">
-                <div className="patient-name">Patient Id Doest Exist</div>
-              </div>)}
+                  <div className="patient-name">
+                    <Tag type="blue">
+                      <FormattedMessage id="patient.label.name" /> :
+                    </Tag>
+                    {patient.lastName} {patient.firstName}
+                  </div>
+                  <div className="patient-dob">
+                    {" "}
+                    <Tag type="blue">
+                      <FormattedMessage id="patient.label.sex" /> :
+                    </Tag>
+                    {patient.gender === "M" ? (
+                      <FormattedMessage id="patient.male" />
+                    ) : (
+                      <FormattedMessage id="patient.female" />
+                    )}{" "}
+                    <Tag type="blue">
+                      <FormattedMessage id="patient.dob" /> :
+                    </Tag>{" "}
+                    {patient.birthDateForDisplay}
+                  </div>
+                  <div className="patient-id">
+                    <Tag type="blue">
+                      <FormattedMessage id="patient.subject.number" /> :
+                    </Tag>
+                    {patient.subjectNumber}{" "}
+                  </div>
+                  <div className="patient-id">
+                    <Tag type="blue">
+                      <FormattedMessage id="patient.natioanalid" /> :
+                    </Tag>
+                    {patient.nationalId}
+                  </div>
+                </div>
+              ) : (
+                <div className="patient-header">
+                  <div className="patient-name">
+                    {" "}
+                    <FormattedMessage id="patient.label.nopatientid" />{" "}
+                  </div>
+                </div>
+              )}
             </Section>
           </Section>
         </Column>
@@ -108,26 +152,36 @@ const RoutedResultsViewer: React.FC<ResultsViewerProps> = () => {
         <Grid fullWidth={true}>
           <Column lg={16}>
             <div className="orderLegendBody">
-            <FilterProvider roots={loading ? roots : []}>
-              <ResultsViewer patientId={patientId} basePath={config.serverBaseUrl} loading={loading} />
-            </FilterProvider>
+              <FilterProvider roots={loading ? roots : []}>
+                <ResultsViewer
+                  patientId={patientId}
+                  basePath={config.serverBaseUrl}
+                  loading={loading}
+                />
+              </FilterProvider>
             </div>
           </Column>
         </Grid>
       ) : (<Grid fullWidth={true}>
         <Column lg={16}>
-          <EmptyState
-            headerTitle={t('testResults', 'Test Results')}
-            displayText={t('testResultsData', 'Test results data')}
-          />
-        </Column>
-      </Grid>)}
+            <div className="orderLegendBody">
+              <EmptyState
+              headerTitle={t("testResults", "Test Results")}
+              displayText={t("testResultsData", "Test results data")}
+            />
+            </div>
+          </Column>
+        </Grid>
+      )}
     </>
 
   );
 };
 
-const ResultsViewer: React.FC<ResultsViewerProps> = ({ patientId, basePath, loading }) => {
+const ResultsViewer: React.FC<ResultsViewerProps> = ({
+  patientId,
+  basePath,
+}) => {
   const { t } = useTranslation();
   const { totalResultsCount } = useContext(FilterContext);
   const { type, testUuid } = useParams();
@@ -135,7 +189,8 @@ const ResultsViewer: React.FC<ResultsViewerProps> = ({ patientId, basePath, load
     <div className="resultsContainer">
       <div className="resultsHeader">
         <div className="leftSection leftHeaderSection">
-          <h4 style={{ flexGrow: 1 }}>{`${t('Results', 'Results')} ${totalResultsCount ? `(${totalResultsCount})` : ''
+          <h4 style={{ flexGrow: 1 }}>{`${t("Results", "Results")} ${
+            totalResultsCount ? `(${totalResultsCount})` : ""
             }`}</h4>
         </div>
       </div>

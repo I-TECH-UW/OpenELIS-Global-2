@@ -359,6 +359,8 @@ function CreatePatientForm(props) {
                 )}
               </Field>
             </div>
+            <Accordion>
+              <AccordionItem title="Emergency Contact Information">
             <div className="inlineDiv">
               <Field name="patientContact.person.lastName">
                 {({ field }) => (
@@ -427,18 +429,10 @@ function CreatePatientForm(props) {
               </div>
               <div className="error"></div>
             </div>
+              </AccordionItem>
+            </Accordion>
+
             <div className="inlineDiv">
-              <Field name="city">
-                {({ field }) => (
-                  <TextInput
-                    value={values.city}
-                    name={field.name}
-                    labelText="Town"
-                    id={field.name}
-                    className="inputText"
-                  />
-                )}
-              </Field>
               <Field name="primaryPhone">
                 {({ field }) => (
                   <TextInput
@@ -448,6 +442,20 @@ function CreatePatientForm(props) {
                     id={field.name}
                     className="inputText"
                   />
+                )}
+              </Field>
+              <Field name="gender">
+                {({ field }) => (
+                    <RadioButtonGroup
+                        valueSelected={values.gender}
+                        legendText="Gender"
+                        name={field.name}
+                        className="inputText"
+                        id="create_patient_gender"
+                    >
+                      <RadioButton id="radio-1" labelText="Male" value="M" />
+                      <RadioButton id="radio-2" labelText="Female" value="F" />
+                    </RadioButtonGroup>
                 )}
               </Field>
             </div>
@@ -507,25 +515,20 @@ function CreatePatientForm(props) {
                 <ErrorMessage name="gender"></ErrorMessage>
               </div>
             </div>
-            <div className="inlineDiv">
-              <Field name="gender">
-                {({ field }) => (
-                    <RadioButtonGroup
-                        valueSelected={values.gender}
-                        legendText="Gender"
-                        name={field.name}
-                        className="inputText"
-                        id="create_patient_gender"
-                    >
-                      <RadioButton id="radio-1" labelText="Male" value="M" />
-                      <RadioButton id="radio-2" labelText="Female" value="F" />
-                    </RadioButtonGroup>
-                )}
-              </Field>
-            </div>
             <Accordion>
               <AccordionItem title="Additional Information">
                 <div className="inlineDiv">
+                  <Field name="city">
+                    {({ field }) => (
+                        <TextInput
+                            value={values.city}
+                            name={field.name}
+                            labelText="Town"
+                            id={field.name}
+                            className="inputText"
+                        />
+                    )}
+                  </Field>
                   <Field name="streetAddress">
                     {({ field }) => (
                       <TextInput

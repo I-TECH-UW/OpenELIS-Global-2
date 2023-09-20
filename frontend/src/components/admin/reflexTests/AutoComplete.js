@@ -59,7 +59,8 @@ function Autocomplete(props) {
       clearError,
     } = props;
     setActiveSuggestion(0);
-    setShowSuggestions(true);
+    setShowSuggestions(false);
+    setFilteredSuggestions([]);
     setUserInput(e.currentTarget.innerText);
     setInvalid(false);
 

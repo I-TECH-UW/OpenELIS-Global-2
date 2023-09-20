@@ -129,8 +129,8 @@
     "header.label.logout" :"Déconnexion",
     "header.label.selectlocale" : "Sélectionner la Langue",
     "sidenav.label.order" : "Commande",
-    "sidenav.label.addorder" : "Ajouter une Commande",
-    "sidenav.label.editorder" : "Modifier une Commande",
+    "sidenav.label.addorder" : "Ajouter une commande",
+    "sidenav.label.editorder" : "Modifier la commande",
     "sidenav.label.incomingorder" : "Commandes Entrantes",
     "sidenav.label.batchorder" : "Saisie de Commande en Lot",
     "sidenav.label.barcode" : "Code-barres",
@@ -287,5 +287,7 @@
     "search.label.loadnext" : "Charger les 99 enregistrements suivants à partir du numéro de laboratoire",
     "search.label.analysis" : "Sélectionnez l'état de l'analyse",
     "search.label.test" : "Sélectionnez le nom du test",
-    "search.label.sample" : "Sélectionnez l'état de l'échantillon"
+    "search.label.sample" : "Sélectionnez l'état de l'échantillon",
+    "pathology.label.report": "Rapport de Pathologie",
+    "patient.nationalid": "Identifiant National"
 }

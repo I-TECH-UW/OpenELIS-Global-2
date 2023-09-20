@@ -209,28 +209,28 @@ function PathologyCaseView() {
         <Column lg={16}>
           <Section>
             <Section>
-              {pathologySampleInfo ? (<div className="patient-header">
+              {pathologySampleInfo ? (<div className="patient-header2">
                 <div className="patient-name"><Tag type="blue"><FormattedMessage id="patient.label.name" /> :</Tag>{pathologySampleInfo.lastName}  {pathologySampleInfo.firstName}</div>
                 <div className="patient-dob"> <Tag type="blue"><FormattedMessage id="patient.label.sex" /> :</Tag>{pathologySampleInfo.sex === 'M' ? "Male" : "Female"}<Tag type="blue"><FormattedMessage id="patient.label.age" /> :</Tag>{pathologySampleInfo.age} </div>
                 <div className="patient-id"><Tag type="blue"><FormattedMessage id="sample.label.orderdate" />  :</Tag>{pathologySampleInfo.requestDate}</div>
                 <div className="patient-id"><Tag type="blue"> <FormattedMessage id="sample.label.labnumber" /> :</Tag>{pathologySampleInfo.labNumber}</div>
                 <div className="patient-id"><Tag type="blue">  <FormattedMessage id="sample.label.facility" /> :</Tag> {pathologySampleInfo.referringFacility}<Tag type="blue"> <FormattedMessage id="sample.label.requester" />: </Tag>{pathologySampleInfo.department}</div>
                 <div className="patient-id"><Tag type="blue"> <FormattedMessage id="sample.label.requester" />: </Tag>{pathologySampleInfo.requester}</div>
-              </div>) : (<div className="patient-header">
+              </div>) : (<div className="patient-header2">
                 <div className="patient-name"> <FormattedMessage id="patient.label.nopatientid" /> </div>
               </div>)}
             </Section>
           </Section>
           <Section>
             <Section>
-              <div className="patient-header">
+              <div className="patient-header2">
                 <QuestionnaireResponse questionnaireResponse={pathologySampleInfo.programQuestionnaireResponse} />
               </div>
             </Section>
           </Section>
         </Column>
       </Grid>
-      <Grid fullWidth={true} className="gridBoundary">
+      <Grid fullWidth={true} className="orderLegendBody">
         {notificationVisible === true ? <AlertDialog /> : ""}
         {loading && (
           <Loading description="Loading Dasboard..." />
@@ -349,7 +349,7 @@ function PathologyCaseView() {
                     />
                   </Column>
                   <Column lg={4}>
-                    Pathology Report
+                  <FormattedMessage id="pathology.label.report" />
                   </Column>
                   <Column lg={2} md={1} sm={2}>
                     {pathologySampleInfo.reports[index].image &&
