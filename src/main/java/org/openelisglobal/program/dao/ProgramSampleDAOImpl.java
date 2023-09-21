@@ -10,33 +10,30 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class ProgramSampleDAOImpl extends BaseDAOImpl<ProgramSample, Integer> implements ProgramSampleDAO {
+    
     ProgramSampleDAOImpl() {
         super(ProgramSample.class);
     }
-
+    
     @Override
-    public ProgramSample getProgrammeSampleBySample(Integer sampleId , String programName) {
-        String className;
-        switch (programName.toLowerCase()) {
-            case "pathology":
+    public ProgramSample getProgrammeSampleBySample(Integer sampleId, String programName) {
+        
+        String className = "PathologySample";
+        if (programName != null) {
+            if (programName.toLowerCase().contains("pathology")) {
                 className = "PathologySample";
-                break;
-            case "immunohistochemistry":
+            } else if (programName.toLowerCase().contains("immunohistochemistry")) {
                 className = "ImmunohistochemistrySample";
-                break;
-            case "cytology":
+            } else if (programName.toLowerCase().contains("cytology")) {
                 className = "CytologySample";
-                break;
-            default:
-                className = "PathologySample";
-                break;
+            }
         }
-
-        String sql = "from "+ className +" ps where ps.sample.id = :sampleId";
+        
+        String sql = "from " + className + " ps where ps.sample.id = :sampleId";
         Query<ProgramSample> query = entityManager.unwrap(Session.class).createQuery(sql, ProgramSample.class);
         query.setParameter("sampleId", sampleId);
         query.setMaxResults(1);
-        ProgramSample programme = (ProgramSample)query.uniqueResult();
+        ProgramSample programme = (ProgramSample) query.uniqueResult();
         return programme;
     }
 }
