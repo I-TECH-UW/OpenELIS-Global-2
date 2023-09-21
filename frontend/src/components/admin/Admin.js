@@ -6,7 +6,6 @@ import ReflexTestManagement from "./reflexTests/ReflexTestManagement";
 import ProgramManagement from "./program/ProgramManagement";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
-import LocationManagement from "./location/LocationManagement";
 import {
   SideNav,
   SideNavItems,
