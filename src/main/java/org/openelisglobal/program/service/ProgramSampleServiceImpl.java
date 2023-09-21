@@ -20,4 +20,9 @@ public class ProgramSampleServiceImpl extends BaseObjectServiceImpl<ProgramSampl
     protected ProgramSampleDAO getBaseObjectDAO() {
         return baseObjectDAO;
     }
+
+    @Override
+    public ProgramSample getProgrammeSampleBySample(Integer sampleId ,String programName) {
+        return getBaseObjectDAO().getProgrammeSampleBySample(sampleId ,programName);
+    }
 }

@@ -18,7 +18,8 @@ import PatientManagement from "./components/patient/PatientManagement";
 import PatientHistory from "./components/patient/PatientHistory";
 import Workplan from "./components/workplan/Workplan";
 import AddOrder from "./components/addOrder/Index";
-import ModifyOrder from "./components/modifyOrder/Index";
+import FindOrder from "./components/modifyOrder/Index";
+import ModifyOrder from "./components/modifyOrder/ModifyOrder";
 import RoutineReports from "./components/Reports/Routine";
 import StudyReports from "./components/Reports/Study";
 import StudyValidation from "./components/validation/Index";
@@ -226,6 +227,12 @@ export default function App() {
                   path="/ModifyOrder"
                   exact
                   component={() => <ModifyOrder />}
+                  role="Reception"
+                />
+                 <SecureRoute
+                  path="/FindOrder"
+                  exact
+                  component={() => <FindOrder />}
                   role="Reception"
                 />
                 <SecureRoute

@@ -55,7 +55,7 @@ public class ImmunohistochemistrySampleDAOImpl extends BaseDAOImpl<Immunohistoch
     @Override
     public List<ImmunohistochemistrySample> searchWithStatusAndAccesionNumber(List<ImmunohistochemistryStatus> statuses,
             String labNumber) {
-        String sql = "from from ImmunohistochemistrySample is where is.status in (:statuses) and is.sample.accessionNumber = :labNumber";
+        String sql = "from ImmunohistochemistrySample is where is.status in (:statuses) and is.sample.accessionNumber = :labNumber";
         Query<ImmunohistochemistrySample> query = entityManager.unwrap(Session.class).createQuery(sql, ImmunohistochemistrySample.class);
         query.setParameterList("statuses", statuses.stream().map(e -> e.toString()).collect(Collectors.toList()));
         query.setParameter("labNumber" ,labNumber);
@@ -66,7 +66,7 @@ public class ImmunohistochemistrySampleDAOImpl extends BaseDAOImpl<Immunohistoch
 
     @Override
     public ImmunohistochemistrySample getByPathologySampleId(Integer pathologySampleId) {
-         String sql = "from from ImmunohistochemistrySample is where is.pathologySample.id = :pathologySampleId";
+         String sql = "from ImmunohistochemistrySample is where is.pathologySample.id = :pathologySampleId";
         Query<ImmunohistochemistrySample> query = entityManager.unwrap(Session.class).createQuery(sql, ImmunohistochemistrySample.class);
         query.setParameter("pathologySampleId" ,pathologySampleId);
         query.setMaxResults(1);
