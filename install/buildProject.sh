@@ -49,9 +49,10 @@ else
 	mvn clean install -DskipTests
 fi
 	
-if [ $? != 0 ]
+SUCCESS=$? 	
+if [ $SUCCESS != 0 ]
 then
     echo
     echo build failed
-    exit $?
+    exit $SUCCESS
 fi
