@@ -6,7 +6,7 @@ import ReflexTestManagement from "./reflexTests/ReflexTestManagement";
 import ProgramManagement from "./program/ProgramManagement";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
-import LocationManagement from "./location/LocationManagement";
+// import LocationManagement from "./location/LocationManagement";
 import {
   SideNav,
   SideNavItems,
@@ -69,9 +69,9 @@ function Admin() {
       <PathRoute path="#calculatedValue">
         <CalculatedValue />
       </PathRoute>
-      <PathRoute path="#locationManagement">
+      {/* <PathRoute path="#locationManagement">
         <LocationManagement />
-      </PathRoute>
+      </PathRoute> */}
     </>
   );
 }

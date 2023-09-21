@@ -291,7 +291,9 @@
     "search.label.test" : "Select Test Name" ,
     "search.label.sample" : "Select Sample Status" ,
     "pathology.label.report" : "Pathology Report",
-    "patient.natioanalid":"National ID "
+    "patient.natioanalid":"National ID",
+    "sample.label.orderpanel":"Order Panels"
+
 
 
 
