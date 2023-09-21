@@ -68,9 +68,6 @@ function Admin() {
       <PathRoute path="#calculatedValue">
         <CalculatedValue />
       </PathRoute>
-      <PathRoute path="#locationManagement">
-        <LocationManagement />
-      </PathRoute>
     </>
   );
 }
