@@ -29,24 +29,6 @@ function Admin() {
               <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
             </SideNavMenuItem>
           </SideNavMenu>
-          {/* <SideNavMenu
-            title={intl.formatMessage({ id: "sidenav.label.admin.usermgt" })}
-          >
-            <SideNavMenuItem
-              href={config.serverBaseUrl + "/UnifiedSystemUserMenu"}
-            >
-              <FormattedMessage id="sidenav.label.admin.usermgt" />
-            </SideNavMenuItem>
-          </SideNavMenu> */}
-          {/* <SideNavMenu
-            title={intl.formatMessage({
-              id: "sidenav.label.admin.organizationmgt",
-            })}
-          >
-            <SideNavMenuItem href={config.serverBaseUrl + "/OrganizationMenu"}>
-              <FormattedMessage id="sidenav.label.admin.organizationmgt" />
-            </SideNavMenuItem>
-          </SideNavMenu> */}
           <SideNavMenuItem href="#program">
             <FormattedMessage id="sidenav.label.admin.program" />
           </SideNavMenuItem>

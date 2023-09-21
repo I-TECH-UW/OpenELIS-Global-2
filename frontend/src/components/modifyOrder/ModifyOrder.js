@@ -1,6 +1,17 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { useParams } from 'react-router-dom';
-import { Button, ProgressIndicator, ProgressStep, Stack ,Breadcrumb ,BreadcrumbItem ,Grid,Column ,Section ,Tag} from "@carbon/react";
+import { useParams } from "react-router-dom";
+import {
+  Button,
+  ProgressIndicator,
+  ProgressStep,
+  Stack,
+  Breadcrumb,
+  BreadcrumbItem,
+  Grid,
+  Column,
+  Section,
+  Tag,
+} from "@carbon/react";
 import EditSample from "./EditSample";
 import AddOrder from "../addOrder/AddOrder";
 import "../addOrder/add-order.scss";
@@ -10,7 +21,7 @@ import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { postToOpenElisServer, getFromOpenElisServer } from "../utils/Utils";
 import EditOrderEntryAdditionalQuestions from "./EditOrderEntryAdditionalQuestions";
 import OrderSuccessMessage from "../addOrder/OrderSuccessMessage";
-import { FormattedMessage ,useIntl} from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export let sampleObject = {
   index: 0,
@@ -45,25 +56,25 @@ const ModifyOrder = () => {
     let accessionNumber = new URLSearchParams(window.location.search).get(
       "accessionNumber",
     );
-    accessionNumber = accessionNumber?accessionNumber:"" ;
-    patientId =patientId?patientId:"";
+    accessionNumber = accessionNumber ? accessionNumber : "";
+    patientId = patientId ? patientId : "";
     getFromOpenElisServer(
       "/rest/SampleEdit?patientId=" +
         patientId +
         "&accessionNumber=" +
         accessionNumber,
-        loadOrderValues,
+      loadOrderValues,
     );
     return () => {
       componentMounted.current = false;
-    }
+    };
   }, []);
 
   const loadOrderValues = (data) => {
     if (componentMounted.current) {
       setOrderFormValues(data);
     }
-  }
+  };
 
   const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
@@ -93,7 +104,7 @@ const ModifyOrder = () => {
   const handleSubmitOrderForm = (e) => {
     e.preventDefault();
     setPage(page + 1);
-    console.log(JSON.stringify(orderFormValues))
+    console.log(JSON.stringify(orderFormValues));
     // postToOpenElisServer(
     //   "/rest/SamplePatientEntry",
     //   JSON.stringify(orderFormValues),
@@ -183,19 +194,23 @@ const ModifyOrder = () => {
   };
   const intl = useIntl();
 
-
   return (
     <>
-     <Breadcrumb>
-        <BreadcrumbItem href="/">{intl.formatMessage({ id: "home.label" })}</BreadcrumbItem>
-        <BreadcrumbItem href="/FindOrder">{intl.formatMessage({ id: "label.search.patient" })}</BreadcrumbItem>
+      <Breadcrumb>
+        <BreadcrumbItem href="/">
+          {intl.formatMessage({ id: "home.label" })}
+        </BreadcrumbItem>
+        <BreadcrumbItem href="/FindOrder">
+          {intl.formatMessage({ id: "label.search.patient" })}
+        </BreadcrumbItem>
       </Breadcrumb>
 
       <Grid fullWidth={true}>
         <Column lg={16}>
           <Section>
-          <Section>
-              {orderFormValues?.patientName ? (<div className="patient-header">
+            <Section>
+              {orderFormValues?.sampleOrderItems ? (
+                <div className="patient-header">
                   <div className="patient-name">
                     <Tag type="blue">
                       <FormattedMessage id="patient.label.name" /> :
@@ -234,7 +249,7 @@ const ModifyOrder = () => {
                 <div className="patient-header">
                   <div className="patient-name">
                     {" "}
-                    <FormattedMessage id="patient.label.nopatientid" />{" "}
+                    <FormattedMessage id="sample.label.noorder" />{" "}
                   </div>
                 </div>
               )}
@@ -245,81 +260,85 @@ const ModifyOrder = () => {
       <Stack gap={10}>
         <div className="pageContent">
           {notificationVisible === true ? <AlertDialog /> : ""}
-          <div className="orderWorkFlowDiv">
-            <h2>
-              <FormattedMessage id="order.test.request.heading" />
-            </h2>
-            {page <= orderPageNumber && (
-              <ProgressIndicator
-                currentIndex={page}
-                className="ProgressIndicator"
-                spaceEqually={true}
-                onChange={(e) => handleTabClickHandler(e)}
-              >
-                <ProgressStep
-                  label={<FormattedMessage id="order.step.program.selection" />}
-                />
-                <ProgressStep
-                  label={<FormattedMessage id="sample.add.action" />}
-                />
-                <ProgressStep
-                  label={<FormattedMessage id="order.label.add" />}
-                />
-              </ProgressIndicator>
-            )}
-            {page === programPageNumber && (
-              <EditOrderEntryAdditionalQuestions
-                orderFormValues={orderFormValues}
-                setOrderFormValues={setOrderFormValues}
-              />
-            )}
-            {page === samplePageNumber && (
-              <EditSample setSamples={setSamples} samples={samples} />
-            )}
-            {page === orderPageNumber && (
-              <AddOrder
-                orderFormValues={orderFormValues}
-                setOrderFormValues={setOrderFormValues}
-                samples={samples}
-              />
-            )}
-
-            {page === successMsgPageNumber && (
-              <OrderSuccessMessage
-                orderFormValues={orderFormValues}
-                setOrderFormValues={setOrderFormValues}
-                setSamples={setSamples}
-                setPage={setPage}
-              />
-            )}
-            <div className="navigationButtonsLayout">
-              {page !== firstPageNumber && page <= orderPageNumber && (
-                <Button kind="tertiary" onClick={() => navigateBackWards()}>
-                  <FormattedMessage id="back.action.button" />
-                </Button>
-              )}
-
-              {page < orderPageNumber && (
-                <Button
-                  kind="primary"
-                  className="forwardButton"
-                  onClick={() => navigateForward()}
+          {orderFormValues?.sampleOrderItems && (
+            <div className="orderWorkFlowDiv">
+              <h2>
+                <FormattedMessage id="order.test.request.heading" />
+              </h2>
+              {page <= orderPageNumber && (
+                <ProgressIndicator
+                  currentIndex={page}
+                  className="ProgressIndicator"
+                  spaceEqually={true}
+                  onChange={(e) => handleTabClickHandler(e)}
                 >
-                  {<FormattedMessage id="next.action.button" />}
-                </Button>
+                  <ProgressStep
+                    label={
+                      <FormattedMessage id="order.step.program.selection" />
+                    }
+                  />
+                  <ProgressStep
+                    label={<FormattedMessage id="sample.add.action" />}
+                  />
+                  <ProgressStep
+                    label={<FormattedMessage id="order.label.add" />}
+                  />
+                </ProgressIndicator>
               )}
-
+              {page === programPageNumber && (
+                <EditOrderEntryAdditionalQuestions
+                  orderFormValues={orderFormValues}
+                  setOrderFormValues={setOrderFormValues}
+                />
+              )}
+              {page === samplePageNumber && (
+                <EditSample setSamples={setSamples} samples={samples} />
+              )}
               {page === orderPageNumber && (
-                <Button
-                  kind="primary"
-                  className="forwardButton"
-                  onClick={handleSubmitOrderForm}
-                >
-                  {<FormattedMessage id="label.button.submit" />}
-                </Button>
+                <AddOrder
+                  orderFormValues={orderFormValues}
+                  setOrderFormValues={setOrderFormValues}
+                  samples={samples}
+                />
               )}
+
+              {page === successMsgPageNumber && (
+                <OrderSuccessMessage
+                  orderFormValues={orderFormValues}
+                  setOrderFormValues={setOrderFormValues}
+                  setSamples={setSamples}
+                  setPage={setPage}
+                />
+              )}
+              <div className="navigationButtonsLayout">
+                {page !== firstPageNumber && page <= orderPageNumber && (
+                  <Button kind="tertiary" onClick={() => navigateBackWards()}>
+                    <FormattedMessage id="back.action.button" />
+                  </Button>
+                )}
+
+                {page < orderPageNumber && (
+                  <Button
+                    kind="primary"
+                    className="forwardButton"
+                    onClick={() => navigateForward()}
+                  >
+                    {<FormattedMessage id="next.action.button" />}
+                  </Button>
+                )}
+
+                {page === orderPageNumber && (
+                  <Button
+                    kind="primary"
+                    className="forwardButton"
+                    onClick={handleSubmitOrderForm}
+                  >
+                    {<FormattedMessage id="label.button.submit" />}
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </Stack>
     </>
