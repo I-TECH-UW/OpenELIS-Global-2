@@ -91,12 +91,36 @@ echo "creating docker images"
 #create data import docker image
 #bash ${INSTALL_DIR}/buildProject.sh -dl ${CONSOLIDATED_SERVER_DIR}
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/fhir -t hapi-fhir-jpaserver
+if [ $? != 0 ]
+then
+    echo
+    echo build failed hapi-fhir-jpaserver
+    exit $?
+fi
 #create the frontend docker image 
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/frontend -t openelisglobal-frontend
+if [ $? != 0 ]
+then
+    echo
+    echo build failed openelisglobal-frontend
+    exit $?
+fi
 #create the frontend docker image 
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/nginx-proxy -t nginx-proxy
+if [ $? != 0 ]
+then
+    echo
+    echo build failed nginx-proxy
+    exit $?
+fi
 #create the docker image 
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR} -t openelisglobal
+if [ $? != 0 ]
+then
+    echo
+    echo build failed openelisglobal
+    exit $?
+fi
 
 createLinuxInstaller() {
 	context=$1
