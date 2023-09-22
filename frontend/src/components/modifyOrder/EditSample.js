@@ -252,7 +252,7 @@ const EditSample = (props) => {
       <div className="orderLegendBody">
         <Column lg={16}>
           <DataTable
-            rows={orderFormValues.existingTests}
+            rows={orderFormValues.possibleTests}
             headers={OrderCurrentTestsHeaders}
             isSortable
           >
