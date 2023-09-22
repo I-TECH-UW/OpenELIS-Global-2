@@ -292,7 +292,7 @@ const ModifyOrder = () => {
                 />
               )}
               {page === samplePageNumber && (
-                <EditSample setSamples={setSamples} samples={samples} />
+                <EditSample orderFormValues={orderFormValues} setSamples={setSamples} samples={samples} />
               )}
               {page === orderPageNumber && (
                 <AddOrder
