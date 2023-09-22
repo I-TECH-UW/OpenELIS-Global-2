@@ -214,7 +214,6 @@ const EditSample = (props) => {
                 <Table {...getTableProps()}>
                   <TableHead>
                     <TableRow>
-                      <TableHeader></TableHeader>
                       {headers.map((header) => (
                         <TableHeader
                           key={header.key}
@@ -230,8 +229,8 @@ const EditSample = (props) => {
                       {rows
                         .slice((page - 1) * pageSize)
                         .slice(0, pageSize)
-                        .map((row ,index) => (
-                          <TableRow key={index}>
+                        .map((row ) => (
+                          <TableRow key={row.id}>
                             {row.cells.map((cell) => renderCell(cell, row))}
                           </TableRow>
                         ))}
@@ -262,7 +261,6 @@ const EditSample = (props) => {
                 <Table {...getTableProps()}>
                   <TableHead>
                     <TableRow>
-                      <TableHeader></TableHeader>
                       {headers.map((header) => (
                         <TableHeader
                           key={header.key}
@@ -278,8 +276,8 @@ const EditSample = (props) => {
                       {rows
                         .slice((page - 1) * pageSize)
                         .slice(0, pageSize)
-                        .map((row ,index) => (
-                          <TableRow key={index}>
+                        .map((row) => (
+                          <TableRow key={row.id}>
                             {row.cells.map((cell) => renderCell(cell, row))}
                           </TableRow>
                         ))}
