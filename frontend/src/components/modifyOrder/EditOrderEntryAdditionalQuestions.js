@@ -5,6 +5,7 @@ import {
   SelectItem,
   TextInput,
   Stack,
+  InlineLoading
 } from "@carbon/react";
 import { FormattedMessage } from "react-intl";
 import "../../index.css";
@@ -496,7 +497,7 @@ const EditOrderEntryAdditionalQuestions = ({
     <>
       <Stack gap={10}>
         <div className="orderLegendBody">
-          <h3>Program</h3>
+          <h3><FormattedMessage id="label.program" /></h3>
           <ProgramSelect
             orderFormValues={orderFormValues}
             programChange={handleProgramSelection}
@@ -513,6 +514,7 @@ const EditOrderEntryAdditionalQuestions = ({
               value={questionnaireResponse}
             />
           )}
+          {loading && <InlineLoading/>}
         </div>
       </Stack>
     </>
