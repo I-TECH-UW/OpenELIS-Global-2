@@ -2827,7 +2827,7 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 				<td class="required">*</td>
 				<td><spring:message code="sample.entry.project.recencyNumber" /></td>
 				<td><form:input path="siteSubjectNumber" cssClass="text"
-						id="rt.siteSubjectNumber" maxlength="18" onchange="" />
+						id="rt.siteSubjectNumber" maxlength="18" onchange="rt.checkSiteSubjectNumber(true)" />
 					<div id="rt.siteSubjectNumberMessage" class="blank"></div></td>
 			</tr>
 			<tr>
@@ -2879,7 +2879,7 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 							itemLabel="localizedName" itemValue="id" />
 					</form:select><div id="rt.vlSuckleMessage" class="blank"></div></td>
 			</tr>
-			<tr>
+<%-- 			<tr>
 				<td class="required">*</td>
 				<td><spring:message code="patient.project.hivType" /></td>
 				<td><form:select path="observations.hivStatus"
@@ -2889,7 +2889,7 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 							itemLabel="localizedName" itemValue="id" />
 					</form:select>
 					<div id="hivStatusMessage" class="blank"></div></td>
-			</tr>
+			</tr> --%>
 			<tr>
 				<td></td>
 				<td colspan="2" class="sectionTitle"><spring:message

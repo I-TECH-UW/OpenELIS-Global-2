@@ -49,6 +49,11 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.util.OrganizationTypeList;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.panel.service.PanelService;
+import org.openelisglobal.panel.valueholder.Panel;
+import org.openelisglobal.panelitem.service.PanelItemService;
+import org.openelisglobal.panelitem.valueholder.PanelItem;
+import org.openelisglobal.patient.form.PatientEntryByProjectForm;
 import org.openelisglobal.patient.saving.ISampleEntry;
 import org.openelisglobal.patient.saving.ISampleEntryAfterPatientEntry;
 import org.openelisglobal.patient.saving.ISampleSecondEntry;
@@ -57,20 +62,27 @@ import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.sample.form.ProjectData;
 import org.openelisglobal.sample.form.SampleEntryByProjectForm;
 import org.openelisglobal.sample.form.SampleTbEntryForm;
+import org.openelisglobal.sample.service.TbSampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 import org.openelisglobal.systemuser.service.UserService;
+import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -97,6 +109,15 @@ public class SampleTbEntryController extends BaseSampleEntryController {
 	private FhirUtil fhirUtil;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private TestService testService;
+	@Autowired
+	private PanelService panelService;
+	@Autowired
+	private TbSampleService tbSampleService;
+
+	@Autowired
+	private PanelItemService panelItemService;
 
 	private Task task = null;
 	private Practitioner requesterPerson = null;
@@ -107,37 +128,7 @@ public class SampleTbEntryController extends BaseSampleEntryController {
 	private Specimen specimen = null;
 	private Patient fhirPatient = null;
 
-	private static final String[] ALLOWED_FIELDS = new String[] { "currentDate", "domain", "project",
-			"patientLastUpdated", "personLastUpdated", "patientUpdateStatus", "patientPK", "samplePK",
-			"observations.projectFormName", "ProjectData.ARVcenterName", "ProjectData.ARVcenterCode",
-			"observations.nameOfDoctor", "receivedDateForDisplay", "receivedTimeForDisplay", "interviewDate",
-			"interviewTime", "subjectNumber", "siteSubjectNumber", "labNo", "gender", "birthDateForDisplay",
-			"ProjectData.dryTubeTaken", "ProjectData.edtaTubeTaken", "ProjectData.serologyHIVTest",
-			"ProjectData.glycemiaTest", "ProjectData.creatinineTest", "ProjectData.transaminaseTest",
-			"ProjectData.nfsTest", "ProjectData.cd4cd8Test", "ProjectData.viralLoadTest", "ProjectData.genotypingTest",
-			"observations.underInvestigation", "ProjectData.underInvestigationNote", "observations.hivStatus",
-			"ProjectData.EIDSiteName", "projectData.EIDsiteCode", "observations.whichPCR",
-			"observations.reasonForSecondPCRTest", "observations.nameOfRequestor", "observations.nameOfSampler",
-			"observations.eidInfantPTME", "observations.eidTypeOfClinic", "observations.eidHowChildFed",
-			"observations.eidStoppedBreastfeeding", "observations.eidInfantSymptomatic", "observations.eidInfantsARV",
-			"observations.eidInfantCotrimoxazole", "observations.eidMothersHIVStatus", "observations.eidMothersARV",
-			"ProjectData.dbsTaken", "ProjectData.dbsvlTaken", "ProjectData.pscvlTaken", "ProjectData.dnaPCR",
-			"ProjectData.INDsiteName", "ProjectData.address", "ProjectData.phoneNumber", "ProjectData.faxNumber",
-			"ProjectData.email", "observations.indFirstTestDate", "observations.indFirstTestName",
-			"observations.indFirstTestResult", "observations.indSecondTestDate", "observations.indSecondTestName",
-			"observations.indSecondTestResult", "observations.indSiteFinalResult", "observations.reasonForRequest",
-			"ProjectData.murexTest", "ProjectData.integralTest", "ProjectData.vironostikaTest",
-			"ProjectData.innoliaTest", "ProjectData.transaminaseALTLTest", "ProjectData.transaminaseASTLTest",
-			"ProjectData.gbTest", "ProjectData.lymphTest", "ProjectData.monoTest", "ProjectData.eoTest",
-			"ProjectData.basoTest", "ProjectData.grTest", "ProjectData.hbTest", "ProjectData.hctTest",
-			"ProjectData.vgmTest", "ProjectData.tcmhTest", "ProjectData.ccmhTest", "ProjectData.plqTest",
-			"ProjectData.cd3CountTest", "ProjectData.cd4CountTest", "observations.vlPregnancy", "observations.vlSuckle",
-			"observations.currentARVTreatment", "observations.arvTreatmentInitDate", "observations.arvTreatmentRegime",
-			"observations.currentARVTreatmentINNsList*", "observations.vlReasonForRequest",
-			"observations.vlOtherReasonForRequest", "observations.initcd4Count", "observations.initcd4Percent",
-			"observations.initcd4Date", "observations.demandcd4Count", "observations.demandcd4Percent",
-			"observations.demandcd4Date", "observations.vlBenefit", "observations.priorVLValue",
-			"observations.priorVLDate", "electronicOrder.externalId" };
+	private static final String[] ALLOWED_FIELDS = new String[] {};
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
@@ -147,8 +138,7 @@ public class SampleTbEntryController extends BaseSampleEntryController {
 	@RequestMapping(value = "/MicrobiologyTb", method = RequestMethod.GET)
 	public ModelAndView showSampleEntryByProject(HttpServletRequest request) {
 		SampleTbEntryForm form = new SampleTbEntryForm();
-		request.setAttribute(IActionConstants.PAGE_SUBTITLE_KEY,
-				MessageUtil.getMessage("add.tb.sample.title"));
+		request.setAttribute(IActionConstants.PAGE_SUBTITLE_KEY, MessageUtil.getMessage("add.tb.sample.title"));
 
 		Date today = Calendar.getInstance().getTime();
 		String dateAsText = DateUtil.formatDateAsText(today);
@@ -160,280 +150,25 @@ public class SampleTbEntryController extends BaseSampleEntryController {
 		return findForward(FWD_SUCCESS, form);
 	}
 
-	//
-//	private void setupFormData(HttpServletRequest request, SampleEntryByProjectForm form) {
-//		try {
-//			String externalOrderNumber = request.getParameter("ID");
-//			if (StringUtils.isNotBlank(externalOrderNumber)) {
-//				ElectronicOrder eOrder = null;
-//				List<ElectronicOrder> eOrders = electronicOrderService
-//						.getElectronicOrdersByExternalId(externalOrderNumber);
-//				if (eOrders.size() > 0)
-//					eOrder = eOrders.get(eOrders.size() - 1);
-//				if (eOrder != null) {
-//					form.setElectronicOrder(eOrder);
-//					IGenericClient localFhirClient = fhirUtil.getLocalFhirClient();
-//					for (String remotePath : fhirConfig.getRemoteStorePaths()) {
-//						Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
-//								.where(ServiceRequest.RES_ID.exactly().code(externalOrderNumber))
-//								.include(ServiceRequest.INCLUDE_SPECIMEN).execute();
-//						for (BundleEntryComponent bundleComponent : srBundle.getEntry()) {
-//							if (bundleComponent.hasResource() && ResourceType.ServiceRequest
-//									.equals(bundleComponent.getResource().getResourceType())) {
-//								serviceRequest = (ServiceRequest) bundleComponent.getResource();
-//							}
-//							if (bundleComponent.hasResource()
-//									&& ResourceType.Specimen.equals(bundleComponent.getResource().getResourceType())) {
-//								specimen = (Specimen) bundleComponent.getResource();
-//							}
-//						}
-//						srBundle = (Bundle) localFhirClient
-//								.search().forResource(ServiceRequest.class).where(ServiceRequest.IDENTIFIER.exactly()
-//										.systemAndIdentifier(remotePath, externalOrderNumber))
-//								.include(ServiceRequest.INCLUDE_SPECIMEN).execute();
-//						for (BundleEntryComponent bundleComponent : srBundle.getEntry()) {
-//							if (bundleComponent.hasResource() && ResourceType.ServiceRequest
-//									.equals(bundleComponent.getResource().getResourceType())) {
-//								serviceRequest = (ServiceRequest) bundleComponent.getResource();
-//							}
-//							if (bundleComponent.hasResource()
-//									&& ResourceType.Specimen.equals(bundleComponent.getResource().getResourceType())) {
-//								specimen = (Specimen) bundleComponent.getResource();
-//							}
-//						}
-//					}
-//					if (serviceRequest != null) {
-//						LogEvent.logDebug(this.getClass().getName(), "processRequest",
-//								"found matching serviceRequest " + serviceRequest.getIdElement().getIdPart());
-//					} else {
-//						LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching serviceRequest");
-//					}
-//					fhirPatient = localFhirClient.read()//
-//							.resource(Patient.class)//
-//							.withId(serviceRequest.getSubject().getReferenceElement().getIdPart())//
-//							.execute();
-//					if (fhirPatient != null) {
-//						LogEvent.logDebug(this.getClass().getName(), "processRequest",
-//								"found matching patient " + fhirPatient.getIdElement().getIdPart());
-//					} else {
-//						LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching patient");
-//					}
-//					task = fhirPersistanceService.getTaskBasedOnServiceRequest(externalOrderNumber).orElseThrow();
-//					if (task != null) {
-//						LogEvent.logDebug(this.getClass().getName(), "processRequest",
-//								"found matching task " + task.getIdElement().getIdPart());
-//					} else {
-//						LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching task");
-//					}
-//					if (!GenericValidator.isBlankOrNull(
-//							task.getRestriction().getRecipientFirstRep().getReferenceElement().getIdPart())) {
-//						referringOrganization = localFhirClient.read()//
-//								.resource(org.hl7.fhir.r4.model.Organization.class)//
-//								.withId(task.getRestriction().getRecipientFirstRep().getReferenceElement().getIdPart())//
-//								.execute();
-//						if (referringOrganization != null) {
-//							LogEvent.logDebug(this.getClass().getName(), "processRequest",
-//									"found matching organization " + referringOrganization.getIdElement().getIdPart());
-//						} else {
-//							LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching organization");
-//						}
-//					}
-//					if (!GenericValidator.isBlankOrNull(
-//							serviceRequest.getLocationReferenceFirstRep().getReferenceElement().getIdPart())) {
-//						location = localFhirClient.read()//
-//								.resource(Location.class)//
-//								.withId(serviceRequest.getLocationReferenceFirstRep().getReferenceElement().getIdPart())//
-//								.execute();
-//						if (location != null) {
-//							LogEvent.logDebug(this.getClass().getName(), "processRequest",
-//									"found matching location " + location.getIdElement().getIdPart());
-//						} else {
-//							LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching location");
-//						}
-//					}
-//					if (!GenericValidator.isBlankOrNull(serviceRequest.getRequester().getReferenceElement().getIdPart())
-//							&& serviceRequest.getRequester().getReference()
-//									.contains(ResourceType.Practitioner.toString())) {
-//						requesterPerson = localFhirClient.read()//
-//								.resource(Practitioner.class)//
-//								.withId(serviceRequest.getRequester().getReferenceElement().getIdPart())//
-//								.execute();
-//
-//						if (requesterPerson != null) {
-//							LogEvent.logDebug(this.getClass().getName(), "processRequest",
-//									"found matching requester " + requesterPerson.getIdElement().getIdPart());
-//						} else {
-//							LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching requester");
-//						}
-//					}
-//					if (specimen != null && !GenericValidator
-//							.isBlankOrNull(specimen.getCollection().getCollector().getReferenceElement().getIdPart())) {
-//						collector = localFhirClient.read()//
-//								.resource(Practitioner.class)//
-//								.withId(specimen.getCollection().getCollector().getReferenceElement().getIdPart())//
-//								.execute();
-//
-//						if (collector != null) {
-//							LogEvent.logDebug(this.getClass().getName(), "processRequest",
-//									"found matching collector " + collector.getIdElement().getIdPart());
-//						} else {
-//							LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching collector");
-//						}
-//					}
-//					loadDataInForm(form);
-//				}
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-//
-//	private void loadDataInForm(SampleEntryByProjectForm form) {
-//		ProjectData projectData = new ProjectData();
-//		ObservationData observationData = new ObservationData();
-//		form.setBirthDateForDisplay(DateUtil.formatDateAsText(fhirPatient.getBirthDate()));
-//		form.setGender(fhirPatient.getGender().getDisplay().substring(0, 1).toUpperCase());
-//		for (Identifier identifier : fhirPatient.getIdentifier()) {
-//			if ((fhirConfig.getOeFhirSystem() + "/pat_subjectNumber").equals(identifier.getSystem())) {
-//				form.setSubjectNumber(identifier.getValue());
-//			}
-//			if ((fhirConfig.getOeFhirSystem() + "/pat_nationalId").equals(identifier.getSystem())) {
-//				form.setSiteSubjectNumber(identifier.getValue());
-//			}
-//		}
-//		for (ParameterComponent parameter : task.getInput()) {
-//			if (parameter.getType().hasCoding("https://openconceptlab.org/orgs/CIEL/sources/CIEL", "159376")) {
-//				if (parameter.getValue() instanceof DateTimeType) {
-//					if (ObjectUtils.isNotEmpty(parameter.getValue())) {
-//						DateTimeType dateValue = (DateTimeType) parameter.getValue();
-//						observationData.setInitcd4Date(DateUtil.formatDateAsText(dateValue.getValue()));
-//					}
-//				}
-//			}
-//			if (parameter.getType().hasCoding("https://openconceptlab.org/orgs/CIEL/sources/CIEL", "160103")) {
-//				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
-//					if (parameter.getValue() instanceof DateTimeType) {
-//						DateTimeType dateValue = (DateTimeType) parameter.getValue();
-//						observationData.setDemandcd4Date(DateUtil.formatDateAsText(dateValue.getValue()));
-//					}
-//				}
-//			}
-//		}
-//		if (ObjectUtils.isNotEmpty(serviceRequest)) {
-//			if (ObjectUtils.isNotEmpty(serviceRequest.getOccurrencePeriod())) {
-//				Date startDate = serviceRequest.getOccurrencePeriod().getStart();
-//				form.setInterviewDate(DateUtil.formatDateAsText(startDate));
-//			}
-//		}
-//
-//		requesterPerson.getName().forEach(humanName -> {
-//			String lastName = humanName.getFamily();
-//			String firstName = String.join("",
-//					humanName.getGiven().stream().map(e -> e.asStringValue()).collect(Collectors.toList()));
-//			observationData.setNameOfDoctor(lastName + " " + firstName);
-//		});
-//
-//		projectData.setViralLoadTest(true);
-//		form.setProjectData(projectData);
-//		form.setObservations(observationData);
-//	}
-//		setupFormData(request, form);
+	@RequestMapping(value = "/MicrobiologyTb", method = RequestMethod.POST)
+	public ModelAndView postTbSampleEntryByProject(HttpServletRequest request,
+			@ModelAttribute("form") @Valid SampleTbEntryForm form, BindingResult result,
+			RedirectAttributes redirectAttributes) {
+		if (result.hasErrors()) {
+			saveErrors(result);
+			setDisplayLists(form);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
+		form.setSysUserId(this.getSysUserId(request));
+		if (tbSampleService.persistTbData(form, request)) {
+			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+			return findForward(FWD_SUCCESS_INSERT, form);
+		}
+		logAndAddMessage(request, "postTbSampleEntryByProject", "errors.UpdateException");
 
-//	@RequestMapping(value = "/SampleEntryByProject", method = RequestMethod.POST)
-//	public ModelAndView postSampleEntryByProject(HttpServletRequest request,
-//			@ModelAttribute("form") @Valid SampleEntryByProjectForm form, BindingResult result,
-//			RedirectAttributes redirectAttributes) {
-//		if (result.hasErrors()) {
-//			saveErrors(result);
-//			setDisplayLists(form);
-//			return findForward(FWD_FAIL_INSERT, form);
-//		}
-//
-//		String forward;
-//
-//		ISampleSecondEntry sampleSecondEntry = SpringContext.getBean(ISampleSecondEntry.class);
-//		sampleSecondEntry.setFieldsFromForm(form);
-//		sampleSecondEntry.setSysUserId(getSysUserId(request));
-//		sampleSecondEntry.setRequest(request);
-//		if (sampleSecondEntry.canAccession()) {
-//			forward = handleSave(request, sampleSecondEntry, form);
-//			updateElectronicOrderStatus(form);
-//			if (forward != null) {
-//				if (FWD_SUCCESS_INSERT.equals(forward)) {
-//					redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-//				} else {
-//					setDisplayLists(form);
-//				}
-//				return findForward(forward, form);
-//			}
-//		}
-//		ISampleEntry sampleEntry = SpringContext.getBean(ISampleEntry.class);
-//		sampleEntry.setFieldsFromForm(form);
-//		sampleEntry.setSysUserId(getSysUserId(request));
-//		sampleEntry.setRequest(request);
-//		if (sampleEntry.canAccession()) {
-//			forward = handleSave(request, sampleEntry, form);
-//			updateElectronicOrderStatus(form);
-//			if (forward != null) {
-//				if (FWD_SUCCESS_INSERT.equals(forward)) {
-//					redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-//				} else {
-//					setDisplayLists(form);
-//				}
-//				return findForward(forward, form);
-//			}
-//		}
-//		ISampleEntryAfterPatientEntry sampleEntryAfterPatientEntry = SpringContext
-//				.getBean(ISampleEntryAfterPatientEntry.class);
-//		sampleEntryAfterPatientEntry.setFieldsFromForm(form);
-//		sampleEntryAfterPatientEntry.setSysUserId(getSysUserId(request));
-//		sampleEntryAfterPatientEntry.setRequest(request);
-//		if (sampleEntryAfterPatientEntry.canAccession()) {
-//			forward = handleSave(request, sampleEntryAfterPatientEntry, form);
-//			updateElectronicOrderStatus(form);
-//			if (forward != null) {
-//				if (FWD_SUCCESS_INSERT.equals(forward)) {
-//					redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-//				} else {
-//					setDisplayLists(form);
-//				}
-//				return findForward(forward, form);
-//			}
-//		}
-//		logAndAddMessage(request, "postSampleEntryByProject", "errors.UpdateException");
-//
-//		setDisplayLists(form);
-//		return findForward(FWD_FAIL_INSERT, form);
-//	}
-//
-//	private void updateElectronicOrderStatus(SampleEntryByProjectForm form) {
-//		try {
-//			if (ObjectUtils.isNotEmpty(form.getElectronicOrder())) {
-//				String externalOrderId = form.getElectronicOrder().getExternalId();
-//				List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(externalOrderId);
-//				if (eOrders.size() > 0) {
-//					ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
-//					eOrder.setStatusId(
-//							SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Realized));
-//					electronicOrderService.update(eOrder);
-//					form.setElectronicOrder(eOrder);
-//				}
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			LogEvent.logError(e);
-//		}
-//	}
-//
-//	public SampleItem getSampleItem(Sample sample, TypeOfSample typeofsample) {
-//		SampleItem item = new SampleItem();
-//		item.setSample(sample);
-//		item.setTypeOfSample(typeofsample);
-//		item.setSortOrder(Integer.toString(1));
-//		item.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
-//
-//		return item;
-//	}
+		setDisplayLists(form);
+		return findForward(FWD_FAIL_INSERT, form);
+	}
 
 	private void setDisplayLists(SampleTbEntryForm form) {
 		List<Dictionary> listOfDictionary = new ArrayList<>();
@@ -447,18 +182,82 @@ public class SampleTbEntryController extends BaseSampleEntryController {
 		}
 
 		form.setGenders(genders);
-		form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
-		form.setTbSpecimenNatures(userService.getUserSampleTypes(getSysUserId(request), Constants.ROLE_RECEPTION));
+		form.setReferralOrganizations(
+				DisplayListService.getInstance().getList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
+		form.setTbSpecimenNatures(
+				userService.getUserSampleTypes(getSysUserId(request), Constants.ROLE_RECEPTION, "TB"));
 		form.setTestSectionList(DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE));
 		form.setCurrentDate(DateUtil.getCurrentDateAsText());
 		form.setRejectReasonList(DisplayListService.getInstance().getList(ListType.REJECTION_REASONS));
+		form.setTbOrderReasons(DisplayListService.getInstance().getList(ListType.TB_ORDER_REASONS));
+		form.setTbDiagnosticReasons(DisplayListService.getInstance().getList(ListType.TB_DIAGNOSTIC_REASONS));
+		form.setTbFollowupReasons(DisplayListService.getInstance().getList(ListType.TB_FOLLOWUP_REASONS));
+		form.setTbDiagnosticMethods(DisplayListService.getInstance().getList(ListType.TB_ANALYSIS_METHODS));
+		form.setTbAspects(DisplayListService.getInstance().getList(ListType.TB_SAMPLE_ASPECTS));
+		form.setTbFollowupPeriodsLine1(DisplayListService.getInstance().getList(ListType.TB_FOLLOWUP_LINE1));
+		form.setTbFollowupPeriodsLine2(DisplayListService.getInstance().getList(ListType.TB_FOLLOWUP_LINE2));
+
+	}
+
+	@GetMapping(value = "MicrobiologyTb/panel_test/{method}")
+	public ResponseEntity<Map<String, Object>> getPanelTestsElement(@PathVariable String method) {
+		Map<String, Object> response = new HashMap<String, Object>();
+		try {
+			List<Test> tests = testService.getTbTestByMethod(method);
+			List<Panel> panels = testService.getTbPanelsByMethod(method);
+			List<Map<String, Object>> testsList = new ArrayList<Map<String, Object>>();
+			List<Map<String, Object>> panelsList = new ArrayList<Map<String, Object>>();
+			tests.forEach(test -> {
+				Map<String, Object> el = new HashMap<String, Object>();
+				el.put("id", test.getId());
+				el.put("name", test.getLocalizedName());
+				List<PanelItem> pItems = panelItemService.getPanelItemByTestId(test.getId());
+				pItems.forEach(item -> {
+					int idxPanel = 0;
+					Map<String, Object> sPanel = new HashMap<String, Object>();
+					for (int k = 0; k < panelsList.size(); k++) {
+						if (panelsList.get(k).get("name").equals(item.getPanel().getLocalizedName())) {
+							sPanel = panelsList.get(k);
+							idxPanel = k;
+							break;
+						}
+					}
+					if (ObjectUtils.isEmpty(sPanel)) {
+						sPanel.put("name", item.getPanel().getLocalizedName());
+						sPanel.put("id", item.getPanel().getId());
+						sPanel.put("test_ids", "" + test.getId());
+						panelsList.add(sPanel);
+					} else {
+						sPanel.put("test_ids", sPanel.get("test_ids") + "," + test.getId());
+						panelsList.set(idxPanel, sPanel);
+					}
+				});
+				testsList.add(el);
+			});
+
+			List<Map<String, Object>> newPanelsList = new ArrayList<Map<String, Object>>();
+			List<String> realPanelIds = panels.stream().map(p -> p.getId()).collect(Collectors.toList());
+			panelsList.forEach(elm -> {
+				if (realPanelIds.contains(elm.get("id"))) {
+					newPanelsList.add(elm);
+				}
+			});
+
+			response.put("tests", testsList);
+			response.put("panels", newPanelsList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@Override
 	protected String findLocalForward(String forward) {
 		if (FWD_SUCCESS.equals(forward)) {
 			return "sampleTbEntryDefinition";
-		} else if (FWD_FAIL.equals(forward)) {
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return "redirect:/MicrobiologyTb";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
 			return "homePageDefinition";
 		} else {
 			return "PageNotFound";

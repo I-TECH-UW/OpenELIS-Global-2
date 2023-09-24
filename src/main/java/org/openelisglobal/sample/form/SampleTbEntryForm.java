@@ -23,6 +23,8 @@ public class SampleTbEntryForm extends BaseForm {
     private static final long serialVersionUID = 1L;
 
 	private Boolean rememberSiteAndRequester;
+	
+	private String sysUserId;
 
     @ValidDate(relative = DateRelation.TODAY)
     private String currentDate = "";
@@ -48,10 +50,14 @@ public class SampleTbEntryForm extends BaseForm {
     private List<IdValuePair> tbFollowupReasons;
     
     @SafeHtml(level = SafeListLevel.NONE)
-    private String tbFollowupPeriod;
+    private String tbFollowupPeriodLine1;
     
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String tbDiagnosticMethod;
+    @SafeHtml(level = SafeListLevel.NONE)
+    private String tbFollowupPeriodLine2;
+    
+    private List<IdValuePair> tbFollowupPeriodsLine1;
+    
+    private List<IdValuePair> tbFollowupPeriodsLine2;
     
     private List<IdValuePair> tbDiagnosticMethods;
     
@@ -91,6 +97,16 @@ public class SampleTbEntryForm extends BaseForm {
 
     @ValidDate(relative = DateRelation.PAST)
     private String requestDate;
+    
+    private List<String> newSelectedTests;
+    
+    private String selectedTbMethod;
+    
+    //for updates
+    private List<String> selectedTestToRemove;
+    
+    //for updates
+    private String selectedMethodToRemove;
 
     @NotBlank()
     @ValidDate(relative = DateRelation.PAST)
@@ -386,22 +402,6 @@ public class SampleTbEntryForm extends BaseForm {
 		this.tbFollowupReasons = tbFollowupReasons;
 	}
 
-	public String getTbFollowupPeriod() {
-		return tbFollowupPeriod;
-	}
-
-	public void setTbFollowupPeriod(String tbFollowupPeriod) {
-		this.tbFollowupPeriod = tbFollowupPeriod;
-	}
-
-	public String getTbDiagnosticMethod() {
-		return tbDiagnosticMethod;
-	}
-
-	public void setTbDiagnosticMethod(String tbDiagnosticMethod) {
-		this.tbDiagnosticMethod = tbDiagnosticMethod;
-	}
-
 	public List<IdValuePair> getTbDiagnosticMethods() {
 		return tbDiagnosticMethods;
 	}
@@ -529,5 +529,79 @@ public class SampleTbEntryForm extends BaseForm {
 	public void setRejectReason(String rejectReason) {
 		this.rejectReason = rejectReason;
 	}
+
+	public String getTbFollowupPeriodLine1() {
+		return tbFollowupPeriodLine1;
+	}
+
+	public void setTbFollowupPeriodLine1(String tbFollowupPeriodLine1) {
+		this.tbFollowupPeriodLine1 = tbFollowupPeriodLine1;
+	}
+
+	public String getTbFollowupPeriodLine2() {
+		return tbFollowupPeriodLine2;
+	}
+
+	public void setTbFollowupPeriodLine2(String tbFollowupPeriodLine2) {
+		this.tbFollowupPeriodLine2 = tbFollowupPeriodLine2;
+	}
+
+	public List<IdValuePair> getTbFollowupPeriodsLine1() {
+		return tbFollowupPeriodsLine1;
+	}
+
+	public void setTbFollowupPeriodsLine1(List<IdValuePair> tbFollowupPeriodsLine1) {
+		this.tbFollowupPeriodsLine1 = tbFollowupPeriodsLine1;
+	}
+
+	public List<IdValuePair> getTbFollowupPeriodsLine2() {
+		return tbFollowupPeriodsLine2;
+	}
+
+	public void setTbFollowupPeriodsLine2(List<IdValuePair> tbFollowupPeriodsLine2) {
+		this.tbFollowupPeriodsLine2 = tbFollowupPeriodsLine2;
+	}
+
+	public List<String> getNewSelectedTests() {
+		return newSelectedTests;
+	}
+
+	public void setNewSelectedTests(List<String> newSelectedTests) {
+		this.newSelectedTests = newSelectedTests;
+	}
+
+	public List<String> getSelectedTestToRemove() {
+		return selectedTestToRemove;
+	}
+
+	public void setSelectedTestToRemove(List<String> selectedTestToRemove) {
+		this.selectedTestToRemove = selectedTestToRemove;
+	}
+
+	public String getSysUserId() {
+		return sysUserId;
+	}
+
+	public void setSysUserId(String sysUserId) {
+		this.sysUserId = sysUserId;
+	}
+
+	public String getSelectedTbMethod() {
+		return selectedTbMethod;
+	}
+
+	public void setSelectedTbMethod(String selectedTbMethod) {
+		this.selectedTbMethod = selectedTbMethod;
+	}
+
+	public String getSelectedMethodToRemove() {
+		return selectedMethodToRemove;
+	}
+
+	public void setSelectedMethodToRemove(String selectedMethodToRemove) {
+		this.selectedMethodToRemove = selectedMethodToRemove;
+	}
+	
+	
 	    
 }

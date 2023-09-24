@@ -18,5 +18,9 @@
 	<include relativeToChangelogFile="true" file="add_patient_upid.xml"/>
 	<include relativeToChangelogFile="true" file="extend_person_state_column.xml"/>
 	<include relativeToChangelogFile="true" file="add_recency_testing.xml"/>
+	<include relativeToChangelogFile="true" file="add_tb_samples.xml"/>
+	<include relativeToChangelogFile="true" file="add_tb_dictionary_infos.xml"/>
+	<include relativeToChangelogFile="true" file="add_tb_tests.xml"/>
+	<include relativeToChangelogFile="true" file="add_tb_observation_type.xml"/>
 	
 </databaseChangeLog>

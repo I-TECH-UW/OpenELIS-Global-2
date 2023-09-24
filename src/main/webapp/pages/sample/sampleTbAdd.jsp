@@ -19,8 +19,8 @@
 <c:set var="formName" value="${form.formName}" />
 <c:set var="entryDate" value="${form.currentDate}" />
 
-<link href="select2/css/select2.min.css" rel="stylesheet" />
-<script type="text/javascript" src="select2/js/select2.min.js"></script>
+<script type="text/javascript" src="scripts/utilities.js?"></script>
+<script type="text/javascript" src="scripts/tbUtilities.js"></script>
 <script type="text/javascript" src="scripts/additional_utilities.js"></script>
 <script type="text/javascript" src="scripts/jquery.asmselect.js?"></script>
 <script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
@@ -29,8 +29,23 @@
 <link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css?" />
 <script type="text/javascript" src="select2/js/select2.min.js"></script>
 <link rel="stylesheet" type="text/css" href="select2/css/select2.min.css">
+<script type="text/javascript" src="scripts/jquery_ui/jquery-ui.min.js"></script>
+<link rel="stylesheet" type="text/css" href="scripts/jquery_ui/jquery-ui.min.css"/>
+<link rel="stylesheet" type="text/css" href="scripts/jquery_ui/jquery-ui.theme.min.css"/>
+
 
 <script type="text/javascript">
+fieldValidator = new FieldValidator();
+fieldValidator.setRequiredFields(
+		new Array('labNo','requestDate','receivedDate','referringSiteCode',
+				'tbSubjectNumber','lastNameID','dateOfBirthID','genderID',
+				'tbSpecimenNature','tbOrderReasons','tbDiagnosticMethods'));
+		
+function /*void*/setSaveButton() {
+	var validToSave = fieldValidator.isAllValid();
+	$("saveButtonId").disabled = !validToSave;
+
+}
 	function showHideSection(button, targetId) {
 		targetId = targetId + button.name
 		if (button.value == "+") {
@@ -43,13 +58,177 @@
 	function showSection(button, targetId) {
 		jQuery("#" + targetId).show();
 		button.value = "-";
-		console.log(targetId);
 	}
 
 	function hideSection(button, targetId) {
 		jQuery("#" + targetId).hide();
 		button.value = "+";
-		console.log(targetId);
+	}
+
+	function toggleField(toShow, targetId) {
+		if (toShow) {
+			jQuery("#" + targetId).show();
+			fieldValidator.addRequiredField(targetId.replace('Row', ''));
+		} else {
+			jQuery("#" + targetId.replace('Row', '')).val(null).trigger(
+					'change');
+			fieldValidator.removeRequiredField(targetId.replace('Row', ''));
+			jQuery("#" + targetId).hide();
+		}
+	}
+
+	function toggleOrderReasons() {
+		var elm = jQuery("#tbOrderReasons");
+		toggleField(elm[0].selectedIndex === 1, "tbDiagnosticReasonsRow");
+		toggleField(elm[0].selectedIndex === 2, "tbFollowupReasonsRow");
+		setOrderModified();
+	}
+	
+	function toggleTBFollowupPeriodLine() {
+		var elm = jQuery("#tbFollowupReasons");
+		toggleField(elm[0].selectedIndex === 1, "tbFollowupPeriodLine1Row");
+		toggleField(elm[0].selectedIndex === 2, "tbFollowupPeriodLine2Row");
+		setOrderModified();
+	}
+	
+	function toggleTBSampleAspects() {
+		var elm = jQuery("#tbDiagnosticMethodsRow");
+		var selectedIndices = jQuery("#tbDiagnosticMethodsRow :selected").map((_, e) => e.index).get();
+		toggleField(selectedIndices.includes(2), "tbAspectsRow");
+		setOrderModified();
+	}
+	
+	//
+	//laborder
+	//
+	function checkAccessionNumber(accessionNumber) {
+        //check if empty
+        if (!fieldIsEmptyById("labNo")) {
+            validateAccessionNumberOnServer(false, false, accessionNumber.id, accessionNumber.value, processAccessionSuccess, null);
+        }
+        else {
+             selectFieldErrorDisplay(false, $("labNo"));
+        }
+
+        setCorrectSave();
+    }
+
+    function processAccessionSuccess(xhr) {
+        //alert(xhr.responseText);
+        var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
+        var message = xhr.responseXML.getElementsByTagName("message").item(0);
+        var success = false;
+
+        if (message.firstChild.nodeValue == "valid") {
+            success = true;
+        }
+        var labElement = formField.firstChild.nodeValue;
+        selectFieldErrorDisplay(success, $(labElement));
+
+        if (!success) {
+            alert(message.firstChild.nodeValue);
+        }
+
+        setCorrectSave();
+    }
+
+    function setCorrectSave(){
+        if( window.setSave){
+            setSave();
+        }else if(window.setSaveButton){
+            setSaveButton();
+        }
+    }
+
+    function getNextAccessionNumber() {
+        generateNextScanNumber(processScanSuccess);
+    }
+
+    function processScanSuccess(xhr) {
+        //alert(xhr.responseText);
+        var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
+        var returnedData = formField.firstChild.nodeValue;
+
+        var message = xhr.responseXML.getElementsByTagName("message").item(0);
+
+        var success = message.firstChild.nodeValue == "valid";
+
+        if (success) {
+            $("labNo").value = returnedData;
+
+        } else {
+            alert("<%= MessageUtil.getMessage("error.accession.no.next") %>");
+            $("labNo").value = "";
+        }
+
+        selectFieldErrorDisplay(success, $("labNo"));
+        setValidIndicaterOnField(success, "labNo");
+
+        setCorrectSave();
+    }
+
+    function processCodeSuccess(xhr) {
+        //alert(xhr.responseText);
+        var code = xhr.responseXML.getElementsByTagName("code").item(0);
+        var success = xhr.responseXML.getElementsByTagName("message").item(0).firstChild.nodeValue == "valid";
+
+        if (success) {
+            jQuery("#requesterCodeId").val(code.getAttribute("value"));
+        }
+    }
+    function setOrderModified(){
+        jQuery("#orderModified").val("true");
+        orderChanged = true;
+        if( window.makeDirty ){ makeDirty(); }
+
+        setCorrectSave();
+    }
+    
+    function  /*void*/ processValidateEntryDateSuccess(xhr){
+
+        //alert(xhr.responseText);
+        
+        var message = xhr.responseXML.getElementsByTagName("message").item(0).firstChild.nodeValue;
+        var formField = xhr.responseXML.getElementsByTagName("formfield").item(0).firstChild.nodeValue;
+
+        var isValid = message == "<%=IActionConstants.VALID%>";
+
+        //utilites.js
+        selectFieldErrorDisplay( isValid, $(formField));
+        setSampleFieldValidity( isValid, formField );
+        setSave();
+
+        if( message == '<%=IActionConstants.INVALID_TO_LARGE%>' ){
+            alert( '<spring:message code="error.date.inFuture"/>' );
+        }else if( message == '<%=IActionConstants.INVALID_TO_SMALL%>' ){
+            alert( '<spring:message code="error.date.inPast"/>' );
+        }
+    }
+    
+    function checkValidEntryDate(date, dateRange, blankAllowed)
+    {   
+        if((!date.value || date.value == "") && !blankAllowed){
+            setSave();
+            return;
+        } else if ((!date.value || date.value == "") && blankAllowed) {
+            setSampleFieldValid(date.id);
+            setValidIndicaterOnField(true, date.id);
+            return;
+        }
+        if( !dateRange || dateRange == ""){
+            dateRange = 'past';
+        }
+        isValidDate( date.value, processValidateEntryDateSuccess, date.id, dateRange );
+    }
+    
+	function savePage__(action) {
+		window.onbeforeunload = null; 
+		var form = document.getElementById("mainForm");
+		if (action == null) {
+			action = "MicrobiologyTb"
+		}
+		form.action = action;
+		form.submit();
 	}
 </script>
 
@@ -64,7 +243,9 @@
 		onclick="checkOrderReferral();makeDirty();">
 	<%=MessageUtil.getContextualMessage("referring.order.not.found")%>
 	<hr style="width: 100%; height: 1px" />
-	<br>
+	<br />
+	<form:hidden path="modified" id="orderModified"/>
+    <form:hidden path="sampleId" id="sampleId"/>
 	<div id=orderEntrySection>
 		<input type="button" name="showHide" value='-'
 			onclick="showHideSection(this, 'orderDisplay');" id="orderSectionId">
@@ -73,7 +254,7 @@
 		<table id="orderDisplayshowHide">
 			<tr>
 				<td style="width: 35%"><%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
-					:</td>
+					:<span	class="requiredlabel">*</span></td>
 				<td style="width: 65%"><form:input path="labNo"
 						maxlength='<%=Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>'
 						onchange="checkAccessionNumber(this);" cssClass="text" id="labNo" />
@@ -100,15 +281,16 @@
 					style="font-size: xx-small;"><%=DateUtil.getDateUserPrompt()%>
 				</span></td>
 				<td colspan="2"><form:input path="receivedDate"
-						onchange="setOrderModified();checkValidEntryDate(this, 'past');"
+						onchange="checkValidEntryDate(this, 'past');setOrderModified();"
 						onkeyup="addDateSlashes(this, event);" maxlength="10"
-						cssClass="text required" id="receivedDateForDisplay" /></td>
+						cssClass="text required" id="receivedDate" /></td>
 			</tr>
 			<tr>
 				<td><%=MessageUtil.getContextualMessage("sample.tb.reference.unit")%>
 					: <span class="requiredlabel">*</span></td>
 				<td colspan="2"><form:select path="referringSiteCode"
-						id="referringSiteCode" cssClass="centerCodeClass">
+						id="referringSiteCode" cssClass="centerCodeClass" onchange="setOrderModified();">
+						<option value=" "></option>
 						<form:options items="${form.referralOrganizations}"
 							itemLabel="value" itemValue="id" />
 					</form:select></td>
@@ -154,7 +336,7 @@
 				<td style=""><spring:message code="patient.epiLastName" /> : <span
 					class="requiredlabel">*</span></td>
 				<td><form:input path="patientLastName" id="lastNameID"
-						onchange="updatePatientEditStatus();" /></td>
+						onchange="setOrderModified();" /></td>
 				<td style=""><spring:message code="patient.epiFirstName" /> :<span
 					class="requiredlabel"></span></td>
 				<td><form:input path="patientFirstName" id="firstNameID"
@@ -172,13 +354,13 @@
 				<td style=""><spring:message code="patient.birthDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>:
 					<span class="requiredlabel">*</span></td>
 				<td><form:input path="patientBirthDate"
-						onkeyup="addDateSlashes(this,event); normalizeDateFormat(this);"
-						onchange="checkValidAgeDate( this ); updatePatientEditStatus();"
-						id="dateOfBirthID" cssClass="text" size="20" maxlength="10" />
+						onkeyup="addDateSlashes(this,event);"
+						onchange="convertToAge(this,'ageYears');setOrderModified();"
+						id="dateOfBirthID" cssClass="text" size="20" maxlength="10"/>
 					<div id="patientbirthDateMessage" class="blank"></div></td>
 				<td style=""><spring:message code="patient.age" />:</td>
 				<td><form:input path="patientAge"
-						onchange="handleAgeChange(); " id="ageYears" cssClass="text"
+						onchange="handleAgeChange();setOrderModified();" id="ageYears" cssClass="text"
 						size="3" maxlength="3" placeholder="years" />
 					<div class="blank">
 						<spring:message code="years.label" />
@@ -186,7 +368,7 @@
 					<div id="ageYearsMessage" class="blank"></div></td>
 				<td style=""><spring:message code="patient.gender" />: <span
 					class="requiredlabel">*</span></td>
-				<td><form:select path="patientGender" id="genderID" onchange="">
+				<td><form:select path="patientGender" id="genderID" onchange="setOrderModified();">
 
 						<option value=" "></option>
 						<form:options items="${form.genders}" itemLabel="value"
@@ -212,54 +394,88 @@
 					<td><%=MessageUtil.getContextualMessage("sample.tb.specimen.nature")%>
 						: <span class="requiredlabel">*</span></td>
 					<td colspan="2"><form:select path="tbSpecimenNature"
-							id="tbSpecimenNature">
+							id="tbSpecimenNature" cssClass="tbSpecimenNatureClass"
+							style="min-width:200px" onchange="setOrderModified();">
+							<option value="">&nbsp;</option>
 							<form:options items="${form.tbSpecimenNatures}" itemLabel="value"
 								itemValue="id" />
 						</form:select></td>
+					<td></td>
 				</tr>
-				<tr>
+				<tr id="tbOrderReasonsRow">
 					<td><%=MessageUtil.getContextualMessage("sample.tb.order.reasons")%>
 						: <span class="requiredlabel">*</span></td>
 					<td colspan="2"><form:select path="tbOrderReason"
-							id="tbOrderReasons">
+							id="tbOrderReasons" cssClass="tbOrderReasonsClass"
+							style="min-width:200px" onchange="toggleOrderReasons();">
+							<option value="">&nbsp;</option>
 							<form:options items="${form.tbOrderReasons}" itemLabel="value"
 								itemValue="id" />
 						</form:select></td>
+					<td></td>
 				</tr>
-				<tr>
+				<tr id="tbDiagnosticReasonsRow">
 					<td><%=MessageUtil.getContextualMessage("sample.tb.diagnostic.reasons")%>
 						: <span class="requiredlabel">*</span></td>
 					<td colspan="2"><form:select path="tbDiagnosticReason"
-							id="tbDiagnosticReasons">
-							<form:options items="${form.tbDiagnosticReasons}" itemLabel="value"
-								itemValue="id" />
+							id="tbDiagnosticReasons" cssClass="tbDiagnosticReasonsClass"
+							style="min-width:200px" onchange="setOrderModified();">
+							<option value="">&nbsp;</option>
+							<form:options items="${form.tbDiagnosticReasons}"
+								itemLabel="value" itemValue="id" />
 						</form:select></td>
+					<td></td>
 				</tr>
-				<tr>
+				<tr id="tbFollowupReasonsRow">
 					<td><%=MessageUtil.getContextualMessage("sample.tb.followup.reasons")%>
 						: <span class="requiredlabel">*</span></td>
 					<td colspan="2"><form:select path="tbFollowupReason"
-							id="tbFollowupReasons">
+							id="tbFollowupReasons" cssClass="tbFollowupReasonsClass"
+							onchange="toggleTBFollowupPeriodLine()">
+							<option value="">&nbsp;</option>
 							<form:options items="${form.tbFollowupReasons}" itemLabel="value"
 								itemValue="id" />
-						</form:select> <form:select path="tbFollowupPeriod" id="tbFollowupPeriod" /></td>
+						</form:select> <span id="tbFollowupPeriodLine1Row"> <form:select
+								path="tbFollowupPeriodLine1" id="tbFollowupPeriodLine1"
+								cssClass="tbFollowupPeriodLine1Class" style="min-width:100px" onchange="setOrderModified();">
+								<option value="">&nbsp;</option>
+								<form:options items="${form.tbFollowupPeriodsLine1}"
+									itemLabel="value" itemValue="id" />
+							</form:select>
+					</span> <span id="tbFollowupPeriodLine2Row"> <form:select
+								path="tbFollowupPeriodLine2" id="tbFollowupPeriodLine2"
+								cssClass="tbFollowupPeriodLine2Class" style="min-width:100px" onchange="setOrderModified();">
+								<option value="">&nbsp;</option>
+								<form:options items="${form.tbFollowupPeriodsLine2}"
+									itemLabel="value" itemValue="id" />
+							</form:select>
+					</span></td>
+					<td></td>
 				</tr>
-				<tr>
-					<td><%=MessageUtil.getContextualMessage("sample.tb.diagnostic.methods")%>
-						: <span class="requiredlabel">*</span></td>
-					<td colspan="2"><form:select path="tbDiagnosticMethod"
-							id="tbDiagnosticMethod" multiple="true">
-							<form:options items="${form.tbDiagnosticMethods}" itemLabel="value"
-								itemValue="id" />
+				<tr id="tbDiagnosticMethodsRow">
+					<td><%=MessageUtil.getContextualMessage("sample.tb.diagnostic.methods")%>:
+						<span class="requiredlabel">*</span></td>
+					<%-- <td colspan="2"><form:select path="newSelectedTbMethods" --%>
+					<td colspan="2"><form:select path="selectedTbMethod"
+							id="tbDiagnosticMethods" multiple="false"
+							cssClass="tbDiagnosticMethodsClass"
+							onchange="toggleTBSampleAspects();showPanelAndTests(this)" style="min-width:300px">
+							<option value="">&nbsp;</option>
+							<form:options items="${form.tbDiagnosticMethods}"
+								itemLabel="value" itemValue="id" />
 						</form:select></td>
+					<td></td>
 				</tr>
-				<tr>
+				<tr id="tbAspectsRow">
 					<td><%=MessageUtil.getContextualMessage("sample.tb.aspects")%>
 						: <span class="requiredlabel">*</span></td>
-					<td colspan="2"><form:select path="tbAspect" id="tbAspects">
+					<td colspan="2"><form:select path="tbAspect" id="tbAspects"
+							cssClass="tbAspectsClass" style="min-width:200px" onchange="setOrderModified();">
+							<option value="">&nbsp;</option>
 							<form:options items="${form.tbAspects}" itemLabel="value"
 								itemValue="id" />
 						</form:select></td>
+					<td></td>
 				</tr>
 			</table>
 			<br />
@@ -277,27 +493,23 @@
 						</td>
 					</tr>
 					<tr>
-						<td><select class="panelDropdown" style="width: 97%;"
-							multiple="multiple">
-						</select></td>
-						<td><select class="testDropdown" style="width: 97%;"
-							multiple="multiple">
-						</select></td>
-					</tr>
-					<tr>
 						<td style="width: 30%; vertical-align: top;">
-							<table style="width: 97%" id="addPanelTable"
-								class="addPanelTable">
-								<tr>
+							<table style="width: 97%" id="addPanelTableContainer"
+								class="table addPanelTableContainer">
+								<thead><tr>
 									<th style="width: 20%">&nbsp;</th>
 									<th style="width: 80%"><spring:message
 											code="sample.entry.panel.name" /></th>
 								</tr>
+								</thead>
+								<tbody id="addPanelTable">
+								
+								</tbody>
 
 							</table>
 						</td>
 						<td style="width: 70%; vertical-align: top; margin-left: 3%;">
-							<table style="width: 97%" id="addTestTable" class="addTestTable">
+							<table style="width: 97%" id="addTestTableContainer" class="table addTestTableContainer">
 								<tr>
 									<th style="width: 5%">&nbsp;</th>
 									<th style="width: 50%"><spring:message
@@ -306,6 +518,8 @@
 										Section</th>
 									<th style="width: 20%">&nbsp;</th>
 								</tr>
+								<tbody id="addTestTable"></tbody>
+
 							</table>
 						</td>
 					</tr>
@@ -320,5 +534,98 @@
 <script type="text/javascript">
 	function pageOnLoad() {
 		jQuery('.centerCodeClass').select2();
+		jQuery('.tbSpecimenNatureClass').select2();
+		jQuery('.tbOrderReasonsClass').select2();
+		jQuery('.tbDiagnosticReasonsClass').select2();
+		jQuery('.tbFollowupReasonsClass').select2();
+		jQuery('.tbFollowupPeriodLine1Class').select2();
+		jQuery('.tbFollowupPeriodLine2Class').select2();
+		jQuery('.tbDiagnosticMethodsClass').select2();
+		jQuery('.tbAspectsClass').select2();
+		toggleOrderReasons();
+		toggleTBFollowupPeriodLine();
+		toggleTBSampleAspects();
+		jQuery("#requestDate").datepicker({
+			dateFormat: 'dd/mm/yy',
+			yearRange: "-1:+00"
+		});
+		jQuery("#receivedDate").datepicker({
+			dateFormat: 'dd/mm/yy',
+		     changeMonth: true,
+		     changeYear: true,
+		     yearRange: "-1:+00"
+		});
+		jQuery("#dateOfBirthID").datepicker({
+			dateFormat: 'dd/mm/yy',
+		     changeMonth: true,
+		     changeYear: true,
+		     yearRange: "-120:+00",
+		     maxDate: new Date(),
+		});
+		
+		showPanelAndTests($('tbDiagnosticMethods'));
+		
+		
+		setSaveButton();
 	}
+	
+	function showPanelAndTests(input){	
+		if(!input){
+			return;
+		}
+/* 		  const selectedMethods = [];
+		  for (const option of input.options) {
+		    if (option.selected) {
+		    	selectedMethods.push(option.value);
+		    }
+		  } */
+		
+/* 		if(selectedMethods.length>0){ */
+		if(input.value){
+			selectedMethod = input.value;
+			let testHtml='';
+			let panelHtml='';
+			jQuery.get( "MicrobiologyTb/panel_test/"+selectedMethod, function(data) {
+				if(data){
+					jQuery("#addPanelTable").html('');
+					jQuery("#addTestTable").html('');
+					 for (const [key, value] of Object.entries(data.tests)) { 
+							let d = '<tr>';
+							d+='<td><input type="checkbox" value="'+value.id+'" name="newSelectedTests" id="test_'+value.id+'"/></td>';
+							d+='<td><label for="test_'+value.id+'">'+value.name+'</label></td>';
+							d+='</tr>';
+							testHtml+=d;
+				         } 
+					 jQuery("#addTestTable").append(testHtml);
+					 
+					 for (const [key, value] of Object.entries(data.panels)) { 
+							let d = '<tr>';
+							d+='<td><input type="checkbox" value="'+value.id+'" name="testSelected" id="panel_'+value.id+'" '+ 
+							'onclick="togglePanelSelected(this,\''+value.test_ids+'\')"/></td>';
+							d+='<td><label for="panel_'+value.id+'">'+value.name+'</label></td>';
+							d+='</tr>';
+							panelHtml+=d;
+				         } 
+					 jQuery("#addPanelTable").append(panelHtml);
+				}
+				else{
+					jQuery("#addPanelTable").html('');
+					jQuery("#addTestTable").html('');
+				}
+				});
+		}
+		else{
+			jQuery("#addPanelTable").html('');
+			jQuery("#addTestTable").html('');
+		}
+	}
+	
+	function togglePanelSelected(panel,testIds){
+		var testList = testIds.split(',');
+			for (test of testList){
+				document.getElementById("test_"+test).click();
+		}
+	}
+	
+	
 </script>
