@@ -61,7 +61,7 @@ public class RTRIColumnBuilder extends CIStudyColumnBuilder {
 		add("completed_date", "COMPLETED_DATE", DATE_TIME);
 		add("released_date", "RELEASED_DATE", DATE_TIME);
 
-		add("hivStatus", "STATVIH", DICT_RAW);
+//		add("hivStatus", "STATVIH", DICT_RAW);
 		add("nameOfDoctor", "NAMEMED", NONE);
 		add("nameOfSampler", "NAMEPRELEV", NONE);
 
@@ -116,9 +116,7 @@ public class RTRIColumnBuilder extends CIStudyColumnBuilder {
 		// --------------------------
 		// all observation history values
 		appendObservationHistoryCrosstab(dateRange.getLowDate(), dateRange.getHighDate());
-		// current ARV treatments
-		appendRepeatingObservation(SQLConstant.CURRENT_ARV_TREATMENT_INNS, 4, dateRange.getLowDate(),
-				dateRange.getHighDate());
+
 		// result
 		// appendResultCrosstab(dateRange.getLowDate(), dateRange.getHighDate() );
 		query.append(",  clinlims.analysis as a \n");
