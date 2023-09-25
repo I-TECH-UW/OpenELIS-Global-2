@@ -291,5 +291,9 @@
     "pathology.label.report": "Rapport de Pathologie",
     "patient.nationalid": "Identifiant National",
     "sample.label.orderpanel": "Panels de commande",
-    "sample.label.noorder": "La commande n'existe pas"
+    "sample.label.noorder": "La commande n'existe pas" ,
+    "sample.label.labnumber.new": "Nouveau numéro de laboratoire" ,
+    "sample.label.search.labnumber": "Rechercher par numéro d'accès",
+    "sample.label.search.patient": "Rechercher par patient",
+    "sample.label.search.Order": "Rechercher une commande"
 }

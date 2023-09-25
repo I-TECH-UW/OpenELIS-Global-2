@@ -293,5 +293,10 @@
     "pathology.label.report" : "Pathology Report",
     "patient.natioanalid":"National ID",
     "sample.label.orderpanel":"Order Panels",
-    "sample.label.noorder":"Order Doesnt Exist"
+    "sample.label.noorder":"Order Doesnt Exist",
+    "sample.label.labnumber.new" : "New Lab Number" ,
+    "sample.label.search.labnumber" : "Search By Accesion Number"  ,
+    "sample.label.search.patient" : "Search By Patient" ,
+    "sample.label.search.Order" : "Search Order" 
+    
 }

@@ -87,7 +87,7 @@ function PathologyDashboard() {
               assignCurrentUserAsTechnician(e, pathologySampleId);
             }}
           >
-             <FormattedMessage id="label.button.start"/>
+            <FormattedMessage id="label.button.start" />
           </Button>
         </TableCell>
       );
@@ -105,8 +105,8 @@ function PathologyDashboard() {
             onClick={(e) => {
               assignCurrentUserAsPathologist(e, pathologySampleId);
             }}
-          > 
-           <FormattedMessage id="label.button.start"/>
+          >
+            <FormattedMessage id="label.button.start" />
           </Button>
         </TableCell>
       );

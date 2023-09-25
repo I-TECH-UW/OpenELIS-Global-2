@@ -13,7 +13,7 @@ import {
   Tag,
 } from "@carbon/react";
 import EditSample from "./EditSample";
-import AddOrder from "../addOrder/AddOrder";
+import EditOrder from "./EditOrder";
 import "../addOrder/add-order.scss";
 import { ModifyOrderFormValues } from "../formModel/innitialValues/OrderEntryFormValues";
 import { NotificationContext } from "../layout/Layout";
@@ -59,7 +59,7 @@ const ModifyOrder = () => {
     accessionNumber = accessionNumber ? accessionNumber : "";
     patientId = patientId ? patientId : "";
     getFromOpenElisServer(
-      "/rest/SampleEdit?patientId=" +
+      "/rest/sample-edit?patientId=" +
         patientId +
         "&accessionNumber=" +
         accessionNumber,
@@ -105,11 +105,11 @@ const ModifyOrder = () => {
     e.preventDefault();
     setPage(page + 1);
     console.log(JSON.stringify(orderFormValues));
-    // postToOpenElisServer(
-    //   "/rest/SamplePatientEntry",
-    //   JSON.stringify(orderFormValues),
-    //   handlePost,
-    // );
+    postToOpenElisServer(
+      "/rest/sample-edit",
+      JSON.stringify(orderFormValues),
+      handlePost,
+    );
   };
   useEffect(() => {
     if (page === samplePageNumber + 1) {
@@ -118,7 +118,7 @@ const ModifyOrder = () => {
   }, [page]);
 
   const attacheSamplesToFormValues = () => {
-    let sampleXmlString = null;
+    let sampleXmlString = "";
     let referralItems = [];
     if (samples.length > 0) {
       if (samples[0].tests.length > 0) {
@@ -172,9 +172,9 @@ const ModifyOrder = () => {
     }
     setOrderFormValues({
       ...orderFormValues,
-      useReferral: true,
+     // useReferral: true,
       sampleXML: sampleXmlString,
-      referralItems: referralItems,
+     // referralItems: referralItems,
     });
   };
 
@@ -201,7 +201,7 @@ const ModifyOrder = () => {
           {intl.formatMessage({ id: "home.label" })}
         </BreadcrumbItem>
         <BreadcrumbItem href="/FindOrder">
-          {intl.formatMessage({ id: "label.search.patient" })}
+          {intl.formatMessage({ id: "sample.label.search.Order" })}
         </BreadcrumbItem>
       </Breadcrumb>
 
@@ -292,10 +292,15 @@ const ModifyOrder = () => {
                 />
               )}
               {page === samplePageNumber && (
-                <EditSample orderFormValues={orderFormValues} setSamples={setSamples} samples={samples} />
+                <EditSample
+                  orderFormValues={orderFormValues}
+                  setOrderFormValues={setOrderFormValues}
+                  setSamples={setSamples}
+                  samples={samples}
+                />
               )}
               {page === orderPageNumber && (
-                <AddOrder
+                <EditOrder
                   orderFormValues={orderFormValues}
                   setOrderFormValues={setOrderFormValues}
                   samples={samples}

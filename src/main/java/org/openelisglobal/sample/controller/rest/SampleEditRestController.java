@@ -12,10 +12,13 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
+import org.hibernate.StaleObjectStateException;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.constants.Constants;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator.ValidationResults;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
@@ -54,8 +57,12 @@ import org.openelisglobal.userrole.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -108,7 +115,7 @@ public class SampleEditRestController extends BaseSampleEntryController {
     @Autowired
     private UserService userService;
 
-    @GetMapping(value = "SampleEdit", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "sample-edit", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
     public SampleEditForm showSampleEdit(HttpServletRequest request , @RequestParam(required = false) String accessionNumber, @RequestParam(required = false) String patientId) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
        
@@ -180,6 +187,44 @@ public class SampleEditRestController extends BaseSampleEntryController {
 
         addFlashMsgsToRequest(request);
         return form;
+    }
+
+    @PostMapping(value = "sample-edit", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void saveSampleEdit(HttpServletRequest request,
+            @Validated(SampleEdit.class) @RequestBody SampleEditForm form ,BindingResult result)
+            throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        formValidator.validate(form, result);
+        if (result.hasErrors()) {
+            saveErrors(result);
+        }
+        boolean sampleChanged = accessionNumberChanged(form);
+        Sample updatedSample = null;
+
+        if (sampleChanged) {
+            validateNewAccessionNumber(form.getNewAccessionNumber(), result);
+            if (result.hasErrors()) {
+                saveErrors(result);
+            } else {
+               // updatedSample = updateAccessionNumberInSample(form);
+            }
+             updatedSample = updateAccessionNumberInSample(form);
+        }
+
+         try {
+            sampleEditService.editSample(form, request, updatedSample, sampleChanged, getSysUserId(request));
+
+        } catch (LIMSRuntimeException e) {
+            if (e.getException() instanceof StaleObjectStateException) {
+                result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
+            } else {
+                LogEvent.logDebug(e);
+                result.reject("errors.UpdateException", "errors.UpdateException");
+            }
+            saveErrors(result);
+
+        }
+
     }
 
     @Override

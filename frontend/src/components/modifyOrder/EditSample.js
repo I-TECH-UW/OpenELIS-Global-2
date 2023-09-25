@@ -21,13 +21,18 @@ import { Add } from "@carbon/react/icons";
 import { getFromOpenElisServer } from "../utils/Utils";
 import EditSampleType from "./EditSampleType";
 import { FormattedMessage } from "react-intl";
-import { OrderCurrentTestsHeaders } from "../data/orderCurrentTestsHeaders";
+import {
+  OrderCurrentTestsHeaders,
+  OrderPossibleTestsHeaders,
+} from "../data/orderCurrentTestsHeaders";
 const EditSample = (props) => {
-  const { samples, setSamples, orderFormValues } = props;
+  const { samples, setSamples, orderFormValues, setOrderFormValues } = props;
   const componentMounted = useRef(true);
   const [elementsCounter, setElementsCounter] = useState(0);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
+  const [page2, setPage2] = useState(1);
+  const [pageSize2, setPageSize2] = useState(5);
 
   const [rejectSampleReasons, setRejectSampleReasons] = useState([]);
 
@@ -47,6 +52,68 @@ const EditSample = (props) => {
     });
     setSamples(updateSamples);
     setElementsCounter(count);
+  };
+  const formatTestsObject = (tests) => {
+    return tests.map((test) => {
+      test.id = test.testId;
+      test.collectionTime = "";
+      if (!test.accessionNumber) {
+        test.accessionNumber = "";
+      }
+      if (!test.sampleType) {
+        test.sampleType = "";
+      }
+      if (!test.collectionDate) {
+        test.collectionDate = "";
+      }
+      return test;
+    });
+  };
+  const handleChecked = (e, testId) => {
+    var tests = [];
+    var updatedTests = [];
+    if (e.currentTarget.name === "add") {
+      tests = orderFormValues.possibleTests;
+      updatedTests = tests.map((test) => {
+        if (test.testId === testId) {
+          return { ...test, add: e.currentTarget.checked };
+        } else {
+          return test;
+        }
+      });
+      setOrderFormValues({
+        ...orderFormValues,
+        possibleTests: updatedTests,
+      });
+    } else if (e.currentTarget.name === "removeSample") {
+      tests = orderFormValues.existingTests;
+      updatedTests = tests.map((test) => {
+        if (test.testId === testId) {
+          return { ...test, removeSample: e.currentTarget.checked };
+        }
+        {
+          return test;
+        }
+      });
+      setOrderFormValues({
+        ...orderFormValues,
+        existingTests: updatedTests,
+      });
+    } else if (e.currentTarget.name === "canceled") {
+      tests = orderFormValues.existingTests;
+      updatedTests = tests.map((test) => {
+        if (test.testId === testId) {
+          return { ...test, canceled: e.currentTarget.checked };
+        }
+        {
+          return test;
+        }
+      });
+      setOrderFormValues({
+        ...orderFormValues,
+        existingTests: updatedTests,
+      });
+    }
   };
 
   const sampleTypeObject = (object) => {
@@ -97,6 +164,17 @@ const EditSample = (props) => {
       setPageSize(pageInfo.pageSize);
     }
   };
+
+  const handlePageChange2 = (pageInfo) => {
+    if (page2 != pageInfo.page) {
+      setPage2(pageInfo.page);
+    }
+
+    if (pageSize2 != pageInfo.pageSize) {
+      setPageSize2(pageInfo.pageSize);
+    }
+  };
+
   const removeSample = (index) => {
     let updateSamples = samples.splice(index, 1);
     setSamples(updateSamples);
@@ -138,7 +216,10 @@ const EditSample = (props) => {
     };
   }, []);
 
-  const renderCell = (cell) => {
+  const renderCell = (cell, row) => {
+    var accession = row.cells.find(
+      (e) => e.info.header === "accessionNumber",
+    ).value;
     if (cell.info.header === "accessionNumber") {
       return <TableCell key={cell.id}>{cell.value}</TableCell>;
     } else if (cell.info.header === "sampleType") {
@@ -165,13 +246,21 @@ const EditSample = (props) => {
       );
     } else if (cell.info.header === "removeSample") {
       return (
-        <TableCell key={cell.id}>
-          <Checkbox
-            id={cell.id + cell.info.header}
-            labelText=""
-            checked={cell.value}
-          ></Checkbox>
-        </TableCell>
+        <>
+          {accession !== "" ? (
+            <TableCell key={cell.id}>
+              <Checkbox
+                id={cell.id + cell.info.header}
+                labelText=""
+                name="removeSample"
+                checked={cell.value}
+                onChange={(e) => handleChecked(e, row.id)}
+              ></Checkbox>
+            </TableCell>
+          ) : (
+            <TableCell key={cell.id}></TableCell>
+          )}
+        </>
       );
     } else if (cell.info.header === "testName") {
       return <TableCell key={cell.id}>{cell.value}</TableCell>;
@@ -191,7 +280,21 @@ const EditSample = (props) => {
           <Checkbox
             id={cell.id + cell.info.header}
             labelText=""
+            name="canceled"
             checked={cell.value}
+            onChange={(e) => handleChecked(e, row.id)}
+          ></Checkbox>
+        </TableCell>
+      );
+    } else if (cell.info.header === "add") {
+      return (
+        <TableCell key={cell.id}>
+          <Checkbox
+            id={cell.id + cell.info.header}
+            labelText=""
+            name="add"
+            checked={cell.value}
+            onChange={(e) => handleChecked(e, row.id)}
           ></Checkbox>
         </TableCell>
       );
@@ -205,59 +308,12 @@ const EditSample = (props) => {
       <div className="orderLegendBody">
         <Column lg={16}>
           <DataTable
-            rows={orderFormValues.existingTests}
+            rows={formatTestsObject(orderFormValues.existingTests)}
             headers={OrderCurrentTestsHeaders}
             isSortable
           >
             {({ rows, headers, getHeaderProps, getTableProps }) => (
               <TableContainer title="Current Tests">
-                <Table {...getTableProps()}>
-                  <TableHead>
-                    <TableRow>
-                      {headers.map((header) => (
-                        <TableHeader
-                          key={header.key}
-                          {...getHeaderProps({ header })}
-                        >
-                          {header.header}
-                        </TableHeader>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <>
-                      {rows
-                        .slice((page - 1) * pageSize)
-                        .slice(0, pageSize)
-                        .map((row ) => (
-                          <TableRow key={row.id}>
-                            {row.cells.map((cell) => renderCell(cell, row))}
-                          </TableRow>
-                        ))}
-                    </>
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            )}
-          </DataTable>
-          <Pagination
-            onChange={handlePageChange}
-            page={page}
-            pageSize={pageSize}
-            pageSizes={[5, 10, 20, 30]}
-            totalItems={orderFormValues.existingTests.length}
-          ></Pagination>
-        </Column>
-      </div>
-      <div className="orderLegendBody">
-        <Column lg={16}>
-          <DataTable
-            rows={orderFormValues.possibleTests}
-            headers={OrderCurrentTestsHeaders}
-            isSortable
-          >
-            {({ rows, headers, getHeaderProps, getTableProps }) => (
-              <TableContainer title="Available Tests">
                 <Table {...getTableProps()}>
                   <TableHead>
                     <TableRow>
@@ -296,10 +352,57 @@ const EditSample = (props) => {
           ></Pagination>
         </Column>
       </div>
+      <div className="orderLegendBody">
+        <Column lg={16}>
+          <DataTable
+            rows={formatTestsObject(orderFormValues.possibleTests)}
+            headers={OrderPossibleTestsHeaders}
+            isSortable
+          >
+            {({ rows, headers, getHeaderProps, getTableProps }) => (
+              <TableContainer title="Available Tests">
+                <Table {...getTableProps()}>
+                  <TableHead>
+                    <TableRow>
+                      {headers.map((header) => (
+                        <TableHeader
+                          key={header.key}
+                          {...getHeaderProps({ header })}
+                        >
+                          {header.header}
+                        </TableHeader>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <>
+                      {rows
+                        .slice((page2 - 1) * pageSize2)
+                        .slice(0, pageSize2)
+                        .map((row) => (
+                          <TableRow key={row.id}>
+                            {row.cells.map((cell) => renderCell(cell, row))}
+                          </TableRow>
+                        ))}
+                    </>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </DataTable>
+          <Pagination
+            onChange={handlePageChange2}
+            page={page2}
+            pageSize={pageSize2}
+            pageSizes={[5, 10, 20, 30]}
+            totalItems={orderFormValues.possibleTests.length}
+          ></Pagination>
+        </Column>
+      </div>
       <Stack gap={10}>
         <div className="orderLegendBody">
           <h3>
-            <FormattedMessage id="label.button.sample" />
+            <FormattedMessage id="order.label.add" />
           </h3>
           {samples.map((sample, i) => {
             return (

@@ -78,7 +78,7 @@ const Index = () => {
   }, [page]);
 
   const attacheSamplesToFormValues = () => {
-    let sampleXmlString = null;
+    let sampleXmlString = "";
     let referralItems = [];
     if (samples.length > 0) {
       if (samples[0].tests.length > 0) {

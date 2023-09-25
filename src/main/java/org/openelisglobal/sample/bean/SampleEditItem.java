@@ -54,6 +54,9 @@ public class SampleEditItem {
 
     private boolean hasResults = false;
 
+    // for display in the react Data table. set as the testId
+    private String id ;
+
     public String getAccessionNumber() {
         return accessionNumber;
     }
@@ -92,6 +95,7 @@ public class SampleEditItem {
 
     public void setTestId(String testId) {
         this.testId = testId;
+        this.id = testId ;
     }
 
     public boolean isCanCancel() {
@@ -188,5 +192,13 @@ public class SampleEditItem {
 
     public void setHasResults(boolean hasResults) {
         this.hasResults = hasResults;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

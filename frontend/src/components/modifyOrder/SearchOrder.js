@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import SearchPatientForm from "../patient/SearchPatientForm";
-import { Button, Column, TextInput ,Grid  ,Form} from "@carbon/react";
+import { Button, Column, TextInput, Grid, Form } from "@carbon/react";
+import { FormattedMessage } from "react-intl";
 
 function SearchOrder() {
   const [selectedPatient, setSelectedPatient] = useState({});
@@ -37,8 +38,8 @@ function SearchOrder() {
       <div className="orderLegendBody">
         <Form onSubmit={handleSearch}>
           <Grid>
-            <Column  lg={16}>
-            <h4>Search By Accesion</h4>
+            <Column lg={16}>
+              <h4> <FormattedMessage id="sample.label.search.labnumber" /></h4>
             </Column>
             <Column lg={4}>
               <TextInput
@@ -48,16 +49,25 @@ function SearchOrder() {
               />
             </Column>
             <Column lg={2}>
-              <Button type="submit">Search</Button>
+              <Button type="submit"> <FormattedMessage id="label.button.submit" /></Button>
             </Column>
           </Grid>
         </Form>
       </div>
       <div className="orderLegendBody">
-        <h4>Search By Patient</h4>
-        <SearchPatientForm
-          getSelectedPatient={getSelectedPatient}
-        ></SearchPatientForm>
+        <Grid>
+          <Column lg={16}>
+            <h4>
+              {" "}
+              <FormattedMessage id="sample.label.search.patient" />
+            </h4>
+          </Column>
+          <Column lg={16}>
+            <SearchPatientForm
+              getSelectedPatient={getSelectedPatient}
+            ></SearchPatientForm>
+          </Column>
+        </Grid>
       </div>
     </>
   );
