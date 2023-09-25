@@ -28,6 +28,8 @@ const EditSample = (props) => {
   const [elementsCounter, setElementsCounter] = useState(0);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
+  const [page2, setPage2] = useState(1);
+  const [pageSize2, setPageSize2] = useState(5);
 
   const [rejectSampleReasons, setRejectSampleReasons] = useState([]);
 
@@ -47,6 +49,22 @@ const EditSample = (props) => {
     });
     setSamples(updateSamples);
     setElementsCounter(count);
+  };
+  const formatTestsObject = (tests) => {
+    return tests.map((test) => {
+      test.id = test.testId;
+      test.collectionTime = "";
+      if (!test.accessionNumber) {
+        test.accessionNumber = "";
+      }
+      if (!test.sampleType) {
+        test.sampleType = "";
+      }
+      if (!test.collectionDate) {
+        test.collectionDate = "";
+      }
+      return test;
+    });
   };
 
   const sampleTypeObject = (object) => {
@@ -97,6 +115,17 @@ const EditSample = (props) => {
       setPageSize(pageInfo.pageSize);
     }
   };
+
+  const handlePageChange2 = (pageInfo) => {
+    if (page2 != pageInfo.page) {
+      setPage2(pageInfo.page);
+    }
+
+    if (pageSize2 != pageInfo.pageSize) {
+      setPageSize2(pageInfo.pageSize);
+    }
+  };
+
   const removeSample = (index) => {
     let updateSamples = samples.splice(index, 1);
     setSamples(updateSamples);
@@ -205,59 +234,12 @@ const EditSample = (props) => {
       <div className="orderLegendBody">
         <Column lg={16}>
           <DataTable
-            rows={orderFormValues.existingTests}
+            rows={formatTestsObject(orderFormValues.existingTests)}
             headers={OrderCurrentTestsHeaders}
             isSortable
           >
             {({ rows, headers, getHeaderProps, getTableProps }) => (
               <TableContainer title="Current Tests">
-                <Table {...getTableProps()}>
-                  <TableHead>
-                    <TableRow>
-                      {headers.map((header) => (
-                        <TableHeader
-                          key={header.key}
-                          {...getHeaderProps({ header })}
-                        >
-                          {header.header}
-                        </TableHeader>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <>
-                      {rows
-                        .slice((page - 1) * pageSize)
-                        .slice(0, pageSize)
-                        .map((row ) => (
-                          <TableRow key={row.id}>
-                            {row.cells.map((cell) => renderCell(cell, row))}
-                          </TableRow>
-                        ))}
-                    </>
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            )}
-          </DataTable>
-          <Pagination
-            onChange={handlePageChange}
-            page={page}
-            pageSize={pageSize}
-            pageSizes={[5, 10, 20, 30]}
-            totalItems={orderFormValues.existingTests.length}
-          ></Pagination>
-        </Column>
-      </div>
-      <div className="orderLegendBody">
-        <Column lg={16}>
-          <DataTable
-            rows={orderFormValues.possibleTests}
-            headers={OrderCurrentTestsHeaders}
-            isSortable
-          >
-            {({ rows, headers, getHeaderProps, getTableProps }) => (
-              <TableContainer title="Available Tests">
                 <Table {...getTableProps()}>
                   <TableHead>
                     <TableRow>
@@ -293,6 +275,53 @@ const EditSample = (props) => {
             pageSize={pageSize}
             pageSizes={[5, 10, 20, 30]}
             totalItems={orderFormValues.existingTests.length}
+          ></Pagination>
+        </Column>
+      </div>
+      <div className="orderLegendBody">
+        <Column lg={16}>
+          <DataTable
+            rows={formatTestsObject(orderFormValues.possibleTests)}
+            headers={OrderCurrentTestsHeaders}
+            isSortable
+          >
+            {({ rows, headers, getHeaderProps, getTableProps }) => (
+              <TableContainer title="Available Tests">
+                <Table {...getTableProps()}>
+                  <TableHead>
+                    <TableRow>
+                      {headers.map((header) => (
+                        <TableHeader
+                          key={header.key}
+                          {...getHeaderProps({ header })}
+                        >
+                          {header.header}
+                        </TableHeader>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <>
+                      {rows
+                        .slice((page2 - 1) * pageSize2)
+                        .slice(0, pageSize2)
+                        .map((row) => (
+                          <TableRow key={row.id}>
+                            {row.cells.map((cell) => renderCell(cell, row))}
+                          </TableRow>
+                        ))}
+                    </>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </DataTable>
+          <Pagination
+            onChange={handlePageChange2}
+            page={page2}
+            pageSize={pageSize2}
+            pageSizes={[5, 10, 20, 30]}
+            totalItems={orderFormValues.possibleTests.length}
           ></Pagination>
         </Column>
       </div>
