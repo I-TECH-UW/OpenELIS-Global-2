@@ -293,5 +293,6 @@
     "pathology.label.report" : "Pathology Report",
     "patient.natioanalid":"National ID",
     "sample.label.orderpanel":"Order Panels",
-    "sample.label.noorder":"Order Doesnt Exist"
+    "sample.label.noorder":"Order Doesnt Exist",
+    "sample.label.labnumber.new" : "New Lab Number" 
 }

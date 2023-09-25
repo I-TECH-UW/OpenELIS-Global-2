@@ -32,3 +32,23 @@ export const OrderCurrentTestsHeaders = [
     header: "Cancel Test",
   },
 ];
+
+export const OrderPossibleTestsHeaders = [
+  {
+    key: "accessionNumber",
+    header: "Lab No.",
+  },
+  {
+    key: "sampleType",
+    header: "Sample Type",
+  },
+  {
+    key: "testName",
+    header: "Test Name",
+  },
+  {
+    key: "add",
+    header: "Assign",
+  },
+];
+

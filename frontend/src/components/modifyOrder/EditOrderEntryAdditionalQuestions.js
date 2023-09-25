@@ -275,6 +275,7 @@ export const ProgramSelect = ({
                 })?.id
               }
               value={orderFormValues?.sampleOrderItems?.programId}
+              disabled={true}
             >
               <SelectItem value="" text="" />
               {programs.map((program) => {
