@@ -201,7 +201,7 @@ const ModifyOrder = () => {
           {intl.formatMessage({ id: "home.label" })}
         </BreadcrumbItem>
         <BreadcrumbItem href="/FindOrder">
-          {intl.formatMessage({ id: "label.search.patient" })}
+          {intl.formatMessage({ id: "sample.label.search.Order" })}
         </BreadcrumbItem>
       </Breadcrumb>
 
