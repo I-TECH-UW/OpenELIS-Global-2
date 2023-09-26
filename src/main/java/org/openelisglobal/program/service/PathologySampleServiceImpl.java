@@ -265,8 +265,11 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         if (immunoHistologyTest == null) {
             return;
         }
-        
-        Analysis currentAnalysis = analysisService.getAnalysesBySampleId(pathologySample.getSample().getId()).get(0);
+        List<Analysis> analyses = analysisService.getAnalysesBySampleId(pathologySample.getSample().getId());
+        if(analyses == null || analyses.isEmpty()){
+          return;
+        }
+        Analysis currentAnalysis = analyses.get(0);
         Analysis analysis = new Analysis();
         analysis.setTest(immunoHistologyTest);
         analysis.setIsReportable(currentAnalysis.getIsReportable());
