@@ -39,11 +39,17 @@ export const QuestionnaireResponse = ({ questionnaireResponse }) => {
     return (
       <>
         <div className="questionnaireResponseItem">
-          {item.text}:
-          {item.answer &&
-            item.answer.map((answer, index) => {
-              return <span key={index}>{renderAnswer(answer)}</span>;
-            })}
+          <Grid>
+            <Column lg={6} md={8} sm={4}>
+              <h6>{item.text}:</h6>
+            </Column>
+            <Column lg={10} md={8} sm={4}>
+            {item.answer &&
+              item.answer.map((answer, index) => {
+                return <Tag key={index}>{renderAnswer(answer)}</Tag>;
+              })}
+              </Column>
+          </Grid>
         </div>
       </>
     );
