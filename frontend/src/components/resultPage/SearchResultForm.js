@@ -973,7 +973,7 @@ export function SearchResults(props) {
                 page={page}
                 pageSize={pageSize}
                 pageSizes={[100]}
-                totalItems={props.results.testResult.length}
+                totalItems={props.results.testResult?.length}
               ></Pagination>
 
               <Button type="button" id="submit" onClick={handleSave}>
