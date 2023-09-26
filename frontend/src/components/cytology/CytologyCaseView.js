@@ -131,6 +131,7 @@ function CytologyCaseView() {
   const [loading, setLoading] = useState(true);
   const [reportTypes, setReportTypes] = useState([]);
   const intl = useIntl();
+  const [slidesToAdd, setSlidesToAdd] = useState(1);
 
   async function displayStatus(response) {
     var body = await response.json();
@@ -675,15 +676,41 @@ function CytologyCaseView() {
                 );
               })}
 
-            <Column lg={16} md={8} sm={4}>
+            <Column lg={2} md={8} sm={4}>
+              <TextInput
+                id="slidesToAdd"
+                labelText={intl.formatMessage({ id: "pathology.label.slide.add.number" })}
+                hideLabel={true}
+                placeholder={intl.formatMessage({ id: "pathology.label.slide.add.number" })}
+                value={slidesToAdd}
+                type="number"
+                  onChange={(e) => {
+                    setSlidesToAdd(e.target.value);
+                }}
+              />
+            </Column>
+            <Column lg={14} md={8} sm={4}>
               <Button
                 onClick={() => {
+                  const maxSlideNumber = pathologySampleInfo.slides.reduce(
+                    (max, slide) => {
+                      const slideNumber = slide.slideNumber || 0; 
+                      return Math.ceil(Math.max(max, slideNumber));
+                    },
+                    0,
+                  ); 
+
+                  var allSlides = pathologySampleInfo.slides || [];
+                  Array.from({ length: slidesToAdd }, (_, index) => {
+                    allSlides.push({
+                      id: "",
+                      slideNumber: maxSlideNumber + 1 + index,
+                    });
+                  })
+
                   setPathologySampleInfo({
                     ...pathologySampleInfo,
-                    slides: [
-                      ...(pathologySampleInfo.slides || []),
-                      { id: "", slideNumber: "" },
-                    ],
+                    slides: allSlides
                   });
                 }}
               >

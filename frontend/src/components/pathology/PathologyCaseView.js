@@ -114,6 +114,9 @@ function PathologyCaseView() {
   const [technicianUsers, setTechnicianUsers] = useState([]);
   const [pathologistUsers, setPathologistUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [blocksToAdd, setBlocksToAdd] = useState(1);
+  const [slidesToAdd, setSlidesToAdd] = useState(1);
+
 
   async function displayStatus(response) {
     var body = await response.json();
@@ -647,15 +650,41 @@ function PathologyCaseView() {
                   </>
                 );
               })}
-            <Column lg={16} md={8} sm={4}>
+            <Column lg={2} md={8} sm={4}>
+            <TextInput
+              id="blocksToAdd"
+              labelText={intl.formatMessage({ id: "pathology.label.block.add.number" })}
+              hideLabel={true}
+              placeholder={intl.formatMessage({ id: "pathology.label.block.add.number" })}
+              value={blocksToAdd}
+              type="number"
+                onChange={(e) => {
+                  setBlocksToAdd(e.target.value);
+              }}
+            />
+            </Column>
+            <Column lg={14} md={8} sm={4}>
               <Button
                 onClick={() => {
+                  const maxBlockNumber = pathologySampleInfo.blocks.reduce(
+                    (max, block) => {
+                      const blockNumber = block.blockNumber || 0; 
+                      return Math.ceil(Math.max(max, blockNumber));
+                    },
+                    0,
+                  ); 
+
+                  var allBlocks = pathologySampleInfo.blocks || [];
+                  Array.from({ length: blocksToAdd }, (_, index) => {
+                    allBlocks.push({
+                      id: "",
+                      blockNumber: maxBlockNumber + 1 + index,
+                    });
+                  })
+
                   setPathologySampleInfo({
                     ...pathologySampleInfo,
-                    blocks: [
-                      ...(pathologySampleInfo.blocks || []),
-                      { id: "", blockNumber: "" },
-                    ],
+                    blocks: allBlocks
                   });
                 }}
               >
@@ -798,15 +827,41 @@ function PathologyCaseView() {
                 );
               })}
 
-            <Column lg={16} md={8} sm={4}>
+          <Column lg={2} md={8} sm={4}>
+            <TextInput
+              id="slidesToAdd"
+              labelText={intl.formatMessage({ id: "pathology.label.slide.add.number" })}
+              hideLabel={true}
+              placeholder={intl.formatMessage({ id: "pathology.label.slide.add.number" })}
+              value={slidesToAdd}
+              type="number"
+                onChange={(e) => {
+                  setSlidesToAdd(e.target.value);
+              }}
+            />
+            </Column>
+            <Column lg={14} md={8} sm={4}>
               <Button
                 onClick={() => {
+                  const maxSlideNumber = pathologySampleInfo.slides.reduce(
+                    (max, slide) => {
+                      const slideNumber = slide.slideNumber || 0; 
+                      return Math.ceil(Math.max(max, slideNumber));
+                    },
+                    0,
+                  ); 
+
+                  var allSlides = pathologySampleInfo.slides || [];
+                  Array.from({ length: slidesToAdd }, (_, index) => {
+                    allSlides.push({
+                      id: "",
+                      slideNumber: maxSlideNumber + 1 + index,
+                    });
+                  })
+
                   setPathologySampleInfo({
                     ...pathologySampleInfo,
-                    slides: [
-                      ...(pathologySampleInfo.slides || []),
-                      { id: "", slideNumber: "" },
-                    ],
+                    slides: allSlides
                   });
                 }}
               >
