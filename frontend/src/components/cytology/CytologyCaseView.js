@@ -462,7 +462,7 @@ function CytologyCaseView() {
               save(e);
             }}
           >
-            Save
+            <FormattedMessage id="label.button.save" />
           </Button>
         </Column>
         <Column lg={16} md={8} sm={4}>
@@ -552,7 +552,7 @@ function CytologyCaseView() {
                   <>
                     <Column lg={2} md={8} sm={4}>
                       <IconButton
-                        label="remove slide"
+                        label={intl.formatMessage({ id: "label.button.remove.slide" })}
                         onClick={() => {
                           var info = { ...pathologySampleInfo };
                           info["slides"].splice(index, 1);
@@ -572,9 +572,7 @@ function CytologyCaseView() {
                           <FormattedMessage id="pathology.label.slide.number" />
                         }
                         hideLabel={true}
-                        placeholder={
-                          <FormattedMessage id="pathology.label.slide.number" />
-                        }
+                        placeholder={intl.formatMessage({ id: "pathology.label.slide.number" })}
                         value={slide.slideNumber}
                         type="number"
                         onChange={(e) => {
@@ -594,9 +592,7 @@ function CytologyCaseView() {
                           <FormattedMessage id="pathology.label.location" />
                         }
                         hideLabel={true}
-                        placeholder={
-                          <FormattedMessage id="pathology.label.location" />
-                        }
+                        placeholder={intl.formatMessage({ id: "pathology.label.location" })}
                         value={slide.location}
                         onChange={(e) => {
                           var newSlides = [...pathologySampleInfo.slides];
@@ -719,9 +715,7 @@ function CytologyCaseView() {
                 <SelectItem
                   disabled
                   value="ADD"
-                  text={
-                    <FormattedMessage id="immunohistochemistry.label.addreport" />
-                  }
+                  text={intl.formatMessage({ id: "immunohistochemistry.label.addreport" })}
                 />
                 {reportTypes.map((report, index) => {
                   return (
@@ -749,7 +743,7 @@ function CytologyCaseView() {
                   <>
                     <Column lg={2} md={8} sm={4}>
                       <IconButton
-                        label="Remove Report"
+                        label={intl.formatMessage({ id: "label.button.remove.report" })}
                         onClick={() => {
                           var info = { ...pathologySampleInfo };
                           info["reports"].splice(index, 1);
@@ -1645,7 +1639,7 @@ function CytologyCaseView() {
               save(e);
             }}
           >
-            Save
+             <FormattedMessage id="label.button.save" />
           </Button>
         </Column>
       </Grid>

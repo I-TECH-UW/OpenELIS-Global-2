@@ -374,7 +374,7 @@ function PathologyCaseView() {
               save(e);
             }}
           >
-            Save
+             <FormattedMessage id="label.button.save" />
           </Button>
         </Column>
         <Column lg={16} md={8} sm={4}>
@@ -468,7 +468,7 @@ function PathologyCaseView() {
                   <>
                     <Column lg={2} md={8} sm={4}>
                       <IconButton
-                        label="Remove Report"
+                        label={intl.formatMessage({ id: "label.button.remove.report" })}
                         onClick={() => {
                           var info = { ...pathologySampleInfo };
                           info["reports"].splice(index, 1);
@@ -577,7 +577,7 @@ function PathologyCaseView() {
                   <>
                     <Column lg={2} md={8} sm={4}>
                       <IconButton
-                        label="remove block"
+                        label={intl.formatMessage({ id: "label.button.remove.block" })}
                         onClick={() => {
                           var info = { ...pathologySampleInfo };
                           info["blocks"].splice(index, 1);
@@ -593,9 +593,9 @@ function PathologyCaseView() {
                     <Column lg={3} md={2} sm={1} key={index}>
                       <TextInput
                         id="blockNumber"
-                        labelText="block number"
+                        labelText={intl.formatMessage({ id: "pathology.label.block.number" })}
                         hideLabel={true}
-                        placeholder="Block Number"
+                        placeholder={intl.formatMessage({ id: "pathology.label.block.number" })}
                         value={block.blockNumber}
                         type="number"
                         onChange={(e) => {
@@ -611,9 +611,9 @@ function PathologyCaseView() {
                     <Column lg={3} md={2} sm={1}>
                       <TextInput
                         id="location"
-                        labelText="location"
+                        labelText={intl.formatMessage({ id: "pathology.label.location" })}
                         hideLabel={true}
-                        placeholder="Location"
+                        placeholder={intl.formatMessage({ id: "pathology.label.location" })}
                         value={block.location}
                         onChange={(e) => {
                           var newBlocks = [...pathologySampleInfo.blocks];
@@ -680,7 +680,7 @@ function PathologyCaseView() {
                   <>
                     <Column lg={2} md={8} sm={4}>
                       <IconButton
-                        label="remove slide"
+                        label={intl.formatMessage({ id: "label.button.remove.slide" })}
                         onClick={() => {
                           var info = { ...pathologySampleInfo };
                           info["slides"].splice(index, 1);
@@ -696,9 +696,9 @@ function PathologyCaseView() {
                     <Column lg={3} md={2} sm={1} key={index}>
                       <TextInput
                         id="slideNumber"
-                        labelText="slide number"
+                        labelText={intl.formatMessage({ id: "pathology.label.slide.number" })}
                         hideLabel={true}
-                        placeholder="Slide Number"
+                        placeholder={intl.formatMessage({ id: "pathology.label.slide.number" })}
                         value={slide.slideNumber}
                         type="number"
                         onChange={(e) => {
@@ -714,9 +714,9 @@ function PathologyCaseView() {
                     <Column lg={3} md={2} sm={1}>
                       <TextInput
                         id="location"
-                        labelText="location"
+                        labelText={intl.formatMessage({ id: "pathology.label.location" })}
                         hideLabel={true}
-                        placeholder="Location"
+                        placeholder={intl.formatMessage({ id: "pathology.label.location" })}
                         value={slide.location}
                         onChange={(e) => {
                           var newSlides = [...pathologySampleInfo.slides];
@@ -1086,7 +1086,7 @@ function PathologyCaseView() {
               save(e);
             }}
           >
-            Save
+             <FormattedMessage id="label.button.save" />
           </Button>
         </Column>
       </Grid>

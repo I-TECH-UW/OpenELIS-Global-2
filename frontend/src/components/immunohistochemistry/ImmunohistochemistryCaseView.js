@@ -365,7 +365,7 @@ function ImmunohistochemistryCaseView() {
                 save(e);
               }}
             >
-              Save
+               <FormattedMessage id="label.button.save" />
             </Button>
           </Column>
           <Column lg={16} md={8} sm={4}>
@@ -465,7 +465,7 @@ function ImmunohistochemistryCaseView() {
                 <Select
                   id="report"
                   name="report"
-                  labelText="Add Report"
+                  labelText={intl.formatMessage({ id: "immunohistochemistry.label.addreport" })}
                   onChange={(event) => {
                     setImmunohistochemistrySampleInfo({
                       ...immunohistochemistrySampleInfo,
@@ -476,7 +476,7 @@ function ImmunohistochemistryCaseView() {
                     });
                   }}
                 >
-                  <SelectItem disabled value="ADD" text="Add Report" />
+                  <SelectItem disabled value="ADD" text={intl.formatMessage({ id: "immunohistochemistry.label.addreport" })} />
                   {reportTypes.map((report, index) => {
                     return (
                       <SelectItem
@@ -505,7 +505,7 @@ function ImmunohistochemistryCaseView() {
                     <>
                       <Column lg={2} md={8} sm={4}>
                         <IconButton
-                          label="Remove Report"
+                          label={intl.formatMessage({ id: "label.button.remove.report" })}
                           onClick={() => {
                             var info = { ...immunohistochemistrySampleInfo };
                             info["reports"].splice(index, 1);
@@ -615,9 +615,9 @@ function ImmunohistochemistryCaseView() {
                             <Column lg={2} md={2} sm={1} key={index}>
                               <TextInput
                                 id="blockNumber"
-                                labelText="block number"
+                                labelText={intl.formatMessage({ id: "pathology.label.block.number" })}
                                 hideLabel={true}
-                                placeholder="Block Number"
+                                placeholder={intl.formatMessage({ id: "pathology.label.block.number" })}
                                 value={block.blockNumber}
                                 disabled={true}
                               />
@@ -625,9 +625,9 @@ function ImmunohistochemistryCaseView() {
                             <Column lg={2} md={2} sm={1}>
                               <TextInput
                                 id="location"
-                                labelText="location"
+                                labelText={intl.formatMessage({ id: "pathology.label.location" })}
                                 hideLabel={true}
-                                placeholder="Location"
+                                placeholder={intl.formatMessage({ id: "pathology.label.location" })}
                                 value={block.location}
                                 disabled={true}
                               />
@@ -680,19 +680,19 @@ function ImmunohistochemistryCaseView() {
                             <Column lg={2} md={2} sm={1} key={index}>
                               <TextInput
                                 id="slideNumber"
-                                labelText="slide number"
+                                labelText={intl.formatMessage({ id: "pathology.label.slide.number" })}
                                 hideLabel={true}
                                 disabled={true}
-                                placeholder="Slide Number"
+                                placeholder={intl.formatMessage({ id: "pathology.label.slide.number" })}
                                 value={slide.slideNumber}
                               />
                             </Column>
                             <Column lg={2} md={2} sm={1}>
                               <TextInput
                                 id="location"
-                                labelText="location"
+                                labelText={intl.formatMessage({ id: "pathology.label.location" })}
                                 hideLabel={true}
-                                placeholder="Location"
+                                placeholder={intl.formatMessage({ id: "pathology.label.location" })}
                                 value={slide.location}
                                 disabled={true}
                               />
@@ -858,7 +858,7 @@ function ImmunohistochemistryCaseView() {
                 save(e);
               }}
             >
-              Save
+               <FormattedMessage id="label.button.save" />
             </Button>
           </Column>
         </Grid>

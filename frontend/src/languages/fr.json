@@ -295,5 +295,9 @@
     "sample.label.labnumber.new": "Nouveau numéro de laboratoire" ,
     "sample.label.search.labnumber": "Rechercher par numéro d'accès",
     "sample.label.search.patient": "Rechercher par patient",
-    "sample.label.search.Order": "Rechercher une commande"
+    "sample.label.search.Order": "Rechercher une commande",
+    "label.button.remove.slide": "Supprimer la Diapositive",
+    "label.button.remove.block": "Supprimer le Bloc",
+    "label.button.remove.report": "Supprimer le Rapport",
+    "pathology.label.block.number": "Numéro du Bloc"
 }
