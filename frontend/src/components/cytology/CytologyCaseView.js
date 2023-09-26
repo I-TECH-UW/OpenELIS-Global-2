@@ -30,7 +30,7 @@ import {
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
-import { FormattedMessage ,useIntl} from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import "../pathology/PathologyDashboard.css";
 
 export const QuestionnaireResponse = ({ questionnaireResponse }) => {
@@ -39,11 +39,17 @@ export const QuestionnaireResponse = ({ questionnaireResponse }) => {
     return (
       <>
         <div className="questionnaireResponseItem">
-          {item.text}:
-          {item.answer &&
-            item.answer.map((answer, index) => {
-              return <span key={index}>{renderAnswer(answer)}</span>;
-            })}
+          <Grid>
+            <Column lg={6} md={8} sm={4}>
+              <h6> {item.text}:</h6>
+            </Column>
+            <Column lg={10} md={8} sm={4}>
+              {item.answer &&
+                item.answer.map((answer, index) => {
+                  return <Tag key={index}>{renderAnswer(answer)}</Tag>;
+                })}
+            </Column>
+          </Grid>
         </div>
       </>
     );
@@ -130,7 +136,8 @@ function CytologyCaseView() {
   const [pathologistUsers, setPathologistUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [reportTypes, setReportTypes] = useState([]);
-  const intl = useIntl()
+  const intl = useIntl();
+  const [slidesToAdd, setSlidesToAdd] = useState(1);
 
   async function displayStatus(response) {
     var body = await response.json();
@@ -349,10 +356,18 @@ function CytologyCaseView() {
 
   return (
     <>
-      <Breadcrumb>
-        <BreadcrumbItem href="/">{intl.formatMessage({ id: "home.label" })}</BreadcrumbItem>
-        <BreadcrumbItem href="/CytologyDashboard">{intl.formatMessage({ id: "cytology.label.dashboard" })}</BreadcrumbItem>
-      </Breadcrumb>
+      <Grid fullWidth={true}>
+        <Column lg={16}>
+          <Breadcrumb>
+            <BreadcrumbItem href="/">
+              {intl.formatMessage({ id: "home.label" })}
+            </BreadcrumbItem>
+            <BreadcrumbItem href="/CytologyDashboard">
+              {intl.formatMessage({ id: "cytology.label.dashboard" })}
+            </BreadcrumbItem>
+          </Breadcrumb>
+        </Column>
+      </Grid>
 
       <Grid fullWidth={true}>
         <Column lg={16}>
@@ -454,7 +469,7 @@ function CytologyCaseView() {
               save(e);
             }}
           >
-            Save
+            <FormattedMessage id="label.button.save" />
           </Button>
         </Column>
         <Column lg={16} md={8} sm={4}>
@@ -544,7 +559,7 @@ function CytologyCaseView() {
                   <>
                     <Column lg={2} md={8} sm={4}>
                       <IconButton
-                        label="remove slide"
+                        label={intl.formatMessage({ id: "label.button.remove.slide" })}
                         onClick={() => {
                           var info = { ...pathologySampleInfo };
                           info["slides"].splice(index, 1);
@@ -564,9 +579,7 @@ function CytologyCaseView() {
                           <FormattedMessage id="pathology.label.slide.number" />
                         }
                         hideLabel={true}
-                        placeholder={
-                          <FormattedMessage id="pathology.label.slide.number" />
-                        }
+                        placeholder={intl.formatMessage({ id: "pathology.label.slide.number" })}
                         value={slide.slideNumber}
                         type="number"
                         onChange={(e) => {
@@ -586,9 +599,7 @@ function CytologyCaseView() {
                           <FormattedMessage id="pathology.label.location" />
                         }
                         hideLabel={true}
-                        placeholder={
-                          <FormattedMessage id="pathology.label.location" />
-                        }
+                        placeholder={intl.formatMessage({ id: "pathology.label.location" })}
                         value={slide.location}
                         onChange={(e) => {
                           var newSlides = [...pathologySampleInfo.slides];
@@ -671,15 +682,41 @@ function CytologyCaseView() {
                 );
               })}
 
-            <Column lg={16} md={8} sm={4}>
+            <Column lg={2} md={8} sm={4}>
+              <TextInput
+                id="slidesToAdd"
+                labelText={intl.formatMessage({ id: "pathology.label.slide.add.number" })}
+                hideLabel={true}
+                placeholder={intl.formatMessage({ id: "pathology.label.slide.add.number" })}
+                value={slidesToAdd}
+                type="number"
+                  onChange={(e) => {
+                    setSlidesToAdd(e.target.value);
+                }}
+              />
+            </Column>
+            <Column lg={14} md={8} sm={4}>
               <Button
                 onClick={() => {
+                  const maxSlideNumber = pathologySampleInfo.slides.reduce(
+                    (max, slide) => {
+                      const slideNumber = slide.slideNumber || 0; 
+                      return Math.ceil(Math.max(max, slideNumber));
+                    },
+                    0,
+                  ); 
+
+                  var allSlides = pathologySampleInfo.slides || [];
+                  Array.from({ length: slidesToAdd }, (_, index) => {
+                    allSlides.push({
+                      id: "",
+                      slideNumber: maxSlideNumber + 1 + index,
+                    });
+                  })
+
                   setPathologySampleInfo({
                     ...pathologySampleInfo,
-                    slides: [
-                      ...(pathologySampleInfo.slides || []),
-                      { id: "", slideNumber: "" },
-                    ],
+                    slides: allSlides
                   });
                 }}
               >
@@ -711,9 +748,7 @@ function CytologyCaseView() {
                 <SelectItem
                   disabled
                   value="ADD"
-                  text={
-                    <FormattedMessage id="immunohistochemistry.label.addreport" />
-                  }
+                  text={intl.formatMessage({ id: "immunohistochemistry.label.addreport" })}
                 />
                 {reportTypes.map((report, index) => {
                   return (
@@ -741,7 +776,7 @@ function CytologyCaseView() {
                   <>
                     <Column lg={2} md={8} sm={4}>
                       <IconButton
-                        label="Remove Report"
+                        label={intl.formatMessage({ id: "label.button.remove.report" })}
                         onClick={() => {
                           var info = { ...pathologySampleInfo };
                           info["reports"].splice(index, 1);
@@ -1637,7 +1672,7 @@ function CytologyCaseView() {
               save(e);
             }}
           >
-            Save
+             <FormattedMessage id="label.button.save" />
           </Button>
         </Column>
       </Grid>

@@ -95,10 +95,10 @@
     "pathology.label.title" : "Pathology",
     "pathology.label.blocks" : "Blocks",
     "pathology.label.block" : "Block",
-    "pathology.label.addblock" : "Add Block",
+    "pathology.label.addblock" : "Add Block(s)",
     "pathology.label.slides" : "Slides",
     "pathology.label.slide" : "Slide",
-    "pathology.label.addslide" : "Add Slide",
+    "pathology.label.addslide" : "Add Slide(s)",
     "pathology.label.printlabel" : "Print Label",
     "pathology.label.view" : "View",
     "pathology.label.dashboard" : "Pathology DashBoard",
@@ -297,6 +297,12 @@
     "sample.label.labnumber.new" : "New Lab Number" ,
     "sample.label.search.labnumber" : "Search By Accesion Number"  ,
     "sample.label.search.patient" : "Search By Patient" ,
-    "sample.label.search.Order" : "Search Order" 
+    "sample.label.search.Order" : "Search Order" ,
+    "label.button.remove.slide": "Remove Slide",
+    "label.button.remove.block": "Remove Block",
+    "label.button.remove.report": "Remove Report",
+    "pathology.label.block.number": "Block number",
+    "pathology.label.block.add.number": "Number of Blocks to add",
+    "pathology.label.slide.add.number": "Number of Slides to add"
     
 }
