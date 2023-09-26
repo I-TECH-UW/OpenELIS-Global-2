@@ -172,9 +172,9 @@ const ModifyOrder = () => {
     }
     setOrderFormValues({
       ...orderFormValues,
-     // useReferral: true,
+      // useReferral: true,
       sampleXML: sampleXmlString,
-     // referralItems: referralItems,
+      // referralItems: referralItems,
     });
   };
 
@@ -196,14 +196,18 @@ const ModifyOrder = () => {
 
   return (
     <>
-      <Breadcrumb>
-        <BreadcrumbItem href="/">
-          {intl.formatMessage({ id: "home.label" })}
-        </BreadcrumbItem>
-        <BreadcrumbItem href="/FindOrder">
-          {intl.formatMessage({ id: "sample.label.search.Order" })}
-        </BreadcrumbItem>
-      </Breadcrumb>
+      <Grid fullWidth={true}>
+        <Column lg={16}>
+          <Breadcrumb>
+            <BreadcrumbItem href="/">
+              {intl.formatMessage({ id: "home.label" })}
+            </BreadcrumbItem>
+            <BreadcrumbItem href="/FindOrder">
+              {intl.formatMessage({ id: "sample.label.search.Order" })}
+            </BreadcrumbItem>
+          </Breadcrumb>
+        </Column>
+      </Grid>
 
       <Grid fullWidth={true}>
         <Column lg={16}>

@@ -30,7 +30,7 @@ import {
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
-import { FormattedMessage ,useIntl} from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import "../pathology/PathologyDashboard.css";
 
 export const QuestionnaireResponse = ({ questionnaireResponse }) => {
@@ -130,7 +130,7 @@ function CytologyCaseView() {
   const [pathologistUsers, setPathologistUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [reportTypes, setReportTypes] = useState([]);
-  const intl = useIntl()
+  const intl = useIntl();
 
   async function displayStatus(response) {
     var body = await response.json();
@@ -349,10 +349,18 @@ function CytologyCaseView() {
 
   return (
     <>
-      <Breadcrumb>
-        <BreadcrumbItem href="/">{intl.formatMessage({ id: "home.label" })}</BreadcrumbItem>
-        <BreadcrumbItem href="/CytologyDashboard">{intl.formatMessage({ id: "cytology.label.dashboard" })}</BreadcrumbItem>
-      </Breadcrumb>
+      <Grid fullWidth={true}>
+        <Column lg={16}>
+          <Breadcrumb>
+            <BreadcrumbItem href="/">
+              {intl.formatMessage({ id: "home.label" })}
+            </BreadcrumbItem>
+            <BreadcrumbItem href="/CytologyDashboard">
+              {intl.formatMessage({ id: "cytology.label.dashboard" })}
+            </BreadcrumbItem>
+          </Breadcrumb>
+        </Column>
+      </Grid>
 
       <Grid fullWidth={true}>
         <Column lg={16}>
