@@ -65,17 +65,17 @@ public class AuditTrailServiceImpl implements AuditTrailService {
         // if logging failes an exception should be thrown so that INSERT/UPDATE is
         // rolled back
         if (referenceTable == null) {
-            LogEvent.logDebug("AuditTrailDAOImpl", "saveNewHistory()", "NO CHANGES: REF TABLE IS NULL");
+            LogEvent.logError("AuditTrailDAOImpl", "saveNewHistory()", "NO CHANGES: REF TABLE IS NULL");
             throw new LIMSRuntimeException("Reference Table is null in AuditTrailDAOImpl saveNewHistory()");
         }
 
         if ((sysUserId == null) || (sysUserId.length() == 0)) {
-            LogEvent.logDebug("AuditTrailDAOImpl", "saveNewHistory()", "NO CHANGES: SYS_USER_ID IS NULL");
+            LogEvent.logError("AuditTrailDAOImpl", "saveNewHistory()", "NO CHANGES: SYS_USER_ID IS NULL");
             throw new LIMSRuntimeException("System User ID is null in AuditTrailDAOImpl saveNewHistory()");
         }
 
         if (newObject == null || tableName == null) {
-            LogEvent.logDebug("AuditTrailDAOImpl", "saveNewHistory()",
+            LogEvent.logError("AuditTrailDAOImpl", "saveNewHistory()",
                     "NO CHANGES: EITHER OBJECT or TABLE NAME IS NULL");
             throw new LIMSRuntimeException(
                     "Either new object or table name is null in AuditTrailDAOImpl saveNewHistory()");
@@ -121,14 +121,14 @@ public class AuditTrailServiceImpl implements AuditTrailService {
         }
         if (rt == null) {
             // bugzilla 2154
-            LogEvent.logDebug("AuditTrailDAOImpl", "saveHistory()", "NO CHANGES: REF TABLE IS NULL");
+            LogEvent.logError("AuditTrailDAOImpl", "saveHistory()", "NO CHANGES: REF TABLE IS NULL");
             // bugzilla 1926
             throw new LIMSRuntimeException("Reference Table is null in AuditTrailDAOImpl saveHistory()");
         }
 
         if ((sysUserId == null) || (sysUserId.length() == 0)) {
             // bugzilla 2154
-            LogEvent.logDebug("AuditTrailDAOImpl", "saveHistory()", "NO CHANGES: SYS_USER_ID IS NULL");
+            LogEvent.logError("AuditTrailDAOImpl", "saveHistory()", "NO CHANGES: SYS_USER_ID IS NULL");
             // bugzilla 1926
             throw new LIMSRuntimeException(
                     "System User ID is null in AuditTrailDAOImpl saveHistory() for table " + tableName);
@@ -137,7 +137,7 @@ public class AuditTrailServiceImpl implements AuditTrailService {
         if ((newObject == null && IActionConstants.AUDIT_TRAIL_UPDATE.equals(event)) || existingObject == null
                 || event == null || tableName == null) {
             // bugzilla 2154
-            LogEvent.logDebug("AuditTrailDAOImpl", "saveHistory()",
+            LogEvent.logError("AuditTrailDAOImpl", "saveHistory()",
                     "NO CHANGES: EITHER OBJECTS or EVENT or TABLE NAME IS NULL");
             // bugzilla 1926
             throw new LIMSRuntimeException(
@@ -297,8 +297,7 @@ public class AuditTrailServiceImpl implements AuditTrailService {
                     }
                 } catch (IllegalAccessException e) {
                     // buzilla 2154
-                    LogEvent.logError(e.toString(), e);
-                    LogEvent.logDebug(e);
+                    LogEvent.logErrorStack(e);
                     propertyNewState = "";
                 }
 
@@ -313,8 +312,7 @@ public class AuditTrailServiceImpl implements AuditTrailService {
                     propertyPreUpdateState = "";
                 } catch (IllegalAccessException e) {
                     // buzilla 2154
-                    LogEvent.logError(e.toString(), e);
-                    LogEvent.logDebug(e);
+                    LogEvent.logErrorStack(e);
                     propertyPreUpdateState = "";
                 }
 
@@ -407,7 +405,7 @@ public class AuditTrailServiceImpl implements AuditTrailService {
                     m2 = newObject.getClass().getMethod("getCollectionDate", new Class[0]);
                     o2 = m2.invoke(newObject, (Object[]) new Class[0]);
                 } catch (NoSuchMethodException e) {
-                    LogEvent.logInfo(this.getClass().getName(), "processLabelValueFixes",
+                    LogEvent.logWarn(this.getClass().getName(), "processLabelValueFixes",
                             "ignoring NoSuchMethodException getCollectionDate() for object of type: "
                                     + existingObject.getClass().getName());
                     // ignore for SampleItem (which does not have getCollectionDate method

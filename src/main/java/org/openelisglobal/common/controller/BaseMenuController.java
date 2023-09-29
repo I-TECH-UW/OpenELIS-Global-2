@@ -71,10 +71,10 @@ public abstract class BaseMenuController<T> extends BaseController {
         System.out.println(request.getContextPath());
         int startingRecNo = getCurrentStartingRecNo(request);
 
-        LogEvent.logDebug("BaseMenuAction", "performAction()", "current start " + startingRecNo);
+        LogEvent.logTrace("BaseMenuAction", "performAction()", "current start " + startingRecNo);
         int nextStartingRecNo = startingRecNo + getPageSize();
 
-        LogEvent.logDebug("BaseMenuAction", "performAction()", "next start " + nextStartingRecNo);
+        LogEvent.logTrace("BaseMenuAction", "performAction()", "next start " + nextStartingRecNo);
         String stringNextStartingRecNo = String.valueOf(nextStartingRecNo);
         request.setAttribute("startingRecNo", stringNextStartingRecNo);
 

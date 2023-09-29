@@ -93,7 +93,7 @@ public class ProviderImportServiceImpl implements ProviderImportService {
 
                     } catch (RuntimeException e) {
                         LogEvent.logError(e);
-                        LogEvent.logDebug(this.getClass().getName(), "importProvidersFromBundle",
+                        LogEvent.logError(this.getClass().getName(), "importProvidersFromBundle",
                                 fhirContext.newJsonParser().encodeResourceToString(fhirPractitioner));
                     }
                 }

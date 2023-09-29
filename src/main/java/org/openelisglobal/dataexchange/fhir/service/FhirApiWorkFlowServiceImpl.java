@@ -144,10 +144,10 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                         .where(Task.RES_ID.exactly().identifier(referralTaskUuid.toString()));
                 Bundle originalTasksBundle = searchQuery.execute();
                 if (originalTasksBundle.hasEntry()) {
-                    LogEvent.logDebug(this.getClass().getName(), "beginTaskCheckIfAcceptedPath",
+                    LogEvent.logTrace(this.getClass().getName(), "beginTaskCheckIfAcceptedPath",
                             "received bundle with " + originalTasksBundle.getEntry().size() + " entries");
                 } else {
-                    LogEvent.logDebug(this.getClass().getName(), "beginTaskCheckIfAcceptedPath",
+                    LogEvent.logTrace(this.getClass().getName(), "beginTaskCheckIfAcceptedPath",
                             "received bundle with 0 entries");
                 }
                 Map<String, Task> originalTasksById = new HashMap<>();
@@ -168,10 +168,10 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 for (Entry<String, Task> taskEntry : originalTasksById.entrySet()) {
                     Optional<Task> task = fhirPersistanceService.getTaskBasedOnTask(taskEntry.getKey());
                     if (task.isPresent()) {
-                        LogEvent.logDebug(FhirApiWorkFlowServiceImpl.class.getName(), "beginTaskCheckIfAcceptedPath",
+                        LogEvent.logTrace(FhirApiWorkFlowServiceImpl.class.getName(), "beginTaskCheckIfAcceptedPath",
                                 "task " + task.get().getIdElement().getIdPart() + " has been detected as "
                                         + task.get().getStatus());
-                        LogEvent.logDebug(FhirApiWorkFlowServiceImpl.class.getName(), "beginTaskCheckIfAcceptedPath",
+                        LogEvent.logTrace(FhirApiWorkFlowServiceImpl.class.getName(), "beginTaskCheckIfAcceptedPath",
                                 "changing task " + taskEntry.getKey() + " to " + task.get().getStatus());
                         if (TaskStatus.RECEIVED.equals(task.get().getStatus())) {
                             Task taskBasedOnOrginalTask = task.get();
@@ -221,7 +221,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 //                .where(Task.STATUS.exactly().code(TaskStatus.ACCEPTED.toCode()))//
 //                .where(Task.REQUESTER.hasAnyOfIds(remoteStoreIdentifier));
         for (UUID referralTaskUuid : referralService.getSentReferralUuids()) {
-            LogEvent.logDebug(this.getClass().getName(), "beginTaskImportResultsPath",
+            LogEvent.logTrace(this.getClass().getName(), "beginTaskImportResultsPath",
                     "searching for results for Task ID " + referralTaskUuid);
             try {
                 IQuery<Bundle> searchQuery = sourceFhirClient.search()//
@@ -233,10 +233,10 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                         .where(Task.RES_ID.exactly().identifier(referralTaskUuid.toString()));
                 Bundle originalTasksBundle = searchQuery.execute();
                 if (originalTasksBundle.hasEntry()) {
-                    LogEvent.logDebug(this.getClass().getName(), "beginTaskImportResultsPath", "received bundle with "
+                    LogEvent.logTrace(this.getClass().getName(), "beginTaskImportResultsPath", "received bundle with "
                             + originalTasksBundle.getEntry().size() + " entries for Task ID " + referralTaskUuid);
                 } else {
-                    LogEvent.logDebug(this.getClass().getName(), "beginTaskImportResultsPath",
+                    LogEvent.logTrace(this.getClass().getName(), "beginTaskImportResultsPath",
                             "received bundle with 0 entries for Task ID " + referralTaskUuid);
                 }
                 Map<String, OriginalReferralObjects> originalReferralObjectsByServiceRequest = new HashMap<>();
@@ -245,7 +245,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                         try {
                             addOriginalReferralObject(bundleEntry, originalReferralObjectsByServiceRequest);
                         } catch (RuntimeException e) {
-                            LogEvent.logError(e);
+                            LogEvent.logErrorStack(e);
                             LogEvent.logError("could not import result for: " + bundleEntry.getResource().getId(), e);
                         }
                     }
@@ -373,7 +373,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         }
 
         List<Bundle> importBundles = new ArrayList<>();
-        LogEvent.logDebug(this.getClass().getName(), "beginTaskImportOrderPath", "searching for Tasks");
+        LogEvent.logTrace(this.getClass().getName(), "beginTaskImportOrderPath", "searching for Tasks");
         IGenericClient sourceFhirClient = fhirUtil.getFhirClient(remoteStorePath);
         IQuery<Bundle> searchQuery = sourceFhirClient.search()//
                 .forResource(Task.class)//
@@ -386,21 +386,21 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
         Bundle importBundle = searchQuery.execute();
         importBundles.add(importBundle);
         if (importBundle.hasEntry()) {
-            LogEvent.logDebug(this.getClass().getName(), "beginTaskImportOrderPath",
+            LogEvent.logTrace(this.getClass().getName(), "beginTaskImportOrderPath",
                     "received bundle with " + importBundle.getEntry().size() + " entries");
         } else {
-            LogEvent.logDebug(this.getClass().getName(), "beginTaskImportOrderPath", "received bundle with 0 entries");
+            LogEvent.logTrace(this.getClass().getName(), "beginTaskImportOrderPath", "received bundle with 0 entries");
         }
 
         while (importBundle.getLink(IBaseBundle.LINK_NEXT) != null) {
-            LogEvent.logDebug(this.getClass().getName(), "beginTaskImportOrderPath", "following next link");
+            LogEvent.logTrace(this.getClass().getName(), "beginTaskImportOrderPath", "following next link");
             importBundle = sourceFhirClient.loadPage().next(importBundle).execute();
             importBundles.add(importBundle);
             if (importBundle.hasEntry()) {
-                LogEvent.logDebug(this.getClass().getName(), "beginTaskImportOrderPath",
+                LogEvent.logTrace(this.getClass().getName(), "beginTaskImportOrderPath",
                         "received bundle with " + importBundle.getEntry().size() + " entries");
             } else {
-                LogEvent.logDebug(this.getClass().getName(), "beginTaskImportOrderPath",
+                LogEvent.logTrace(this.getClass().getName(), "beginTaskImportOrderPath",
                         "received bundle with 0 entries");
             }
         }
@@ -469,7 +469,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             TaskStatus taskStatus = taskOrderAcceptedFlag ? TaskStatus.ACCEPTED : TaskStatus.REJECTED;
             localObjects.task.setStatus(taskStatus);
             if (remoteStoreUpdateStatus.isPresent() && remoteStoreUpdateStatus.get()) {
-                LogEvent.logDebug(this.getClass().getName(), "beginTaskPath",
+                LogEvent.logTrace(this.getClass().getName(), "beginTaskPath",
                         "updating remote status to " + taskStatus);
                 remoteTask.setStatus(taskStatus);
                 sourceFhirClient.update().resource(remoteTask).execute();
@@ -671,7 +671,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             objects.requestors.add(localPractitioner);
         }
 
-        LogEvent.logDebug(this.getClass().getName(), "",
+        LogEvent.logTrace(this.getClass().getName(), "",
                 "creating local copies of the remote fhir objects relating to Task: " + originalRemoteTaskId);
         // Run the transaction
         fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
@@ -687,12 +687,12 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.Specimen.equals(entry.getResource().getResourceType())) {
-                LogEvent.logDebug(this.getClass().getName(), "",
+                LogEvent.logTrace(this.getClass().getName(), "",
                         "found specimen with same identifier as " + specimen.getIdElement().getIdPart());
                 return Optional.of((Specimen) localBundle.getEntryFirstRep().getResource());
             }
         }
-        LogEvent.logDebug(this.getClass().getName(), "",
+        LogEvent.logTrace(this.getClass().getName(), "",
                 "no specimen with same identifier " + specimen.getIdElement().getIdPart());
         return Optional.empty();
     }
@@ -706,12 +706,12 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.Practitioner.equals(entry.getResource().getResourceType())) {
-                LogEvent.logDebug(this.getClass().getName(), "",
+                LogEvent.logTrace(this.getClass().getName(), "",
                         "found provider with same identifier as " + provider.getIdElement().getIdPart());
                 return Optional.of((Practitioner) localBundle.getEntryFirstRep().getResource());
             }
         }
-        LogEvent.logDebug(this.getClass().getName(), "",
+        LogEvent.logTrace(this.getClass().getName(), "",
                 "no provider with same identifier " + provider.getIdElement().getIdPart());
         return Optional.empty();
     }
@@ -789,12 +789,12 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.Task.equals(entry.getResource().getResourceType())) {
-                LogEvent.logDebug(this.getClass().getName(), "",
+                LogEvent.logTrace(this.getClass().getName(), "",
                         "found task with same identifier as " + remoteTask.getIdElement().getIdPart());
                 return Optional.of((Task) localBundle.getEntryFirstRep().getResource());
             }
         }
-        LogEvent.logDebug(this.getClass().getName(), "",
+        LogEvent.logTrace(this.getClass().getName(), "",
                 "no task with same identifier " + remoteTask.getIdElement().getIdPart());
 
         return Optional.empty();
@@ -810,12 +810,12 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.ServiceRequest.equals(entry.getResource().getResourceType())) {
-                LogEvent.logDebug(this.getClass().getName(), "",
+                LogEvent.logTrace(this.getClass().getName(), "",
                         "found serviceRequest with same identifier as " + basedOn.getIdElement().getIdPart());
                 return Optional.of((ServiceRequest) localBundle.getEntryFirstRep().getResource());
             }
         }
-        LogEvent.logDebug(this.getClass().getName(), "",
+        LogEvent.logTrace(this.getClass().getName(), "",
                 "no serviceRequest with same identifier " + basedOn.getIdElement().getIdPart());
         return Optional.empty();
     }
@@ -830,12 +830,12 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.Patient.equals(entry.getResource().getResourceType())) {
-                LogEvent.logDebug(this.getClass().getName(), "",
+                LogEvent.logTrace(this.getClass().getName(), "",
                         "found patient with same identifier as " + remotePatient.getIdElement().getIdPart());
                 return Optional.of((Patient) localBundle.getEntryFirstRep().getResource());
             }
         }
-        LogEvent.logDebug(this.getClass().getName(), "",
+        LogEvent.logTrace(this.getClass().getName(), "",
                 "no patient with same identifier " + remotePatient.getIdElement().getIdPart());
         return Optional.empty();
     }
@@ -851,12 +851,12 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 .returnBundle(Bundle.class).execute();
         for (BundleEntryComponent entry : localBundle.getEntry()) {
             if (entry.hasResource() && ResourceType.Practitioner.equals(entry.getResource().getResourceType())) {
-                LogEvent.logDebug(this.getClass().getName(), "",
+                LogEvent.logTrace(this.getClass().getName(), "",
                         "found Practitioner with same identifier as " + remotePractitioner.getIdElement().getIdPart());
                 return Optional.of((Practitioner) localBundle.getEntryFirstRep().getResource());
             }
         }
-        LogEvent.logDebug(this.getClass().getName(), "",
+        LogEvent.logTrace(this.getClass().getName(), "",
                 "no Practitioner with same identifier " + remotePractitioner.getIdElement().getIdPart());
         return Optional.empty();
     }
