@@ -20,10 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
+import org.hl7.fhir.r4.model.QuestionnaireResponse;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
@@ -32,6 +34,9 @@ import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.program.service.ProgramSampleService;
+import org.openelisglobal.program.valueholder.Program;
+import org.openelisglobal.program.valueholder.ProgramSample;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.requester.valueholder.SampleRequester;
@@ -51,6 +56,9 @@ import org.springframework.stereotype.Service;
 @DependsOn({ "springContext" })
 public class SampleOrderService {
 
+
+    private ProgramSampleService programSampleService = SpringContext.getBean(ProgramSampleService.class);
+    private FhirUtil fhirUtil = SpringContext.getBean(FhirUtil.class);
     private static SampleService sampleService = SpringContext.getBean(SampleService.class);
     private static OrganizationService orgService = SpringContext.getBean(OrganizationService.class);
     private ObservationHistoryService observationHistoryService = SpringContext
@@ -152,6 +160,14 @@ public class SampleOrderService {
                     .getValueForSample(ObservationType.BILLING_REFERENCE_NUMBER, sample.getId()));
             sampleOrder.setProgram(
                     observationHistoryService.getRawValueForSample(ObservationType.PROGRAM, sample.getId()));
+                    String programName = observationHistoryService.getRawValueForSample(ObservationType.PROGRAM, sample.getId());
+                    ProgramSample programSample = programSampleService.getProgrammeSampleBySample(Integer.valueOf(sample.getId()), programName);
+                    if (programSample != null) {
+                        sampleOrder.setProgramId(programSample.getProgram().getId());
+                        sampleOrder.setAdditionalQuestions(
+                            fhirUtil.getLocalFhirClient().read().resource(QuestionnaireResponse.class)
+                                    .withId(programSample.getQuestionnaireResponseUuid().toString()).execute());
+                    }
 
             RequesterService requesterService = new RequesterService(sample.getId());
             sampleOrder.setProviderPersonId(requesterService.getRequesterPersonId());

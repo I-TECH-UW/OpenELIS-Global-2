@@ -23,7 +23,7 @@ import CustomTextInput from "../common/CustomTextInput";
 import OrderReferralRequest from "../addOrder/OrderReferralRequest";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 
-const SampleType = (props) => {
+const EditSampleType = (props) => {
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
   const { index, rejectSampleReasons, removeSample, sample } = props;
   const componentMounted = useRef(true);
@@ -689,4 +689,4 @@ const SampleType = (props) => {
   );
 };
 
-export default SampleType;
+export default EditSampleType;

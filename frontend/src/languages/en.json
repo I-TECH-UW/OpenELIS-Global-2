@@ -95,10 +95,10 @@
     "pathology.label.title" : "Pathology",
     "pathology.label.blocks" : "Blocks",
     "pathology.label.block" : "Block",
-    "pathology.label.addblock" : "Add Block",
+    "pathology.label.addblock" : "Add Block(s)",
     "pathology.label.slides" : "Slides",
     "pathology.label.slide" : "Slide",
-    "pathology.label.addslide" : "Add Slide",
+    "pathology.label.addslide" : "Add Slide(s)",
     "pathology.label.printlabel" : "Print Label",
     "pathology.label.view" : "View",
     "pathology.label.dashboard" : "Pathology DashBoard",
@@ -291,8 +291,18 @@
     "search.label.test" : "Select Test Name" ,
     "search.label.sample" : "Select Sample Status" ,
     "pathology.label.report" : "Pathology Report",
-    "patient.natioanalid":"National ID "
-
-
-
+    "patient.natioanalid":"National ID",
+    "sample.label.orderpanel":"Order Panels",
+    "sample.label.noorder":"Order Doesnt Exist",
+    "sample.label.labnumber.new" : "New Lab Number" ,
+    "sample.label.search.labnumber" : "Search By Accesion Number"  ,
+    "sample.label.search.patient" : "Search By Patient" ,
+    "sample.label.search.Order" : "Search Order" ,
+    "label.button.remove.slide": "Remove Slide",
+    "label.button.remove.block": "Remove Block",
+    "label.button.remove.report": "Remove Report",
+    "pathology.label.block.number": "Block number",
+    "pathology.label.block.add.number": "Number of Blocks to add",
+    "pathology.label.slide.add.number": "Number of Slides to add"
+    
 }

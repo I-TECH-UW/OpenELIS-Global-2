@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { FormattedMessage } from "react-intl";
 
 import { Column, Grid, Heading, Section } from "@carbon/react";
-import ModifyOrder from "./ModifyOrder";
+import SearchOrder from "./SearchOrder";
 import { AlertDialog } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
 
@@ -22,7 +22,7 @@ const Index = () => {
           </Section>
         </Column>
       </Grid>
-      <ModifyOrder />
+      <SearchOrder />
     </div>
   );
 };

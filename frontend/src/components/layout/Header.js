@@ -201,12 +201,7 @@ function OEHeader(props) {
                           <SideNavMenuItem href="/AddOrder">
                             <FormattedMessage id="sidenav.label.addorder" />
                           </SideNavMenuItem>
-                          <SideNavMenuItem
-                            href={
-                              config.serverBaseUrl +
-                              "/SampleEdit?type=readwrite"
-                            }
-                          >
+                          <SideNavMenuItem href="/FindOrder">
                             <FormattedMessage id="sidenav.label.editorder" />
                           </SideNavMenuItem>
                           <SideNavMenuItem

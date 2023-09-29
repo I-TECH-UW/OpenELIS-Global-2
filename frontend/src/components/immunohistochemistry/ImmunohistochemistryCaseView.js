@@ -29,7 +29,7 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { SearchResults } from "../resultPage/SearchResultForm";
-import { FormattedMessage ,useIntl} from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import "./../pathology/PathologyDashboard.css";
 
 export const QuestionnaireResponse = ({ questionnaireResponse }) => {
@@ -38,11 +38,15 @@ export const QuestionnaireResponse = ({ questionnaireResponse }) => {
     return (
       <>
         <div className="questionnaireResponseItem">
-          {item.text}:
-          {item.answer &&
-            item.answer.map((answer, index) => {
-              return <span key={index}>{renderAnswer(answer)}</span>;
-            })}
+          <Grid>
+            <Column lg={6} md={8} sm={4}><h6>{item.text}:</h6> </Column>
+            <Column lg={10} md={8} sm={4}>
+              {item.answer &&
+                item.answer.map((answer, index) => {
+                  return <Tag key={index}>{renderAnswer(answer)}</Tag>;
+                })}
+            </Column>
+          </Grid> 
         </div>
       </>
     );
@@ -103,7 +107,7 @@ function ImmunohistochemistryCaseView() {
   const [results, setResults] = useState({ testResult: [] });
   const [loading, setLoading] = useState(true);
   const [resultsLoading, setResultsLoading] = useState(true);
- const intl = useIntl()
+  const intl = useIntl();
   async function displayStatus(response) {
     var body = await response.json();
     console.log(body);
@@ -246,10 +250,20 @@ function ImmunohistochemistryCaseView() {
 
   return (
     <>
-      <Breadcrumb>
-        <BreadcrumbItem href="/">{intl.formatMessage({ id: "home.label" })}</BreadcrumbItem>
-        <BreadcrumbItem href="/ImmunohistochemistryDashboard">{intl.formatMessage({ id: "immunohistochemistry.label.dashboard" })}</BreadcrumbItem>
-      </Breadcrumb>
+      <Grid fullWidth={true}>
+        <Column lg={16}>
+          <Breadcrumb>
+            <BreadcrumbItem href="/">
+              {intl.formatMessage({ id: "home.label" })}
+            </BreadcrumbItem>
+            <BreadcrumbItem href="/ImmunohistochemistryDashboard">
+              {intl.formatMessage({
+                id: "immunohistochemistry.label.dashboard",
+              })}
+            </BreadcrumbItem>
+          </Breadcrumb>
+        </Column>
+      </Grid>
 
       <Grid fullWidth={true}>
         <Column lg={16}>
@@ -355,7 +369,7 @@ function ImmunohistochemistryCaseView() {
                 save(e);
               }}
             >
-              Save
+               <FormattedMessage id="label.button.save" />
             </Button>
           </Column>
           <Column lg={16} md={8} sm={4}>
@@ -455,7 +469,7 @@ function ImmunohistochemistryCaseView() {
                 <Select
                   id="report"
                   name="report"
-                  labelText="Add Report"
+                  labelText={intl.formatMessage({ id: "immunohistochemistry.label.addreport" })}
                   onChange={(event) => {
                     setImmunohistochemistrySampleInfo({
                       ...immunohistochemistrySampleInfo,
@@ -466,7 +480,7 @@ function ImmunohistochemistryCaseView() {
                     });
                   }}
                 >
-                  <SelectItem disabled value="ADD" text="Add Report" />
+                  <SelectItem disabled value="ADD" text={intl.formatMessage({ id: "immunohistochemistry.label.addreport" })} />
                   {reportTypes.map((report, index) => {
                     return (
                       <SelectItem
@@ -495,7 +509,7 @@ function ImmunohistochemistryCaseView() {
                     <>
                       <Column lg={2} md={8} sm={4}>
                         <IconButton
-                          label="Remove Report"
+                          label={intl.formatMessage({ id: "label.button.remove.report" })}
                           onClick={() => {
                             var info = { ...immunohistochemistrySampleInfo };
                             info["reports"].splice(index, 1);
@@ -605,9 +619,9 @@ function ImmunohistochemistryCaseView() {
                             <Column lg={2} md={2} sm={1} key={index}>
                               <TextInput
                                 id="blockNumber"
-                                labelText="block number"
+                                labelText={intl.formatMessage({ id: "pathology.label.block.number" })}
                                 hideLabel={true}
-                                placeholder="Block Number"
+                                placeholder={intl.formatMessage({ id: "pathology.label.block.number" })}
                                 value={block.blockNumber}
                                 disabled={true}
                               />
@@ -615,9 +629,9 @@ function ImmunohistochemistryCaseView() {
                             <Column lg={2} md={2} sm={1}>
                               <TextInput
                                 id="location"
-                                labelText="location"
+                                labelText={intl.formatMessage({ id: "pathology.label.location" })}
                                 hideLabel={true}
-                                placeholder="Location"
+                                placeholder={intl.formatMessage({ id: "pathology.label.location" })}
                                 value={block.location}
                                 disabled={true}
                               />
@@ -670,19 +684,19 @@ function ImmunohistochemistryCaseView() {
                             <Column lg={2} md={2} sm={1} key={index}>
                               <TextInput
                                 id="slideNumber"
-                                labelText="slide number"
+                                labelText={intl.formatMessage({ id: "pathology.label.slide.number" })}
                                 hideLabel={true}
                                 disabled={true}
-                                placeholder="Slide Number"
+                                placeholder={intl.formatMessage({ id: "pathology.label.slide.number" })}
                                 value={slide.slideNumber}
                               />
                             </Column>
                             <Column lg={2} md={2} sm={1}>
                               <TextInput
                                 id="location"
-                                labelText="location"
+                                labelText={intl.formatMessage({ id: "pathology.label.location" })}
                                 hideLabel={true}
-                                placeholder="Location"
+                                placeholder={intl.formatMessage({ id: "pathology.label.location" })}
                                 value={slide.location}
                                 disabled={true}
                               />
@@ -848,7 +862,7 @@ function ImmunohistochemistryCaseView() {
                 save(e);
               }}
             >
-              Save
+               <FormattedMessage id="label.button.save" />
             </Button>
           </Column>
         </Grid>
