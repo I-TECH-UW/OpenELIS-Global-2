@@ -532,24 +532,26 @@ abstract public class CSVRoutineColumnBuilder {
         // String excludeAnalytes = getExcludedAnalytesSet();
         SQLConstant listName = SQLConstant.RESULT;
         query.append(", \n\n ( SELECT si.samp_id, si.id AS sampleItem_id, si.sort_order AS sampleItemNo, " + listName
-                + ".* " + " FROM sample_item AS si LEFT JOIN \n "
-                		+ " sample_projects sp ON si.samp_id = sp.samp_id LEFT JOIN \n");
+                + ".* " + " FROM sample_item AS si JOIN \n ");
 
         // Begin cross tab / pivot table
-        query.append(" crosstab( " + "\n 'SELECT si.id, t.description, r.value "
-                + "\n FROM clinlims.result AS r, clinlims.analysis AS a, clinlims.sample_item AS si, clinlims.sample AS s, clinlims.test AS t, clinlims.test_result AS tr "
-                + "\n WHERE " + "\n s.id = si.samp_id" + " AND s.entered_date >= date(''"
+        query.append(" crosstab( " + "\n 'SELECT si.id, t.description,  replace( replace( replace( r.value , E''\\n'', ''\\n'' ), E''\\t'', ''\\t'' ), E''\\r'', ''\\r'' ) "
+                + "\n FROM clinlims.result AS r join clinlims.analysis AS a on a.id = r.analysis_id \n "
+                + " join clinlims.sample_item AS si on si.id = a.sampitem_id \n "
+                + " join clinlims.sample AS s on s.id = si.samp_id \n"
+                + " join clinlims.test_result AS tr on r.test_result_id = tr.id \n"
+                + " join clinlims.test AS t on tr.test_id = t.id \n"
+                + " left join sample_projects sp on si.samp_id = sp.samp_id \n"
+                + "\n WHERE sp.id IS NULL AND s.entered_date >= date(''"
                 + formatDateForDatabaseSql(lowDate) + "'')  AND s.entered_date <= date(''"
-                + formatDateForDatabaseSql(highDate) + " '') " + "\n AND s.id = si.samp_id "
-                + "\n AND si.id = a.sampitem_id "
+                + formatDateForDatabaseSql(highDate) + " '') " + "\n "
                 // sql injection safe as user cannot overwrite validStatusId in database
                 + ((validStatusId == null) ? "" : " AND a.status_id = " + validStatusId)
-                + "\n AND a.id = r.analysis_id " + "\n AND r.test_result_id = tr.id" + "\n AND tr.test_id = t.id       "
                 // + (( excludeAnalytes == null)?"":
                 // " AND r.analyte_id NOT IN ( " + excludeAnalytes) + ")"
                 // + " AND a.test_id = t.id "
                 + "\n ORDER BY 1, 2 "
-                + "\n ', 'SELECT description FROM test where is_active = ''Y'' ORDER BY 1' ) ");
+                + "\n ', 'SELECT t.description FROM test t where t.is_active = ''Y'' ORDER BY 1' ) ");
         // end of cross tab
 
         // Name the test pivot table columns . We'll name them all after the
@@ -570,7 +572,7 @@ abstract public class CSVRoutineColumnBuilder {
         query.append(" ) \n");
         // left join all sample Items from the right sample range to the results table.
         query.append("\n ON si.id = " + listName + ".si_id " // the inner use a few lines above
-                + "\n WHERE sp.id IS NULL ORDER BY si.samp_id, si.id " + "\n) AS " + listName + "\n "); // outer re-use the list name to
+                + "\n ORDER BY si.samp_id, si.id " + "\n) AS " + listName + "\n "); // outer re-use the list name to
                                                                                     // name this sparse matrix of
                                                                                     // results.
     }
