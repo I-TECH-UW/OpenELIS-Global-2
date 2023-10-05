@@ -56,6 +56,9 @@ public class TestAddFormValidator implements Validator {
                 ValidationHelper.validateIdField(StringUtil.nullSafeToString(newTest.get("resultType")), "JsonWad",
                         "resultType", errors, true);
 
+                ValidationHelper.validateYNField(StringUtil.nullSafeToString(newTest.get("antimicrobialResistance")), "JsonWad",
+                        "antimicrobialResistance", errors);
+
                 ValidationHelper.validateYNField(StringUtil.nullSafeToString(newTest.get("orderable")), "JsonWad",
                         "orderable", errors);
 

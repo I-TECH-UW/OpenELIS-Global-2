@@ -117,6 +117,8 @@ public class Test extends EnumValueItemImpl {
     // should we notify patient of a finalized result
     private Boolean notifyResults;
 
+    private Boolean antimicrobialResistance;
+
     @Override
     public String getSortOrder() {
         return sortOrder;
@@ -504,6 +506,14 @@ public class Test extends EnumValueItemImpl {
 
     public void setInLabOnly(boolean inLabOnly) {
         this.inLabOnly = inLabOnly;
+    }
+
+    public void setAntimicrobialResistance(Boolean antimicrobialResistance) {
+        this.antimicrobialResistance = antimicrobialResistance;
+    }
+
+    public Boolean getAntimicrobialResistance() {
+        return antimicrobialResistance;
     }
 
     @Override
