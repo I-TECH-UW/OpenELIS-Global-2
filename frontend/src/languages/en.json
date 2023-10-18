@@ -303,6 +303,7 @@
     "label.button.remove.report": "Remove Report",
     "pathology.label.block.number": "Block number",
     "pathology.label.block.add.number": "Number of Blocks to add",
-    "pathology.label.slide.add.number": "Number of Slides to add"
+    "pathology.label.slide.add.number": "Number of Slides to add",
+    "button.label.genarateReport" : "Generate Report"
     
 }

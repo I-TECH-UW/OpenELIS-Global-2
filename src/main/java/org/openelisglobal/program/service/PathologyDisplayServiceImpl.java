@@ -137,4 +137,14 @@ public class PathologyDisplayServiceImpl implements PathologyDisplayService {
         return displayItem;
     }
 
+    @Override
+    @Transactional
+    public PathologySample getPathologySampleWithLoadedAtttributes(Integer pathologySampleId) {
+       PathologySample pathologySample = pathologySampleService.get(pathologySampleId);
+       pathologySample.getBlocks().size();
+       pathologySample.getSlides().size();
+       pathologySample.getConclusions().size();
+       return pathologySample;
+    }
+
 }
