@@ -155,6 +155,8 @@ public class ReportForm extends BaseForm {
 
     private Boolean useStatisticsParams = false;
 
+    private String programSampleId;
+
     // for display
     private List<IdValuePair> priorityList;
 
@@ -619,4 +621,13 @@ public class ReportForm extends BaseForm {
     public void setReceptionTime(List<ReceptionTime> receptionTime) {
         this.receptionTime = receptionTime;
     }
+
+    public String getProgramSampleId() {
+        return programSampleId;
+    }
+
+    public void setProgramSampleId(String programSampleId) {
+        this.programSampleId = programSampleId;
+    }
+
 }
