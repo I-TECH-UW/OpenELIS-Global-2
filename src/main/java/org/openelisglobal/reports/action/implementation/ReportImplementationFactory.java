@@ -279,6 +279,9 @@ public class ReportImplementationFactory {
             }else if (report.equals("PatientPathologyReport")){
                return new PatientPathologyReport();
             }
+            else if(report.equals("PatientCytologyReport")){
+               return new PatientCytologyReport();
+            }
         }
 
         return null;
