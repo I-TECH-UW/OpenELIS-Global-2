@@ -1,5 +1,7 @@
 package org.openelisglobal.reports.action.implementation.reportBeans;
 
+import java.util.List;
+
 public final class ProgramSampleReportData {
     
     private String patientName = "";
@@ -94,6 +96,7 @@ public final class ProgramSampleReportData {
     
     private String labOrderType = "";
     
+    //Pathology data
     private String grossExam;
     
     private String microExam;
@@ -101,6 +104,21 @@ public final class ProgramSampleReportData {
     private String codedConclusion;
     
     private String textConclusion;
+    
+    //Cytology data
+    private String specimenAdequacy;
+    
+    private String diagnosis;
+    
+    private List<String> nonNeoplasticCellularVariations;
+    
+    private List<String> reactiveCellularChanges;
+    
+    private List<String> organisms;
+    
+    private List<String> epithelialCellAbnomalities;
+    
+    private List<String> otherDiagnoses;
     
     public ProgramSampleReportData() {
     }
@@ -569,4 +587,59 @@ public final class ProgramSampleReportData {
         this.textConclusion = textConclusion;
     }
     
+    public String getSpecimenAdequacy() {
+        return specimenAdequacy;
+    }
+    
+    public void setSpecimenAdequacy(String specimenAdequacy) {
+        this.specimenAdequacy = specimenAdequacy;
+    }
+    
+    public String getDiagnosis() {
+        return diagnosis;
+    }
+    
+    public void setDiagnosis(String diagnosis) {
+        this.diagnosis = diagnosis;
+    }
+    
+    public List<String> getNonNeoplasticCellularVariations() {
+        return nonNeoplasticCellularVariations;
+    }
+    
+    public void setNonNeoplasticCellularVariations(List<String> nonNeoplasticCellularVariations) {
+        this.nonNeoplasticCellularVariations = nonNeoplasticCellularVariations;
+    }
+    
+    public List<String> getReactiveCellularChanges() {
+        return reactiveCellularChanges;
+    }
+    
+    public void setReactiveCellularChanges(List<String> reactiveCellularChanges) {
+        this.reactiveCellularChanges = reactiveCellularChanges;
+    }
+    
+    public List<String> getOrganisms() {
+        return organisms;
+    }
+    
+    public void setOrganisms(List<String> organisms) {
+        this.organisms = organisms;
+    }
+    
+    public List<String> getEpithelialCellAbnomalities() {
+        return epithelialCellAbnomalities;
+    }
+    
+    public void setEpithelialCellAbnomalities(List<String> epithelialCellAbnomalities) {
+        this.epithelialCellAbnomalities = epithelialCellAbnomalities;
+    }
+    
+    public List<String> getOtherDiagnoses() {
+        return otherDiagnoses;
+    }
+    
+    public void setOtherDiagnoses(List<String> otherDiagnoses) {
+        this.otherDiagnoses = otherDiagnoses;
+    }
 }
