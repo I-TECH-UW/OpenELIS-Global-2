@@ -101,7 +101,7 @@ public final class ProgramSampleReportData {
     
     private String microExam;
     
-    private String codedConclusion;
+    private List<String> codedConclusion;
     
     private String textConclusion;
     
@@ -571,11 +571,11 @@ public final class ProgramSampleReportData {
         this.microExam = microExam;
     }
     
-    public String getCodedConclusion() {
+    public List<String> getCodedConclusion() {
         return codedConclusion;
     }
     
-    public void setCodedConclusion(String codedConclusion) {
+    public void setCodedConclusion(List<String> codedConclusion) {
         this.codedConclusion = codedConclusion;
     }
     

@@ -33,8 +33,7 @@ public class PatientPathologyReport extends PatientProgramReport{
         List<String> codedConclusions =  pathologySample.getConclusions().stream().filter(e -> e.getType() == ConclusionType.DICTIONARY)
         .map(e -> dictionaryService.get(e.getValue()).getLocalizedName())
         .collect(Collectors.toList());
-        String commaSeparatedString = String.join(", ", codedConclusions);
-        data.setCodedConclusion(commaSeparatedString);
+        data.setCodedConclusion(codedConclusions);
     }
 
     @Override
