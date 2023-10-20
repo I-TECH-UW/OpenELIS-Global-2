@@ -6,9 +6,9 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
+	<import value="net.sf.jasperreports.engine.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA["../reports/"]]></defaultValueExpression>
 	</parameter>
@@ -68,10 +68,6 @@
 	<field name="subjectNumber" class="java.lang.String"/>
 	<field name="billingNumber" class="java.lang.String"/>
 	<field name="labOrderType" class="java.lang.String"/>
-	<!-- <field name="grossExam" class="java.lang.String"/>
-	<field name="microExam" class="java.lang.String"/>
-	<field name="codedConclusion" class="java.lang.String"/>
-	<field name="textConclusion" class="java.lang.String"/> -->
 	<field name="specimenAdequacy" class="java.lang.String"/>
 	<field name="diagnosis" class="java.lang.String"/>
 	<field name="nonNeoplasticCellularVariations" class="java.util.List"/>
@@ -847,7 +843,7 @@
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="2" y="169" width="550" height="14" uuid="7811f81d-7274-42a7-ae56-ef02eb60bc8b"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"  markup="styled">
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{pathology.label.report}]]></textFieldExpression>
@@ -856,116 +852,161 @@
 	</pageHeader>
 	<detail>
 		<band height="300" splitType="Prevent">
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="-5" width="550" height="290" uuid="a8fab68a-a9d7-45d8-90e1-3470e822b2cc"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#071E26"/>
+				</graphicElement>
+			</rectangle>
 			<textField>
-				<reportElement x="0" y="-5" width="200" height="20" uuid="3f4df96a-83c1-4216-92a3-2018447ad5a0"/>
+				<reportElement x="0" y="-5" width="550" height="15" uuid="3f4df96a-83c1-4216-92a3-2018447ad5a0"/>
+				<box leftPadding="5">
+						<topPen lineWidth="0.25" lineStyle="Solid"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<u>" + $R{cytology.label.specimen} + "</u>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{cytology.label.specimen}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="15" width="400" height="30" uuid="57152e13-27fb-4b80-a518-c3dd78d93fdf"/>
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="15" width="400" height="25" uuid="57152e13-27fb-4b80-a518-c3dd78d93fdf"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{specimenAdequacy}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="40" width="200" height="20" uuid="d06bcdaf-4eef-4588-9524-cd5145a4c14f"/>
+				<reportElement x="0" y="40" width="550" height="15" uuid="d06bcdaf-4eef-4588-9524-cd5145a4c14f"/>
+				<box leftPadding="5">
+						<topPen lineWidth="0.25" lineStyle="Solid"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<u>" + $R{cytology.label.diagnosis} + "</u>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{cytology.label.diagnosis}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="55" width="400" height="30" uuid="5d46c2cf-2242-422a-97a8-8d48b3d86df3"/>
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="55" width="400" height="25" uuid="5d46c2cf-2242-422a-97a8-8d48b3d86df3"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{diagnosis}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="80" width="200" height="20" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
+				<reportElement x="0" y="80" width="550" height="15" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
+				<box leftPadding="5">
+						<topPen lineWidth="0.25" lineStyle="Solid"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<u>" + $R{cytology.label.neoplastic} + "</u>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{cytology.label.neoplastic}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="95" width="400" height="30" uuid="0287bf57-8501-4703-b420-e60f5aae8ead"/>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" isStretchWithOverflow="false">
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="95" width="500" height="25" uuid="0287bf57-8501-4703-b420-e60f5aae8ead"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{nonNeoplasticCellularVariations}.stream().map(s -> "• " + s).collect(java.util.stream.Collectors.joining("\n"))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nonNeoplasticCellularVariations}.stream().map(s -> "• " + s).collect(java.util.stream.Collectors.joining("  "))]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="120" width="200" height="20" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
+				<reportElement x="0" y="120" width="550" height="15" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
+				<box leftPadding="5">
+						<topPen lineWidth="0.25" lineStyle="Solid"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<u>" + $R{cytology.label.reactive}+ "</u>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{cytology.label.reactive}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="135" width="400" height="30" uuid="f42cd56a-8af1-416f-8bb0-a2e739b10fab"/>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" isStretchWithOverflow="false">
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="135" width="500" height="25" uuid="f42cd56a-8af1-416f-8bb0-a2e739b10fab"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{reactiveCellularChanges}.stream().map(s -> "• " + s).collect(java.util.stream.Collectors.joining("\n"))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{reactiveCellularChanges}.stream().map(s -> "• " + s).collect(java.util.stream.Collectors.joining("  "))]]></textFieldExpression>
 			</textField>
-
 			<textField>
-				<reportElement x="0" y="160" width="200" height="20" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
+				<reportElement x="0" y="160" width="550" height="15" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
+				<box leftPadding="5">
+						<topPen lineWidth="0.25" lineStyle="Solid"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<u>" + $R{cytology.label.organisms}+ "</u>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{cytology.label.organisms}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="175" width="400" height="30" uuid="f42cd56a-8af1-416f-8bb0-a2e739b10fab"/>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" isStretchWithOverflow="false">
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="175" width="500" height="25" uuid="f42cd56a-8af1-416f-8bb0-a2e739b10fab"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{organisms}.stream().map(s -> "• " + s).collect(java.util.stream.Collectors.joining("\n"))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{organisms}.stream().map(s -> "• " + s).collect(java.util.stream.Collectors.joining("  "))]]></textFieldExpression>
 			</textField>
-
 			<textField>
-				<reportElement x="0" y="200" width="200" height="20" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
+				<reportElement x="0" y="200" width="550" height="15" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
+				<box leftPadding="5">
+						<topPen lineWidth="0.25" lineStyle="Solid"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<u>" + $R{cytology.label.cellabnomality}+ "</u>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{cytology.label.cellabnomality}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="225" width="400" height="30" uuid="f42cd56a-8af1-416f-8bb0-a2e739b10fab"/>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" isStretchWithOverflow="false">
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="215" width="500" height="25" uuid="f42cd56a-8af1-416f-8bb0-a2e739b10fab"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{epithelialCellAbnomalities}.stream().map(s -> "• " + s).collect(java.util.stream.Collectors.joining("\n"))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{epithelialCellAbnomalities}.stream().map(s -> "• " + s).collect(java.util.stream.Collectors.joining("  "))]]></textFieldExpression>
 			</textField>
-
 			<textField>
-				<reportElement x="0" y="240" width="250" height="20" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
+				<reportElement x="0" y="240" width="550" height="15" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
+				<box leftPadding="5">
+						<topPen lineWidth="0.25" lineStyle="Solid"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<u>" + $R{cytology.label.otherResult}+ "</u>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{cytology.label.otherResult}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="260" width="400" height="30" uuid="f42cd56a-8af1-416f-8bb0-a2e739b10fab"/>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" isStretchWithOverflow="false">
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="255" width="500" height="25" uuid="f42cd56a-8af1-416f-8bb0-a2e739b10fab"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{otherDiagnoses}.stream().map(s -> "• " + s).collect(java.util.stream.Collectors.joining("\n"))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{otherDiagnoses}.stream().map(s -> "• " + s).collect(java.util.stream.Collectors.joining("  "))]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="0" splitType="Stretch"/>
+		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
 		<band height="22" splitType="Stretch">
