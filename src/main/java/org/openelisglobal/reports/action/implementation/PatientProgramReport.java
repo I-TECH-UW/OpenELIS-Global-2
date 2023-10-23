@@ -58,6 +58,7 @@ import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestServiceImpl;
+import org.openelisglobal.test.valueholder.Test;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -370,6 +371,10 @@ public abstract class PatientProgramReport  extends Report implements IReportCre
         data.setPatientName(patientService.getLastFirstName(patient));
         data.setFirstName(patientService.getFirstName(patient));
         data.setLastName(patientService.getLastName(patient));
+    }
+
+     protected String getUnitOfMeasure(Test test) {
+        return (test != null && test.getUnitOfMeasure() != null) ? test.getUnitOfMeasure().getName() : "";
     }
 
     protected String getLazyPatientIdentity(Patient patient, String identity, String id) {
