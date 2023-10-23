@@ -120,6 +120,9 @@ public final class ProgramSampleReportData {
     
     private List<String> otherDiagnoses;
     
+    //ImmunoHistoChemistry data
+    private List<Result> results;
+    
     public ProgramSampleReportData() {
     }
     
@@ -641,5 +644,47 @@ public final class ProgramSampleReportData {
     
     public void setOtherDiagnoses(List<String> otherDiagnoses) {
         this.otherDiagnoses = otherDiagnoses;
+    }
+    
+    public List<Result> getResults() {
+        return results;
+    }
+    
+    public void setResults(List<Result> results) {
+        this.results = results;
+    }
+    
+    public static class Result {
+        
+        private String result;
+        
+        private String test;
+        
+        private String uom;
+        
+        public String getResult() {
+            return result;
+        }
+        
+        public void setResult(String result) {
+            this.result = result;
+        }
+        
+        public String getTest() {
+            return test;
+        }
+        
+        public void setTest(String test) {
+            this.test = test;
+        }
+        
+        public String getUom() {
+            return uom;
+        }
+        
+        public void setUom(String uom) {
+            this.uom = uom;
+        }
+        
     }
 }

@@ -281,6 +281,8 @@ public class ReportImplementationFactory {
             }
             else if(report.equals("PatientCytologyReport")){
                return new PatientCytologyReport();
+            }else if(report.equals("PatientImmunoChemistryReport")){
+               return new PatientImmunoChemistryReport();
             }
         }
 

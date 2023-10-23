@@ -14,7 +14,7 @@ import org.openelisglobal.spring.util.SpringContext;
 public class PatientPathologyReport extends PatientProgramReport{
     protected  PathologyDisplayService pathologyDisplayService = SpringContext.getBean(PathologyDisplayService.class);
 
-     private PathologySample pathologySample;
+    private PathologySample pathologySample;
 
     @Override
     protected String getReportName() {
