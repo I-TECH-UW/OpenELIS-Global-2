@@ -20,6 +20,7 @@ import {
   Loading,
   RadioButtonGroup,
   RadioButton,
+  InlineLoading
 } from "@carbon/react";
 import { Launch, Subtract } from "@carbon/react/icons";
 import {
@@ -135,6 +136,7 @@ function CytologyCaseView() {
   const [technicianUsers, setTechnicianUsers] = useState([]);
   const [pathologistUsers, setPathologistUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingReport, setLoadingReport] = useState(false);
   const [reportTypes, setReportTypes] = useState([]);
   const intl = useIntl();
   const [slidesToAdd, setSlidesToAdd] = useState(1);
@@ -162,6 +164,36 @@ function CytologyCaseView() {
       });
     }
   }
+
+  async function writeReport(response) {
+    var report = await response.blob();
+    const url = URL.createObjectURL(report);
+    setLoadingReport(false)
+    console.log(JSON.stringify(report));
+    var status = response.status;
+    setNotificationVisible(true);
+    if (status == "200") {
+      setNotificationBody({
+        kind: NotificationKinds.success,
+        title: <FormattedMessage id="notification.title" />,
+        message: "Succesfuly Generated Report",
+      });
+
+      var win = window.open();
+      win.document.write(
+        '<iframe src="' +
+          url +
+          '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>',
+      );
+    } else {
+      setNotificationBody({
+        kind: NotificationKinds.error,
+        title: <FormattedMessage id="notification.title" />,
+        message: "Error while Generating Report",
+      });
+    }
+  }
+
 
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -768,6 +800,7 @@ function CytologyCaseView() {
                 {" "}
                 <FormattedMessage id="immunohistochemistry.label.reports" />
               </h5>
+              {loadingReport && <InlineLoading />}
               <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
             </Column>
             {pathologySampleInfo.reports &&
@@ -851,12 +884,17 @@ function CytologyCaseView() {
                     </Column>
                     <Column lg={3} md={2} sm={2}>
                       <Button
+                       id ={"generate_report_"+index}
                         onClick={(e) => {
-                          window.open(
-                            config.serverBaseUrl +
-                              "/rest/ReportPrint?report=PatientCytologyReport&programSampleId=" +
-                              cytologySampleId,
-                            "_blank",
+                          setLoadingReport(true);
+                          const form = {
+                            report: "PatientCytologyReport",
+                            programSampleId: cytologySampleId,
+                          };
+                          postToOpenElisServerFullResponse(
+                            "/rest/ReportPrint",
+                            JSON.stringify(form),
+                            writeReport,
                           );
                         }}
                       >

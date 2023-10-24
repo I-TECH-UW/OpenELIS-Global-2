@@ -19,13 +19,14 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   Loading,
+  InlineLoading,
   Row,
 } from "@carbon/react";
 import { Launch, Subtract } from "@carbon/react/icons";
 import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
-  hasRole,
+  hasRole
 } from "../utils/Utils";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { NotificationContext } from "../layout/Layout";
@@ -122,6 +123,7 @@ function PathologyCaseView() {
   const [loading, setLoading] = useState(true);
   const [blocksToAdd, setBlocksToAdd] = useState(1);
   const [slidesToAdd, setSlidesToAdd] = useState(1);
+  const [loadingReport, setLoadingReport] = useState(false);
 
 
   async function displayStatus(response) {
@@ -144,6 +146,35 @@ function PathologyCaseView() {
         kind: NotificationKinds.error,
         title: <FormattedMessage id="notification.title" />,
         message: "Error while saving",
+      });
+    }
+  }
+
+  async function writeReport(response) {
+    var report = await response.blob();
+    const url = URL.createObjectURL(report);
+    console.log(JSON.stringify(report));
+    var status = response.status;
+    setLoadingReport(false);
+    setNotificationVisible(true);
+    if (status == "200") {
+      setNotificationBody({
+        kind: NotificationKinds.success,
+        title: <FormattedMessage id="notification.title" />,
+        message: "Succesfuly Generated Report",
+      });
+
+      var win = window.open();
+      win.document.write(
+        '<iframe src="' +
+          url +
+          '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>',
+      );
+    } else {
+      setNotificationBody({
+        kind: NotificationKinds.error,
+        title: <FormattedMessage id="notification.title" />,
+        message: "Error while Generating Report",
       });
     }
   }
@@ -468,6 +499,7 @@ function PathologyCaseView() {
                 {" "}
                 <FormattedMessage id="immunohistochemistry.label.reports" />
               </h5>
+              {loadingReport && <InlineLoading />}
               <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
             </Column>
 
@@ -549,11 +581,15 @@ function PathologyCaseView() {
                     <Column lg={3} md={2} sm={2}>
                       <Button
                         onClick={(e) => {
-                          window.open(
-                            config.serverBaseUrl +
-                              "/rest/ReportPrint?report=PatientPathologyReport&programSampleId=" +
-                              pathologySampleId,
-                            "_blank",
+                          setLoadingReport(true);
+                          const form = {
+                            report: "PatientPathologyReport",
+                            programSampleId: pathologySampleId,
+                          };
+                          postToOpenElisServerFullResponse(
+                            "/rest/ReportPrint",
+                            JSON.stringify(form),
+                            writeReport,
                           );
                         }}
                       >

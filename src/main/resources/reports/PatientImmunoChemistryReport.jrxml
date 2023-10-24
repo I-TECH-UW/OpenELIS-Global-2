@@ -909,7 +909,7 @@
 				<textFieldExpression><![CDATA[$R{pathology.label.conclusion}]]></textFieldExpression>
 			</textField>
 			<textField  isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="20" width="550" height="30" uuid="57152e13-27fb-4b80-a518-c3dd78d93fdf"/>
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="20" width="550" height="30" uuid="57152e13-27fb-4b80-a518-c3dd78d93fdf"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
