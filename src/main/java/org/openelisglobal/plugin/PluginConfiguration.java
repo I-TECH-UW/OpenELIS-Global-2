@@ -110,13 +110,13 @@ public class PluginConfiguration implements BeanFactoryAware {
 
             if (versionElement == null) {
                 LogEvent.logError(this.getClass().getName(), "loadFromXml", "Missing version number in plugin");
-                LogEvent.logInfo(this.getClass().getName(), "method unkown", "Missing version number in plugin");
+                LogEvent.logInfo(this.getClass().getName(), "loadFromXml", "Missing version number in plugin");
                 return false;
             }
             if (!PluginLoader.SUPPORTED_VERSION.equals(versionElement.getData())) {
                 LogEvent.logError(this.getClass().getName(), "loadFromXml", "Unsupported version number.  Expected "
                         + PluginLoader.SUPPORTED_VERSION + " got " + versionElement.getData());
-                LogEvent.logInfo(this.getClass().getName(), "method unkown", "Unsupported version number.  Expected "
+                LogEvent.logInfo(this.getClass().getName(), "loadFromXml", "Unsupported version number.  Expected "
                         + PluginLoader.SUPPORTED_VERSION + " got " + versionElement.getData());
                 return false;
             }

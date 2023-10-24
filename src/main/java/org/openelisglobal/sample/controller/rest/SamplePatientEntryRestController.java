@@ -283,7 +283,7 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
 				// error = new ActionError("errors.UpdateException", null, null);
 				result.reject("errors.UpdateException", "errors.UpdateException");
 			}
-			LogEvent.logInfo(this.getClass().getName(), "method unkown", result.toString());
+			LogEvent.logInfo(this.getClass().getName(), "samplePatientEntrySave", result.toString());
 
 			// errors.add(ActionMessages.GLOBAL_MESSAGE, error);
 			saveErrors(result);

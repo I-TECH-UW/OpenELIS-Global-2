@@ -318,7 +318,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
             // return localization.getEnglish();
             // }
         } catch (RuntimeException e) {
-            LogEvent.logInfo("TestServiceImpl", "method unkown", "buildTestName caught LAZY");
+            LogEvent.logInfo("TestServiceImpl", "buildTestName", "buildTestName caught LAZY");
             return "ts:btn:284:name";
         }
     }
@@ -362,7 +362,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
             // return localization.getEnglish();
             // }
         } catch (RuntimeException e) {
-            LogEvent.logInfo("TestServiceImpl", "method unkown", "reporting caught LAZY");
+            LogEvent.logInfo("TestServiceImpl", "buildReportingTestName", "reporting caught LAZY");
             return "ts:brtn:322:name";
         }
     }
@@ -391,7 +391,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
             // // return "ts:batn:342:name:" + test.getDescription();
             // }
         } catch (RuntimeException e) {
-            LogEvent.logInfo(this.getClass().getName(), "method unkown", "augmented caught LAZY");
+            LogEvent.logInfo(this.getClass().getName(), "buildAugmentedTestName", "augmented caught LAZY");
             return "ts:batn:345:name:" + test.getDescription();
         }
     }

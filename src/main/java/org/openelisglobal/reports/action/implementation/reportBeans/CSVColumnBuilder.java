@@ -306,7 +306,7 @@ abstract public class CSVColumnBuilder {
             // if you end up where it is because the result set doesn't return a
             // column of the right name
             // Check MAX_POSTGRES_COL_NAME if this fails on a long name
-            LogEvent.logInfo(this.getClass().getName(), "method unkown",
+            LogEvent.logInfo(this.getClass().getName(), "getValue",
                     "Internal Error: Unable to find db column \"" + column.dbName + "\" in data.");
             return "?" + column.csvName + "?";
         }
@@ -315,7 +315,7 @@ abstract public class CSVColumnBuilder {
         // translate should never return null, "" is better while it is doing
         // translation.
         if (result == null) {
-            LogEvent.logInfo(this.getClass().getName(), "method unkown", "A null found " + column.dbName);
+            LogEvent.logInfo(this.getClass().getName(), "getValue", "A null found " + column.dbName);
         }
         return result;
     }
@@ -432,7 +432,7 @@ abstract public class CSVColumnBuilder {
             case PROJECT:
                 return translateProjectId(value);
             case DEBUG:
-                LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                LogEvent.logInfo(this.getClass().getName(), "translate",
                         "Processing Column Value: " + csvName + " \"" + value + "\"");
             case BLANK:
                 return "";

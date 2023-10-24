@@ -1197,7 +1197,7 @@ public abstract class Accessioner implements IAccessioner {
      *
      */
     protected void persistObservationHistoryLists() {
-        LogEvent.logInfo(this.getClass().getName(), "method unkown", "FUNCTION NAME PROHIBITED !");
+        LogEvent.logInfo(this.getClass().getName(), "persistObservationHistoryLists", "FUNCTION NAME PROHIBITED !");
     }
 
     protected void persistObservationHistoryLists2() {

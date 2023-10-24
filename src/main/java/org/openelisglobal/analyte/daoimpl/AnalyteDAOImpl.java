@@ -44,7 +44,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 
     @Override
     public void delete(Analyte analyte) {
-        LogEvent.logInfo(this.getClass().getName(), "method unkown", "selete dao");
+        LogEvent.logWarn(this.getClass().getName(), "delete", "delete analyte is not implemented");
     }
 
     // bugzilla 1367 added ignoreCase

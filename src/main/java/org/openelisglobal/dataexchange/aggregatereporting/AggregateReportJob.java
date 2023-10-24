@@ -63,8 +63,6 @@ public class AggregateReportJob implements Job {
 
     @Override
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
-        LogEvent.logInfo(this.getClass().getName(), "method unkown",
-                "Reporting triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
         LogEvent.logInfo("AggregateReportJob", "execute()",
                 "Reporting triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
 
@@ -265,9 +263,8 @@ public class AggregateReportJob implements Job {
 //                    }
 //                }.start();
             } else {
-                LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                LogEvent.logInfo(this.getClass().getName(), "retry",
                         "Aggregate report: Giving up trying to connect");
-                LogEvent.logInfo("AggregateReportJob", "retry()", "Giving up trying to connect");
             }
         }
 

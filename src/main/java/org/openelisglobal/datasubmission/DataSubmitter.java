@@ -161,7 +161,7 @@ public class DataSubmitter {
             client = HttpClientBuilder.create().build();
             HttpGet request = new HttpGet(url.toString());
             request.setHeader("Accept", "application/json");
-            LogEvent.logInfo(this.getClass().getName(), "method unkown", "GET: " + request.getURI());
+            LogEvent.logInfo(this.getClass().getName(), "sendGet", "GET: " + request.getURI());
 
             response = client.execute(request);
             if (response.getStatusLine().getStatusCode() != 201 && response.getStatusLine().getStatusCode() != 200) {
@@ -169,7 +169,7 @@ public class DataSubmitter {
             }
 
             String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-            LogEvent.logInfo(this.getClass().getName(), "method unkown", "Server returned: " + body);
+            LogEvent.logInfo(this.getClass().getName(), "sendGet", "Server returned: " + body);
             return body;
         } finally {
             if (client != null) {
@@ -207,7 +207,7 @@ public class DataSubmitter {
             request.setHeader("Accept", "application/json");
             request.setHeader("Content-type", "application/json");
             request.setEntity(entity);
-            LogEvent.logInfo(this.getClass().getName(), "method unkown",
+            LogEvent.logInfo(this.getClass().getName(), "sendJSONPost",
                     "POST: " + request.getURI() + " " + createJSONString(resource.getColumnValues()));
 
             response = client.execute(request);
@@ -216,7 +216,7 @@ public class DataSubmitter {
             }
 
             String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-            LogEvent.logInfo(this.getClass().getName(), "method unkown", "Server returned: " + body);
+            LogEvent.logInfo(this.getClass().getName(), "sendJSONPost", "Server returned: " + body);
             return body;
         } finally {
             if (client != null) {
@@ -250,7 +250,7 @@ public class DataSubmitter {
             request.setHeader("Accept", "application/json");
             request.setHeader("Content-type", "application/json");
             request.setEntity(entity);
-            LogEvent.logInfo(this.getClass().getName(), "method unkown",
+            LogEvent.logInfo(this.getClass().getName(), "sendJSONPut",
                     "PUT: " + request.getURI() + " " + createJSONString(resource.getColumnValues()));
 
             response = client.execute(request);
@@ -422,7 +422,7 @@ public class DataSubmitter {
             request.setHeader("Content-type", "application/json");
             request.setEntity(entity);
 
-            LogEvent.logInfo(this.getClass().getName(), "method unkown", getBaseURL() + "/" + table);
+            LogEvent.logInfo(this.getClass().getName(), "sendJSONPost", getBaseURL() + "/" + table);
 
             response = client.execute(request);
             if (response.getStatusLine().getStatusCode() != 201 && response.getStatusLine().getStatusCode() != 200) {

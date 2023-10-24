@@ -326,7 +326,7 @@ public class PatientManagementUpdate implements IPatientUpdate {
         try {
             typeName = patientInfo.getPatientType();
         } catch (RuntimeException e) {
-            LogEvent.logInfo(this.getClass().getName(), "method unkown", "typeName ignored");
+            LogEvent.logInfo(this.getClass().getName(), "persistPatientType", "typeName ignored");
         }
 
         if (!GenericValidator.isBlankOrNull(typeName) && !"0".equals(typeName)) {
