@@ -68,14 +68,12 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
     private static String TABLE_REFERENCE_ID;
 
     @Autowired
-    private static NoteDAO baseObjectDAO = SpringContext.getBean(NoteDAO.class);
+    private NoteDAO baseObjectDAO;
 
     @Autowired
     private SampleQaEventService sampleQAService;
     @Autowired
     private ReferenceTablesService refTableService;
-    @Autowired
-    private static SystemUserService systemUserService = SpringContext.getBean(SystemUserService.class);
 
     @PostConstruct
     public void initializeGlobalVariables() {
@@ -315,7 +313,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
     public static SystemUser createSystemUser(String currentUserId) {
         SystemUser systemUser = new SystemUser();
         systemUser.setId(currentUserId);
-        systemUserService.getData(systemUser);
+        SpringContext.getBean(SystemUserService.class).getData(systemUser);
         return systemUser;
     }
 
@@ -339,7 +337,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
         }
     }
 
-    public static List<Note> getTestNotesInDateRangeByType(Date lowDate, Date highDate, NoteType noteType) {
+    public List<Note> getTestNotesInDateRangeByType(Date lowDate, Date highDate, NoteType noteType) {
         return baseObjectDAO.getNotesInDateRangeAndType(lowDate, DateUtil.addDaysToSQLDate(highDate, 1),
                 noteType.DBCode, AnalysisServiceImpl.getTableReferenceId());
     }

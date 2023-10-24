@@ -25,6 +25,7 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl;
 import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.reports.action.implementation.reportBeans.RejectionReportBean;
@@ -33,7 +34,7 @@ import org.openelisglobal.spring.util.SpringContext;
 
 /**
  */
-public class RejectionReportByTestSection extends RejectionReport implements IReportCreator, IReportParameterSetter {
+public class RejectionReportByTestSection extends RejectionReport implements IReportParameterSetter {
     private String unitName;
 
     @Override
@@ -60,7 +61,7 @@ public class RejectionReportByTestSection extends RejectionReport implements IRe
         rejections = new ArrayList<>();
         ArrayList<RejectionReportBean> rawResults = new ArrayList<>();
 
-        List<Note> testRejectionNotes = NoteServiceImpl.getTestNotesInDateRangeByType(dateRange.getLowDate(),
+        List<Note> testRejectionNotes = SpringContext.getBean(NoteService.class).getTestNotesInDateRangeByType(dateRange.getLowDate(),
                 dateRange.getHighDate(), NoteServiceImpl.NoteType.REJECTION_REASON);
 
         Collections.sort(testRejectionNotes, new Comparator<Note>() {

@@ -13,10 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
-import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.localization.service.LocalizationService;
-import org.openelisglobal.login.bean.OEHeader;
 import org.openelisglobal.login.bean.UserSession;
 import org.openelisglobal.login.form.LoginForm;
 import org.openelisglobal.role.service.RoleService;
@@ -91,14 +88,13 @@ public class LoginPageController extends BaseController {
             form.setUseSAML(useSAML);
         }
         if (useOAUTH) {
-            Iterable<ClientRegistration> clientRegistrations = null;
             ResolvableType type = ResolvableType.forInstance(clientRegistrationRepository).as(Iterable.class);
             if (type != ResolvableType.NONE && ClientRegistration.class.isAssignableFrom(type.resolveGenerics()[0])) {
-                clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository;
-            }
-
-            clientRegistrations.forEach(registration -> oauth2AuthenticationUrls.put(registration.getClientName(),
+                @SuppressWarnings("unchecked")
+                Iterable<ClientRegistration> clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository;
+                clientRegistrations.forEach(registration -> oauth2AuthenticationUrls.put(registration.getClientName(),
                     authorizationRequestBaseUri + "/" + registration.getRegistrationId()));
+            }
             form.setOauthUrls(oauth2AuthenticationUrls);
         }
 
@@ -119,7 +115,7 @@ public class LoginPageController extends BaseController {
 
     @GetMapping(value = "/session", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public UserSession getSesssionDetails(HttpServletRequest request ,CsrfToken token) {
+    public UserSession getSesssionDetails(HttpServletRequest request, CsrfToken token) {
         boolean authenticated = !userModuleService.isSessionExpired(request);
         UserSession session = new UserSession();
         session.setAuthenticated(authenticated);

@@ -31,8 +31,6 @@ import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
 import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
-import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
-import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
@@ -45,17 +43,11 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 
     private static String TABLE_REFERENCE_ID;
 
-    @Autowired
     private static ResultDAO baseObjectDAO = SpringContext.getBean(ResultDAO.class);
-
-    @Autowired
     private static DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
-    @Autowired
     private static ResultSignatureService signatureService = SpringContext.getBean(ResultSignatureService.class);
     @Autowired
     private ReferenceTablesService referenceTablesService = SpringContext.getBean(ReferenceTablesService.class);
-    @Autowired
-    private TypeOfSampleTestService typeOfSampleTestService = SpringContext.getBean(TypeOfSampleTestService.class);
     @Autowired
     private TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
     @Autowired
