@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.propertyeditor.CaseInsensitiveEnumPropertyEditor;
 import org.openelisglobal.externalconnections.valueholder.ExternalConnection.AuthType;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -43,6 +45,13 @@ public class ControllerSetup extends ResponseEntityExceptionHandler {
                 new CaseInsensitiveEnumPropertyEditor<>(ProgrammedConnection.class));
     }
 
+    @ExceptionHandler(value = { LIMSRuntimeException.class })
+    protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
+        LogEvent.logError(ex);
+        return handleExceptionInternal(ex, "LIMSRuntimeException",
+                new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
+
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
             HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -56,7 +65,6 @@ public class ControllerSetup extends ResponseEntityExceptionHandler {
         LogEvent.logError(ex);
         return super.handleMissingServletRequestParameter(ex, headers, status, request);
     }
-
 
     // error handle for @Valid
     @Override
