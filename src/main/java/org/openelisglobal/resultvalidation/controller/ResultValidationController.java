@@ -303,7 +303,7 @@ public class ResultValidationController extends BaseResultValidationController {
                 LogEvent.logError(e);
             }
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
             throw e;
         }
 

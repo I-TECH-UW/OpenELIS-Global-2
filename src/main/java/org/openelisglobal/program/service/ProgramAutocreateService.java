@@ -100,7 +100,7 @@ public class ProgramAutocreateService {
                     DisplayListService.getInstance().refreshList(ListType.PROGRAM);
                     
                 } catch (IOException | FhirLocalPersistingException e) {
-                    LogEvent.logErrorStack(e);
+                    LogEvent.logError(e);
                 }
             }
         }

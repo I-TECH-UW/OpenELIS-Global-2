@@ -165,7 +165,7 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
         try {
             callSoapWebService(connectionString, soapAction);
         } catch (SOAPException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
         setPossibleErrors();
     }
@@ -273,7 +273,6 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
 
         } catch (Exception e) {
             LogEvent.logError("Error occurred while sending SOAP Request to Server!", e);
-            LogEvent.logErrorStack(e);
         } finally {
             if (soapConnection != null) {
                 soapConnection.close();

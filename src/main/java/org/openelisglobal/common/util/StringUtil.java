@@ -431,7 +431,7 @@ public class StringUtil {
             columns[columns.length - 1] = columns[columns.length - 1] + System.getProperty("line.separator");
             return columns;
         } catch (CsvException | IOException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(e.getMessage(), e);
         }
     }
@@ -450,7 +450,7 @@ public class StringUtil {
         try (CSVReader reader = new CSVReaderBuilder(new StringReader(line)).withCSVParser(parser).build();) {
             return reader.readAll();
         } catch (CsvException | IOException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(e.getMessage(), e);
         }
     }

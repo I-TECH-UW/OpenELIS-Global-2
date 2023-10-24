@@ -57,12 +57,12 @@ public class SMPPNotificationSender {
                 LogEvent.logDebug(this.getClass().getName(), "send", "sms messageId: " + messageId);
             } catch (IllegalArgumentException | PDUException | ResponseTimeoutException | InvalidResponseException
                     | NegativeResponseException | IOException e) {
-                LogEvent.logErrorStack(e);
+                LogEvent.logError(e);
             }
 
             session.unbindAndClose();
         } catch (IOException | URISyntaxException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
 
     }

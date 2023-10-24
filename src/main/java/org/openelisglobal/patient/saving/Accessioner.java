@@ -1293,7 +1293,6 @@ public abstract class Accessioner implements IAccessioner {
      * @param e          the thrown exception of which to print the stack trace.
      */
     public void logAndAddMessage(String methodName, String messageKey, Exception e) {
-        LogEvent.logDebug(e);
         LogEvent.logError(e.toString(), e);
         if (!messages.hasErrors()) {
             messages.reject(messageKey);

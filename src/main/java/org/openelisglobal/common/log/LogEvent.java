@@ -15,8 +15,6 @@
 */
 package org.openelisglobal.common.log;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Category;
 import org.owasp.encoder.Encode;
 
@@ -48,9 +46,9 @@ public class LogEvent {
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         String className = stackTrace[0].getClassName();
         String methodName = stackTrace[0].getMethodName();
-
         getLog().error(
                 "Class: " + className + ", Method: " + methodName + ", Error: " + sanitizeLogMessage(errorMessage));
+        logError(throwable);
     }
 
     /**
@@ -60,28 +58,16 @@ public class LogEvent {
      */
     public static void logError(Throwable throwable) {
         StackTraceElement[] stackTrace = throwable.getStackTrace();
-        String className = stackTrace[0].getClassName();
-        String methodName = stackTrace[0].getMethodName();
-
-        getLog().error("Class: " + className + ", Method: " + methodName + ", Error: "
-                + sanitizeLogMessage(throwable.getMessage()));
-    }
-
-    /**
-     * Write to the log file (type error)
-     *
-     * @param throwable -- exception which will be used to generate the stack trace
-     */
-    public static void logErrorStack(Throwable throwable) {
-        StringBuilder stackErrorMessage = new StringBuilder();
-        StackTraceElement[] stackTrace = throwable.getStackTrace();
-        for (int i = 0; i < MAX_STACK_DEPTH; ++i) {
-            stackErrorMessage.append(sanitizeLogMessage(stackTrace[i].toString()));
-            stackErrorMessage.append(System.lineSeparator());
-        }
-        logError(stackErrorMessage.toString(), throwable);
         getLog().error("Class: " + stackTrace[0].getClassName() + ", Method: " + stackTrace[0].getMethodName(),
                 throwable);
+        if (getLog().isDebugEnabled()) {
+            StringBuilder stackErrorMessage = new StringBuilder();
+            for (int i = 0; i < MAX_STACK_DEPTH; ++i) {
+                stackErrorMessage.append(sanitizeLogMessage(stackTrace[i].toString()));
+                stackErrorMessage.append(System.lineSeparator());
+            }
+            logDebug(stackErrorMessage.toString(), throwable);
+        }
     }
 
     public static void logTrace(String className, String methodName, String debugMessage) {
@@ -163,11 +149,6 @@ public class LogEvent {
     public static void logFatal(String className, String methodName, String fatalMessage) {
         getLog().fatal(
                 "Class: " + className + ", Method: " + methodName + ", Fatal:" + sanitizeLogMessage(fatalMessage));
-    }
-
-    public static Log getLog(Class className) {
-        Log log = LogFactory.getLog(className);
-        return log;
     }
 
     private static Category getLog() {

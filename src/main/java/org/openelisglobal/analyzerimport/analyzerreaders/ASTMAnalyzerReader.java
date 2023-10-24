@@ -60,7 +60,6 @@ public class ASTMAnalyzerReader extends AnalyzerReader {
             }
         } catch (IOException e) {
             error = "Unable to determine message encoding";
-            LogEvent.logError(e);
             LogEvent.logError("an error occured detecting the encoding of the analyzer message", e);
             return false;
         }

@@ -46,14 +46,14 @@ public class ControllerSetup extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
             HttpHeaders headers, HttpStatus status, WebRequest request) {
-        LogEvent.logErrorStack(ex);
+        LogEvent.logError(ex);
         return super.handleHttpMessageNotReadable(ex, headers, status, request);
     }
 
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex,
             HttpHeaders headers, HttpStatus status, WebRequest request) {
-        LogEvent.logErrorStack(ex);
+        LogEvent.logError(ex);
         return super.handleMissingServletRequestParameter(ex, headers, status, request);
     }
 
@@ -88,7 +88,7 @@ public class ControllerSetup extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex,
             HttpHeaders headers, HttpStatus status, WebRequest request) {
-        LogEvent.logErrorStack(ex);
+        LogEvent.logError(ex);
         return super.handleHttpMediaTypeNotSupported(ex, headers, status, request);
     }
 }

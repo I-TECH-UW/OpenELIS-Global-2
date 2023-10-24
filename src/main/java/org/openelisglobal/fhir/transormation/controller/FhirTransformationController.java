@@ -167,12 +167,12 @@ public class FhirTransformationController extends BaseController {
                         }
                     } catch (FhirPersistanceException e) {
                         ++batchFailure;
-                        LogEvent.logErrorStack(e);
+                        LogEvent.logError(e);
                         LogEvent.logError(this.getClass().getName(), "transformPersistMissingFhirObjects",
                                 "error persisting batch " + (i - batchSize + 1) + "-" + i);
                     } catch (Exception e) {
                         ++batchFailure;
-                        LogEvent.logErrorStack(e);
+                        LogEvent.logError(e);
                         LogEvent.logError(this.getClass().getName(), "transformPersistMissingFhirObjects",
                                 "error with batch " + (i - batchSize + 1) + "-" + i);
                     }

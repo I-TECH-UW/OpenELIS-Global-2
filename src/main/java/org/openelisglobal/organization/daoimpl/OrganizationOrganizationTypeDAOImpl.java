@@ -107,7 +107,6 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
     }
 
     private void handleException(Exception e, String string) {
-        LogEvent.logErrorStack(e);
-
+        LogEvent.logError(e);
     }
 }

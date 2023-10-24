@@ -754,7 +754,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
     }
 
     protected void handleException(Exception e, String method) throws LIMSRuntimeException {
-        // LogEvent.logErrorStack(this.getClass().getSimpleName(), method, e);
+        // logError(this.getClass().getSimpleName(), method, e);
         throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + method, e);
     }
 

@@ -141,7 +141,7 @@ public class AggregateReportJob implements Job {
         try {
             cronSchedulerService.update(reportScheduler);
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
     }
 
@@ -215,7 +215,7 @@ public class AggregateReportJob implements Job {
                 }
 
             } catch (LIMSRuntimeException e) {
-                LogEvent.logErrorStack(e);
+                LogEvent.logError(e);
                 throw e;
             }
 
@@ -280,7 +280,7 @@ public class AggregateReportJob implements Job {
                     siteInfoService.update(sendInfo);
                 }
             } catch (LIMSRuntimeException e) {
-                LogEvent.logErrorStack(e);
+                LogEvent.logError(e);
             }
         }
 

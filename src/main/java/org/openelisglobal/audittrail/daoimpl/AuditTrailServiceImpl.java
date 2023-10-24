@@ -297,7 +297,7 @@ public class AuditTrailServiceImpl implements AuditTrailService {
                     }
                 } catch (IllegalAccessException e) {
                     // buzilla 2154
-                    LogEvent.logErrorStack(e);
+                    LogEvent.logError(e);
                     propertyNewState = "";
                 }
 
@@ -312,7 +312,7 @@ public class AuditTrailServiceImpl implements AuditTrailService {
                     propertyPreUpdateState = "";
                 } catch (IllegalAccessException e) {
                     // buzilla 2154
-                    LogEvent.logErrorStack(e);
+                    LogEvent.logError(e);
                     propertyPreUpdateState = "";
                 }
 

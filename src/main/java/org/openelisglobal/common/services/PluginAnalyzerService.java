@@ -110,7 +110,7 @@ public class PluginAnalyzerService {
             analyzerService.persistData(analyzer, testMappings, existingMappings);
             registerAanlyzerInCache(name, analyzer.getId());
         } catch (RuntimeException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
         return analyzer.getId();
     }
@@ -143,7 +143,7 @@ public class PluginAnalyzerService {
             analyzerService.persistData(analyzer, testMappings, existingMappings);
             registerAanlyzerInCache(name, analyzer.getId());
         } catch (RuntimeException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
         return analyzer.getId();
     }

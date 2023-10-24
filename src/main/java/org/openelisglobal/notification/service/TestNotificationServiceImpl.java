@@ -209,7 +209,7 @@ public class TestNotificationServiceImpl implements TestNotificationService {
         } catch (RuntimeException e) {
             LogEvent.logError(this.getClass().getName(), "createAndSendResultsNotificationSMS",
                     "could not send sms notification");
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
 
     }

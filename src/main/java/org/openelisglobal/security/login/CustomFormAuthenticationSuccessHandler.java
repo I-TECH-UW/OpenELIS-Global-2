@@ -106,7 +106,6 @@ public class CustomFormAuthenticationSuccessHandler extends SavedRequestAwareAut
             getRedirectStrategy().sendRedirect(request, response, "/LoginPage");
             return;
         } catch (RuntimeException e) {
-            LogEvent.logErrorStack(e);
             LogEvent.logError(e);
 
             SecurityContextHolder.getContext().setAuthentication(null);

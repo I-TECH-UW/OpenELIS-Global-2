@@ -77,7 +77,7 @@ public class ImageServiceImpl extends BaseObjectServiceImpl<Image, String> imple
 	        Image image = get(logoInformation.getValue());
 	        return Optional.ofNullable(image);
         } catch (Exception e) {
-        	LogEvent.logErrorStack(e);
+        	LogEvent.logError(e);
 			return Optional.empty();
 		}
 

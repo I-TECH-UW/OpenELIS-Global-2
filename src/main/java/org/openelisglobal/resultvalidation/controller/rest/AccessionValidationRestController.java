@@ -311,7 +311,7 @@ public class AccessionValidationRestController extends BaseResultValidationContr
             resultValidationService.persistdata(deletableList, analysisUpdateList, resultUpdateList, resultItemList,
                     sampleUpdateList, noteUpdateList, resultSaveService, updaters, getSysUserId(request));
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
 
         for (IResultUpdate updater : updaters) {

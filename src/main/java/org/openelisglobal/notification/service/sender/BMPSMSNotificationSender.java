@@ -59,7 +59,7 @@ public class BMPSMSNotificationSender {
         } catch (IOException e) {
             LogEvent.logError(this.getClass().getName(), "sendSMS",
                     "failed to communicate with " + address + " for sending SMS");
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
 
         if (!GenericValidator.isBlankOrNull(statusReturned) && statusReturned.contains("-")) {

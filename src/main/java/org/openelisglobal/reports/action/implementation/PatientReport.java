@@ -278,7 +278,7 @@ public abstract class PatientReport extends Report {
 //				}
 
             } catch (LIMSRuntimeException e) {
-                LogEvent.logErrorStack(e);
+                LogEvent.logError(e);
             }
         }
     }

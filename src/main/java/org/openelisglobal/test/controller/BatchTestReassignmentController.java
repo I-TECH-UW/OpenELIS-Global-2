@@ -90,7 +90,7 @@ public class BatchTestReassignmentController extends BaseController {
             analysisService.updateAnalysises(cancelAnalysis, newAnalysis, getSysUserId(request));
 
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
 
         if (changeBeans.isEmpty()) {

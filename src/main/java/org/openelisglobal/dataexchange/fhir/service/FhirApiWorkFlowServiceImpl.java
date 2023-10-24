@@ -200,7 +200,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                     }
                 }
             } catch (RuntimeException e) {
-                LogEvent.logError(e);
                 LogEvent.logError("could not check/update state of referral with UUID: " + referralTaskUuid, e);
             }
         }
@@ -245,7 +244,6 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                         try {
                             addOriginalReferralObject(bundleEntry, originalReferralObjectsByServiceRequest);
                         } catch (RuntimeException e) {
-                            LogEvent.logErrorStack(e);
                             LogEvent.logError("could not import result for: " + bundleEntry.getResource().getId(), e);
                         }
                     }
@@ -414,7 +412,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                     try {
                         processTaskImportOrder(remoteTask, remoteStorePath, sourceFhirClient, bundle);
                     } catch (RuntimeException | FhirLocalPersistingException e) {
-                        LogEvent.logErrorStack(e);
+                        LogEvent.logError(e);
                         LogEvent.logError(this.getClass().getName(), "beginTaskImportOrderPath",
                                 "could not process Task with identifier : " + remoteTask.getId());
                     }
