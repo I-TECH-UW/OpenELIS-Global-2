@@ -43,6 +43,7 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.params.CoreConnectionPNames;
 import org.dom4j.DocumentException;
 import org.openelisglobal.common.log.LogEvent;
@@ -177,7 +178,7 @@ public class ExternalPatientSearch implements IExternalPatientSearch {
     // protected for unit testing called from synchronized block
     protected void doSearch() {
 
-        CloseableHttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
         setTimeout(httpclient);
 
         HttpGet httpget = new HttpGet(connectionString);
@@ -187,6 +188,7 @@ public class ExternalPatientSearch implements IExternalPatientSearch {
         CloseableHttpResponse getResponse = null;
         try {
             // Ignore hostname mismatches and allow trust of self-signed certs
+            // TODO shouldn't let a self signed cert through
             SSLSocketFactory sslsf = new SSLSocketFactory(new TrustSelfSignedStrategy(),
                     SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
             Scheme https = new Scheme("https", 443, sslsf);

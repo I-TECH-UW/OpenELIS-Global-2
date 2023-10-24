@@ -14,7 +14,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -158,7 +158,7 @@ public class DataSubmitter {
         CloseableHttpClient client = null;
         CloseableHttpResponse response = null;
         try {
-            client = new DefaultHttpClient();
+            client = HttpClientBuilder.create().build();
             HttpGet request = new HttpGet(url.toString());
             request.setHeader("Accept", "application/json");
             LogEvent.logInfo(this.getClass().getName(), "method unkown", "GET: " + request.getURI());
@@ -197,7 +197,8 @@ public class DataSubmitter {
         CloseableHttpClient client = null;
         CloseableHttpResponse response = null;
         try {
-            client = new DefaultHttpClient();
+
+            client = HttpClientBuilder.create().build();
             String url = getBaseURL() + "/" + resource.getCollectionName();
             url += "/" + resource.getLevel();
             HttpPost request = new HttpPost(url);
@@ -239,7 +240,7 @@ public class DataSubmitter {
         CloseableHttpClient client = null;
         CloseableHttpResponse response = null;
         try {
-            client = new DefaultHttpClient();
+            client = HttpClientBuilder.create().build();
             String url = getBaseURL() + "/" + resource.getName();
             url += "/" + level + "/" + resource.getLevelIdMap().get(level);
 
@@ -297,7 +298,7 @@ public class DataSubmitter {
         CloseableHttpClient client = null;
         CloseableHttpResponse response = null;
         try {
-            client = new DefaultHttpClient();
+            client = HttpClientBuilder.create().build();
             HttpGet request = new HttpGet(url.toString());
             request.setHeader("Accept", "application/json");
 
@@ -339,7 +340,7 @@ public class DataSubmitter {
         CloseableHttpClient client = null;
         CloseableHttpResponse response = null;
         try {
-            client = new DefaultHttpClient();
+            client = HttpClientBuilder.create().build();
             HttpGet request = new HttpGet(url.toString());
             request.setHeader("Accept", "application/json");
 
@@ -374,7 +375,7 @@ public class DataSubmitter {
         CloseableHttpClient client = null;
         CloseableHttpResponse response = null;
         try {
-            client = new DefaultHttpClient();
+            client = HttpClientBuilder.create().build();
 
             HttpPut request = new HttpPut(getBaseURL() + "/" + table + "/" + foreignKey);
             StringEntity entity = new StringEntity(createJSONString(values));
@@ -413,7 +414,7 @@ public class DataSubmitter {
         CloseableHttpClient client = null;
         CloseableHttpResponse response = null;
         try {
-            client = new DefaultHttpClient();
+            client = HttpClientBuilder.create().build();
             HttpPost request = new HttpPost(getBaseURL() + "/" + table);
             StringEntity entity = new StringEntity(createJSONString(values));
             entity.setContentType("application/json");
