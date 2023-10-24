@@ -1,7 +1,11 @@
 package org.openelisglobal.reports.action.implementation;
 
 import org.openelisglobal.program.service.ImmunohistochemistrySampleService;
+import org.openelisglobal.program.service.PathologyDisplayService;
 import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySample;
+import org.openelisglobal.program.valueholder.pathology.PathologyConclusion;
+import org.openelisglobal.program.valueholder.pathology.PathologySample;
+import org.openelisglobal.program.valueholder.pathology.PathologyConclusion.ConclusionType;
 import org.openelisglobal.reports.action.implementation.reportBeans.ProgramSampleReportData;
 import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.result.service.ResultService;
@@ -16,6 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.validator.GenericValidator;
@@ -27,7 +32,7 @@ import org.openelisglobal.dictionary.valueholder.Dictionary;
 public class PatientImmunoChemistryReport extends PatientProgramReport{
 
     protected  ImmunohistochemistrySampleService immunohistochemistrySampleService = SpringContext.getBean(ImmunohistochemistrySampleService.class);
-
+    protected  PathologyDisplayService pathologyDisplayService = SpringContext.getBean(PathologyDisplayService.class);
     private ImmunohistochemistrySample immunohistochemistrySample;
 
 
@@ -71,6 +76,13 @@ public class PatientImmunoChemistryReport extends PatientProgramReport{
             resultsData.add(resultData);
         });
         data.setResults(resultsData);
+       
+        if(immunohistochemistrySample.getPathologySample() != null){
+             PathologySample pathologySample = pathologyDisplayService.getPathologySampleWithLoadedAtttributes(immunohistochemistrySample.getPathologySample().getId());
+             Optional<PathologyConclusion> conclusion = pathologySample.getConclusions().stream()
+                .filter(e -> e.getType() == ConclusionType.TEXT).findFirst();
+            data.setTextConclusion(conclusion.get().getValue());
+        }
     }
 
     @Override
