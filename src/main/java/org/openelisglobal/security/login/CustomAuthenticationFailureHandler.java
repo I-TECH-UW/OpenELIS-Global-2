@@ -1,4 +1,4 @@
-package org.openelisglobal.security;
+package org.openelisglobal.security.login;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 import org.openelisglobal.common.constants.Constants;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
@@ -27,6 +28,15 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException exception) throws IOException, ServletException {
+        //get the X-Forwarded-For header so that we know if the request is from a proxy
+        final String xfHeader = request.getHeader("X-Forwarded-For");
+        if (xfHeader == null){
+            //no proxy
+            LogEvent.logInfo(this.getClass().getName(), "onFailure", "Unsuccessful login attempt from "+ request.getRemoteAddr());
+        } else {
+            //from proxy
+            LogEvent.logInfo(this.getClass().getName(), "onFailure", "Unsuccessful login attempt from "+ xfHeader.split(",")[0]);
+        }
         if ("true".equals(request.getParameter("apiCall"))) {
             this.handleApiLogin(request, response, exception);
             return;

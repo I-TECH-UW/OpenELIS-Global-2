@@ -22,16 +22,22 @@ import org.jasypt.util.text.AES256TextEncryptor;
 import org.jasypt.util.text.TextEncryptor;
 import org.openelisglobal.config.condition.ConditionalOnProperty;
 import org.openelisglobal.security.KeystoreUtil.KeyCertPair;
+import org.openelisglobal.security.login.BasicAuthFilter;
+import org.openelisglobal.security.login.CustomAuthenticationFailureHandler;
+import org.openelisglobal.security.login.CustomFormAuthenticationSuccessHandler;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
+import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -226,13 +232,20 @@ public class SecurityConfig {
             http.addFilterBefore(multipartFilter, CsrfFilter.class);
 
             http.requestMatcher(new SamlRequestedMatcher()).authorizeRequests().anyRequest().authenticated().and()
-                    .saml2Logout().and().saml2Login().successHandler(customAuthenticationSuccessHandler())
+                    .saml2Logout().and().saml2Login()
+                    .failureHandler(customAuthenticationFailureHandler())
+                    .successHandler(customAuthenticationSuccessHandler())
                     .relyingPartyRegistrationRepository(relyingPartyRegistrationRepository());
         }
 
         @Bean("samlAuthenticationSuccessHandler")
         public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
             return new CustomFormAuthenticationSuccessHandler();
+        }
+
+        @Bean("samlAuthenticationFailureHandler")
+        public AuthenticationFailureHandler customAuthenticationFailureHandler() {
+            return new CustomAuthenticationFailureHandler();
         }
     }
 
@@ -278,6 +291,7 @@ public class SecurityConfig {
                     .authenticated().and()//
                     .oauth2Login().clientRegistrationRepository(clientRegistrationRepository())//
                     .authorizedClientService(authorizedClientService())
+                    .failureHandler(customAuthenticationFailureHandler())
                     .successHandler(customAuthenticationSuccessHandler()).and()
                     .logout(logout -> logout.logoutSuccessHandler(oidcLogoutSuccessHandler()))
                     // add security headers
@@ -302,6 +316,11 @@ public class SecurityConfig {
         @Bean("oauthAuthenticationSuccessHandler")
         public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
             return new CustomFormAuthenticationSuccessHandler();
+        }
+
+        @Bean("oauthAuthenticationFailureHandler")
+        public AuthenticationFailureHandler customAuthenticationFailureHandler() {
+            return new CustomAuthenticationFailureHandler();
         }
 
     }
@@ -418,6 +437,12 @@ public class SecurityConfig {
         textEncryptor.setPassword(encryptionPassword);
         return textEncryptor;
     }
+
+    // @Bean
+    // public AuthenticationEventPublisher authenticationEventPublisher
+    //         (ApplicationEventPublisher applicationEventPublisher) {
+    //     return new DefaultAuthenticationEventPublisher(applicationEventPublisher);
+    // }
 
     private static class OAuthRequestedMatcher implements RequestMatcher {
         @Override

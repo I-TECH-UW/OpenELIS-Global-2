@@ -1,4 +1,4 @@
-package org.openelisglobal.security;
+package org.openelisglobal.security.login;
 
 import java.util.ArrayList;
 import java.util.List;

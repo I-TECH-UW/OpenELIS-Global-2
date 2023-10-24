@@ -1,4 +1,4 @@
-package org.openelisglobal.security;
+package org.openelisglobal.security.login;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -34,7 +34,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.saml2.provider.service.authentication.DefaultSaml2AuthenticatedPrincipal;
 import org.springframework.security.web.WebAttributes;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -42,8 +41,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 @Component
 public class CustomFormAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler
-
-        implements AuthenticationSuccessHandler, IActionConstants {
+        implements IActionConstants {
 
     @Autowired
     private LoginUserService loginService;
@@ -66,6 +64,17 @@ public class CustomFormAuthenticationSuccessHandler extends SavedRequestAwareAut
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
+        // get the X-Forwarded-For header so that we know if the request is from a proxy
+        final String xfHeader = request.getHeader("X-Forwarded-For");
+        if (xfHeader == null) {
+            // no proxy
+            LogEvent.logInfo(this.getClass().getName(), "onSuccess",
+                    "Successful login attempt for " + authentication.getName() + " from " + request.getRemoteAddr());
+        } else {
+            // from proxy
+            LogEvent.logInfo(this.getClass().getName(), "onSuccess",
+                    "Successful login attempt for " + authentication.getName() + " from " + xfHeader.split(",")[0]);
+        }
 
         String homePath = "/Dashboard";
         LoginUser loginInfo = null;
@@ -116,7 +125,7 @@ public class CustomFormAuthenticationSuccessHandler extends SavedRequestAwareAut
         if ("true".equals(request.getParameter("apiCall"))) {
             this.handleApiLogin(request, response);
         } else {
-//        redirectStrategy.sendRedirect(request, response, homePath);
+            // redirectStrategy.sendRedirect(request, response, homePath);
             super.onAuthenticationSuccess(request, response, authentication);
             clearCustomAuthenticationAttributes(request);
         }

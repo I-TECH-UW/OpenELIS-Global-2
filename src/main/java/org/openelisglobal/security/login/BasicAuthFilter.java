@@ -1,4 +1,4 @@
-package org.openelisglobal.security;
+package org.openelisglobal.security.login;
 
 import java.util.HashSet;
 import java.util.List;
@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Component; 
 
 @Component("basicAuthFilter")
 public class BasicAuthFilter extends BasicAuthenticationFilter {
