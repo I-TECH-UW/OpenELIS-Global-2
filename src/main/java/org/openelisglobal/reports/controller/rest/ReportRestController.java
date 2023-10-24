@@ -82,8 +82,7 @@ public class ReportRestController extends BaseRestController{
                 servletOutputStream.flush();
                 servletOutputStream.close();
             } catch (IOException | SQLException | JRException | DocumentException | ParseException e) {
-                LogEvent.logErrorStack(e);
-                LogEvent.logDebug(e);
+                LogEvent.logError(e);
             }
         }
 
