@@ -12,4 +12,5 @@
 	<include relativeToChangelogFile="true" file="immunohistochemistry.xml" />
 	<include relativeToChangelogFile="true" file="cytology.xml" />
 	<include relativeToChangelogFile="true" file="sample_types.xml" />
+	<include relativeToChangelogFile="true" file="add_antimicrobial_resistance_test_column.xml" />
 </databaseChangeLog>

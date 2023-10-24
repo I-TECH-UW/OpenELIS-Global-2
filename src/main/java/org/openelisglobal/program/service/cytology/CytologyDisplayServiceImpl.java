@@ -145,5 +145,13 @@ public class CytologyDisplayServiceImpl implements CytologyDisplayService {
         displayItem.setPathologySampleId(cytologySample.getId());
         return displayItem;
     }
+
+    @Override
+        @Transactional
+    public CytologySample getCytologySampleWithLoadedAttributes(Integer cytologySampleId) {
+        CytologySample cytologySample = cytologySampleService.get(cytologySampleId);
+        cytologySample.getDiagnosis().getDiagnosisResultsMaps().size();
+        return cytologySample;
+    }
     
 }

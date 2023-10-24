@@ -522,7 +522,7 @@ function PathologyCaseView() {
                         }}
                       />
                     </Column>
-                    <Column lg={4}>
+                    <Column lg={2}>
                       <FormattedMessage id="pathology.label.report" />
                     </Column>
                     <Column lg={2} md={1} sm={2}>
@@ -546,7 +546,22 @@ function PathologyCaseView() {
                         </>
                       )}
                     </Column>
-                    <Column lg={3} md={5} sm={3} />
+                    <Column lg={3} md={2} sm={2}>
+                      <Button
+                        onClick={(e) => {
+                          window.open(
+                            config.serverBaseUrl +
+                              "/rest/ReportPrint?report=PatientPathologyReport&programSampleId=" +
+                              pathologySampleId,
+                            "_blank",
+                          );
+                        }}
+                      >
+                        {" "}
+                        <FormattedMessage id="button.label.genarateReport" />
+                      </Button>
+                    </Column>
+                    <Column lg={4} md={2} sm={2}/>
                     <Column lg={16} md={8} sm={4}>
                       <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                     </Column>

@@ -299,5 +299,6 @@
     "label.button.remove.slide": "Supprimer la Diapositive",
     "label.button.remove.block": "Supprimer le Bloc",
     "label.button.remove.report": "Supprimer le Rapport",
-    "pathology.label.block.number": "Numéro du Bloc"
+    "pathology.label.block.number": "Numéro du Bloc" ,
+    "button.label.genarateReport" : "Générer un rapport"
 }
