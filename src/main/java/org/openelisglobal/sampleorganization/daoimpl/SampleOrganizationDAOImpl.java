@@ -60,7 +60,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SampleOrganization getData()", e);
         }
     }
@@ -71,7 +71,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
             so = entityManager.unwrap(Session.class).get(SampleOrganization.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SampleOrganization readSampleOrganization()", e);
         }
 
@@ -95,7 +95,7 @@ public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, S
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SampleOrganization getData()", e);
         }
 

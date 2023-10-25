@@ -375,7 +375,7 @@ public class InventoryController extends BaseController {
 //                }
 //            } catch (NumberFormatException e) {
 //                // bugzilla 2154
-//                LogEvent.logError(e.toString(), e);
+//                LogEvent.logError(e);
 //                errors.reject("errors.invalid", new Object[] { MessageUtil.getMessage(messageKey) }, "errors.invalid");
 //            }
 //        }

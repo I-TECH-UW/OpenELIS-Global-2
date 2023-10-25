@@ -53,9 +53,9 @@ public class ReportTransmission {
             orWorker.createReport(resultReport);
             sendRawReport(orWorker.getHl7Message().encode(), url, true, responseHandler, HTTP_TYPE.POST);
         } catch (HL7Exception e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
         } catch (IOException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
         }
     }
 
@@ -85,7 +85,7 @@ public class ReportTransmission {
             errors.add(e.toString());
             responseHandler.handleResponse(HttpServletResponse.SC_BAD_REQUEST, errors, xmlString);
         } catch (ValidationException | MarshalException | IOException | MappingException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
         } finally {
             try {
                 source.getByteStream().close();
@@ -126,7 +126,7 @@ public class ReportTransmission {
                 }
             }
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
         }
 
     }
@@ -141,14 +141,14 @@ public class ReportTransmission {
             propertyStream = resourceLocator.getNamedResourceAsInputStream(ResourceLocator.XMIT_PROPERTIES);
             transmissionMap.load(propertyStream);
         } catch (IOException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Unable to load transmission resource mappings.", e);
         } finally {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
                 } catch (IOException e) {
-                    LogEvent.logError(e.toString(), e);
+                    LogEvent.logError(e);
                 }
             }
         }

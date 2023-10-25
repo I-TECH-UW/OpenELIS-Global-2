@@ -59,7 +59,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
                 sampleItem.setId(null);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SampleItem getData()", e);
         }
     }
@@ -87,7 +87,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
             Query<SampleItem> query = entityManager.unwrap(Session.class).createQuery(sql, SampleItem.class);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SampleItem getAllSampleItems()", e);
         }
 
@@ -111,7 +111,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
             list = query.list();
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SampleItem getPageOfSampleItems()", e);
         }
 
@@ -124,7 +124,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
             samp = entityManager.unwrap(Session.class).get(SampleItem.class, idString);
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SampleItem readSampleItem()", e);
         }
 
@@ -160,7 +160,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
                 PropertyUtils.copyProperties(sampleItem, si);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SampleItem getDataBySample()", e);
         }
 
@@ -180,7 +180,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
             return list;
 
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SampleItem getSampleItemsBySampleId()", e);
         }
 
@@ -204,7 +204,7 @@ public class SampleItemDAOImpl extends BaseDAOImpl<SampleItem, String> implement
             return list;
 
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SampleItem getSampleItemsBySampleId()", e);
         }
     }

@@ -576,11 +576,11 @@ public class ResultsReportProvider extends BaseReportsProvider {
                 } catch (JRException e) {
                     errors.reject("errors.jasperreport.general");
                     // bugzilla 2154
-                    LogEvent.logError(e.toString(), e);
+                    LogEvent.logError(e);
                     // rethrow an exception so transaction management detects it and rolls back
                     throw new LIMSRuntimeException(e);
                 } catch (LIMSResultsReportHasNoDataException e) {
-                    LogEvent.logError(e.toString(), e);
+                    LogEvent.logError(e);
                     if (accessionNumbers.size() > 1) {
                         // message if report is for several samples
                         errors.reject("errors.jasperreport.resultsreports.nodata");
@@ -591,12 +591,12 @@ public class ResultsReportProvider extends BaseReportsProvider {
                     // rethrow an exception so transaction management detects it and rolls back
                     throw new LIMSRuntimeException(e);
                 } catch (org.hibernate.StaleObjectStateException e) {
-                    LogEvent.logError(e.toString(), e);
+                    LogEvent.logError(e);
                     errors.reject("errors.OptimisticLockException");
                     // rethrow an exception so transaction management detects it and rolls back
                     throw new LIMSRuntimeException(e);
                 } catch (IOException | RuntimeException e) {
-                    LogEvent.logError(e.toString(), e);
+                    LogEvent.logError(e);
                     errors.reject("errors.jasperreport.general");
                     // rethrow an exception so transaction management detects it and rolls back
                     throw new LIMSRuntimeException(e);

@@ -201,7 +201,7 @@ public class StringUtil {
                 String post = phone.substring(9, 13);
                 returnPhone = area + "/" + pre + "-" + post;
             } catch (RuntimeException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
             }
 
         }
@@ -223,7 +223,7 @@ public class StringUtil {
                 String post = phone.substring(8, 12);
                 returnPhone = "(" + area + ")" + pre + "-" + post;
             } catch (RuntimeException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
             }
 
         }
@@ -238,7 +238,7 @@ public class StringUtil {
             try {
                 returnPhone = phone.substring(13);
             } catch (RuntimeException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
             }
 
         }
@@ -265,7 +265,7 @@ public class StringUtil {
             }
             return sb.toString();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error converting string to regular expression ", e);
         }
     }
@@ -277,7 +277,7 @@ public class StringUtil {
             }
             return "";
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error trimming string ", e);
         }
     }
@@ -634,7 +634,7 @@ public class StringUtil {
         try {
             return new Double(significantDigits);
         } catch (NumberFormatException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             return null;
         }
     }

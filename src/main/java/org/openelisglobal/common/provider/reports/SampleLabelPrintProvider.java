@@ -105,7 +105,7 @@ public class SampleLabelPrintProvider extends BasePrintProvider {
                 numberOfLabelCopies = Integer.parseInt(numberOfLabelCopiesString);
             } catch (NumberFormatException e) {
                 // bugzilla 2154
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
             }
 
             String accessionNumber = (String) parameters.get("Accession_Number");

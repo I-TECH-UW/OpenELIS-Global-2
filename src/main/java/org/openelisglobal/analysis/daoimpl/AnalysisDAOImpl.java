@@ -73,7 +73,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                 analysis.setId(null);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getData()", e);
         }
     }
@@ -84,7 +84,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             analysis = entityManager.unwrap(Session.class).get(Analysis.class, idString);
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis readAnalysis()", e);
         }
 
@@ -103,7 +103,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setParameterList("statusIdList", statusIdList);
             return query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestAndStatuses()", e);
         }
     }
@@ -126,7 +126,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setParameterList("statusIdList", statusIdList);
             return query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestsAndStatuses()", e);
         }
     }
@@ -151,7 +151,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setParameter("highDate", highDate);
             return query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestsAndStatusAndCompletedDateRange()",
                     e);
         }
@@ -170,7 +170,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             return query.list();
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestAndExcludedStatuses()", e);
         }
 
@@ -194,7 +194,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             return query.list();
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestSectionAndStatuses()", e);
         }
     }
@@ -221,7 +221,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             return query.list();
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestSectionAndStatuses()", e);
         }
     }
@@ -246,7 +246,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             return query.list();
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getPageAnalysisAtAccessionNumberAndStatus()", e);
         }
     }
@@ -264,7 +264,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             return query.list();
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getAllAnalysisByTestSectionAndExcludedStatuses()", e);
         }
     }
@@ -282,7 +282,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getAnalysesBySampleItem()", e);
         }
 
@@ -310,7 +310,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             analysisList = query.list();
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getAnalysesBySampleItemsExcludingByStatusIds()", e);
         }
 
@@ -357,7 +357,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             analysisList = query.list();
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getAnalysesBySampleItemsExcludingByStatusIds()", e);
         }
 
@@ -473,7 +473,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     .setParameterList("sampleStatusesToInclude", sampleStatusesToInclude).list();
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in getAnalysesReadyToBeReported()", e);
         }
     }
@@ -491,7 +491,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setParameterList("param2", statusesToExclude);
             return query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getallChildAnalysesByResult()", e);
         }
     }
@@ -514,7 +514,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             return query.list();
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getMaxRevisionAnalysesBySample()", e);
         }
     }
@@ -535,7 +535,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setParameter("param", sampleItem.getId());
             return query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getMaxRevisionAnalysesBySample()", e);
         }
     }
@@ -557,7 +557,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setParameterList("param2", statusesToExclude);
             return query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getRevisionHistoryOfAnalysesBySample()", e);
         }
     }
@@ -588,7 +588,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setParameterList("param3", statusesToExclude);
             return query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getRevisionHistoryOfAnalysesBySample()", e);
         }
     }
@@ -612,7 +612,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
             return query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getAllMaxRevisionAnalysesPerTest()", e);
         }
     }
@@ -659,7 +659,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     .setParameterList("sampleStatusesToInclude", sampleStatusesToInclude).list();
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getMaxRevisionAnalysesReadyToBeReported()", e);
         }
     }
@@ -718,7 +718,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             }
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in getMaxRevisionAnalysesReadyForReportPreviewBySample()", e);
         }
         return list;
@@ -745,7 +745,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             return entityManager.unwrap(Session.class).createNativeQuery(sql).setParameter("sampleId", sample.getId())
                     .list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in getAnalysesAlreadyReportedBySample()", e);
         }
     }
@@ -791,7 +791,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     .setParameterList("analysisStatusesToInclude", analysisStatusesToInclude).list();
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getMaxRevisionPendingAnalysesReadyToBeReportedBySample()",
                     e);
         }
@@ -819,7 +819,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                     .setParameterList("analysisStatusesToInclude", analysisStatusesToInclude).list();
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in getMaxRevisionPendingAnalysesReadyForReportPreviewBySample()", e);
         }
 
@@ -843,7 +843,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
                 try {
                     revision = Integer.parseInt(revisionString);
                 } catch (NumberFormatException e) {
-                    LogEvent.logError(e.toString(), e);
+                    LogEvent.logError(e);
                     throw new LIMSRuntimeException("Error in getPreviousAnalysisForAmendedAnalysis()", e);
                 }
             }
@@ -862,7 +862,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Exception occurred in getPreviousAnalysisForAmendedAnalysis", e);
         }
         return previousAnalysis;
@@ -896,7 +896,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getMaxRevisionAnalysisBySampleAndTest()", e);
         }
 
@@ -922,7 +922,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setParameterList("param2", statusesToExclude);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analysis getMaxRevisionAnalysesBySample()", e);
         }
 
@@ -1080,7 +1080,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
             list = query.list();
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in getAnalysisStartedOn()", e);
         }
 

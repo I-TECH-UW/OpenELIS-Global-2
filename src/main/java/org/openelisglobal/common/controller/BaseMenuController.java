@@ -49,7 +49,7 @@ public abstract class BaseMenuController<T> extends BaseController {
                 menuList = doNone(form, request);
             }
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             forward = FWD_FAIL;
         }
 

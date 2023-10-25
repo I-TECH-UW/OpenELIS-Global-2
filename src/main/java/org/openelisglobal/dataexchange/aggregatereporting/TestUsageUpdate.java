@@ -188,7 +188,7 @@ public class TestUsageUpdate implements IResultUpdate {
 //				}
 //			}
         } catch (LIMSRuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
         }
     }
 }

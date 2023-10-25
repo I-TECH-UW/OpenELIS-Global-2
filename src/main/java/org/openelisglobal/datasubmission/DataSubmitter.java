@@ -98,7 +98,7 @@ public class DataSubmitter {
                 }
             } catch (RuntimeException e) {
                 success = false;
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
             } finally {
                 // remove extra information as it does not need to be saved to database
                 columnValues.removeAll(commonValues);

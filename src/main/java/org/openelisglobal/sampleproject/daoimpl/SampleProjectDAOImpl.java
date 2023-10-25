@@ -60,7 +60,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SampleProject getData()", e);
         }
     }
@@ -71,7 +71,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
             sp = entityManager.unwrap(Session.class).get(SampleProject.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SampleProject readSampleProject()", e);
         }
 
@@ -96,7 +96,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SampleProjectDAO getSampleProjectsByProjId()", e);
         }
     }
@@ -138,7 +138,7 @@ public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> imp
             query.setParameter("organizationId", Integer.valueOf(organizationId));
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(
                     "Exception occurred in SampleNumberDAOImpl.getByOrganizationProjectAndReceivedOnRange", e);
         }

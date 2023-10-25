@@ -356,13 +356,13 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
             properties.load(propertyStream);
 
         } catch (IOException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
         } finally {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
                 } catch (IOException e) {
-                    LogEvent.logError(e.toString(), e);
+                    LogEvent.logError(e);
                 }
             }
 

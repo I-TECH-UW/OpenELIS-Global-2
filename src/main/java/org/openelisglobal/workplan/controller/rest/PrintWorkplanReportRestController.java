@@ -82,7 +82,7 @@ public class PrintWorkplanReportRestController extends BaseRestController {
             servletOutputStream.close();
 
         } catch (JRException | IOException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             result.reject("error.jasper", "error.jasper");
         }
     }

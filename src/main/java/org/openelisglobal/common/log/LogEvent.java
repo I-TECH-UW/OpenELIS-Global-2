@@ -23,7 +23,8 @@ import org.owasp.encoder.Encode;
  */
 
 public class LogEvent {
-    private static final int MAX_STACK_DEPTH = 10;
+    private static final int MAX_STACK_DEPTH = 50;
+    private static final int MAX_ERROR_DEPTH = 4;
 
     /**
      * Write to the log file (type error)
@@ -54,20 +55,66 @@ public class LogEvent {
     /**
      * Write to the log file (type error)
      *
+     * @param errorMessage the error message
+     * @param throwable    the error to log
+     * @param hideException whether to display only errorMessage
+     */
+    public static void logError(String errorMessage, Throwable throwable, boolean hideException) {
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        String className = stackTrace[0].getClassName();
+        String methodName = stackTrace[0].getMethodName();
+        getLog().error(
+                "Class: " + className + ", Method: " + methodName + ", Error: " + sanitizeLogMessage(errorMessage));
+        if (!hideException) {
+            logError(throwable);
+        }
+    }
+
+    /**
+     * Write to the log file (type error)
+     *
      * @param throwable the error to log
      */
     public static void logError(Throwable throwable) {
         StackTraceElement[] stackTrace = throwable.getStackTrace();
-        getLog().error("Class: " + stackTrace[0].getClassName() + ", Method: " + stackTrace[0].getMethodName(),
-                throwable);
+        StringBuilder errorMessage = new StringBuilder();
+        errorMessage.append("Class: ")
+            .append(stackTrace[0].getClassName())
+            .append(", Method: ")
+            .append(stackTrace[0].getMethodName())
+            .append(", Line: ")
+            .append(stackTrace[0].getLineNumber())
+            .append(", Message: ")
+            .append(sanitizeLogMessage(throwable.getMessage()));
+        if (throwable.getCause() != null) {
+            logErrorCause(throwable, throwable.getCause(), errorMessage, 0);
+        }
+        getLog().error(errorMessage.toString());
         if (getLog().isDebugEnabled()) {
             StringBuilder stackErrorMessage = new StringBuilder();
             for (int i = 0; i < MAX_STACK_DEPTH; ++i) {
                 stackErrorMessage.append(sanitizeLogMessage(stackTrace[i].toString()));
                 stackErrorMessage.append(System.lineSeparator());
             }
-            logDebug(stackErrorMessage.toString(), throwable);
+            logDebugWithoutSanitizing(stackErrorMessage.toString(), throwable);
         }
+    }
+
+    private static void logErrorCause(Throwable originalThrowable, Throwable throwable, StringBuilder errorMessage, int depth) {
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        errorMessage.append(System.lineSeparator())
+            .append("Class: ")
+            .append(stackTrace[0].getClassName())
+            .append(", Method: ")
+            .append(stackTrace[0].getMethodName())
+            .append(", Line: ")
+            .append(stackTrace[0].getLineNumber())
+            .append(", Sub-Message: ")
+            .append(sanitizeLogMessage(throwable.getMessage()));
+        if (throwable.getCause() != null && depth < MAX_ERROR_DEPTH) {
+            logErrorCause(originalThrowable, throwable.getCause(), errorMessage, ++depth);
+        }
+
     }
 
     public static void logTrace(String className, String methodName, String debugMessage) {
@@ -100,6 +147,21 @@ public class LogEvent {
 
         getLog().debug(
                 "Class: " + className + ", Method: " + methodName + ", Error: " + sanitizeLogMessage(debugMessage));
+    }
+
+    /**
+     * Write to the log file (type error)
+     *
+     * @param errorMessage the error message
+     * @param throwable    the error to log
+     */
+     private static void logDebugWithoutSanitizing(String debugMessage, Throwable throwable) {
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        String className = stackTrace[0].getClassName();
+        String methodName = stackTrace[0].getMethodName();
+
+        getLog().debug(
+                "Class: " + className + ", Method: " + methodName + ", Error: " + debugMessage);
     }
 
     /**

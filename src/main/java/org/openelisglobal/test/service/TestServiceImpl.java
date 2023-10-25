@@ -538,7 +538,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
             return result;
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in isTestFullySetup()", e);
         }
     }

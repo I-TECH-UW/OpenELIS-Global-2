@@ -79,7 +79,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample getData()", e);
         }
     }
@@ -111,7 +111,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
                 samp.setReleasedDateForDisplay(DateUtil.convertSqlDateToStringDate(samp.getReleasedDate()));
             }
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample getPageOfSamples()", e);
         }
 
@@ -145,7 +145,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample getDataByAccessionNumber()", e);
         }
     }
@@ -156,7 +156,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             samp = entityManager.unwrap(Session.class).get(Sample.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample readSample()", e);
         }
         return samp;
@@ -232,7 +232,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample getNextAccessionNumber()", e);
         }
         return accessionNumber;
@@ -280,7 +280,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
         } catch (RuntimeException e) {
 
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample getAllSampleByStatusAndDomain()", e);
         }
 
@@ -363,7 +363,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             query.setParameterList("param3", statusesToExclude);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample getSamplesWithPendingQaEvents()", e);
         }
 
@@ -405,7 +405,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             query.setParameter("end", end.getTime());
             list = query.list();
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample getSamplesReceivedInDateRange()", e);
         }
         return list;
@@ -426,7 +426,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             list = query.list();
 
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample getSamplesRecievedOn()", e);
         }
 
@@ -528,7 +528,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             greatestAccessionNumber = query.uniqueResult();
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Exception occurred in SampleDAOImpl.getLargestAccessionNumber", e);
         }
 
@@ -546,7 +546,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             query.setParameter("prefix", prefix + "%");
             greatestAccessionNumber = query.uniqueResult();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(
                     "Exception occurred in SampleNumberDAOImpl.getLargestAccessionNumberWithPrefix", e);
         }

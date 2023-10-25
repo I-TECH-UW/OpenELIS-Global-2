@@ -59,7 +59,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Dictionary getData()", e);
         }
     }
@@ -115,7 +115,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(
                     "Error in Dictionary getDictionaryEntrys(String filter, String categoryFilter)", e);
         }
@@ -158,7 +158,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(
                     "Error in Dictionary getDictionaryEntrysByCategoryAbbreviation(String categoryFilter)", e);
         }
@@ -207,7 +207,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
             return !query.list().isEmpty();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateDictionaryExists()", e);
         }
     }
@@ -237,7 +237,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 
             return !query.list().isEmpty();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in dictionaryIsInUse()", e);
         }
     }

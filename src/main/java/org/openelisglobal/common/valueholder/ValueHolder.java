@@ -55,7 +55,7 @@ public class ValueHolder implements ValueHolderInterface, Cloneable, Serializabl
             return super.clone();
         } catch (CloneNotSupportedException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
         }
 
         return null;

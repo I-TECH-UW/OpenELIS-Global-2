@@ -432,7 +432,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             }
         } catch (LIMSRuntimeException e) {
             String errorMsg;
-            if (e.getException() instanceof StaleObjectStateException) {
+            if (e.getCause() instanceof StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
                 LogEvent.logError(e);

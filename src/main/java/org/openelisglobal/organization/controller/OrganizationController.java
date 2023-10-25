@@ -341,12 +341,12 @@ public class OrganizationController extends BaseController {
 
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
-            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
+            LogEvent.logError(e);
+            if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
                 result.reject("errors.OptimisticLockException");
             } else {
                 // bugzilla 1482
-                if (e.getException() instanceof LIMSDuplicateRecordException) {
+                if (e.getCause() instanceof LIMSDuplicateRecordException) {
                     String messageKey = "organization.organization";
                     String msg = MessageUtil.getMessage(messageKey);
                     result.reject("errors.DuplicateRecord.activeonly", new String[] { msg },

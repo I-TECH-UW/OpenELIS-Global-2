@@ -49,7 +49,8 @@ public class QueryProviderFactory {
             Class classDefinition = Class.forName(className);
             object = classDefinition.newInstance();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            throw new LIMSRuntimeException("Unable to create an object for " + className, e, true);
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Unable to create an object for " + className, e);
         }
         return object;
     }
@@ -76,7 +77,8 @@ public class QueryProviderFactory {
 
                 queryProviderClassMap.load(propertyStream);
             } catch (IOException e) {
-                throw new LIMSRuntimeException("Unable to load validation provider class mappings.", e, true);
+                LogEvent.logError(e);
+                throw new LIMSRuntimeException("Unable to load validation provider class mappings.", e);
             } finally {
                 if (null != propertyStream) {
                     try {

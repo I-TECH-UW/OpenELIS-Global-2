@@ -59,7 +59,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestReflex getData()", e);
         }
     }
@@ -76,7 +76,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestReflex getAllTestReflexs()", e);
         }
 
@@ -102,7 +102,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestReflex getPageOfTestReflexs()", e);
         }
 
@@ -131,7 +131,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestReflex getTestReflexesByTestResult(TestResult testResult)", e);
         }
     }
@@ -161,7 +161,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestReflex getTestReflexesByTestResult(TestResult testResult)", e);
         }
     }
@@ -195,7 +195,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestReflex getTestReflexesByTestResult(TestResult testResult)", e);
         }
     }
@@ -220,7 +220,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
                 return list;
             } catch (RuntimeException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException(
                         "Error in TestReflex getTestReflexByTestResultAnalyteTest(String testResultId, String analyteId, String testId)",
                         e);
@@ -235,7 +235,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             tr = entityManager.unwrap(Session.class).get(TestReflex.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestReflex readTestReflex()", e);
         }
         return tr;
@@ -292,7 +292,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             }
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateTestReflexExists()", e);
         }
     }
@@ -366,7 +366,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
                 return list;
             }
             catch (RuntimeException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException(
                         "Error in TestReflex getTestReflexByTestResultAnalyteTest(String testResultId, String analyteId, String testId)",
                         e);
@@ -388,7 +388,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
                 return list;
             }
             catch (RuntimeException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException(
                         "Error in getTestReflexsByTestAnalyteId(String testAnalyteId)",
                         e);

@@ -65,7 +65,7 @@ public class LoginUserDAOImpl extends BaseDAOImpl<LoginUser, Integer> implements
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateLoginNameExists()", e);
         }
     }
@@ -90,7 +90,7 @@ public class LoginUserDAOImpl extends BaseDAOImpl<LoginUser, Integer> implements
             }
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in getPasswordExpiredDayNo()", e);
         }
 
@@ -120,7 +120,7 @@ public class LoginUserDAOImpl extends BaseDAOImpl<LoginUser, Integer> implements
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in getSystemUserId()", e);
         } finally {
         }

@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoggingController {
 
     @GetMapping(path = "/logging")
-    public void changeLoggingLevel(@RequestParam(name = "logLevel", defaultValue = "E") String logLevel,
+    public void changeLoggingLevel(@RequestParam(name = "logLevel", defaultValue = "I") String logLevel,
             @RequestParam(name = "logger", defaultValue = "org.openelisglobal") String logger,
-            @RequestParam(name = "rootLogLevel", defaultValue = "E") String rootLogLevel) {
+            @RequestParam(name = "rootLogLevel", defaultValue = "I") String rootLogLevel) {
         org.apache.logging.log4j.Level log4jLogLevel;
         org.apache.logging.log4j.Level rootLog4jLogLevel;
         switch (logLevel) {

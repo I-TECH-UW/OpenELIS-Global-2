@@ -66,7 +66,7 @@ public class JRHibernateDataSource implements JRRewindableDataSource {
                 value = nestedFieldValue(nestedObject, field.substring(field.indexOf("__") + 2, field.length()));
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 // bugzilla 2154
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
             }
         } else {
             try {
@@ -80,7 +80,7 @@ public class JRHibernateDataSource implements JRRewindableDataSource {
                 }
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 // bugzilla 2154
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
             }
         }
         return value;

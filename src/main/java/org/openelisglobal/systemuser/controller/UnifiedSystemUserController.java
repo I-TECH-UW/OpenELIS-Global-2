@@ -492,9 +492,9 @@ public class UnifiedSystemUserController extends BaseController {
             }
             ID = systemUser.getId() + "-" + loginUser.getId();
         } catch (LIMSRuntimeException e) {
-            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
                 errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
-            } else if (e.getException() instanceof LIMSDuplicateRecordException) {
+            } else if (e.getCause() instanceof LIMSDuplicateRecordException) {
                 errors.reject("errors.DuplicateRecordException", "errors.DuplicateRecordException");
             } else {
                 errors.reject("errors.UpdateException", "errors.UpdateException");
