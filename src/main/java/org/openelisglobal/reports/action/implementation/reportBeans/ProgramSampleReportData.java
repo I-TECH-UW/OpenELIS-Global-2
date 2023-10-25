@@ -123,6 +123,12 @@ public final class ProgramSampleReportData {
     //ImmunoHistoChemistry data
     private List<Result> results;
     
+    private String erResult;
+    
+    private String prResult;
+    
+    private String mibResult;
+    
     public ProgramSampleReportData() {
     }
     
@@ -652,6 +658,30 @@ public final class ProgramSampleReportData {
     
     public void setResults(List<Result> results) {
         this.results = results;
+    }
+    
+    public String getErResult() {
+        return erResult;
+    }
+    
+    public void setErResult(String erResult) {
+        this.erResult = erResult;
+    }
+    
+    public String getPrResult() {
+        return prResult;
+    }
+    
+    public void setPrResult(String prResult) {
+        this.prResult = prResult;
+    }
+    
+    public String getMibResult() {
+        return mibResult;
+    }
+    
+    public void setMibResult(String mibResult) {
+        this.mibResult = mibResult;
     }
     
     public static class Result {

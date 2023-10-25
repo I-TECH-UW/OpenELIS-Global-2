@@ -283,6 +283,10 @@ public class ReportImplementationFactory {
                return new PatientCytologyReport();
             }else if(report.equals("PatientImmunoChemistryReport")){
                return new PatientImmunoChemistryReport();
+            }else if(report.equals("DualInSituHybridizationReport")){
+                return new DualInSituHybridizationReport();
+            }else if(report.equals("BreastCancerHormoneReceptorReport")){
+                return new BreastCancerHormoneReceptorReport();
             }
         }
 

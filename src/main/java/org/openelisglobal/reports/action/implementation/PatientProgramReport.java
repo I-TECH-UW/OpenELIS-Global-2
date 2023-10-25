@@ -39,18 +39,11 @@ import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
-import org.openelisglobal.program.service.PathologyDisplayService;
 import org.openelisglobal.program.service.PathologySampleService;
-import org.openelisglobal.program.valueholder.pathology.PathologyConclusion;
-import org.openelisglobal.program.valueholder.pathology.PathologyConclusion.ConclusionType;
-import org.openelisglobal.program.valueholder.pathology.PathologySample;
-import org.openelisglobal.program.valueholder.pathology.PathologyTechnique.TechniqueType;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
-import org.openelisglobal.reports.action.implementation.reportBeans.ClinicalPatientData;
 import org.openelisglobal.reports.action.implementation.reportBeans.ProgramSampleReportData;
 import org.openelisglobal.reports.form.ReportForm;
-import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
@@ -100,6 +93,7 @@ public abstract class PatientProgramReport  extends Report implements IReportCre
     protected List<ProgramSampleReportData> reportItems;
     protected List<Analysis> analyses;
     protected  ProgramSampleReportData data;
+    protected ReportForm form;
 
     abstract protected String getReportName();
 
@@ -130,6 +124,7 @@ public abstract class PatientProgramReport  extends Report implements IReportCre
 
     @Override
     public void initializeReport(ReportForm form) {
+        this.form = form;
         super.initializeReport();
         errorFound = false;
         createReportParameters();
@@ -176,7 +171,13 @@ public abstract class PatientProgramReport  extends Report implements IReportCre
                 ConfigurationProperties.getInstance().getPropertyValue(Property.LAB_DIRECTOR_NAME));
         reportParameters.put("labDirectorTitle",
                 ConfigurationProperties.getInstance().getPropertyValue(Property.LAB_DIRECTOR_TITLE));
+       createExtraReportParameters();
+    
     }
+
+     protected void createExtraReportParameters() {
+
+     }
 
     private Object getFooterName() {
         if (configName.equals("CI IPCI") || configName.equals("CI LNSP")) {

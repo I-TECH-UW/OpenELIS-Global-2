@@ -18,7 +18,9 @@ import {
   BreadcrumbItem,
   Stack,
   Loading,
-  InlineLoading
+  InlineLoading ,
+  Toggle ,
+  TextArea
 } from "@carbon/react";
 import { Launch, Subtract } from "@carbon/react/icons";
 import {
@@ -109,6 +111,24 @@ function ImmunohistochemistryCaseView() {
   const [loading, setLoading] = useState(true);
   const [resultsLoading, setResultsLoading] = useState(true);
   const [loadingReport, setLoadingReport] = useState(false);
+  const [reportParams, setReportParams] = useState({
+    0: {
+      erPercent: "",
+      erIntensity: "",
+      erScore: "",
+      prPercent: "",
+      prIntensity: "",
+      prScore: "",
+      mib: "",
+      pattern: "",
+      herAssesment: "",
+      herScore: "",
+      diagnosis: "",
+      molecularSubType: "",
+      toggled : false
+    },
+  });
+
   const intl = useIntl();
   async function displayStatus(response) {
     var body = await response.json();
@@ -163,6 +183,305 @@ function ImmunohistochemistryCaseView() {
     }
   }
 
+  const getReportName = (reportType) => {
+    switch (reportType) {
+      case "DUAL_IN_SITU_HYBRIDISATION":
+        return "DualInSituHybridizationReport"
+      case "BREAST_CANCER_HORMONE_RECEPTOR":
+        return "BreastCancerHormoneReceptorReport";
+      case "IMMUNOHISTOCHEMISTRY":
+        return "PatientImmunoChemistryReport";
+    }
+  }
+
+  const toggleReportParam = (e, index) => {
+    const params = { ...reportParams };
+    if (!params[index]) {
+      params[index] = {};
+    }
+    params[index]["toggled"] = e;
+    setReportParams(params);
+  };
+  const createReportParams = (reportType , index) => {
+    switch (reportType) {
+      case "BREAST_CANCER_HORMONE_RECEPTOR":
+        return (
+          <>
+            {" "}
+            <Column lg={16} md={8} sm={4}>
+            <Grid fullWidth={true} className="gridBoundary">
+                <Column lg={2} md={8} sm={4}>
+                   ER
+                </Column>
+                <Column lg={2} md={8} sm={4}>
+                  <TextInput
+                    id={"erPercent_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    value={reportParams[index]?.erPercent}
+                    onChange={(e) => {
+                      var params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].erPercent = e.target.value;
+                      setReportParams(params);
+                    }}
+                  />
+              </Column>
+              <Column lg={3} md={8} sm={4}>
+                  % of cell show nuclear staining with
+              </Column>
+              <Column lg={2} md={8} sm={4}>
+                  <TextInput
+                    id={"erIntensity_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    value={reportParams[index]?.erIntensity}
+                    onChange={(e) => {
+                      var params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].erIntensity = e.target.value;
+                      setReportParams(params);
+                    }}
+                  />
+              </Column>
+              <Column lg={3} md={8} sm={4}>
+                intensity . Allred score
+              </Column>
+              <Column lg={2} md={8} sm={4}>
+                  <TextInput
+                    id={"erScore_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    value={reportParams[index]?.erScore}
+                    onChange={(e) => {
+                      var params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].erScore = e.target.value;
+                      setReportParams(params);
+                    }}
+                  />
+              </Column>
+              <Column lg={2} md={8} sm={4}>
+                 out of 8
+              </Column>
+
+              <Column lg={16} md={8} sm={4}>
+                  <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+                </Column>
+              <Column lg={2} md={8} sm={4}>
+                   PR
+                </Column>
+                <Column lg={2} md={8} sm={4}>
+                  <TextInput
+                    id={"prPercent_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    value={reportParams[index]?.prPercent}
+                    onChange={(e) => {
+                      var params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].prPercent = e.target.value;
+                      setReportParams(params);
+                    }}
+                  />
+              </Column>
+              <Column lg={3} md={8} sm={4}>
+                  % of cell show nuclear staining with
+              </Column>
+              <Column lg={2} md={8} sm={4}>
+                  <TextInput
+                    id={"erIntensity_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    value={reportParams[index]?.prIntensity}
+                    onChange={(e) => {
+                      var params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].prIntensity = e.target.value;
+                      setReportParams(params);
+                    }}
+                  />
+              </Column>
+              <Column lg={3} md={8} sm={4}>
+                intensity . Allred score
+              </Column>
+              <Column lg={2} md={8} sm={4}>
+                  <TextInput
+                    id={"erScore_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    value={reportParams[index]?.prScore}
+                    onChange={(e) => {
+                      var params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].prScore = e.target.value;
+                      setReportParams(params);
+                    }}
+                  />
+              </Column>
+              <Column lg={2} md={8} sm={4}>
+                 out of 8
+              </Column>
+
+              <Column lg={16} md={8} sm={4}>
+                  <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+                </Column>
+
+                <Column lg={3} md={8} sm={4}>
+                    MiB 1(ki-67) (Proliferative Index)
+                </Column>
+                <Column lg={8} md={8} sm={4}>
+                  <TextInput
+                    id={"mib_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    value={reportParams[index]?.mib}
+                    onChange={(e) => {
+                      var params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].mib = e.target.value;
+                      setReportParams(params);
+                    }}
+                  />
+              </Column>
+              <Column lg={5} md={8} sm={4}>
+                 of tumor cells positive (cut of 20%)
+              </Column>
+              <Column lg={16} md={8} sm={4}>
+                  <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+              </Column>
+
+              <Column lg={3} md={8} sm={4}>
+                 CerbB2/HER 2 staining pattern
+                </Column>
+                <Column lg={13} md={8} sm={4}>
+                  <TextArea
+                    id={"pattern_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    value={reportParams[index]?.pattern}
+                    onChange={(e) => {
+                      var params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].pattern = e.target.value;
+                      setReportParams(params);
+                    }}
+                  />
+              </Column>
+
+              <Column lg={16} md={8} sm={4}>
+                  <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+                </Column>
+
+                <Column lg={4} md={8} sm={4}>
+                  HER 2 protein assesment is
+                </Column>
+                <Column lg={4} md={8} sm={4}>
+                  <TextInput
+                    id={"herAssesment_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    value={reportParams[index]?.herAssesment}
+                    onChange={(e) => {
+                      var params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].herAssesment = e.target.value;
+                      setReportParams(params);
+                    }}
+                  />
+              </Column>
+              <Column lg={4} md={8} sm={4}>
+                  with a score of
+              </Column>
+              <Column lg={4} md={8} sm={4}>
+                  <TextInput
+                    id={"herScore_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    value={reportParams[index]?.herScore}
+                    onChange={(e) => {
+                      var params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].herScore = e.target.value;
+                      setReportParams(params);
+                    }}
+                  />
+              </Column>
+              <Column lg={16} md={8} sm={4}>
+                  <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+                </Column>
+                <Column lg={3} md={8} sm={4}>
+                   Histological Diagnosis
+                </Column>
+                <Column lg={13} md={8} sm={4}>
+                  <TextArea
+                    id={"diagnosis_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    value={reportParams[index]?.diagnosis}
+                    onChange={(e) => {
+                      var params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].diagnosis = e.target.value;
+                      setReportParams(params);
+                    }}
+                  />
+              </Column>
+
+              <Column lg={16} md={8} sm={4}>
+                  <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+                </Column>
+                <Column lg={3} md={8} sm={4}>
+                    Molecular SubType
+                </Column>
+                <Column lg={13} md={8} sm={4}>
+                  <TextInput
+                    id={"molecularSubType_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    value={reportParams[index]?.molecularSubType}
+                    onChange={(e) => {
+                      var params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].molecularSubType = e.target.value;
+                      setReportParams(params);
+                    }}
+                  />
+              </Column>
+            </Grid>
+          </Column>
+          </>
+        );
+      case "DUAL_IN_SITU_HYBRIDISATION":  
+        return <></>;
+      case "IMMUNOHISTOCHEMISTRY":
+        return <></>;
+    }
+  }
 
   const setResultsWithId = (results) => {
     if (results) {
@@ -593,12 +912,14 @@ function ImmunohistochemistryCaseView() {
                           }}
                         />
                       </Column>
-                      <Column lg={2}>
+                      <Column lg={4}>
+                        <h6>
                         {
                           reportTypes.filter(
                             (type) => type.id === report.reportType,
                           )[0]?.value
                         }
+                        </h6>
                       </Column>
                       <Column lg={2} md={1} sm={2}>
                         {immunohistochemistrySampleInfo.reports[index]
@@ -627,8 +948,20 @@ function ImmunohistochemistryCaseView() {
                         onClick={(e) => {
                             setLoadingReport(true);
                             const form = {
-                              report: "PatientImmunoChemistryReport",
+                              report: getReportName(report.reportType),
                               programSampleId: immunohistochemistrySampleId,
+                              erPercent: reportParams[index]?.erPercent,
+                              erIntensity: reportParams[index]?.erIntensity,
+                              erScore: reportParams[index]?.erScore,
+                              prPercent: reportParams[index]?.prPercent,
+                              prIntensity: reportParams[index]?.prIntensity,
+                              prScore: reportParams[index]?.prScore,
+                              mib: reportParams[index]?.mib,
+                              pattern: reportParams[index]?.pattern,
+                              herAssesment: reportParams[index]?.herAssesment,
+                              herScore: reportParams[index]?.herScore,
+                              diagnosis: reportParams[index]?.diagnosis,
+                              molecularSubType: reportParams[index]?.molecularSubType,
                           };
                             postToOpenElisServerFullResponse(
                             "/rest/ReportPrint",
@@ -641,7 +974,17 @@ function ImmunohistochemistryCaseView() {
                         <FormattedMessage id="button.label.genarateReport" />
                       </Button>
                     </Column>
-                    <Column lg={5} md={2} sm={2}/>
+                    <Column lg={3}>
+                    <Toggle
+                        toggled={reportParams[index]?.toggled}
+                        aria-label="toggle button"
+                        id={index + "_toggle"}
+                        labelText="Toggle report param"
+                        onToggle={(e) => toggleReportParam(e, index)}
+                      />
+                    </Column>
+                    <Column lg={1} md={2} sm={2}/>
+                      { reportParams[index]?.toggled && createReportParams(report.reportType ,index)}
                       <Column lg={16} md={8} sm={4}>
                         <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                       </Column>
