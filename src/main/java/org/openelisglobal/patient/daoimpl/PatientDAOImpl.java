@@ -171,7 +171,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 
             results = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Patient readPatient()", e);
         }
 
@@ -187,7 +187,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
             query.setParameter(propertyName, propertyValue);
             patients = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Patient getPatientByStringProperty(" + propertyName + "\", ) ", e);
         }
         return patients.isEmpty() ? null : patients.get(0);
@@ -235,7 +235,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 
             patients = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Patient getPatientByPerson()", e);
         }
 

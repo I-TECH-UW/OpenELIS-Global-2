@@ -135,7 +135,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in OrganizationDAOImpl getPageOfSearchedOrganizations()", e);
         }
 
@@ -380,7 +380,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             }
 
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in OrganizationDAOImpl getTotalSearchedOrganizations()", e);
         }
 

@@ -170,7 +170,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Test getPageOfSearchedTests()", e);
         }
 
@@ -479,7 +479,7 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             }
 
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestDaoImpl getTotalSearchedTestCount()", e);
         }
 

@@ -104,7 +104,7 @@ public class ReportRestController extends BaseRestController{
             try {
                 reportPath = URLDecoder.decode(reportPath, "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                LogEvent.logDebug(e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException(e);
             }
         }
@@ -117,7 +117,7 @@ public class ReportRestController extends BaseRestController{
             try {
                 imagesPath = URLDecoder.decode(imagesPath, "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                LogEvent.logDebug(e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException(e);
             }
         }

@@ -85,7 +85,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
 
             queryResults = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SearchResultsDAOImpl getSearchResults()", e);
         }
 
@@ -179,9 +179,9 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             if (queryGender) {
                 query.setParameter(GENDER, gender);
             }
-            LogEvent.logWarn(this.getClass().getName(), "getSearchResults",
+            LogEvent.logTrace(this.getClass().getName(), "getSearchResults",
                     "SearchResultsDAOImp:getSearchResults:query:guid: " + guid);
-            LogEvent.logWarn(this.getClass().getName(), "getSearchResults",
+            LogEvent.logTrace(this.getClass().getName(), "getSearchResults",
                     "SearchResultsDAOImp:getSearchResults:query: " + query.getQueryString());
 //            String[] dArray = { " ", " ", subjectNumber, nationalID, gender, " ", " ", " "};
 //            String[] sArray = query.getNamedParameters();
@@ -203,7 +203,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
 
             queryResults = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SearchResultsDAOImpl getSearchResults()", e);
         }
 
@@ -288,7 +288,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             }
             queryResults = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SearchResultsDAOImpl getSearchResultsExact()", e);
         }
 
