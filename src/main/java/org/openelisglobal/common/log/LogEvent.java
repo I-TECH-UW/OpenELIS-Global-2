@@ -44,12 +44,7 @@ public class LogEvent {
      * @param throwable    the error to log
      */
     public static void logError(String errorMessage, Throwable throwable) {
-        StackTraceElement[] stackTrace = throwable.getStackTrace();
-        String className = stackTrace[0].getClassName();
-        String methodName = stackTrace[0].getMethodName();
-        getLog().error(
-                "Class: " + className + ", Method: " + methodName + ", Error: " + sanitizeLogMessage(errorMessage));
-        logError(throwable);
+        logError(errorMessage, throwable, false);
     }
 
     /**
