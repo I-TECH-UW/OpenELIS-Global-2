@@ -16,7 +16,7 @@ import org.openelisglobal.test.valueholder.Test;
 
 public class BreastCancerHormoneReceptorReport extends PatientProgramReport {
     
-    protected ImmunohistochemistrySampleService immunohistochemistrySampleService = SpringContext
+    private ImmunohistochemistrySampleService immunohistochemistrySampleService = SpringContext
             .getBean(ImmunohistochemistrySampleService.class);
     
     private ImmunohistochemistrySample immunohistochemistrySample;

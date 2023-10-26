@@ -186,6 +186,16 @@ public class ReportForm extends BaseForm {
     
     private String conclusion;
     
+    private String ihcScore;
+    
+    private String ihcRatio;
+    
+    private String averageChrom;
+    
+    private String averageHer2;
+    
+    private String numberOfcancerNuclei;
+    
     // for display
     private List<IdValuePair> priorityList;
     
@@ -763,4 +773,43 @@ public class ReportForm extends BaseForm {
         this.conclusion = conclusion;
     }
     
+    public String getIhcScore() {
+        return ihcScore;
+    }
+    
+    public void setIhcScore(String ihcScore) {
+        this.ihcScore = ihcScore;
+    }
+    
+    public String getIhcRatio() {
+        return ihcRatio;
+    }
+    
+    public void setIhcRatio(String ihcRatio) {
+        this.ihcRatio = ihcRatio;
+    }
+    
+    public String getAverageChrom() {
+        return averageChrom;
+    }
+    
+    public void setAverageChrom(String averageChrom) {
+        this.averageChrom = averageChrom;
+    }
+    
+    public String getAverageHer2() {
+        return averageHer2;
+    }
+    
+    public void setAverageHer2(String averageHer2) {
+        this.averageHer2 = averageHer2;
+    }
+    
+    public String getNumberOfcancerNuclei() {
+        return numberOfcancerNuclei;
+    }
+    
+    public void setNumberOfcancerNuclei(String numberOfcancerNuclei) {
+        this.numberOfcancerNuclei = numberOfcancerNuclei;
+    }
 }

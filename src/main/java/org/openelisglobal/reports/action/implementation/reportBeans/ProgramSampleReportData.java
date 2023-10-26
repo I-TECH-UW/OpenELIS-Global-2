@@ -129,66 +129,11 @@ public final class ProgramSampleReportData {
     
     private String mibResult;
     
-    public ProgramSampleReportData() {
-    }
+    private String ihcReportDetails;
     
-    public ProgramSampleReportData(ProgramSampleReportData data) {
-        patientName = data.getPatientName();
-        nationalId = data.getNationalId();
-        gender = data.getGender();
-        dob = data.getDob();
-        age = data.getAge();
-        stNumber = data.getStNumber();
-        subjectNumber = data.getSubjectNumber();
-        contactInfo = data.getContactInfo();
-        siteInfo = data.getSiteInfo();
-        testName = data.getTestName();
-        testRefRange = data.getTestRefRange();
-        conclusion = data.getConclusion();
-        finishDate = data.getFinishDate();
-        accessionNumber = data.getAccessionNumber();
-        receivedDate = data.getReceivedDate();
-        testDate = data.getTestDate();
-        referralSentDate = data.getReferralSentDate();
-        referralTestName = data.getReferralTestName();
-        referralResult = data.getReferralResult();
-        referralResultReportDate = data.getReferralResultReportDate();
-        referralReason = data.getReferralReason();
-        referralRefRange = data.getReferralRefRange();
-        referralNote = data.getReferralNote();
-        firstName = data.getFirstName();
-        lastName = data.getLastName();
-        dept = data.getDept();
-        commune = data.getCommune();
-        healthDistrict = data.getHealthDistrict();
-        healthRegion = data.getHealthRegion();
-        sectionSortOrder = data.getSectionSortOrder();
-        testSortOrder = data.getTestSortOrder();
-        orderDate = data.getOrderDate();
-        patientSiteNumber = data.getPatientSiteNumber();
-        parentMarker = data.getParentMarker();
-        billingNumber = data.getBillingNumber();
-        sampleType = data.getSampleType();
-        sampleId = data.getSampleId();
-        sampleSortOrder = data.getSampleSortOrder();
-        analysisStatus = data.getAnalysisStatus();
-        completeFlag = data.getCompleteFlag();
-        
-        orderFinishDate = data.getOrderFinishDate();
-        
-        collectionDateTime = data.getCollectionDateTime();
-        
-        correctedResult = data.getCorrectedResult();
-        
-        labOrderType = data.getLabOrderType();
-        
-        grossExam = data.getGrossExam();
-        
-        microExam = data.getMicroExam();
-        
-        codedConclusion = data.getCodedConclusion();
-        
-        textConclusion = data.getTextConclusion();
+    private String ihcScore;
+    
+    public ProgramSampleReportData() {
     }
     
     public String getReferralRefRange() {
@@ -682,6 +627,22 @@ public final class ProgramSampleReportData {
     
     public void setMibResult(String mibResult) {
         this.mibResult = mibResult;
+    }
+    
+    public String getIhcReportDetails() {
+        return ihcReportDetails;
+    }
+    
+    public void setIhcReportDetails(String ihcReportDetails) {
+        this.ihcReportDetails = ihcReportDetails;
+    }
+    
+    public String getIhcScore() {
+        return ihcScore;
+    }
+    
+    public void setIhcScore(String ihcScore) {
+        this.ihcScore = ihcScore;
     }
     
     public static class Result {

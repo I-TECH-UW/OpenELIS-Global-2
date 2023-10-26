@@ -126,6 +126,11 @@ function ImmunohistochemistryCaseView() {
       diagnosis: "",
       molecularSubType: "",
       conclusion : "",
+      ihcScore: "",
+      ihcRatio: "",
+      averageChrom: "",
+      averageHer2: "",
+      numberOfcancerNuclei: "",
       toggled : false
     },
   });
@@ -478,7 +483,132 @@ function ImmunohistochemistryCaseView() {
           </>
         );
       case "DUAL_IN_SITU_HYBRIDISATION":  
-        return <></>;
+        return <>
+
+          <Column lg={16} md={8} sm={4}>
+            <Grid fullWidth={true} className="gridBoundary">
+                <Column lg={3} md={8} sm={4}>
+                   Number of Cancer nuclei
+                </Column>
+                <Column lg={5} md={8} sm={4}>
+                  <TextInput
+                    id={"nuclei_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    value={reportParams[index]?.numberOfcancerNuclei}
+                    onChange={(e) => {
+                      var params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].numberOfcancerNuclei = e.target.value;
+                      setReportParams(params);
+                    }}
+                  />
+              </Column>
+              <Column lg={16} md={8} sm={4}>
+                  <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+               </Column>
+               <Column lg={3} md={8} sm={4}>
+                   Average HER2 per nucleus
+                </Column>
+                <Column lg={5} md={8} sm={4}>
+                  <TextInput
+                    id={"her_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    value={reportParams[index]?.averageHer2}
+                    onChange={(e) => {
+                      var params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].averageHer2 = e.target.value;
+                      var her2 = e.target.value;
+                      var chrom  = params[index].averageChrom;
+                      if(chrom){
+                        var ratio = her2/chrom ;
+                        params[index].ihcRatio  = ratio;
+                        if (ratio >= 2.0) {
+                          params[index].ihcScore = "AMPLIFICATION"
+                        }else{
+                          params[index].ihcScore = "NO_AMPLIFICATION"
+                        }
+                      }
+                      setReportParams(params);
+                    }}
+                  />
+              </Column>
+              <Column lg={16} md={8} sm={4}>
+                  <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+               </Column>
+               <Column lg={3} md={8} sm={4}>
+                   Average Chromozome 17 Sinals per nucleus
+                </Column>
+                <Column lg={5} md={8} sm={4}>
+                  <TextInput
+                    id={"her_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    value={reportParams[index]?.averageChrom}
+                    onChange={(e) => {
+                      var params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].averageChrom = e.target.value;
+                      var her2 = params[index].averageHer2
+                      var chrom  = e.target.value;
+                      if(her2){
+                        var ratio = her2/chrom ;
+                        params[index].ihcRatio  = ratio;
+                        if (ratio >= 2.0) {
+                          params[index].ihcScore = "AMPLIFICATION"
+                        }else{
+                          params[index].ihcScore = "NO_AMPLIFICATION"
+                        }
+                      }
+                      setReportParams(params);
+                    }}
+                  />
+              </Column>
+              <Column lg={16} md={8} sm={4}>
+                  <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+               </Column>
+               <Column lg={3} md={8} sm={4}>
+                   Ratio of Her2/neu Signals to Chromozome 17
+                </Column>
+                <Column lg={5} md={8} sm={4}>
+                  <TextInput
+                    id={"her_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    disabled={true}
+                    value={reportParams[index]?.ihcRatio}
+                  />
+              </Column>
+
+              <Column lg={16} md={8} sm={4}>
+                  <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+               </Column>
+               <Column lg={3} md={8} sm={4}>
+                   IHC (Cerb2 Scoer)
+                </Column>
+                <Column lg={5} md={8} sm={4}>
+                  <TextInput
+                    id={"her_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    disabled={true}
+                    value={reportParams[index]?.ihcScore}
+                  />
+              </Column>
+
+            </Grid>
+            </Column>
+        
+        
+        </>;
       case "IMMUNOHISTOCHEMISTRY":
         return <>
          <Column lg={16} md={8} sm={4}>
@@ -990,6 +1120,11 @@ function ImmunohistochemistryCaseView() {
                               diagnosis: reportParams[index]?.diagnosis,
                               molecularSubType: reportParams[index]?.molecularSubType,
                               conclusion: reportParams[index]?.conclusion,
+                              ihcScore: reportParams[index]?.ihcScore,
+                              ihcRatio: reportParams[index]?.ihcRatio,
+                              averageChrom: reportParams[index]?.averageChrom,
+                              averageHer2: reportParams[index]?.averageHer2,
+                              numberOfcancerNuclei: reportParams[index]?.numberOfcancerNuclei,
                           };
                             postToOpenElisServerFullResponse(
                             "/rest/ReportPrint",
