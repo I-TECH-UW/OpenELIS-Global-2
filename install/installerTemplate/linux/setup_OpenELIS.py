@@ -344,7 +344,7 @@ def create_docker_compose_file():
         if len(EXTERNAL_HOSTS) > 0:
             if line.find("#eh") >= 0:
                 line = line.replace("#eh", "")
-            docker_external_hosts = "            - " + "\n            - ".join(EXTERNAL_HOSTS)
+            docker_external_hosts = "      - " + "\n      - ".join(EXTERNAL_HOSTS)
             line = line.replace("[% extra_hosts %]", docker_external_hosts )
         
         output_file.write(line)
