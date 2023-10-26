@@ -125,6 +125,7 @@ function ImmunohistochemistryCaseView() {
       herScore: "",
       diagnosis: "",
       molecularSubType: "",
+      conclusion : "",
       toggled : false
     },
   });
@@ -427,7 +428,7 @@ function ImmunohistochemistryCaseView() {
                     }}
                   />
               </Column>
-              <Column lg={16} md={8} sm={4}>
+                <Column lg={16} md={8} sm={4}>
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                 </Column>
                 <Column lg={3} md={8} sm={4}>
@@ -479,7 +480,33 @@ function ImmunohistochemistryCaseView() {
       case "DUAL_IN_SITU_HYBRIDISATION":  
         return <></>;
       case "IMMUNOHISTOCHEMISTRY":
-        return <></>;
+        return <>
+         <Column lg={16} md={8} sm={4}>
+            <Grid fullWidth={true} className="gridBoundary">
+            <Column lg={3} md={8} sm={4}>
+                   Conlusion
+                </Column>
+                <Column lg={13} md={8} sm={4}>
+                  <TextArea
+                    id={"conclusion_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    value={reportParams[index]?.conclusion}
+                    onChange={(e) => {
+                      var params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].conclusion = e.target.value;
+                      setReportParams(params);
+                    }}
+                  />
+              </Column>
+
+
+            </Grid>
+            </Column>
+             </>;
     }
   }
 
@@ -962,6 +989,7 @@ function ImmunohistochemistryCaseView() {
                               herScore: reportParams[index]?.herScore,
                               diagnosis: reportParams[index]?.diagnosis,
                               molecularSubType: reportParams[index]?.molecularSubType,
+                              conclusion: reportParams[index]?.conclusion,
                           };
                             postToOpenElisServerFullResponse(
                             "/rest/ReportPrint",

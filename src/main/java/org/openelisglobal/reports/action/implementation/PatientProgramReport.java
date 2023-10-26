@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -20,11 +22,14 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.services.IStatusService;
+import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.image.service.ImageService;
 import org.openelisglobal.image.valueholder.Image;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -44,14 +49,18 @@ import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.reports.action.implementation.reportBeans.ProgramSampleReportData;
 import org.openelisglobal.reports.form.ReportForm;
+import org.openelisglobal.result.service.ResultService;
+import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -69,6 +78,7 @@ public abstract class PatientProgramReport  extends Report implements IReportCre
     protected PersonAddressService addressService = SpringContext.getBean(PersonAddressService.class);
     protected ProviderService providerService = SpringContext.getBean(ProviderService.class);
     protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+    protected TestService testService = SpringContext.getBean(TestService.class);
     private static String ADDRESS_DEPT_ID;
     private static String ADDRESS_COMMUNE_ID;
     protected String currentContactInfo = "";
@@ -94,6 +104,27 @@ public abstract class PatientProgramReport  extends Report implements IReportCre
     protected List<Analysis> analyses;
     protected  ProgramSampleReportData data;
     protected ReportForm form;
+
+     protected static Set<Integer> analysisStatusIds;
+
+     static {
+        analysisStatusIds = new HashSet<>();
+        analysisStatusIds.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
+        analysisStatusIds.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        analysisStatusIds.add(Integer.parseInt(
+                SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated)));
+        analysisStatusIds.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted)));
+        analysisStatusIds.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
+        analysisStatusIds.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
+        analysisStatusIds.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
+
+    }
 
     abstract protected String getReportName();
 
@@ -391,6 +422,123 @@ public abstract class PatientProgramReport  extends Report implements IReportCre
         }
 
         return identity;
+    }
+
+    protected String getAppropriateResults(List<Result> resultList) {
+        String reportResult = "";
+        if (!resultList.isEmpty()) {
+
+            // If only one result just get it and get out
+            if (resultList.size() == 1) {
+                Result result = resultList.get(0);
+                if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
+                    Dictionary dictionary = new Dictionary();
+                    dictionary.setId(result.getValue());
+                    dictionaryService.getData(dictionary);
+                   
+
+                    if (result.getAnalyte() != null && "Conclusion".equals(result.getAnalyte().getAnalyteName())) {
+                        currentConclusion = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
+                    } else {
+                        reportResult = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
+                    }
+                } else {
+                    ResultService resultResultService = SpringContext.getBean(ResultService.class);
+                    reportResult = resultResultService.getResultValue(result, true);
+    
+                }
+            } else {
+                // If multiple results it can be a quantified result, multiple
+                // results with quantified other results or it can be a
+                // conclusion
+                ResultService resultResultService = SpringContext.getBean(ResultService.class);
+                Result result = resultList.get(0);
+
+                if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY
+                        .matches(resultResultService.getTestType(result))) {
+                   // data.setAbnormalResult(resultResultService.isAbnormalDictionaryResult(result));
+                    List<Result> dictionaryResults = new ArrayList<>();
+                    Result quantification = null;
+                    for (Result sibResult : resultList) {
+                        if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(sibResult.getResultType())) {
+                            dictionaryResults.add(sibResult);
+                        } else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(sibResult.getResultType())
+                                && sibResult.getParentResult() != null) {
+                            quantification = sibResult;
+                        }
+                    }
+
+                    Dictionary dictionary = new Dictionary();
+                    for (Result sibResult : dictionaryResults) {
+                        dictionary.setId(sibResult.getValue());
+                        dictionaryService.getData(dictionary);
+                        if (sibResult.getAnalyte() != null
+                                && "Conclusion".equals(sibResult.getAnalyte().getAnalyteName())) {
+                            currentConclusion = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
+                        } else {
+                            reportResult = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
+                            if (quantification != null
+                                    && quantification.getParentResult().getId().equals(sibResult.getId())) {
+                                reportResult += ": " + quantification.getValue(true);
+                            }
+                        }
+                    }
+                } else if (TypeOfTestResultServiceImpl.ResultType
+                        .isMultiSelectVariant(resultResultService.getTestType(result))) {
+                    Dictionary dictionary = new Dictionary();
+                    StringBuilder multiResult = new StringBuilder();
+
+                    Collections.sort(resultList, new Comparator<Result>() {
+                        @Override
+                        public int compare(Result o1, Result o2) {
+                            if (o1.getGrouping() == o2.getGrouping()) {
+                                return Integer.parseInt(o1.getId()) - Integer.parseInt(o2.getId());
+                            } else {
+                                return o1.getGrouping() - o2.getGrouping();
+                            }
+                        }
+                    });
+
+                    Result quantifiedResult = null;
+                    for (Result subResult : resultList) {
+                        if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(subResult.getResultType())) {
+                            quantifiedResult = subResult;
+                            resultList.remove(subResult);
+                            break;
+                        }
+                    }
+                    int currentGrouping = resultList.get(0).getGrouping();
+                    for (Result subResult : resultList) {
+                        if (subResult.getGrouping() != currentGrouping) {
+                            currentGrouping = subResult.getGrouping();
+                            multiResult.append("-------\n");
+                        }
+                        dictionary.setId(subResult.getValue());
+                        dictionaryService.getData(dictionary);
+
+                        if (dictionary.getId() != null) {
+                            multiResult.append(dictionary.getLocalizedName());
+                            if (quantifiedResult != null
+                                    && quantifiedResult.getParentResult().getId().equals(subResult.getId())
+                                    && !GenericValidator.isBlankOrNull(quantifiedResult.getValue())) {
+                                multiResult.append(": ");
+                                multiResult.append(quantifiedResult.getValue(true));
+                            }
+                            multiResult.append("\n");
+                        }
+                    }
+
+                    if (multiResult.length() > 1) {
+                        // remove last "\n"
+                        multiResult.setLength(multiResult.length() - 1);
+                    }
+
+                    reportResult = multiResult.toString();
+                }
+            }
+        }
+        return reportResult;
+
     }
     
 }

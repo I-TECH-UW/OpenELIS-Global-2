@@ -184,6 +184,8 @@ public class ReportForm extends BaseForm {
     
     private String molecularSubType;
     
+    private String conclusion;
+    
     // for display
     private List<IdValuePair> priorityList;
     
@@ -751,6 +753,14 @@ public class ReportForm extends BaseForm {
     
     public void setHerAssesment(String herAssesment) {
         this.herAssesment = herAssesment;
+    }
+    
+    public String getConclusion() {
+        return conclusion;
+    }
+    
+    public void setConclusion(String conclusion) {
+        this.conclusion = conclusion;
     }
     
 }
