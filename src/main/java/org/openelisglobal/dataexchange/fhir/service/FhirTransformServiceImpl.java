@@ -193,7 +193,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             }
             org.hl7.fhir.r4.model.Patient fhirPatient = this.transformToFhirPatient(patient);
             if (fhirPatients.containsKey(fhirPatient.getIdElement().getIdPart())) {
-                LogEvent.logWarn("", "", "patient collision with id: " + fhirPatient.getIdElement().getIdPart());
+                LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistPatients", "patient collision with id: " + fhirPatient.getIdElement().getIdPart());
             }
             fhirPatients.put(fhirPatient.getIdElement().getIdPart(), fhirPatient);
 
@@ -223,7 +223,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         Map<String, Observation> observations = new HashMap<>();
         Map<String, Practitioner> requesters = new HashMap<>();
         for (String sampleId : sampleIds) {
-            LogEvent.logDebug(this.getClass().getName(), "transformPersistObjectsUnderSamples",
+            LogEvent.logDebug(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
                     "transforming sampleId: " + sampleId);
             Sample sample = sampleService.get(sampleId);
             Patient patient = sampleHumanService.getPatientForSample(sample);
@@ -260,7 +260,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             });
             Task task = this.transformToTask(sample);
             if (tasks.containsKey(task.getIdElement().getIdPart())) {
-                LogEvent.logWarn("", "", "task collision with id: " + task.getIdElement().getIdPart());
+                LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples", "task collision with id: " + task.getIdElement().getIdPart());
             }
             tasks.put(task.getIdElement().getIdPart(), task);
 
@@ -268,41 +268,41 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             if (referringTask.isPresent()) {
                 updateReferringTaskWithTaskInfo(referringTask.get(), task);
                 if (tasks.containsKey(referringTask.get().getIdElement().getIdPart())) {
-                    LogEvent.logWarn("", "",
+                    LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
                             "referring task collision with id: " + referringTask.get().getIdElement().getIdPart());
                 }
             }
 
             org.hl7.fhir.r4.model.Patient fhirPatient = this.transformToFhirPatient(patient);
             if (fhirPatients.containsKey(fhirPatient.getIdElement().getIdPart())) {
-                LogEvent.logWarn("", "", "patient collision with id: " + fhirPatient.getIdElement().getIdPart());
+                LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples", "patient collision with id: " + fhirPatient.getIdElement().getIdPart());
             }
             fhirPatients.put(fhirPatient.getIdElement().getIdPart(), fhirPatient);
 
             Practitioner requester = transformProviderToPractitioner(provider);
             if (requesters.containsKey(requester.getIdElement().getIdPart())) {
-                LogEvent.logWarn("", "", "practitioner collision with id: " + fhirPatient.getIdElement().getIdPart());
+                LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples", "practitioner collision with id: " + fhirPatient.getIdElement().getIdPart());
             }
             requesters.put(requester.getIdElement().getIdPart(), requester);
 
             for (SampleItem sampleItem : sampleItems) {
                 Specimen specimen = this.transformToSpecimen(sampleItem);
                 if (specimens.containsKey(specimen.getIdElement().getIdPart())) {
-                    LogEvent.logWarn("", "", "specimen collision with id: " + specimen.getIdElement().getIdPart());
+                    LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples", "specimen collision with id: " + specimen.getIdElement().getIdPart());
                 }
                 specimens.put(specimen.getIdElement().getIdPart(), specimen);
             }
             for (Analysis analysis : analysises) {
                 ServiceRequest serviceRequest = this.transformToServiceRequest(analysis);
                 if (serviceRequests.containsKey(serviceRequest.getIdElement().getIdPart())) {
-                    LogEvent.logWarn("", "",
+                    LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
                             "serviceRequest collision with id: " + serviceRequest.getIdElement().getIdPart());
                 }
                 serviceRequests.put(serviceRequest.getIdElement().getIdPart(), serviceRequest);
                 if (statusService.matches(analysis.getStatusId(), AnalysisStatus.Finalized)) {
                     DiagnosticReport diagnosticReport = this.transformResultToDiagnosticReport(analysis);
                     if (diagnosticReports.containsKey(analysis.getFhirUuidAsString())) {
-                        LogEvent.logWarn("", "",
+                        LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
                                 "diagnosticReport collision with id: " + diagnosticReport.getIdElement().getIdPart());
                     }
                     diagnosticReports.put(analysis.getFhirUuidAsString(), diagnosticReport);
@@ -311,7 +311,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             for (Result result : results) {
                 Observation observation = this.transformResultToObservation(result);
                 if (observations.containsKey(observation.getIdElement().getIdPart())) {
-                    LogEvent.logWarn("", "",
+                    LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
                             "observation collision with id: " + observation.getIdElement().getIdPart());
                 }
                 observations.put(observation.getIdElement().getIdPart(), observation);
@@ -362,7 +362,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     public void transformPersistOrderEntryFhirObjects(SamplePatientUpdateData updateData,
             PatientManagementInfo patientInfo, boolean useReferral, List<ReferralItem> referralItems)
             throws FhirLocalPersistingException {
-        LogEvent.logTrace(this.getClass().getName(), "createFhirFromSamplePatient",
+        LogEvent.logTrace(this.getClass().getSimpleName(), "createFhirFromSamplePatient",
                 "accessionNumber - " + updateData.getAccessionNumber());
         CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
         FhirOperations fhirOperations = new FhirOperations();
@@ -997,7 +997,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         if (result.getAnalysis().getStatusId().equals(statusService.getStatusID(AnalysisStatus.Finalized))) {
             observation.setStatus(ObservationStatus.FINAL);
         } else if (result.getAnalysis().getStatusId().equals(statusService.getStatusID(AnalysisStatus.NotStarted))) {
-            LogEvent.logError(this.getClass().getName(), "transformResultToObservation",
+            LogEvent.logError(this.getClass().getSimpleName(), "transformResultToObservation",
                     "recording result for analysis that is not started.");
             observation.setStatus(ObservationStatus.UNKNOWN);
         } else {

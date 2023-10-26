@@ -151,7 +151,7 @@ public class CommonValidationsRestController {
 		}
 		catch (IllegalArgumentException | IllegalStateException e) {
 			error = MessageUtil.getMessage("error.accession.no.error");
-			LogEvent.logError(this.getClass().getName(), "processRequest", e.toString());
+			LogEvent.logError(this.getClass().getSimpleName(), "processRequest", e.toString());
 		}
 
 		boolean success = !GenericValidator.isBlankOrNull(nextNumber);

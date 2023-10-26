@@ -176,10 +176,10 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                 }
             }
             if (serviceRequest != null) {
-                LogEvent.logDebug(this.getClass().getName(), "processRequest",
+                LogEvent.logDebug(this.getClass().getSimpleName(), "processRequest",
                         "found matching serviceRequest " + serviceRequest.getIdElement().getIdPart());
             } else {
-                LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching serviceRequest");
+                LogEvent.logDebug(this.getClass().getSimpleName(), "processRequest", "no matching serviceRequest");
             }
 
             patient = localFhirClient.read()//
@@ -188,10 +188,10 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                     .execute();
 
             if (patient != null) {
-                LogEvent.logDebug(this.getClass().getName(), "processRequest",
+                LogEvent.logDebug(this.getClass().getSimpleName(), "processRequest",
                         "found matching patient " + patient.getIdElement().getIdPart());
             } else {
-                LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching patient");
+                LogEvent.logDebug(this.getClass().getSimpleName(), "processRequest", "no matching patient");
             }
 
 //            task = fhirUtil.getFhirParser().parseResource(Task.class, eOrder.getData());
@@ -204,10 +204,10 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             task = fhirPersistanceService.getTaskBasedOnServiceRequest(orderNumber).orElseThrow();
 
             if (task != null) {
-                LogEvent.logDebug(this.getClass().getName(), "processRequest",
+                LogEvent.logDebug(this.getClass().getSimpleName(), "processRequest",
                         "found matching task " + task.getIdElement().getIdPart());
             } else {
-                LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching task");
+                LogEvent.logDebug(this.getClass().getSimpleName(), "processRequest", "no matching task");
             }
 
             if (!GenericValidator
@@ -218,10 +218,10 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                         .execute();
 
                 if (referringOrganization != null) {
-                    LogEvent.logDebug(this.getClass().getName(), "processRequest",
+                    LogEvent.logDebug(this.getClass().getSimpleName(), "processRequest",
                             "found matching organization " + referringOrganization.getIdElement().getIdPart());
                 } else {
-                    LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching organization");
+                    LogEvent.logDebug(this.getClass().getSimpleName(), "processRequest", "no matching organization");
                 }
             }
 
@@ -233,10 +233,10 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                         .execute();
 
                 if (location != null) {
-                    LogEvent.logDebug(this.getClass().getName(), "processRequest",
+                    LogEvent.logDebug(this.getClass().getSimpleName(), "processRequest",
                             "found matching location " + location.getIdElement().getIdPart());
                 } else {
-                    LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching location");
+                    LogEvent.logDebug(this.getClass().getSimpleName(), "processRequest", "no matching location");
                 }
             }
 
@@ -248,10 +248,10 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                         .execute();
 
                 if (requesterPerson != null) {
-                    LogEvent.logDebug(this.getClass().getName(), "processRequest",
+                    LogEvent.logDebug(this.getClass().getSimpleName(), "processRequest",
                             "found matching requester " + requesterPerson.getIdElement().getIdPart());
                 } else {
-                    LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching requester");
+                    LogEvent.logDebug(this.getClass().getSimpleName(), "processRequest", "no matching requester");
                 }
             }
 
@@ -263,10 +263,10 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                         .execute();
 
                 if (collector != null) {
-                    LogEvent.logDebug(this.getClass().getName(), "processRequest",
+                    LogEvent.logDebug(this.getClass().getSimpleName(), "processRequest",
                             "found matching collector " + collector.getIdElement().getIdPart());
                 } else {
-                    LogEvent.logDebug(this.getClass().getName(), "processRequest", "no matching collector");
+                    LogEvent.logDebug(this.getClass().getSimpleName(), "processRequest", "no matching collector");
                 }
             }
         }
@@ -313,7 +313,7 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                 }
             }
         }
-        LogEvent.logDebug(this.getClass().getName(), "createSearchResultXML", "using patient guid " + patientGuid);
+        LogEvent.logDebug(this.getClass().getSimpleName(), "createSearchResultXML", "using patient guid " + patientGuid);
 
         createOrderXML(eOrder.getData(), patientGuid, xml);
 

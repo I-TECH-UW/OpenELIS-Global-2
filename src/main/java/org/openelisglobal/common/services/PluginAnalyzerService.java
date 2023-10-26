@@ -180,7 +180,7 @@ public class PluginAnalyzerService {
                 return test.getId();
             }
         }
-        LogEvent.logError(this.getClass().getName(), "getIdForTestName",
+        LogEvent.logError(this.getClass().getSimpleName(), "getIdForTestName",
                 "Unable to find test " + dbbTestName + " in test catalog");
         return null;
     }

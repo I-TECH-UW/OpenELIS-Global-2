@@ -293,7 +293,7 @@ public class DateUtil {
     // since midnight.
     public static synchronized int decodeTime(String s) throws LIMSException {
         SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Passed in this
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "Passed in this
         // time " +s);
         TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
         f.setTimeZone(utcTimeZone);

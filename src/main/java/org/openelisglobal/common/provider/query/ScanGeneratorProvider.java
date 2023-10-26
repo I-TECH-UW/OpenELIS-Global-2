@@ -78,7 +78,7 @@ public class ScanGeneratorProvider extends BaseQueryProvider {
             }
         } catch (IllegalArgumentException | IllegalStateException e) {
             error = MessageUtil.getMessage("error.accession.no.error");
-            LogEvent.logError(this.getClass().getName(), "processRequest", e.toString());
+            LogEvent.logError(this.getClass().getSimpleName(), "processRequest", e.toString());
         }
 
         String result = GenericValidator.isBlankOrNull(nextNumber) ? INVALID : VALID;

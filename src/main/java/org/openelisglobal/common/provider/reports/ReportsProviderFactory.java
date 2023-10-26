@@ -110,7 +110,7 @@ public class ReportsProviderFactory {
         String mapping = reportsProviderClassMap.getProperty(reportsProvidername);
         if (mapping == null) {
             // bugzilla 2154
-            LogEvent.logError(this.getClass().getName(), "getReportsProviderClassName", reportsProvidername);
+            LogEvent.logError(this.getClass().getSimpleName(), "getReportsProviderClassName", reportsProvidername);
             throw new LIMSRuntimeException(
                     "getReportsProviderClassName - Unable to find mapping for " + reportsProvidername);
         }

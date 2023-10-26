@@ -66,7 +66,7 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
             try {
                 prePrintLabels(request, response);
             } catch (NumberFormatException | LIMSInvalidConfigurationException e) {
-                LogEvent.logError(this.getClass().getName(), "doGet",
+                LogEvent.logError(this.getClass().getSimpleName(), "doGet",
                         "invalid configuration, could not generate a pre-printed accession number");
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.setContentType("text/html; charset=utf-8");

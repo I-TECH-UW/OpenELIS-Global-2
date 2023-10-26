@@ -202,17 +202,17 @@ public class ExternalPatientSearch implements IExternalPatientSearch {
         } catch (SocketTimeoutException e) {
             errors.add("Response from patient information server took too long.");
             LogEvent.logError(e);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Tinny time out"
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "Tinny time out"
             // + e);
         } catch (ConnectException e) {
             errors.add("Unable to connect to patient information form service. Service may not be running");
             LogEvent.logError(e);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "you no talks? "
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "you no talks? "
             // + e);
         } catch (IOException e) {
             errors.add("IO error trying to read input stream.");
             LogEvent.logError(e);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "all else failed
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "all else failed
             // " + e);
         } catch (KeyManagementException e) {
             errors.add("Key management error trying to connect to external search service.");

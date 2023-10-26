@@ -112,7 +112,7 @@ public class ProviderServiceImpl extends BaseObjectServiceImpl<Provider, String>
             if (dbProvider.isPresent()) {
                 dbProvider.get().setActive(false);
             } else {
-                LogEvent.logWarn(this.getClass().getName(), "deactivateProviders",
+                LogEvent.logWarn(this.getClass().getSimpleName(), "deactivateProviders",
                         "could not deactivate Provider with id '" + deactivateProvider.getId()
                                 + "' as it could not be found");
             }

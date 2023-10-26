@@ -1197,7 +1197,7 @@ public abstract class Accessioner implements IAccessioner {
      *
      */
     protected void persistObservationHistoryLists() {
-        LogEvent.logInfo(this.getClass().getName(), "persistObservationHistoryLists", "FUNCTION NAME PROHIBITED !");
+        LogEvent.logInfo(this.getClass().getSimpleName(), "persistObservationHistoryLists", "FUNCTION NAME PROHIBITED !");
     }
 
     protected void persistObservationHistoryLists2() {
@@ -1208,8 +1208,8 @@ public abstract class Accessioner implements IAccessioner {
         for (String listType : observationHistoryLists.keySet()) {
             // throw away the old list
             Map<String, ObservationHistory> oldOHes = findExistingObservationHistories(listType);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", );
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", listType + "
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", );
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", listType + "
             // oldOHes.size = "
             // +oldOHes.size());
             for (ObservationHistory oh : oldOHes.values()) {
@@ -1219,7 +1219,7 @@ public abstract class Accessioner implements IAccessioner {
 
             // insert the new
             List<ObservationHistory> newOHes = observationHistoryLists.get(listType);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", listType + "
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", listType + "
             // newOHes.size = "
             // +newOHes.size());
             for (ObservationHistory newOH : newOHes) {
@@ -1310,7 +1310,7 @@ public abstract class Accessioner implements IAccessioner {
 //        try {
 //
 //            String xml = projectFormMapper.getForm().getSampleXML();
-//            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "AMANI:"+xml);
+//            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "AMANI:"+xml);
 //            Document sampleDom = DocumentHelper.parseText(xml);
 //            for (Iterator i = sampleDom.getRootElement().elementIterator("sample"); i.hasNext();) {
 //                Element sampleItem = (Element) i.next();

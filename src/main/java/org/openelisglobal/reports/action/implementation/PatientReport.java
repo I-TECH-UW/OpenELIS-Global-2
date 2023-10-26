@@ -613,7 +613,7 @@ public abstract class PatientReport extends Report {
             try {
                 resultValue += " (" + formatTwoDecimals(Math.log10(Double.parseDouble(resultValue))) + ")log ";
             } catch (IllegalFormatException e) {
-                LogEvent.logDebug(this.getClass().getName(), "getAugmentedResult", e.getMessage());
+                LogEvent.logDebug(this.getClass().getSimpleName(), "getAugmentedResult", e.getMessage());
                 // no-op
             }
         }
@@ -668,7 +668,7 @@ public abstract class PatientReport extends Report {
                 }
             }
         } catch (NumberFormatException e) {
-            LogEvent.logInfo(this.getClass().getName(), "getResultFlag", e.getMessage());
+            LogEvent.logInfo(this.getClass().getSimpleName(), "getResultFlag", e.getMessage());
             // no-op
         }
 

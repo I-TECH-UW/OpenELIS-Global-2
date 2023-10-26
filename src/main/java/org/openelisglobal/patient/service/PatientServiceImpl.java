@@ -799,7 +799,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
         try {
             typeName = patientInfo.getPatientType();
         } catch (RuntimeException e) {
-            LogEvent.logInfo(this.getClass().getName(), "persistPatientType", "ignoring exception");
+            LogEvent.logInfo(this.getClass().getSimpleName(), "persistPatientType", "ignoring exception");
         }
 
         if (!GenericValidator.isBlankOrNull(typeName) && !"0".equals(typeName)) {

@@ -179,9 +179,9 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             if (queryGender) {
                 query.setParameter(GENDER, gender);
             }
-            LogEvent.logTrace(this.getClass().getName(), "getSearchResults",
+            LogEvent.logTrace(this.getClass().getSimpleName(), "getSearchResults",
                     "SearchResultsDAOImp:getSearchResults:query:guid: " + guid);
-            LogEvent.logTrace(this.getClass().getName(), "getSearchResults",
+            LogEvent.logTrace(this.getClass().getSimpleName(), "getSearchResults",
                     "SearchResultsDAOImp:getSearchResults:query: " + query.getQueryString());
 //            String[] dArray = { " ", " ", subjectNumber, nationalID, gender, " ", " ", " "};
 //            String[] sArray = query.getNamedParameters();

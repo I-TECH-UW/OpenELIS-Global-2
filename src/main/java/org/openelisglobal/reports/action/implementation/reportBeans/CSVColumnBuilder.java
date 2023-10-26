@@ -233,11 +233,11 @@ abstract public class CSVColumnBuilder {
     protected void buildResultSet() throws SQLException {
         makeSQL();
         String sql = query.toString();
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===1===\n" +
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "===1===\n" +
         // sql.substring(0, 7000)); // the SQL is
         // chunked out only because Eclipse thinks printing really big strings to the
         // console must be wrong, so it truncates them
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===2===\n" +
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "===2===\n" +
         // sql.substring(7000));
 //		Session session = HibernateUtil.getSession().getSessionFactory().openSession();
 //		PreparedStatement stmt = session.connection().prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -306,7 +306,7 @@ abstract public class CSVColumnBuilder {
             // if you end up where it is because the result set doesn't return a
             // column of the right name
             // Check MAX_POSTGRES_COL_NAME if this fails on a long name
-            LogEvent.logInfo(this.getClass().getName(), "getValue",
+            LogEvent.logInfo(this.getClass().getSimpleName(), "getValue",
                     "Internal Error: Unable to find db column \"" + column.dbName + "\" in data.");
             return "?" + column.csvName + "?";
         }
@@ -315,7 +315,7 @@ abstract public class CSVColumnBuilder {
         // translate should never return null, "" is better while it is doing
         // translation.
         if (result == null) {
-            LogEvent.logInfo(this.getClass().getName(), "getValue", "A null found " + column.dbName);
+            LogEvent.logInfo(this.getClass().getSimpleName(), "getValue", "A null found " + column.dbName);
         }
         return result;
     }
@@ -323,7 +323,7 @@ abstract public class CSVColumnBuilder {
     private String prepareColumnName(String columnName) {
         // trim and escape the column name so it is more safe from sql injection
         if (!columnName.matches("(?i)[a-zàâçéèêëîïôûùüÿñæœ0-9_ ()%/\\[\\]+\\-]+")) {
-            LogEvent.logWarn(this.getClass().getName(), "prepareColumnName",
+            LogEvent.logWarn(this.getClass().getSimpleName(), "prepareColumnName",
                     "potentially dangerous character detected in '" + columnName + "'");
         }
         return "\"" + trimToPostgresMaxColumnName(columnName = columnName.replace("\"", "\\\"")) + "\"";
@@ -432,7 +432,7 @@ abstract public class CSVColumnBuilder {
             case PROJECT:
                 return translateProjectId(value);
             case DEBUG:
-                LogEvent.logInfo(this.getClass().getName(), "translate",
+                LogEvent.logInfo(this.getClass().getSimpleName(), "translate",
                         "Processing Column Value: " + csvName + " \"" + value + "\"");
             case BLANK:
                 return "";

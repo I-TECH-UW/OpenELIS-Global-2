@@ -273,7 +273,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
                 // error = new ActionError("errors.UpdateException", null, null);
                 result.reject("errors.UpdateException", "errors.UpdateException");
             }
-            LogEvent.logInfo(this.getClass().getName(), "showSamplePatientEntrySave", result.toString());
+            LogEvent.logInfo(this.getClass().getSimpleName(), "showSamplePatientEntrySave", result.toString());
 
             // errors.add(ActionMessages.GLOBAL_MESSAGE, error);
             saveErrors(result);
@@ -353,7 +353,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         setupReferralOption(form);
         // for (Object program : form.getSampleOrderItems().getProgramList()) {
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", ((IdValuePair)
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", ((IdValuePair)
         // program).getValue());
         // }
 

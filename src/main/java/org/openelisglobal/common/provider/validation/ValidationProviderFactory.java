@@ -111,7 +111,7 @@ public class ValidationProviderFactory {
         String mapping = validationProviderClassMap.getProperty(validationProvidername);
         if (mapping == null) {
             // bugzilla 2154
-            LogEvent.logError(this.getClass().getName(), "getValidationProviderClassName", validationProvidername);
+            LogEvent.logError(this.getClass().getSimpleName(), "getValidationProviderClassName", validationProvidername);
             throw new LIMSRuntimeException(
                     "getValidationProviderClassName - Unable to find mapping for " + validationProvidername);
         }

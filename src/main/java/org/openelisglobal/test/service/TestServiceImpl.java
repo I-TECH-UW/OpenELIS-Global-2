@@ -391,7 +391,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
             // // return "ts:batn:342:name:" + test.getDescription();
             // }
         } catch (RuntimeException e) {
-            LogEvent.logInfo(this.getClass().getName(), "buildAugmentedTestName", "augmented caught LAZY");
+            LogEvent.logInfo(this.getClass().getSimpleName(), "buildAugmentedTestName", "augmented caught LAZY");
             return "ts:batn:345:name:" + test.getDescription();
         }
     }

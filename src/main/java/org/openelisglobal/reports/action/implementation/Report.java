@@ -280,7 +280,7 @@ public abstract class Report implements IReportCreator {
                     range += "  -  " + highDateStr;
                 }
             } catch (RuntimeException e) {
-                LogEvent.logInfo(this.getClass().getName(), "persistPatientType", "ignoring exception");
+                LogEvent.logInfo(this.getClass().getSimpleName(), "persistPatientType", "ignoring exception");
             }
             return range;
         }

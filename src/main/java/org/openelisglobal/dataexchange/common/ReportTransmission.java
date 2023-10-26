@@ -100,7 +100,7 @@ public class ReportTransmission {
             ITransmissionResponseHandler responseHandler, HTTP_TYPE httpType) {
         try {
             IExternalSender sender;
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", contents );
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", contents );
             switch (httpType) {
             case GET:
                 sender = SpringContext.getBean(HttpGetSender.class);

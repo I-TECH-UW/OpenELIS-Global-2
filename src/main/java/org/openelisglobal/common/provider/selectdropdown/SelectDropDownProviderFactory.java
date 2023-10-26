@@ -111,7 +111,7 @@ public class SelectDropDownProviderFactory {
 
         String mapping = validationProviderClassMap.getProperty(validationProvidername);
         if (mapping == null) {
-            LogEvent.logError(this.getClass().getName(), "getSelectDropdownProviderClassName", validationProvidername);
+            LogEvent.logError(this.getClass().getSimpleName(), "getSelectDropdownProviderClassName", validationProvidername);
             throw new LIMSRuntimeException(
                     "getSelectDropDownProviderClassName - Unable to find mapping for " + validationProvidername);
         }

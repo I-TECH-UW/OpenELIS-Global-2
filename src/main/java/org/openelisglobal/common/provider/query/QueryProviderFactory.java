@@ -92,7 +92,7 @@ public class QueryProviderFactory {
 
         String mapping = queryProviderClassMap.getProperty(queryProvidername);
         if (mapping == null) {
-            LogEvent.logError(this.getClass().getName(), "getQueryProviderClassName",
+            LogEvent.logError(this.getClass().getSimpleName(), "getQueryProviderClassName",
                     "getQueryProviderClassName - Unable to find mapping for " + queryProvidername);
             throw new LIMSRuntimeException(
                     "getQueryProviderClassName - Unable to find mapping for " + queryProvidername);

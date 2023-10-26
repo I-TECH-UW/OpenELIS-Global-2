@@ -91,7 +91,7 @@ public class TestAddController extends BaseController {
 
     @RequestMapping(value = "/TestAdd", method = RequestMethod.GET)
     public ModelAndView showTestAdd(HttpServletRequest request) {
-        LogEvent.logTrace(this.getClass().getName(), "showTestAdd",
+        LogEvent.logTrace(this.getClass().getSimpleName(), "showTestAdd",
                 "Hibernate Version: " + org.hibernate.Version.getVersionString());
 
         TestAddForm form = new TestAddForm();

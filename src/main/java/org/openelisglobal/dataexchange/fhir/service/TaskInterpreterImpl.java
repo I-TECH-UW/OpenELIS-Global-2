@@ -140,7 +140,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
     }
 
     private Test createTestFromFHIR(ServiceRequest serviceRequest) throws HL7Exception {
-        LogEvent.logDebug(this.getClass().getName(), "createTestFromFHIR", "start");
+        LogEvent.logDebug(this.getClass().getSimpleName(), "createTestFromFHIR", "start");
 
         String loincCode = "";
         String system = "";
@@ -159,7 +159,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
             i++;
         }
 
-        LogEvent.logError(this.getClass().getName(), "createTestFromFHIR",
+        LogEvent.logError(this.getClass().getSimpleName(), "createTestFromFHIR",
                 "no test found for SR: " + serviceRequest.getIdElement().getIdPart());
         return null;
     }
@@ -268,7 +268,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
     }
 
     private List<InterpreterResults> buildResultList(boolean exceptionThrown) {
-        LogEvent.logDebug(this.getClass().getName(), "buildResultList", "buildResultList: " + exceptionThrown);
+        LogEvent.logDebug(this.getClass().getSimpleName(), "buildResultList", "buildResultList: " + exceptionThrown);
         results = new ArrayList<>();
 
         if (exceptionThrown) {

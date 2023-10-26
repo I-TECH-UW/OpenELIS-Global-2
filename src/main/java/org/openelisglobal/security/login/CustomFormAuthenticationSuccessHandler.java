@@ -68,11 +68,11 @@ public class CustomFormAuthenticationSuccessHandler extends SavedRequestAwareAut
         final String xfHeader = request.getHeader("X-Forwarded-For");
         if (xfHeader == null) {
             // no proxy
-            LogEvent.logInfo(this.getClass().getName(), "onSuccess",
+            LogEvent.logInfo(this.getClass().getSimpleName(), "onSuccess",
                     "Successful login attempt for " + authentication.getName() + " from " + request.getRemoteAddr());
         } else {
             // from proxy
-            LogEvent.logInfo(this.getClass().getName(), "onSuccess",
+            LogEvent.logInfo(this.getClass().getSimpleName(), "onSuccess",
                     "Successful login attempt for " + authentication.getName() + " from " + xfHeader.split(",")[0]);
         }
 
@@ -96,7 +96,7 @@ public class CustomFormAuthenticationSuccessHandler extends SavedRequestAwareAut
         try {
             setupUserSession(request, loginInfo);
         } catch (IllegalStateException e) {
-            LogEvent.logError(this.getClass().getName(), "onAuthenticationSuccess",
+            LogEvent.logError(this.getClass().getSimpleName(), "onAuthenticationSuccess",
                     "the login user doesn't exist in OE this is usually caused by login being handled by an external application that contains a user that OE is missing");
             SecurityContextHolder.getContext().setAuthentication(null);
             BaseErrors errors = new BaseErrors();

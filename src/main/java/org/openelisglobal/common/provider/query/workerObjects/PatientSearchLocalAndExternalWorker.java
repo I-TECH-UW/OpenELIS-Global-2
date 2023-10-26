@@ -127,7 +127,7 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
                 if (externalSearchResult == 200) {
                     externalResults = externalSearch.getSearchResults();
                 } else {
-                    LogEvent.logWarn(this.getClass().getName(), "createSearchResultXML",
+                    LogEvent.logError(this.getClass().getSimpleName(), "createSearchResultXML",
                             "could not get external search results from " + externalSearch.getConnectionString()
                                     + " - failed response");
                 }

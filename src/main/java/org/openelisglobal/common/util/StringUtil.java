@@ -208,7 +208,7 @@ public class StringUtil {
         if (!StringUtil.isNullorNill(ext)) {
             returnPhone = returnPhone + "." + ext;
         }
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "This is phone "
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "This is phone "
         // + returnPhone);
         return returnPhone;
     }

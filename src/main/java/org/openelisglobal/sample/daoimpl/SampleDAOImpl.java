@@ -204,7 +204,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
                                 // over
                                 // the
                                 // limit
-                                // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Error in Sample
+                                // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "Error in Sample
                                 // getNextAccessionNumber() max sequence
                                 // number reached");
                                 throw new LIMSRuntimeException(
@@ -261,6 +261,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
                 sample = list.get(0);
             }
         } catch (RuntimeException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Exception occurred in getSampleForAccessionNumber", e);
         }
         return sample;

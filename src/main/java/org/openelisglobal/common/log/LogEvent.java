@@ -82,7 +82,7 @@ public class LogEvent {
             .append(", Message: ")
             .append(sanitizeLogMessage(throwable.getMessage()));
         if (throwable.getCause() != null) {
-            logErrorCause(throwable, throwable.getCause(), errorMessage, 0);
+            logCause(throwable, throwable.getCause(), errorMessage, 0);
         }
         getLog().error(errorMessage.toString());
         if (getLog().isDebugEnabled()) {
@@ -95,7 +95,7 @@ public class LogEvent {
         }
     }
 
-    private static void logErrorCause(Throwable originalThrowable, Throwable throwable, StringBuilder errorMessage, int depth) {
+    private static void logCause(Throwable originalThrowable, Throwable throwable, StringBuilder errorMessage, int depth) {
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         errorMessage.append(System.lineSeparator())
             .append("Class: ")
@@ -107,7 +107,7 @@ public class LogEvent {
             .append(", Sub-Message: ")
             .append(sanitizeLogMessage(throwable.getMessage()));
         if (throwable.getCause() != null && depth < MAX_ERROR_DEPTH) {
-            logErrorCause(originalThrowable, throwable.getCause(), errorMessage, ++depth);
+            logCause(originalThrowable, throwable.getCause(), errorMessage, ++depth);
         }
 
     }
@@ -194,6 +194,30 @@ public class LogEvent {
     public static void logWarn(String className, String methodName, String warnMessage) {
         getLog().warn(
                 "Class: " + className + ", Method: " + methodName + ", Warning:" + sanitizeLogMessage(warnMessage));
+    }
+
+    /**
+     * Write to the log file (type warning)
+     *
+     * @param className   the class name
+     * @param methodName  the method name
+     * @param warnMessage the warning message
+     */
+    public static void logWarn(Throwable throwable) {
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        StringBuilder warnMessage = new StringBuilder();
+        warnMessage.append("Class: ")
+            .append(stackTrace[0].getClassName())
+            .append(", Method: ")
+            .append(stackTrace[0].getMethodName())
+            .append(", Line: ")
+            .append(stackTrace[0].getLineNumber())
+            .append(", Message: ")
+            .append(sanitizeLogMessage(throwable.getMessage()));
+        if (throwable.getCause() != null) {
+            logCause(throwable, throwable.getCause(), warnMessage, 0);
+        }
+        getLog().warn(warnMessage.toString());
     }
 
     /**

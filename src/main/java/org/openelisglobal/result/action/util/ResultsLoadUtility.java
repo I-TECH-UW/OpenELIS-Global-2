@@ -940,7 +940,7 @@ public class ResultsLoadUtility {
                 valid = value >= resultLimit.getLowValid() && value <= resultLimit.getHighValid();
 
             } catch (NumberFormatException e) {
-                LogEvent.logInfo(this.getClass().getName(), "getIsValid", e.getMessage());
+                LogEvent.logInfo(this.getClass().getSimpleName(), "getIsValid", e.getMessage());
                 // no-op
             }
         }
@@ -958,7 +958,7 @@ public class ResultsLoadUtility {
                 normal = value >= resultLimit.getLowNormal() && value <= resultLimit.getHighNormal();
 
             } catch (NumberFormatException e) {
-                LogEvent.logInfo(this.getClass().getName(), "getIsNormal", e.getMessage());
+                LogEvent.logInfo(this.getClass().getSimpleName(), "getIsNormal", e.getMessage());
                 // no-op
             }
         }

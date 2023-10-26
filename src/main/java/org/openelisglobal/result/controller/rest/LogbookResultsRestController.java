@@ -444,7 +444,7 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
                 .getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
         List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
         if (checkResults.size() == 0) {
-            LogEvent.logDebug(this.getClass().getName(), "LogbookResults()", "Attempted save of stale page.");
+            LogEvent.logDebug(this.getClass().getSimpleName(), "LogbookResults()", "Attempted save of stale page.");
 
             List<TestResultItem> resultList = form.getTestResult();
             for (TestResultItem item : resultList) {
@@ -508,7 +508,7 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
             try {
                 updater.postTransactionalCommitUpdate(actionDataSet);
             } catch (Exception e) {
-                LogEvent.logError(this.getClass().getName(), "showLogbookResultsUpdate",
+                LogEvent.logError(this.getClass().getSimpleName(), "showLogbookResultsUpdate",
                         "error doing a post transactional commit");
                 LogEvent.logError(e);
             }

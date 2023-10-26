@@ -84,7 +84,7 @@ public class LogoUploadController {
 
         boolean deleteSuccess = previewFile.delete();
         if (!deleteSuccess) {
-            LogEvent.logError(this.getClass().getName(), "removeImage", "could not delete preview file");
+            LogEvent.logError(this.getClass().getSimpleName(), "removeImage", "could not delete preview file");
         }
 
         SiteInformation logoInformation = siteInformationService.getSiteInformationByName(logoName);

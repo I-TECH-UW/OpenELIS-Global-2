@@ -236,7 +236,7 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
                 .getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
         List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
         if (checkResults.size() == 0) {
-            LogEvent.logDebug(this.getClass().getName(), "ResultValidation()", "Attempted save of stale page.");
+            LogEvent.logDebug(this.getClass().getSimpleName(), "ResultValidation()", "Attempted save of stale page.");
 //            Errors errors = new BaseErrors();
 //            errors.reject("alert.error", "An error occured while saving");
 //            saveErrors(errors);

@@ -163,7 +163,7 @@ public class TestUsageUpdate implements IResultUpdate {
                 json.put(name, databaseTestCountList.get(name));
             }
         } catch (ParseException e) {
-            LogEvent.logInfo(this.getClass().getName(), "updateExport", e.toString());
+            LogEvent.logInfo(this.getClass().getSimpleName(), "updateExport", e.toString());
         }
 
         StringWriter buffer = new StringWriter();

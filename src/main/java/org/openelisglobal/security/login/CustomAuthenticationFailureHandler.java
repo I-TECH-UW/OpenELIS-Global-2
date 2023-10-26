@@ -32,10 +32,10 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         final String xfHeader = request.getHeader("X-Forwarded-For");
         if (xfHeader == null){
             //no proxy
-            LogEvent.logInfo(this.getClass().getName(), "onFailure", "Unsuccessful login attempt from "+ request.getRemoteAddr());
+            LogEvent.logInfo(this.getClass().getSimpleName(), "onFailure", "Unsuccessful login attempt from "+ request.getRemoteAddr());
         } else {
             //from proxy
-            LogEvent.logInfo(this.getClass().getName(), "onFailure", "Unsuccessful login attempt from "+ xfHeader.split(",")[0]);
+            LogEvent.logInfo(this.getClass().getSimpleName(), "onFailure", "Unsuccessful login attempt from "+ xfHeader.split(",")[0]);
         }
         if ("true".equals(request.getParameter("apiCall"))) {
             this.handleApiLogin(request, response, exception);

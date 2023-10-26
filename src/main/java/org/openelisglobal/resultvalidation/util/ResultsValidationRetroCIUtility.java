@@ -398,7 +398,7 @@ public class ResultsValidationRetroCIUtility {
                                     ? dictionary.getDictEntry()
                                     : dictionary.getLocalAbbreviation();
                         } catch (RuntimeException e) {
-                            LogEvent.logInfo(this.getClass().getName(), "getGroupedTestsForAnalysisList",
+                            LogEvent.logInfo(this.getClass().getSimpleName(), "getGroupedTestsForAnalysisList",
                                     e.getMessage());
                             // no-op
                         }

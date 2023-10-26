@@ -110,7 +110,7 @@ public class AutocompleteProviderFactory {
 
         String mapping = validationProviderClassMap.getProperty(validationProvidername);
         if (mapping == null) {
-//            LogEvent.logError(this.getClass().getName(), "getAutocompleteProviderClassName", validationProvidername);
+//            LogEvent.logError(this.getClass().getSimpleName(), "getAutocompleteProviderClassName", validationProvidername);
             throw new LIMSRuntimeException(
                     "getAutocompleteProviderClassName - Unable to find mapping for " + validationProvidername);
         }

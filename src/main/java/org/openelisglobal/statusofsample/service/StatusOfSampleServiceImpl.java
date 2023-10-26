@@ -66,7 +66,7 @@ public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSam
             sb.append(" Status Type: ");
             sb.append(statusOfSample.getStatusType());
             // bugzilla 2154
-            LogEvent.logError(this.getClass().getName(), "insert", sb.toString());
+            LogEvent.logError(this.getClass().getSimpleName(), "insert", sb.toString());
             throw new LIMSDuplicateRecordException(sb.toString());
         }
         return super.insert(statusOfSample);
@@ -81,7 +81,7 @@ public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSam
             sb.append(" Status Type: ");
             sb.append(statusOfSample.getStatusType());
             // bugzilla 2154
-            LogEvent.logError(this.getClass().getName(), "save", sb.toString());
+            LogEvent.logError(this.getClass().getSimpleName(), "save", sb.toString());
             throw new LIMSDuplicateRecordException(sb.toString());
         }
         return super.save(statusOfSample);
@@ -96,7 +96,7 @@ public class StatusOfSampleServiceImpl extends BaseObjectServiceImpl<StatusOfSam
             sb.append(" Status Type: ");
             sb.append(statusOfSample.getStatusType());
             // bugzilla 2154
-            LogEvent.logError(this.getClass().getName(), "update", sb.toString());
+            LogEvent.logError(this.getClass().getSimpleName(), "update", sb.toString());
             throw new LIMSDuplicateRecordException(sb.toString());
         }
         return super.update(statusOfSample);

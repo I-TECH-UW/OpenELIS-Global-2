@@ -130,7 +130,7 @@ public class ForCIDashboardColumnBuilder extends CIColumnBuilder {
         /////////
         // no don't insert another crosstab or table here, go up before the main WHERE
         ///////// clause
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown",
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown",
         ///////// query.toString());
         return;
     }

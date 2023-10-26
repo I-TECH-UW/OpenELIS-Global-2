@@ -250,7 +250,7 @@ public class AggregateReportJob implements Job {
 //                new Thread() {
 //                    @Override
 //                    public void run() {
-//                        LogEvent.logInfo(this.getClass().getName(), "method unkown",
+//                        LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown",
 //                                "Aggregate Report: Will attempt to resend report in " + delayInMin + " minutes.");
 //                        LogEvent.logInfo("AggregateReportJob", "retry()",
 //                                "Will attempt to resend report in " + delayInMin + " minutes.");
@@ -263,7 +263,7 @@ public class AggregateReportJob implements Job {
 //                    }
 //                }.start();
             } else {
-                LogEvent.logInfo(this.getClass().getName(), "retry",
+                LogEvent.logInfo(this.getClass().getSimpleName(), "retry",
                         "Aggregate report: Giving up trying to connect");
             }
         }

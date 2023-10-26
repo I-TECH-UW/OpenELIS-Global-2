@@ -266,7 +266,7 @@ public class AccessionValidationRestController extends BaseResultValidationContr
         List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
         if (checkResults.size() == 0) {
             System.out.println("Operation failed");
-            LogEvent.logDebug(this.getClass().getName(), "ResultValidation()", "Attempted save of stale page.");
+            LogEvent.logDebug(this.getClass().getSimpleName(), "ResultValidation()", "Attempted save of stale page.");
             return form;
         }
 

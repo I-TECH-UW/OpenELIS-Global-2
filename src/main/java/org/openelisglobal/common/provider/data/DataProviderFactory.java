@@ -109,7 +109,7 @@ public class DataProviderFactory {
         String mapping = dataProviderClassMap.getProperty(dataProvidername);
         if (mapping == null) {
             // bugzilla 2154
-//            LogEvent.logError(this.getClass().getName(), "getDataProviderClassName", dataProvidername, e);
+//            LogEvent.logError(this.getClass().getSimpleName(), "getDataProviderClassName", dataProvidername, e);
             throw new LIMSRuntimeException("getDataProviderClassName - Unable to find mapping for " + dataProvidername);
         }
         return mapping;

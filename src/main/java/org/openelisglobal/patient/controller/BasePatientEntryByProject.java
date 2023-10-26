@@ -110,7 +110,7 @@ public abstract class BasePatientEntryByProject extends BaseController {
             } catch (IllegalArgumentException e) {
                 LogEvent.logWarn("BasePatientEntryByProject", "getRequestType",
                         "request type '" + requestTypeStr + "' invalid");
-                LogEvent.logDebug(e);
+                LogEvent.logWarn(e);
                 return RequestType.UNKNOWN;
             }
         }
@@ -167,7 +167,7 @@ public abstract class BasePatientEntryByProject extends BaseController {
      * global message.
      */
     protected void logAndAddMessage(HttpServletRequest request, String methodName, String messageKey) {
-        LogEvent.logError(this.getClass().getName(), methodName, "Unable to enter patient into system");
+        LogEvent.logError(this.getClass().getSimpleName(), methodName, "Unable to enter patient into system");
         Errors errors = new BaseErrors();
         errors.reject(messageKey, messageKey);
         saveErrors(errors);

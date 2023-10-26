@@ -370,7 +370,7 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
                 Date date = dateTimeFormatter.parse(dateString);
                 patient.setBirthdate(DateUtil.formatDateAsText(date));
             } else {                
-                LogEvent.logWarn(this.getClass().getName(), "setDate", 
+                LogEvent.logWarn(this.getClass().getSimpleName(), "setDate", 
                     "Could not parse date received from infohighway search");
             }
         } 

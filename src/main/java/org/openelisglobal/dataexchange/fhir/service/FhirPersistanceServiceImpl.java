@@ -118,10 +118,10 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         addCreateToTransactionBundle(createResources, transactionBundle);
         Bundle transactionResponseBundle = new Bundle();
         try {
-            LogEvent.logTrace(this.getClass().getName(), "",
+            LogEvent.logTrace(this.getClass().getSimpleName(), "",
                     "creating resources: " + fhirContext.newJsonParser().encodeResourceToString(transactionBundle));
             transactionResponseBundle = localFhirClient.transaction().withBundle(transactionBundle).execute();
-            LogEvent.logTrace(this.getClass().getName(), "", "created resources: "
+            LogEvent.logTrace(this.getClass().getSimpleName(), "", "created resources: "
                     + fhirContext.newJsonParser().encodeResourceToString(transactionResponseBundle));
         } catch (Exception e) {
             LogEvent.logError(e);
@@ -148,10 +148,10 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         }
         Bundle transactionResponseBundle = new Bundle();
         try {
-            LogEvent.logTrace(this.getClass().getName(), "",
+            LogEvent.logTrace(this.getClass().getSimpleName(), "",
                     "creating resources: " + fhirContext.newJsonParser().encodeResourceToString(transactionBundle));
             transactionResponseBundle = localFhirClient.transaction().withBundle(transactionBundle).execute();
-            LogEvent.logTrace(this.getClass().getName(), "", "created resources: "
+            LogEvent.logTrace(this.getClass().getSimpleName(), "", "created resources: "
                     + fhirContext.newJsonParser().encodeResourceToString(transactionResponseBundle));
         } catch (Exception e) {
             LogEvent.logError(e);
@@ -319,7 +319,7 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
             serviceRequest = (ServiceRequest) bundle.getEntryFirstRep().getResource();
         }
         if (serviceRequest == null) {
-            LogEvent.logDebug(this.getClass().getName(), "", "no service request with identifier " + referringId);
+            LogEvent.logDebug(this.getClass().getSimpleName(), "", "no service request with identifier " + referringId);
             for (String remotePath : fhirConfig.getRemoteStorePaths()) {
 
                 bundle = localFhirClient.search()//
@@ -333,7 +333,7 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
             }
         }
         if (serviceRequest == null) {
-            LogEvent.logDebug(this.getClass().getName(), "",
+            LogEvent.logDebug(this.getClass().getSimpleName(), "",
                     "no service request with identifier " + referringId + " with configured systems");
         } else {
             LogEvent.logDebug(FhirPersistanceServiceImpl.class.getName(), "getTaskBasedOnServiceRequest",
@@ -381,7 +381,7 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
             task = (Task) bundle.getEntryFirstRep().getResource();
         }
         if (task == null) {
-            LogEvent.logDebug(this.getClass().getName(), "", "no task with identifier " + taskId);
+            LogEvent.logDebug(this.getClass().getSimpleName(), "", "no task with identifier " + taskId);
             for (String remotePath : fhirConfig.getRemoteStorePaths()) {
 
                 bundle = localFhirClient.search()//
@@ -395,7 +395,7 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
             }
         }
         if (task == null) {
-            LogEvent.logDebug(this.getClass().getName(), "",
+            LogEvent.logDebug(this.getClass().getSimpleName(), "",
                     "no task with identifier " + taskId + " with configured systems");
         } else {
             LogEvent.logDebug(FhirPersistanceServiceImpl.class.getName(), "getTaskBasedOnTask",

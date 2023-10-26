@@ -142,10 +142,10 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
                 sql = "from ReferenceTables t where trim(lower(t.tableName)) = :param and id != :param2";
             }
 
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Yi in
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "Yi in
             // duplicateReferencetables sql is " + sql);
             Query<ReferenceTables> query = entityManager.unwrap(Session.class).createQuery(sql, ReferenceTables.class);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown",
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown",
             // "duplicateReferencetables sql is " + sql);
 
             query.setParameter("param", referenceTables.getTableName().toLowerCase().trim());

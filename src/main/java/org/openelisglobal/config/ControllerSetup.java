@@ -46,13 +46,13 @@ public class ControllerSetup extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = { RuntimeException.class })
-    protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
+    protected ResponseEntity<Object> handleRuntimeException(RuntimeException ex, WebRequest request) {
         LogEvent.logError(ex);
         return new ResponseEntity<>("Check server logs", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(value = { LIMSRuntimeException.class })
-    protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
+    protected ResponseEntity<Object> handleLIMSRuntimeException(RuntimeException ex, WebRequest request) {
         LogEvent.logError(ex);
         return new ResponseEntity<>("Check server logs", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
