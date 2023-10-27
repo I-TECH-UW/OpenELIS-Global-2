@@ -122,6 +122,7 @@ public class CytologyDisplayServiceImpl implements CytologyDisplayService {
         }
         displayItem.setRequester(sampleItem.getProviderLastName() + " " + sampleItem.getProviderFirstName());
         displayItem.setAge(DateUtil.getCurrentAgeForDate(patient.getBirthDate(), DateUtil.getNowAsTimestamp()));
+        displayItem.setSex(patient.getGender());
         return displayItem;
     }
     

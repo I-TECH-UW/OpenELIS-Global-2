@@ -236,7 +236,7 @@ function ImmunohistochemistryCaseView() {
                   />
               </Column>
               <Column lg={3} md={8} sm={4}>
-                  % of cell show nuclear staining with
+                  <FormattedMessage id="immunohistochemistry.label.cellPercent" />
               </Column>
               <Column lg={2} md={8} sm={4}>
                   <TextInput
@@ -255,7 +255,7 @@ function ImmunohistochemistryCaseView() {
                   />
               </Column>
               <Column lg={3} md={8} sm={4}>
-                intensity . Allred score
+                  <FormattedMessage id="immunohistochemistry.label.cellIntensity" />
               </Column>
               <Column lg={2} md={8} sm={4}>
                   <TextInput
@@ -274,7 +274,7 @@ function ImmunohistochemistryCaseView() {
                   />
               </Column>
               <Column lg={2} md={8} sm={4}>
-                 out of 8
+                 <FormattedMessage id="immunohistochemistry.label.outOf8" />
               </Column>
 
               <Column lg={16} md={8} sm={4}>
@@ -300,7 +300,7 @@ function ImmunohistochemistryCaseView() {
                   />
               </Column>
               <Column lg={3} md={8} sm={4}>
-                  % of cell show nuclear staining with
+                  <FormattedMessage id="immunohistochemistry.label.cellPercent" />
               </Column>
               <Column lg={2} md={8} sm={4}>
                   <TextInput
@@ -319,7 +319,7 @@ function ImmunohistochemistryCaseView() {
                   />
               </Column>
               <Column lg={3} md={8} sm={4}>
-                intensity . Allred score
+                  <FormattedMessage id="immunohistochemistry.label.cellIntensity" />
               </Column>
               <Column lg={2} md={8} sm={4}>
                   <TextInput
@@ -338,7 +338,7 @@ function ImmunohistochemistryCaseView() {
                   />
               </Column>
               <Column lg={2} md={8} sm={4}>
-                 out of 8
+                  <FormattedMessage id="immunohistochemistry.label.outOf8" />
               </Column>
 
               <Column lg={16} md={8} sm={4}>
@@ -346,7 +346,7 @@ function ImmunohistochemistryCaseView() {
                 </Column>
 
                 <Column lg={3} md={8} sm={4}>
-                    MiB 1(ki-67) (Proliferative Index)
+                   <FormattedMessage id="immunohistochemistry.label.mibName" />
                 </Column>
                 <Column lg={8} md={8} sm={4}>
                   <TextInput
@@ -365,14 +365,14 @@ function ImmunohistochemistryCaseView() {
                   />
               </Column>
               <Column lg={5} md={8} sm={4}>
-                 of tumor cells positive (cut of 20%)
+                <FormattedMessage id="immunohistochemistry.label.tumorCells" />
               </Column>
               <Column lg={16} md={8} sm={4}>
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
               </Column>
 
               <Column lg={3} md={8} sm={4}>
-                 CerbB2/HER 2 staining pattern
+                  <FormattedMessage id="immunohistochemistry.label.her2Pattern" />
                 </Column>
                 <Column lg={13} md={8} sm={4}>
                   <TextArea
@@ -396,7 +396,7 @@ function ImmunohistochemistryCaseView() {
                 </Column>
 
                 <Column lg={4} md={8} sm={4}>
-                  HER 2 protein assesment is
+                  <FormattedMessage id="immunohistochemistry.label.her2Assesment" />
                 </Column>
                 <Column lg={4} md={8} sm={4}>
                   <TextInput
@@ -415,7 +415,7 @@ function ImmunohistochemistryCaseView() {
                   />
               </Column>
               <Column lg={4} md={8} sm={4}>
-                  with a score of
+                  <FormattedMessage id="immunohistochemistry.label.her2ScoreOf" />
               </Column>
               <Column lg={4} md={8} sm={4}>
                   <TextInput
@@ -437,7 +437,7 @@ function ImmunohistochemistryCaseView() {
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                 </Column>
                 <Column lg={3} md={8} sm={4}>
-                   Histological Diagnosis
+                  <FormattedMessage id="immunohistochemistry.label.historicalDiagnosis" /> 
                 </Column>
                 <Column lg={13} md={8} sm={4}>
                   <TextArea
@@ -460,7 +460,7 @@ function ImmunohistochemistryCaseView() {
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                 </Column>
                 <Column lg={3} md={8} sm={4}>
-                    Molecular SubType
+                  <FormattedMessage id="immunohistochemistry.label.molecularType" /> 
                 </Column>
                 <Column lg={13} md={8} sm={4}>
                   <TextInput
@@ -488,7 +488,7 @@ function ImmunohistochemistryCaseView() {
           <Column lg={16} md={8} sm={4}>
             <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={3} md={8} sm={4}>
-                   Number of Cancer nuclei
+                  <FormattedMessage id="immunohistochemistry.label.numberOfCancer" /> 
                 </Column>
                 <Column lg={5} md={8} sm={4}>
                   <TextInput
@@ -510,7 +510,7 @@ function ImmunohistochemistryCaseView() {
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                </Column>
                <Column lg={3} md={8} sm={4}>
-                   Average HER2 per nucleus
+                   <FormattedMessage id="immunohistochemistry.label.averageHer2" /> 
                 </Column>
                 <Column lg={5} md={8} sm={4}>
                   <TextInput
@@ -543,7 +543,7 @@ function ImmunohistochemistryCaseView() {
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                </Column>
                <Column lg={3} md={8} sm={4}>
-                   Average Chromozome 17 Sinals per nucleus
+                  <FormattedMessage id="immunohistochemistry.label.averageChrom" />
                 </Column>
                 <Column lg={5} md={8} sm={4}>
                   <TextInput
@@ -576,7 +576,7 @@ function ImmunohistochemistryCaseView() {
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                </Column>
                <Column lg={3} md={8} sm={4}>
-                   Ratio of Her2/neu Signals to Chromozome 17
+                 <FormattedMessage id="immunohistochemistry.label.ihcRatio" />
                 </Column>
                 <Column lg={5} md={8} sm={4}>
                   <TextInput
@@ -592,7 +592,7 @@ function ImmunohistochemistryCaseView() {
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                </Column>
                <Column lg={3} md={8} sm={4}>
-                   IHC (Cerb2 Scoer)
+               <FormattedMessage id="immunohistochemistry.label.ihcScore" />
                 </Column>
                 <Column lg={5} md={8} sm={4}>
                   <TextInput
@@ -614,7 +614,7 @@ function ImmunohistochemistryCaseView() {
          <Column lg={16} md={8} sm={4}>
             <Grid fullWidth={true} className="gridBoundary">
             <Column lg={3} md={8} sm={4}>
-                   Conlusion
+                  <FormattedMessage id="pathology.label.conclusion" /> 
                 </Column>
                 <Column lg={13} md={8} sm={4}>
                   <TextArea
@@ -804,8 +804,8 @@ function ImmunohistochemistryCaseView() {
                       <FormattedMessage id="patient.label.sex" />:
                     </Tag>
                     {immunohistochemistrySampleInfo.sex === "M"
-                      ? "Male"
-                      : "Female"}
+                      ?  <FormattedMessage id="patient.male" />
+                      :  <FormattedMessage id="patient.female" />}
                     <Tag type="blue">
                       <FormattedMessage id="patient.label.age" /> :
                     </Tag>
@@ -1034,7 +1034,7 @@ function ImmunohistochemistryCaseView() {
 
                       <Column lg={2} md={1} sm={2}>
                         <FileUploader
-                          style={{ marginTop: "-30px" }}
+                          style={{ marginTop: "-20px" }}
                           buttonLabel={
                             <FormattedMessage id="label.button.uploadfile" />
                           }
@@ -1142,7 +1142,7 @@ function ImmunohistochemistryCaseView() {
                         toggled={reportParams[index]?.toggled}
                         aria-label="toggle button"
                         id={index + "_toggle"}
-                        labelText="Toggle report param"
+                        labelText={intl.formatMessage({ id: "button.label.showHidePram" })}
                         onToggle={(e) => toggleReportParam(e, index)}
                       />
                     </Column>
