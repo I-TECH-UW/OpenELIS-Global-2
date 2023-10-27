@@ -1179,14 +1179,14 @@
 				<textFieldExpression><![CDATA[$P{herAssesment}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="257" y="100" width="70" height="20" uuid="5d46c2cf-2242-422a-97a8-8d48b3d86df3"/>
+				<reportElement stretchType="RelativeToTallestObject" x="257" y="100" width="120" height="20" uuid="5d46c2cf-2242-422a-97a8-8d48b3d86df3"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{immunohistochemistry.label.her2ScoreOf}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="300" y="100" width="100" height="20" uuid="d06bcdaf-4eef-4588-9524-cd5145a4c14f"/>
+				<reportElement x="350" y="100" width="100" height="20" uuid="d06bcdaf-4eef-4588-9524-cd5145a4c14f"/>
 				<box leftPadding="5">
 						<topPen lineWidth="0.25" lineStyle="Solid"/>
 						<leftPen lineWidth="0.25" lineStyle="Solid"/>
