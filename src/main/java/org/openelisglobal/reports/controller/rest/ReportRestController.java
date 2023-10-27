@@ -13,10 +13,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.rest.BaseRestController;
+import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.reports.action.implementation.IReportCreator;
 import org.openelisglobal.reports.action.implementation.ReportImplementationFactory;
 import org.openelisglobal.reports.form.ReportForm;
@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.lowagie.text.DocumentException;
 
@@ -32,35 +32,33 @@ import net.sf.jasperreports.engine.JRException;
 
 @Controller
 @RequestMapping(value = "/rest/")
-public class ReportRestController extends BaseRestController{
-
-     @Autowired
+public class ReportRestController extends BaseRestController {
+    
+    @Autowired
     private ServletContext context;
-
+    
     private static String reportPath = null;
+    
     private static String imagesPath = null;
     
-
-    @RequestMapping(value = "/ReportPrint", method = RequestMethod.GET)
-    public void showReportPrint(@RequestParam String report ,@RequestParam String programSampleId ,HttpServletRequest request, HttpServletResponse response)
+    @RequestMapping(value = "ReportPrint" ,method = RequestMethod.POST)
+    @ResponseBody
+    public void showReportPrint(@RequestBody ReportForm form, HttpServletRequest request, HttpServletResponse response)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-       
-        ReportForm form   = new ReportForm();
-        form.setReport(report);
-        form.setProgramSampleId(programSampleId);
+        
         LogEvent.logTrace("ReportController", "Log GET ", form.getReport());
         IReportCreator reportCreator = ReportImplementationFactory.getReportCreator(form.getReport());
-
+        
         if (reportCreator != null) {
             reportCreator.setSystemUserId(getSysUserId(request));
             reportCreator.setRequestedReport(form.getReport());
             reportCreator.initializeReport(form);
             reportCreator.setReportPath(getReportPath());
-
+            
             HashMap<String, String> parameterMap = (HashMap<String, String>) reportCreator.getReportParameters();
             parameterMap.put("SUBREPORT_DIR", getReportPath());
             parameterMap.put("imagesPath", getImagesPath());
-
+            
             try {
                 response.setContentType(reportCreator.getContentType());
                 String responseHeaderName = reportCreator.getResponseHeaderName();
@@ -69,25 +67,30 @@ public class ReportRestController extends BaseRestController{
                         && !GenericValidator.isBlankOrNull(responseHeaderContent)) {
                     response.setHeader(responseHeaderName, responseHeaderContent);
                 }
-
+                
                 byte[] bytes = reportCreator.runReport();
-
+                
                 response.setContentLength(bytes.length);
-
+                
                 ServletOutputStream servletOutputStream = response.getOutputStream();
-
+                
                 servletOutputStream.write(bytes, 0, bytes.length);
                 servletOutputStream.flush();
                 servletOutputStream.close();
+<<<<<<< HEAD
             } catch (IOException | SQLException | JRException | DocumentException | ParseException e) {
                 LogEvent.logError(e);
+=======
+            }
+            catch (IOException | SQLException | JRException | DocumentException | ParseException e) {
+                LogEvent.logErrorStack(e);
+                LogEvent.logDebug(e);
+>>>>>>> a029071d7d3252be41d5349371a08d153f3e2a6c
             }
         }
-
     }
-
-
-     private String getReportPath() {
+    
+    private String getReportPath() {
         String reportPath = getReportPathValue();
         if (reportPath.endsWith(File.separator)) {
             return reportPath;
@@ -95,9 +98,9 @@ public class ReportRestController extends BaseRestController{
             return reportPath + File.separator;
         }
     }
-
+    
     private String getReportPathValue() {
-
+        
         if (reportPath == null) {
             ClassLoader classLoader = getClass().getClassLoader();
             reportPath = classLoader.getResource("reports").getPath();
@@ -110,7 +113,7 @@ public class ReportRestController extends BaseRestController{
         }
         return reportPath;
     }
-
+    
     public String getImagesPath() {
         if (imagesPath == null) {
             imagesPath = context.getRealPath("") + "static" + File.separator + "images" + File.separator;

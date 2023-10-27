@@ -134,6 +134,7 @@ public class PathologyDisplayServiceImpl implements PathologyDisplayService {
         } 
         displayItem.setRequester(sampleItem.getProviderLastName() +" "+ sampleItem.getProviderFirstName());                  
         displayItem.setAge(DateUtil.getCurrentAgeForDate(patient.getBirthDate() ,DateUtil.getNowAsTimestamp()));
+        displayItem.setSex(patient.getGender());
         return displayItem;
     }
 

@@ -69,11 +69,8 @@
 	<field name="subjectNumber" class="java.lang.String"/>
 	<field name="billingNumber" class="java.lang.String"/>
 	<field name="labOrderType" class="java.lang.String"/>
-	<!-- <field name="grossExam" class="java.lang.String"/>
-	<field name="microExam" class="java.lang.String"/>
-	<field name="codedConclusion" class="java.util.List"/>
-	<field name="textConclusion" class="java.lang.String"/> -->
 	<field name="results" class="java.util.List"/>
+	<field name="textConclusion" class="java.lang.String"/>
 	<field name="contactTracingIndexName" class="java.lang.String"/>
 	<field name="contactTracingIndexRecordNumber" class="java.lang.String"/>
 	<group name="person" isStartNewPage="true" isResetPageNumber="true" footerPosition="ForceAtBottom">
@@ -850,9 +847,9 @@
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="250" splitType="Prevent">
+		<band height="50" splitType="Prevent">
 			<rectangle>
-				<reportElement x="0" y="0" width="550" height="250" mode="Opaque"/>
+				<reportElement x="0" y="0" width="550" height="50" mode="Opaque"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#071e26"/>
 				</graphicElement>
@@ -870,18 +867,54 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$R{immunochemmistry.label.results}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField  isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="3" y="20" width="550" height="30" uuid="57152e13-27fb-4b80-a518-c3dd78d93fdf"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{immunochemmistry.label.results.decription}]]></textFieldExpression>
 			</textField>
+			</band>
+			<band height="200" splitType="Prevent">	
+			<rectangle>
+				<reportElement x="0" y="0" width="550" height="200" mode="Opaque"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#071e26"/>
+				</graphicElement>
+			</rectangle>
 			<subreport>
-			   <reportElement x="0" y="70" width="550" height="155" />
+			   <reportElement x="0" y="0" width="550" height="155" />
                 <dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{results})]]></dataSourceExpression>
                 <subreportExpression class = "java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "PatientImmunoChemistryResults.jasper"]]></subreportExpression>	
             </subreport>
+		</band>		
+		<band height="50" splitType="Prevent">	
+		<rectangle>
+				<reportElement x="0" y="0" width="550" height="50" mode="Opaque"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#071e26"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="0" y="0" width="550" height="20" uuid="3f4df96a-83c1-4216-92a3-2018447ad5a0"/>
+				<box leftPadding="5">
+						<topPen lineWidth="0.25" lineStyle="Solid"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{pathology.label.conclusion}]]></textFieldExpression>
+			</textField>
+			<textField  isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="20" width="550" height="30" uuid="57152e13-27fb-4b80-a518-c3dd78d93fdf"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{textConclusion}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>

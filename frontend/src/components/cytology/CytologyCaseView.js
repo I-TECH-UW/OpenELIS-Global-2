@@ -20,6 +20,7 @@ import {
   Loading,
   RadioButtonGroup,
   RadioButton,
+  InlineLoading
 } from "@carbon/react";
 import { Launch, Subtract } from "@carbon/react/icons";
 import {
@@ -135,6 +136,7 @@ function CytologyCaseView() {
   const [technicianUsers, setTechnicianUsers] = useState([]);
   const [pathologistUsers, setPathologistUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingReport, setLoadingReport] = useState(false);
   const [reportTypes, setReportTypes] = useState([]);
   const intl = useIntl();
   const [slidesToAdd, setSlidesToAdd] = useState(1);
@@ -162,6 +164,36 @@ function CytologyCaseView() {
       });
     }
   }
+
+  async function writeReport(response) {
+    var report = await response.blob();
+    const url = URL.createObjectURL(report);
+    setLoadingReport(false)
+    console.log(JSON.stringify(report));
+    var status = response.status;
+    setNotificationVisible(true);
+    if (status == "200") {
+      setNotificationBody({
+        kind: NotificationKinds.success,
+        title: <FormattedMessage id="notification.title" />,
+        message: "Succesfuly Generated Report",
+      });
+
+      var win = window.open();
+      win.document.write(
+        '<iframe src="' +
+          url +
+          '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>',
+      );
+    } else {
+      setNotificationBody({
+        kind: NotificationKinds.error,
+        title: <FormattedMessage id="notification.title" />,
+        message: "Error while Generating Report",
+      });
+    }
+  }
+
 
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -399,7 +431,11 @@ function CytologyCaseView() {
                     <Tag type="blue">
                       <FormattedMessage id="patient.label.sex" /> :
                     </Tag>
-                    {pathologySampleInfo.sex === "M" ? "Male" : "Female"}
+                    {pathologySampleInfo.sex === "M" ? (
+                      <FormattedMessage id="patient.male" />
+                    ) : (
+                      <FormattedMessage id="patient.female" />
+                    )}
                     <Tag type="blue">
                       <FormattedMessage id="patient.label.age" /> :
                     </Tag>
@@ -768,6 +804,7 @@ function CytologyCaseView() {
                 {" "}
                 <FormattedMessage id="immunohistochemistry.label.reports" />
               </h5>
+              {loadingReport && <InlineLoading />}
               <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
             </Column>
             {pathologySampleInfo.reports &&
@@ -792,7 +829,7 @@ function CytologyCaseView() {
 
                     <Column lg={3} md={1} sm={2}>
                       <FileUploader
-                        style={{ marginTop: "-30px" }}
+                        style={{ marginTop: "-20px" }}
                         buttonLabel={
                           <FormattedMessage id="label.button.uploadfile" />
                         }
@@ -821,12 +858,12 @@ function CytologyCaseView() {
                         }}
                       />
                     </Column>
-                    <Column lg={2}>
-                      {
+                    <Column lg={4}>
+                      <h6>{
                         reportTypes.filter(
                           (type) => type.id === report.reportType,
                         )[0]?.value
-                      }
+                      }</h6>
                     </Column>
                     <Column lg={2} md={1} sm={2}>
                       {pathologySampleInfo.reports[index].image && (
@@ -851,12 +888,17 @@ function CytologyCaseView() {
                     </Column>
                     <Column lg={3} md={2} sm={2}>
                       <Button
+                       id ={"generate_report_"+index}
                         onClick={(e) => {
-                          window.open(
-                            config.serverBaseUrl +
-                              "/rest/ReportPrint?report=PatientCytologyReport&programSampleId=" +
-                              cytologySampleId,
-                            "_blank",
+                          setLoadingReport(true);
+                          const form = {
+                            report: "PatientCytologyReport",
+                            programSampleId: cytologySampleId,
+                          };
+                          postToOpenElisServerFullResponse(
+                            "/rest/ReportPrint",
+                            JSON.stringify(form),
+                            writeReport,
                           );
                         }}
                       >
@@ -864,7 +906,7 @@ function CytologyCaseView() {
                         <FormattedMessage id="button.label.genarateReport" />
                       </Button>
                     </Column>
-                    <Column lg={4} md={2} sm={2}/>
+                    <Column lg={2} md={2} sm={2}/>
                     <Column lg={16} md={8} sm={4}>
                       <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                     </Column>

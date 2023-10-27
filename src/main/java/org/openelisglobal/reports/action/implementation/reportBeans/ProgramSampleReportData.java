@@ -123,66 +123,17 @@ public final class ProgramSampleReportData {
     //ImmunoHistoChemistry data
     private List<Result> results;
     
-    public ProgramSampleReportData() {
-    }
+    private String erResult;
     
-    public ProgramSampleReportData(ProgramSampleReportData data) {
-        patientName = data.getPatientName();
-        nationalId = data.getNationalId();
-        gender = data.getGender();
-        dob = data.getDob();
-        age = data.getAge();
-        stNumber = data.getStNumber();
-        subjectNumber = data.getSubjectNumber();
-        contactInfo = data.getContactInfo();
-        siteInfo = data.getSiteInfo();
-        testName = data.getTestName();
-        testRefRange = data.getTestRefRange();
-        conclusion = data.getConclusion();
-        finishDate = data.getFinishDate();
-        accessionNumber = data.getAccessionNumber();
-        receivedDate = data.getReceivedDate();
-        testDate = data.getTestDate();
-        referralSentDate = data.getReferralSentDate();
-        referralTestName = data.getReferralTestName();
-        referralResult = data.getReferralResult();
-        referralResultReportDate = data.getReferralResultReportDate();
-        referralReason = data.getReferralReason();
-        referralRefRange = data.getReferralRefRange();
-        referralNote = data.getReferralNote();
-        firstName = data.getFirstName();
-        lastName = data.getLastName();
-        dept = data.getDept();
-        commune = data.getCommune();
-        healthDistrict = data.getHealthDistrict();
-        healthRegion = data.getHealthRegion();
-        sectionSortOrder = data.getSectionSortOrder();
-        testSortOrder = data.getTestSortOrder();
-        orderDate = data.getOrderDate();
-        patientSiteNumber = data.getPatientSiteNumber();
-        parentMarker = data.getParentMarker();
-        billingNumber = data.getBillingNumber();
-        sampleType = data.getSampleType();
-        sampleId = data.getSampleId();
-        sampleSortOrder = data.getSampleSortOrder();
-        analysisStatus = data.getAnalysisStatus();
-        completeFlag = data.getCompleteFlag();
-        
-        orderFinishDate = data.getOrderFinishDate();
-        
-        collectionDateTime = data.getCollectionDateTime();
-        
-        correctedResult = data.getCorrectedResult();
-        
-        labOrderType = data.getLabOrderType();
-        
-        grossExam = data.getGrossExam();
-        
-        microExam = data.getMicroExam();
-        
-        codedConclusion = data.getCodedConclusion();
-        
-        textConclusion = data.getTextConclusion();
+    private String prResult;
+    
+    private String mibResult;
+    
+    private String ihcReportDetails;
+    
+    private String ihcScore;
+    
+    public ProgramSampleReportData() {
     }
     
     public String getReferralRefRange() {
@@ -652,6 +603,46 @@ public final class ProgramSampleReportData {
     
     public void setResults(List<Result> results) {
         this.results = results;
+    }
+    
+    public String getErResult() {
+        return erResult;
+    }
+    
+    public void setErResult(String erResult) {
+        this.erResult = erResult;
+    }
+    
+    public String getPrResult() {
+        return prResult;
+    }
+    
+    public void setPrResult(String prResult) {
+        this.prResult = prResult;
+    }
+    
+    public String getMibResult() {
+        return mibResult;
+    }
+    
+    public void setMibResult(String mibResult) {
+        this.mibResult = mibResult;
+    }
+    
+    public String getIhcReportDetails() {
+        return ihcReportDetails;
+    }
+    
+    public void setIhcReportDetails(String ihcReportDetails) {
+        this.ihcReportDetails = ihcReportDetails;
+    }
+    
+    public String getIhcScore() {
+        return ihcScore;
+    }
+    
+    public void setIhcScore(String ihcScore) {
+        this.ihcScore = ihcScore;
     }
     
     public static class Result {

@@ -848,9 +848,9 @@
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="250" splitType="Prevent">
+		<band height="350" splitType="Prevent">
 			<rectangle>
-				<reportElement x="0" y="0" width="550" height="250" mode="Opaque"/>
+				<reportElement x="0" y="0" width="550" height="350" mode="Opaque"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#071e26"/>
 				</graphicElement>
@@ -869,14 +869,14 @@
 				<textFieldExpression><![CDATA[$R{pathology.label.grossexam}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="3" y="20" width="400" height="30" uuid="57152e13-27fb-4b80-a518-c3dd78d93fdf"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="20" width="540" height="50" uuid="57152e13-27fb-4b80-a518-c3dd78d93fdf"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{grossExam}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="50" width="550" height="20" uuid="d06bcdaf-4eef-4588-9524-cd5145a4c14f"/>
+				<reportElement x="0" y="70" width="550" height="20" uuid="d06bcdaf-4eef-4588-9524-cd5145a4c14f"/>
 				<box leftPadding="5">
 						<topPen lineWidth="0.25" lineStyle="Solid"/>
 						<leftPen lineWidth="0.25" lineStyle="Solid"/>
@@ -889,14 +889,14 @@
 				<textFieldExpression><![CDATA[$R{pathology.label.microexam}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="3" y="70" width="400" height="30" uuid="5d46c2cf-2242-422a-97a8-8d48b3d86df3"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="90" width="540" height="50" uuid="5d46c2cf-2242-422a-97a8-8d48b3d86df3"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{microExam}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="100" width="550" height="20" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
+				<reportElement x="0" y="140" width="550" height="20" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
 				<box leftPadding="5">
 						<topPen lineWidth="0.25" lineStyle="Solid"/>
 						<leftPen lineWidth="0.25" lineStyle="Solid"/>
@@ -909,15 +909,15 @@
 				<textFieldExpression><![CDATA[$R{pathology.label.conclusion}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true" isStretchWithOverflow="false">
-				<reportElement stretchType="RelativeToTallestObject" x="3" y="120" width="400" height="30" uuid="0287bf57-8501-4703-b420-e60f5aae8ead"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="160" width="540" height="80" uuid="0287bf57-8501-4703-b420-e60f5aae8ead"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{codedConclusion}.stream().map(s -> "• " + s).collect(java.util.stream.Collectors.joining("  "))]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="150" width="550" height="20" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
+				<reportElement x="0" y="240" width="550" height="20" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
 				<box leftPadding="5">
 						<topPen lineWidth="0.25" lineStyle="Solid"/>
 						<leftPen lineWidth="0.25" lineStyle="Solid"/>
@@ -930,8 +930,8 @@
 				<textFieldExpression><![CDATA[$R{pathology.label.textconclusion}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="3" y="170" width="400" height="30" uuid="f42cd56a-8af1-416f-8bb0-a2e739b10fab"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="260" width="540" height="50" uuid="f42cd56a-8af1-416f-8bb0-a2e739b10fab"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{textConclusion}]]></textFieldExpression>
