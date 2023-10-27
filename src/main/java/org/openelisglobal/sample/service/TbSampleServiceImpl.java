@@ -25,6 +25,10 @@ import org.openelisglobal.observationhistorytype.valueholder.ObservationHistoryT
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.patientidentity.service.PatientIdentityService;
+import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
+import org.openelisglobal.patientidentitytype.service.PatientIdentityTypeService;
+import org.openelisglobal.patientidentitytype.util.PatientIdentityTypeMap;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.provider.service.ProviderService;
@@ -65,6 +69,8 @@ public class TbSampleServiceImpl implements TbSampleService {
 	@Autowired
 	private AddressPartService addressPartService;
 	@Autowired
+	private PatientIdentityService patientIdentityService;
+	@Autowired
 	private PatientService patientService;
 	@Autowired
 	private ProviderService providerService;
@@ -95,6 +101,7 @@ public class TbSampleServiceImpl implements TbSampleService {
 		boolean isOK = false;
 		try {
 			persistPatientData(form);
+			createPatientIdentity(form, patientId);
 			sampleId = persistSampleData(form);
 			persistSampleHumanData(form);
 			sampleItemId = persistSampleItemData(form);
@@ -158,7 +165,7 @@ public class TbSampleServiceImpl implements TbSampleService {
 		tbFollowupReasonPeriodLine1.setPatientId(patientId);
 		tbFollowupReasonPeriodLine1.setLastupdated(DateUtil.getNowAsTimestamp());
 		tbFollowupReasonPeriodLine1.setSysUserId(formData.getSysUserId());
-		tbFollowupReasonPeriodLine1.setValueType(ValueType.DICTIONARY);
+		tbFollowupReasonPeriodLine1.setValueType(ValueType.LITERAL);
 		tbFollowupReasonPeriodLine1.setValue(formData.getTbFollowupPeriodLine1());
 		tbFollowupReasonPeriodLine1.setObservationHistoryTypeId(getObservationHistoryTypeId("TbFollowupReasonPeriodLine1"));
 		obervations.add(tbFollowupReasonPeriodLine1);
@@ -168,7 +175,7 @@ public class TbSampleServiceImpl implements TbSampleService {
 		tbFollowupReasonPeriodLine2.setPatientId(patientId);
 		tbFollowupReasonPeriodLine2.setLastupdated(DateUtil.getNowAsTimestamp());
 		tbFollowupReasonPeriodLine2.setSysUserId(formData.getSysUserId());
-		tbFollowupReasonPeriodLine2.setValueType(ValueType.DICTIONARY);
+		tbFollowupReasonPeriodLine2.setValueType(ValueType.LITERAL);
 		tbFollowupReasonPeriodLine2.setValue(formData.getTbFollowupPeriodLine2());
 		tbFollowupReasonPeriodLine2.setObservationHistoryTypeId(getObservationHistoryTypeId("TbFollowupReasonPeriodLine2"));
 		obervations.add(tbFollowupReasonPeriodLine2);
@@ -224,6 +231,23 @@ public class TbSampleServiceImpl implements TbSampleService {
 		person.setId(personId);
 		createPersonAddresses(formData, personId);
 		return person;
+	}
+	
+	// create a new Person
+	private String createPatientIdentity(SampleTbEntryForm formData,String patientId) {
+		String typeID = PatientIdentityTypeMap.getInstance().getIDForType("SUBJECT");
+		PatientIdentity patientIdentity = patientIdentityService.getPatitentIdentityForPatientAndType(patientId, typeID);
+		if(ObjectUtils.isEmpty(patientIdentity)) {
+			patientIdentity = new PatientIdentity();
+			patientIdentity.setPatientId(patientId);
+			patientIdentity.setIdentityData(formData.getTbSubjectNumber());
+			patientIdentity.setLastupdated(DateUtil.getNowAsTimestamp());
+			patientIdentity.setIdentityTypeId(typeID);
+			return patientIdentityService.insert(patientIdentity);
+		}
+		else {
+			return patientIdentity.getId();
+		}
 	}
 
 	private String createPersonAndProvider(SampleTbEntryForm formData) {

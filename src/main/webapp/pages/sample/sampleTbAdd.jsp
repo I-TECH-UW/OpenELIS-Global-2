@@ -1,3 +1,4 @@
+<%@page import="org.openelisglobal.common.util.SystemConfiguration"%>
 <%@page import="org.openelisglobal.common.action.IActionConstants"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.formfields.FormFields,
@@ -38,7 +39,7 @@
 fieldValidator = new FieldValidator();
 fieldValidator.setRequiredFields(
 		new Array('labNo','requestDate','receivedDate','referringSiteCode',
-				'tbSubjectNumber','lastNameID','dateOfBirthID','genderID',
+				'lastNameID','dateOfBirthID','genderID',
 				'tbSpecimenNature','tbOrderReasons','tbDiagnosticMethods'));
 		
 function /*void*/setSaveButton() {
@@ -81,6 +82,7 @@ function /*void*/setSaveButton() {
 		var elm = jQuery("#tbOrderReasons");
 		toggleField(elm[0].selectedIndex === 1, "tbDiagnosticReasonsRow");
 		toggleField(elm[0].selectedIndex === 2, "tbFollowupReasonsRow");
+		toggleField(elm[0].selectedIndex === 2, "tbSubjectNumberRow");
 		setOrderModified();
 	}
 	
@@ -98,6 +100,7 @@ function /*void*/setSaveButton() {
 		setOrderModified();
 	}
 	
+	
 	//
 	//laborder
 	//
@@ -112,6 +115,56 @@ function /*void*/setSaveButton() {
 
         setCorrectSave();
     }
+	
+	function validateSubjectNumber(field){
+		 const tbNumberFormat = /^[0-9]{2}-[0-9]{5}$/;
+		 if(field.value){
+			  if(tbNumberFormat.test(field.value)){
+				  field.classList.remove("error");
+				  setCorrectSave();
+			  }
+			  else{
+				  field.classList.add("error");
+			  }
+		 }
+	}
+	
+	function handleAgeChange(){
+		var ageYears = jQuery("#ageYears").val();
+
+		if( ageYears.blank()){
+			$("dateOfBirthID").value = null;
+		} else {
+			
+			var date = new Date();
+			if ( !ageYears.blank() ) {
+				date.setFullYear( date.getFullYear() - parseInt(ageYears));
+			}
+			
+			var day = "01";
+			var month = "01";
+			var year = "xxxx";
+
+			year = date.getFullYear();
+
+			var datePattern = '<%=SystemConfiguration.getInstance().getPatternForDateLocale() %>';
+			var splitPattern = datePattern.split("/");
+
+			var DOB = "";
+
+			for( var i = 0; i < 3; i++ ){
+				if(splitPattern[i] == "DD"){
+					DOB = DOB + day.toLocaleString('en', {minimumIntegerDigits:2}) + "/";
+				}else if(splitPattern[i] == "MM" ){
+					DOB = DOB + month.toLocaleString('en', {minimumIntegerDigits:2}) + "/";
+				}else if(splitPattern[i] == "YYYY" ){
+					DOB = DOB + year + "/";
+				}
+			}
+			$("dateOfBirthID").value = DOB.substring(0, DOB.length - 1 );
+		}
+		jQuery("#dateOfBirthID").trigger('change');
+	}
 
     function processAccessionSuccess(xhr) {
         //alert(xhr.responseText);
@@ -196,7 +249,7 @@ function /*void*/setSaveButton() {
         //utilites.js
         selectFieldErrorDisplay( isValid, $(formField));
         setSampleFieldValidity( isValid, formField );
-        setSave();
+        setSaveButton();
 
         if( message == '<%=IActionConstants.INVALID_TO_LARGE%>' ){
             alert( '<spring:message code="error.date.inFuture"/>' );
@@ -208,7 +261,7 @@ function /*void*/setSaveButton() {
     function checkValidEntryDate(date, dateRange, blankAllowed)
     {   
         if((!date.value || date.value == "") && !blankAllowed){
-            setSave();
+            setSaveButton();
             return;
         } else if ((!date.value || date.value == "") && blankAllowed) {
             setSampleFieldValid(date.id);
@@ -324,15 +377,6 @@ function /*void*/setSaveButton() {
 		<span class="requiredlabel">*</span>
 		<table id="patientDisplayshowHide">
 			<tr>
-				<td style=""><spring:message code="patient.subject.tbnumber" />:
-					<span class="requiredlabel">*</span></td>
-				<td><form:input path="tbSubjectNumber" id="tbSubjectNumber"
-						onchange="validateSubjectNumber(this, 'subjectNumber');"
-						cssClass="text" /></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
 				<td style=""><spring:message code="patient.epiLastName" /> : <span
 					class="requiredlabel">*</span></td>
 				<td><form:input path="patientLastName" id="lastNameID"
@@ -355,12 +399,12 @@ function /*void*/setSaveButton() {
 					<span class="requiredlabel">*</span></td>
 				<td><form:input path="patientBirthDate"
 						onkeyup="addDateSlashes(this,event);"
-						onchange="convertToAge(this,'ageYears');setOrderModified();"
+						onchange="checkValidEntryDate(this, 'past');convertToAge(this,'ageYears');"
 						id="dateOfBirthID" cssClass="text" size="20" maxlength="10"/>
 					<div id="patientbirthDateMessage" class="blank"></div></td>
 				<td style=""><spring:message code="patient.age" />:</td>
 				<td><form:input path="patientAge"
-						onchange="handleAgeChange();setOrderModified();" id="ageYears" cssClass="text"
+						onchange="handleAgeChange();" id="ageYears" cssClass="text"
 						size="3" maxlength="3" placeholder="years" />
 					<div class="blank">
 						<spring:message code="years.label" />
@@ -412,6 +456,15 @@ function /*void*/setSaveButton() {
 							<form:options items="${form.tbOrderReasons}" itemLabel="value"
 								itemValue="id" />
 						</form:select></td>
+					<td></td>
+				</tr>
+				<tr id="tbSubjectNumberRow">
+					<td style=""><spring:message code="patient.subject.tbnumber" />:
+						<span class="requiredlabel">*</span></td>
+					<td><form:input path="tbSubjectNumber" id="tbSubjectNumber"
+							onchange="validateSubjectNumber(this, 'subjectNumber');"
+							cssClass="text" /></td>
+					<td></td>
 					<td></td>
 				</tr>
 				<tr id="tbDiagnosticReasonsRow">
@@ -573,25 +626,17 @@ function /*void*/setSaveButton() {
 		if(!input){
 			return;
 		}
-/* 		  const selectedMethods = [];
-		  for (const option of input.options) {
-		    if (option.selected) {
-		    	selectedMethods.push(option.value);
-		    }
-		  } */
-		
-/* 		if(selectedMethods.length>0){ */
 		if(input.value){
 			selectedMethod = input.value;
 			let testHtml='';
 			let panelHtml='';
-			jQuery.get( "MicrobiologyTb/panel_test/"+selectedMethod, function(data) {
+			jQuery.get( "MicrobiologyTb/panel_test?method="+selectedMethod, function(data) {
 				if(data){
 					jQuery("#addPanelTable").html('');
 					jQuery("#addTestTable").html('');
 					 for (const [key, value] of Object.entries(data.tests)) { 
 							let d = '<tr>';
-							d+='<td><input type="checkbox" value="'+value.id+'" name="newSelectedTests" id="test_'+value.id+'"/></td>';
+							d+='<td><input type="checkbox" value="'+value.id+'" name="newSelectedTests" id="test_'+value.id+'" class="tb_test" /></td>';
 							d+='<td><label for="test_'+value.id+'">'+value.name+'</label></td>';
 							d+='</tr>';
 							testHtml+=d;

@@ -3,6 +3,7 @@ package org.openelisglobal.sample.form;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -98,8 +99,10 @@ public class SampleTbEntryForm extends BaseForm {
     @ValidDate(relative = DateRelation.PAST)
     private String requestDate;
     
+    @NotEmpty()
     private List<String> newSelectedTests;
-    
+
+    @NotBlank()
     private String selectedTbMethod;
     
     //for updates
@@ -139,20 +142,18 @@ public class SampleTbEntryForm extends BaseForm {
     @ValidName(nameType = NameType.LAST_NAME)
     private String patientLastName;
     
-    @ValidName(nameType = NameType.FIRST_NAME)
+    @Pattern(regexp = ValidationHelper.PHONE_REGEX)
     private String patientPhone;
     
-    @ValidName(nameType = NameType.LAST_NAME)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String patientAddress;
     
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
     private String tbSubjectNumber;
     
-  
     @NotNull()
     private Boolean modified = false;
 
-    
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String sampleId;
     

@@ -15,7 +15,9 @@ function convertToAge(field,ageField){
 	let one_or_zero = (today.getMonth() < birthdate.getMonth()) ||
 	                  (today.getMonth() === birthdate.getMonth() && today.getDate() < birthdate.getDate()) ? 1 : 0;
 	let age = year_difference - one_or_zero;
-	document.getElementById(ageField).value = age;
+	if(age){
+		document.getElementById(ageField).value = age;
+	}
 }
 
 function checkDateOfBirth(blanksAllowed) {

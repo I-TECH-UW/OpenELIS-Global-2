@@ -119,6 +119,8 @@ public interface TestService extends BaseObjectService<Test, String> {
     
     List<Test> getTbTestByMethod(String method);
     
+    List<Test> getTbTest();
+    
     List<Panel> getTbPanelsByMethod(String method);
 
     Optional<Test> getActiveTestByLoincCodeAndSampleType(String loincCode, String sampleTypeId);

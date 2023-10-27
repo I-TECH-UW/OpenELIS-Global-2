@@ -711,6 +711,19 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 	}
 	
 	@Override
+	public List<Test> getTbTest() throws LIMSRuntimeException {
+        String sql = "SELECT t.* From test t JOIN test_section ts ON t.test_section_id = ts.id where t.is_active='Y' AND ts.name = 'TB' ORDER BY t.name";
+        try {
+            Query<Test> query = entityManager.unwrap(Session.class).createNativeQuery(sql, Test.class);
+            List<Test> tests = query.list();
+            return tests;
+        } catch (HibernateException e) {
+            handleException(e, "getTbTest");
+        }
+
+        return null;
+	}
+	@Override
 	public List<Panel> getTbPanelsByMethod(String method) throws LIMSRuntimeException {
 		List<Integer> methodIds = Arrays.asList(method.split(",")).stream().map(e->Integer.parseInt(e)).collect(Collectors.toList());
 		

@@ -397,5 +397,4 @@
 			<column name="lab_unit" valueComputed="(SELECT id FROM clinlims.test_section WHERE name ='TB' limit 1)"/>
 		</insert>
 	</changeSet>
-
 </databaseChangeLog>

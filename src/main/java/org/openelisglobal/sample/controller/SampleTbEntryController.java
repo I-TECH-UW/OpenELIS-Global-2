@@ -85,6 +85,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -162,11 +163,11 @@ public class SampleTbEntryController extends BaseSampleEntryController {
 		form.setSysUserId(this.getSysUserId(request));
 		if (tbSampleService.persistTbData(form, request)) {
 			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+			setDisplayLists(form);
 			return findForward(FWD_SUCCESS_INSERT, form);
 		}
 		logAndAddMessage(request, "postTbSampleEntryByProject", "errors.UpdateException");
 
-		setDisplayLists(form);
 		return findForward(FWD_FAIL_INSERT, form);
 	}
 
@@ -199,8 +200,8 @@ public class SampleTbEntryController extends BaseSampleEntryController {
 
 	}
 
-	@GetMapping(value = "MicrobiologyTb/panel_test/{method}")
-	public ResponseEntity<Map<String, Object>> getPanelTestsElement(@PathVariable String method) {
+	@GetMapping(value = "MicrobiologyTb/panel_test")
+	public ResponseEntity<Map<String, Object>> getPanelTestsElement(@RequestParam("method") String method) {
 		Map<String, Object> response = new HashMap<String, Object>();
 		try {
 			List<Test> tests = testService.getTbTestByMethod(method);

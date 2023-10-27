@@ -134,8 +134,8 @@ abstract public class CSVRoutineColumnBuilder {
     protected ResultService resultService = SpringContext.getBean(ResultService.class);
     private ObservationHistoryTypeService ohtService = SpringContext.getBean(ObservationHistoryTypeService.class);
     private AnalyteService analyteService = SpringContext.getBean(AnalyteService.class);
-    private TestService testService = SpringContext.getBean(TestService.class);
-    private TestResultService testResultService = SpringContext.getBean(TestResultService.class);
+    protected TestService testService = SpringContext.getBean(TestService.class);
+    protected TestResultService testResultService = SpringContext.getBean(TestResultService.class);
 
     // This is the largest value possible for a postgres column name. The code will
     // convert the
@@ -150,7 +150,7 @@ abstract public class CSVRoutineColumnBuilder {
     @SuppressWarnings("unchecked")
     protected void defineAllTestsAndResults() {
         if (allTests == null) {
-            allTests = testService.getAllOrderBy("name");
+            allTests = testService.getAllOrderBy("description");
         }
         if (testResultsByTestName == null) {
             testResultsByTestName = new HashMap<>();
@@ -230,7 +230,8 @@ abstract public class CSVRoutineColumnBuilder {
 
             @Override
             public ResultSet execute(Connection connection) throws SQLException {
-                return connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)
+
+            	return connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)
                         .executeQuery();
             }
 
@@ -303,7 +304,7 @@ abstract public class CSVRoutineColumnBuilder {
         return result;
     }
 
-    private String prepareColumnName(String columnName) {
+    protected String prepareColumnName(String columnName) {
         // trim and escape the column name so it is more safe from sql injection
         if (!columnName.matches("(?i)[a-zàâçéèêëîïôûùüÿñæœ0-9_ ()%/\\[\\]+\\-]+")) {
             LogEvent.logWarn(this.getClass().getName(), "prepareColumnName",
@@ -500,7 +501,7 @@ abstract public class CSVRoutineColumnBuilder {
             List<Result> results = resultService.getResultsForTestAndSample(sampleId, testId);
             StringBuilder multi = new StringBuilder();
             for (Result result : results) {
-                multi.append(ResourceTranslator.DictionaryTranslator.getInstance().translateRaw(result.getValue()));
+                multi.append(ResourceTranslator.DictionaryTranslator.getInstance().translateRaw(result.getValue().replace(",", ".")));
                 multi.append(",");
             }
 
@@ -535,7 +536,7 @@ abstract public class CSVRoutineColumnBuilder {
                 + ".* " + " FROM sample_item AS si JOIN \n ");
 
         // Begin cross tab / pivot table
-        query.append(" crosstab( " + "\n 'SELECT si.id, t.description,  replace( replace( replace( r.value , E''\\n'', ''\\n'' ), E''\\t'', ''\\t'' ), E''\\r'', ''\\r'' ) "
+        query.append(" crosstab( " + "\n 'SELECT si.id, t.description, replace(replace(replace(replace(r.value ,E''\\n'', '' ''), E''\\t'', '' ''), E''\\r'', '' ''),'','',''.'') "
                 + "\n FROM clinlims.result AS r join clinlims.analysis AS a on a.id = r.analysis_id \n "
                 + " join clinlims.sample_item AS si on si.id = a.sampitem_id \n "
                 + " join clinlims.sample AS s on s.id = si.samp_id \n"

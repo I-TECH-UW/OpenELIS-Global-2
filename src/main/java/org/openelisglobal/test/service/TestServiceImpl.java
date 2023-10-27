@@ -727,6 +727,11 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 	}
 	
 	@Override
+	public List<Test> getTbTest() {
+		return getBaseObjectDAO().getTbTest();
+	}
+	
+	@Override
 	public List<Panel> getTbPanelsByMethod(String method) {
 		return getBaseObjectDAO().getTbPanelsByMethod(method);
 	}
