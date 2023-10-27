@@ -1032,7 +1032,7 @@ function ImmunohistochemistryCaseView() {
                         </IconButton>
                       </Column>
 
-                      <Column lg={2} md={1} sm={2}>
+                      <Column lg={3} md={1} sm={2}>
                         <FileUploader
                           style={{ marginTop: "-20px" }}
                           buttonLabel={
@@ -1137,7 +1137,7 @@ function ImmunohistochemistryCaseView() {
                         <FormattedMessage id="button.label.genarateReport" />
                       </Button>
                     </Column>
-                    <Column lg={3}>
+                    <Column lg={2}>
                     <Toggle
                         toggled={reportParams[index]?.toggled}
                         aria-label="toggle button"
@@ -1146,7 +1146,7 @@ function ImmunohistochemistryCaseView() {
                         onToggle={(e) => toggleReportParam(e, index)}
                       />
                     </Column>
-                    <Column lg={1} md={2} sm={2}/>
+                    {/* <Column lg={1} md={2} sm={2}/> */}
                       { reportParams[index]?.toggled && createReportParams(report.reportType ,index)}
                       <Column lg={16} md={8} sm={4}>
                         <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
