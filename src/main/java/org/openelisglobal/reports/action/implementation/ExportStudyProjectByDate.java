@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
@@ -221,6 +222,7 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
         projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
         project.setProjectName("Recency Testing");
         projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
+        projects.removeIf(Objects::isNull);
         return projects;
     }
 

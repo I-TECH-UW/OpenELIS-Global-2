@@ -80,7 +80,6 @@ eid = new EidProjectChecker();
         <form:input path="receivedTimeForDisplay"
             onkeyup="filterTimeKeys(this, event);"              
             onblur="eid.checkReceivedTime(true);"
-
             cssClass="text"
             id="eid.receivedTimeForDisplay" maxlength="5"/>
             <div id="eid.receivedTimeForDisplayMessage" class="blank" ></div>
@@ -263,6 +262,7 @@ eid = new EidProjectChecker();
                       maxlength="10"
                       onkeyup="addDateSlashes(this, event);"
                       onchange="eid.checkDateOfBirth(false);"
+                      id="eid.dateOfBirth"
                       />
                 <div id="eid.dateOfBirthMessage" class="blank" ></div>
             </td>

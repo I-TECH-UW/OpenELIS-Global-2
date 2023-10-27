@@ -96,6 +96,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 	private ServiceRequest serviceRequest = null;
 	private Specimen specimen = null;
 	private Patient fhirPatient = null;
+	private static String OPENMRS_SYSTEM_URL = "https://openmrs.org";
 
 	private static final String[] ALLOWED_FIELDS = new String[] { "currentDate", "domain", "project",
 			"patientLastUpdated", "personLastUpdated", "patientUpdateStatus", "patientPK", "patientFhirUuid",
@@ -293,6 +294,9 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 			}
 			if ((fhirConfig.getOeFhirSystem() + "/pat_nationalId").equals(identifier.getSystem())) {
 				form.setSiteSubjectNumber(identifier.getValue());
+			}
+			if ((OPENMRS_SYSTEM_URL + "/UPI").equals(identifier.getSystem())) {
+				form.setUpidCode(identifier.getValue());
 			}
 		}
 		for (ParameterComponent parameter : task.getInput()) {
@@ -515,6 +519,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 		String forward;
+		
 
 		ISampleSecondEntry sampleSecondEntry = SpringContext.getBean(ISampleSecondEntry.class);
 		sampleSecondEntry.setFieldsFromForm(form);

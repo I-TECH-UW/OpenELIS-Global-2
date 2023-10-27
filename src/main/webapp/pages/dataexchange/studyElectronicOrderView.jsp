@@ -267,10 +267,6 @@ jQuery(document).ready( function() {
     <th class='split-content'>
     	<c:out value="No."/>
     </th>
-<%--     <th class='split-content'>
-    	<spring:message code="study.eorder.request.id"/>
-    	<span class="fa" onclick='sort(1)'><i class="fas fa-sort"></i></span>
-    </th> --%>
     <th class='split-content'>
     	<spring:message code="study.eorder.requester.facility"/>
     	<span class="fa" onclick='sort(2)'><i class="fas fa-sort"></i></span>
@@ -323,9 +319,6 @@ jQuery(document).ready( function() {
 	    <td>
 	       <c:out value="${iter.index + 1}"/>
 	    </td>
-<%-- 	    <td>
-	       <c:out value="${eOrder.externalOrderId}"/>
-	    </td> --%>
 	    <td>
 	       <c:out value="${eOrder.requestingFacility}"/>
 	    </td>
@@ -344,9 +337,9 @@ jQuery(document).ready( function() {
 		<td class="dateCol">
 	       <c:out value="${eOrder.requestDateDisplay}"/>
 	    </td>
-<%-- 	    <td>
+ 	    <td>
 	       <c:out value="${eOrder.priority}"/>
-	    </td> --%>
+	    </td>
 	    <td>
 	       <c:out value="${eOrder.status}"/>
 	    </td>

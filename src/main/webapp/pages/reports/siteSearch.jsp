@@ -83,7 +83,6 @@ function siteDepartmentSuccess (xhr) {
             </form:select>
     </td>
 </tr>
-
 	<% if( useSiteDepartment ){ %>
 	<tr>
 	    <td>

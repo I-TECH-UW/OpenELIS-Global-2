@@ -62,7 +62,7 @@ public class SampleEntryByProjectForm extends BaseForm implements IAccessionerFo
 	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
 	private String subjectNumber = "";
 
-	@NotBlank
+	//@NotBlank may be subjectNumber or siteSubjectNumber
 	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
 	private String siteSubjectNumber = "";
 

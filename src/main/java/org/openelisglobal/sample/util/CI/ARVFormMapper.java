@@ -44,7 +44,7 @@ public class ARVFormMapper extends BaseProjectFormMapper implements IProjectForm
         if (projectData.getSerologyHIVTest()) {
             CollectionUtils.addIgnoreNull(testList, createTest("Vironostika", true));
             CollectionUtils.addIgnoreNull(testList, createTest("Murex", true));
-            CollectionUtils.addIgnoreNull(testList, createTest("Integral", true));
+            //CollectionUtils.addIgnoreNull(testList, createTest("Integral", true));
         }
         if (projectData.getCreatinineTest()) {
             CollectionUtils.addIgnoreNull(testList, createTest("Créatininémie", true));

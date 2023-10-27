@@ -70,7 +70,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
         setPatientInfo(data);
         setTestInfo(data);
         reportItems.add(data);
-
+        
     }
 
     protected void setTestInfo(VLReportData data) {
@@ -82,6 +82,8 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 
         Date maxCompleationDate = null;
         long maxCompleationTime = 0L;
+        Date maxReleasedDate = null;
+        long maxReleasedTime = 0L;
 //		String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
 
         for (Analysis analysis : analysisList) {
@@ -93,7 +95,12 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
                     maxCompleationDate = analysis.getCompletedDate();
                     maxCompleationTime = maxCompleationDate.getTime();
                 }
-
+            }
+            if (analysis.getReleasedDate() != null) {
+            	if (analysis.getReleasedDate().getTime() > maxReleasedTime) {
+            		maxReleasedDate = analysis.getReleasedDate();
+            		maxReleasedTime = maxReleasedDate.getTime();
+            	}
             }
 
             String testName = TestServiceImpl.getUserLocalizedTestName(analysis.getTest());
@@ -143,6 +150,9 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
         }
         if (maxCompleationDate != null) {
             data.setCompleationdate(DateUtil.convertSqlDateToStringDate(maxCompleationDate));
+        }
+        if (maxReleasedDate != null) {
+            data.setReleasedate(DateUtil.convertSqlDateToStringDate(maxReleasedDate));
         }
 
         data.setDuplicateReport(mayBeDuplicate);

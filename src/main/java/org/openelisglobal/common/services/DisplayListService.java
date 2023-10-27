@@ -39,6 +39,7 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.method.service.MethodService;
 import org.openelisglobal.method.valueholder.Method;
 import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.organization.util.OrganizationTypeList;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
@@ -83,7 +84,7 @@ public class DisplayListService implements LocaleChangeListener {
 		SEVERITY_CONSEQUENCES_LIST, SEVERITY_RECURRENCE_LIST, ACTION_TYPE_LIST, LABORATORY_COMPONENT, SAMPLE_NATURE,
 		ELECTRONIC_ORDER_STATUSES, METHODS, METHODS_INACTIVE, METHOD_BY_NAME, PRACTITIONER_PERSONS, ORDER_PRIORITY,
 		TB_ORDER_REASONS, TB_DIAGNOSTIC_REASONS, TB_FOLLOWUP_REASONS, TB_ANALYSIS_METHODS, TB_SAMPLE_ASPECTS,
-		TB_FOLLOWUP_LINE1, TB_FOLLOWUP_LINE2
+		TB_FOLLOWUP_LINE1, TB_FOLLOWUP_LINE2, ARV_ORG_LIST
 	}
 
 	private static Map<ListType, List<IdValuePair>> typeToListMap;
@@ -203,6 +204,7 @@ public class DisplayListService implements LocaleChangeListener {
 		typeToListMap.put(ListType.TB_SAMPLE_ASPECTS, createDictionaryListForCategory("TB Sample Aspects"));
 		typeToListMap.put(ListType.TB_FOLLOWUP_LINE1, createTBFollowupLine1List());
 		typeToListMap.put(ListType.TB_FOLLOWUP_LINE2, createTBFollowupLine2List());
+		typeToListMap.put(ListType.ARV_ORG_LIST, createArvOrgList());
 	}
 
 	public List<IdValuePair> getList(ListType listType) {
@@ -385,7 +387,7 @@ public class DisplayListService implements LocaleChangeListener {
 		typeToListMap.put(ListType.TB_SAMPLE_ASPECTS, createDictionaryListForCategory("TB Sample Aspects"));
 		typeToListMap.put(ListType.TB_FOLLOWUP_LINE1, createTBFollowupLine1List());
 		typeToListMap.put(ListType.TB_FOLLOWUP_LINE2, createTBFollowupLine2List());
-
+		typeToListMap.put(ListType.ARV_ORG_LIST, createArvOrgList());
 	}
 
 	public void refreshList(ListType listType) {
@@ -473,6 +475,9 @@ public class DisplayListService implements LocaleChangeListener {
 		case DICTIONARY_TEST_RESULTS: {
 			typeToListMap.put(ListType.DICTIONARY_TEST_RESULTS, createDictionaryTestResults());
 		}
+		case ARV_ORG_LIST: {
+			typeToListMap.put(ListType.ARV_ORG_LIST, createArvOrgList());
+		}
 		}
 	}
 
@@ -497,6 +502,26 @@ public class DisplayListService implements LocaleChangeListener {
 
 		List<Organization> orgList = organizationService.getOrganizationsByTypeName("shortName",
 				RequesterService.REFERRAL_ORG_TYPE);
+		orgList.sort((e, f) -> {
+			return e.getOrganizationName().compareTo(f.getOrganizationName());
+		});
+
+		for (Organization organization : orgList) {
+			if (GenericValidator.isBlankOrNull(organization.getShortName())) {
+				requesterList.add(new IdValuePair(organization.getId(), organization.getOrganizationName()));
+			} else {
+				requesterList.add(new IdValuePair(organization.getId(),
+						organization.getShortName() + " - " + organization.getOrganizationName()));
+			}
+		}
+
+		return requesterList;
+	}
+
+	private List<IdValuePair> createArvOrgList() {
+		List<IdValuePair> requesterList = new ArrayList<>();
+
+		List<Organization> orgList = OrganizationTypeList.ARV_ORGS.getList();
 		orgList.sort((e, f) -> {
 			return e.getOrganizationName().compareTo(f.getOrganizationName());
 		});

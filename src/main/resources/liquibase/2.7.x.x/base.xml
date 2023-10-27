@@ -22,5 +22,7 @@
 	<include relativeToChangelogFile="true" file="add_tb_dictionary_infos.xml"/>
 	<include relativeToChangelogFile="true" file="add_tb_tests.xml"/>
 	<include relativeToChangelogFile="true" file="add_tb_observation_type.xml"/>
+	<include relativeToChangelogFile="true" file="activate_result_modifer_role.xml"/>
+	<include relativeToChangelogFile="true" file="add_loinc_code.xml"/>
 	
 </databaseChangeLog>

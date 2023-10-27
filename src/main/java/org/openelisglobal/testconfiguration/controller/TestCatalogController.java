@@ -183,7 +183,7 @@ public class TestCatalogController extends BaseController {
     }
 
     private String getDictionaryValue(TestResult testResult) {
-    	System.out.println("testResult.getValue(): "+testResult.getValue());
+    	
         if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
             Dictionary dictionary = dictionaryService.getDataForId(testResult.getValue());
             String displayValue = dictionary.getLocalizedName();

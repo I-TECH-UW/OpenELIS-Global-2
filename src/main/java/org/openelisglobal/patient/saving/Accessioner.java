@@ -953,9 +953,9 @@ public abstract class Accessioner implements IAccessioner {
 		}
 		// if we didn't create any analysis, we need to check if the sample is
 		// completely done.
-		if (!newAnalysis) {
-			completeSample();
-		}
+//		if (!newAnalysis) {
+//			completeSample();
+//		}
 	}
 
 	/**
@@ -1008,6 +1008,7 @@ public abstract class Accessioner implements IAccessioner {
 	 *
 	 * @
 	 */
+	@Transactional
 	public void completeSample() {
 		if (isAllAnalysisDone() && !SpringContext.getBean(IStatusService.class)
 				.getStatusID(OrderStatus.NonConforming_depricated).equals(sample.getStatus())) {
