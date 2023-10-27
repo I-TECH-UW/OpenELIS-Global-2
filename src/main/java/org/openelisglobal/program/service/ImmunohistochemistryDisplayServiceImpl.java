@@ -138,6 +138,7 @@ public class ImmunohistochemistryDisplayServiceImpl implements Immunohistochemis
             displayItem.setRequests(pathologySample.getRequests().stream().filter(e -> e.getType() == RequestType.DICTIONARY)
                     .map(e -> new IdValuePair(e.getValue(), dictionaryService.get(e.getValue()).getLocalizedName()))
                     .collect(Collectors.toList()));
+            displayItem.setSex(patient.getGender());        
             
         }
         return displayItem;

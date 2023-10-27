@@ -341,7 +341,11 @@ function PathologyCaseView() {
                     <Tag type="blue">
                       <FormattedMessage id="patient.label.sex" /> :
                     </Tag>
-                    {pathologySampleInfo.sex === "M" ? "Male" : "Female"}
+                    {pathologySampleInfo.sex === "M" ? (
+                      <FormattedMessage id="patient.male" />
+                    ) : (
+                      <FormattedMessage id="patient.female" />
+                    )}
                     <Tag type="blue">
                       <FormattedMessage id="patient.label.age" /> :
                     </Tag>
@@ -525,7 +529,7 @@ function PathologyCaseView() {
 
                     <Column lg={3} md={1} sm={2}>
                       <FileUploader
-                        style={{ marginTop: "-30px" }}
+                        style={{ marginTop: "-20px" }}
                         buttonLabel={
                           <FormattedMessage id="label.button.uploadfile" />
                         }
@@ -555,7 +559,7 @@ function PathologyCaseView() {
                       />
                     </Column>
                     <Column lg={2}>
-                      <FormattedMessage id="pathology.label.report" />
+                      <h6><FormattedMessage id="pathology.label.report" /></h6>
                     </Column>
                     <Column lg={2} md={1} sm={2}>
                       {pathologySampleInfo.reports[index].image && (

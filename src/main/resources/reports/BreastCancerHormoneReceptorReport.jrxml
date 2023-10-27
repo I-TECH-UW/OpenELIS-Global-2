@@ -905,7 +905,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["% of cell show nuclear staining with"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{immunohistochemistry.label.cellPercent}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="240" y="25" width="50" height="20" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
@@ -926,7 +926,7 @@
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA["intensity . Allred score"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{immunohistochemistry.label.cellIntensity}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="395" y="25" width="50" height="20" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
@@ -946,7 +946,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["out of 8"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{immunohistochemistry.label.outOf8}]]></textFieldExpression>
 			</textField>
 
 			<!-- Second Row -->
@@ -975,7 +975,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["% of cell show nuclear staining with"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{immunohistochemistry.label.cellPercent}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="240" y="50" width="50" height="20" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
@@ -996,7 +996,7 @@
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA["intensity . Allred score"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{immunohistochemistry.label.cellIntensity}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="395" y="50" width="50" height="20" uuid="4db3d469-99a4-414e-aaa6-129b2a5c5ff4"/>
@@ -1016,7 +1016,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["out of 8"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{immunohistochemistry.label.outOf8}]]></textFieldExpression>
 			</textField>
 
 			<!-- Third  Row -->
@@ -1025,7 +1025,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["MiB 1(ki-67) (Proliferative Index)"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{immunohistochemistry.label.mibName}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="155" y="75" width="100" height="20" uuid="d06bcdaf-4eef-4588-9524-cd5145a4c14f"/>
@@ -1045,7 +1045,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["of tumor cells positive (cut of 20%)"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{immunohistochemistry.label.tumorCells}]]></textFieldExpression>
 			</textField>
 
 			<!-- Forth  Row -->
@@ -1054,7 +1054,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["CerbB2/HER 2 staining pattern"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{immunohistochemistry.label.her2Pattern}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="155" y="100" width="350" height="70" uuid="d06bcdaf-4eef-4588-9524-cd5145a4c14f"/>
@@ -1159,14 +1159,14 @@
 
          	<!-- Fourth Row -->
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="2" y="100" width="120" height="20" uuid="57152e13-27fb-4b80-a518-c3dd78d93fdf"/>
+				<reportElement stretchType="RelativeToTallestObject" x="2" y="100" width="140" height="20" uuid="57152e13-27fb-4b80-a518-c3dd78d93fdf"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["HER 2 protein assesment is"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{immunohistochemistry.label.her2Assesment}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="125" y="100" width="100" height="20" uuid="d06bcdaf-4eef-4588-9524-cd5145a4c14f"/>
+				<reportElement x="145" y="100" width="100" height="20" uuid="d06bcdaf-4eef-4588-9524-cd5145a4c14f"/>
 				<box leftPadding="5">
 						<topPen lineWidth="0.25" lineStyle="Solid"/>
 						<leftPen lineWidth="0.25" lineStyle="Solid"/>
@@ -1179,11 +1179,11 @@
 				<textFieldExpression><![CDATA[$P{herAssesment}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="227" y="100" width="70" height="20" uuid="5d46c2cf-2242-422a-97a8-8d48b3d86df3"/>
+				<reportElement stretchType="RelativeToTallestObject" x="257" y="100" width="70" height="20" uuid="5d46c2cf-2242-422a-97a8-8d48b3d86df3"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["with a score of"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{immunohistochemistry.label.her2ScoreOf}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="300" y="100" width="100" height="20" uuid="d06bcdaf-4eef-4588-9524-cd5145a4c14f"/>
@@ -1225,7 +1225,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Histological Diagnosis"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{immunohistochemistry.label.historicalDiagnosis}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="105" y="20" width="445" height="20" uuid="d06bcdaf-4eef-4588-9524-cd5145a4c14f"/>
@@ -1247,7 +1247,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Molecular SubType"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{immunohistochemistry.label.molecularType}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="105" y="40" width="445" height="20" uuid="d06bcdaf-4eef-4588-9524-cd5145a4c14f"/>

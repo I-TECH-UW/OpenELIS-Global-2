@@ -300,5 +300,21 @@
     "label.button.remove.block": "Supprimer le Bloc",
     "label.button.remove.report": "Supprimer le Rapport",
     "pathology.label.block.number": "Numéro du Bloc" ,
-    "button.label.genarateReport" : "Générer un rapport"
+    "button.label.genarateReport" : "Générer un rapport",
+    "button.label.showHidePram" : "Afficher/Masquer les paramètres du rapport",
+    "immunohistochemistry.label.numberOfCancer" : "Nombre de noyaux cancéreux",
+    "immunohistochemistry.label.averageHer2" : "Moyenne de HER2 par noyau",
+    "immunohistochemistry.label.averageChrom" : "Moyenne des signaux Chromosome 17 par noyau",
+    "immunohistochemistry.label.ihcRatio" : "Ratio des signaux Her2/neu par rapport au Chromosome 17",
+    "immunohistochemistry.label.ihcScore" : "Score IHC (Cerb2)",
+    "immunohistochemistry.label.her2Pattern" : "Motif de coloration CerbB2/HER 2",
+    "immunohistochemistry.label.historicalDiagnosis" : "Diagnostic histologique",
+    "immunohistochemistry.label.molecularType" : "Sous-type moléculaire" ,
+    "immunohistochemistry.label.cellPercent" : "% des cellules présentent une coloration nucléaire avec",
+    "immunohistochemistry.label.cellIntensity" : "d'intensité. Score Allred",
+    "immunohistochemistry.label.outOf8" : "sur 8" ,
+    "immunohistochemistry.label.mibName" : "MiB 1 (ki-67) (Indice de prolifération) :",
+    "immunohistochemistry.label.tumorCells" :"des cellules tumorales sont positives (seuil de 20 %)",
+    "immunohistochemistry.label.her2Assesment" :"L'évaluation de la protéine HER2 est de" ,
+    "immunohistochemistry.label.her2ScoreOf" :"Avec un score de"
 }

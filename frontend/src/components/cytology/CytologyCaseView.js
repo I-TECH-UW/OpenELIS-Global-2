@@ -431,7 +431,11 @@ function CytologyCaseView() {
                     <Tag type="blue">
                       <FormattedMessage id="patient.label.sex" /> :
                     </Tag>
-                    {pathologySampleInfo.sex === "M" ? "Male" : "Female"}
+                    {pathologySampleInfo.sex === "M" ? (
+                      <FormattedMessage id="patient.male" />
+                    ) : (
+                      <FormattedMessage id="patient.female" />
+                    )}
                     <Tag type="blue">
                       <FormattedMessage id="patient.label.age" /> :
                     </Tag>
@@ -825,7 +829,7 @@ function CytologyCaseView() {
 
                     <Column lg={3} md={1} sm={2}>
                       <FileUploader
-                        style={{ marginTop: "-30px" }}
+                        style={{ marginTop: "-20px" }}
                         buttonLabel={
                           <FormattedMessage id="label.button.uploadfile" />
                         }
@@ -854,12 +858,12 @@ function CytologyCaseView() {
                         }}
                       />
                     </Column>
-                    <Column lg={2}>
-                      {
+                    <Column lg={4}>
+                      <h6>{
                         reportTypes.filter(
                           (type) => type.id === report.reportType,
                         )[0]?.value
-                      }
+                      }</h6>
                     </Column>
                     <Column lg={2} md={1} sm={2}>
                       {pathologySampleInfo.reports[index].image && (
@@ -902,7 +906,7 @@ function CytologyCaseView() {
                         <FormattedMessage id="button.label.genarateReport" />
                       </Button>
                     </Column>
-                    <Column lg={4} md={2} sm={2}/>
+                    <Column lg={2} md={2} sm={2}/>
                     <Column lg={16} md={8} sm={4}>
                       <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                     </Column>
