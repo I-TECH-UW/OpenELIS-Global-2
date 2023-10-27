@@ -558,7 +558,7 @@ function PathologyCaseView() {
                         }}
                       />
                     </Column>
-                    <Column lg={2}>
+                    <Column lg={3}>
                       <h6><FormattedMessage id="pathology.label.report" /></h6>
                     </Column>
                     <Column lg={2} md={1} sm={2}>
@@ -601,7 +601,7 @@ function PathologyCaseView() {
                         <FormattedMessage id="button.label.genarateReport" />
                       </Button>
                     </Column>
-                    <Column lg={4} md={2} sm={2}/>
+                    <Column lg={3} md={2} sm={2}/>
                     <Column lg={16} md={8} sm={4}>
                       <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                     </Column>

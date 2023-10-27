@@ -28,7 +28,7 @@ public class PatientPathologyReport extends PatientProgramReport{
         pathologySample.getConclusions().size();
         Optional<PathologyConclusion> conclusion = pathologySample.getConclusions().stream()
                 .filter(e -> e.getType() == ConclusionType.TEXT).findFirst();
-        data.setTextConclusion(conclusion.get().getValue());
+        data.setTextConclusion(conclusion.isPresent()?conclusion.get().getValue():"");
 
         List<String> codedConclusions =  pathologySample.getConclusions().stream().filter(e -> e.getType() == ConclusionType.DICTIONARY)
         .map(e -> dictionaryService.get(e.getValue()).getLocalizedName())
