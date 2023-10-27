@@ -52,7 +52,14 @@ public class PatientCytologyReport extends PatientProgramReport {
                         }
                         switch (diagnosisResult.getCategory()) {
                             case EPITHELIAL_CELL_ABNORMALITY: {
-                                data.setEpithelialCellAbnomalities(diagnoses);
+                                List<String> existingDiagnoses =  new ArrayList<>();
+                                if(data.getEpithelialCellAbnomalities() != null){
+                                 if(!data.getEpithelialCellAbnomalities().isEmpty()){
+                                   existingDiagnoses = data.getEpithelialCellAbnomalities();
+                                 }
+                                }
+                                existingDiagnoses.addAll(diagnoses);
+                                data.setEpithelialCellAbnomalities(existingDiagnoses);
                                 break;
                             }
                             case NON_NEOPLASTIC_CELLULAR_VARIATIONS: {
