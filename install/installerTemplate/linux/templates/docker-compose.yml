@@ -17,7 +17,7 @@ x-loki-logging:
     loki-external-labels: "container_name={{.Name}},hostname=[% host_name %]"
     loki-pipeline-stages: |
           - multiline:
-              firstline: '^\d{4}-\d{2}-\d{2}T?\d{2}:\d{2}:\d{2}.\d{3}'
+              firstline: '^\d{4}-\d{2}-\d{2}[T ]?\d{2}:\d{2}:\d{2}.\d{3}'
           - labeldrop:
               - compose_project
               - compose_service
