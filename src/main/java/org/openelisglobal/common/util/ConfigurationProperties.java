@@ -82,6 +82,7 @@ public abstract class ConfigurationProperties {
         notesRequiredForModifyResults("modify results note required"), // If true a note is required when a result is
                                                                        // modified
         resultTechnicianName("ResultTechnicianName"), // If true the technicians name is needed for results
+        customCriticalMessage("customCriticalMessage"),// Override the default message for a critical result
         allowResultRejection("allowResultRejection"), // If true then a technician has the ability to reject an
                                                       // individual test and select a reason for rejection
         restrictFreeTextRefSiteEntry("restrictFreeTextRefSiteEntry"), // If true then a user cannot enter new referring

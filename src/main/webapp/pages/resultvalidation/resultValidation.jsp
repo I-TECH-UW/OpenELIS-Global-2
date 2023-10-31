@@ -36,6 +36,7 @@
 	String searchTerm = request.getParameter("searchTerm");
 	String url = request.getAttribute("javax.servlet.forward.servlet_path").toString();	
 	//boolean showTestSectionSelect = !ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI RetroCI");
+	String criticalMessage = ConfigurationProperties.getInstance().getPropertyValue(ConfigurationProperties.Property.customCriticalMessage);
 %>
 
 
@@ -56,6 +57,8 @@ var pager = new OEPager('${form.formName}', '<c:if test="${not empty testSection
 pager.setCurrentPageNumber('<c:out value="${form.paging.currentPage}"/>');
 
 var pageSearch; //assigned in post load function
+
+var criticalMsg = "<%=criticalMessage%>";
 
 var pagingSearch = {};
 
@@ -322,6 +325,17 @@ function altAccessionHighlightSearch(accessionNumber) {
 	}
 }
 
+function validateCriticalResults(index,lowCritical,highCritical){
+	var elementVal;
+	var elementt = jQuery("#resultId_" + index);
+	elementVal = elementt.val();
+	console.log(elementVal);
+	if (elementVal > lowCritical && elementVal < highCritical) {
+		    elementt.addClass("error");
+            alert(criticalMsg);
+            return;
+        }
+  }
 </script>
 <c:set var="total" value="${form.paging.totalPages}"/>
 <c:if test="${resultCount != 0}">
@@ -598,7 +612,8 @@ function altAccessionHighlightSearch(accessionNumber) {
 								   id='accepted_${iter.index}'
 								   cssClass='accepted accepted_${resultList.sampleGroupingNumber} ${resultList.normal ? "normalAccepted" : "" }'
 								   onchange="markUpdated(); makeDirty();"
-								   onclick='enableDisableCheckboxes("rejected_${iter.index}", "${resultList.sampleGroupingNumber}");' 
+								   onclick='enableDisableCheckboxes("rejected_${iter.index}", "${resultList.sampleGroupingNumber}");
+								    validateCriticalResults("${iter.index}","${resultList.lowerCritical}","${resultList.higherCritical}");' 
 								   />
 				</td>
 				<td style="text-align:center">
