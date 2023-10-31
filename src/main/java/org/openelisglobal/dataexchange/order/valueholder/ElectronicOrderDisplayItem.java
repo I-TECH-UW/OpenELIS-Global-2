@@ -26,6 +26,8 @@ public class ElectronicOrderDisplayItem {
     private String electronicOrderId;
 
     private String externalOrderId;
+    
+    private String patientUpid;
 
     private String requestDateDisplay;
 
@@ -192,4 +194,13 @@ public class ElectronicOrderDisplayItem {
     public void setPriority(OrderPriority priority) {
         this.priority = priority;
     }
+
+	public String getPatientUpid() {
+		return patientUpid;
+	}
+
+	public void setPatientUpid(String patientUpid) {
+		this.patientUpid = patientUpid;
+	}
+   
 }

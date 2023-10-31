@@ -31,7 +31,7 @@ public abstract class BasePatientEntryByProject extends BaseController {
 
     private static final String[] BASE_ALLOWED_FIELDS = new String[] { "patientUpdateStatus", "patientPK", "samplePK",
             "receivedDateForDisplay", "receivedTimeForDisplay", "interviewDate", "interviewTime", "subjectNumber",
-            "siteSubjectNumber", "labNo", "centerName", "centerCode", "lastName", "firstName", "gender",
+            "siteSubjectNumber", "labNo", "centerName", "centerCode", "lastName", "firstName", "gender","upidCode",
             "birthDateForDisplay", "observations.projectFormName", "observations.hivStatus",
             "observations.educationLevel", "observations.maritalStatus", "observations.nationality",
             "observations.nationalityOther", "observations.legalResidence", "observations.nameOfDoctor",
@@ -39,7 +39,7 @@ public abstract class BasePatientEntryByProject extends BaseController {
             "observations.arvProphylaxisBenefit", "observations.arvProphylaxis", "observations.currentARVTreatment",
             "observations.priorARVTreatment", "observations.priorARVTreatmentINNsList*",
             "observations.cotrimoxazoleTreatment", "observations.aidsStage", "observations.anyCurrentDiseases",
-            "ProjectData.dbsTaken","ProjectData.dbsvlTaken", "ProjectData.pscvlTaken","ProjectData.viralLoadTest", 
+            "ProjectData.dbsTaken","ProjectData.dbsvlTaken", "ProjectData.pscvlTaken","ProjectData.edtaTubeTaken","ProjectData.viralLoadTest", 
             "observations.currentDiseases", "observations.currentDiseasesValue", "observations.currentOITreatment",
             "observations.patientWeight", "observations.karnofskyScore", "observations.underInvestigation",
             "projectData.underInvestigationNote",
@@ -68,7 +68,8 @@ public abstract class BasePatientEntryByProject extends BaseController {
             "observations.demandcd4Date", "observations.vlBenefit", "observations.priorVLLab",
             "observations.priorVLValue", "observations.priorVLDate",
             //
-            "observations.service", "observations.hospitalPatient", "observations.reason" };
+            "observations.service", "observations.hospitalPatient", "observations.reason", "ProjectData.asanteTest",
+			"ProjectData.plasmaTaken", "ProjectData.serumTaken" };
 
     protected List<String> getBasePatientEntryByProjectFields() {
         List<String> allowedFields = new ArrayList<>();

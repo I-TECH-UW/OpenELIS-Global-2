@@ -68,7 +68,9 @@ public class ReportImplementationFactory {
             } else if (report.equals("patientHaitiClinical") || report.equals("patientHaitiLNSP")
                     || report.equals("patientCILNSP") || report.equals("patientCILNSP_vreduit")) {
                 return new PatientClinicalReport();
-            } else if (report.equals("indicatorHaitiClinicalHIV")) {
+            }else if (report.equals("TBPatientReport")) {
+                return new PatientClinicalReport();
+            }else if (report.equals("indicatorHaitiClinicalHIV")) {
                 return new IndicatorHIV();
             } else if (report.equals("indicatorHaitiLNSPHIV")) {
                 return new IndicatorHIVLNSP();
@@ -132,6 +134,8 @@ public class ReportImplementationFactory {
                 return new RejectionReportByTestSection();
             } else if (report.equals("CIStudyExport")) {
                 return new ExportStudyProjectByDate();
+            } else if (report.equals("TBOrderExport")) {
+                return new ExportTBOrdersByDate();
             } else if (report.equals("Trends")) {
                 return new ExportTrendsByDate();
             }
@@ -194,7 +198,10 @@ public class ReportImplementationFactory {
             } else if (report.equals("patientCILNSP")) {
                 return new PatientCILNSPClinical();
             } else if (report.equals("patientCILNSP_vreduit")) {
-                return new PatientCILNSPClinical_vreduit();
+                //return new PatientCILNSPClinical_vreduit();
+            	return new PatientCILNSPClinical();
+            } else if (report.equals("TBPatientReport")) {
+            	return new TBPatientReport();
             } else if (report.equals("indicatorHaitiClinicalHIV")) {
                 return new IndicatorHIV();
             } else if (report.equals("indicatorHaitiLNSPHIV")) {
@@ -267,6 +274,8 @@ public class ReportImplementationFactory {
                 return new ExportStudyProjectByDate();
             } else if (report.equals("Trends")) {
                 return new ExportTrendsByDate();
+            } else if (report.equals("TBOrderExport")) {
+                return new ExportTBOrdersByDate();
             } else if (report.equals("MauritiusProtocolSheet")) {
                 return new MauritiusProtocolSheet();
             }

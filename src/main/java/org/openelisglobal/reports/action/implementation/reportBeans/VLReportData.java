@@ -50,6 +50,7 @@ public class VLReportData {
     private String servicename;
     private String doctor;
     private String compleationdate;
+    private String releasedate;
     private String vlPregnancy;
     private String vlSuckle;
     private String PTME;
@@ -347,5 +348,13 @@ public class VLReportData {
             return note != null ? note.getText() : null;
         }
     }
+
+	public String getReleasedate() {
+		return releasedate;
+	}
+
+	public void setReleasedate(String releasedate) {
+		this.releasedate = releasedate;
+	}
 
 }

@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -729,15 +730,16 @@ public class AnalyzerResultsController extends BaseController {
         }
 
         redirectAttibutes.addFlashAttribute(FWD_SUCCESS, true);
-        if (GenericValidator.isBlankOrNull(form.getType())) {
-            return findForward(FWD_SUCCESS_INSERT, form);
-        } else {
-            Map<String, String> params = new HashMap<>();
-            params.put("type", form.getType());
-            // params.put("page", form.getPaging().getCurrentPage());
-            params.put("forward", FWD_SUCCESS_INSERT);
-            return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
-        }
+        return findForward(FWD_SUCCESS_INSERT, form);
+//        if (GenericValidator.isBlankOrNull(form.getType())) {
+//            return findForward(FWD_SUCCESS_INSERT, form);
+//        } else {
+//            Map<String, String> params = new HashMap<>();
+//            params.put("type", form.getType());
+//            // params.put("page", form.getPaging().getCurrentPage());
+//            params.put("forward", FWD_SUCCESS_INSERT);
+//            return getForwardWithParameters(findForward(FWD_SUCCESS_INSERT, form), params);
+//        }
     }
 
     private Errors validateSavableItems(List<AnalyzerResultItem> savableResults, Errors errors) {
@@ -890,9 +892,11 @@ public class AnalyzerResultsController extends BaseController {
     protected SampleItem getOrCreateSampleItem(List<AnalyzerResultItem> groupedAnalyzerResultItems, Sample sample) {
         List<Analysis> dBAnalysisList = analysisService.getAnalysesBySampleId(sample.getId());
 
-        TypeOfSampleTest typeOfSampleForNewTest = typeOfSampleTestService
-                .getTypeOfSampleTestForTest(groupedAnalyzerResultItems.get(0).getTestId());
-        String typeOfSampleId = typeOfSampleForNewTest.getTypeOfSampleId();
+        List<TypeOfSampleTest> typeOfSampleForNewTest = typeOfSampleTestService
+                .getTypeOfSampleTestsForTest(groupedAnalyzerResultItems.get(0).getTestId());
+
+        //String typeOfSampleId = typeOfSampleForNewTest.getTypeOfSampleId(); a test can have more than 1 sample type
+        List<String>  typeOfSampleIds = typeOfSampleForNewTest.stream().map(e->e.getTypeOfSampleId()).collect(Collectors.toList());
 
         SampleItem sampleItem = null;
         int maxSampleItemSortOrder = 0;
@@ -902,7 +906,7 @@ public class AnalyzerResultsController extends BaseController {
                 maxSampleItemSortOrder = Math.max(maxSampleItemSortOrder,
                         Integer.parseInt(dbAnalysis.getSampleItem().getSortOrder()));
             }
-            if (typeOfSampleId.equals(dbAnalysis.getSampleItem().getTypeOfSampleId())) {
+            if (typeOfSampleIds.contains(dbAnalysis.getSampleItem().getTypeOfSampleId())) {
                 sampleItem = dbAnalysis.getSampleItem();
                 break;
             }
@@ -915,7 +919,7 @@ public class AnalyzerResultsController extends BaseController {
             sampleItem.setSysUserId(getSysUserId(request));
             sampleItem.setSortOrder(Integer.toString(maxSampleItemSortOrder + 1));
             sampleItem.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
-            TypeOfSample typeOfSample = typeOfSampleService.get(typeOfSampleId);
+            TypeOfSample typeOfSample = typeOfSampleService.get(typeOfSampleIds.get(0));
             sampleItem.setTypeOfSample(typeOfSample);
         }
         return sampleItem;

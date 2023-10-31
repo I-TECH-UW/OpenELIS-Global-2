@@ -620,7 +620,7 @@ public class DateUtil {
         if (!GenericValidator.isBlankOrNull(date) && !GenericValidator.isBlankOrNull(time)) {
             date = date + " " + time;
         } else if (!GenericValidator.isBlankOrNull(date) && GenericValidator.isBlankOrNull(time)) {
-            date = date + " 00:00";
+            date = date + " 09:00";
         } else {
             return null;
         }

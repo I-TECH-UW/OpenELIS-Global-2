@@ -115,7 +115,7 @@ public class PatientEditByProjectController extends BasePatientEntryByProject {
         } else if (FWD_FAIL.equals(forward)) {
             return "redirect:/Dashboard";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/PatientEditByProject";
+            return "redirect:/PatientEditByProject?type=readwrite";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "patientEditByProjectDefinition";
         } else {

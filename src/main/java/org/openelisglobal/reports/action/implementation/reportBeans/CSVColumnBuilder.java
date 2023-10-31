@@ -40,6 +40,7 @@ import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
@@ -193,7 +194,9 @@ abstract public class CSVColumnBuilder {
                 projectTag = "ARVB";
             } else if (project.getNameKey().contains("VLS")) {
                 projectTag = "VLS";
-            } else {
+            } else if (project.getNameKey().contains("Recency")) {
+                projectTag = "RTRI";
+            } else  {
                 // otherwise we use the letters from the Sample ID prefix, which
                 // at some locations for some projects is undefined.
                 String code = project.getProgramCode();
@@ -409,7 +412,7 @@ abstract public class CSVColumnBuilder {
             case DROP_ZERO:
                 return ("0".equals(value) || value == null) ? "" : value;
             case TEST_RESULT:
-                return isBlankOrNull(value) ? "" : translateTestResult(csvName, value);
+                return isBlankOrNull(value) ? "" : translateTestResult(this.csvName, value);
             case GEND_CD4:
                 return isBlankOrNull(value) ? "" : translateGendResult(getGendCD4CountAnalyteId(), value);
             case LOG:
@@ -429,6 +432,30 @@ abstract public class CSVColumnBuilder {
                 case NonConforming_depricated:
                     return "N"; // Non-conforming, Non-conformes
                 }
+			case ANALYSIS_STATUS:
+				AnalysisStatus analysisStatus = StatusService.getInstance().getAnalysisStatusForID(value);
+				if (analysisStatus == null)
+					return "?";
+				switch (analysisStatus) {
+				case SampleRejected:
+					return "Reject"; // rejété, entr�e
+				case NotStarted:
+					return "Not_Started"; // entered, entr�e
+				case Canceled:
+					return "Canceled"; // commenced, commenc�
+				case TechnicalAcceptance:
+					return "Validation_Technique"; // Finished, Finale
+				case TechnicalRejected:
+					return "Rejet - Technique"; // Non-conforming, Non-conformes
+				case BiologistRejected:
+					return "Rejet - Biologie"; // entered, entr�e
+				case NonConforming_depricated:
+					return "Non Conforme"; // commenced, commenc�
+				case Finalized:
+					return "Validation_Biologique"; // Finished, Finale
+				
+				
+				}
             case PROJECT:
                 return translateProjectId(value);
             case DEBUG:
@@ -486,7 +513,10 @@ abstract public class CSVColumnBuilder {
          * @throws SQLException
          */
         public String translateTestResult(String testName, String value) throws SQLException {
-            TestResult testResult = testResultsByTestName.get(testName);
+            TestResult testResult = testResultsByTestName.get(testName); 
+            if(testName.equalsIgnoreCase("DNA PCR")) { //need fix: testName is different from map key
+            	return ResourceTranslator.DictionaryTranslator.getInstance().translateRaw(value);
+            }
             // if it is not in the table then its just a value in the result
             // that was NOT selected from a list, thus no translation
             if (testResult == null) {
