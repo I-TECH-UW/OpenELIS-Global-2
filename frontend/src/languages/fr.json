@@ -125,7 +125,7 @@
     "cytology.label.reactive" : "Modifications Cellulaires Réactives",
     "cytology.label.organisms" : "Organismes",
     "cytology.label.otherResult" : "Autre Résultat de Diagnostic",
-    "header.label.version" :"Version :",
+    "header.label.version" :"Version:",
     "header.label.logout" :"Déconnexion",
     "header.label.selectlocale" : "Sélectionner la Langue",
     "sidenav.label.order" : "Commande",

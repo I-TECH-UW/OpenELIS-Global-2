@@ -125,7 +125,7 @@
     "cytology.label.reactive" : "Reactive cellular changes" ,
     "cytology.label.organisms" : "Organisms" ,
     "cytology.label.otherResult" : " Other Diagnosis Result" ,
-    "header.label.version" :"Verion:",
+    "header.label.version" :"Version:",
     "header.label.logout" :"Logout" ,
     "header.label.selectlocale" : "Select Locale" ,
     "sidenav.label.order" : "Order",
