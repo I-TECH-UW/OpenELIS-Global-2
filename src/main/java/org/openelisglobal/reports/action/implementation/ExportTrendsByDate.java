@@ -172,14 +172,22 @@ public class ExportTrendsByDate extends CSVSampleExportReport implements IReport
         String[] splitLine = indicStr.split(":");
         String indic = splitLine[1];
         if (indic.equals("Unsuppressed VL")) {
-            return workingResult.contains("Log7") || !workingResult.contains("L") && !workingResult.contains("X")
-                    && !workingResult.contains("<") && workingResult.length() > 0
-                    && Double.parseDouble(workingResult.replaceAll("[^0-9]", "")) >= 1000;
+        	try {
+	            return workingResult.contains("Log7") || !workingResult.contains("L") && !workingResult.contains("X")
+	                    && !workingResult.contains("<") && workingResult.length() > 0
+	                    && (workingResult.replaceAll("[^0-9]", "").length()>0 ? Double.parseDouble(workingResult.replaceAll("[^0-9]", "")) >= 1000 : false);
+        	}catch (Exception e) {
+        		return false;
+			}
         } else if (indic.equals("Suppressed VL")) {
-            return workingResult.contains("L") || workingResult.contains("<")
-                    || (workingResult.length() > 0 && !workingResult.toUpperCase().contains("X")
-                            && !workingResult.toLowerCase().contains("invalid")
-                            && Double.parseDouble(workingResult.replaceAll("[^0-9]", "")) < 1000);
+        	try {
+	            return workingResult.contains("L") || workingResult.contains("<")
+	                    || (workingResult.length() > 0 && !workingResult.toUpperCase().contains("X")
+	                            && !workingResult.toLowerCase().contains("invalid")
+	                            && Double.parseDouble(workingResult.replaceAll("[^0-9]", "")) < 1000);
+        	}catch(Exception e) {
+        		return false;
+        	}
         }
 
         return false;

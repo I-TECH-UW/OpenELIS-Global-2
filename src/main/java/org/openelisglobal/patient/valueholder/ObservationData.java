@@ -19,6 +19,7 @@ package org.openelisglobal.patient.valueholder;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -1393,7 +1394,7 @@ public class ObservationData implements Serializable {
         if (priorDiseasesList == null) {
             priorDiseasesList = makeDiseaseList("P", ObservationHistoryList.ARV_DISEASES.getList());
         }
-        return priorDiseasesList;
+        return new ArrayList<>(new HashSet<>(priorDiseasesList));
     }
 
     private List<NameValuePair> makeDiseaseList(String prefix, List<Dictionary> dictionaryList) {
@@ -1412,7 +1413,7 @@ public class ObservationData implements Serializable {
         if (currentDiseasesList == null) {
             currentDiseasesList = makeDiseaseList("C", ObservationHistoryList.ARV_DISEASES_SHORT.getList());
         }
-        return currentDiseasesList;
+        return new ArrayList<>(new HashSet<>(currentDiseasesList)); //remove duplicates entry
     }
 
     public NameValuePair getCurrentDiseases(int index) {
@@ -1423,13 +1424,13 @@ public class ObservationData implements Serializable {
         if (rtnPriorDiseasesList == null) {
             rtnPriorDiseasesList = makeDiseaseList("", ObservationHistoryList.RTN_DISEASES.getList());
         }
-        return rtnPriorDiseasesList;
+        return new ArrayList<>(new HashSet<>(rtnPriorDiseasesList));
     }
 
     public List<NameValuePair> getRtnCurrentDiseasesList() {
         if (rtnCurrentDiseasesList == null) {
             rtnCurrentDiseasesList = makeDiseaseList("", ObservationHistoryList.RTN_EXAM_DISEASES.getList());
         }
-        return rtnCurrentDiseasesList;
+        return new ArrayList<>(new HashSet<>(rtnCurrentDiseasesList));
     }
 }

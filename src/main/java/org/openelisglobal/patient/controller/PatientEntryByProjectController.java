@@ -76,7 +76,8 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
             @ModelAttribute("form") @Valid PatientEntryByProjectForm form, BindingResult result,
             RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        formValidator.validate(form, result);
+
+    	formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);
             return findForward(FWD_FAIL_INSERT, form);

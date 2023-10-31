@@ -77,7 +77,7 @@ function enterOrder(index) {
 	
 	var tBody = document.getElementById('eOrderTableBody');
 	var eOrderRow = document.getElementById('eOrderRow_' + index);
-	var enterButton = document.getElementById('enterButton_' + index);
+	var enterButton = document.getElementById('enterButton_' + index); 
 	var editButton = document.getElementById('editButton_' + index);
 	var rejectButton = document.getElementById('rejectButton_' + index);
 	enterButton.style.display='none';
@@ -113,10 +113,10 @@ function rejectOrder(index) {
 	
 	var tBody = document.getElementById('eOrderTableBody');
 	var eOrderRow = document.getElementById('eOrderRow_' + index);
-	var enterButton = document.getElementById('enterButton_' + index);
+	/* var enterButton = document.getElementById('enterButton_' + index); */
 	var editButton = document.getElementById('editButton_' + index);
 	var rejectButton = document.getElementById('rejectButton_' + index);
-	enterButton.style.display='none';
+	/* enterButton.style.display='none'; */
 	editButton.style.display='none';
 	rejectButton.style.display='none';
 	eOrderRow.style.background = '#FF6';
@@ -155,10 +155,10 @@ function restoreRow(index) {
 	var eOrderRow = document.getElementById('eOrderRow_' + index);
 	eOrderRow.style.display = '';
 	eOrderRow.style.background = '';
-	var enterButton = document.getElementById('enterButton_' + index);
+	/* var enterButton = document.getElementById('enterButton_' + index); */
 	var editButton = document.getElementById('editButton_' + index);
 	var rejectButton = document.getElementById('rejectButton_' + index);
-	enterButton.style.display='';
+	/* enterButton.style.display=''; */
 	editButton.style.display='';
 	rejectButton.style.display='';
 }
@@ -176,7 +176,7 @@ function saveEntry(index) {
 }
 
 function markRowOutOfSync(index) {
-	jQuery('#enterButton_' + index).attr('disabled', 'disabled');
+	/* jQuery('#enterButton_' + index).attr('disabled', 'disabled'); */
 	jQuery('#editButton_' + index).attr('disabled', 'disabled');
 	jQuery('#rejectButton_' + index).attr('disabled', 'disabled');
 	jQuery('#eOrderRow_' + index).addClass('unsynced-resource');
@@ -206,7 +206,7 @@ function processScanSuccess(xhr, index) {
 
 function editOrder(index) {
 	var externalOrderId = jQuery('#externalOrderId_' + index).val();
-	location.href='SampleEntryByProject?type=Initial&ID=' + externalOrderId;
+	location.href='SampleEntryByProject?type=initial&ID=' + externalOrderId;
 }
 
 jQuery(document).ready( function() {

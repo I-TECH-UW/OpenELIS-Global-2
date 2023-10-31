@@ -58,7 +58,7 @@ public class SPEFormMapper extends ARVFormMapper implements IProjectFormMapper {
             CollectionUtils.addIgnoreNull(testList, createTest("Murex", true));
         }
         if (projectData.getIntegralTest()) {
-            CollectionUtils.addIgnoreNull(testList, createTest("Integral", true));
+            //CollectionUtils.addIgnoreNull(testList, createTest("Integral", true));
         }
         if (projectData.getVironostikaTest()) {
             CollectionUtils.addIgnoreNull(testList, createTest("Vironostika", true));
