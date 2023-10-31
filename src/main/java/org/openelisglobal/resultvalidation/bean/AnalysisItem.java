@@ -76,6 +76,8 @@ public class AnalysisItem implements Serializable{
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ResultValidationForm.ResultValidation.class })
     private String resultId;
+    private double lowerCritical;
+    private double higherCritical;
 
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String resultType;
@@ -179,8 +181,8 @@ public class AnalysisItem implements Serializable{
 
     private boolean valid = true;
 
-    private boolean isNormal;
-
+    private boolean isNormal; 
+    
     public String getRejectReasonId() {
         return rejectReasonId;
     }
@@ -728,5 +730,21 @@ public class AnalysisItem implements Serializable{
 
     public void setNormal(boolean isNormal) {
         this.isNormal = isNormal;
+    }
+
+    public double getLowerCritical() {
+        return lowerCritical;
+    }
+
+    public void setLowerCritical(double lowerCritical) {
+        this.lowerCritical = lowerCritical;
+    }
+
+    public double getHigherCritical() {
+        return higherCritical;
+    }
+
+    public void setHigherCritical(double higherCritical) {
+        this.higherCritical = higherCritical;
     }
 }

@@ -138,7 +138,24 @@ Ensure all keystores have global read permission
 
     sudo chmod 644 /etc/openelis-global/keystore /etc/openelis-global/truststore /etc/openelis-global/client_facing_keystore
 	
-### Download OpenELIS Global
+## Options for installing OpenELIS Global software
+
+You can choose to install OpenELIS in an online mode for servers with fast internet connections, and offline, using less internet connectivity by providing a local copy of the images to be loaded. 
+
+### Online OpenELIS installation with Docker
+#### Running with published docker images
+    docker-compose up -d
+
+#### Building the docker images from source code
+    docker-compose -f build.docker-compose.yml up -d --build
+
+#### The Instaces can be accesed at 
+
+| Instance  |     URL       | credentials (user : password)|
+|---------- |:-------------:|------:                       |
+| OpenElis   |  https://localhost:8443/OpenELIS-Global/  | admin: adminADMIN! |
+
+### Downloaded Installer Offline Setup
 
 1. Install OpenELIS Global
 
@@ -206,3 +223,28 @@ Follow the SOP at: [Backup Configuration](../backups)
 
 To set the identifier for this particular instance, use the /var/lib/openelisglobal/secrets/extra.properties file, and set the organization value to the same identifier as is set in the consolidated server FHIR location object. 
 EG: `org.openelisglobal.remote.source.identifier=Organization/8136bd30-901c-4d47-b133-72de813404ee`
+
+### Run OpenELIS Global 2 With Docker Compose 
+
+1. Install [Docker](https://linuxize.com/post/how-to-install-and-use-docker-on-ubuntu-20-04/) and [Docker Compose](https://linuxize.com/post/how-to-install-and-use-docker-compose-on-ubuntu-20-04/)
+
+1. Clone the OpenELIS Global repository.   
+    For  Open Elis Global 2.7.x 
+
+        git clone https://github.com/I-TECH-UW/OpenELIS-Global-2.git
+
+    For the Open Elis Global 2.8.x 
+
+        git clone https://github.com/I-TECH-UW/OpenELIS-Global-2.git -b 2.8
+
+1. Move to the Project directory 
+
+         cd  OpenELIS-Global-2   
+
+1. Start the containers
+
+        docker-compose up -d      
+
+  For OpenELIS Global 2.7.x ,you should acces the Instance at https://localhost:8443/OpenELIS-Global/ 
+
+  For OpenELIS Global 2.8.x , you should acces the instances at https://localhost/ for the new UI and https://localhost/api/OpenELIS-Global/  for the Old UI

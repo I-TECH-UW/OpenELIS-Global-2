@@ -350,7 +350,7 @@ public class SamplePatientUpdateData {
             providerPerson = new Person();
             provider = new Provider();
             provider.setFhirUuid(UUID.randomUUID());
-
+            provider.setActive(true);
             providerPerson.setFirstName(sampleOrder.getProviderFirstName());
             providerPerson.setLastName(sampleOrder.getProviderLastName());
             providerPerson.setWorkPhone(sampleOrder.getProviderWorkPhone());

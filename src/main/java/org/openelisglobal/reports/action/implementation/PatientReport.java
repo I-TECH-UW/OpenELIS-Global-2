@@ -607,9 +607,7 @@ public abstract class PatientReport extends Report {
 
     private void setNormalRange(ClinicalPatientData data, Test test, Result result) {
         String uom = getUnitOfMeasure(test);
-        if (!result.getResultType().equalsIgnoreCase("D")) {
-            data.setTestRefRange(addIfNotEmpty(getRange(result), appendUOMToRange() ? uom : null));
-        }
+        data.setTestRefRange(addIfNotEmpty(getRange(result), appendUOMToRange() ? uom : null));
         data.setUom(uom);
     }
 

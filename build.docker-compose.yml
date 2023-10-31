@@ -10,7 +10,7 @@ services:
         networks:
             - default
         volumes:
-            -  key_trust-store-volume:/etc/openelis-global
+            -  cert-volume:/etc/openelis-global
     database:
         container_name: openelisglobal-database 
         image: postgres:9.5
@@ -33,8 +33,10 @@ services:
             retries: 10 
             
     oe.openelis.org:
+        build:
+          context: .
         container_name: openelisglobal-webapp 
-        image: ghcr.io/i-tech-uw/openelis-global-2:develop     
+        image: openelisglobal-webapp.build     
         depends_on:
             - database
         ports:
@@ -44,14 +46,13 @@ services:
         networks:
           default:
               ipv4_address: 172.20.1.121
-
         environment:
             - DEFAULT_PW=adminADMIN! 
             - TZ=Africa/Nairobi
               # context.xml doesn't seem to be able to pick up environment variables directly, so we are passing them in as CATALINA_OPTS
             - CATALINA_OPTS= -Ddatasource.url=jdbc:postgresql://database:5432/clinlims -Ddatasource.username=clinlims
         volumes:
-            -  key_trust-store-volume:/etc/openelis-global
+            -  cert-volume:/etc/openelis-global
             - ./volume/plugins/:/var/lib/openelis-global/plugins
             - ./volume/tomcat/oe_server.xml:/usr/local/tomcat/conf/server.xml
         secrets:
@@ -78,9 +79,9 @@ services:
                       -Djavax.net.ssl.keyStoreType=pkcs12"            
         
         volumes:
-            -  key_trust-store-volume:/etc/openelis-global
+            -  cert-volume:/etc/openelis-global
             - ./volume/tomcat/hapi_server.xml:/usr/local/tomcat/conf/server.xml
-            
+                
 secrets:
   datasource.password:
     file: ./volume/properties/datasource.password  
@@ -96,6 +97,6 @@ networks:
         
 volumes:
   db-data:
-  key_trust-store-volume:
+  cert-volume:
        
     
