@@ -381,9 +381,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 		}
 
 		Optional<ServiceRequest> referingServiceRequest = getReferringServiceRequestForSample(updateData.getSample());
-		if(referingServiceRequest.isPresent()){
-          updateReferringServiceRequestWithSampleInfo(updateData.getSample(),referingServiceRequest.get());
-		  this.addToOperations(fhirOperations, tempIdGenerator, referingServiceRequest.get());
+		if (referingServiceRequest.isPresent()) {
+			updateReferringServiceRequestWithSampleInfo(updateData.getSample(), referingServiceRequest.get());
+			this.addToOperations(fhirOperations, tempIdGenerator, referingServiceRequest.get());
 		}
 
 		// patient
@@ -434,9 +434,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 		}
 	}
 
-	private void updateReferringServiceRequestWithSampleInfo(Sample sample ,ServiceRequest serviceRequest) {
-			serviceRequest.setRequisition(this.createIdentifier(fhirConfig.getOeFhirSystem() + "/samp_labNo",
-				sample.getAccessionNumber()));
+	private void updateReferringServiceRequestWithSampleInfo(Sample sample, ServiceRequest serviceRequest) {
+		serviceRequest.setRequisition(
+		    this.createIdentifier(fhirConfig.getOeFhirSystem() + "/samp_labNo", sample.getAccessionNumber()));
 	}
 
 	private Optional<Task> getReferringTaskForSample(Sample sample) {
