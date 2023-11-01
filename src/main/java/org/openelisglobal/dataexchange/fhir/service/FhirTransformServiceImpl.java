@@ -380,6 +380,12 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 			this.addToOperations(fhirOperations, tempIdGenerator, referringTask.get());
 		}
 
+		Optional<ServiceRequest> referingServiceRequest = getReferringServiceRequestForSample(updateData.getSample());
+		if(referingServiceRequest.isPresent()){
+          updateReferringServiceRequestWithSampleInfo(updateData.getSample(),referingServiceRequest.get());
+		  this.addToOperations(fhirOperations, tempIdGenerator, referingServiceRequest.get());
+		}
+
 		// patient
 		org.hl7.fhir.r4.model.Patient patient = transformToFhirPatient(patientInfo.getPatientPK());
 		this.addToOperations(fhirOperations, tempIdGenerator, patient);
@@ -428,10 +434,23 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 		}
 	}
 
+	private void updateReferringServiceRequestWithSampleInfo(Sample sample ,ServiceRequest serviceRequest) {
+			serviceRequest.setRequisition(this.createIdentifier(fhirConfig.getOeFhirSystem() + "/samp_labNo",
+				sample.getAccessionNumber()));
+	}
+
 	private Optional<Task> getReferringTaskForSample(Sample sample) {
 		List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(sample.getReferringId());
 		if (eOrders.size() > 0 && ElectronicOrderType.FHIR.equals(eOrders.get(0).getType())) {
 			return fhirPersistanceService.getTaskBasedOnServiceRequest(sample.getReferringId());
+		}
+		return Optional.empty();
+	}
+
+	private Optional<ServiceRequest> getReferringServiceRequestForSample(Sample sample) {
+		List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(sample.getReferringId());
+		if (eOrders.size() > 0 && ElectronicOrderType.FHIR.equals(eOrders.get(0).getType())) {
+			return fhirPersistanceService.getServiceRequestByReferingId(sample.getReferringId());
 		}
 		return Optional.empty();
 	}
