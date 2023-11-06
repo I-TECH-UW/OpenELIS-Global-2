@@ -413,4 +413,14 @@ public class TbSampleServiceImpl implements TbSampleService {
         }
         return null;
     }
+
+	@Override
+	public void getTBFormData(SampleTbEntryForm form) {
+		String labnoForSearch = form.getLabnoForSearch();
+		if(ObjectUtils.isNotEmpty(labnoForSearch)) {
+			Sample searchSample = sampleService.getSampleByAccessionNumber(labnoForSearch);
+			
+		}
+		
+	}
 }
