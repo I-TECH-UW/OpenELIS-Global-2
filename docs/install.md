@@ -43,7 +43,7 @@ This updates the system from the sources in the sources list. It updates what ne
 
 You can choose to install OpenELIS in an online mode for servers with fast internet connections, and offline, using less internet connectivity by providing a local copy of the images to be loaded. 
 
-### Online OpenELIS installation with Docker
+### Online OpenELIS installation with Docker-Compose
 This Option can be used where there is fast internet connectivity 
 
 #### Prerequisites for OpenELIS  Online Setup 
