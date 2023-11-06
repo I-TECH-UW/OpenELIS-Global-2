@@ -51,7 +51,7 @@ This Option can be used where there is fast internet connectivity
 
 2. Install [git](https://github.com/git-guides/install-git) 
 
-#### Steps to Run Offline Setup
+#### Steps to Run Online Setup
 1. Clone the [OpenELIS-Global docker](https://github.com/I-TECH-UW/openelis-docker) repository.   
 
         git clone https://github.com/I-TECH-UW/openelis-docker.git
