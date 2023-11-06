@@ -8,7 +8,7 @@ The software serves as both an effective laboratory software solution and busine
 ##A Global LIS
 Laboratory Information System for Global Health
 
-The global health version of [OpenELIS Global](http://openelisglobal.org) builds on the foundation provided by the original US Public Health Lab version of OpenELIS Global. Our challenge is to provide the flexibility demanded by different laboratories while maintaining a common code base. Some examples:
+The global health version of [OpenELIS Global](https://openelis-global.org) builds on the foundation provided by the original US Public Health Lab version of OpenELIS Global. Our challenge is to provide the flexibility demanded by different laboratories while maintaining a common code base. Some examples:
 
 Some laboratories refer to the number attached to the sample as an accession number while others refer to it as a laboratory number.
 
