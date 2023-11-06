@@ -80,9 +80,9 @@ This Option can be used where there is fast internet connectivity
 | OpenElis   |  https://localhost:8443/OpenELIS-Global/  | admin: adminADMIN! |
 
 ##### Running OpenELIS-Global2 from source code in docker
-   1. Clone the OpenELIS Global Docker repository.     
+   1. Clone the [OpenELIS Global](https://github.com/I-TECH-UW/OpenELIS-Global-2) repository.     
 
-           git clone https://github.com/I-TECH-UW/openelis-docker.git
+           git clone https://github.com/I-TECH-UW/OpenELIS-Global-2.git
 
    1. Build and Run the docker images from source code
 
