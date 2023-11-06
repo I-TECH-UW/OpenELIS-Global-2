@@ -39,7 +39,7 @@ This updates the system from the sources in the sources list. It updates what ne
 
         sudo apt install python3
 
-## Options for installing OpenELIS Global software
+### Options for installing OpenELIS Global software
 
 You can choose to install OpenELIS in an online mode for servers with fast internet connections, and offline, using less internet connectivity by providing a local copy of the images to be loaded. 
 
