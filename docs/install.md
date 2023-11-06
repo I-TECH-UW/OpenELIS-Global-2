@@ -122,7 +122,7 @@ and then
 
 **Be sure to remember your keystore password, you will need it later **
 	
-#### Create truststore with OpenELIS-Global's cert (or a CA that signs OE certs)
+##### Create truststore with OpenELIS-Global's cert (or a CA that signs OE certs)
 
 **Choose ONE of the two methods below to create your truststore**
 
@@ -193,7 +193,7 @@ Ensure all keystores have global read permission
     sudo chmod 644 /etc/openelis-global/keystore /etc/openelis-global/truststore /etc/openelis-global/client_facing_keystore
 	
 
-#### Steps to Run Offline Setup
+#### DownLoad and Unzip the Installation Files for Offline Setup
 
 1. Download OpenELIS Global2 Installer
 
@@ -222,7 +222,7 @@ Ensure all keystores have global read permission
 
         sudo python3 setup_OpenELIS.py
 
-#### Install OpenELIS Global ###
+#### Install OpenELIS Global2
 
 **OpenELIS Global uses the following file to set things like the consolidated server address, it is not overwritten by the installer. /var/lib/openelisglobal/secrets/extra.properties**
 
