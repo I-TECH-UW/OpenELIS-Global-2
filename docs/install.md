@@ -52,7 +52,7 @@ This Option can be used where there is fast internet connectivity
 2. Install [git](https://github.com/git-guides/install-git) 
 
 #### Steps to Run Offline Setup
-1. Clone the OpenELIS Global Docker repository.   
+1. Clone the [OpenELIS-Global docker](https://github.com/I-TECH-UW/openelis-docker) repository.   
 
         git clone https://github.com/I-TECH-UW/openelis-docker.git
 
@@ -80,11 +80,13 @@ This Option can be used where there is fast internet connectivity
 | OpenElis   |  https://localhost:8443/OpenELIS-Global/  | admin: adminADMIN! |
 
 ##### Running OpenELIS-Global2 from source code in docker
-   1. Clone the OpenELIS Global Docker repository.   
-        git clone https://github.com/I-TECH-UW/openelis-docker.git
+   1. Clone the OpenELIS Global Docker repository.     
+
+           git clone https://github.com/I-TECH-UW/openelis-docker.git
 
    1. Build and Run the docker images from source code
-    	docker-compose -f build.docker-compose.yml up -d --build
+
+    	  docker-compose -f build.docker-compose.yml up -d --build
   
 
 ### Downloaded Installer Offline Setup
