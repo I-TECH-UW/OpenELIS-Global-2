@@ -88,13 +88,8 @@ services:
     frontend.openelis.org:
         image: ghcr.io/i-tech-uw/openelis-global-2-frontend:2.8
         container_name: openelisglobal-front-end
-        # ports:
-        #   - 80:80
         networks:
         - default
-        volumes:
-        - './react-ui/src:/app/src'
-        - './react-ui/public:/app/public'
         environment:
         - CHOKIDAR_USEPOLLING=true
         tty: true
