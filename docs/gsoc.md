@@ -25,6 +25,7 @@ If you are new to **OpenELIS**, we recommend starting with our [Installation](ht
   |Improve OpenELIS Search Operations|Medium| Integrate a Search Engine library for OpenELIS Search |Java , Spring |`TBD`| `TBD`|
   |Improve Integration Tests Coverage | 
   |Improve E2E Tests Coverage|  
+
 ## Program Timeline
 | Date | Status | Activity |
 |------|--------|----------|
