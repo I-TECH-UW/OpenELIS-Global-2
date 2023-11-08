@@ -42,7 +42,7 @@ nav:
 
 # Theme
 theme: 
- name: "material"
+  name: "material"
   features:
     - navigation.expand
     #- navigation.tabs
