@@ -26,6 +26,8 @@ nav:
        - Database Profiles Mass facility and test catalog updates: dbprofiles.md
        - Entity Relation Diagram: entity relation diagram.md
     - Troubleshooting: troubleshooting.md
+    - Google Summer of Code (GSOC) : gsoc.md
+    - GSoC ‐ Guidelines for Students : gsocstudentguide.md
     - Website: http://openelis-global.org
 
 # Theme
