@@ -30,14 +30,14 @@ nav:
 # Theme
 theme:
   name: "material"
-  palette:
-    primary: "blue grey"
-    accent: "indigo"
-  language: "en"
-  font:
-    text: "Roboto"
-    code: "Roboto Mono"
-  features:
+  # palette:
+  #   primary: "blue grey"
+  #   accent: "indigo"
+  # language: "en"
+  # font:
+  #   text: "Roboto"
+  #   code: "Roboto Mono"
+  # features:
     # - navigation.expand
     - navigation.tabs
 
