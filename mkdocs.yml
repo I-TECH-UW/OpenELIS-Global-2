@@ -44,8 +44,7 @@ nav:
 theme: 
   name: "material"
   features:
-    - navigation.expand
-    #- navigation.tabs
+    - navigation.tabs
 
 markdown_extensions:
 
