@@ -45,12 +45,13 @@ theme:
   name: "material"
 
 markdown_extensions:
-
+  - admonition
+  - codehilite:
+      guess_lang: false
   # Python Markdown
   - toc:
       permalink: true
   - tables
-markdown_extensions:
-  - tables
+
   
 
