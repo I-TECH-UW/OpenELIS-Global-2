@@ -48,10 +48,9 @@ markdown_extensions:
   - admonition
   - codehilite:
       guess_lang: false
-  # Python Markdown
   - toc:
-      permalink: true
-  - tables
+      toc_depth : "3"
+  - footnotes
 
   
 
