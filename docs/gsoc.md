@@ -59,5 +59,6 @@ If you are new to **OpenELIS**, we recommend starting with our [Installation](in
 ### Mentor's guidelines
 * GSoC - Guidelines for Mentors
 
-!!! caution  Please Ensure to Follow the Students Guidelines
+!!! tip  
+    Please Ensure to Follow the Students Guidelines Above
 
