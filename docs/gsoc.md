@@ -23,8 +23,8 @@ If you are new to **OpenELIS**, we recommend starting with our [Installation](ht
   |--|--|--|--|--|--|
   |Improve Responsiveness for OpenELIS3| Medium |Making OE3 Resposnsive|React , Typescript , Javascript| `TBD`| Mutesasira Moses|
   |Improve OpenELIS Search Operations|Medium| Integrate a Search Engine library for OpenELIS Search |Java , Spring |`TBD`| `TBD`|
-  |Improve Integration Tests Coverage | 
-  |Improve E2E Tests Coverage|  
+  |Improve Integration Tests Coverage | Medium| Improve Integration Tests Coverage for the backend Service layer |Java , Spring ,J-Unit|`TBD`| `TBD`|
+  |Improve E2E Tests Coverage|  Medium| Improve end to end ui Tests Coverage for the new React Frontend |react , cypress |`TBD`| `TBD`|
 
 ## Program Timeline
 | Date | Status | Activity |
