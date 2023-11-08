@@ -27,7 +27,19 @@ nav:
        - Entity Relation Diagram: entity relation diagram.md
     - Troubleshooting: troubleshooting.md
     - Website: http://openelis-global.org
-theme: material
+# Theme
+theme:
+  name: "material"
+  palette:
+    primary: "blue grey"
+    accent: "indigo"
+  language: "en"
+  font:
+    text: "Roboto"
+    code: "Roboto Mono"
+  features:
+    # - navigation.expand
+    - navigation.tabs
 
 markdown_extensions:
 
