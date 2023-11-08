@@ -54,7 +54,7 @@ If you are new to **OpenELIS**, we recommend starting with our [Installation](ht
 
 ## Guidelines
 ### Student's guidelines
-* [GSoC - Guidelines for Students](https://github.com/I-TECH-UW/OpenELIS-Global-2/wiki/GSoC-%E2%80%90-Guidelines-for-Students)
+* [GSoC - Guidelines for Students](gsocstudentguide.md)
 ### Mentor's guidelines
 * GSoC - Guidelines for Mentors
 
