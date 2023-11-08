@@ -1,5 +1,8 @@
 Welcome! Are you interested in working on a Google Summer of Code project with *OpenELIS*? We' want you to be a successful GSoC developer in our community so we've put together a few guidelines to answer some of your initial questions and help you understand what is expected of students before submitting a proposal, after being accepted, and during the coding period.
 
+!!! caution  
+    Only Students who meet both Google's Contributor [Eligibility Requirements](GSoC Contributors) and also follow our Guidelines will be Selected
+
 |Page OutLine|
 |--|
 |[Before the Application](#before-the-application)|
@@ -19,7 +22,7 @@ Welcome! Are you interested in working on a Google Summer of Code project with *
 ## Proposal Template 
  1. Use this [GSOC Template](https://docs.google.com/document/d/1nPcu-UMaibHuASPU6sLnG18sf0ZRoh0fEjzeGZvHcYQ/edit#heading=h.3tq62aycf5sk) to create your Application and Proposal write up.  
  1. Complete all the mandatory Fields for your application to be accepted
- 1. Submit your application through Google’s website. See Google's GSOC Get Started page here: https://summerofcode.withgoogle.com/get-started/
+ 1. Submit your application through Google’s website. See Google's GSOC Get Started page [here](https://summerofcode.withgoogle.com/get-started/)
 
 ## After being accepted
 1. Set up a blog for your Project on OpenELIS Talk where you will be posting Updates weekly
