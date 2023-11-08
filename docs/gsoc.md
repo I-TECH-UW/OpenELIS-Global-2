@@ -3,7 +3,7 @@
 
 [**OpenELIS**](https://openelis-global.org/) is hoping to be a mentoring organization for [Google Summer of Code](https://summerofcode.withgoogle.com/) 2024 for the first Time.  We're extremely excited about the projects and mentorship opportunities available this year. Coding for **OpenELIS** is a great way to practice your coding skills and, at the same time help making a positive impact on the world through empowering labs with the best tools and support to deliver quality health care to clients.
 
-If you are new to **OpenELIS**, we recommend starting with our [Installation](https://docs.openelis-global.org/en/latest/install/) and [Developer](https://docs.openelis-global.org/en/latest/dev_setup/) Instructions
+If you are new to **OpenELIS**, we recommend starting with our [Installation](install.md) and [Developer](dev_setup.md) Instructions
 
 ||Page Outline |
 |--|--|
