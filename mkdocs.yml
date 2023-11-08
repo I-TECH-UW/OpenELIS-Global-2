@@ -39,7 +39,7 @@ theme:
   #   code: "Roboto Mono"
   # features:
     # - navigation.expand
-    - navigation.tabs
+    #- navigation.tabs
 
 markdown_extensions:
 
