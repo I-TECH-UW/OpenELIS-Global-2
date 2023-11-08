@@ -75,7 +75,7 @@ export function SearchResultForm(props) {
     }
   };
 
-  const handleAdvancedSearch = () => { };
+  const handleAdvancedSearch = () => {};
 
   const getSelectedPatient = (patient) => {
     setPatient(patient);
@@ -189,210 +189,229 @@ export function SearchResultForm(props) {
           <Form
             onSubmit={handleSubmit}
             onChange={handleChange}
-          //onBlur={handleBlur}
+            //onBlur={handleBlur}
           >
             <Stack gap={2}>
-              <FormattedMessage id="label.button.search" />
+              <Grid>
+                <Column lg={16}>
+                  <h4>
+                    <FormattedMessage id="label.button.search" />
+                  </h4>
+                </Column>
 
-              <Column lg={6}>
                 {searchBy.type === "unit" && (
-                  <Field name="unitType">
-                    {({ field }) => (
-                      <Select
-                        className="inputSelect2"
-                        labelText={
-                          <FormattedMessage id="search.label.testunit" />
-                        }
-                        name={field.name}
-                        id={field.name}
-                      >
-                        <SelectItem text="" value="" />
-                        {testSections.map((test, index) => {
-                          return (
-                            <SelectItem
-                              key={index}
-                              text={test.value}
-                              value={test.id}
-                            />
-                          );
-                        })}
-                      </Select>
-                    )}
-                  </Field>
+                  <>
+                    <Column lg={6}>
+                      <Field name="unitType">
+                        {({ field }) => (
+                          <Select
+                            className="inputSelect2"
+                            labelText={
+                              <FormattedMessage id="search.label.testunit" />
+                            }
+                            name={field.name}
+                            id={field.name}
+                          >
+                            <SelectItem text="" value="" />
+                            {testSections.map((test, index) => {
+                              return (
+                                <SelectItem
+                                  key={index}
+                                  text={test.value}
+                                  value={test.id}
+                                />
+                              );
+                            })}
+                          </Select>
+                        )}
+                      </Field>
+                    </Column>
+                    <Column lg={10} />
+                  </>
                 )}
-                </Column>
-              <Column lg={10} />
 
-                <Column lg={6}>
                 {searchBy.type === "order" && (
-                  <Field name="accessionNumber">
-                    {({ field }) => (
-                      <TextInput
-                        placeholder="Enter Accession No."
-                        className="searchLabNumber inputText2"
-                        name={field.name}
-                        id={field.name}
-                        labelText={
-                          <FormattedMessage id="search.label.accession" />
-                        }
-                      />
-                    )}
-                  </Field>
+                  <>
+                    <Column lg={6}>
+                      <Field name="accessionNumber">
+                        {({ field }) => (
+                          <TextInput
+                            placeholder="Enter Accession No."
+                            className="searchLabNumber inputText2"
+                            name={field.name}
+                            id={field.name}
+                            labelText={
+                              <FormattedMessage id="search.label.accession" />
+                            }
+                          />
+                        )}
+                      </Field>
+                    </Column>
+                    <Column lg={10} />
+                  </>
                 )}
-                </Column>
-              <Column lg={10} />
-                <div className="inlineDiv">
+
                 {searchBy.type === "range" && (
-                  <div className="inlineDiv">
-                    <Field name="startLabNo">
-                      {({ field }) => (
-                        <TextInput
-                          placeholder={"Enter LabNo"}
-                          className="searchLabNumber inputText"
-                          name={field.name}
-                          id={field.name}
-                          labelText={
-                            <FormattedMessage id="search.label.fromaccession" />
-                          }
-                        />
-                      )}
-                    </Field>
-
-                    <Field name="endLabNo">
-                      {({ field }) => (
-                        <TextInput
-                          placeholder={"Enter LabNo"}
-                          className="searchLabNumber inputText"
-                          name={field.name}
-                          id={field.name}
-                          labelText={
-                            <FormattedMessage id="search.label.toaccession" />
-                          }
-                        />
-                      )}
-                    </Field>
-                  </div>
+                  <>
+                    <Column lg={6}>
+                      <Field name="startLabNo">
+                        {({ field }) => (
+                          <TextInput
+                            placeholder={"Enter LabNo"}
+                            className="searchLabNumber inputText"
+                            name={field.name}
+                            id={field.name}
+                            labelText={
+                              <FormattedMessage id="search.label.fromaccession" />
+                            }
+                          />
+                        )}
+                      </Field>
+                    </Column>
+                    <Column lg={6}>
+                      <Field name="endLabNo">
+                        {({ field }) => (
+                          <TextInput
+                            placeholder={"Enter LabNo"}
+                            className="searchLabNumber inputText"
+                            name={field.name}
+                            id={field.name}
+                            labelText={
+                              <FormattedMessage id="search.label.toaccession" />
+                            }
+                          />
+                        )}
+                      </Field>
+                    </Column>
+                    <Column lg={4} />
+                  </>
                 )}
-              </div>
 
-              {searchBy.type === "date" && (
-                <div>
-                  <div className="inlineDiv">
-                    <Field name="collectionDate">
-                      {({ field }) => (
-                        <TextInput
-                          placeholder={"Collection Date(dd/mm/yyyy)"}
-                          className="collectionDate inputText"
-                          name={field.name}
-                          id={field.name}
-                          labelText={
-                            <FormattedMessage id="search.label.collectiondate" />
-                          }
-                        />
-                      )}
-                    </Field>
-                    <Field name="recievedDate">
-                      {({ field }) => (
-                        <TextInput
-                          placeholder={"Received Date(dd/mm/yyyy)"}
-                          className="receivedDate inputText"
-                          name={field.name}
-                          id={field.name}
-                          labelText={
-                            <FormattedMessage id="search.label.recieveddate" />
-                          }
-                        />
-                      )}
-                    </Field>
-                  </div>
-                  <div className="inlineDiv">
-                    <Field name="testName">
-                      {({ field }) => (
-                        <Select
-                          className="analysisStatus inputText"
-                          labelText={
-                            <FormattedMessage id="search.label.test" />
-                          }
-                          name={field.name}
-                          id={field.name}
-                        >
-                          <SelectItem text="" value="" />
-                          {tests.map((test, index) => {
-                            return (
-                              <SelectItem
-                                key={index}
-                                text={test.value}
-                                value={test.id}
-                              />
-                            );
-                          })}
-                        </Select>
-                      )}
-                    </Field>
-                    <Field name="analysisStatus">
-                      {({ field }) => (
-                        <Select
-                          className="analysisStatus inputText"
-                          labelText={
-                            <FormattedMessage id="search.label.analysis" />
-                          }
-                          name={field.name}
-                          id={field.name}
-                        >
-                          <SelectItem text="" value="" />
-                          {analysisStatusTypes.map((test, index) => {
-                            return (
-                              <SelectItem
-                                key={index}
-                                text={test.value}
-                                value={test.id}
-                              />
-                            );
-                          })}
-                        </Select>
-                      )}
-                    </Field>
+                {searchBy.type === "date" && (
+                  <>
+                    <Column lg={3}>
+                      <Field name="collectionDate">
+                        {({ field }) => (
+                          <TextInput
+                            placeholder={"Collection Date(dd/mm/yyyy)"}
+                            className="collectionDate inputText"
+                            name={field.name}
+                            id={field.name}
+                            labelText={
+                              <FormattedMessage id="search.label.collectiondate" />
+                            }
+                          />
+                        )}
+                      </Field>
+                    </Column>
+                    <Column lg={3}>
+                      <Field name="recievedDate">
+                        {({ field }) => (
+                          <TextInput
+                            placeholder={"Received Date(dd/mm/yyyy)"}
+                            className="receivedDate inputText"
+                            name={field.name}
+                            id={field.name}
+                            labelText={
+                              <FormattedMessage id="search.label.recieveddate" />
+                            }
+                          />
+                        )}
+                      </Field>
+                    </Column>
+                    <Column lg={3}>
+                      <Field name="testName">
+                        {({ field }) => (
+                          <Select
+                            className="analysisStatus inputText"
+                            labelText={
+                              <FormattedMessage id="search.label.test" />
+                            }
+                            name={field.name}
+                            id={field.name}
+                          >
+                            <SelectItem text="" value="" />
+                            {tests.map((test, index) => {
+                              return (
+                                <SelectItem
+                                  key={index}
+                                  text={test.value}
+                                  value={test.id}
+                                />
+                              );
+                            })}
+                          </Select>
+                        )}
+                      </Field>
+                    </Column>
+                    <Column lg={3}>
+                      <Field name="analysisStatus">
+                        {({ field }) => (
+                          <Select
+                            className="analysisStatus inputText"
+                            labelText={
+                              <FormattedMessage id="search.label.analysis" />
+                            }
+                            name={field.name}
+                            id={field.name}
+                          >
+                            <SelectItem text="" value="" />
+                            {analysisStatusTypes.map((test, index) => {
+                              return (
+                                <SelectItem
+                                  key={index}
+                                  text={test.value}
+                                  value={test.id}
+                                />
+                              );
+                            })}
+                          </Select>
+                        )}
+                      </Field>
+                    </Column>
+                    <Column lg={3}>
+                      <Field name="sampleStatusType">
+                        {({ field }) => (
+                          <Select
+                            className="sampleStatus inputText"
+                            labelText={
+                              <FormattedMessage id="search.label.sample" />
+                            }
+                            name={field.name}
+                            id={field.name}
+                          >
+                            <SelectItem text="" value="" />
+                            {sampleStatusTypes.map((test, index) => {
+                              return (
+                                <SelectItem
+                                  key={index}
+                                  text={test.value}
+                                  value={test.id}
+                                />
+                              );
+                            })}
+                          </Select>
+                        )}
+                      </Field>
+                    </Column>
+                    <Column lg={1} />
+                  </>
+                )}
 
-                    <Field name="sampleStatusType">
-                      {({ field }) => (
-                        <Select
-                          className="sampleStatus inputText"
-                          labelText={
-                            <FormattedMessage id="search.label.sample" />
-                          }
-                          name={field.name}
-                          id={field.name}
-                        >
-                          <SelectItem text="" value="" />
-                          {sampleStatusTypes.map((test, index) => {
-                            return (
-                              <SelectItem
-                                key={index}
-                                text={test.value}
-                                value={test.id}
-                              />
-                            );
-                          })}
-                        </Select>
-                      )}
-                    </Field>
-                  </div>
-                </div>
-              )}
-
-              <Column lg={6}>
                 {searchBy.type !== "patient" && (
-                  <div className="searchActionButtons">
-                    <Button
-                      type="submit"
-                      id="submit"
-                      className="searchResultsBtn"
-                    >
-                      <FormattedMessage id="label.button.search" />
-                    </Button>
-                  </div>
+                  <Column lg={16}>
+                    <div className="searchActionButtons">
+                      <Button
+                        type="submit"
+                        id="submit"
+                        className="searchResultsBtn"
+                      >
+                        <FormattedMessage id="label.button.search" />
+                      </Button>
+                    </div>
+                  </Column>
                 )}
-              </Column>
+              </Grid>
             </Stack>
           </Form>
         )}
@@ -678,7 +697,6 @@ export function SearchResults(props) {
             );
 
           case "N":
-
             return (
               <TextInput
                 id={"currentResultValue" + row.id}
@@ -959,7 +977,7 @@ export function SearchResults(props) {
           }) => (
             <Form
               onChange={handleChange}
-            //onBlur={handleBlur}
+              //onBlur={handleBlur}
             >
               <DataTable
                 data={props.results.testResult}
