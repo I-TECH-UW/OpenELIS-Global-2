@@ -27,7 +27,7 @@ nav:
        - Entity Relation Diagram: entity relation diagram.md
     - Troubleshooting: troubleshooting.md
     - Website: http://openelis-global.org
-theme: readthedocs
+theme: material
 
 markdown_extensions:
 
