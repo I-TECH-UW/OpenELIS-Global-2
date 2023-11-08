@@ -43,7 +43,7 @@ nav:
 # Theme
 theme: 
   name: "material"
-  logo: img/oe_full_logo.png
+  logo: img/openelis_logo.png
 
 markdown_extensions:
   - admonition
