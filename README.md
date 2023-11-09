@@ -23,12 +23,12 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 
         git submodule update --init --recursive
         cd OpenELIS-Global-2/dataexport
-        mvn clean install 
+        mvn clean install -DskipTests
 
 3.   Build the War file
 
             cd OpenELIS-Global-2
-            mvn clean install 
+            mvn clean install -DskipTests
 3. Mount the locally Compiled war file as a volume to the container . 
  ie Add the line below to the volumes for the `oe.openelis.org` service in the [docker-compose.yml](./docker-compose.yml) file
 
