@@ -3,7 +3,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Publish 3.X FrontEnd Docker image
+name: Publish 3.X Dev FrontEnd Docker image
 
 on:
   push:

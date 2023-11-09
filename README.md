@@ -23,12 +23,12 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 
         git submodule update --init --recursive
         cd OpenELIS-Global-2/dataexport
-        mvn clean install 
+        mvn clean install -DskipTests
 
 3.   Build the War file
 
             cd OpenELIS-Global-2
-            mvn clean install 
+            mvn clean install -DskipTests
 
 4. Start the containers to mount the locally compiled artifacts
 
