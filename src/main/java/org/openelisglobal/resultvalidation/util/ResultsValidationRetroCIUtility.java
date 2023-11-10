@@ -730,6 +730,9 @@ public class ResultsValidationRetroCIUtility {
         } else if (testName.equals("Integral")) {
             eItem.setIntegralResult(result);
             eItem.setIntegralAnalysisId(analysisId);
+        }else if (testName.equals("Genscreen")) {
+            eItem.setGenscreenResult(result);
+            eItem.setGenscreenAnalysisId(analysisId);
         } else if (testName.equals("Vironostika")) {
             eItem.setVironostikaResult(result);
             eItem.setVironostikaAnalysisId(analysisId);

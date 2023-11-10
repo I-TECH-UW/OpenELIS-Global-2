@@ -29,6 +29,7 @@ public class ProjectData implements Serializable {
     private boolean serologyHIVTest;
     private boolean murexTest;
     private boolean integralTest;
+    private boolean genscreenTest;
     private boolean genieIITest;
     private boolean vironostikaTest;
     private boolean genieII100Test;
@@ -705,5 +706,13 @@ public class ProjectData implements Serializable {
 
 	public void setAsanteTest(boolean asanteTest) {
 		this.asanteTest = asanteTest;
+	}
+
+	public boolean getGenscreenTest() {
+		return genscreenTest;
+	}
+
+	public void setGenscreenTest(boolean genscreenTest) {
+		this.genscreenTest = genscreenTest;
 	}
 }

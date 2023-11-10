@@ -97,6 +97,10 @@ public class AnalysisItem implements Serializable{
     private String integralResult;
 
     private String integralAnalysisId;
+    
+    private String genscreenResult;
+    
+    private String genscreenAnalysisId;
 
     private String murexResult;
 
@@ -747,4 +751,20 @@ public class AnalysisItem implements Serializable{
     public void setHigherCritical(double higherCritical) {
         this.higherCritical = higherCritical;
     }
+
+	public String getGenscreenResult() {
+		return genscreenResult;
+	}
+
+	public void setGenscreenResult(String genscreenResult) {
+		this.genscreenResult = genscreenResult;
+	}
+
+	public String getGenscreenAnalysisId() {
+		return genscreenAnalysisId;
+	}
+
+	public void setGenscreenAnalysisId(String genscreenAnalysisId) {
+		this.genscreenAnalysisId = genscreenAnalysisId;
+	}
 }

@@ -42,7 +42,8 @@ public class RTNFormMapper extends BaseProjectFormMapper implements IProjectForm
         if (projectData.getSerologyHIVTest()) {
             CollectionUtils.addIgnoreNull(testList, createTest("Vironostika", true));
             CollectionUtils.addIgnoreNull(testList, createTest("Murex", true));
-            //CollectionUtils.addIgnoreNull(testList, createTest("Integral", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Genscreen", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Innolia", true));
         }
 
         return testList;

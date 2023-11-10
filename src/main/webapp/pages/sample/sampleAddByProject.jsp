@@ -1955,11 +1955,11 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 			</tr>
 			<tr>
 				<td></td>
-				<td><spring:message code="sample.entry.project.integralTest" /></td>
-				<td><form:checkbox path="ProjectData.integralTest"
-						id="spe.integralTest"
-						onchange="spe.checkSampleItem($('spe.dryTubeTaken'), $('spe.integralTest'))" />
-						<div id="spe.integralTestMessage" class="blank"></div>
+				<td><spring:message code="sample.entry.project.genscreenTest" /></td>
+				<td><form:checkbox path="ProjectData.genscreenTest"
+						id="spe.genscreenTest"
+						onchange="spe.checkSampleItem($('spe.dryTubeTaken'), $('spe.genscreenTest'))" />
+						<div id="spe.genscreenTestMessage" class="blank"></div>
 				</td>
 			</tr>
 			<tr>

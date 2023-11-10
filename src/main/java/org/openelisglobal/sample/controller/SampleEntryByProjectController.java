@@ -117,7 +117,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 			"ProjectData.email", "observations.indFirstTestDate", "observations.indFirstTestName",
 			"observations.indFirstTestResult", "observations.indSecondTestDate", "observations.indSecondTestName",
 			"observations.indSecondTestResult", "observations.indSiteFinalResult", "observations.reasonForRequest",
-			"ProjectData.murexTest", "ProjectData.integralTest", "ProjectData.vironostikaTest",
+			"ProjectData.murexTest", "ProjectData.integralTest","ProjectData.GenscreenTest", "ProjectData.vironostikaTest",
 			"ProjectData.innoliaTest", "ProjectData.transaminaseALTLTest", "ProjectData.transaminaseASTLTest",
 			"ProjectData.gbTest", "ProjectData.lymphTest", "ProjectData.monoTest", "ProjectData.eoTest",
 			"ProjectData.basoTest", "ProjectData.grTest", "ProjectData.hbTest", "ProjectData.hctTest",
@@ -475,6 +475,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 					}
 				}
 			}
+			
 			if (parameter.getType().getCodingFirstRep().getCode().equals("5632AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")) {// Breastfeeding
 				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
 					if (parameter.getValue() instanceof StringType) {
@@ -489,8 +490,17 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 					}
 				}
 			}
+			//CI0050006AAAAAAAAAAAAAAAAAAAAAAAAAAA Heure de prélèvement
+			if (parameter.getType().getCodingFirstRep().getCode().equals("CI0050006AAAAAAAAAAAAAAAAAAAAAAAAAAA")) {// Heure de prélèvement
+				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
+					if (parameter.getValue() instanceof DateTimeType) {
+						DateTimeType dateValue = (DateTimeType) parameter.getValue();
+						form.setInterviewTime(DateUtil.formatTimeAsText(dateValue.getValue()));
+					}
+				}
+			}
 		}
-		if (ObjectUtils.isNotEmpty(serviceRequest)) {
+		if (ObjectUtils.isNotEmpty(serviceRequest)) { //date de prélèvement
 			if (ObjectUtils.isNotEmpty(serviceRequest.getOccurrencePeriod())) {
 				Date startDate = serviceRequest.getOccurrencePeriod().getStart();
 				form.setInterviewDate(DateUtil.formatDateAsText(startDate));

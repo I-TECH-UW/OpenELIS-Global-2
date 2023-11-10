@@ -491,6 +491,10 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
             analysis = getAnalysisFromId(analysisItem.getIntegralAnalysisId());
             analysisList.add(analysis);
         }
+        if (!isBlankOrNull(analysisItem.getGenscreenResult())) {
+        	analysis = getAnalysisFromId(analysisItem.getGenscreenAnalysisId());
+        	analysisList.add(analysis);
+        }
         if (!isBlankOrNull(analysisItem.getVironostikaResult())) {
             analysis = getAnalysisFromId(analysisItem.getVironostikaAnalysisId());
             analysisList.add(analysis);

@@ -147,6 +147,8 @@ public abstract class PatientIndeterminateReport extends RetroCIPatientReport {
     private void setIndeterminateData(IndeterminateReportData data, String testName, String resultValue) {
         if (testName.equals("Integral")) {
             data.setIntegral(resultValue);
+        } else if (testName.equals("Genscreen")) {
+            data.setGenscreen(resultValue);
         } else if (testName.equals("Murex")) {
             data.setMurex(resultValue);
         } else if (testName.equals("Vironostika")) {
