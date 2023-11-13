@@ -8,13 +8,13 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 [![Publish Docker Image Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish.yml)
 
 ### Running OpenELIS in Docker
-#### Running with published docker images
+#### Running with docker compose
     docker-compose up -d
 
 #### Building the docker images directly from source code
     docker-compose -f build.docker-compose.yml up -d --build
 
-#### Running published docker images With locally compiled Artifacts (ie the War file and local frontend Source files)
+#### Running docker containers With locally compiled Artifacts (ie the War file and local frontend Source files)
 1. Clone the Repository
 
          git clone https://github.com/I-TECH-UW/OpenELIS-Global-2.git -b 2.8 
