@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import { FormattedMessage, injectIntl,useIntl } from "react-intl";
+import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../Style.css";
 import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
 import { nationalityList } from "../data/countries";
-import format from 'date-fns/format'
+import format from "date-fns/format";
 
 import {
   Heading,
@@ -40,21 +40,23 @@ function CreatePatientForm(props) {
   const [maritalStatuses, setMaritalStatuses] = useState([]);
   const [formAction, setFormAction] = useState("ADD");
   const componentMounted = useRef(false);
-  const [dateOfBirthFormatter,setDateOfBirthFormatter] = useState({
-    "years": "", "months": "", "days": ""
-  })
+  const [dateOfBirthFormatter, setDateOfBirthFormatter] = useState({
+    years: "",
+    months: "",
+    days: "",
+  });
 
   const handleDatePickerChange = (values, ...e) => {
     var patient = values;
     patient.birthDateForDisplay = e[1];
     setPatientDetails(patient);
     if (patient.birthDateForDisplay !== "") {
-      getYearsMonthsDaysFromDOB(patient.birthDateForDisplay)
+      getYearsMonthsDaysFromDOB(patient.birthDateForDisplay);
     }
   };
 
   function getYearsMonthsDaysFromDOB(date) {
-    const selectedDate = date.split('/');
+    const selectedDate = date.split("/");
     let today = new Date();
 
     let year = today.getFullYear();
@@ -75,11 +77,16 @@ function CreatePatientForm(props) {
       years = years - 1;
       months = months + 12;
     }
-    days = Math.floor((today.getTime() - (new Date(yy + years, mm + months - 1, dd)).getTime()) / (24 * 60 * 60 * 1000));
+    days = Math.floor(
+      (today.getTime() - new Date(yy + years, mm + months - 1, dd).getTime()) /
+        (24 * 60 * 60 * 1000)
+    );
 
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
-      years: years, months: months, days: days
+      years: years,
+      months: months,
+      days: days,
     });
   }
 
@@ -87,37 +94,39 @@ function CreatePatientForm(props) {
     const currentDate = new Date();
     const pastDate = new Date();
 
-    pastDate.setFullYear(currentDate.getFullYear() - dateOfBirthFormatter.years);
+    pastDate.setFullYear(
+      currentDate.getFullYear() - dateOfBirthFormatter.years
+    );
     pastDate.setMonth(currentDate.getMonth() - dateOfBirthFormatter.months);
     pastDate.setDate(currentDate.getDate() - dateOfBirthFormatter.days);
-    const dob = format(new Date(pastDate),'dd/MM/yyyy');
+    const dob = format(new Date(pastDate), "dd/MM/yyyy");
     setPatientDetails((prevState) => ({
       ...prevState,
       birthDateForDisplay: dob,
     }));
-  }
+  };
 
-  function handleYearsChange(e){
+  function handleYearsChange(e) {
     let years = e.target.value;
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
-      years: years
+      years: years,
     });
   }
 
-  function handleMonthsChange(e){
+  function handleMonthsChange(e) {
     let months = e.target.value;
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
-      months: months
+      months: months,
     });
   }
 
-  function handleDaysChange(e){
+  function handleDaysChange(e) {
     let days = e.target.value;
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
-      days: days
+      days: days,
     });
   }
   const handleRegionSelection = (e, values) => {
@@ -127,7 +136,7 @@ function CreatePatientForm(props) {
     const { value } = e.target;
     getFromOpenElisServer(
       "/rest/health-districts-for-region?regionId=" + value,
-      fetchHeathDistricts,
+      fetchHeathDistricts
     );
   };
 
@@ -135,9 +144,9 @@ function CreatePatientForm(props) {
     setHealthDistricts(res);
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     getDOBByYearMonthsDays();
-  },[dateOfBirthFormatter])
+  }, [dateOfBirthFormatter]);
 
   useEffect(() => {
     if (props.selectedPatient.patientPK) {
@@ -145,7 +154,7 @@ function CreatePatientForm(props) {
         getFromOpenElisServer(
           "/rest/health-districts-for-region?regionId=" +
             props.selectedPatient.healthRegion,
-          fethchHealthDistrictsCallback,
+          fethchHealthDistrictsCallback
         );
       } else {
         //nextState.healthDistricts = [];
@@ -166,7 +175,9 @@ function CreatePatientForm(props) {
         props.orderFormValues.patientProperties.guid !== ""
       ) {
         setPatientDetails(props.orderFormValues.patientProperties);
-        getYearsMonthsDaysFromDOB(props.orderFormValues.patientProperties.birthDateForDisplay);
+        getYearsMonthsDaysFromDOB(
+          props.orderFormValues.patientProperties.birthDateForDisplay
+        );
       }
     }
   };
@@ -204,7 +215,7 @@ function CreatePatientForm(props) {
     if (numberValue !== "") {
       getFromOpenElisServer(
         `/rest/subjectNumberValidationProvider?fieldId=${fieldId}&numberType=${numberType}&subjectNumber=${numberValue}`,
-        accessionNumberValidationResponse,
+        accessionNumberValidationResponse
       );
     }
   };
@@ -230,7 +241,7 @@ function CreatePatientForm(props) {
     postToOpenElisServer(
       "/rest/patient-management",
       JSON.stringify(values),
-      handlePost,
+      handlePost
     );
   };
 
@@ -299,14 +310,16 @@ function CreatePatientForm(props) {
                   <TextInput
                     value={values.subjectNumber}
                     name={field.name}
-                    labelText={intl.FormattedMessage({id:"patient.subject.number"})}
+                    labelText={intl.formatMessage({
+                      id: "patient.subject.number",
+                    })}
                     id={field.name}
                     className="inputText"
                     onMouseOut={() => {
                       handleSubjectNoValidation(
                         "subjectNumber",
                         "subjectNumberID",
-                        values.subjectNumber,
+                        values.subjectNumber
                       );
                     }}
                   />
@@ -317,14 +330,16 @@ function CreatePatientForm(props) {
                   <TextInput
                     value={values.nationalId}
                     name={field.name}
-                    labelText={intl.FormattedMessage({id: "patient.natioanalid"})}
+                    labelText={intl.formatMessage({
+                      id: "patient.natioanalid",
+                    })}
                     id={field.name}
                     className="inputText"
                     onMouseOut={() => {
                       handleSubjectNoValidation(
                         "nationalId",
                         "nationalID",
-                        values.nationalId,
+                        values.nationalId
                       );
                     }}
                   />
@@ -341,7 +356,9 @@ function CreatePatientForm(props) {
                   <TextInput
                     value={values.lastName}
                     name={field.name}
-                    labelText={intl.FormattedMessage({id: "patient.last.name"})}
+                    labelText={intl.formatMessage({
+                      id: "patient.last.name",
+                    })}
                     id={field.name}
                     className="inputText"
                   />
@@ -352,7 +369,9 @@ function CreatePatientForm(props) {
                   <TextInput
                     value={values.firstName}
                     name={field.name}
-                    labelText={intl.FormattedMessage({id: "patient.first.name"})}
+                    labelText={intl.formatMessage({
+                      id: "patient.first.name",
+                    })}
                     id={field.name}
                     className="inputText"
                   />
@@ -361,77 +380,87 @@ function CreatePatientForm(props) {
             </div>
             <Accordion>
               <AccordionItem title="Emergency Contact Information">
-            <div className="inlineDiv">
-              <Field name="patientContact.person.lastName">
-                {({ field }) => (
-                  <TextInput
-                    value={
-                      values.patientContact?.person.lastName === undefined
-                        ? ""
-                        : values.patientContact?.person.lastName
-                    }
-                    name={field.name}
-                    labelText={intl.FormattedMessage({id: "patientcontact.person.lastname"})}
-                    id={field.name}
-                    className="inputText"
-                  />
-                )}
-              </Field>
-              <Field name="patientContact.person.firstName">
-                {({ field }) => (
-                  <TextInput
-                    value={
-                      values.patientContact?.person.firstName === undefined
-                        ? ""
-                        : values.patientContact?.person.firstName
-                    }
-                    name={field.name}
-                    labelText={intl.FormattedMessage({id:"patientcontact.person.firstname"})}
-                    id={field.name}
-                    className="inputText"
-                  />
-                )}
-              </Field>
-            </div>
-            <div className="inlineDiv">
-              <Field name="patientContact.person.email">
-                {({ field }) => (
-                  <TextInput
-                    value={
-                      values.patientContact?.person.email === undefined
-                        ? ""
-                        : values.patientContact?.person.email
-                    }
-                    name={field.name}
-                    labelText={intl.FormattedMessage({id: "patientcontact.person.email"})}
-                    id={field.name}
-                    className="inputText"
-                  />
-                )}
-              </Field>
-              <Field name="patientContact.person.primaryPhone">
-                {({ field }) => (
-                  <TextInput
-                    value={
-                      values.patientContact?.person.primaryPhone === undefined
-                        ? ""
-                        : values.patientContact?.person.primaryPhone
-                    }
-                    name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "patient.label.contactphone",
-                      defaultMessage: "Contact Phone: {PHONE_FORMAT}",
-                    }, { PHONE_FORMAT: configurationProperties.PHONE_FORMAT })}
-                    id={field.name}
-                    className="inputText"
-                  />
-                )}
-              </Field>
-              <div className="error">
-                <ErrorMessage name="patientContact.person.email"></ErrorMessage>
-              </div>
-              <div className="error"></div>
-            </div>
+                <div className="inlineDiv">
+                  <Field name="patientContact.person.lastName">
+                    {({ field }) => (
+                      <TextInput
+                        value={
+                          values.patientContact?.person.lastName === undefined
+                            ? ""
+                            : values.patientContact?.person.lastName
+                        }
+                        name={field.name}
+                        labelText={intl.formatMessage({
+                          id: "patientcontact.person.lastname",
+                        })}
+                        id={field.name}
+                        className="inputText"
+                      />
+                    )}
+                  </Field>
+                  <Field name="patientContact.person.firstName">
+                    {({ field }) => (
+                      <TextInput
+                        value={
+                          values.patientContact?.person.firstName === undefined
+                            ? ""
+                            : values.patientContact?.person.firstName
+                        }
+                        name={field.name}
+                        labelText={intl.formatMessage({
+                          id: "patientcontact.person.firstname",
+                        })}
+                        id={field.name}
+                        className="inputText"
+                      />
+                    )}
+                  </Field>
+                </div>
+                <div className="inlineDiv">
+                  <Field name="patientContact.person.email">
+                    {({ field }) => (
+                      <TextInput
+                        value={
+                          values.patientContact?.person.email === undefined
+                            ? ""
+                            : values.patientContact?.person.email
+                        }
+                        name={field.name}
+                        labelText={intl.formatMessage({
+                          id: "patientcontact.person.email",
+                        })}
+                        id={field.name}
+                        className="inputText"
+                      />
+                    )}
+                  </Field>
+                  <Field name="patientContact.person.primaryPhone">
+                    {({ field }) => (
+                      <TextInput
+                        value={
+                          values.patientContact?.person.primaryPhone ===
+                          undefined
+                            ? ""
+                            : values.patientContact?.person.primaryPhone
+                        }
+                        name={field.name}
+                        labelText={intl.formatMessage(
+                          {
+                            id: "patient.label.contactphone",
+                            defaultMessage: "Contact Phone: {PHONE_FORMAT}",
+                          },
+                          { PHONE_FORMAT: configurationProperties.PHONE_FORMAT }
+                        )}
+                        id={field.name}
+                        className="inputText"
+                      />
+                    )}
+                  </Field>
+                  <div className="error">
+                    <ErrorMessage name="patientContact.person.email"></ErrorMessage>
+                  </div>
+                  <div className="error"></div>
+                </div>
               </AccordionItem>
             </Accordion>
 
@@ -441,10 +470,13 @@ function CreatePatientForm(props) {
                   <TextInput
                     value={values.primaryPhone}
                     name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "patient.label.primaryphone",
-                      defaultMessage: "Phone: {PHONE_FORMAT}",
-                    }, { PHONE_FORMAT: configurationProperties.PHONE_FORMAT })}
+                    labelText={intl.formatMessage(
+                      {
+                        id: "patient.label.primaryphone",
+                        defaultMessage: "Phone: {PHONE_FORMAT}",
+                      },
+                      { PHONE_FORMAT: configurationProperties.PHONE_FORMAT }
+                    )}
                     id={field.name}
                     className="inputText"
                   />
@@ -452,16 +484,26 @@ function CreatePatientForm(props) {
               </Field>
               <Field name="gender">
                 {({ field }) => (
-                    <RadioButtonGroup
-                        valueSelected={values.gender}
-                        legendText={intl.FormattedMessage({id :"patient.gender"})}
-                        name={field.name}
-                        className="inputText"
-                        id="create_patient_gender"
-                    >
-                      <RadioButton id="radio-1" labelText={intl.FormattedMessage({id:"patient.male"})} value="M" />
-                      <RadioButton id="radio-2" labelText={intl.FormattedMessage({id:"patient.female"})} value="F" />
-                    </RadioButtonGroup>
+                  <RadioButtonGroup
+                    valueSelected={values.gender}
+                    legendText={intl.formatMessage({ id: "patient.gender" })}
+                    name={field.name}
+                    className="inputText"
+                    id="create_patient_gender"
+                  >
+                    <RadioButton
+                      id="radio-1"
+                      labelText={intl.formatMessage({ id: "patient.male" })}
+                      value="M"
+                    />
+                    <RadioButton
+                      id="radio-2"
+                      labelText={intl.formatMessage({
+                        id: "patient.female",
+                      })}
+                      value="F"
+                    />
+                  </RadioButtonGroup>
                 )}
               </Field>
             </div>
@@ -480,7 +522,7 @@ function CreatePatientForm(props) {
                     <DatePickerInput
                       id="date-picker-default-id"
                       placeholder="dd/mm/yyyy"
-                      labelText={intl.FormattedMessage({id: "patient.dob"})}
+                      labelText={intl.formatMessage({ id: "patient.dob" })}
                       type="text"
                       name={field.name}
                     />
@@ -488,32 +530,32 @@ function CreatePatientForm(props) {
                 )}
               </Field>
 
-                <TextInput
-                    value={dateOfBirthFormatter.years}
-                    name="years"
-                    labelText={intl.FormattedMessage({id: "patient.age.years"})}
-                    id="years"
-                    onChange={ handleYearsChange }
-                    className="inputText"
-                />
+              <TextInput
+                value={dateOfBirthFormatter.years}
+                name="years"
+                labelText={intl.formatMessage({ id: "patient.age.years" })}
+                id="years"
+                onChange={handleYearsChange}
+                className="inputText"
+              />
 
-                <TextInput
-                    value={dateOfBirthFormatter.months}
-                    name="months"
-                    labelText={intl.FormattedMessage({id: "patient.age.months"})}
-                    onChange={  handleMonthsChange }
-                    id="months"
-                    className="inputText"
-                />
+              <TextInput
+                value={dateOfBirthFormatter.months}
+                name="months"
+                labelText={intl.formatMessage({ id: "patient.age.months" })}
+                onChange={handleMonthsChange}
+                id="months"
+                className="inputText"
+              />
 
-                <TextInput
-                    value={dateOfBirthFormatter.days}
-                    name="days"
-                    onChange={ handleDaysChange}
-                    labelText={intl.FormattedMessage({id: "patient.age.days"})}
-                    id="days"
-                    className="inputText"
-                />
+              <TextInput
+                value={dateOfBirthFormatter.days}
+                name="days"
+                onChange={handleDaysChange}
+                labelText={intl.formatMessage({ id: "patient.age.days" })}
+                id="days"
+                className="inputText"
+              />
               <div className="error">
                 <ErrorMessage name="birthDateForDisplay"></ErrorMessage>
               </div>
@@ -526,13 +568,15 @@ function CreatePatientForm(props) {
                 <div className="inlineDiv">
                   <Field name="city">
                     {({ field }) => (
-                        <TextInput
-                            value={values.city}
-                            name={field.name}
-                            labelText={intl.FormattedMessage({id: "patient.address.town"})}
-                            id={field.name}
-                            className="inputText"
-                        />
+                      <TextInput
+                        value={values.city}
+                        name={field.name}
+                        labelText={intl.formatMessage({
+                          id: "patient.address.town",
+                        })}
+                        id={field.name}
+                        className="inputText"
+                      />
                     )}
                   </Field>
                   <Field name="streetAddress">
@@ -540,7 +584,9 @@ function CreatePatientForm(props) {
                       <TextInput
                         value={values.streetAddress}
                         name={field.name}
-                        labelText={intl.FormattedMessage({id: "patient.address.street"})}
+                        labelText={intl.formatMessage({
+                          id: "patient.address.street",
+                        })}
                         id={field.name}
                         className="inputText"
                       />
@@ -551,7 +597,9 @@ function CreatePatientForm(props) {
                       <TextInput
                         value={values.commune}
                         name={field.name}
-                        labelText={intl.FormattedMessage({id: "patient.address.camp"})}
+                        labelText={intl.formatMessage({
+                          id: "patient.address.camp",
+                        })}
                         id={field.name}
                         className="inputText"
                       />
@@ -565,7 +613,9 @@ function CreatePatientForm(props) {
                         id="health_region"
                         value={values.healthRegion}
                         name={field.name}
-                        labelText={intl.FormattedMessage({id : "patient.address.healthregion"})}
+                        labelText={intl.formatMessage({
+                          id: "patient.address.healthregion",
+                        })}
                         className="inputText"
                         onChange={(e) => handleRegionSelection(e, values)}
                       >
@@ -586,7 +636,9 @@ function CreatePatientForm(props) {
                         id="health_district"
                         value={values.healthDistrict}
                         name={field.name}
-                        labelText={intl.FormattedMessage({id: "patient.address.healthdistrict"})}
+                        labelText={intl.formatMessage({
+                          id: "patient.address.healthdistrict",
+                        })}
                         className="inputText"
                         onChange={() => {}}
                       >
@@ -609,7 +661,9 @@ function CreatePatientForm(props) {
                         id="education"
                         value={values.education}
                         name={field.name}
-                        labelText={intl.FormattedMessage({id: "pateint.eduction"})}
+                        labelText={intl.formatMessage({
+                          id: "pateint.eduction",
+                        })}
                         className="inputText"
                         onChange={() => {}}
                       >
@@ -630,7 +684,9 @@ function CreatePatientForm(props) {
                         id="maritialStatus"
                         value={values.maritialStatus}
                         name={field.name}
-                        labelText={intl.FormattedMessage({id: "patient.maritalstatus"})}
+                        labelText={intl.formatMessage({
+                          id: "patient.maritalstatus",
+                        })}
                         className="inputText"
                         onChange={() => {}}
                       >
@@ -653,7 +709,9 @@ function CreatePatientForm(props) {
                         id="nationality"
                         value={values.nationality}
                         name={field.name}
-                        labelText={intl.FormattedMessage({id: "patient.nationality"})}
+                        labelText={intl.formatMessage({
+                          id: "patient.nationality",
+                        })}
                         className="inputText"
                         onChange={() => {}}
                       >
@@ -673,7 +731,9 @@ function CreatePatientForm(props) {
                       <TextInput
                         value={values.otherNationality}
                         name={field.name}
-                        labelText={intl.FormattedMessage({id: "patient.nationality.other"})}
+                        labelText={intl.formatMessage({
+                          id: "patient.nationality.other",
+                        })}
                         id={field.name}
                         className="inputText"
                       />
