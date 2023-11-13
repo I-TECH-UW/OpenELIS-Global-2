@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
+import { FormattedMessage, injectIntl } from "react-intl";
 import "../Style.css";
 import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
 import { nationalityList } from "../data/countries";
@@ -32,7 +33,7 @@ function CreatePatientForm(props) {
   const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
   const configurationProperties = useContext(ConfigurationContext);
-  const intl = useIntl();
+
   const [patientDetails, setPatientDetails] = useState(CreatePatientFormValues);
   const [healthRegions, setHealthRegions] = useState([]);
   const [healthDistricts, setHealthDistricts] = useState([]);
