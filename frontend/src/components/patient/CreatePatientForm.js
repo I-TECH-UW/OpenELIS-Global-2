@@ -41,6 +41,7 @@ function CreatePatientForm(props) {
   const [maritalStatuses, setMaritalStatuses] = useState([]);
   const [formAction, setFormAction] = useState("ADD");
   const componentMounted = useRef(false);
+  const intl = useIntl()
   const [dateOfBirthFormatter, setDateOfBirthFormatter] = useState({
     years: "",
     months: "",
