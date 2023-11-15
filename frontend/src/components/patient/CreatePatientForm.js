@@ -106,7 +106,8 @@ function CreatePatientForm(props) {
     }));
   };
 
-  function handleYearsChange(e) {
+  function handleYearsChange(e, values) {
+    setPatientDetails(values);
     let years = e.target.value;
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
@@ -114,7 +115,8 @@ function CreatePatientForm(props) {
     });
   }
 
-  function handleMonthsChange(e) {
+  function handleMonthsChange(e, values) {
+    setPatientDetails(values);
     let months = e.target.value;
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
@@ -122,7 +124,8 @@ function CreatePatientForm(props) {
     });
   }
 
-  function handleDaysChange(e) {
+  function handleDaysChange(e, values) {
+    setPatientDetails(values);
     let days = e.target.value;
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
@@ -499,7 +502,8 @@ function CreatePatientForm(props) {
                 name="years"
                 labelText="Age/Years"
                 id="years"
-                onChange={handleYearsChange}
+                type="number"
+                onChange={(e) => handleYearsChange(e, values)}
                 className="inputText"
               />
 
@@ -507,7 +511,8 @@ function CreatePatientForm(props) {
                 value={dateOfBirthFormatter.months}
                 name="months"
                 labelText="Months"
-                onChange={handleMonthsChange}
+                type="number"
+                onChange={(e) => handleMonthsChange(e, values)}
                 id="months"
                 className="inputText"
               />
@@ -515,7 +520,8 @@ function CreatePatientForm(props) {
               <TextInput
                 value={dateOfBirthFormatter.days}
                 name="days"
-                onChange={handleDaysChange}
+                type="number"
+                onChange={(e) => handleDaysChange(e, values)}
                 labelText="Days"
                 id="days"
                 className="inputText"
