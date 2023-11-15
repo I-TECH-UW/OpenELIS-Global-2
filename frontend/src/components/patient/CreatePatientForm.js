@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
-import { FormattedMessage, injectIntl } from "react-intl";
 import "../Style.css";
 import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
 import { nationalityList } from "../data/countries";
@@ -41,7 +40,7 @@ function CreatePatientForm(props) {
   const [maritalStatuses, setMaritalStatuses] = useState([]);
   const [formAction, setFormAction] = useState("ADD");
   const componentMounted = useRef(false);
-  const intl = useIntl()
+  const intl = useIntl();
   const [dateOfBirthFormatter, setDateOfBirthFormatter] = useState({
     years: "",
     months: "",
