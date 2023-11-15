@@ -205,7 +205,6 @@ export function SearchResultForm(props) {
                       <Field name="unitType">
                         {({ field }) => (
                           <Select
-                            className="inputSelect2"
                             labelText={
                               <FormattedMessage id="search.label.testunit" />
                             }
@@ -237,7 +236,6 @@ export function SearchResultForm(props) {
                         {({ field }) => (
                           <TextInput
                             placeholder="Enter Accession No."
-                            className="searchLabNumber inputText2"
                             name={field.name}
                             id={field.name}
                             labelText={
@@ -258,7 +256,6 @@ export function SearchResultForm(props) {
                         {({ field }) => (
                           <TextInput
                             placeholder={"Enter LabNo"}
-                            className="searchLabNumber inputText"
                             name={field.name}
                             id={field.name}
                             labelText={
@@ -273,7 +270,6 @@ export function SearchResultForm(props) {
                         {({ field }) => (
                           <TextInput
                             placeholder={"Enter LabNo"}
-                            className="searchLabNumber inputText"
                             name={field.name}
                             id={field.name}
                             labelText={
@@ -294,7 +290,6 @@ export function SearchResultForm(props) {
                         {({ field }) => (
                           <TextInput
                             placeholder={"Collection Date(dd/mm/yyyy)"}
-                            className="collectionDate inputText"
                             name={field.name}
                             id={field.name}
                             labelText={
@@ -309,7 +304,6 @@ export function SearchResultForm(props) {
                         {({ field }) => (
                           <TextInput
                             placeholder={"Received Date(dd/mm/yyyy)"}
-                            className="receivedDate inputText"
                             name={field.name}
                             id={field.name}
                             labelText={
@@ -323,7 +317,6 @@ export function SearchResultForm(props) {
                       <Field name="testName">
                         {({ field }) => (
                           <Select
-                            className="analysisStatus inputText"
                             labelText={
                               <FormattedMessage id="search.label.test" />
                             }
@@ -348,7 +341,6 @@ export function SearchResultForm(props) {
                       <Field name="analysisStatus">
                         {({ field }) => (
                           <Select
-                            className="analysisStatus inputText"
                             labelText={
                               <FormattedMessage id="search.label.analysis" />
                             }
@@ -373,7 +365,6 @@ export function SearchResultForm(props) {
                       <Field name="sampleStatusType">
                         {({ field }) => (
                           <Select
-                            className="sampleStatus inputText"
                             labelText={
                               <FormattedMessage id="search.label.sample" />
                             }
@@ -400,15 +391,9 @@ export function SearchResultForm(props) {
 
                 {searchBy.type !== "patient" && (
                   <Column lg={16}>
-                    <div className="searchActionButtons">
-                      <Button
-                        type="submit"
-                        id="submit"
-                        className="searchResultsBtn"
-                      >
+                    <Button style={{ marginTop: '16px' }} type="submit" id="submit">
                         <FormattedMessage id="label.button.search" />
-                      </Button>
-                    </div>
+                    </Button>
                   </Column>
                 )}
               </Grid>
@@ -990,7 +975,7 @@ export function SearchResults(props) {
                 onChange={handlePageChange}
                 page={page}
                 pageSize={pageSize}
-                pageSizes={[100]}
+                pageSizes={[100 ,50 ,10]}
                 totalItems={props.results.testResult?.length}
               ></Pagination>
 
