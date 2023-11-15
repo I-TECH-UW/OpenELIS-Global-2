@@ -254,6 +254,8 @@ public class DisplayListController extends BaseRestController{
     @ResponseBody
     private Map<String, String> getConfigurationProperties() {
         Map<String, String> configs = getOpenConfigurationProperties();
+		configs.put(Property.allowResultRejection.toString() ,ConfigurationProperties.getInstance().getPropertyValue(
+			    Property.allowResultRejection));
 		return configs;
 	}
 
