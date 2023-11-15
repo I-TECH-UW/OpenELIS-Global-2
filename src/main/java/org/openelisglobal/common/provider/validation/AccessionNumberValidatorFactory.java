@@ -18,13 +18,16 @@
 package org.openelisglobal.common.provider.validation;
 
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
+import org.openelisglobal.common.util.ConfigurationListener;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.springframework.stereotype.Component;
 
-public class AccessionNumberValidatorFactory {
+@Component
+public class AccessionNumberValidatorFactory implements ConfigurationListener {
 
     public enum AccessionFormat {
-        MAIN, GENERAL, SITE_YEAR, PROGRAM, YEAR_NUM_SIX, YEAR_NUM_DASH, YEAR_NUM_SEVEN, ALPHANUM_DASH, ALT_YEAR
+        MAIN, GENERAL, SITE_YEAR, PROGRAM, YEAR_NUM_SIX, YEAR_NUM_DASH, YEAR_NUM_SEVEN, ALPHANUM_DASH, ALT_YEAR, ALPHANUM
     }
 
     private AccessionFormat mainAccessionFormat;
@@ -39,27 +42,32 @@ public class AccessionNumberValidatorFactory {
             return mainGenerator;
         }
         synchronized (this) {
-            if (accessionFormat.equals("SITEYEARNUM")) {
+            if (accessionFormat.equals("ALPHANUM") || accessionFormat.equals(AccessionFormat.ALPHANUM.name())) {
+                if (!mainGeneratorSet) {
+                    mainGenerator = getAlphanumValidator();
+                    mainAccessionFormat = AccessionFormat.ALPHANUM;
+                }
+            } else if (accessionFormat.equals("SITEYEARNUM") || accessionFormat.equals(AccessionFormat.SITE_YEAR.name())) {
                 if (!mainGeneratorSet) {
                     mainGenerator = getSiteYearValidator();
                     mainAccessionFormat = AccessionFormat.SITE_YEAR;
                 }
-            } else if (accessionFormat.equals("PROGRAMNUM")) {
+            } else if (accessionFormat.equals("PROGRAMNUM") || accessionFormat.equals(AccessionFormat.PROGRAM.name())) {
                 if (!mainGeneratorSet) {
                     mainGenerator = getProgramValidator();
                     mainAccessionFormat = AccessionFormat.PROGRAM;
                 }
-            } else if (accessionFormat.equals("YEARNUM_SIX")) {
+            } else if (accessionFormat.equals("YEARNUM_SIX") || accessionFormat.equals(AccessionFormat.YEAR_NUM_SIX.name())) {
                 if (!mainGeneratorSet) {
                     mainGenerator = getYearNumValidator(6, null);
                     mainAccessionFormat = AccessionFormat.YEAR_NUM_SIX;
                 }
-            } else if (accessionFormat.equals("YEARNUM_DASH_SEVEN")) {
+            } else if (accessionFormat.equals("YEARNUM_DASH_SEVEN") || accessionFormat.equals(AccessionFormat.YEAR_NUM_DASH.name())) {
                 if (!mainGeneratorSet) {
                     mainGenerator = getYearNumValidator(7, '-');
                     mainAccessionFormat = AccessionFormat.YEAR_NUM_DASH;
                 }
-            } else if (accessionFormat.equals("YEARNUM_SEVEN")) {
+            } else if (accessionFormat.equals("YEARNUM_SEVEN") || accessionFormat.equals(AccessionFormat.YEAR_NUM_SEVEN.name())) {
                 if (!mainGeneratorSet) {
                     mainGenerator = getYearNumValidator(7, null);
                     mainAccessionFormat = AccessionFormat.YEAR_NUM_SEVEN;
@@ -86,6 +94,8 @@ public class AccessionNumberValidatorFactory {
             return getConfiguredMainGenerator();
         case GENERAL:
             return getAllActiveValidator();
+        case ALPHANUM:
+            return getAlphanumValidator();
         case SITE_YEAR:
             return getSiteYearValidator();
         case PROGRAM:
@@ -114,6 +124,8 @@ public class AccessionNumberValidatorFactory {
         switch (accessionFormat) {
         case MAIN:
             return getConfiguredMainGenerator();
+            case ALPHANUM:
+            return getAlphanumValidator();
         case SITE_YEAR:
             return getSiteYearValidator();
         case PROGRAM:
@@ -145,6 +157,10 @@ public class AccessionNumberValidatorFactory {
         return new YearNumAccessionValidator(length, separator);
     }
 
+    private IAccessionNumberGenerator getAlphanumValidator() {
+        return new Base27AccessionValidator();
+    }
+
     private IAccessionNumberGenerator getSiteYearValidator() {
         return new SiteYearAccessionValidator();
     }
@@ -159,6 +175,12 @@ public class AccessionNumberValidatorFactory {
 
     private IAccessionNumberGenerator getProgramValidator() {
         return new ProgramAccessionValidator();
+    }
+
+    @Override
+    public void refreshConfiguration() {
+        mainAccessionFormat = null;
+        mainGenerator = null;
     }
 
 }

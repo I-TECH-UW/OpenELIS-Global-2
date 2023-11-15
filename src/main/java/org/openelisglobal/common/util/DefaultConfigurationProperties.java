@@ -207,7 +207,10 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
 //        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_USERNAME, Property.INFO_HIGHWAY_USERNAME.getName(), "");
 //        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_PASSWORD, Property.INFO_HIGHWAY_PASSWORD.getName(), "");
 //        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ENABLED, Property.INFO_HIGHWAY_ENABLED.getName(), "");
-    }
+        setDBPropertyMappingAndDefault(Property.ALPHANUM_ACCESSION_PREFIX, Property.ALPHANUM_ACCESSION_PREFIX.getName(), "");
+        setDBPropertyMappingAndDefault(Property.USE_ALPHANUM_ACCESSION_PREFIX, Property.USE_ALPHANUM_ACCESSION_PREFIX.getName(), "false");
+
+        }
 
     private void setDBPropertyMappingAndDefault(Property property, String dbName, String defaultValue) {
         dbNamePropertiesMap.put(dbName, property);

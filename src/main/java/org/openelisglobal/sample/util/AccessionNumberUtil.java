@@ -42,7 +42,7 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class AccessionNumberUtil {
 
-    private static AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
+    private static AccessionNumberValidatorFactory accessionNumberValidatorFactory = SpringContext.getBean(AccessionNumberValidatorFactory.class);
 
     private static String blacklistCharacters = ".*['\"<>\\[\\](){};:/?!@#$%^&*+=].*";
 
@@ -77,6 +77,16 @@ public class AccessionNumberUtil {
             LogEvent.logError("AccessionNumberUtil", "getMainAccessionNumberValidator", e.toString());
         }
         return null;
+    }
+
+    public static IAccessionNumberGenerator getAccessionNumberGenerator(AccessionFormat format) {
+        try {
+            return accessionNumberValidatorFactory.getGenerator(format);
+        } catch (LIMSInvalidConfigurationException e) {
+            LogEvent.logError("AccessionNumberUtil", "getAccessionNumberGenerator", e.toString());
+        }
+        return null;
+
     }
 
     public static IAccessionNumberValidator getAccessionNumberValidator(AccessionFormat format) {

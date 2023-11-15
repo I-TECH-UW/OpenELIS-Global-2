@@ -31,8 +31,7 @@ import {
 } from "@carbon/react";
 
 function OEHeader(props) {
-  const { releaseNumber } = useContext(ConfigurationContext);
-  const { BANNER_TEXT } = useContext(ConfigurationContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
   const { userSessionDetails, logout } = useContext(UserSessionDetailsContext);
   const [switchCollapsed, setSwitchCollapsed] = useState(true);
   const userSwitchRef = createRef();
@@ -93,10 +92,10 @@ function OEHeader(props) {
                 <HeaderName href="/" prefix="">
                   <span id="header-logo">{logo()}</span>
                   <div className="banner">
-                    <h5>{BANNER_TEXT}</h5>
+                    <h5>{configurationProperties.BANNER_TEXT}</h5>
                     <p>
                       <FormattedMessage id="header.label.version" /> &nbsp;{" "}
-                      {releaseNumber}
+                      {configurationProperties.releaseNumber}
                     </p>
                   </div>
                 </HeaderName>
@@ -179,7 +178,7 @@ function OEHeader(props) {
                       <label className="cds--label">
                         {" "}
                         <FormattedMessage id="header.label.version" />:{" "}
-                        {releaseNumber}
+                        {configurationProperties.releaseNumber}
                       </label>
                     </li>
                   </ul>

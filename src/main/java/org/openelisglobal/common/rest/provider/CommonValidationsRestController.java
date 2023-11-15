@@ -9,8 +9,10 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator;
 import org.openelisglobal.common.provider.validation.ProgramAccessionValidator;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import org.openelisglobal.common.services.PhoneNumberService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -26,6 +28,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -66,26 +69,25 @@ public class CommonValidationsRestController {
 		if (ignoreYear || ignoreUsage) {
 			result = projectFormNameUsed ? new ProgramAccessionValidator().validFormat(accessionNumber, !ignoreYear)
 					: AccessionNumberUtil.getGeneralAccessionNumberValidator().validFormat(accessionNumber,
-					!ignoreYear);
+							!ignoreYear);
 			if (result == IAccessionNumberValidator.ValidationResults.SUCCESS && !ignoreUsage) {
-				result = AccessionNumberUtil.isUsed(accessionNumber) ?
-						IAccessionNumberValidator.ValidationResults.SAMPLE_FOUND
-						:
-						IAccessionNumberValidator.ValidationResults.SAMPLE_NOT_FOUND;
+				result = AccessionNumberUtil.isUsed(accessionNumber)
+						? IAccessionNumberValidator.ValidationResults.SAMPLE_FOUND
+						: IAccessionNumberValidator.ValidationResults.SAMPLE_NOT_FOUND;
 			}
 		} else {
 			// year matters and number must not be used
 			result = projectFormNameUsed
 					? new ProgramAccessionValidator().checkAccessionNumberValidity(accessionNumber, recordType,
-					isRequired, projectFormName)
+							isRequired, projectFormName)
 					: AccessionNumberUtil.getGeneralAccessionNumberValidator()
-					.checkAccessionNumberValidity(accessionNumber, recordType, isRequired, projectFormName);
+							.checkAccessionNumberValidity(accessionNumber, recordType, isRequired, projectFormName);
 		}
 
-		//       if( !Boolean.valueOf(ConfigurationProperties.getInstance()
-		//                .getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
-		//            result = ValidationResults.SUCCESS;
-		//        }
+		// if( !Boolean.valueOf(ConfigurationProperties.getInstance()
+		// .getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
+		// result = ValidationResults.SUCCESS;
+		// }
 
 		switch (result) {
 			case SUCCESS:
@@ -107,8 +109,10 @@ public class CommonValidationsRestController {
 							? AccessionNumberUtil.getAltAccessionNumberValidator().getInvalidMessage(result)
 							: AccessionNumberUtil.getMainAccessionNumberValidator().getInvalidMessage(result)
 							: altAccession
-							? AccessionNumberUtil.getAltAccessionNumberValidator().getInvalidFormatMessage(result)
-							: AccessionNumberUtil.getMainAccessionNumberValidator().getInvalidFormatMessage(result);
+									? AccessionNumberUtil.getAltAccessionNumberValidator()
+											.getInvalidFormatMessage(result)
+									: AccessionNumberUtil.getMainAccessionNumberValidator()
+											.getInvalidFormatMessage(result);
 				}
 				responseObject.setStatus(false);
 				responseObject.setBody(message);
@@ -119,15 +123,22 @@ public class CommonValidationsRestController {
 
 	@GetMapping(value = "SampleEntryGenerateScanProvider", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public ResponseObject accessionNumberGenerator(HttpServletRequest request) {
+	public ResponseObject accessionNumberGenerator(@RequestParam(required = false) String programCode, @RequestParam(defaultValue = "false") Boolean noIncrement,
+			@RequestParam(required = false) AccessionFormat format) {
 
-		String programCode = request.getParameter("programCode");
 		String nextNumber = null;
 		String error = null;
 		try {
 			if (GenericValidator.isBlankOrNull(programCode)) {
-				nextNumber = AccessionNumberUtil.getMainAccessionNumberGenerator().getNextAvailableAccessionNumber("",
-						true);
+				if (format == null) {
+					nextNumber = AccessionNumberUtil.getMainAccessionNumberGenerator().getNextAvailableAccessionNumber(
+							"",
+							!noIncrement);
+				} else {
+					nextNumber = AccessionNumberUtil.getAccessionNumberGenerator(format)
+							.getNextAvailableAccessionNumber("",
+									!noIncrement);
+				}
 			} else {
 				// check program code validity
 				List<Project> programCodes = projectService.getAllProjects();
@@ -140,7 +151,7 @@ public class CommonValidationsRestController {
 				}
 				if (found) {
 					nextNumber = AccessionNumberUtil.getProgramAccessionNumberGenerator()
-							.getNextAvailableAccessionNumber(programCode, true);
+							.getNextAvailableAccessionNumber(programCode, !noIncrement);
 					if (GenericValidator.isBlankOrNull(nextNumber)) {
 						error = MessageUtil.getMessage("error.accession.no.next");
 					}
@@ -148,8 +159,7 @@ public class CommonValidationsRestController {
 					error = MessageUtil.getMessage("errors.invalid", "program.code");
 				}
 			}
-		}
-		catch (IllegalArgumentException | IllegalStateException e) {
+		} catch (IllegalArgumentException | IllegalStateException e) {
 			error = MessageUtil.getMessage("error.accession.no.error");
 			LogEvent.logError(this.getClass().getSimpleName(), "processRequest", e.toString());
 		}
@@ -197,7 +207,7 @@ public class CommonValidationsRestController {
 		String nationalId = numberType.equals("nationalId") ? number : null;
 
 		responseObject.setStatus(false);
-		String	queryResponse = "";
+		String queryResponse = "";
 		// We just care about duplicates but blank values do not count as duplicates
 		if (!(GenericValidator.isBlankOrNull(STNumber) && GenericValidator.isBlankOrNull(subjectNumber)
 				&& GenericValidator.isBlankOrNull(nationalId))) {
@@ -209,13 +219,13 @@ public class CommonValidationsRestController {
 			boolean allowDuplicateNationalId = ConfigurationProperties.getInstance()
 					.isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_NATIONAL_IDS, "true");
 			if (!results.isEmpty() && !GenericValidator.isBlankOrNull(subjectNumber)) {
-				 queryResponse = (allowDuplicateSubjectNumber ? "warning#" + MessageUtil.getMessage("alert.warning")
+				queryResponse = (allowDuplicateSubjectNumber ? "warning#" + MessageUtil.getMessage("alert.warning")
 						: "fail#" + MessageUtil.getMessage("alert.error")) + ": "
 						+ MessageUtil.getMessage("error.duplicate.subjectNumber.warning");
 				responseObject.setBody(queryResponse);
 
 			} else if (!results.isEmpty() && !GenericValidator.isBlankOrNull(nationalId)) {
-			 	queryResponse = (allowDuplicateNationalId ? "warning#" + MessageUtil.getMessage("alert.warning")
+				queryResponse = (allowDuplicateNationalId ? "warning#" + MessageUtil.getMessage("alert.warning")
 						: "fail#" + MessageUtil.getMessage("alert.error")) + ": "
 						+ MessageUtil.getMessage("error.duplicate.subjectNumber.warning");
 				responseObject.setBody(queryResponse);
@@ -223,13 +233,14 @@ public class CommonValidationsRestController {
 				queryResponse = "fail#" + MessageUtil.getMessage("alert.error") + ": "
 						+ MessageUtil.getMessage("error.duplicate.subjectNumber.warning");
 				responseObject.setBody(queryResponse);
-			}else{
+			} else {
 				responseObject.setStatus(true);
 				responseObject.setBody("Valid");
 			}
 		}
 		return responseObject;
 	}
+
 	public static class ResponseObject {
 
 		private boolean status = false;
@@ -256,6 +267,3 @@ public class CommonValidationsRestController {
 		}
 	}
 }
-
-
-

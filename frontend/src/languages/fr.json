@@ -171,6 +171,7 @@
     "sidenav.label.admin.program" : "Entrée du Programme",
     "sidenav.label.admin.organizationmgt" : "Gestion de l'Organisation",
     "sidenav.label.admin.usermgt" : "Gestion des Utilisateurs",
+    "sidenav.label.admin.labNumber" : "Gestion des Numéro de Laboratoire",
     "patient.label.name" : "Nom",
     "patient.label.sex" : "Sexe",
     "patient.label.age" : "Âge",
@@ -316,5 +317,11 @@
     "immunohistochemistry.label.mibName" : "MiB 1 (ki-67) (Indice de prolifération) :",
     "immunohistochemistry.label.tumorCells" :"des cellules tumorales sont positives (seuil de 20 %)",
     "immunohistochemistry.label.her2Assesment" :"L'évaluation de la protéine HER2 est de" ,
-    "immunohistochemistry.label.her2ScoreOf" :"Avec un score de"
+    "immunohistochemistry.label.her2ScoreOf" :"Avec un score de",
+    "configure.labNumber.title" : "Gestion des Numéro de Laboratoire",
+    "labNumber.type" : "Type de numéro de laboratoire",
+    "labNumber.usePrefix": "Utiliser le préfixe",
+    "labNumber.prefix": "Préfixe",
+    "labNumber.format.new": "Nouveau format",
+    "labNumber.format.current": "Format actuel"
 }

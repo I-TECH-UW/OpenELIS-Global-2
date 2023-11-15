@@ -4,7 +4,7 @@ import { ConfigurationContext } from "../layout/Layout";
 import { format } from "date-fns";
 
 const CustomDatePicker = (props) => {
-  const configurationProperties = useContext(ConfigurationContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
   const [currentDate, setCurrentDate] = useState(props.value);
 
   function handleDatePickerChange(e) {
