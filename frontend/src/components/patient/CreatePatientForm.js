@@ -107,7 +107,8 @@ function CreatePatientForm(props) {
     }));
   };
 
-  function handleYearsChange(e) {
+  function handleYearsChange(e, values) {
+    setPatientDetails(values);
     let years = e.target.value;
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
@@ -115,7 +116,8 @@ function CreatePatientForm(props) {
     });
   }
 
-  function handleMonthsChange(e) {
+  function handleMonthsChange(e, values) {
+    setPatientDetails(values);
     let months = e.target.value;
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
@@ -123,7 +125,8 @@ function CreatePatientForm(props) {
     });
   }
 
-  function handleDaysChange(e) {
+  function handleDaysChange(e, values) {
+    setPatientDetails(values);
     let days = e.target.value;
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
@@ -380,7 +383,7 @@ function CreatePatientForm(props) {
               </Field>
             </div>
             <Accordion>
-              <AccordionItem title="Emergency Contact Information">
+              <AccordionItem title={intl.formatMessage({ id: "emergencyContactInfo.title" })}>
                 <div className="inlineDiv">
                   <Field name="patientContact.person.lastName">
                     {({ field }) => (
@@ -492,18 +495,10 @@ function CreatePatientForm(props) {
                     className="inputText"
                     id="create_patient_gender"
                   >
-                    <RadioButton
-                      id="radio-1"
-                      labelText={intl.formatMessage({ id: "patient.male" })}
-                      value="M"
-                    />
-                    <RadioButton
-                      id="radio-2"
-                      labelText={intl.formatMessage({
+                    <RadioButton id="radio-1" labelText={intl.formatMessage({ id: "patient.male" })} value="M" />
+                    <RadioButton id="radio-2"                       labelText={intl.formatMessage({
                         id: "patient.female",
-                      })}
-                      value="F"
-                    />
+                      })} value="F" />
                   </RadioButtonGroup>
                 )}
               </Field>
@@ -523,7 +518,9 @@ function CreatePatientForm(props) {
                     <DatePickerInput
                       id="date-picker-default-id"
                       placeholder="dd/mm/yyyy"
-                      labelText={intl.formatMessage({ id: "patient.dob" })}
+                      labelText={intl.formatMessage({
+                        id: "patient.female",
+                      })}
                       type="text"
                       name={field.name}
                     />
@@ -534,9 +531,12 @@ function CreatePatientForm(props) {
               <TextInput
                 value={dateOfBirthFormatter.years}
                 name="years"
-                labelText={intl.formatMessage({ id: "patient.age.years" })}
+                labelText={intl.formatMessage({
+                  id: "patient.female",
+                })}
                 id="years"
-                onChange={handleYearsChange}
+                type="number"
+                onChange={(e) => handleYearsChange(e, values)}
                 className="inputText"
               />
 
@@ -544,7 +544,8 @@ function CreatePatientForm(props) {
                 value={dateOfBirthFormatter.months}
                 name="months"
                 labelText={intl.formatMessage({ id: "patient.age.months" })}
-                onChange={handleMonthsChange}
+                type="number"
+                onChange={(e) => handleMonthsChange(e, values)}
                 id="months"
                 className="inputText"
               />
@@ -552,7 +553,8 @@ function CreatePatientForm(props) {
               <TextInput
                 value={dateOfBirthFormatter.days}
                 name="days"
-                onChange={handleDaysChange}
+                type="number"
+                onChange={(e) => handleDaysChange(e, values)}
                 labelText={intl.formatMessage({ id: "patient.age.days" })}
                 id="days"
                 className="inputText"
