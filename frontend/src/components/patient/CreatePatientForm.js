@@ -3,7 +3,7 @@ import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../Style.css";
 import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
 import { nationalityList } from "../data/countries";
-import format from "date-fns/format";
+import format from 'date-fns/format'
 
 import {
   Heading,
@@ -41,23 +41,21 @@ function CreatePatientForm(props) {
   const [formAction, setFormAction] = useState("ADD");
   const componentMounted = useRef(false);
   const intl = useIntl();
-  const [dateOfBirthFormatter, setDateOfBirthFormatter] = useState({
-    years: "",
-    months: "",
-    days: "",
-  });
+  const [dateOfBirthFormatter,setDateOfBirthFormatter] = useState({
+    "years": "", "months": "", "days": ""
+  })
 
   const handleDatePickerChange = (values, ...e) => {
     var patient = values;
     patient.birthDateForDisplay = e[1];
     setPatientDetails(patient);
     if (patient.birthDateForDisplay !== "") {
-      getYearsMonthsDaysFromDOB(patient.birthDateForDisplay);
+      getYearsMonthsDaysFromDOB(patient.birthDateForDisplay)
     }
   };
 
   function getYearsMonthsDaysFromDOB(date) {
-    const selectedDate = date.split("/");
+    const selectedDate = date.split('/');
     let today = new Date();
 
     let year = today.getFullYear();
@@ -78,16 +76,13 @@ function CreatePatientForm(props) {
       years = years - 1;
       months = months + 12;
     }
-    days = Math.floor(
-      (today.getTime() - new Date(yy + years, mm + months - 1, dd).getTime()) /
-        (24 * 60 * 60 * 1000)
-    );
+    days = Math.floor((today.getTime() - new
+  Date(yy + years, mm + months - 1, dd).getTime()) /
+  (24 * 60 * 60 * 1000));
 
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
-      years: years,
-      months: months,
-      days: days,
+      years: years,months: months,days: days,
     });
   }
 
@@ -95,23 +90,23 @@ function CreatePatientForm(props) {
     const currentDate = new Date();
     const pastDate = new Date();
 
-    pastDate.setFullYear(
-      currentDate.getFullYear() - dateOfBirthFormatter.years
-    );
+    pastDate.setFullYear(currentDate.getFullYear() -
+      dateOfBirthFormatter.years);
     pastDate.setMonth(currentDate.getMonth() - dateOfBirthFormatter.months);
     pastDate.setDate(currentDate.getDate() - dateOfBirthFormatter.days);
-    const dob = format(new Date(pastDate), "dd/MM/yyyy");
+    const dob = format(new Date(pastDate), 'dd/MM/yyyy');
     setPatientDetails((prevState) => ({
       ...prevState,
       birthDateForDisplay: dob,
     }));
-  };
+  }
 
-  function handleYearsChange(e) {
+  function handleYearsChange(e, values) {
+    setPatientDetails(values)
     let years = e.target.value;
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
-      years: years,
+      years: years
     });
   }
 
@@ -119,15 +114,16 @@ function CreatePatientForm(props) {
     let months = e.target.value;
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
-      months: months,
+      months: months
     });
   }
 
-  function handleDaysChange(e) {
+  function handleDaysChange(e, values) {
+    setPatientDetails(values)
     let days = e.target.value;
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
-      days: days,
+      days: days
     });
   }
   const handleRegionSelection = (e, values) => {
@@ -137,7 +133,7 @@ function CreatePatientForm(props) {
     const { value } = e.target;
     getFromOpenElisServer(
       "/rest/health-districts-for-region?regionId=" + value,
-      fetchHeathDistricts
+      fetchHeathDistricts,
     );
   };
 
@@ -145,9 +141,9 @@ function CreatePatientForm(props) {
     setHealthDistricts(res);
   }
 
-  useEffect(() => {
+  useEffect(()=>{
     getDOBByYearMonthsDays();
-  }, [dateOfBirthFormatter]);
+  },[dateOfBirthFormatter])
 
   useEffect(() => {
     if (props.selectedPatient.patientPK) {
@@ -155,7 +151,7 @@ function CreatePatientForm(props) {
         getFromOpenElisServer(
           "/rest/health-districts-for-region?regionId=" +
             props.selectedPatient.healthRegion,
-          fethchHealthDistrictsCallback
+          fethchHealthDistrictsCallback,
         );
       } else {
         //nextState.healthDistricts = [];
@@ -176,9 +172,7 @@ function CreatePatientForm(props) {
         props.orderFormValues.patientProperties.guid !== ""
       ) {
         setPatientDetails(props.orderFormValues.patientProperties);
-        getYearsMonthsDaysFromDOB(
-          props.orderFormValues.patientProperties.birthDateForDisplay
-        );
+        getYearsMonthsDaysFromDOB(props.orderFormValues.patientProperties.birthDateForDisplay);
       }
     }
   };
@@ -216,7 +210,7 @@ function CreatePatientForm(props) {
     if (numberValue !== "") {
       getFromOpenElisServer(
         `/rest/subjectNumberValidationProvider?fieldId=${fieldId}&numberType=${numberType}&subjectNumber=${numberValue}`,
-        accessionNumberValidationResponse
+        accessionNumberValidationResponse,
       );
     }
   };
