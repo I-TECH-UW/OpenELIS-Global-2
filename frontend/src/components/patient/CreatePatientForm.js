@@ -543,24 +543,20 @@ function CreatePatientForm(props) {
                 <div className="inlineDiv">
                   <Field name="city">
                     {({ field }) => (
-                        <TextInput
-                            value={values.city}
-                            name={field.name}
-                            labelText={intl.formatMessage({
-                              id: "patient.address.town",
-                            })}
-                            id={field.name}
-                            className="inputText"
-                        />         )}
+                      <TextInput
+                        value={values.city}
+                        name={field.name}
+                        labelText={intl.formatMessage({id: "patient.address.town",})}
+                        id={field.name}
+                        className="inputText"
+                      />         )}
                   </Field>
                   <Field name="streetAddress">
                     {({ field }) => (
                       <TextInput
                         value={values.streetAddress}
                         name={field.name}
-                        labelText={intl.formatMessage({
-                          id: "patient.address.street",
-                        })}
+                        labelText={intl.formatMessage({id: "patient.address.street",})}
                         id={field.name}
                         className="inputText"
                       />
@@ -571,9 +567,7 @@ function CreatePatientForm(props) {
                       <TextInput
                         value={values.commune}
                         name={field.name}
-                        labelText={intl.formatMessage({
-                          id: "patient.address.camp",
-                        })}
+                        labelText={intl.formatMessage({id: "patient.address.camp",})}
                         id={field.name}
                         className="inputText"
                       />
@@ -587,9 +581,7 @@ function CreatePatientForm(props) {
                         id="health_region"
                         value={values.healthRegion}
                         name={field.name}
-                        labelText={intl.formatMessage({
-                          id: "patient.address.healthregion",
-                        })}
+                        labelText={intl.formatMessage({id: "patient.address.healthregion",})}
                         className="inputText"
                         onChange={(e) => handleRegionSelection(e, values)}
                       >
@@ -610,9 +602,7 @@ function CreatePatientForm(props) {
                         id="health_district"
                         value={values.healthDistrict}
                         name={field.name}
-                        labelText={intl.formatMessage({
-                          id: "patient.address.healthdistrict",
-                        })}
+                        labelText={intl.formatMessage({id: "patient.address.healthdistrict",})}
                         className="inputText"
                         onChange={() => {}}
                       >
@@ -635,9 +625,7 @@ function CreatePatientForm(props) {
                         id="education"
                         value={values.education}
                         name={field.name}
-                        labelText={intl.formatMessage({
-                          id: "pateint.eduction",
-                        })}
+                        labelText={intl.formatMessage({id: "pateint.eduction",})}
                         className="inputText"
                         onChange={() => {}}
                       >
@@ -658,9 +646,7 @@ function CreatePatientForm(props) {
                         id="maritialStatus"
                         value={values.maritialStatus}
                         name={field.name}
-                        labelText={intl.formatMessage({
-                          id: "patient.maritalstatus",
-                        })}
+                        labelText={intl.formatMessage({id: "patient.maritalstatus",})}
                         className="inputText"
                         onChange={() => {}}
                       >
@@ -683,9 +669,7 @@ function CreatePatientForm(props) {
                         id="nationality"
                         value={values.nationality}
                         name={field.name}
-                        labelText={intl.formatMessage({
-                          id: "patient.nationality",
-                        })}
+                        labelText={intl.formatMessage({id: "patient.nationality",})}
                         className="inputText"
                         onChange={() => {}}
                       >
@@ -705,9 +689,7 @@ function CreatePatientForm(props) {
                       <TextInput
                         value={values.otherNationality}
                         name={field.name}
-                        labelText={intl.formatMessage({
-                          id: "patient.nationality.other",
-                        })}
+                        labelText={intl.formatMessage({id: "patient.nationality.other",})}
                         id={field.name}
                         className="inputText"
                       />
