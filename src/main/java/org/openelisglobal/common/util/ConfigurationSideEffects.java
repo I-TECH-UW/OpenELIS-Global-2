@@ -56,7 +56,7 @@ public class ConfigurationSideEffects {
 
         if (Property.SiteCode.getName().equals(siteInformation.getName())) {
             SiteInformation accessionFormat = siteInformationService.getSiteInformationByName("acessionFormat");
-            if ("SiteYearNum".equals(accessionFormat.getValue())) {
+            if ("SITEYEARNUM".equals(accessionFormat.getValue())) {
                 SiteInformation accessionPrefix = siteInformationService
                         .getSiteInformationByName("Accession number prefix");
                 if (GenericValidator.isBlankOrNull(accessionPrefix.getValue())) {
