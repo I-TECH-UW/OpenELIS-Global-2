@@ -536,33 +536,32 @@ function CreatePatientForm(props) {
                 <TextInput
                     value={dateOfBirthFormatter.days}
                     name="days"
-                    type="number"
-                    onChange={(e) => handleDaysChange(e, values)}
+                    onChange={ handleDaysChange}
                     labelText={intl.formatMessage({ id: "patient.age.days" })}
                     id="days"
                     className="inputText"
                 />
-                <div className="error">
-                  <ErrorMessage name="birthDateForDisplay"></ErrorMessage>
-                </div>
-                <div className="error">
-                  <ErrorMessage name="gender"></ErrorMessage>
-                </div>
+              <div className="error">
+                <ErrorMessage name="birthDateForDisplay"></ErrorMessage>
+              </div>
+              <div className="error">
+                <ErrorMessage name="gender"></ErrorMessage>
+              </div>
               </div>
             <Accordion>
               <AccordionItem title="Additional Information">
                 <div className="inlineDiv">
                   <Field name="city">
                     {({ field }) => (
-                      <TextInput
-                          value={values.city}
-                          name={field.name}
-                          labelText={intl.formatMessage({
-                            id: "patient.address.town",
-                          })}
-                          id={field.name}
-                          className="inputText"
-                      />
+                        <TextInput
+                            value={values.city}
+                            name={field.name}
+                            labelText={intl.formatMessage({
+                              id: "patient.address.town",
+                            })}
+                            id={field.name}
+                            className="inputText"
+                        />
                     )}
                   </Field>
                   <Field name="streetAddress">
