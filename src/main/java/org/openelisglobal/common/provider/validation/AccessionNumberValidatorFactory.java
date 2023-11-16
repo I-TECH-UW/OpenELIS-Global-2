@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 public class AccessionNumberValidatorFactory implements ConfigurationListener {
 
     public enum AccessionFormat {
-        MAIN, GENERAL, SITE_YEAR, PROGRAM, YEAR_NUM_SIX, YEAR_NUM_DASH, YEAR_NUM_SEVEN, ALPHANUM_DASH, ALT_YEAR, ALPHANUM
+        MAIN, GENERAL, SITEYEARNUM, PROGRAMNUM, YEARNUM_SIX, YEARNUM_DASH_SEVEN, YEARNUM_SEVEN, UNFORMATTED, ALT_YEAR, ALPHANUM
     }
 
     private AccessionFormat mainAccessionFormat;
@@ -42,35 +42,35 @@ public class AccessionNumberValidatorFactory implements ConfigurationListener {
             return mainGenerator;
         }
         synchronized (this) {
-            if (accessionFormat.equals("ALPHANUM") || accessionFormat.equals(AccessionFormat.ALPHANUM.name())) {
+            if (accessionFormat.equals(AccessionFormat.ALPHANUM.name())) {
                 if (!mainGeneratorSet) {
                     mainGenerator = getAlphanumValidator();
                     mainAccessionFormat = AccessionFormat.ALPHANUM;
                 }
-            } else if (accessionFormat.equals("SITEYEARNUM") || accessionFormat.equals(AccessionFormat.SITE_YEAR.name())) {
+            } else if (accessionFormat.equals(AccessionFormat.SITEYEARNUM.name())) {
                 if (!mainGeneratorSet) {
                     mainGenerator = getSiteYearValidator();
-                    mainAccessionFormat = AccessionFormat.SITE_YEAR;
+                    mainAccessionFormat = AccessionFormat.SITEYEARNUM;
                 }
-            } else if (accessionFormat.equals("PROGRAMNUM") || accessionFormat.equals(AccessionFormat.PROGRAM.name())) {
+            } else if (accessionFormat.equals(AccessionFormat.PROGRAMNUM.name())) {
                 if (!mainGeneratorSet) {
                     mainGenerator = getProgramValidator();
-                    mainAccessionFormat = AccessionFormat.PROGRAM;
+                    mainAccessionFormat = AccessionFormat.PROGRAMNUM;
                 }
-            } else if (accessionFormat.equals("YEARNUM_SIX") || accessionFormat.equals(AccessionFormat.YEAR_NUM_SIX.name())) {
+            } else if (accessionFormat.equals(AccessionFormat.YEARNUM_SIX.name())) {
                 if (!mainGeneratorSet) {
                     mainGenerator = getYearNumValidator(6, null);
-                    mainAccessionFormat = AccessionFormat.YEAR_NUM_SIX;
+                    mainAccessionFormat = AccessionFormat.YEARNUM_SIX;
                 }
-            } else if (accessionFormat.equals("YEARNUM_DASH_SEVEN") || accessionFormat.equals(AccessionFormat.YEAR_NUM_DASH.name())) {
+            } else if (accessionFormat.equals(AccessionFormat.YEARNUM_DASH_SEVEN.name())) {
                 if (!mainGeneratorSet) {
                     mainGenerator = getYearNumValidator(7, '-');
-                    mainAccessionFormat = AccessionFormat.YEAR_NUM_DASH;
+                    mainAccessionFormat = AccessionFormat.YEARNUM_DASH_SEVEN;
                 }
-            } else if (accessionFormat.equals("YEARNUM_SEVEN") || accessionFormat.equals(AccessionFormat.YEAR_NUM_SEVEN.name())) {
+            } else if (accessionFormat.equals(AccessionFormat.YEARNUM_SEVEN.name())) {
                 if (!mainGeneratorSet) {
                     mainGenerator = getYearNumValidator(7, null);
-                    mainAccessionFormat = AccessionFormat.YEAR_NUM_SEVEN;
+                    mainAccessionFormat = AccessionFormat.YEARNUM_SEVEN;
                 }
             }
 
@@ -96,15 +96,15 @@ public class AccessionNumberValidatorFactory implements ConfigurationListener {
             return getAllActiveValidator();
         case ALPHANUM:
             return getAlphanumValidator();
-        case SITE_YEAR:
+        case SITEYEARNUM:
             return getSiteYearValidator();
-        case PROGRAM:
+        case PROGRAMNUM:
             return getProgramValidator();
-        case YEAR_NUM_SIX:
+        case YEARNUM_SIX:
             return getYearNumValidator(6, null);
-        case YEAR_NUM_DASH:
+        case YEARNUM_DASH_SEVEN:
             return getYearNumValidator(7, '-');
-        case YEAR_NUM_SEVEN:
+        case YEARNUM_SEVEN:
             return getYearNumValidator(7, null);
         case ALT_YEAR:
             return getAltYearValidator();
@@ -126,15 +126,15 @@ public class AccessionNumberValidatorFactory implements ConfigurationListener {
             return getConfiguredMainGenerator();
             case ALPHANUM:
             return getAlphanumValidator();
-        case SITE_YEAR:
+        case SITEYEARNUM:
             return getSiteYearValidator();
-        case PROGRAM:
+        case PROGRAMNUM:
             return getProgramValidator();
-        case YEAR_NUM_SIX:
+        case YEARNUM_SIX: 
             return getYearNumValidator(6, null);
-        case YEAR_NUM_DASH:
+        case YEARNUM_DASH_SEVEN:
             return getYearNumValidator(7, '-');
-        case YEAR_NUM_SEVEN:
+        case YEARNUM_SEVEN:
             return getYearNumValidator(7, null);
         case ALT_YEAR:
             return getAltYearValidator();

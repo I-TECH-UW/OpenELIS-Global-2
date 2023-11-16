@@ -72,7 +72,7 @@ public class SiteYearAccessionValidator extends BaseSiteYearAccessionValidator i
     @Override
     public String incrementAccessionNumber() throws IllegalArgumentException {
         String year = DateUtil.getTwoDigitYear();
-        long nextNum = accessionService.getNextNumberIncrement(this.getPrefix() + year, AccessionFormat.SITE_YEAR);
+        long nextNum = accessionService.getNextNumberIncrement(this.getPrefix() + year, AccessionFormat.SITEYEARNUM);
         String incrementAsString;
         incrementAsString = String.format("%013d", nextNum);
         return getPrefix() + year + incrementAsString;

@@ -149,7 +149,7 @@ function LabNumberManagement() {
 
   const fetchLegacyLabNumNoIncrement = () => {
     getFromOpenElisServer(
-      "/rest/SampleEntryGenerateScanProvider?noIncrement=true&format=SITE_YEAR",
+      "/rest/SampleEntryGenerateScanProvider?noIncrement=true&format=SITEYEARNUM",
       (res) => {
         if (res.status) {
           setSampleLabNumForDisplay(res.body);
@@ -178,7 +178,7 @@ function LabNumberManagement() {
               onChange={handleFieldChange}
             >
               <SelectItem value="ALPHANUM" text="Alpha Numeric" />
-              <SelectItem value="SITE_YEAR" text="Legacy" />
+              <SelectItem value="SITEYEARNUM" text="Legacy" />
             </Select>
           </div>
           {labNumberValues.labNumberType === "ALPHANUM" && (

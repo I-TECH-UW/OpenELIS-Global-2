@@ -47,7 +47,7 @@ public class TestResultItem implements ResultItem, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ValidAccessionNumber(format = AccessionFormat.ALPHANUM_DASH, groups = { WorkplanForm.PrintWorkplan.class,
+    @ValidAccessionNumber(format = AccessionFormat.UNFORMATTED, groups = { WorkplanForm.PrintWorkplan.class,
             LogbookResultsForm.LogbookResults.class })
     private String accessionNumber;
     private String sequenceNumber;

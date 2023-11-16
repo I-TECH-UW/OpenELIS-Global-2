@@ -100,7 +100,7 @@ public class AccessionNumberUtil {
 
     public static IAccessionNumberGenerator getProgramAccessionNumberGenerator() {
         try {
-            return accessionNumberValidatorFactory.getGenerator(AccessionFormat.PROGRAM);
+            return accessionNumberValidatorFactory.getGenerator(AccessionFormat.PROGRAMNUM);
         } catch (LIMSInvalidConfigurationException e) {
             LogEvent.logError("AccessionNumberUtil", "getProgramAccessionNumberGenerator", e.toString());
         }
@@ -109,7 +109,7 @@ public class AccessionNumberUtil {
 
     public static IAccessionNumberValidator getProgramAccessionNumberValidator() {
         try {
-            return accessionNumberValidatorFactory.getValidator(AccessionFormat.PROGRAM);
+            return accessionNumberValidatorFactory.getValidator(AccessionFormat.PROGRAMNUM);
         } catch (LIMSInvalidConfigurationException e) {
             LogEvent.logError("AccessionNumberUtil", "getProgramAccessionNumberValidator", e.toString());
         }
