@@ -483,16 +483,16 @@ function CreatePatientForm(props) {
               </Field>
               <Field name="gender">
                 {({ field }) => (
-                    <RadioButtonGroup
-                      valueSelected={values.gender}
-                      legendText={intl.formatMessage({ id: "patient.gender" })}
-                      name={field.name}
-                      className="inputText"
-                      id="create_patient_gender"
-                    >
-                      <RadioButton id="radio-1" labelText={intl.formatMessage({ id: "patient.male" })} value="M" />
-                      <RadioButton id="radio-2" labelText={intl.formatMessage({id: "patient.female",})} value="F" />
-                    </RadioButtonGroup>
+                  <RadioButtonGroup
+                    valueSelected={values.gender}
+                    legendText={intl.formatMessage({ id: "patient.gender" })}
+                    name={field.name}
+                    className="inputText"
+                    id="create_patient_gender"
+                  >
+                    <RadioButton id="radio-1" labelText={intl.formatMessage({ id: "patient.male" })} value="M" />
+                    <RadioButton id="radio-2" labelText={intl.formatMessage({id: "patient.female",})} value="F" />
+                  </RadioButtonGroup>
                 )}
               </Field>
             </div>
@@ -520,36 +520,36 @@ function CreatePatientForm(props) {
                   </DatePicker>
                 )}
               </Field>
-                <TextInput
-                    value={dateOfBirthFormatter.years}
-                    name="years"
-                    labelText={intl.formatMessage({
-                      id: "patient.female",
-                    })}
-                    id="years"
-                    type="number"
-                    onChange={(e) => handleYearsChange(e, values)}
-                    className="inputText"
-                />
+              <TextInput
+                value={dateOfBirthFormatter.years}
+                name="years"
+                labelText={intl.formatMessage({
+                  id: "patient.female",
+                })}
+                id="years"
+                type="number"
+                onChange={(e) => handleYearsChange(e, values)}
+                className="inputText"
+              />
 
-                <TextInput
-                    value={dateOfBirthFormatter.months}
-                    name="months"
-                    labelText={intl.formatMessage({ id: "patient.age.months" })}
-                    type="number"
-                    onChange={(e) => handleMonthsChange(e, values)}
-                    id="months"
-                    className="inputText"
-                />
+              <TextInput
+                value={dateOfBirthFormatter.months}
+                name="months"
+                labelText={intl.formatMessage({ id: "patient.age.months" })}
+                type="number"
+                onChange={(e) => handleMonthsChange(e, values)}
+                id="months"
+                className="inputText"
+              />
 
-                <TextInput
-                    value={dateOfBirthFormatter.days}
-                    name="days"
-                    onChange={ handleDaysChange}
-                    labelText={intl.formatMessage({ id: "patient.age.days" })}
-                    id="days"
-                    className="inputText"
-                />
+              <TextInput
+                value={dateOfBirthFormatter.days}
+                name="days"
+                onChange={ handleDaysChange}
+                labelText={intl.formatMessage({ id: "patient.age.days" })}
+                id="days"
+                className="inputText"
+              />
               <div className="error">
                 <ErrorMessage name="birthDateForDisplay"></ErrorMessage>
               </div>
