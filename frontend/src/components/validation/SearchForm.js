@@ -14,7 +14,7 @@ import {
   DatePicker,
   DatePickerInput,
   Loading,
-  Grid
+  Grid,
 } from "@carbon/react";
 import { FormattedMessage } from "react-intl";
 import { Formik, Field } from "formik";
@@ -62,7 +62,6 @@ const SearchForm = (props) => {
         setNotificationVisible(true);
       }
     }
-
   };
 
   useEffect(() => {
@@ -91,6 +90,11 @@ const SearchForm = (props) => {
   const handleChange = () => {};
   const fetchTestSections = (response) => {
     setTestSections(response);
+  };
+
+  const submitOnSelect = (e) => {
+    var values = { unitType: e.target.value };
+    handleSubmit(values);
   };
 
   function handleDatePickerChange(e) {
@@ -161,36 +165,6 @@ const SearchForm = (props) => {
                   </>
                 )}
 
-                {searchBy === "routine" && (
-                  <>
-                    <Column lg={6}>
-                      <Field name="unitType">
-                        {({ field }) => (
-                          <Select
-                            labelText={
-                              <FormattedMessage id="search.label.testunit" />
-                            }
-                            name={field.name}
-                            id={field.name}
-                          >
-                            <SelectItem text="" value="" />
-                            {testSections.map((test, index) => {
-                              return (
-                                <SelectItem
-                                  key={index}
-                                  text={test.value}
-                                  value={test.id}
-                                />
-                              );
-                            })}
-                          </Select>
-                        )}
-                      </Field>
-                    </Column>
-                    <Column lg={10} />
-                  </>
-                )}
-
                 {searchBy === "testDate" && (
                   <>
                     <Column lg={6}>
@@ -222,21 +196,45 @@ const SearchForm = (props) => {
                     <Column lg={10} />
                   </>
                 )}
-
-                <Column lg={16}>
-                  <Button
-                    type="submit"
-                    id="submit"
-                    style={{ marginTop: '16px' }}
-                  >
-                    <FormattedMessage id="label.button.search" />
-                  </Button>
-                </Column>
+                {searchBy !== "routine" && (
+                  <Column lg={16}>
+                    <Button
+                      type="submit"
+                      id="submit"
+                      style={{ marginTop: "16px" }}
+                    >
+                      <FormattedMessage id="label.button.search" />
+                    </Button>
+                  </Column>
+                )}
               </Grid>
             </Stack>
           </Form>
         )}
       </Formik>
+
+      {searchBy === "routine" && (
+        <>
+          <Grid>
+            <Column lg={6}>
+              <Select
+                labelText={<FormattedMessage id="search.label.testunit" />}
+                name="unitType"
+                id="unitType"
+                onChange={submitOnSelect}
+              >
+                <SelectItem text="" value="" />
+                {testSections.map((test, index) => {
+                  return (
+                    <SelectItem key={index} text={test.value} value={test.id} />
+                  );
+                })}
+              </Select>
+            </Column>
+            <Column lg={10} />
+          </Grid>
+        </>
+      )}
     </>
   );
 };

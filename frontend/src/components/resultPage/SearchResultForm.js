@@ -30,7 +30,8 @@ import SearchResultFormValues from "../formModel/innitialValues/SearchResultForm
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
 import SearchPatientForm from "../patient/SearchPatientForm";
-import { ConfigurationContext } from "../layout/Layout"
+import { ConfigurationContext } from "../layout/Layout";
+import config from "../../config.json";
 
 function ResultSearchPage() {
   const [resultForm, setResultForm] = useState({ testResult: [] });
@@ -150,6 +151,11 @@ export function SearchResultForm(props) {
     setTestSections(response);
   };
 
+  const submitOnSelect = (e) => {
+    var values = { unitType: e.target.value };
+    handleSubmit(values);
+  };
+
   useEffect(() => {
     componentMounted.current = true;
     getFromOpenElisServer("/rest/test-list", getTests);
@@ -199,37 +205,6 @@ export function SearchResultForm(props) {
                     <FormattedMessage id="label.button.search" />
                   </h4>
                 </Column>
-
-                {searchBy.type === "unit" && (
-                  <>
-                    <Column lg={6}>
-                      <Field name="unitType">
-                        {({ field }) => (
-                          <Select
-                            labelText={
-                              <FormattedMessage id="search.label.testunit" />
-                            }
-                            name={field.name}
-                            id={field.name}
-                          >
-                            <SelectItem text="" value="" />
-                            {testSections.map((test, index) => {
-                              return (
-                                <SelectItem
-                                  key={index}
-                                  text={test.value}
-                                  value={test.id}
-                                />
-                              );
-                            })}
-                          </Select>
-                        )}
-                      </Field>
-                    </Column>
-                    <Column lg={10} />
-                  </>
-                )}
-
                 {searchBy.type === "order" && (
                   <>
                     <Column lg={6}>
@@ -390,10 +365,14 @@ export function SearchResultForm(props) {
                   </>
                 )}
 
-                {searchBy.type !== "patient" && (
+                {searchBy.type !== "patient" && searchBy.type !== "unit" && (
                   <Column lg={16}>
-                    <Button style={{ marginTop: '16px' }} type="submit" id="submit">
-                        <FormattedMessage id="label.button.search" />
+                    <Button
+                      style={{ marginTop: "16px" }}
+                      type="submit"
+                      id="submit"
+                    >
+                      <FormattedMessage id="label.button.search" />
                     </Button>
                   </Column>
                 )}
@@ -406,6 +385,29 @@ export function SearchResultForm(props) {
         <SearchPatientForm
           getSelectedPatient={getSelectedPatient}
         ></SearchPatientForm>
+      )}
+
+      {searchBy.type === "unit" && (
+        <>
+          <Grid>
+            <Column lg={6}>
+              <Select
+                labelText={<FormattedMessage id="search.label.testunit" />}
+                name="unitType"
+                id="unitType"
+                onChange={submitOnSelect}
+              >
+                <SelectItem text="" value="" />
+                {testSections.map((test, index) => {
+                  return (
+                    <SelectItem key={index} text={test.value} value={test.id} />
+                  );
+                })}
+              </Select>
+            </Column>
+            <Column lg={10} />
+          </Grid>
+        </>
       )}
     </>
   );
@@ -421,7 +423,8 @@ export function SearchResults(props) {
   const [referalOrganizations, setReferalOrganizations] = useState([]);
   const [methods, setMethods] = useState([]);
   const [referralReasons, setReferralReasons] = useState([]);
-  const configurationProperties = useContext(ConfigurationContext);
+  const [rejectReasons, setRejectReasons] = useState([]);
+  const { configurationProperties } = useContext(ConfigurationContext);
   const saveStatus = "";
 
   const componentMounted = useRef(true);
@@ -437,6 +440,10 @@ export function SearchResults(props) {
     getFromOpenElisServer(
       "/rest/displayList/REFERRAL_REASONS",
       loadReferalReasons,
+    );
+    getFromOpenElisServer(
+      "/rest/displayList/REJECTION_REASONS",
+      loadRejectReasons,
     );
     return () => {
       componentMounted.current = false;
@@ -461,7 +468,34 @@ export function SearchResults(props) {
     }
   };
 
-  const columns = [
+  const loadRejectReasons = (values) => {
+    if (componentMounted.current) {
+      setRejectReasons(values);
+    }
+  };
+
+  const addRejectResult = () => {
+    const resultColumn = {
+      name: "Reject",
+      cell: (row, index, column, id) => {
+        return renderCell(row, index, column, id);
+      },
+      width: "12rem",
+    };
+
+    if (configurationProperties.allowResultRejection == "true") {
+      if (columns) {
+        const updatedList = [
+          ...columns.slice(0, 8),
+          resultColumn,
+          ...columns.slice(8),
+        ];
+        columns = updatedList;
+      }
+    }
+  };
+
+  var columns = [
     {
       name: "Sample Info",
       cell: (row, index, column, id) => {
@@ -487,7 +521,7 @@ export function SearchResults(props) {
       name: "Test Name",
       selector: (row) => row.testName,
       sortable: true,
-      width: "10rem",
+      width: "8rem",
     },
     {
       name: "Normal Range",
@@ -517,20 +551,11 @@ export function SearchResults(props) {
       width: "8rem",
     },
     {
-      name: "Reject",
-      cell: (row, index, column, id) => {
-        //if (configurationProperties.allowResultRejection == "true") {
-          //return renderCell(row, index, column, id);
-       // }
-      },
-      width: "5rem",
-    },
-    {
       name: "Notes",
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "8rem",
+      width: "10rem",
     },
   ];
 
@@ -558,6 +583,16 @@ export function SearchResults(props) {
                 rows={3}
               ></TextArea>
             </div>
+            {row.nonconforming && (
+              <picture>
+                <img
+                  src={config.serverBaseUrl + "/images/nonconforming.gif"}
+                  alt="nonconforming"
+                  width="20"
+                  height="15"
+                />
+              </picture>
+            )}
           </>
         );
 
@@ -577,23 +612,46 @@ export function SearchResults(props) {
             </Field>
           </>
         );
-        
-        case "Reject":
-          return (
-            <>
-              <Field name="reject">
-                {() => (
-                  <Checkbox
-                    id={"testResult" + row.id + ".rejected"}
-                    name={"testResult[" + row.id + "].rejected"}
-                    labelText=""
-                    defaultChecked={row.nonconforming}
-                    onChange={(e) => handleCheckBoxChange(e, row.id)}
-                  />
-                )}
-              </Field>
-            </>
-          );   
+
+      case "Reject":
+        return (
+          <>
+            <Grid>
+              <Column lg={16}>
+                <Field name="reject">
+                  {() => (
+                    <Checkbox
+                      id={"testResult" + row.id + ".rejected"}
+                      name={"testResult[" + row.id + "].rejected"}
+                      labelText=""
+                      onChange={(e) => handleRejectCheckBoxChange(e, row.id)}
+                    />
+                  )}
+                </Field>
+              </Column>
+
+              <Column lg={16}>
+                <Select
+                  id={"rejectReasonId" + row.id}
+                  name={"testResult[" + row.id + "].rejectReasonId"}
+                  //noLabel={true}
+                  labelText={"Reason"}
+                  onChange={(e) => handleChange(e, row.id)}
+                >
+                  {/* {...updateShadowResult(e, this, param.rowId)} */}
+                  <SelectItem text="" value="" />
+                  {rejectReasons.map((reason, reason_index) => (
+                    <SelectItem
+                      text={reason.value}
+                      value={reason.id}
+                      key={reason_index}
+                    />
+                  ))}
+                </Select>
+              </Column>
+            </Grid>
+          </>
+        );
 
       case "Notes":
         return (
@@ -602,11 +660,11 @@ export function SearchResults(props) {
               <TextArea
                 id={"testResult" + row.id + ".note"}
                 name={"testResult[" + row.id + "].note"}
-                value={props.results.testResult[row.id]?.pastNotes}
+                //value={props.results.testResult[row.id]?.pastNotes}
                 disabled={false}
                 type="text"
                 labelText=""
-                rows={3}
+                rows={1}
                 onChange={(e) => handleChange(e, row.id)}
               ></TextArea>
             </div>
@@ -759,102 +817,101 @@ export function SearchResults(props) {
   };
 
   const renderReferral = ({ data }) => (
-    <pre>
-      <div className="referralRow">
-        <Grid>
-          <Column lg={3}>
-            <div>
-              <Select
-                id={"testMethod" + data.id}
-                name={"testResult[" + data.id + "].testMethod"}
-                labelText={"Methods"}
-                onChange={(e) => handleChange(e, data.id)}
-                value={data.method}
-              >
-                <SelectItem text="" value="" />
-                {methods.map((method, method_index) => (
-                  <SelectItem
-                    text={method.value}
-                    value={method.id}
-                    key={method_index}
-                  />
-                ))}
-              </Select>
-            </div>
-          </Column>
-          <Column lg={3}>
-            <div>
-              <Select
-                className="referralReason"
-                id={"referralReason" + data.id}
-                name={"testResult[" + data.id + "].referralReason"}
-                // noLabel={true}
-                labelText={"Referral Reason"}
-                onChange={(e) => handleChange(e, data.id)}
-              >
-                {/* {...updateShadowResult(e, this, param.rowId)} */}
-                <SelectItem text="" value="" />
-                {referralReasons.map((reason, reason_index) => (
-                  <SelectItem
-                    text={reason.value}
-                    value={reason.id}
-                    key={reason_index}
-                  />
-                ))}
-              </Select>
-            </div>
-          </Column>
-          <Column lg={3}>
-            <div className="institute">
-              <Select
-                id={"institute" + data.id}
-                name={"testResult[" + data.id + "].institute"}
-                // noLabel={true}
-                labelText={"Institute"}
-                onChange={(e) => handleChange(e, data.id)}
-              >
-                {/* {...updateShadowResult(e, this, param.rowId)} */}
-
-                <SelectItem text="" value="" />
-                {referalOrganizations.map((org, org_index) => (
-                  <SelectItem text={org.value} value={org.id} key={org_index} />
-                ))}
-              </Select>
-            </div>
-          </Column>
-          <Column lg={3}>
-            <div className="testToPerform">
-              <Select
-                id={"testToPerform" + data.id}
-                name={"testResult[" + data.id + "].testToPerform"}
-                // noLabel={true}
-                labelText={"Test to Perform"}
-                onChange={(e) => handleChange(e, data.id)}
-              >
-                {/* {...updateShadowResult(e, this, param.rowId)} */}
-
-                <SelectItem text={data.testName} value={data.id} />
-              </Select>
-            </div>
-          </Column>
-          <Column lg={3}>
-            <DatePicker
-              datePickerType="single"
-              id={"sentDate_" + data.id}
-              name={"testResult[" + data.id + "].sentDate_"}
-              onChange={(date) => handleDatePickerChange(date, data.id)}
-            >
-              <DatePickerInput
-                placeholder="mm/dd/yyyy"
-                labelText="Sent Date"
-                id="date-picker-single"
-                size="md"
+    <>
+      <Grid>
+      <Column lg={3}>
+          <TextArea
+            id={"testResult" + data.id + ".pastNotes"}
+            name={"testResult[" + data.id + "].pastNotes"}
+            value={data.pastNotes}
+            disabled={true}
+            type="text"
+            labelText="Past Notes"
+            rows={2}
+          ></TextArea>
+        </Column>
+        <Column lg={2}>
+          <Select
+            id={"testMethod" + data.id}
+            name={"testResult[" + data.id + "].testMethod"}
+            labelText={"Methods"}
+            onChange={(e) => handleChange(e, data.id)}
+            value={data.method}
+          >
+            <SelectItem text="" value="" />
+            {methods.map((method, method_index) => (
+              <SelectItem
+                text={method.value}
+                value={method.id}
+                key={method_index}
               />
-            </DatePicker>
-          </Column>
-        </Grid>
-      </div>
-    </pre>
+            ))}
+          </Select>
+        </Column>
+        <Column lg={3}>
+          <Select
+            id={"referralReason" + data.id}
+            name={"testResult[" + data.id + "].referralReason"}
+            // noLabel={true}
+            labelText={"Referral Reason"}
+            onChange={(e) => handleChange(e, data.id)}
+          >
+            {/* {...updateShadowResult(e, this, param.rowId)} */}
+            <SelectItem text="" value="" />
+            {referralReasons.map((reason, reason_index) => (
+              <SelectItem
+                text={reason.value}
+                value={reason.id}
+                key={reason_index}
+              />
+            ))}
+          </Select>
+        </Column>
+        <Column lg={3}>
+          <Select
+            id={"institute" + data.id}
+            name={"testResult[" + data.id + "].institute"}
+            // noLabel={true}
+            labelText={"Institute"}
+            onChange={(e) => handleChange(e, data.id)}
+          >
+            {/* {...updateShadowResult(e, this, param.rowId)} */}
+
+            <SelectItem text="" value="" />
+            {referalOrganizations.map((org, org_index) => (
+              <SelectItem text={org.value} value={org.id} key={org_index} />
+            ))}
+          </Select>
+        </Column>
+        <Column lg={3}>
+          <Select
+            id={"testToPerform" + data.id}
+            name={"testResult[" + data.id + "].testToPerform"}
+            // noLabel={true}
+            labelText={"Test to Perform"}
+            onChange={(e) => handleChange(e, data.id)}
+          >
+            {/* {...updateShadowResult(e, this, param.rowId)} */}
+
+            <SelectItem text={data.testName} value={data.id} />
+          </Select>
+        </Column>
+        <Column lg={2}>
+          <DatePicker
+            datePickerType="single"
+            id={"sentDate_" + data.id}
+            name={"testResult[" + data.id + "].sentDate_"}
+            onChange={(date) => handleDatePickerChange(date, data.id)}
+          >
+            <DatePickerInput
+              placeholder="mm/dd/yyyy"
+              labelText="Sent Date"
+              id="date-picker-single"
+            />
+          </DatePicker>
+        </Column>
+      </Grid>
+    </>
   );
 
   const validateResults = (e, rowId) => {
@@ -875,11 +932,13 @@ export function SearchResults(props) {
     jp.value(form, isModified, "true");
   };
 
-  const handleCheckBoxChange = (e, rowId) => {
+  const handleRejectCheckBoxChange = (e, rowId) => {
     const { name, checked } = e.target;
     var form = props.results;
     var jp = require("jsonpath");
     jp.value(form, name, checked);
+    var shadowRejected = "testResult[" + rowId + "].shadowRejected";
+    jp.value(form, shadowRejected, checked);
     var isModified = "testResult[" + rowId + "].isModified";
     jp.value(form, isModified, "true");
   };
@@ -930,7 +989,6 @@ export function SearchResults(props) {
       result.reportable = result.reportable === "N" ? false : true;
       delete result.result;
     });
-    console.log(props.results);
     postToOpenElisServerJsonResponse(
       searchEndPoint,
       JSON.stringify(props.results),
@@ -982,7 +1040,27 @@ export function SearchResults(props) {
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
+      {addRejectResult()}
       <>
+        {props.results.testResult.length > 0 && (
+          <Grid style={{ marginTop: "20px" }} className="gridBoundary">
+            <Column lg={3} />
+            <Column lg={7}>
+              <picture>
+                <img
+                  src={config.serverBaseUrl + "/images/nonconforming.gif"}
+                  alt="nonconforming"
+                  width="25" // Set your desired width
+                  height="20" // Set your desired height
+                />
+              </picture>
+              <b>
+                {" "}
+                <FormattedMessage id="validation.label.nonconform" />
+              </b>
+            </Column>
+          </Grid>
+        )}
         <Formik
           initialValues={SearchResultFormValues}
           //validationSchema={}
@@ -1012,7 +1090,7 @@ export function SearchResults(props) {
                 onChange={handlePageChange}
                 page={page}
                 pageSize={pageSize}
-                pageSizes={[100 ,50 ,10]}
+                pageSizes={[100, 50, 10]}
                 totalItems={props.results.testResult?.length}
               ></Pagination>
 
