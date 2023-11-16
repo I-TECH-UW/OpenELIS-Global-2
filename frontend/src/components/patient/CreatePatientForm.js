@@ -454,102 +454,102 @@ function CreatePatientForm(props) {
               </AccordionItem>
             </Accordion>
 
-              <div className="inlineDiv">
-                <Field name="primaryPhone">
-                  {({ field }) => (
-                    <TextInput
-                      value={values.primaryPhone}
+            <div className="inlineDiv">
+              <Field name="primaryPhone">
+                {({ field }) => (
+                  <TextInput
+                    value={values.primaryPhone}
+                    name={field.name}
+                    labelText={intl.formatMessage(
+                      {
+                        id: "patient.label.primaryphone",
+                        defaultMessage: "Phone: {PHONE_FORMAT}",
+                      },
+                      { PHONE_FORMAT: configurationProperties.PHONE_FORMAT }
+                    )}
+                    id={field.name}
+                    className="inputText"
+                  />
+                )}
+              </Field>
+              <Field name="gender">
+                {({ field }) => (
+                    <RadioButtonGroup
+                      valueSelected={values.gender}
+                      legendText={intl.formatMessage({ id: "patient.gender" })}
                       name={field.name}
-                      labelText={intl.formatMessage(
-                        {
-                          id: "patient.label.primaryphone",
-                          defaultMessage: "Phone: {PHONE_FORMAT}",
-                        },
-                        { PHONE_FORMAT: configurationProperties.PHONE_FORMAT }
-                      )}
-                      id={field.name}
                       className="inputText"
-                    />
-                  )}
-                </Field>
-                <Field name="gender">
-                  {({ field }) => (
-                      <RadioButtonGroup
-                        valueSelected={values.gender}
-                        legendText={intl.formatMessage({ id: "patient.gender" })}
-                        name={field.name}
-                        className="inputText"
-                        id="create_patient_gender"
-                      >
-                        <RadioButton id="radio-1" labelText={intl.formatMessage({ id: "patient.male" })} value="M" />
-                        <RadioButton id="radio-2" labelText={intl.formatMessage({id: "patient.female",})} value="F" />
-                      </RadioButtonGroup>
-                  )}
-                </Field>
-              </div>
-              <div className="inlineDiv">
-                <Field name="birthDateForDisplay">
-                  {({ field }) => (
-                    <DatePicker
-                      value={values.birthDateForDisplay}
-                      onChange={(...e) => handleDatePickerChange(values, ...e)}
-                      name={field.name}
-                      dateFormat="d/m/Y"
-                      datePickerType="single"
-                      light={true}
-                      className="inputText"
+                      id="create_patient_gender"
                     >
-                      <DatePickerInput
-                        id="date-picker-default-id"
-                        placeholder="dd/mm/yyyy"
-                        labelText={intl.formatMessage({
-                          id: "patient.female",
-                        })}
-                        type="text"
-                        name={field.name}
-                      />
-                    </DatePicker>
-                  )}
-                </Field>
-
-                  <TextInput
-                    value={dateOfBirthFormatter.years}
-                    name="years"
-                    labelText={intl.formatMessage({
-                      id: "patient.female",
-                    })}
-                    id="years"
-                    type="number"
-                    onChange={(e) => handleYearsChange(e, values)}
+                      <RadioButton id="radio-1" labelText={intl.formatMessage({ id: "patient.male" })} value="M" />
+                      <RadioButton id="radio-2" labelText={intl.formatMessage({id: "patient.female",})} value="F" />
+                    </RadioButtonGroup>
+                )}
+              </Field>
+            </div>
+            <div className="inlineDiv">
+              <Field name="birthDateForDisplay">
+                {({ field }) => (
+                  <DatePicker
+                    value={values.birthDateForDisplay}
+                    onChange={(...e) => handleDatePickerChange(values, ...e)}
+                    name={field.name}
+                    dateFormat="d/m/Y"
+                    datePickerType="single"
+                    light={true}
                     className="inputText"
-                  />
+                  >
+                    <DatePickerInput
+                      id="date-picker-default-id"
+                      placeholder="dd/mm/yyyy"
+                      labelText={intl.formatMessage({
+                        id: "patient.female",
+                      })}
+                      type="text"
+                      name={field.name}
+                    />
+                  </DatePicker>
+                )}
+              </Field>
 
-                  <TextInput
-                    value={dateOfBirthFormatter.months}
-                    name="months"
-                    labelText={intl.formatMessage({ id: "patient.age.months" })}
-                    type="number"
-                    onChange={(e) => handleMonthsChange(e, values)}
-                    id="months"
-                    className="inputText"
-                  />
+                <TextInput
+                  value={dateOfBirthFormatter.years}
+                  name="years"
+                  labelText={intl.formatMessage({
+                    id: "patient.female",
+                  })}
+                  id="years"
+                  type="number"
+                  onChange={(e) => handleYearsChange(e, values)}
+                  className="inputText"
+                />
 
-                  <TextInput
-                    value={dateOfBirthFormatter.days}
-                    name="days"
-                    type="number"
-                    onChange={(e) => handleDaysChange(e, values)}
-                    labelText={intl.formatMessage({ id: "patient.age.days" })}
-                    id="days"
-                    className="inputText"
-                  />
-                  <div className="error">
-                    <ErrorMessage name="birthDateForDisplay"></ErrorMessage>
-                  </div>
-                  <div className="error">
-                    <ErrorMessage name="gender"></ErrorMessage>
-                  </div>
+                <TextInput
+                  value={dateOfBirthFormatter.months}
+                  name="months"
+                  labelText={intl.formatMessage({ id: "patient.age.months" })}
+                  type="number"
+                  onChange={(e) => handleMonthsChange(e, values)}
+                  id="months"
+                  className="inputText"
+                />
+
+                <TextInput
+                  value={dateOfBirthFormatter.days}
+                  name="days"
+                  type="number"
+                  onChange={(e) => handleDaysChange(e, values)}
+                  labelText={intl.formatMessage({ id: "patient.age.days" })}
+                  id="days"
+                  className="inputText"
+                />
+                <div className="error">
+                  <ErrorMessage name="birthDateForDisplay"></ErrorMessage>
                 </div>
+                <div className="error">
+                  <ErrorMessage name="gender"></ErrorMessage>
+                </div>
+              </div>
             <Accordion>
               <AccordionItem title="Additional Information">
                 <div className="inlineDiv">
