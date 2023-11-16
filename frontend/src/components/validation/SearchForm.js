@@ -36,6 +36,7 @@ const SearchForm = (props) => {
   const validationResults = (data) => {
     if (data) {
       setSearchResults(data);
+      setIsLoading(false);
       if (data.resultList.length > 0) {
         const newResultsList = data.resultList.map((data, id) => {
           let tempData = { ...data };
@@ -47,6 +48,7 @@ const SearchForm = (props) => {
           resultList: newResultsList,
         }));
       } else {
+        setIsLoading(false);
         setSearchResults((prevState) => ({
           ...prevState,
           resultList: [],
@@ -60,7 +62,7 @@ const SearchForm = (props) => {
         setNotificationVisible(true);
       }
     }
-    setIsLoading(false);
+
   };
 
   useEffect(() => {
@@ -142,7 +144,6 @@ const SearchForm = (props) => {
                         {({ field }) => (
                           <TextInput
                             placeholder={"Enter Lab No"}
-                            className="searchLabNumber inputText"
                             name={field.name}
                             id={field.name}
                             labelText={
@@ -166,7 +167,6 @@ const SearchForm = (props) => {
                       <Field name="unitType">
                         {({ field }) => (
                           <Select
-                            className="inputText"
                             labelText={
                               <FormattedMessage id="search.label.testunit" />
                             }
@@ -200,7 +200,6 @@ const SearchForm = (props) => {
                             name={field.name}
                             id={field.id}
                             dateFormat="d/m/Y"
-                            className="inputText"
                             datePickerType="single"
                             value={testDate}
                             onChange={(e) => {
@@ -228,7 +227,7 @@ const SearchForm = (props) => {
                   <Button
                     type="submit"
                     id="submit"
-                    className="searchResultsBtn"
+                    style={{ marginTop: '16px' }}
                   >
                     <FormattedMessage id="label.button.search" />
                   </Button>

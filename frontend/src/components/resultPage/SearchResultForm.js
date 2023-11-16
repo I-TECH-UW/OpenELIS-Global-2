@@ -30,6 +30,7 @@ import SearchResultFormValues from "../formModel/innitialValues/SearchResultForm
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
 import SearchPatientForm from "../patient/SearchPatientForm";
+import { ConfigurationContext } from "../layout/Layout"
 
 function ResultSearchPage() {
   const [resultForm, setResultForm] = useState({ testResult: [] });
@@ -205,7 +206,6 @@ export function SearchResultForm(props) {
                       <Field name="unitType">
                         {({ field }) => (
                           <Select
-                            className="inputSelect2"
                             labelText={
                               <FormattedMessage id="search.label.testunit" />
                             }
@@ -237,7 +237,6 @@ export function SearchResultForm(props) {
                         {({ field }) => (
                           <TextInput
                             placeholder="Enter Accession No."
-                            className="searchLabNumber inputText2"
                             name={field.name}
                             id={field.name}
                             labelText={
@@ -258,7 +257,6 @@ export function SearchResultForm(props) {
                         {({ field }) => (
                           <TextInput
                             placeholder={"Enter LabNo"}
-                            className="searchLabNumber inputText"
                             name={field.name}
                             id={field.name}
                             labelText={
@@ -273,7 +271,6 @@ export function SearchResultForm(props) {
                         {({ field }) => (
                           <TextInput
                             placeholder={"Enter LabNo"}
-                            className="searchLabNumber inputText"
                             name={field.name}
                             id={field.name}
                             labelText={
@@ -294,7 +291,6 @@ export function SearchResultForm(props) {
                         {({ field }) => (
                           <TextInput
                             placeholder={"Collection Date(dd/mm/yyyy)"}
-                            className="collectionDate inputText"
                             name={field.name}
                             id={field.name}
                             labelText={
@@ -309,7 +305,6 @@ export function SearchResultForm(props) {
                         {({ field }) => (
                           <TextInput
                             placeholder={"Received Date(dd/mm/yyyy)"}
-                            className="receivedDate inputText"
                             name={field.name}
                             id={field.name}
                             labelText={
@@ -323,7 +318,6 @@ export function SearchResultForm(props) {
                       <Field name="testName">
                         {({ field }) => (
                           <Select
-                            className="analysisStatus inputText"
                             labelText={
                               <FormattedMessage id="search.label.test" />
                             }
@@ -348,7 +342,6 @@ export function SearchResultForm(props) {
                       <Field name="analysisStatus">
                         {({ field }) => (
                           <Select
-                            className="analysisStatus inputText"
                             labelText={
                               <FormattedMessage id="search.label.analysis" />
                             }
@@ -373,7 +366,6 @@ export function SearchResultForm(props) {
                       <Field name="sampleStatusType">
                         {({ field }) => (
                           <Select
-                            className="sampleStatus inputText"
                             labelText={
                               <FormattedMessage id="search.label.sample" />
                             }
@@ -400,15 +392,9 @@ export function SearchResultForm(props) {
 
                 {searchBy.type !== "patient" && (
                   <Column lg={16}>
-                    <div className="searchActionButtons">
-                      <Button
-                        type="submit"
-                        id="submit"
-                        className="searchResultsBtn"
-                      >
+                    <Button style={{ marginTop: '16px' }} type="submit" id="submit">
                         <FormattedMessage id="label.button.search" />
-                      </Button>
-                    </div>
+                    </Button>
                   </Column>
                 )}
               </Grid>
@@ -435,6 +421,7 @@ export function SearchResults(props) {
   const [referalOrganizations, setReferalOrganizations] = useState([]);
   const [methods, setMethods] = useState([]);
   const [referralReasons, setReferralReasons] = useState([]);
+  const configurationProperties = useContext(ConfigurationContext);
   const saveStatus = "";
 
   const componentMounted = useRef(true);
@@ -481,7 +468,7 @@ export function SearchResults(props) {
         return renderCell(row, index, column, id);
       },
       sortable: true,
-      width: "19rem",
+      width: "15rem",
     },
     {
       name: "Test Date",
@@ -506,21 +493,21 @@ export function SearchResults(props) {
       name: "Normal Range",
       selector: (row) => row.normalRange,
       sortable: true,
-      width: "7rem",
+      width: "8rem",
     },
     {
       name: "Accept",
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "8rem",
+      width: "5rem",
     },
     {
       name: "Result",
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "8rem",
+      width: "6rem",
     },
     {
       name: "Current Result",
@@ -530,11 +517,20 @@ export function SearchResults(props) {
       width: "8rem",
     },
     {
+      name: "Reject",
+      cell: (row, index, column, id) => {
+        //if (configurationProperties.allowResultRejection == "true") {
+          //return renderCell(row, index, column, id);
+       // }
+      },
+      width: "5rem",
+    },
+    {
       name: "Notes",
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "16rem",
+      width: "8rem",
     },
   ];
 
@@ -581,6 +577,23 @@ export function SearchResults(props) {
             </Field>
           </>
         );
+        
+        case "Reject":
+          return (
+            <>
+              <Field name="reject">
+                {() => (
+                  <Checkbox
+                    id={"testResult" + row.id + ".rejected"}
+                    name={"testResult[" + row.id + "].rejected"}
+                    labelText=""
+                    defaultChecked={row.nonconforming}
+                    onChange={(e) => handleCheckBoxChange(e, row.id)}
+                  />
+                )}
+              </Field>
+            </>
+          );   
 
       case "Notes":
         return (
@@ -862,6 +875,15 @@ export function SearchResults(props) {
     jp.value(form, isModified, "true");
   };
 
+  const handleCheckBoxChange = (e, rowId) => {
+    const { name, checked } = e.target;
+    var form = props.results;
+    var jp = require("jsonpath");
+    jp.value(form, name, checked);
+    var isModified = "testResult[" + rowId + "].isModified";
+    jp.value(form, isModified, "true");
+  };
+
   const handleDatePickerChange = (date, rowId) => {
     console.log("handleDatePickerChange:" + date);
     const d = new Date(date).toLocaleDateString("fr-FR");
@@ -990,7 +1012,7 @@ export function SearchResults(props) {
                 onChange={handlePageChange}
                 page={page}
                 pageSize={pageSize}
-                pageSizes={[100]}
+                pageSizes={[100 ,50 ,10]}
                 totalItems={props.results.testResult?.length}
               ></Pagination>
 

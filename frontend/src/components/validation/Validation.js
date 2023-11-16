@@ -25,8 +25,8 @@ import { getFromOpenElisServer } from "../utils/Utils";
 const Validation = (props) => {
   const { setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(0);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(100);
   const [referalOrganizations, setReferalOrganizations] = useState([]);
   const [methods, setMethods] = useState([]);
   const [referralReasons, setReferralReasons] = useState([]);
@@ -140,13 +140,20 @@ const Validation = (props) => {
     setNotificationVisible(true);
   };
 
-  const handlePageChange = () => {};
+  const handlePageChange = (pageInfo) => {
+    if (page != pageInfo.page) {
+      setPage(pageInfo.page);
+    }
+    if (pageSize != pageInfo.pageSize) {
+      setPageSize(pageInfo.pageSize);
+    }
+  };
 
   const handleChange = (e, rowId) => {
     const { name, id, value } = e.target;
     let form = props.results;
     var jp = require("jsonpath");
-    jp.value(form, name, value);
+     jp.value(form, name, value);
   };
 
   const handleDatePickerChange = (date, rowId) => {
@@ -157,11 +164,21 @@ const Validation = (props) => {
     jp.value(form, "resultList[" + rowId + "].sentDate_", d);
   };
   const handleCheckBox = (e, rowId) => {
-    handleChange(e, rowId);
+    const { name, id, checked } = e.target;
+    let form = props.results;
+    var jp = require("jsonpath");
+     jp.value(form, name, checked);
+  };
+
+  const handleAutomatedCheck = (checked, name) => {
+    let form = props.results;
+    var jp = require("jsonpath");
+     jp.value(form, name, checked);
   };
   const validateResults = (e, rowId) => {
     handleChange(e, rowId);
   };
+
 
   const renderCell = (row, index, column, id) => {
     switch (column.name) {
@@ -221,7 +238,7 @@ const Validation = (props) => {
               <TextArea
                 id={"resultList" + row.id + ".note"}
                 name={"resultList[" + row.id + "].note"}
-                // value={this.props.results.resultList[row.id].note}
+                 value={row.pastNotes}
                 disabled={false}
                 type="text"
                 labelText=""
@@ -264,9 +281,7 @@ const Validation = (props) => {
                 name={"resultList[" + row.id + "].result"}
                 labelText=""
                 type="number"
-                defaultValue={
-                  props.results ? props.results.resultList[row.id]?.result : ""
-                }
+                defaultValue={row.result ? row.result : ""}
                 onChange={(e) => handleChange(e, row.id)}
               />
             );
@@ -374,6 +389,64 @@ const Validation = (props) => {
   };
   return (
     <>
+      {props.results && (
+        <Grid style={{ marginTop: "20px" }}>
+          <Column lg={4} />
+          <Column lg={3}>
+            <Checkbox
+              id={"saveallnormal"}
+              name={"autochecks"}
+              labelText="Savel All normal"
+              onChange={(e) => {
+                const nomalResults = props.results.resultList?.filter(
+                  (result) => result.normal == true,
+                );
+                nomalResults.forEach((result) => {
+                  const checkbox = document.getElementById(
+                    "resultList" + result.id + ".isAccepted",
+                  );
+                  checkbox.checked = e.target.checked;
+                  handleAutomatedCheck(e.target.checked ,checkbox.name);
+                })
+              }}
+            />
+          </Column>
+          <Column lg={3}>
+            <Checkbox
+              id={"saveallresults"}
+              name={"autochecks"}
+              labelText="Savel All Results"
+              onChange={(e) => {
+                const nomalResults = props.results.resultList;
+                nomalResults.forEach((result) => {
+                  const checkbox = document.getElementById(
+                    "resultList" + result.id + ".isAccepted",
+                  );
+                  checkbox.checked = e.target.checked;
+                  handleAutomatedCheck(e.target.checked ,checkbox.name);
+                })
+              }}
+            />
+          </Column>
+          <Column lg={3}>
+            <Checkbox
+              id={"retestalltests"}
+              name={"autochecks"}
+              labelText="Retest All Tests"
+              onChange={(e) => {
+                const nomalResults = props.results.resultList;
+                nomalResults.forEach((result) => {
+                  const checkbox = document.getElementById(
+                    "resultList" + result.id + ".isRejected",
+                  );
+                  checkbox.checked = e.target.checked;
+                  handleAutomatedCheck(e.target.checked ,checkbox.name);
+                })
+              }}
+            />
+          </Column>
+        </Grid>
+      )}
       <Formik
         initialValues={ValidationSearchFormValues}
         //validationSchema={}
@@ -403,8 +476,8 @@ const Validation = (props) => {
               onChange={handlePageChange}
               page={page}
               pageSize={pageSize}
-              pageSizes={[100]}
-              totalItems={props.results ? props.results.resultList.length : 0}
+              pageSizes={[100,50,10]}
+              totalItems={props.results ? props.results.resultList?props.results.resultList.length:0 : 0}
             ></Pagination>
 
             <Button
