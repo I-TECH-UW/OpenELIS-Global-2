@@ -41,9 +41,7 @@ function CreatePatientForm(props) {
   const [formAction, setFormAction] = useState("ADD");
   const componentMounted = useRef(false);
   const intl = useIntl();
-  const [dateOfBirthFormatter,setDateOfBirthFormatter] = useState({
-    "years": "", "months": "", "days": ""
-  })
+  const [dateOfBirthFormatter,setDateOfBirthFormatter] = useState({"years": "", "months": "", "days": ""})
 
   const handleDatePickerChange = (values, ...e) => {
     var patient = values;
@@ -382,86 +380,86 @@ function CreatePatientForm(props) {
             </div>
             <Accordion>
               <AccordionItem title={intl.formatMessage({ id: "emergencyContactInfo.title" })}>
-            <div className="inlineDiv">
-              <Field name="patientContact.person.lastName">
-                {({ field }) => (
-                  <TextInput
-                    value={
-                      values.patientContact?.person.lastName === undefined
-                        ? ""
-                        : values.patientContact?.person.lastName
-                    }
-                    name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "patientcontact.person.lastname",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                  />
-                )}
-              </Field>
-              <Field name="patientContact.person.firstName">
-                {({ field }) => (
-                  <TextInput
-                    value={
-                      values.patientContact?.person.firstName === undefined
-                        ? ""
-                        : values.patientContact?.person.firstName
-                    }
-                    name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "patientcontact.person.firstname",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                  />
-                )}
-              </Field>
-            </div>
-            <div className="inlineDiv">
-              <Field name="patientContact.person.email">
-                {({ field }) => (
-                  <TextInput
-                    value={
-                      values.patientContact?.person.email === undefined
-                        ? ""
-                        : values.patientContact?.person.email
-                    }
-                    name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "patientcontact.person.email",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                  />
-                )}
-              </Field>
-              <Field name="patientContact.person.primaryPhone">
-                {({ field }) => (
-                  <TextInput
-                    value={
-                      values.patientContact?.person.primaryPhone === undefined
-                        ? ""
-                        : values.patientContact?.person.primaryPhone
-                    }
-                    name={field.name}
-                    labelText={intl.formatMessage(
-                      {
-                        id: "patient.label.contactphone",
-                        defaultMessage: "Contact Phone: {PHONE_FORMAT}",
-                      },
-                      { PHONE_FORMAT: configurationProperties.PHONE_FORMAT }
+                <div className="inlineDiv">
+                  <Field name="patientContact.person.lastName">
+                    {({ field }) => (
+                      <TextInput
+                        value={
+                          values.patientContact?.person.lastName === undefined
+                            ? ""
+                            : values.patientContact?.person.lastName
+                        }
+                        name={field.name}
+                        labelText={intl.formatMessage({
+                          id: "patientcontact.person.lastname",
+                        })}
+                        id={field.name}
+                        className="inputText"
+                      />
                     )}
-                    id={field.name}
-                    className="inputText"
-                  />
-                )}
-              </Field>
-              <div className="error">
-                <ErrorMessage name="patientContact.person.email"></ErrorMessage>
-              </div>
-              <div className="error"></div>
-            </div>
+                  </Field>
+                  <Field name="patientContact.person.firstName">
+                    {({ field }) => (
+                      <TextInput
+                        value={
+                          values.patientContact?.person.firstName === undefined
+                            ? ""
+                            : values.patientContact?.person.firstName
+                        }
+                        name={field.name}
+                        labelText={intl.formatMessage({
+                          id: "patientcontact.person.firstname",
+                        })}
+                        id={field.name}
+                        className="inputText"
+                      />
+                    )}
+                  </Field>
+                </div>
+                <div className="inlineDiv">
+                  <Field name="patientContact.person.email">
+                    {({ field }) => (
+                      <TextInput
+                        value={
+                          values.patientContact?.person.email === undefined
+                            ? ""
+                            : values.patientContact?.person.email
+                        }
+                        name={field.name}
+                        labelText={intl.formatMessage({
+                          id: "patientcontact.person.email",
+                        })}
+                        id={field.name}
+                        className="inputText"
+                      />
+                    )}
+                  </Field>
+                  <Field name="patientContact.person.primaryPhone">
+                    {({ field }) => (
+                      <TextInput
+                        value={
+                          values.patientContact?.person.primaryPhone === undefined
+                            ? ""
+                            : values.patientContact?.person.primaryPhone
+                        }
+                        name={field.name}
+                        labelText={intl.formatMessage(
+                          {
+                            id: "patient.label.contactphone",
+                            defaultMessage: "Contact Phone: {PHONE_FORMAT}",
+                          },
+                          { PHONE_FORMAT: configurationProperties.PHONE_FORMAT }
+                        )}
+                        id={field.name}
+                        className="inputText"
+                      />
+                    )}
+                  </Field>
+                  <div className="error">
+                    <ErrorMessage name="patientContact.person.email"></ErrorMessage>
+                  </div>
+                  <div className="error"></div>
+                </div>
               </AccordionItem>
             </Accordion>
 
