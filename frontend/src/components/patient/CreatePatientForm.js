@@ -167,8 +167,7 @@ function CreatePatientForm(props) {
         props.orderFormValues.patientProperties.guid !== ""
       ) {
         setPatientDetails(props.orderFormValues.patientProperties);
-        getYearsMonthsDaysFromDOB(props.orderFormValues.patientProperties.birthDateForDisplay
-        );
+        getYearsMonthsDaysFromDOB(props.orderFormValues.patientProperties.birthDateForDisplay);
       }
     }
   };
@@ -330,7 +329,7 @@ function CreatePatientForm(props) {
                       handleSubjectNoValidation(
                         "nationalId",
                         "nationalID",
-                        values.nationalId
+                        values.nationalId,
                       );
                     }}
                   />
@@ -513,35 +512,35 @@ function CreatePatientForm(props) {
               </Field>
 
                 <TextInput
-                  value={dateOfBirthFormatter.years}
-                  name="years"
-                  labelText={intl.formatMessage({
-                    id: "patient.female",
-                  })}
-                  id="years"
-                  type="number"
-                  onChange={(e) => handleYearsChange(e, values)}
-                  className="inputText"
+                    value={dateOfBirthFormatter.years}
+                    name="years"
+                    labelText={intl.formatMessage({
+                      id: "patient.female",
+                    })}
+                    id="years"
+                    type="number"
+                    onChange={(e) => handleYearsChange(e, values)}
+                    className="inputText"
                 />
 
                 <TextInput
-                  value={dateOfBirthFormatter.months}
-                  name="months"
-                  labelText={intl.formatMessage({ id: "patient.age.months" })}
-                  type="number"
-                  onChange={(e) => handleMonthsChange(e, values)}
-                  id="months"
-                  className="inputText"
+                    value={dateOfBirthFormatter.months}
+                    name="months"
+                    labelText={intl.formatMessage({ id: "patient.age.months" })}
+                    type="number"
+                    onChange={(e) => handleMonthsChange(e, values)}
+                    id="months"
+                    className="inputText"
                 />
 
                 <TextInput
-                  value={dateOfBirthFormatter.days}
-                  name="days"
-                  type="number"
-                  onChange={(e) => handleDaysChange(e, values)}
-                  labelText={intl.formatMessage({ id: "patient.age.days" })}
-                  id="days"
-                  className="inputText"
+                    value={dateOfBirthFormatter.days}
+                    name="days"
+                    type="number"
+                    onChange={(e) => handleDaysChange(e, values)}
+                    labelText={intl.formatMessage({ id: "patient.age.days" })}
+                    id="days"
+                    className="inputText"
                 />
                 <div className="error">
                   <ErrorMessage name="birthDateForDisplay"></ErrorMessage>
@@ -556,13 +555,13 @@ function CreatePatientForm(props) {
                   <Field name="city">
                     {({ field }) => (
                       <TextInput
-                        value={values.city}
-                        name={field.name}
-                        labelText={intl.formatMessage({
-                          id: "patient.address.town",
-                        })}
-                        id={field.name}
-                        className="inputText"
+                          value={values.city}
+                          name={field.name}
+                          labelText={intl.formatMessage({
+                            id: "patient.address.town",
+                          })}
+                          id={field.name}
+                          className="inputText"
                       />
                     )}
                   </Field>
