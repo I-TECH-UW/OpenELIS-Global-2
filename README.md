@@ -8,11 +8,31 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 [![Publish Docker Image Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish.yml)
 
 ### Running OpenELIS in Docker
-#### Running with published docker images
+#### Running with docker compose
     docker-compose up -d
 
-#### Building the docker images from source code
+#### Building the docker images directly from source code
     docker-compose -f build.docker-compose.yml up -d --build
+
+#### Running docker containers With locally compiled Artifacts (ie the War file and local frontend Source files)
+1. Clone the Repository
+
+         git clone https://github.com/I-TECH-UW/OpenELIS-Global-2.git -b 2.8 
+
+2. innitialize and build sub modules
+
+        git submodule update --init --recursive
+        cd OpenELIS-Global-2/dataexport
+        mvn clean install -DskipTests
+
+3.   Build the War file
+
+            cd OpenELIS-Global-2
+            mvn clean install -DskipTests
+
+4. Start the containers to mount the locally compiled artifacts
+
+        docker-compose -f dev.docker-compose.yml up -d    
 
 #### The Instaces can be accesed at 
 

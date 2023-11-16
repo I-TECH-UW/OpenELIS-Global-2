@@ -12,6 +12,7 @@ export const NotificationContext = createContext(null);
 export default function Layout(props) {
   const { children } = props;
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
+  const [resetConfig, setResetConfig] = useState(false);
   const [configurationProperties, setConfigurationProperties] = useState({});
   const [notificationVisible, setNotificationVisible] = useState(false);
   const [notificationBody, setNotificationBody] = useState({
@@ -36,10 +37,18 @@ export default function Layout(props) {
         fetchConfigurationProperties,
       );
     }
-  }, [userSessionDetails.authenticated]);
+    setResetConfig(false);
+  }, [userSessionDetails.authenticated, resetConfig]);
 
   return (
-    <ConfigurationContext.Provider value={configurationProperties}>
+    <ConfigurationContext.Provider
+      value={{
+        configurationProperties: configurationProperties,
+        reloadConfiguration: () => {
+          setResetConfig(true);
+        },
+      }}
+    >
       <NotificationContext.Provider
         value={{
           notificationVisible,

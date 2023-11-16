@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -413,5 +414,18 @@ public class SiteInformationServiceImpl extends BaseObjectServiceImpl<SiteInform
             siteInformation.setValue(encryptor.encrypt(siteInformation.getValue()));
         }
     }
+
+    @Override
+    @Transactional
+    public List<SiteInformation> updateSiteInformationByName(Map<String, String> map) {
+        List<SiteInformation> updatedSiteInfomration = new ArrayList<>();
+        for (Entry<String, String> entry : map.entrySet()) {
+            SiteInformation si = getSiteInformationByName(entry.getKey());
+            si.setValue(entry.getValue());
+            updatedSiteInfomration.add(siteInformationDAO.update(si));
+        }
+        return updatedSiteInfomration;
+    }
+
 
 }

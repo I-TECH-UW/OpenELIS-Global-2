@@ -8,7 +8,7 @@ import {
   SelectItem,
   Tag,
   Tile,
-  Loading
+  Loading,
 } from "@carbon/react";
 import CustomCheckBox from "../common/CustomCheckBox";
 import CustomSelect from "../common/CustomSelect";
@@ -245,7 +245,7 @@ const SampleType = (props) => {
   const fetchSamplesTypes = (res) => {
     if (componentMounted.current) {
       setSampleTypes(res);
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -554,7 +554,7 @@ const SampleType = (props) => {
                         <Tile className={"emptyFilterTests"}>
                           <span>
                             <FormattedMessage id="sample.panel.search.error.msg" />{" "}
-                            <strong> "{panelSearchTerm}"</strong>{" "}
+                            <strong>"{panelSearchTerm}"</strong>{" "}
                           </span>
                         </Tile>
                       </Layer>

@@ -3,7 +3,7 @@ import { ConfigurationContext } from "../layout/Layout";
 import { TimePicker } from "@carbon/react";
 
 const CustomTimePicker = (props) => {
-  const configurationProperties = useContext(ConfigurationContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
   const [currentTime, setCurrentTime] = useState(null);
 
   function handleTimePicker(e) {

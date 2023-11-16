@@ -3,7 +3,7 @@ import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../Style.css";
 import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
 import { nationalityList } from "../data/countries";
-import format from 'date-fns/format'
+import format from "date-fns/format";
 
 import {
   Heading,
@@ -31,7 +31,7 @@ import CreatePatientValidationSchema from "../formModel/validationSchema/CreateP
 function CreatePatientForm(props) {
   const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
-  const configurationProperties = useContext(ConfigurationContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
 
   const [patientDetails, setPatientDetails] = useState(CreatePatientFormValues);
   const [healthRegions, setHealthRegions] = useState([]);
@@ -50,12 +50,12 @@ function CreatePatientForm(props) {
     patient.birthDateForDisplay = e[1];
     setPatientDetails(patient);
     if (patient.birthDateForDisplay !== "") {
-      getYearsMonthsDaysFromDOB(patient.birthDateForDisplay)
+      getYearsMonthsDaysFromDOB(patient.birthDateForDisplay);
     }
   };
 
   function getYearsMonthsDaysFromDOB(date) {
-    const selectedDate = date.split('/');
+    const selectedDate = date.split("/");
     let today = new Date();
 
     let year = today.getFullYear();
@@ -76,11 +76,16 @@ function CreatePatientForm(props) {
       years = years - 1;
       months = months + 12;
     }
-    days = Math.floor((today.getTime() - (new Date(yy + years, mm + months - 1, dd)).getTime()) / (24 * 60 * 60 * 1000));
+    days = Math.floor(
+      (today.getTime() - new Date(yy + years, mm + months - 1, dd).getTime()) /
+        (24 * 60 * 60 * 1000),
+    );
 
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
-      years: years, months: months, days: days
+      years: years,
+      months: months,
+      days: days,
     });
   }
 
@@ -88,37 +93,42 @@ function CreatePatientForm(props) {
     const currentDate = new Date();
     const pastDate = new Date();
 
-    pastDate.setFullYear(currentDate.getFullYear() - dateOfBirthFormatter.years);
+    pastDate.setFullYear(
+      currentDate.getFullYear() - dateOfBirthFormatter.years,
+    );
     pastDate.setMonth(currentDate.getMonth() - dateOfBirthFormatter.months);
     pastDate.setDate(currentDate.getDate() - dateOfBirthFormatter.days);
-    const dob = format(new Date(pastDate),'dd/MM/yyyy');
+    const dob = format(new Date(pastDate), "dd/MM/yyyy");
     setPatientDetails((prevState) => ({
       ...prevState,
       birthDateForDisplay: dob,
     }));
-  }
+  };
 
-  function handleYearsChange(e){
+  function handleYearsChange(e, values) {
+    setPatientDetails(values);
     let years = e.target.value;
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
-      years: years
+      years: years,
     });
   }
 
-  function handleMonthsChange(e){
+  function handleMonthsChange(e, values) {
+    setPatientDetails(values);
     let months = e.target.value;
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
-      months: months
+      months: months,
     });
   }
 
-  function handleDaysChange(e){
+  function handleDaysChange(e, values) {
+    setPatientDetails(values);
     let days = e.target.value;
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
-      days: days
+      days: days,
     });
   }
   const handleRegionSelection = (e, values) => {
@@ -136,9 +146,9 @@ function CreatePatientForm(props) {
     setHealthDistricts(res);
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     getDOBByYearMonthsDays();
-  },[dateOfBirthFormatter])
+  }, [dateOfBirthFormatter]);
 
   useEffect(() => {
     if (props.selectedPatient.patientPK) {
@@ -167,7 +177,9 @@ function CreatePatientForm(props) {
         props.orderFormValues.patientProperties.guid !== ""
       ) {
         setPatientDetails(props.orderFormValues.patientProperties);
-        getYearsMonthsDaysFromDOB(props.orderFormValues.patientProperties.birthDateForDisplay);
+        getYearsMonthsDaysFromDOB(
+          props.orderFormValues.patientProperties.birthDateForDisplay,
+        );
       }
     }
   };
@@ -510,7 +522,6 @@ function CreatePatientForm(props) {
                   </DatePicker>
                 )}
               </Field>
-
                 <TextInput
                     value={dateOfBirthFormatter.years}
                     name="years"
@@ -561,8 +572,7 @@ function CreatePatientForm(props) {
                             })}
                             id={field.name}
                             className="inputText"
-                        />
-                    )}
+                        />         )}
                   </Field>
                   <Field name="streetAddress">
                     {({ field }) => (

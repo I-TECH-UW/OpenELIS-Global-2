@@ -31,9 +31,8 @@ const AddOrder = (props) => {
   const [siteNames, setSiteNames] = useState([]);
   const [innitialized, setInnitialized] = useState(false);
   const [phoneFormat, setPhoneFormat] = useState("");
-  const configurationProperties = useContext(ConfigurationContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
   const [departments, setDepartments] = useState([]);
-
 
   const handleDatePickerChange = (datePicker, date) => {
     let obj = null;
@@ -246,9 +245,9 @@ const AddOrder = (props) => {
       loadDepartments,
     );
   }
-  const loadDepartments =(data) => {
+  const loadDepartments = (data) => {
     setDepartments(data);
-  }
+  };
 
   function handleLabNo(e) {
     setOrderFormValues({
@@ -308,7 +307,6 @@ const AddOrder = (props) => {
     });
   }
 
-
   useEffect(() => {
     if (!innitialized) {
       setPhoneFormat(configurationProperties.phoneFormat);
@@ -332,7 +330,6 @@ const AddOrder = (props) => {
     if (orderFormValues.sampleOrderItems.requestDate != "") {
       setInnitialized(true);
     }
-
   }, [orderFormValues]);
 
   function handlePriority(e) {
@@ -445,7 +442,7 @@ const AddOrder = (props) => {
               id={"order_receivedDate"}
               labelText={<FormattedMessage id="sample.receivedDate" />}
               className="inputDate"
-               autofillDate={true}
+              autofillDate={true}
               value={orderFormValues.sampleOrderItems.receivedDateForDisplay}
               onChange={(date) => handleDatePickerChange("receivedDate", date)}
             />
@@ -667,7 +664,10 @@ const AddOrder = (props) => {
             if (sample.tests.length > 0) {
               return (
                 <div key={index}>
-                  <h4> <FormattedMessage id="label.button.sample" /> {index + 1}</h4>
+                  <h4>
+                    {" "}
+                    <FormattedMessage id="label.button.sample" /> {index + 1}
+                  </h4>
                   <OrderResultReporting
                     selectedTests={sample.tests}
                     reportingNotifications={reportingNotifications}
