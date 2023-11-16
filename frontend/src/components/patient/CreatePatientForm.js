@@ -42,7 +42,6 @@ function CreatePatientForm(props) {
   const componentMounted = useRef(false);
   const intl = useIntl();
   const [dateOfBirthFormatter,setDateOfBirthFormatter] = useState({"years": "", "months": "", "days": ""})
-
   const handleDatePickerChange = (values, ...e) => {
     var patient = values;
     patient.birthDateForDisplay = e[1];
@@ -390,9 +389,7 @@ function CreatePatientForm(props) {
                             : values.patientContact?.person.lastName
                         }
                         name={field.name}
-                        labelText={intl.formatMessage({
-                          id: "patientcontact.person.lastname",
-                        })}
+                        labelText={intl.formatMessage({id: "patientcontact.person.lastname",})}
                         id={field.name}
                         className="inputText"
                       />
@@ -407,9 +404,7 @@ function CreatePatientForm(props) {
                             : values.patientContact?.person.firstName
                         }
                         name={field.name}
-                        labelText={intl.formatMessage({
-                          id: "patientcontact.person.firstname",
-                        })}
+                        labelText={intl.formatMessage({id: "patientcontact.person.firstname",})}
                         id={field.name}
                         className="inputText"
                       />
@@ -426,9 +421,7 @@ function CreatePatientForm(props) {
                             : values.patientContact?.person.email
                         }
                         name={field.name}
-                        labelText={intl.formatMessage({
-                          id: "patientcontact.person.email",
-                        })}
+                        labelText={intl.formatMessage({id: "patientcontact.person.email",})}
                         id={field.name}
                         className="inputText"
                       />
@@ -443,13 +436,7 @@ function CreatePatientForm(props) {
                             : values.patientContact?.person.primaryPhone
                         }
                         name={field.name}
-                        labelText={intl.formatMessage(
-                          {
-                            id: "patient.label.contactphone",
-                            defaultMessage: "Contact Phone: {PHONE_FORMAT}",
-                          },
-                          { PHONE_FORMAT: configurationProperties.PHONE_FORMAT }
-                        )}
+                        labelText={intl.formatMessage({id: "patient.label.contactphone",defaultMessage: "Contact Phone: {PHONE_FORMAT}",},{ PHONE_FORMAT: configurationProperties.PHONE_FORMAT })}
                         id={field.name}
                         className="inputText"
                       />
@@ -469,13 +456,7 @@ function CreatePatientForm(props) {
                   <TextInput
                     value={values.primaryPhone}
                     name={field.name}
-                    labelText={intl.formatMessage(
-                      {
-                        id: "patient.label.primaryphone",
-                        defaultMessage: "Phone: {PHONE_FORMAT}",
-                      },
-                      { PHONE_FORMAT: configurationProperties.PHONE_FORMAT }
-                    )}
+                    labelText={intl.formatMessage({id: "patient.label.primaryphone",defaultMessage: "Phone: {PHONE_FORMAT}",},{ PHONE_FORMAT: configurationProperties.PHONE_FORMAT })}
                     id={field.name}
                     className="inputText"
                   />
