@@ -493,7 +493,7 @@ function CreatePatientForm(props) {
                       id="date-picker-default-id"
                       placeholder="dd/mm/yyyy"
                       labelText={intl.formatMessage({
-                        id: "patient.female",
+                        id: "patient.dob",
                       })}
                       type="text"
                       name={field.name}
