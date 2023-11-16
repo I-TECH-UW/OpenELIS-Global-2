@@ -55,7 +55,7 @@ public abstract class ConfigurationProperties {
         GeographicUnit1Label("Geographic Unit 1 Label"), // The Geographical units for a particular region
         GeographicUnit2Label("Geographic Unit 2 Label"), // The Geographical units for a particular district
         AccessionFormat("acessionFormat"), // Format of accession number can be one of SITEYEARNUM, YEARNUM OR
-                                           // PROGRAMNUM see AccessionNumberValidatorFactory
+                                           // PROGRAMNUM, ALPHANUM see AccessionNumberValidatorFactory
         ReflexAction("reflexAction"), // In combination with flags in reflex table determines actual action, should be
                                       // standardize
         TrainingInstallation("TrainingInstallation"), // Flag to indicate if this is a training instance
@@ -176,6 +176,8 @@ public abstract class ConfigurationProperties {
         SLIDE_BARCODE_WIDTH("widthSlideLabels"), //
         ALT_ACCESSION_PREFIX("prePrintAltAccessionPrefix"), //
         USE_ALT_ACCESSION_PREFIX("prePrintUseAltAccession"), //
+        USE_ALPHANUM_ACCESSION_PREFIX("useAlphanumAccessionPrefix"), //
+        ALPHANUM_ACCESSION_PREFIX("alphanumAccessionPrefix"), //
         LAB_DIRECTOR_NAME("labDirectorName"), //
         LAB_DIRECTOR_TITLE("labDirectorTitle"), //
         INFO_HIGHWAY_USERNAME("infoHighway.username"), //

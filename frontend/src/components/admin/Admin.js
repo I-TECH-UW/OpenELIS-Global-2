@@ -4,6 +4,7 @@ import { FormattedMessage, useIntl, injectIntl } from "react-intl";
 import "../Style.css";
 import ReflexTestManagement from "./reflexTests/ReflexTestManagement";
 import ProgramManagement from "./program/ProgramManagement";
+import LabNumberManagement from "./labNumber/LabNumberManagement";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
 import {
@@ -29,6 +30,9 @@ function Admin() {
               <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
             </SideNavMenuItem>
           </SideNavMenu>
+          <SideNavMenuItem href="#labNumber">
+            <FormattedMessage id="sidenav.label.admin.labNumber" />
+          </SideNavMenuItem>
           <SideNavMenuItem href="#program">
             <FormattedMessage id="sidenav.label.admin.program" />
           </SideNavMenuItem>
@@ -41,6 +45,9 @@ function Admin() {
         </SideNavItems>
       </SideNav>
 
+      <PathRoute path="#labNumber">
+        <LabNumberManagement />
+      </PathRoute>
       <PathRoute path="#reflex">
         <ReflexTestManagement />
       </PathRoute>

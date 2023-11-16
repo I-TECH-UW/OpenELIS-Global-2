@@ -85,26 +85,34 @@ export const postToOpenElisServerFullResponse = (
     });
 };
 
-export const postToOpenElisServerJsonResponse = (endPoint, payLoad, callback, extraParams) => {
-    fetch(config.serverBaseUrl + endPoint,
+export const postToOpenElisServerJsonResponse = (
+  endPoint,
+  payLoad,
+  callback,
+  extraParams,
+) => {
+  fetch(
+    config.serverBaseUrl + endPoint,
 
-        {
-            //includes the browser sessionId in the Header for Authentication on the backend server
-            credentials: "include",
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-                "X-CSRF-Token": localStorage.getItem("CSRF")
-            },
-            body: payLoad
-        }
-    )
-        .then( response => response.json()).then( json =>{
-            callback(json, extraParams)
-        }).catch(error => {
-            console.log(error)
-        })
-}
+    {
+      //includes the browser sessionId in the Header for Authentication on the backend server
+      credentials: "include",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": localStorage.getItem("CSRF"),
+      },
+      body: payLoad,
+    },
+  )
+    .then((response) => response.json())
+    .then((json) => {
+      callback(json, extraParams);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 
 //provides Synchronous calls to the api
 export const getFromOpenElisServerSync = (endPoint, callback) => {
@@ -149,4 +157,20 @@ export const postToOpenElisServerForPDF = (endPoint, payLoad) => {
 
 export const hasRole = (userSessionDetails, role) => {
   return userSessionDetails.roles && userSessionDetails.roles.includes(role);
+};
+
+export const convertAlphaNumLabNumForDisplay = (labNumber) => {
+  let labNumberForDisplay = labNumber.slice(0, 2) + "-";
+  if (labNumber.length > 8) {
+    labNumberForDisplay =
+      labNumberForDisplay + labNumber.slice(2, labNumber.length - 6) + "-";
+  }
+  labNumberForDisplay =
+    labNumberForDisplay +
+    labNumber.slice(labNumber.length - 6, labNumber.length - 3) +
+    "-";
+
+  labNumberForDisplay =
+    labNumberForDisplay + labNumber.slice(labNumber.length - 3);
+  return labNumberForDisplay.toUpperCase();
 };

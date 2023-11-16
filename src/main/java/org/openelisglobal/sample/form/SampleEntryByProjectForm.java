@@ -45,7 +45,7 @@ public class SampleEntryByProjectForm extends BaseForm implements IAccessionerFo
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String project = "";
 
-    @ValidAccessionNumber(format = AccessionFormat.PROGRAM/* , dateValidate = true */)
+    @ValidAccessionNumber(format = AccessionFormat.PROGRAMNUM/* , dateValidate = true */)
     private String labNo = "";
 
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE)

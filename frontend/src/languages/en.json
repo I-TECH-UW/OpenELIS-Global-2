@@ -125,7 +125,7 @@
     "cytology.label.reactive" : "Reactive cellular changes" ,
     "cytology.label.organisms" : "Organisms" ,
     "cytology.label.otherResult" : " Other Diagnosis Result" ,
-    "header.label.version" :"Verion:",
+    "header.label.version" :"Version:",
     "header.label.logout" :"Logout" ,
     "header.label.selectlocale" : "Select Locale" ,
     "sidenav.label.order" : "Order",
@@ -170,7 +170,8 @@
     "sidenav.label.admin.testmgt.calculated" : "Manage Calculated Value tests" ,
     "sidenav.label.admin.program" : "Program Entry" ,
     "sidenav.label.admin.organizationmgt" : "Organization Management" ,
-    "sidenav.label.admin.usermgt" : "User Management"  ,
+    "sidenav.label.admin.usermgt" : "User Management",
+    "sidenav.label.admin.labNumber" : "Lab Number Management",
     "patient.label.name" : "Name" ,
     "patient.label.sex" : "Sex" ,
     "patient.label.age" : "Age" ,
@@ -320,5 +321,11 @@
     "immunohistochemistry.label.mibName" : " MiB 1(ki-67) (Proliferative Index): ",
     "immunohistochemistry.label.tumorCells" :"of tumor cells positive (cut of 20%)",
     "immunohistochemistry.label.her2Assesment" :"HER 2 protein assesment is" ,
-    "immunohistochemistry.label.her2ScoreOf" :"with a Score of"
+    "immunohistochemistry.label.her2ScoreOf" :"with a Score of",
+    "configure.labNumber.title" : "Lab Number Management",
+    "labNumber.type" : "Lab Number Type",
+    "labNumber.usePrefix": "Use Prefix",
+    "labNumber.prefix": "Prefix",
+    "labNumber.format.new": "New Format",
+    "labNumber.format.current": "Current Format"
 }
