@@ -379,7 +379,7 @@ function CreatePatientForm(props) {
               </Field>
             </div>
             <Accordion>
-              <AccordionItem title={intl.formatMessage({ id: "emergencyContactInfo.title" })}>
+              <AccordionItem title={intl.formatMessage({ id:"emergencyContactInfo.title" })}>
                 <div className="inlineDiv">
                   <Field name="patientContact.person.lastName">
                     {({ field }) => (
