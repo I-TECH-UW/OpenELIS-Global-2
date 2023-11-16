@@ -36,6 +36,8 @@ public class StatusRules {
         resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.BiologistRejected);
         resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.NotStarted);
         resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.NonConforming_depricated);
+        resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.TechnicalRejected);
+        resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.TechnicalAcceptance);
         resultsLoadUtility.addIncludedSampleStatus(OrderStatus.Entered);
         resultsLoadUtility.addIncludedSampleStatus(OrderStatus.Started);
         resultsLoadUtility.addIncludedSampleStatus(OrderStatus.NonConforming_depricated);

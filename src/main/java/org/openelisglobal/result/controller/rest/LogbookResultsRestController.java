@@ -395,32 +395,12 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
 
     }
 
-    @PostMapping(value = "ReactLogbookResultsUpdateTest", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public void showReactLogbookResultsUpdateTest(HttpServletRequest request,
-            @Validated(LogbookResultsForm.LogbookResults.class) @RequestBody LogbookResultsForm Form,
-            BindingResult result) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-        ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-        String jsonString = new String();
-
-        try {
-            jsonString = mapper.writeValueAsString(Form);
-        } catch (Exception e) {
-            System.out.println("Post:LogbookResultsRestController:ERROR:" + e.toString());
-        }
-
-        System.out.println("Post:LogbookResultsRestController:SUCCESS" + jsonString);
-
-    }
 
     @PostMapping(value = "ReactLogbookResultsUpdate", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String ,List<String>> showReactLogbookResultsUpdate(HttpServletRequest request,
             @Validated(LogbookResultsForm.LogbookResults.class) @RequestBody LogbookResultsForm form,
             BindingResult result) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-        System.out.println("Post:LogbookResultsRestController:SUCCESS");
 
         boolean useTechnicianName = ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(Property.resultTechnicianName, "true");
@@ -549,6 +529,8 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
                     testResultItem.getNote(), RESULT_SUBJECT, getSysUserId(request)));
 
             if (testResultItem.isShadowRejected()) {
+                testResultItem.setResultValue("");
+                testResultItem.setShadowResultValue("");
                 String rejectedReasonId = testResultItem.getRejectReasonId();
                 for (IdValuePair rejectReason : DisplayListService.getInstance().getList(ListType.REJECTION_REASONS)) {
                     if (rejectedReasonId.equals(rejectReason.getId())) {

@@ -327,5 +327,6 @@
     "labNumber.usePrefix": "Use Prefix",
     "labNumber.prefix": "Prefix",
     "labNumber.format.new": "New Format",
-    "labNumber.format.current": "Current Format"
+    "labNumber.format.current": "Current Format" ,
+    "validation.label.nonconform" : "= Sample or Order is nonconforming or Test has been rejected"
 }

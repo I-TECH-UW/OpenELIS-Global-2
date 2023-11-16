@@ -389,3 +389,6 @@ button {
   margin: 10px !important;
 }
 
+.cds--date-picker__input{
+  max-width: 200px;
+}

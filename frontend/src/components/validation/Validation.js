@@ -20,52 +20,22 @@ import ValidationSearchFormValues from "../formModel/innitialValues/ValidationSe
 import { NotificationKinds } from "../common/CustomNotification";
 import { postToOpenElisServer } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
-import { getFromOpenElisServer } from "../utils/Utils";
+import config from "../../config.json";
 
 const Validation = (props) => {
   const { setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(100);
-  const [referalOrganizations, setReferalOrganizations] = useState([]);
-  const [methods, setMethods] = useState([]);
-  const [referralReasons, setReferralReasons] = useState([]);
 
   const componentMounted = useRef(false);
 
   useEffect(() => {
     componentMounted.current = true;
-    getFromOpenElisServer(
-      "/rest/displayList/REFERRAL_ORGANIZATIONS",
-      loadReferalOrganizations,
-    );
-    getFromOpenElisServer("/rest/displayList/METHODS", loadMehtods);
-    getFromOpenElisServer(
-      "/rest/displayList/REFERRAL_REASONS",
-      loadReferalReasons,
-    );
     return () => {
       componentMounted.current = false;
     };
   }, []);
-
-  const loadReferalOrganizations = (results) => {
-    if (componentMounted.current) {
-      setReferalOrganizations(results);
-    }
-  };
-
-  const loadMehtods = (results) => {
-    if (componentMounted.current) {
-      setMethods(results);
-    }
-  };
-
-  const loadReferalReasons = (results) => {
-    if (componentMounted.current) {
-      setReferralReasons(results);
-    }
-  };
 
   const columns = [
     {
@@ -114,7 +84,14 @@ const Validation = (props) => {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "16rem",
+      width: "10rem",
+    },
+    {
+      name: "Past Notes",
+      cell: (row, index, column, id) => {
+        return renderCell(row, index, column, id);
+      },
+      width: "10rem",
     },
   ];
 
@@ -153,7 +130,7 @@ const Validation = (props) => {
     const { name, id, value } = e.target;
     let form = props.results;
     var jp = require("jsonpath");
-     jp.value(form, name, value);
+    jp.value(form, name, value);
   };
 
   const handleDatePickerChange = (date, rowId) => {
@@ -167,33 +144,40 @@ const Validation = (props) => {
     const { name, id, checked } = e.target;
     let form = props.results;
     var jp = require("jsonpath");
-     jp.value(form, name, checked);
+    jp.value(form, name, checked);
   };
 
   const handleAutomatedCheck = (checked, name) => {
     let form = props.results;
     var jp = require("jsonpath");
-     jp.value(form, name, checked);
+    jp.value(form, name, checked);
   };
   const validateResults = (e, rowId) => {
     handleChange(e, rowId);
   };
-
 
   const renderCell = (row, index, column, id) => {
     switch (column.name) {
       case "Sample Info":
         return (
           <>
-            <div className="sampleInfo">
-              <TextArea
-                value={row.accessionNumber}
-                disabled={true}
-                type="text"
-                labelText=""
-                rows={3}
-              ></TextArea>
-            </div>
+            <TextArea
+              value={row.accessionNumber}
+              disabled={true}
+              type="text"
+              labelText=""
+              rows={1}
+            ></TextArea>
+            {row.nonconforming && (
+              <picture>
+                <img
+                  src={config.serverBaseUrl + "/images/nonconforming.gif"}
+                  alt="nonconforming"
+                  width="20" 
+                  height="15" 
+                />
+              </picture>
+            )}
           </>
         );
 
@@ -238,12 +222,28 @@ const Validation = (props) => {
               <TextArea
                 id={"resultList" + row.id + ".note"}
                 name={"resultList[" + row.id + "].note"}
-                 value={row.pastNotes}
                 disabled={false}
                 type="text"
                 labelText=""
                 rows={3}
                 onChange={(e) => handleChange(e, row.id)}
+              ></TextArea>
+            </div>
+          </>
+        );
+
+        case "Past Notes":
+        return (
+          <>
+            <div className="note">
+              <TextArea
+                id={"resultList" + row.id + ".pastNotes"}
+                name={"resultList[" + row.id + "].pastNotes"}
+                value={row.pastNotes}
+                disabled={true}
+                type="text"
+                labelText=""
+                rows={3}
               ></TextArea>
             </div>
           </>
@@ -293,105 +293,25 @@ const Validation = (props) => {
     }
     return row.result;
   };
-  const renderReferral = ({ data }) => {
-    return (
-      <div className="referralRow">
-        <Grid>
-          <Column lg={3}>
-            <div>
-              <Select
-                id={"testMethod" + data.id}
-                name={"resultList[" + data.id + "].testMethod"}
-                labelText={"Methods"}
-                onChange={(e) => handleChange(e, data.id)}
-                value={data.method}
-              >
-                <SelectItem text="" value="" />
-                {methods.map((method, method_index) => (
-                  <SelectItem
-                    text={method.value}
-                    value={method.id}
-                    key={method_index}
-                  />
-                ))}
-              </Select>
-            </div>
-          </Column>
-          <Column lg={3}>
-            <div>
-              <Select
-                className="referralReason"
-                id={"referralReason" + data.id}
-                name={"resultList[" + data.id + "].referralReason"}
-                labelText={"Referral Reason"}
-                onChange={(e) => handleChange(e, data.id)}
-              >
-                <SelectItem text="" value="" />
-                {referralReasons.map((method, method_index) => (
-                  <SelectItem
-                    text={method.value}
-                    value={method.id}
-                    key={method_index}
-                  />
-                ))}
-              </Select>
-            </div>
-          </Column>
-          <Column lg={3}>
-            <div className="institute">
-              <Select
-                id={"institute" + data.id}
-                name={"resultList[" + data.id + "].institute"}
-                labelText={"Institute"}
-                onChange={(e) => handleChange(e, data.id)}
-              >
-                <SelectItem text="" value="" />
-                {referalOrganizations.map((method, method_index) => (
-                  <SelectItem
-                    text={method.value}
-                    value={method.id}
-                    key={method_index}
-                  />
-                ))}
-              </Select>
-            </div>
-          </Column>
-          <Column lg={3}>
-            <div className="testToPerform">
-              <Select
-                id={"testToPerform" + data.id}
-                name={"resultList[" + data.id + "].testToPerform"}
-                labelText={"Test to Perform"}
-                onChange={(e) => handleChange(e, data.id)}
-              >
-                <SelectItem text={data.testName} value={data.id} />
-              </Select>
-            </div>
-          </Column>
-          <Column lg={3}>
-            <DatePicker
-              datePickerType="single"
-              id={"sentDate_" + data.id}
-              name={"resultList[" + data.id + "].sentDate_"}
-              onChange={(date) => handleDatePickerChange(date, data.id)}
-            >
-              <DatePickerInput
-                placeholder="mm/dd/yyyy"
-                labelText="Sent Date"
-                id="date-picker-single"
-                size="md"
-              />
-            </DatePicker>
-          </Column>
-        </Grid>
-      </div>
-    );
-  };
+
   return (
     <>
-      {props.results && (
-        <Grid style={{ marginTop: "20px" }}>
-          <Column lg={4} />
+      {props.results?.resultList?.length > 0 && (
+        <Grid style={{ marginTop: "20px" }} className="gridBoundary">
+          <Column lg={7}>
+            <picture>
+              <img
+                src={config.serverBaseUrl + "/images/nonconforming.gif"}
+                alt="nonconforming"
+                width="25" // Set your desired width
+                height="20" // Set your desired height
+              />
+            </picture>
+            <b>
+              {" "}
+              <FormattedMessage id="validation.label.nonconform" />
+            </b>
+          </Column>
           <Column lg={3}>
             <Checkbox
               id={"saveallnormal"}
@@ -406,8 +326,8 @@ const Validation = (props) => {
                     "resultList" + result.id + ".isAccepted",
                   );
                   checkbox.checked = e.target.checked;
-                  handleAutomatedCheck(e.target.checked ,checkbox.name);
-                })
+                  handleAutomatedCheck(e.target.checked, checkbox.name);
+                });
               }}
             />
           </Column>
@@ -423,8 +343,8 @@ const Validation = (props) => {
                     "resultList" + result.id + ".isAccepted",
                   );
                   checkbox.checked = e.target.checked;
-                  handleAutomatedCheck(e.target.checked ,checkbox.name);
-                })
+                  handleAutomatedCheck(e.target.checked, checkbox.name);
+                });
               }}
             />
           </Column>
@@ -440,8 +360,8 @@ const Validation = (props) => {
                     "resultList" + result.id + ".isRejected",
                   );
                   checkbox.checked = e.target.checked;
-                  handleAutomatedCheck(e.target.checked ,checkbox.name);
-                })
+                  handleAutomatedCheck(e.target.checked, checkbox.name);
+                });
               }}
             />
           </Column>
@@ -453,31 +373,27 @@ const Validation = (props) => {
         onSubmit
         onChange
       >
-        {({
-          values,
-          errors,
-          touched,
-          handleChange,
-          //handleBlur,
-          handleSubmit,
-        }) => (
+        {({ values, errors, touched, handleChange, handleSubmit }) => (
           <Form
             onChange={handleChange}
-            //onBlur={handleBlur}
           >
             <DataTable
               data={props.results ? props.results.resultList : []}
               columns={columns}
               isSortable
-              expandableRows
-              expandableRowsComponent={renderReferral}
             ></DataTable>
             <Pagination
               onChange={handlePageChange}
               page={page}
               pageSize={pageSize}
-              pageSizes={[100,50,10]}
-              totalItems={props.results ? props.results.resultList?props.results.resultList.length:0 : 0}
+              pageSizes={[100, 50, 10]}
+              totalItems={
+                props.results
+                  ? props.results.resultList
+                    ? props.results.resultList.length
+                    : 0
+                  : 0
+              }
             ></Pagination>
 
             <Button
