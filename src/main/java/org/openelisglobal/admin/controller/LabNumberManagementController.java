@@ -27,7 +27,7 @@ public class LabNumberManagementController {
     private SiteInformationService siteInformationService;
 
 
-    @GetMapping("labnumbermanagement")
+    @GetMapping("/rest/labnumbermanagement")
     public LabNumberManagementForm getValues() {
         LabNumberManagementForm form = new LabNumberManagementForm();
 
@@ -38,7 +38,7 @@ public class LabNumberManagementController {
         return form;
     }
 
-    @PostMapping("labnumbermanagement")
+    @PostMapping("/rest/labnumbermanagement")
     public LabNumberManagementForm setValues(@Valid @RequestBody LabNumberManagementForm form) {
         Map<String, String> map = new HashMap<>();
 

@@ -103,7 +103,7 @@ function LabNumberManagement() {
   }
 
   const loadValues = () => {
-    getFromOpenElisServer("/labnumbermanagement", (body) => {
+    getFromOpenElisServer("/rest/labnumbermanagement", (body) => {
       setLabNumberValues(body);
       setLoading(false);
     });
@@ -114,7 +114,7 @@ function LabNumberManagement() {
     setIsSubmitting(true);
     var submitValues = { ...labNumberValues };
     postToOpenElisServerFullResponse(
-      "/labnumbermanagement",
+      "/rest/labnumbermanagement",
       JSON.stringify(submitValues),
       displayStatus,
     );
