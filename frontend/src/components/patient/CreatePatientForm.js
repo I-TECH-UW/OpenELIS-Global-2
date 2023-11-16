@@ -76,7 +76,7 @@ function CreatePatientForm(props) {
       years = years - 1;
       months = months + 12;
     }
-    days = Math.floor((today.getTime() - new Date(yy + years, mm + months - 1, dd).getTime()) / (24 * 60 * 60 * 1000));
+    days = Math.floor((today.getTime() - (new Date(yy + years, mm + months - 1, dd)).getTime()) / (24 * 60 * 60 * 1000));
 
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
@@ -310,7 +310,7 @@ function CreatePatientForm(props) {
                       handleSubjectNoValidation(
                         "subjectNumber",
                         "subjectNumberID",
-                        values.subjectNumber
+                        values.subjectNumber,
                       );
                     }}
                   />
@@ -429,8 +429,7 @@ function CreatePatientForm(props) {
                 {({ field }) => (
                   <TextInput
                     value={
-                      values.patientContact?.person.primaryPhone ===
-                      undefined
+                      values.patientContact?.person.primaryPhone === undefined
                         ? ""
                         : values.patientContact?.person.primaryPhone
                     }
@@ -455,281 +454,279 @@ function CreatePatientForm(props) {
               </AccordionItem>
             </Accordion>
 
-            <div className="inlineDiv">
-              <Field name="primaryPhone">
-                {({ field }) => (
+              <div className="inlineDiv">
+                <Field name="primaryPhone">
+                  {({ field }) => (
+                    <TextInput
+                      value={values.primaryPhone}
+                      name={field.name}
+                      labelText={intl.formatMessage(
+                        {
+                          id: "patient.label.primaryphone",
+                          defaultMessage: "Phone: {PHONE_FORMAT}",
+                        },
+                        { PHONE_FORMAT: configurationProperties.PHONE_FORMAT }
+                      )}
+                      id={field.name}
+                      className="inputText"
+                    />
+                  )}
+                </Field>
+                <Field name="gender">
+                  {({ field }) => (
+                      <RadioButtonGroup
+                        valueSelected={values.gender}
+                        legendText={intl.formatMessage({ id: "patient.gender" })}
+                        name={field.name}
+                        className="inputText"
+                        id="create_patient_gender"
+                      >
+                        <RadioButton id="radio-1" labelText={intl.formatMessage({ id: "patient.male" })} value="M" />
+                        <RadioButton id="radio-2" labelText={intl.formatMessage({id: "patient.female",})} value="F" />
+                      </RadioButtonGroup>
+                  )}
+                </Field>
+              </div>
+              <div className="inlineDiv">
+                <Field name="birthDateForDisplay">
+                  {({ field }) => (
+                    <DatePicker
+                      value={values.birthDateForDisplay}
+                      onChange={(...e) => handleDatePickerChange(values, ...e)}
+                      name={field.name}
+                      dateFormat="d/m/Y"
+                      datePickerType="single"
+                      light={true}
+                      className="inputText"
+                    >
+                      <DatePickerInput
+                        id="date-picker-default-id"
+                        placeholder="dd/mm/yyyy"
+                        labelText={intl.formatMessage({
+                          id: "patient.female",
+                        })}
+                        type="text"
+                        name={field.name}
+                      />
+                    </DatePicker>
+                  )}
+                </Field>
+
                   <TextInput
-                    value={values.primaryPhone}
-                    name={field.name}
-                    labelText={intl.formatMessage(
-                      {
-                        id: "patient.label.primaryphone",
-                        defaultMessage: "Phone: {PHONE_FORMAT}",
-                      },
-                      { PHONE_FORMAT: configurationProperties.PHONE_FORMAT }
-                    )}
-                    id={field.name}
+                    value={dateOfBirthFormatter.years}
+                    name="years"
+                    labelText={intl.formatMessage({
+                      id: "patient.female",
+                    })}
+                    id="years"
+                    type="number"
+                    onChange={(e) => handleYearsChange(e, values)}
                     className="inputText"
                   />
-                )}
-              </Field>
-              <Field name="gender">
-                {({ field }) => (
-                  <RadioButtonGroup
-                    valueSelected={values.gender}
-                    legendText={intl.formatMessage({ id: "patient.gender" })}
-                    name={field.name}
+
+                  <TextInput
+                    value={dateOfBirthFormatter.months}
+                    name="months"
+                    labelText={intl.formatMessage({ id: "patient.age.months" })}
+                    type="number"
+                    onChange={(e) => handleMonthsChange(e, values)}
+                    id="months"
                     className="inputText"
-                    id="create_patient_gender"
-                  >
-                    <RadioButton id="radio-1" labelText={intl.formatMessage({ id: "patient.male" })} value="M" />
-                    <RadioButton id="radio-2"                       labelText={intl.formatMessage({
-                        id: "patient.female",
-                      })} value="F" />
-                  </RadioButtonGroup>
-                )}
-              </Field>
-            </div>
-            <div className="inlineDiv">
-              <Field name="birthDateForDisplay">
-                {({ field }) => (
-                  <DatePicker
-                    value={values.birthDateForDisplay}
-                    onChange={(...e) => handleDatePickerChange(values, ...e)}
-                    name={field.name}
-                    dateFormat="d/m/Y"
-                    datePickerType="single"
-                    light={true}
+                  />
+
+                  <TextInput
+                    value={dateOfBirthFormatter.days}
+                    name="days"
+                    type="number"
+                    onChange={(e) => handleDaysChange(e, values)}
+                    labelText={intl.formatMessage({ id: "patient.age.days" })}
+                    id="days"
                     className="inputText"
-                  >
-                    <DatePickerInput
-                      id="date-picker-default-id"
-                      placeholder="dd/mm/yyyy"
-                      labelText={intl.formatMessage({
-                        id: "patient.female",
-                      })}
-                      type="text"
-                      name={field.name}
-                    />
-                  </DatePicker>
-                )}
-              </Field>
-
-              <TextInput
-                value={dateOfBirthFormatter.years}
-                name="years"
-                labelText={intl.formatMessage({
-                  id: "patient.female",
-                })}
-                id="years"
-                type="number"
-                onChange={(e) => handleYearsChange(e, values)}
-                className="inputText"
-              />
-
-              <TextInput
-                value={dateOfBirthFormatter.months}
-                name="months"
-                labelText={intl.formatMessage({ id: "patient.age.months" })}
-                type="number"
-                onChange={(e) => handleMonthsChange(e, values)}
-                id="months"
-                className="inputText"
-              />
-
-              <TextInput
-                value={dateOfBirthFormatter.days}
-                name="days"
-                type="number"
-                onChange={(e) => handleDaysChange(e, values)}
-                labelText={intl.formatMessage({ id: "patient.age.days" })}
-                id="days"
-                className="inputText"
-              />
-              <div className="error">
-                <ErrorMessage name="birthDateForDisplay"></ErrorMessage>
-              </div>
-              <div className="error">
-                <ErrorMessage name="gender"></ErrorMessage>
-              </div>
-            </div>
+                  />
+                  <div className="error">
+                    <ErrorMessage name="birthDateForDisplay"></ErrorMessage>
+                  </div>
+                  <div className="error">
+                    <ErrorMessage name="gender"></ErrorMessage>
+                  </div>
+                </div>
             <Accordion>
               <AccordionItem title="Additional Information">
-            <div className="inlineDiv">
-              <Field name="city">
-                {({ field }) => (
-                  <TextInput
-                    value={values.city}
-                    name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "patient.address.town",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                  />
-                )}
-              </Field>
-              <Field name="streetAddress">
-                {({ field }) => (
-                  <TextInput
-                    value={values.streetAddress}
-                    name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "patient.address.street",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                  />
-                )}
-              </Field>
-              <Field name="commune">
-                {({ field }) => (
-                  <TextInput
-                    value={values.commune}
-                    name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "patient.address.camp",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                  />
-                )}
-              </Field>
-            </div>
-            <div className="inlineDiv">
-              <Field name="healthRegion">
-                {({ field }) => (
-                  <Select
-                    id="health_region"
-                    value={values.healthRegion}
-                    name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "patient.address.healthregion",
-                    })}
-                    className="inputText"
-                    onChange={(e) => handleRegionSelection(e, values)}
-                  >
-                    <SelectItem text="" value="" />
-                    {healthRegions.map((region, index) => (
-                      <SelectItem
-                        text={region.value}
-                        value={region.id}
-                        key={index}
+                <div className="inlineDiv">
+                  <Field name="city">
+                    {({ field }) => (
+                      <TextInput
+                        value={values.city}
+                        name={field.name}
+                        labelText={intl.formatMessage({
+                          id: "patient.address.town",
+                        })}
+                        id={field.name}
+                        className="inputText"
                       />
-                    ))}
-                  </Select>
-                )}
-              </Field>
-              <Field name="healthDistrict">
-                {({ field }) => (
-                  <Select
-                    id="health_district"
-                    value={values.healthDistrict}
-                    name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "patient.address.healthdistrict",
-                    })}
-                    className="inputText"
-                    onChange={() => {}}
-                  >
-                    <SelectItem text="" value="" />
-                    {healthDistricts.map((district, index) => (
-                      <SelectItem
-                        text={district.value}
-                        value={district.value}
-                        key={index}
+                    )}
+                  </Field>
+                  <Field name="streetAddress">
+                    {({ field }) => (
+                      <TextInput
+                        value={values.streetAddress}
+                        name={field.name}
+                        labelText={intl.formatMessage({
+                          id: "patient.address.street",
+                        })}
+                        id={field.name}
+                        className="inputText"
                       />
-                    ))}
-                  </Select>
-                )}
-              </Field>
-            </div>
-            <div className="inlineDiv">
-              <Field name="education">
-                {({ field }) => (
-                  <Select
-                    id="education"
-                    value={values.education}
-                    name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "pateint.eduction",
-                    })}
-                    className="inputText"
-                    onChange={() => {}}
-                  >
-                    <SelectItem text="" value="" />
-                    {educationList.map((education, index) => (
-                      <SelectItem
-                        text={education.value}
-                        value={education.value}
-                        key={index}
+                    )}
+                  </Field>
+                  <Field name="commune">
+                    {({ field }) => (
+                      <TextInput
+                        value={values.commune}
+                        name={field.name}
+                        labelText={intl.formatMessage({
+                          id: "patient.address.camp",
+                        })}
+                        id={field.name}
+                        className="inputText"
                       />
-                    ))}
-                  </Select>
-                )}
-              </Field>
-              <Field name="maritialStatus">
-                {({ field }) => (
-                  <Select
-                    id="maritialStatus"
-                    value={values.maritialStatus}
-                    name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "patient.maritalstatus",
-                    })}
-                    className="inputText"
-                    onChange={() => {}}
-                  >
-                    <SelectItem text="" value="" />
-                    {maritalStatuses.map((status, index) => (
-                      <SelectItem
-                        text={status.value}
-                        value={status.value}
-                        key={index}
+                    )}
+                  </Field>
+                </div>
+                <div className="inlineDiv">
+                  <Field name="healthRegion">
+                    {({ field }) => (
+                      <Select
+                        id="health_region"
+                        value={values.healthRegion}
+                        name={field.name}
+                        labelText={intl.formatMessage({
+                          id: "patient.address.healthregion",
+                        })}
+                        className="inputText"
+                        onChange={(e) => handleRegionSelection(e, values)}
+                      >
+                        <SelectItem text="" value="" />
+                        {healthRegions.map((region, index) => (
+                          <SelectItem
+                            text={region.value}
+                            value={region.id}
+                            key={index}
+                          />
+                        ))}
+                      </Select>
+                    )}
+                  </Field>
+                  <Field name="healthDistrict">
+                    {({ field }) => (
+                      <Select
+                        id="health_district"
+                        value={values.healthDistrict}
+                        name={field.name}
+                        labelText={intl.formatMessage({
+                          id: "patient.address.healthdistrict",
+                        })}
+                        className="inputText"
+                        onChange={() => {}}
+                      >
+                        <SelectItem text="" value="" />
+                        {healthDistricts.map((district, index) => (
+                          <SelectItem
+                            text={district.value}
+                            value={district.value}
+                            key={index}
+                          />
+                        ))}
+                      </Select>
+                    )}
+                  </Field>
+                </div>
+                <div className="inlineDiv">
+                  <Field name="education">
+                    {({ field }) => (
+                      <Select
+                        id="education"
+                        value={values.education}
+                        name={field.name}
+                        labelText={intl.formatMessage({
+                          id: "pateint.eduction",
+                        })}
+                        className="inputText"
+                        onChange={() => {}}
+                      >
+                        <SelectItem text="" value="" />
+                        {educationList.map((education, index) => (
+                          <SelectItem
+                            text={education.value}
+                            value={education.value}
+                            key={index}
+                          />
+                        ))}
+                      </Select>
+                    )}
+                  </Field>
+                  <Field name="maritialStatus">
+                    {({ field }) => (
+                      <Select
+                        id="maritialStatus"
+                        value={values.maritialStatus}
+                        name={field.name}
+                        labelText={intl.formatMessage({
+                          id: "patient.maritalstatus",
+                        })}
+                        className="inputText"
+                        onChange={() => {}}
+                      >
+                        <SelectItem text="" value="" />
+                        {maritalStatuses.map((status, index) => (
+                          <SelectItem
+                            text={status.value}
+                            value={status.value}
+                            key={index}
+                          />
+                        ))}
+                      </Select>
+                    )}
+                  </Field>
+                </div>
+                <div className="inlineDiv">
+                  <Field name="nationality">
+                    {({ field }) => (
+                      <Select
+                        id="nationality"
+                        value={values.nationality}
+                        name={field.name}
+                        labelText={intl.formatMessage({
+                          id: "patient.nationality",
+                        })}
+                        className="inputText"
+                        onChange={() => {}}
+                      >
+                        <SelectItem text="" value="" />
+                        {nationalityList.map((nationality, index) => (
+                          <SelectItem
+                            text={nationality.label}
+                            value={nationality.value}
+                            key={index}
+                          />
+                        ))}
+                      </Select>
+                    )}
+                  </Field>
+                  <Field name="otherNationality">
+                    {({ field }) => (
+                      <TextInput
+                        value={values.otherNationality}
+                        name={field.name}
+                        labelText={intl.formatMessage({
+                          id: "patient.nationality.other",
+                        })}
+                        id={field.name}
+                        className="inputText"
                       />
-                    ))}
-                  </Select>
-                )}
-              </Field>
-            </div>
-            <div className="inlineDiv">
-              <Field name="nationality">
-                {({ field }) => (
-                  <Select
-                    id="nationality"
-                    value={values.nationality}
-                    name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "patient.nationality",
-                    })}
-                    className="inputText"
-                    onChange={() => {}}
-                  >
-                    <SelectItem text="" value="" />
-                    {nationalityList.map((nationality, index) => (
-                      <SelectItem
-                        text={nationality.label}
-                        value={nationality.value}
-                        key={index}
-                      />
-                    ))}
-                  </Select>
-                )}
-              </Field>
-              <Field name="otherNationality">
-                {({ field }) => (
-                  <TextInput
-                    value={values.otherNationality}
-                    name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "patient.nationality.other",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                  />
-                )}
-              </Field>
-            </div>
+                    )}
+                  </Field>
+                </div>
               </AccordionItem>
             </Accordion>
             {props.showActionsButton && (
