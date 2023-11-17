@@ -290,7 +290,6 @@
     "label.button.select.technician": "Sélectionner le technicien",
     "label.button.select.pathologist": "Sélectionner le pathologiste",
     "label.button.select.test": "Sélectionner le test",
-    "label.button.externalsearch": "Recherche externe",
     "assigned.cytopathologist.label": "Cytopathologiste attribué" ,
     "label.search.patient": "Rechercher un patient",
     "immunohistochemistry.label.dashboard": "Tableau de bord en immunohistochimie",
