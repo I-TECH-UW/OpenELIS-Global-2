@@ -292,6 +292,7 @@
     "label.button.select.technician": "Select Technician" ,
     "label.button.select.pathologist": "Select Pathologist" ,
     "label.button.select.test": "Select Test",
+    "label.button.externalsearch": "External Search",
     "assigned.cytopathologist.label" : "CytoPathologist Assigned" ,
     "label.search.patient" : "Search Patient" ,
     "immunohistochemistry.label.dashboard" : "Immunohistochemistry DashBoard" ,
