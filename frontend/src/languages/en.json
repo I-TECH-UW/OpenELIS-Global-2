@@ -157,8 +157,8 @@
     "sidenav.label.results.testdate" : "By Test Date" ,
     "sidenav.label.results.byrange" : "By Range of Order numbers" ,
     "sidenav.label.validation" : "Validation" ,
-    "sidenav.label.validation.routine" : "Search By Routine",
-    "sidenav.label.validation.study" : "Search By Study",
+    "sidenav.label.validation.routine" : "Routine",
+    "sidenav.label.validation.study" : "Study",
     "sidenav.label.validation.order" : "Search By Order" ,
     "sidenav.label.validation.testdate" : "Search By Test Date" ,
     "sidenav.label.reports" : "Reports" ,
@@ -327,5 +327,6 @@
     "labNumber.usePrefix": "Use Prefix",
     "labNumber.prefix": "Prefix",
     "labNumber.format.new": "New Format",
-    "labNumber.format.current": "Current Format"
+    "labNumber.format.current": "Current Format" ,
+    "validation.label.nonconform" : "= Sample or Order is nonconforming or Test has been rejected"
 }
