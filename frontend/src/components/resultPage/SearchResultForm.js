@@ -24,12 +24,15 @@ import {
   SelectItem,
   Loading,
 } from "@carbon/react";
+import { convertAlphaNumLabNumForDisplay } from "../utils/Utils";
+import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import DataTable from "react-data-table-component";
 import { Formik, Field } from "formik";
 import SearchResultFormValues from "../formModel/innitialValues/SearchResultFormValues";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
 import SearchPatientForm from "../patient/SearchPatientForm";
+import { ConfigurationContext } from "../layout/Layout";
 
 function ResultSearchPage() {
   const [resultForm, setResultForm] = useState({ testResult: [] });
@@ -179,10 +182,11 @@ export function SearchResultForm(props) {
         onChange
       >
         {({
-          //   values,
+          values,
           //   errors,
           //   touched,
           handleChange,
+          setFieldValue,
           //   handleBlur,
           handleSubmit,
         }) => (
@@ -235,14 +239,18 @@ export function SearchResultForm(props) {
                     <Column lg={6}>
                       <Field name="accessionNumber">
                         {({ field }) => (
-                          <TextInput
+                          <CustomLabNumberInput
                             placeholder="Enter Accession No."
                             className="searchLabNumber inputText2"
                             name={field.name}
                             id={field.name}
+                            value={values[field.name]}
                             labelText={
                               <FormattedMessage id="search.label.accession" />
                             }
+                            onChange={(e, rawValue) => {
+                              setFieldValue(field.name, rawValue);
+                            }}
                           />
                         )}
                       </Field>
@@ -428,6 +436,7 @@ export function SearchResultForm(props) {
 export function SearchResults(props) {
   const { notificationVisible, setNotificationBody, setNotificationVisible } =
     useContext(NotificationContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(100);
@@ -539,6 +548,8 @@ export function SearchResults(props) {
   ];
 
   const renderCell = (row, index, column, id) => {
+    let formatLabNum = configurationProperties.AccessionFormat === "ALPHANUM";
+
     console.log("renderCell: index: " + index + ", id: " + id);
     switch (column.name) {
       case "Sample Info":
@@ -548,7 +559,9 @@ export function SearchResults(props) {
             <div className="sampleInfo">
               <TextArea
                 value={
-                  row.accessionNumber +
+                  (formatLabNum
+                    ? convertAlphaNumLabNumForDisplay(row.accessionNumber)
+                    : row.accessionNumber) +
                   "-" +
                   row.sequenceNumber +
                   "\n" +

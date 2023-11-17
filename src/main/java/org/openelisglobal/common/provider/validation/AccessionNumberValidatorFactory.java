@@ -158,7 +158,7 @@ public class AccessionNumberValidatorFactory implements ConfigurationListener {
     }
 
     private IAccessionNumberGenerator getAlphanumValidator() {
-        return new Base27AccessionValidator();
+        return new AlphanumAccessionValidator();
     }
 
     private IAccessionNumberGenerator getSiteYearValidator() {

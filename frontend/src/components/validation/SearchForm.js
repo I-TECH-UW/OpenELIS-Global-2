@@ -14,8 +14,9 @@ import {
   DatePicker,
   DatePickerInput,
   Loading,
-  Grid
+  Grid,
 } from "@carbon/react";
+import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import { FormattedMessage } from "react-intl";
 import { Formik, Field } from "formik";
 import ValidationSearchFormValues from "../formModel/innitialValues/ValidationSearchFormValues";
@@ -140,7 +141,7 @@ const SearchForm = (props) => {
                     <Column lg={6}>
                       <Field name="accessionNumber">
                         {({ field }) => (
-                          <TextInput
+                          <CustomLabNumberInput
                             placeholder={"Enter Lab No"}
                             className="searchLabNumber inputText"
                             name={field.name}

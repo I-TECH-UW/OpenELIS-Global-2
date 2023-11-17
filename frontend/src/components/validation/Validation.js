@@ -21,10 +21,13 @@ import { NotificationKinds } from "../common/CustomNotification";
 import { postToOpenElisServer } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
 import { getFromOpenElisServer } from "../utils/Utils";
+import { ConfigurationContext } from "../layout/Layout";
+import { convertAlphaNumLabNumForDisplay } from "../utils/Utils";
 
 const Validation = (props) => {
   const { setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(0);
   const [referalOrganizations, setReferalOrganizations] = useState([]);
@@ -164,13 +167,18 @@ const Validation = (props) => {
   };
 
   const renderCell = (row, index, column, id) => {
+    let formatLabNum = configurationProperties.AccessionFormat === "ALPHANUM";
     switch (column.name) {
       case "Sample Info":
         return (
           <>
             <div className="sampleInfo">
               <TextArea
-                value={row.accessionNumber}
+                value={
+                  formatLabNum
+                    ? convertAlphaNumLabNumForDisplay(row.accessionNumber)
+                    : row.accessionNumber
+                }
                 disabled={true}
                 type="text"
                 labelText=""

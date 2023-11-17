@@ -8,6 +8,7 @@ import {
   TextInput,
   TimePicker,
 } from "@carbon/react";
+import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import CustomDatePicker from "../common/CustomDatePicker";
 import { getFromOpenElisServer } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
@@ -249,12 +250,12 @@ const AddOrder = (props) => {
     setDepartments(data);
   };
 
-  function handleLabNo(e) {
+  function handleLabNo(e, rawVal) {
     setOrderFormValues({
       ...orderFormValues,
       sampleOrderItems: {
         ...orderFormValues.sampleOrderItems,
-        labNo: e.target.value,
+        labNo: rawVal ? rawVal : e.target.value,
       },
     });
     setNotificationVisible(false);
@@ -392,11 +393,11 @@ const AddOrder = (props) => {
           </h3>
           <div className="formInlineDiv">
             <div className="inputText">
-              <TextInput
+              <CustomLabNumberInput
                 name="labNo"
                 value={orderFormValues.sampleOrderItems.labNo}
                 onMouseLeave={handleLabNoValidation}
-                onChange={(e) => handleLabNo(e)}
+                onChange={handleLabNo}
                 labelText={<FormattedMessage id="sample.label.labnumber" />}
                 id="labNo"
                 className="inputText"

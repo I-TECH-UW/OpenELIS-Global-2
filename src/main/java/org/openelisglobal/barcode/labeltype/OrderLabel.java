@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.apache.commons.lang.StringUtils;
 import org.openelisglobal.barcode.LabelField;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
+import org.openelisglobal.common.provider.validation.AlphanumAccessionValidator;
 import org.openelisglobal.common.services.SampleOrderService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -54,7 +56,11 @@ public class OrderLabel extends Label {
         aboveFields.add(siteField);
 
         // adding bar code
-        setCode(labNo);
+         if (AccessionFormat.ALPHANUM.toString().equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            setCode(AlphanumAccessionValidator.convertAlphaNumLabNumForDisplay(labNo));
+        }else {
+            setCode(labNo);
+        }
     }
 
     /**
@@ -91,7 +97,11 @@ public class OrderLabel extends Label {
         aboveFields.add(siteField);
 
         // adding bar code
-        setCode(labNo);
+         if (AccessionFormat.ALPHANUM.toString().equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            setCode(AlphanumAccessionValidator.convertAlphaNumLabNumForDisplay(labNo));
+        }else {
+            setCode(labNo);
+        }
     }
 
     /**

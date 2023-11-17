@@ -24,6 +24,8 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
+import org.openelisglobal.common.provider.validation.AlphanumAccessionValidator;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
@@ -131,8 +133,14 @@ public abstract class RejectionReport extends Report implements IReportCreator {
                 break;
             }
         }
-
-        item.setAccessionNumber(sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH));
+if (AccessionFormat.ALPHANUM.toString()
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            item.setAccessionNumber(
+                    AlphanumAccessionValidator
+                            .convertAlphaNumLabNumForDisplay(sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH)));
+        } else {
+            item.setAccessionNumber(sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH));
+        }
         item.setReceivedDate(sampleService.getTwoYearReceivedDateForDisplay(sample));
         item.setCollectionDate(
                 DateUtil.convertTimestampToTwoYearStringDate(analysis.getSampleItem().getCollectionDate()));

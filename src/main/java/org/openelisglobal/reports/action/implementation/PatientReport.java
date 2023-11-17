@@ -43,6 +43,8 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
+import org.openelisglobal.common.provider.validation.AlphanumAccessionValidator;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.IStatusService;
@@ -102,7 +104,7 @@ public abstract class PatientReport extends Report {
     private static String ADDRESS_DEPT_ID;
     private static String ADDRESS_COMMUNE_ID;
     protected String currentContactInfo = "";
-    protected String currentSiteInfo = ""; 
+    protected String currentSiteInfo = "";
 
     protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
     protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
@@ -120,7 +122,7 @@ public abstract class PatientReport extends Report {
     protected PersonAddressService addressService = SpringContext.getBean(PersonAddressService.class);
     protected AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
     protected OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
-    protected UserService userService =  SpringContext.getBean(UserService.class);;
+    protected UserService userService = SpringContext.getBean(UserService.class);;
     private List<String> handledOrders;
     private List<Analysis> updatedAnalysis = new ArrayList<>();
 
@@ -273,9 +275,9 @@ public abstract class PatientReport extends Report {
         if (!updatedAnalysis.isEmpty()) {
             try {
                 analysisService.updateAllNoAuditTrail(updatedAnalysis);
-//				for (Analysis analysis : updatedAnalysis) {
-//					analysisService.update(analysis, true);
-//				}
+                // for (Analysis analysis : updatedAnalysis) {
+                // analysisService.update(analysis, true);
+                // }
 
             } catch (LIMSRuntimeException e) {
                 LogEvent.logError(e);
@@ -362,7 +364,7 @@ public abstract class PatientReport extends Report {
         currentSiteInfo = "";
         currentProvider = null;
 
-//        sampleService.getOrganizationRequester(currentSample);
+        // sampleService.getOrganizationRequester(currentSample);
         Organization referringOrg = sampleService.getOrganizationRequester(currentSample,
                 TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
         Organization referringDepartmentOrg = sampleService.getOrganizationRequester(currentSample,
@@ -852,8 +854,10 @@ public abstract class PatientReport extends Report {
      * If you have a string that you wish to add a suffix like units of measure, use
      * this.
      *
-     * @param base something
-     * @param plus something to add, if the above is not null or blank.
+     * @param base
+     *            something
+     * @param plus
+     *            something to add, if the above is not null or blank.
      * @return the two args put together, or the original if it was blank to begin
      *         with.
      */
@@ -928,8 +932,24 @@ public abstract class PatientReport extends Report {
             data.setCollectionDateTime(DateUtil.convertTimestampToStringDateAndConfiguredHourTime(
                     currentAnalysis.getSampleItem().getCollectionDate()));
         }
-
-        data.setAccessionNumber(sampleService.getAccessionNumber(currentSample) + "-" + sortOrder);
+        if (AccessionFormat.ALPHANUM.toString()
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            if (doAnalysis) {
+                data.setSampleId(
+                        AlphanumAccessionValidator
+                                .convertAlphaNumLabNumForDisplay(sampleService.getAccessionNumber(currentSample))
+                                + "-" + data.getSampleSortOrder());
+            }
+            data.setAccessionNumber(
+                    AlphanumAccessionValidator
+                            .convertAlphaNumLabNumForDisplay(sampleService.getAccessionNumber(currentSample))
+                            + "-" + data.getSampleSortOrder());
+        } else {
+            if (doAnalysis) {
+                data.setSampleId(sampleService.getAccessionNumber(currentSample) + "-" + data.getSampleSortOrder());
+            }
+            data.setAccessionNumber(sampleService.getAccessionNumber(currentSample) + "-" + data.getSampleSortOrder());
+        }
 
         if (doAnalysis) {
             reportResultAndConclusion(data);
@@ -967,8 +987,10 @@ public abstract class PatientReport extends Report {
      * starting at the given index. It uses multiresult form the list when the
      * results are for the same test.
      *
-     * @param referralResultsForReferral The referral
-     * @param i                          starting index.
+     * @param referralResultsForReferral
+     *            The referral
+     * @param i
+     *            starting index.
      * @return last index actually used. If you start with 2 and this routine uses
      *         just item #2, then return result is 2, but if there are two results
      *         for the same test (e.g. a multi-select result) and those are in item
@@ -995,7 +1017,8 @@ public abstract class PatientReport extends Report {
      * Derive the appropriate displayable string results, either dictionary result
      * or direct value.
      *
-     * @param result The result
+     * @param result
+     *            The result
      * @return a reportable result string.
      */
     private String findDisplayableReportResult(Result result) {

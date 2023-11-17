@@ -8,6 +8,7 @@ import {
   TextInput,
   TimePicker,
 } from "@carbon/react";
+import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import CustomDatePicker from "../common/CustomDatePicker";
 import { getFromOpenElisServer } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
@@ -391,7 +392,7 @@ const AddOrder = (props) => {
           </h5>
           <div className="formInlineDiv">
             <div className="inputText">
-              <TextInput
+              <CustomLabNumberInput
                 name="labNo"
                 value={orderFormValues.newAccessionNumber}
                 onMouseLeave={handleLabNoValidation}

@@ -8,10 +8,14 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
+import org.openelisglobal.common.provider.validation.AlphanumAccessionValidator;
 import org.openelisglobal.common.services.IReportTrackingService;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.ReportTrackingService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
@@ -167,7 +171,14 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
         data.setServicename(sampleOrg.getId() == null ? ""
                 : oService.get(sampleOrg.getOrganization().getId()).getOrganizationName());
         data.setDoctor(getObservationValues(OBSERVATION_DOCTOR_ID));
-        data.setAccession_number(reportSample.getAccessionNumber());
+        if (AccessionFormat.ALPHANUM.toString()
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            data.setAccessionNumber(
+                    AlphanumAccessionValidator
+                            .convertAlphaNumLabNumForDisplay(reportSample.getAccessionNumber()));
+        } else {
+            data.setAccessionNumber(reportSample.getAccessionNumber());
+        }
         data.setReceptiondate(DateUtil.convertTimestampToStringDateAndTime(reportSample.getReceivedTimestamp()));
         Timestamp collectionDate = reportSample.getCollectionDate();
 

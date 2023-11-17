@@ -22,6 +22,8 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
+import org.openelisglobal.common.provider.validation.AlphanumAccessionValidator;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.TableIdService;
@@ -66,116 +68,123 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 public abstract class PatientProgramReport extends Report implements IReportCreator {
-    
+
     private ImageService imageService = SpringContext.getBean(ImageService.class);
-    
+
     protected PathologySampleService pathologySerivice = SpringContext.getBean(PathologySampleService.class);
-    
+
     protected PatientService patientService = SpringContext.getBean(PatientService.class);
-    
+
     private static final String configName = ConfigurationProperties.getInstance()
             .getPropertyValue(Property.configurationName);
-    
+
     protected SampleService sampleService = SpringContext.getBean(SampleService.class);
-    
+
     protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
-    
+
     protected AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
-    
+
     protected OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
-    
+
     protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
-    
+
     protected PersonAddressService addressService = SpringContext.getBean(PersonAddressService.class);
-    
+
     protected ProviderService providerService = SpringContext.getBean(ProviderService.class);
-    
+
     protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
-    
+
     protected TestService testService = SpringContext.getBean(TestService.class);
-    
+
     private static String ADDRESS_DEPT_ID;
-    
+
     private static String ADDRESS_COMMUNE_ID;
-    
+
     protected String currentContactInfo = "";
-    
+
     protected String currentSiteInfo = "";
-    
+
     protected String STNumber = null;
-    
+
     protected String subjectNumber = null;
-    
+
     protected String healthRegion = null;
-    
+
     protected String healthDistrict = null;
-    
+
     protected String patientName = null;
-    
+
     protected String patientDOB = null;
-    
+
     protected String currentConclusion = null;
-    
+
     protected String patientDept = null;
-    
+
     protected String patientCommune = null;
-    
+
     protected Provider currentProvider;
-    
+
     protected Analysis currentAnalysis = null;
-    
+
     protected String reportReferralResultValue;
-    
+
     protected String completionDate;
-    
+
     protected Patient patient;
-    
+
     protected Sample sample;
-    
+
     protected List<ProgramSampleReportData> reportItems;
-    
+
     protected List<Analysis> analyses;
-    
+
     protected ProgramSampleReportData data;
-    
+
     protected ReportForm form;
-    
+
     protected static Set<Integer> analysisStatusIds;
-    
+
     static {
         analysisStatusIds = new HashSet<>();
         analysisStatusIds.add(
-            Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
+                Integer.parseInt(
+                        SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
         analysisStatusIds
-                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+                .add(Integer
+                        .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
         analysisStatusIds.add(Integer
-                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NonConforming_depricated)));
+                .parseInt(SpringContext.getBean(IStatusService.class)
+                        .getStatusID(AnalysisStatus.NonConforming_depricated)));
         analysisStatusIds
-                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted)));
+                .add(Integer
+                        .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted)));
         analysisStatusIds.add(
-            Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
+                Integer.parseInt(
+                        SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
         analysisStatusIds
-                .add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
+                .add(Integer
+                        .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled)));
         analysisStatusIds.add(
-            Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
-        
+                Integer.parseInt(
+                        SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
+
     }
-    
+
     abstract protected String getReportName();
-    
+
     abstract protected void setAdditionalReportItems();
-    
+
     abstract protected void innitializeSample(ReportForm form);
-    
+
     @Override
     protected String reportFileName() {
         return getReportName();
     }
-    
+
     protected String getHeaderName() {
         return "CDIHeader.jasper";
     }
-    
+
     @PostConstruct
     private void initialize() {
         List<AddressPart> partList = addressPartService.getAll();
@@ -187,7 +196,7 @@ public abstract class PatientProgramReport extends Report implements IReportCrea
             }
         }
     }
-    
+
     @Override
     public void initializeReport(ReportForm form) {
         this.form = form;
@@ -208,46 +217,49 @@ public abstract class PatientProgramReport extends Report implements IReportCrea
         findPatientInfo();
         createReportItems();
     }
-    
+
     protected void createReportItems() {
         reportItems.add(buildClinicalPatientData());
     }
-    
+
     @Override
     public JRDataSource getReportDataSource() throws IllegalStateException {
         if (!initialized) {
             throw new IllegalStateException("initializeReport not called first");
         }
-        
+
         return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(reportItems);
     }
-    
+
     @Override
     protected void createReportParameters() {
         super.createReportParameters();
         reportParameters.put("siteId", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteCode));
         reportParameters.put("headerName", getHeaderName());
-        reportParameters.put("billingNumberLabel", SpringContext.getBean(LocalizationService.class).getLocalizedValueById(
-            ConfigurationProperties.getInstance().getPropertyValue(Property.BILLING_REFERENCE_NUMBER_LABEL)));
+        reportParameters.put("billingNumberLabel",
+                SpringContext.getBean(LocalizationService.class).getLocalizedValueById(
+                        ConfigurationProperties.getInstance()
+                                .getPropertyValue(Property.BILLING_REFERENCE_NUMBER_LABEL)));
         reportParameters.put("footerName", getFooterName());
         Optional<Image> labDirectorSignature = imageService.getImageBySiteInfoName("labDirectorSignature");
         reportParameters.put("useLabDirectorSignature", labDirectorSignature.isPresent());
         if (labDirectorSignature.isPresent()) {
-            reportParameters.put("labDirectorSignature", new ByteArrayInputStream(labDirectorSignature.get().getImage()));
+            reportParameters.put("labDirectorSignature",
+                    new ByteArrayInputStream(labDirectorSignature.get().getImage()));
         }
-        
+
         reportParameters.put("labDirectorName",
-            ConfigurationProperties.getInstance().getPropertyValue(Property.LAB_DIRECTOR_NAME));
+                ConfigurationProperties.getInstance().getPropertyValue(Property.LAB_DIRECTOR_NAME));
         reportParameters.put("labDirectorTitle",
-            ConfigurationProperties.getInstance().getPropertyValue(Property.LAB_DIRECTOR_TITLE));
+                ConfigurationProperties.getInstance().getPropertyValue(Property.LAB_DIRECTOR_TITLE));
         createExtraReportParameters();
-        
+
     }
-    
+
     protected void createExtraReportParameters() {
-        
+
     }
-    
+
     private Object getFooterName() {
         if (configName.equals("CI IPCI") || configName.equals("CI LNSP")) {
             return "CILNSPFooter.jasper";
@@ -255,70 +267,70 @@ public abstract class PatientProgramReport extends Report implements IReportCrea
             return "";
         }
     }
-    
+
     protected void initializeReportItems() {
         reportItems = new ArrayList<>();
     }
-    
+
     private void findCompletionDate() {
         Date date = sampleService.getCompletedDate(sample);
         completionDate = date == null ? null : DateUtil.convertSqlDateToStringDate(date);
     }
-    
+
     protected void findPatientFromSample() {
         patient = sampleHumanService.getPatientForSample(sample);
     }
-    
+
     private void findPatientInfo() {
         if (patientService.getPerson(patient) == null) {
             return;
         }
-        
+
         patientDept = "";
         patientCommune = "";
         if (ADDRESS_DEPT_ID != null) {
             PersonAddress deptAddress = addressService.getByPersonIdAndPartId(patientService.getPerson(patient).getId(),
-                ADDRESS_DEPT_ID);
-            
+                    ADDRESS_DEPT_ID);
+
             if (deptAddress != null && !GenericValidator.isBlankOrNull(deptAddress.getValue())) {
                 patientDept = dictionaryService.getDictionaryById(deptAddress.getValue()).getDictEntry();
             }
         }
-        
+
         if (ADDRESS_COMMUNE_ID != null) {
             PersonAddress deptAddress = addressService.getByPersonIdAndPartId(patientService.getPerson(patient).getId(),
-                ADDRESS_COMMUNE_ID);
-            
+                    ADDRESS_COMMUNE_ID);
+
             if (deptAddress != null) {
                 patientCommune = deptAddress.getValue();
             }
         }
-        
+
     }
-    
+
     private void findContactInfo() {
         currentContactInfo = "";
         currentSiteInfo = "";
         currentProvider = null;
-        
-        //        sampleService.getOrganizationRequester(currentSample);
+
+        // sampleService.getOrganizationRequester(currentSample);
         Organization referringOrg = sampleService.getOrganizationRequester(sample,
-            TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
+                TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
         Organization referringDepartmentOrg = sampleService.getOrganizationRequester(sample,
-            TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID);
-        
+                TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID);
+
         currentSiteInfo += referringOrg == null ? "" : referringOrg.getOrganizationName();
         currentSiteInfo += "|" + (referringDepartmentOrg == null ? "" : referringDepartmentOrg.getOrganizationName());
-        
+
         Person person = sampleService.getPersonRequester(sample);
         if (person != null) {
             PersonService personService = SpringContext.getBean(PersonService.class);
             currentContactInfo = personService.getLastFirstName(person);
             currentProvider = providerService.getProviderByPerson(person);
         }
-        
+
     }
-    
+
     protected ProgramSampleReportData buildClinicalPatientData() {
         data = new ProgramSampleReportData();
         String testName = currentAnalysis != null
@@ -330,13 +342,13 @@ public abstract class PatientProgramReport extends Report implements IReportCrea
         String orderDateForDisplay = orderDate != null
                 ? DateUtil.convertTimestampToStringDateAndConfiguredHourTime(orderDate)
                 : "";
-        
+
         if (FormFields.getInstance().useField(Field.SampleEntryUseReceptionHour)) {
             receivedDate += " " + sampleService.getReceivedTimeForDisplay(sample);
         }
         ObservationHistoryService observationHistoryService = SpringContext.getBean(ObservationHistoryService.class);
         data.setSampleType(
-            currentAnalysis != null ? analysisService.getTypeOfSample(currentAnalysis).getLocalizedName() : "");
+                currentAnalysis != null ? analysisService.getTypeOfSample(currentAnalysis).getLocalizedName() : "");
         Set<SampleItem> sampleSet = new HashSet<>();
         if (analyses != null) {
             analyses.forEach(analysis -> {
@@ -356,35 +368,49 @@ public abstract class PatientProgramReport extends Report implements IReportCrea
         data.setCommune(patientCommune);
         data.setStNumber(getLazyPatientIdentity(patient, STNumber, PatientServiceImpl.getPatientSTIdentity()));
         data.setSubjectNumber(
-            getLazyPatientIdentity(patient, subjectNumber, PatientServiceImpl.getPatientSubjectIdentity()));
+                getLazyPatientIdentity(patient, subjectNumber, PatientServiceImpl.getPatientSubjectIdentity()));
         data.setHealthRegion(
-            getLazyPatientIdentity(patient, healthRegion, PatientServiceImpl.getPatientHealthRegionIdentity()));
+                getLazyPatientIdentity(patient, healthRegion, PatientServiceImpl.getPatientHealthRegionIdentity()));
         data.setHealthDistrict(
-            getLazyPatientIdentity(patient, healthDistrict, PatientServiceImpl.getPatientHealthDistrictIdentity()));
-        
+                getLazyPatientIdentity(patient, healthDistrict, PatientServiceImpl.getPatientHealthDistrictIdentity()));
+
         data.setLabOrderType(
-            observationHistoryService.getValueForSample(ObservationType.PROGRAM, sampleService.getId(sample)));
+                observationHistoryService.getValueForSample(ObservationType.PROGRAM, sampleService.getId(sample)));
         data.setTestName(testName);
         data.setPatientSiteNumber(
-            observationHistoryService.getValueForSample(ObservationType.REFERRERS_PATIENT_ID, sampleService.getId(sample)));
+                observationHistoryService.getValueForSample(ObservationType.REFERRERS_PATIENT_ID,
+                        sampleService.getId(sample)));
         data.setBillingNumber(observationHistoryService.getValueForSample(ObservationType.BILLING_REFERENCE_NUMBER,
-            sampleService.getId(sample)));
+                sampleService.getId(sample)));
         data.setOrderDate(orderDateForDisplay);
         data.setSampleSortOrder(currentAnalysis != null ? currentAnalysis.getSampleItem().getSortOrder() : "");
-        data.setSampleId(sampleService.getAccessionNumber(sample) + "-" + data.getSampleSortOrder());
-        data.setAccessionNumber(sampleService.getAccessionNumber(sample) + "-" + data.getSampleSortOrder());
-        
+        if (AccessionFormat.ALPHANUM.toString()
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            data.setSampleId(
+                    AlphanumAccessionValidator.convertAlphaNumLabNumForDisplay(sampleService.getAccessionNumber(sample))
+                            + "-" + data.getSampleSortOrder());
+            data.setAccessionNumber(
+                    AlphanumAccessionValidator.convertAlphaNumLabNumForDisplay(sampleService.getAccessionNumber(sample))
+                            + "-" + data.getSampleSortOrder());
+        } else {
+            data.setSampleId(sampleService.getAccessionNumber(sample) + "-" + data.getSampleSortOrder());
+
+            data.setAccessionNumber(sampleService.getAccessionNumber(sample) + "-" + data.getSampleSortOrder());
+        }
+
         if (Boolean.valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.CONTACT_TRACING))) {
             data.setContactTracingIndexName(sampleService.getSampleAdditionalFieldForSample(sampleService.getId(sample),
-                AdditionalFieldName.CONTACT_TRACING_INDEX_NAME).getFieldValue());
+                    AdditionalFieldName.CONTACT_TRACING_INDEX_NAME).getFieldValue());
             data.setContactTracingIndexRecordNumber(sampleService.getSampleAdditionalFieldForSample(
-                sampleService.getId(sample), AdditionalFieldName.CONTACT_TRACING_INDEX_RECORD_NUMBER).getFieldValue());
+                    sampleService.getId(sample), AdditionalFieldName.CONTACT_TRACING_INDEX_RECORD_NUMBER)
+                    .getFieldValue());
         }
         setAdditionalReportItems();
         return data;
     }
-    
-    protected void setCollectionTime(Set<SampleItem> sampleSet, ProgramSampleReportData data, boolean addAccessionNumber) {
+
+    protected void setCollectionTime(Set<SampleItem> sampleSet, ProgramSampleReportData data,
+            boolean addAccessionNumber) {
         StringBuilder buffer = new StringBuilder();
         boolean firstItem = true;
         for (SampleItem sampleItem : sampleSet) {
@@ -393,7 +419,7 @@ public abstract class PatientProgramReport extends Report implements IReportCrea
             } else {
                 buffer.append(", ");
             }
-            
+
             buffer.append(sampleItem.getTypeOfSample().getLocalizedName());
             if (addAccessionNumber) {
                 buffer.append(" ");
@@ -404,21 +430,22 @@ public abstract class PatientProgramReport extends Report implements IReportCrea
                 buffer.append(MessageUtil.getMessage("label.not.available"));
             } else {
                 buffer.append(" ");
-                buffer.append(DateUtil.convertTimestampToStringDateAndConfiguredHourTime(sampleItem.getCollectionDate()));
+                buffer.append(
+                        DateUtil.convertTimestampToStringDateAndConfiguredHourTime(sampleItem.getCollectionDate()));
             }
         }
-        
+
         String collectionTimes = buffer.toString();
-        
+
         data.setCollectionDateTime(collectionTimes);
-        
+
     }
-    
+
     private String createReadableAge(String dob) {
         if (GenericValidator.isBlankOrNull(dob)) {
             return "";
         }
-        
+
         dob = dob.replaceAll(DateUtil.AMBIGUOUS_DATE_SEGMENT, "01");
         Date dobDate = DateUtil.convertStringDateToSqlDate(dob);
         int months = DateUtil.getAgeInMonths(dobDate, DateUtil.getNowAsSqlDate());
@@ -430,27 +457,27 @@ public abstract class PatientProgramReport extends Report implements IReportCrea
             int days = DateUtil.getAgeInDays(dobDate, DateUtil.getNowAsSqlDate());
             return days + " " + MessageUtil.getMessage("abbreviation.day.single");
         }
-        
+
     }
-    
+
     protected String getPatientDOB(Patient patient) {
         if (patientDOB == null) {
             patientDOB = patientService.getBirthdayForDisplay(patient);
         }
-        
+
         return patientDOB;
     }
-    
+
     protected void setPatientName(ProgramSampleReportData data) {
         data.setPatientName(patientService.getLastFirstName(patient));
         data.setFirstName(patientService.getFirstName(patient));
         data.setLastName(patientService.getLastName(patient));
     }
-    
+
     protected String getUnitOfMeasure(Test test) {
         return (test != null && test.getUnitOfMeasure() != null) ? test.getUnitOfMeasure().getName() : "";
     }
-    
+
     protected String getLazyPatientIdentity(Patient patient, String identity, String id) {
         if (identity == null) {
             identity = " ";
@@ -462,14 +489,14 @@ public abstract class PatientProgramReport extends Report implements IReportCrea
                 }
             }
         }
-        
+
         return identity;
     }
-    
+
     protected String getAppropriateResults(List<Result> resultList) {
         String reportResult = "";
         if (!resultList.isEmpty()) {
-            
+
             // If only one result just get it and get out
             if (resultList.size() == 1) {
                 Result result = resultList.get(0);
@@ -477,7 +504,7 @@ public abstract class PatientProgramReport extends Report implements IReportCrea
                     Dictionary dictionary = new Dictionary();
                     dictionary.setId(result.getValue());
                     dictionaryService.getData(dictionary);
-                    
+
                     if (result.getAnalyte() != null && "Conclusion".equals(result.getAnalyte().getAnalyteName())) {
                         currentConclusion = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
                     } else {
@@ -486,7 +513,7 @@ public abstract class PatientProgramReport extends Report implements IReportCrea
                 } else {
                     ResultService resultResultService = SpringContext.getBean(ResultService.class);
                     reportResult = resultResultService.getResultValue(result, true);
-                    
+
                 }
             } else {
                 // If multiple results it can be a quantified result, multiple
@@ -494,8 +521,9 @@ public abstract class PatientProgramReport extends Report implements IReportCrea
                 // conclusion
                 ResultService resultResultService = SpringContext.getBean(ResultService.class);
                 Result result = resultList.get(0);
-                
-                if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(resultResultService.getTestType(result))) {
+
+                if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY
+                        .matches(resultResultService.getTestType(result))) {
                     // data.setAbnormalResult(resultResultService.isAbnormalDictionaryResult(result));
                     List<Result> dictionaryResults = new ArrayList<>();
                     Result quantification = null;
@@ -507,12 +535,13 @@ public abstract class PatientProgramReport extends Report implements IReportCrea
                             quantification = sibResult;
                         }
                     }
-                    
+
                     Dictionary dictionary = new Dictionary();
                     for (Result sibResult : dictionaryResults) {
                         dictionary.setId(sibResult.getValue());
                         dictionaryService.getData(dictionary);
-                        if (sibResult.getAnalyte() != null && "Conclusion".equals(sibResult.getAnalyte().getAnalyteName())) {
+                        if (sibResult.getAnalyte() != null
+                                && "Conclusion".equals(sibResult.getAnalyte().getAnalyteName())) {
                             currentConclusion = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
                         } else {
                             reportResult = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
@@ -526,9 +555,9 @@ public abstract class PatientProgramReport extends Report implements IReportCrea
                         .isMultiSelectVariant(resultResultService.getTestType(result))) {
                     Dictionary dictionary = new Dictionary();
                     StringBuilder multiResult = new StringBuilder();
-                    
+
                     Collections.sort(resultList, new Comparator<Result>() {
-                        
+
                         @Override
                         public int compare(Result o1, Result o2) {
                             if (o1.getGrouping() == o2.getGrouping()) {
@@ -538,7 +567,7 @@ public abstract class PatientProgramReport extends Report implements IReportCrea
                             }
                         }
                     });
-                    
+
                     Result quantifiedResult = null;
                     for (Result subResult : resultList) {
                         if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(subResult.getResultType())) {
@@ -555,7 +584,7 @@ public abstract class PatientProgramReport extends Report implements IReportCrea
                         }
                         dictionary.setId(subResult.getValue());
                         dictionaryService.getData(dictionary);
-                        
+
                         if (dictionary.getId() != null) {
                             multiResult.append(dictionary.getLocalizedName());
                             if (quantifiedResult != null
@@ -567,18 +596,18 @@ public abstract class PatientProgramReport extends Report implements IReportCrea
                             multiResult.append("\n");
                         }
                     }
-                    
+
                     if (multiResult.length() > 1) {
                         // remove last "\n"
                         multiResult.setLength(multiResult.length() - 1);
                     }
-                    
+
                     reportResult = multiResult.toString();
                 }
             }
         }
         return reportResult;
-        
+
     }
-    
+
 }

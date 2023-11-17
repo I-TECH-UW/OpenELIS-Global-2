@@ -160,17 +160,32 @@ export const hasRole = (userSessionDetails, role) => {
 };
 
 export const convertAlphaNumLabNumForDisplay = (labNumber) => {
-  let labNumberForDisplay = labNumber.slice(0, 2) + "-";
-  if (labNumber.length > 8) {
-    labNumberForDisplay =
-      labNumberForDisplay + labNumber.slice(2, labNumber.length - 6) + "-";
+  if (!labNumber) {
+    return labNumber;
   }
-  labNumberForDisplay =
-    labNumberForDisplay +
-    labNumber.slice(labNumber.length - 6, labNumber.length - 3) +
-    "-";
+  let labNumberForDisplay = labNumber;
+  //incomplete lab number
+  if (labNumber.length < 8) {
+    labNumberForDisplay = labNumber.slice(0, 2);
+    if (labNumber.length > 2) {
+      labNumberForDisplay = labNumberForDisplay + "-";
+      labNumberForDisplay = labNumberForDisplay + labNumber.slice(2);
+    }
+  } else {
+    //possibly complete lab number
+    labNumberForDisplay = labNumber.slice(0, 2) + "-";
+    if (labNumber.length > 8) {
+      // lab number contains prefix
+      labNumberForDisplay =
+        labNumberForDisplay + labNumber.slice(2, labNumber.length - 6) + "-";
+    }
+    labNumberForDisplay =
+      labNumberForDisplay +
+      labNumber.slice(labNumber.length - 6, labNumber.length - 3) +
+      "-";
 
-  labNumberForDisplay =
-    labNumberForDisplay + labNumber.slice(labNumber.length - 3);
+    labNumberForDisplay =
+      labNumberForDisplay + labNumber.slice(labNumber.length - 3);
+  }
   return labNumberForDisplay.toUpperCase();
 };
