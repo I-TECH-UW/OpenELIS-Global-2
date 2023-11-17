@@ -432,7 +432,6 @@ export function SearchResults(props) {
   const [methods, setMethods] = useState([]);
   const [referralReasons, setReferralReasons] = useState([]);
   const [rejectReasons, setRejectReasons] = useState([]);
-  const { configurationProperties } = useContext(ConfigurationContext);
   const saveStatus = "";
 
   const componentMounted = useRef(true);
@@ -831,7 +830,7 @@ export function SearchResults(props) {
   const renderReferral = ({ data }) => (
     <>
       <Grid>
-      <Column lg={3}>
+        <Column lg={3}>
           <TextArea
             id={"testResult" + data.id + ".pastNotes"}
             name={"testResult[" + data.id + "].pastNotes"}
