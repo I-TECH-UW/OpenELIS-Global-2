@@ -403,6 +403,7 @@ public class BarcodeLabelMaker {
         Barcode128 barcode = new Barcode128();
         barcode.setCodeType(Barcode.CODE128);
         barcode.setCode(label.getCode());
+        barcode.setAltText(label.getCodeLabel());
         // shrink bar code height inversely with number of text rows
         barcode.setBarHeight((10 - (label.getNumTextRowsBefore() + label.getNumTextRowsAfter())) * 30 / 10);
         PdfPCell cell = new PdfPCell(barcode.createImageWithBarcode(writer.getDirectContent(), null, null), true);

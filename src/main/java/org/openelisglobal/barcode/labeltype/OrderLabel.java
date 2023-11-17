@@ -56,17 +56,20 @@ public class OrderLabel extends Label {
         aboveFields.add(siteField);
 
         // adding bar code
-         if (AccessionFormat.ALPHANUM.toString().equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
-            setCode(AlphanumAccessionValidator.convertAlphaNumLabNumForDisplay(labNo));
-        }else {
-            setCode(labNo);
+        if (AccessionFormat.ALPHANUM.toString()
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            setCodeLabel(AlphanumAccessionValidator.convertAlphaNumLabNumForDisplay(labNo));
         }
+        setCode(labNo);
     }
 
     /**
-     * @param patient Who to include on order label
-     * @param sample  What to include on order label
-     * @param labNo   Code to include in bar code
+     * @param patient
+     *            Who to include on order label
+     * @param sample
+     *            What to include on order label
+     * @param labNo
+     *            Code to include in bar code
      */
     public OrderLabel(Patient patient, Sample sample, String labNo) {
         // set dimensions
@@ -97,17 +100,18 @@ public class OrderLabel extends Label {
         aboveFields.add(siteField);
 
         // adding bar code
-         if (AccessionFormat.ALPHANUM.toString().equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
-            setCode(AlphanumAccessionValidator.convertAlphaNumLabNumForDisplay(labNo));
-        }else {
-            setCode(labNo);
+        if (AccessionFormat.ALPHANUM.toString()
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            setCodeLabel(AlphanumAccessionValidator.convertAlphaNumLabNumForDisplay(labNo));
         }
+        setCode(labNo);
     }
 
     /**
      * Get first available id to identify a patient (Subject Number > National Id)
      *
-     * @param patient Who to find identification for
+     * @param patient
+     *            Who to find identification for
      * @return label field containing patient id
      */
     private LabelField getAvailableIdField(Patient patient) {
