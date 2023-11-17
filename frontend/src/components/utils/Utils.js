@@ -163,6 +163,10 @@ export const convertAlphaNumLabNumForDisplay = (labNumber) => {
   if (!labNumber) {
     return labNumber;
   }
+  if (labNumber.length > 13) {
+    console.log("labNumber is not alphanumeric (too long), ignoring format");
+    return labNumber;
+  }
   let labNumberForDisplay = labNumber;
   //incomplete lab number
   if (labNumber.length < 8) {

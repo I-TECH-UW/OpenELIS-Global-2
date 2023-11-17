@@ -4,6 +4,7 @@ import "../Style.css";
 import {
   getFromOpenElisServer,
   postToOpenElisServerJsonResponse,
+  convertAlphaNumLabNumForDisplay,
 } from "../utils/Utils";
 import {
   Heading,
@@ -24,7 +25,6 @@ import {
   SelectItem,
   Loading,
 } from "@carbon/react";
-import { convertAlphaNumLabNumForDisplay } from "../utils/Utils";
 import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import DataTable from "react-data-table-component";
 import { Formik, Field } from "formik";

@@ -12,14 +12,20 @@ import {
   TableHeader,
   TableRow,
 } from "@carbon/react";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "../Style.css";
 import "./wpStyle.css";
 import { FormattedMessage } from "react-intl";
 import WorkplanSearchForm from "./WorkplanSearchForm";
-import { postToOpenElisServerForPDF } from "../utils/Utils";
+import {
+  postToOpenElisServerForPDF,
+  convertAlphaNumLabNumForDisplay,
+} from "../utils/Utils";
+import { ConfigurationContext } from "../layout/Layout";
 
 export default function Workplan(props) {
+  const { configurationProperties } = useContext(ConfigurationContext);
+
   const [testsList, setTestsList] = useState([]);
   const [subjectOnWorkplan, setSubjectOnWorkplan] = useState(false);
   const [nextVisitOnWorkplan, setNextVisitOnWorkplan] = useState(false);
@@ -249,7 +255,14 @@ export default function Workplan(props) {
                           <TableCell>
                             {showAccessionNumber && (
                               <Link style={{ color: "blue" }} href="#">
-                                <u>{row.accessionNumber}</u>
+                                <u>
+                                  {configurationProperties.AccessionFormat ===
+                                  "ALPHANUM"
+                                    ? convertAlphaNumLabNumForDisplay(
+                                        row.accessionNumber,
+                                      )
+                                    : row.accessionNumber}
+                                </u>
                               </Link>
                             )}
                           </TableCell>

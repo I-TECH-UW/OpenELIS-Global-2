@@ -13,9 +13,14 @@ const CustomLabNumberInput = (props) => {
 
   useEffect(() => {
     setRawInput(props.value);
-    if (configurationProperties.AccessionFormat === "ALPHANUM") {
+    if (
+      configurationProperties.AccessionFormat === "ALPHANUM" &&
+      props.value.length < 13
+    ) {
       const formatted = convertAlphaNumLabNumForDisplay(props.value); // use your own format function here
       setFormattedInput(formatted);
+    } else {
+      setFormattedInput(props.value);
     }
   }, [props.value]);
 
@@ -33,7 +38,6 @@ const CustomLabNumberInput = (props) => {
           {...props}
           onChange={(e) => {
             const val = e.target.value.replace(/-/g, "");
-            if (val.length > 2 + 5 + 6) return;
             setRawInput(val);
             if (typeof props.onChange === "function") {
               props.onChange(e, val);
