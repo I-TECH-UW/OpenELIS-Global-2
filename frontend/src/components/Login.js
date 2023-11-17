@@ -75,7 +75,7 @@ function Login(props) {
         } else {
           setNotificationBody({
             title: <FormattedMessage id="notification.title" />,
-            message: <FormattedMessage id={data.error} /> ,
+            message: <FormattedMessage id={data.error} />,
             kind: NotificationKinds.error,
           });
           setNotificationVisible(true);
@@ -157,10 +157,12 @@ function Login(props) {
                       />
                       <Button type="submit" disabled={!isValid}>
                         <FormattedMessage id="label.button.submit" />
+                        <Loading
+                          small={true}
+                          withOverlay={false}
+                          className={submitting ? "show" : "hidden"}
+                        />
                       </Button>
-                      {submitting && (
-                        <Loading small={true} withOverlay={false} />
-                      )}
                     </Stack>
                   </Form>
                 )}
