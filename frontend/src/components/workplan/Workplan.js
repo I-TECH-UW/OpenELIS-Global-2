@@ -254,14 +254,17 @@ export default function Workplan(props) {
                           )}
                           <TableCell>
                             {showAccessionNumber && (
-                              <Link style={{ color: "blue" }} href="#">
+                              <Link
+                                style={{ color: "blue" }}
+                                href={
+                                  "/result?type=order&doRange=false&accessionNumber=" +
+                                  row.accessionNumber
+                                }
+                              >
                                 <u>
-                                  {configurationProperties.AccessionFormat ===
-                                  "ALPHANUM"
-                                    ? convertAlphaNumLabNumForDisplay(
-                                        row.accessionNumber,
-                                      )
-                                    : row.accessionNumber}
+                                  {convertAlphaNumLabNumForDisplay(
+                                    row.accessionNumber,
+                                  )}
                                 </u>
                               </Link>
                             )}

@@ -56,6 +56,9 @@ export function SearchResultForm(props) {
   const [searchBy, setSearchBy] = useState({ type: "", doRange: false });
   const [patient, setPatient] = useState({ patientPK: "" });
   const [testSections, setTestSections] = useState([]);
+  const [searchFormValues, setSearchFormValues] = useState(
+    SearchResultFormValues,
+  );
 
   const componentMounted = useRef(false);
 
@@ -85,7 +88,7 @@ export function SearchResultForm(props) {
     setPatient(patient);
   };
   useEffect(() => {
-    querySearch(SearchResultFormValues);
+    querySearch(searchFormValues);
   }, [patient]);
 
   const querySearch = (values) => {
@@ -177,15 +180,30 @@ export function SearchResultForm(props) {
     });
   }, []);
 
+  useEffect(() => {
+    let accessionNumber = new URLSearchParams(window.location.search).get(
+      "accessionNumber",
+    );
+    if (accessionNumber) {
+      let searchValues = {
+        ...searchFormValues,
+        accessionNumber: accessionNumber,
+      };
+      setSearchFormValues(searchValues);
+      querySearch(searchValues);
+    }
+  }, [searchBy]);
+
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading></Loading>}
       <Formik
-        initialValues={SearchResultFormValues}
+        initialValues={searchFormValues}
         //validationSchema={}
         onSubmit={handleSubmit}
         onChange
+        enableReinitialize={true}
       >
         {({
           values,
