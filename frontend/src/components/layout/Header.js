@@ -221,40 +221,48 @@ function OEHeader(props) {
                             <FormattedMessage id="sidenav.label.barcode" />
                           </SideNavMenuItem>
                         </SideNavMenu>
-                        <SideNavMenu aria-label="Patient" title="Patient">
-                          <SideNavMenuItem href="/PatientManagement">
-                            <FormattedMessage id="sidenav.label.editpatient" />
-                          </SideNavMenuItem>
-                          <SideNavMenuItem href="/PatientHistory">
-                            <FormattedMessage id="sidenav.label.patientHistory" />
-                          </SideNavMenuItem>
-                        </SideNavMenu>
-                        <SideNavMenu
-                          aria-label="Non-Conforming Events"
-                          title={intl.formatMessage({
-                            id: "sidenav.label.nonConform",
-                          })}
-                        >
-                          <SideNavMenuItem
-                            href={
-                              config.serverBaseUrl + "/ReportNonConformingEvent"
-                            }
+                        {configurationProperties.patientManagementTab ==
+                          "true" && (
+                          <SideNavMenu aria-label="Patient" title="Patient">
+                            <SideNavMenuItem href="/PatientManagement">
+                              <FormattedMessage id="sidenav.label.editpatient" />
+                            </SideNavMenuItem>
+                            <SideNavMenuItem href="/PatientHistory">
+                              <FormattedMessage id="sidenav.label.patientHistory" />
+                            </SideNavMenuItem>
+                          </SideNavMenu>
+                        )}
+                        {configurationProperties.nonConformityTab == "true" && (
+                          <SideNavMenu
+                            aria-label="Non-Conforming Events"
+                            title={intl.formatMessage({
+                              id: "sidenav.label.nonConform",
+                            })}
                           >
-                            <FormattedMessage id="sidenav.label.nonConform.report" />
-                          </SideNavMenuItem>
-                          <SideNavMenuItem
-                            href={
-                              config.serverBaseUrl + "/ViewNonConformingEvent"
-                            }
-                          >
-                            <FormattedMessage id="sidenav.label.nonConform.view" />
-                          </SideNavMenuItem>
-                          <SideNavMenuItem
-                            href={config.serverBaseUrl + "/NCECorrectiveAction"}
-                          >
-                            <FormattedMessage id="sidenav.label.nonConform.actions" />
-                          </SideNavMenuItem>
-                        </SideNavMenu>
+                            <SideNavMenuItem
+                              href={
+                                config.serverBaseUrl +
+                                "/ReportNonConformingEvent"
+                              }
+                            >
+                              <FormattedMessage id="sidenav.label.nonConform.report" />
+                            </SideNavMenuItem>
+                            <SideNavMenuItem
+                              href={
+                                config.serverBaseUrl + "/ViewNonConformingEvent"
+                              }
+                            >
+                              <FormattedMessage id="sidenav.label.nonConform.view" />
+                            </SideNavMenuItem>
+                            <SideNavMenuItem
+                              href={
+                                config.serverBaseUrl + "/NCECorrectiveAction"
+                              }
+                            >
+                              <FormattedMessage id="sidenav.label.nonConform.actions" />
+                            </SideNavMenuItem>
+                          </SideNavMenu>
+                        )}
                         <SideNavMenu aria-label="Workplan" title="Workplan">
                           <SideNavMenuItem href={"/WorkplanByTest"}>
                             <FormattedMessage id="sidenav.label.workplan.test" />
@@ -322,14 +330,17 @@ function OEHeader(props) {
                           <SideNavMenuItem href="/validation?type=routine">
                             <FormattedMessage id="sidenav.label.validation.routine" />
                           </SideNavMenuItem>
-                          <SideNavMenuItem
-                            href={
-                              config.serverBaseUrl +
-                              "/ResultValidationRetroC?type=Immunology"
-                            }
-                          >
-                            <FormattedMessage id="sidenav.label.validation.study" />
-                          </SideNavMenuItem>
+                          {configurationProperties.studyManagementTab ==
+                            "true" && (
+                            <SideNavMenuItem
+                              href={
+                                config.serverBaseUrl +
+                                "/ResultValidationRetroC?type=Immunology"
+                              }
+                            >
+                              <FormattedMessage id="sidenav.label.validation.study" />
+                            </SideNavMenuItem>
+                          )}
                           <SideNavMenuItem href="/validation?type=order">
                             <FormattedMessage id="sidenav.label.validation.order" />
                           </SideNavMenuItem>

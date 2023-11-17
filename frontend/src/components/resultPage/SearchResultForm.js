@@ -541,7 +541,7 @@ export function SearchResults(props) {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "6rem",
+      width: "8rem",
     },
     {
       name: "Current Result",
