@@ -31,6 +31,8 @@ import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.role.service.RoleService;
+import org.openelisglobal.siteinformation.service.SiteInformationService;
+import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.service.TestService;
@@ -73,6 +75,9 @@ public class DisplayListController extends BaseRestController{
 
 	@Autowired
 	private OrganizationService organizationService;
+
+	@Autowired
+	private SiteInformationService siteInformationService;
 
 	private static boolean HAS_NFS_PANEL = false;
 
@@ -286,6 +291,12 @@ public class DisplayListController extends BaseRestController{
 		configs.put("currentTimeAsText",DateUtil.getCurrentTimeAsText());
 		configs.put(Property.BANNER_TEXT.toString(), localizationService
 		.getLocalizedValueById(ConfigurationProperties.getInstance().getPropertyValue(Property.BANNER_TEXT)));
+		SiteInformation patientManagementTab = siteInformationService.getSiteInformationByName("Patient management tab");
+		SiteInformation studyManagementTab = siteInformationService.getSiteInformationByName("Study Management tab");
+		SiteInformation nonConformityTab = siteInformationService.getSiteInformationByName("Non Conformity tab");
+		configs.put("patientManagementTab", patientManagementTab != null ? patientManagementTab.getValue() : "false");
+		configs.put("studyManagementTab", studyManagementTab != null ? studyManagementTab.getValue() : "false");
+		configs.put("nonConformityTab", nonConformityTab != null ? nonConformityTab.getValue() : "false");
         return configs;
 	}
 
