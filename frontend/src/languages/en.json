@@ -288,6 +288,7 @@
     "patient.label.contactphone": "Contact Phone:{PHONE_FORMAT}",
     "patient.label.primaryphone": "Primary phone:{PHONE_FORMAT}",
     "patient.gender": "Gender",
+    "label.button.externalsearch": "External Search",
     "label.button.select.status": "Select Status" ,
     "label.button.select.technician": "Select Technician" ,
     "label.button.select.pathologist": "Select Pathologist" ,

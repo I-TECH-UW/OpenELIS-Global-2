@@ -292,6 +292,7 @@
     "label.button.select.test": "Sélectionner le test",
     "assigned.cytopathologist.label": "Cytopathologiste attribué" ,
     "label.search.patient": "Rechercher un patient",
+    "label.button.externalsearch": "Recherche externe",
     "immunohistochemistry.label.dashboard": "Tableau de bord en immunohistochimie",
     "cytology.label.dashboard": "Tableau de bord en cytologie",
     "label.button.start" : "Commencer" ,
