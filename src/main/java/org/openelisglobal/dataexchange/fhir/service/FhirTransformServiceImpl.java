@@ -193,7 +193,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             }
             org.hl7.fhir.r4.model.Patient fhirPatient = this.transformToFhirPatient(patient);
             if (fhirPatients.containsKey(fhirPatient.getIdElement().getIdPart())) {
-                LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistPatients", "patient collision with id: " + fhirPatient.getIdElement().getIdPart());
+                LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistPatients",
+                        "patient collision with id: " + fhirPatient.getIdElement().getIdPart());
             }
             fhirPatients.put(fhirPatient.getIdElement().getIdPart(), fhirPatient);
 
@@ -260,7 +261,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             });
             Task task = this.transformToTask(sample);
             if (tasks.containsKey(task.getIdElement().getIdPart())) {
-                LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples", "task collision with id: " + task.getIdElement().getIdPart());
+                LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+                        "task collision with id: " + task.getIdElement().getIdPart());
             }
             tasks.put(task.getIdElement().getIdPart(), task);
 
@@ -275,20 +277,23 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
             org.hl7.fhir.r4.model.Patient fhirPatient = this.transformToFhirPatient(patient);
             if (fhirPatients.containsKey(fhirPatient.getIdElement().getIdPart())) {
-                LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples", "patient collision with id: " + fhirPatient.getIdElement().getIdPart());
+                LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+                        "patient collision with id: " + fhirPatient.getIdElement().getIdPart());
             }
             fhirPatients.put(fhirPatient.getIdElement().getIdPart(), fhirPatient);
 
             Practitioner requester = transformProviderToPractitioner(provider);
             if (requesters.containsKey(requester.getIdElement().getIdPart())) {
-                LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples", "practitioner collision with id: " + fhirPatient.getIdElement().getIdPart());
+                LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+                        "practitioner collision with id: " + fhirPatient.getIdElement().getIdPart());
             }
             requesters.put(requester.getIdElement().getIdPart(), requester);
 
             for (SampleItem sampleItem : sampleItems) {
                 Specimen specimen = this.transformToSpecimen(sampleItem);
                 if (specimens.containsKey(specimen.getIdElement().getIdPart())) {
-                    LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples", "specimen collision with id: " + specimen.getIdElement().getIdPart());
+                    LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+                            "specimen collision with id: " + specimen.getIdElement().getIdPart());
                 }
                 specimens.put(specimen.getIdElement().getIdPart(), specimen);
             }
@@ -396,11 +401,13 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             fhirSampleEntryObjects.specimen = transformToFhirSpecimen(sampleTest);
 
             // TODO collector
-//            fhirSampleEntryObjects.collector = transformCollectorToPractitioner(sampleTest.item.getCollector());
+            // fhirSampleEntryObjects.collector =
+            // transformCollectorToPractitioner(sampleTest.item.getCollector());
             fhirSampleEntryObjects.serviceRequests = transformToServiceRequests(updateData, sampleTest);
 
             this.addToOperations(fhirOperations, tempIdGenerator, fhirSampleEntryObjects.specimen);
-//            this.addToOperations(fhirOperations, tempIdGenerator, fhirSampleEntryObjects.collector);
+            // this.addToOperations(fhirOperations, tempIdGenerator,
+            // fhirSampleEntryObjects.collector);
 
             for (ServiceRequest serviceRequest : fhirSampleEntryObjects.serviceRequests) {
                 this.addToOperations(fhirOperations, tempIdGenerator, serviceRequest);
@@ -603,9 +610,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         Address address = new Address()//
                 .addLine(person.getStreetAddress())//
                 .setCity(person.getCity())//
-//                .setDistrict(value)
+                // .setDistrict(value)
                 .setState(person.getState())//
-//                .setPostalCode(value)
+                // .setPostalCode(value)
                 .setCountry(person.getCountry())//
         ;
         if (commune != null) {
@@ -820,7 +827,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         SpecimenCollectionComponent specimenCollectionComponent = new SpecimenCollectionComponent();
         specimenCollectionComponent.setCollected(new DateTimeType(collectionDate));
         // TODO create a collector from this info
-//        specimenCollectionComponent.setCollector(collector);
+        // specimenCollectionComponent.setCollector(collector);
         return specimenCollectionComponent;
     }
 
@@ -1032,10 +1039,10 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         observation.addBasedOn(this.createReferenceFor(ResourceType.ServiceRequest, analysis.getFhirUuidAsString()));
         observation.setSpecimen(this.createReferenceFor(ResourceType.Specimen, sampleItem.getFhirUuidAsString()));
         observation.setSubject(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
-//        observation.setIssued(result.getOriginalLastupdated());
+        // observation.setIssued(result.getOriginalLastupdated());
         observation.setIssued(result.getLastupdated());
         observation.setEffective(new DateTimeType(result.getLastupdated()));
-//      observation.setIssued(new Date());
+        // observation.setIssued(new Date());
         return observation;
     }
 
@@ -1214,6 +1221,10 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     @Override
     public Reference createReferenceFor(ResourceType resourceType, String id) {
+        if (GenericValidator.isBlankOrNull(id)) {
+            LogEvent.logWarn(this.getClass().getName(), "createReferenceFor",
+                    "null or empty id used in resource:" + resourceType + "/" + id);
+        }
         Reference reference = new Reference();
         reference.setReference(resourceType + "/" + id);
         return reference;
