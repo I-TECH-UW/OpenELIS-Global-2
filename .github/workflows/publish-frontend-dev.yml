@@ -14,7 +14,7 @@ on:
 env:
   REGISTRY: docker.io
   IMAGE_NAME: ${{ github.repository }}-frontend-dev
-  DOCKER_NAME: ${{ vars.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
+  DOCKER_NAME: ${{ vars.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}-frontend-dev
 
 
 jobs:

@@ -16,7 +16,7 @@ on:
 env:
   REGISTRY: docker.io
   IMAGE_NAME: ${{ github.repository }}-frontend
-  DOCKER_NAME: ${{ vars.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
+  DOCKER_NAME: ${{ vars.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}-frontend
 
 jobs:
   build-and-push-image:
