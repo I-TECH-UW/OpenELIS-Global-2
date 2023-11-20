@@ -64,15 +64,12 @@ public class PrintWorkplanReportRestController extends BaseRestController {
 
         // set Jasper report file name
         String reportFileName = workplanReport.getFileName();
-        ClassLoader classLoader = getClass().getClassLoader();
-        File reportFile = new File(classLoader.getResource("reports/" + reportFileName + ".jasper").getFile());
-
         try {
 
             byte[] bytes = null;
 
             JRDataSource dataSource = createReportDataSource(workplanRows);
-            bytes = JasperRunManager.runReportToPdf(reportFile.getAbsolutePath(), parameterMap, dataSource);
+            bytes = JasperRunManager.runReportToPdf(getReportPath() + reportFileName + ".jasper", parameterMap, dataSource);
 
             ServletOutputStream servletOutputStream = response.getOutputStream();
             response.setContentType("application/pdf");
