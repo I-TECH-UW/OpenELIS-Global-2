@@ -34,7 +34,7 @@ services:
             
     oe.openelis.org:
         container_name: openelisglobal-webapp 
-        image: i-tech-uw/openelis-global-2:develop     
+        image: itechuw/openelis-global-2:develop     
         depends_on:
             - database
         ports:
