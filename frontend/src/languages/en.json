@@ -178,6 +178,7 @@
     "patient.label.nopatientid" : "Patient Id Doest Exist" ,
     "sample.label.orderdate" : "Oder Date" ,
     "sample.label.labnumber" : "Lab Number" ,
+    "sample.label.labnumber.generate": "Generate",
     "sample.label.facility" : "Referring Facility",
     "sample.label.requester" : "Requester" ,
     "sample.label.dept" : "Ward/Dept/Unit" ,

@@ -166,7 +166,9 @@ const AddOrder = (props) => {
   }
 
   const handleLabNoGeneration = (e) => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
     getFromOpenElisServer(
       "/rest/SampleEntryGenerateScanProvider",
       fetchGeneratedAccessionNo,
@@ -376,6 +378,12 @@ const AddOrder = (props) => {
     }
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleLabNoGeneration(event);
+    }
+  };
+
   useEffect(() => {
     getFromOpenElisServer("/rest/SamplePatientEntry", getSampleEntryPreform);
     window.scrollTo(0, 0);
@@ -398,6 +406,7 @@ const AddOrder = (props) => {
                 value={orderFormValues.sampleOrderItems.labNo}
                 onMouseLeave={handleLabNoValidation}
                 onChange={handleLabNo}
+                onKeyPress={handleKeyPress}
                 labelText={<FormattedMessage id="sample.label.labnumber" />}
                 id="labNo"
                 className="inputText"
@@ -405,7 +414,7 @@ const AddOrder = (props) => {
               <div className="inputText">
                 <FormattedMessage id="label.order.scan.text" />{" "}
                 <Link href="#" onClick={(e) => handleLabNoGeneration(e)}>
-                  <FormattedMessage id="sample.label.labnumber" />
+                  <FormattedMessage id="sample.label.labnumber.generate" />
                 </Link>
               </div>
             </div>
@@ -604,15 +613,16 @@ const AddOrder = (props) => {
               required
             >
               <SelectItem value="" text="" />
-              {paymentOptions.map((option) => {
-                return (
-                  <SelectItem
-                    key={option.id}
-                    value={option.id}
-                    text={option.value}
-                  />
-                );
-              })}
+              {paymentOptions &&
+                paymentOptions.map((option) => {
+                  return (
+                    <SelectItem
+                      key={option.id}
+                      value={option.id}
+                      text={option.value}
+                    />
+                  );
+                })}
             </Select>
           </div>
           <div className="inlineDiv">

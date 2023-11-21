@@ -370,6 +370,12 @@ const AddOrder = (props) => {
     }
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleLabNoGeneration(event);
+    }
+  };
+
   useEffect(() => {
     getFromOpenElisServer("/rest/SamplePatientEntry", getSampleEntryPreform);
     window.scrollTo(0, 0);
@@ -396,7 +402,8 @@ const AddOrder = (props) => {
                 name="labNo"
                 value={orderFormValues.newAccessionNumber}
                 onMouseLeave={handleLabNoValidation}
-                onChange={(e) => handleLabNo(e)}
+                onChange={handleLabNo}
+                onKeyPress={handleKeyPress}
                 labelText={<FormattedMessage id="sample.label.labnumber.new" />}
                 id="labNo"
                 className="inputText"
@@ -404,7 +411,7 @@ const AddOrder = (props) => {
               <div className="inputText">
                 <FormattedMessage id="label.order.scan.text" />{" "}
                 <Link href="#" onClick={(e) => handleLabNoGeneration(e)}>
-                  <FormattedMessage id="sample.label.labnumber" />
+                  <FormattedMessage id="sample.label.labnumber.generate" />
                 </Link>
               </div>
             </div>

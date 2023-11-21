@@ -178,6 +178,7 @@
     "patient.label.nopatientid" : "Identifiant du Patient N'existe Pas",
     "sample.label.orderdate" : "Date de Commande",
     "sample.label.labnumber" : "Numéro de Laboratoire",
+    "sample.label.labnumber.generate": "Générer",
     "sample.label.facility" : "Établissement Référant",
     "sample.label.requester" : "Demandeur",
     "sample.label.dept" : "Service/Département/Unité",
