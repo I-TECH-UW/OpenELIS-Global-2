@@ -19,9 +19,11 @@ package org.openelisglobal.test.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
@@ -33,6 +35,7 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.method.valueholder.Method;
+import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.test.dao.TestDAO;
 import org.openelisglobal.test.valueholder.Test;
 import org.springframework.stereotype.Component;
@@ -707,4 +710,49 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
 
         return null;
     }
+	@Override
+	public List<Test> getTbTestByMethod(String method) throws LIMSRuntimeException {
+		List<Integer> methodIds = Arrays.asList(method.split(",")).stream().map(e->Integer.parseInt(e)).collect(Collectors.toList());
+        String sql = "SELECT t.* From test t JOIN tb_method_test tm ON t.id = tm.test_id where tm.method_id in (:method) and t.is_active='Y' ORDER BY t.name";
+        try {
+            Query<Test> query = entityManager.unwrap(Session.class).createNativeQuery(sql, Test.class);
+            query.setParameter("method", methodIds);
+            List<Test> tests = query.list();
+            return tests;
+        } catch (HibernateException e) {
+            handleException(e, "getTbTestByMethod");
+        }
+
+        return null;
+	}
+	
+	@Override
+	public List<Test> getTbTest() throws LIMSRuntimeException {
+        String sql = "SELECT t.* From test t JOIN test_section ts ON t.test_section_id = ts.id where t.is_active='Y' AND ts.name = 'TB' ORDER BY t.name";
+        try {
+            Query<Test> query = entityManager.unwrap(Session.class).createNativeQuery(sql, Test.class);
+            List<Test> tests = query.list();
+            return tests;
+        } catch (HibernateException e) {
+            handleException(e, "getTbTest");
+        }
+
+        return null;
+	}
+	@Override
+	public List<Panel> getTbPanelsByMethod(String method) throws LIMSRuntimeException {
+		List<Integer> methodIds = Arrays.asList(method.split(",")).stream().map(e->Integer.parseInt(e)).collect(Collectors.toList());
+		
+        String sql = "SELECT p.* From panel p JOIN tb_method_panel tm ON p.id = tm.panel_id where tm.method_id in (:method) and p.is_active='Y' ORDER BY p.name";
+        try {
+            Query<Panel> query = entityManager.unwrap(Session.class).createNativeQuery(sql, Panel.class);
+            query.setParameter("method", methodIds);
+            List<Panel> panels = query.list();
+            return panels;
+        } catch (HibernateException e) {
+            handleException(e, "getTbPanelByMethod");
+        }
+
+        return null;
+	}
 }

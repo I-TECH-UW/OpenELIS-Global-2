@@ -13,26 +13,6 @@ services:
       - key_trust-store-volume:/etc/openelis-global
       - keys-vol:/etc/ssl/private/
       - certs-vol:/etc/ssl/certs/
-  database:
-    container_name: openelisglobal-database
-    image: postgres:9.5
-    ports:
-      - "15432:5432"
-    restart: always
-    env_file:
-      - ./volume/database/database.env
-    volumes:
-      # preserves the database between containers
-      - db-data:/var/lib/postgresql/data
-      # files here will run on install
-      - ./volume/database/dbInit:/docker-entrypoint-initdb.d
-    networks:
-      - default
-    healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "clinlims", "-U", "clinlims" ]
-      timeout: 45s
-      interval: 10s
-      retries: 10
 
   oe.openelis.org:
     build:
@@ -73,7 +53,6 @@ services:
     restart: always
     environment:
       TZ: Africa/Nairobi
-
       JAVA_OPTS: "-Djavax.net.ssl.trustStore=/etc/openelis-global/truststore 
                       -Djavax.net.ssl.trustStorePassword=tspass
                       -Djavax.net.ssl.trustStoreType=pkcs12 

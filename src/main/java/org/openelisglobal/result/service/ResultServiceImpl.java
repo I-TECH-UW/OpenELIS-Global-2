@@ -197,7 +197,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
         if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(getTestType(result))) {
 
             if (!printable) {
-                return result.getValue(printable);
+                return result.getValue();
             }
             String reportResult = "";
             List<Result> resultList = baseObjectDAO.getResultsByAnalysis(result.getAnalysis());
@@ -218,13 +218,13 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
                     }
 
                     for (Result sibResult : dictionaryResults) {
-                        Dictionary dictionary = dictionaryService.getDictionaryById(sibResult.getValue(printable));
+                        Dictionary dictionary = dictionaryService.getDictionaryById(sibResult.getValue());
                         reportResult = (dictionary != null && dictionary.getId() != null)
                                 ? dictionary.getLocalizedName()
                                 : "";
                         if (quantification != null
                                 && quantification.getParentResult().getId().equals(sibResult.getId())) {
-                            reportResult += separator + quantification.getValue(printable);
+                            reportResult += separator + quantification.getValue();
                         }
                     }
                 }
@@ -252,26 +252,26 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
                     } else {
                         buffer.append(separator);
                     }
-                    buffer.append(dictionaryService.getDataForId(multiResult.getValue(printable)).getDictEntry());
+                    buffer.append(dictionaryService.getDataForId(multiResult.getValue()).getDictEntry());
                 }
             }
             return buffer.toString();
         } else if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(getTestType(result))) {
             int significantPlaces = result.getSignificantDigits();
             if (significantPlaces == -1) {
-                return result.getValue(printable) + appendUOM(result, includeUOM);
+                return result.getValue() + appendUOM(result, includeUOM);
             }
             if (significantPlaces == 0) {
-                return result.getValue(printable).split("\\.")[0] + appendUOM(result, includeUOM);
+                return result.getValue().split("\\.")[0] + appendUOM(result, includeUOM);
             }
             StringBuilder value = new StringBuilder();
-            value.append(result.getValue(printable));
+            value.append(result.getValue());
             int startFill = 0;
 
-            if (!result.getValue(printable).contains(".")) {
+            if (!result.getValue().contains(".")) {
                 value.append(".");
             } else {
-                startFill = result.getValue(printable).length() - result.getValue(printable).lastIndexOf(".") - 1;
+                startFill = result.getValue(true).length() - result.getValue(true).lastIndexOf(".") - 1;
             }
 
             for (int i = startFill; i < significantPlaces; i++) {
@@ -281,9 +281,9 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
             return value.toString() + appendUOM(result, includeUOM);
         } else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(result.getResultType())
                 && !GenericValidator.isBlankOrNull(result.getValue())) {
-            return result.getValue(printable).split("\\(")[0].trim();
+            return result.getValue().split("\\(")[0].trim();
         } else {
-            return result.getValue(printable);
+            return result.getValue();
         }
     }
 
@@ -296,7 +296,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
         if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(getTestType(result))) {
 
             if (!printable) {
-                return result.getValue(printable);
+                return result.getValue();
             }
             String reportResult = "";
             List<Result> resultList = baseObjectDAO.getResultsByAnalysis(result.getAnalysis());
@@ -317,13 +317,13 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
                     }
 
                     for (Result sibResult : dictionaryResults) {
-                        Dictionary dictionary = dictionaryService.getDictionaryById(sibResult.getValue(printable));
+                        Dictionary dictionary = dictionaryService.getDictionaryById(sibResult.getValue());
                         reportResult = (dictionary != null && dictionary.getId() != null)
                                 ? dictionary.getLocalizedName()
                                 : "";
                         if (quantification != null
                                 && quantification.getParentResult().getId().equals(sibResult.getId())) {
-                            reportResult += separator + quantification.getValue(printable);
+                            reportResult += separator + quantification.getValue();
                         }
                     }
                 }
@@ -344,33 +344,33 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
             List<Result> results = new ResultDAOImpl().getResultsByAnalysis(result.getAnalysis());
 
             for (Result multiResult : results) {
-                if (!GenericValidator.isBlankOrNull(multiResult.getValue(printable))
+                if (!GenericValidator.isBlankOrNull(multiResult.getValue())
                         && TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(multiResult.getResultType())) {
                     if (firstPass) {
                         firstPass = false;
                     } else {
                         buffer.append(separator);
                     }
-                    buffer.append(dictionaryService.getDataForId(multiResult.getValue(printable)).getDictEntry());
+                    buffer.append(dictionaryService.getDataForId(multiResult.getValue()).getDictEntry());
                 }
             }
             return buffer.toString();
         } else if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(getTestType(result))) {
             int significantPlaces = result.getSignificantDigits();
             if (significantPlaces == -1) {
-                return result.getValue(printable) + appendUOM(result, includeUOM);
+                return result.getValue() + appendUOM(result, includeUOM);
             }
             if (significantPlaces == 0) {
-                return result.getValue(printable).split("\\.")[0] + appendUOM(result, includeUOM);
+                return result.getValue().split("\\.")[0] + appendUOM(result, includeUOM);
             }
             StringBuilder value = new StringBuilder();
-            value.append(result.getValue(printable));
+            value.append(result.getValue());
             int startFill = 0;
 
-            if (!result.getValue(printable).contains(".")) {
+            if (!result.getValue().contains(".")) {
                 value.append(".");
             } else {
-                startFill = result.getValue(printable).length() - result.getValue(printable).lastIndexOf(".") - 1;
+                startFill = result.getValue(true).length() - result.getValue(true).lastIndexOf(".") - 1;
             }
 
             for (int i = startFill; i < significantPlaces; i++) {
@@ -380,9 +380,9 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
             return value.toString() + appendUOM(result, includeUOM);
         } else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(result.getResultType())
                 && !GenericValidator.isBlankOrNull(result.getValue())) {
-            return result.getValue(printable).split("\\(")[0].trim();
+            return result.getValue().split("\\(")[0].trim();
         } else {
-            return result.getValue(printable);
+            return result.getValue();
         }
     }
 

@@ -110,13 +110,31 @@ public class Result extends EnumValueItemImpl {
     }
 
     public String getValue(Boolean getActualNumericValue) {
-        if (getActualNumericValue && this.resultType != null) {
-            if ((this.resultType.equals("N") || this.resultType.equals("D") || this.resultType.equals("A"))
+        if (getActualNumericValue) {
+            if ((this.resultType.equals("N"))
                     && this.value != null) {
                 return StringUtil.getActualNumericValue(value);
             }
         }
         return value;
+    }
+    
+    public long getVLValueAsNumber() {
+		long finalResult = 0;
+		String workingResult = value.split("\\(")[0].trim();
+		if (workingResult.toLowerCase().contains("log7") || workingResult.contains(">")) {
+			finalResult = 1000000;
+		} else if (workingResult.toUpperCase().contains("L") || workingResult.contains("<")) {
+			finalResult = 20;
+		} else {
+			try {
+				finalResult = Long.parseLong(workingResult.replaceAll("[^0-9]", ""));
+			} catch (Exception e) {
+				finalResult = -1;
+			}
+		}
+		
+		return finalResult;
     }
 
     public void setValue(String value) {

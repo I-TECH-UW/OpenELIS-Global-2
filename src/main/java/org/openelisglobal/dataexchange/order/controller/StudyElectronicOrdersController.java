@@ -118,8 +118,6 @@ public class StudyElectronicOrdersController extends BaseController {
             Patient patient = electronicOrder.getPatient();
             if (patient != null) {
                 displayItem.setSubjectNumber(patientService.getSubjectNumber(patient));
-                displayItem.setPatientLastName(patient.getPerson().getLastName());
-                displayItem.setPatientFirstName(patient.getPerson().getFirstName());
                 displayItem.setPatientNationalId(patient.getNationalId());
                 displayItem.setBirthDate(patient.getBirthDateForDisplay());
                 displayItem.setGender(patient.getGender());
@@ -140,8 +138,6 @@ public class StudyElectronicOrdersController extends BaseController {
             if (sample != null) {
                 displayItem.setLabNumber(sample.getAccessionNumber());
             }
-
-            if (useAllInfo) {
                 IGenericClient fhirClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
 
                 ServiceRequest serviceRequest = fhirClient.read().resource(ServiceRequest.class)
@@ -165,20 +161,6 @@ public class StudyElectronicOrdersController extends BaseController {
                 if (test != null) {
                     displayItem.setTestName(test.getLocalizedTestName().getLocalizedValue());
                 }
-
-                String patientUuid = serviceRequest.getSubject().getReferenceElement().getIdPart();
-                org.hl7.fhir.r4.model.Patient fhirPatient = fhirClient.read()
-                        .resource(org.hl7.fhir.r4.model.Patient.class).withId(patientUuid).execute();
-
-                for (Identifier identifier : fhirPatient.getIdentifier()) {
-                    if ("passport".equals(identifier.getSystem())) {
-                        displayItem.setPassportNumber(identifier.getId());
-                    }
-                    if ((fhirConfig.getOeFhirSystem() + "/pat_subjectNumber").equals(identifier.getSystem())) {
-                        displayItem.setSubjectNumber(identifier.getId());
-                    }
-                }
-            }
         } catch (ResourceNotFoundException e) {
             String errorMsg = "error in data collection - FHIR resource not found";
             displayItem.setWarnings(Arrays.asList(errorMsg));

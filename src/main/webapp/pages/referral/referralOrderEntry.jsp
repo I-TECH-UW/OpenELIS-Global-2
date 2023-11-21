@@ -149,7 +149,7 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
     </c:if>
 	<c:forEach items="${form.referralOrganizations}" var="referralOrganization" varStatus="iter">
 	option = document.createElement('option');
-	option.value = '${referralOrganization.id}';
+	option.value = "${referralOrganization.id}";
 	option.innerHTML = '${referralOrganization.value}';
 	referralOrgSelect.appendChild(option);
 	</c:forEach>

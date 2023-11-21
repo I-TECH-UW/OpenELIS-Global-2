@@ -698,7 +698,7 @@ public class ResultsValidationUtility {
     }
 
     protected final String getFormattedResult(ResultValidationItem testResultItem) {
-        String result = testResultItem.getResult().getValue(false);
+        String result = testResultItem.getResult().getValue();
         if (TestIdentityService.getInstance().isTestNumericViralLoad(testResultItem.getTestId())
                 && !GenericValidator.isBlankOrNull(result)) {
             return result.split("\\(")[0].trim();

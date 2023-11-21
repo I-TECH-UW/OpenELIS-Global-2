@@ -34,7 +34,7 @@ public class LogoUploadServiceImpl implements LogoUploadService {
             image.setId(imageId);
         	imageService.delete(image);
         }
-        Image savedImage  = imageService.save(image);
+        Image savedImage = imageService.save(image);
 
         logoInformation.setValue(savedImage.getId());
         logoInformation.setSysUserId("1");

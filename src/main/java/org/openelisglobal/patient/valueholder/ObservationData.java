@@ -28,6 +28,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dictionary.ObservationHistoryList;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.resultvalidation.form.ResultValidationForm;
 import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidName;
@@ -211,7 +212,7 @@ public class ObservationData implements Serializable {
     private String vlSuckle;
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String priorVLLab;
-    @Pattern(regexp = "^[0-9]*$")
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String priorVLValue;
     @ValidDate
     private String priorVLDate;

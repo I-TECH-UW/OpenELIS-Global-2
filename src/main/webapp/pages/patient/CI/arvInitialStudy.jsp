@@ -197,6 +197,7 @@ iarv = new ArvInitialProjectChecker();
 				<form:options items="${form.organizationTypeLists.ARV_ORGS_BY_NAME.list}" itemLabel="organizationName"
 					itemValue="id" />
 			</form:select>
+			<div id="centerNameMessage" class="blank" ></div>
 		</td>
 	</tr>
 
@@ -439,6 +440,7 @@ iarv = new ArvInitialProjectChecker();
 					<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName"
 						itemValue="id" />
 				</form:select>
+				<div id="${disease.name}.Message" class="blank" ></div>
 			</td>
 		</tr>
 	</c:forEach>
@@ -455,6 +457,7 @@ iarv = new ArvInitialProjectChecker();
 				<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName"
 					itemValue="id" />
 			</form:select>
+			<div id="priorDiseasesMessage" class="blank" ></div>
 		</td>
 	</tr>
 	<tr id="priorDiseasesValueRow" style="display: none">
@@ -638,6 +641,7 @@ iarv = new ArvInitialProjectChecker();
 					<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName"
 						itemValue="id" />
 				</form:select>
+				<div id="${disease.name}.Message" class="blank" ></div>
 			</td>
 		</tr>
 	</c:forEach>
@@ -654,6 +658,7 @@ iarv = new ArvInitialProjectChecker();
 				<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName"
 					itemValue="id" />
 			</form:select>
+			<div id="currentDiseasesMessage" class="blank"></div>
 		</td>
 	</tr>
 
@@ -748,6 +753,7 @@ iarv = new ArvInitialProjectChecker();
 			<form:options items="${form.dictionaryLists.YES_NO.list}" itemLabel="localizedName"
 				itemValue="id" />
 			</form:select>
+			<div id="underInvestigationMessage" class="blank"></div>
 		</td>
     </tr>    
  	<tr id="underInvestigationCommentRow">
@@ -758,6 +764,7 @@ iarv = new ArvInitialProjectChecker();
 		<td colspan="3">
 			<form:input path="projectData.underInvestigationNote" maxlength="1000" size="80"
 				onchange="makeDirty();" id="underInvestigationComment" />
+				<div id="underInvestigationCommentMessage" class="blank"></div>
 		</td>
     </tr>
 </table>
