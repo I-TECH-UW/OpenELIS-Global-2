@@ -217,28 +217,45 @@ public class UserServiceImpl implements UserService {
         String resultsRoleId = roleService.getRoleByName(roleName).getId();
         List<IdValuePair> testSections = getUserTestSections(systemUserId, resultsRoleId);
         TestSection testSection = testSectionService.getTestSectionByName(testSectionName);
-        List<String> testUnitIds = new ArrayList<>();
+        //List<String> testUnitIds = new ArrayList<>();
+        List<Integer> testUnitIds = new ArrayList<>();
         if (ObjectUtils.isNotEmpty(testSection)) {
-        	testUnitIds= testSections.stream().filter(el->el.getId().equals(testSection.getId())).map(e->e.getId()).collect(Collectors.toList());
+            testSections.forEach(testSection2 -> testUnitIds.add(Integer.valueOf(testSection2.getId())));
+        	//testUnitIds= testSections.stream().filter(el->el.getId().equals(testSection.getId())).map(e->e.getId()).collect(Collectors.toList());
         }
-       
-        List<String> allTBTestIds = typeOfSampleService.getAllActiveTestsByTestUnit(true, testUnitIds).stream().map(e->e.getId()).collect(Collectors.toList());
-        List<IdValuePair> allSampleTypes = DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE);
+        List<Test> allTests = testService.getTestsByTestSectionIds(testUnitIds);
+        // List<String> allTBTestIds = typeOfSampleService.getAllActiveTestsByTestUnit(true, testUnitIds).stream().map(e->e.getId()).collect(Collectors.toList());
+        // List<IdValuePair> allSampleTypes = DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE);
         Set<String> sampleIds = new HashSet<>();
-        
-        // clear cache to create a fresh Map of testId To TypeOfSample
-        typeOfSampleService.clearCache();
-        
-        List<String> allSampleTypesIds = DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE).stream().map(e->e.getId()).collect(Collectors.toList());
-        allSampleTypesIds.forEach(sid->{
-            List<String> testIds = typeOfSampleService.getActiveTestsBySampleTypeId(sid, false).stream().map(e->e.getId()).collect(Collectors.toList());
-            if(allTBTestIds.stream().anyMatch(testIds::contains)) {
-            	sampleIds.add(sid);
+
+        List<IdValuePair> userSampleTypes = new ArrayList<>();
+        if (allTests != null ) {
+            typeOfSampleService.clearCache();
+            allTests.forEach(test -> sampleIds.addAll(typeOfSampleService.getTypeOfSampleForTest(test.getId()).stream()
+                    .map(e -> e.getId()).collect(Collectors.toList())));
+
+        }
+
+        sampleIds.forEach( id -> {
+            TypeOfSample type = typeOfSampleService.get(id);
+            if(type != null){
+               userSampleTypes.add(new IdValuePair(type.getId(), type.getLocalizedName()));
             }
         });
+        
+        // clear cache to create a fresh Map of testId To TypeOfSample
+        // typeOfSampleService.clearCache();
+        
+        // List<String> allSampleTypesIds = DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE).stream().map(e->e.getId()).collect(Collectors.toList());
+        // allSampleTypesIds.forEach(sid->{
+        //     List<String> testIds = typeOfSampleService.getActiveTestsBySampleTypeId(sid, false).stream().map(e->e.getId()).collect(Collectors.toList());
+        //     if(allTBTestIds.stream().anyMatch(testIds::contains)) {
+        //     	sampleIds.add(sid);
+        //     }
+        // });
 
-        List<IdValuePair> userSampleTypes = allSampleTypes.stream().filter(type -> sampleIds.contains(type.getId()))
-                .collect(Collectors.toList());
+        // List<IdValuePair> userSampleTypes = allSampleTypes.stream().filter(type -> sampleIds.contains(type.getId()))
+        //         .collect(Collectors.toList());
         return userSampleTypes;
     }
 
