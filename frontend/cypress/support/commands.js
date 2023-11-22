@@ -43,3 +43,16 @@ Cypress.Commands.add('enterText', (selector, value) => {
     }
 });
 
+Cypress.Commands.add('clearField', (selector) => {
+    cy.get(selector).clear();
+});
+
+Cypress.Commands.add('elementExists', (selector) => {
+    cy.get('body').then(($body) => {
+        if ($body.find(selector).length) {
+            return cy.get(selector)
+        } else {
+            assert.isOk('OK', 'Element does not exist.')
+        }
+    })
+});
