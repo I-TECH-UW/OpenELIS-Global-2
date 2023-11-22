@@ -290,7 +290,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
             if (!result.getValue().contains(".")) {
                 value.append(".");
             } else {
-                startFill = result.getValue().length() - result.getValue().lastIndexOf(".") - 1;
+                startFill = result.getValue(true).length() - result.getValue(true).lastIndexOf(".") - 1;
             }
 
             for (int i = startFill; i < significantPlaces; i++) {
@@ -389,7 +389,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
             if (!result.getValue().contains(".")) {
                 value.append(".");
             } else {
-                startFill = result.getValue().length() - result.getValue().lastIndexOf(".") - 1;
+                startFill = result.getValue(true).length() - result.getValue(true).lastIndexOf(".") - 1;
             }
 
             for (int i = startFill; i < significantPlaces; i++) {
