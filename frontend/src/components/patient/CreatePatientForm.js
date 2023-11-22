@@ -240,7 +240,6 @@ function CreatePatientForm(props) {
   };
 
   const handleSubmit = (values) => {
-    console.log(JSON.stringify(values));
     if ("years" in values) {
       delete values.years;
     }
@@ -250,7 +249,6 @@ function CreatePatientForm(props) {
     if ("days" in values) {
       delete values.days;
     }
-    console.log(" after delete");
     console.log(JSON.stringify(values));
     postToOpenElisServer(
       "/rest/patient-management",
