@@ -98,7 +98,7 @@ const Validation = (props) => {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "10rem",
+      width: "16rem",
     },
   ];
 
@@ -263,6 +263,8 @@ const Validation = (props) => {
 
       case "Result":
         switch (row.resultType) {
+          case "M":
+          case "C":
           case "D":
             return (
               <Select

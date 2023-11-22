@@ -376,7 +376,13 @@ public class TestCalculatedUtil {
         generatedAnalysis.setAnalysisType(currentAnalysis.getAnalysisType());
         generatedAnalysis.setRevision(currentAnalysis.getRevision());
         generatedAnalysis.setStartedDate(DateUtil.getNowAsSqlDate());
-        generatedAnalysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));
+        if (resultCalculated) {
+            generatedAnalysis.setStatusId(
+                SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance));
+        } else {
+            generatedAnalysis
+                    .setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));
+        }
         generatedAnalysis.setParentAnalysis(currentAnalysis);
         generatedAnalysis.setParentResult(result);
         generatedAnalysis.setSampleItem(currentAnalysis.getSampleItem());

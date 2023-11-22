@@ -9,6 +9,9 @@ import {
   SelectItem,
   Button,
   Loading,
+  Grid,
+  Column,
+  Section,
 } from "@carbon/react";
 import ProgramFormValues from "./ProgramFormValues";
 import {
@@ -157,12 +160,18 @@ function ProgramManagement() {
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       <div className="adminPageContent">
+      <Grid >
+          <Column lg={16}>
+            <Section>
+              <Section>
+                <Heading>
+                  <FormattedMessage id="edit.add.program.title" />
+                </Heading>
+              </Section>
+            </Section>
+          </Column>
+        </Grid>
         <Form onSubmit={handleSubmit}>
-          <FormLabel>
-            <Heading>
-              <FormattedMessage id="edit.add.program.title" />
-            </Heading>
-          </FormLabel>
           <div className="formInlineDiv">
             <Select
               id="additionalQuestionsSelect"

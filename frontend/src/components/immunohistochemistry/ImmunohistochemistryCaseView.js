@@ -224,6 +224,7 @@ function ImmunohistochemistryCaseView() {
                     id={"erPercent_" + index}
                     labelText=""
                     hideLabel={true}
+                    type="number"
                     value={reportParams[index]?.erPercent}
                     onChange={(e) => {
                       var params = { ...reportParams };
@@ -243,6 +244,7 @@ function ImmunohistochemistryCaseView() {
                     id={"erIntensity_" + index}
                     labelText=""
                     hideLabel={true}
+                    type="number"
                     value={reportParams[index]?.erIntensity}
                     onChange={(e) => {
                       var params = { ...reportParams };
@@ -262,6 +264,7 @@ function ImmunohistochemistryCaseView() {
                     id={"erScore_" + index}
                     labelText=""
                     hideLabel={true}
+                    type="number"
                     value={reportParams[index]?.erScore}
                     onChange={(e) => {
                       var params = { ...reportParams };
@@ -288,6 +291,7 @@ function ImmunohistochemistryCaseView() {
                     id={"prPercent_" + index}
                     labelText=""
                     hideLabel={true}
+                    type="number"
                     value={reportParams[index]?.prPercent}
                     onChange={(e) => {
                       var params = { ...reportParams };
@@ -307,6 +311,7 @@ function ImmunohistochemistryCaseView() {
                     id={"erIntensity_" + index}
                     labelText=""
                     hideLabel={true}
+                    type="number"
                     value={reportParams[index]?.prIntensity}
                     onChange={(e) => {
                       var params = { ...reportParams };
@@ -326,6 +331,7 @@ function ImmunohistochemistryCaseView() {
                     id={"erScore_" + index}
                     labelText=""
                     hideLabel={true}
+                    type="number"
                     value={reportParams[index]?.prScore}
                     onChange={(e) => {
                       var params = { ...reportParams };
@@ -353,6 +359,7 @@ function ImmunohistochemistryCaseView() {
                     id={"mib_" + index}
                     labelText=""
                     hideLabel={true}
+                    type="number"
                     value={reportParams[index]?.mib}
                     onChange={(e) => {
                       var params = { ...reportParams };
@@ -422,6 +429,7 @@ function ImmunohistochemistryCaseView() {
                     id={"herScore_" + index}
                     labelText=""
                     hideLabel={true}
+                    type="number"
                     value={reportParams[index]?.herScore}
                     onChange={(e) => {
                       var params = { ...reportParams };
@@ -495,6 +503,7 @@ function ImmunohistochemistryCaseView() {
                     id={"nuclei_" + index}
                     labelText=""
                     hideLabel={true}
+                    type="number"
                     value={reportParams[index]?.numberOfcancerNuclei}
                     onChange={(e) => {
                       var params = { ...reportParams };
@@ -517,6 +526,7 @@ function ImmunohistochemistryCaseView() {
                     id={"her_" + index}
                     labelText=""
                     hideLabel={true}
+                    type="number"
                     value={reportParams[index]?.averageHer2}
                     onChange={(e) => {
                       var params = { ...reportParams };
@@ -550,6 +560,7 @@ function ImmunohistochemistryCaseView() {
                     id={"her_" + index}
                     labelText=""
                     hideLabel={true}
+                    type="number"
                     value={reportParams[index]?.averageChrom}
                     onChange={(e) => {
                       var params = { ...reportParams };
