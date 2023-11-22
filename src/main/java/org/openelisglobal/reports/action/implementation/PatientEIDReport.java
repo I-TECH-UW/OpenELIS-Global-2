@@ -105,7 +105,7 @@ public abstract class PatientEIDReport extends RetroCIPatientReport {
                 if (valid) {
                     String resultValue = "";
                     if (resultList.size() > 0) {
-                        resultValue = resultList.get(resultList.size() - 1).getValue(true);
+                        resultValue = resultList.get(resultList.size() - 1).getValue();
                     }
                     Dictionary dictionary = new Dictionary();
                     dictionary.setId(resultValue);
