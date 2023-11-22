@@ -36,8 +36,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -331,6 +333,7 @@ public abstract class Accessioner implements IAccessioner {
             populateSampleData();
             populateSampleHuman();
             populateObservationHistory();
+			updateSampleWithElectronicEOrders();
 
             // all of the following methods are assumed to only write when
             // necessary
@@ -818,6 +821,9 @@ public abstract class Accessioner implements IAccessioner {
 
         patientInDB.setNationalId(convertEmptyToNull(form.getSubjectNumber()));
         patientInDB.setExternalId(convertEmptyToNull(form.getSiteSubjectNumber()));
+		if (ObjectUtils.isNotEmpty(form.getPatientFhirUuid())) {
+			patientInDB.setFhirUuid(UUID.fromString(form.getPatientFhirUuid()));
+		}
         populatePatientBirthDate(form.getBirthDateForDisplay());
 
         projectData = form.getProjectData();
@@ -1002,6 +1008,7 @@ public abstract class Accessioner implements IAccessioner {
      *
      * @
      */
+	@Transactional
     public void completeSample() {
         if (isAllAnalysisDone() && !SpringContext.getBean(IStatusService.class)
                 .getStatusID(OrderStatus.NonConforming_depricated).equals(sample.getStatus())) {
@@ -1104,6 +1111,10 @@ public abstract class Accessioner implements IAccessioner {
      */
     protected void persistSampleHuman() {
         if (sampleHuman != null) {
+			SampleHuman otherSampleHuman = sampleHumanService.getMatch("sampleId", sample.getId()).orElse(null);
+			if (ObjectUtils.isNotEmpty(otherSampleHuman)) {
+				sampleHuman = otherSampleHuman;
+			}
             sampleHuman.setPatientId(patientInDB.getId());
             sampleHuman.setSampleId(sample.getId());
             // we do not store any doctor name as a provider in SampleHuman
@@ -1254,19 +1265,25 @@ public abstract class Accessioner implements IAccessioner {
     }
 
     protected void deleteOldPatient() {
-        if (patientToDelete != null) {
-            List<PatientIdentity> oldIdentities = identityService
-                    .getPatientIdentitiesForPatient(patientToDelete.getId());
-            for (PatientIdentity listIdentity : oldIdentities) {
-                identityService.delete(listIdentity.getId(), sysUserId);
-            }
-            Person personToDelete = patientToDelete.getPerson();
-            patientToDelete.setSysUserId(sysUserId);
-            patientService.deleteAll(Arrays.asList(patientToDelete));
-            personToDelete.setSysUserId(sysUserId);
-            personService.deleteAll(Arrays.asList(personToDelete));
-        }
-    }
+		if (patientToDelete != null) {
+			try {
+
+				List<PatientIdentity> oldIdentities = identityService
+						.getPatientIdentitiesForPatient(patientToDelete.getId());
+				for (PatientIdentity listIdentity : oldIdentities) {
+					identityService.delete(listIdentity.getId(), sysUserId);
+				}
+				Person personToDelete = patientToDelete.getPerson();
+				patientToDelete.setSysUserId(sysUserId);
+				patientService.deleteAll(Arrays.asList(patientToDelete));
+				personToDelete.setSysUserId(sysUserId);
+				personService.deleteAll(Arrays.asList(personToDelete));
+
+			} catch (Exception e) {
+				LogEvent.logError(e);
+			}
+		}
+	}
 
     protected List<ObservationHistory> getObservationHistories() {
         return observationHistories;
@@ -1343,13 +1360,24 @@ public abstract class Accessioner implements IAccessioner {
 //
 //    }
 
-    private static String getObservationHistoryTypeId(ObservationHistoryTypeService ohtService, String name) {
-        ObservationHistoryType oht;
-        oht = ohtService.getByName(name);
-        if (oht != null) {
-            return oht.getId();
-        }
+	private static String getObservationHistoryTypeId(ObservationHistoryTypeService ohtService, String name) {
+		ObservationHistoryType oht;
+		oht = ohtService.getByName(name);
+		if (oht != null) {
+			return oht.getId();
+		}
 
-        return null;
-    }
+		return null;
+	}
+
+	private void updateSampleWithElectronicEOrders() {
+		try {
+			if (ObjectUtils.isNotEmpty(projectFormMapper.getForm().getElectronicOrder())) {
+				sample.setReferringId(projectFormMapper.getForm().getElectronicOrder().getExternalId());
+				sample.setClinicalOrderId(projectFormMapper.getForm().getElectronicOrder().getId());
+			}
+		} catch (Exception e) {
+			LogEvent.logError(e);
+		}
+	}
 }

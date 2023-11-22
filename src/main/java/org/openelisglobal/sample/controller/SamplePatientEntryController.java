@@ -220,7 +220,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(sampleOrder.getReceivedTime())) {
             receivedDateForDisplay += " " + sampleOrder.getReceivedTime();
         } else {
-            receivedDateForDisplay += " 00:00";
+            receivedDateForDisplay += " 09:00";
         }
 
         updateData.setCollectionDateFromRecieveDateIfNeeded(receivedDateForDisplay);

@@ -18,6 +18,7 @@
 package org.openelisglobal.test.beanItems;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -549,6 +550,16 @@ public class TestResultItem implements ResultItem, Serializable {
     public void setResultValue(String results) {
         resultValue = results;
         setShadowResultValue(results);
+    }
+    
+    public String getResultValueLog() {
+    	try {
+    		DecimalFormat df = new DecimalFormat("###.##");
+    		double val = Double.parseDouble(this.resultValue);
+    		return df.format(Math.log10(val));
+    	}catch(Exception e) {
+    		return "--";
+    	}
     }
 
     public String getShadowResultValue() {

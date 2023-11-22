@@ -303,7 +303,6 @@ function enableSearchButton(eventCode){
 }
 
 function handleSelectedPatient(){
-	console.log("patientSearch:HandleSelectedPatient: ");
     var accessionNumber = "";
     if(jQuery("#searchCriteria").val() == 5){//lab number
         accessionNumber = jQuery("#searchValue").val();

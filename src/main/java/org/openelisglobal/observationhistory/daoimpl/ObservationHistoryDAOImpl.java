@@ -224,6 +224,6 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
     @Override
     @Transactional(readOnly = true)
     public ObservationHistory getById(ObservationHistory observation) throws LIMSRuntimeException {
-        return get(observation.getId()).get();
+        return get(observation.getId()).orElse(null);
     }
 }

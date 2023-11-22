@@ -157,8 +157,8 @@
     "sidenav.label.results.testdate" : "Par Date de Test",
     "sidenav.label.results.byrange" : "Par plage de numéros de commande",
     "sidenav.label.validation" : "Validation",
-    "sidenav.label.validation.routine" : "Recherche Par Routine",
-    "sidenav.label.validation.study" : "Recherche Par Étude",
+    "sidenav.label.validation.routine" : "Routine",
+    "sidenav.label.validation.study" : "Étude",
     "sidenav.label.validation.order" : "Recherche Par Commande",
     "sidenav.label.validation.testdate" : "Recherche Par Date de Test",
     "sidenav.label.reports" : "Rapports",
@@ -178,6 +178,7 @@
     "patient.label.nopatientid" : "Identifiant du Patient N'existe Pas",
     "sample.label.orderdate" : "Date de Commande",
     "sample.label.labnumber" : "Numéro de Laboratoire",
+    "sample.label.labnumber.generate": "Générer",
     "sample.label.facility" : "Établissement Référant",
     "sample.label.requester" : "Demandeur",
     "sample.label.dept" : "Service/Département/Unité",
@@ -342,5 +343,6 @@
     "labNumber.usePrefix": "Utiliser le préfixe",
     "labNumber.prefix": "Préfixe",
     "labNumber.format.new": "Nouveau format",
-    "labNumber.format.current": "Format actuel"
+    "labNumber.format.current": "Format actuel" ,
+    "validation.label.nonconform": "= L'échantillon ou la commande est non conforme ou le test a été rejeté"
 }

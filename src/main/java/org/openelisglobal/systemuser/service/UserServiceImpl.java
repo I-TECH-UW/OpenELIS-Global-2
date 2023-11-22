@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.DisplayListService;
@@ -21,7 +22,9 @@ import org.openelisglobal.systemuser.controller.UnifiedSystemUserController;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.userrole.service.UserRoleService;
@@ -46,9 +49,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private TypeOfSampleService typeOfSampleService;
     @Autowired
-    ProgramService programService;
+    private ProgramService programService;
     @Autowired
-    TestService testService;
+    private TestService testService;
+    @Autowired
+    private TestSectionService testSectionService;
 
     @Override
     @Transactional
@@ -204,6 +209,53 @@ public class UserServiceImpl implements UserService {
             }
         });
         
+        return userSampleTypes;
+    }
+    
+    @Override
+    public List<IdValuePair> getUserSampleTypes(String systemUserId, String roleName, String testSectionName) {
+        String resultsRoleId = roleService.getRoleByName(roleName).getId();
+        List<IdValuePair> testSections = getUserTestSections(systemUserId, resultsRoleId);
+        TestSection testSection = testSectionService.getTestSectionByName(testSectionName);
+        //List<String> testUnitIds = new ArrayList<>();
+        List<Integer> testUnitIds = new ArrayList<>();
+        if (ObjectUtils.isNotEmpty(testSection)) {
+            testSections.forEach(testSection2 -> testUnitIds.add(Integer.valueOf(testSection2.getId())));
+        	//testUnitIds= testSections.stream().filter(el->el.getId().equals(testSection.getId())).map(e->e.getId()).collect(Collectors.toList());
+        }
+        List<Test> allTests = testService.getTestsByTestSectionIds(testUnitIds);
+        // List<String> allTBTestIds = typeOfSampleService.getAllActiveTestsByTestUnit(true, testUnitIds).stream().map(e->e.getId()).collect(Collectors.toList());
+        // List<IdValuePair> allSampleTypes = DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE);
+        Set<String> sampleIds = new HashSet<>();
+
+        List<IdValuePair> userSampleTypes = new ArrayList<>();
+        if (allTests != null ) {
+            typeOfSampleService.clearCache();
+            allTests.forEach(test -> sampleIds.addAll(typeOfSampleService.getTypeOfSampleForTest(test.getId()).stream()
+                    .map(e -> e.getId()).collect(Collectors.toList())));
+
+        }
+
+        sampleIds.forEach( id -> {
+            TypeOfSample type = typeOfSampleService.get(id);
+            if(type != null){
+               userSampleTypes.add(new IdValuePair(type.getId(), type.getLocalizedName()));
+            }
+        });
+        
+        // clear cache to create a fresh Map of testId To TypeOfSample
+        // typeOfSampleService.clearCache();
+        
+        // List<String> allSampleTypesIds = DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE).stream().map(e->e.getId()).collect(Collectors.toList());
+        // allSampleTypesIds.forEach(sid->{
+        //     List<String> testIds = typeOfSampleService.getActiveTestsBySampleTypeId(sid, false).stream().map(e->e.getId()).collect(Collectors.toList());
+        //     if(allTBTestIds.stream().anyMatch(testIds::contains)) {
+        //     	sampleIds.add(sid);
+        //     }
+        // });
+
+        // List<IdValuePair> userSampleTypes = allSampleTypes.stream().filter(type -> sampleIds.contains(type.getId()))
+        //         .collect(Collectors.toList());
         return userSampleTypes;
     }
 

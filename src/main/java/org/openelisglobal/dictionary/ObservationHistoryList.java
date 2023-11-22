@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -81,7 +82,9 @@ public enum ObservationHistoryList {
 
     private static List<Dictionary> copyListAndAddEntry(List<Dictionary> oldList, Dictionary entryToAdd) {
         List<Dictionary> newList = new ArrayList<>(oldList);
-        newList.add(entryToAdd);
+        if(ObjectUtils.isNotEmpty(entryToAdd)) {
+        	newList.add(entryToAdd);
+        }
         return newList;
     }
 
@@ -92,7 +95,9 @@ public enum ObservationHistoryList {
     public static final Map<String, ObservationHistoryList> MAP = new HashMap<>();
     static {
         for (ObservationHistoryList ds : ObservationHistoryList.values()) {
-            MAP.put(ds.name(), ds);
+        	if(ObjectUtils.isNotEmpty(ds)) {
+        		MAP.put(ds.name(), ds);
+        	}
         }
     }
 

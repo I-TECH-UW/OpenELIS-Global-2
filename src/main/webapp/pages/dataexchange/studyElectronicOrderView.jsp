@@ -34,7 +34,6 @@ function searchByIdentifier() {
 	const params = new URLSearchParams({
 		searchType: "IDENTIFIER",
 		searchValue: jQuery('#searchValue').val(),
-		useAllInfo: jQuery('#allInfo1').is(':checked'),
 		});
 	
 	window.location.href = "StudyElectronicOrders?" + params.toString();
@@ -45,7 +44,6 @@ function searchByFacility() {
 	const params = new URLSearchParams({
 		searchType: "FACILITY",
 		organizationId: jQuery('#organizationId').val(),
-		useAllInfo: jQuery('#allInfo2').is(':checked'),
 		});
 	
 	window.location.href = "StudyElectronicOrders?" + params.toString();
@@ -58,7 +56,6 @@ function searchByDateAndStatus() {
 		startDate: jQuery('#startDate').val(),
 		endDate: jQuery('#endDate').val(),
 		statusId: jQuery('#statusId').val(),
-		useAllInfo: jQuery('#allInfo3').is(':checked'),
 		});
 	
 	window.location.href = "StudyElectronicOrders?" + params.toString();
@@ -224,16 +221,16 @@ jQuery(document).ready( function() {
 <form:hidden id="searchType" path="searchType" htmlEscape="true"/>
 <form:input path="searchValue" id="searchValue" placeholder="${patientCodeLabel}" htmlEscape="true"/> 
 <button type="button" onclick="searchByIdentifier()"><spring:message code="label.button.search" /></button>
-<form:checkbox path="useAllInfo" id="allInfo1" value="true"/> <spring:message code="label.eorder.allinfo" text="get all info" />
-<br/><br/>
+<br/>
+<%-- 
+<br/>
 <form:select path="organizationId"
 			 id="organizationId"
 			 class="eoder_select_site">
 	<form:option value="">&nbsp;</form:option>
 	<form:options items="${form.organizationList}" itemLabel="doubleName" itemValue="id" htmlEscape="true"/>
 </form:select>
-<button type="button" onclick="searchByFacility()" class="button"><spring:message code="label.button.search" /></button>
-<form:checkbox path="useAllInfo" id="allInfo2" value="true"/> <spring:message code="label.eorder.allinfo" text="get all info" />
+<button type="button" onclick="searchByFacility()" class="button"><spring:message code="label.button.search" /></button> --%>
 <hr>
 <spring:message code='study.eorder.search.date_range.title'/>
 
@@ -248,7 +245,6 @@ jQuery(document).ready( function() {
 <form:options items="${form.statusSelectionList}" itemLabel="value" itemValue="id" htmlEscape="true"/>
 </form:select>
 <button type="button" onclick="searchByDateAndStatus()"><spring:message code="label.button.search" /></button>
-<form:checkbox path="useAllInfo" id="allInfo3r" value="true" /> <spring:message code="label.eorder.allinfo" text="get all info" />
 <br>
 <hr>
 
@@ -272,10 +268,6 @@ jQuery(document).ready( function() {
     	<c:out value="No."/>
     </th>
     <th class='split-content'>
-    	<spring:message code="study.eorder.request.id"/>
-    	<span class="fa" onclick='sort(1)'><i class="fas fa-sort"></i></span>
-    </th>
-    <th class='split-content'>
     	<spring:message code="study.eorder.requester.facility"/>
     	<span class="fa" onclick='sort(2)'><i class="fas fa-sort"></i></span>
     </th>
@@ -283,33 +275,37 @@ jQuery(document).ready( function() {
     	<spring:message code="study.eorder.patient.code"/>
     	<span class="fa" onclick='sort(3)'><i class="fas fa-sort"></i></span>
     </th>
-    <th class='split-content'>
-    	<spring:message code="study.eorder.patient.gender"/>
+        <th class='split-content'>
+    	<spring:message code="study.eorder.patient.upid"/>
     	<span class="fa" onclick='sort(4)'><i class="fas fa-sort"></i></span>
     </th>
     <th class='split-content'>
-    	<spring:message code="study.eorder.patient.birth_date"/>
+    	<spring:message code="study.eorder.patient.gender"/>
     	<span class="fa" onclick='sort(5)'><i class="fas fa-sort"></i></span>
     </th>
     <th class='split-content'>
-    	<spring:message code="study.eorder.request.date"/>
+    	<spring:message code="study.eorder.patient.birth_date"/>
     	<span class="fa" onclick='sort(6)'><i class="fas fa-sort"></i></span>
+    </th>
+    <th class='split-content'>
+    	<spring:message code="study.eorder.request.date"/>
+    	<span class="fa" onclick='sort(7)'><i class="fas fa-sort"></i></span>
     </th>
 	<th class='split-content'>
     	<spring:message code="study.eorder.request.priority"/>
-    	<span class="fa" onclick='sort(7)'><i class="fas fa-sort"></i></span>
-    </th>
-    <th class='split-content'>
-    	<spring:message code="study.eorder.request.status"/>
     	<span class="fa" onclick='sort(8)'><i class="fas fa-sort"></i></span>
     </th>
     <th class='split-content'>
-    	<spring:message code="study.eorder.request.test_name"/>
+    	<spring:message code="study.eorder.request.status"/>
     	<span class="fa" onclick='sort(9)'><i class="fas fa-sort"></i></span>
     </th>
     <th class='split-content'>
-    	<spring:message code="study.eorder.lab_number"/>
+    	<spring:message code="study.eorder.request.test_name"/>
     	<span class="fa" onclick='sort(10)'><i class="fas fa-sort"></i></span>
+    </th>
+    <th class='split-content'>
+    	<spring:message code="study.eorder.lab_number"/>
+    	<span class="fa" onclick='sort(11)'><i class="fas fa-sort"></i></span>
     </th>
 	<th style="background-color:white;" colspan="3">
 		<spring:message code="study.eorder.action.title"/>
@@ -324,13 +320,13 @@ jQuery(document).ready( function() {
 	       <c:out value="${iter.index + 1}"/>
 	    </td>
 	    <td>
-	       <c:out value="${eOrder.externalOrderId}"/>
-	    </td>
-	    <td>
 	       <c:out value="${eOrder.requestingFacility}"/>
 	    </td>
 	    <td>
-	       <c:out value="${eOrder.subjectNumber}"/>
+	       <c:out value="${eOrder.patientNationalId}"/>
+	    </td>
+	    <td>
+	       <c:out value="${eOrder.patientUpid}"/>
 	    </td>
 	    <td>
 	       <c:out value="${eOrder.gender}"/>
@@ -341,7 +337,7 @@ jQuery(document).ready( function() {
 		<td class="dateCol">
 	       <c:out value="${eOrder.requestDateDisplay}"/>
 	    </td>
-	    <td>
+ 	    <td>
 	       <c:out value="${eOrder.priority}"/>
 	    </td>
 	    <td>
@@ -351,20 +347,21 @@ jQuery(document).ready( function() {
 	       <c:out value="${eOrder.testName}"/>
 	    </td>
 	    <td>
-	       <c:out value="${eOrder.referringLabNumber}"/>
+	       <c:out value="${eOrder.labNumber}"/>
 	    </td>
-	    <td>
+<%-- 	    <td>
 	    	<form:hidden id="externalOrderId_${iter.index}" path="eOrders[${iter.index}].externalOrderId" htmlEscape="true" />
 	    	<button type="button" id="enterButton_${iter.index}" onclick="enterOrder('${iter.index}')" ${entered ? 'disabled="disabled"' : '' }>
 	    	<spring:message code="study.eorder.action.enter"/>
 	    	</button>
-	  	</td>
+	  	</td> --%>
     	<td>
 		    <button type="button" id="editButton_${iter.index}" onclick="editOrder('${iter.index}')" ${entered ? 'disabled="disabled"' : '' }>
 		    <spring:message code="study.eorder.action.edit"/>
 		    </button>
 	    </td>
 	    <td>
+	    	<form:hidden id="externalOrderId_${iter.index}" path="eOrders[${iter.index}].externalOrderId" htmlEscape="true" />
 		    <button type="button" id="rejectButton_${iter.index}" onclick="rejectOrder('${iter.index}')" ${entered ? 'disabled="disabled"' : '' }>
 		    <spring:message code="study.eorder.action.reject"/>
 		    </button>

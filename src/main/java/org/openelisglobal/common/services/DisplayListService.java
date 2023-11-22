@@ -41,6 +41,7 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.method.service.MethodService;
 import org.openelisglobal.method.valueholder.Method;
 import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.organization.util.OrganizationTypeList;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
@@ -98,7 +99,9 @@ public class DisplayListService implements LocaleChangeListener {
         PATHOLOGIST_CONCLUSIONS ,IMMUNOHISTOCHEMISTRY_REPORT_TYPES ,IMMUNOHISTOCHEMISTRY_MARKERS_TESTS ,CYTOLOGY_STATUS,
         CYTOLOGY_SATISFACTORY_FOR_EVALUATION ,CYTOLOGY_UN_SATISFACTORY_FOR_EVALUATION ,CYTOLOGY_REPORT_TYPES,
         CYTOLOGY_DIAGNOSIS_RESULT_EPITHELIAL_CELL_SQUAMOUS ,CYTOLOGY_DIAGNOSIS_RESULT_EPITHELIAL_CELL_GLANDULAR ,CYTOLOGY_DIAGNOSIS_RESULT_NON_NEO_PLASTIC_CELLULAR,
-        CYTOLOGY_DIAGNOSIS_RESULT_REACTIVE_CELLULAR ,CYTOLOGY_DIAGNOSIS_RESULT_ORGANISMS , CYTOLOGY_DIAGNOSIS_RESULT_OTHER ;
+        CYTOLOGY_DIAGNOSIS_RESULT_REACTIVE_CELLULAR ,CYTOLOGY_DIAGNOSIS_RESULT_ORGANISMS , CYTOLOGY_DIAGNOSIS_RESULT_OTHER,
+		TB_ORDER_REASONS, TB_DIAGNOSTIC_REASONS, TB_FOLLOWUP_REASONS, TB_ANALYSIS_METHODS, TB_SAMPLE_ASPECTS,
+		TB_FOLLOWUP_LINE1, TB_FOLLOWUP_LINE2, ARV_ORG_LIST ;
 
     }
     private static Map<ListType, List<IdValuePair>> typeToListMap;
@@ -153,7 +156,7 @@ public class DisplayListService implements LocaleChangeListener {
         List<IdValuePair> testResults = createFromDictionaryCategoryLocalizedSort("CG");
         testResults.addAll(createFromDictionaryCategoryLocalizedSort("HL"));
         testResults.addAll(createFromDictionaryCategoryLocalizedSort("KL"));
-        testResults.addAll(createFromDictionaryCategoryLocalizedSort("Test Reslt"));
+        testResults.addAll(createFromDictionaryCategoryLocalizedSort("Test Result"));
         testResults.addAll(createFromDictionaryCategoryLocalizedSort("HIV1NInd"));
         testResults.addAll(createFromDictionaryCategoryLocalizedSort("PosNegIndInv"));
         testResults.addAll(createFromDictionaryCategoryLocalizedSort("HIVResult"));
@@ -234,6 +237,14 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_REACTIVE_CELLULAR, createDictionaryListForCategory("cytology_reactive_cellular_changes"));
         typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_ORGANISMS, createDictionaryListForCategory("cytology_diagnosis_organisms"));
         typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_OTHER, createDictionaryListForCategory("cytology_diagnosis_other"));    
+		typeToListMap.put(ListType.TB_ORDER_REASONS, createDictionaryListForCategory("TB Order Reasons"));
+		typeToListMap.put(ListType.TB_DIAGNOSTIC_REASONS, createDictionaryListForCategory("TB Diagnostic Reasons"));
+		typeToListMap.put(ListType.TB_FOLLOWUP_REASONS, createDictionaryListForCategory("TB Followup Reasons"));
+		typeToListMap.put(ListType.TB_ANALYSIS_METHODS, createDictionaryListForCategory("TB Analysis Methods"));
+		typeToListMap.put(ListType.TB_SAMPLE_ASPECTS, createDictionaryListForCategory("TB Sample Aspects"));
+		typeToListMap.put(ListType.TB_FOLLOWUP_LINE1, createTBFollowupLine1List());
+		typeToListMap.put(ListType.TB_FOLLOWUP_LINE2, createTBFollowupLine2List());
+		typeToListMap.put(ListType.ARV_ORG_LIST, createArvOrgList());
     }
 
     private List<IdValuePair> createPathologyStatusList() {
@@ -475,6 +486,14 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_REACTIVE_CELLULAR, createDictionaryListForCategory("cytology_reactive_cellular_changes"));
         typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_ORGANISMS, createDictionaryListForCategory("cytology_diagnosis_organisms"));
         typeToListMap.put(ListType.CYTOLOGY_DIAGNOSIS_RESULT_OTHER, createDictionaryListForCategory("cytology_diagnosis_other"));
+		typeToListMap.put(ListType.TB_ORDER_REASONS, createDictionaryListForCategory("TB Order Reasons"));
+		typeToListMap.put(ListType.TB_DIAGNOSTIC_REASONS, createDictionaryListForCategory("TB Diagnostic Reasons"));
+		typeToListMap.put(ListType.TB_FOLLOWUP_REASONS, createDictionaryListForCategory("TB Followup Reasons"));
+		typeToListMap.put(ListType.TB_ANALYSIS_METHODS, createDictionaryListForCategory("TB Analysis Methods"));
+		typeToListMap.put(ListType.TB_SAMPLE_ASPECTS, createDictionaryListForCategory("TB Sample Aspects"));
+		typeToListMap.put(ListType.TB_FOLLOWUP_LINE1, createTBFollowupLine1List());
+		typeToListMap.put(ListType.TB_FOLLOWUP_LINE2, createTBFollowupLine2List());
+		typeToListMap.put(ListType.ARV_ORG_LIST, createArvOrgList());
     }
 
     public void refreshList(ListType listType) {
@@ -570,6 +589,9 @@ public class DisplayListService implements LocaleChangeListener {
         case DICTIONARY_TEST_RESULTS: {
             typeToListMap.put(ListType.DICTIONARY_TEST_RESULTS, createDictionaryTestResults());
         }
+		case ARV_ORG_LIST: {
+			typeToListMap.put(ListType.ARV_ORG_LIST, createArvOrgList());
+		}
         }
     }
 
@@ -609,6 +631,26 @@ public class DisplayListService implements LocaleChangeListener {
 
         return requesterList;
     }
+
+	private List<IdValuePair> createArvOrgList() {
+		List<IdValuePair> requesterList = new ArrayList<>();
+
+		List<Organization> orgList = OrganizationTypeList.ARV_ORGS.getList();
+		orgList.sort((e, f) -> {
+			return e.getOrganizationName().compareTo(f.getOrganizationName());
+		});
+
+		for (Organization organization : orgList) {
+			if (GenericValidator.isBlankOrNull(organization.getShortName())) {
+				requesterList.add(new IdValuePair(organization.getId(), organization.getOrganizationName()));
+			} else {
+				requesterList.add(new IdValuePair(organization.getId(),
+						organization.getShortName() + " - " + organization.getOrganizationName()));
+			}
+		}
+
+		return requesterList;
+	}
 
     private List<IdValuePair> createGenderList() {
         List<IdValuePair> genders = new ArrayList<>();
@@ -843,163 +885,180 @@ public class DisplayListService implements LocaleChangeListener {
     private List<IdValuePair> createUnitOfMeasureList() {
         List<IdValuePair> unitOfMeasuresPairs = new ArrayList<>();
 //		List<UnitOfMeasure> unitOfMeasures = unitOfMeasureService.getAllActiveUnitOfMeasures();
-        List<UnitOfMeasure> unitOfMeasures = unitOfMeasureService.getAll();
+		List<UnitOfMeasure> unitOfMeasures = unitOfMeasureService.getAll();
 
-        for (UnitOfMeasure unitOfMeasure : unitOfMeasures) {
-            unitOfMeasuresPairs.add(new IdValuePair(unitOfMeasure.getId(), unitOfMeasure.getLocalizedName()));
-        }
+		for (UnitOfMeasure unitOfMeasure : unitOfMeasures) {
+			unitOfMeasuresPairs.add(new IdValuePair(unitOfMeasure.getId(), unitOfMeasure.getLocalizedName()));
+		}
 
-        return unitOfMeasuresPairs;
-    }
+		return unitOfMeasuresPairs;
+	}
 
-    private List<IdValuePair> createTypeOfSampleList() {
-        List<IdValuePair> typeOfSamplePairs = new ArrayList<>();
-        List<TypeOfSample> typeOfSamples = typeOfSampleService.getAllTypeOfSamplesSortOrdered();
+	private List<IdValuePair> createTypeOfSampleList() {
+		List<IdValuePair> typeOfSamplePairs = new ArrayList<>();
+		List<TypeOfSample> typeOfSamples = typeOfSampleService.getAllTypeOfSamplesSortOrdered();
 
-        for (TypeOfSample typeOfSample : typeOfSamples) {
-            typeOfSamplePairs.add(new IdValuePair(typeOfSample.getId(), typeOfSample.getLocalizedName()));
-        }
+		for (TypeOfSample typeOfSample : typeOfSamples) {
+			typeOfSamplePairs.add(new IdValuePair(typeOfSample.getId(), typeOfSample.getLocalizedName()));
+		}
 
-        return typeOfSamplePairs;
-    }
+		return typeOfSamplePairs;
+	}
 
-    private List<IdValuePair> createInactiveTestSection() {
-        List<IdValuePair> testSectionsPairs = new ArrayList<>();
-        List<TestSection> testSections = testSectionService.getAllInActiveTestSections();
+	private List<IdValuePair> createInactiveTestSection() {
+		List<IdValuePair> testSectionsPairs = new ArrayList<>();
+		List<TestSection> testSections = testSectionService.getAllInActiveTestSections();
 
-        for (TestSection section : testSections) {
-            testSectionsPairs.add(new IdValuePair(section.getId(), section.getLocalizedName()));
-        }
+		for (TestSection section : testSections) {
+			testSectionsPairs.add(new IdValuePair(section.getId(), section.getLocalizedName()));
+		}
 
-        return testSectionsPairs;
-    }
+		return testSectionsPairs;
+	}
 
-    private List<IdValuePair> createInactiveMethod() {
-        List<IdValuePair> methodPairs = new ArrayList<>();
-        List<Method> methods = methodService.getAllInActiveMethods();
+	private List<IdValuePair> createInactiveMethod() {
+		List<IdValuePair> methodPairs = new ArrayList<>();
+		List<Method> methods = methodService.getAllInActiveMethods();
 
-        for (Method method : methods) {
-            methodPairs.add(new IdValuePair(method.getId(), method.getLocalization().getLocalizedValue()));
-        }
+		for (Method method : methods) {
+			methodPairs.add(new IdValuePair(method.getId(), method.getLocalization().getLocalizedValue()));
+		}
 
-        return methodPairs;
-    }
+		return methodPairs;
+	}
 
-    private List<IdValuePair> createTestSectionByNameList() {
-        List<IdValuePair> testSectionsPairs = new ArrayList<>();
-        List<TestSection> testSections = testSectionService.getAllActiveTestSections();
+	private List<IdValuePair> createTestSectionByNameList() {
+		List<IdValuePair> testSectionsPairs = new ArrayList<>();
+		List<TestSection> testSections = testSectionService.getAllActiveTestSections();
 
-        for (TestSection section : testSections) {
-            testSectionsPairs.add(new IdValuePair(section.getId(), section.getTestSectionName()));
-        }
+		for (TestSection section : testSections) {
+			testSectionsPairs.add(new IdValuePair(section.getId(), section.getTestSectionName()));
+		}
 
-        return testSectionsPairs;
-    }
+		return testSectionsPairs;
+	}
 
-    private List<IdValuePair> createAddressDepartmentList() {
-        List<IdValuePair> departmentPairs = new ArrayList<>();
-        List<Dictionary> departments = dictionaryService.getDictionaryEntrysByCategoryAbbreviation("description",
-                "haitiDepartment", true);
+	private List<IdValuePair> createAddressDepartmentList() {
+		List<IdValuePair> departmentPairs = new ArrayList<>();
+		List<Dictionary> departments = dictionaryService.getDictionaryEntrysByCategoryAbbreviation("description",
+				"haitiDepartment", true);
 
-        for (Dictionary dictionary : departments) {
-            departmentPairs.add(new IdValuePair(dictionary.getId(), dictionary.getDictEntry()));
-        }
+		for (Dictionary dictionary : departments) {
+			departmentPairs.add(new IdValuePair(dictionary.getId(), dictionary.getDictEntry()));
+		}
 
-        return departmentPairs;
-    }
+		return departmentPairs;
+	}
 
-    private List<IdValuePair> createPatientSearchCriteria() {
-        List<IdValuePair> searchCriteria = new ArrayList<>();
+	private List<IdValuePair> createPatientSearchCriteria() {
+		List<IdValuePair> searchCriteria = new ArrayList<>();
 
-        // N.B. If the order is to be changed just change the order but keep the
-        // id:value pairing the same
-        searchCriteria.add(new IdValuePair("0", MessageUtil.getMessage("label.select.search.by")));
-        searchCriteria.add(new IdValuePair("2", "1. " + MessageUtil.getMessage("label.select.last.name")));
-        searchCriteria.add(new IdValuePair("1", "2. " + MessageUtil.getMessage("label.select.first.name")));
-        searchCriteria.add(new IdValuePair("3", "3. " + MessageUtil.getMessage("label.select.last.first.name")));
-        searchCriteria.add(new IdValuePair("4", "4. " + MessageUtil.getMessage("label.select.patient.ID")));
-        searchCriteria
-                .add(new IdValuePair("5", "5. " + MessageUtil.getContextualMessage("quick.entry.accession.number")));
+		// N.B. If the order is to be changed just change the order but keep the
+		// id:value pairing the same
+		searchCriteria.add(new IdValuePair("0", MessageUtil.getMessage("label.select.search.by")));
+		searchCriteria.add(new IdValuePair("2", "1. " + MessageUtil.getMessage("label.select.last.name")));
+		searchCriteria.add(new IdValuePair("1", "2. " + MessageUtil.getMessage("label.select.first.name")));
+		searchCriteria.add(new IdValuePair("3", "3. " + MessageUtil.getMessage("label.select.last.first.name")));
+		searchCriteria.add(new IdValuePair("4", "4. " + MessageUtil.getMessage("label.select.patient.ID")));
+		searchCriteria
+				.add(new IdValuePair("5", "5. " + MessageUtil.getContextualMessage("quick.entry.accession.number")));
 
-        return searchCriteria;
-    }
+		return searchCriteria;
+	}
 
-    private List<IdValuePair> createConsequencesList() {
-        List<IdValuePair> consequencesList = new ArrayList<>();
+	private List<IdValuePair> createConsequencesList() {
+		List<IdValuePair> consequencesList = new ArrayList<>();
 
-        // N.B. If the order is to be changed just change the order but keep the
-        // id:value pairing the same
-        consequencesList.add(new IdValuePair("0", MessageUtil.getMessage("label.select.one")));
-        consequencesList.add(new IdValuePair("1", MessageUtil.getMessage("label.select.consequences.none")));
-        consequencesList.add(new IdValuePair("2", MessageUtil.getMessage("label.select.consequences.moderate")));
-        consequencesList.add(new IdValuePair("3", MessageUtil.getMessage("label.select.consequences.high")));
-        return consequencesList;
-    }
+		// N.B. If the order is to be changed just change the order but keep the
+		// id:value pairing the same
+		consequencesList.add(new IdValuePair("0", MessageUtil.getMessage("label.select.one")));
+		consequencesList.add(new IdValuePair("1", MessageUtil.getMessage("label.select.consequences.none")));
+		consequencesList.add(new IdValuePair("2", MessageUtil.getMessage("label.select.consequences.moderate")));
+		consequencesList.add(new IdValuePair("3", MessageUtil.getMessage("label.select.consequences.high")));
+		return consequencesList;
+	}
 
-    private List<IdValuePair> createRecurrenceList() {
-        List<IdValuePair> recurrenceList = new ArrayList<>();
+	private List<IdValuePair> createRecurrenceList() {
+		List<IdValuePair> recurrenceList = new ArrayList<>();
 
-        // N.B. If the order is to be changed just change the order but keep the
-        // id:value pairing the same
-        recurrenceList.add(new IdValuePair("0", MessageUtil.getMessage("label.select.one")));
-        recurrenceList.add(new IdValuePair("1", MessageUtil.getMessage("label.select.recurrence.not")));
-        recurrenceList.add(new IdValuePair("2", MessageUtil.getMessage("label.select.recurrence.somewhat")));
-        recurrenceList.add(new IdValuePair("3", MessageUtil.getMessage("label.select.recurrence.highly")));
-        return recurrenceList;
-    }
+		// N.B. If the order is to be changed just change the order but keep the
+		// id:value pairing the same
+		recurrenceList.add(new IdValuePair("0", MessageUtil.getMessage("label.select.one")));
+		recurrenceList.add(new IdValuePair("1", MessageUtil.getMessage("label.select.recurrence.not")));
+		recurrenceList.add(new IdValuePair("2", MessageUtil.getMessage("label.select.recurrence.somewhat")));
+		recurrenceList.add(new IdValuePair("3", MessageUtil.getMessage("label.select.recurrence.highly")));
+		return recurrenceList;
+	}
 
-    private List<IdValuePair> createActionTypeList() {
-        List<IdValuePair> recurrenceList = new ArrayList<>();
+	private List<IdValuePair> createTBFollowupLine1List() {
+		List<IdValuePair> tbFollowupLine1List = new ArrayList<>();
+		tbFollowupLine1List.add(new IdValuePair("M2", MessageUtil.getMessage("dictionary.tb.order.followup") + " M2"));
+		tbFollowupLine1List.add(new IdValuePair("M5", MessageUtil.getMessage("dictionary.tb.order.followup") + " M5"));
+		tbFollowupLine1List.add(new IdValuePair("M6", MessageUtil.getMessage("dictionary.tb.order.followup") + " M6"));
+		return tbFollowupLine1List;
+	}
 
-        // N.B. If the order is to be changed just change the order but keep the
-        // id:value pairing the same
-        recurrenceList.add(new IdValuePair("1", MessageUtil.getMessage("label.input.actiontype.corrective")));
-        recurrenceList.add(new IdValuePair("2", MessageUtil.getMessage("label.input.actiontype.preventive")));
-        recurrenceList.add(new IdValuePair("3", MessageUtil.getMessage("label.input.actiontype.concurrent")));
-        return recurrenceList;
-    }
+	private List<IdValuePair> createTBFollowupLine2List() {
+		List<IdValuePair> tbFollowupLine2List = new ArrayList<>();
+		for (int i = 0; i <= 24; i++) {
+			tbFollowupLine2List
+					.add(new IdValuePair("M" + i, MessageUtil.getMessage("dictionary.tb.order.followup") + " M" + i));
+		}
+		return tbFollowupLine2List;
+	}
 
-    private List<IdValuePair> createLaboratoryComponentList() {
-        List<IdValuePair> recurrenceList = new ArrayList<>();
+	private List<IdValuePair> createActionTypeList() {
+		List<IdValuePair> recurrenceList = new ArrayList<>();
 
-        // N.B. If the order is to be changed just change the order but keep the
-        // id:value pairing the same
-        recurrenceList.add(
-                new IdValuePair("1", MessageUtil.getMessage("label.select.laboratoryComponent.facilitiesAndSafety")));
-        recurrenceList
-                .add(new IdValuePair("2", MessageUtil.getMessage("label.select.laboratoryComponent.organization")));
-        recurrenceList.add(new IdValuePair("3", MessageUtil.getMessage("label.select.laboratoryComponent.personnel")));
-        recurrenceList.add(new IdValuePair("4", MessageUtil.getMessage("label.select.laboratoryComponent.equipment")));
-        recurrenceList.add(new IdValuePair("5", MessageUtil.getMessage("label.select.laboratoryComponent.purchasing")));
-        recurrenceList.add(new IdValuePair("6", MessageUtil.getMessage("label.select.laboratoryComponent.process")));
-        recurrenceList
-                .add(new IdValuePair("7", MessageUtil.getMessage("label.select.laboratoryComponent.information")));
-        recurrenceList.add(new IdValuePair("8", MessageUtil.getMessage("label.select.laboratoryComponent.documents")));
-        recurrenceList.add(new IdValuePair("9", MessageUtil.getMessage("label.select.laboratoryComponent.assessment")));
-        recurrenceList
-                .add(new IdValuePair("10", MessageUtil.getMessage("label.select.laboratoryComponent.nceManagement")));
-        recurrenceList.add(
-                new IdValuePair("11", MessageUtil.getMessage("label.select.laboratoryComponent.continualImprovement")));
-        return recurrenceList;
-    }
+		// N.B. If the order is to be changed just change the order but keep the
+		// id:value pairing the same
+		recurrenceList.add(new IdValuePair("1", MessageUtil.getMessage("label.input.actiontype.corrective")));
+		recurrenceList.add(new IdValuePair("2", MessageUtil.getMessage("label.input.actiontype.preventive")));
+		recurrenceList.add(new IdValuePair("3", MessageUtil.getMessage("label.input.actiontype.concurrent")));
+		return recurrenceList;
+	}
 
-    private List<IdValuePair> createMethodByNameList() {
-        List<IdValuePair> methodsPairs = new ArrayList<>();
-        List<Method> methods = methodService.getAllActiveMethods();
-        for (Method method : methods) {
-            methodsPairs.add(new IdValuePair(method.getId(), method.getMethodName()));
-        }
-        return methodsPairs;
-    }
+	private List<IdValuePair> createLaboratoryComponentList() {
+		List<IdValuePair> recurrenceList = new ArrayList<>();
 
-    private List<IdValuePair> createSamplePriorityList() {
-        List<IdValuePair> priorities = new ArrayList<>();
-        priorities.add(new IdValuePair(OrderPriority.ROUTINE.name(), MessageUtil.getMessage("label.priority.routine")));
-        priorities.add(new IdValuePair(OrderPriority.ASAP.name(), MessageUtil.getMessage("label.priority.asap")));
-        priorities.add(new IdValuePair(OrderPriority.STAT.name(), MessageUtil.getMessage("label.priority.stat")));
-        priorities.add(new IdValuePair(OrderPriority.TIMED.name(), MessageUtil.getMessage("label.priority.timed")));
-        priorities.add(
-                new IdValuePair(OrderPriority.FUTURE_STAT.name(), MessageUtil.getMessage("label.priority.futureStat")));
-        return priorities;
-    }
+		// N.B. If the order is to be changed just change the order but keep the
+		// id:value pairing the same
+		recurrenceList.add(
+				new IdValuePair("1", MessageUtil.getMessage("label.select.laboratoryComponent.facilitiesAndSafety")));
+		recurrenceList
+				.add(new IdValuePair("2", MessageUtil.getMessage("label.select.laboratoryComponent.organization")));
+		recurrenceList.add(new IdValuePair("3", MessageUtil.getMessage("label.select.laboratoryComponent.personnel")));
+		recurrenceList.add(new IdValuePair("4", MessageUtil.getMessage("label.select.laboratoryComponent.equipment")));
+		recurrenceList.add(new IdValuePair("5", MessageUtil.getMessage("label.select.laboratoryComponent.purchasing")));
+		recurrenceList.add(new IdValuePair("6", MessageUtil.getMessage("label.select.laboratoryComponent.process")));
+		recurrenceList
+				.add(new IdValuePair("7", MessageUtil.getMessage("label.select.laboratoryComponent.information")));
+		recurrenceList.add(new IdValuePair("8", MessageUtil.getMessage("label.select.laboratoryComponent.documents")));
+		recurrenceList.add(new IdValuePair("9", MessageUtil.getMessage("label.select.laboratoryComponent.assessment")));
+		recurrenceList
+				.add(new IdValuePair("10", MessageUtil.getMessage("label.select.laboratoryComponent.nceManagement")));
+		recurrenceList.add(
+				new IdValuePair("11", MessageUtil.getMessage("label.select.laboratoryComponent.continualImprovement")));
+		return recurrenceList;
+	}
+
+	private List<IdValuePair> createMethodByNameList() {
+		List<IdValuePair> methodsPairs = new ArrayList<>();
+		List<Method> methods = methodService.getAllActiveMethods();
+		for (Method method : methods) {
+			methodsPairs.add(new IdValuePair(method.getId(), method.getMethodName()));
+		}
+		return methodsPairs;
+	}
+
+	private List<IdValuePair> createSamplePriorityList() {
+		List<IdValuePair> priorities = new ArrayList<>();
+		priorities.add(new IdValuePair(OrderPriority.ROUTINE.name(), MessageUtil.getMessage("label.priority.routine")));
+		priorities.add(new IdValuePair(OrderPriority.ASAP.name(), MessageUtil.getMessage("label.priority.asap")));
+		priorities.add(new IdValuePair(OrderPriority.STAT.name(), MessageUtil.getMessage("label.priority.stat")));
+		priorities.add(new IdValuePair(OrderPriority.TIMED.name(), MessageUtil.getMessage("label.priority.timed")));
+		priorities.add(
+				new IdValuePair(OrderPriority.FUTURE_STAT.name(), MessageUtil.getMessage("label.priority.futureStat")));
+		return priorities;
+	}
 }

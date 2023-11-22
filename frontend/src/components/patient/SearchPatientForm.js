@@ -20,8 +20,9 @@ import {
   TableBody,
   TableCell,
   Pagination,
-  Loading
+  Loading,
 } from "@carbon/react";
+import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import { patientSearchHeaderData } from "../data/PatientResultsTableHeaders";
 import { Formik, Field } from "formik";
 import SearchPatientFormValues from "../formModel/innitialValues/SearchPatientFormValues";
@@ -74,7 +75,7 @@ function SearchPatientForm(props) {
       });
       setNotificationVisible(true);
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   const fetchPatientDetails = (patientDetails) => {
@@ -106,7 +107,7 @@ function SearchPatientForm(props) {
 
   return (
     <>
-      {loading && <Loading/>}
+      {loading && <Loading />}
       <Formik
         initialValues={SearchPatientFormValues}
         // validationSchema={}
@@ -138,12 +139,15 @@ function SearchPatientForm(props) {
                 )}
               </Field>
               <Field name="labNumber">
-                {({ field }) => (
-                  <TextInput
+                {({ field, setFieldValue }) => (
+                  <CustomLabNumberInput
                     name={field.name}
                     labelText={intl.formatMessage({id: "patient.prev.lab.no", defaultMessage: "Previous Lab Number", })}
                     id={field.name}
                     className="inputText"
+                    onChange={(e, rawValue) => {
+                      setFieldValue(rawValue);
+                    }}
                   />
                 )}
               </Field>

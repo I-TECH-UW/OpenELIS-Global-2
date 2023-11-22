@@ -211,6 +211,7 @@ function BaseLoader() {
 		clearField(document.getElementById("farv." + fieldId));
 		clearField(document.getElementById("eid." + fieldId));
 		clearField(document.getElementById("vl." + fieldId));
+		clearField(document.getElementById("rt." + fieldId));
 		clearField(document.getElementById("rtn." + fieldId));
 	}
 
@@ -230,6 +231,7 @@ function BaseLoader() {
 		this.setField("rtn." + fieldId, value);
 		this.setField("eid." + fieldId, value);
 		this.setField("vl." + fieldId, value);
+		this.setField("rt." + fieldId, value);
 	};
 
 	/**
@@ -259,6 +261,7 @@ function BaseLoader() {
  */
 function PatientLoader() {
 	this.url = "provider=PatientSearchPopulateProvider";
+	
 	this.existing = null;
 	/**
 	 * This member indicates that value of the subjectNumber loaded from a sampleNumber
@@ -317,7 +320,7 @@ function PatientLoader() {
 	}
 
 	this.processLoadSuccess = function /*void*/ (xhr, sampleNo) {
-		//console.info("PatientLoader.processLoadSuccess:" + xhr.responseText);
+		// console.info("PatientLoader.processLoadSuccess:" + xhr.responseText);
 		var response = xhr.responseXML.getElementsByTagName("formfield").item(0);
 		this.existing = response;
 		patientLoader.setExistingSubjectNumber();
@@ -328,7 +331,7 @@ function PatientLoader() {
 		var dob = this.getResponseProperty(response,   "dob");
 		var gender = this.getResponseProperty(response, "gender");
 
-		//this.setFields(nationalID, lastName, firstName, externalID, dob, gender);
+		this.setFields(nationalID, lastName, firstName, externalID, dob, gender);
 		var searchLabNumber = $("searchLabNumber").value; 
 		if ( searchLabNumber != "" ) {
 			sampleLoader.loadDetailsByAccessionNumber(searchLabNumber);
@@ -354,13 +357,13 @@ function PatientLoader() {
 		} else {
 			this.setFieldInAllStudies("dateOfBirth", dob);
 			// TODO PAHill we could go back to projectChecker to do only the current fields instead of banging on all of them, but we don't know the type of study yet because we haven't loaded the sample.
-			handlePatientBirthDateChange($("dateOfBirth"), $("interviewDate"), false, $("age"));
+			/*handlePatientBirthDateChange($("dateOfBirth"), $("interviewDate"), false, $("age"));
 			handlePatientBirthDateChange($("farv.dateOfBirth"), $("farv.interviewDate"), false, $("farv.age"));
 			handlePatientBirthDateChange($("eid.dateOfBirth"),  $("eid.interviewDate"), false, null, $('eid.month'), $('eid.ageWeek'));
 			handlePatientBirthDateChange($("vl.dateOfBirth"),  $("vl.interviewDate"), false, $("vl.age"));
-			handlePatientBirthDateChange($("rtn.dateOfBirth"),  $("rtn.interviewDate"), false, $("rtn.age"), $("rtn.month"));
-		}
-
+			handlePatientBirthDateChange($("rt.dateOfBirth"),  $("rt.interviewDate"), false, $("rt.age"));
+			handlePatientBirthDateChange($("rtn.dateOfBirth"),  $("rtn.interviewDate"), false, $("rtn.age"), $("rtn.month")); */
+		} 
 		this.setFieldInAllStudies("gender", gender);
 	}
 	
@@ -727,6 +730,7 @@ function ObservationHistoryLoader() {
 	    farv.refresh();
 	    eid.refresh();
 	    vl.refresh();
+	    rt.refresh();
 	    if (rtn != null) {
 		    rtn.refresh();
 	    }
@@ -914,9 +918,9 @@ function BaseProjectChecker() {
 	
 	this.checkGenderForVlPregnancyOrSuckle = function () {
 		//Observation[YES_NO] set "No" option selected by default when selected gender = "F"
-		if($("vl.gender").value === 'F'){
-			$("vl.vlPregnancy").value=1251; //1251 is th dictionary ID for "No" response 
-			$("vl.vlSuckle").value=1251;
+		if($(this.idPre+"gender").value === 'F'){
+			$(this.idPre+"vlPregnancy").value=1251; //1251 is th dictionary ID for "No" response 
+			$(this.idPre+"vlSuckle").value=1251;
 		}
 	}
 

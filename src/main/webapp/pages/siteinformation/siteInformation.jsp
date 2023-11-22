@@ -90,7 +90,7 @@
 </c:if>
 <c:if test="${form.valueType == 'logoUpload'}">
 	<input type="hidden" name="logoName" id="logoName" />
-    <img id="imagePreview" src=""  
+    <img id="imagePreview" src="./dbImage/siteInformation/${form.paramName}"  
        	 height="42" 
 	     width="42"  />
     <br>

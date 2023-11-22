@@ -66,6 +66,9 @@ public class ProjectData implements Serializable {
     private boolean dbsTaken;
     private boolean dbsvlTaken;
     private boolean pscvlTaken;
+    private boolean asanteTest;
+    private boolean plasmaTaken;
+    private boolean serumTaken;
 
     // ARV
     private String doctor;
@@ -670,5 +673,37 @@ public class ProjectData implements Serializable {
 
 	public void setPscvlTaken(boolean pscvlTaken) {
 		this.pscvlTaken = pscvlTaken;
+	}
+
+	public boolean isDbsvlTaken() {
+		return dbsvlTaken;
+	}
+
+	public void setDbsvlTaken(boolean dbsvlTaken) {
+		this.dbsvlTaken = dbsvlTaken;
+	}
+
+	public boolean isPlasmaTaken() {
+		return plasmaTaken;
+	}
+
+	public void setPlasmaTaken(boolean plasmaTaken) {
+		this.plasmaTaken = plasmaTaken;
+	}
+
+	public boolean isSerumTaken() {
+		return serumTaken;
+	}
+
+	public void setSerumTaken(boolean serumTaken) {
+		this.serumTaken = serumTaken;
+	}
+
+	public boolean isAsanteTest() {
+		return asanteTest;
+	}
+
+	public void setAsanteTest(boolean asanteTest) {
+		this.asanteTest = asanteTest;
 	}
 }

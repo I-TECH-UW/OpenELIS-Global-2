@@ -19,7 +19,7 @@ import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.spring.util.SpringContext;
 
-public class Base27AccessionValidator implements IAccessionNumberGenerator {
+public class AlphanumAccessionValidator implements IAccessionNumberGenerator {
 
     protected SampleService sampleService = SpringContext.getBean(SampleService.class);
     protected AccessionService accessionService = SpringContext.getBean(AccessionService.class);
@@ -123,7 +123,7 @@ public class Base27AccessionValidator implements IAccessionNumberGenerator {
         }
 
         try {
-            Long.parseLong(accessionNumber.substring(getIncrementStartIndex()));
+            IntegerUtil.parseIntBase27(accessionNumber.substring(getIncrementStartIndex()));
         } catch (NumberFormatException e) {
             return ValidationResults.FORMAT_FAIL;
         }

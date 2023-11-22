@@ -40,6 +40,8 @@ public interface FhirPersistanceService {
 
     Optional<Task> getTaskBasedOnServiceRequest(String referringId);
 
+    Optional<ServiceRequest> getServiceRequestByReferingId(String referringId);
+
     Optional<Task> getTaskBasedOnTask(String taskId);
 
     Bundle createUpdateFhirResourcesInFhirStore(Map<String, Resource> createResources,
