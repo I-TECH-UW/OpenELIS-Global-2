@@ -450,6 +450,7 @@ export function SearchResults(props) {
   const [methods, setMethods] = useState([]);
   const [referralReasons, setReferralReasons] = useState([]);
   const [rejectReasons, setRejectReasons] = useState([]);
+  const [rejectedItems, setRejectedItems] = useState({});
   const saveStatus = "";
 
   const componentMounted = useRef(true);
@@ -470,6 +471,13 @@ export function SearchResults(props) {
       "/rest/displayList/REJECTION_REASONS",
       loadRejectReasons,
     );
+    if (props.results.testResult.length > 0) {
+      var defaultRejectedItems = {};
+      props.results.testResult.forEach((result) => {
+        defaultRejectedItems[result.id] = false;
+      });
+      setRejectedItems(defaultRejectedItems);
+    }
     return () => {
       componentMounted.current = false;
     };
@@ -580,7 +588,7 @@ export function SearchResults(props) {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "10rem",
+      width: "7rem",
     },
   ];
 
@@ -658,26 +666,27 @@ export function SearchResults(props) {
                   )}
                 </Field>
               </Column>
-
-              <Column lg={16}>
-                <Select
-                  id={"rejectReasonId" + row.id}
-                  name={"testResult[" + row.id + "].rejectReasonId"}
-                  //noLabel={true}
-                  labelText={"Reason"}
-                  onChange={(e) => handleChange(e, row.id)}
-                >
-                  {/* {...updateShadowResult(e, this, param.rowId)} */}
-                  <SelectItem text="" value="" />
-                  {rejectReasons.map((reason, reason_index) => (
-                    <SelectItem
-                      text={reason.value}
-                      value={reason.id}
-                      key={reason_index}
-                    />
-                  ))}
-                </Select>
-              </Column>
+              {rejectedItems[row.id] == true && (
+                <Column lg={16}>
+                  <Select
+                    id={"rejectReasonId" + row.id}
+                    name={"testResult[" + row.id + "].rejectReasonId"}
+                    //noLabel={true}
+                    labelText={"Reason"}
+                    onChange={(e) => handleChange(e, row.id)}
+                  >
+                    {/* {...updateShadowResult(e, this, param.rowId)} */}
+                    <SelectItem text="" value="" />
+                    {rejectReasons.map((reason, reason_index) => (
+                      <SelectItem
+                        text={reason.value}
+                        value={reason.id}
+                        key={reason_index}
+                      />
+                    ))}
+                  </Select>
+                </Column>
+              )}
             </Grid>
           </>
         );
@@ -702,6 +711,8 @@ export function SearchResults(props) {
 
       case "Result":
         switch (row.resultType) {
+          case "M":
+          case "C":
           case "D":
             return (
               <Select
@@ -730,10 +741,8 @@ export function SearchResults(props) {
               <TextInput
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
-                //type="text"
-                // value={resultForm.testResult[row.id].resultValue}
                 labelText=""
-                // helperText="Optional help text"
+                type="number"
                 onChange={(e) => handleChange(e, row.id)}
               />
             );
@@ -744,10 +753,7 @@ export function SearchResults(props) {
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
                 style={{ width: "10px", height: "20px" }}
-                //type="text"
-                // value={resultForm.testResult[row.id].resultValue}
                 labelText=""
-                // helperText="Optional help text"
                 onChange={(e) => handleChange(e, row.id)}
               />
             );
@@ -758,10 +764,7 @@ export function SearchResults(props) {
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
                 style={{ width: "10px", height: "20px" }}
-                //type="text"
-                // value={resultForm.testResult[row.id].resultValue}
                 labelText=""
-                // helperText="Optional help text"
                 onChange={(e) => handleChange(e, row.id)}
               />
             );
@@ -772,69 +775,17 @@ export function SearchResults(props) {
 
       case "Current Result":
         switch (row.resultType) {
+          case "M":
+          case "C":
           case "D":
             return (
-              <Select
-                className="currentResult"
-                id={"currentResultValue" + row.id}
-                name={"testResult[" + row.id + "].resultValue"}
-                noLabel={true}
-                onChange={(e) => validateResults(e, row.id)}
-                value={row.resultValue}
-              >
-                {/* {...updateShadowResult(e, this, param.rowId)} */}
-                <SelectItem text="" value="" />
-                {row.dictionaryResults.map(
-                  (dictionaryResult, dictionaryResult_index) => (
-                    <SelectItem
-                      text={dictionaryResult.value}
-                      value={dictionaryResult.id}
-                      key={dictionaryResult_index}
-                    />
-                  ),
-                )}
-              </Select>
-            );
-
-          case "N":
-            return (
-              <TextInput
-                id={"currentResultValue" + row.id}
-                name={"testResult[" + row.id + "].resultValue"}
-                //type="text"
-                value={row.resultValue}
-                labelText=""
-                // helperText="Optional help text"
-                onChange={(e) => handleChange(e, row.id)}
-              />
-            );
-
-          case "R":
-            return (
-              <TextArea
-                id={"ResultValue" + row.id}
-                name={"testResult[" + row.id + "].resultValue"}
-                style={{ width: "10px", height: "20px" }}
-                //type="text"
-                value={row.resultValue}
-                labelText=""
-                // helperText="Optional help text"
-                onChange={(e) => handleChange(e, row.id)}
-              />
-            );
-
-          case "A":
-            return (
-              <TextArea
-                id={"ResultValue" + row.id}
-                name={"testResult[" + row.id + "].resultValue"}
-                style={{ width: "10px", height: "20px" }}
-                //type="text"
-                value={row.resultValue}
-                labelText=""
-                // helperText="Optional help text"
-                onChange={(e) => handleChange(e, row.id)}
-              />
+              <>
+                {
+                  row.dictionaryResults.find(
+                    (result) => result.id == row.resultValue,
+                  )?.value
+                }
+              </>
             );
 
           default:
@@ -970,6 +921,21 @@ export function SearchResults(props) {
     jp.value(form, shadowRejected, checked);
     var isModified = "testResult[" + rowId + "].isModified";
     jp.value(form, isModified, "true");
+    var allrejectedItems = { ...rejectedItems };
+    allrejectedItems[rowId] = checked;
+    setRejectedItems(allrejectedItems);
+
+    var message =
+      "Rejecting the result will permanently delete test results \n" +
+      "The results will no longer be available.";
+    setNotificationBody({
+      title: <FormattedMessage id="notification.title" />,
+      message: message,
+      kind: NotificationKinds.warning,
+    });
+    if (checked) {
+      setNotificationVisible(true);
+    }
   };
 
   const handleDatePickerChange = (date, rowId) => {
