@@ -9,10 +9,6 @@ describe('Failing or Succeeding to Login', function () {
         // login.acceptSelfAssignedCert();
     });
 
-    after('Close Browser', () => {
-       cy.clearLocalStorage();
-    })
-
     it('Should validate user authentication', function () {
         cy.fixture('Users').then((users) => {
             users.forEach((user) => {
@@ -24,6 +20,7 @@ describe('Failing or Succeeding to Login', function () {
                 login.signIn();
 
                 if (user.correctPass === true) {
+                    cy.getCookie('JSESSIONID').should('exist');
                     cy.get('header#mainHeader > button[title=\'Open menu\']').should('exist')
                         .and('span:nth-of-type(3) > .cds--btn.cds--btn--icon-only.cds--btn--primary.cds--header__action > svg > path:nth-of-type(1)', 'exist');
                 } else {
@@ -33,5 +30,8 @@ describe('Failing or Succeeding to Login', function () {
         });
     });
 
+    after('Close Browser', () => {
+        login.logoutSession();
+    });
 
 });
