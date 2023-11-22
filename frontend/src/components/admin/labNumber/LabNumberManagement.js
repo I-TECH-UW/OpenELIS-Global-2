@@ -9,6 +9,9 @@ import {
   SelectItem,
   Button,
   Loading,
+  Grid,
+  Column,
+  Section,
 } from "@carbon/react";
 import LabNumberFormValues from "./LabNumberFormValues";
 import {
@@ -163,12 +166,18 @@ function LabNumberManagement() {
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading />}
       <div className="adminPageContent">
+        <Grid >
+          <Column lg={16}>
+            <Section>
+              <Section>
+                <Heading>
+                  <FormattedMessage id="configure.labNumber.title" />
+                </Heading>
+              </Section>
+            </Section>
+          </Column>
+        </Grid>
         <Form onSubmit={handleSubmit}>
-          <FormLabel>
-            <Heading>
-              <FormattedMessage id="configure.labNumber.title" />
-            </Heading>
-          </FormLabel>
           <div className="inlineDiv">
             <Select
               id="lab_number_type"

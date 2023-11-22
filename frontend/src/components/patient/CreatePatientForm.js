@@ -41,7 +41,11 @@ function CreatePatientForm(props) {
   const [formAction, setFormAction] = useState("ADD");
   const componentMounted = useRef(false);
   const intl = useIntl();
-  const [dateOfBirthFormatter,setDateOfBirthFormatter] = useState({"years": "", "months": "", "days": ""})
+  const [dateOfBirthFormatter, setDateOfBirthFormatter] = useState({
+    years: "",
+    months: "",
+    days: "",
+  });
   const handleDatePickerChange = (values, ...e) => {
     var patient = values;
     patient.birthDateForDisplay = e[1];
@@ -236,6 +240,15 @@ function CreatePatientForm(props) {
   };
 
   const handleSubmit = (values) => {
+    if ("years" in values) {
+      delete values.years;
+    }
+    if ("months" in values) {
+      delete values.months;
+    }
+    if ("days" in values) {
+      delete values.days;
+    }
     console.log(JSON.stringify(values));
     postToOpenElisServer(
       "/rest/patient-management",
@@ -384,7 +397,13 @@ function CreatePatientForm(props) {
                   <TextInput
                     value={values.primaryPhone}
                     name={field.name}
-                    labelText={intl.formatMessage({id: "patient.label.primaryphone",defaultMessage: "Phone: {PHONE_FORMAT}",},{ PHONE_FORMAT: configurationProperties.PHONE_FORMAT })}
+                    labelText={intl.formatMessage(
+                      {
+                        id: "patient.label.primaryphone",
+                        defaultMessage: "Phone: {PHONE_FORMAT}",
+                      },
+                      { PHONE_FORMAT: configurationProperties.PHONE_FORMAT },
+                    )}
                     id={field.name}
                     className="inputText"
                   />
@@ -399,8 +418,16 @@ function CreatePatientForm(props) {
                     className="inputText"
                     id="create_patient_gender"
                   >
-                    <RadioButton id="radio-1" labelText={intl.formatMessage({ id: "patient.male" })} value="M" />
-                    <RadioButton id="radio-2" labelText={intl.formatMessage({id: "patient.female",})} value="F" />
+                    <RadioButton
+                      id="radio-1"
+                      labelText={intl.formatMessage({ id: "patient.male" })}
+                      value="M"
+                    />
+                    <RadioButton
+                      id="radio-2"
+                      labelText={intl.formatMessage({ id: "patient.female" })}
+                      value="F"
+                    />
                   </RadioButtonGroup>
                 )}
               </Field>
@@ -433,7 +460,7 @@ function CreatePatientForm(props) {
                 value={dateOfBirthFormatter.years}
                 name="years"
                 labelText={intl.formatMessage({
-                  id: "patient.female",
+                  id: "patient.age.years",
                 })}
                 id="years"
                 type="number"
@@ -454,7 +481,8 @@ function CreatePatientForm(props) {
               <TextInput
                 value={dateOfBirthFormatter.days}
                 name="days"
-                onChange={ handleDaysChange}
+                type="number"
+                onChange={(e) => handleDaysChange(e, values)}
                 labelText={intl.formatMessage({ id: "patient.age.days" })}
                 id="days"
                 className="inputText"
@@ -465,9 +493,11 @@ function CreatePatientForm(props) {
               <div className="error">
                 <ErrorMessage name="gender"></ErrorMessage>
               </div>
-              </div>
+            </div>
             <Accordion>
-               <AccordionItem title={intl.formatMessage({ id:"emergencyContactInfo.title" })}>
+              <AccordionItem
+                title={intl.formatMessage({ id: "emergencyContactInfo.title" })}
+              >
                 <div className="inlineDiv">
                   <Field name="patientContact.person.lastName">
                     {({ field }) => (
@@ -478,7 +508,9 @@ function CreatePatientForm(props) {
                             : values.patientContact?.person.lastName
                         }
                         name={field.name}
-                        labelText={intl.formatMessage({id: "patientcontact.person.lastname",})}
+                        labelText={intl.formatMessage({
+                          id: "patientcontact.person.lastname",
+                        })}
                         id={field.name}
                         className="inputText"
                       />
@@ -493,7 +525,9 @@ function CreatePatientForm(props) {
                             : values.patientContact?.person.firstName
                         }
                         name={field.name}
-                        labelText={intl.formatMessage({id: "patientcontact.person.firstname",})}
+                        labelText={intl.formatMessage({
+                          id: "patientcontact.person.firstname",
+                        })}
                         id={field.name}
                         className="inputText"
                       />
@@ -510,7 +544,9 @@ function CreatePatientForm(props) {
                             : values.patientContact?.person.email
                         }
                         name={field.name}
-                        labelText={intl.formatMessage({id: "patientcontact.person.email",})}
+                        labelText={intl.formatMessage({
+                          id: "patientcontact.person.email",
+                        })}
                         id={field.name}
                         className="inputText"
                       />
@@ -520,12 +556,21 @@ function CreatePatientForm(props) {
                     {({ field }) => (
                       <TextInput
                         value={
-                          values.patientContact?.person.primaryPhone === undefined
+                          values.patientContact?.person.primaryPhone ===
+                          undefined
                             ? ""
                             : values.patientContact?.person.primaryPhone
                         }
                         name={field.name}
-                        labelText={intl.formatMessage({id: "patient.label.contactphone",defaultMessage: "Contact Phone: {PHONE_FORMAT}",},{ PHONE_FORMAT: configurationProperties.PHONE_FORMAT })}
+                        labelText={intl.formatMessage(
+                          {
+                            id: "patient.label.contactphone",
+                            defaultMessage: "Contact Phone: {PHONE_FORMAT}",
+                          },
+                          {
+                            PHONE_FORMAT: configurationProperties.PHONE_FORMAT,
+                          },
+                        )}
                         id={field.name}
                         className="inputText"
                       />
@@ -537,24 +582,33 @@ function CreatePatientForm(props) {
                   <div className="error"></div>
                 </div>
               </AccordionItem>
-              <AccordionItem title="Additional Information">
+              <AccordionItem
+                title={intl.formatMessage({
+                  id: "patient.label.additionalInfo",
+                })}
+              >
                 <div className="inlineDiv">
                   <Field name="city">
                     {({ field }) => (
                       <TextInput
                         value={values.city}
                         name={field.name}
-                        labelText={intl.formatMessage({id: "patient.address.town",})}
+                        labelText={intl.formatMessage({
+                          id: "patient.address.town",
+                        })}
                         id={field.name}
                         className="inputText"
-                      />         )}
+                      />
+                    )}
                   </Field>
                   <Field name="streetAddress">
                     {({ field }) => (
                       <TextInput
                         value={values.streetAddress}
                         name={field.name}
-                        labelText={intl.formatMessage({id: "patient.address.street",})}
+                        labelText={intl.formatMessage({
+                          id: "patient.address.street",
+                        })}
                         id={field.name}
                         className="inputText"
                       />
@@ -565,7 +619,9 @@ function CreatePatientForm(props) {
                       <TextInput
                         value={values.commune}
                         name={field.name}
-                        labelText={intl.formatMessage({id: "patient.address.camp",})}
+                        labelText={intl.formatMessage({
+                          id: "patient.address.camp",
+                        })}
                         id={field.name}
                         className="inputText"
                       />
@@ -579,7 +635,9 @@ function CreatePatientForm(props) {
                         id="health_region"
                         value={values.healthRegion}
                         name={field.name}
-                        labelText={intl.formatMessage({id: "patient.address.healthregion",})}
+                        labelText={intl.formatMessage({
+                          id: "patient.address.healthregion",
+                        })}
                         className="inputText"
                         onChange={(e) => handleRegionSelection(e, values)}
                       >
@@ -600,7 +658,9 @@ function CreatePatientForm(props) {
                         id="health_district"
                         value={values.healthDistrict}
                         name={field.name}
-                        labelText={intl.formatMessage({id: "patient.address.healthdistrict",})}
+                        labelText={intl.formatMessage({
+                          id: "patient.address.healthdistrict",
+                        })}
                         className="inputText"
                         onChange={() => {}}
                       >
@@ -623,7 +683,9 @@ function CreatePatientForm(props) {
                         id="education"
                         value={values.education}
                         name={field.name}
-                        labelText={intl.formatMessage({id: "pateint.eduction",})}
+                        labelText={intl.formatMessage({
+                          id: "pateint.eduction",
+                        })}
                         className="inputText"
                         onChange={() => {}}
                       >
@@ -644,7 +706,9 @@ function CreatePatientForm(props) {
                         id="maritialStatus"
                         value={values.maritialStatus}
                         name={field.name}
-                        labelText={intl.formatMessage({id: "patient.maritalstatus",})}
+                        labelText={intl.formatMessage({
+                          id: "patient.maritalstatus",
+                        })}
                         className="inputText"
                         onChange={() => {}}
                       >
@@ -667,7 +731,9 @@ function CreatePatientForm(props) {
                         id="nationality"
                         value={values.nationality}
                         name={field.name}
-                        labelText={intl.formatMessage({id: "patient.nationality",})}
+                        labelText={intl.formatMessage({
+                          id: "patient.nationality",
+                        })}
                         className="inputText"
                         onChange={() => {}}
                       >
@@ -687,7 +753,9 @@ function CreatePatientForm(props) {
                       <TextInput
                         value={values.otherNationality}
                         name={field.name}
-                        labelText={intl.formatMessage({id: "patient.nationality.other",})}
+                        labelText={intl.formatMessage({
+                          id: "patient.nationality.other",
+                        })}
                         id={field.name}
                         className="inputText"
                       />

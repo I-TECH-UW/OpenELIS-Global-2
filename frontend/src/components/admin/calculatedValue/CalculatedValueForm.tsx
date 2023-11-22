@@ -11,9 +11,11 @@ import {
   Toggle,
   Loading,
   Checkbox,
-  RadioButtonGroup,
-  RadioButton,
   ModalWrapper,
+  Grid,
+  Column,
+  Section,
+  Heading
 } from "@carbon/react";
 import AutoComplete from "../../common/AutoComplete.js";
 import { Add, Subtract, Save } from "@carbon/react/icons";
@@ -583,6 +585,17 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
 
   return (
     <div className="adminPageContent">
+      <Grid >
+          <Column lg={16}>
+            <Section>
+            <Section>
+                <Heading>
+                  <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
+              </Heading>
+              </Section>
+            </Section>
+          </Column>
+        </Grid>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading></Loading>}
       {calculationList.map((calculation, index) => (

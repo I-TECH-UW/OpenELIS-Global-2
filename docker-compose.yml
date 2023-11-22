@@ -73,6 +73,10 @@ services:
             - default
         restart: always
         environment:
+          spring.datasource.url : jdbc:postgresql://database:5432/clinlims?currentSchema=clinlims
+          spring.datasource.username : clinlims
+          spring.datasource.password : clinlims
+          spring.datasource.driverClassName: org.postgresql.Driver
           TZ: Africa/Nairobi
 
           JAVA_OPTS: "-Djavax.net.ssl.trustStore=/etc/openelis-global/truststore 

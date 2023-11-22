@@ -151,7 +151,9 @@ public class CytologyDisplayServiceImpl implements CytologyDisplayService {
         @Transactional
     public CytologySample getCytologySampleWithLoadedAttributes(Integer cytologySampleId) {
         CytologySample cytologySample = cytologySampleService.get(cytologySampleId);
-        cytologySample.getDiagnosis().getDiagnosisResultsMaps().size();
+        if(cytologySample.getDiagnosis() != null){
+           cytologySample.getDiagnosis().getDiagnosisResultsMaps().size();
+        }
         return cytologySample;
     }
     
