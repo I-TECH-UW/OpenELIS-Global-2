@@ -25,6 +25,7 @@ import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
 import org.openelisglobal.testresult.valueholder.TestResult;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Result extends EnumValueItemImpl {
 
@@ -119,6 +120,7 @@ public class Result extends EnumValueItemImpl {
         return value;
     }
     
+    @JsonIgnore
     public long getVLValueAsNumber() {
 		long finalResult = 0;
 		String workingResult = value.split("\\(")[0].trim();
