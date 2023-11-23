@@ -30,10 +30,7 @@ const Validation = (props) => {
     useContext(NotificationContext);
   const { configurationProperties } = useContext(ConfigurationContext);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(100);
-  const [referalOrganizations, setReferalOrganizations] = useState([]);
-  const [methods, setMethods] = useState([]);
-  const [referralReasons, setReferralReasons] = useState([]);
+  const [pageSize, setPageSize] = useState(20);
 
   const componentMounted = useRef(false);
 
@@ -387,10 +384,17 @@ const Validation = (props) => {
         onSubmit
         onChange
       >
-        {({ values, errors, touched, handleChange, handleSubmit }) => (
+        {({ values, errors, touched, handleChange }) => (
           <Form onChange={handleChange}>
             <DataTable
-              data={props.results ? props.results.resultList : []}
+              data={
+                props.results
+                  ? props.results.resultList.slice(
+                      (page - 1) * pageSize,
+                      page * pageSize,
+                    )
+                  : []
+              }
               columns={columns}
               isSortable
             ></DataTable>
@@ -398,7 +402,7 @@ const Validation = (props) => {
               onChange={handlePageChange}
               page={page}
               pageSize={pageSize}
-              pageSizes={[100, 50, 10]}
+              pageSizes={[10, 20, 50, 100]}
               totalItems={
                 props.results
                   ? props.results.resultList

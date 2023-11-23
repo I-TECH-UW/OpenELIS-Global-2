@@ -444,7 +444,7 @@ export function SearchResults(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
 
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(100);
+  const [pageSize, setPageSize] = useState(20);
   const [acceptAsIs, setAcceptAsIs] = useState([]);
   const [referalOrganizations, setReferalOrganizations] = useState([]);
   const [methods, setMethods] = useState([]);
@@ -921,6 +921,7 @@ export function SearchResults(props) {
     jp.value(form, shadowRejected, checked);
     var isModified = "testResult[" + rowId + "].isModified";
     jp.value(form, isModified, "true");
+
     var allrejectedItems = { ...rejectedItems };
     allrejectedItems[rowId] = checked;
     setRejectedItems(allrejectedItems);
@@ -1032,6 +1033,13 @@ export function SearchResults(props) {
     }
   };
 
+  // const paginationOptions = {
+  //   rowsPerPageText: 'Rows per page:',
+  //   rangeSeparatorText: 'of',
+  //   selectAllRowsItem: true,
+  //   selectAllRowsItemText: 'All',
+  // };
+
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
@@ -1045,8 +1053,8 @@ export function SearchResults(props) {
                 <img
                   src={config.serverBaseUrl + "/images/nonconforming.gif"}
                   alt="nonconforming"
-                  width="25" // Set your desired width
-                  height="20" // Set your desired height
+                  width="25" 
+                  height="20" 
                 />
               </picture>
               <b>
@@ -1075,17 +1083,24 @@ export function SearchResults(props) {
               //onBlur={handleBlur}
             >
               <DataTable
-                data={props.results.testResult}
+                data={props.results.testResult.slice(
+                  (page - 1) * pageSize,
+                  page * pageSize,
+                )}
                 columns={columns}
                 isSortable
                 expandableRows
                 expandableRowsComponent={renderReferral}
+                // pagination
+                // paginationPerPage={10} // Number of rows per page
+                // paginationRowsPerPageOptions={[10, 20, 30, 40, 50 ,100]} // Options for rows per page dropdown
+                // paginationComponentOptions={paginationOptions}
               ></DataTable>
               <Pagination
                 onChange={handlePageChange}
                 page={page}
                 pageSize={pageSize}
-                pageSizes={[100, 50, 10]}
+                pageSizes={[10, 20, 50, 100]}
                 totalItems={props.results.testResult?.length}
               ></Pagination>
 
