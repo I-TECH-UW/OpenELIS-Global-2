@@ -754,7 +754,7 @@ export function SearchResults(props) {
               <Select
                 id={"testMethod" + data.id}
                 name={"testResult[" + data.id + "].testMethod"}
-                labelText={"Methods"}
+                labelText={<FormattedMessage id= "referral.label.testmethod" defaultMessage="Methods"/>}
                 onChange={(e) => handleChange(e, data.id)}
                 value={data.method}
               >
@@ -776,7 +776,7 @@ export function SearchResults(props) {
                 id={"referralReason" + data.id}
                 name={"testResult[" + data.id + "].referralReason"}
                 // noLabel={true}
-                labelText={"Referral Reason"}
+                labelText={<FormattedMessage id= "referral.label.reason" defaultMessage="Referral Reason"/>}
                 onChange={(e) => handleChange(e, data.id)}
               >
                 {/* {...updateShadowResult(e, this, param.rowId)} */}
@@ -797,7 +797,7 @@ export function SearchResults(props) {
                 id={"institute" + data.id}
                 name={"testResult[" + data.id + "].institute"}
                 // noLabel={true}
-                labelText={"Institute"}
+                labelText={<FormattedMessage id ="referral.label.institute" defaultMessage="Institute"/>}
                 onChange={(e) => handleChange(e, data.id)}
               >
                 {/* {...updateShadowResult(e, this, param.rowId)} */}
@@ -815,7 +815,7 @@ export function SearchResults(props) {
                 id={"testToPerform" + data.id}
                 name={"testResult[" + data.id + "].testToPerform"}
                 // noLabel={true}
-                labelText={"Test to Perform"}
+                labelText={<FormattedMessage id="referral.label.testtoperform" defaultMessage="Test to Perform"/>}
                 onChange={(e) => handleChange(e, data.id)}
               >
                 {/* {...updateShadowResult(e, this, param.rowId)} */}
@@ -833,7 +833,7 @@ export function SearchResults(props) {
             >
               <DatePickerInput
                 placeholder="mm/dd/yyyy"
-                labelText="Sent Date"
+                labelText={<FormattedMessage id="referral.label.sentdate" defaultMessage="Sent Date" />}
                 id="date-picker-single"
                 size="md"
               />
