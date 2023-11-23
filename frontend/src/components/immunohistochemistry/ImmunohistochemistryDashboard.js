@@ -18,6 +18,7 @@ import {
   TableBody,
   TableCell,
   Section,
+  Pagination,
 } from "@carbon/react";
 import { Search } from "@carbon/react";
 import {
@@ -50,6 +51,8 @@ function ImmunohistochemistryDashboard() {
   });
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   function formatDateToDDMMYYYY(date) {
     var day = date.getDate();
@@ -79,7 +82,15 @@ function ImmunohistochemistryDashboard() {
       formatDateToDDMMYYYY(currentDate)
     );
   };
+  const handlePageChange = (pageInfo) => {
+    if (page != pageInfo.page) {
+      setPage(pageInfo.page);
+    }
 
+    if (pageSize != pageInfo.pageSize) {
+      setPageSize(pageInfo.pageSize);
+    }
+  };
   const tileList = [
     { title: "Cases in Progress", count: counts.inProgress },
     {
@@ -313,7 +324,10 @@ function ImmunohistochemistryDashboard() {
 
           <Column lg={16} md={8} sm={4}>
             <DataTable
-              rows={immunohistochemistryEntries}
+              rows={immunohistochemistryEntries.slice(
+                (page - 1) * pageSize,
+                page * pageSize,
+              )}
               headers={[
                 {
                   key: "requestDate",
@@ -379,6 +393,13 @@ function ImmunohistochemistryDashboard() {
                 </TableContainer>
               )}
             </DataTable>
+            <Pagination
+              onChange={handlePageChange}
+              page={page}
+              pageSize={pageSize}
+              pageSizes={[10, 20, 30]}
+              totalItems={immunohistochemistryEntries.length}
+            ></Pagination>
           </Column>
         </Grid>
       </div>

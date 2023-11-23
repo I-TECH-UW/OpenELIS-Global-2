@@ -18,6 +18,7 @@ import {
   TableCell,
   Tile,
   Loading,
+  Pagination,
 } from "@carbon/react";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { Search } from "@carbon/react";
@@ -38,6 +39,8 @@ function PathologyDashboard() {
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
   const [statuses, setStatuses] = useState([]);
   const [pathologyEntries, setPathologyEntries] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState({
     searchTerm: "",
     myCases: false,
@@ -72,6 +75,16 @@ function PathologyDashboard() {
       {},
       refreshItems,
     );
+  };
+
+  const handlePageChange = (pageInfo) => {
+    if (page != pageInfo.page) {
+      setPage(pageInfo.page);
+    }
+
+    if (pageSize != pageInfo.pageSize) {
+      setPageSize(pageInfo.pageSize);
+    }
   };
 
   const renderCell = (cell, row) => {
@@ -303,7 +316,10 @@ function PathologyDashboard() {
 
           <Column lg={16} md={8} sm={4}>
             <DataTable
-              rows={pathologyEntries}
+              rows={pathologyEntries.slice(
+                (page - 1) * pageSize,
+                page * pageSize,
+              )}
               headers={[
                 {
                   key: "requestDate",
@@ -369,6 +385,13 @@ function PathologyDashboard() {
                 </TableContainer>
               )}
             </DataTable>
+            <Pagination
+              onChange={handlePageChange}
+              page={page}
+              pageSize={pageSize}
+              pageSizes={[10, 20, 30]}
+              totalItems={pathologyEntries.length}
+            ></Pagination>
           </Column>
         </Grid>
       </div>

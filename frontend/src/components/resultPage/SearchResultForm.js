@@ -1033,13 +1033,6 @@ export function SearchResults(props) {
     }
   };
 
-  // const paginationOptions = {
-  //   rowsPerPageText: 'Rows per page:',
-  //   rangeSeparatorText: 'of',
-  //   selectAllRowsItem: true,
-  //   selectAllRowsItemText: 'All',
-  // };
-
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
@@ -1091,10 +1084,6 @@ export function SearchResults(props) {
                 isSortable
                 expandableRows
                 expandableRowsComponent={renderReferral}
-                // pagination
-                // paginationPerPage={10} // Number of rows per page
-                // paginationRowsPerPageOptions={[10, 20, 30, 40, 50 ,100]} // Options for rows per page dropdown
-                // paginationComponentOptions={paginationOptions}
               ></DataTable>
               <Pagination
                 onChange={handlePageChange}
