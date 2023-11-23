@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
+import org.openelisglobal.common.provider.validation.AlphanumAccessionValidator;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.services.TableIdService;
@@ -121,7 +123,13 @@ public abstract class NonConformityByDate extends Report implements IReportCreat
                 String noteForSample = NonConformityHelper.getNoteForSample(sample);
 
                 NonConformityReportData data = new NonConformityReportData();
-                data.setAccessionNumber(sample.getAccessionNumber());
+                if (AccessionFormat.ALPHANUM.toString()
+                        .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+                    data.setAccessionNumber(
+                            AlphanumAccessionValidator.convertAlphaNumLabNumForDisplay(sample.getAccessionNumber()));
+                } else {
+                    data.setAccessionNumber(sample.getAccessionNumber());
+                }
                 data.setSubjectNumber(patient.getNationalId());
                 data.setSiteSubjectNumber(patient.getExternalId());
                 data.setStudy((project != null) ? project.getLocalizedName() : "");

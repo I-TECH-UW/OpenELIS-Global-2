@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { FormattedMessage, injectIntl ,useIntl} from "react-intl";
+import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../Style.css";
 import { getFromOpenElisServer } from "../utils/Utils";
 import {
@@ -20,8 +20,9 @@ import {
   TableBody,
   TableCell,
   Pagination,
-  Loading
+  Loading,
 } from "@carbon/react";
+import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import { patientSearchHeaderData } from "../data/PatientResultsTableHeaders";
 import { Formik, Field } from "formik";
 import SearchPatientFormValues from "../formModel/innitialValues/SearchPatientFormValues";
@@ -74,7 +75,7 @@ function SearchPatientForm(props) {
       });
       setNotificationVisible(true);
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   const fetchPatientDetails = (patientDetails) => {
@@ -106,7 +107,7 @@ function SearchPatientForm(props) {
 
   return (
     <>
-      {loading && <Loading/>}
+      {loading && <Loading />}
       <Formik
         initialValues={SearchPatientFormValues}
         // validationSchema={}
@@ -131,19 +132,28 @@ function SearchPatientForm(props) {
                 {({ field }) => (
                   <TextInput
                     name={field.name}
-                    labelText={intl.formatMessage({id: "patient.id", defaultMessage:"Patient Id",})}
+                    labelText={intl.formatMessage({
+                      id: "patient.id",
+                      defaultMessage: "Patient Id",
+                    })}
                     id={field.name}
                     className="inputText"
                   />
                 )}
               </Field>
               <Field name="labNumber">
-                {({ field }) => (
-                  <TextInput
+                {({ field, setFieldValue }) => (
+                  <CustomLabNumberInput
                     name={field.name}
-                    labelText={intl.formatMessage({id: "patient.prev.lab.no", defaultMessage: "Previous Lab Number", })}
+                    labelText={intl.formatMessage({
+                      id: "patient.prev.lab.no",
+                      defaultMessage: "Previous Lab Number",
+                    })}
                     id={field.name}
                     className="inputText"
+                    onChange={(e, rawValue) => {
+                      setFieldValue(rawValue);
+                    }}
                   />
                 )}
               </Field>
@@ -153,7 +163,10 @@ function SearchPatientForm(props) {
                 {({ field }) => (
                   <TextInput
                     name={field.name}
-                    labelText={intl.formatMessage({id: "patient.last.name", defaultMessage: "Last Name", })}
+                    labelText={intl.formatMessage({
+                      id: "patient.last.name",
+                      defaultMessage: "Last Name",
+                    })}
                     id={field.name}
                     className="inputText"
                   />
@@ -163,7 +176,10 @@ function SearchPatientForm(props) {
                 {({ field }) => (
                   <TextInput
                     name={field.name}
-                    labelText={intl.formatMessage({id:"patient.first.name", defaultMessage: "First Name",})}
+                    labelText={intl.formatMessage({
+                      id: "patient.first.name",
+                      defaultMessage: "First Name",
+                    })}
                     id={field.name}
                     className="inputText"
                   />
@@ -184,7 +200,10 @@ function SearchPatientForm(props) {
                     <DatePickerInput
                       id="date-picker-default-id"
                       placeholder="dd/mm/yyyy"
-                      labelText={intl.formatMessage({id:"patient.dob", defaultMessage: "Date of Birth", })}
+                      labelText={intl.formatMessage({
+                        id: "patient.dob",
+                        defaultMessage: "Date of Birth",
+                      })}
                       type="text"
                       name={field.name}
                     />
@@ -196,18 +215,27 @@ function SearchPatientForm(props) {
                   <RadioButtonGroup
                     className="inputText"
                     defaultSelected=""
-                    legendText={intl.formatMessage({id:"patient.gender", defaultMessage: "Gender",})}
+                    legendText={intl.formatMessage({
+                      id: "patient.gender",
+                      defaultMessage: "Gender",
+                    })}
                     name={field.name}
                     id="search_patient_gender"
                   >
                     <RadioButton
                       id="search-radio-1"
-                      labelText={intl.formatMessage({ id: "patient.male", defaultMessage: "Male", })} 
+                      labelText={intl.formatMessage({
+                        id: "patient.male",
+                        defaultMessage: "Male",
+                      })}
                       value="M"
                     />
                     <RadioButton
                       id="search-radio-2"
-                      labelText={intl.formatMessage({ id: "patient.female", defaultMessage:"Female", })} 
+                      labelText={intl.formatMessage({
+                        id: "patient.female",
+                        defaultMessage: "Female",
+                      })}
                       value="F"
                     />
                   </RadioButtonGroup>
@@ -217,7 +245,10 @@ function SearchPatientForm(props) {
             <div className="formInlineDiv">
               <div className="searchActionButtons">
                 <Button kind="tertiary">
-                <FormattedMessage id="label.button.externalsearch" defaultMessage="External Search"/>
+                  <FormattedMessage
+                    id="label.button.externalsearch"
+                    defaultMessage="External Search"
+                  />
                 </Button>
                 <Button type="submit">
                   <FormattedMessage id="label.button.search" />

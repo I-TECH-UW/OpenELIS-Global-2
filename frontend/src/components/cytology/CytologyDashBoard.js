@@ -18,6 +18,7 @@ import {
   TableCell,
   Tile,
   Loading,
+  Pagination,
 } from "@carbon/react";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { Search } from "@carbon/react";
@@ -49,6 +50,8 @@ function CytologyDashboard() {
     complete: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const setStatusList = (statusList) => {
     if (componentMounted.current) {
@@ -72,6 +75,15 @@ function CytologyDashboard() {
       refreshItems,
     );
   };
+  const handlePageChange = (pageInfo) => {
+    if (page != pageInfo.page) {
+      setPage(pageInfo.page);
+    }
+
+    if (pageSize != pageInfo.pageSize) {
+      setPageSize(pageInfo.pageSize);
+    }
+  };
 
   const renderCell = (cell, row) => {
     var status = row.cells.find((e) => e.info.header === "status").value;
@@ -86,7 +98,7 @@ function CytologyDashboard() {
               assignCurrentUserAsTechnician(e, pathologySampleId);
             }}
           >
-             <FormattedMessage id="label.button.start"/>
+            <FormattedMessage id="label.button.start" />
           </Button>
         </TableCell>
       );
@@ -105,7 +117,7 @@ function CytologyDashboard() {
               assignCurrentUserAsPathologist(e, pathologySampleId);
             }}
           >
-             <FormattedMessage id="label.button.start"/>
+            <FormattedMessage id="label.button.start" />
           </Button>
         </TableCell>
       );
@@ -249,122 +261,134 @@ function CytologyDashboard() {
           </Tile>
         ))}
       </div>
-      <Grid fullWidth={true} className="gridBoundary">
-        <Column lg={8} md={4} sm={2}>
-          <Search
-            size="sm"
-            value={filters.searchTerm}
-            onChange={(e) =>
-              setFilters({ ...filters, searchTerm: e.target.value })
-            }
-            placeholder="Search by LabNo or Family Name"
-            labelText="Search by LabNo or Family Name"
-          />
-        </Column>
-        <Column lg={8} md={4} sm={2}>
-          <div className="inlineDivBlock">
-            <div>Filters:</div>
-            <Checkbox
-              labelText="My cases"
-              id="filterMyCases"
-              value={filters.myCases}
+      <div className="orderLegendBody">
+        <Grid fullWidth={true} className="gridBoundary">
+          <Column lg={8} md={4} sm={2}>
+            <Search
+              size="sm"
+              value={filters.searchTerm}
               onChange={(e) =>
-                setFilters({ ...filters, myCases: e.target.checked })
+                setFilters({ ...filters, searchTerm: e.target.value })
               }
+              placeholder="Search by LabNo or Family Name"
+              labelText="Search by LabNo or Family Name"
             />
-            <Select
-              id="statusFilter"
-              name="statusFilter"
-              labelText="Status"
-              defaultValue="placeholder"
-              onChange={setStatusFilter}
-              noLabel
-            >
-              <SelectItem disabled hidden value="placeholder" text="Status" />
-              <SelectItem text="All" value="All" />
-              {statuses.map((status, index) => {
-                return (
-                  <SelectItem
-                    key={index}
-                    text={status.value}
-                    value={status.id}
-                  />
-                );
-              })}
-            </Select>
-          </div>
-        </Column>
+          </Column>
+          <Column lg={8} md={4} sm={2}>
+            <div className="inlineDivBlock">
+              <div>Filters:</div>
+              <Checkbox
+                labelText="My cases"
+                id="filterMyCases"
+                value={filters.myCases}
+                onChange={(e) =>
+                  setFilters({ ...filters, myCases: e.target.checked })
+                }
+              />
+              <Select
+                id="statusFilter"
+                name="statusFilter"
+                labelText="Status"
+                defaultValue="placeholder"
+                onChange={setStatusFilter}
+                noLabel
+              >
+                <SelectItem disabled hidden value="placeholder" text="Status" />
+                <SelectItem text="All" value="All" />
+                {statuses.map((status, index) => {
+                  return (
+                    <SelectItem
+                      key={index}
+                      text={status.value}
+                      value={status.id}
+                    />
+                  );
+                })}
+              </Select>
+            </div>
+          </Column>
 
-        <Column lg={16} md={8} sm={4}>
-          <DataTable
-            rows={pathologyEntries}
-            headers={[
-              {
-                key: "requestDate",
-                header: "Request Date",
-              },
-              {
-                key: "status",
-                header: "Stage",
-              },
-              {
-                key: "lastName",
-                header: "Last Name",
-              },
-              {
-                key: "firstName",
-                header: "First Name",
-              },
-              {
-                key: "assignedTechnician",
-                header: "Assigned Technician",
-              },
-              {
-                key: "assignedCytoPathologist",
-                header: "Assigned CytoPathologist",
-              },
-              {
-                key: "labNumber",
-                header: "Lab Number",
-              },
-            ]}
-            isSortable
-          >
-            {({ rows, headers, getHeaderProps, getTableProps }) => (
-              <TableContainer title="" description="">
-                <Table {...getTableProps()}>
-                  <TableHead>
-                    <TableRow>
-                      {headers.map((header) => (
-                        <TableHeader
-                          key={header.key}
-                          {...getHeaderProps({ header })}
-                        >
-                          {header.header}
-                        </TableHeader>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <>
-                      {rows.map((row) => (
-                        <TableRow
-                          key={row.id}
-                          onClick={() => {
-                            openCaseView(row.id);
-                          }}
-                        >
-                          {row.cells.map((cell) => renderCell(cell, row))}
-                        </TableRow>
-                      ))}
-                    </>
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            )}
-          </DataTable>
-        </Column>
-      </Grid>
+          <Column lg={16} md={8} sm={4}>
+            <DataTable
+              rows={pathologyEntries.slice(
+                (page - 1) * pageSize,
+                page * pageSize,
+              )}
+              headers={[
+                {
+                  key: "requestDate",
+                  header: "Request Date",
+                },
+                {
+                  key: "status",
+                  header: "Stage",
+                },
+                {
+                  key: "lastName",
+                  header: "Last Name",
+                },
+                {
+                  key: "firstName",
+                  header: "First Name",
+                },
+                {
+                  key: "assignedTechnician",
+                  header: "Assigned Technician",
+                },
+                {
+                  key: "assignedCytoPathologist",
+                  header: "Assigned CytoPathologist",
+                },
+                {
+                  key: "labNumber",
+                  header: "Lab Number",
+                },
+              ]}
+              isSortable
+            >
+              {({ rows, headers, getHeaderProps, getTableProps }) => (
+                <TableContainer title="" description="">
+                  <Table {...getTableProps()}>
+                    <TableHead>
+                      <TableRow>
+                        {headers.map((header) => (
+                          <TableHeader
+                            key={header.key}
+                            {...getHeaderProps({ header })}
+                          >
+                            {header.header}
+                          </TableHeader>
+                        ))}
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      <>
+                        {rows.map((row) => (
+                          <TableRow
+                            key={row.id}
+                            onClick={() => {
+                              openCaseView(row.id);
+                            }}
+                          >
+                            {row.cells.map((cell) => renderCell(cell, row))}
+                          </TableRow>
+                        ))}
+                      </>
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
+            </DataTable>
+            <Pagination
+              onChange={handlePageChange}
+              page={page}
+              pageSize={pageSize}
+              pageSizes={[10, 20, 30]}
+              totalItems={pathologyEntries.length}
+            ></Pagination>
+          </Column>
+        </Grid>
+      </div>
     </>
   );
 }

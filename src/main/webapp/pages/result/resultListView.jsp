@@ -487,7 +487,7 @@ function createReferralOption(sampleNum, testNum, testId, testName, index) {
 	<c:forEach items="${form.referralOrganizations}" var="referralOrganization" varStatus="iter">
 	option = document.createElement('option');
 	option.value = '${referralOrganization.id}';
-	option.innerHTML = '${referralOrganization.value}';
+	option.innerHTML = "${referralOrganization.value}";
 	referralOrgSelect.appendChild(option);
 	</c:forEach>
 	cell2.innerHTML = "Institute ";
@@ -1201,11 +1201,13 @@ function /*void*/ handleEnterEvent(  ){
 									onchange='markUpdated(${iter.index});' />
 
 							</div>
-						</c:if> <c:if test="${testResult.displayResultAsLog}">
+						</c:if> 
+						<c:out value="${testResult.unitsOfMeasure}" />
+						<c:if test="${testResult.displayResultAsLog}">
 							<br />
 							<input type='text' id="log_${iter.index}" disabled='disabled'
-								style="color: black" value="${testResult.resultValue}" size='6' /> log
-					</c:if> <c:out value="${testResult.unitsOfMeasure}" /></td>
+								style="color: black" value="${testResult.resultValueLog}" size='6' /> log
+					</c:if> </td>
 					
 					<%-- current result cell --%>
 					<td id="currentresultcell_${iter.index}" class="ruled"><c:if
@@ -1290,11 +1292,13 @@ function /*void*/ handleEnterEvent(  ){
 									style="${(not testResult.hasQualifiedResult) ? 'display:none' : ''}" />
 
 							</div>
-						</c:if> <c:if test="${testResult.displayResultAsLog}">
+						</c:if>
+						<c:out value="${testResult.unitsOfMeasure}" />
+						 <c:if test="${testResult.displayResultAsLog}">
 							<br />
 							<input type='text' id="log_${iter.index}" disabled='disabled'
-								style="color: black" value="${testResult.resultValue}" size='6' /> log
-					</c:if> <c:out value="${testResult.unitsOfMeasure}" /></td>
+								style="color: black" value="${testResult.resultValueLog}" size='6' /> log
+					</c:if> </td>
 					<%
 						if (useTechnicianName) {
 					%>

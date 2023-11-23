@@ -4,6 +4,7 @@ import "../Style.css";
 import {
   getFromOpenElisServer,
   postToOpenElisServerJsonResponse,
+  convertAlphaNumLabNumForDisplay,
 } from "../utils/Utils";
 import {
   Heading,
@@ -24,12 +25,15 @@ import {
   SelectItem,
   Loading,
 } from "@carbon/react";
+import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import DataTable from "react-data-table-component";
 import { Formik, Field } from "formik";
 import SearchResultFormValues from "../formModel/innitialValues/SearchResultFormValues";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
 import SearchPatientForm from "../patient/SearchPatientForm";
+import { ConfigurationContext } from "../layout/Layout";
+import config from "../../config.json";
 
 function ResultSearchPage() {
   const [resultForm, setResultForm] = useState({ testResult: [] });
@@ -52,6 +56,9 @@ export function SearchResultForm(props) {
   const [searchBy, setSearchBy] = useState({ type: "", doRange: false });
   const [patient, setPatient] = useState({ patientPK: "" });
   const [testSections, setTestSections] = useState([]);
+  const [searchFormValues, setSearchFormValues] = useState(
+    SearchResultFormValues,
+  );
 
   const componentMounted = useRef(false);
 
@@ -81,7 +88,7 @@ export function SearchResultForm(props) {
     setPatient(patient);
   };
   useEffect(() => {
-    querySearch(SearchResultFormValues);
+    querySearch(searchFormValues);
   }, [patient]);
 
   const querySearch = (values) => {
@@ -149,6 +156,11 @@ export function SearchResultForm(props) {
     setTestSections(response);
   };
 
+  const submitOnSelect = (e) => {
+    var values = { unitType: e.target.value };
+    handleSubmit(values);
+  };
+
   useEffect(() => {
     componentMounted.current = true;
     getFromOpenElisServer("/rest/test-list", getTests);
@@ -168,21 +180,37 @@ export function SearchResultForm(props) {
     });
   }, []);
 
+  useEffect(() => {
+    let accessionNumber = new URLSearchParams(window.location.search).get(
+      "accessionNumber",
+    );
+    if (accessionNumber) {
+      let searchValues = {
+        ...searchFormValues,
+        accessionNumber: accessionNumber,
+      };
+      setSearchFormValues(searchValues);
+      querySearch(searchValues);
+    }
+  }, [searchBy]);
+
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading></Loading>}
       <Formik
-        initialValues={SearchResultFormValues}
+        initialValues={searchFormValues}
         //validationSchema={}
         onSubmit={handleSubmit}
         onChange
+        enableReinitialize={true}
       >
         {({
-          //   values,
+          values,
           //   errors,
           //   touched,
           handleChange,
+          setFieldValue,
           //   handleBlur,
           handleSubmit,
         }) => (
@@ -198,51 +226,22 @@ export function SearchResultForm(props) {
                     <FormattedMessage id="label.button.search" />
                   </h4>
                 </Column>
-
-                {searchBy.type === "unit" && (
-                  <>
-                    <Column lg={6}>
-                      <Field name="unitType">
-                        {({ field }) => (
-                          <Select
-                            className="inputSelect2"
-                            labelText={
-                              <FormattedMessage id="search.label.testunit" />
-                            }
-                            name={field.name}
-                            id={field.name}
-                          >
-                            <SelectItem text="" value="" />
-                            {testSections.map((test, index) => {
-                              return (
-                                <SelectItem
-                                  key={index}
-                                  text={test.value}
-                                  value={test.id}
-                                />
-                              );
-                            })}
-                          </Select>
-                        )}
-                      </Field>
-                    </Column>
-                    <Column lg={10} />
-                  </>
-                )}
-
                 {searchBy.type === "order" && (
                   <>
                     <Column lg={6}>
                       <Field name="accessionNumber">
                         {({ field }) => (
-                          <TextInput
+                          <CustomLabNumberInput
                             placeholder="Enter Accession No."
-                            className="searchLabNumber inputText2"
                             name={field.name}
                             id={field.name}
+                            value={values[field.name]}
                             labelText={
                               <FormattedMessage id="search.label.accession" />
                             }
+                            onChange={(e, rawValue) => {
+                              setFieldValue(field.name, rawValue);
+                            }}
                           />
                         )}
                       </Field>
@@ -258,7 +257,6 @@ export function SearchResultForm(props) {
                         {({ field }) => (
                           <TextInput
                             placeholder={"Enter LabNo"}
-                            className="searchLabNumber inputText"
                             name={field.name}
                             id={field.name}
                             labelText={
@@ -273,7 +271,6 @@ export function SearchResultForm(props) {
                         {({ field }) => (
                           <TextInput
                             placeholder={"Enter LabNo"}
-                            className="searchLabNumber inputText"
                             name={field.name}
                             id={field.name}
                             labelText={
@@ -294,7 +291,6 @@ export function SearchResultForm(props) {
                         {({ field }) => (
                           <TextInput
                             placeholder={"Collection Date(dd/mm/yyyy)"}
-                            className="collectionDate inputText"
                             name={field.name}
                             id={field.name}
                             labelText={
@@ -309,7 +305,6 @@ export function SearchResultForm(props) {
                         {({ field }) => (
                           <TextInput
                             placeholder={"Received Date(dd/mm/yyyy)"}
-                            className="receivedDate inputText"
                             name={field.name}
                             id={field.name}
                             labelText={
@@ -323,7 +318,6 @@ export function SearchResultForm(props) {
                       <Field name="testName">
                         {({ field }) => (
                           <Select
-                            className="analysisStatus inputText"
                             labelText={
                               <FormattedMessage id="search.label.test" />
                             }
@@ -348,7 +342,6 @@ export function SearchResultForm(props) {
                       <Field name="analysisStatus">
                         {({ field }) => (
                           <Select
-                            className="analysisStatus inputText"
                             labelText={
                               <FormattedMessage id="search.label.analysis" />
                             }
@@ -373,7 +366,6 @@ export function SearchResultForm(props) {
                       <Field name="sampleStatusType">
                         {({ field }) => (
                           <Select
-                            className="sampleStatus inputText"
                             labelText={
                               <FormattedMessage id="search.label.sample" />
                             }
@@ -398,17 +390,15 @@ export function SearchResultForm(props) {
                   </>
                 )}
 
-                {searchBy.type !== "patient" && (
+                {searchBy.type !== "patient" && searchBy.type !== "unit" && (
                   <Column lg={16}>
-                    <div className="searchActionButtons">
-                      <Button
-                        type="submit"
-                        id="submit"
-                        className="searchResultsBtn"
-                      >
-                        <FormattedMessage id="label.button.search" />
-                      </Button>
-                    </div>
+                    <Button
+                      style={{ marginTop: "16px" }}
+                      type="submit"
+                      id="submit"
+                    >
+                      <FormattedMessage id="label.button.search" />
+                    </Button>
                   </Column>
                 )}
               </Grid>
@@ -421,6 +411,29 @@ export function SearchResultForm(props) {
           getSelectedPatient={getSelectedPatient}
         ></SearchPatientForm>
       )}
+
+      {searchBy.type === "unit" && (
+        <>
+          <Grid>
+            <Column lg={6}>
+              <Select
+                labelText={<FormattedMessage id="search.label.testunit" />}
+                name="unitType"
+                id="unitType"
+                onChange={submitOnSelect}
+              >
+                <SelectItem text="" value="" />
+                {testSections.map((test, index) => {
+                  return (
+                    <SelectItem key={index} text={test.value} value={test.id} />
+                  );
+                })}
+              </Select>
+            </Column>
+            <Column lg={10} />
+          </Grid>
+        </>
+      )}
     </>
   );
 }
@@ -428,13 +441,16 @@ export function SearchResultForm(props) {
 export function SearchResults(props) {
   const { notificationVisible, setNotificationBody, setNotificationVisible } =
     useContext(NotificationContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
 
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(100);
+  const [pageSize, setPageSize] = useState(20);
   const [acceptAsIs, setAcceptAsIs] = useState([]);
   const [referalOrganizations, setReferalOrganizations] = useState([]);
   const [methods, setMethods] = useState([]);
   const [referralReasons, setReferralReasons] = useState([]);
+  const [rejectReasons, setRejectReasons] = useState([]);
+  const [rejectedItems, setRejectedItems] = useState({});
   const saveStatus = "";
 
   const componentMounted = useRef(true);
@@ -451,6 +467,17 @@ export function SearchResults(props) {
       "/rest/displayList/REFERRAL_REASONS",
       loadReferalReasons,
     );
+    getFromOpenElisServer(
+      "/rest/displayList/REJECTION_REASONS",
+      loadRejectReasons,
+    );
+    if (props.results.testResult.length > 0) {
+      var defaultRejectedItems = {};
+      props.results.testResult.forEach((result) => {
+        defaultRejectedItems[result.id] = false;
+      });
+      setRejectedItems(defaultRejectedItems);
+    }
     return () => {
       componentMounted.current = false;
     };
@@ -474,14 +501,41 @@ export function SearchResults(props) {
     }
   };
 
-  const columns = [
+  const loadRejectReasons = (values) => {
+    if (componentMounted.current) {
+      setRejectReasons(values);
+    }
+  };
+
+  const addRejectResult = () => {
+    const resultColumn = {
+      name: "Reject",
+      cell: (row, index, column, id) => {
+        return renderCell(row, index, column, id);
+      },
+      width: "12rem",
+    };
+
+    if (configurationProperties.allowResultRejection == "true") {
+      if (columns) {
+        const updatedList = [
+          ...columns.slice(0, 8),
+          resultColumn,
+          ...columns.slice(8),
+        ];
+        columns = updatedList;
+      }
+    }
+  };
+
+  var columns = [
     {
       name: "Sample Info",
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
       sortable: true,
-      width: "19rem",
+      width: "15rem",
     },
     {
       name: "Test Date",
@@ -500,20 +554,20 @@ export function SearchResults(props) {
       name: "Test Name",
       selector: (row) => row.testName,
       sortable: true,
-      width: "10rem",
+      width: "8rem",
     },
     {
       name: "Normal Range",
       selector: (row) => row.normalRange,
       sortable: true,
-      width: "7rem",
+      width: "8rem",
     },
     {
       name: "Accept",
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "8rem",
+      width: "5rem",
     },
     {
       name: "Result",
@@ -534,11 +588,13 @@ export function SearchResults(props) {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "16rem",
+      width: "7rem",
     },
   ];
 
   const renderCell = (row, index, column, id) => {
+    let formatLabNum = configurationProperties.AccessionFormat === "ALPHANUM";
+
     console.log("renderCell: index: " + index + ", id: " + id);
     switch (column.name) {
       case "Sample Info":
@@ -548,7 +604,9 @@ export function SearchResults(props) {
             <div className="sampleInfo">
               <TextArea
                 value={
-                  row.accessionNumber +
+                  (formatLabNum
+                    ? convertAlphaNumLabNumForDisplay(row.accessionNumber)
+                    : row.accessionNumber) +
                   "-" +
                   row.sequenceNumber +
                   "\n" +
@@ -562,6 +620,16 @@ export function SearchResults(props) {
                 rows={3}
               ></TextArea>
             </div>
+            {row.nonconforming && (
+              <picture>
+                <img
+                  src={config.serverBaseUrl + "/images/nonconforming.gif"}
+                  alt="nonconforming"
+                  width="20"
+                  height="15"
+                />
+              </picture>
+            )}
           </>
         );
 
@@ -582,6 +650,47 @@ export function SearchResults(props) {
           </>
         );
 
+      case "Reject":
+        return (
+          <>
+            <Grid>
+              <Column lg={16}>
+                <Field name="reject">
+                  {() => (
+                    <Checkbox
+                      id={"testResult" + row.id + ".rejected"}
+                      name={"testResult[" + row.id + "].rejected"}
+                      labelText=""
+                      onChange={(e) => handleRejectCheckBoxChange(e, row.id)}
+                    />
+                  )}
+                </Field>
+              </Column>
+              {rejectedItems[row.id] == true && (
+                <Column lg={16}>
+                  <Select
+                    id={"rejectReasonId" + row.id}
+                    name={"testResult[" + row.id + "].rejectReasonId"}
+                    //noLabel={true}
+                    labelText={"Reason"}
+                    onChange={(e) => handleChange(e, row.id)}
+                  >
+                    {/* {...updateShadowResult(e, this, param.rowId)} */}
+                    <SelectItem text="" value="" />
+                    {rejectReasons.map((reason, reason_index) => (
+                      <SelectItem
+                        text={reason.value}
+                        value={reason.id}
+                        key={reason_index}
+                      />
+                    ))}
+                  </Select>
+                </Column>
+              )}
+            </Grid>
+          </>
+        );
+
       case "Notes":
         return (
           <>
@@ -589,11 +698,11 @@ export function SearchResults(props) {
               <TextArea
                 id={"testResult" + row.id + ".note"}
                 name={"testResult[" + row.id + "].note"}
-                value={props.results.testResult[row.id]?.pastNotes}
+                //value={props.results.testResult[row.id]?.pastNotes}
                 disabled={false}
                 type="text"
                 labelText=""
-                rows={3}
+                rows={1}
                 onChange={(e) => handleChange(e, row.id)}
               ></TextArea>
             </div>
@@ -602,6 +711,8 @@ export function SearchResults(props) {
 
       case "Result":
         switch (row.resultType) {
+          case "M":
+          case "C":
           case "D":
             return (
               <Select
@@ -630,10 +741,8 @@ export function SearchResults(props) {
               <TextInput
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
-                //type="text"
-                // value={resultForm.testResult[row.id].resultValue}
                 labelText=""
-                // helperText="Optional help text"
+                type="number"
                 onChange={(e) => handleChange(e, row.id)}
               />
             );
@@ -644,10 +753,7 @@ export function SearchResults(props) {
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
                 style={{ width: "10px", height: "20px" }}
-                //type="text"
-                // value={resultForm.testResult[row.id].resultValue}
                 labelText=""
-                // helperText="Optional help text"
                 onChange={(e) => handleChange(e, row.id)}
               />
             );
@@ -658,10 +764,7 @@ export function SearchResults(props) {
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
                 style={{ width: "10px", height: "20px" }}
-                //type="text"
-                // value={resultForm.testResult[row.id].resultValue}
                 labelText=""
-                // helperText="Optional help text"
                 onChange={(e) => handleChange(e, row.id)}
               />
             );
@@ -672,69 +775,17 @@ export function SearchResults(props) {
 
       case "Current Result":
         switch (row.resultType) {
+          case "M":
+          case "C":
           case "D":
             return (
-              <Select
-                className="currentResult"
-                id={"currentResultValue" + row.id}
-                name={"testResult[" + row.id + "].resultValue"}
-                noLabel={true}
-                onChange={(e) => validateResults(e, row.id)}
-                value={row.resultValue}
-              >
-                {/* {...updateShadowResult(e, this, param.rowId)} */}
-                <SelectItem text="" value="" />
-                {row.dictionaryResults.map(
-                  (dictionaryResult, dictionaryResult_index) => (
-                    <SelectItem
-                      text={dictionaryResult.value}
-                      value={dictionaryResult.id}
-                      key={dictionaryResult_index}
-                    />
-                  ),
-                )}
-              </Select>
-            );
-
-          case "N":
-            return (
-              <TextInput
-                id={"currentResultValue" + row.id}
-                name={"testResult[" + row.id + "].resultValue"}
-                //type="text"
-                value={row.resultValue}
-                labelText=""
-                // helperText="Optional help text"
-                onChange={(e) => handleChange(e, row.id)}
-              />
-            );
-
-          case "R":
-            return (
-              <TextArea
-                id={"ResultValue" + row.id}
-                name={"testResult[" + row.id + "].resultValue"}
-                style={{ width: "10px", height: "20px" }}
-                //type="text"
-                value={row.resultValue}
-                labelText=""
-                // helperText="Optional help text"
-                onChange={(e) => handleChange(e, row.id)}
-              />
-            );
-
-          case "A":
-            return (
-              <TextArea
-                id={"ResultValue" + row.id}
-                name={"testResult[" + row.id + "].resultValue"}
-                style={{ width: "10px", height: "20px" }}
-                //type="text"
-                value={row.resultValue}
-                labelText=""
-                // helperText="Optional help text"
-                onChange={(e) => handleChange(e, row.id)}
-              />
+              <>
+                {
+                  row.dictionaryResults.find(
+                    (result) => result.id == row.resultValue,
+                  )?.value
+                }
+              </>
             );
 
           default:
@@ -842,6 +893,7 @@ export function SearchResults(props) {
         </Grid>
       </div>
     </pre>
+
   );
 
   const validateResults = (e, rowId) => {
@@ -860,6 +912,33 @@ export function SearchResults(props) {
     jp.value(form, name, value);
     var isModified = "testResult[" + rowId + "].isModified";
     jp.value(form, isModified, "true");
+  };
+
+  const handleRejectCheckBoxChange = (e, rowId) => {
+    const { name, checked } = e.target;
+    var form = props.results;
+    var jp = require("jsonpath");
+    jp.value(form, name, checked);
+    var shadowRejected = "testResult[" + rowId + "].shadowRejected";
+    jp.value(form, shadowRejected, checked);
+    var isModified = "testResult[" + rowId + "].isModified";
+    jp.value(form, isModified, "true");
+
+    var allrejectedItems = { ...rejectedItems };
+    allrejectedItems[rowId] = checked;
+    setRejectedItems(allrejectedItems);
+
+    var message =
+      "Rejecting the result will permanently delete test results \n" +
+      "The results will no longer be available.";
+    setNotificationBody({
+      title: <FormattedMessage id="notification.title" />,
+      message: message,
+      kind: NotificationKinds.warning,
+    });
+    if (checked) {
+      setNotificationVisible(true);
+    }
   };
 
   const handleDatePickerChange = (date, rowId) => {
@@ -908,7 +987,6 @@ export function SearchResults(props) {
       result.reportable = result.reportable === "N" ? false : true;
       delete result.result;
     });
-    console.log(props.results);
     postToOpenElisServerJsonResponse(
       searchEndPoint,
       JSON.stringify(props.results),
@@ -960,7 +1038,27 @@ export function SearchResults(props) {
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
+      {addRejectResult()}
       <>
+        {props.results.testResult.length > 0 && (
+          <Grid style={{ marginTop: "20px" }} className="gridBoundary">
+            <Column lg={3} />
+            <Column lg={7}>
+              <picture>
+                <img
+                  src={config.serverBaseUrl + "/images/nonconforming.gif"}
+                  alt="nonconforming"
+                  width="25" 
+                  height="20" 
+                />
+              </picture>
+              <b>
+                {" "}
+                <FormattedMessage id="validation.label.nonconform" />
+              </b>
+            </Column>
+          </Grid>
+        )}
         <Formik
           initialValues={SearchResultFormValues}
           //validationSchema={}
@@ -980,7 +1078,10 @@ export function SearchResults(props) {
               //onBlur={handleBlur}
             >
               <DataTable
-                data={props.results.testResult}
+                data={props.results.testResult.slice(
+                  (page - 1) * pageSize,
+                  page * pageSize,
+                )}
                 columns={columns}
                 isSortable
                 expandableRows
@@ -990,7 +1091,7 @@ export function SearchResults(props) {
                 onChange={handlePageChange}
                 page={page}
                 pageSize={pageSize}
-                pageSizes={[100]}
+                pageSizes={[10, 20, 50, 100]}
                 totalItems={props.results.testResult?.length}
               ></Pagination>
 

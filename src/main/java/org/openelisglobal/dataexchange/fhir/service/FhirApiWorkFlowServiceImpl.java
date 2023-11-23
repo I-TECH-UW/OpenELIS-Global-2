@@ -498,6 +498,9 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
             referenceString = referenceString + "/";
         }
         referenceString = referenceString + ResourceType.Task.toString() + "/" + remoteTask.getIdElement().getIdPart();
+        if (referenceString.endsWith("null")) {
+            LogEvent.logWarn(this.getClass().getName(), "saveTaskBasedOnRemoteTask", "remote task has a null identifier: " + remoteTask.getId());
+        }
         reference.setReference(referenceString);
         taskBasedOnRemoteTask.addBasedOn(reference);
 

@@ -245,8 +245,6 @@ public class AccessionValidationRestController extends BaseResultValidationContr
                                                                  BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        System.out.println("Post:LogbookResultsRestController:SUCCESS");
-        System.out.println("Post:LogbookResultsRestController:" + form);
 
         if ("true".equals(request.getParameter("pageResults"))) {
             return getResultValidation(request, form ,false);

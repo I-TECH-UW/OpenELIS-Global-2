@@ -2,7 +2,7 @@ version: '3.3'
 services:
     certs:
         container_name: oe-certs 
-        image: ghcr.io/i-tech-uw/certgen:main
+        image: itechuw/certgen:main
         restart: always
         environment:
             - KEYSTORE_PW="kspass"
@@ -37,7 +37,7 @@ services:
             
     oe.openelis.org:
         container_name: openelisglobal-webapp 
-        image: ghcr.io/i-tech-uw/openelis-global-2:2.8    
+        image: itechuw/openelis-global-2:2.8    
         depends_on:
             - database
         ports:
@@ -72,6 +72,10 @@ services:
             - default
         restart: always
         environment:
+          spring.datasource.url : jdbc:postgresql://database:5432/clinlims?currentSchema=clinlims
+          spring.datasource.username : clinlims
+          spring.datasource.password : clinlims
+          spring.datasource.driverClassName: org.postgresql.Driver
           TZ: Africa/Nairobi
 
           JAVA_OPTS: "-Djavax.net.ssl.trustStore=/etc/openelis-global/truststore 
@@ -87,7 +91,7 @@ services:
 
          
     frontend.openelis.org:
-        image: ghcr.io/i-tech-uw/openelis-global-2-frontend-dev:2.8
+        image: itechuw/openelis-global-2-frontend-dev:2.8
         container_name: openelisglobal-front-end
         networks:
             - default

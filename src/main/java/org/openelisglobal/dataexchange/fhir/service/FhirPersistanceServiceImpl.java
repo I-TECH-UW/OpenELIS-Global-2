@@ -355,6 +355,40 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
     }
 
     @Override
+    public Optional<ServiceRequest> getServiceRequestByReferingId(String referringId) {
+        ServiceRequest serviceRequest = null;
+        Bundle bundle = localFhirClient.search()//
+                .forResource(ServiceRequest.class)//
+                .returnBundle(Bundle.class)//
+                .where(ServiceRequest.IDENTIFIER.exactly().identifier(referringId))//
+                .execute();
+        if (bundle.hasEntry()) {
+            serviceRequest = (ServiceRequest) bundle.getEntryFirstRep().getResource();
+        }
+        if (serviceRequest == null) {
+            LogEvent.logDebug(this.getClass().getName(), "", "no service request with identifier " + referringId);
+            for (String remotePath : fhirConfig.getRemoteStorePaths()) {
+                
+                bundle = localFhirClient.search()//
+                        .forResource(ServiceRequest.class)//
+                        .returnBundle(Bundle.class)//
+                        .where(ServiceRequest.IDENTIFIER.exactly().systemAndIdentifier(remotePath, referringId))//
+                        .execute();
+                if (bundle.hasEntry()) {
+                    serviceRequest = (ServiceRequest) bundle.getEntryFirstRep().getResource();
+                }
+            }
+        }
+        if (serviceRequest == null) {
+            LogEvent.logDebug(this.getClass().getName(), "",
+                "no service request with identifier " + referringId + " with configured systems");
+        } else {
+            return Optional.of(serviceRequest);
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<Task> getTaskBasedOnTask(String taskId) {
         Bundle bundle = localFhirClient.search()//
                 .forResource(Task.class)//

@@ -59,8 +59,8 @@ public class ReportController extends BaseController {
     @Autowired
     private ServletContext context;
 
-    private static String reportPath = null;
-    private static String imagesPath = null;
+    private String reportPath = null;
+    private String imagesPath = null;
 
     @ModelAttribute("form")
     public BaseForm form() {

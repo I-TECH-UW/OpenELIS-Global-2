@@ -14,8 +14,9 @@ import {
   DatePicker,
   DatePickerInput,
   Loading,
-  Grid
+  Grid,
 } from "@carbon/react";
+import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import { FormattedMessage } from "react-intl";
 import { Formik, Field } from "formik";
 import ValidationSearchFormValues from "../formModel/innitialValues/ValidationSearchFormValues";
@@ -36,6 +37,7 @@ const SearchForm = (props) => {
   const validationResults = (data) => {
     if (data) {
       setSearchResults(data);
+      setIsLoading(false);
       if (data.resultList.length > 0) {
         const newResultsList = data.resultList.map((data, id) => {
           let tempData = { ...data };
@@ -47,6 +49,7 @@ const SearchForm = (props) => {
           resultList: newResultsList,
         }));
       } else {
+        setIsLoading(false);
         setSearchResults((prevState) => ({
           ...prevState,
           resultList: [],
@@ -60,7 +63,6 @@ const SearchForm = (props) => {
         setNotificationVisible(true);
       }
     }
-    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -89,6 +91,11 @@ const SearchForm = (props) => {
   const handleChange = () => {};
   const fetchTestSections = (response) => {
     setTestSections(response);
+  };
+
+  const submitOnSelect = (e) => {
+    var values = { unitType: e.target.value };
+    handleSubmit(values);
   };
 
   function handleDatePickerChange(e) {
@@ -140,9 +147,8 @@ const SearchForm = (props) => {
                     <Column lg={6}>
                       <Field name="accessionNumber">
                         {({ field }) => (
-                          <TextInput
+                          <CustomLabNumberInput
                             placeholder={"Enter Lab No"}
-                            className="searchLabNumber inputText"
                             name={field.name}
                             id={field.name}
                             labelText={
@@ -160,37 +166,6 @@ const SearchForm = (props) => {
                   </>
                 )}
 
-                {searchBy === "routine" && (
-                  <>
-                    <Column lg={6}>
-                      <Field name="unitType">
-                        {({ field }) => (
-                          <Select
-                            className="inputText"
-                            labelText={
-                              <FormattedMessage id="search.label.testunit" />
-                            }
-                            name={field.name}
-                            id={field.name}
-                          >
-                            <SelectItem text="" value="" />
-                            {testSections.map((test, index) => {
-                              return (
-                                <SelectItem
-                                  key={index}
-                                  text={test.value}
-                                  value={test.id}
-                                />
-                              );
-                            })}
-                          </Select>
-                        )}
-                      </Field>
-                    </Column>
-                    <Column lg={10} />
-                  </>
-                )}
-
                 {searchBy === "testDate" && (
                   <>
                     <Column lg={6}>
@@ -200,7 +175,6 @@ const SearchForm = (props) => {
                             name={field.name}
                             id={field.id}
                             dateFormat="d/m/Y"
-                            className="inputText"
                             datePickerType="single"
                             value={testDate}
                             onChange={(e) => {
@@ -223,21 +197,45 @@ const SearchForm = (props) => {
                     <Column lg={10} />
                   </>
                 )}
-
-                <Column lg={16}>
-                  <Button
-                    type="submit"
-                    id="submit"
-                    className="searchResultsBtn"
-                  >
-                    <FormattedMessage id="label.button.search" />
-                  </Button>
-                </Column>
+                {searchBy !== "routine" && (
+                  <Column lg={16}>
+                    <Button
+                      type="submit"
+                      id="submit"
+                      style={{ marginTop: "16px" }}
+                    >
+                      <FormattedMessage id="label.button.search" />
+                    </Button>
+                  </Column>
+                )}
               </Grid>
             </Stack>
           </Form>
         )}
       </Formik>
+
+      {searchBy === "routine" && (
+        <>
+          <Grid>
+            <Column lg={6}>
+              <Select
+                labelText={<FormattedMessage id="search.label.testunit" />}
+                name="unitType"
+                id="unitType"
+                onChange={submitOnSelect}
+              >
+                <SelectItem text="" value="" />
+                {testSections.map((test, index) => {
+                  return (
+                    <SelectItem key={index} text={test.value} value={test.id} />
+                  );
+                })}
+              </Select>
+            </Column>
+            <Column lg={10} />
+          </Grid>
+        </>
+      )}
     </>
   );
 };
