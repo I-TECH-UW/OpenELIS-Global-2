@@ -11,202 +11,202 @@ export const RoutineReportsMenu = {
   className: "resultSideNav",
   sideNavMenuItems: [
     {
-      title:<FormattedMessage id="sideNav.title.arvreports" defaultMessage="ARV Reports"/>,
+      title:<FormattedMessage id="sideNav.title.arvreports"/>,
       icon: IbmWatsonDiscovery,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=patientARVInitial1",
-          label: <FormattedMessage id="sideNav.label.arvreports1" defaultMessage="ARV Initial Version 1"/>,
+          label: <FormattedMessage id="sideNav.label.arvreports1"/>,
         },
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=patientARVInitial2",
-          label:<FormattedMessage id="sideNav.label.arvreports2" defaultMessage="ARV Initial Version 2"/>,
+          label:<FormattedMessage id="sideNav.label.arvreports2"/>,
         },
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=patientARVFollowup1",
-          label: <FormattedMessage id="sideNav.label.arvfollowup1" defaultMessage="ARV Follow-up Version 1"/>,
+          label: <FormattedMessage id="sideNav.label.arvfollowup1"/>,
         },
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=patientARVFollowup2",
-          label: <FormattedMessage id="sideNav.label.arvfollowup2" defaultMessage="ARV Follow-up Version 2"/>,
+          label: <FormattedMessage id="sideNav.label.arvfollowup2"/>,
         },
         {
           link:
             config.serverBaseUrl + "/Report?type=patient&report=patientARV1",
-          label: <FormattedMessage id="sideNav.label.arvversion1" defaultMessage="ARV-Version 1"/>,
+          label: <FormattedMessage id="sideNav.label.arvversion1"/>,
         },
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.eidreports" defaultMessage="EID Reports"/>,
+      title: <FormattedMessage id="sideNav.title.eidreports"/>,
       icon: Microscope,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl + "/Report?type=patient&report=patientEID1",
-          label: <FormattedMessage id="sideNav.label.eidreports1" defaultMessage="EID Version 1"/>,
+          label: <FormattedMessage id="sideNav.label.eidreports1"/>,
         },
         {
           link:
             config.serverBaseUrl + "/Report?type=patient&report=patientEID2",
-          label: <FormattedMessage id="sideNav.label.eidreports2" defaultMessage="EID Version 2"/>,
+          label: <FormattedMessage id="sideNav.label.eidreports2"/>,
         },
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.vlreport" defaultMessage="VL Report"/>,
+      title: <FormattedMessage id="sideNav.title.vlreport"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link: config.serverBaseUrl + "/Report?type=patient&report=patientVL1",
-          label: <FormattedMessage id="sideNav.label.vlversionnational" defaultMessage="VL version Nationale"/>,
+          label: <FormattedMessage id="sideNav.label.vlversionnational"/>,
         },
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.intermediatereport" defaultMessage="Intermediate Report"/>,
+      title: <FormattedMessage id="sideNav.title.intermediatereport"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=patientIndeterminate1",
-          label: <FormattedMessage id="sideNav.label.intermediatereport1" defaultMessage="Intermediate Version 1"/>,
+          label: <FormattedMessage id="sideNav.label.intermediatereport1"/>,
         },
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=patientIndeterminate2",
-          label: <FormattedMessage id="sideNav.label.intermediatereport2" defaultMessage="Intermediate Version 2"/>,
+          label: <FormattedMessage id="sideNav.label.intermediatereport2"/>,
         },
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=patientIndeterminateByLocation",
-          label: <FormattedMessage id="sideNav.label.intermediatebyservice" defaultMessage="Intermediate By Service"/>,
+          label: <FormattedMessage id="sideNav.label.intermediatebyservice"/>,
         },
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.specialrequest" defaultMessage="Special Request "/>,
+      title: <FormattedMessage id="sideNav.title.specialrequest"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=patientSpecialReport",
-          label: <FormattedMessage id="sideNav.label.specialrequest" defaultMessage="Special Request "/>,
+          label: <FormattedMessage id="sideNav.label.specialrequest"/>,
         },
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.collectedarvpatientreports" defaultMessage="Collected ARV patient Report"/>,
+      title: <FormattedMessage id="sideNav.title.collectedarvpatientreports"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=patientCollection",
-          label:  <FormattedMessage id="sideNav.label.collectedarvpatientreports" defaultMessage="Collected ARV patient Report"/>,
+          label:  <FormattedMessage id="sideNav.label.collectedarvpatientreports"/>,
         },
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.associatedpatientreport" defaultMessage="Associated Patient Report"/>,
+      title: <FormattedMessage id="sideNav.title.associatedpatientreport"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=patientAssociated",
-          label: <FormattedMessage id="sideNav.label.associatedpatientreport" defaultMessage="Associated Patient Report"/>,
+          label: <FormattedMessage id="sideNav.label.associatedpatientreport"/>,
         },
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.indicator" defaultMessage="Indicator"/>,
+      title: <FormattedMessage id="sideNav.title.indicator"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl +
             "/ReportPrint?type=indicator&report=indicatorSectionPerformance",
-          label: <FormattedMessage id="sideNav.label.sectionperformance" defaultMessage="Section Performance"/>,
+          label: <FormattedMessage id="sideNav.label.sectionperformance"/>,
         },
         {
           link:
             config.serverBaseUrl +
             "/ReportPrint?type=indicator&report=validationBacklog",
-          label: <FormattedMessage id="sideNav.label.delayedvalidation" defaultMessage="Delayed Validation"/>,
+          label: <FormattedMessage id="sideNav.label.delayedvalidation"/>,
         },
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.noncomformityreports" defaultMessage="Non conformity Reports"/>,
+      title: <FormattedMessage id="sideNav.title.noncomformityreports"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=retroCINonConformityByDate",
-          label: <FormattedMessage id="sideNav.label.noncomformityreportsbydate" defaultMessage="By Date"/>,
+          label: <FormattedMessage id="sideNav.label.noncomformityreportsbydate"/>,
         },
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=retroCInonConformityBySectionReason",
-          label: config.serverBaseUrl + <FormattedMessage id="sideNav.label.noncomformityreportsbyunit" defaultMessage="By Unit and Reason"/>,
+          label: config.serverBaseUrl + <FormattedMessage id="sideNav.label.noncomformityreportsbyunit"/>,
         },
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=retroCINonConformityByLabno",
-          label: <FormattedMessage id="sideNav.label.noncomformityreportsbylabno" defaultMessage="By Lab No"/>,
+          label: <FormattedMessage id="sideNav.label.noncomformityreportsbylabno"/>,
         },
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=retroCInonConformityNotification",
-          label: <FormattedMessage id="sideNav.label.noncomformitynotification" defaultMessage="Non-conformity Notification"/>,
+          label: <FormattedMessage id="sideNav.label.noncomformitynotification"/>,
         },
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=retroCIFollowupRequiredByLocation",
-          label:<FormattedMessage id="sideNav.label.followuprequired" defaultMessage="Follow-up Required"/>,
+          label:<FormattedMessage id="sideNav.label.followuprequired"/>,
         },
       ],
     },
     {
-      title:  <FormattedMessage id="sideNav.title.exportbydate" defaultMessage="Export By Date"/>,
+      title:  <FormattedMessage id="sideNav.title.exportbydate"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl + "/Report?type=patient&report=CIStudyExport",
-          label: <FormattedMessage id="sideNav.label.generalreport" defaultMessage="General Report"/>,
+          label: <FormattedMessage id="sideNav.label.generalreport"/>,
         },
         {
           link: config.serverBaseUrl + "/Report?type=patient&report=Trends",
-          label: <FormattedMessage id="sideNav.label.viralloaddataexport" defaultMessage="Viral Load Data Export"/>,
+          label: <FormattedMessage id="sideNav.label.viralloaddataexport"/>,
         },
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.audittrail" defaultMessage="Audit Trail"/>,
+      title: <FormattedMessage id="sideNav.title.audittrail"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link: config.serverBaseUrl + "/AuditTrailReport",
-          label:<FormattedMessage id="sideNav.label.audittrail" defaultMessage="Audit Trail"/>,
+          label:<FormattedMessage id="sideNav.label.audittrail"/>,
         },
       ],
     },
