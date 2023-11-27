@@ -26,6 +26,7 @@ import { Launch, Subtract } from "@carbon/react/icons";
 import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
+  postToOpenElisServerForPDF,
   hasRole,
 } from "../utils/Utils";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
@@ -165,26 +166,15 @@ function CytologyCaseView() {
     }
   }
 
-  async function writeReport(response) {
-    var report = await response.blob();
-    const url = URL.createObjectURL(report);
-    setLoadingReport(false)
-    console.log(JSON.stringify(report));
-    var status = response.status;
+  const reportStatus = (pdfGenerated) => {
     setNotificationVisible(true);
-    if (status == "200") {
+    setLoadingReport(false)
+    if (pdfGenerated) {
       setNotificationBody({
         kind: NotificationKinds.success,
         title: <FormattedMessage id="notification.title" />,
         message: "Succesfuly Generated Report",
       });
-
-      var win = window.open();
-      win.document.write(
-        '<iframe src="' +
-          url +
-          '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>',
-      );
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
@@ -895,10 +885,10 @@ function CytologyCaseView() {
                             report: "PatientCytologyReport",
                             programSampleId: cytologySampleId,
                           };
-                          postToOpenElisServerFullResponse(
+                          postToOpenElisServerForPDF(
                             "/rest/ReportPrint",
                             JSON.stringify(form),
-                            writeReport,
+                            reportStatus,
                           );
                         }}
                       >
