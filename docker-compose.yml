@@ -40,7 +40,7 @@ services:
         image: itechuw/openelis-global-2:2.8    
         depends_on:
             - database
-             - certs
+            - certs
         ports:
             - "8080:8080"
             - "8443:8443"
