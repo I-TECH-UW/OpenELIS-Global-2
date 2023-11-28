@@ -17,12 +17,15 @@ function SecureRoute(props) {
 
   const idleTimer = useRef();
 
-  const { userSessionDetails, isCheckingLogin, logout } = useContext(
-    UserSessionDetailsContext,
-  );
+  const {
+    userSessionDetails,
+    errorLoadingSessionDetails,
+    isCheckingLogin,
+    logout,
+  } = useContext(UserSessionDetailsContext);
 
   useEffect(() => {
-    setLoading(isCheckingLogin());
+    setLoading(!errorLoadingSessionDetails && isCheckingLogin());
     if (userSessionDetails.authenticated) {
       console.info("Authenticated");
       // console.log(JSON.stringify(jsonResp))
@@ -50,7 +53,7 @@ function SecureRoute(props) {
     } else if ("authenticated" in userSessionDetails) {
       window.location.href = config.loginRedirect;
     }
-  }, [userSessionDetails]);
+  }, [userSessionDetails, errorLoadingSessionDetails]);
 
   const hasPermission = (userDetails = userSessionDetails) => {
     var hasRole =

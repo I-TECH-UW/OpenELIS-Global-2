@@ -92,10 +92,10 @@ function OEHeader(props) {
                 <HeaderName href="/" prefix="">
                   <span id="header-logo">{logo()}</span>
                   <div className="banner">
-                    <h5>{configurationProperties.BANNER_TEXT}</h5>
+                    <h5>{configurationProperties?.BANNER_TEXT}</h5>
                     <p>
                       <FormattedMessage id="header.label.version" /> &nbsp;{" "}
-                      {configurationProperties.releaseNumber}
+                      {configurationProperties?.releaseNumber}
                     </p>
                   </div>
                 </HeaderName>
@@ -178,7 +178,7 @@ function OEHeader(props) {
                       <label className="cds--label">
                         {" "}
                         <FormattedMessage id="header.label.version" />:{" "}
-                        {configurationProperties.releaseNumber}
+                        {configurationProperties?.releaseNumber}
                       </label>
                     </li>
                   </ul>
@@ -221,7 +221,7 @@ function OEHeader(props) {
                             <FormattedMessage id="sidenav.label.barcode" />
                           </SideNavMenuItem>
                         </SideNavMenu>
-                        {configurationProperties.patientManagementTab ==
+                        {configurationProperties?.patientManagementTab ==
                           "true" && (
                           <SideNavMenu aria-label="Patient" title="Patient">
                             <SideNavMenuItem href="/PatientManagement">
@@ -232,7 +232,8 @@ function OEHeader(props) {
                             </SideNavMenuItem>
                           </SideNavMenu>
                         )}
-                        {configurationProperties.nonConformityTab == "true" && (
+                        {configurationProperties?.nonConformityTab ==
+                          "true" && (
                           <SideNavMenu
                             aria-label="Non-Conforming Events"
                             title={intl.formatMessage({
@@ -330,7 +331,7 @@ function OEHeader(props) {
                           <SideNavMenuItem href="/validation?type=routine">
                             <FormattedMessage id="sidenav.label.validation.routine" />
                           </SideNavMenuItem>
-                          {configurationProperties.studyManagementTab ==
+                          {configurationProperties?.studyManagementTab ==
                             "true" && (
                             <SideNavMenuItem
                               href={

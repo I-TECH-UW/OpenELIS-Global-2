@@ -40,6 +40,7 @@ import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,6 +52,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/rest/")
 public class DisplayListController extends BaseRestController{
+    @Value("${org.itech.login.saml:false}")
+    private Boolean useSAML;
+    @Value("${org.itech.login.oauth:false}")
+    private Boolean useOAUTH;
 
     @Autowired
     private ProviderService  providerService;
@@ -297,6 +302,8 @@ public class DisplayListController extends BaseRestController{
 		configs.put("patientManagementTab", patientManagementTab != null ? patientManagementTab.getValue() : "false");
 		configs.put("studyManagementTab", studyManagementTab != null ? studyManagementTab.getValue() : "false");
 		configs.put("nonConformityTab", nonConformityTab != null ? nonConformityTab.getValue() : "false");
+		configs.put("useSaml", useSAML ? "true" : "false");
+		configs.put("useOauth", useOAUTH ? "true" : "false");
         return configs;
 	}
 
