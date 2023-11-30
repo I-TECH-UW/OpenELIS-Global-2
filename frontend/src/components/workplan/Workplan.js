@@ -11,6 +11,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Pagination,
 } from "@carbon/react";
 import React, { useState, useContext } from "react";
 import "../Style.css";
@@ -32,6 +33,8 @@ export default function Workplan(props) {
   const [configurationName, setConfigurationName] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
   const [selectedLabel, setSelectedLabel] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const type = props.type;
   let title = "";
@@ -63,6 +66,15 @@ export default function Workplan(props) {
   };
   const handleSelectedLabel = (val) => {
     setSelectedLabel(val);
+  };
+  const handlePageChange = (pageInfo) => {
+    if (page != pageInfo.page) {
+      setPage(pageInfo.page);
+    }
+
+    if (pageSize != pageInfo.pageSize) {
+      setPageSize(pageInfo.pageSize);
+    }
   };
 
   const printWorkplan = () => {
@@ -216,91 +228,102 @@ export default function Workplan(props) {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {testsList.map((row, index) => {
-                        if (!(row.accessionNumber === currentAccessionNumber)) {
-                          showAccessionNumber = true;
-                          currentAccessionNumber = row.accessionNumber;
-                          rowColorIndex++;
-                        } else {
-                          showAccessionNumber = false;
-                        }
-                        return (
-                          <TableRow
-                            key={index}
-                            id={"row_" + index}
-                            className={
-                              rowColorIndex % 2 === 0 ? "evenRow" : "oddRow"
-                            }
-                          >
-                            {!row.servingAsTestGroupIdentifier && (
-                              <TableCell>
-                                <input
-                                  type="checkbox"
-                                  value={row.notIncludedInWorkplan}
-                                  id={"includedCheck_" + index}
-                                  className="includedCheck"
-                                  onClick={(e) =>
-                                    disableEnableTest(e.target, index)
-                                  }
-                                />
-                              </TableCell>
-                            )}
-                            {type === "test" && (
-                              <TableCell>
-                                {row.nonconforming && (
-                                  <img
-                                    src={`images/nonconforming.gif`}
-                                    alt="nonconforming"
+                      {testsList
+                        .slice((page - 1) * pageSize, page * pageSize)
+                        .map((row, index) => {
+                          if (
+                            !(row.accessionNumber === currentAccessionNumber)
+                          ) {
+                            showAccessionNumber = true;
+                            currentAccessionNumber = row.accessionNumber;
+                            rowColorIndex++;
+                          } else {
+                            showAccessionNumber = false;
+                          }
+                          return (
+                            <TableRow
+                              key={index}
+                              id={"row_" + index}
+                              className={
+                                rowColorIndex % 2 === 0 ? "evenRow" : "oddRow"
+                              }
+                            >
+                              {!row.servingAsTestGroupIdentifier && (
+                                <TableCell>
+                                  <input
+                                    type="checkbox"
+                                    value={row.notIncludedInWorkplan}
+                                    id={"includedCheck_" + index}
+                                    className="includedCheck"
+                                    onClick={(e) =>
+                                      disableEnableTest(e.target, index)
+                                    }
                                   />
-                                )}
-                              </TableCell>
-                            )}
-                            <TableCell>
-                              {showAccessionNumber && (
-                                <Link
-                                  style={{ color: "blue" }}
-                                  href={
-                                    "/result?type=order&doRange=false&accessionNumber=" +
-                                    row.accessionNumber
-                                  }
-                                >
-                                  <u>
-                                    {convertAlphaNumLabNumForDisplay(
-                                      row.accessionNumber,
-                                    )}
-                                  </u>
-                                </Link>
+                                </TableCell>
                               )}
-                            </TableCell>
-                            {subjectOnWorkplan.toLowerCase() === "true" && (
+                              {type === "test" && (
+                                <TableCell>
+                                  {row.nonconforming && (
+                                    <img
+                                      src={`images/nonconforming.gif`}
+                                      alt="nonconforming"
+                                    />
+                                  )}
+                                </TableCell>
+                              )}
                               <TableCell>
-                                {showAccessionNumber && row.patientInfo}
-                              </TableCell>
-                            )}
-                            {nextVisitOnWorkplan.toLowerCase() === "true" && (
-                              <TableCell>
-                                {showAccessionNumber && row.nextVisitDate}
-                              </TableCell>
-                            )}
-                            {type !== "test" && (
-                              <TableCell>
-                                {row.nonconforming && (
-                                  <img
-                                    src={`images/nonconforming.gif`}
-                                    alt="nonconforming"
-                                  />
+                                {showAccessionNumber && (
+                                  <Link
+                                    style={{ color: "blue" }}
+                                    href={
+                                      "/result?type=order&doRange=false&accessionNumber=" +
+                                      row.accessionNumber
+                                    }
+                                  >
+                                    <u>
+                                      {convertAlphaNumLabNumForDisplay(
+                                        row.accessionNumber,
+                                      )}
+                                    </u>
+                                  </Link>
                                 )}
                               </TableCell>
-                            )}
-                            {type !== "test" && (
-                              <TableCell>{row.testName}</TableCell>
-                            )}
-                            <TableCell>{row.receivedDate}</TableCell>
-                          </TableRow>
-                        );
-                      })}
+                              {subjectOnWorkplan.toLowerCase() === "true" && (
+                                <TableCell>
+                                  {showAccessionNumber && row.patientInfo}
+                                </TableCell>
+                              )}
+                              {nextVisitOnWorkplan.toLowerCase() === "true" && (
+                                <TableCell>
+                                  {showAccessionNumber && row.nextVisitDate}
+                                </TableCell>
+                              )}
+                              {type !== "test" && (
+                                <TableCell>
+                                  {row.nonconforming && (
+                                    <img
+                                      src={`images/nonconforming.gif`}
+                                      alt="nonconforming"
+                                    />
+                                  )}
+                                </TableCell>
+                              )}
+                              {type !== "test" && (
+                                <TableCell>{row.testName}</TableCell>
+                              )}
+                              <TableCell>{row.receivedDate}</TableCell>
+                            </TableRow>
+                          );
+                        })}
                     </TableBody>
                   </Table>
+                  <Pagination
+                    onChange={handlePageChange}
+                    page={page}
+                    pageSize={pageSize}
+                    pageSizes={[10, 20, 30]}
+                    totalItems={testsList.length}
+                  ></Pagination>
                 </>
               </Column>
               <hr />
