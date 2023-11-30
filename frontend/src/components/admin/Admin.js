@@ -5,7 +5,6 @@ import "../Style.css";
 import ReflexTestManagement from "./reflexTests/ReflexTestManagement";
 import ProgramManagement from "./program/ProgramManagement";
 import LabNumberManagement from "./labNumber/LabNumberManagement";
-import LocationManagement from "./location/LocationManagement";
 import BillingMenuManagement from "./menu/BillingMenuManagement";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -65,9 +64,6 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#calculatedValue">
         <CalculatedValue />
-      </PathRoute>
-      <PathRoute path="#locationManagement">
-        <LocationManagement />
       </PathRoute>
       <PathRoute path="#billingMenuManagement">
         <BillingMenuManagement />
