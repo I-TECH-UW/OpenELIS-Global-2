@@ -288,10 +288,12 @@ public class DisplayListController extends BaseRestController{
 			    Property.PHONE_FORMAT));
 	    configs.put(Property.releaseNumber.toString(), ConfigurationProperties.getInstance().getPropertyValue(
 			    Property.releaseNumber));
-	    configs.put(Property.restrictFreeTextProviderEntry.toString(), ConfigurationProperties.getInstance().getPropertyValue(
-			    Property.restrictFreeTextProviderEntry));
-	    configs.put(Property.restrictFreeTextProviderEntry.toString(), ConfigurationProperties.getInstance().getPropertyValue(
-			    Property.restrictFreeTextProviderEntry));
+	    configs.put(Property.ACCESSION_NUMBER_VALIDATE.toString(), ConfigurationProperties.getInstance().getPropertyValue(
+			    Property.ACCESSION_NUMBER_VALIDATE));
+	    configs.put(Property.AUTOFILL_COLLECTION_DATE.toString(), ConfigurationProperties.getInstance().getPropertyValue(
+			    Property.AUTOFILL_COLLECTION_DATE));
+	    configs.put(Property.ACCEPT_EXTERNAL_ORDERS.toString(), ConfigurationProperties.getInstance().getPropertyValue(
+			    Property.ACCEPT_EXTERNAL_ORDERS));
 		configs.put("currentDateAsText", DateUtil.getCurrentDateAsText());
 		configs.put("currentTimeAsText",DateUtil.getCurrentTimeAsText());
 		configs.put(Property.BANNER_TEXT.toString(), localizationService

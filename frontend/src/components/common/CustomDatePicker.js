@@ -15,9 +15,8 @@ const CustomDatePicker = (props) => {
   }
 
   useEffect(() => {
-    const date = configurationProperties.currentDateAsText;
     if (props.autofillDate) {
-      setCurrentDate(date);
+      setCurrentDate(configurationProperties.currentDateAsText);
     }
   }, [configurationProperties]);
 

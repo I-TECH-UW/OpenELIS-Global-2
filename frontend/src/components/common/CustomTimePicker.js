@@ -11,9 +11,10 @@ const CustomTimePicker = (props) => {
     setCurrentTime(time);
     props.onChange(time);
   }
-
   useEffect(() => {
-    setCurrentTime(configurationProperties.currentTimeAsText);
+    if (props.autofillTime) {
+      setCurrentTime(configurationProperties.currentTimeAsText);
+    }
   }, [configurationProperties]);
 
   useEffect(() => {
