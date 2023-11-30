@@ -56,6 +56,16 @@
 			<column name="test_id" valueNumeric="(select id from clinlims.test where description = 'Histopathology examination' )" /> 
 		</insert>
 	</changeSet>
+	<changeSet author="csteele" id="1.1">
+		<preConditions onFail="MARK_RAN">
+        	<sqlCheck expectedResult="2">select count(*) from clinlims.type_of_sample where local_abbrev = 'TAM'; </sqlCheck>
+		</preConditions>
+		<update schemaName="clinlims" tableName="type_of_sample">
+			<column name="lastupdated" valueDate="now()" /> 
+			<column name="local_abbrev" value="TMP" />	
+		</update>
+		<where>description='Tissue post mortem'</where>
+	</changeSet>
     
 	<changeSet author="csteele" id="2">
 		<preConditions onFail="MARK_RAN">
