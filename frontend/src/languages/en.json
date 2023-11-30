@@ -21,7 +21,7 @@
     "patient.label.info" : "Patient Information",
     "breadcrumb.home" : "Home",
     "admin.legacy" :"Legacy Admin",
-    "admin.billing" :"Billing",
+    "banner.menu.billing" :"Billing",
     "label.page.patientHistory" : "Patient History",
     "workplan.page.title"                :"Workplan {0}",
     "workplan.panel.title"               :"Workplan By Panel",
@@ -350,5 +350,12 @@
     "labNumber.prefix": "Prefix",
     "labNumber.format.new": "New Format",
     "labNumber.format.current": "Current Format" ,
-    "validation.label.nonconform" : "= Sample or Order is nonconforming or Test has been rejected"
+    "validation.label.nonconform" : "= Sample or Order is nonconforming or Test has been rejected",
+    "notification.login.generic.error": "Error while attempting login",
+    "label.button.login.sso": "SSO Login",
+    "menu.billing.title": "Billing Menu Management",
+    "menu.billing.address": "Billing URL",
+    "menu.billing.active": "Billing Menu Active",
+    "sidenav.label.admin.menu": "Menu Configuration",
+    "sidenav.label.admin.menu.billing": "Billing Menu Configuration"
 }

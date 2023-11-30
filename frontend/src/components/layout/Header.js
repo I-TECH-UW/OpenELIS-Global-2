@@ -29,14 +29,28 @@ import {
   Theme,
   HeaderPanel,
 } from "@carbon/react";
+import { getFromOpenElisServer } from "../utils/Utils";
 
 function OEHeader(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
   const { userSessionDetails, logout } = useContext(UserSessionDetailsContext);
-  const [switchCollapsed, setSwitchCollapsed] = useState(true);
+
   const userSwitchRef = createRef();
   const headerPanelRef = createRef();
   const intl = useIntl();
+
+  const [switchCollapsed, setSwitchCollapsed] = useState(true);
+  const [billingMenu, setBillingMenu] = useState({ menu: {}, childMenus: [] });
+
+  const handleMenuItems = (res) => {
+    if (res) {
+      setBillingMenu(res);
+    }
+  };
+
+  useEffect(() => {
+    getFromOpenElisServer("/rest/menu/menu_billing", handleMenuItems);
+  }, []);
 
   const panelSwitchLabel = () => {
     return userSessionDetails.authenticated ? "User" : "Lang";
@@ -365,12 +379,18 @@ function OEHeader(props) {
                           <FormattedMessage id="sidenav.label.admin" />
                         </SideNavMenuItem>
 
-                        <SideNavMenuItem
-                          target="_blank"
-                          href={"http://ozone.uwdigi.org:8069/"}
-                        >
-                          <FormattedMessage id="admin.billing" />
-                        </SideNavMenuItem>
+                        {billingMenu.menu.isActive && (
+                          <SideNavMenuItem
+                            target={
+                              billingMenu.menu.openInNewWindow ? "_blank" : ""
+                            }
+                            href={billingMenu.menu.actionURL}
+                          >
+                            <FormattedMessage
+                              id={billingMenu.menu.displayKey}
+                            />
+                          </SideNavMenuItem>
+                        )}
                       </SideNavItems>
                     </SideNav>
                   </>

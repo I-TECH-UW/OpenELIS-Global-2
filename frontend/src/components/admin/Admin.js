@@ -5,6 +5,8 @@ import "../Style.css";
 import ReflexTestManagement from "./reflexTests/ReflexTestManagement";
 import ProgramManagement from "./program/ProgramManagement";
 import LabNumberManagement from "./labNumber/LabNumberManagement";
+import LocationManagement from "./location/LocationManagement";
+import BillingMenuManagement from "./menu/BillingMenuManagement";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
 import {
@@ -36,6 +38,13 @@ function Admin() {
           <SideNavMenuItem href="#program">
             <FormattedMessage id="sidenav.label.admin.program" />
           </SideNavMenuItem>
+          <SideNavMenu
+            title={intl.formatMessage({ id: "sidenav.label.admin.menu" })}
+          >
+            <SideNavMenuItem href="#billingMenuManagement">
+              <FormattedMessage id="sidenav.label.admin.menu.billing" />
+            </SideNavMenuItem>
+          </SideNavMenu>
           <SideNavMenuItem
             target="_blank"
             href={config.serverBaseUrl + "/MasterListsPage"}
@@ -56,6 +65,12 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#calculatedValue">
         <CalculatedValue />
+      </PathRoute>
+      <PathRoute path="#locationManagement">
+        <LocationManagement />
+      </PathRoute>
+      <PathRoute path="#billingMenuManagement">
+        <BillingMenuManagement />
       </PathRoute>
     </>
   );
