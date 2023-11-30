@@ -15,4 +15,5 @@
 	<include relativeToChangelogFile="true" file="add_antimicrobial_resistance_test_column.xml" />
 	<include relativeToChangelogFile="true" file="lab_number_alphanum_update.xml" />
 	<include relativeToChangelogFile="true" file="menu.xml" />
+	<include relativeToChangelogFile="true" file="panel_item_fix.xml" />
 </databaseChangeLog>
