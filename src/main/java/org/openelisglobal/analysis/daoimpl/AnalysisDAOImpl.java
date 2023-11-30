@@ -36,7 +36,7 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.paging.PagingProperties;
+//import org.openelisglobal.common.paging.PagingProperties;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.StringUtil;
@@ -216,7 +216,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
             query.setParameter("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("statusIdList", statusIdList);
-            query.setMaxResults(SpringContext.getBean(PagingProperties.class).getValidationPageSize());
+           // query.setMaxResults(SpringContext.getBean(PagingProperties.class).getValidationPageSize());
 
             return query.list();
         } catch (RuntimeException e) {
@@ -241,7 +241,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
             query.setParameter("accessionNumber", accessionNumber);
             query.setParameterList("statusIdList", statusIdList);
-            query.setMaxResults(SpringContext.getBean(PagingProperties.class).getValidationPageSize());
+            //query.setMaxResults(SpringContext.getBean(PagingProperties.class).getValidationPageSize());
 
             return query.list();
         } catch (RuntimeException e) {
@@ -1256,7 +1256,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setParameter("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
-            query.setMaxResults(SpringContext.getBean(PagingProperties.class).getResultsPageSize());
+           // query.setMaxResults(SpringContext.getBean(PagingProperties.class).getResultsPageSize());
 
             List<Analysis> analysisList = query.list();
 
@@ -1537,7 +1537,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setParameter("accessionNumber", accessionNumber);
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
-            query.setMaxResults(SpringContext.getBean(PagingProperties.class).getResultsPageSize());
+            //query.setMaxResults(SpringContext.getBean(PagingProperties.class).getResultsPageSize());
 
             List<Analysis> analysisList = query.list();
 
@@ -1595,7 +1595,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             }
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
-            query.setMaxResults(SpringContext.getBean(PagingProperties.class).getResultsPageSize());
+            //query.setMaxResults(SpringContext.getBean(PagingProperties.class).getResultsPageSize());
 
             List<Analysis> analysisList = query.list();
 
