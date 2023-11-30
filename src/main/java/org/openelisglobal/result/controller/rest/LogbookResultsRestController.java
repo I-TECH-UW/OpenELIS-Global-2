@@ -222,27 +222,6 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
     }
 
 
-    @GetMapping(value = "ReactRangeResults", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public LogbookResultsForm showReactLogbookResultsByRange(@RequestParam String labNumber,
-                                                             @RequestParam String  upperRangeAccessionNumber,@RequestParam boolean doRange, @RequestParam boolean finished,
-            @Validated(LogbookResults.class) @ModelAttribute("form") LogbookResultsForm form, BindingResult result)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-        LogbookResultsForm newForm = new LogbookResultsForm();
-        if (!(result.hasFieldErrors("type") || result.hasFieldErrors("accessionNumber"))) {
-            newForm.setType(form.getType());
-            newForm.setAccessionNumber(form.getAccessionNumber());
-
-            String currentDate = getCurrentDate();
-            newForm.setCurrentDate(currentDate);
-        }
-        newForm.setDisplayTestSections(false);
-        newForm.setSearchByRange(true);
-
-        return getLogbookResults(request, newForm,null, labNumber,"",upperRangeAccessionNumber, doRange, finished);
-    }
-
     private LogbookResultsForm getLogbookResults(HttpServletRequest request, LogbookResultsForm form,StatusResultsForm statusResultsForm, String labNumber,String patientPK,String upperRangeAccessionNumber, boolean doRange,
             boolean finished) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
    

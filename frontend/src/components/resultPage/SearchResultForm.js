@@ -59,7 +59,10 @@ export function SearchResultForm(props) {
   const [searchFormValues, setSearchFormValues] = useState(
     SearchResultFormValues,
   );
-
+  const [nextPage, setNextPage] = useState(null);
+  const [previousPage, setPreviousPage] = useState(null);
+  const [pagination, setPagination] = useState(false);
+  const [url, setUrl] = useState("");
   const componentMounted = useRef(false);
 
   const setResultsWithId = (results) => {
@@ -70,6 +73,22 @@ export function SearchResultForm(props) {
       }
       props.setResults?.(results);
       setLoading(false);
+      if (results.paging) {
+        var { totalPages, currentPage } = results.paging;
+        if (totalPages > 1) {
+          setPagination(true);
+          if (parseInt(currentPage) < parseInt(totalPages)) {
+            setNextPage(parseInt(currentPage) + 1);
+          } else {
+            setNextPage(null);
+          }
+          if (parseInt(currentPage) > 1) {
+            setPreviousPage(parseInt(currentPage) - 1);
+          } else {
+            setPreviousPage(null);
+          }
+        }
+      }
     } else {
       props.setResults?.({ testResult: [] });
       setNotificationBody({
@@ -84,7 +103,20 @@ export function SearchResultForm(props) {
 
   const handleAdvancedSearch = () => {};
 
+  const loadNextResultsPage = () => {
+    setLoading(true);
+    getFromOpenElisServer(url + "&page=" + nextPage, setResultsWithId);
+  };
+
+  const loadPreviousResultsPage = () => {
+    setLoading(true);
+    getFromOpenElisServer(url + "&page=" + previousPage, setResultsWithId);
+  };
+
   const getSelectedPatient = (patient) => {
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
     setPatient(patient);
   };
   useEffect(() => {
@@ -127,10 +159,15 @@ export function SearchResultForm(props) {
       searchBy.doRange +
       "&finished=" +
       true;
+    setUrl(searchEndPoint);
+
     getFromOpenElisServer(searchEndPoint, setResultsWithId);
   };
 
   const handleSubmit = (values) => {
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
     querySearch(values);
   };
 
@@ -157,6 +194,9 @@ export function SearchResultForm(props) {
   };
 
   const submitOnSelect = (e) => {
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
     var values = { unitType: e.target.value };
     handleSubmit(values);
   };
@@ -192,6 +232,9 @@ export function SearchResultForm(props) {
       setSearchFormValues(searchValues);
       querySearch(searchValues);
     }
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
   }, [searchBy]);
 
   return (
@@ -434,6 +477,35 @@ export function SearchResultForm(props) {
           </Grid>
         </>
       )}
+
+      <>
+        {pagination && (
+          <Grid>
+            <Column lg={12} />
+            <Column lg={1}>
+              <Button
+                type=""
+                id="loadpreviousresults"
+                onClick={loadPreviousResultsPage}
+                disabled={previousPage != null ? false : true}
+              >
+                <FormattedMessage id="Load Previous" />
+              </Button>
+            </Column>
+            <Column lg={1} />
+            <Column lg={1}>
+              <Button
+                type=""
+                id="loadpreviousresults"
+                disabled={nextPage != null ? false : true}
+                onClick={loadNextResultsPage}
+              >
+                <FormattedMessage id="Load Next" />
+              </Button>
+            </Column>
+          </Grid>
+        )}
+      </>
     </>
   );
 }
@@ -1046,8 +1118,8 @@ export function SearchResults(props) {
                 <img
                   src={config.serverBaseUrl + "/images/nonconforming.gif"}
                   alt="nonconforming"
-                  width="25" 
-                  height="20" 
+                  width="25"
+                  height="20"
                 />
               </picture>
               <b>
