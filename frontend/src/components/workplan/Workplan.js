@@ -347,7 +347,7 @@ export default function Workplan(props) {
                     onChange={handlePageChange}
                     page={page}
                     pageSize={pageSize}
-                    pageSizes={[10, 20, 30]}
+                    pageSizes={[10, 20, 50, 100]}
                     totalItems={testsList.length}
                   ></Pagination>
                 </>
