@@ -13,7 +13,7 @@ import {
   TableRow,
   Pagination,
 } from "@carbon/react";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "../Style.css";
 import "./wpStyle.css";
 import { FormattedMessage } from "react-intl";
@@ -22,6 +22,8 @@ import {
   postToOpenElisServerForPDF,
   convertAlphaNumLabNumForDisplay,
 } from "../utils/Utils";
+import { NotificationContext } from "../layout/Layout";
+import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { ConfigurationContext } from "../layout/Layout";
 
 export default function Workplan(props) {
@@ -34,7 +36,9 @@ export default function Workplan(props) {
   const [selectedValue, setSelectedValue] = useState("");
   const [selectedLabel, setSelectedLabel] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
+  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+    useContext(NotificationContext);
 
   const type = props.type;
   let title = "";
@@ -55,11 +59,31 @@ export default function Workplan(props) {
       title = "";
   }
 
+  useEffect(() =>{
+    setSubjectOnWorkplan(configurationProperties.SUBJECT_ON_WORKPLAN);
+    setNextVisitOnWorkplan(configurationProperties.NEXT_VISIT_DATE_ON_WORKPLAN);
+    setConfigurationName(configurationProperties.configurationName);
+  }, []);
+
+  const reportStatus = (pdfGenerated) => {
+    setNotificationVisible(true);
+    if (pdfGenerated) {
+      setNotificationBody({
+        kind: NotificationKinds.success,
+        title: <FormattedMessage id="notification.title" />,
+        message: "Succesfuly Generated Report",
+      });
+    } else {
+      setNotificationBody({
+        kind: NotificationKinds.error,
+        title: <FormattedMessage id="notification.title" />,
+        message: "Error while Generating Report",
+      });
+    }
+  }
+
   const handleTestsList = (tests) => {
-    setTestsList(tests.tests);
-    setSubjectOnWorkplan(tests.SUBJECT_ON_WORKPLAN);
-    setNextVisitOnWorkplan(tests.NEXT_VISIT_DATE_ON_WORKPLAN);
-    setConfigurationName(tests.configurationName);
+    setTestsList(tests.workplanTests);
   };
   const handleSelectedValue = (val) => {
     setSelectedValue(val);
@@ -91,6 +115,7 @@ export default function Workplan(props) {
     postToOpenElisServerForPDF(
       "/rest/printWorkplanReport",
       JSON.stringify(form),
+      reportStatus
     );
   };
 
@@ -135,6 +160,7 @@ export default function Workplan(props) {
   return (
     <>
       <Grid fullWidth={true}>
+      {notificationVisible === true ? <AlertDialog /> : ""}
         <Column lg={16}>
           <Section>
             <Section>

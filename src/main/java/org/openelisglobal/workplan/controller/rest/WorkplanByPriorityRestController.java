@@ -2,10 +2,7 @@ package org.openelisglobal.workplan.controller.rest;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
@@ -16,8 +13,6 @@ import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
-import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
 import org.openelisglobal.result.action.util.ResultsLoadUtility;
@@ -29,6 +24,8 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.test.service.TestServiceImpl;
+import org.openelisglobal.workplan.action.util.WorkplanPaging;
+import org.openelisglobal.workplan.form.WorkplanForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,33 +43,31 @@ public class WorkplanByPriorityRestController extends WorkplanRestController {
     private UserService userService;	
 
 	@RequestMapping(value = "/rest/workplan-by-priority", method = RequestMethod.GET)
-    public Map<String, Object> showWorkPlanByPriority(HttpServletRequest request,
+    public WorkplanForm showWorkPlanByPriority(HttpServletRequest request,
 			@RequestParam(name = "priority", defaultValue = "") OrderPriority priority)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         
-		Map<String, Object> response = new HashMap<String, Object>();
+        WorkplanPaging paging = new WorkplanPaging();
+		WorkplanForm form = new WorkplanForm();
         List<TestResultItem> workplanTests = new ArrayList<TestResultItem>();
         List<TestResultItem> filteredTests =  new ArrayList<TestResultItem>();
 
-        if (priority != null) {
-            workplanTests = getWorkplanByPriority(priority);
-            filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests,
-                    Constants.ROLE_RESULTS);
+            String requestedPage = request.getParameter("page");
+            if (GenericValidator.isBlankOrNull(requestedPage)) {
+                workplanTests = getWorkplanByPriority(priority);
+                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests,
+                        Constants.ROLE_RESULTS);
 
-            ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility();
-            resultsLoadUtility.sortByAccessionAndSequence(filteredTests);
+                ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility();
+                resultsLoadUtility.sortByAccessionAndSequence(filteredTests);
 
-        } 
+                paging.setDatabaseResults(request, form, filteredTests);
+            }else{
+                int requestedPageNumber = Integer.parseInt(requestedPage);
+                paging.page(request, form, requestedPageNumber);
+            }
         
-		response.put("tests", filteredTests);
-		response.put("SUBJECT_ON_WORKPLAN",
-				ConfigurationProperties.getInstance().getPropertyValue(Property.SUBJECT_ON_WORKPLAN));
-		response.put("NEXT_VISIT_DATE_ON_WORKPLAN",
-				ConfigurationProperties.getInstance().getPropertyValue(Property.NEXT_VISIT_DATE_ON_WORKPLAN));
-		response.put("configurationName",
-				ConfigurationProperties.getInstance().getPropertyValue(Property.configurationName));
-
-		return response;
+		return form;
 
     }
 

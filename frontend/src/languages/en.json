@@ -357,5 +357,7 @@
     "menu.billing.address": "Billing URL",
     "menu.billing.active": "Billing Menu Active",
     "sidenav.label.admin.menu": "Menu Configuration",
-    "sidenav.label.admin.menu.billing": "Billing Menu Configuration"
+    "sidenav.label.admin.menu.billing": "Billing Menu Configuration" ,
+    "button.label.loadnext": "Load Next Bundle",
+    "button.label.loadprevious": "Load Previous Bundle"
 }
