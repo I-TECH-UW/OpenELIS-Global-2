@@ -306,6 +306,9 @@ public class DisplayListController extends BaseRestController{
 		configs.put("nonConformityTab", nonConformityTab != null ? nonConformityTab.getValue() : "false");
 		configs.put("useSaml", useSAML ? "true" : "false");
 		configs.put("useOauth", useOAUTH ? "true" : "false");
+		configs.put(Property.SUBJECT_ON_WORKPLAN.toString(), ConfigurationProperties.getInstance().getPropertyValue(Property.SUBJECT_ON_WORKPLAN));
+		configs.put(Property.NEXT_VISIT_DATE_ON_WORKPLAN.toString(), ConfigurationProperties.getInstance().getPropertyValue(Property.NEXT_VISIT_DATE_ON_WORKPLAN));
+		configs.put(Property.configurationName.toString(), ConfigurationProperties.getInstance().getPropertyValue(Property.configurationName));
         return configs;
 	}
 
