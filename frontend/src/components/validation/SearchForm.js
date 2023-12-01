@@ -298,7 +298,7 @@ const SearchForm = (props) => {
                 disabled={nextPage != null ? false : true}
                 onClick={loadNextResultsPage}
               >
-                <FormattedMessage id="button.label.loadprevious" />
+                <FormattedMessage id="button.label.loadnext" />
               </Button>
             </Column>
           </Grid>
