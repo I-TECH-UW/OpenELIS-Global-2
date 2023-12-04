@@ -109,7 +109,7 @@ function NonConformityMenuManagement() {
                   curMenuItem={menuItem}
                   path="$"
                   setMenuItem={setMenuItem}
-                  labelKey="menu.study.active"
+                  labelKey="menu.nonconform.active"
                   recurse={showChildren}
                 />
                 <br></br>

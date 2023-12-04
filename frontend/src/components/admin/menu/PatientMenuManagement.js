@@ -108,7 +108,7 @@ function PatientMenuManagement() {
                   curMenuItem={menuItem}
                   path="$"
                   setMenuItem={setMenuItem}
-                  labelKey="menu.study.active"
+                  labelKey="menu.patient.active"
                   recurse={showChildren}
                 />
                 <br></br>
