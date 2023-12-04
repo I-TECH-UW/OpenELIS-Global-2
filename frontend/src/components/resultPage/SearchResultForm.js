@@ -7,9 +7,7 @@ import {
   convertAlphaNumLabNumForDisplay,
 } from "../utils/Utils";
 import {
-  Heading,
   Form,
-  FormLabel,
   TextInput,
   TextArea,
   Checkbox,
@@ -19,7 +17,6 @@ import {
   DatePicker,
   DatePickerInput,
   Stack,
-  Section,
   Pagination,
   Select,
   SelectItem,
@@ -101,7 +98,6 @@ export function SearchResultForm(props) {
     }
   };
 
-  const handleAdvancedSearch = () => {};
 
   const loadNextResultsPage = () => {
     setLoading(true);
@@ -877,7 +873,7 @@ export function SearchResults(props) {
             value={data.pastNotes}
             disabled={true}
             type="text"
-            labelText="Past Notes"
+            labelText={<FormattedMessage id="referral.testresult.pastnote"/>}
             rows={2}
           ></TextArea>
         </Column>
@@ -885,7 +881,7 @@ export function SearchResults(props) {
           <Select
             id={"testMethod" + data.id}
             name={"testResult[" + data.id + "].testMethod"}
-            labelText={"Methods"}
+            labelText={<FormattedMessage id= "referral.label.testmethod"/>}
             onChange={(e) => handleChange(e, data.id)}
             value={data.method}
           >
@@ -904,7 +900,7 @@ export function SearchResults(props) {
             id={"referralReason" + data.id}
             name={"testResult[" + data.id + "].referralReason"}
             // noLabel={true}
-            labelText={"Referral Reason"}
+            labelText={<FormattedMessage id= "referral.label.reason"/>}
             onChange={(e) => handleChange(e, data.id)}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
@@ -923,7 +919,7 @@ export function SearchResults(props) {
             id={"institute" + data.id}
             name={"testResult[" + data.id + "].institute"}
             // noLabel={true}
-            labelText={"Institute"}
+            labelText={<FormattedMessage id ="referral.label.institute"/>}
             onChange={(e) => handleChange(e, data.id)}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
@@ -939,7 +935,7 @@ export function SearchResults(props) {
             id={"testToPerform" + data.id}
             name={"testResult[" + data.id + "].testToPerform"}
             // noLabel={true}
-            labelText={"Test to Perform"}
+            labelText={<FormattedMessage id="referral.label.testtoperform"/>}
             onChange={(e) => handleChange(e, data.id)}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
@@ -956,7 +952,7 @@ export function SearchResults(props) {
           >
             <DatePickerInput
               placeholder="mm/dd/yyyy"
-              labelText="Sent Date"
+              labelText={<FormattedMessage id="referral.label.sentdate"/>}
               id="date-picker-single"
             />
           </DatePicker>
