@@ -27,6 +27,8 @@ public interface ElectronicOrderService extends BaseObjectService<ElectronicOrde
     List<ElectronicOrder> getAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate, String statusId,
             SortOrder sortOrder);
 
+   int getCountOfAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate, String statusId);        
+
     List<ElectronicOrder> getAllElectronicOrdersByTimestampAndStatus(Timestamp startTimestamp, Timestamp endTimestamp,
             String statusId, SortOrder statusId2);
 
