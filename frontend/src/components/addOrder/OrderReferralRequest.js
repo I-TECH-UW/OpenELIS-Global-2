@@ -11,6 +11,7 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import CustomTextInput from "../common/CustomTextInput";
 import CustomSelect from "../common/CustomSelect";
 import CustomDatePicker from "../common/CustomDatePicker";
+import { useIntl } from "react-intl";
 
 function requiredSymbol(value) {
   return (
@@ -20,16 +21,17 @@ function requiredSymbol(value) {
     </>
   );
 }
-
+const intl = useIntl();
 const header = [
-  { key: "reason", header: requiredSymbol("Reason for Referral") },
-  { key: "referrer", header: "Referrer" },
+  { key: "reason", header: requiredSymbol(intl.formatMessage({ id: "referral.label.reason"})) },
+  { key: "referrer", header: intl.formatMessage({ id: "referrer.label" })},
   {
     key: "institute",
-    header: requiredSymbol("Institute"),
+    header: requiredSymbol(intl.formatMessage({ id: "referral.label.institute"})),
   },
-  { key: "", header: "Sent Date\n" + "(dd/mm/yyyy)" },
-  { key: "name", header: requiredSymbol("Test Name") },
+  { key: "", header:intl.formatMessage({ id: "referral.label.sentdate"}) + "\n" + "(dd/mm/yyyy)" },
+  { key: "name", header: requiredSymbol(intl.formatMessage({ id: "search.label.test" })) },
+
 ];
 
 const OrderReferralRequest = ({

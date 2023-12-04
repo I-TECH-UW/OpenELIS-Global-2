@@ -525,8 +525,8 @@ const SampleType = (props) => {
               <Search
                 size="lg"
                 id={`panels_search_` + index}
-                labelText={"Search Available panel"}
-                placeholder={"Choose Available panel"}
+                labelText={<FormattedMessage id="label.search.availablepanel"/>}
+                placeholder={<FormattedMessage id="choose.availablepanel"/>}
                 onChange={handlePanelSearchChange}
                 value={(() => {
                   if (panelSearchTerm) {
@@ -609,12 +609,12 @@ const SampleType = (props) => {
               <></>
             )}
           </div>
-          <FormGroup legendText={"Search through the available tests"}>
+          <FormGroup legendText={<FormattedMessage id="legend.search.availabletests"/>}>
             <Search
               size="lg"
               id={`tests_search_` + index}
-              labelText={"Search Available Test"}
-              placeholder={"Choose Available test"}
+              labelText={<FormattedMessage id="label.search.available.targetest"/>}
+              placeholder={<FormattedMessage id="holder.choose.availabletest"/>}
               onChange={handleTestSearchChange}
               value={(() => {
                 if (testSearchTerm) {
@@ -647,7 +647,7 @@ const SampleType = (props) => {
                     <Layer>
                       <Tile className={"emptyFilterTests"}>
                         <span>
-                          No test found matching
+                          <FormattedMessage id="title.notestfoundmatching"/>
                           <strong> "{testSearchTerm}"</strong>{" "}
                         </span>
                       </Tile>
@@ -676,7 +676,7 @@ const SampleType = (props) => {
         <div className="requestTestReferral">
           <Checkbox
             id={`useReferral_` + index}
-            labelText="Refer test to a reference lab"
+            labelText={<FormattedMessage id="label.refertest.referencelab"/>}
             onChange={handleReferralRequest}
           />
           {requestTestReferral === true && (
