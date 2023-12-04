@@ -16,7 +16,7 @@ services:
 
     database:
         container_name: openelisglobal-database 
-        image: postgres:9.5
+        image: postgres:14.4
         ports:
             - "15432:5432"
         restart: always
