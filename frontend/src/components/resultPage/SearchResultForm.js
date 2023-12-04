@@ -7,9 +7,7 @@ import {
   convertAlphaNumLabNumForDisplay,
 } from "../utils/Utils";
 import {
-  Heading,
   Form,
-  FormLabel,
   TextInput,
   TextArea,
   Checkbox,
@@ -19,7 +17,6 @@ import {
   DatePicker,
   DatePickerInput,
   Stack,
-  Section,
   Pagination,
   Select,
   SelectItem,
@@ -59,7 +56,10 @@ export function SearchResultForm(props) {
   const [searchFormValues, setSearchFormValues] = useState(
     SearchResultFormValues,
   );
-
+  const [nextPage, setNextPage] = useState(null);
+  const [previousPage, setPreviousPage] = useState(null);
+  const [pagination, setPagination] = useState(false);
+  const [url, setUrl] = useState("");
   const componentMounted = useRef(false);
 
   const setResultsWithId = (results) => {
@@ -70,6 +70,22 @@ export function SearchResultForm(props) {
       }
       props.setResults?.(results);
       setLoading(false);
+      if (results.paging) {
+        var { totalPages, currentPage } = results.paging;
+        if (totalPages > 1) {
+          setPagination(true);
+          if (parseInt(currentPage) < parseInt(totalPages)) {
+            setNextPage(parseInt(currentPage) + 1);
+          } else {
+            setNextPage(null);
+          }
+          if (parseInt(currentPage) > 1) {
+            setPreviousPage(parseInt(currentPage) - 1);
+          } else {
+            setPreviousPage(null);
+          }
+        }
+      }
     } else {
       props.setResults?.({ testResult: [] });
       setNotificationBody({
@@ -82,9 +98,21 @@ export function SearchResultForm(props) {
     }
   };
 
-  const handleAdvancedSearch = () => {};
+
+  const loadNextResultsPage = () => {
+    setLoading(true);
+    getFromOpenElisServer(url + "&page=" + nextPage, setResultsWithId);
+  };
+
+  const loadPreviousResultsPage = () => {
+    setLoading(true);
+    getFromOpenElisServer(url + "&page=" + previousPage, setResultsWithId);
+  };
 
   const getSelectedPatient = (patient) => {
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
     setPatient(patient);
   };
   useEffect(() => {
@@ -127,10 +155,15 @@ export function SearchResultForm(props) {
       searchBy.doRange +
       "&finished=" +
       true;
+    setUrl(searchEndPoint);
+
     getFromOpenElisServer(searchEndPoint, setResultsWithId);
   };
 
   const handleSubmit = (values) => {
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
     querySearch(values);
   };
 
@@ -157,6 +190,9 @@ export function SearchResultForm(props) {
   };
 
   const submitOnSelect = (e) => {
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
     var values = { unitType: e.target.value };
     handleSubmit(values);
   };
@@ -192,6 +228,9 @@ export function SearchResultForm(props) {
       setSearchFormValues(searchValues);
       querySearch(searchValues);
     }
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
   }, [searchBy]);
 
   return (
@@ -434,6 +473,35 @@ export function SearchResultForm(props) {
           </Grid>
         </>
       )}
+
+      <>
+        {pagination && (
+          <Grid>
+            <Column lg={12} />
+            <Column lg={1}>
+              <Button
+                type=""
+                id="loadpreviousresults"
+                onClick={loadPreviousResultsPage}
+                disabled={previousPage != null ? false : true}
+              >
+                <FormattedMessage id="Load Previous" />
+              </Button>
+            </Column>
+            <Column lg={1} />
+            <Column lg={1}>
+              <Button
+                type=""
+                id="loadpreviousresults"
+                disabled={nextPage != null ? false : true}
+                onClick={loadNextResultsPage}
+              >
+                <FormattedMessage id="Load Next" />
+              </Button>
+            </Column>
+          </Grid>
+        )}
+      </>
     </>
   );
 }
@@ -797,103 +865,101 @@ export function SearchResults(props) {
   };
 
   const renderReferral = ({ data }) => (
-    <pre>
-      <div className="referralRow">
-        <Grid>
-          <Column lg={3}>
-            <div>
-              <Select
-                id={"testMethod" + data.id}
-                name={"testResult[" + data.id + "].testMethod"}
-                labelText={<FormattedMessage id= "referral.label.testmethod" defaultMessage="Methods"/>}
-                onChange={(e) => handleChange(e, data.id)}
-                value={data.method}
-              >
-                <SelectItem text="" value="" />
-                {methods.map((method, method_index) => (
-                  <SelectItem
-                    text={method.value}
-                    value={method.id}
-                    key={method_index}
-                  />
-                ))}
-              </Select>
-            </div>
-          </Column>
-          <Column lg={3}>
-            <div>
-              <Select
-                className="referralReason"
-                id={"referralReason" + data.id}
-                name={"testResult[" + data.id + "].referralReason"}
-                // noLabel={true}
-                labelText={<FormattedMessage id= "referral.label.reason" defaultMessage="Referral Reason"/>}
-                onChange={(e) => handleChange(e, data.id)}
-              >
-                {/* {...updateShadowResult(e, this, param.rowId)} */}
-                <SelectItem text="" value="" />
-                {referralReasons.map((reason, reason_index) => (
-                  <SelectItem
-                    text={reason.value}
-                    value={reason.id}
-                    key={reason_index}
-                  />
-                ))}
-              </Select>
-            </div>
-          </Column>
-          <Column lg={3}>
-            <div className="institute">
-              <Select
-                id={"institute" + data.id}
-                name={"testResult[" + data.id + "].institute"}
-                // noLabel={true}
-                labelText={<FormattedMessage id ="referral.label.institute" defaultMessage="Institute"/>}
-                onChange={(e) => handleChange(e, data.id)}
-              >
-                {/* {...updateShadowResult(e, this, param.rowId)} */}
-
-                <SelectItem text="" value="" />
-                {referalOrganizations.map((org, org_index) => (
-                  <SelectItem text={org.value} value={org.id} key={org_index} />
-                ))}
-              </Select>
-            </div>
-          </Column>
-          <Column lg={3}>
-            <div className="testToPerform">
-              <Select
-                id={"testToPerform" + data.id}
-                name={"testResult[" + data.id + "].testToPerform"}
-                // noLabel={true}
-                labelText={<FormattedMessage id="referral.label.testtoperform" defaultMessage="Test to Perform"/>}
-                onChange={(e) => handleChange(e, data.id)}
-              >
-                {/* {...updateShadowResult(e, this, param.rowId)} */}
-
-                <SelectItem text={data.testName} value={data.id} />
-              </Select>
-            </div>
-          </Column>
-          <Column lg={3}>
-            <DatePicker
-              datePickerType="single"
-              id={"sentDate_" + data.id}
-              name={"testResult[" + data.id + "].sentDate_"}
-              onChange={(date) => handleDatePickerChange(date, data.id)}
-            >
-              <DatePickerInput
-                placeholder="mm/dd/yyyy"
-                labelText={<FormattedMessage id="referral.label.sentdate" defaultMessage="Sent Date" />}
-                id="date-picker-single"
-                size="md"
+    <>
+      <Grid>
+        <Column lg={3}>
+          <TextArea
+            id={"testResult" + data.id + ".pastNotes"}
+            name={"testResult[" + data.id + "].pastNotes"}
+            value={data.pastNotes}
+            disabled={true}
+            type="text"
+            labelText={<FormattedMessage id="referral.testresult.pastnote"/>}
+            rows={2}
+          ></TextArea>
+        </Column>
+        <Column lg={2}>
+          <Select
+            id={"testMethod" + data.id}
+            name={"testResult[" + data.id + "].testMethod"}
+            labelText={<FormattedMessage id= "referral.label.testmethod"/>}
+            onChange={(e) => handleChange(e, data.id)}
+            value={data.method}
+          >
+            <SelectItem text="" value="" />
+            {methods.map((method, method_index) => (
+              <SelectItem
+                text={method.value}
+                value={method.id}
+                key={method_index}
               />
-            </DatePicker>
-          </Column>
-        </Grid>
-      </div>
-    </pre>
+            ))}
+          </Select>
+        </Column>
+        <Column lg={3}>
+          <Select
+            id={"referralReason" + data.id}
+            name={"testResult[" + data.id + "].referralReason"}
+            // noLabel={true}
+            labelText={<FormattedMessage id= "referral.label.reason"/>}
+            onChange={(e) => handleChange(e, data.id)}
+          >
+            {/* {...updateShadowResult(e, this, param.rowId)} */}
+            <SelectItem text="" value="" />
+            {referralReasons.map((reason, reason_index) => (
+              <SelectItem
+                text={reason.value}
+                value={reason.id}
+                key={reason_index}
+              />
+            ))}
+          </Select>
+        </Column>
+        <Column lg={3}>
+          <Select
+            id={"institute" + data.id}
+            name={"testResult[" + data.id + "].institute"}
+            // noLabel={true}
+            labelText={<FormattedMessage id ="referral.label.institute"/>}
+            onChange={(e) => handleChange(e, data.id)}
+          >
+            {/* {...updateShadowResult(e, this, param.rowId)} */}
 
+            <SelectItem text="" value="" />
+            {referalOrganizations.map((org, org_index) => (
+              <SelectItem text={org.value} value={org.id} key={org_index} />
+            ))}
+          </Select>
+        </Column>
+        <Column lg={3}>
+          <Select
+            id={"testToPerform" + data.id}
+            name={"testResult[" + data.id + "].testToPerform"}
+            // noLabel={true}
+            labelText={<FormattedMessage id="referral.label.testtoperform"/>}
+            onChange={(e) => handleChange(e, data.id)}
+          >
+            {/* {...updateShadowResult(e, this, param.rowId)} */}
+
+            <SelectItem text={data.testName} value={data.id} />
+          </Select>
+        </Column>
+        <Column lg={2}>
+          <DatePicker
+            datePickerType="single"
+            id={"sentDate_" + data.id}
+            name={"testResult[" + data.id + "].sentDate_"}
+            onChange={(date) => handleDatePickerChange(date, data.id)}
+          >
+            <DatePickerInput
+              placeholder="mm/dd/yyyy"
+              labelText={<FormattedMessage id="referral.label.sentdate"/>}
+              id="date-picker-single"
+            />
+          </DatePicker>
+        </Column>
+      </Grid>
+    </>
   );
 
   const validateResults = (e, rowId) => {
@@ -1048,8 +1114,8 @@ export function SearchResults(props) {
                 <img
                   src={config.serverBaseUrl + "/images/nonconforming.gif"}
                   alt="nonconforming"
-                  width="25" 
-                  height="20" 
+                  width="25"
+                  height="20"
                 />
               </picture>
               <b>
