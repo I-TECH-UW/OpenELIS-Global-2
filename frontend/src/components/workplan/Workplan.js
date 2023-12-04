@@ -225,12 +225,12 @@ export default function Workplan(props) {
                         <TableHeader>
                           <FormattedMessage id="quick.entry.accession.number" />
                         </TableHeader>
-                        {subjectOnWorkplan.toLowerCase() === "true" && (
+                        {subjectOnWorkplan?.toLowerCase() === "true" && (
                           <TableHeader>
                             <FormattedMessage id="patient.subject.number" />
                           </TableHeader>
                         )}
-                        {nextVisitOnWorkplan.toLowerCase() === "true" && (
+                        {nextVisitOnWorkplan?.toLowerCase() === "true" && (
                           <TableHeader>
                             <FormattedMessage id="sample.entry.nextVisit.date" />
                           </TableHeader>
@@ -314,12 +314,12 @@ export default function Workplan(props) {
                                   </Link>
                                 )}
                               </TableCell>
-                              {subjectOnWorkplan.toLowerCase() === "true" && (
+                              {subjectOnWorkplan?.toLowerCase() === "true" && (
                                 <TableCell>
                                   {showAccessionNumber && row.patientInfo}
                                 </TableCell>
                               )}
-                              {nextVisitOnWorkplan.toLowerCase() === "true" && (
+                              {nextVisitOnWorkplan?.toLowerCase() === "true" && (
                                 <TableCell>
                                   {showAccessionNumber && row.nextVisitDate}
                                 </TableCell>

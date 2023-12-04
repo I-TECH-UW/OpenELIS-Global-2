@@ -211,4 +211,9 @@ public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<Electronic
 
 	}
 
+	@Override
+	public int getCountOfAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate, String statusId) {
+		return getBaseObjectDAO().getCountOfAllElectronicOrdersByDateAndStatus(startDate, endDate, statusId);
+	}
+
 }
