@@ -227,6 +227,7 @@
     "referral.testresult.pastnote":"Past Notes",
     "referral.label.sentdate":"Sent Date",
     "referral.label.reason":"Referral Reason",
+    "referral.label.testtoperform":"Test to Perform",
     "new.patient.label": "New Patient",
     "sample.select.type": "Select sample type",
     "sample.reject.label": "Reject Sample",
