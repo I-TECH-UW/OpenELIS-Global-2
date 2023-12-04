@@ -357,5 +357,6 @@
     "sidenav.label.admin.menu": "Menu Configuration",
     "sidenav.label.admin.menu.billing": "Billing Menu Configuration",
     "button.label.loadnext": "Charger le lot suivant",
-    "button.label.loadprevious": "Charger le lot précédent"
+    "button.label.loadprevious": "Charger le lot précédent",
+    "referral.label.testtoperform":"Test à effectuer"
 }
