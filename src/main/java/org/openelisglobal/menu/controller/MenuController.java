@@ -1,7 +1,9 @@
 package org.openelisglobal.menu.controller;
 
+import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.stream.Collectors;
 
 import org.openelisglobal.menu.service.MenuService;
@@ -27,14 +29,35 @@ public class MenuController {
 
     @GetMapping("/rest/menu/{elementId}")
     public Optional<MenuItem> getMenuTree(@PathVariable String elementId) {
-        return MenuUtil.getMenuTree()//
-                .stream().filter(menuItem -> elementId.equals(menuItem.getMenu().getElementId()))
-                .findFirst();
+        return findMenuItem(elementId, MenuUtil.getMenuTree());
+    }
+
+    @PostMapping("/rest/menu/")
+    public List<MenuItem> postMenuTree(@RequestBody List<MenuItem> menuItems) {
+        return menuService.save(menuItems);
     }
 
     @PostMapping("/rest/menu/{elementId}")
     public MenuItem postMenuTree(@PathVariable String elementId, @RequestBody MenuItem menuItem) {
         return menuService.save(menuItem);
+    }
+
+    private Optional<MenuItem> findMenuItem(String elementId, List<MenuItem> menuItems) {
+        Queue<MenuItem> queue = new ArrayDeque<>();
+        queue.addAll(menuItems);
+        while(!queue.isEmpty()) {
+            MenuItem menuItem = queue.remove();
+            if ( elementId.equals(menuItem.getMenu().getElementId())) {
+                return Optional.of(menuItem);
+            } else {
+                for (MenuItem childMenuItem : menuItem.getChildMenus()) {
+                    if (menuItem.getMenu().getElementId() != childMenuItem.getMenu().getElementId()) {
+                        queue.add(childMenuItem); // prevent infinite loops if a menu option points to itself
+                    }
+                }
+            }
+        }
+        return Optional.empty();
     }
 
 }

@@ -40,16 +40,29 @@ function OEHeader(props) {
   const intl = useIntl();
 
   const [switchCollapsed, setSwitchCollapsed] = useState(true);
-  const [billingMenu, setBillingMenu] = useState({ menu: {}, childMenus: [] });
+  const [menus, setMenus] = useState({
+    menu_billing: { menu: {}, childMenus: [] },
+    menu_nonconformity: { menu: {}, childMenus: [] },
+  });
 
-  const handleMenuItems = (res) => {
+  const handleMenuItems = (tag, res) => {
     if (res) {
-      setBillingMenu(res);
+      let newMenus = menus;
+      newMenus[tag] = res;
+      setMenus(newMenus);
     }
   };
 
   useEffect(() => {
-    getFromOpenElisServer("/rest/menu/menu_billing", handleMenuItems);
+    getFromOpenElisServer("/rest/menu/menu_billing", (res) => {
+      handleMenuItems("menu_billing", res);
+    });
+    getFromOpenElisServer("/rest/menu/menu_nonconformity", (res) => {
+      handleMenuItems("menu_nonconformity", res);
+    });
+    getFromOpenElisServer("/rest/menu/menu_patient", (res) => {
+      handleMenuItems("menu_patient", res);
+    });
   }, []);
 
   const panelSwitchLabel = () => {
@@ -90,6 +103,7 @@ function OEHeader(props) {
 
   return (
     <>
+      {/* TODO make this generate from Menu table like it did before */}
       <div className="container">
         <Theme>
           <HeaderContainer
@@ -235,47 +249,116 @@ function OEHeader(props) {
                             <FormattedMessage id="sidenav.label.barcode" />
                           </SideNavMenuItem>
                         </SideNavMenu>
-                        {configurationProperties?.patientManagementTab ==
-                          "true" && (
-                          <SideNavMenu aria-label="Patient" title="Patient">
-                            <SideNavMenuItem href="/PatientManagement">
+                        {menus?.menu_patient?.menu.isActive && (
+                          <SideNavMenu
+                            aria-label="Patient"
+                            title={intl.formatMessage({
+                              id: menus?.menu_patient?.menu.displayKey,
+                            })}
+                          >
+                            {menus?.menu_patient?.childMenus.map(
+                              (childMenuItem, index) => {
+                                return !childMenuItem?.menu.isActive ? (
+                                  <React.Fragment
+                                    key={"patient_" + index}
+                                  ></React.Fragment>
+                                ) : childMenuItem?.childMenus.length > 0 ? (
+                                  <React.Fragment key={"patient_" + index}>
+                                    <SideNavMenuItem>
+                                      <FormattedMessage
+                                        id={childMenuItem?.menu.displayKey}
+                                      />
+                                    </SideNavMenuItem>
+                                    {childMenuItem?.childMenus.map(
+                                      (childMenuItem2, index2) => {
+                                        return (
+                                          <React.Fragment
+                                            key={
+                                              "patient_" + index + "_" + index2
+                                            }
+                                          >
+                                            {childMenuItem2?.menu.isActive && (
+                                              <SideNavMenuItem
+                                                href={
+                                                  childMenuItem2?.menu.actionURL
+                                                }
+                                                target={
+                                                  childMenuItem2?.menu
+                                                    .openInNewWindow
+                                                    ? "_blank"
+                                                    : ""
+                                                }
+                                                key={index + "_" + index2}
+                                              >
+                                                -&nbsp;&nbsp;&nbsp;
+                                                <FormattedMessage
+                                                  id={
+                                                    childMenuItem2?.menu
+                                                      .displayKey
+                                                  }
+                                                />
+                                              </SideNavMenuItem>
+                                            )}
+                                          </React.Fragment>
+                                        );
+                                      },
+                                    )}
+                                  </React.Fragment>
+                                ) : (
+                                  <SideNavMenuItem
+                                    href={childMenuItem?.menu.actionURL}
+                                    target={
+                                      childMenuItem?.menu.openInNewWindow
+                                        ? "_blank"
+                                        : ""
+                                    }
+                                    key={index}
+                                  >
+                                    <FormattedMessage
+                                      id={childMenuItem?.menu.displayKey}
+                                    />
+                                  </SideNavMenuItem>
+                                );
+                              },
+                            )}
+                            {/* <SideNavMenuItem href="/PatientManagement">
                               <FormattedMessage id="sidenav.label.editpatient" />
                             </SideNavMenuItem>
                             <SideNavMenuItem href="/PatientHistory">
                               <FormattedMessage id="sidenav.label.patientHistory" />
-                            </SideNavMenuItem>
+                            </SideNavMenuItem> */}
                           </SideNavMenu>
                         )}
-                        {configurationProperties?.nonConformityTab ==
-                          "true" && (
+                        {menus?.menu_nonconformity?.menu.isActive && (
                           <SideNavMenu
                             aria-label="Non-Conforming Events"
                             title={intl.formatMessage({
-                              id: "sidenav.label.nonConform",
+                              id: menus?.menu_nonconformity?.menu.displayKey,
                             })}
                           >
-                            <SideNavMenuItem
-                              href={
-                                config.serverBaseUrl +
-                                "/ReportNonConformingEvent"
-                              }
-                            >
-                              <FormattedMessage id="sidenav.label.nonConform.report" />
-                            </SideNavMenuItem>
-                            <SideNavMenuItem
-                              href={
-                                config.serverBaseUrl + "/ViewNonConformingEvent"
-                              }
-                            >
-                              <FormattedMessage id="sidenav.label.nonConform.view" />
-                            </SideNavMenuItem>
-                            <SideNavMenuItem
-                              href={
-                                config.serverBaseUrl + "/NCECorrectiveAction"
-                              }
-                            >
-                              <FormattedMessage id="sidenav.label.nonConform.actions" />
-                            </SideNavMenuItem>
+                            {menus?.menu_nonconformity?.childMenus.map(
+                              (childMenuItem, index) => {
+                                return !childMenuItem?.menu.isActive ? (
+                                  <React.Fragment
+                                    key={"nonConform_" + index}
+                                  ></React.Fragment>
+                                ) : (
+                                  <SideNavMenuItem
+                                    href={childMenuItem?.menu.actionURL}
+                                    target={
+                                      childMenuItem?.menu.openInNewWindow
+                                        ? "_blank"
+                                        : ""
+                                    }
+                                    key={index}
+                                  >
+                                    <FormattedMessage
+                                      id={childMenuItem?.menu.displayKey}
+                                    />
+                                  </SideNavMenuItem>
+                                );
+                              },
+                            )}
                           </SideNavMenu>
                         )}
                         <SideNavMenu aria-label="Workplan" title="Workplan">
@@ -379,15 +462,17 @@ function OEHeader(props) {
                           <FormattedMessage id="sidenav.label.admin" />
                         </SideNavMenuItem>
 
-                        {billingMenu.menu.isActive && (
+                        {menus?.menu_billing?.menu.isActive && (
                           <SideNavMenuItem
                             target={
-                              billingMenu.menu.openInNewWindow ? "_blank" : ""
+                              menus?.menu_billing?.menu.openInNewWindow
+                                ? "_blank"
+                                : ""
                             }
-                            href={billingMenu.menu.actionURL}
+                            href={menus?.menu_billing?.menu.actionURL}
                           >
                             <FormattedMessage
-                              id={billingMenu.menu.displayKey}
+                              id={menus?.menu_billing?.menu.displayKey}
                             />
                           </SideNavMenuItem>
                         )}

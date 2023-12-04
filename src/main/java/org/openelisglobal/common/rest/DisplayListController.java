@@ -298,12 +298,8 @@ public class DisplayListController extends BaseRestController{
 		configs.put("currentTimeAsText",DateUtil.getCurrentTimeAsText());
 		configs.put(Property.BANNER_TEXT.toString(), localizationService
 		.getLocalizedValueById(ConfigurationProperties.getInstance().getPropertyValue(Property.BANNER_TEXT)));
-		SiteInformation patientManagementTab = siteInformationService.getSiteInformationByName("Patient management tab");
 		SiteInformation studyManagementTab = siteInformationService.getSiteInformationByName("Study Management tab");
-		SiteInformation nonConformityTab = siteInformationService.getSiteInformationByName("Non Conformity tab");
-		configs.put("patientManagementTab", patientManagementTab != null ? patientManagementTab.getValue() : "false");
 		configs.put("studyManagementTab", studyManagementTab != null ? studyManagementTab.getValue() : "false");
-		configs.put("nonConformityTab", nonConformityTab != null ? nonConformityTab.getValue() : "false");
 		configs.put("useSaml", useSAML ? "true" : "false");
 		configs.put("useOauth", useOAUTH ? "true" : "false");
         return configs;
