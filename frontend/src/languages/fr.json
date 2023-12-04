@@ -46,6 +46,11 @@
     "result.noTestsFound": "Aucun test approprié trouvé",
     "quick.entry.accession.number":"N° Labo",
     "patient.subject.number":"Sujet No.",
+    "referral.label.institute":"Institut",
+    "referral.label.testmethod":"Méthode",
+    "referral.testresult.pastnote":"Notes passées",
+    "referral.label.sentdate":"Date envoyée",
+    "referral.label.reason":"Raison de la référence",
     "sample.entry.nextVisit.date":"Date de rendez vous",
     "sample.entry.project.testName":"Nom du Test",
     "sample.receivedDate":"Date de réception",
@@ -446,5 +451,8 @@
     "banner.menu.resultvalidation.virology": "Virologie",
     "banner.menu.resultvalidation_routine": "Routine",
     "banner.menu.resultvalidation_study": "Etude",
-    "reports.followupRequired.byLocation": "Suivi Requis"
+    "reports.followupRequired.byLocation": "Suivi Requis",
+    "button.label.loadnext": "Charger le lot suivant",
+    "button.label.loadprevious": "Charger le lot précédent",
+    "referral.label.testtoperform":"Test à effectuer"
 }

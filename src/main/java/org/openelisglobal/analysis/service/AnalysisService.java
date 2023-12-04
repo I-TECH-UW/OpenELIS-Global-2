@@ -71,6 +71,8 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     List<Analysis> getAnalysisStartedOnExcludedByStatusId(Date collectionDate, Set<Integer> statusIds);
 
+    int getCountOfAnalysisStartedOnExcludedByStatusId(Date collectionDate, Set<Integer> statusIds);
+
     List<Analysis> getAnalysisByTestSectionAndCompletedDateRange(String sectionID, Date lowDate, Date highDate);
 
     List<Analysis> getMaxRevisionAnalysesReadyToBeReported();
@@ -107,6 +109,8 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
     List<Analysis> getAnalysisCompleteInRange(Timestamp lowDate, Timestamp highDate);
 
     List<Analysis> getAnalysesForStatusId(String statusId);
+
+    int getCountOfAnalysesForStatusIds(List<Integer> statusIdList);
 
     List<Analysis> getAllMaxRevisionAnalysesPerTest(Test test);
 
@@ -204,5 +208,9 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
     List<Analysis> getStudyAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
             LocalDate upperDate);
 
-    List<Analysis> getAnalysisCompletedOnByStatusId(Date completedDate, String statusId);       
+    List<Analysis> getAnalysisCompletedOnByStatusId(Date completedDate, String statusId);  
+
+    int getCountOfAnalysisCompletedOnByStatusId(Date completedDate, List<Integer> statusIds); 
+    
+    int getCountOfAnalysisStartedOnByStatusId(Date startedDate, List<Integer> statusIds); 
 }

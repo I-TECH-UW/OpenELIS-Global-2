@@ -264,38 +264,14 @@ const Validation = (props) => {
           case "C":
           case "D":
             return (
-              <Select
-                className="result"
-                id={"result" + row.id}
-                name={"resultList[" + row.id + "].result"}
-                noLabel={true}
-                value={row.result}
-                onChange={(e) => validateResults(e, row.id)}
-              >
-                <SelectItem text="" value="" />
-                {row.dictionaryResults.map(
-                  (dictionaryResult, dictionaryResult_index) => (
-                    <SelectItem
-                      text={dictionaryResult.value}
-                      value={dictionaryResult.id}
-                      key={dictionaryResult_index}
-                    />
-                  ),
-                )}
-              </Select>
-            );
-
-          case "N":
-            return (
-              <TextInput
-                id={"ResultValue" + row.id}
-                name={"resultList[" + row.id + "].result"}
-                labelText=""
-                type="number"
-                defaultValue={row.result ? row.result : ""}
-                onChange={(e) => handleChange(e, row.id)}
-              />
-            );
+              <>
+                {
+                  row.dictionaryResults.find(
+                    (result) => result.id == row.result,
+                  )?.value
+                }
+              </>
+            )
           default:
             return row.result;
         }

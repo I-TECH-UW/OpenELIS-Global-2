@@ -36,7 +36,7 @@ public class BaseTestConfig {
 
     private static final String DB_NAME = "clinlims";
 
-    private static PostgreSQLContainer postgreSqlContainer = new PostgreSQLContainer("postgres:9.5");
+    private static PostgreSQLContainer postgreSqlContainer = new PostgreSQLContainer("postgres:14.4");
 
     @Bean("liquibase")
     @Profile("test")

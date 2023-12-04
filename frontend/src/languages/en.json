@@ -223,6 +223,12 @@
     "patient.label": "Patient",
     "requester.label": "Requester",
     "search.patient.label": "Search for Patient",
+    "referral.label.institute":"Institute",
+    "referral.label.testmethod":"Method",
+    "referral.testresult.pastnote":"Past Notes",
+    "referral.label.sentdate":"Sent Date",
+    "referral.label.reason":"Referral Reason",
+    "referral.label.testtoperform":"Test to Perform",
     "new.patient.label": "New Patient",
     "sample.select.type": "Select sample type",
     "sample.reject.label": "Reject Sample",
@@ -453,5 +459,7 @@
     "banner.menu.resultvalidation.virology": "Virology",
     "banner.menu.resultvalidation_routine": "Routine",
     "banner.menu.resultvalidation_study": "Study",
-    "reports.followupRequired.byLocation": "Follow-up Required"
+    "reports.followupRequired.byLocation": "Follow-up Required",
+    "button.label.loadnext": "Load Next Bundle",
+    "button.label.loadprevious": "Load Previous Bundle"
 }

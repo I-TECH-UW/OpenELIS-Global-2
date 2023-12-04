@@ -53,7 +53,10 @@ const SampleType = (props) => {
   const [panelSearchTerm, setPanelSearchTerm] = useState("");
   const [searchBoxPanels, setSearchBoxPanels] = useState([]);
   const [sampleXml, setSampleXml] = useState({
-    collectionDate: "",
+    collectionDate:
+      configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
+        ? configurationProperties.currentDateAsText
+        : "",
     collector: "",
     rejected: false,
     rejectionReason: "",
