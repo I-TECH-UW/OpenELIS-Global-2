@@ -10,17 +10,8 @@ export const NotificationKinds = {
 };
 
 export const AlertDialog = () => {
-  const { notificationBody, setNotificationVisible } =
-    useContext(NotificationContext);
+  const { notificationBody } = useContext(NotificationContext);
 
-  useEffect(() => {
-    setTimeout(
-      () => {
-        setNotificationVisible(false);
-      },
-      notificationBody.kind !== NotificationKinds.error ? 7000 : 100000,
-    );
-  }, []);
   return (
     <div className="toastDisplay">
       <ToastNotification
@@ -28,10 +19,16 @@ export const AlertDialog = () => {
         timeout={
           notificationBody.kind !== NotificationKinds.error ? 8000 : 100000
         }
+        onClose={() => {}}
+        onCloseButtonClick={() => {}}
         lowContrast={true}
         kind={notificationBody.kind}
-        subtitle={notificationBody.message}
-      />
+        subtitle={notificationBody.subtitle}
+      >
+        {notificationBody.message}
+        <br />
+        <br />
+      </ToastNotification>
     </div>
   );
 };

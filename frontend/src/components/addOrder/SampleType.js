@@ -17,7 +17,7 @@ import CustomTimePicker from "../common/CustomTimePicker";
 import { NotificationKinds } from "../common/CustomNotification";
 import { FormattedMessage } from "react-intl";
 import { getFromOpenElisServer } from "../utils/Utils";
-import { NotificationContext } from "../layout/Layout";
+import { NotificationContext, ConfigurationContext } from "../layout/Layout";
 import { sampleTypeTestsStructure } from "../data/SampleEntryTestsForTypeProvider";
 import CustomTextInput from "../common/CustomTextInput";
 import OrderReferralRequest from "../addOrder/OrderReferralRequest";
@@ -25,10 +25,11 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 
 const SampleType = (props) => {
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
   const { index, rejectSampleReasons, removeSample, sample } = props;
   const componentMounted = useRef(true);
-  const [sampleTypes, setSampleTypes] = useState([]);
   const sampleTypesRef = useRef(null);
+  const [sampleTypes, setSampleTypes] = useState([]);
   const [selectedSampleType, setSelectedSampleType] = useState({
     id: null,
     name: "",
@@ -52,7 +53,10 @@ const SampleType = (props) => {
   const [panelSearchTerm, setPanelSearchTerm] = useState("");
   const [searchBoxPanels, setSearchBoxPanels] = useState([]);
   const [sampleXml, setSampleXml] = useState({
-    collectionDate: "",
+    collectionDate:
+      configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
+        ? configurationProperties.currentDateAsText
+        : "",
     collector: "",
     rejected: false,
     rejectionReason: "",
@@ -462,7 +466,9 @@ const SampleType = (props) => {
         <div className="inlineDiv">
           <CustomDatePicker
             id={"collectionDate_" + index}
-            autofillDate={true}
+            autofillDate={
+              configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
+            }
             onChange={(date) => handleCollectionDate(date)}
             labelText={<FormattedMessage id="sample.collection.date" />}
             className="inputText"
@@ -470,6 +476,9 @@ const SampleType = (props) => {
 
           <CustomTimePicker
             id={"collectionTime_" + index}
+            autofillTime={
+              configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
+            }
             onChange={(time) => handleCollectionTime(time)}
             className="inputText"
             labelText={<FormattedMessage id="sample.collection.time" />}

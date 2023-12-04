@@ -4,16 +4,19 @@ import { TimePicker } from "@carbon/react";
 
 const CustomTimePicker = (props) => {
   const { configurationProperties } = useContext(ConfigurationContext);
-  const [currentTime, setCurrentTime] = useState(null);
+  const [currentTime, setCurrentTime] = useState(
+    props.value ? props.value : "",
+  );
 
   function handleTimePicker(e) {
     let time = e.target.value;
     setCurrentTime(time);
     props.onChange(time);
   }
-
   useEffect(() => {
-    setCurrentTime(configurationProperties.currentTimeAsText);
+    if (props.autofillTime) {
+      setCurrentTime(configurationProperties.currentTimeAsText);
+    }
   }, [configurationProperties]);
 
   useEffect(() => {

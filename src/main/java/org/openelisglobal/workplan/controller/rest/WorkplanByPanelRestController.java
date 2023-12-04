@@ -39,6 +39,8 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.test.service.TestServiceImpl;
+import org.openelisglobal.workplan.action.util.WorkplanPaging;
+import org.openelisglobal.workplan.form.WorkplanForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,67 +51,75 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController("WorkplanByPanelRestController")
 public class WorkplanByPanelRestController extends WorkplanRestController {
-
+	
 	@Autowired
 	SampleService sampleService;
+	
 	@Autowired
 	PatientService patientService;
+	
 	@Autowired
 	PersonService personService;
+	
 	@Autowired
 	ObservationHistoryService observationHistoryService;
+	
 	@Autowired
 	SampleHumanService sampleHumanService;
+	
 	@Autowired
 	SearchResultsService searchResultsService;
+	
 	@Autowired
 	private AnalysisService analysisService;
+	
 	@Autowired
 	private PanelItemService panelItemService;
+	
 	@Autowired
 	private SampleQaEventService sampleQaEventService;
+	
 	@Autowired
 	private UserService userService;
-
+	
 	@GetMapping(value = "/rest/workplan-by-panel", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, Object> showWorkPlanByPanel(HttpServletRequest request,
-			@RequestParam(name = "panel_id", defaultValue = "0") String panelID)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-		Map<String, Object> response = new HashMap<String, Object>();
-		List<TestResultItem> workplanTests;
-		List<TestResultItem> filteredTests;
-
-		workplanTests = getWorkplanByPanel(panelID);
-		filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests,
-				Constants.ROLE_RESULTS);
-
-		response.put("tests", filteredTests);
-		response.put("SUBJECT_ON_WORKPLAN",
-				ConfigurationProperties.getInstance().getPropertyValue(Property.SUBJECT_ON_WORKPLAN));
-		response.put("NEXT_VISIT_DATE_ON_WORKPLAN",
-				ConfigurationProperties.getInstance().getPropertyValue(Property.NEXT_VISIT_DATE_ON_WORKPLAN));
-		response.put("configurationName",
-				ConfigurationProperties.getInstance().getPropertyValue(Property.configurationName));
-
-		return response;
-
+	public WorkplanForm showWorkPlanByPanel(HttpServletRequest request,
+	        @RequestParam(name = "panel_id", defaultValue = "0") String panelID)
+	        throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		
+		WorkplanForm form = new WorkplanForm();
+		WorkplanPaging paging = new WorkplanPaging();
+		List<TestResultItem> workplanTests = new ArrayList<TestResultItem>();
+		List<TestResultItem> filteredTests = new ArrayList<TestResultItem>();
+	
+		String requestedPage = request.getParameter("page");
+		if (GenericValidator.isBlankOrNull(requestedPage)) {
+			workplanTests = getWorkplanByPanel(panelID);
+			filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests,
+			    Constants.ROLE_RESULTS);
+			paging.setDatabaseResults(request, form, filteredTests);
+		} else {
+			int requestedPageNumber = Integer.parseInt(requestedPage);
+			paging.page(request, form, requestedPageNumber);
+		}
+		
+		return form;
 	}
-
+	
 	private List<TestResultItem> getWorkplanByPanel(String panelId) {
-
+		
 		List<TestResultItem> workplanTestList = new ArrayList<>();
 		// check for patient name addition
 		boolean addPatientName = isPatientNameAdded();
-
+		
 		if (!(GenericValidator.isBlankOrNull(panelId) || panelId.equals("0"))) {
-
+			
 			List<PanelItem> panelItems = panelItemService.getPanelItemsForPanel(panelId);
-
+			
 			for (PanelItem panelItem : panelItems) {
 				List<Analysis> analysisList = analysisService.getAllAnalysisByTestAndStatus(panelItem.getTest().getId(),
-						statusList);
-
+				    statusList);
+				
 				for (Analysis analysis : analysisList) {
 					TestResultItem testResultItem = new TestResultItem();
 					testResultItem.setTestId(analysis.getTest().getId());
@@ -117,7 +127,7 @@ public class WorkplanByPanelRestController extends WorkplanRestController {
 					testResultItem.setAccessionNumber(sample.getAccessionNumber());
 					testResultItem.setPatientInfo(getSubjectNumber(analysis));
 					testResultItem.setNextVisitDate(SpringContext.getBean(ObservationHistoryService.class)
-							.getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId()));
+					        .getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId()));
 					testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
 					testResultItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
 					boolean nonConforming = QAService.isAnalysisParentNonConforming(analysis);
@@ -128,30 +138,31 @@ public class WorkplanByPanelRestController extends WorkplanRestController {
 					if (addPatientName) {
 						testResultItem.setPatientName(getPatientName(analysis));
 					}
-
+					
 					workplanTestList.add(testResultItem);
 				}
 			}
-
+			
 			Collections.sort(workplanTestList, new Comparator<TestResultItem>() {
+				
 				@Override
 				public int compare(TestResultItem o1, TestResultItem o2) {
 					return o1.getAccessionNumber().compareTo(o2.getAccessionNumber());
 				}
-
+				
 			});
-
+			
 			String currentAccessionNumber = null;
 			int sampleGroupingNumber = 0;
-
+			
 			int newIndex = 0;
 			int newElementsAdded = 0;
 			int workplanTestListOrigSize = workplanTestList.size();
-
+			
 			for (int i = 0; newIndex < (workplanTestListOrigSize + newElementsAdded); i++) {
-
+				
 				TestResultItem testResultItem = workplanTestList.get(newIndex);
-
+				
 				if (!testResultItem.getAccessionNumber().equals(currentAccessionNumber)) {
 					sampleGroupingNumber++;
 					if (addPatientName) {
@@ -159,20 +170,20 @@ public class WorkplanByPanelRestController extends WorkplanRestController {
 						newIndex++;
 						newElementsAdded++;
 					}
-
+					
 					currentAccessionNumber = testResultItem.getAccessionNumber();
 				}
 				testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
 				newIndex++;
 			}
-
+			
 		}
-
+		
 		return workplanTestList;
 	}
-
+	
 	private void addPatientNameToList(TestResultItem firstTestResultItem, List<TestResultItem> workplanTestList,
-			int insertPosition, int sampleGroupingNumber) {
+	        int insertPosition, int sampleGroupingNumber) {
 		TestResultItem testResultItem = new TestResultItem();
 		testResultItem.setAccessionNumber(firstTestResultItem.getAccessionNumber());
 		testResultItem.setPatientInfo(firstTestResultItem.getPatientInfo());
@@ -182,30 +193,29 @@ public class WorkplanByPanelRestController extends WorkplanRestController {
 		testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
 		testResultItem.setServingAsTestGroupIdentifier(true);
 		workplanTestList.add(insertPosition, testResultItem);
-
+		
 	}
-
+	
 	private boolean isPatientNameAdded() {
 		return ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "Haiti LNSP");
 	}
-
+	
 	private boolean getQaEventByTestSection(Analysis analysis) {
-
+		
 		if (analysis.getTestSection() != null && analysis.getSampleItem().getSample() != null) {
 			Sample sample = analysis.getSampleItem().getSample();
 			List<SampleQaEvent> sampleQaEventsList = getSampleQaEvents(sample);
 			for (SampleQaEvent event : sampleQaEventsList) {
 				QAService qa = new QAService(event);
-				if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
-						&& qa.getObservationValue(QAObservationType.SECTION)
-								.equals(analysis.getTestSection().getNameKey())) {
+				if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION)) && qa
+				        .getObservationValue(QAObservationType.SECTION).equals(analysis.getTestSection().getNameKey())) {
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-
+	
 	public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
 		return sampleQaEventService.getSampleQaEventsBySample(sample);
 	}
@@ -216,5 +226,4 @@ public class WorkplanByPanelRestController extends WorkplanRestController {
 		return DisplayListService.getInstance().getList(ListType.PANELS);
 	}
 	
-
 }

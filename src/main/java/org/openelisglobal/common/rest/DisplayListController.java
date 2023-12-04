@@ -40,6 +40,7 @@ import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,6 +52,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/rest/")
 public class DisplayListController extends BaseRestController{
+    @Value("${org.itech.login.saml:false}")
+    private Boolean useSAML;
+    @Value("${org.itech.login.oauth:false}")
+    private Boolean useOAUTH;
 
     @Autowired
     private ProviderService  providerService;
@@ -283,10 +288,12 @@ public class DisplayListController extends BaseRestController{
 			    Property.PHONE_FORMAT));
 	    configs.put(Property.releaseNumber.toString(), ConfigurationProperties.getInstance().getPropertyValue(
 			    Property.releaseNumber));
-	    configs.put(Property.restrictFreeTextProviderEntry.toString(), ConfigurationProperties.getInstance().getPropertyValue(
-			    Property.restrictFreeTextProviderEntry));
-	    configs.put(Property.restrictFreeTextProviderEntry.toString(), ConfigurationProperties.getInstance().getPropertyValue(
-			    Property.restrictFreeTextProviderEntry));
+	    configs.put(Property.ACCESSION_NUMBER_VALIDATE.toString(), ConfigurationProperties.getInstance().getPropertyValue(
+			    Property.ACCESSION_NUMBER_VALIDATE));
+	    configs.put(Property.AUTOFILL_COLLECTION_DATE.toString(), ConfigurationProperties.getInstance().getPropertyValue(
+			    Property.AUTOFILL_COLLECTION_DATE));
+	    configs.put(Property.ACCEPT_EXTERNAL_ORDERS.toString(), ConfigurationProperties.getInstance().getPropertyValue(
+			    Property.ACCEPT_EXTERNAL_ORDERS));
 		configs.put("currentDateAsText", DateUtil.getCurrentDateAsText());
 		configs.put("currentTimeAsText",DateUtil.getCurrentTimeAsText());
 		configs.put(Property.BANNER_TEXT.toString(), localizationService
@@ -297,6 +304,11 @@ public class DisplayListController extends BaseRestController{
 		configs.put("patientManagementTab", patientManagementTab != null ? patientManagementTab.getValue() : "false");
 		configs.put("studyManagementTab", studyManagementTab != null ? studyManagementTab.getValue() : "false");
 		configs.put("nonConformityTab", nonConformityTab != null ? nonConformityTab.getValue() : "false");
+		configs.put("useSaml", useSAML ? "true" : "false");
+		configs.put("useOauth", useOAUTH ? "true" : "false");
+		configs.put(Property.SUBJECT_ON_WORKPLAN.toString(), ConfigurationProperties.getInstance().getPropertyValue(Property.SUBJECT_ON_WORKPLAN));
+		configs.put(Property.NEXT_VISIT_DATE_ON_WORKPLAN.toString(), ConfigurationProperties.getInstance().getPropertyValue(Property.NEXT_VISIT_DATE_ON_WORKPLAN));
+		configs.put(Property.configurationName.toString(), ConfigurationProperties.getInstance().getPropertyValue(Property.configurationName));
         return configs;
 	}
 

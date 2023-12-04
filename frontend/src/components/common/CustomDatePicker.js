@@ -5,7 +5,9 @@ import { format } from "date-fns";
 
 const CustomDatePicker = (props) => {
   const { configurationProperties } = useContext(ConfigurationContext);
-  const [currentDate, setCurrentDate] = useState(props.value);
+  const [currentDate, setCurrentDate] = useState(
+    props.value ? props.value : "",
+  );
 
   function handleDatePickerChange(e) {
     let date = new Date(e[0]);
@@ -15,9 +17,8 @@ const CustomDatePicker = (props) => {
   }
 
   useEffect(() => {
-    const date = configurationProperties.currentDateAsText;
     if (props.autofillDate) {
-      setCurrentDate(date);
+      setCurrentDate(configurationProperties.currentDateAsText);
     }
   }, [configurationProperties]);
 

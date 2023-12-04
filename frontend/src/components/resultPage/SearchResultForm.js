@@ -478,25 +478,24 @@ export function SearchResultForm(props) {
         {pagination && (
           <Grid>
             <Column lg={12} />
-            <Column lg={1}>
+            <Column lg={2}>
               <Button
                 type=""
                 id="loadpreviousresults"
                 onClick={loadPreviousResultsPage}
                 disabled={previousPage != null ? false : true}
               >
-                <FormattedMessage id="Load Previous" />
+                <FormattedMessage id="button.label.loadprevious" />
               </Button>
             </Column>
-            <Column lg={1} />
-            <Column lg={1}>
+            <Column lg={2}>
               <Button
                 type=""
-                id="loadpreviousresults"
+                id="loadnextresults"
                 disabled={nextPage != null ? false : true}
                 onClick={loadNextResultsPage}
               >
-                <FormattedMessage id="Load Next" />
+                <FormattedMessage id="button.label.loadnext" />
               </Button>
             </Column>
           </Grid>
@@ -642,7 +641,7 @@ export function SearchResults(props) {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "8rem",
+      width: "10rem",
     },
     {
       name: "Current Result",

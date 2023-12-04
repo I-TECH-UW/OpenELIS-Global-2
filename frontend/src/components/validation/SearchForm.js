@@ -34,10 +34,31 @@ const SearchForm = (props) => {
   const [testSections, setTestSections] = useState([]);
   const [testDate, setTestDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [nextPage, setNextPage] = useState(null);
+  const [previousPage, setPreviousPage] = useState(null);
+  const [pagination, setPagination] = useState(false);
+  const [url, setUrl] = useState("");
+
   const validationResults = (data) => {
     if (data) {
       setSearchResults(data);
       setIsLoading(false);
+      if (data.paging) {
+        var { totalPages, currentPage } = data.paging;
+        if (totalPages > 1) {
+          setPagination(true);
+          if (parseInt(currentPage) < parseInt(totalPages)) {
+            setNextPage(parseInt(currentPage) + 1);
+          } else {
+            setNextPage(null);
+          }
+          if (parseInt(currentPage) > 1) {
+            setPreviousPage(parseInt(currentPage) - 1);
+          } else {
+            setPreviousPage(null);
+          }
+        }
+      }
       if (data.resultList.length > 0) {
         const newResultsList = data.resultList.map((data, id) => {
           let tempData = { ...data };
@@ -70,6 +91,9 @@ const SearchForm = (props) => {
   }, [searchResults]);
 
   const handleSubmit = (values) => {
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
     setIsLoading(true);
     var accessionNumber = values.accessionNumber ? values.accessionNumber : "";
     var unitType = values.unitType ? values.unitType : "";
@@ -84,16 +108,29 @@ const SearchForm = (props) => {
       date +
       "&doRange=" +
       doRange;
-
+      setUrl(searchEndPoint);
     getFromOpenElisServer(searchEndPoint, validationResults);
   };
 
   const handleChange = () => {};
+
+  const loadNextResultsPage = () => {
+    setIsLoading(true);
+    getFromOpenElisServer(url + "&page=" + nextPage, validationResults);
+  };
+
+  const loadPreviousResultsPage = () => {
+    setIsLoading(true);
+    getFromOpenElisServer(url + "&page=" + previousPage, validationResults);
+  };
   const fetchTestSections = (response) => {
     setTestSections(response);
   };
 
   const submitOnSelect = (e) => {
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
     var values = { unitType: e.target.value };
     handleSubmit(values);
   };
@@ -111,6 +148,9 @@ const SearchForm = (props) => {
       setDoRagnge(false);
     }
     getFromOpenElisServer("/rest/user-test-sections", fetchTestSections);
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
   }, []);
   return (
     <>
@@ -236,6 +276,34 @@ const SearchForm = (props) => {
           </Grid>
         </>
       )}
+
+<>
+        {pagination && (
+          <Grid>
+            <Column lg={11} />
+            <Column lg={2}>
+              <Button
+                type=""
+                id="loadpreviousresults"
+                onClick={loadPreviousResultsPage}
+                disabled={previousPage != null ? false : true}
+              >
+                <FormattedMessage id="button.label.loadprevious" />
+              </Button>
+            </Column>
+            <Column lg={2}>
+              <Button
+                type=""
+                id="loadnextresults"
+                disabled={nextPage != null ? false : true}
+                onClick={loadNextResultsPage}
+              >
+                <FormattedMessage id="button.label.loadnext" />
+              </Button>
+            </Column>
+          </Grid>
+        )}
+      </>
     </>
   );
 };

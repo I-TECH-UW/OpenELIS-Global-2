@@ -14,7 +14,7 @@
 * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
 *
 */
-package org.openelisglobal.result.action.util;
+package org.openelisglobal.workplan.action.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -26,57 +26,48 @@ import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.paging.IPageDivider;
 import org.openelisglobal.common.paging.IPageFlattener;
 import org.openelisglobal.common.paging.IPageUpdater;
-import org.openelisglobal.common.paging.PagingBean;
 import org.openelisglobal.common.paging.PagingProperties;
 import org.openelisglobal.common.paging.PagingUtility;
 import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.result.form.ResultsPagingForm;
+
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.beanItems.TestResultItem;
+import org.openelisglobal.workplan.form.WorkplanForm;
 
-public class ResultsPaging {
+public class WorkplanPaging {
     private PagingUtility<List<TestResultItem>> paging = new PagingUtility<>();
 
     private static TestItemPageHelper pagingHelper = new TestItemPageHelper();
 
-    public void setDatabaseResults(HttpServletRequest request, ResultsPagingForm form, List<TestResultItem> tests)
+    public void setDatabaseResults(HttpServletRequest request, WorkplanForm form, List<TestResultItem> tests)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         paging.setDatabaseResults(request.getSession(), tests, pagingHelper);
 
         List<TestResultItem> resultPage = paging.getPage(1, request.getSession());
         if (resultPage != null) {
-            form.setTestResult(resultPage);
+            form.setWorkplanTests(resultPage);
             form.setPaging(paging.getPagingBeanWithSearchMapping(1, request.getSession()));
         }
     }
 
-    public void page(HttpServletRequest request, ResultsPagingForm form, int newPage)
+    public void page(HttpServletRequest request, WorkplanForm form, int newPage)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.FALSE);
-        //List<TestResultItem> clientTests = form.getTestResult();
-        //PagingBean bean = form.getPaging();
-        //paging.updatePagedResults(request.getSession(), clientTests, bean, pagingHelper);
 
         if (newPage < 0) {
             newPage = 0;
         }
         List<TestResultItem> resultPage = paging.getPage(newPage, request.getSession());
         if (resultPage != null) {
-            form.setTestResult(resultPage);
+            form.setWorkplanTests(resultPage);
             form.setTestSectionId("0");
             form.setPaging(paging.getPagingBeanWithSearchMapping(newPage, request.getSession()));
         }
 
     }
 
-    public void updatePagedResults(HttpServletRequest request, ResultsPagingForm form) {
-        List<TestResultItem> clientTests = form.getTestResult();
-        PagingBean bean = form.getPaging();
-
-        paging.updatePagedResults(request.getSession(), clientTests, bean, pagingHelper);
-    }
 
     public List<TestResultItem> getResults(HttpServletRequest request) {
         return paging.getAllResults(request.getSession(), pagingHelper);
@@ -89,19 +80,18 @@ public class ResultsPaging {
         public void createPages(List<TestResultItem> tests, List<List<TestResultItem>> pagedResults) {
             List<TestResultItem> page = new ArrayList<>();
 
-            String accessionSequenceNumber = null;
+            Boolean createNewPage = false;
             int resultCount = 0;
 
             for (TestResultItem item : tests) {
-                if (accessionSequenceNumber != null
-                        && !accessionSequenceNumber.equals(item.getSequenceAccessionNumber())) {
+                if (createNewPage) {
                     resultCount = 0;
-                    accessionSequenceNumber = null;
+                    createNewPage = false;
                     pagedResults.add(page);
                     page = new ArrayList<>();
                 }
                 if (resultCount >= SpringContext.getBean(PagingProperties.class).getResultsPageSize()) {
-                    accessionSequenceNumber = item.getSequenceAccessionNumber();
+                    createNewPage = true;
                 }
 
                 page.add(item);

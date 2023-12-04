@@ -78,6 +78,9 @@ public class CustomFormAuthenticationSuccessHandler extends SavedRequestAwareAut
 
         String homePath = "/Dashboard";
         LoginUser loginInfo = null;
+        boolean apiLogin = "true".equals(request.getParameter("apiCall"));
+        boolean samlLogin = false;
+        boolean oauthLogin = false;
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof UserDetails) {
@@ -87,10 +90,12 @@ public class CustomFormAuthenticationSuccessHandler extends SavedRequestAwareAut
                 DefaultSaml2AuthenticatedPrincipal samlUser = (DefaultSaml2AuthenticatedPrincipal) principal;
                 loginInfo = loginService.getUserProfile(samlUser.getName());
                 request.getSession().setAttribute("samlSession", true);
+                samlLogin = true;
             } else if (principal instanceof DefaultOAuth2User) {
                 DefaultOAuth2User oauthUser = (DefaultOAuth2User) principal;
                 loginInfo = loginService.getUserProfile(oauthUser.getAttribute("preferred_username"));
                 request.getSession().setAttribute("oauthSession", true);
+                oauthLogin = true;
             }
         }
         try {
@@ -121,7 +126,11 @@ public class CustomFormAuthenticationSuccessHandler extends SavedRequestAwareAut
             homePath += "?passReminder=true";
         }
 
-        if ("true".equals(request.getParameter("apiCall"))) {
+        if (apiLogin) {
+            this.handleApiLogin(request, response);
+        } else if (samlLogin) {
+            this.handleApiLogin(request, response);
+        } else if (oauthLogin) {
             this.handleApiLogin(request, response);
         } else {
             // redirectStrategy.sendRedirect(request, response, homePath);

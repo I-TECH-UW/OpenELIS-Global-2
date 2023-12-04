@@ -39,6 +39,8 @@ export default function App() {
   };
 
   const [userSessionDetails, setUserSessionDetails] = useState({});
+  const [errorLoadingSessionDetails, setErrorLoadingSessionDetails] =
+    useState(false);
   const [locale, setLocale] = useState("en");
 
   useEffect(() => {
@@ -47,7 +49,7 @@ export default function App() {
 
   const getUserSessionDetails = async () => {
     let counter = 0;
-    while (counter < 10 && !("authenticated" in userSessionDetails)) {
+    while (counter < 10) {
       try {
         const response = await fetch(
           config.serverBaseUrl + `/session`,
@@ -59,7 +61,15 @@ export default function App() {
         if (jsonResp.authenticated) {
           localStorage.setItem("CSRF", jsonResp.csrf);
         }
-        setUserSessionDetails(jsonResp);
+
+        if (
+          !Object.keys(jsonResp).every(
+            (key) => jsonResp[key] === userSessionDetails[key],
+          )
+        ) {
+          setUserSessionDetails(jsonResp);
+        }
+        setErrorLoadingSessionDetails(false);
         return jsonResp;
       } catch (error) {
         console.log(error);
@@ -81,6 +91,7 @@ export default function App() {
       }
       ++counter;
     }
+    setErrorLoadingSessionDetails(true);
     return userSessionDetails;
   };
 
@@ -133,11 +144,18 @@ export default function App() {
     i18nConfig.locale = lang;
     localStorage.setItem("locale", lang);
     //rerender the component on changing locale
-    setLocale(lang)
+    setLocale(lang);
   };
 
   const onChangeLanguage = (lang) => {
     changeLanguage(lang);
+  };
+
+  const refresh = async (callback) => {
+    await getUserSessionDetails();
+    if (typeof callback === "function") {
+      callback();
+    }
   };
 
   const isCheckingLogin = () => {
@@ -154,8 +172,10 @@ export default function App() {
       <UserSessionDetailsContext.Provider
         value={{
           userSessionDetails,
+          errorLoadingSessionDetails,
           isCheckingLogin,
           logout,
+          refresh,
         }}
       >
         <>
@@ -229,7 +249,7 @@ export default function App() {
                   component={() => <ModifyOrder />}
                   role="Reception"
                 />
-                 <SecureRoute
+                <SecureRoute
                   path="/FindOrder"
                   exact
                   component={() => <FindOrder />}
