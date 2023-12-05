@@ -29,7 +29,7 @@ import {
 } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog } from "../common/CustomNotification";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage ,useIntl } from "react-intl";
 import "./PathologyDashboard.css";
 
 function PathologyDashboard() {
@@ -53,6 +53,7 @@ function PathologyDashboard() {
     complete: 0,
   });
   const [loading, setLoading] = useState(true);
+  const intl = useIntl();
 
   const setStatusList = (statusList) => {
     if (componentMounted.current) {
@@ -217,13 +218,26 @@ function PathologyDashboard() {
   };
 
   const tileList = [
-    { title: "Cases in Progress", count: counts.inProgress },
-    { title: "Awaiting Pathology Review", count: counts.awaitingReview },
     {
-      title: "Additional Pathology Requests",
+      title: <FormattedMessage id="pathology.label.casesInProgress" />,
+      count: counts.inProgress,
+    },
+    {
+      title: <FormattedMessage id="pathology.label.review" />,
+      count: counts.awaitingReview,
+    },
+    {
+      title: <FormattedMessage id="pathology.label.requests" />,
       count: counts.additionalRequests,
     },
-    { title: "Complete (Week " + getPastWeek() + " )", count: counts.complete },
+    {
+      title:
+        intl.formatMessage({ id: "pathology.label.complete" }) +
+        "(Week " +
+        getPastWeek() +
+        " )",
+      count: counts.complete,
+    },
   ];
 
   useEffect(() => {

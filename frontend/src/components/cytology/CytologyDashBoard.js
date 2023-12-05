@@ -29,7 +29,7 @@ import {
 } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog } from "../common/CustomNotification";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import "../pathology/PathologyDashboard.css";
 
 function CytologyDashboard() {
@@ -52,6 +52,7 @@ function CytologyDashboard() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const intl = useIntl();
 
   const setStatusList = (statusList) => {
     if (componentMounted.current) {
@@ -215,9 +216,22 @@ function CytologyDashboard() {
   };
 
   const tileList = [
-    { title: "Cases in Progress", count: counts.inProgress },
-    { title: "Awaiting Cytopathologist Review", count: counts.awaitingReview },
-    { title: "Complete (Week " + getPastWeek() + " )", count: counts.complete },
+    {
+      title: intl.formatMessage({ id: "pathology.label.casesInProgress" }),
+      count: counts.inProgress,
+    },
+    {
+      title: intl.formatMessage({ id: "cytology.label.review" }),
+      count: counts.awaitingReview,
+    },
+    {
+      title:
+        intl.formatMessage({ id: "pathology.label.complete" }) +
+        "(Week " +
+        getPastWeek() +
+        " )",
+      count: counts.complete,
+    },
   ];
 
   useEffect(() => {
