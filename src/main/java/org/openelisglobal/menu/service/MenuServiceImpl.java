@@ -48,6 +48,18 @@ public class MenuServiceImpl extends BaseObjectServiceImpl<Menu, String> impleme
        return item;
     }
 
+    @Override
+    @Transactional
+    public List<MenuItem> save(List<MenuItem> menuItems) {
+        List<MenuItem> menuItemsNew = new ArrayList<>();
+        for (MenuItem menuItem : menuItems) {
+            MenuItem item =  save(menuItem, menuItem.getMenu().getParent());
+            menuItemsNew.add(item);
+        }
+       MenuUtil.forceRebuild();
+       return menuItemsNew; 
+    }
+
     private MenuItem save(MenuItem menuItem, Menu parent) {
         Menu menu = menuItem.getMenu();
         Menu oldMenu;

@@ -12,5 +12,7 @@ public interface MenuService extends BaseObjectService<Menu, String> {
     List<Menu> getAllActiveMenus();
 
     MenuItem save(MenuItem menuItem);
+    
+    List<MenuItem> save(List<MenuItem> menuItems);
 
 }

@@ -285,6 +285,8 @@ public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, Str
         reflex.setRelation(condition.getRelation());
         reflex.setTestAnalyte(testAnalyte);
         reflex.setTest(triggerTest);
+        reflex.setInternalNote(action.getInternalNote());
+        reflex.setExternalNote(action.getExternalNote());
         if (testAndSampleMatches(action.getReflexTestId(), action.getSampleId())) {
             Test reflexTest = testService.getTestById(action.getReflexTestId());
             reflex.setAddedTest(reflexTest);

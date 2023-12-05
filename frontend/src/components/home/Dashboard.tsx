@@ -30,7 +30,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
   const componentMounted = useRef(true);
 
   useEffect(() => {
-    getFromOpenElisServer("/rest/home-dashboard/counts", loadCount);
+    getFromOpenElisServer("/rest/home-dashboard/metrics", loadCount);
 
     return () => {
       // This code runs when component is unmounted

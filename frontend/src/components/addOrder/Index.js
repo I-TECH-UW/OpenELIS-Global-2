@@ -64,6 +64,15 @@ const Index = () => {
   };
   const handleSubmitOrderForm = (e) => {
     e.preventDefault();
+    if ("years" in orderFormValues.patientProperties) {
+      delete orderFormValues.patientProperties.years;
+    }
+    if ("months" in orderFormValues.patientProperties) {
+      delete orderFormValues.patientProperties.months;
+    }
+    if ("days" in orderFormValues.patientProperties) {
+      delete orderFormValues.patientProperties.days;
+    }
     console.log(JSON.stringify(orderFormValues))
     postToOpenElisServer(
       "/rest/SamplePatientEntry",
