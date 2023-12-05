@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
+import org.openelisglobal.common.rest.provider.bean.TestDisplayBean;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.IStatusService;
@@ -23,6 +24,8 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
@@ -38,6 +41,8 @@ import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.testresult.service.TestResultService;
+import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -83,6 +88,12 @@ public class DisplayListController extends BaseRestController{
 
 	@Autowired
 	private SiteInformationService siteInformationService;
+
+	@Autowired
+	private TestResultService testResultService;
+	
+	@Autowired
+	DictionaryService dictionaryService;
 
 	private static boolean HAS_NFS_PANEL = false;
 
@@ -419,5 +430,41 @@ public class DisplayListController extends BaseRestController{
 		
 		return list;
 	}
+
+	@GetMapping(value = "test-display-beans", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<TestDisplayBean> getTestBeansBySample(@RequestParam(required = false) String sampleType) {
+        List<TestDisplayBean> testItems = new ArrayList<>();
+        List<Test> testList = new ArrayList<>();
+        if (StringUtils.isNotBlank(sampleType)) {
+            testList = typeOfSampleService.getActiveTestsBySampleTypeId(sampleType, false);
+        } else {
+            return testItems;
+        }
+        
+        for (Test test : testList) {
+            TestDisplayBean testDisplayBean = new TestDisplayBean(test.getId(),
+                    TestServiceImpl.getLocalizedTestNameWithType(test), testService.getResultType(test));
+            List<IdValuePair> resultList = new ArrayList<>();
+            List<TestResult> results = testResultService.getActiveTestResultsByTest(test.getId());
+            results.forEach(result -> {
+                if (result.getValue() != null) {
+                    Dictionary dict = dictionaryService.getDictionaryById(result.getValue());
+                    resultList.add(new IdValuePair(dict.getId(), dict.getLocalizedName()));
+                }
+            });
+            testDisplayBean.setResultList(resultList);
+            testItems.add(testDisplayBean);
+            
+            Collections.sort(testItems, new Comparator<TestDisplayBean>() {
+                
+                @Override
+                public int compare(TestDisplayBean o1, TestDisplayBean o2) {
+                    return o1.getValue().compareTo(o2.getValue());
+                }
+            });
+        }
+        return testItems;
+    }
 	
 }
