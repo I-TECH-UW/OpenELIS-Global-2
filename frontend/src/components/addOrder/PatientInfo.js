@@ -55,7 +55,7 @@ const PatientInfo = (props) => {
       <Stack gap={10}>
         <div className="orderLegendBody">
           <h3>
-            <FormattedMessage id="sidenav.label.patient" />
+            <FormattedMessage id="banner.menu.patient" />
           </h3>
           <div className="tabsLayout">
             <Button

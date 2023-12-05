@@ -109,4 +109,19 @@
 			<column name="relation" type="VARCHAR(40)"  />
 		</addColumn>
 	</changeSet>
+	<changeSet author="moses_mutesa" id="5">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="test_reflex" schemaName="clinlims" />
+			<not>
+				<columnExists tableName="test_reflex" columnName="internalNote" />
+			</not>
+		</preConditions>
+		<comment>add InternalNote and External Column to test_reflex table</comment>
+		<addColumn schemaName="clinlims" tableName="test_reflex">
+			<column name="internal_note" type="VARCHAR(50)"  />
+		</addColumn>
+		<addColumn schemaName="clinlims" tableName="test_reflex">
+			<column name="external_note" type="VARCHAR(50)"  />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
