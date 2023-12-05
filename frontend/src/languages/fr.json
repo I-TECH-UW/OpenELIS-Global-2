@@ -140,8 +140,6 @@
     "header.label.version" :"Version:",
     "header.label.logout" :"Déconnexion",
     "header.label.selectlocale": "Sélectionner la Langue", 
-    "sideNav.title.intermediatereport1" :"Version intermédiaire 1",
-    "sideNav.title.intermediatereport2" :"Version intermédiaire 2",
     "sidenav.label.addorder" : "Ajouter une commande",
     "sidenav.label.editorder" : "Modifier la commande",
     "sidenav.label.incomingorder" : "Commandes Entrantes",
