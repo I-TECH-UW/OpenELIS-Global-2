@@ -43,7 +43,7 @@ public class MenuServiceImpl extends BaseObjectServiceImpl<Menu, String> impleme
     @Override
     @Transactional
     public MenuItem save(MenuItem menuItem) {
-       MenuItem item =  save(menuItem, null);
+       MenuItem item =  saveMenuItem(menuItem);
        MenuUtil.forceRebuild();
        return item;
     }
@@ -53,14 +53,14 @@ public class MenuServiceImpl extends BaseObjectServiceImpl<Menu, String> impleme
     public List<MenuItem> save(List<MenuItem> menuItems) {
         List<MenuItem> menuItemsNew = new ArrayList<>();
         for (MenuItem menuItem : menuItems) {
-            MenuItem item =  save(menuItem, menuItem.getMenu().getParent());
+            MenuItem item =  saveMenuItem(menuItem);
             menuItemsNew.add(item);
         }
        MenuUtil.forceRebuild();
        return menuItemsNew; 
     }
 
-    private MenuItem save(MenuItem menuItem, Menu parent) {
+    private MenuItem saveMenuItem(MenuItem menuItem) {
         Menu menu = menuItem.getMenu();
         Menu oldMenu;
         if (GenericValidator.isBlankOrNull(menu.getId())) {
@@ -70,13 +70,12 @@ public class MenuServiceImpl extends BaseObjectServiceImpl<Menu, String> impleme
         }
         oldMenu.setActionURL(menu.getActionURL());
         oldMenu.setIsActive(menu.getIsActive());
-        oldMenu.setParent(parent);
         menuItem.setMenu(oldMenu);
         
         List<MenuItem> oldChildren = menuItem.getChildMenus();
         menuItem.setChildMenus(new ArrayList<>());
         for (MenuItem oldChild : oldChildren) {
-            menuItem.getChildMenus().add(save(oldChild, oldMenu));
+            menuItem.getChildMenus().add(save(oldChild));
         }
         return menuItem;
     }
