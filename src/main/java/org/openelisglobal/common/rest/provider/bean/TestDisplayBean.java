@@ -1,14 +1,14 @@
-package org.openelisglobal.testcalculated.action.bean;
+package org.openelisglobal.common.rest.provider.bean;
 
 import java.util.List;
 import org.openelisglobal.common.util.IdValuePair;
 
-public class TestDisplayBeanItem extends IdValuePair {
+public class TestDisplayBean extends IdValuePair {
 
     String resultType ;
     List<IdValuePair> resultList;
 
-    public TestDisplayBeanItem(String id, String value , String resultType) {
+    public TestDisplayBean(String id, String value , String resultType) {
         super(id, value);
         this.resultType = resultType;
     }
