@@ -988,9 +988,8 @@ function ReflexRule() {
                             <div>
                               <TextArea
                                 style={{
-                                  width: "1%",
+                                  width: "100%",
                                   height: "1px",
-                                  marginLeft: "-8px",
                                 }}
                                 name="internalNote"
                                 type="text"
@@ -1014,9 +1013,8 @@ function ReflexRule() {
                               <TextArea
                                 name="externalNote"
                                 style={{
-                                  width: "1%",
+                                  width: "100%",
                                   height: "1px",
-                                  marginLeft: "-5px",
                                 }}
                                 type="text"
                                 id={index + "_" + action_index + "_xnote"}
