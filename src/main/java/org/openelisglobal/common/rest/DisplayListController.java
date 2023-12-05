@@ -90,10 +90,10 @@ public class DisplayListController extends BaseRestController{
 	private SiteInformationService siteInformationService;
 
 	@Autowired
-    private TestResultService testResultService;
-
+	private TestResultService testResultService;
+	
 	@Autowired
-    DictionaryService dictionaryService;
+	DictionaryService dictionaryService;
 
 	private static boolean HAS_NFS_PANEL = false;
 
