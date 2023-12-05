@@ -18,7 +18,7 @@ public class ProgramSampleDAOImpl extends BaseDAOImpl<ProgramSample, Integer> im
     @Override
     public ProgramSample getProgrammeSampleBySample(Integer sampleId, String programName) {
         
-        String className = "PathologySample";
+        String className = "ProgramSample";
         if (programName != null) {
             if (programName.toLowerCase().contains("pathology")) {
                 className = "PathologySample";
