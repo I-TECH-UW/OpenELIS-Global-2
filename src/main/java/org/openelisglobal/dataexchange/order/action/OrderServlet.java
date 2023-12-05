@@ -72,7 +72,7 @@ public class OrderServlet extends HohServlet {
             OrderWorker worker = new OrderWorker(message);
 
             worker.setInterpreter(SpringContext.getBean(IOrderInterpreter.class));
-            worker.setExistanceChecker(SpringContext.getBean(DBOrderExistanceChecker.class));
+            worker.setExistanceChecker(SpringContext.getBean(IOrderExistanceChecker.class));
             worker.setPersister(SpringContext.getBean(IOrderPersister.class));
 
             OrderResult orderResult = worker.handleOrderRequest();
