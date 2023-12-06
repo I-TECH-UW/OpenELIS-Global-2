@@ -47,7 +47,12 @@ function ImmunohistochemistryDashboard() {
   const [filters, setFilters] = useState({
     searchTerm: "",
     myCases: false,
-    statuses: [],
+    statuses: [
+      {
+        id: "IN_PROGRESS",
+        value: "In Progress",
+      },
+    ],
   });
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
   const [loading, setLoading] = useState(true);
@@ -183,14 +188,16 @@ function ImmunohistochemistryDashboard() {
   };
 
   const setImmunohistochemistryEntriesWithIds = (entries) => {
-    if (componentMounted.current && entries && entries.length > 0) {
-      setImmunohistochemistryEntries(
-        entries.map((entry) => {
-          return { ...entry, id: "" + entry.immunohistochemistrySampleId };
-        }),
-      );
-    }
     if (componentMounted.current) {
+      if (entries && entries.length > 0) {
+        setImmunohistochemistryEntries(
+          entries.map((entry) => {
+            return { ...entry, id: "" + entry.immunohistochemistrySampleId };
+          }),
+        );
+      } else {
+        setImmunohistochemistryEntries([]);
+      }
       setLoading(false);
     }
   };
@@ -248,7 +255,15 @@ function ImmunohistochemistryDashboard() {
 
   useEffect(() => {
     componentMounted.current = true;
-    setFilters({ ...filters, statuses: statuses });
+    setFilters({
+      ...filters,
+      statuses: [
+        {
+          id: "IN_PROGRESS",
+          value: "In Progress",
+        },
+      ],
+    });
 
     return () => {
       componentMounted.current = false;
@@ -314,11 +329,13 @@ function ImmunohistochemistryDashboard() {
                 id="statusFilter"
                 name="statusFilter"
                 labelText="Status"
-                defaultValue="placeholder"
+                value={
+                  filters.statuses.length > 1 ? "All" : filters.statuses[0].id
+                }
                 onChange={setStatusFilter}
                 noLabel
               >
-                <SelectItem disabled hidden value="placeholder" text="Status" />
+                <SelectItem disabled value="placeholder" text="Status" />
                 <SelectItem text="All" value="All" />
                 {statuses.map((status, index) => {
                   return (

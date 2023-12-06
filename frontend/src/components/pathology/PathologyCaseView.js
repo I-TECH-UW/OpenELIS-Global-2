@@ -27,7 +27,7 @@ import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
   postToOpenElisServerForPDF,
-  hasRole
+  hasRole,
 } from "../utils/Utils";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { NotificationContext } from "../layout/Layout";
@@ -46,11 +46,11 @@ export const QuestionnaireResponse = ({ questionnaireResponse }) => {
               <h6>{item.text}:</h6>
             </Column>
             <Column lg={10} md={8} sm={4}>
-            {item.answer &&
-              item.answer.map((answer, index) => {
-                return <Tag key={index}>{renderAnswer(answer)}</Tag>;
-              })}
-              </Column>
+              {item.answer &&
+                item.answer.map((answer, index) => {
+                  return <Tag key={index}>{renderAnswer(answer)}</Tag>;
+                })}
+            </Column>
           </Grid>
         </div>
       </>
@@ -126,7 +126,6 @@ function PathologyCaseView() {
   const [slidesToAdd, setSlidesToAdd] = useState(1);
   const [loadingReport, setLoadingReport] = useState(false);
 
-
   async function displayStatus(response) {
     var body = await response.json();
     console.log(body);
@@ -153,7 +152,7 @@ function PathologyCaseView() {
 
   const reportStatus = (pdfGenerated) => {
     setNotificationVisible(true);
-    setLoadingReport(false)
+    setLoadingReport(false);
     if (pdfGenerated) {
       setNotificationBody({
         kind: NotificationKinds.success,
@@ -167,7 +166,7 @@ function PathologyCaseView() {
         message: "Error while Generating Report",
       });
     }
-  }
+  };
 
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -408,7 +407,7 @@ function PathologyCaseView() {
               save(e);
             }}
           >
-             <FormattedMessage id="label.button.save" />
+            <FormattedMessage id="label.button.save" />
           </Button>
         </Column>
         <Column lg={16} md={8} sm={4}>
@@ -503,7 +502,9 @@ function PathologyCaseView() {
                   <>
                     <Column lg={2} md={8} sm={4}>
                       <IconButton
-                        label={intl.formatMessage({ id: "label.button.remove.report" })}
+                        label={intl.formatMessage({
+                          id: "label.button.remove.report",
+                        })}
                         onClick={() => {
                           var info = { ...pathologySampleInfo };
                           info["reports"].splice(index, 1);
@@ -549,7 +550,9 @@ function PathologyCaseView() {
                       />
                     </Column>
                     <Column lg={3}>
-                      <h6><FormattedMessage id="pathology.label.report" /></h6>
+                      <h6>
+                        <FormattedMessage id="pathology.label.report" />
+                      </h6>
                     </Column>
                     <Column lg={2} md={1} sm={2}>
                       {pathologySampleInfo.reports[index].image && (
@@ -591,7 +594,7 @@ function PathologyCaseView() {
                         <FormattedMessage id="button.label.genarateReport" />
                       </Button>
                     </Column>
-                    <Column lg={3} md={2} sm={2}/>
+                    <Column lg={3} md={2} sm={2} />
                     <Column lg={16} md={8} sm={4}>
                       <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                     </Column>
@@ -631,7 +634,9 @@ function PathologyCaseView() {
                   <>
                     <Column lg={2} md={8} sm={4}>
                       <IconButton
-                        label={intl.formatMessage({ id: "label.button.remove.block" })}
+                        label={intl.formatMessage({
+                          id: "label.button.remove.block",
+                        })}
                         onClick={() => {
                           var info = { ...pathologySampleInfo };
                           info["blocks"].splice(index, 1);
@@ -647,9 +652,13 @@ function PathologyCaseView() {
                     <Column lg={3} md={2} sm={1} key={index}>
                       <TextInput
                         id="blockNumber"
-                        labelText={intl.formatMessage({ id: "pathology.label.block.number" })}
+                        labelText={intl.formatMessage({
+                          id: "pathology.label.block.number",
+                        })}
                         hideLabel={true}
-                        placeholder={intl.formatMessage({ id: "pathology.label.block.number" })}
+                        placeholder={intl.formatMessage({
+                          id: "pathology.label.block.number",
+                        })}
                         value={block.blockNumber}
                         type="number"
                         onChange={(e) => {
@@ -665,9 +674,13 @@ function PathologyCaseView() {
                     <Column lg={3} md={2} sm={1}>
                       <TextInput
                         id="location"
-                        labelText={intl.formatMessage({ id: "pathology.label.location" })}
+                        labelText={intl.formatMessage({
+                          id: "pathology.label.location",
+                        })}
                         hideLabel={true}
-                        placeholder={intl.formatMessage({ id: "pathology.label.location" })}
+                        placeholder={intl.formatMessage({
+                          id: "pathology.label.location",
+                        })}
                         value={block.location}
                         onChange={(e) => {
                           var newBlocks = [...pathologySampleInfo.blocks];
@@ -702,28 +715,32 @@ function PathologyCaseView() {
                 );
               })}
             <Column lg={2} md={8} sm={4}>
-            <TextInput
-              id="blocksToAdd"
-              labelText={intl.formatMessage({ id: "pathology.label.block.add.number" })}
-              hideLabel={true}
-              placeholder={intl.formatMessage({ id: "pathology.label.block.add.number" })}
-              value={blocksToAdd}
-              type="number"
+              <TextInput
+                id="blocksToAdd"
+                labelText={intl.formatMessage({
+                  id: "pathology.label.block.add.number",
+                })}
+                hideLabel={true}
+                placeholder={intl.formatMessage({
+                  id: "pathology.label.block.add.number",
+                })}
+                value={blocksToAdd}
+                type="number"
                 onChange={(e) => {
                   setBlocksToAdd(e.target.value);
-              }}
-            />
+                }}
+              />
             </Column>
             <Column lg={14} md={8} sm={4}>
               <Button
                 onClick={() => {
                   const maxBlockNumber = pathologySampleInfo.blocks.reduce(
                     (max, block) => {
-                      const blockNumber = block.blockNumber || 0; 
+                      const blockNumber = block.blockNumber || 0;
                       return Math.ceil(Math.max(max, blockNumber));
                     },
                     0,
-                  ); 
+                  );
 
                   var allBlocks = pathologySampleInfo.blocks || [];
                   Array.from({ length: blocksToAdd }, (_, index) => {
@@ -731,11 +748,11 @@ function PathologyCaseView() {
                       id: "",
                       blockNumber: maxBlockNumber + 1 + index,
                     });
-                  })
+                  });
 
                   setPathologySampleInfo({
                     ...pathologySampleInfo,
-                    blocks: allBlocks
+                    blocks: allBlocks,
                   });
                 }}
               >
@@ -760,7 +777,9 @@ function PathologyCaseView() {
                   <>
                     <Column lg={2} md={8} sm={4}>
                       <IconButton
-                        label={intl.formatMessage({ id: "label.button.remove.slide" })}
+                        label={intl.formatMessage({
+                          id: "label.button.remove.slide",
+                        })}
                         onClick={() => {
                           var info = { ...pathologySampleInfo };
                           info["slides"].splice(index, 1);
@@ -776,9 +795,13 @@ function PathologyCaseView() {
                     <Column lg={3} md={2} sm={1} key={index}>
                       <TextInput
                         id="slideNumber"
-                        labelText={intl.formatMessage({ id: "pathology.label.slide.number" })}
+                        labelText={intl.formatMessage({
+                          id: "pathology.label.slide.number",
+                        })}
                         hideLabel={true}
-                        placeholder={intl.formatMessage({ id: "pathology.label.slide.number" })}
+                        placeholder={intl.formatMessage({
+                          id: "pathology.label.slide.number",
+                        })}
                         value={slide.slideNumber}
                         type="number"
                         onChange={(e) => {
@@ -794,9 +817,13 @@ function PathologyCaseView() {
                     <Column lg={3} md={2} sm={1}>
                       <TextInput
                         id="location"
-                        labelText={intl.formatMessage({ id: "pathology.label.location" })}
+                        labelText={intl.formatMessage({
+                          id: "pathology.label.location",
+                        })}
                         hideLabel={true}
-                        placeholder={intl.formatMessage({ id: "pathology.label.location" })}
+                        placeholder={intl.formatMessage({
+                          id: "pathology.label.location",
+                        })}
                         value={slide.location}
                         onChange={(e) => {
                           var newSlides = [...pathologySampleInfo.slides];
@@ -878,29 +905,33 @@ function PathologyCaseView() {
                 );
               })}
 
-          <Column lg={2} md={8} sm={4}>
-            <TextInput
-              id="slidesToAdd"
-              labelText={intl.formatMessage({ id: "pathology.label.slide.add.number" })}
-              hideLabel={true}
-              placeholder={intl.formatMessage({ id: "pathology.label.slide.add.number" })}
-              value={slidesToAdd}
-              type="number"
+            <Column lg={2} md={8} sm={4}>
+              <TextInput
+                id="slidesToAdd"
+                labelText={intl.formatMessage({
+                  id: "pathology.label.slide.add.number",
+                })}
+                hideLabel={true}
+                placeholder={intl.formatMessage({
+                  id: "pathology.label.slide.add.number",
+                })}
+                value={slidesToAdd}
+                type="number"
                 onChange={(e) => {
                   setSlidesToAdd(e.target.value);
-              }}
-            />
+                }}
+              />
             </Column>
             <Column lg={14} md={8} sm={4}>
               <Button
                 onClick={() => {
                   const maxSlideNumber = pathologySampleInfo.slides.reduce(
                     (max, slide) => {
-                      const slideNumber = slide.slideNumber || 0; 
+                      const slideNumber = slide.slideNumber || 0;
                       return Math.ceil(Math.max(max, slideNumber));
                     },
                     0,
-                  ); 
+                  );
 
                   var allSlides = pathologySampleInfo.slides || [];
                   Array.from({ length: slidesToAdd }, (_, index) => {
@@ -908,11 +939,11 @@ function PathologyCaseView() {
                       id: "",
                       slideNumber: maxSlideNumber + 1 + index,
                     });
-                  })
+                  });
 
                   setPathologySampleInfo({
                     ...pathologySampleInfo,
-                    slides: allSlides
+                    slides: allSlides,
                   });
                 }}
               >
@@ -1137,18 +1168,21 @@ function PathologyCaseView() {
             </Column>
           </>
         )}
-        <Column lg={16}>
-          <Checkbox
-            labelText={<FormattedMessage id="pathology.label.release" />}
-            id="release"
-            onChange={() => {
-              setPathologySampleInfo({
-                ...pathologySampleInfo,
-                release: !pathologySampleInfo.release,
-              });
-            }}
-          />
-        </Column>
+        {pathologySampleInfo.assignedPathologistId &&
+          pathologySampleInfo.assignedTechnicianId && (
+            <Column lg={16}>
+              <Checkbox
+                labelText={<FormattedMessage id="pathology.label.release" />}
+                id="release"
+                onChange={() => {
+                  setPathologySampleInfo({
+                    ...pathologySampleInfo,
+                    release: !pathologySampleInfo.release,
+                  });
+                }}
+              />
+            </Column>
+          )}
         <Column lg={8}>
           <Checkbox
             labelText={<FormattedMessage id="pathology.label.refer" />}
@@ -1192,7 +1226,7 @@ function PathologyCaseView() {
               save(e);
             }}
           >
-             <FormattedMessage id="label.button.save" />
+            <FormattedMessage id="label.button.save" />
           </Button>
         </Column>
       </Grid>
