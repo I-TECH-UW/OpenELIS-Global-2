@@ -21,17 +21,6 @@ function requiredSymbol(value) {
     </>
   );
 }
-const header = [
-  { key: "reason", header: requiredSymbol(intl.formatMessage({ id: "referral.label.reason"})) },
-  { key: "referrer", header: intl.formatMessage({ id: "referrer.label" })},
-  {
-    key: "institute",
-    header: requiredSymbol(intl.formatMessage({ id: "referral.label.institute"})),
-  },
-  { key: "", header:intl.formatMessage({ id: "referral.label.sentdate"}) + "\n" + "(dd/mm/yyyy)" },
-  { key: "name", header: requiredSymbol(intl.formatMessage({ id: "search.label.test" })) },
-
-];
 
 const OrderReferralRequest = ({
   index,
@@ -70,6 +59,18 @@ const OrderReferralRequest = ({
       setReferralRequests(update);
     }
   }
+
+  const header = [
+    { key: "reason", header: requiredSymbol(intl.formatMessage({ id: "referral.label.reason"})) },
+    { key: "referrer", header: intl.formatMessage({ id: "referrer.label" })},
+    {
+      key: "institute",
+      header: requiredSymbol(intl.formatMessage({ id: "referral.label.institute"})),
+    },
+    { key: "", header:intl.formatMessage({ id: "referral.label.sentdate"}) + "\n" + "(dd/mm/yyyy)" },
+    { key: "name", header: requiredSymbol(intl.formatMessage({ id: "search.label.test" })) },
+  
+  ];
 
   const updateUIRender = () => {
     const rows = [];
