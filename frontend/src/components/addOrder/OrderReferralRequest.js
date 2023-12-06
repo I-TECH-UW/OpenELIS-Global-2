@@ -21,7 +21,6 @@ function requiredSymbol(value) {
     </>
   );
 }
-const intl = useIntl();
 const header = [
   { key: "reason", header: requiredSymbol(intl.formatMessage({ id: "referral.label.reason"})) },
   { key: "referrer", header: intl.formatMessage({ id: "referrer.label" })},
@@ -42,6 +41,7 @@ const OrderReferralRequest = ({
   referralRequests,
   setReferralRequests,
 }) => {
+  const intl = useIntl();
   const [referralRows, setReferralRows] = useState([]);
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
 
