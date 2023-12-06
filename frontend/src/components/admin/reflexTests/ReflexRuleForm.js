@@ -3,6 +3,7 @@ import {
   Form,
   Stack,
   TextInput,
+  TextArea,
   Select,
   SelectItem,
   Button,
@@ -15,7 +16,7 @@ import {
   ModalWrapper,
 } from "@carbon/react";
 import { Add, Subtract } from "@carbon/react/icons";
-import Autocomplete from "./AutoComplete";
+import AutoComplete from "../../common/AutoComplete.js";
 import RuleBuilderFormValues from "../../formModel/innitialValues/RuleBuilderFormValues";
 import { getFromOpenElisServer, postToOpenElisServer } from "../../utils/Utils";
 import { NotificationContext } from "../../layout/Layout";
@@ -109,7 +110,7 @@ function ReflexRule() {
         rule.conditions.forEach(function (condition, conditionIndex) {
           if (condition.sampleId) {
             getFromOpenElisServer(
-              "/rest/test-details?sampleType=" + condition.sampleId,
+              "/rest/test-display-beans?sampleType=" + condition.sampleId,
               (resp) =>
                 fetchDeafultTests(
                   resp,
@@ -126,7 +127,7 @@ function ReflexRule() {
         rule.actions.forEach(function (action, actionIndex) {
           if (action.sampleId) {
             getFromOpenElisServer(
-              "/rest/test-details?sampleType=" + action.sampleId,
+              "/rest/test-display-beans?sampleType=" + action.sampleId,
               (resp) =>
                 fetchDeafultTests(
                   resp,
@@ -161,7 +162,7 @@ function ReflexRule() {
       if (condition.value) {
         const test = defaultSampleTests.conditions[index][item_index].find(
           (test) => {
-            if (test.value.trim() === condition.testId) {
+            if (test.id.trim() === condition.testId) {
               return true;
             }
           },
@@ -213,12 +214,29 @@ function ReflexRule() {
     setRuleList(list);
   };
 
+  const handleAutoCompleteRuleFieldItemChange = (
+    value,
+    name,
+    index,
+    itemIndex,
+    field,
+  ) => {
+    const list = [...ruleList];
+    list[index][field][itemIndex][name] = value;
+    setRuleList(list);
+  };
+
   const handleAddNotificationChange = (value, index, itemIndex, field) => {
     const e = { target: { name: "addNotification", value: value } };
     handleRuleFieldItemChange(e, index, itemIndex, field);
   };
 
-  const handleTestSelected = (index, item_index, testDetails) => {
+  const handleTestSelected = (id, index, item_index, field) => {
+    var testDetails = {resultList : [] ,resultType :"N"};
+    if (sampleTestList[field]) {
+      testDetails = sampleTestList[field][index][item_index].find(
+        (test) => test.id == id)
+      }
     const results = { ...testResultList };
     if (!results[index]) {
       results[index] = {};
@@ -242,8 +260,9 @@ function ReflexRule() {
 
   const handleSampleSelected = (e, index, item_index, field) => {
     const { value } = e.target;
-    getFromOpenElisServer("/rest/test-details?sampleType=" + value, (resp) =>
-      fetchTests(resp, index, item_index, field),
+    getFromOpenElisServer(
+      "/rest/test-display-beans?sampleType=" + value,
+      (resp) => fetchTests(resp, index, item_index, field),
     );
   };
 
@@ -544,19 +563,34 @@ function ReflexRule() {
                             </div>
 
                             <div>
-                              <Autocomplete
-                                stateValue={condition.testName}
-                                handleChange={handleRuleFieldItemChange}
-                                onSelect={handleTestSelected}
-                                index={index}
+                              <AutoComplete
+                                id={
+                                  index +
+                                  "_" +
+                                  condition_index +
+                                  "_conditionTestId"
+                              }
+                               value={condition.testId}
+                                onSelect={(id) => {
+                                  handleAutoCompleteRuleFieldItemChange(
+                                    id,
+                                    "testId",
+                                    index,
+                                    condition_index,
+                                    FIELD.conditions,
+                                  );
+                                  handleTestSelected(
+                                    id,
+                                    index,
+                                    condition_index,
+                                    FIELD.conditions,
+                                  );
+                                }}
                                 name="testName"
-                                idField="testId"
                                 label={
                                   <FormattedMessage id="rulebuilder.label.searchTest" />
                                 }
                                 class="autocomplete"
-                                item_index={condition_index}
-                                field={FIELD.conditions}
                                 suggestions={
                                   sampleTestList[FIELD.conditions][index]
                                     ? sampleTestList[FIELD.conditions][index][
@@ -565,8 +599,6 @@ function ReflexRule() {
                                     : []
                                 }
                                 required
-                                addError={addError}
-                                clearError={clearError}
                               />
                             </div>
                             <div>&nbsp; &nbsp;</div>
@@ -673,8 +705,8 @@ function ReflexRule() {
                                                 condition_value_index,
                                               ) => (
                                                 <SelectItem
-                                                  text={result.label}
-                                                  value={result.value}
+                                                  text={result.value}
+                                                  value={result.id}
                                                   key={condition_value_index}
                                                 />
                                               ),
@@ -924,20 +956,25 @@ function ReflexRule() {
                             </div>
                             <div>&nbsp; &nbsp;</div>
                             <div>
-                              <Autocomplete
-                                stateValue={action.reflexTestName}
-                                handleChange={handleRuleFieldItemChange}
-                                index={index}
+                              <AutoComplete
+                                id={
+                                  index + "_" + action_index + "_reflexTestId"
+                                }
+                                onSelect={(id) => {
+                                  handleAutoCompleteRuleFieldItemChange(
+                                    id,
+                                    "reflexTestId",
+                                    index,
+                                    action_index,
+                                    FIELD.actions,
+                                  );
+                                }}
                                 label={
                                   <FormattedMessage id="rulebuilder.label.searchTest" />
                                 }
                                 name="reflexTestName"
-                                idField="reflexTestId"
-                                item_index={action_index}
-                                field={FIELD.actions}
+                                value={action.reflexTestId}
                                 class="autocomplete"
-                                addError={addError}
-                                clearError={clearError}
                                 suggestions={
                                   sampleTestList[FIELD.actions][index]
                                     ? sampleTestList[FIELD.actions][index][
@@ -949,9 +986,12 @@ function ReflexRule() {
                             </div>
                             <div>&nbsp; &nbsp;</div>
                             <div>
-                              <TextInput
+                              <TextArea
+                                style={{
+                                  width: "100%",
+                                  height: "1px",
+                                }}
                                 name="internalNote"
-                                className="reflexInputText"
                                 type="text"
                                 id={index + "_" + action_index + "_inote"}
                                 labelText={
@@ -970,9 +1010,12 @@ function ReflexRule() {
                             </div>
                             <div>&nbsp; &nbsp;</div>
                             <div>
-                              <TextInput
+                              <TextArea
                                 name="externalNote"
-                                className="reflexInputText"
+                                style={{
+                                  width: "100%",
+                                  height: "1px",
+                                }}
                                 type="text"
                                 id={index + "_" + action_index + "_xnote"}
                                 labelText={
@@ -989,7 +1032,7 @@ function ReflexRule() {
                                 }
                               />
                             </div>
-                            <div>&nbsp; &nbsp;</div>
+                            {/* <div>&nbsp; &nbsp;</div>
                             <div>
                               <RadioButtonGroup
                                 valueSelected={action.addNotification}
@@ -1023,7 +1066,7 @@ function ReflexRule() {
                                   value="N"
                                 />
                               </RadioButtonGroup>
-                            </div>
+                            </div> */}
                             <div>&nbsp; &nbsp;</div>
                             {rule.actions.length - 1 === action_index && (
                               <div className="second-row">
@@ -1105,9 +1148,6 @@ function ReflexRule() {
           </div>
           <div className="second-division">
             {ruleList.length !== 1 && (
-              // <IconButton kind='danger' label="Remove Rule" size='md' onClick={handleConfirmDelete}>
-              //   <Subtract size={16} />
-              // </IconButton>
               <ModalWrapper
                 modalLabel={
                   <FormattedMessage id="label.button.confirmDelete" />

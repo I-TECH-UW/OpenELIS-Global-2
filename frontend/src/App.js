@@ -14,6 +14,7 @@ import messages_fr from "./languages/fr.json";
 import config from "./config.json";
 import { SecureRoute } from "./components/security";
 import "./index.scss";
+import RedirectOldUI from "./RedirectOldUI";
 import PatientManagement from "./components/patient/PatientManagement";
 import PatientHistory from "./components/patient/PatientHistory";
 import Workplan from "./components/workplan/Workplan";
@@ -327,6 +328,7 @@ export default function App() {
                   component={() => <StudyValidation />}
                   role="Global Administrator"
                 />
+                <Route path="*" component={() => <RedirectOldUI />} />
               </Switch>
             </Layout>
           </Router>

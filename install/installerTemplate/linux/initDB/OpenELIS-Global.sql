@@ -17832,7 +17832,7 @@ COPY clinlims.type_of_sample (id, description, domain, lastupdated, local_abbrev
 5	Actual type will be selected by user	H	2013-09-19 14:31:47.008874	Variable	f	2147483647	136	\N
 3	Plasma	H	2012-10-24 11:58:25.215565	Plasma	t	20	137	sample.type.Plasma
 2	Serum	H	2012-10-24 11:58:25.215565	Serum	t	10	139	sample.type.Serum
-4	Whole Blood	H	2012-10-24 11:58:25.215565	Whole Blood	t	50	138	sample.type.Sang
+4	Whole Blood	H	2012-10-24 11:58:25.215565	Whole Bld	t	50	138	sample.type.Sang
 1	Urines	H	2012-10-24 11:58:25.215565	Urines	t	30	140	sample.type.Urines
 24	Dry Tube	H	2020-01-22 21:46:41.326636	Dry	t	2147483647	141	sample.type.dryTube
 25	EDTA Tube	H	2020-01-22 21:46:41.326636	EDTA	t	2147483647	142	sample.type.edtaTube

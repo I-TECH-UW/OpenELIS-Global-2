@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Column, Form, Grid, Section } from "@carbon/react";
+import { Column, Form, Grid, Section, Button } from "@carbon/react";
 import { FormattedMessage } from "react-intl";
 import "../Style.css";
 import TestSectionSelectForm from "./TestSectionSelectForm";
@@ -13,6 +13,10 @@ export default function WorkplanSearchForm(props) {
   const [selectedValue, setSelectedValue] = useState("");
   const [selectedLabel, setSelectedLabel] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [nextPage, setNextPage] = useState(null);
+  const [previousPage, setPreviousPage] = useState(null);
+  const [pagination, setPagination] = useState(false);
+  const [url, setUrl] = useState("");
 
   let title = "";
   let urlToPost = "";
@@ -51,17 +55,54 @@ export default function WorkplanSearchForm(props) {
   const getTestsList = (res) => {
     if (mounted.current) {
       props.createTestsList(res);
+      if (res.paging) {
+        var { totalPages, currentPage } = res.paging;
+        if (totalPages > 1) {
+          setPagination(true);
+          if (parseInt(currentPage) < parseInt(totalPages)) {
+            setNextPage(parseInt(currentPage) + 1);
+          } else {
+            setNextPage(null);
+          }
+          if (parseInt(currentPage) > 1) {
+            setPreviousPage(parseInt(currentPage) - 1);
+          } else {
+            setPreviousPage(null);
+          }
+        }
+      }
       setIsLoading(false);
     }
   };
 
+  const loadNextResultsPage = () => {
+    setIsLoading(true);
+    getFromOpenElisServer(url + "&page=" + nextPage, getTestsList);
+  };
+
+  const loadPreviousResultsPage = () => {
+    setIsLoading(true);
+    getFromOpenElisServer(url + "&page=" + previousPage, getTestsList);
+  };
+
   useEffect(() => {
     mounted.current = true;
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
+    setUrl(urlToPost + selectedValue);
     getFromOpenElisServer(urlToPost + selectedValue, getTestsList);
     return () => {
       mounted.current = false;
     };
   }, [selectedValue]);
+
+  useEffect(() => {
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
+  }, []);
+
 
   return (
     <>
@@ -117,6 +158,33 @@ export default function WorkplanSearchForm(props) {
           )}
         </Column>
       </Grid>
+      <>
+        {pagination && (
+          <Grid>
+            <Column lg={11} />
+            <Column lg={2}>
+              <Button
+                type=""
+                id="loadpreviousresults"
+                onClick={loadPreviousResultsPage}
+                disabled={previousPage != null ? false : true}
+              >
+                <FormattedMessage id="button.label.loadprevious" />
+              </Button>
+            </Column>
+            <Column lg={2}>
+              <Button
+                type=""
+                id="loadnextresults"
+                disabled={nextPage != null ? false : true}
+                onClick={loadNextResultsPage}
+              >
+                <FormattedMessage id="button.label.loadnext" />
+              </Button>
+            </Column>
+          </Grid>
+        )}
+      </>
     </>
   );
 }

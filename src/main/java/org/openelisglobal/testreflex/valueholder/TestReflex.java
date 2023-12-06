@@ -63,6 +63,10 @@ public class TestReflex extends EnumValueItemImpl {
 
     private ReflexRuleOptions.NumericRelationOptions relation;
 
+    private String internalNote;
+
+    private String externalNote;
+
     public TestReflex() {
         super();
         this.testResult = new ValueHolder();
@@ -265,4 +269,19 @@ public class TestReflex extends EnumValueItemImpl {
         this.relation = relation;
     }
 
+    public String getInternalNote() {
+        return internalNote;
+    }
+
+    public void setInternalNote(String internalNote) {
+        this.internalNote = internalNote;
+    }
+
+    public String getExternalNote() {
+        return externalNote;
+    }
+    
+    public void setExternalNote(String externalNote) {
+        this.externalNote = externalNote;
+    }
 }
