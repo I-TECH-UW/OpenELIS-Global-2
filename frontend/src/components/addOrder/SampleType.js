@@ -15,7 +15,7 @@ import CustomSelect from "../common/CustomSelect";
 import CustomDatePicker from "../common/CustomDatePicker";
 import CustomTimePicker from "../common/CustomTimePicker";
 import { NotificationKinds } from "../common/CustomNotification";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { getFromOpenElisServer } from "../utils/Utils";
 import { NotificationContext, ConfigurationContext } from "../layout/Layout";
 import { sampleTypeTestsStructure } from "../data/SampleEntryTestsForTypeProvider";
@@ -63,6 +63,7 @@ const SampleType = (props) => {
     collectionTime: "",
   });
   const [loading, setLoading] = useState(true);
+  const intl = useIntl();
 
   const defaultSelect = { id: "", value: "Choose Rejection Reason" };
 
@@ -528,8 +529,12 @@ const SampleType = (props) => {
               <Search
                 size="lg"
                 id={`panels_search_` + index}
-                labelText={<FormattedMessage id="label.search.availablepanel"/>}
-                placeholder={<FormattedMessage id="choose.availablepanel"/>}
+                labelText={
+                  <FormattedMessage id="label.search.availablepanel" />
+                }
+                placeholder={intl.formatMessage({
+                  id: "choose.availablepanel",
+                })}
                 onChange={handlePanelSearchChange}
                 value={(() => {
                   if (panelSearchTerm) {
@@ -612,12 +617,18 @@ const SampleType = (props) => {
               <></>
             )}
           </div>
-          <FormGroup legendText={<FormattedMessage id="legend.search.availabletests"/>}>
+          <FormGroup
+            legendText={<FormattedMessage id="legend.search.availabletests" />}
+          >
             <Search
               size="lg"
               id={`tests_search_` + index}
-              labelText={<FormattedMessage id="label.search.available.targetest"/>}
-              placeholder={<FormattedMessage id="holder.choose.availabletest"/>}
+              labelText={
+                <FormattedMessage id="label.search.available.targetest" />
+              }
+              placeholder={intl.formatMessage({
+                id: "holder.choose.availabletest",
+              })}
               onChange={handleTestSearchChange}
               value={(() => {
                 if (testSearchTerm) {
@@ -650,7 +661,7 @@ const SampleType = (props) => {
                     <Layer>
                       <Tile className={"emptyFilterTests"}>
                         <span>
-                          <FormattedMessage id="title.notestfoundmatching"/>
+                          <FormattedMessage id="title.notestfoundmatching" />
                           <strong> "{testSearchTerm}"</strong>{" "}
                         </span>
                       </Tile>
@@ -679,7 +690,7 @@ const SampleType = (props) => {
         <div className="requestTestReferral">
           <Checkbox
             id={`useReferral_` + index}
-            labelText={<FormattedMessage id="label.refertest.referencelab"/>}
+            labelText={<FormattedMessage id="label.refertest.referencelab" />}
             onChange={handleReferralRequest}
           />
           {requestTestReferral === true && (
