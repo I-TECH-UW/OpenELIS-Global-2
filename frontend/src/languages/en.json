@@ -190,6 +190,7 @@
     "sideNav.title.activityreport" :"Activity Report",
     "sideNav.title.referredtestreport":"Referred Tests Report",
     "sideNav.title.noncomformityreports":"Non conformity Reports",
+    "sideNav.label.bytesttype":"By Test Type",
     "sideNav.label.bypaneltype":"By Panel Type",
     "sideNav.label.byunit" :"By Unit",
     "sideNav.label.referredtestreport" : "Referred Tests Report",
