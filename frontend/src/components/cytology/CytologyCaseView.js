@@ -33,6 +33,7 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
+import ConfirmPopup from "../common/ConfirmPopup";
 import "../pathology/PathologyDashboard.css";
 
 export const QuestionnaireResponse = ({ questionnaireResponse }) => {
@@ -141,6 +142,18 @@ function CytologyCaseView() {
   const [reportTypes, setReportTypes] = useState([]);
   const intl = useIntl();
   const [slidesToAdd, setSlidesToAdd] = useState(1);
+  const [isConfirmOpen, setConfirmOpen] = useState(false);
+
+  const handleConfirm = () => {
+    var diagnosis = { ...pathologySampleInfo.diagnosis };
+    diagnosis.negativeDiagnosis = true;
+    diagnosis.diagnosisResultsMaps = [];
+    setPathologySampleInfo({
+      ...pathologySampleInfo,
+      diagnosis: diagnosis,
+    });
+    setConfirmOpen(false);
+  };
 
   async function displayStatus(response) {
     var body = await response.json();
@@ -486,6 +499,12 @@ function CytologyCaseView() {
       <Grid fullWidth={true} className="orderLegendBody">
         {notificationVisible === true ? <AlertDialog /> : ""}
         {loading && <Loading description="Loading Dasboard..." />}
+        <ConfirmPopup
+          isOpen={isConfirmOpen}
+          onClose={() => setConfirmOpen(false)}
+          onConfirm={handleConfirm}
+          messageCode="cytology.label.confirmSelect"
+        />
         <Column lg={16} md={8} sm={4}>
           <Button
             id="pathology_save"
@@ -1050,13 +1069,17 @@ function CytologyCaseView() {
                 labelText={<FormattedMessage id="cytology.label.negative" />}
                 id="checked"
                 onChange={(e) => {
-                  var diagnosis = { ...pathologySampleInfo.diagnosis };
-                  diagnosis.negativeDiagnosis = e.target.checked;
-                  diagnosis.diagnosisResultsMaps = [];
-                  setPathologySampleInfo({
-                    ...pathologySampleInfo,
-                    diagnosis: diagnosis,
-                  });
+                  if (e.target.checked) {
+                    setConfirmOpen(true);
+                  } else {
+                    var diagnosis = { ...pathologySampleInfo.diagnosis };
+                    diagnosis.negativeDiagnosis = e.target.checked;
+                    diagnosis.diagnosisResultsMaps = [];
+                    setPathologySampleInfo({
+                      ...pathologySampleInfo,
+                      diagnosis: diagnosis,
+                    });
+                  }
                 }}
               />
             </Column>

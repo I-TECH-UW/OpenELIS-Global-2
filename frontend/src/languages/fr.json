@@ -7,6 +7,8 @@
     "label.button.range" : "Range" ,
     "label.button.clear" : "Dégager",
     "label.button.confirm": "Confirmer",
+    "label.button.confirmAction": "Confirmer l'action",
+    "label.button.confirmTitle": "Êtes-vous sûr(e) ?",
     "referral.label.testmethod":"Méthodes",
     "referral.label.reason":"Raison de référence",
     "referral.label.institute" :"Institut",
@@ -137,6 +139,7 @@
     "cytology.label.organisms" : "Organismes",
     "cytology.label.otherResult" : "Autre Résultat de Diagnostic",
     "cytology.label.review": "En attente de révision cytopathologique",
+    "cytology.label.confirmSelect": "Si vous sélectionnez cette option, toutes les informations de diagnostic actuelles seront supprimées",
     "header.label.version" :"Version:",
     "header.label.logout" :"Déconnexion",
     "header.label.selectlocale": "Sélectionner la Langue",
@@ -512,6 +515,5 @@
     "banner.menu.resultvalidation_study": "Etude",
     "reports.followupRequired.byLocation": "Suivi Requis",
     "button.label.loadnext": "Charger le lot suivant",
-    "button.label.loadprevious": "Charger le lot précédent",
-    "referral.label.testtoperform":"Test à effectuer"
+    "button.label.loadprevious": "Charger le lot précédent"
 }
