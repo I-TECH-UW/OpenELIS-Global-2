@@ -426,7 +426,9 @@ const OrderEntryAdditionalQuestions = ({
     <>
       <Stack gap={10}>
         <div className="orderLegendBody">
-          <h3>Program</h3>
+          <h3>
+            <FormattedMessage id="select.program" />
+          </h3>
           <ProgramSelect programChange={handleProgramSelection} />
           <Questionnaire
             questionnaire={questionnaire}

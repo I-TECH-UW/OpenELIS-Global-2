@@ -11,6 +11,7 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import CustomTextInput from "../common/CustomTextInput";
 import CustomSelect from "../common/CustomSelect";
 import CustomDatePicker from "../common/CustomDatePicker";
+import { useIntl } from "react-intl";
 
 function requiredSymbol(value) {
   return (
@@ -21,17 +22,6 @@ function requiredSymbol(value) {
   );
 }
 
-const header = [
-  { key: "reason", header: requiredSymbol("Reason for Referral") },
-  { key: "referrer", header: "Referrer" },
-  {
-    key: "institute",
-    header: requiredSymbol("Institute"),
-  },
-  { key: "", header: "Sent Date\n" + "(dd/mm/yyyy)" },
-  { key: "name", header: requiredSymbol("Test Name") },
-];
-
 const OrderReferralRequest = ({
   index,
   selectedTests,
@@ -40,6 +30,7 @@ const OrderReferralRequest = ({
   referralRequests,
   setReferralRequests,
 }) => {
+  const intl = useIntl();
   const [referralRows, setReferralRows] = useState([]);
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
 
@@ -68,6 +59,18 @@ const OrderReferralRequest = ({
       setReferralRequests(update);
     }
   }
+
+  const header = [
+    { key: "reason", header: requiredSymbol(intl.formatMessage({ id: "referral.label.reason"})) },
+    { key: "referrer", header: intl.formatMessage({ id: "referrer.label" })},
+    {
+      key: "institute",
+      header: requiredSymbol(intl.formatMessage({ id: "referral.label.institute"})),
+    },
+    { key: "", header:intl.formatMessage({ id: "referral.label.sentdate"}) + "\n" + "(dd/mm/yyyy)" },
+    { key: "name", header: requiredSymbol(intl.formatMessage({ id: "search.label.test" })) },
+  
+  ];
 
   const updateUIRender = () => {
     const rows = [];

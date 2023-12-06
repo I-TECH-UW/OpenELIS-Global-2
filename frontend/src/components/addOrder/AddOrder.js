@@ -441,7 +441,7 @@ const AddOrder = (props) => {
           <div className="inlineDiv">
             <CustomDatePicker
               id={"order_requestDate"}
-              labelText={"Request Date"}
+              labelText={<FormattedMessage id="sample.requestDate" />}
               autofillDate={true}
               value={orderFormValues.sampleOrderItems.requestDate}
               className="inputDate"

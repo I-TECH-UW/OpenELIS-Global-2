@@ -290,9 +290,6 @@
     "requester.label": "Requester",
     "search.patient.label": "Search for Patient",
     "referral.testresult.pastnote":"Past Notes",
-    "referral.label.sentdate":"Sent Date",
-    "referral.label.reason":"Referral Reason",
-    "referral.label.testtoperform":"Test to Perform",
     "new.patient.label": "New Patient",
     "sample.select.type": "Select sample type",
     "sample.reject.label": "Reject Sample",
@@ -525,5 +522,20 @@
     "banner.menu.resultvalidation_study": "Study",
     "reports.followupRequired.byLocation": "Follow-up Required",
     "button.label.loadnext": "Load Next Bundle",
-    "button.label.loadprevious": "Load Previous Bundle"
+    "button.label.loadprevious": "Load Previous Bundle",
+    "sample.requestDate": "Request Date",
+    "select.program": "Program",
+    "referrer.label":"referrer",
+    "provider.email": "Email",
+    "print.barcode":"Print Barcode",
+    "save.success":"Save successful",
+    "request.samesite.order":"Place same site order",
+    "label.search.availablepanel":"Search Available panel",
+    "choose.availablepanel":"Choose Available panel",
+    "legend.search.availabletests":"Search through the available tests",
+    "label.search.available.targetest":"Search Available Tests",
+    "holder.choose.availabletest":"Choose Available Test",
+    "title.notestfoundmatching":"No test Found Matching",
+    "label.refertest.referencelab":"Refer test to a reference lab"
+
 }

@@ -48,7 +48,7 @@ const RequesterEmailAndSMS = (testId, index, handleRequesterEmailAndSMS) => {
       <CustomCheckBox
         id={"providerEmail_" + index + "_" + testId}
         onChange={(checked) => handleProviderEmail(checked)}
-        label="Email"
+        label={<FormattedMessage id="provider.email"/>}
       />
       <CustomCheckBox
         id={"providerSMS_" + index + "_" + testId}
