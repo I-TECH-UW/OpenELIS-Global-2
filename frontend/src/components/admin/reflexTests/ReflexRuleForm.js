@@ -85,7 +85,6 @@ function ReflexRule() {
   const [errors, setErrors] = useState({});
   const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
-  const [showConfirmBox, setShowConfirmBox] = useState(true);
 
   useEffect(() => {
     getFromOpenElisServer("/rest/samples", fetchSamples);
@@ -266,9 +265,6 @@ function ReflexRule() {
     );
   };
 
-  const handleCancelDelete = () => {
-    setShowConfirmBox(false);
-  };
 
   const handleRuleRemove = (index, id) => {
     const list = [...ruleList];
@@ -281,7 +277,6 @@ function ReflexRule() {
         handleDelete,
       );
     }
-    setShowConfirmBox(false);
   };
 
   const handleDelete = (status) => {
@@ -1152,10 +1147,7 @@ function ReflexRule() {
                 modalLabel={
                   <FormattedMessage id="label.button.confirmDelete" />
                 }
-                open={showConfirmBox}
-                onRequestClose={() => setShowConfirmBox(false)}
                 handleSubmit={() => handleRuleRemove(index, rule.id)}
-                onSecondarySubmit={handleCancelDelete}
                 primaryButtonText={
                   <FormattedMessage id="label.button.confirm" />
                 }
