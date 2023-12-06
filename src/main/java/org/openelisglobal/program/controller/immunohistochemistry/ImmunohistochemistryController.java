@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.program.bean.ImmunohistochemistryDashBoardCount;
-import org.openelisglobal.program.bean.PathologyDashBoardCount;
 import org.openelisglobal.program.service.ImmunohistochemistryDisplayService;
 import org.openelisglobal.program.service.ImmunohistochemistrySampleService;
 import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistryCaseViewDisplayItem;

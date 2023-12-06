@@ -42,7 +42,12 @@ function CytologyDashboard() {
   const [filters, setFilters] = useState({
     searchTerm: "",
     myCases: false,
-    statuses: [],
+    statuses: [
+      {
+        id: "PREPARING_SLIDES",
+        value: "Preparing slides",
+      },
+    ],
   });
   const [counts, setCounts] = useState({
     inProgress: 0,
@@ -128,14 +133,16 @@ function CytologyDashboard() {
   };
 
   const setPathologyEntriesWithIds = (entries) => {
-    if (componentMounted.current && entries && entries.length > 0) {
-      setPathologyEntries(
-        entries.map((entry) => {
-          return { ...entry, id: "" + entry.pathologySampleId };
-        }),
-      );
-    }
     if (componentMounted.current) {
+      if (entries && entries.length > 0) {
+        setPathologyEntries(
+          entries.map((entry) => {
+            return { ...entry, id: "" + entry.pathologySampleId };
+          }),
+        );
+      } else {
+        setPathologyEntries([]);
+      }
       setLoading(false);
     }
   };
@@ -236,7 +243,15 @@ function CytologyDashboard() {
 
   useEffect(() => {
     componentMounted.current = true;
-    setFilters({ ...filters, statuses: statuses });
+    setFilters({
+      ...filters,
+      statuses: [
+        {
+          id: "PREPARING_SLIDES",
+          value: "Preparing slides",
+        },
+      ],
+    });
 
     return () => {
       componentMounted.current = false;
@@ -303,11 +318,13 @@ function CytologyDashboard() {
                 id="statusFilter"
                 name="statusFilter"
                 labelText="Status"
-                defaultValue="placeholder"
+                value={
+                  filters.statuses.length > 1 ? "All" : filters.statuses[0].id
+                }
                 onChange={setStatusFilter}
                 noLabel
               >
-                <SelectItem disabled hidden value="placeholder" text="Status" />
+                <SelectItem disabled  value="placeholder" text="Status" />
                 <SelectItem text="All" value="All" />
                 {statuses.map((status, index) => {
                   return (
