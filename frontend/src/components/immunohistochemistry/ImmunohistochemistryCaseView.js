@@ -18,9 +18,9 @@ import {
   BreadcrumbItem,
   Stack,
   Loading,
-  InlineLoading ,
-  Toggle ,
-  TextArea
+  InlineLoading,
+  Toggle,
+  TextArea,
 } from "@carbon/react";
 import { Launch, Subtract } from "@carbon/react/icons";
 import {
@@ -43,14 +43,16 @@ export const QuestionnaireResponse = ({ questionnaireResponse }) => {
       <>
         <div className="questionnaireResponseItem">
           <Grid>
-            <Column lg={6} md={8} sm={4}><h6>{item.text}:</h6> </Column>
+            <Column lg={6} md={8} sm={4}>
+              <h6>{item.text}:</h6>{" "}
+            </Column>
             <Column lg={10} md={8} sm={4}>
               {item.answer &&
                 item.answer.map((answer, index) => {
                   return <Tag key={index}>{renderAnswer(answer)}</Tag>;
                 })}
             </Column>
-          </Grid> 
+          </Grid>
         </div>
       </>
     );
@@ -126,13 +128,13 @@ function ImmunohistochemistryCaseView() {
       herScore: "",
       diagnosis: "",
       molecularSubType: "",
-      conclusion : "",
+      conclusion: "",
       ihcScore: "",
       ihcRatio: "",
       averageChrom: "",
       averageHer2: "",
       numberOfcancerNuclei: "",
-      toggled : false
+      toggled: false,
     },
   });
 
@@ -163,7 +165,7 @@ function ImmunohistochemistryCaseView() {
 
   const reportStatus = (pdfGenerated) => {
     setNotificationVisible(true);
-    setLoadingReport(false)
+    setLoadingReport(false);
     if (pdfGenerated) {
       setNotificationBody({
         kind: NotificationKinds.success,
@@ -177,18 +179,18 @@ function ImmunohistochemistryCaseView() {
         message: "Error while Generating Report",
       });
     }
-  }
+  };
 
   const getReportName = (reportType) => {
     switch (reportType) {
       case "DUAL_IN_SITU_HYBRIDISATION":
-        return "DualInSituHybridizationReport"
+        return "DualInSituHybridizationReport";
       case "BREAST_CANCER_HORMONE_RECEPTOR":
         return "BreastCancerHormoneReceptorReport";
       case "IMMUNOHISTOCHEMISTRY":
         return "PatientImmunoChemistryReport";
     }
-  }
+  };
 
   const toggleReportParam = (e, index) => {
     const params = { ...reportParams };
@@ -198,16 +200,16 @@ function ImmunohistochemistryCaseView() {
     params[index]["toggled"] = e;
     setReportParams(params);
   };
-  const createReportParams = (reportType , index) => {
+  const createReportParams = (reportType, index) => {
     switch (reportType) {
       case "BREAST_CANCER_HORMONE_RECEPTOR":
         return (
           <>
             {" "}
             <Column lg={16} md={8} sm={4}>
-            <Grid fullWidth={true} className="gridBoundary">
+              <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={2} md={8} sm={4}>
-                   ER
+                  ER
                 </Column>
                 <Column lg={2} md={8} sm={4}>
                   <TextInput
@@ -225,11 +227,11 @@ function ImmunohistochemistryCaseView() {
                       setReportParams(params);
                     }}
                   />
-              </Column>
-              <Column lg={3} md={8} sm={4}>
+                </Column>
+                <Column lg={3} md={8} sm={4}>
                   <FormattedMessage id="immunohistochemistry.label.cellPercent" />
-              </Column>
-              <Column lg={2} md={8} sm={4}>
+                </Column>
+                <Column lg={2} md={8} sm={4}>
                   <TextInput
                     id={"erIntensity_" + index}
                     labelText=""
@@ -245,11 +247,11 @@ function ImmunohistochemistryCaseView() {
                       setReportParams(params);
                     }}
                   />
-              </Column>
-              <Column lg={3} md={8} sm={4}>
+                </Column>
+                <Column lg={3} md={8} sm={4}>
                   <FormattedMessage id="immunohistochemistry.label.cellIntensity" />
-              </Column>
-              <Column lg={2} md={8} sm={4}>
+                </Column>
+                <Column lg={2} md={8} sm={4}>
                   <TextInput
                     id={"erScore_" + index}
                     labelText=""
@@ -265,16 +267,16 @@ function ImmunohistochemistryCaseView() {
                       setReportParams(params);
                     }}
                   />
-              </Column>
-              <Column lg={2} md={8} sm={4}>
-                 <FormattedMessage id="immunohistochemistry.label.outOf8" />
-              </Column>
+                </Column>
+                <Column lg={2} md={8} sm={4}>
+                  <FormattedMessage id="immunohistochemistry.label.outOf8" />
+                </Column>
 
-              <Column lg={16} md={8} sm={4}>
+                <Column lg={16} md={8} sm={4}>
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                 </Column>
-              <Column lg={2} md={8} sm={4}>
-                   PR
+                <Column lg={2} md={8} sm={4}>
+                  PR
                 </Column>
                 <Column lg={2} md={8} sm={4}>
                   <TextInput
@@ -292,11 +294,11 @@ function ImmunohistochemistryCaseView() {
                       setReportParams(params);
                     }}
                   />
-              </Column>
-              <Column lg={3} md={8} sm={4}>
+                </Column>
+                <Column lg={3} md={8} sm={4}>
                   <FormattedMessage id="immunohistochemistry.label.cellPercent" />
-              </Column>
-              <Column lg={2} md={8} sm={4}>
+                </Column>
+                <Column lg={2} md={8} sm={4}>
                   <TextInput
                     id={"erIntensity_" + index}
                     labelText=""
@@ -312,11 +314,11 @@ function ImmunohistochemistryCaseView() {
                       setReportParams(params);
                     }}
                   />
-              </Column>
-              <Column lg={3} md={8} sm={4}>
+                </Column>
+                <Column lg={3} md={8} sm={4}>
                   <FormattedMessage id="immunohistochemistry.label.cellIntensity" />
-              </Column>
-              <Column lg={2} md={8} sm={4}>
+                </Column>
+                <Column lg={2} md={8} sm={4}>
                   <TextInput
                     id={"erScore_" + index}
                     labelText=""
@@ -332,17 +334,17 @@ function ImmunohistochemistryCaseView() {
                       setReportParams(params);
                     }}
                   />
-              </Column>
-              <Column lg={2} md={8} sm={4}>
+                </Column>
+                <Column lg={2} md={8} sm={4}>
                   <FormattedMessage id="immunohistochemistry.label.outOf8" />
-              </Column>
+                </Column>
 
-              <Column lg={16} md={8} sm={4}>
+                <Column lg={16} md={8} sm={4}>
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                 </Column>
 
                 <Column lg={3} md={8} sm={4}>
-                   <FormattedMessage id="immunohistochemistry.label.mibName" />
+                  <FormattedMessage id="immunohistochemistry.label.mibName" />
                 </Column>
                 <Column lg={8} md={8} sm={4}>
                   <TextInput
@@ -360,15 +362,15 @@ function ImmunohistochemistryCaseView() {
                       setReportParams(params);
                     }}
                   />
-              </Column>
-              <Column lg={5} md={8} sm={4}>
-                <FormattedMessage id="immunohistochemistry.label.tumorCells" />
-              </Column>
-              <Column lg={16} md={8} sm={4}>
+                </Column>
+                <Column lg={5} md={8} sm={4}>
+                  <FormattedMessage id="immunohistochemistry.label.tumorCells" />
+                </Column>
+                <Column lg={16} md={8} sm={4}>
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
-              </Column>
+                </Column>
 
-              <Column lg={3} md={8} sm={4}>
+                <Column lg={3} md={8} sm={4}>
                   <FormattedMessage id="immunohistochemistry.label.her2Pattern" />
                 </Column>
                 <Column lg={13} md={8} sm={4}>
@@ -386,9 +388,9 @@ function ImmunohistochemistryCaseView() {
                       setReportParams(params);
                     }}
                   />
-              </Column>
+                </Column>
 
-              <Column lg={16} md={8} sm={4}>
+                <Column lg={16} md={8} sm={4}>
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                 </Column>
 
@@ -410,11 +412,11 @@ function ImmunohistochemistryCaseView() {
                       setReportParams(params);
                     }}
                   />
-              </Column>
-              <Column lg={4} md={8} sm={4}>
+                </Column>
+                <Column lg={4} md={8} sm={4}>
                   <FormattedMessage id="immunohistochemistry.label.her2ScoreOf" />
-              </Column>
-              <Column lg={4} md={8} sm={4}>
+                </Column>
+                <Column lg={4} md={8} sm={4}>
                   <TextInput
                     id={"herScore_" + index}
                     labelText=""
@@ -430,12 +432,12 @@ function ImmunohistochemistryCaseView() {
                       setReportParams(params);
                     }}
                   />
-              </Column>
+                </Column>
                 <Column lg={16} md={8} sm={4}>
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                 </Column>
                 <Column lg={3} md={8} sm={4}>
-                  <FormattedMessage id="immunohistochemistry.label.historicalDiagnosis" /> 
+                  <FormattedMessage id="immunohistochemistry.label.historicalDiagnosis" />
                 </Column>
                 <Column lg={13} md={8} sm={4}>
                   <TextArea
@@ -452,13 +454,13 @@ function ImmunohistochemistryCaseView() {
                       setReportParams(params);
                     }}
                   />
-              </Column>
+                </Column>
 
-              <Column lg={16} md={8} sm={4}>
+                <Column lg={16} md={8} sm={4}>
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                 </Column>
                 <Column lg={3} md={8} sm={4}>
-                  <FormattedMessage id="immunohistochemistry.label.molecularType" /> 
+                  <FormattedMessage id="immunohistochemistry.label.molecularType" />
                 </Column>
                 <Column lg={13} md={8} sm={4}>
                   <TextInput
@@ -475,18 +477,18 @@ function ImmunohistochemistryCaseView() {
                       setReportParams(params);
                     }}
                   />
-              </Column>
-            </Grid>
-          </Column>
+                </Column>
+              </Grid>
+            </Column>
           </>
         );
-      case "DUAL_IN_SITU_HYBRIDISATION":  
-        return <>
-
-          <Column lg={16} md={8} sm={4}>
-            <Grid fullWidth={true} className="gridBoundary">
+      case "DUAL_IN_SITU_HYBRIDISATION":
+        return (
+          <>
+            <Column lg={16} md={8} sm={4}>
+              <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={3} md={8} sm={4}>
-                  <FormattedMessage id="immunohistochemistry.label.numberOfCancer" /> 
+                  <FormattedMessage id="immunohistochemistry.label.numberOfCancer" />
                 </Column>
                 <Column lg={5} md={8} sm={4}>
                   <TextInput
@@ -504,12 +506,12 @@ function ImmunohistochemistryCaseView() {
                       setReportParams(params);
                     }}
                   />
-              </Column>
-              <Column lg={16} md={8} sm={4}>
+                </Column>
+                <Column lg={16} md={8} sm={4}>
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
-               </Column>
-               <Column lg={3} md={8} sm={4}>
-                   <FormattedMessage id="immunohistochemistry.label.averageHer2" /> 
+                </Column>
+                <Column lg={3} md={8} sm={4}>
+                  <FormattedMessage id="immunohistochemistry.label.averageHer2" />
                 </Column>
                 <Column lg={5} md={8} sm={4}>
                   <TextInput
@@ -525,24 +527,24 @@ function ImmunohistochemistryCaseView() {
                       }
                       params[index].averageHer2 = e.target.value;
                       var her2 = e.target.value;
-                      var chrom  = params[index].averageChrom;
-                      if(chrom){
-                        var ratio = her2/chrom ;
-                        params[index].ihcRatio  = ratio.toFixed(2);
+                      var chrom = params[index].averageChrom;
+                      if (chrom) {
+                        var ratio = her2 / chrom;
+                        params[index].ihcRatio = ratio.toFixed(2);
                         if (ratio >= 2.0) {
-                          params[index].ihcScore = "AMPLIFICATION"
-                        }else{
-                          params[index].ihcScore = "NO_AMPLIFICATION"
+                          params[index].ihcScore = "AMPLIFICATION";
+                        } else {
+                          params[index].ihcScore = "NO_AMPLIFICATION";
                         }
                       }
                       setReportParams(params);
                     }}
                   />
-              </Column>
-              <Column lg={16} md={8} sm={4}>
+                </Column>
+                <Column lg={16} md={8} sm={4}>
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
-               </Column>
-               <Column lg={3} md={8} sm={4}>
+                </Column>
+                <Column lg={3} md={8} sm={4}>
                   <FormattedMessage id="immunohistochemistry.label.averageChrom" />
                 </Column>
                 <Column lg={5} md={8} sm={4}>
@@ -558,26 +560,26 @@ function ImmunohistochemistryCaseView() {
                         params[index] = {};
                       }
                       params[index].averageChrom = e.target.value;
-                      var her2 = params[index].averageHer2
-                      var chrom  = e.target.value;
-                      if(her2){
-                        var ratio = her2/chrom ;
-                        params[index].ihcRatio  = ratio.toFixed(2);
+                      var her2 = params[index].averageHer2;
+                      var chrom = e.target.value;
+                      if (her2) {
+                        var ratio = her2 / chrom;
+                        params[index].ihcRatio = ratio.toFixed(2);
                         if (ratio >= 2.0) {
-                          params[index].ihcScore = "AMPLIFICATION"
-                        }else{
-                          params[index].ihcScore = "NO_AMPLIFICATION"
+                          params[index].ihcScore = "AMPLIFICATION";
+                        } else {
+                          params[index].ihcScore = "NO_AMPLIFICATION";
                         }
                       }
                       setReportParams(params);
                     }}
                   />
-              </Column>
-              <Column lg={16} md={8} sm={4}>
+                </Column>
+                <Column lg={16} md={8} sm={4}>
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
-               </Column>
-               <Column lg={3} md={8} sm={4}>
-                 <FormattedMessage id="immunohistochemistry.label.ihcRatio" />
+                </Column>
+                <Column lg={3} md={8} sm={4}>
+                  <FormattedMessage id="immunohistochemistry.label.ihcRatio" />
                 </Column>
                 <Column lg={5} md={8} sm={4}>
                   <TextInput
@@ -587,13 +589,13 @@ function ImmunohistochemistryCaseView() {
                     disabled={true}
                     value={reportParams[index]?.ihcRatio}
                   />
-              </Column>
+                </Column>
 
-              <Column lg={16} md={8} sm={4}>
+                <Column lg={16} md={8} sm={4}>
                   <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
-               </Column>
-               <Column lg={3} md={8} sm={4}>
-               <FormattedMessage id="immunohistochemistry.label.ihcScore" />
+                </Column>
+                <Column lg={3} md={8} sm={4}>
+                  <FormattedMessage id="immunohistochemistry.label.ihcScore" />
                 </Column>
                 <Column lg={5} md={8} sm={4}>
                   <TextInput
@@ -603,19 +605,18 @@ function ImmunohistochemistryCaseView() {
                     disabled={true}
                     value={reportParams[index]?.ihcScore}
                   />
-              </Column>
-
-            </Grid>
+                </Column>
+              </Grid>
             </Column>
-        
-        
-        </>;
+          </>
+        );
       case "IMMUNOHISTOCHEMISTRY":
-        return <>
-         <Column lg={16} md={8} sm={4}>
-            <Grid fullWidth={true} className="gridBoundary">
-            <Column lg={3} md={8} sm={4}>
-                  <FormattedMessage id="pathology.label.conclusion" /> 
+        return (
+          <>
+            <Column lg={16} md={8} sm={4}>
+              <Grid fullWidth={true} className="gridBoundary">
+                <Column lg={3} md={8} sm={4}>
+                  <FormattedMessage id="pathology.label.conclusion" />
                 </Column>
                 <Column lg={13} md={8} sm={4}>
                   <TextArea
@@ -632,14 +633,13 @@ function ImmunohistochemistryCaseView() {
                       setReportParams(params);
                     }}
                   />
-              </Column>
-
-
-            </Grid>
+                </Column>
+              </Grid>
             </Column>
-             </>;
+          </>
+        );
     }
-  }
+  };
 
   const setResultsWithId = (results) => {
     if (results) {
@@ -804,9 +804,11 @@ function ImmunohistochemistryCaseView() {
                       {" "}
                       <FormattedMessage id="patient.label.sex" />:
                     </Tag>
-                    {immunohistochemistrySampleInfo.sex === "M"
-                      ?  <FormattedMessage id="patient.male" />
-                      :  <FormattedMessage id="patient.female" />}
+                    {immunohistochemistrySampleInfo.sex === "M" ? (
+                      <FormattedMessage id="patient.male" />
+                    ) : (
+                      <FormattedMessage id="patient.female" />
+                    )}
                     <Tag type="blue">
                       <FormattedMessage id="patient.label.age" /> :
                     </Tag>
@@ -878,7 +880,7 @@ function ImmunohistochemistryCaseView() {
                 save(e);
               }}
             >
-               <FormattedMessage id="label.button.save" />
+              <FormattedMessage id="label.button.save" />
             </Button>
           </Column>
           <Column lg={16} md={8} sm={4}>
@@ -978,7 +980,9 @@ function ImmunohistochemistryCaseView() {
                 <Select
                   id="report"
                   name="report"
-                  labelText={intl.formatMessage({ id: "immunohistochemistry.label.addreport" })}
+                  labelText={intl.formatMessage({
+                    id: "immunohistochemistry.label.addreport",
+                  })}
                   onChange={(event) => {
                     setImmunohistochemistrySampleInfo({
                       ...immunohistochemistrySampleInfo,
@@ -989,7 +993,13 @@ function ImmunohistochemistryCaseView() {
                     });
                   }}
                 >
-                  <SelectItem disabled value="ADD" text={intl.formatMessage({ id: "immunohistochemistry.label.addreport" })} />
+                  <SelectItem
+                    disabled
+                    value="ADD"
+                    text={intl.formatMessage({
+                      id: "immunohistochemistry.label.addreport",
+                    })}
+                  />
                   {reportTypes.map((report, index) => {
                     return (
                       <SelectItem
@@ -1019,7 +1029,9 @@ function ImmunohistochemistryCaseView() {
                     <>
                       <Column lg={2} md={8} sm={4}>
                         <IconButton
-                          label={intl.formatMessage({ id: "label.button.remove.report" })}
+                          label={intl.formatMessage({
+                            id: "label.button.remove.report",
+                          })}
                           onClick={() => {
                             var info = { ...immunohistochemistrySampleInfo };
                             info["reports"].splice(index, 1);
@@ -1072,11 +1084,11 @@ function ImmunohistochemistryCaseView() {
                       </Column>
                       <Column lg={4}>
                         <h6>
-                        {
-                          reportTypes.filter(
-                            (type) => type.id === report.reportType,
-                          )[0]?.value
-                        }
+                          {
+                            reportTypes.filter(
+                              (type) => type.id === report.reportType,
+                            )[0]?.value
+                          }
                         </h6>
                       </Column>
                       <Column lg={2} md={1} sm={2}>
@@ -1102,8 +1114,8 @@ function ImmunohistochemistryCaseView() {
                         )}
                       </Column>
                       <Column lg={3} md={2} sm={2}>
-                      <Button
-                        onClick={(e) => {
+                        <Button
+                          onClick={(e) => {
                             setLoadingReport(true);
                             const form = {
                               report: getReportName(report.reportType),
@@ -1119,36 +1131,41 @@ function ImmunohistochemistryCaseView() {
                               herAssesment: reportParams[index]?.herAssesment,
                               herScore: reportParams[index]?.herScore,
                               diagnosis: reportParams[index]?.diagnosis,
-                              molecularSubType: reportParams[index]?.molecularSubType,
+                              molecularSubType:
+                                reportParams[index]?.molecularSubType,
                               conclusion: reportParams[index]?.conclusion,
                               ihcScore: reportParams[index]?.ihcScore,
                               ihcRatio: reportParams[index]?.ihcRatio,
                               averageChrom: reportParams[index]?.averageChrom,
                               averageHer2: reportParams[index]?.averageHer2,
-                              numberOfcancerNuclei: reportParams[index]?.numberOfcancerNuclei,
-                          };
+                              numberOfcancerNuclei:
+                                reportParams[index]?.numberOfcancerNuclei,
+                            };
                             postToOpenElisServerForPDF(
-                            "/rest/ReportPrint",
-                              JSON.stringify(form) ,
-                              reportStatus
-                          );
-                        }}
+                              "/rest/ReportPrint",
+                              JSON.stringify(form),
+                              reportStatus,
+                            );
+                          }}
                         >
-                        {" "}
-                        <FormattedMessage id="button.label.genarateReport" />
-                      </Button>
-                    </Column>
-                    <Column lg={2}>
-                    <Toggle
-                        toggled={reportParams[index]?.toggled}
-                        aria-label="toggle button"
-                        id={index + "_toggle"}
-                        labelText={intl.formatMessage({ id: "button.label.showHidePram" })}
-                        onToggle={(e) => toggleReportParam(e, index)}
-                      />
-                    </Column>
-                    {/* <Column lg={1} md={2} sm={2}/> */}
-                      { reportParams[index]?.toggled && createReportParams(report.reportType ,index)}
+                          {" "}
+                          <FormattedMessage id="button.label.genarateReport" />
+                        </Button>
+                      </Column>
+                      <Column lg={2}>
+                        <Toggle
+                          toggled={reportParams[index]?.toggled}
+                          aria-label="toggle button"
+                          id={index + "_toggle"}
+                          labelText={intl.formatMessage({
+                            id: "button.label.showHidePram",
+                          })}
+                          onToggle={(e) => toggleReportParam(e, index)}
+                        />
+                      </Column>
+                      {/* <Column lg={1} md={2} sm={2}/> */}
+                      {reportParams[index]?.toggled &&
+                        createReportParams(report.reportType, index)}
                       <Column lg={16} md={8} sm={4}>
                         <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                       </Column>
@@ -1178,9 +1195,13 @@ function ImmunohistochemistryCaseView() {
                             <Column lg={2} md={2} sm={1} key={index}>
                               <TextInput
                                 id="blockNumber"
-                                labelText={intl.formatMessage({ id: "pathology.label.block.number" })}
+                                labelText={intl.formatMessage({
+                                  id: "pathology.label.block.number",
+                                })}
                                 hideLabel={true}
-                                placeholder={intl.formatMessage({ id: "pathology.label.block.number" })}
+                                placeholder={intl.formatMessage({
+                                  id: "pathology.label.block.number",
+                                })}
                                 value={block.blockNumber}
                                 disabled={true}
                               />
@@ -1188,9 +1209,13 @@ function ImmunohistochemistryCaseView() {
                             <Column lg={2} md={2} sm={1}>
                               <TextInput
                                 id="location"
-                                labelText={intl.formatMessage({ id: "pathology.label.location" })}
+                                labelText={intl.formatMessage({
+                                  id: "pathology.label.location",
+                                })}
                                 hideLabel={true}
-                                placeholder={intl.formatMessage({ id: "pathology.label.location" })}
+                                placeholder={intl.formatMessage({
+                                  id: "pathology.label.location",
+                                })}
                                 value={block.location}
                                 disabled={true}
                               />
@@ -1243,19 +1268,27 @@ function ImmunohistochemistryCaseView() {
                             <Column lg={2} md={2} sm={1} key={index}>
                               <TextInput
                                 id="slideNumber"
-                                labelText={intl.formatMessage({ id: "pathology.label.slide.number" })}
+                                labelText={intl.formatMessage({
+                                  id: "pathology.label.slide.number",
+                                })}
                                 hideLabel={true}
                                 disabled={true}
-                                placeholder={intl.formatMessage({ id: "pathology.label.slide.number" })}
+                                placeholder={intl.formatMessage({
+                                  id: "pathology.label.slide.number",
+                                })}
                                 value={slide.slideNumber}
                               />
                             </Column>
                             <Column lg={2} md={2} sm={1}>
                               <TextInput
                                 id="location"
-                                labelText={intl.formatMessage({ id: "pathology.label.location" })}
+                                labelText={intl.formatMessage({
+                                  id: "pathology.label.location",
+                                })}
                                 hideLabel={true}
-                                placeholder={intl.formatMessage({ id: "pathology.label.location" })}
+                                placeholder={intl.formatMessage({
+                                  id: "pathology.label.location",
+                                })}
                                 value={slide.location}
                                 disabled={true}
                               />
@@ -1311,9 +1344,9 @@ function ImmunohistochemistryCaseView() {
                 </Grid>
               </Column>
 
-              <Column lg={16} md={8} sm={4}>
-                <Grid fullWidth={true} className="gridBoundary">
-                  {hasRole(userSessionDetails, "Pathologist") && (
+              {hasRole(userSessionDetails, "Pathologist") && (
+                <Column lg={16} md={8} sm={4}>
+                  <Grid fullWidth={true} className="gridBoundary">
                     <>
                       <Column lg={2} md={4} sm={2}>
                         <h6>
@@ -1394,24 +1427,26 @@ function ImmunohistochemistryCaseView() {
                         </Tag>
                       </Column>
                     </>
-                  )}
-                </Grid>
-              </Column>
+                  </Grid>
+                </Column>
+              )}
             </>
           )}
-
-          <Column lg={16}>
-            <Checkbox
-              labelText={<FormattedMessage id="pathology.label.release" />}
-              id="release"
-              onChange={() => {
-                setImmunohistochemistrySampleInfo({
-                  ...immunohistochemistrySampleInfo,
-                  release: !immunohistochemistrySampleInfo.release,
-                });
-              }}
-            />
-          </Column>
+          {immunohistochemistrySampleInfo.assignedPathologistId &&
+            immunohistochemistrySampleInfo.assignedTechnicianId && (
+              <Column lg={16}>
+                <Checkbox
+                  labelText={<FormattedMessage id="pathology.label.release" />}
+                  id="release"
+                  onChange={() => {
+                    setImmunohistochemistrySampleInfo({
+                      ...immunohistochemistrySampleInfo,
+                      release: !immunohistochemistrySampleInfo.release,
+                    });
+                  }}
+                />
+              </Column>
+            )}
 
           <Column>
             <Button
@@ -1421,7 +1456,7 @@ function ImmunohistochemistryCaseView() {
                 save(e);
               }}
             >
-               <FormattedMessage id="label.button.save" />
+              <FormattedMessage id="label.button.save" />
             </Button>
           </Column>
         </Grid>
