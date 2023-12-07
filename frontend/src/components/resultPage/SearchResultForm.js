@@ -1105,7 +1105,7 @@ export function SearchResults(props) {
       {notificationVisible === true ? <AlertDialog /> : ""}
       {addRejectResult()}
       <>
-        {props.results.testResult.length > 0 && (
+        {props.results?.testResult?.length > 0 && (
           <Grid style={{ marginTop: "20px" }} className="gridBoundary">
             <Column lg={3} />
             <Column lg={7}>
@@ -1143,7 +1143,7 @@ export function SearchResults(props) {
               //onBlur={handleBlur}
             >
               <DataTable
-                data={props.results.testResult.slice(
+                data={props.results?.testResult?.slice(
                   (page - 1) * pageSize,
                   page * pageSize,
                 )}
@@ -1157,7 +1157,7 @@ export function SearchResults(props) {
                 page={page}
                 pageSize={pageSize}
                 pageSizes={[10, 20, 50, 100]}
-                totalItems={props.results.testResult?.length}
+                totalItems={props.results?.testResult?.length}
               ></Pagination>
 
               <Button type="button" id="submit" onClick={handleSave}>
