@@ -29,7 +29,7 @@ import {
 } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog } from "../common/CustomNotification";
-import { FormattedMessage ,useIntl } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import "./PathologyDashboard.css";
 
 function PathologyDashboard() {
@@ -44,7 +44,12 @@ function PathologyDashboard() {
   const [filters, setFilters] = useState({
     searchTerm: "",
     myCases: false,
-    statuses: [],
+    statuses: [
+      {
+        id: "GROSSING",
+        value: "Grossing",
+      },
+    ],
   });
   const [counts, setCounts] = useState({
     inProgress: 0,
@@ -130,14 +135,16 @@ function PathologyDashboard() {
   };
 
   const setPathologyEntriesWithIds = (entries) => {
-    if (componentMounted.current && entries && entries.length > 0) {
-      setPathologyEntries(
-        entries.map((entry) => {
-          return { ...entry, id: "" + entry.pathologySampleId };
-        }),
-      );
-    }
     if (componentMounted.current) {
+      if (entries && entries.length > 0) {
+        setPathologyEntries(
+          entries.map((entry) => {
+            return { ...entry, id: "" + entry.pathologySampleId };
+          }),
+        );
+      } else {
+        setPathologyEntries([]);
+      }
       setLoading(false);
     }
   };
@@ -242,7 +249,15 @@ function PathologyDashboard() {
 
   useEffect(() => {
     componentMounted.current = true;
-    setFilters({ ...filters, statuses: statuses });
+    setFilters({
+      ...filters,
+      statuses: [
+        {
+          id: "GROSSING",
+          value: "Grossing",
+        },
+      ],
+    });
 
     return () => {
       componentMounted.current = false;
@@ -310,10 +325,14 @@ function PathologyDashboard() {
                 name="statusFilter"
                 labelText={<FormattedMessage id= "label.filters.status"/>}
                 defaultValue="placeholder"
+                labelText="Status"
+                value={
+                  filters.statuses.length > 1 ? "All" : filters.statuses[0].id
+                }
                 onChange={setStatusFilter}
                 noLabel
               >
-                <SelectItem disabled hidden value="placeholder" text="Status" />
+                <SelectItem disabled value="placeholder" text="Status" />
                 <SelectItem text="All" value="All" />
                 {statuses.map((status, index) => {
                   return (

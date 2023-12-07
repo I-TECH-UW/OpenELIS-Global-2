@@ -81,7 +81,6 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   const [calculationList, setCalculationList] = useState([
     CalculatedValueFormValues,
   ]);
-  const [showConfirmBox, setShowConfirmBox] = useState(true);
   const [sampleList, setSampleList] = useState([]);
   const [sampleTestList, setSampleTestList] = useState(TestListObj);
   const [loading, setLoading] = useState(true);
@@ -172,7 +171,6 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
         handleDelete,
       );
     }
-    setShowConfirmBox(false);
   };
 
   const handleDelete = (status) => {
@@ -192,9 +190,6 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     }
   };
 
-  const handleCancelDelete = () => {
-    setShowConfirmBox(false);
-  };
 
   const addOperation = (index: number, type: OperationType) => {
     const list = [...calculationList];
@@ -917,10 +912,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                 modalLabel={
                   <FormattedMessage id="label.button.confirmDelete" />
                 }
-                open={showConfirmBox}
-                onRequestClose={() => setShowConfirmBox(false)}
                 handleSubmit={() => handleRuleRemove(index, calculation.id)}
-                onSecondarySubmit={handleCancelDelete}
                 primaryButtonText={
                   <FormattedMessage id="label.button.confirm" />
                 }
