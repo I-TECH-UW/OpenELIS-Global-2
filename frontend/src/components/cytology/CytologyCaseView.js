@@ -146,7 +146,9 @@ function CytologyCaseView() {
   const [reportParams, setReportParams] = useState({
     0: {
       submited: false,
-    }});
+      reportLink: "",
+    },
+  });
 
   const handleConfirm = () => {
     var diagnosis = { ...pathologySampleInfo.diagnosis };
@@ -183,7 +185,7 @@ function CytologyCaseView() {
     }
   }
 
-  const reportStatus = (pdfGenerated, index) => {
+  const reportStatus = async (pdfGenerated, blob, index) => {
     setNotificationVisible(true);
     setLoadingReport(false);
     if (pdfGenerated) {
@@ -197,7 +199,18 @@ function CytologyCaseView() {
         params[index] = {};
       }
       params[index].submited = true;
+      params[index].reportLink = window.URL.createObjectURL(blob, {
+        type: "application/pdf",
+      });
       setReportParams(params);
+
+      var newReports = [...pathologySampleInfo.reports];
+      let encodedFile = await toBase64(blob);
+      newReports[index].base64Image = encodedFile;
+      setPathologySampleInfo({
+        ...pathologySampleInfo,
+        reports: newReports,
+      });
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
@@ -868,7 +881,7 @@ function CytologyCaseView() {
                         iconDescription="file upload"
                         multiple={false}
                         accept={["image/jpeg", "image/png", "application/pdf"]}
-                        disabled={false}
+                        disabled={reportParams[index]?.submited}
                         name=""
                         buttonKind="primary"
                         size="lg"
@@ -899,30 +912,49 @@ function CytologyCaseView() {
                         }
                       </h6>
                     </Column>
-                    <Column lg={2} md={1} sm={2}>
-                      {pathologySampleInfo.reports[index].image && (
-                        <>
-                          <Button
-                            onClick={() => {
-                              var win = window.open();
-                              win.document.write(
-                                '<iframe src="' +
-                                  report.fileType +
-                                  ";base64," +
-                                  report.image +
-                                  '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>',
-                              );
-                            }}
-                          >
-                            <Launch />{" "}
-                            <FormattedMessage id="pathology.label.view" />
-                          </Button>
-                        </>
-                      )}
-                    </Column>
+
+                    {pathologySampleInfo.reports[index].image && (
+                      <>
+                        {!reportParams[index]?.submited && (
+                          <Column lg={2} md={1} sm={2}>
+                            <Button
+                              onClick={() => {
+                                var win = window.open();
+                                win.document.write(
+                                  '<iframe src="' +
+                                    report.fileType +
+                                    ";base64," +
+                                    report.image +
+                                    '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>',
+                                );
+                              }}
+                            >
+                              <Launch />{" "}
+                              <FormattedMessage id="pathology.label.view" />
+                            </Button>
+                          </Column>
+                        )}
+                      </>
+                    )}
+
+                    {reportParams[index]?.submited && (
+                      <Column lg={2} md={1} sm={2}>
+                        <Button
+                          onClick={() => {
+                            window.open(
+                              reportParams[index]?.reportLink,
+                              "_blank",
+                            );
+                          }}
+                        >
+                          <Launch />{" "}
+                          <FormattedMessage id="pathology.label.view" />
+                        </Button>
+                      </Column>
+                    )}
                     <Column lg={3} md={2} sm={2}>
                       <Button
-                       disabled={reportParams[index]?.submited}
+                        disabled={reportParams[index]?.submited}
                         id={"generate_report_" + index}
                         onClick={(e) => {
                           setLoadingReport(true);
@@ -933,7 +965,7 @@ function CytologyCaseView() {
                           postToOpenElisServerForPDF(
                             "/rest/ReportPrint",
                             JSON.stringify(form),
-                            (e) => reportStatus(e, index),
+                            (e, blob) => reportStatus(e, blob, index),
                           );
                         }}
                       >
