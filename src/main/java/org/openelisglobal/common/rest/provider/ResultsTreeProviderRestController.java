@@ -122,9 +122,9 @@ public class ResultsTreeProviderRestController {
                           resultType = testService.getResultType(result.getTestResult().getTest());
                         } 
                         resultDisplay.setValue("");
-                        if (resultType.equals("N")) {
-                            resultDisplay.setValue(result.getValue() != null ? result.getValue(true) : "");
-                        } else if (resultType.equals("D")) {
+                        if (resultType.equals("N") || resultType.equals("A") || resultType.equals("R")) {
+                            resultDisplay.setValue(result.getValue() != null ? result.getValue() : "");
+                        } else if (resultType.equals("D")|| resultType.equals("M") || resultType.equals("C")) {
                             if (result.getValue() != null && StringUtils.isNumeric(result.getValue())) {
                                 Dictionary dict = dictionaryService.get(result.getValue());
                                 if (dict != null) {
