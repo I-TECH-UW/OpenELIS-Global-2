@@ -526,5 +526,14 @@
     "banner.menu.resultvalidation_study": "Etude",
     "reports.followupRequired.byLocation": "Suivi Requis",
     "button.label.loadnext": "Charger le lot suivant",
-    "button.label.loadprevious": "Charger le lot précédent"
+    "button.label.loadprevious": "Charger le lot précédent",
+    "dashboard.avg.turn.around.subtitle.label":"Réception à Validation",
+    "label.seacrh.labno.family":"Recherche par numéro de laboratoire ou nom de famille",
+    "label.filters.mycases":"Mes cas",
+    "label.filters.status":"Statut",
+    "pathology.label.stage":"Scène",
+    "error.save.msg":"Erreur lors de l'enregistrement",
+    "success.save.msg":"Enregistré avec succès",
+    "success.report.status":"Rapport généré avec succès",
+    "error.report.status":"Erreur lors de la génération du rapport"
 }

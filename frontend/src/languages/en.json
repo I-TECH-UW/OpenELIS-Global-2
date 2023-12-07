@@ -533,6 +533,15 @@
     "label.search.available.targetest":"Search Available Tests",
     "holder.choose.availabletest":"Choose Available Test",
     "title.notestfoundmatching":"No test Found Matching",
-    "label.refertest.referencelab":"Refer test to a reference lab"
+    "label.refertest.referencelab":"Refer test to a reference lab",
+    "dashboard.avg.turn.around.subtitle.label":"Reception to Validation",
+    "label.seacrh.labno.family":"Search by LabNo or Family Name",
+    "label.filters.mycases":"My cases",
+    "label.filters.status":"Status",
+    "pathology.label.stage":"Stage",
+    "error.save.msg":"Error While saving",
+    "success.save.msg":"Successfullly saved",
+    "success.report.status":"Succesfuly Generated Report",
+    "error.report.status":"Error while Generating Report"
 
 }

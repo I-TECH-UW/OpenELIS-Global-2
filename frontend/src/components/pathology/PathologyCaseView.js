@@ -140,13 +140,13 @@ function PathologyCaseView() {
       setNotificationBody({
         kind: NotificationKinds.success,
         title: <FormattedMessage id="notification.title" />,
-        message: "Succesfuly saved",
+        message: <FormattedMessage id= "success.save.msg"/>,
       });
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
         title: <FormattedMessage id="notification.title" />,
-        message: "Error while saving",
+        message: <FormattedMessage id="error.save.msg"/>,
       });
     }
   }
@@ -164,7 +164,7 @@ function PathologyCaseView() {
       setNotificationBody({
         kind: NotificationKinds.error,
         title: <FormattedMessage id="notification.title" />,
-        message: "Error while Generating Report",
+        message: <FormattedMessage id="error.report.status"/>,
       });
     }
   }
@@ -222,8 +222,6 @@ function PathologyCaseView() {
       };
     }
 
-    console.log(" ..submit....");
-    console.log(JSON.stringify(submitValues));
     postToOpenElisServerFullResponse(
       "/rest/pathology/caseView/" + pathologySampleId,
       JSON.stringify(submitValues),
