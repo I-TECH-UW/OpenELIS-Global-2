@@ -125,6 +125,10 @@ function PathologyCaseView() {
   const [blocksToAdd, setBlocksToAdd] = useState(1);
   const [slidesToAdd, setSlidesToAdd] = useState(1);
   const [loadingReport, setLoadingReport] = useState(false);
+  const [reportParams, setReportParams] = useState({
+    0: {
+      submited: false,
+    }});
 
   async function displayStatus(response) {
     var body = await response.json();
@@ -150,7 +154,7 @@ function PathologyCaseView() {
     }
   }
 
-  const reportStatus = (pdfGenerated) => {
+  const reportStatus = (pdfGenerated, index) => {
     setNotificationVisible(true);
     setLoadingReport(false);
     if (pdfGenerated) {
@@ -159,6 +163,12 @@ function PathologyCaseView() {
         title: <FormattedMessage id="notification.title" />,
         message: "Succesfuly Generated Report",
       });
+      var params = { ...reportParams };
+      if (!params[index]) {
+        params[index] = {};
+      }
+      params[index].submited = true;
+      setReportParams(params);
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
@@ -585,6 +595,7 @@ function PathologyCaseView() {
                     </Column>
                     <Column lg={3} md={2} sm={2}>
                       <Button
+                       disabled={reportParams[index]?.submited}
                         onClick={(e) => {
                           setLoadingReport(true);
                           const form = {
@@ -594,7 +605,7 @@ function PathologyCaseView() {
                           postToOpenElisServerForPDF(
                             "/rest/ReportPrint",
                             JSON.stringify(form),
-                            reportStatus,
+                            (e) => reportStatus(e, index),
                           );
                         }}
                       >
