@@ -610,7 +610,7 @@ const AddOrder = (props) => {
               required
             >
               <SelectItem value="" text="" />
-              {paymentOptions.map((option) => {
+              {paymentOptions?.map((option) => {
                 return (
                   <SelectItem
                     key={option.id}
@@ -667,7 +667,7 @@ const AddOrder = (props) => {
         </div>
         <div className="orderLegendBody">
           <h3>{<FormattedMessage id="order.result.reporting.heading" />}</h3>
-          {samples.map((sample, index) => {
+          {samples?.map((sample, index) => {
             if (sample.tests.length > 0) {
               return (
                 <div key={index}>
