@@ -305,7 +305,7 @@ function PathologyDashboard() {
               onChange={(e) =>
                 setFilters({ ...filters, searchTerm: e.target.value })
               }
-              placeholder={<FormattedMessage id="label.seacrh.labno.family"/>}
+              placeholder={intl.formatMessage({id:"label.seacrh.labno.family",})}
               labelText= {<FormattedMessage id="label.seacrh.labno.family"/>}
             />
           </Column>
