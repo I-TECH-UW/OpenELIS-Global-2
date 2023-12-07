@@ -112,7 +112,7 @@
     "pathology.label.slide" : "Lame",
     "pathology.label.addslide" : "Ajouter une Lame(s)",
     "pathology.label.printlabel" : "Imprimer l'Étiquette",
-    "pathology.label.view" : "Voir le rapport",
+    "pathology.label.view" : "Voir la fiche",
     "pathology.label.dashboard" : "Tableau de Bord de la Pathologie",
     "pathology.label.techniques" : "Techniques Utilisées",
     "pathology.label.request" : "Demandes",
