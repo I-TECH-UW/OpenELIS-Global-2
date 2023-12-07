@@ -325,7 +325,6 @@ function PathologyDashboard() {
                 name="statusFilter"
                 labelText={<FormattedMessage id= "label.filters.status"/>}
                 defaultValue="placeholder"
-                labelText="Status"
                 value={
                   filters.statuses.length > 1 ? "All" : filters.statuses[0].id
                 }
