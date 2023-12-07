@@ -126,7 +126,7 @@ export const getFromOpenElisServerSync = (endPoint, callback) => {
   callback(JSON.parse(request.response));
 };
 
-export const postToOpenElisServerForPDF = (endPoint, payLoad ,callback) => {
+export const postToOpenElisServerForPDF = (endPoint, payLoad, callback) => {
   fetch(
     config.serverBaseUrl + endPoint,
 
@@ -143,7 +143,7 @@ export const postToOpenElisServerForPDF = (endPoint, payLoad ,callback) => {
   )
     .then((response) => response.blob())
     .then((blob) => {
-      callback(true)
+      callback(true, blob);
       let link = document.createElement("a");
       link.href = window.URL.createObjectURL(blob, { type: "application/pdf" });
       link.target = "_blank";
@@ -152,7 +152,7 @@ export const postToOpenElisServerForPDF = (endPoint, payLoad ,callback) => {
       document.body.removeChild(link);
     })
     .catch((error) => {
-      callback(false)
+      callback(false);
       console.log(error);
     });
 };

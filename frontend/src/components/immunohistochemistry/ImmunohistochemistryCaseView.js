@@ -139,6 +139,7 @@ function ImmunohistochemistryCaseView() {
       numberOfcancerNuclei: "",
       toggled: false,
       submited: false,
+      reportLink: "",
     },
   });
 
@@ -167,7 +168,7 @@ function ImmunohistochemistryCaseView() {
     }
   }
 
-  const reportStatus = (pdfGenerated, index) => {
+  const reportStatus = async (pdfGenerated, blob, index) => {
     setNotificationVisible(true);
     setLoadingReport(false);
     if (pdfGenerated) {
@@ -182,7 +183,19 @@ function ImmunohistochemistryCaseView() {
       }
       params[index].submited = true;
       params[index].toggled = false;
+      params[index].reportLink = window.URL.createObjectURL(blob, {
+        type: "application/pdf",
+      });
       setReportParams(params);
+
+      var newReports = [...immunohistochemistrySampleInfo.reports];
+      let encodedFile = await toBase64(blob);
+      newReports[index].base64Image = encodedFile;
+
+      setImmunohistochemistrySampleInfo({
+        ...immunohistochemistrySampleInfo,
+        reports: newReports,
+      });
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
@@ -247,7 +260,6 @@ function ImmunohistochemistryCaseView() {
                     id={"erIntensity_" + index}
                     name="status"
                     labelText=""
-
                     value={reportParams[index]?.erIntensity}
                     onChange={(e) => {
                       var params = { ...reportParams };
@@ -509,7 +521,7 @@ function ImmunohistochemistryCaseView() {
                   <FormattedMessage id="immunohistochemistry.label.molecularType" />
                 </Column>
                 <Column lg={13} md={8} sm={4}>
-                   <Select
+                  <Select
                     id={"molecularSubType_" + index}
                     name="molecularSubType"
                     labelText=""
@@ -1128,7 +1140,7 @@ function ImmunohistochemistryCaseView() {
                             "image/png",
                             "application/pdf",
                           ]}
-                          disabled={false}
+                          disabled={reportParams[index]?.submited}
                           name=""
                           buttonKind="primary"
                           size="lg"
@@ -1161,31 +1173,49 @@ function ImmunohistochemistryCaseView() {
                           }
                         </h6>
                       </Column>
-                      <Column lg={2} md={1} sm={2}>
-                        {immunohistochemistrySampleInfo.reports[index]
-                          .image && (
-                          <>
-                            <Button
-                              onClick={() => {
-                                var win = window.open();
-                                win.document.write(
-                                  '<iframe src="' +
-                                    report.fileType +
-                                    ";base64," +
-                                    report.image +
-                                    '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>',
-                                );
-                              }}
-                            >
-                              <Launch />{" "}
-                              <FormattedMessage id="pathology.label.view" />
-                            </Button>
-                          </>
-                        )}
-                      </Column>
+
+                      {immunohistochemistrySampleInfo.reports[index].image && (
+                        <>
+                          {!reportParams[index]?.submited && (
+                            <Column lg={2} md={1} sm={2}>
+                              <Button
+                                onClick={() => {
+                                  var win = window.open();
+                                  win.document.write(
+                                    '<iframe src="' +
+                                      report.fileType +
+                                      ";base64," +
+                                      report.image +
+                                      '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>',
+                                  );
+                                }}
+                              >
+                                <Launch />{" "}
+                                <FormattedMessage id="pathology.label.view" />
+                              </Button>
+                            </Column>
+                          )}
+                        </>
+                      )}
+                      {reportParams[index]?.submited && (
+                        <Column lg={2} md={1} sm={2}>
+                          <Button
+                            onClick={() => {
+                              window.open(
+                                reportParams[index]?.reportLink,
+                                "_blank")
+          
+                            }}
+                          >
+                            <Launch />{" "}
+                            <FormattedMessage id="pathology.label.view" />
+                          </Button>
+                        </Column>
+                      )}
+
                       <Column lg={3} md={2} sm={2}>
                         <Button
-                         disabled={reportParams[index]?.submited}
+                          disabled={reportParams[index]?.submited}
                           onClick={(e) => {
                             setLoadingReport(true);
                             const form = {
@@ -1215,7 +1245,7 @@ function ImmunohistochemistryCaseView() {
                             postToOpenElisServerForPDF(
                               "/rest/ReportPrint",
                               JSON.stringify(form),
-                              (e) => reportStatus(e, index),
+                              (e, blob) => reportStatus(e, blob, index),
                             );
                           }}
                         >

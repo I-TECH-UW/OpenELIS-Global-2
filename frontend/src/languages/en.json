@@ -102,7 +102,7 @@
     "pathology.label.slide" : "Slide",
     "pathology.label.addslide" : "Add Slide(s)",
     "pathology.label.printlabel" : "Print Label",
-    "pathology.label.view" : "View",
+    "pathology.label.view" : "View Report",
     "pathology.label.dashboard" : "Pathology DashBoard",
     "pathology.label.techniques" : "Techniques Used",
     "pathology.label.request" : "Requests",
