@@ -143,6 +143,10 @@ function CytologyCaseView() {
   const intl = useIntl();
   const [slidesToAdd, setSlidesToAdd] = useState(1);
   const [isConfirmOpen, setConfirmOpen] = useState(false);
+  const [reportParams, setReportParams] = useState({
+    0: {
+      submited: false,
+    }});
 
   const handleConfirm = () => {
     var diagnosis = { ...pathologySampleInfo.diagnosis };
@@ -179,7 +183,7 @@ function CytologyCaseView() {
     }
   }
 
-  const reportStatus = (pdfGenerated) => {
+  const reportStatus = (pdfGenerated, index) => {
     setNotificationVisible(true);
     setLoadingReport(false);
     if (pdfGenerated) {
@@ -188,6 +192,12 @@ function CytologyCaseView() {
         title: <FormattedMessage id="notification.title" />,
         message: "Succesfuly Generated Report",
       });
+      var params = { ...reportParams };
+      if (!params[index]) {
+        params[index] = {};
+      }
+      params[index].submited = true;
+      setReportParams(params);
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
@@ -912,6 +922,7 @@ function CytologyCaseView() {
                     </Column>
                     <Column lg={3} md={2} sm={2}>
                       <Button
+                       disabled={reportParams[index]?.submited}
                         id={"generate_report_" + index}
                         onClick={(e) => {
                           setLoadingReport(true);
@@ -922,7 +933,7 @@ function CytologyCaseView() {
                           postToOpenElisServerForPDF(
                             "/rest/ReportPrint",
                             JSON.stringify(form),
-                            reportStatus,
+                            (e) => reportStatus(e, index),
                           );
                         }}
                       >

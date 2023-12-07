@@ -125,6 +125,10 @@ function PathologyCaseView() {
   const [blocksToAdd, setBlocksToAdd] = useState(1);
   const [slidesToAdd, setSlidesToAdd] = useState(1);
   const [loadingReport, setLoadingReport] = useState(false);
+  const [reportParams, setReportParams] = useState({
+    0: {
+      submited: false,
+    }});
 
   async function displayStatus(response) {
     var body = await response.json();
@@ -150,7 +154,7 @@ function PathologyCaseView() {
     }
   }
 
-  const reportStatus = (pdfGenerated) => {
+  const reportStatus = (pdfGenerated, index) => {
     setNotificationVisible(true);
     setLoadingReport(false);
     if (pdfGenerated) {
@@ -159,6 +163,12 @@ function PathologyCaseView() {
         title: <FormattedMessage id="notification.title" />,
         message: "Succesfuly Generated Report",
       });
+      var params = { ...reportParams };
+      if (!params[index]) {
+        params[index] = {};
+      }
+      params[index].submited = true;
+      setReportParams(params);
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
@@ -193,9 +203,17 @@ function PathologyCaseView() {
           : false,
       referToImmunoHistoChemistry:
         pathologySampleInfo.referToImmunoHistoChemistry,
-      immunoHistoChemistryTestId:
-        pathologySampleInfo.immunoHistoChemistryTestId,
     };
+    if (pathologySampleInfo.immunoHistoChemistryTestIds) {
+      submitValues = {
+        ...submitValues,
+        immunoHistoChemistryTestIds:
+          pathologySampleInfo.immunoHistoChemistryTestIds.map((e) => {
+            return e.id;
+          }),
+      };
+    }
+
     if (pathologySampleInfo.techniques) {
       submitValues = {
         ...submitValues,
@@ -577,6 +595,7 @@ function PathologyCaseView() {
                     </Column>
                     <Column lg={3} md={2} sm={2}>
                       <Button
+                       disabled={reportParams[index]?.submited}
                         onClick={(e) => {
                           setLoadingReport(true);
                           const form = {
@@ -586,7 +605,7 @@ function PathologyCaseView() {
                           postToOpenElisServerForPDF(
                             "/rest/ReportPrint",
                             JSON.stringify(form),
-                            reportStatus,
+                            (e) => reportStatus(e, index),
                           );
                         }}
                       >
@@ -1168,6 +1187,65 @@ function PathologyCaseView() {
             </Column>
           </>
         )}
+        <Column lg={16} md={4} sm={2}>
+          <Grid fullWidth={true} className="gridBoundary">
+            <Column lg={4}>
+              <Checkbox
+                labelText={<FormattedMessage id="pathology.label.refer" />}
+                id="referToImmunoHistoChemistry"
+                onChange={() => {
+                  setPathologySampleInfo({
+                    ...pathologySampleInfo,
+                    referToImmunoHistoChemistry:
+                      !pathologySampleInfo.referToImmunoHistoChemistry,
+                  });
+                }}
+              />
+            </Column>
+            {pathologySampleInfo.referToImmunoHistoChemistry && (
+              <>
+                <Column lg={4}>
+                  <FilterableMultiSelect
+                    id="ihctests"
+                    titleText={
+                      <FormattedMessage id="label.button.select.test" />
+                    }
+                    items={immunoHistoChemistryTests}
+                    itemToString={(item) => (item ? item.value : "")}
+                    onChange={(changes) => {
+                      setPathologySampleInfo({
+                        ...pathologySampleInfo,
+                        immunoHistoChemistryTestIds: changes.selectedItems,
+                      });
+                    }}
+                    selectionFeedback="top-after-reopen"
+                  />
+                </Column>
+                <Column lg={8} md={4} sm={2}>
+                  {pathologySampleInfo.immunoHistoChemistryTestIds &&
+                    pathologySampleInfo.immunoHistoChemistryTestIds.map(
+                      (test, index) => (
+                        <Tag
+                          key={index}
+                          filter
+                          onClose={() => {
+                            var info = { ...pathologySampleInfo };
+                            info["immunoHistoChemistryTestIds"].splice(
+                              index,
+                              1,
+                            );
+                            setPathologySampleInfo(info);
+                          }}
+                        >
+                          {test.value}
+                        </Tag>
+                      ),
+                    )}
+                </Column>
+              </>
+            )}
+          </Grid>
+        </Column>
         {pathologySampleInfo.assignedPathologistId &&
           pathologySampleInfo.assignedTechnicianId && (
             <Column lg={16}>
@@ -1183,41 +1261,6 @@ function PathologyCaseView() {
               />
             </Column>
           )}
-        <Column lg={8}>
-          <Checkbox
-            labelText={<FormattedMessage id="pathology.label.refer" />}
-            id="referToImmunoHistoChemistry"
-            onChange={() => {
-              setPathologySampleInfo({
-                ...pathologySampleInfo,
-                referToImmunoHistoChemistry:
-                  !pathologySampleInfo.referToImmunoHistoChemistry,
-              });
-            }}
-          />
-        </Column>
-        {pathologySampleInfo.referToImmunoHistoChemistry && (
-          <Column lg={8}>
-            <Select
-              id="immunoHistoChemistryTest"
-              name="immunoHistoChemistryTest"
-              labelText={<FormattedMessage id="label.button.select.test" />}
-              onChange={(event) => {
-                setPathologySampleInfo({
-                  ...pathologySampleInfo,
-                  immunoHistoChemistryTestId: event.target.value,
-                });
-              }}
-            >
-              <SelectItem />
-              {immunoHistoChemistryTests.map((test, index) => {
-                return (
-                  <SelectItem key={index} text={test.value} value={test.id} />
-                );
-              })}
-            </Select>
-          </Column>
-        )}
         <Column lg={16}>
           <Button
             id="pathology_save2"
