@@ -292,6 +292,7 @@
     "referral.testresult.pastnote":"Past Notes",
     "new.patient.label": "New Patient",
     "sample.select.type": "Select sample type",
+    "sample.type":"Sample Type",
     "sample.reject.label": "Reject Sample",
     "sample.collection.date": "Collection Date",
     "sample.collection.time": "Collection Time",
@@ -565,6 +566,23 @@
     "stillThere.title":"Still There?",
     "stillThere.message":"user session is about to time out",
     "reflexTests":"Reflex Tests",
-    "calculatedTests" :"Calculated Tests"
+    "calculatedTests" :"Calculated Tests",
+    "header.formname":"FormName",
+    "header.results.recorded":"Results Recorded",
+    "header.cancel.test":"Cancel Test",
+    "header.assign":"Assign",
+    "header.rejection.reason":"Reject Reason",
+    "header.reject":"Reject",
+    "header.ID":"ID",
+    "label.equals":"equals",
+    "label.notequals":"does not equal",
+    "label.inside.normalrange":"is inside the normal range",
+    "label.outside.normalrange":"is outside the normal range",
+    "label.any":"Any",
+    "label.test.add":"Add test to order",
+    "label.add.notification":"Add pop up notification to user",
+    "rulebuilder.label.add.internaltrigger":"Add Internal `triggered by` message",
+    "rulebuilder.label.add.externaltrigger":"Add External `triggered by` message"
+
 
 }

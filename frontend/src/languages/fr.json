@@ -558,6 +558,23 @@
     "stillThere.title":"Toujours là?",
     "stillThere.message":"la session utilisateur est sur le point d'expirer",
     "reflexTests":"Tests de réflexes",
-    "calculatedTests":"Calculated Tests"
+    "calculatedTests":"Calculated Tests",
+    "patient.natioanalid":"Carte d'identité",
+    "header.formname":"Nom de forme",
+    "sample.type":"Échantillon type",
+    "header.results.recorded":"Résultats enregistrés",
+    "header.cancel.test":"Annuler le test",
+    "header.assign":"Attribuer",
+    "header.rejection.reason":"Raison du rejet",
+    "header.reject":"Rejeter",
+    "header.ID":"IDENTIFIANT",
+    "label.equals":"équivaut à",
+    "label.notequals":"n'est pas égal",
+    "label.inside.normalrange":"est dans la plage normale",
+    "label.outside.normalrange":"est en dehors de la plage normale",
+    "label.any":"N'importe lequel",
+    "label.add.notification":"Ajouter une notification contextuelle à l'utilisateur",
+    "rulebuilder.label.add.internaltrigger":"Ajouter un message interne \"déclenché par\"",
+    "rulebuilder.label.add.externaltrigger":"Add External `triggered by` message"
 
 }
