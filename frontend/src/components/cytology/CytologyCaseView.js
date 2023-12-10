@@ -174,13 +174,13 @@ function CytologyCaseView() {
       setNotificationBody({
         kind: NotificationKinds.success,
         title: <FormattedMessage id="notification.title" />,
-        message: "Succesfuly saved",
+        message: <FormattedMessage id="save.success"/>,
       });
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
         title: <FormattedMessage id="notification.title" />,
-        message: "Error while saving",
+        message: <FormattedMessage id="error.save.msg"/>,
       });
     }
   }
@@ -192,7 +192,7 @@ function CytologyCaseView() {
       setNotificationBody({
         kind: NotificationKinds.success,
         title: <FormattedMessage id="notification.title" />,
-        message: "Succesfuly Generated Report",
+        message: <FormattedMessage id="success.report.status"/>,
       });
       var params = { ...reportParams };
       if (!params[index]) {
@@ -215,7 +215,7 @@ function CytologyCaseView() {
       setNotificationBody({
         kind: NotificationKinds.error,
         title: <FormattedMessage id="notification.title" />,
-        message: "Error while Generating Report",
+        message:<FormattedMessage id="error.report.status"/>,
       });
     }
   };
@@ -546,7 +546,7 @@ function CytologyCaseView() {
           <Select
             id="status"
             name="status"
-            labelText="Status"
+            labelText={<FormattedMessage id="label.filters.status"/>}
             value={pathologySampleInfo.status}
             onChange={(event) => {
               setPathologySampleInfo({
@@ -1324,9 +1324,9 @@ function CytologyCaseView() {
                         <FormattedMessage id="cytology.label.other" /> :
                         <TextInput
                           id="otherNeoPlasms"
-                          labelText="Enter text rest"
+                          labelText={intl.formatMessage({ id: "enterText.label" })}
                           hideLabel={true}
-                          placeholder="Other Malignant"
+                          placeholder={intl.formatMessage({ id: "otherMalignant.placeholder" })}
                           value={
                             filterDiagnosisResultsByCategory(
                               "EPITHELIAL_CELL_ABNORMALITY",
@@ -1388,7 +1388,7 @@ function CytologyCaseView() {
                       <Column lg={4} md={8} sm={4}>
                         <FilterableMultiSelect
                           id="nonNeoPlastic"
-                          titleText="Select Result"
+                          titleText={intl.formatMessage({ id: "selectResult.title" })}
                           items={diagnosisResultNonNeoPlasticCellular}
                           itemToString={(item) => (item ? item.value : "")}
                           initialSelectedItems={
@@ -1491,7 +1491,7 @@ function CytologyCaseView() {
                       <Column lg={4} md={8} sm={4}>
                         <FilterableMultiSelect
                           id="reactiveChanges"
-                          titleText="Select Result"
+                          titleText={intl.formatMessage({ id: "selectResult.title" })}
                           items={diagnosisResultReactiveCellular}
                           itemToString={(item) => (item ? item.value : "")}
                           initialSelectedItems={
@@ -1591,7 +1591,7 @@ function CytologyCaseView() {
                       <Column lg={4} md={8} sm={4}>
                         <FilterableMultiSelect
                           id="organisms"
-                          titleText="Select Result"
+                          titleText={intl.formatMessage({ id: "selectResult.title" })}
                           items={diagnosisResultOrganisms}
                           itemToString={(item) => (item ? item.value : "")}
                           initialSelectedItems={
@@ -1688,7 +1688,7 @@ function CytologyCaseView() {
                       <Column lg={4} md={8} sm={4}>
                         <FilterableMultiSelect
                           id="OTHER"
-                          titleText="Select Result"
+                          titleText={intl.formatMessage({ id: "selectResult.title" })}
                           items={diagnosisResultOther}
                           itemToString={(item) => (item ? item.value : "")}
                           initialSelectedItems={

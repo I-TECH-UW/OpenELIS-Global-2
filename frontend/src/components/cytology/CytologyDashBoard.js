@@ -299,15 +299,15 @@ function CytologyDashboard() {
               onChange={(e) =>
                 setFilters({ ...filters, searchTerm: e.target.value })
               }
-              placeholder="Search by LabNo or Family Name"
-              labelText="Search by LabNo or Family Name"
+              placeholder={intl.formatMessage({ id: "label.seacrh.labno.family" })}
+              labelText={<FormattedMessage id="label.seacrh.labno.family"/>}
             />
           </Column>
           <Column lg={8} md={4} sm={2}>
             <div className="inlineDivBlock">
-              <div>Filters:</div>
+              <div>{intl.formatMessage({ id: "filters.label" })}</div>
               <Checkbox
-                labelText="My cases"
+                labelText={<FormattedMessage id="label.filters.mycases"/>}
                 id="filterMyCases"
                 value={filters.myCases}
                 onChange={(e) =>
@@ -317,15 +317,15 @@ function CytologyDashboard() {
               <Select
                 id="statusFilter"
                 name="statusFilter"
-                labelText="Status"
+                labelText={<FormattedMessage id="label.filters.status"/>}
                 value={
                   filters.statuses.length > 1 ? "All" : filters.statuses[0].id
                 }
                 onChange={setStatusFilter}
                 noLabel
               >
-                <SelectItem disabled  value="placeholder" text="Status" />
-                <SelectItem text="All" value="All" />
+                <SelectItem disabled  value="placeholder" text={intl.formatMessage({ id: "label.filters.status"})} />
+                <SelectItem text={intl.formatMessage({ id: "all.label" })} value="All" />
                 {statuses.map((status, index) => {
                   return (
                     <SelectItem
@@ -348,31 +348,31 @@ function CytologyDashboard() {
               headers={[
                 {
                   key: "requestDate",
-                  header: "Request Date",
+                  header: intl.formatMessage({ id: "sample.requestDate" }),
                 },
                 {
                   key: "status",
-                  header: "Stage",
+                  header:intl.formatMessage({ id:  "label.filters.status"}),
                 },
                 {
                   key: "lastName",
-                  header: "Last Name",
+                  header: intl.formatMessage({ id: "patient.last.name"}),
                 },
                 {
                   key: "firstName",
-                  header: "First Name",
+                  header: intl.formatMessage({ id: "patient.first.name" }),
                 },
                 {
                   key: "assignedTechnician",
-                  header: "Assigned Technician",
+                  header: intl.formatMessage({ id:"label.button.select.technician" }) ,
                 },
                 {
                   key: "assignedCytoPathologist",
-                  header: "Assigned CytoPathologist",
+                  header: intl.formatMessage({ id: "assigned.cytopathologist.label" }),
                 },
                 {
                   key: "labNumber",
-                  header: "Lab Number",
+                  header: intl.formatMessage({ id: "sample.label.labnumber" }), 
                 },
               ]}
               isSortable
