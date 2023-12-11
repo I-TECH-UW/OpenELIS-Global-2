@@ -291,7 +291,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 }
             }
 
-            paging.setDatabaseResults(request, form, filteredTests);
+            paging.setDatabaseResults(request, form, filteredTests);           
 
         } else {
             int requestedPageNumber = Integer.parseInt(requestedPage);
@@ -336,6 +336,14 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
         String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
+        // load testSections for drop down
+        String resultsRoleId = roleService.getRoleByName(Constants.ROLE_RESULTS).getId();
+        List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request), resultsRoleId);
+        form.setTestSections(testSections);
+        form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
+        form.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
+        form.setSearchFinished(true);
+        
         if ("true".equals(request.getParameter("pageResults"))) {
             return getLogbookResults(request, form);
         }
