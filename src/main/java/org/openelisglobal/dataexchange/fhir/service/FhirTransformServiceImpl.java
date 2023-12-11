@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.Bundle;
@@ -392,9 +393,11 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 		orderEntryObjects.patient = patient;
 
 		// requester
-		Practitioner requester = transformProviderToPractitioner(updateData.getProvider().getId());
-		this.addToOperations(fhirOperations, tempIdGenerator, requester);
-		orderEntryObjects.requester = requester;
+		if(ObjectUtils.isNotEmpty(updateData.getProvider())) {
+			Practitioner requester = transformProviderToPractitioner(updateData.getProvider().getId());
+			this.addToOperations(fhirOperations, tempIdGenerator, requester);
+			orderEntryObjects.requester = requester;
+		}
 
 		// Specimens and service requests
 		for (SampleTestCollection sampleTest : updateData.getSampleItemsTests()) {
