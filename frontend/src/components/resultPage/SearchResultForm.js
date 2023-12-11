@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { FormattedMessage, injectIntl } from "react-intl";
+import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../Style.css";
 import {
   getFromOpenElisServer,
@@ -519,6 +519,7 @@ export function SearchResults(props) {
   const [rejectReasons, setRejectReasons] = useState([]);
   const [rejectedItems, setRejectedItems] = useState({});
   const saveStatus = "";
+  const intl = useIntl();
 
   const componentMounted = useRef(true);
 
@@ -881,7 +882,7 @@ export function SearchResults(props) {
           <Select
             id={"testMethod" + data.id}
             name={"testResult[" + data.id + "].testMethod"}
-            labelText={<FormattedMessage id= "referral.label.testmethod"/>}
+            labelText={<FormattedMessage id="referral.label.testmethod" />}
             onChange={(e) => handleChange(e, data.id)}
             value={data.method}
           >
@@ -900,7 +901,7 @@ export function SearchResults(props) {
             id={"referralReason" + data.id}
             name={"testResult[" + data.id + "].referralReason"}
             // noLabel={true}
-            labelText={<FormattedMessage id= "referral.label.reason"/>}
+            labelText={<FormattedMessage id="referral.label.reason" />}
             onChange={(e) => handleChange(e, data.id)}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
@@ -919,7 +920,7 @@ export function SearchResults(props) {
             id={"institute" + data.id}
             name={"testResult[" + data.id + "].institute"}
             // noLabel={true}
-            labelText={<FormattedMessage id ="referral.label.institute"/>}
+            labelText={<FormattedMessage id="referral.label.institute" />}
             onChange={(e) => handleChange(e, data.id)}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
@@ -1070,7 +1071,7 @@ export function SearchResults(props) {
     } else {
       setNotificationBody({
         title: <FormattedMessage id="notification.title" />,
-        message:<FormattedMessage id="error.save.msg"/>,
+        message: <FormattedMessage id="error.save.msg" />,
         kind: NotificationKinds.error,
       });
     }
@@ -1080,13 +1081,19 @@ export function SearchResults(props) {
   const createMesssage = (resp) => {
     var message = "";
     if (resp.reflex.length > 0) {
-      message +=intl.formatMessage({ id: "reflexTests" }) + ": " + resp.reflex.join(", ");
+      message +=
+        intl.formatMessage({ id: "reflexTests" }) +
+        ": " +
+        resp.reflex.join(", ");
     }
     if (resp.calculated.length > 0) {
-      message += intl.formatMessage({ id: "calculatedTests" }) + ": "+ resp.calculated.join(", ");
+      message +=
+        intl.formatMessage({ id: "calculatedTests" }) +
+        ": " +
+        resp.calculated.join(", ");
     }
     if (message === "") {
-      message +=intl.formatMessage({ id: "success.save.msg"});
+      message += intl.formatMessage({ id: "success.save.msg" });
     }
     return message;
   };
