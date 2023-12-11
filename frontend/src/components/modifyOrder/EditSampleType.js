@@ -15,7 +15,7 @@ import CustomSelect from "../common/CustomSelect";
 import CustomDatePicker from "../common/CustomDatePicker";
 import CustomTimePicker from "../common/CustomTimePicker";
 import { NotificationKinds } from "../common/CustomNotification";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { getFromOpenElisServer } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
 import { sampleTypeTestsStructure } from "../data/SampleEntryTestsForTypeProvider";
@@ -61,6 +61,7 @@ const EditSampleType = (props) => {
   const [loading, setLoading] = useState(true);
 
   const defaultSelect = { id: "", value: "Choose Rejection Reason" };
+  const intl = useIntl();
 
   function handleCollectionDate(date) {
     setSampleXml({
@@ -580,7 +581,7 @@ const EditSampleType = (props) => {
         </div>
 
         <div className="cds--col">
-          {selectedTests && !selectedTests.length ? "" : <h4>Order Tests</h4>}
+          {selectedTests && !selectedTests.length ? "" : <h4>{intl.formatMessage({ id: "ordertests.title" })}</h4>}
           <div
             className={"searchTestText"}
             style={{ marginBottom: "1.188rem" }}
@@ -603,12 +604,12 @@ const EditSampleType = (props) => {
               <></>
             )}
           </div>
-          <FormGroup legendText={"Search through the available tests"}>
+          <FormGroup legendText={intl.formatMessage({ id: "searchTests.legend" })}>
             <Search
               size="lg"
               id={`tests_search_` + index}
-              labelText={"Search Available Test"}
-              placeholder={"Choose Available test"}
+              labelText={intl.formatMessage({ id: "searchTests.label" })}
+              placeholder={intl.formatMessage({ id: "searchTests.label" })}
               onChange={handleTestSearchChange}
               value={(() => {
                 if (testSearchTerm) {
@@ -641,8 +642,7 @@ const EditSampleType = (props) => {
                     <Layer>
                       <Tile className={"emptyFilterTests"}>
                         <span>
-                          No test found matching
-                          <strong> "{testSearchTerm}"</strong>{" "}
+                        {intl.formatMessage({ id: "noTestsFound.matching" }, { testSearchTerm: testSearchTerm || '' })}
                         </span>
                       </Tile>
                     </Layer>
@@ -670,7 +670,7 @@ const EditSampleType = (props) => {
         <div className="requestTestReferral">
           <Checkbox
             id={`useReferral_` + index}
-            labelText="Refer test to a reference lab"
+            labelText={intl.formatMessage({ id: "referTest.referralLabel" })}
             onChange={handleReferralRequest}
           />
           {requestTestReferral === true && (

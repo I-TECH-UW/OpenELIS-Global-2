@@ -305,15 +305,15 @@ function PathologyDashboard() {
               onChange={(e) =>
                 setFilters({ ...filters, searchTerm: e.target.value })
               }
-              placeholder="Search by LabNo or Family Name"
-              labelText="Search by LabNo or Family Name"
+              placeholder={intl.formatMessage({id:"label.seacrh.labno.family",})}
+              labelText= {<FormattedMessage id="label.seacrh.labno.family"/>}
             />
           </Column>
           <Column lg={8} md={4} sm={2}>
             <div className="inlineDivBlock">
               <div>Filters:</div>
               <Checkbox
-                labelText="My cases"
+                labelText={<FormattedMessage id="label.filters.mycases"/>}
                 id="filterMyCases"
                 value={filters.myCases}
                 onChange={(e) =>
@@ -323,7 +323,8 @@ function PathologyDashboard() {
               <Select
                 id="statusFilter"
                 name="statusFilter"
-                labelText="Status"
+                labelText={<FormattedMessage id= "label.filters.status"/>}
+                defaultValue="placeholder"
                 value={
                   filters.statuses.length > 1 ? "All" : filters.statuses[0].id
                 }
@@ -354,31 +355,31 @@ function PathologyDashboard() {
               headers={[
                 {
                   key: "requestDate",
-                  header: "Request Date",
+                  header: <FormattedMessage id="sample.requestDate"/>,
                 },
                 {
                   key: "status",
-                  header: "Stage",
+                  header: <FormattedMessage id="pathology.label.stage"/>,
                 },
                 {
                   key: "lastName",
-                  header: "Last Name",
+                  header: <FormattedMessage id="patient.last.name"/>,
                 },
                 {
                   key: "firstName",
-                  header: "First Name",
+                  header: <FormattedMessage id="patient.first.name"/>,
                 },
                 {
                   key: "assignedTechnician",
-                  header: "Assigned Technician",
+                  header: <FormattedMessage id="assigned.technician.label"/>,
                 },
                 {
                   key: "assignedPathologist",
-                  header: "Assigned Pathologist",
+                  header: <FormattedMessage id="assigned.pathologist.label"/>,
                 },
                 {
                   key: "labNumber",
-                  header: "Lab Number",
+                  header:<FormattedMessage id="sample.label.labnumber"/>,
                 },
               ]}
               isSortable

@@ -1070,7 +1070,7 @@ export function SearchResults(props) {
     } else {
       setNotificationBody({
         title: <FormattedMessage id="notification.title" />,
-        message: "Error while Saving",
+        message:<FormattedMessage id="error.save.msg"/>,
         kind: NotificationKinds.error,
       });
     }
@@ -1080,13 +1080,13 @@ export function SearchResults(props) {
   const createMesssage = (resp) => {
     var message = "";
     if (resp.reflex.length > 0) {
-      message += "Reflex Tests : " + resp.reflex.join(", ");
+      message +=intl.formatMessage({ id: "reflexTests" }) + ": " + resp.reflex.join(", ");
     }
     if (resp.calculated.length > 0) {
-      message += "Calculated Tests : " + resp.calculated.join(", ");
+      message += intl.formatMessage({ id: "calculatedTests" }) + ": "+ resp.calculated.join(", ");
     }
     if (message === "") {
-      message += "Saved Succesfully";
+      message +=intl.formatMessage({ id: "success.save.msg"});
     }
     return message;
   };

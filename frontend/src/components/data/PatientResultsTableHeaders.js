@@ -1,26 +1,27 @@
+import { FormattedMessage } from 'react-intl';
 export const patientSearchHeaderData = [
   {
     key: "lastName",
-    header: "Last Name",
+    header: <FormattedMessage id="patient.last.name"/>,
   },
   {
     key: "firstName",
-    header: "First Name",
+    header: <FormattedMessage id="patient.first.name"/>,
   },
   {
     key: "gender",
-    header: "Gender",
+    header: <FormattedMessage id="patient.gender"/>,
   },
   {
     key: "dob",
-    header: "Date Of Birth",
+    header: <FormattedMessage id="patient.dob"/>,
   },
   {
     key: "subjectNumber",
-    header: "Unique Health ID number",
+    header: <FormattedMessage id="patient.subject.number"/>,
   },
   {
     key: "nationalId",
-    header: "National ID",
+    header: <FormattedMessage id="patient.natioanalid"/>,
   },
 ];

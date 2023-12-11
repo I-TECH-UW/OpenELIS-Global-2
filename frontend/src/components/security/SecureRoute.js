@@ -6,6 +6,7 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
 import { Loading } from "@carbon/react/";
 import config from "../../config.json";
+import { FormattedMessage } from "react-intl";
 
 const idleTimeout = 1000 * 60 * 15; // milliseconds until idle warning will appear
 const idleWarningTimeout = 1000 * 60 * 1; // milliseconds until logout is automatically processed from idle warning
@@ -33,12 +34,12 @@ function SecureRoute(props) {
         console.info("Access Allowed");
       } else {
         const options = {
-          title: "Access Denied",
+          title:  <FormattedMessage id="accessDenied.title" />,
           message:
-            "You do not have access to this module ,please contact your system administrator",
+          <FormattedMessage id="accessDenied.message" />,
           buttons: [
             {
-              label: "OK",
+              label: <FormattedMessage id="accessDenied.okButton" />,
               onClick: () => {
                 window.location.href = window.location.origin;
               },
@@ -101,11 +102,11 @@ function SecureRoute(props) {
     const timeoutEventID = timer();
 
     const options = {
-      title: "Still there?",
-      message: "user session is about to time out",
+      title: <FormattedMessage id="stillThere.title" />,
+      message:<FormattedMessage id="stillThere.message" />,
       buttons: [
         {
-          label: "Yes",
+          label:<FormattedMessage id= "yes.option"/>,
           onClick: () => {
             clearTimeout(timeoutEventID);
           },
@@ -118,7 +119,9 @@ function SecureRoute(props) {
   return (
     <>
       {loading && <Loading />}
-      {!loading && !userSessionDetails.authenticated && "Not Authenticated"}
+      {!loading && !userSessionDetails.authenticated &&  (
+        <FormattedMessage id="notAuthenticated" />
+      )}
       {!loading && userSessionDetails.authenticated && permissionGranted && (
         <>
           <IdleTimer
