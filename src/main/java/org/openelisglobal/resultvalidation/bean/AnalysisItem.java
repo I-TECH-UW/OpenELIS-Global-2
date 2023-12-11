@@ -107,9 +107,9 @@ public class AnalysisItem implements Serializable{
     private String murexAnalysisId;
 
     private String vironostikaResult;
-
+ 
     private String vironostikaAnalysisId;
-
+    
     private String genieIIResult;
 
     private String genieIIAnalysisId;
