@@ -31,7 +31,7 @@ public class ProjectFormMapperFactory {
 	private static final String IND = "Indeterminate_Id";
 	private static final String SPE = "Special_Request_Id";
 	private static final String RT = "Recency_Id";
-	private static final String HPV = "HPV_Request_Id";
+	private static final String HPV = "HPV_Id";
 
 	public IProjectFormMapper getProjectInitializer(String projectFormId, IProjectForm form)
 			throws LIMSRuntimeException {

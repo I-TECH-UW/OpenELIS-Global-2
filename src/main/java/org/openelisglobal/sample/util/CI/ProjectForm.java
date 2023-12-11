@@ -38,7 +38,7 @@ public enum ProjectForm {
     EID("EID_Id", "Early Infant Diagnosis for HIV Study"), VL("VL_Id", "Viral Load Results"),
     INDETERMINATE("Indeterminate_Id", "Indeterminate Results"),
     SPECIAL_REQUEST("Special_Request_Id", "Special Request"),RECENCY_TESTING("Recency_Id", "Recency Testing"),
-    HPV_REQUEST("HPV_Request_Id", "HPV Testing");
+    HPV_TESTING("HPV_Id", "HPV Testing");
 
     private ProjectForm(String projectFormId, String projectName) {
         this.projectFormId = projectFormId;

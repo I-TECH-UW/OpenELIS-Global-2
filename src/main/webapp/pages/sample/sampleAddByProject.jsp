@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.action.IActionConstants,
+				org.openelisglobal.sample.util.AccessionNumberUtil,
 				org.openelisglobal.login.valueholder.UserSessionData,
 	            org.openelisglobal.common.util.*, org.openelisglobal.internationalization.MessageUtil,
 	            org.openelisglobal.common.util.ConfigurationProperties.Property,java.util.HashSet,
@@ -34,6 +35,7 @@ boolean acceptExternalOrders = ConfigurationProperties.getInstance()
 %>
 
 <script type="text/javascript" src="scripts/utilities.js?"></script>
+<script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
 <script type="text/javascript" src="scripts/neon2/retroCIUtilities.js?"></script>
 <script type="text/javascript" src="scripts/entryByProjectUtils.js?"></script>
 <script type="text/javascript" src="select2/js/select2.min.js"></script>
@@ -99,7 +101,7 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 	function Studies() {
 		this.validators = new Array();
 		this.studyNames = [ "InitialARV_Id", "FollowUp_ARV_Id", "RTN_Id",
-				"EID_Id", "VL_Id", "Indeterminate_Id", "Special_Request_Id","Recency_Id" ];
+				"EID_Id", "VL_Id", "Indeterminate_Id", "Special_Request_Id","Recency_Id","HPV_Id" ];
 
 		this.validators["InitialARV_Id"] = new FieldValidator();
 		this.validators["InitialARV_Id"].setRequiredFields(new Array(
@@ -144,6 +146,8 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 				"rt.centerCode", "rt.receivedDateForDisplay",
 				"rt.interviewDate", "rt.gender", "rt.labno", "rt.asanteTest",
 				"rt.dateOfBirth"));
+		this.validators["HPV_Id"] = new FieldValidator();
+		this.validators["HPV_Id"].setRequiredFields(new Array("hpv.centerCode", "hpv.interviewDate", "hpv.siteSubjectNumber", "hpv.labNo","hpv.dateOfBirth"));
 
 		this.getValidator = function /*FieldValidator*/(divId) {
 			return this.validators[divId];
@@ -160,6 +164,7 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 			this.projectChecker["Special_Request_Id"] = spe;
 			this.projectChecker["VL_Id"] = vl;
 			this.projectChecker["Recency_Id"] = rt;
+			this.projectChecker["HPV_Id"] = hpv;
 		}
 
 		this.getProjectChecker = function(divId) {
@@ -192,9 +197,6 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 		}
 		var tests = new Array();
 		if (div == "InitialARV_Id") {
-			/* tests = new Array("iarv.serologyHIVTest", "iarv.glycemiaTest", "iarv.creatinineTest",
-			         "iarv.transaminaseTest", "iarv.edtaTubeTaken", "iarv.dryTubeTaken",
-			         "iarv.nfsTest", "iarv.cd4cd8Test") ;*/
 
 			tests = new Array("iarv.serologyHIVTest", "iarv.creatinineTest",
 					"iarv.edtaTubeTaken", "iarv.dryTubeTaken", "iarv.nfsTest",
@@ -202,8 +204,6 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 		}
 
 		if (div == "FollowUpARV_Id") {
-			// tests = new Array("farv.glycemiaTest", "farv.creatinineTest",
-			//  "farv.transaminaseTest", "farv.edtaTubeTaken", "farv.dryTubeTaken") ;
 			tests = new Array("farv.creatinineTest", "farv.dryTubeTaken");
 		}
 
@@ -223,6 +223,9 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 		}
 		if (div == "Recency_Id") {
 			tests = new Array("rt.asanteTest");
+		}
+		if (div == "HPV_Id") {
+			tests = new Array("hpv.hpvTest");
 		}
 
 		for (var i = 0; i < tests.length; i++) {
@@ -291,6 +294,7 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 		toggleDisabledDiv(document.getElementById("Special_Request_Id"), false);
 		toggleDisabledDiv(document.getElementById("VL_Id"), false);
 		toggleDisabledDiv(document.getElementById("Recency_Id"), false);
+		toggleDisabledDiv(document.getElementById("HPV_Id"), false);
 
 		document.getElementById('InitialARV_Id').style.display = "none";
 		document.getElementById('FollowUpARV_Id').style.display = "none";
@@ -300,6 +304,7 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 		document.getElementById('Special_Request_Id').style.display = "none";
 		document.getElementById('VL_Id').style.display = "none";
 		document.getElementById('Recency_Id').style.display = "none";
+		document.getElementById('HPV_Id').style.display = "none";
 	}
 
 	function /*boolean*/allSamplesHaveTests() {
@@ -357,6 +362,8 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 			code="sample.entry.project.VL.title" /></option>
 	<option value="Recency_Id"><spring:message
 			code="sample.entry.project.RT.title" /></option>
+	<option value="HPV_Id"><spring:message
+			code="sample.entry.project.HPV.title" /></option>
 </select>
 <br />
 <hr>
@@ -2401,15 +2408,7 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 					id="vl.month" size="3"
 					onchange="vl.checkAge( this, true, 'month' ); clearField('vl.age');"
 					maxlength="2" />
-					<div id="ageMessage" class="blank"></div> <%--  <div class="blank"><spring:message code="label.month"/></div>
-            <INPUT type="text" name="age" id="vl.month" size="3" class="text"
-                onchange="vl.checkAge( this, true, 'month' ); clearField('vl.ageWeek');"
-                maxlength="2" />
-            <div class="blank"><spring:message code="label.week"/></div>
-            <INPUT type="text" name="ageWeek" id="vl.ageWeek" size="3" class="text"
-                onchange="vl.checkAge( this, true, 'week' ); clearField('vl.month');"
-                maxlength="2" />
-            <div id="vl.ageMessage" class="blank" > </div> --%></td>
+					<div id="ageMessage" class="blank"></div> </td>
 			</tr>
 
 			<tr>
@@ -2879,17 +2878,7 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 							itemLabel="localizedName" itemValue="id" />
 					</form:select><div id="rt.vlSuckleMessage" class="blank"></div></td>
 			</tr>
-<%-- 			<tr>
-				<td class="required">*</td>
-				<td><spring:message code="patient.project.hivType" /></td>
-				<td><form:select path="observations.hivStatus"
-						id="rt.hivStatus" onchange="">
-						<form:option value="">&nbsp;</form:option>
-						<form:options items="${form.dictionaryLists['HIV_TYPES']}"
-							itemLabel="localizedName" itemValue="id" />
-					</form:select>
-					<div id="hivStatusMessage" class="blank"></div></td>
-			</tr> --%>
+
 			<tr>
 				<td></td>
 				<td colspan="2" class="sectionTitle"><spring:message
@@ -2925,7 +2914,7 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 				<td><spring:message code="sample.entry.project.receivedTime" />&nbsp;<spring:message
 						code="sample.military.time.format" /></td>
 				<td><form:input path="receivedTimeForDisplay" cssClass="text"
-						id="rt.receivedTimeForDisplay" maxlength="5" />
+						onkeyup="filterTimeKeys(this, event);" id="rt.receivedTimeForDisplay" maxlength="5" />
 						<div id="rt.receivedTimeForDisplayMessage" class="blank"></div></td>
 			</tr>
 			<tr>
@@ -2940,8 +2929,8 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 				<td></td>
 				<td><spring:message code="sample.entry.project.timeTaken" />&nbsp;<spring:message
 						code="sample.military.time.format" /></td>
-				<td><form:input path="interviewTime" onkeyup="" onblur=""
-						cssClass="text" id="rt.interviewTime" maxlength="5" />
+				<td><form:input path="interviewTime" onblur=""
+						onkeyup="filterTimeKeys(this, event);" cssClass="text" id="rt.interviewTime" maxlength="5" />
 						<div id="rt.interviewTimeMessage" class="blank"></div></td>
 			</tr>
 			<tr>
@@ -2974,8 +2963,190 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 				<td><spring:message
 						code="sample.entry.project.recency.asanteKit" /></td>
 				<td><form:checkbox path="ProjectData.asanteTest"
-						id="rt.asanteTest" onchange="vl.checkSampleItem($('vl.viralLoadTest'), this);" />
+						id="rt.asanteTest" onchange="vl.checkSampleItem($('rt.asanteTest'), this);" />
 						<div id="rt.asanteTestMessage" class="blank"></div></td>
+			</tr>
+		</table>
+
+	</div>
+	<div id="HPV_Id" style="display: none;">
+		<table>
+			<tr>
+				<td></td>
+				<td colspan="2" class="sectionTitle"><spring:message
+						code="sample.entry.project.title.org" /></td>
+			</tr>
+			<tr>
+				<td class="required">*</td>
+				<td><spring:message code="patient.project.centerCode" /></td>
+				<td><form:select path="ProjectData.ARVcenterCode"
+						id="hpv.centerCode" onchange="hpv.checkCenterCode(true)" class="centerCodeClass">
+						<form:option value="">&nbsp;</form:option>
+						<form:options items="${form.organizationTypeLists['ARV_ORGS']}"
+							itemLabel="doubleName" itemValue="id" />
+					</form:select><div id="hpv.centerCodeMessage" class="blank"></div></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td colspan="2" class="sectionTitle"><spring:message
+						code="sample.entry.project.title.patientInfo" /></td>
+			</tr>
+			<tr>
+				<td class="required">*</td>
+				<td><%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>
+				</td>
+		        <td style="width:65%">
+		            <INPUT  type="text" maxlength='<%= Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>'
+		                      onchange="checkAccessionNumber(this);" class="text" name="hpv.labNoForDisplay"
+					id="hpv.labNoForDisplay"/>
+		            <form:input path="labNo" size="5" cssClass="text"
+						style="display:none;" id="hpv.labNo" />
+					<div id="hpv.labNoMessage" class="blank"></div>
+		            <spring:message code="sample.entry.scanner.instructions" htmlEscape="false"/>
+		            <input type="button" id="generateAccessionButton" value='<%=MessageUtil.getMessage("sample.entry.scanner.generate")%>'
+		                   onclick="getNextAccessionNumber(); " class="textButton">
+		        </td>
+			</tr>
+			<tr>
+				<td class="required">*</td>
+				<td><spring:message code="sample.entry.project.hpvSubjectNumber" /></td>
+				<td><form:input path="siteSubjectNumber" cssClass="text"
+						id="hpv.siteSubjectNumber" maxlength="18" onchange="" />
+					<div id="hpv.siteSubjectNumberMessage" class="blank"></div></td>
+			</tr>
+ 			<tr>
+				<td></td>
+				<td><spring:message code="patient.project.hivStatus" /></td>
+				<td><form:select path="observations.hivStatus"
+						onchange="hpv.checkHivStatus(true);" id="hpv.hivStatus">
+						<form:option value="">&nbsp;</form:option>
+						<form:options items="${form.dictionaryLists['HIV_STATUSES']}"
+							itemLabel="localizedName" itemValue="id" />
+					</form:select>
+					<div id="hpv.hivStatusMessage" class="blank"></div></td>
+			</tr>
+			<tr style="display:none;">
+				<td><form:hidden path="gender" id="hpv.gender" value="F" />
+					<div id="hpv.genderMessage" class="blank"></div></td>
+			</tr>
+			<tr>
+				<td class="required">*</td>
+				<td><spring:message code="patient.birthDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>
+				</td>
+				<td><form:input path="birthDateForDisplay" cssClass="text"
+						onkeyup="addDateSlashes(this, event);"
+						onchange="hpv.checkDateOfBirth(false);"  id="hpv.dateOfBirth" maxlength="10" />
+					<div id="hpv.dateOfBirthMessage" class="blank"></div></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><spring:message code="patient.age" /></td>
+				<td><label for="age"><spring:message code="label.year" /></label>
+					<INPUT type='text' name='age' id="hpv.age" size="3"
+					onchange="hpv.checkAge( this, true, 'year' );"
+					maxlength="2" />
+					<div id="ageMessage" class="blank"></div></td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td colspan="2" class="sectionTitle"><spring:message
+						code="sample.entry.project.title.sample" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><spring:message code="patient.project.nameOfClinician" /></td>
+				<td><form:input path="observations.nameOfDoctor"
+						cssClass="text" id="hpv.nameOfDoctor" size="50"
+						onchange="" />
+					<div id="hpv.nameOfDoctorMessage" class="blank"></div></td>
+			</tr>
+			<tr>
+				<td class="required">*</td>
+				<td><spring:message code="sample.entry.project.receivedDate" />&nbsp;<%=DateUtil.getDateUserPrompt()%>
+				</td>
+				<td><form:input path="receivedDateForDisplay" cssClass="text"
+						onkeyup="" onchange="" id="hpv.receivedDateForDisplay"
+						maxlength="10" />
+					<div id="receivedDateForDisplayMessage" class="blank"></div></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><spring:message code="sample.entry.project.receivedTime" />&nbsp;<spring:message
+						code="sample.military.time.format" /></td>
+				<td><form:input path="receivedTimeForDisplay" cssClass="text"
+						onkeyup="filterTimeKeys(this, event);" id="hpv.receivedTimeForDisplay" maxlength="5" />
+						<div id="hpv.receivedTimeForDisplayMessage" class="blank"></div></td>
+			</tr>
+			<tr>
+				<td class="required">*</td>
+				<td><spring:message code="sample.entry.project.dateTaken" />&nbsp;<%=DateUtil.getDateUserPrompt()%>
+				</td>
+				<td><form:input path="interviewDate" onkeyup="" onchange=""
+						cssClass="text" id="hpv.interviewDate" maxlength="10" />
+					<div id="hpv.interviewDateMessage" class="blank"></div></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><spring:message code="sample.entry.project.timeTaken" />&nbsp;<spring:message
+						code="sample.military.time.format" /></td>
+				<td><form:input path="interviewTime" onblur=""
+						onkeyup="filterTimeKeys(this, event);" cssClass="text" id="hpv.interviewTime" maxlength="5" />
+						<div id="hpv.interviewTimeMessage" class="blank"></div></td>
+			</tr>
+			<tr>
+				<td> </td>
+				<td><spring:message code="sample.entry.project.title.sampleType"/></td>
+				<td>
+				<form:radiobuttons path="observations.hpvSamplingMethod" id="hpv.hpvSamplingMethod" 
+				items="${form.dictionaryLists['HPV_SAMPLING_METHOD']}"
+				itemLabel="localizedName" itemValue="id"/>
+					<div id="hpv.hpvSamplingMethodMessage" class="blank"></div>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td colspan="3" class="sectionTitle"><spring:message
+						code="sample.entry.project.title.specimen" /></td>
+			</tr>
+			<tr>
+				<td width=""></td>
+				<td width=""><spring:message
+						code="sample.entry.project.HPV.preservCytTaken" /></td>
+				<td width=""><form:checkbox path="ProjectData.preservCytTaken"
+						id="hpv.preservCytTaken"
+						onchange="hpv.checkSampleItem($('hpv.preservCytTaken'));"/>
+						<div id="hpv.preservCytTakenMessage" class="blank" ></div>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td colspan="2" class="sectionTitle"><spring:message
+						code="sample.entry.project.title.tests" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><spring:message
+						code="sample.entry.project.hpv.hpvKit" /></td>
+				<td><form:checkbox path="ProjectData.hpvTest"
+						id="hpv.hpvTest" onchange="" />
+						<div id="hpv.hpvTestMessage" class="blank"></div></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><spring:message
+						code="sample.entry.project.hpv.abottOrRocheAnalysis" /></td>
+				<td><form:checkbox path="ProjectData.abbottOrRocheAnalysis"
+						id="hpv.abbottOrRocheAnalysis" onchange="" />
+						<div id="hpv.abbottOrRocheAnalysisMessage" class="blank"></div></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><spring:message
+						code="sample.entry.project.hpv.geneXpertAnalysis" /></td>
+				<td><form:checkbox path="ProjectData.geneXpertAnalysis"
+						id="hpv.geneXpertAnalysis" onchange="" />
+						<div id="hpv.geneXpertAnalysisMessage" class="blank"></div></td>
 			</tr>
 		</table>
 
@@ -2994,12 +3165,6 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 <%=Encode
 		.forJavaScript(org.openelisglobal.dictionary.ObservationHistoryList.YES_NO_UNKNOWN.getList().get(0).getId())%>
 	];
-
-	function checkVLSampleType(e) {
-		$("vl.pscvlTaken").checked = (e.id === "vl.pscvlTaken");
-		$("vl.dbsvlTaken").checked = (e.id === "vl.dbsvlTaken");
-		$("vl.edtaTubeTaken").checked = (e.id === "vl.edtaTubeTaken");
-	}
 
 	function ArvInitialProjectChecker() {
 		this.idPre = "iarv.";
@@ -3213,6 +3378,15 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 	vl = new VLProjectChecker();
 	RecencyProjectChecker.prototype = new BaseProjectChecker();
 	rt = new RecencyProjectChecker();
+	
+	function HPVProjectChecker() {
+		this.idPre = "hpv.";
+	}
+
+	HPVProjectChecker.prototype = new BaseProjectChecker();
+	hpv = new HPVProjectChecker();
+	HPVProjectChecker.prototype = new BaseProjectChecker();
+	hpv = new HPVProjectChecker();
 
 	function pageOnLoad() {
 		initializeStudySelection();
@@ -3223,14 +3397,4 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 		jQuery('.centerCodeClass').select2();
 	}
 
-	function findEOrder() {
-		var value = jQuery("#externalOrderNumber").val()
-		if (value) {
-			var url = new URL(window.location.href);
-			var search_params = url.searchParams;
-			search_params.set('ID', value);
-			url.search = search_params.toString();
-			window.location.replace(url.toString());
-		}
-	}
 </script>

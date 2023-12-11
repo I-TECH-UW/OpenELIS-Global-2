@@ -43,35 +43,37 @@ public class HPVFormMapper extends BaseProjectFormMapper implements IProjectForm
 		return projectCode;
 	}
 
-	public List<Test> getPlasmaTests() {
+	public List<Test> getAbbottOrRocheTests() {
 		List<Test> testList = new ArrayList<>();
 
-		if (projectData.isAsanteTest()) {
-			CollectionUtils.addIgnoreNull(testList, createTest("HPV", true));
+		if (projectData.isHpvTest()) {
+			CollectionUtils.addIgnoreNull(testList, createTest("HPV 16", true));
+			CollectionUtils.addIgnoreNull(testList, createTest("HPV 18", true));
+			CollectionUtils.addIgnoreNull(testList, createTest("Autre HPV HR", true));
+		}
+		return testList;
+	}
+	public List<Test> getGeneXpertTests() {
+		List<Test> testList = new ArrayList<>();
+		
+		if (projectData.isHpvTest()) {
+			CollectionUtils.addIgnoreNull(testList, createTest("HPV 18_45", true));
+			CollectionUtils.addIgnoreNull(testList, createTest("HPV P3", true));
+			CollectionUtils.addIgnoreNull(testList, createTest("HPV P4", true));
+			CollectionUtils.addIgnoreNull(testList, createTest("HPV P5", true));
 		}
 		return testList;
 	}
 
-	public List<Test> getSerumTests() {
-		List<Test> testList = new ArrayList<>();
-
-		if (projectData.isAsanteTest()) {
-			CollectionUtils.addIgnoreNull(testList, createTest("HPV", true));
-		}
-		return testList;
-	}
 
 	@Override
 	public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
 		ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
-
-		// Check for Plasma Tests
-		if (projectData.isPlasmaTaken()) {
-			sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Plasma"), getPlasmaTests()));
+		if (projectData.isAbbottOrRocheAnalysis()) {
+			sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Prélèvement cervico-vaginal"), getAbbottOrRocheTests()));
 		}
-
-		if (projectData.isSerumTaken()) {
-			sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Serum"), getSerumTests()));
+		if (projectData.isGeneXpertAnalysis()) {
+			sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Prélèvement cervico-vaginal"), getGeneXpertTests()));
 		}
 
 		return sItemTests;

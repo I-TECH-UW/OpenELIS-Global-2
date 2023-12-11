@@ -15,19 +15,21 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
+import org.hl7.fhir.r4.model.DateTimeType;
+import org.hl7.fhir.r4.model.DecimalType;
+import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Location;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Practitioner;
+import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Specimen;
 import org.hl7.fhir.r4.model.StringType;
 import org.hl7.fhir.r4.model.Task;
 import org.hl7.fhir.r4.model.Task.ParameterComponent;
-import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
-import org.hl7.fhir.r4.model.DateTimeType;
-import org.hl7.fhir.r4.model.DecimalType;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
@@ -45,8 +47,10 @@ import org.openelisglobal.dictionary.ObservationHistoryList;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.organization.service.OrganizationTypeService;
 import org.openelisglobal.organization.util.OrganizationTypeList;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.organization.valueholder.OrganizationType;
 import org.openelisglobal.patient.saving.ISampleEntry;
 import org.openelisglobal.patient.saving.ISampleEntryAfterPatientEntry;
 import org.openelisglobal.patient.saving.ISampleSecondEntry;
@@ -82,6 +86,12 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 	private ElectronicOrderService electronicOrderService;
 	@Autowired
 	private FhirPersistanceService fhirPersistanceService;
+	@Autowired
+	private OrganizationService organizationService;
+	@Autowired
+	private OrganizationTypeService organizationTypeService;
+	@Autowired
+	private DictionaryService dictionaryService;
 
 	@Autowired
 	private FhirConfig fhirConfig;
@@ -97,6 +107,8 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 	private Specimen specimen = null;
 	private Patient fhirPatient = null;
 	private static String OPENMRS_SYSTEM_URL = "https://openmrs.org";
+	public static final String REFERRING_ORG_TYPE = "referring clinic";
+	public static final String ARV_ORG_TYPE = "ARV Service Loc";
 
 	private static final String[] ALLOWED_FIELDS = new String[] { "currentDate", "domain", "project",
 			"patientLastUpdated", "personLastUpdated", "patientUpdateStatus", "patientPK", "patientFhirUuid",
@@ -117,19 +129,21 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 			"ProjectData.email", "observations.indFirstTestDate", "observations.indFirstTestName",
 			"observations.indFirstTestResult", "observations.indSecondTestDate", "observations.indSecondTestName",
 			"observations.indSecondTestResult", "observations.indSiteFinalResult", "observations.reasonForRequest",
-			"ProjectData.murexTest", "ProjectData.integralTest","ProjectData.GenscreenTest", "ProjectData.vironostikaTest",
-			"ProjectData.innoliaTest", "ProjectData.transaminaseALTLTest", "ProjectData.transaminaseASTLTest",
-			"ProjectData.gbTest", "ProjectData.lymphTest", "ProjectData.monoTest", "ProjectData.eoTest",
-			"ProjectData.basoTest", "ProjectData.grTest", "ProjectData.hbTest", "ProjectData.hctTest",
-			"ProjectData.vgmTest", "ProjectData.tcmhTest", "ProjectData.ccmhTest", "ProjectData.plqTest",
-			"ProjectData.cd3CountTest", "ProjectData.cd4CountTest", "observations.vlPregnancy", "observations.vlSuckle",
-			"observations.currentARVTreatment", "observations.arvTreatmentInitDate", "observations.arvTreatmentRegime",
-			"observations.currentARVTreatmentINNsList*", "observations.vlReasonForRequest",
-			"observations.vlOtherReasonForRequest", "observations.initcd4Count", "observations.initcd4Percent",
-			"observations.initcd4Date", "observations.demandcd4Count", "observations.demandcd4Percent",
-			"observations.demandcd4Date", "observations.vlBenefit", "observations.priorVLValue",
-			"observations.priorVLDate", "electronicOrder.externalId", "ProjectData.asanteTest",
-			"ProjectData.plasmaTaken", "ProjectData.serumTaken"};
+			"ProjectData.murexTest", "ProjectData.integralTest", "ProjectData.GenscreenTest",
+			"ProjectData.vironostikaTest", "ProjectData.innoliaTest", "ProjectData.transaminaseALTLTest",
+			"ProjectData.transaminaseASTLTest", "ProjectData.gbTest", "ProjectData.lymphTest", "ProjectData.monoTest",
+			"ProjectData.eoTest", "ProjectData.basoTest", "ProjectData.grTest", "ProjectData.hbTest",
+			"ProjectData.hctTest", "ProjectData.vgmTest", "ProjectData.tcmhTest", "ProjectData.ccmhTest",
+			"ProjectData.plqTest", "ProjectData.cd3CountTest", "ProjectData.cd4CountTest", "observations.vlPregnancy",
+			"observations.vlSuckle", "observations.currentARVTreatment", "observations.arvTreatmentInitDate",
+			"observations.arvTreatmentRegime", "observations.currentARVTreatmentINNsList*",
+			"observations.vlReasonForRequest", "observations.vlOtherReasonForRequest", "observations.initcd4Count",
+			"observations.initcd4Percent", "observations.initcd4Date", "observations.demandcd4Count",
+			"observations.demandcd4Percent", "observations.demandcd4Date", "observations.vlBenefit",
+			"observations.priorVLValue", "observations.priorVLDate", "electronicOrder.externalId",
+			"ProjectData.asanteTest", "ProjectData.hpvTest", "ProjectData.plasmaTaken", "ProjectData.serumTaken",
+			"ProjectData.preservCytTaken", "observations.hpvSamplingMethod", "ProjectData.abbottOrRocheAnalysis",
+			"ProjectData.geneXpertAnalysis", "ProjectData.hpvTest" };
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
@@ -298,16 +312,82 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 			if ((OPENMRS_SYSTEM_URL + "/UPI").equals(identifier.getSystem())) {
 				form.setUpidCode(identifier.getValue());
 			}
+			// get location
+			if (("http://fhir.openmrs.org/ext/patient/identifier#location")
+					.equals(identifier.getExtensionFirstRep().getUrl())) {
+				Extension extension = identifier.getExtensionFirstRep();
+				Reference locationReference = (Reference) extension.getValue();
+				String reference = locationReference.getReference();
+				// the short code can be 5 ou 4 digits base code
+				String centerCode = reference.substring(reference.length() - 5);
+				try {
+					Integer.parseInt(centerCode);
+				} catch (Exception e) {
+					centerCode = reference.substring(reference.length() - 4);
+				}
+				String display = locationReference.getDisplay();
+
+				Organization org = organizationService.getOrganizationByShortName(centerCode, true);
+				try {
+					if (ObjectUtils.isEmpty(org)) {
+						// create a new Organization
+						org = new Organization();
+						org.setOrganizationName(display);
+						org.setName(display);
+						org.setShortName(centerCode);
+						org.setIsActive("Y");
+						org.setMlsSentinelLabFlag("N");
+						org.setLastupdated(DateUtil.getNowAsTimestamp());
+						organizationService.insert(org);
+						OrganizationType referringClinicSiteType = organizationTypeService
+								.getOrganizationTypeByName(REFERRING_ORG_TYPE);
+						OrganizationType arvSiteType = organizationTypeService.getOrganizationTypeByName(ARV_ORG_TYPE);
+						organizationService.linkOrganizationAndType(org, referringClinicSiteType.getId());
+						organizationService.linkOrganizationAndType(org, arvSiteType.getId());
+					}
+
+					projectData.setARVcenterCode(org.getId());
+					projectData.setARVcenterName(org.getId());
+				} catch (Exception e) {
+					LogEvent.logDebug(this.getClass().getName(), "setOrganizationFromFhirObject", e.getMessage());
+				}
+			}
 		}
 		for (ParameterComponent parameter : task.getInput()) {
+
 			if (parameter.getType().getCodingFirstRep().getCode().equals("160533AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")) {// currentARVTreatment
 				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
+					Dictionary dict = dictionaryService
+							.getDictionaryByDictEntry("Demographic Response Yes (in Yes or No)");
+					if (ObjectUtils.isNotEmpty(dict)) {
+						observationData.setCurrentARVTreatment(dict.getId());
+					}
+				}
+			}
+			if (parameter.getType().getCodingFirstRep().getCode().equals("CI0050002AAAAAAAAAAAAAAAAAAAAAAAAAAA")) {// vlReasonForRequest
+				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
 					if (parameter.getValue() instanceof StringType) {
-						StringType onARTTreatment = (StringType) parameter.getValue();
-						if (onARTTreatment.getValue().equalsIgnoreCase("true")) {
-							observationData.setCurrentARVTreatment("1253");
-						} else if (onARTTreatment.getValue().equalsIgnoreCase("false")) {
-							observationData.setCurrentARVTreatment("1251");
+						StringType vlReasonType = (StringType) parameter.getValue();
+						Dictionary dict = null;
+						switch (vlReasonType.getValue().trim()) {
+						case "Charge Virale de controle":
+							dict = dictionaryService.getDictionaryByDictEntry("VL under ARV control");
+							break;
+						case "Echec Virologique":
+							dict = dictionaryService.getDictionaryByDictEntry("Virological Failure");
+							break;
+						case "Echec immunologique":
+							dict = dictionaryService.getDictionaryByDictEntry("Immunological Failure");
+							break;
+						case "Echec clinique":
+						case "GB J0":
+							dict = dictionaryService.getDictionaryByDictEntry("Clinical Failure");
+							break;
+						default:
+							break;
+						}
+						if (ObjectUtils.isNotEmpty(dict)) {
+							observationData.setVlReasonForRequest(dict.getId());
 						}
 					}
 				}
@@ -338,12 +418,16 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
 					if (parameter.getValue() instanceof StringType) {
 						StringType arvTreatmentRegimeType = (StringType) parameter.getValue();
+						Dictionary dict = null;
 						if (arvTreatmentRegimeType.getValue().equalsIgnoreCase("Première")) {
-							observationData.setArvTreatmentRegime("1206");
+							dict = dictionaryService.getDictionaryByDictEntry("1st Line");
 						} else if (arvTreatmentRegimeType.getValue().equalsIgnoreCase("Deuxième")) {
-							observationData.setArvTreatmentRegime("1213");
+							dict = dictionaryService.getDictionaryByDictEntry("2nd Line");
 						} else if (arvTreatmentRegimeType.getValue().equalsIgnoreCase("Troisième")) {
-							observationData.setArvTreatmentRegime("1219");
+							dict = dictionaryService.getDictionaryByDictEntry("3rd Line");
+						}
+						if (ObjectUtils.isNotEmpty(dict)) {
+							observationData.setArvTreatmentRegime(dict.getId());
 						}
 					}
 				}
@@ -364,7 +448,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 					}
 				}
 			}
-			if (parameter.getType().getCodingFirstRep().getCode().equals("163545AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")) {// vl.priorVLValue
+			if (parameter.getType().getCodingFirstRep().getCode().equals("165270AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")) {// vl.priorVLValue
 				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
 					if (parameter.getValue() instanceof DecimalType) {
 						DecimalType priorVLValueType = (DecimalType) parameter.getValue();
@@ -376,12 +460,16 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
 					if (parameter.getValue() instanceof StringType) {
 						StringType hivStatusType = (StringType) parameter.getValue();
+						Dictionary dict = null;
 						if (hivStatusType.getValue().equalsIgnoreCase("VIH-1")) {
-							observationData.setHivStatus("1264");
+							dict = dictionaryService.getDictionaryByDictEntry("HIV Status HIV-1 infection");
 						} else if (hivStatusType.getValue().equalsIgnoreCase("VIH-1+2")) {
-							observationData.setHivStatus("1263");
+							dict = dictionaryService.getDictionaryByDictEntry("HIV Status HIV-1 and HIV-2");
 						} else if (hivStatusType.getValue().equalsIgnoreCase("VIH-2")) {
-							observationData.setHivStatus("1265");
+							dict = dictionaryService.getDictionaryByDictEntry("HIV Status HIV-2 infection");
+						}
+						if (ObjectUtils.isNotEmpty(dict)) {
+							observationData.setHivStatus(dict.getId());
 						}
 					}
 				}
@@ -438,12 +526,17 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
 					if (parameter.getValue() instanceof StringType) {
 						StringType vlBenefitType = (StringType) parameter.getValue();
+						Dictionary dict = null;
 						if (vlBenefitType.getValue().equalsIgnoreCase("Oui")
 								|| vlBenefitType.getValue().equalsIgnoreCase("Yes")) {
-							observationData.setVlBenefit("1253");
+							dict = dictionaryService
+									.getDictionaryByDictEntry("Demographic Response Yes (in Yes or No)");
 						} else if (vlBenefitType.getValue().equalsIgnoreCase("Non")
 								|| vlBenefitType.getValue().equalsIgnoreCase("No")) {
-							observationData.setVlBenefit("1251");
+							dict = dictionaryService.getDictionaryByDictEntry("Demographic Response No (in Yes or No)");
+						}
+						if (ObjectUtils.isNotEmpty(dict)) {
+							observationData.setVlBenefit(dict.getId());
 						}
 					}
 				}
@@ -465,33 +558,45 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
 					if (parameter.getValue() instanceof StringType) {
 						StringType vlPregnancyType = (StringType) parameter.getValue();
+						Dictionary dict = null;
 						if (vlPregnancyType.getValue().equalsIgnoreCase("Oui")
 								|| vlPregnancyType.getValue().equalsIgnoreCase("Yes")) {
-							observationData.setVlPregnancy(("1253"));
+							dict = dictionaryService
+									.getDictionaryByDictEntry("Demographic Response Yes (in Yes or No)");
 						} else if (vlPregnancyType.getValue().equalsIgnoreCase("Non")
 								|| vlPregnancyType.getValue().equalsIgnoreCase("No")) {
-							observationData.setVlPregnancy("1251");
+							dict = dictionaryService.getDictionaryByDictEntry("Demographic Response No (in Yes or No)");
+						}
+						if (ObjectUtils.isNotEmpty(dict)) {
+							observationData.setVlPregnancy(dict.getId());
 						}
 					}
 				}
 			}
-			
+
 			if (parameter.getType().getCodingFirstRep().getCode().equals("5632AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")) {// Breastfeeding
 				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
 					if (parameter.getValue() instanceof StringType) {
 						StringType vlBreastFeedingType = (StringType) parameter.getValue();
+						Dictionary dict = null;
 						if (vlBreastFeedingType.getValue().equalsIgnoreCase("Oui")
 								|| vlBreastFeedingType.getValue().equalsIgnoreCase("Yes")) {
-							observationData.setVlSuckle(("1253"));
+							dict = dictionaryService
+									.getDictionaryByDictEntry("Demographic Response Yes (in Yes or No)");
 						} else if (vlBreastFeedingType.getValue().equalsIgnoreCase("Non")
 								|| vlBreastFeedingType.getValue().equalsIgnoreCase("No")) {
-							observationData.setVlSuckle("1251");
+							dict = dictionaryService.getDictionaryByDictEntry("Demographic Response No (in Yes or No)");
+						}
+						if (ObjectUtils.isNotEmpty(dict)) {
+							observationData.setVlSuckle(dict.getId());
 						}
 					}
 				}
 			}
-			//CI0050006AAAAAAAAAAAAAAAAAAAAAAAAAAA Heure de prélèvement
-			if (parameter.getType().getCodingFirstRep().getCode().equals("CI0050006AAAAAAAAAAAAAAAAAAAAAAAAAAA")) {// Heure de prélèvement
+			// CI0050006AAAAAAAAAAAAAAAAAAAAAAAAAAA Heure de prélèvement
+			if (parameter.getType().getCodingFirstRep().getCode().equals("CI0050006AAAAAAAAAAAAAAAAAAAAAAAAAAA")) {// Heure
+																													// de
+				// prélèvement
 				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
 					if (parameter.getValue() instanceof DateTimeType) {
 						DateTimeType dateValue = (DateTimeType) parameter.getValue();
@@ -500,7 +605,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 				}
 			}
 		}
-		if (ObjectUtils.isNotEmpty(serviceRequest)) { //date de prélèvement
+		if (ObjectUtils.isNotEmpty(serviceRequest)) { // date de prélèvement
 			if (ObjectUtils.isNotEmpty(serviceRequest.getOccurrencePeriod())) {
 				Date startDate = serviceRequest.getOccurrencePeriod().getStart();
 				form.setInterviewDate(DateUtil.formatDateAsText(startDate));
@@ -529,7 +634,6 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 			return findForward(FWD_FAIL_INSERT, form);
 		}
 		String forward;
-		
 
 		ISampleSecondEntry sampleSecondEntry = SpringContext.getBean(ISampleSecondEntry.class);
 		sampleSecondEntry.setFieldsFromForm(form);
@@ -654,6 +758,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 		observationHistoryMapOfLists.put("ARV_REGIME", ObservationHistoryList.ARV_REGIME.getList());
 		observationHistoryMapOfLists.put("ARV_REASON_FOR_VL_DEMAND",
 				ObservationHistoryList.ARV_REASON_FOR_VL_DEMAND.getList());
+		observationHistoryMapOfLists.put("HPV_SAMPLING_METHOD", ObservationHistoryList.HPV_SAMPLING_METHOD.getList());
 
 		form.setDictionaryLists(observationHistoryMapOfLists);
 

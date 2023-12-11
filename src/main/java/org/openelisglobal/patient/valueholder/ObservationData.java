@@ -245,6 +245,9 @@ public class ObservationData implements Serializable {
 
     @ValidName(nameType = NameType.FULL_NAME)
     private String nameOfSampler;
+    
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
+    private String hpvSamplingMethod;
 
     /**
      * Yes/No
@@ -1433,4 +1436,12 @@ public class ObservationData implements Serializable {
         }
         return new ArrayList<>(new HashSet<>(rtnCurrentDiseasesList));
     }
+
+	public String getHpvSamplingMethod() {
+		return hpvSamplingMethod;
+	}
+
+	public void setHpvSamplingMethod(String hpvSamplingMethod) {
+		this.hpvSamplingMethod = hpvSamplingMethod;
+	}
 }

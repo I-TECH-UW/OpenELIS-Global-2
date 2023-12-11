@@ -929,6 +929,9 @@ function BaseProjectChecker() {
 
 	this.checkGender = function (blanksAllowed) {
 		makeDirty();
+		if(this.idPre === 'hpv.'){
+			return; //don't check gender for HPV project
+		}
 		checkRequiredField($(this.idPre + "gender"), blanksAllowed);
 		comparePatientField( this.idPre + "gender", false, blanksAllowed);
 		var selectedValue = $(this.idPre + "gender").value;

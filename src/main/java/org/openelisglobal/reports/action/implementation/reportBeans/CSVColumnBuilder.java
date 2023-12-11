@@ -196,6 +196,8 @@ abstract public class CSVColumnBuilder {
                 projectTag = "VLS";
             } else if (project.getNameKey().contains("Recency")) {
                 projectTag = "RTRI";
+            } else if (project.getNameKey().contains("HPV")) {
+                projectTag = "HPV";
             } else  {
                 // otherwise we use the letters from the Sample ID prefix, which
                 // at some locations for some projects is undefined.
@@ -323,7 +325,7 @@ abstract public class CSVColumnBuilder {
         return result;
     }
 
-    private String prepareColumnName(String columnName) {
+    protected String prepareColumnName(String columnName) {
         // trim and escape the column name so it is more safe from sql injection
         if (!columnName.matches("(?i)[a-zàâçéèêëîïôûùüÿñæœ0-9_ ()%/\\[\\]+\\-]+")) {
             LogEvent.logWarn(this.getClass().getName(), "prepareColumnName",
