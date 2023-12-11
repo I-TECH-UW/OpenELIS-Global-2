@@ -73,6 +73,9 @@ const Index = () => {
     if ("days" in orderFormValues.patientProperties) {
       delete orderFormValues.patientProperties.days;
     }
+    if ("questionnaire" in orderFormValues.sampleOrderItems) {
+      delete orderFormValues.sampleOrderItems.questionnaire;
+    }
     console.log(JSON.stringify(orderFormValues))
     postToOpenElisServer(
       "/rest/SamplePatientEntry",
