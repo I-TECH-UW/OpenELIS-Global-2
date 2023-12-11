@@ -1,4 +1,5 @@
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from "react-intl";
+import React from "react";
 export const OrderCurrentTestsHeaders = [
   {
     key: "accessionNumber",
