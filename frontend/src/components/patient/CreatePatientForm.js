@@ -342,11 +342,28 @@ function CreatePatientForm(props) {
                   <TextInput
                     value={values.nationalId}
                     name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "patient.natioanalid",
-                    })}
+                    labelText={
+                      <>
+                        {intl.formatMessage({
+                          id: "patient.natioanalid",
+                        })}
+                        <span className="requiredlabel">*</span>
+                      </>
+                    }
                     id={field.name}
                     className="inputText"
+                    invalid={
+                      props.error
+                        ? props.error("patientProperties.nationalId")
+                          ? true
+                          : false
+                        : false
+                    }
+                    invalidText={
+                      props.error
+                        ? props.error("patientProperties.nationalId")
+                        : ""
+                    }
                     onMouseOut={() => {
                       handleSubjectNoValidation(
                         "nationalId",
@@ -412,7 +429,12 @@ function CreatePatientForm(props) {
                 {({ field }) => (
                   <RadioButtonGroup
                     valueSelected={values.gender}
-                    legendText={intl.formatMessage({ id: "patient.gender" })}
+                    legendText={
+                      <>
+                        {intl.formatMessage({ id: "patient.gender" })}{" "}
+                        <span className="requiredlabel">*</span>
+                      </>
+                    }
                     name={field.name}
                     className="inputText"
                     id="create_patient_gender"
@@ -449,9 +471,14 @@ function CreatePatientForm(props) {
                     <DatePickerInput
                       id="date-picker-default-id"
                       placeholder="dd/mm/yyyy"
-                      labelText={intl.formatMessage({
-                        id: "patient.dob",
-                      })}
+                      labelText={
+                        <>
+                          {intl.formatMessage({
+                            id: "patient.dob",
+                          })}
+                          <span className="requiredlabel">*</span>
+                        </>
+                      }
                       type="text"
                       name={field.name}
                     />

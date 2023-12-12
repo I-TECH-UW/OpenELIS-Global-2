@@ -392,3 +392,7 @@ button {
 .hidden {
   visibility: hidden;
 }
+
+.requiredlabel {
+  color: #FF0000;
+}
