@@ -357,7 +357,6 @@ function CreatePatientForm(props) {
                   />
                 )}
               </Field>
-              <div className="error"></div>
               <div className="error">
                 <ErrorMessage name="nationalId"></ErrorMessage>
               </div>
@@ -431,6 +430,9 @@ function CreatePatientForm(props) {
                   </RadioButtonGroup>
                 )}
               </Field>
+              <div className="error">
+                <ErrorMessage name="gender"></ErrorMessage>
+              </div>
             </div>
             <div className="inlineDiv">
               <Field name="birthDateForDisplay">
@@ -489,9 +491,6 @@ function CreatePatientForm(props) {
               />
               <div className="error">
                 <ErrorMessage name="birthDateForDisplay"></ErrorMessage>
-              </div>
-              <div className="error">
-                <ErrorMessage name="gender"></ErrorMessage>
               </div>
             </div>
             <Accordion>
@@ -642,7 +641,7 @@ function CreatePatientForm(props) {
                         onChange={(e) => handleRegionSelection(e, values)}
                       >
                         <SelectItem text="" value="" />
-                        {healthRegions.map((region, index) => (
+                        {healthRegions?.map((region, index) => (
                           <SelectItem
                             text={region.value}
                             value={region.id}

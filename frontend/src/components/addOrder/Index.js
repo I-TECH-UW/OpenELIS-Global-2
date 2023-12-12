@@ -1,5 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, ProgressIndicator, ProgressStep, Stack } from "@carbon/react";
+import {
+  Button,
+  ProgressIndicator,
+  ProgressStep,
+  Stack,
+  ToastNotification,
+} from "@carbon/react";
 import PatientInfo from "./PatientInfo";
 import AddSample from "./AddSample";
 import AddOrder from "./AddOrder";
@@ -11,6 +17,7 @@ import { postToOpenElisServer } from "../utils/Utils";
 import OrderEntryAdditionalQuestions from "./OrderEntryAdditionalQuestions";
 import OrderSuccessMessage from "./OrderSuccessMessage";
 import { FormattedMessage } from "react-intl";
+import OrderEntryValidationSchema from "../formModel/validationSchema/OrderEntryValidationSchema";
 
 export let sampleObject = {
   index: 0,
@@ -35,6 +42,7 @@ const Index = () => {
   const [page, setPage] = useState(firstPageNumber);
   const [orderFormValues, setOrderFormValues] = useState(SampleOrderFormValues);
   const [samples, setSamples] = useState([sampleObject]);
+  const [errors, setErrors] = useState([]);
 
   const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
@@ -76,7 +84,7 @@ const Index = () => {
     if ("questionnaire" in orderFormValues.sampleOrderItems) {
       delete orderFormValues.sampleOrderItems.questionnaire;
     }
-    console.log(JSON.stringify(orderFormValues))
+    console.log(JSON.stringify(orderFormValues));
     postToOpenElisServer(
       "/rest/SamplePatientEntry",
       JSON.stringify(orderFormValues),
@@ -88,6 +96,18 @@ const Index = () => {
       attacheSamplesToFormValues();
     }
   }, [page]);
+
+  useEffect(() => {
+    OrderEntryValidationSchema.validate(orderFormValues, { abortEarly: false })
+      .then((validData) => {
+        setErrors([]);
+        console.log("Valid Data:", validData);
+      })
+      .catch((errors) => {
+        setErrors(errors.errors);
+        console.error("Validation Errors:", errors.errors);
+      });
+  }, [orderFormValues]);
 
   const attacheSamplesToFormValues = () => {
     let sampleXmlString = "";
@@ -249,10 +269,22 @@ const Index = () => {
                 <Button
                   kind="primary"
                   className="forwardButton"
+                  disabled={errors.length > 0 ? true : false}
                   onClick={handleSubmitOrderForm}
                 >
                   {<FormattedMessage id="label.button.submit" />}
                 </Button>
+              )}
+              {page === orderPageNumber && errors.length > 0 && (
+                <div className="orderLegendBody">
+                  <div style={{ color: "red", marginTop: "10px" }}>
+                    <ul>
+                      {errors.map((message, index) => (
+                        <li key={index}>{message}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               )}
             </div>
           </div>

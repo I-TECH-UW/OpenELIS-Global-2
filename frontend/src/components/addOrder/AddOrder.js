@@ -492,6 +492,7 @@ const AddOrder = (props) => {
                 }
                 id="siteName"
                 className="inputText"
+                required
               />
             ) : (
               <AutoComplete
