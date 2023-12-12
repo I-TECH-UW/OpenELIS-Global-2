@@ -504,10 +504,8 @@ const AddOrder = (props) => {
                 }
                 id="siteName"
                 className="inputText"
-                invalid={
-                  error("sampleOrderItems.referringSiteName") ? true : false
-                }
-                invalidText={error("sampleOrderItems.referringSiteName")}
+                invalid={error("sampleOrderItems") ? true : false}
+                invalidText={error("sampleOrderItems")}
                 required
               />
             ) : (
@@ -518,10 +516,6 @@ const AddOrder = (props) => {
                 onSelect={handleAutoCompleteSiteName}
                 label={<FormattedMessage id="order.search.site.name" />}
                 class="inputText"
-                invalid={
-                  error("sampleOrderItems.referringSiteName") ? true : false
-                }
-                invalidText={error("sampleOrderItems.referringSiteName")}
                 style={{ width: "!important 100%" }}
                 suggestions={siteNames.length > 0 ? siteNames : []}
                 required
