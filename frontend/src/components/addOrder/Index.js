@@ -18,7 +18,6 @@ import OrderEntryAdditionalQuestions from "./OrderEntryAdditionalQuestions";
 import OrderSuccessMessage from "./OrderSuccessMessage";
 import { FormattedMessage } from "react-intl";
 import OrderEntryValidationSchema from "../formModel/validationSchema/OrderEntryValidationSchema";
-
 export let sampleObject = {
   index: 0,
   sampleRejected: false,
@@ -70,6 +69,17 @@ const Index = () => {
       );
     }
   };
+  const elementError = (path) => {
+    if (errors?.errors?.length > 0) {
+      let error = errors.inner?.find((e) => e.path === path);
+      if (error) {
+        return error.message;
+      } else {
+        return null;
+      }
+    }
+  };
+
   const handleSubmitOrderForm = (e) => {
     e.preventDefault();
     if ("years" in orderFormValues.patientProperties) {
@@ -104,7 +114,7 @@ const Index = () => {
         console.log("Valid Data:", validData);
       })
       .catch((errors) => {
-        setErrors(errors.errors);
+        setErrors(errors);
         console.error("Validation Errors:", errors.errors);
       });
   }, [orderFormValues]);
@@ -221,6 +231,7 @@ const Index = () => {
               <PatientInfo
                 orderFormValues={orderFormValues}
                 setOrderFormValues={setOrderFormValues}
+                error={elementError}
               />
             )}
             {page === programPageNumber && (
@@ -230,13 +241,18 @@ const Index = () => {
               />
             )}
             {page === samplePageNumber && (
-              <AddSample setSamples={setSamples} samples={samples} />
+              <AddSample
+                error={elementError}
+                setSamples={setSamples}
+                samples={samples}
+              />
             )}
             {page === orderPageNumber && (
               <AddOrder
                 orderFormValues={orderFormValues}
                 setOrderFormValues={setOrderFormValues}
                 samples={samples}
+                error={elementError}
               />
             )}
 
@@ -269,22 +285,11 @@ const Index = () => {
                 <Button
                   kind="primary"
                   className="forwardButton"
-                  disabled={errors.length > 0 ? true : false}
+                  disabled={errors?.errors?.length > 0 ? true : false}
                   onClick={handleSubmitOrderForm}
                 >
                   {<FormattedMessage id="label.button.submit" />}
                 </Button>
-              )}
-              {page === orderPageNumber && errors.length > 0 && (
-                <div className="orderLegendBody">
-                  <div style={{ color: "red", marginTop: "10px" }}>
-                    <ul>
-                      {errors.map((message, index) => (
-                        <li key={index}>{message}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
               )}
             </div>
           </div>

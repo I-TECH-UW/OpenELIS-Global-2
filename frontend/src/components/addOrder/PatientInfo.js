@@ -5,7 +5,7 @@ import CreatePatientForm from "../patient/CreatePatientForm";
 import { FormattedMessage } from "react-intl";
 
 const PatientInfo = (props) => {
-  const { orderFormValues, setOrderFormValues } = props;
+  const { orderFormValues, setOrderFormValues ,error } = props;
   const componentMounted = useRef(false);
   const [searchPatientTab, setSearchPatientTab] = useState({
     kind: "primary",
@@ -79,6 +79,7 @@ const PatientInfo = (props) => {
                 orderFormValues={orderFormValues}
                 setOrderFormValues={setOrderFormValues}
                 getSelectedPatient={getSelectedPatient}
+                error={error}
               />
             )}
           </div>

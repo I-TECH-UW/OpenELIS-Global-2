@@ -5,7 +5,7 @@ import { getFromOpenElisServer } from "../utils/Utils";
 import SampleType from "./SampleType";
 import { FormattedMessage } from "react-intl";
 const AddSample = (props) => {
-  const { samples, setSamples } = props;
+  const { samples, setSamples, error } = props;
   const componentMounted = useRef(true);
   const [elementsCounter, setElementsCounter] = useState(0);
 
@@ -121,6 +121,7 @@ const AddSample = (props) => {
               <div className="sampleType" key={i}>
                 <h4>
                   <FormattedMessage id="label.button.sample" /> {i + 1}
+                  <span className="requiredlabel">*</span>
                 </h4>
                 <Link href="#" onClick={(e) => handleRemoveSample(e, sample)}>
                   {<FormattedMessage id="sample.remove.action" />}
@@ -131,6 +132,7 @@ const AddSample = (props) => {
                   removeSample={removeSample}
                   sample={sample}
                   sampleTypeObject={sampleTypeObject}
+                  error={error}
                 />
               </div>
             );

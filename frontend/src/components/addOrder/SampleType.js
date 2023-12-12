@@ -26,7 +26,7 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 const SampleType = (props) => {
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
   const { configurationProperties } = useContext(ConfigurationContext);
-  const { index, rejectSampleReasons, removeSample, sample } = props;
+  const { index, rejectSampleReasons, removeSample } = props;
   const componentMounted = useRef(true);
   const sampleTypesRef = useRef(null);
   const [sampleTypes, setSampleTypes] = useState([]);
