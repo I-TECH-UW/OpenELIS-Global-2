@@ -352,16 +352,17 @@ const OrderEntryAdditionalQuestions = ({
   function setAdditionalQuestions(res ,event) {
     console.log(res);
     setQuestionnaire(res);
+    var convertedQuestionnaireResponse = convertQuestionnaireToResponse(res);
+    setQuestionnaireResponse(convertedQuestionnaireResponse);
     setOrderFormValues({
       ...orderFormValues,
       sampleOrderItems: {
         ...orderFormValues.sampleOrderItems,
         questionnaire: res,
         programId: event.target.value,
+        additionalQuestions: convertedQuestionnaireResponse,
       },
     });
-    var convertedQuestionnaireResponse = convertQuestionnaireToResponse(res);
-    setQuestionnaireResponse(convertedQuestionnaireResponse);
   }
   const setAnswer = (linkId) => {
     var responseItem = questionnaireResponse?.item?.find(

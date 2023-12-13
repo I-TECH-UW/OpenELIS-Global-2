@@ -15,7 +15,7 @@ const CustomLabNumberInput = (props) => {
     setRawInput(props.value);
     if (
       configurationProperties.AccessionFormat === "ALPHANUM" &&
-      props.value.length < 13
+      props?.value?.length < 13
     ) {
       const formatted = convertAlphaNumLabNumForDisplay(props.value); // use your own format function here
       setFormattedInput(formatted);
