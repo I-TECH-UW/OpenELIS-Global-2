@@ -44,7 +44,7 @@
 	</changeSet> 
 	<changeSet author="csteele" id="2">
 		<preConditions onFail="MARK_RAN">
-        	<sqlCheck expectedResult="1">select count(*) from clinlims.site_information where name = 'alphanumAccessionPrefix' AND value = 'SiteYearNum'; </sqlCheck>
+        	<sqlCheck expectedResult="1">select count(*) from clinlims.site_information where name = 'acessionFormat' AND value = 'SiteYearNum'; </sqlCheck>
 		</preConditions>
 		<update schemaName="clinlims" tableName="site_information">
 			<column name="description" value="specifies the format of the acession number,ex: SITEYEARNUM" />

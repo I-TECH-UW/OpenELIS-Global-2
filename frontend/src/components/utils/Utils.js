@@ -123,10 +123,10 @@ export const getFromOpenElisServerSync = (endPoint, callback) => {
   // if (request.response.url.includes("LoginPage")) {
   //     throw "No Login Session";
   // }
-  callback(JSON.parse(request.response));
+  return callback(JSON.parse(request.response));
 };
 
-export const postToOpenElisServerForPDF = (endPoint, payLoad ,callback) => {
+export const postToOpenElisServerForPDF = (endPoint, payLoad, callback) => {
   fetch(
     config.serverBaseUrl + endPoint,
 
@@ -143,7 +143,7 @@ export const postToOpenElisServerForPDF = (endPoint, payLoad ,callback) => {
   )
     .then((response) => response.blob())
     .then((blob) => {
-      callback(true)
+      callback(true);
       let link = document.createElement("a");
       link.href = window.URL.createObjectURL(blob, { type: "application/pdf" });
       link.target = "_blank";
@@ -152,7 +152,7 @@ export const postToOpenElisServerForPDF = (endPoint, payLoad ,callback) => {
       document.body.removeChild(link);
     })
     .catch((error) => {
-      callback(false)
+      callback(false);
       console.log(error);
     });
 };
@@ -161,37 +161,52 @@ export const hasRole = (userSessionDetails, role) => {
   return userSessionDetails.roles && userSessionDetails.roles.includes(role);
 };
 
+// this is complicated to enable it to format "smartly" as a person types
+// possible rework could allow it to only format completed numbers
 export const convertAlphaNumLabNumForDisplay = (labNumber) => {
   if (!labNumber) {
     return labNumber;
   }
-  if (labNumber.length > 13) {
+  if (labNumber.length > 15) {
     console.log("labNumber is not alphanumeric (too long), ignoring format");
     return labNumber;
   }
-  let labNumberForDisplay = labNumber;
+  //if dash made it into value, then it's part of the analysis number, not the base lab number
+  let labNumberParts = labNumber.split("-");
+  let isAnalysisLabNumber = labNumberParts.length > 1;
+  let labNumberForDisplay = labNumberParts[0];
   //incomplete lab number
-  if (labNumber.length < 8) {
-    labNumberForDisplay = labNumber.slice(0, 2);
-    if (labNumber.length > 2) {
+  if (labNumberParts[0].length < 8) {
+    labNumberForDisplay = labNumberParts[0].slice(0, 2);
+    if (labNumberParts[0].length > 2) {
       labNumberForDisplay = labNumberForDisplay + "-";
-      labNumberForDisplay = labNumberForDisplay + labNumber.slice(2);
+      labNumberForDisplay = labNumberForDisplay + labNumberParts[0].slice(2);
     }
   } else {
     //possibly complete lab number
-    labNumberForDisplay = labNumber.slice(0, 2) + "-";
-    if (labNumber.length > 8) {
+    labNumberForDisplay = labNumberParts[0].slice(0, 2) + "-";
+    if (labNumberParts[0].length > 8) {
       // lab number contains prefix
       labNumberForDisplay =
-        labNumberForDisplay + labNumber.slice(2, labNumber.length - 6) + "-";
+        labNumberForDisplay +
+        labNumberParts[0].slice(2, labNumberParts[0].length - 6) +
+        "-";
     }
     labNumberForDisplay =
       labNumberForDisplay +
-      labNumber.slice(labNumber.length - 6, labNumber.length - 3) +
+      labNumberParts[0].slice(
+        labNumberParts[0].length - 6,
+        labNumberParts[0].length - 3,
+      ) +
       "-";
 
     labNumberForDisplay =
-      labNumberForDisplay + labNumber.slice(labNumber.length - 3);
+      labNumberForDisplay +
+      labNumberParts[0].slice(labNumberParts[0].length - 3);
+  }
+  //re-add dash
+  if (isAnalysisLabNumber) {
+    labNumberForDisplay = labNumberForDisplay + "-" + labNumberParts[1];
   }
   return labNumberForDisplay.toUpperCase();
 };

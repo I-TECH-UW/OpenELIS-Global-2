@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { FormattedMessage, injectIntl } from "react-intl";
+import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../Style.css";
 import {
   getFromOpenElisServer,
@@ -22,6 +22,7 @@ import {
   SelectItem,
   Loading,
 } from "@carbon/react";
+import { Copy } from "@carbon/icons-react";
 import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import DataTable from "react-data-table-component";
 import { Formik, Field } from "formik";
@@ -98,7 +99,6 @@ export function SearchResultForm(props) {
     }
   };
 
-
   const loadNextResultsPage = () => {
     setLoading(true);
     getFromOpenElisServer(url + "&page=" + nextPage, setResultsWithId);
@@ -127,7 +127,8 @@ export function SearchResultForm(props) {
       values.accessionNumber !== ""
         ? values.accessionNumber
         : values.startLabNo;
-    let labNo = accessionNumber !== undefined ? accessionNumber : "";
+    let labNo =
+      accessionNumber !== undefined ? accessionNumber.split("-")[0] : "";
     const endLabNo = values.endLabNo !== undefined ? values.endLabNo : "";
     values.unitType = values.unitType ? values.unitType : "";
 
@@ -510,6 +511,8 @@ export function SearchResults(props) {
     useContext(NotificationContext);
   const { configurationProperties } = useContext(ConfigurationContext);
 
+  const intl = useIntl();
+
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [acceptAsIs, setAcceptAsIs] = useState([]);
@@ -576,7 +579,8 @@ export function SearchResults(props) {
 
   const addRejectResult = () => {
     const resultColumn = {
-      name: "Reject",
+      id: "reject",
+      name: intl.formatMessage({ id: "column.name.reject" }),
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
@@ -597,61 +601,71 @@ export function SearchResults(props) {
 
   var columns = [
     {
-      name: "Sample Info",
+      id: "sampleInfo",
+      name: intl.formatMessage({ id: "column.name.sampleInfo" }),
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
       sortable: true,
-      width: "15rem",
+      selector: (row) => row.accessionNumber,
+      width: "16rem",
     },
     {
-      name: "Test Date",
+      id: "testDate",
+      name: intl.formatMessage({ id: "column.name.testDate" }),
       selector: (row) => row.testDate,
       sortable: true,
       width: "7rem",
     },
 
     {
-      name: "Analyzer Result",
+      id: "analyzerResult",
+      name: intl.formatMessage({ id: "column.name.analyzerResult" }),
       selector: (row) => row.analysisMethod,
       sortable: true,
       width: "7rem",
     },
     {
-      name: "Test Name",
+      id: "testName",
+      name: intl.formatMessage({ id: "column.name.testName" }),
       selector: (row) => row.testName,
       sortable: true,
       width: "8rem",
     },
     {
-      name: "Normal Range",
+      id: "normalRange",
+      name: intl.formatMessage({ id: "column.name.normalRange" }),
       selector: (row) => row.normalRange,
       sortable: true,
       width: "8rem",
     },
     {
-      name: "Accept",
+      id: "accept",
+      name: intl.formatMessage({ id: "column.name.accept" }),
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
       width: "5rem",
     },
     {
-      name: "Result",
+      id: "result",
+      name: intl.formatMessage({ id: "column.name.result" }),
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
       width: "10rem",
     },
     {
-      name: "Current Result",
+      id: "currentResult",
+      name: intl.formatMessage({ id: "column.name.currentResult" }),
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
       width: "8rem",
     },
     {
-      name: "Notes",
+      id: "notes",
+      name: intl.formatMessage({ id: "column.name.notes" }),
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
@@ -663,29 +677,46 @@ export function SearchResults(props) {
     let formatLabNum = configurationProperties.AccessionFormat === "ALPHANUM";
 
     console.log("renderCell: index: " + index + ", id: " + id);
-    switch (column.name) {
-      case "Sample Info":
+    switch (column.id) {
+      case "sampleInfo":
         // return <input id={"results_" + id} type="text" size="6"></input>
         return (
           <>
+            <div>
+              <Button
+                onClick={async () => {
+                  if ("clipboard" in navigator) {
+                    return await navigator.clipboard.writeText(
+                      row.accessionNumber,
+                    );
+                  } else {
+                    return document.execCommand(
+                      "copy",
+                      true,
+                      row.accessionNumber,
+                    );
+                  }
+                }}
+                kind="ghost"
+                iconDescription={intl.formatMessage({
+                  id: "instructions.copy.labnum",
+                })}
+                hasIconOnly
+                renderIcon={Copy}
+              />
+            </div>
             <div className="sampleInfo">
-              <TextArea
-                value={
-                  (formatLabNum
-                    ? convertAlphaNumLabNumForDisplay(row.accessionNumber)
-                    : row.accessionNumber) +
-                  "-" +
-                  row.sequenceNumber +
-                  "\n" +
-                  row.patientName +
-                  "\n" +
-                  row.patientInfo
-                }
-                disabled={true}
-                type="text"
-                labelText=""
-                rows={3}
-              ></TextArea>
+              <br></br>
+              {(formatLabNum
+                ? convertAlphaNumLabNumForDisplay(row.accessionNumber)
+                : row.accessionNumber) +
+                "-" +
+                row.sequenceNumber}
+              <br></br>
+              {row.patientName} <br></br>
+              {row.patientInfo}
+              <br></br>
+              <br></br>
             </div>
             {row.nonconforming && (
               <picture>
@@ -700,7 +731,7 @@ export function SearchResults(props) {
           </>
         );
 
-      case "Accept":
+      case "accept":
         return (
           <>
             <Field name="forceTechApproval">
@@ -717,7 +748,7 @@ export function SearchResults(props) {
           </>
         );
 
-      case "Reject":
+      case "reject":
         return (
           <>
             <Grid>
@@ -758,7 +789,7 @@ export function SearchResults(props) {
           </>
         );
 
-      case "Notes":
+      case "notes":
         return (
           <>
             <div className="note">
@@ -776,7 +807,7 @@ export function SearchResults(props) {
           </>
         );
 
-      case "Result":
+      case "result":
         switch (row.resultType) {
           case "M":
           case "C":
@@ -840,7 +871,7 @@ export function SearchResults(props) {
             return row.resultValue;
         }
 
-      case "Current Result":
+      case "currentResult":
         switch (row.resultType) {
           case "M":
           case "C":
@@ -873,7 +904,7 @@ export function SearchResults(props) {
             value={data.pastNotes}
             disabled={true}
             type="text"
-            labelText={<FormattedMessage id="referral.testresult.pastnote"/>}
+            labelText={<FormattedMessage id="referral.testresult.pastnote" />}
             rows={2}
           ></TextArea>
         </Column>
@@ -881,7 +912,7 @@ export function SearchResults(props) {
           <Select
             id={"testMethod" + data.id}
             name={"testResult[" + data.id + "].testMethod"}
-            labelText={<FormattedMessage id= "referral.label.testmethod"/>}
+            labelText={<FormattedMessage id="referral.label.testmethod" />}
             onChange={(e) => handleChange(e, data.id)}
             value={data.method}
           >
@@ -900,7 +931,7 @@ export function SearchResults(props) {
             id={"referralReason" + data.id}
             name={"testResult[" + data.id + "].referralReason"}
             // noLabel={true}
-            labelText={<FormattedMessage id= "referral.label.reason"/>}
+            labelText={<FormattedMessage id="referral.label.reason" />}
             onChange={(e) => handleChange(e, data.id)}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
@@ -919,7 +950,7 @@ export function SearchResults(props) {
             id={"institute" + data.id}
             name={"testResult[" + data.id + "].institute"}
             // noLabel={true}
-            labelText={<FormattedMessage id ="referral.label.institute"/>}
+            labelText={<FormattedMessage id="referral.label.institute" />}
             onChange={(e) => handleChange(e, data.id)}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
@@ -935,7 +966,7 @@ export function SearchResults(props) {
             id={"testToPerform" + data.id}
             name={"testResult[" + data.id + "].testToPerform"}
             // noLabel={true}
-            labelText={<FormattedMessage id="referral.label.testtoperform"/>}
+            labelText={<FormattedMessage id="referral.label.testtoperform" />}
             onChange={(e) => handleChange(e, data.id)}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
@@ -952,7 +983,7 @@ export function SearchResults(props) {
           >
             <DatePickerInput
               placeholder="mm/dd/yyyy"
-              labelText={<FormattedMessage id="referral.label.sentdate"/>}
+              labelText={<FormattedMessage id="referral.label.sentdate" />}
               id="date-picker-single"
             />
           </DatePicker>

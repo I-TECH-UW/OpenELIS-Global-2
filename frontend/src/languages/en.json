@@ -467,5 +467,19 @@
     "banner.menu.resultvalidation_study": "Study",
     "reports.followupRequired.byLocation": "Follow-up Required",
     "button.label.loadnext": "Load Next Bundle",
-    "button.label.loadprevious": "Load Previous Bundle"
+    "button.label.loadprevious": "Load Previous Bundle",
+    "column.name.reject": "Reject",
+    "column.name.sampleInfo": "Sample Info",
+    "column.name.testDate": "Test Date",
+    "column.name.analyzerResult": "Analyzer Result",
+    "column.name.testName": "Test Name",
+    "column.name.normalRange": "Normal Range",
+    "column.name.accept": "Accept",
+    "column.name.result": "Result",
+    "column.name.currentResult": "Current Result",
+    "column.name.notes": "Notes",
+    "column.name.save": "Save",
+    "column.name.retest": "Retest",
+    "column.name.pastNotes": "Past Notes",
+    "instructions.copy.labnum": "Copy Lab Number"
 }

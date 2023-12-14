@@ -14,8 +14,9 @@ import {
   TextArea,
   TextInput,
 } from "@carbon/react";
+import { Copy } from "@carbon/icons-react";
 import DataTable from "react-data-table-component";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import ValidationSearchFormValues from "../formModel/innitialValues/ValidationSearchFormValues";
 import { NotificationKinds } from "../common/CustomNotification";
 import { postToOpenElisServer } from "../utils/Utils";
@@ -29,10 +30,13 @@ const Validation = (props) => {
   const { setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
   const { configurationProperties } = useContext(ConfigurationContext);
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
 
   const componentMounted = useRef(false);
+
+  const intl = useIntl();
+
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
 
   useEffect(() => {
     componentMounted.current = true;
@@ -43,55 +47,64 @@ const Validation = (props) => {
 
   const columns = [
     {
-      name: "Sample Info",
+      id: "sampleInfo",
+      name: intl.formatMessage({ id: "column.name.sampleInfo" }),
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
+      selector: (row) => row.accessionNumber,
       sortable: true,
-      width: "19rem",
+      width: "16rem",
     },
     {
-      name: "Test Name",
+      id: "testName",
+      name: intl.formatMessage({ id: "column.name.testName" }),
       selector: (row) => row.testName,
       sortable: true,
       width: "10rem",
     },
     {
-      name: "Normal Range",
+      id: "normalRange",
+      name: intl.formatMessage({ id: "column.name.normalRange" }),
       selector: (row) => row.normalRange,
       sortable: true,
-      width: "7rem",
+      width: "8rem",
     },
     {
-      name: "Result",
+      id: "result",
+      name: intl.formatMessage({ id: "column.name.result" }),
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
       width: "8rem",
     },
     {
-      name: "Save",
+      id: "save",
+      name: intl.formatMessage({ id: "column.name.save" }),
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
       width: "8rem",
     },
     {
-      name: "Retest",
+      id: "retest",
+      name: intl.formatMessage({ id: "column.name.retest" }),
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
       width: "8rem",
     },
     {
-      name: "Notes",
+      id: "notes",
+      name: intl.formatMessage({ id: "column.name.notes" }),
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
       width: "10rem",
     },
     {
-      name: "Past Notes",
+      id: "pastNotes",
+      name: intl.formatMessage({ id: "column.name.pastNotes" }),
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
@@ -162,21 +175,39 @@ const Validation = (props) => {
 
   const renderCell = (row, index, column, id) => {
     let formatLabNum = configurationProperties.AccessionFormat === "ALPHANUM";
-    switch (column.name) {
-      case "Sample Info":
+    switch (column.id) {
+      case "sampleInfo":
         return (
           <>
-            <TextArea
-              value={
-                formatLabNum
-                  ? convertAlphaNumLabNumForDisplay(row.accessionNumber)
-                  : row.accessionNumber
-              }
-              disabled={true}
-              type="text"
-              labelText=""
-              rows={1}
-            ></TextArea>
+            <Button
+              onClick={async () => {
+                if ("clipboard" in navigator) {
+                  return await navigator.clipboard.writeText(
+                    row.accessionNumber,
+                  );
+                } else {
+                  return document.execCommand(
+                    "copy",
+                    true,
+                    row.accessionNumber,
+                  );
+                }
+              }}
+              kind="ghost"
+              iconDescription={intl.formatMessage({
+                id: "instructions.copy.labnum",
+              })}
+              hasIconOnly
+              renderIcon={Copy}
+            />
+            <div className="sampleInfo">
+              <br></br>
+              {formatLabNum
+                ? convertAlphaNumLabNumForDisplay(row.accessionNumber)
+                : row.accessionNumber}
+              <br></br>
+              <br></br>
+            </div>
             {row.nonconforming && (
               <picture>
                 <img
@@ -190,7 +221,7 @@ const Validation = (props) => {
           </>
         );
 
-      case "Save":
+      case "save":
         return (
           <>
             <Field name="isAccepted">
@@ -207,7 +238,7 @@ const Validation = (props) => {
           </>
         );
 
-      case "Retest":
+      case "retest":
         return (
           <>
             <Field name="isRejected">
@@ -224,7 +255,7 @@ const Validation = (props) => {
           </>
         );
 
-      case "Notes":
+      case "notes":
         return (
           <>
             <div className="note">
@@ -241,7 +272,7 @@ const Validation = (props) => {
           </>
         );
 
-      case "Past Notes":
+      case "pastNotes":
         return (
           <>
             <div className="note">
@@ -258,7 +289,7 @@ const Validation = (props) => {
           </>
         );
 
-      case "Result":
+      case "result":
         switch (row.resultType) {
           case "M":
           case "C":
@@ -271,7 +302,7 @@ const Validation = (props) => {
                   )?.value
                 }
               </>
-            )
+            );
           default:
             return row.result;
         }

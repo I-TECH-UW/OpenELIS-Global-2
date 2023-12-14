@@ -17,7 +17,7 @@ import {
   Grid,
 } from "@carbon/react";
 import CustomLabNumberInput from "../common/CustomLabNumberInput";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { Formik, Field } from "formik";
 import ValidationSearchFormValues from "../formModel/innitialValues/ValidationSearchFormValues";
 import { getFromOpenElisServer } from "../utils/Utils";
@@ -38,6 +38,7 @@ const SearchForm = (props) => {
   const [previousPage, setPreviousPage] = useState(null);
   const [pagination, setPagination] = useState(false);
   const [url, setUrl] = useState("");
+  const intl = useIntl();
 
   const validationResults = (data) => {
     if (data) {
@@ -95,7 +96,9 @@ const SearchForm = (props) => {
     setPreviousPage(null);
     setPagination(false);
     setIsLoading(true);
-    var accessionNumber = values.accessionNumber ? values.accessionNumber : "";
+    var accessionNumber = values.accessionNumber
+      ? values.accessionNumber.split("-")[0]
+      : "";
     var unitType = values.unitType ? values.unitType : "";
     var date = testDate ? testDate : "";
     let searchEndPoint =
@@ -108,7 +111,7 @@ const SearchForm = (props) => {
       date +
       "&doRange=" +
       doRange;
-      setUrl(searchEndPoint);
+    setUrl(searchEndPoint);
     getFromOpenElisServer(searchEndPoint, validationResults);
   };
 
@@ -165,6 +168,7 @@ const SearchForm = (props) => {
           values,
           errors,
           touched,
+          setFieldValue,
           handleChange,
           //handleBlur,
           handleSubmit,
@@ -191,6 +195,10 @@ const SearchForm = (props) => {
                             placeholder={"Enter Lab No"}
                             name={field.name}
                             id={field.name}
+                            value={values[field.name]}
+                            onChange={(e, rawValue) => {
+                              setFieldValue(field.name, rawValue);
+                            }}
                             labelText={
                               searchBy == "order" ? (
                                 <FormattedMessage id="search.label.accession" />
@@ -277,7 +285,7 @@ const SearchForm = (props) => {
         </>
       )}
 
-<>
+      <>
         {pagination && (
           <Grid>
             <Column lg={11} />

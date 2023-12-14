@@ -280,7 +280,7 @@ public class DisplayListController extends BaseRestController{
 			    Property.allowResultRejection));
 
 		configs.put(Property.AccessionFormat.toString(), ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat));
-
+		configs.put(Property.USE_ALPHANUM_ACCESSION_PREFIX.toString(), ConfigurationProperties.getInstance().getPropertyValue(Property.USE_ALPHANUM_ACCESSION_PREFIX));
 		return configs;
 	}
 
