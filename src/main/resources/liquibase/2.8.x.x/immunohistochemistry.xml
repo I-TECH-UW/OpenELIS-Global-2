@@ -2415,5 +2415,34 @@
 			<column name="test_id"  valueNumeric=" ( select id from clinlims.test where description = 'Anti-Vimentin' ) " />
 		</insert>
 	</changeSet> 
+	<changeSet author="mozzymutesa" id="7">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">select count(*) from clinlims.dictionary_category where name = 'ihc_breast_cancer_report_intensity';
+    		</sqlCheck>
+    </preConditions>
+    <comment>adds Breast Cancer Hormone Receptor Status Report Parameter Lists in dictionary_category</comment> 
+   
+		<insert tableName="dictionary_category" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_category_seq" />
+			<column name="description" value="IHC Breast Cancer Report Intensity" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="local_abbrev" value="ihcBcrInte" />
+			<column name="name" value="ihc_breast_cancer_report_intensity" />
+		</insert>
+		<insert tableName="dictionary_category" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_category_seq" />
+			<column name="description" value="IHC Breast Cancer Report CerbB2 Pattern" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="local_abbrev" value="ihcBcrCerb" />
+			<column name="name" value="ihc_breast_cancer_report_cerbb2_pattern" />
+		</insert>
+		<insert tableName="dictionary_category" schemaName="clinlims">
+			<column name="id" valueSequenceNext="dictionary_category_seq" />
+			<column name="description" value="IHC Breast Cancer Report Molecular subtype" />
+			<column name="lastupdated" valueComputed="${now}"/>
+			<column name="local_abbrev" value="ihcBcrMole" />
+			<column name="name" value="ihc_breast_cancer_report_molecular_subtype" />
+		</insert>
+  </changeSet>
 	
 </databaseChangeLog>

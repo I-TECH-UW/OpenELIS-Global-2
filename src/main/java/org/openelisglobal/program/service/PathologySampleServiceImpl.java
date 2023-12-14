@@ -245,9 +245,15 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
     }
     
     private void referToImmunoHistoChemistry(PathologySample pathologySample, PathologySampleForm form) {
-        Test immunoHistologyTest = null;
-        if (StringUtils.isNotBlank(form.getImmunoHistoChemistryTestId())) {
-            immunoHistologyTest = testService.get(form.getImmunoHistoChemistryTestId());
+        List <Test> immunoHistologyTests = new ArrayList<>();
+        if (!form.getImmunoHistoChemistryTestIds().isEmpty()) {
+            form.getImmunoHistoChemistryTestIds().forEach(id -> {
+               Test t = testService.get(id);
+               if(t != null){
+                 immunoHistologyTests.add(t);
+               }
+            });
+             
         }
         
         ImmunohistochemistrySample immunoHistoSample = immunohistochemistrySampleService
@@ -262,7 +268,7 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         immunoHistoSample.setReffered(true);
         immunohistochemistrySampleService.save(immunoHistoSample);
         
-        if (immunoHistologyTest == null) {
+        if (immunoHistologyTests.isEmpty()) {
             return;
         }
         List<Analysis> analyses = analysisService.getAnalysesBySampleId(pathologySample.getSample().getId());
@@ -270,7 +276,14 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
           return;
         }
         Analysis currentAnalysis = analyses.get(0);
-        Analysis analysis = new Analysis();
+        immunoHistologyTests.forEach(test -> {
+            CreateNewAnalysis(test ,currentAnalysis ,pathologySample.getProgram().getProgramName() ,form.getSystemUserId());
+        });
+       
+    }
+
+    private void CreateNewAnalysis(Test immunoHistologyTest ,Analysis currentAnalysis ,String programmeName ,String systemUserId){
+         Analysis analysis = new Analysis();
         analysis.setTest(immunoHistologyTest);
         analysis.setIsReportable(currentAnalysis.getIsReportable());
         analysis.setAnalysisType(currentAnalysis.getAnalysisType());
@@ -282,28 +295,28 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         TestSection testSection = testSectionService.getTestSectionByName("Immunohistochemistry");
         analysis.setTestSection(testSection);
         analysis.setSampleTypeName(currentAnalysis.getSampleTypeName());
-        analysis.setSysUserId(form.getSystemUserId());
+        analysis.setSysUserId(systemUserId);
         analysisService.insert(analysis);
         
         List<Note> notes = new ArrayList<>();
         Note note = noteService.createSavableNote(
             analysis, NoteType.INTERNAL, "Refered From Pathology Programme : "
-                    + pathologySample.getProgram().getProgramName() + "to Immunohistochemistry",
-            "Refered to Immunohistochemistry", form.getSystemUserId());
+                    + programmeName + "to Immunohistochemistry",
+            "Refered to Immunohistochemistry", systemUserId);
         if (!noteService.duplicateNoteExists(note)) {
             notes.add(note);
         }
         noteService.saveAll(notes);
     }
     
-    public PathologyConclusion createConclusion(String text, ConclusionType type) {
+    private PathologyConclusion createConclusion(String text, ConclusionType type) {
         PathologyConclusion conclusion = new PathologyConclusion();
         conclusion.setValue(text);
         conclusion.setType(type);
         return conclusion;
     }
     
-    public PathologyRequest createRequest(String text, RequestType type , RequestStatus status) {
+    private PathologyRequest createRequest(String text, RequestType type , RequestStatus status) {
         PathologyRequest request = new PathologyRequest();
         request.setValue(text);
         request.setType(type);
@@ -311,7 +324,7 @@ public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologyS
         return request;
     }
     
-    public PathologyTechnique createTechnique(String text, TechniqueType type) {
+    private PathologyTechnique createTechnique(String text, TechniqueType type) {
         PathologyTechnique request = new PathologyTechnique();
         request.setValue(text);
         request.setType(type);

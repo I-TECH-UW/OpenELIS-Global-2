@@ -1,5 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, ProgressIndicator, ProgressStep, Stack } from "@carbon/react";
+import {
+  Button,
+  ProgressIndicator,
+  ProgressStep,
+  Stack,
+  ToastNotification,
+} from "@carbon/react";
 import PatientInfo from "./PatientInfo";
 import AddSample from "./AddSample";
 import AddOrder from "./AddOrder";
@@ -11,7 +17,7 @@ import { postToOpenElisServer } from "../utils/Utils";
 import OrderEntryAdditionalQuestions from "./OrderEntryAdditionalQuestions";
 import OrderSuccessMessage from "./OrderSuccessMessage";
 import { FormattedMessage } from "react-intl";
-
+import OrderEntryValidationSchema from "../formModel/validationSchema/OrderEntryValidationSchema";
 export let sampleObject = {
   index: 0,
   sampleRejected: false,
@@ -35,6 +41,7 @@ const Index = () => {
   const [page, setPage] = useState(firstPageNumber);
   const [orderFormValues, setOrderFormValues] = useState(SampleOrderFormValues);
   const [samples, setSamples] = useState([sampleObject]);
+  const [errors, setErrors] = useState([]);
 
   const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
@@ -62,6 +69,17 @@ const Index = () => {
       );
     }
   };
+  const elementError = (path) => {
+    if (errors?.errors?.length > 0) {
+      let error = errors.inner?.find((e) => e.path === path);
+      if (error) {
+        return error.message;
+      } else {
+        return null;
+      }
+    }
+  };
+
   const handleSubmitOrderForm = (e) => {
     e.preventDefault();
     if ("years" in orderFormValues.patientProperties) {
@@ -73,7 +91,10 @@ const Index = () => {
     if ("days" in orderFormValues.patientProperties) {
       delete orderFormValues.patientProperties.days;
     }
-    console.log(JSON.stringify(orderFormValues))
+    if ("questionnaire" in orderFormValues.sampleOrderItems) {
+      delete orderFormValues.sampleOrderItems.questionnaire;
+    }
+    console.log(JSON.stringify(orderFormValues));
     postToOpenElisServer(
       "/rest/SamplePatientEntry",
       JSON.stringify(orderFormValues),
@@ -85,6 +106,18 @@ const Index = () => {
       attacheSamplesToFormValues();
     }
   }, [page]);
+
+  useEffect(() => {
+    OrderEntryValidationSchema.validate(orderFormValues, { abortEarly: false })
+      .then((validData) => {
+        setErrors([]);
+        console.log("Valid Data:", validData);
+      })
+      .catch((errors) => {
+        setErrors(errors);
+        console.error("Validation Errors:", errors.errors);
+      });
+  }, [orderFormValues]);
 
   const attacheSamplesToFormValues = () => {
     let sampleXmlString = "";
@@ -198,6 +231,7 @@ const Index = () => {
               <PatientInfo
                 orderFormValues={orderFormValues}
                 setOrderFormValues={setOrderFormValues}
+                error={elementError}
               />
             )}
             {page === programPageNumber && (
@@ -207,13 +241,18 @@ const Index = () => {
               />
             )}
             {page === samplePageNumber && (
-              <AddSample setSamples={setSamples} samples={samples} />
+              <AddSample
+                error={elementError}
+                setSamples={setSamples}
+                samples={samples}
+              />
             )}
             {page === orderPageNumber && (
               <AddOrder
                 orderFormValues={orderFormValues}
                 setOrderFormValues={setOrderFormValues}
                 samples={samples}
+                error={elementError}
               />
             )}
 
@@ -246,6 +285,7 @@ const Index = () => {
                 <Button
                   kind="primary"
                   className="forwardButton"
+                  disabled={errors?.errors?.length > 0 ? true : false}
                   onClick={handleSubmitOrderForm}
                 >
                   {<FormattedMessage id="label.button.submit" />}

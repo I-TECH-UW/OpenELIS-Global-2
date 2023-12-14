@@ -94,7 +94,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     },
     {
       title: <FormattedMessage id="dashboard.avg.turn.around.label" />,
-      subTitle: "Reception to Validation",
+      subTitle:  <FormattedMessage id="dashboard.avg.turn.around.subtitle.label"/>,
       value: counts.averageTurnAroudTime,
     },
     {

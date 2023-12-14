@@ -1,54 +1,56 @@
+import { FormattedMessage } from "react-intl";
+import React from "react";
 export const OrderCurrentTestsHeaders = [
   {
     key: "accessionNumber",
-    header: "Lab No.",
+    header: <FormattedMessage id="sample.label.labnumber"/>,
   },
   {
     key: "sampleType",
-    header: "Sample Type",
+    header: <FormattedMessage id="sample.type"/>,
   },
   {
     key: "collectionDate",
-    header: "Collection Date",
+    header: <FormattedMessage id="sample.collection.date"/>,
   },
   {
     key: "collectionTime",
-    header: "Collection Time",
+    header: <FormattedMessage id="sample.collection.time"/>,
   },
   {
     key: "removeSample",
-    header: "Remove Sample",
+    header: <FormattedMessage id="sample.remove.action"/>,
   },
   {
     key: "testName",
-    header: "Test Name",
+    header: <FormattedMessage id="sample.entry.project.testName"/>,
   },
   {
     key: "hasResults",
-    header: "Results Recorded",
+    header: <FormattedMessage id="header.results.recorded"/>,
   },
   {
     key: "canceled",
-    header: "Cancel Test",
+    header: <FormattedMessage id= "header.cancel.test"/>,
   },
 ];
 
 export const OrderPossibleTestsHeaders = [
   {
     key: "accessionNumber",
-    header: "Lab No.",
+    header:< FormattedMessage id="sample.label.labnumber"/>,
   },
   {
     key: "sampleType",
-    header: "Sample Type",
+    header: <FormattedMessage id="sample.type"/>,
   },
   {
     key: "testName",
-    header: "Test Name",
+    header: <FormattedMessage id="sample.entry.project.testName"/>,
   },
   {
     key: "add",
-    header: "Assign",
+    header: <FormattedMessage id="header.assign"/>,
   },
 ];
 

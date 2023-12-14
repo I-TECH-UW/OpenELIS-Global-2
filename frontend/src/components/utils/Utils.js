@@ -143,7 +143,7 @@ export const postToOpenElisServerForPDF = (endPoint, payLoad, callback) => {
   )
     .then((response) => response.blob())
     .then((blob) => {
-      callback(true);
+      callback(true, blob);
       let link = document.createElement("a");
       link.href = window.URL.createObjectURL(blob, { type: "application/pdf" });
       link.target = "_blank";

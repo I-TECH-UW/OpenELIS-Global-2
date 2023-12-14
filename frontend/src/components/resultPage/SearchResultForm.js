@@ -522,6 +522,7 @@ export function SearchResults(props) {
   const [rejectReasons, setRejectReasons] = useState([]);
   const [rejectedItems, setRejectedItems] = useState({});
   const saveStatus = "";
+  const intl = useIntl();
 
   const componentMounted = useRef(true);
 
@@ -1101,7 +1102,7 @@ export function SearchResults(props) {
     } else {
       setNotificationBody({
         title: <FormattedMessage id="notification.title" />,
-        message: "Error while Saving",
+        message: <FormattedMessage id="error.save.msg" />,
         kind: NotificationKinds.error,
       });
     }
@@ -1111,13 +1112,19 @@ export function SearchResults(props) {
   const createMesssage = (resp) => {
     var message = "";
     if (resp.reflex.length > 0) {
-      message += "Reflex Tests : " + resp.reflex.join(", ");
+      message +=
+        intl.formatMessage({ id: "reflexTests" }) +
+        ": " +
+        resp.reflex.join(", ");
     }
     if (resp.calculated.length > 0) {
-      message += "Calculated Tests : " + resp.calculated.join(", ");
+      message +=
+        intl.formatMessage({ id: "calculatedTests" }) +
+        ": " +
+        resp.calculated.join(", ");
     }
     if (message === "") {
-      message += "Saved Succesfully";
+      message += intl.formatMessage({ id: "success.save.msg" });
     }
     return message;
   };
@@ -1136,7 +1143,7 @@ export function SearchResults(props) {
       {notificationVisible === true ? <AlertDialog /> : ""}
       {addRejectResult()}
       <>
-        {props.results.testResult.length > 0 && (
+        {props.results?.testResult?.length > 0 && (
           <Grid style={{ marginTop: "20px" }} className="gridBoundary">
             <Column lg={3} />
             <Column lg={7}>
@@ -1174,7 +1181,7 @@ export function SearchResults(props) {
               //onBlur={handleBlur}
             >
               <DataTable
-                data={props.results.testResult.slice(
+                data={props.results?.testResult?.slice(
                   (page - 1) * pageSize,
                   page * pageSize,
                 )}
@@ -1188,7 +1195,7 @@ export function SearchResults(props) {
                 page={page}
                 pageSize={pageSize}
                 pageSizes={[10, 20, 50, 100]}
-                totalItems={props.results.testResult?.length}
+                totalItems={props.results?.testResult?.length}
               ></Pagination>
 
               <Button type="button" id="submit" onClick={handleSave}>

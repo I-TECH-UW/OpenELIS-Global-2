@@ -20,7 +20,7 @@ import {
 import { Add } from "@carbon/react/icons";
 import { getFromOpenElisServer } from "../utils/Utils";
 import EditSampleType from "./EditSampleType";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage,useIntl} from "react-intl";
 import {
   OrderCurrentTestsHeaders,
   OrderPossibleTestsHeaders,
@@ -35,6 +35,7 @@ const EditSample = (props) => {
   const [pageSize2, setPageSize2] = useState(5);
 
   const [rejectSampleReasons, setRejectSampleReasons] = useState([]);
+  const intl = useIntl();
 
   const handleAddNewSample = () => {
     let updateSamples = [...samples];
@@ -313,7 +314,7 @@ const EditSample = (props) => {
             isSortable
           >
             {({ rows, headers, getHeaderProps, getTableProps }) => (
-              <TableContainer title="Current Tests">
+              <TableContainer title={intl.formatMessage({ id: "currentests.title" })}>
                 <Table {...getTableProps()}>
                   <TableHead>
                     <TableRow>
@@ -360,7 +361,7 @@ const EditSample = (props) => {
             isSortable
           >
             {({ rows, headers, getHeaderProps, getTableProps }) => (
-              <TableContainer title="Available Tests">
+              <TableContainer title={intl.formatMessage({ id: "availabletests.title" })}>
                 <Table {...getTableProps()}>
                   <TableHead>
                     <TableRow>

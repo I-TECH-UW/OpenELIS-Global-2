@@ -49,10 +49,16 @@ function PatientManagement() {
       <div className="orderLegendBody">
         <div className="tabsLayout">
           <Button kind={searchPatientTab.kind} onClick={handleSearchPatientTab}>
-          <FormattedMessage id="search.patient.label" defaultMessage="Search for Patient" />
+            <FormattedMessage
+              id="search.patient.label"
+              defaultMessage="Search for Patient"
+            />
           </Button>
           <Button kind={newPatientTab.kind} onClick={handleNewPatientTab}>
-           <FormattedMessage id="new.patient.label" defaultMessage="New Patient"/>
+            <FormattedMessage
+              id="new.patient.label"
+              defaultMessage="New Patient"
+            />
           </Button>
         </div>
         {searchPatientTab.active && (

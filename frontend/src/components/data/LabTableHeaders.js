@@ -1,14 +1,15 @@
+import { FormattedMessage } from 'react-intl';
 export const labHeaderData = [
   {
     key: "formName",
-    header: "FormName",
+    header: <FormattedMessage id="header.formname"/>,
   },
   {
     key: "firstName",
-    header: "First Name",
+    header: <FormattedMessage id="patient.first.name"/>,
   },
   {
     key: "lastName",
-    header: "Last Name",
+    header: <FormattedMessage id="patient.last.name"/>,
   },
 ];

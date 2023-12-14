@@ -1,5 +1,6 @@
 package org.openelisglobal.program.controller.pathology;
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class PathologySampleForm {
     
     private Boolean referToImmunoHistoChemistry = false;
     
-    String immunoHistoChemistryTestId;
+    private List<String> immunoHistoChemistryTestIds;
     
     private List<PathologyReportForm> reports;
     
@@ -175,14 +176,6 @@ public class PathologySampleForm {
         this.systemUserId = systemUserId;
     }
     
-    public String getImmunoHistoChemistryTestId() {
-        return immunoHistoChemistryTestId;
-    }
-    
-    public void setImmunoHistoChemistryTestId(String immunoHistoChemistryTestId) {
-        this.immunoHistoChemistryTestId = immunoHistoChemistryTestId;
-    }
-    
     public List<PathologyReportForm> getReports() {
         return reports;
     }
@@ -190,6 +183,18 @@ public class PathologySampleForm {
     public void setReports(List<PathologyReportForm> reports) {
         this.reports = reports;
     }
+
+    public List<String> getImmunoHistoChemistryTestIds() {
+        if(immunoHistoChemistryTestIds == null){
+            immunoHistoChemistryTestIds = new ArrayList<>();
+        }
+        return immunoHistoChemistryTestIds;
+    }
+
+    public void setImmunoHistoChemistryTestIds(List<String> immunoHistoChemistryTestIds) {
+        this.immunoHistoChemistryTestIds = immunoHistoChemistryTestIds;
+    }
+
     public static class PathologySlideForm extends PathologySlide {
         
         private static final long serialVersionUID = 3142138533368581327L;
