@@ -522,7 +522,6 @@ export function SearchResults(props) {
   const [rejectReasons, setRejectReasons] = useState([]);
   const [rejectedItems, setRejectedItems] = useState({});
   const saveStatus = "";
-  const intl = useIntl();
 
   const componentMounted = useRef(true);
 
