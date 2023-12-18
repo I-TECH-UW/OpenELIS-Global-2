@@ -35,8 +35,11 @@ import "./PathologyDashboard.css";
 function PathologyDashboard() {
   const componentMounted = useRef(false);
 
+  const intl = useIntl();
+
   const { notificationVisible } = useContext(NotificationContext);
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
+
   const [statuses, setStatuses] = useState([]);
   const [pathologyEntries, setPathologyEntries] = useState([]);
   const [page, setPage] = useState(1);
@@ -58,7 +61,6 @@ function PathologyDashboard() {
     complete: 0,
   });
   const [loading, setLoading] = useState(true);
-  const intl = useIntl();
 
   const setStatusList = (statusList) => {
     if (componentMounted.current) {
@@ -305,15 +307,19 @@ function PathologyDashboard() {
               onChange={(e) =>
                 setFilters({ ...filters, searchTerm: e.target.value })
               }
-              placeholder={intl.formatMessage({id:"label.seacrh.labno.family",})}
-              labelText= {<FormattedMessage id="label.seacrh.labno.family"/>}
+              placeholder={intl.formatMessage({
+                id: "label.seacrh.labno.family",
+              })}
+              labelText={intl.formatMessage({
+                id: "label.seacrh.labno.family",
+              })}
             />
           </Column>
           <Column lg={8} md={4} sm={2}>
             <div className="inlineDivBlock">
               <div>Filters:</div>
               <Checkbox
-                labelText={<FormattedMessage id="label.filters.mycases"/>}
+                labelText={intl.formatMessage({ id: "label.filters.mycases" })}
                 id="filterMyCases"
                 value={filters.myCases}
                 onChange={(e) =>
@@ -323,7 +329,7 @@ function PathologyDashboard() {
               <Select
                 id="statusFilter"
                 name="statusFilter"
-                labelText={<FormattedMessage id= "label.filters.status"/>}
+                labelText={intl.formatMessage({ id: "label.filters.status" })}
                 defaultValue="placeholder"
                 value={
                   filters.statuses.length > 1 ? "All" : filters.statuses[0].id
@@ -355,31 +361,31 @@ function PathologyDashboard() {
               headers={[
                 {
                   key: "requestDate",
-                  header: <FormattedMessage id="sample.requestDate"/>,
+                  header: <FormattedMessage id="sample.requestDate" />,
                 },
                 {
                   key: "status",
-                  header: <FormattedMessage id="pathology.label.stage"/>,
+                  header: <FormattedMessage id="pathology.label.stage" />,
                 },
                 {
                   key: "lastName",
-                  header: <FormattedMessage id="patient.last.name"/>,
+                  header: <FormattedMessage id="patient.last.name" />,
                 },
                 {
                   key: "firstName",
-                  header: <FormattedMessage id="patient.first.name"/>,
+                  header: <FormattedMessage id="patient.first.name" />,
                 },
                 {
                   key: "assignedTechnician",
-                  header: <FormattedMessage id="assigned.technician.label"/>,
+                  header: <FormattedMessage id="assigned.technician.label" />,
                 },
                 {
                   key: "assignedPathologist",
-                  header: <FormattedMessage id="assigned.pathologist.label"/>,
+                  header: <FormattedMessage id="assigned.pathologist.label" />,
                 },
                 {
                   key: "labNumber",
-                  header:<FormattedMessage id="sample.label.labnumber"/>,
+                  header: <FormattedMessage id="sample.label.labnumber" />,
                 },
               ]}
               isSortable

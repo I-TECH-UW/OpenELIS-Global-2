@@ -39,17 +39,23 @@ function SearchOrder() {
         <Form onSubmit={handleSearch}>
           <Grid>
             <Column lg={16}>
-              <h4> <FormattedMessage id="sample.label.search.labnumber" /></h4>
+              <h4>
+                <FormattedMessage id="sample.label.search.labnumber" />
+              </h4>
             </Column>
             <Column lg={4}>
               <TextInput
+                id="searchLabNumber"
+                labelText=""
                 type="text"
                 value={accessionNumber}
                 onChange={(e) => setAccessionNumber(e.target.value)}
               />
             </Column>
             <Column lg={2}>
-              <Button type="submit"> <FormattedMessage id="label.button.submit" /></Button>
+              <Button type="submit">
+                <FormattedMessage id="label.button.submit" />
+              </Button>
             </Column>
           </Grid>
         </Form>

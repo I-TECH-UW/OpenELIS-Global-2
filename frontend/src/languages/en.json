@@ -252,8 +252,8 @@
     "label.order.scan.text": "Scan OR Enter Manually OR",
     "order.reception.time": "Reception Time (hh:mm) :",
     "order.site.name": "Site Name:",
-    "order.search.site.name": "Search site Name",
-    "order.invalid.site.name": "Invalid site name",
+    "order.search.site.name": "Search Site Name",
+    "order.invalid.site.name": "Invalid Site name",
     "order.department.label": "ward/dept/unit:",
     "order.search.requester.label": "Search Requester",
     "order.invalid.requester.name.label": "invalid requester name",
@@ -305,6 +305,8 @@
     "delete.error.msg": "Error while Deleting",
     "success.add.edited.msg": "Successfully Added/Edited",
     "error.add.edited.msg":  "Error while Editing/Adding",
+    "success.delete.msg":  "Succesfuly Deleted",
+    "error.delete.msg":  "Error while Deleting",
     "edit.add.program.title" : "Add/Edit Program",
     "new.program.label" : "New Program",
     "program.name.label" : "Program Name",
@@ -596,7 +598,16 @@
     "label.test.add":"Add test to order",
     "label.add.notification":"Add pop up notification to user",
     "rulebuilder.label.add.internaltrigger":"Add Internal `triggered by` message",
-    "rulebuilder.label.add.externaltrigger":"Add External `triggered by` message"
-
+    "rulebuilder.label.add.externaltrigger":"Add External `triggered by` message",
+    "error.duplicate.calculationname":"Duplicate Calculation Name or Error while saving",
+    "success.save.patient": "Patient Saved Successfully",
+    "error.save.patient": "Error While Saving Patient",
+    "patient.search.nopatient":"No patients found matching search terms",
+    "result.search.noresult": "No results found",
+    "result.reject.warning":"Rejecting the result will permanently delete test results \nThe results will no longer be available.",
+    "result.acceptasis.warning":"Checking this box will indicate that you accept the results unconditionally.\nExpected uses:\n1. The test has been redone and the result is the same.\n2. There is no result for the test but you do not want to cancel it.\n3. The result was changed and the technician wants to give the biologist the option to add a note during the validation step explaining the reason of the change.\nIn  either case, leave a note explaining why you are taking this action.\n",
+    "validation.search.noresult": "No Results found to be validated",
+    "validation.save.success":"Results have been validated successfully",
+    "validation.save.error":"Results have been validated successfully"
 
 }

@@ -3,6 +3,8 @@ import "../admin/reflexTests/ReflexStyles.css";
 import { TextInput } from "@carbon/react";
 
 function AutoComplete(props) {
+  const allowFreeText = props.allowFreeText;
+
   const [textValue, setTextValue] = useState("");
   const [activeSuggestion, setActiveSuggestion] = useState(0);
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
@@ -40,8 +42,11 @@ function AutoComplete(props) {
     setShowSuggestions(true);
     setInnitialised(true);
 
-    if (filteredSuggestions.length) {
+    if (filteredSuggestions.length == 0 && !allowFreeText) {
       setInvalid(true);
+    }
+    if (typeof props.onChange === "function") {
+      props.onChange(e);
     }
   };
 

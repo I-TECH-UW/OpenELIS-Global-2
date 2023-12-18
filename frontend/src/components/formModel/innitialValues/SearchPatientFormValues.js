@@ -4,6 +4,7 @@ const SearchPatientFormValues = {
   lastName: "",
   firstName: "",
   dateOfBirth: "",
+  guid: "",
   gender: "",
 };
 

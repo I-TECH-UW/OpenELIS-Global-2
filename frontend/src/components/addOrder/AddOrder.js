@@ -16,24 +16,34 @@ import { priorities } from "../data/orderOptions";
 import { NotificationKinds } from "../common/CustomNotification";
 import AutoComplete from "../common/AutoComplete";
 import OrderResultReporting from "./OrderResultReporting";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { ConfigurationContext } from "../layout/Layout";
 const AddOrder = (props) => {
+  const { setNotificationVisible, setNotificationBody } =
+    useContext(NotificationContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
+
+  const intl = useIntl();
+
+  const componentMounted = useRef(false);
+
   const { orderFormValues, setOrderFormValues, samples, error } = props;
-  const componentMounted = useRef(true);
   const [otherSamplingVisible, setOtherSamplingVisible] = useState(false);
   const [providers, setProviders] = useState([]);
   const [paymentOptions, setPaymentOptions] = useState([]);
   const [samplingPerformed, setSamplingPerformed] = useState([]);
-  const [allowSiteNameOptions, setAllowSiteNameOptions] = useState("false");
-  const [allowRequesterOptions, setAllowRequesterOptions] = useState("false");
-  const { setNotificationVisible, setNotificationBody } =
-    useContext(NotificationContext);
   const [siteNames, setSiteNames] = useState([]);
   const [innitialized, setInnitialized] = useState(false);
-  const [phoneFormat, setPhoneFormat] = useState("");
-  const { configurationProperties } = useContext(ConfigurationContext);
   const [departments, setDepartments] = useState([]);
+
+  useEffect(() => {
+    componentMounted.current = true;
+    getFromOpenElisServer("/rest/SamplePatientEntry", getSampleEntryPreform);
+    window.scrollTo(0, 0);
+    return () => {
+      componentMounted.current = false;
+    };
+  }, []);
 
   const handleDatePickerChange = (datePicker, date) => {
     let obj = null;
@@ -180,7 +190,7 @@ const AddOrder = (props) => {
       setNotificationVisible(true);
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
+        title: intl.formatMessage({ id: "notification.title" }),
         message: res.body,
       });
     }
@@ -243,10 +253,6 @@ const AddOrder = (props) => {
         referringSiteId: siteId,
       },
     });
-    getFromOpenElisServer(
-      "/rest/departments-for-site?refferingSiteId=" + siteId,
-      loadDepartments,
-    );
   }
   const loadDepartments = (data) => {
     setDepartments(data);
@@ -257,7 +263,7 @@ const AddOrder = (props) => {
       ...orderFormValues,
       sampleOrderItems: {
         ...orderFormValues.sampleOrderItems,
-        labNo: rawVal ? rawVal : e.target.value,
+        labNo: rawVal ? rawVal : e?.target?.value,
       },
     });
     setNotificationVisible(false);
@@ -276,7 +282,7 @@ const AddOrder = (props) => {
   function fetchPhoneNoValidation(res) {
     if (res.status === false) {
       setNotificationBody({
-        title: <FormattedMessage id="notification.title" />,
+        title: intl.formatMessage({ id: "notification.title" }),
         message: res.body,
         kind: NotificationKinds.error,
       });
@@ -285,7 +291,7 @@ const AddOrder = (props) => {
   }
 
   const handlePhoneNoValidation = () => {
-    if (orderFormValues.sampleOrderItems.providerWorkPhone !== "") {
+    if (orderFormValues.sampleOrderItems.providerWorkPhone) {
       const providerPhoneNo =
         orderFormValues.sampleOrderItems.providerWorkPhone.replace(
           /\+/g,
@@ -312,7 +318,6 @@ const AddOrder = (props) => {
 
   useEffect(() => {
     if (!innitialized) {
-      setPhoneFormat(configurationProperties.phoneFormat);
       setOrderFormValues({
         ...orderFormValues,
         sampleOrderItems: {
@@ -323,17 +328,19 @@ const AddOrder = (props) => {
           receivedTime: configurationProperties.currentTimeAsText,
         },
       });
-      setAllowSiteNameOptions(
-        configurationProperties.restrictFreeTextRefSiteEntry,
-      );
-      setAllowRequesterOptions(
-        configurationProperties.restrictFreeTextProviderEntry,
-      );
     }
     if (orderFormValues.sampleOrderItems.requestDate != "") {
       setInnitialized(true);
     }
   }, [orderFormValues]);
+
+  useEffect(() => {
+    getFromOpenElisServer(
+      "/rest/departments-for-site?refferingSiteId=" +
+        (orderFormValues.sampleOrderItems.referringSiteId || ""),
+      loadDepartments,
+    );
+  }, [orderFormValues.sampleOrderItems.referringSiteId]);
 
   function handlePriority(e) {
     setOrderFormValues({
@@ -384,14 +391,6 @@ const AddOrder = (props) => {
     }
   };
 
-  useEffect(() => {
-    getFromOpenElisServer("/rest/SamplePatientEntry", getSampleEntryPreform);
-    window.scrollTo(0, 0);
-    return () => {
-      componentMounted.current = false;
-    };
-  }, []);
-
   return (
     <>
       <Stack gap={10}>
@@ -399,6 +398,14 @@ const AddOrder = (props) => {
           <h3>
             <FormattedMessage id="order.title" />
           </h3>
+          {configurationProperties.ACCEPT_EXTERNAL_ORDERS === "true" && (
+            <input
+              type="hidden"
+              name="externalOrderNumber"
+              id="externalOrderNumber"
+              value={orderFormValues.sampleOrderItems.externalOrderNumber}
+            />
+          )}
           <div className="formInlineDiv">
             <div className="inputText">
               <CustomLabNumberInput
@@ -429,7 +436,7 @@ const AddOrder = (props) => {
               className="inputText"
               id="priorityId"
               name="priority"
-              labelText={<FormattedMessage id="workplan.priority.list" />}
+              labelText={intl.formatMessage({ id: "workplan.priority.list" })}
               value={orderFormValues.sampleOrderItems.priority}
               onChange={handlePriority}
               required
@@ -448,7 +455,7 @@ const AddOrder = (props) => {
           <div className="inlineDiv">
             <CustomDatePicker
               id={"order_requestDate"}
-              labelText={<FormattedMessage id="sample.requestDate" />}
+              labelText={intl.formatMessage({ id: "sample.requestDate" })}
               autofillDate={true}
               value={orderFormValues.sampleOrderItems.requestDate}
               className="inputDate"
@@ -457,7 +464,7 @@ const AddOrder = (props) => {
 
             <CustomDatePicker
               id={"order_receivedDate"}
-              labelText={<FormattedMessage id="sample.receivedDate" />}
+              labelText={intl.formatMessage({ id: "sample.receivedDate" })}
               className="inputDate"
               autofillDate={true}
               value={orderFormValues.sampleOrderItems.receivedDateForDisplay}
@@ -468,65 +475,52 @@ const AddOrder = (props) => {
             <TimePicker
               id="order_receivedTime"
               className="inputTime"
-              labelText={<FormattedMessage id="order.reception.time" />}
+              labelText={intl.formatMessage({ id: "order.reception.time" })}
               onChange={handleReceivedTime}
               value={
                 orderFormValues.sampleOrderItems.receivedTime
                   ? orderFormValues.sampleOrderItems.receivedTime
-                  : configurationProperties.receivedTime
+                  : configurationProperties.currentTimeAsText
               }
             />
 
             <CustomDatePicker
               id={"order_nextVisitDate"}
               className="inputDate"
-              labelText={<FormattedMessage id="sample.entry.nextVisit.date" />}
+              labelText={intl.formatMessage({
+                id: "sample.entry.nextVisit.date",
+              })}
               value={orderFormValues.sampleOrderItems.nextVisitDate}
               autofillDate={false}
               onChange={(date) => handleDatePickerChange("nextVisitDate", date)}
             />
           </div>
           <div className="inlineDiv">
-            {allowSiteNameOptions === "false" ? (
-              <TextInput
-                name="siteName"
-                labelText={
-                  <>
-                    <FormattedMessage id="order.site.name" />{" "}
-                    <span className="requiredlabel">*</span>
-                  </>
-                }
-                onChange={handleSiteName}
-                value={
-                  orderFormValues.sampleOrderItems.referringSiteName == null
-                    ? ""
-                    : orderFormValues.sampleOrderItems.referringSiteName
-                }
-                id="siteName"
-                className="inputText"
-                invalid={error("sampleOrderItems") ? true : false}
-                invalidText={error("sampleOrderItems")}
-                required
-              />
-            ) : (
-              <AutoComplete
-                name="siteName"
-                id="siteName"
-                className="inputText"
-                onSelect={handleAutoCompleteSiteName}
-                label={<FormattedMessage id="order.search.site.name" />}
-                class="inputText"
-                style={{ width: "!important 100%" }}
-                suggestions={siteNames.length > 0 ? siteNames : []}
-                required
-              />
-            )}
+            <AutoComplete
+              name="siteName"
+              id="siteName"
+              className="inputText"
+              allowFreeText={
+                !(
+                  configurationProperties.restrictFreeTextRefSiteEntry ===
+                  "true"
+                )
+              }
+              onChange={handleSiteName}
+              onSelect={handleAutoCompleteSiteName}
+              label={intl.formatMessage({ id: "order.search.site.name" })}
+              class="inputText"
+              style={{ width: "!important 100%" }}
+              suggestions={siteNames.length > 0 ? siteNames : []}
+              required
+            />
+            {/* )} */}
 
             <Select
               className="inputText"
               id="requesterDepartmentId"
               name="requesterDepartmentId"
-              labelText={<FormattedMessage id="order.department.label" />}
+              labelText={intl.formatMessage({ id: "order.department.label" })}
               onChange={handleRequesterDept}
               required
             >
@@ -540,30 +534,32 @@ const AddOrder = (props) => {
               ))}
             </Select>
           </div>
-          {allowRequesterOptions === "false" ? (
-            ""
-          ) : (
-            <div className="inlineDiv">
-              <AutoComplete
-                name="requesterId"
-                id="requesterId"
-                onSelect={handleProviderSelectOptions}
-                label={
-                  <>
-                    <FormattedMessage id="order.search.requester.label" />{" "}
-                    <span className="requiredlabel">*</span>
-                  </>
-                }
-                class="inputText"
-                style={{ width: "!important 100%" }}
-                invalidText={
-                  <FormattedMessage id="order.invalid.requester.name.label" />
-                }
-                suggestions={providers.length > 0 ? providers : []}
-                required
-              />
-            </div>
-          )}
+          <div className="inlineDiv">
+            <AutoComplete
+              name="requesterId"
+              id="requesterId"
+              allowFreeText={
+                !(
+                  configurationProperties.restrictFreeTextProviderEntry ===
+                  "true"
+                )
+              }
+              onSelect={handleProviderSelectOptions}
+              label={
+                <>
+                  <FormattedMessage id="order.search.requester.label" />{" "}
+                  <span className="requiredlabel">*</span>
+                </>
+              }
+              class="inputText"
+              style={{ width: "!important 100%" }}
+              invalidText={
+                <FormattedMessage id="order.invalid.requester.name.label" />
+              }
+              suggestions={providers.length > 0 ? providers : []}
+              required
+            />
+          </div>
           <div className="inlineDiv">
             <TextInput
               name="requesterFirstName"
@@ -573,7 +569,9 @@ const AddOrder = (props) => {
                   <span className="requiredlabel">*</span>
                 </>
               }
-              disabled={allowRequesterOptions !== "false"}
+              disabled={
+                configurationProperties.restrictFreeTextProviderEntry === "true"
+              }
               onChange={handleRequesterFirstName}
               value={orderFormValues.sampleOrderItems.providerFirstName}
               invalid={
@@ -592,7 +590,9 @@ const AddOrder = (props) => {
                   <span className="requiredlabel">*</span>
                 </>
               }
-              disabled={allowRequesterOptions !== "false"}
+              disabled={
+                configurationProperties.restrictFreeTextProviderEntry === "true"
+              }
               value={orderFormValues.sampleOrderItems.providerLastName}
               onChange={handleRequesterLastName}
               id="requesterLastName"
@@ -606,19 +606,27 @@ const AddOrder = (props) => {
           <div className="inlineDiv">
             <TextInput
               name="providerWorkPhone"
-              disabled={allowRequesterOptions !== "false"}
+              disabled={
+                configurationProperties.restrictFreeTextProviderEntry === "true"
+              }
               onChange={handleRequesterWorkPhone}
               value={orderFormValues.sampleOrderItems.providerWorkPhone}
               onMouseLeave={handlePhoneNoValidation}
-              labelText={<FormattedMessage id="order.requester.phone.label" />}
+              labelText={intl.formatMessage({
+                id: "order.requester.phone.label",
+              })}
               id="providerWorkPhoneId"
               className="inputText"
             />
 
             <TextInput
               name="providerFax"
-              labelText={<FormattedMessage id="order.requester.fax.label" />}
-              disabled={allowRequesterOptions !== "false"}
+              labelText={intl.formatMessage({
+                id: "order.requester.fax.label",
+              })}
+              disabled={
+                configurationProperties.restrictFreeTextProviderEntry === "true"
+              }
               onChange={handleRequesterFax}
               value={orderFormValues.sampleOrderItems.providerFax}
               id="providerFaxId"
@@ -628,8 +636,12 @@ const AddOrder = (props) => {
           <div className="inlineDiv">
             <TextInput
               name="providerEmail"
-              labelText={<FormattedMessage id="order.requester.email.label" />}
-              disabled={allowRequesterOptions !== "false"}
+              labelText={intl.formatMessage({
+                id: "order.requester.email.label",
+              })}
+              disabled={
+                configurationProperties.restrictFreeTextProviderEntry === "true"
+              }
               onChange={handleRequesterEmail}
               value={orderFormValues.sampleOrderItems.providerEmail}
               id="providerEmailId"
@@ -641,7 +653,9 @@ const AddOrder = (props) => {
               id="paymentOptionSelectionId"
               name="paymentOptionSelections"
               value={orderFormValues.sampleOrderItems.paymentOptionSelection}
-              labelText={<FormattedMessage id="order.payment.status.label" />}
+              labelText={intl.formatMessage({
+                id: "order.payment.status.label",
+              })}
               onChange={handlePaymentStatus}
               required
             >
@@ -683,7 +697,7 @@ const AddOrder = (props) => {
             </Select>
             <TextInput
               name="testLocationCodeOther"
-              labelText={<FormattedMessage id="order.if.other.label" />}
+              labelText={intl.formatMessage({ id: "order.if.other.label" })}
               onChange={handleOtherLocationCode}
               className="inputText"
               value={orderFormValues.sampleOrderItems.otherLocationCode}
@@ -703,7 +717,9 @@ const AddOrder = (props) => {
           </div>
         </div>
         <div className="orderLegendBody">
-          <h3>{<FormattedMessage id="order.result.reporting.heading" />}</h3>
+          <h3>
+            <FormattedMessage id="order.result.reporting.heading" />
+          </h3>
           {samples.map((sample, index) => {
             if (sample.tests.length > 0) {
               return (

@@ -28,6 +28,9 @@ import { format } from "date-fns";
 const SearchForm = (props) => {
   const { setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
+
+  const intl = useIntl();
+
   const [searchResults, setSearchResults] = useState();
   const [searchBy, setSearchBy] = useState();
   const [doRange, setDoRagnge] = useState(true);
@@ -38,7 +41,6 @@ const SearchForm = (props) => {
   const [previousPage, setPreviousPage] = useState(null);
   const [pagination, setPagination] = useState(false);
   const [url, setUrl] = useState("");
-  const intl = useIntl();
 
   const validationResults = (data) => {
     if (data) {
@@ -79,8 +81,8 @@ const SearchForm = (props) => {
 
         setNotificationBody({
           kind: NotificationKinds.warning,
-          title: <FormattedMessage id="notification.title" />,
-          message: "No Results found to be validated",
+          title: intl.formatMessage({ id: "notification.title" }),
+          message: intl.formatMessage({ id: "validation.search.noresult" }),
         });
         setNotificationVisible(true);
       }
@@ -267,7 +269,7 @@ const SearchForm = (props) => {
           <Grid>
             <Column lg={6}>
               <Select
-                labelText={<FormattedMessage id="search.label.testunit" />}
+                labelText={intl.formatMessage({ id: "search.label.testunit" })}
                 name="unitType"
                 id="unitType"
                 onChange={submitOnSelect}

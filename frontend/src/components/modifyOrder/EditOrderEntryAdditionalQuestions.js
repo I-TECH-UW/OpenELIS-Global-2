@@ -7,7 +7,7 @@ import {
   Stack,
   InlineLoading,
 } from "@carbon/react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import "../../index.css";
 import "../../App.css";
 import "../Style.css";
@@ -244,6 +244,8 @@ export const ProgramSelect = ({
 }) => {
   const componentMounted = useRef(true);
 
+  const intl = useIntl();
+
   const [programs, setPrograms] = useState([]);
 
   const fetchPrograms = (programsList) => {
@@ -251,6 +253,18 @@ export const ProgramSelect = ({
       setPrograms(programsList);
     }
   };
+
+  useEffect(() => {
+    if (!orderFormValues?.sampleOrderItems?.programId) {
+      programChange({
+        target: {
+          value: programs.find((program) => {
+            return program.value === "Routine Testing";
+          })?.id,
+        },
+      });
+    }
+  }, [programs]);
 
   useEffect(() => {
     componentMounted.current = true;
@@ -267,13 +281,8 @@ export const ProgramSelect = ({
           <div className="inputText">
             <Select
               id="additionalQuestionsSelect"
-              labelText={<FormattedMessage id="label.program" />}
+              labelText={intl.formatMessage({ id: "label.program" })}
               onChange={programChange}
-              defaultValue={
-                programs.find((program) => {
-                  return program.value === "Routine Testing";
-                })?.id
-              }
               value={orderFormValues?.sampleOrderItems?.programId}
               disabled={true}
             >
@@ -322,13 +331,13 @@ const EditOrderEntryAdditionalQuestions = ({
   }, [orderFormValues]);
 
   const handleProgramSelection = (event) => {
-    if (event.target.value === "") {
+    if (!event.target.value) {
       setAdditionalQuestions(null);
       setOrderFormValues({
         ...orderFormValues,
         sampleOrderItems: {
           ...orderFormValues.sampleOrderItems,
-          programId: null,
+          programId: "",
         },
       });
     } else {

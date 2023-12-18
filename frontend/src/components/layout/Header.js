@@ -37,6 +37,7 @@ function OEHeader(props) {
 
   const userSwitchRef = createRef();
   const headerPanelRef = createRef();
+
   const intl = useIntl();
 
   const [switchCollapsed, setSwitchCollapsed] = useState(true);

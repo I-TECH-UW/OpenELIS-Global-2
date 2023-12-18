@@ -97,15 +97,14 @@ export const QuestionnaireResponse = ({ questionnaireResponse }) => {
 
 function PathologyCaseView() {
   const intl = useIntl();
+
   const componentMounted = useRef(false);
 
   const { pathologySampleId } = useParams();
 
   const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
-  const { userSessionDetails, setUserSessionDetails } = useContext(
-    UserSessionDetailsContext,
-  );
+  const { userSessionDetails } = useContext(UserSessionDetailsContext);
 
   const [pathologySampleInfo, setPathologySampleInfo] = useState({});
 
@@ -144,14 +143,14 @@ function PathologyCaseView() {
       save2.disabled = true;
       setNotificationBody({
         kind: NotificationKinds.success,
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id= "success.save.msg"/>,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "success.save.msg" }),
       });
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id="error.save.msg"/>,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.save.msg" }),
       });
     }
   }
@@ -162,8 +161,8 @@ function PathologyCaseView() {
     if (pdfGenerated) {
       setNotificationBody({
         kind: NotificationKinds.success,
-        title: <FormattedMessage id="notification.title" />,
-        message: "Succesfuly Generated Report",
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "success.report.status" }),
       });
       var params = { ...reportParams };
       if (!params[index]) {
@@ -185,8 +184,8 @@ function PathologyCaseView() {
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id="error.report.status"/>,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.report.status" }),
       });
     }
   };
@@ -321,10 +320,10 @@ function PathologyCaseView() {
         <Column lg={16}>
           <Breadcrumb>
             <BreadcrumbItem href="/">
-              {intl.formatMessage({ id: "home.label" })}
+              <FormattedMessage id="home.label" />
             </BreadcrumbItem>
             <BreadcrumbItem href="/PathologyDashboard">
-              {intl.formatMessage({ id: "pathology.label.dashboard" })}
+              <FormattedMessage id="pathology.label.dashboard" />
             </BreadcrumbItem>
           </Breadcrumb>
         </Column>
@@ -446,7 +445,7 @@ function PathologyCaseView() {
           <Select
             id="status"
             name="status"
-            labelText={<FormattedMessage id="label.button.select.status" />}
+            labelText={intl.formatMessage({ id: "label.button.select.status" })}
             value={pathologySampleInfo.status}
             onChange={(event) => {
               setPathologySampleInfo({
@@ -469,7 +468,9 @@ function PathologyCaseView() {
           <Select
             id="assignedTechnician"
             name="assignedTechnician"
-            labelText={<FormattedMessage id="label.button.select.technician" />}
+            labelText={intl.formatMessage({
+              id: "label.button.select.technician",
+            })}
             value={pathologySampleInfo.assignedTechnicianId}
             onChange={(event) => {
               setPathologySampleInfo({
@@ -1220,7 +1221,7 @@ function PathologyCaseView() {
           <Grid fullWidth={true} className="gridBoundary">
             <Column lg={4}>
               <Checkbox
-                labelText={<FormattedMessage id="pathology.label.refer" />}
+                labelText={intl.formatMessage({ id: "pathology.label.refer" })}
                 id="referToImmunoHistoChemistry"
                 onChange={() => {
                   setPathologySampleInfo({
@@ -1279,7 +1280,9 @@ function PathologyCaseView() {
           pathologySampleInfo.assignedTechnicianId && (
             <Column lg={16}>
               <Checkbox
-                labelText={<FormattedMessage id="pathology.label.release" />}
+                labelText={intl.formatMessage({
+                  id: "pathology.label.release",
+                })}
                 id="release"
                 onChange={() => {
                   setPathologySampleInfo({

@@ -8,7 +8,7 @@ import {
   SelectItem,
   Tag,
   Tile,
-  Loading
+  Loading,
 } from "@carbon/react";
 import CustomCheckBox from "../common/CustomCheckBox";
 import CustomSelect from "../common/CustomSelect";
@@ -246,7 +246,7 @@ const EditSampleType = (props) => {
   const fetchSamplesTypes = (res) => {
     if (componentMounted.current) {
       setSampleTypes(res);
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -302,8 +302,8 @@ const EditSampleType = (props) => {
     if (checked) {
       setNotificationBody({
         kind: NotificationKinds.warning,
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id="reject.order.sample.notification" />,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "reject.order.sample.notification" }),
       });
       setNotificationVisible(true);
     }
@@ -448,7 +448,7 @@ const EditSampleType = (props) => {
         <CustomCheckBox
           id={"reject_" + index}
           onChange={(value) => handleRejection(value)}
-          label={<FormattedMessage id="sample.reject.label" />}
+          label={intl.formatMessage({ id: "sample.reject.label" })}
         />
         {sampleXml.rejected && (
           <CustomSelect
@@ -465,7 +465,7 @@ const EditSampleType = (props) => {
             id={"collectionDate_" + index}
             autofillDate={true}
             onChange={(date) => handleCollectionDate(date)}
-            labelText={<FormattedMessage id="sample.collection.date" />}
+            labelText={intl.formatMessage({ id: "sample.collection.date" })}
             className="inputText"
           />
 
@@ -473,7 +473,7 @@ const EditSampleType = (props) => {
             id={"collectionTime_" + index}
             onChange={(time) => handleCollectionTime(time)}
             className="inputText"
-            labelText={<FormattedMessage id="sample.collection.time" />}
+            labelText={intl.formatMessage({ id: "sample.collection.time" })}
           />
         </div>
         <div className="inlineDiv">
@@ -481,7 +481,7 @@ const EditSampleType = (props) => {
             id={"collector_" + index}
             onChange={(value) => handleCollector(value)}
             defaultValue={""}
-            labelText={<FormattedMessage id="collector.label" />}
+            labelText={intl.formatMessage({ id: "collector.label" })}
             className="inputText"
           />
         </div>
@@ -581,7 +581,13 @@ const EditSampleType = (props) => {
         </div>
 
         <div className="cds--col">
-          {selectedTests && !selectedTests.length ? "" : <h4>{intl.formatMessage({ id: "ordertests.title" })}</h4>}
+          {selectedTests && !selectedTests.length ? (
+            ""
+          ) : (
+            <h4>
+              <FormattedMessage id="ordertests.title" />
+            </h4>
+          )}
           <div
             className={"searchTestText"}
             style={{ marginBottom: "1.188rem" }}
@@ -604,7 +610,9 @@ const EditSampleType = (props) => {
               <></>
             )}
           </div>
-          <FormGroup legendText={intl.formatMessage({ id: "searchTests.legend" })}>
+          <FormGroup
+            legendText={intl.formatMessage({ id: "searchTests.legend" })}
+          >
             <Search
               size="lg"
               id={`tests_search_` + index}
@@ -642,7 +650,10 @@ const EditSampleType = (props) => {
                     <Layer>
                       <Tile className={"emptyFilterTests"}>
                         <span>
-                        {intl.formatMessage({ id: "noTestsFound.matching" }, { testSearchTerm: testSearchTerm || '' })}
+                          {intl.formatMessage(
+                            { id: "noTestsFound.matching" },
+                            { testSearchTerm: testSearchTerm || "" },
+                          )}
                         </span>
                       </Tile>
                     </Layer>

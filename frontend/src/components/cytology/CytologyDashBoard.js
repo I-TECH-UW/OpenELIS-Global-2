@@ -299,15 +299,21 @@ function CytologyDashboard() {
               onChange={(e) =>
                 setFilters({ ...filters, searchTerm: e.target.value })
               }
-              placeholder={intl.formatMessage({ id: "label.seacrh.labno.family" })}
-              labelText={<FormattedMessage id="label.seacrh.labno.family"/>}
+              placeholder={intl.formatMessage({
+                id: "label.seacrh.labno.family",
+              })}
+              labelText={intl.formatMessage({
+                id: "label.seacrh.labno.family",
+              })}
             />
           </Column>
           <Column lg={8} md={4} sm={2}>
             <div className="inlineDivBlock">
-              <div>{intl.formatMessage({ id: "filters.label" })}</div>
+              <div>
+                <FormattedMessage id="filters.label" />
+              </div>
               <Checkbox
-                labelText={<FormattedMessage id="label.filters.mycases"/>}
+                labelText={intl.formatMessage({ id: "label.filters.mycases" })}
                 id="filterMyCases"
                 value={filters.myCases}
                 onChange={(e) =>
@@ -317,15 +323,22 @@ function CytologyDashboard() {
               <Select
                 id="statusFilter"
                 name="statusFilter"
-                labelText={<FormattedMessage id="label.filters.status"/>}
+                labelText={intl.formatMessage({ id: "label.filters.status" })}
                 value={
                   filters.statuses.length > 1 ? "All" : filters.statuses[0].id
                 }
                 onChange={setStatusFilter}
                 noLabel
               >
-                <SelectItem disabled  value="placeholder" text={intl.formatMessage({ id: "label.filters.status"})} />
-                <SelectItem text={intl.formatMessage({ id: "all.label" })} value="All" />
+                <SelectItem
+                  disabled
+                  value="placeholder"
+                  text={intl.formatMessage({ id: "label.filters.status" })}
+                />
+                <SelectItem
+                  text={intl.formatMessage({ id: "all.label" })}
+                  value="All"
+                />
                 {statuses.map((status, index) => {
                   return (
                     <SelectItem
@@ -352,11 +365,11 @@ function CytologyDashboard() {
                 },
                 {
                   key: "status",
-                  header:intl.formatMessage({ id:  "label.filters.status"}),
+                  header: intl.formatMessage({ id: "label.filters.status" }),
                 },
                 {
                   key: "lastName",
-                  header: intl.formatMessage({ id: "patient.last.name"}),
+                  header: intl.formatMessage({ id: "patient.last.name" }),
                 },
                 {
                   key: "firstName",
@@ -364,15 +377,19 @@ function CytologyDashboard() {
                 },
                 {
                   key: "assignedTechnician",
-                  header: intl.formatMessage({ id:"label.button.select.technician" }) ,
+                  header: intl.formatMessage({
+                    id: "label.button.select.technician",
+                  }),
                 },
                 {
                   key: "assignedCytoPathologist",
-                  header: intl.formatMessage({ id: "assigned.cytopathologist.label" }),
+                  header: intl.formatMessage({
+                    id: "assigned.cytopathologist.label",
+                  }),
                 },
                 {
                   key: "labNumber",
-                  header: intl.formatMessage({ id: "sample.label.labnumber" }), 
+                  header: intl.formatMessage({ id: "sample.label.labnumber" }),
                 },
               ]}
               isSortable

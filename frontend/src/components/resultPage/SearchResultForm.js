@@ -90,14 +90,16 @@ export function SearchResultForm(props) {
     } else {
       props.setResults?.({ testResult: [] });
       setNotificationBody({
-        title: <FormattedMessage id="notification.title" />,
-        message: "No results found!",
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "result.search.nopatient" }),
         kind: NotificationKinds.warning,
       });
       setNotificationVisible(true);
       setLoading(false);
     }
   };
+
+  const intl = useIntl();
 
   const loadNextResultsPage = () => {
     setLoading(true);
@@ -457,7 +459,7 @@ export function SearchResultForm(props) {
           <Grid>
             <Column lg={6}>
               <Select
-                labelText={<FormattedMessage id="search.label.testunit" />}
+                labelText={intl.formatMessage({ id: "search.label.testunit" })}
                 name="unitType"
                 id="unitType"
                 onChange={submitOnSelect}
@@ -904,7 +906,9 @@ export function SearchResults(props) {
             value={data.pastNotes}
             disabled={true}
             type="text"
-            labelText={<FormattedMessage id="referral.testresult.pastnote" />}
+            labelText={intl.formatMessage({
+              id: "referral.testresult.pastnote",
+            })}
             rows={2}
           ></TextArea>
         </Column>
@@ -912,7 +916,7 @@ export function SearchResults(props) {
           <Select
             id={"testMethod" + data.id}
             name={"testResult[" + data.id + "].testMethod"}
-            labelText={<FormattedMessage id="referral.label.testmethod" />}
+            labelText={intl.formatMessage({ id: "referral.label.testmethod" })}
             onChange={(e) => handleChange(e, data.id)}
             value={data.method}
           >
@@ -931,7 +935,7 @@ export function SearchResults(props) {
             id={"referralReason" + data.id}
             name={"testResult[" + data.id + "].referralReason"}
             // noLabel={true}
-            labelText={<FormattedMessage id="referral.label.reason" />}
+            labelText={intl.formatMessage({ id: "referral.label.reason" })}
             onChange={(e) => handleChange(e, data.id)}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
@@ -950,7 +954,7 @@ export function SearchResults(props) {
             id={"institute" + data.id}
             name={"testResult[" + data.id + "].institute"}
             // noLabel={true}
-            labelText={<FormattedMessage id="referral.label.institute" />}
+            labelText={intl.formatMessage({ id: "referral.label.institute" })}
             onChange={(e) => handleChange(e, data.id)}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
@@ -966,7 +970,9 @@ export function SearchResults(props) {
             id={"testToPerform" + data.id}
             name={"testResult[" + data.id + "].testToPerform"}
             // noLabel={true}
-            labelText={<FormattedMessage id="referral.label.testtoperform" />}
+            labelText={intl.formatMessage({
+              id: "referral.label.testtoperform",
+            })}
             onChange={(e) => handleChange(e, data.id)}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
@@ -983,7 +989,7 @@ export function SearchResults(props) {
           >
             <DatePickerInput
               placeholder="mm/dd/yyyy"
-              labelText={<FormattedMessage id="referral.label.sentdate" />}
+              labelText={intl.formatMessage({ id: "referral.label.sentdate" })}
               id="date-picker-single"
             />
           </DatePicker>
@@ -1024,12 +1030,9 @@ export function SearchResults(props) {
     allrejectedItems[rowId] = checked;
     setRejectedItems(allrejectedItems);
 
-    var message =
-      "Rejecting the result will permanently delete test results \n" +
-      "The results will no longer be available.";
     setNotificationBody({
-      title: <FormattedMessage id="notification.title" />,
-      message: message,
+      title: intl.formatMessage({ id: "notification.title" }),
+      message: intl.formatMessage({ id: "result.reject.warning" }),
       kind: NotificationKinds.warning,
     });
     if (checked) {
@@ -1051,21 +1054,10 @@ export function SearchResults(props) {
     console.log("handleAcceptAsIsChange:" + acceptAsIs[rowId]);
     handleChange(e, rowId);
     if (acceptAsIs[rowId] == undefined) {
-      var message =
-        `Checking this box will indicate that you accept the results unconditionally.\n` +
-        `Expected uses:\n` +
-        `1. The test has been redone and the result is the same.\n` +
-        `2. There is no result for the test but you do not want to cancel it.\n` +
-        `3. The result was changed and the technician wants to give the biologist the option to add a note during the validation step explaining the reason of the change.\n` +
-        `In  either case, leave a note explaining why you are taking this action.\n`;
-
-      // message=`Incorrect Username/Password Used \n Please try again…`
-
-      alert(message);
-
+      alert(intl.formatMessage({ id: "result.acceptasis.warning" }));
       setNotificationBody({
-        title: <FormattedMessage id="notification.title" />,
-        message: message,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "result.acceptasis.warning" }),
         kind: NotificationKinds.warning,
       });
       setNotificationVisible(true);
@@ -1094,14 +1086,14 @@ export function SearchResults(props) {
     console.log("setStatus" + JSON.stringify(resp));
     if (resp) {
       setNotificationBody({
-        title: <FormattedMessage id="notification.title" />,
+        title: intl.formatMessage({ id: "notification.title" }),
         message: createMesssage(resp),
         kind: NotificationKinds.success,
       });
     } else {
       setNotificationBody({
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id="error.save.msg" />,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.save.msg" }),
         kind: NotificationKinds.error,
       });
     }

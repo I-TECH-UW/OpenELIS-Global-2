@@ -24,18 +24,21 @@ import {
   AlertDialog,
   NotificationKinds,
 } from "../../common/CustomNotification";
-import { FormattedMessage ,useIntl} from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 
 function ProgramManagement() {
+  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+    useContext(NotificationContext);
+
   const componentMounted = useRef(true);
+
+  const intl = useIntl();
+
   const [programs, setPrograms] = useState([]);
   const [testSections, setTestSections] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [programValues, setProgramValues] = useState(ProgramFormValues);
-  const { notificationVisible, setNotificationVisible, setNotificationBody } =
-    useContext(NotificationContext);
-  const intl = useIntl();
 
   const fetchPrograms = (programsList) => {
     if (componentMounted.current) {
@@ -93,8 +96,8 @@ function ProgramManagement() {
     if (res.status == "200") {
       setNotificationBody({
         kind: NotificationKinds.success,
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id="success.add.edited.msg" />,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "success.add.edited.msg" }),
       });
       getFromOpenElisServer("/rest/displayList/PROGRAM", fetchPrograms);
       var body = await res.json();
@@ -109,8 +112,8 @@ function ProgramManagement() {
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id="error.add.edited.msg" />,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.add.edited.msg" }),
       });
     }
   }
@@ -160,7 +163,7 @@ function ProgramManagement() {
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       <div className="adminPageContent">
-      <Grid >
+        <Grid>
           <Column lg={16}>
             <Section>
               <Section>
@@ -180,7 +183,7 @@ function ProgramManagement() {
             >
               <SelectItem
                 value=""
-                text={intl.formatMessage({ id :"new.program.label"})}
+                text={intl.formatMessage({ id: "new.program.label" })}
               />
               {programs.map((program) => {
                 return (
@@ -206,15 +209,33 @@ function ProgramManagement() {
               type="text"
               name="program.programName"
               id="program.programName"
-              labelText={<FormattedMessage id="program.name.label" />}
+              labelText={intl.formatMessage({ id: "program.name.label" })}
               value={programValues.program.programName}
+              onChange={handleFieldChange}
+            />
+            <TextInput
+              type="text"
+              name="program.questionnaireUUID"
+              id="program.questionnaireUUID"
+              labelText="UUID"
+              disabled={programValues.program.id !== "" ? true : false}
+              value={programValues.program.questionnaireUUID}
               onChange={handleFieldChange}
             />
           </div>
           <div className="formInlineDiv">
+            <TextInput
+              type="text"
+              name="program.code"
+              id="program.code"
+              labelText="Code"
+              maxLength="10"
+              value={programValues.program.code}
+              onChange={handleFieldChange}
+            />
             <Select
               id="test_section"
-              labelText={<FormattedMessage id="test.section.label" />}
+              labelText={intl.formatMessage({ id: "test.section.label" })}
               name="testSectionId"
               value={programValues.testSectionId}
               onChange={handleFieldChange}
@@ -230,26 +251,6 @@ function ProgramManagement() {
                 );
               })}
             </Select>
-          </div>
-          <div className="formInlineDiv">
-            <TextInput
-              type="text"
-              name="program.questionnaireUUID"
-              id="program.questionnaireUUID"
-              labelText="UUID"
-              disabled={programValues.program.id !== "" ? true : false}
-              value={programValues.program.questionnaireUUID}
-              onChange={handleFieldChange}
-            />
-            <TextInput
-              type="text"
-              name="program.code"
-              id="program.code"
-              labelText="Code"
-              maxLength="10"
-              value={programValues.program.code}
-              onChange={handleFieldChange}
-            />
           </div>
           <div className="formInlineDiv">
             <TextArea

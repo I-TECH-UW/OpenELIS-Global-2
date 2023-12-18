@@ -26,9 +26,14 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 const SampleType = (props) => {
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
   const { configurationProperties } = useContext(ConfigurationContext);
-  const { index, rejectSampleReasons, removeSample } = props;
+
+  const intl = useIntl();
+
   const componentMounted = useRef(true);
   const sampleTypesRef = useRef(null);
+
+  const { index, rejectSampleReasons, removeSample, sample } = props;
+
   const [sampleTypes, setSampleTypes] = useState([]);
   const [selectedSampleType, setSelectedSampleType] = useState({
     id: null,
@@ -60,10 +65,12 @@ const SampleType = (props) => {
     collector: "",
     rejected: false,
     rejectionReason: "",
-    collectionTime: "",
+    collectionTime:
+      configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
+        ? configurationProperties.currentTimeAsText
+        : "",
   });
   const [loading, setLoading] = useState(true);
-  const intl = useIntl();
 
   const defaultSelect = { id: "", value: "Choose Rejection Reason" };
 
@@ -306,8 +313,8 @@ const SampleType = (props) => {
     if (checked) {
       setNotificationBody({
         kind: NotificationKinds.warning,
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id="reject.order.sample.notification" />,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "reject.order.sample.notification" }),
       });
       setNotificationVisible(true);
     }
@@ -452,7 +459,7 @@ const SampleType = (props) => {
         <CustomCheckBox
           id={"reject_" + index}
           onChange={(value) => handleRejection(value)}
-          label={<FormattedMessage id="sample.reject.label" />}
+          label={intl.formatMessage({ id: "sample.reject.label" })}
         />
         {sampleXml.rejected && (
           <CustomSelect
@@ -471,7 +478,7 @@ const SampleType = (props) => {
               configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
             }
             onChange={(date) => handleCollectionDate(date)}
-            labelText={<FormattedMessage id="sample.collection.date" />}
+            labelText={intl.formatMessage({ id: "sample.collection.date" })}
             className="inputText"
           />
 
@@ -482,7 +489,7 @@ const SampleType = (props) => {
             }
             onChange={(time) => handleCollectionTime(time)}
             className="inputText"
-            labelText={<FormattedMessage id="sample.collection.time" />}
+            labelText={intl.formatMessage({ id: "sample.collection.time" })}
           />
         </div>
         <div className="inlineDiv">
@@ -490,7 +497,7 @@ const SampleType = (props) => {
             id={"collector_" + index}
             onChange={(value) => handleCollector(value)}
             defaultValue={""}
-            labelText={<FormattedMessage id="collector.label" />}
+            labelText={intl.formatMessage({ id: "collector.label" })}
             className="inputText"
           />
         </div>
@@ -587,6 +594,10 @@ const SampleType = (props) => {
                     labelText={panel.name}
                     id={`panel_` + index + "_" + panel.panelId}
                     key={index + panel.panelId}
+                    checked={
+                      selectedPanels.filter((item) => item.id === panel.panelId)
+                        .length > 0
+                    }
                   />
                 );
               })}
@@ -618,7 +629,9 @@ const SampleType = (props) => {
             )}
           </div>
           <FormGroup
-            legendText={<FormattedMessage id="legend.search.availabletests" />}
+            legendText={intl.formatMessage({
+              id: "legend.search.availabletests",
+            })}
           >
             <Search
               size="lg"
@@ -681,7 +694,11 @@ const SampleType = (props) => {
                   labelText={test.name}
                   id={`test_` + index + "_" + test.id}
                   key={`test_checkBox_` + index + test.id}
-                  checked={test.userBenchChoice}
+                  checked={
+                    selectedTests.filter((item) => item.id === test.id).length >
+                    0
+                  }
+                  // checked={test.userBenchChoice}
                 />
               );
             })}
@@ -690,7 +707,9 @@ const SampleType = (props) => {
         <div className="requestTestReferral">
           <Checkbox
             id={`useReferral_` + index}
-            labelText={<FormattedMessage id="label.refertest.referencelab" />}
+            labelText={intl.formatMessage({
+              id: "label.refertest.referencelab",
+            })}
             onChange={handleReferralRequest}
           />
           {requestTestReferral === true && (

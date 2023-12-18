@@ -35,6 +35,10 @@ export let sampleObject = {
   referralItems: [],
 };
 const ModifyOrder = () => {
+  const componentMounted = useRef(false);
+
+  const intl = useIntl();
+
   const firstPageNumber = 0;
   const lastPageNumber = 3;
   const programPageNumber = firstPageNumber + 0;
@@ -45,8 +49,6 @@ const ModifyOrder = () => {
   const [page, setPage] = useState(firstPageNumber);
   const [orderFormValues, setOrderFormValues] = useState(ModifyOrderFormValues);
   const [samples, setSamples] = useState([sampleObject]);
-
-  const componentMounted = useRef(false);
 
   useEffect(() => {
     componentMounted.current = true;
@@ -83,7 +85,7 @@ const ModifyOrder = () => {
     setNotificationVisible(true);
     setNotificationBody({
       kind: kind,
-      title: <FormattedMessage id="notification.title" />,
+      title: intl.formatMessage({ id: "notification.title" }),
       message: msg,
     });
   };
@@ -192,7 +194,6 @@ const ModifyOrder = () => {
   const handleTabClickHandler = (e) => {
     setPage(e);
   };
-  const intl = useIntl();
 
   return (
     <>
@@ -200,10 +201,10 @@ const ModifyOrder = () => {
         <Column lg={16}>
           <Breadcrumb>
             <BreadcrumbItem href="/">
-              {intl.formatMessage({ id: "home.label" })}
+              <FormattedMessage id="home.label" />
             </BreadcrumbItem>
             <BreadcrumbItem href="/FindOrder">
-              {intl.formatMessage({ id: "sample.label.search.Order" })}
+              <FormattedMessage id="sample.label.search.Order" />
             </BreadcrumbItem>
           </Breadcrumb>
         </Column>
@@ -277,15 +278,15 @@ const ModifyOrder = () => {
                   onChange={(e) => handleTabClickHandler(e)}
                 >
                   <ProgressStep
-                    label={
-                      <FormattedMessage id="order.step.program.selection" />
-                    }
+                    label={intl.formatMessage({
+                      id: "order.step.program.selection",
+                    })}
                   />
                   <ProgressStep
-                    label={<FormattedMessage id="sample.add.action" />}
+                    label={intl.formatMessage({ id: "sample.add.action" })}
                   />
                   <ProgressStep
-                    label={<FormattedMessage id="order.label.add" />}
+                    label={intl.formatMessage({ id: "order.label.add" })}
                   />
                 </ProgressIndicator>
               )}
@@ -332,7 +333,7 @@ const ModifyOrder = () => {
                     className="forwardButton"
                     onClick={() => navigateForward()}
                   >
-                    {<FormattedMessage id="next.action.button" />}
+                    <FormattedMessage id="next.action.button" />
                   </Button>
                 )}
 
@@ -342,7 +343,7 @@ const ModifyOrder = () => {
                     className="forwardButton"
                     onClick={handleSubmitOrderForm}
                   >
-                    {<FormattedMessage id="label.button.submit" />}
+                    <FormattedMessage id="label.button.submit" />
                   </Button>
                 )}
               </div>

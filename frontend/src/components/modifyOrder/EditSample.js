@@ -20,14 +20,18 @@ import {
 import { Add } from "@carbon/react/icons";
 import { getFromOpenElisServer } from "../utils/Utils";
 import EditSampleType from "./EditSampleType";
-import { FormattedMessage,useIntl} from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import {
   OrderCurrentTestsHeaders,
   OrderPossibleTestsHeaders,
 } from "../data/orderCurrentTestsHeaders";
 const EditSample = (props) => {
   const { samples, setSamples, orderFormValues, setOrderFormValues } = props;
+
   const componentMounted = useRef(true);
+
+  const intl = useIntl();
+
   const [elementsCounter, setElementsCounter] = useState(0);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -35,7 +39,6 @@ const EditSample = (props) => {
   const [pageSize2, setPageSize2] = useState(5);
 
   const [rejectSampleReasons, setRejectSampleReasons] = useState([]);
-  const intl = useIntl();
 
   const handleAddNewSample = () => {
     let updateSamples = [...samples];
@@ -314,7 +317,9 @@ const EditSample = (props) => {
             isSortable
           >
             {({ rows, headers, getHeaderProps, getTableProps }) => (
-              <TableContainer title={intl.formatMessage({ id: "currentests.title" })}>
+              <TableContainer
+                title={intl.formatMessage({ id: "currentests.title" })}
+              >
                 <Table {...getTableProps()}>
                   <TableHead>
                     <TableRow>
@@ -361,7 +366,9 @@ const EditSample = (props) => {
             isSortable
           >
             {({ rows, headers, getHeaderProps, getTableProps }) => (
-              <TableContainer title={intl.formatMessage({ id: "availabletests.title" })}>
+              <TableContainer
+                title={intl.formatMessage({ id: "availabletests.title" })}
+              >
                 <Table {...getTableProps()}>
                   <TableHead>
                     <TableRow>

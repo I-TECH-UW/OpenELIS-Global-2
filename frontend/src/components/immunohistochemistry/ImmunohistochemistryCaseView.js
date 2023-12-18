@@ -99,13 +99,15 @@ export const QuestionnaireResponse = ({ questionnaireResponse }) => {
 function ImmunohistochemistryCaseView() {
   const componentMounted = useRef(false);
 
-  const { immunohistochemistrySampleId } = useParams();
   const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
+
+  const intl = useIntl();
+
+  const { immunohistochemistrySampleId } = useParams();
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
   const [immunohistochemistrySampleInfo, setImmunohistochemistrySampleInfo] =
     useState({ labNumber: "" });
-
   const [statuses, setStatuses] = useState([]);
   const [reportTypes, setReportTypes] = useState([]);
   const [technicianUsers, setTechnicianUsers] = useState([]);
@@ -143,7 +145,6 @@ function ImmunohistochemistryCaseView() {
     },
   });
 
-  const intl = useIntl();
   async function displayStatus(response) {
     var body = await response.json();
     console.log(body);
@@ -156,14 +157,14 @@ function ImmunohistochemistryCaseView() {
       save2.disabled = true;
       setNotificationBody({
         kind: NotificationKinds.success,
-        title: <FormattedMessage id="notification.title" />,
-        message: "Succesfuly saved",
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "save.success" }),
       });
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
-        message: "Error while saving",
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.save.msg" }),
       });
     }
   }
@@ -174,8 +175,8 @@ function ImmunohistochemistryCaseView() {
     if (pdfGenerated) {
       setNotificationBody({
         kind: NotificationKinds.success,
-        title: <FormattedMessage id="notification.title" />,
-        message: "Succesfuly Generated Report",
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "success.report.status" }),
       });
       var params = { ...reportParams };
       if (!params[index]) {
@@ -199,8 +200,8 @@ function ImmunohistochemistryCaseView() {
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
-        message: "Error while Generating Report",
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.report.status" }),
       });
     }
   };
@@ -972,7 +973,9 @@ function ImmunohistochemistryCaseView() {
             <Select
               id="status"
               name="status"
-              labelText={<FormattedMessage id="label.button.select.status" />}
+              labelText={intl.formatMessage({
+                id: "label.button.select.status",
+              })}
               value={immunohistochemistrySampleInfo.status}
               onChange={(event) => {
                 setImmunohistochemistrySampleInfo({
@@ -1203,8 +1206,8 @@ function ImmunohistochemistryCaseView() {
                             onClick={() => {
                               window.open(
                                 reportParams[index]?.reportLink,
-                                "_blank")
-          
+                                "_blank",
+                              );
                             }}
                           >
                             <Launch />{" "}
@@ -1538,7 +1541,9 @@ function ImmunohistochemistryCaseView() {
             immunohistochemistrySampleInfo.assignedTechnicianId && (
               <Column lg={16}>
                 <Checkbox
-                  labelText={<FormattedMessage id="pathology.label.release" />}
+                  labelText={intl.formatMessage({
+                    id: "pathology.label.release",
+                  })}
                   id="release"
                   onChange={() => {
                     setImmunohistochemistrySampleInfo({

@@ -24,7 +24,7 @@ import {
   AlertDialog,
   NotificationKinds,
 } from "../../common/CustomNotification";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import "./ReflexStyles.css";
 
 var defaultTestResultList = {};
@@ -32,6 +32,9 @@ var defaultSampleTests = { conditions: {}, actions: {} };
 
 function ReflexRule() {
   const componentMounted = useRef(true);
+
+  const intl = useIntl();
+
   const FIELD = {
     conditions: "conditions",
     actions: "actions",
@@ -231,11 +234,12 @@ function ReflexRule() {
   };
 
   const handleTestSelected = (id, index, item_index, field) => {
-    var testDetails = {resultList : [] ,resultType :"N"};
+    var testDetails = { resultList: [], resultType: "N" };
     if (sampleTestList[field]) {
       testDetails = sampleTestList[field][index][item_index].find(
-        (test) => test.id == id)
-      }
+        (test) => test.id == id,
+      );
+    }
     const results = { ...testResultList };
     if (!results[index]) {
       results[index] = {};
@@ -265,7 +269,6 @@ function ReflexRule() {
     );
   };
 
-
   const handleRuleRemove = (index, id) => {
     const list = [...ruleList];
     list.splice(index, 1);
@@ -284,14 +287,14 @@ function ReflexRule() {
     if (status == "200") {
       setNotificationBody({
         kind: NotificationKinds.success,
-        title: <FormattedMessage id="notification.title" />,
-        message: "Succesfuly Deleted",
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "success.deleted.msg" }),
       });
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
-        message: "Error while Deleting",
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.deleted.msg" }),
       });
     }
   };
@@ -325,14 +328,14 @@ function ReflexRule() {
       element.disabled = true;
       setNotificationBody({
         kind: NotificationKinds.success,
-        title: <FormattedMessage id="notification.title" />,
-        message: "Succesfuly saved",
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "save.success" }),
       });
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
-        message: "Duplicate Calculation Name or Error while saving",
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.duplicate.calculationname" }),
       });
     }
   };
@@ -564,8 +567,8 @@ function ReflexRule() {
                                   "_" +
                                   condition_index +
                                   "_conditionTestId"
-                              }
-                               value={condition.testId}
+                                }
+                                value={condition.testId}
                                 onSelect={(id) => {
                                   handleAutoCompleteRuleFieldItemChange(
                                     id,
@@ -1130,7 +1133,7 @@ function ReflexRule() {
             {ruleList.length - 1 === index && (
               <IconButton
                 onClick={handleRuleAdd}
-                label={<FormattedMessage id="rulebuilder.label.addRule" />}
+                label={intl.formatMessage({ id: "rulebuilder.label.addRule" })}
                 size="md"
                 kind="tertiary"
               >

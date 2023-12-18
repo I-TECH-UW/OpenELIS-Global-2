@@ -33,12 +33,13 @@ function SearchPatientForm(props) {
   const { setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
 
+  const intl = useIntl();
+
   const [dob, setDob] = useState("");
   const [patientSearchResults, setPatientSearchResults] = useState([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [loading, setLoading] = useState(false);
-  const intl = useIntl();
   const handleSubmit = (values) => {
     setLoading(true);
     values.dateOfBirth = dob;
@@ -56,6 +57,8 @@ function SearchPatientForm(props) {
       values.patientId +
       "&labNumber=" +
       values.labNumber +
+      "&guid=" +
+      values.guid +
       "&dateOfBirth=" +
       values.dateOfBirth +
       "&gender=" +
@@ -69,8 +72,8 @@ function SearchPatientForm(props) {
       setPatientSearchResults(patientsResults);
     } else {
       setNotificationBody({
-        title: <FormattedMessage id="notification.title" />,
-        message: "No patients found matching search terms",
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "patient.search.nopatient" }),
         kind: NotificationKinds.warning,
       });
       setNotificationVisible(true);
@@ -115,9 +118,10 @@ function SearchPatientForm(props) {
         onChange
       >
         {({
-          //values,
+          values,
           //errors,
           //touched,
+          setFieldValue,
           handleChange,
           handleBlur,
           handleSubmit,
@@ -127,6 +131,11 @@ function SearchPatientForm(props) {
             onChange={handleChange}
             onBlur={handleBlur}
           >
+            <Field name="guid">
+              {({ field }) => (
+                <input type="hidden" name={field.name} id={field.name} />
+              )}
+            </Field>
             <div className="inlineDiv">
               <Field name="patientId">
                 {({ field }) => (
@@ -142,7 +151,7 @@ function SearchPatientForm(props) {
                 )}
               </Field>
               <Field name="labNumber">
-                {({ field, setFieldValue }) => (
+                {({ field }) => (
                   <CustomLabNumberInput
                     name={field.name}
                     labelText={intl.formatMessage({
@@ -151,8 +160,9 @@ function SearchPatientForm(props) {
                     })}
                     id={field.name}
                     className="inputText"
+                    value={values[field.name]}
                     onChange={(e, rawValue) => {
-                      setFieldValue(rawValue);
+                      setFieldValue(field.name, rawValue);
                     }}
                   />
                 )}

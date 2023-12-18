@@ -7,15 +7,13 @@ import { FormattedMessage } from "react-intl";
 const AddSample = (props) => {
   const { samples, setSamples, error } = props;
   const componentMounted = useRef(true);
-  const [elementsCounter, setElementsCounter] = useState(0);
 
   const [rejectSampleReasons, setRejectSampleReasons] = useState([]);
 
   const handleAddNewSample = () => {
     let updateSamples = [...samples];
-    let count = elementsCounter + 1;
     updateSamples.push({
-      index: count,
+      index: updateSamples.length + 1,
       sampleRejected: false,
       rejectionReason: "",
       requestReferralEnabled: false,
@@ -25,8 +23,8 @@ const AddSample = (props) => {
       panels: [],
       tests: [],
     });
+    console.log(JSON.stringify(updateSamples));
     setSamples(updateSamples);
-    setElementsCounter(count);
   };
 
   const sampleTypeObject = (object) => {
@@ -64,12 +62,14 @@ const AddSample = (props) => {
         newState[object.sampleObjectIndex].referralItems = object.referralItems;
         break;
       default:
+        console.log(JSON.stringify(newState));
         props.setSamples(newState);
     }
   };
 
   const removeSample = (index) => {
     let updateSamples = samples.splice(index, 1);
+    console.log(JSON.stringify(updateSamples));
     setSamples(updateSamples);
   };
 
@@ -84,6 +84,7 @@ const AddSample = (props) => {
     let filtered = samples.filter(function (element) {
       return element !== sample;
     });
+    console.log(JSON.stringify(filtered));
     setSamples(filtered);
   };
 
@@ -131,6 +132,11 @@ const AddSample = (props) => {
                   rejectSampleReasons={rejectSampleReasons}
                   removeSample={removeSample}
                   sample={sample}
+                  setSample={(newSample) => {
+                    let newSamples = [...samples];
+                    newSamples[i] = newSample;
+                    setSamples(newSamples);
+                  }}
                   sampleTypeObject={sampleTypeObject}
                   error={error}
                 />

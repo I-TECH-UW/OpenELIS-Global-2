@@ -35,7 +35,11 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 function ImmunohistochemistryDashboard() {
   const componentMounted = useRef(false);
 
+  const { userSessionDetails } = useContext(UserSessionDetailsContext);
   const { notificationVisible } = useContext(NotificationContext);
+
+  const intl = useIntl();
+
   const [counts, setCounts] = useState({
     inProgress: 0,
     awaitingReview: 0,
@@ -54,11 +58,9 @@ function ImmunohistochemistryDashboard() {
       },
     ],
   });
-  const { userSessionDetails } = useContext(UserSessionDetailsContext);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const intl = useIntl();
 
   function formatDateToDDMMYYYY(date) {
     var day = date.getDate();

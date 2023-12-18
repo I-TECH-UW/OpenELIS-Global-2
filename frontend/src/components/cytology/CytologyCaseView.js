@@ -103,9 +103,9 @@ function CytologyCaseView() {
 
   const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
-  const { userSessionDetails, setUserSessionDetails } = useContext(
-    UserSessionDetailsContext,
-  );
+  const { userSessionDetails } = useContext(UserSessionDetailsContext);
+
+  const intl = useIntl();
 
   const [pathologySampleInfo, setPathologySampleInfo] = useState({});
 
@@ -140,7 +140,6 @@ function CytologyCaseView() {
   const [loading, setLoading] = useState(true);
   const [loadingReport, setLoadingReport] = useState(false);
   const [reportTypes, setReportTypes] = useState([]);
-  const intl = useIntl();
   const [slidesToAdd, setSlidesToAdd] = useState(1);
   const [isConfirmOpen, setConfirmOpen] = useState(false);
   const [reportParams, setReportParams] = useState({
@@ -173,14 +172,14 @@ function CytologyCaseView() {
       save2.disabled = true;
       setNotificationBody({
         kind: NotificationKinds.success,
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id="save.success"/>,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "save.success" }),
       });
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id="error.save.msg"/>,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.save.msg" }),
       });
     }
   }
@@ -191,8 +190,8 @@ function CytologyCaseView() {
     if (pdfGenerated) {
       setNotificationBody({
         kind: NotificationKinds.success,
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id="success.report.status"/>,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "success.report.status" }),
       });
       var params = { ...reportParams };
       if (!params[index]) {
@@ -214,8 +213,8 @@ function CytologyCaseView() {
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
-        message:<FormattedMessage id="error.report.status"/>,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.report.status" }),
       });
     }
   };
@@ -417,10 +416,10 @@ function CytologyCaseView() {
         <Column lg={16}>
           <Breadcrumb>
             <BreadcrumbItem href="/">
-              {intl.formatMessage({ id: "home.label" })}
+              <FormattedMessage id="home.label" />
             </BreadcrumbItem>
             <BreadcrumbItem href="/CytologyDashboard">
-              {intl.formatMessage({ id: "cytology.label.dashboard" })}
+              <FormattedMessage id="cytology.label.dashboard" />
             </BreadcrumbItem>
           </Breadcrumb>
         </Column>
@@ -546,7 +545,7 @@ function CytologyCaseView() {
           <Select
             id="status"
             name="status"
-            labelText={<FormattedMessage id="label.filters.status"/>}
+            labelText={intl.formatMessage({ id: "label.filters.status" })}
             value={pathologySampleInfo.status}
             onChange={(event) => {
               setPathologySampleInfo({
@@ -569,7 +568,7 @@ function CytologyCaseView() {
           <Select
             id="assignedTechnician"
             name="assignedTechnician"
-            labelText={<FormattedMessage id="assigned.technician.label" />}
+            labelText={intl.formatMessage({ id: "assigned.technician.label" })}
             value={pathologySampleInfo.assignedTechnicianId}
             onChange={(event) => {
               setPathologySampleInfo({
@@ -591,7 +590,9 @@ function CytologyCaseView() {
           <Select
             id="assignedPathologist"
             name="assignedPathologist"
-            labelText={<FormattedMessage id="assigned.cytopathologist.label" />}
+            labelText={intl.formatMessage({
+              id: "assigned.cytopathologist.label",
+            })}
             value={pathologySampleInfo.assignedPathologistId}
             onChange={(e) => {
               setPathologySampleInfo({
@@ -1070,7 +1071,9 @@ function CytologyCaseView() {
                       valueSelected={
                         pathologySampleInfo.specimenAdequacy?.values[0]?.id
                       }
-                      legendText={<FormattedMessage id="label.button.select" />}
+                      legendText={intl.formatMessage({
+                        id: "label.button.select",
+                      })}
                       name="adequacy"
                       id="adequacy"
                       onChange={(value) => {
@@ -1109,7 +1112,9 @@ function CytologyCaseView() {
                     ? pathologySampleInfo.diagnosis.negativeDiagnosis
                     : true
                 }
-                labelText={<FormattedMessage id="cytology.label.negative" />}
+                labelText={intl.formatMessage({
+                  id: "cytology.label.negative",
+                })}
                 id="checked"
                 onChange={(e) => {
                   if (e.target.checked) {
@@ -1324,9 +1329,13 @@ function CytologyCaseView() {
                         <FormattedMessage id="cytology.label.other" /> :
                         <TextInput
                           id="otherNeoPlasms"
-                          labelText={intl.formatMessage({ id: "enterText.label" })}
+                          labelText={intl.formatMessage({
+                            id: "enterText.label",
+                          })}
                           hideLabel={true}
-                          placeholder={intl.formatMessage({ id: "otherMalignant.placeholder" })}
+                          placeholder={intl.formatMessage({
+                            id: "otherMalignant.placeholder",
+                          })}
                           value={
                             filterDiagnosisResultsByCategory(
                               "EPITHELIAL_CELL_ABNORMALITY",
@@ -1388,7 +1397,9 @@ function CytologyCaseView() {
                       <Column lg={4} md={8} sm={4}>
                         <FilterableMultiSelect
                           id="nonNeoPlastic"
-                          titleText={intl.formatMessage({ id: "selectResult.title" })}
+                          titleText={intl.formatMessage({
+                            id: "selectResult.title",
+                          })}
                           items={diagnosisResultNonNeoPlasticCellular}
                           itemToString={(item) => (item ? item.value : "")}
                           initialSelectedItems={
@@ -1491,7 +1502,9 @@ function CytologyCaseView() {
                       <Column lg={4} md={8} sm={4}>
                         <FilterableMultiSelect
                           id="reactiveChanges"
-                          titleText={intl.formatMessage({ id: "selectResult.title" })}
+                          titleText={intl.formatMessage({
+                            id: "selectResult.title",
+                          })}
                           items={diagnosisResultReactiveCellular}
                           itemToString={(item) => (item ? item.value : "")}
                           initialSelectedItems={
@@ -1591,7 +1604,9 @@ function CytologyCaseView() {
                       <Column lg={4} md={8} sm={4}>
                         <FilterableMultiSelect
                           id="organisms"
-                          titleText={intl.formatMessage({ id: "selectResult.title" })}
+                          titleText={intl.formatMessage({
+                            id: "selectResult.title",
+                          })}
                           items={diagnosisResultOrganisms}
                           itemToString={(item) => (item ? item.value : "")}
                           initialSelectedItems={
@@ -1688,7 +1703,9 @@ function CytologyCaseView() {
                       <Column lg={4} md={8} sm={4}>
                         <FilterableMultiSelect
                           id="OTHER"
-                          titleText={intl.formatMessage({ id: "selectResult.title" })}
+                          titleText={intl.formatMessage({
+                            id: "selectResult.title",
+                          })}
                           items={diagnosisResultOther}
                           itemToString={(item) => (item ? item.value : "")}
                           initialSelectedItems={
@@ -1784,7 +1801,9 @@ function CytologyCaseView() {
           pathologySampleInfo.assignedTechnicianId && (
             <Column lg={16}>
               <Checkbox
-                labelText={<FormattedMessage id="pathology.label.release" />}
+                labelText={intl.formatMessage({
+                  id: "pathology.label.release",
+                })}
                 id="release"
                 onChange={() => {
                   setPathologySampleInfo({

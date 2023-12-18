@@ -25,6 +25,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 function PatientMenuManagement() {
   const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
+
   const intl = useIntl();
 
   const componentMounted = useRef(true);
@@ -39,16 +40,16 @@ function PatientMenuManagement() {
     if (res.status == "200") {
       setNotificationBody({
         kind: NotificationKinds.success,
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id="success.add.edited.msg" />,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "success.add.edited.msg" }),
       });
       var body = await res.json();
       setMenuItem(body);
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id="error.add.edited.msg" />,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.add.edited.msg" }),
       });
     }
   }

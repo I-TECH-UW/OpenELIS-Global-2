@@ -16,7 +16,7 @@ import {
 import React, { useState, useContext, useEffect } from "react";
 import "../Style.css";
 import "./wpStyle.css";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import WorkplanSearchForm from "./WorkplanSearchForm";
 import {
   postToOpenElisServerForPDF,
@@ -28,6 +28,10 @@ import { ConfigurationContext } from "../layout/Layout";
 
 export default function Workplan(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
+  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+    useContext(NotificationContext);
+
+  const intl = useIntl();
 
   const [testsList, setTestsList] = useState([]);
   const [subjectOnWorkplan, setSubjectOnWorkplan] = useState(false);
@@ -37,8 +41,6 @@ export default function Workplan(props) {
   const [selectedLabel, setSelectedLabel] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const { notificationVisible, setNotificationVisible, setNotificationBody } =
-    useContext(NotificationContext);
 
   const type = props.type;
   let title = "";
@@ -59,7 +61,7 @@ export default function Workplan(props) {
       title = "";
   }
 
-  useEffect(() =>{
+  useEffect(() => {
     setSubjectOnWorkplan(configurationProperties.SUBJECT_ON_WORKPLAN);
     setNextVisitOnWorkplan(configurationProperties.NEXT_VISIT_DATE_ON_WORKPLAN);
     setConfigurationName(configurationProperties.configurationName);
@@ -70,17 +72,17 @@ export default function Workplan(props) {
     if (pdfGenerated) {
       setNotificationBody({
         kind: NotificationKinds.success,
-        title: <FormattedMessage id="notification.title" />,
-        message: "Succesfuly Generated Report",
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "success.report.status" }),
       });
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
-        message: "Error while Generating Report",
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.report.status" }),
       });
     }
-  }
+  };
 
   const handleTestsList = (tests) => {
     setTestsList(tests.workplanTests);
@@ -115,7 +117,7 @@ export default function Workplan(props) {
     postToOpenElisServerForPDF(
       "/rest/printWorkplanReport",
       JSON.stringify(form),
-      reportStatus
+      reportStatus,
     );
   };
 
@@ -160,7 +162,7 @@ export default function Workplan(props) {
   return (
     <>
       <Grid fullWidth={true}>
-      {notificationVisible === true ? <AlertDialog /> : ""}
+        {notificationVisible === true ? <AlertDialog /> : ""}
         <Column lg={16}>
           <Section>
             <Section>
@@ -319,7 +321,8 @@ export default function Workplan(props) {
                                   {showAccessionNumber && row.patientInfo}
                                 </TableCell>
                               )}
-                              {nextVisitOnWorkplan?.toLowerCase() === "true" && (
+                              {nextVisitOnWorkplan?.toLowerCase() ===
+                                "true" && (
                                 <TableCell>
                                   {showAccessionNumber && row.nextVisitDate}
                                 </TableCell>

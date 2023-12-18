@@ -46,10 +46,15 @@ public class PatientSearchRestController {
 
     @GetMapping(value = "patient-search-results", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<PatientSearchResults> getPatientResults(@RequestParam String lastName,
-            @RequestParam String firstName, @RequestParam String STNumber, @RequestParam String subjectNumber,
-            @RequestParam String nationalID,
-            @RequestParam String labNumber, @RequestParam String dateOfBirth, @RequestParam String gender) {
+    public List<PatientSearchResults> getPatientResults(@RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String firstName, 
+            @RequestParam(required = false) String STNumber,
+            @RequestParam(required = false) String subjectNumber,
+            @RequestParam(required = false) String nationalID,
+            @RequestParam(required = false) String guid,
+            @RequestParam(required = false) String labNumber, 
+            @RequestParam(required = false) String dateOfBirth,
+            @RequestParam(required = false) String gender) {
 
         List<PatientSearchResults> results = new ArrayList<>();
         if (!GenericValidator.isBlankOrNull(labNumber)) {
@@ -65,14 +70,14 @@ public class PatientSearchRestController {
         } else {
             if (GenericValidator.isBlankOrNull(lastName) && GenericValidator.isBlankOrNull(firstName)
                     && GenericValidator.isBlankOrNull(STNumber) && GenericValidator.isBlankOrNull(subjectNumber)
-                    && GenericValidator.isBlankOrNull(nationalID) && GenericValidator.isBlankOrNull(dateOfBirth)
+                    && GenericValidator.isBlankOrNull(nationalID) && GenericValidator.isBlankOrNull(guid) && GenericValidator.isBlankOrNull(dateOfBirth)
                     && GenericValidator.isBlankOrNull(gender)) {
                 return Collections.<PatientSearchResults>emptyList();
 
             }
 
             results = searchResultsService.getSearchResults(lastName, firstName, STNumber,
-                    subjectNumber, nationalID, nationalID, null, null, dateOfBirth, gender);
+                    subjectNumber, nationalID, nationalID, null, guid, dateOfBirth, gender);
             if (!GenericValidator.isBlankOrNull(nationalID)) {
                 List<PatientSearchResults> observationResults = getObservationsByReferringPatientId(nationalID);
                 results.addAll(observationResults);

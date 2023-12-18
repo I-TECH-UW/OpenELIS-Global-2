@@ -27,11 +27,11 @@ import { convertAlphaNumLabNumForDisplay } from "../utils/Utils";
 import config from "../../config.json";
 
 const Validation = (props) => {
+  const componentMounted = useRef(false);
+
   const { setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
   const { configurationProperties } = useContext(ConfigurationContext);
-
-  const componentMounted = useRef(false);
 
   const intl = useIntl();
 
@@ -120,15 +120,15 @@ const Validation = (props) => {
     );
   };
   const handleResponse = (status) => {
-    let message = "Oops, try gain";
+    let message = intl.formatMessage({ id: "validation.save.error" });
     let kind = NotificationKinds.error;
     if (status == 200) {
-      message = "Results have been validated successfully";
+      message = intl.formatMessage({ id: "validation.save.success" });
       kind = NotificationKinds.success;
     }
     setNotificationBody({
       kind: kind,
-      title: <FormattedMessage id="notification.title" />,
+      title: intl.formatMessage({ id: "notification.title" }),
       message: message,
     });
     setNotificationVisible(true);

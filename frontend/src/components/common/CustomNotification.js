@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { ToastNotification } from "@carbon/react";
 import { NotificationContext } from "../layout/Layout";
 
