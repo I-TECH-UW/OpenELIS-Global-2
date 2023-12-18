@@ -295,6 +295,7 @@ export const ProgramSelect = ({
               labelText={intl.formatMessage({ id: "label.program" })}
               onChange={programChange}
               value={orderFormValues?.sampleOrderItems?.programId}
+              //disabled={editable ? editable : false}
             >
               <SelectItem value="" text="" />
               {programs.map((program) => {
