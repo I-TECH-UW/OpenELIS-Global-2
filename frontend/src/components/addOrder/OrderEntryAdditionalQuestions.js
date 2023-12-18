@@ -73,7 +73,7 @@ export const Questionnaire = ({
               className="inputText"
               labelText={item.text}
               onChange={onAnswerChange}
-              value={setAnswer(item.linkId)}
+              value={setAnswer ? setAnswer(item.linkId) : ""}
             >
               <FormattedMessage id="select.default.option.label">
                 {(msg) => <SelectItem disabled value="" text={msg} />}
@@ -100,7 +100,7 @@ export const Questionnaire = ({
                     : ""
                   : ""
               }
-              value={setAnswer(item.linkId)}
+              value={setAnswer ? setAnswer(item.linkId) : ""}
               onChange={onAnswerChange}
             >
               <FormattedMessage id="select.default.option.label">
@@ -126,7 +126,7 @@ export const Questionnaire = ({
                 e.target.value = changes.selectedItems;
                 onAnswerChange(e);
               }}
-              value={setAnswer(item.linkId)}
+              value={setAnswer ? setAnswer(item.linkId) : ""}
               selectionFeedback="top-after-reopen"
             />
           )}
@@ -135,7 +135,7 @@ export const Questionnaire = ({
               id={item.linkId}
               labelText={item.text}
               onChange={onAnswerChange}
-              value={setAnswer(item.linkId)}
+              value={setAnswer ? setAnswer(item.linkId) : ""}
               type="number"
               step="1"
               pattern="\d+"
@@ -156,7 +156,7 @@ export const Questionnaire = ({
               id={item.linkId}
               labelText={item.text}
               onChange={onAnswerChange}
-              value={setAnswer(item.linkId)}
+              value={setAnswer ? setAnswer(item.linkId) : ""}
               type="date"
             />
           )}
@@ -165,7 +165,7 @@ export const Questionnaire = ({
               id={item.linkId}
               labelText={item.text}
               onChange={onAnswerChange}
-              value={setAnswer(item.linkId)}
+              value={setAnswer ? setAnswer(item.linkId) : ""}
               type="time"
             />
           )}
@@ -174,7 +174,7 @@ export const Questionnaire = ({
               id={item.linkId}
               labelText={item.text}
               onChange={onAnswerChange}
-              value={setAnswer(item.linkId)}
+              value={setAnswer ? setAnswer(item.linkId) : ""}
               type="text"
             />
           )}
@@ -183,7 +183,7 @@ export const Questionnaire = ({
               id={item.linkId}
               labelText={item.text}
               onChange={onAnswerChange}
-              value={setAnswer(item.linkId)}
+              value={setAnswer ? setAnswer(item.linkId) : ""}
               type="text"
             />
           )}
@@ -192,7 +192,7 @@ export const Questionnaire = ({
               id={item.linkId}
               labelText={item.text}
               onChange={onAnswerChange}
-              value={setAnswer(item.linkId)}
+              value={setAnswer ? setAnswer(item.linkId) : ""}
               type="number"
             />
           )}
@@ -239,7 +239,8 @@ export const ProgramSelect = ({
   programChange = () => {
     console.log("default programChange function does nothing");
   },
-  orderFormValues
+  orderFormValues,
+  editable
 }) => {
   const componentMounted = useRef(true);
 
@@ -274,6 +275,7 @@ export const ProgramSelect = ({
                   return program.value === "Routine Testing";
                 })?.id
               }
+              disabled={editable ? editable : false}
             >
               <SelectItem value="" text="" />
               {programs.map((program) => {
@@ -349,7 +351,7 @@ const OrderEntryAdditionalQuestions = ({
     return null;
   }
 
-  function setAdditionalQuestions(res ,event) {
+  function setAdditionalQuestions(res, event) {
     console.log(res);
     setQuestionnaire(res);
     var convertedQuestionnaireResponse = convertQuestionnaireToResponse(res);
