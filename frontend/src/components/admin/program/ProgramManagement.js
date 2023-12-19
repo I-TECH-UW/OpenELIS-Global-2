@@ -30,7 +30,7 @@ function ProgramManagement() {
   const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
 
-  const componentMounted = useRef(true);
+  const componentMounted = useRef(false);
 
   const intl = useIntl();
 
@@ -65,7 +65,7 @@ function ProgramManagement() {
   };
 
   function setAdditionalQuestions(res) {
-    console.log(res);
+    console.debug(res);
     if (res.additionalOrderEntryQuestions) {
       res.additionalOrderEntryQuestions = JSON.stringify(
         res.additionalOrderEntryQuestions,
@@ -148,6 +148,7 @@ function ProgramManagement() {
   }
 
   useEffect(() => {
+    componentMounted.current = true;
     getFromOpenElisServer("/rest/displayList/PROGRAM", fetchPrograms);
     getFromOpenElisServer(
       "/rest/displayList/TEST_SECTION_ACTIVE",

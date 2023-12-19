@@ -30,7 +30,7 @@ import { ConfigurationContext } from "../../layout/Layout";
 function LabNumberManagement() {
   const intl = useIntl();
 
-  const componentMounted = useRef(true);
+  const componentMounted = useRef(false);
 
   const { configurationProperties, reloadConfiguration } =
     useContext(ConfigurationContext);
@@ -48,6 +48,7 @@ function LabNumberManagement() {
   const [labNumberValues, setLabNumberValues] = useState(LabNumberFormValues);
 
   useEffect(() => {
+    componentMounted.current = true;
     loadValues();
     return () => {
       componentMounted.current = false;
@@ -56,9 +57,6 @@ function LabNumberManagement() {
 
   useEffect(() => {
     fetchCurrentLabNumberNoIncrement();
-    return () => {
-      componentMounted.current = false;
-    };
   }, [configurationProperties]);
 
   useEffect(() => {
@@ -66,9 +64,6 @@ function LabNumberManagement() {
       fetchLegacyLabNumNoIncrement();
     }
     generateSampleLabNum();
-    return () => {
-      componentMounted.current = false;
-    };
   }, [labNumberValues]);
 
   const handleFieldChange = (e) => {

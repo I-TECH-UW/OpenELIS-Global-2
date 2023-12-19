@@ -28,7 +28,7 @@ import {
 const EditSample = (props) => {
   const { samples, setSamples, orderFormValues, setOrderFormValues } = props;
 
-  const componentMounted = useRef(true);
+  const componentMounted = useRef(false);
 
   const intl = useIntl();
 
@@ -199,6 +199,7 @@ const EditSample = (props) => {
   };
 
   useEffect(() => {
+    componentMounted.current = true;
     getFromOpenElisServer(
       "/rest/test-rejection-reasons",
       fetchRejectSampleReasons,

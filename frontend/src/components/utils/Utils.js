@@ -11,7 +11,7 @@ export const getFromOpenElisServer = (endPoint, callback) => {
     },
   )
     .then((response) => {
-      console.log("checking response");
+      console.debug("checking response");
       // if (response.url.includes("LoginPage")) {
       //     throw "No Login Session";
       // }
@@ -25,7 +25,7 @@ export const getFromOpenElisServer = (endPoint, callback) => {
       }
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
     });
 };
 
@@ -52,10 +52,9 @@ export const postToOpenElisServer = (
     .then((response) => response.status)
     .then((status) => {
       callback(status, extraParams);
-      //console.log(JSON.stringify(jsonResp))
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
     });
 };
 
@@ -81,7 +80,7 @@ export const postToOpenElisServerFullResponse = (
   )
     .then((response) => callback(response, extraParams))
     .catch((error) => {
-      console.log(error);
+      console.error(error);
     });
 };
 
@@ -110,7 +109,7 @@ export const postToOpenElisServerJsonResponse = (
       callback(json, extraParams);
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
     });
 };
 
@@ -153,7 +152,7 @@ export const postToOpenElisServerForPDF = (endPoint, payLoad, callback) => {
     })
     .catch((error) => {
       callback(false);
-      console.log(error);
+      console.error(error);
     });
 };
 
@@ -168,7 +167,7 @@ export const convertAlphaNumLabNumForDisplay = (labNumber) => {
     return labNumber;
   }
   if (labNumber.length > 15) {
-    console.log("labNumber is not alphanumeric (too long), ignoring format");
+    console.warn("labNumber is not alphanumeric (too long), ignoring format");
     return labNumber;
   }
   //if dash made it into value, then it's part of the analysis number, not the base lab number

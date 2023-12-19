@@ -38,7 +38,7 @@ import "../pathology/PathologyDashboard.css";
 
 export const QuestionnaireResponse = ({ questionnaireResponse }) => {
   const renderQuestionResponse = (item) => {
-    console.log(JSON.stringify(item));
+    console.debug(JSON.stringify(item));
     return (
       <>
         <div className="questionnaireResponseItem">
@@ -59,7 +59,7 @@ export const QuestionnaireResponse = ({ questionnaireResponse }) => {
   };
 
   const renderAnswer = (answer) => {
-    console.log(JSON.stringify(answer));
+    console.debug(JSON.stringify(answer));
 
     var display = "";
     if ("valueString" in answer) {
@@ -162,7 +162,7 @@ function CytologyCaseView() {
 
   async function displayStatus(response) {
     var body = await response.json();
-    console.log(body);
+    console.debug(body);
     var status = response.status;
     setNotificationVisible(true);
     if (status == "200") {
@@ -294,9 +294,10 @@ function CytologyCaseView() {
         diagnosis: diagnosis,
       };
     }
-
-    console.log(" ..submit....");
-    console.log(JSON.stringify(submitValues));
+    console.group("submitting");
+    console.debug(" ..submit....");
+    console.debug(JSON.stringify(submitValues));
+    console.groupEnd();
     postToOpenElisServerFullResponse(
       "/rest/cytology/caseView/" + cytologySampleId,
       JSON.stringify(submitValues),

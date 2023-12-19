@@ -6,7 +6,7 @@ import SampleType from "./SampleType";
 import { FormattedMessage } from "react-intl";
 const AddSample = (props) => {
   const { samples, setSamples, error } = props;
-  const componentMounted = useRef(true);
+  const componentMounted = useRef(false);
 
   const [rejectSampleReasons, setRejectSampleReasons] = useState([]);
 
@@ -23,7 +23,7 @@ const AddSample = (props) => {
       panels: [],
       tests: [],
     });
-    console.log(JSON.stringify(updateSamples));
+    console.debug(JSON.stringify(updateSamples));
     setSamples(updateSamples);
   };
 
@@ -62,14 +62,14 @@ const AddSample = (props) => {
         newState[object.sampleObjectIndex].referralItems = object.referralItems;
         break;
       default:
-        console.log(JSON.stringify(newState));
+        console.debug(JSON.stringify(newState));
         props.setSamples(newState);
     }
   };
 
   const removeSample = (index) => {
     let updateSamples = samples.splice(index, 1);
-    console.log(JSON.stringify(updateSamples));
+    console.debug(JSON.stringify(updateSamples));
     setSamples(updateSamples);
   };
 
@@ -84,22 +84,12 @@ const AddSample = (props) => {
     let filtered = samples.filter(function (element) {
       return element !== sample;
     });
-    console.log(JSON.stringify(filtered));
+    console.debug(JSON.stringify(filtered));
     setSamples(filtered);
   };
 
   useEffect(() => {
-    getFromOpenElisServer(
-      "/rest/test-rejection-reasons",
-      fetchRejectSampleReasons,
-    );
-    window.scrollTo(0, 0);
-    return () => {
-      componentMounted.current = false;
-    };
-  }, []);
-
-  useEffect(() => {
+    componentMounted.current = true;
     getFromOpenElisServer(
       "/rest/test-rejection-reasons",
       fetchRejectSampleReasons,

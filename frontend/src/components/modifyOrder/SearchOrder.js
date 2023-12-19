@@ -11,7 +11,7 @@ function SearchOrder() {
 
   const getSelectedPatient = (patient) => {
     setSelectedPatient(patient);
-    console.log("selectedPatient:" + selectedPatient);
+    console.debug("selectedPatient:" + selectedPatient);
   };
 
   useEffect(() => {

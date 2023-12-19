@@ -29,14 +29,12 @@ function SecureRoute(props) {
     setLoading(!errorLoadingSessionDetails && isCheckingLogin());
     if (userSessionDetails.authenticated) {
       console.info("Authenticated");
-      // console.log(JSON.stringify(jsonResp))
       if (hasPermission(userSessionDetails)) {
         console.info("Access Allowed");
       } else {
         const options = {
-          title:  <FormattedMessage id="accessDenied.title" />,
-          message:
-          <FormattedMessage id="accessDenied.message" />,
+          title: <FormattedMessage id="accessDenied.title" />,
+          message: <FormattedMessage id="accessDenied.message" />,
           buttons: [
             {
               label: <FormattedMessage id="accessDenied.okButton" />,
@@ -83,16 +81,16 @@ function SecureRoute(props) {
   };
 
   const handleOnAction = (event) => {
-    console.log("no action is defined on the IdleTimer", event);
+    console.debug("no action is defined on the IdleTimer", event);
   };
 
   const handleOnActive = (event) => {
-    console.log("user is active", event);
+    console.debug("user is active", event);
     setIsIdle(false);
   };
 
   const handleOnIdle = (event) => {
-    console.log("user is idle", event);
+    console.debug("user is idle", event);
     setIsIdle(true);
 
     const timer = () =>
@@ -103,10 +101,10 @@ function SecureRoute(props) {
 
     const options = {
       title: <FormattedMessage id="stillThere.title" />,
-      message:<FormattedMessage id="stillThere.message" />,
+      message: <FormattedMessage id="stillThere.message" />,
       buttons: [
         {
-          label:<FormattedMessage id= "yes.option"/>,
+          label: <FormattedMessage id="yes.option" />,
           onClick: () => {
             clearTimeout(timeoutEventID);
           },
@@ -119,7 +117,7 @@ function SecureRoute(props) {
   return (
     <>
       {loading && <Loading />}
-      {!loading && !userSessionDetails.authenticated &&  (
+      {!loading && !userSessionDetails.authenticated && (
         <FormattedMessage id="notAuthenticated" />
       )}
       {!loading && userSessionDetails.authenticated && permissionGranted && (

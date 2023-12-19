@@ -112,7 +112,7 @@ function Login(props) {
           kind: NotificationKinds.error,
         });
         setNotificationVisible(true);
-        console.log(error);
+        console.error(error);
       });
   };
 
@@ -142,7 +142,7 @@ function Login(props) {
                       doLogin(values);
                     })
                     .catch((error) => {
-                      console.log(error);
+                      console.error(error);
                     });
                 }}
               >

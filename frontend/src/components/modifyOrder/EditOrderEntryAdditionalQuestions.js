@@ -20,7 +20,7 @@ import {
 const EditOrderEntryAdditionalQuestions = ({
   orderFormValues,
   setOrderFormValues = () => {
-    console.log("default setOrderFormValues change function does nothing");
+    console.debug("default setOrderFormValues change function does nothing");
   },
 }) => {
   const [questionnaire, setQuestionnaire] = useState({});
@@ -94,7 +94,7 @@ const EditOrderEntryAdditionalQuestions = ({
   }
 
   function setAdditionalQuestions(res) {
-    console.log(res);
+    console.debug(res);
     setQuestionnaire(res);
     var convertedQuestionnaireResponse = convertQuestionnaireToResponse(res);
     setQuestionnaireResponse(convertedQuestionnaireResponse);
@@ -102,7 +102,7 @@ const EditOrderEntryAdditionalQuestions = ({
 
   function setDefaultAdditionalQuestions(res) {
     if (loading) {
-      console.log(res);
+      console.debug(res);
       setQuestionnaire(res);
       setQuestionnaireResponse(
         orderFormValues.sampleOrderItems.additionalQuestions,

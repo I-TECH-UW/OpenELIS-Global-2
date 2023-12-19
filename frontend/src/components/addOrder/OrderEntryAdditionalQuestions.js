@@ -15,10 +15,10 @@ import { getFromOpenElisServer } from "../utils/Utils";
 export const Questionnaire = ({
   questionnaire,
   onAnswerChange = () => {
-    console.log("default onAnswerChange function does nothing");
+    console.debug("default onAnswerChange function does nothing");
   },
   getAnswer = () => {
-    console.log("default getAnswer function does nothing");
+    console.debug("default getAnswer function does nothing");
   },
 }) => {
   const intl = useIntl();
@@ -249,11 +249,11 @@ export const Questionnaire = ({
 
 export const ProgramSelect = ({
   programChange = () => {
-    console.log("default programChange function does nothing");
+    console.debug("default programChange function does nothing");
   },
   orderFormValues,
 }) => {
-  const componentMounted = useRef(true);
+  const componentMounted = useRef(false);
 
   const intl = useIntl();
 
@@ -318,7 +318,7 @@ export const ProgramSelect = ({
 const OrderEntryAdditionalQuestions = ({
   orderFormValues,
   setOrderFormValues = () => {
-    console.log("default setOrderFormValues change function does nothing");
+    console.debug("default setOrderFormValues change function does nothing");
   },
 }) => {
   const [questionnaire, setQuestionnaire] = useState(
@@ -379,7 +379,7 @@ const OrderEntryAdditionalQuestions = ({
   }
 
   function setAdditionalQuestions(res, event) {
-    console.log(res);
+    console.debug(res);
     setQuestionnaire(res);
     var convertedQuestionnaireResponse = convertQuestionnaireToResponse(res);
     setQuestionnaireResponse(convertedQuestionnaireResponse);

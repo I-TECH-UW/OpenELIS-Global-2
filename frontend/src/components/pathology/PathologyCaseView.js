@@ -37,7 +37,7 @@ import "./PathologyDashboard.css";
 
 export const QuestionnaireResponse = ({ questionnaireResponse }) => {
   const renderQuestionResponse = (item) => {
-    console.log(JSON.stringify(item));
+    console.debug(JSON.stringify(item));
     return (
       <>
         <div className="questionnaireResponseItem">
@@ -58,7 +58,7 @@ export const QuestionnaireResponse = ({ questionnaireResponse }) => {
   };
 
   const renderAnswer = (answer) => {
-    console.log(JSON.stringify(answer));
+    console.debug(JSON.stringify(answer));
 
     var display = "";
     if ("valueString" in answer) {
@@ -133,7 +133,7 @@ function PathologyCaseView() {
 
   async function displayStatus(response) {
     var body = await response.json();
-    console.log(body);
+    console.debug(body);
     var status = response.status;
     setNotificationVisible(true);
     if (status == "200") {

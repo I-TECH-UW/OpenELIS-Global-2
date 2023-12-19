@@ -106,11 +106,11 @@ const Index = () => {
         success(jsonResponse);
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         failure();
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         failure();
       });
   };
@@ -553,7 +553,7 @@ const Index = () => {
     if ("questionnaire" in orderFormValues.sampleOrderItems) {
       delete orderFormValues.sampleOrderItems.questionnaire;
     }
-    console.log(JSON.stringify(orderFormValues));
+    console.debug(JSON.stringify(orderFormValues));
     postToOpenElisServer(
       "/rest/SamplePatientEntry",
       JSON.stringify(orderFormValues),
@@ -571,7 +571,7 @@ const Index = () => {
     OrderEntryValidationSchema.validate(orderFormValues, { abortEarly: false })
       .then((validData) => {
         setErrors([]);
-        console.log("Valid Data:", validData);
+        console.debug("Valid Data:", validData);
       })
       .catch((errors) => {
         setErrors(errors);

@@ -21,7 +21,7 @@ import { ConfigurationContext } from "../layout/Layout";
 const AddOrder = (props) => {
   const { orderFormValues, setOrderFormValues, samples } = props;
 
-  const componentMounted = useRef(true);
+  const componentMounted = useRef(false);
 
   const { setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
@@ -382,6 +382,7 @@ const AddOrder = (props) => {
   };
 
   useEffect(() => {
+    componentMounted.current = true;
     getFromOpenElisServer("/rest/SamplePatientEntry", getSampleEntryPreform);
     window.scrollTo(0, 0);
     return () => {

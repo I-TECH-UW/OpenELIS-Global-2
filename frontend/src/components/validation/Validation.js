@@ -151,7 +151,7 @@ const Validation = (props) => {
   };
 
   const handleDatePickerChange = (date, rowId) => {
-    console.log("handleDatePickerChange:" + date);
+    console.debug("handleDatePickerChange:" + date);
     const d = new Date(date).toLocaleDateString("fr-FR");
     var form = props.results;
     var jp = require("jsonpath");

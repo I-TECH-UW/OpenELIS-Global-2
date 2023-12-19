@@ -27,7 +27,7 @@ function StudyMenuManagement() {
 
   const intl = useIntl();
 
-  const componentMounted = useRef(true);
+  const componentMounted = useRef(false);
 
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -133,6 +133,7 @@ function StudyMenuManagement() {
   };
 
   useEffect(() => {
+    componentMounted.current = true;
     getFromOpenElisServer("/rest/menu/menu_sample_create", (res) => {
       if (res) {
         let newMenuItems = { ...menuItem };

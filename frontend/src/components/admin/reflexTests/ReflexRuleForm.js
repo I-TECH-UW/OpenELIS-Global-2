@@ -31,7 +31,7 @@ var defaultTestResultList = {};
 var defaultSampleTests = { conditions: {}, actions: {} };
 
 function ReflexRule() {
-  const componentMounted = useRef(true);
+  const componentMounted = useRef(false);
 
   const intl = useIntl();
 
@@ -90,6 +90,7 @@ function ReflexRule() {
     useContext(NotificationContext);
 
   useEffect(() => {
+    componentMounted.current = true;
     getFromOpenElisServer("/rest/samples", fetchSamples);
     getFromOpenElisServer("/rest/reflexrule-options", fetchRuleOptions);
     getFromOpenElisServer("/rest/reflexrules", fetchReflexRules);
@@ -342,7 +343,7 @@ function ReflexRule() {
 
   const handleSubmit = (event, index) => {
     event.preventDefault();
-    console.log(JSON.stringify(ruleList[index]));
+    console.debug(JSON.stringify(ruleList[index]));
     postToOpenElisServer(
       "/rest/reflexrule",
       JSON.stringify(ruleList[index]),
@@ -362,7 +363,7 @@ function ReflexRule() {
 
   const fetchReflexRules = (reflexRuleList) => {
     if (componentMounted.current) {
-      // console.log(JSON.stringify(reflexRuleList))
+      // console.debug(JSON.stringify(reflexRuleList))
       if (reflexRuleList.length > 0) {
         setRuleList(reflexRuleList);
       } else {
@@ -373,7 +374,7 @@ function ReflexRule() {
 
   const fetchRuleOptions = (options) => {
     if (componentMounted.current) {
-      console.log(JSON.stringify(options));
+      console.debug(JSON.stringify(options));
       if (options) {
         setGeneralRelationOptions(options.generalRelationOptions);
         setNumericRelationOptions(options.numericRelationOptions);
@@ -400,7 +401,7 @@ function ReflexRule() {
         //valid float
         return false;
       } else {
-        console.log("invalid value");
+        console.error("invalid value");
         return true;
       }
     }
@@ -415,7 +416,7 @@ function ReflexRule() {
         //valid float
         clearError(fieldName);
       } else {
-        console.log("invalid value");
+        console.error("invalid value");
         addError({ name: fieldName, error: "Invaid Numeric Value" });
       }
     }

@@ -28,7 +28,7 @@ function BillingMenuManagement() {
 
   const intl = useIntl();
 
-  const componentMounted = useRef(true);
+  const componentMounted = useRef(false);
 
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -71,6 +71,7 @@ function BillingMenuManagement() {
   };
 
   useEffect(() => {
+    componentMounted.current = true;
     getFromOpenElisServer("/rest/menu/menu_billing", handleMenuItems);
     return () => {
       componentMounted.current = false;

@@ -28,7 +28,7 @@ function PatientMenuManagement() {
 
   const intl = useIntl();
 
-  const componentMounted = useRef(true);
+  const componentMounted = useRef(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showChildren, setShowChildren] = useState(false);
@@ -71,6 +71,7 @@ function PatientMenuManagement() {
   };
 
   useEffect(() => {
+    componentMounted.current = true;
     getFromOpenElisServer("/rest/menu/menu_patient", handleMenuItems);
     return () => {
       componentMounted.current = false;

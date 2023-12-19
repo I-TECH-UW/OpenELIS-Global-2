@@ -29,10 +29,10 @@ const SampleType = (props) => {
 
   const intl = useIntl();
 
-  const componentMounted = useRef(true);
+  const componentMounted = useRef(false);
   const sampleTypesRef = useRef(null);
 
-  const { index, rejectSampleReasons, removeSample, sample } = props;
+  const { index, rejectSampleReasons, removeSample } = props;
 
   const [sampleTypes, setSampleTypes] = useState([]);
   const [selectedSampleType, setSelectedSampleType] = useState({
@@ -417,6 +417,7 @@ const SampleType = (props) => {
   };
 
   useEffect(() => {
+    componentMounted.current = true;
     getFromOpenElisServer(
       "/rest/referral-reasons",
       displayReferralReasonsOptions,

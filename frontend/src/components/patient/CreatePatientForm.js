@@ -63,7 +63,7 @@ function CreatePatientForm(props) {
 
   function getYearsMonthsDaysFromDOB(date) {
     if (!date || date === "") {
-      console.log("trying to parse empty date");
+      console.warn("trying to parse empty date");
       return;
     }
     const selectedDate = date.split("/");
@@ -287,7 +287,7 @@ function CreatePatientForm(props) {
     if ("days" in values) {
       delete values.days;
     }
-    console.log(JSON.stringify(values));
+    console.debug(JSON.stringify(values));
     postToOpenElisServer(
       "/rest/patient-management",
       JSON.stringify(values),

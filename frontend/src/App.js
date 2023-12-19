@@ -58,7 +58,7 @@ export default function App() {
           { credentials: "include" },
         );
         const jsonResp = await response.json();
-        console.log(JSON.stringify(jsonResp));
+        console.debug(JSON.stringify(jsonResp));
         if (jsonResp.authenticated) {
           localStorage.setItem("CSRF", jsonResp.csrf);
         }
@@ -73,7 +73,7 @@ export default function App() {
         setErrorLoadingSessionDetails(false);
         return jsonResp;
       } catch (error) {
-        console.log(error);
+        console.error(error);
         const options = {
           title: "System Error",
           message: "Error : " + error.message,
@@ -123,10 +123,9 @@ export default function App() {
       .then(() => {
         getUserSessionDetails();
         window.location.href = config.loginRedirect;
-        //console.log(JSON.stringify(jsonResp))
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   };
 

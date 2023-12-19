@@ -25,8 +25,9 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 
 const EditSampleType = (props) => {
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
-  const { index, rejectSampleReasons, removeSample, sample } = props;
-  const componentMounted = useRef(true);
+  const { index, rejectSampleReasons, removeSample } = props;
+  const componentMounted = useRef(false);
+
   const [sampleTypes, setSampleTypes] = useState([]);
   const sampleTypesRef = useRef(null);
   const [selectedSampleType, setSelectedSampleType] = useState({
@@ -406,6 +407,7 @@ const EditSampleType = (props) => {
   };
 
   useEffect(() => {
+    componentMounted.current = true;
     getFromOpenElisServer(
       "/rest/referral-reasons",
       displayReferralReasonsOptions,
