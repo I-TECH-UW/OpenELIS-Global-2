@@ -177,12 +177,12 @@ function CreatePatientForm(props) {
       patient.patientUpdateStatus = "UPDATE";
       //merge objects together to avoid "A component is changing a controlled input to be uncontrolled"
       const patientContactPerson = {
-        ...patientDetails.patientContact.person,
-        ...patient.patientContact.person,
+        ...patientDetails?.patientContact?.person,
+        ...patient?.patientContact?.person,
       };
       const patientContact = {
-        ...patientDetails.patientContact,
-        ...patient.patientContact,
+        ...patientDetails?.patientContact,
+        ...patient?.patientContact,
         person: patientContactPerson,
       };
       patient = {

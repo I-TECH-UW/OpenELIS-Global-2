@@ -320,10 +320,10 @@ function PathologyCaseView() {
         <Column lg={16}>
           <Breadcrumb>
             <BreadcrumbItem href="/">
-              <FormattedMessage id="home.label" />
+              {intl.formatMessage({ id: "home.label" })}
             </BreadcrumbItem>
             <BreadcrumbItem href="/PathologyDashboard">
-              <FormattedMessage id="pathology.label.dashboard" />
+              {intl.formatMessage({ id: "pathology.label.dashboard" })}
             </BreadcrumbItem>
           </Breadcrumb>
         </Column>

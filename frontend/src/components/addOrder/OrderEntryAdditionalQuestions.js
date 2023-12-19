@@ -252,6 +252,7 @@ export const ProgramSelect = ({
     console.debug("default programChange function does nothing");
   },
   orderFormValues,
+  editable
 }) => {
   const componentMounted = useRef(false);
 
@@ -295,7 +296,7 @@ export const ProgramSelect = ({
               labelText={intl.formatMessage({ id: "label.program" })}
               onChange={programChange}
               value={orderFormValues?.sampleOrderItems?.programId}
-              //disabled={editable ? editable : false}
+              disabled={editable ? editable : false}
             >
               <SelectItem value="" text="" />
               {programs.map((program) => {
