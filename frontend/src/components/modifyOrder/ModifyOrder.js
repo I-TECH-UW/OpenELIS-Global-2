@@ -201,10 +201,10 @@ const ModifyOrder = () => {
         <Column lg={16}>
           <Breadcrumb>
             <BreadcrumbItem href="/">
-              <FormattedMessage id="home.label" />
+              {intl.formatMessage({ id: "home.label" })}
             </BreadcrumbItem>
             <BreadcrumbItem href="/FindOrder">
-              <FormattedMessage id="sample.label.search.Order" />
+              {intl.formatMessage({ id: "sample.label.search.Order" })}
             </BreadcrumbItem>
           </Breadcrumb>
         </Column>

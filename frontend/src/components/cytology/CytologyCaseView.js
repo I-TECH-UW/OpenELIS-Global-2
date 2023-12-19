@@ -417,10 +417,10 @@ function CytologyCaseView() {
         <Column lg={16}>
           <Breadcrumb>
             <BreadcrumbItem href="/">
-              <FormattedMessage id="home.label" />
+              {intl.formatMessage({ id: "home.label" })}
             </BreadcrumbItem>
             <BreadcrumbItem href="/CytologyDashboard">
-              <FormattedMessage id="cytology.label.dashboard" />
+              {intl.formatMessage({ id: "cytology.label.dashboard" })}
             </BreadcrumbItem>
           </Breadcrumb>
         </Column>

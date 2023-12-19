@@ -1,5 +1,4 @@
 const CreatePatientFormValues = {
-  id: "",
   patientUpdateStatus: "ADD",
   nationalId: "",
   subjectNumber: "",
