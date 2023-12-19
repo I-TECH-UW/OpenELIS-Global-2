@@ -68,14 +68,9 @@ function LabNumberManagement() {
 
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
-    //TODO use better strategy developed with greg
-    var names = name.split(".");
     const updatedValues = { ...labNumberValues };
-    if (names.length === 1) {
-      updatedValues[name] = value;
-    } else if (names.length === 2) {
-      updatedValues[names[0]][names[1]] = value;
-    }
+    var jp = require("jsonpath");
+    jp.value(updatedValues, name, value);
     setLabNumberValues(updatedValues);
   };
 
@@ -89,7 +84,7 @@ function LabNumberManagement() {
         message: intl.formatMessage({ id: "success.add.edited.msg" }),
       });
       var body = await res.json();
-      setLabNumberValues(body);
+      setLabNumberValues({ ...LabNumberFormValues, ...body });
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
@@ -102,7 +97,7 @@ function LabNumberManagement() {
 
   const loadValues = () => {
     getFromOpenElisServer("/rest/labnumbermanagement", (body) => {
-      setLabNumberValues(body);
+      setLabNumberValues({ ...LabNumberFormValues, ...body });
       setLoading(false);
     });
   };

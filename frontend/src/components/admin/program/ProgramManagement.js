@@ -73,20 +73,20 @@ function ProgramManagement() {
         4,
       );
     }
-    setProgramValues(res);
+    const newProgramValues = {
+      ...ProgramFormValues,
+      ...res,
+      program: { ...ProgramFormValues.program, ...res.program },
+    };
+    setProgramValues(newProgramValues);
     setLoading(false);
   }
 
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
-    //TODO use better strategy developed with greg
-    var names = name.split(".");
     const updatedValues = { ...programValues };
-    if (names.length === 1) {
-      updatedValues[name] = value;
-    } else if (names.length === 2) {
-      updatedValues[names[0]][names[1]] = value;
-    }
+    var jp = require("jsonpath");
+    jp.value(updatedValues, name, value);
     setProgramValues(updatedValues);
   };
 
@@ -108,7 +108,8 @@ function ProgramManagement() {
           4,
         );
       }
-      setProgramValues(body);
+      const newProgramValues = { ...ProgramFormValues, ...body };
+      setProgramValues(newProgramValues);
     } else {
       setNotificationBody({
         kind: NotificationKinds.error,
