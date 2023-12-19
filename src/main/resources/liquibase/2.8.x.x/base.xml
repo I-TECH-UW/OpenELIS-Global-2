@@ -17,4 +17,5 @@
 	<include relativeToChangelogFile="true" file="menu.xml" />
 	<include relativeToChangelogFile="true" file="panel_item_fix.xml" />
 	<include relativeToChangelogFile="true" file="update_default_setting.xml" />
+	<include relativeToChangelogFile="true" file="rename_test_for_csv_export.xml"/>
 </databaseChangeLog>
