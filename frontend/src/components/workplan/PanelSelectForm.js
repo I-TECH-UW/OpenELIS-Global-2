@@ -7,6 +7,8 @@ import { getFromOpenElisServer } from "../utils/Utils";
 function PanelSelectForm(props) {
   const mounted = useRef(false);
   const [panels, setPanels] = useState([]);
+  const [defaultPanelId, setDefaultPanelId] = useState("");
+  const [defaultPanelLabel, setDefaultPanelLabel] = useState("");
 
   const handleChange = (e) => {
     props.value(e.target.value, e.target.selectedOptions[0].text);
@@ -20,7 +22,18 @@ function PanelSelectForm(props) {
 
   useEffect(() => {
     mounted.current = true;
-    getFromOpenElisServer("/rest/panels", getPanels);
+    let panelId = new URLSearchParams(window.location.search).get(
+      "panel_id"
+    );
+    panelId = panelId ? panelId : "";
+    getFromOpenElisServer("/rest/panels", (fetchedPanels) => {
+      let panel = fetchedPanels.find(panel => panel.id === panelId);
+      let panelLabel = panel ? panel.value : "";
+      setDefaultPanelId(panelId);
+      setDefaultPanelLabel(panelLabel);
+      props.value(panelId, panelLabel);
+      getPanels(fetchedPanels);
+    })
     return () => {
       mounted.current = false;
     };
@@ -40,9 +53,11 @@ function PanelSelectForm(props) {
             labelText=""
             onChange={handleChange}
           >
-            <SelectItem text="" value="" />
-            {panels.map((item, idx) => {
-              return <SelectItem key={idx} text={item.value} value={item.id} />;
+            <SelectItem text={defaultPanelLabel} value={defaultPanelId} />
+            {panels
+              .filter(item => item.id !== defaultPanelId)
+              .map((item, idx) => {
+                return <SelectItem key={idx} text={item.value} value={item.id} />;
             })}
           </Select>
         </Column>
