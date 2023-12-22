@@ -29,7 +29,7 @@ import config from "../../config.json";
 const Validation = (props) => {
   const componentMounted = useRef(false);
 
-  const { setNotificationVisible, setNotificationBody } =
+  const { setNotificationVisible, addNotification } =
     useContext(NotificationContext);
   const { configurationProperties } = useContext(ConfigurationContext);
 
@@ -126,7 +126,7 @@ const Validation = (props) => {
       message = intl.formatMessage({ id: "validation.save.success" });
       kind = NotificationKinds.success;
     }
-    setNotificationBody({
+    addNotification({
       kind: kind,
       title: intl.formatMessage({ id: "notification.title" }),
       message: message,

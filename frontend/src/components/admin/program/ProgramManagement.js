@@ -27,7 +27,7 @@ import {
 import { FormattedMessage, useIntl } from "react-intl";
 
 function ProgramManagement() {
-  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
   const componentMounted = useRef(false);
@@ -94,7 +94,7 @@ function ProgramManagement() {
     setNotificationVisible(true);
     setIsSubmitting(false);
     if (res.status == "200") {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "success.add.edited.msg" }),
@@ -111,7 +111,7 @@ function ProgramManagement() {
       const newProgramValues = { ...ProgramFormValues, ...body };
       setProgramValues(newProgramValues);
     } else {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "error.add.edited.msg" }),

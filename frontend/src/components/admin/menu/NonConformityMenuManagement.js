@@ -22,7 +22,7 @@ import {
 import { FormattedMessage, useIntl } from "react-intl";
 
 function NonConformityMenuManagement() {
-  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
   const intl = useIntl();
@@ -38,7 +38,7 @@ function NonConformityMenuManagement() {
     setNotificationVisible(true);
     setIsSubmitting(false);
     if (res.status == "200") {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "success.add.edited.msg" }),
@@ -46,7 +46,7 @@ function NonConformityMenuManagement() {
       var body = await res.json();
       setMenuItem(body);
     } else {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "error.add.edited.msg" }),

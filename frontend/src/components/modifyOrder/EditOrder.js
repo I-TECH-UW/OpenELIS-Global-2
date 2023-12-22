@@ -23,7 +23,7 @@ const AddOrder = (props) => {
 
   const componentMounted = useRef(false);
 
-  const { setNotificationVisible, setNotificationBody } =
+  const { setNotificationVisible, addNotification } =
     useContext(NotificationContext);
   const { configurationProperties } = useContext(ConfigurationContext);
 
@@ -181,7 +181,7 @@ const AddOrder = (props) => {
   function accessionNumberValidationResults(res) {
     if (res.status === false) {
       setNotificationVisible(true);
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
         message: res.body,
@@ -275,7 +275,7 @@ const AddOrder = (props) => {
 
   function fetchPhoneNoValidation(res) {
     if (res.status === false) {
-      setNotificationBody({
+      addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
         message: res.body,
         kind: NotificationKinds.error,

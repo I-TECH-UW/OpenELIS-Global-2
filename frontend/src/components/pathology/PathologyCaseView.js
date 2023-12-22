@@ -102,7 +102,7 @@ function PathologyCaseView() {
 
   const { pathologySampleId } = useParams();
 
-  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
 
@@ -141,13 +141,13 @@ function PathologyCaseView() {
       const save2 = document.getElementById("pathology_save2");
       save1.disabled = true;
       save2.disabled = true;
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "success.save.msg" }),
       });
     } else {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "error.save.msg" }),
@@ -159,7 +159,7 @@ function PathologyCaseView() {
     setNotificationVisible(true);
     setLoadingReport(false);
     if (pdfGenerated) {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "success.report.status" }),
@@ -182,7 +182,7 @@ function PathologyCaseView() {
         reports: newReports,
       });
     } else {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "error.report.status" }),

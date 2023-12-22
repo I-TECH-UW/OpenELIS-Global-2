@@ -35,7 +35,7 @@ import CreatePatientValidationSchema from "../formModel/validationSchema/CreateP
 function CreatePatientForm(props) {
   const componentMounted = useRef(false);
 
-  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
   const { configurationProperties } = useContext(ConfigurationContext);
 
@@ -236,7 +236,7 @@ function CreatePatientForm(props) {
     let error;
     if (res.status === false) {
       setNotificationVisible(true);
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
         message: res.body,
@@ -298,13 +298,13 @@ function CreatePatientForm(props) {
   const handlePost = (status) => {
     setNotificationVisible(true);
     if (status === 200) {
-      setNotificationBody({
+      addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "success.save.patient" }),
         kind: NotificationKinds.success,
       });
     } else {
-      setNotificationBody({
+      addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "error.save.patient" }),
         kind: NotificationKinds.error,

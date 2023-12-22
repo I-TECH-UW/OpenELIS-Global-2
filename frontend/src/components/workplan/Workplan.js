@@ -28,7 +28,7 @@ import { ConfigurationContext } from "../layout/Layout";
 
 export default function Workplan(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
-  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
   const intl = useIntl();
@@ -70,13 +70,13 @@ export default function Workplan(props) {
   const reportStatus = (pdfGenerated) => {
     setNotificationVisible(true);
     if (pdfGenerated) {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "success.report.status" }),
       });
     } else {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "error.report.status" }),

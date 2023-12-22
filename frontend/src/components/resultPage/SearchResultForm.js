@@ -44,7 +44,7 @@ function ResultSearchPage() {
 }
 
 export function SearchResultForm(props) {
-  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
   const [tests, setTests] = useState([]);
@@ -89,7 +89,7 @@ export function SearchResultForm(props) {
       }
     } else {
       props.setResults?.({ testResult: [] });
-      setNotificationBody({
+      addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "result.search.nopatient" }),
         kind: NotificationKinds.warning,
@@ -509,7 +509,7 @@ export function SearchResultForm(props) {
 }
 
 export function SearchResults(props) {
-  const { notificationVisible, setNotificationBody, setNotificationVisible } =
+  const { notificationVisible, addNotification, setNotificationVisible } =
     useContext(NotificationContext);
   const { configurationProperties } = useContext(ConfigurationContext);
 
@@ -1032,7 +1032,7 @@ export function SearchResults(props) {
     allrejectedItems[rowId] = checked;
     setRejectedItems(allrejectedItems);
 
-    setNotificationBody({
+    addNotification({
       title: intl.formatMessage({ id: "notification.title" }),
       message: intl.formatMessage({ id: "result.reject.warning" }),
       kind: NotificationKinds.warning,
@@ -1057,7 +1057,7 @@ export function SearchResults(props) {
     handleChange(e, rowId);
     if (acceptAsIs[rowId] == undefined) {
       alert(intl.formatMessage({ id: "result.acceptasis.warning" }));
-      setNotificationBody({
+      addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "result.acceptasis.warning" }),
         kind: NotificationKinds.warning,
@@ -1087,13 +1087,13 @@ export function SearchResults(props) {
   const setResponse = (resp) => {
     console.debug("setStatus" + JSON.stringify(resp));
     if (resp) {
-      setNotificationBody({
+      addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
         message: createMesssage(resp),
         kind: NotificationKinds.success,
       });
     } else {
-      setNotificationBody({
+      addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "error.save.msg" }),
         kind: NotificationKinds.error,

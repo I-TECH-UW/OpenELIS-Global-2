@@ -30,7 +30,7 @@ import { NotificationContext } from "../layout/Layout";
 import { NotificationKinds } from "../common/CustomNotification";
 
 function SearchPatientForm(props) {
-  const { setNotificationVisible, setNotificationBody } =
+  const { setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
   const intl = useIntl();
@@ -71,7 +71,7 @@ function SearchPatientForm(props) {
       patientsResults.forEach((item) => (item.id = item.patientID));
       setPatientSearchResults(patientsResults);
     } else {
-      setNotificationBody({
+      addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "patient.search.nopatient" }),
         kind: NotificationKinds.warning,

@@ -21,7 +21,7 @@ import UserSessionDetailsContext from "../UserSessionDetailsContext";
 import { ConfigurationContext, NotificationContext } from "./layout/Layout";
 
 function Login(props) {
-  const { notificationVisible, setNotificationBody, setNotificationVisible } =
+  const { notificationVisible, addNotification, setNotificationVisible } =
     useContext(NotificationContext);
   const { configurationProperties } = useContext(ConfigurationContext);
 
@@ -88,7 +88,7 @@ function Login(props) {
         if (response.status === 200) {
           window.location.href = "/";
         } else {
-          setNotificationBody({
+          addNotification({
             title: props.intl.formatMessage({
               id: "notification.title",
             }),
@@ -102,7 +102,7 @@ function Login(props) {
       })
       .catch((error) => {
         setSubmitting(false);
-        setNotificationBody({
+        addNotification({
           title: props.intl.formatMessage({
             id: "notification.title",
           }),

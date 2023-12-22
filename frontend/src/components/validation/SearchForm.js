@@ -26,7 +26,7 @@ import { NotificationKinds } from "../common/CustomNotification";
 import { format } from "date-fns";
 
 const SearchForm = (props) => {
-  const { setNotificationVisible, setNotificationBody } =
+  const { setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
   const intl = useIntl();
@@ -79,7 +79,7 @@ const SearchForm = (props) => {
           resultList: [],
         }));
 
-        setNotificationBody({
+        addNotification({
           kind: NotificationKinds.warning,
           title: intl.formatMessage({ id: "notification.title" }),
           message: intl.formatMessage({ id: "validation.search.noresult" }),

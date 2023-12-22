@@ -99,7 +99,7 @@ export const QuestionnaireResponse = ({ questionnaireResponse }) => {
 function ImmunohistochemistryCaseView() {
   const componentMounted = useRef(false);
 
-  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
   const intl = useIntl();
@@ -155,13 +155,13 @@ function ImmunohistochemistryCaseView() {
       const save2 = document.getElementById("pathology_save2");
       save1.disabled = true;
       save2.disabled = true;
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "save.success" }),
       });
     } else {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "error.save.msg" }),
@@ -173,7 +173,7 @@ function ImmunohistochemistryCaseView() {
     setNotificationVisible(true);
     setLoadingReport(false);
     if (pdfGenerated) {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "success.report.status" }),
@@ -198,7 +198,7 @@ function ImmunohistochemistryCaseView() {
         reports: newReports,
       });
     } else {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "error.report.status" }),

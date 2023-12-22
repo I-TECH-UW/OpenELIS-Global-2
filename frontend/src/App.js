@@ -75,21 +75,23 @@ export default function App() {
         return jsonResp;
       } catch (error) {
         console.error(error);
-        const options = {
-          title: "System Error",
-          message: "Error : " + error.message,
-          buttons: [
-            {
-              label: "OK",
-              onClick: () => {
-                window.location.href = window.location.origin;
+        if (counter === 10) {
+          const options = {
+            title: "System Error",
+            message: "Error : " + error.message,
+            buttons: [
+              {
+                label: "OK",
+                onClick: () => {
+                  window.location.href = window.location.origin;
+                },
               },
-            },
-          ],
-          closeOnClickOutside: false,
-          closeOnEscape: false,
-        };
-        confirmAlert(options);
+            ],
+            closeOnClickOutside: false,
+            closeOnEscape: false,
+          };
+          confirmAlert(options);
+        }
       }
       ++counter;
     }

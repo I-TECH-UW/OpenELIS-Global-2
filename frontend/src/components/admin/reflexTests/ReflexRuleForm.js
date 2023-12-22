@@ -86,7 +86,7 @@ function ReflexRule() {
   const [counter, setCounter] = useState(0);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
-  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
   useEffect(() => {
@@ -286,13 +286,13 @@ function ReflexRule() {
   const handleDelete = (status) => {
     setNotificationVisible(true);
     if (status == "200") {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "success.deleted.msg" }),
       });
     } else {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "error.deleted.msg" }),
@@ -327,13 +327,13 @@ function ReflexRule() {
     if (status == "200") {
       const element = document.getElementById("submit_" + index);
       element.disabled = true;
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "save.success" }),
       });
     } else {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "error.duplicate.calculationname" }),

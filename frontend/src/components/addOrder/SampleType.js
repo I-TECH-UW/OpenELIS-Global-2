@@ -50,7 +50,7 @@ const SampleType = (props) => {
   const [referralOrganizations, setReferralOrganizations] = useState([]);
   const [testSearchTerm, setTestSearchTerm] = useState("");
   const [referralRequests, setReferralRequests] = useState([]);
-  const { setNotificationVisible, setNotificationBody } =
+  const { setNotificationVisible, addNotification } =
     useContext(NotificationContext);
   const [rejectionReasonsDisabled, setRejectionReasonsDisabled] =
     useState(true);
@@ -311,7 +311,7 @@ const SampleType = (props) => {
 
   function handleRejection(checked) {
     if (checked) {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.warning,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "reject.order.sample.notification" }),

@@ -54,7 +54,7 @@ const Index = () => {
   let CrossPanels = [];
   let CrossTests = [];
 
-  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
   const { configurationProperties } = useContext(ConfigurationContext);
 
@@ -509,7 +509,7 @@ const Index = () => {
 
   const showAlertMessage = (msg, kind) => {
     setNotificationVisible(true);
-    setNotificationBody({
+    addNotification({
       kind: kind,
       title: intl.formatMessage({ id: "notification.title" }),
       message: msg,

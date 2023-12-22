@@ -24,7 +24,7 @@ import { ConfigurationContext, NotificationContext } from "../layout/Layout";
 import { NotificationKinds } from "../common/CustomNotification";
 
 const EOrder = ({ eOrders, setEOrders, eOrderRef }) => {
-  const { setNotificationVisible, setNotificationBody } =
+  const { setNotificationVisible, addNotification } =
     useContext(NotificationContext);
   const { configurationProperties } = useContext(ConfigurationContext);
 
@@ -83,7 +83,7 @@ const EOrder = ({ eOrders, setEOrders, eOrderRef }) => {
   function accessionNumberValidationResults(res) {
     if (res.status === false) {
       setNotificationVisible(true);
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
         message: res.body,

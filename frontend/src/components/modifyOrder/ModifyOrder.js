@@ -78,12 +78,12 @@ const ModifyOrder = () => {
     }
   };
 
-  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
   const showAlertMessage = (msg, kind) => {
     setNotificationVisible(true);
-    setNotificationBody({
+    addNotification({
       kind: kind,
       title: intl.formatMessage({ id: "notification.title" }),
       message: msg,

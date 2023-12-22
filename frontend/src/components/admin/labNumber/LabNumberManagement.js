@@ -34,7 +34,7 @@ function LabNumberManagement() {
 
   const { configurationProperties, reloadConfiguration } =
     useContext(ConfigurationContext);
-  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
   const [currentLabNumForDisplay, setCurrentLabNumForDisplay] = useState(
@@ -78,7 +78,7 @@ function LabNumberManagement() {
     setNotificationVisible(true);
     setIsSubmitting(false);
     if (res.status == "200") {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "success.add.edited.msg" }),
@@ -86,7 +86,7 @@ function LabNumberManagement() {
       var body = await res.json();
       setLabNumberValues({ ...LabNumberFormValues, ...body });
     } else {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "error.add.edited.msg" }),
