@@ -166,12 +166,14 @@ const Index = () => {
 
       const urlParams = new URLSearchParams(window.location.search);
       const externalId = urlParams.get("ID");
+      const labNumber = urlParams.get("labNumber");
 
       newOrderFormValues = {
         ...newOrderFormValues,
         sampleOrderItems: {
           ...newOrderFormValues.sampleOrderItems,
           externalOrderNumber: externalId,
+          labNo: labNumber,
         },
       };
       setOrderFormValues(newOrderFormValues);
@@ -583,13 +585,14 @@ const Index = () => {
     const labNumber = new URLSearchParams(window.location.search).get(
       "labNumber",
     );
-    setOrderFormValues({
+    const newOrderFormValues = {
       ...orderFormValues,
       sampleOrderItems: {
         ...orderFormValues.sampleOrderItems,
         labNo: labNumber ? labNumber : "",
       },
-    });
+    };
+    setOrderFormValues(newOrderFormValues);
   }, []);
 
   const attacheSamplesToFormValues = () => {

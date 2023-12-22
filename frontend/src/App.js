@@ -31,6 +31,7 @@ import PathologyCaseView from "./components/pathology/PathologyCaseView";
 import ImmunohistochemistryDashboard from "./components/immunohistochemistry/ImmunohistochemistryDashboard";
 import ImmunohistochemistryCaseView from "./components/immunohistochemistry/ImmunohistochemistryCaseView";
 import RoutedResultsViewer from "./components/patient/resultsViewer/results-viewer.tsx";
+import EOrderPage from "./components/eOrder/Index";
 
 export default function App() {
   let i18nConfig = {
@@ -253,6 +254,12 @@ export default function App() {
                   path="/FindOrder"
                   exact
                   component={() => <FindOrder />}
+                  role="Reception"
+                />
+                <SecureRoute
+                  path="/EOrder"
+                  exact
+                  component={() => <EOrderPage />}
                   role="Reception"
                 />
                 <SecureRoute

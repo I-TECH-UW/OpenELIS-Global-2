@@ -232,9 +232,7 @@ function OEHeader(props) {
                           <SideNavMenuItem href="/FindOrder">
                             <FormattedMessage id="sidenav.label.editorder" />
                           </SideNavMenuItem>
-                          <SideNavMenuItem
-                            href={config.serverBaseUrl + "/ElectronicOrders"}
-                          >
+                          <SideNavMenuItem href={"/EOrder"}>
                             <FormattedMessage id="sidenav.label.incomingorder" />
                           </SideNavMenuItem>
                           <SideNavMenuItem

@@ -182,32 +182,37 @@ function LabNumberManagement() {
           </div>
           {labNumberValues.labNumberType === "ALPHANUM" && (
             <>
-              <div className="inlineDiv">
-                <Checkbox
-                  type="checkbox"
-                  name="usePrefix"
-                  id="usePrefix"
-                  labelText={intl.formatMessage({ id: "labNumber.usePrefix" })}
-                  checked={labNumberValues.usePrefix}
-                  onClick={() => {
-                    const updatedValues = { ...labNumberValues };
-                    updatedValues.usePrefix = !labNumberValues.usePrefix;
-                    setLabNumberValues(updatedValues);
-                  }}
-                />
-              </div>
-              <div className="inlineDiv">
-                <TextInput
-                  type="text"
-                  name="alphanumPrefix"
-                  id="alphanumPrefix"
-                  labelText={intl.formatMessage({ id: "labNumber.prefix" })}
-                  disabled={!labNumberValues.usePrefix}
-                  value={labNumberValues.alphanumPrefix}
-                  onChange={handleFieldChange}
-                  enableCounter={true}
-                  maxCount={5}
-                />
+              <div className="formInlineDiv">
+                <div className="formInlineDiv">
+                  <TextInput
+                    type="text"
+                    name="alphanumPrefix"
+                    id="alphanumPrefix"
+                    labelText={intl.formatMessage({ id: "labNumber.prefix" })}
+                    disabled={!labNumberValues.usePrefix}
+                    value={labNumberValues.alphanumPrefix}
+                    onChange={handleFieldChange}
+                    enableCounter={true}
+                    maxCount={5}
+                  />
+                  <span className="middleAlignVertical">
+                    <Checkbox
+                      type="checkbox"
+                      name="usePrefix"
+                      id="usePrefix"
+                      labelText={intl.formatMessage({
+                        id: "labNumber.usePrefix",
+                      })}
+                      checked={labNumberValues.usePrefix}
+                      onClick={() => {
+                        const updatedValues = { ...labNumberValues };
+                        updatedValues.usePrefix = !labNumberValues.usePrefix;
+                        setLabNumberValues(updatedValues);
+                      }}
+                    />
+                  </span>
+                </div>
+                <div></div>
               </div>
             </>
           )}

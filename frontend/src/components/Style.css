@@ -163,6 +163,31 @@ button {
   margin-left : 1%
 }
 
+.middleAlign {
+  height: 100%;
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+}
+
+.middleAlignHorizontal {
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+}
+.middleAlignVertical {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  /* justify-content: center; */
+}
+.bottomAlign {
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  /* justify-content: center; */
+}
+
 .formInlineDiv {
   /* display: flex;
   flex-wrap: nowrap;
