@@ -161,6 +161,10 @@ function ProgramManagement() {
     };
   }, []);
 
+  const additionalOrderEntryQuestionsAreJson = isJson(
+    programValues.additionalOrderEntryQuestions,
+  );
+
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
@@ -259,12 +263,19 @@ function ProgramManagement() {
               name="additionalOrderEntryQuestions"
               id="additionalOrderEntryQuestions"
               labelText="Questionnaire"
-              value={programValues.additionalOrderEntryQuestions}
+              value={programValues.additionalOrderEntryQuestions || ""}
               onChange={handleFieldChange}
+              invalid={
+                !additionalOrderEntryQuestionsAreJson &&
+                programValues.additionalOrderEntryQuestions !== ""
+              }
+              invalidText={intl.formatMessage({ id: "invalid.json" })}
             />
-            {isJson(programValues.additionalOrderEntryQuestions) && (
+            {additionalOrderEntryQuestionsAreJson && (
               <div>
-                <FormLabel>Example</FormLabel>
+                <FormLabel>
+                  <FormattedMessage id="example" />
+                </FormLabel>
                 <div className="exampleDiv">
                   <Questionnaire
                     questionnaire={JSON.parse(
@@ -275,7 +286,7 @@ function ProgramManagement() {
               </div>
             )}
           </div>
-
+          <br></br>
           <div>
             <Button type="submit">
               <FormattedMessage id="label.button.submit" />

@@ -635,5 +635,7 @@
     "eorder.instructions.enter1":"Test Requests Matching Search - In the ",
     "eorder.instructions.enter2":" menu, add a lab number and select ",
     "eorder.instructions.enter3":" to accept the order as is, or select ",
-    "eorder.instructions.enter4":" to make changes "
+    "eorder.instructions.enter4":" to make changes ",
+    "invalid.json": "JSON is invalid",
+    "example": "Example"
 }

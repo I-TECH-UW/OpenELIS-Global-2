@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import {
   Form,
-  FormLabel,
   Heading,
   TextInput,
   Button,
@@ -65,6 +64,7 @@ function BillingMenuManagement() {
   }
 
   const handleMenuItems = (res) => {
+    setLoading(false);
     if (res) {
       setMenuItem(res);
     }
@@ -72,6 +72,7 @@ function BillingMenuManagement() {
 
   useEffect(() => {
     componentMounted.current = true;
+    setLoading(true);
     getFromOpenElisServer("/rest/menu/menu_billing", handleMenuItems);
     return () => {
       componentMounted.current = false;
@@ -98,7 +99,7 @@ function BillingMenuManagement() {
                     labelText={intl.formatMessage({
                       id: "menu.billing.address",
                     })}
-                    value={menuItem.menu.actionURL}
+                    value={menuItem.menu.actionURL || ""}
                     onChange={(e) => {
                       setMenuItem({
                         ...menuItem,
@@ -114,7 +115,7 @@ function BillingMenuManagement() {
                     labelText={intl.formatMessage({
                       id: "menu.billing.active",
                     })}
-                    checked={menuItem.menu.isActive}
+                    checked={menuItem.menu.isActive || false}
                     onChange={(_, { checked }) => {
                       setMenuItem({
                         ...menuItem,
