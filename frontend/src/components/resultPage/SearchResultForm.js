@@ -330,51 +330,29 @@ export function SearchResultForm(props) {
                   <>
                     <Column lg={3}>
                       <Field name="collectionDate">
-                        {({ field, form }) => (
-                          <DatePicker
-                            id={field.name}
+                        {({ field }) => (
+                          <TextInput
+                            placeholder={"Collection Date(dd/mm/yyyy)"}
                             name={field.name}
-                            datePickerType="single"
-                            dateFormat="d/m/Y"
-                            onChange={(date) =>
-                              form.setFieldValue(
-                                field.name,
-                                new Date(date).toLocaleDateString("fr-FR")
-                              )
+                            id={field.name}
+                            labelText={
+                              <FormattedMessage id="search.label.collectiondate" />
                             }
-                          >
-                            <DatePickerInput
-                              labelText={
-                                <FormattedMessage id="search.label.collectiondate" />
-                              }
-                              placeholder="dd/mm/yyyy"
-                            />
-                          </DatePicker>
+                          />
                         )}
                       </Field>
                     </Column>
                     <Column lg={3}>
                       <Field name="recievedDate">
-                        {({ field, form }) => (
-                          <DatePicker
-                            id={field.name}
+                        {({ field }) => (
+                          <TextInput
+                            placeholder={"Received Date(dd/mm/yyyy)"}
                             name={field.name}
-                            datePickerType="single"
-                            dateFormat="d/m/Y"
-                            onChange={(date) =>
-                              form.setFieldValue(
-                                field.name,
-                                new Date(date).toLocaleDateString("fr-FR")
-                              )
+                            id={field.name}
+                            labelText={
+                              <FormattedMessage id="search.label.recieveddate" />
                             }
-                          >
-                            <DatePickerInput
-                              labelText={
-                                <FormattedMessage id="search.label.recieveddate" />
-                              }
-                              placeholder="dd/mm/yyyy"
-                            />
-                          </DatePicker>
+                          />
                         )}
                       </Field>
                     </Column>
@@ -547,7 +525,7 @@ export function SearchResults(props) {
   const [rejectedItems, setRejectedItems] = useState({});
   const saveStatus = "";
 
-  const componentMounted = useRef(false);
+  const componentMounted = useRef(true);
 
   useEffect(() => {
     componentMounted.current = true;
@@ -700,7 +678,7 @@ export function SearchResults(props) {
   const renderCell = (row, index, column, id) => {
     let formatLabNum = configurationProperties.AccessionFormat === "ALPHANUM";
 
-    console.debug("renderCell: index: " + index + ", id: " + id);
+    console.log("renderCell: index: " + index + ", id: " + id);
     switch (column.id) {
       case "sampleInfo":
         // return <input id={"results_" + id} type="text" size="6"></input>
@@ -1021,18 +999,16 @@ export function SearchResults(props) {
   );
 
   const validateResults = (e, rowId) => {
-    console.debug("validateResults:" + e.target.value);
+    console.log("validateResults:" + e.target.value);
     // e.target.value;
     handleChange(e, rowId);
   };
 
   const handleChange = (e, rowId) => {
     const { name, id, value } = e.target;
-    console.debug(
-      "handleChange:" + id + ":" + name + ":" + value + ":" + rowId,
-    );
+    console.log("handleChange:" + id + ":" + name + ":" + value + ":" + rowId);
     // setState({value: e.target.value})
-    console.debug("State updated to ", e.target.value);
+    // console.log('State updated to ', e.target.value);
     var form = props.results;
     var jp = require("jsonpath");
     jp.value(form, name, value);
@@ -1065,7 +1041,7 @@ export function SearchResults(props) {
   };
 
   const handleDatePickerChange = (date, rowId) => {
-    console.debug("handleDatePickerChange:" + date);
+    console.log("handleDatePickerChange:" + date);
     const d = new Date(date).toLocaleDateString("fr-FR");
     var form = props.results;
     var jp = require("jsonpath");
@@ -1075,7 +1051,7 @@ export function SearchResults(props) {
   };
 
   const handleAcceptAsIsChange = (e, rowId) => {
-    console.debug("handleAcceptAsIsChange:" + acceptAsIs[rowId]);
+    console.log("handleAcceptAsIsChange:" + acceptAsIs[rowId]);
     handleChange(e, rowId);
     if (acceptAsIs[rowId] == undefined) {
       alert(intl.formatMessage({ id: "result.acceptasis.warning" }));
@@ -1092,7 +1068,7 @@ export function SearchResults(props) {
   };
 
   const handleSave = (values) => {
-    console.debug("handleSave:" + values);
+    //console.log("handleSave:" + values);
     values.status = saveStatus;
     var searchEndPoint = "/rest/ReactLogbookResultsUpdate";
     props.results.testResult.forEach((result) => {
@@ -1107,7 +1083,7 @@ export function SearchResults(props) {
   };
 
   const setResponse = (resp) => {
-    console.debug("setStatus" + JSON.stringify(resp));
+    console.log("setStatus" + JSON.stringify(resp));
     if (resp) {
       setNotificationBody({
         title: intl.formatMessage({ id: "notification.title" }),
