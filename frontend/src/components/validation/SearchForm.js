@@ -107,7 +107,8 @@ const SearchForm = (props) => {
       ? values.accessionNumber.split("-")[0]
       : "";
     var unitType = values.unitType ? values.unitType : "";
-    var date = testDate ? testDate : values.defaultDate;
+    var defaultDate = values.defaultDate ? values.defaultDate : "";
+    var date = testDate ? testDate : defaultDate;
     let searchEndPoint =
       "/rest/accessionValidation?" +
       "accessionNumber=" +
