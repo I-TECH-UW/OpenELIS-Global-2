@@ -51,7 +51,9 @@ function SearchOrder() {
                 id="labNumber"
                 name="labNumber"
                 value={accessionNumber}
-                onChange={(e, value) => setAccessionNumber(value)}
+                onChange={(e, rawVal) =>
+                  setAccessionNumber(rawVal ? rawVal : e?.target?.value)
+                }
                 labelText={<FormattedMessage id="search.label.accession" />}
               />
             </Column>
