@@ -87,8 +87,10 @@ const RoutedResultsViewer: React.FC<ResultsViewerProps> = () => {
         <Grid fullWidth={true}>
           <Column lg={16}>
             <EmptyState
-              headerTitle={t("testResults", "Test Results")}
-              displayText={t("testResultsData", "Test results data")}
+              headerTitle={intl.formatMessage({ id: "label.test.results" })}
+              displayText={intl.formatMessage({
+                id: "label.test.resultsData",
+              })}
             />
           </Column>
         </Grid>
@@ -182,8 +184,10 @@ const RoutedResultsViewer: React.FC<ResultsViewerProps> = () => {
           <Column lg={16}>
             <div className="orderLegendBody">
               <EmptyState
-                headerTitle={t("testResults", "Test Results")}
-                displayText={t("testResultsData", "Test results data")}
+                headerTitle= {intl.formatMessage({ id: "label.test.results" })}
+                displayText={intl.formatMessage({
+                  id: "label.test.resultsData",
+                })}
               />
             </div>
           </Column>
@@ -200,11 +204,12 @@ const ResultsViewer: React.FC<ResultsViewerProps> = ({
   const { t } = useTranslation();
   const { totalResultsCount } = useContext(FilterContext);
   const { type, testUuid } = useParams();
+  const intl = useIntl();
   return (
     <div className="resultsContainer">
       <div className="resultsHeader">
-        <div className="leftSection leftHeaderSection">
-          <h4 style={{ flexGrow: 1 }}>{`${t("Results", "Results")} ${
+        <div className="leftSection leftHeaderSection desktopHeading">
+          <h4 style={{ flexGrow: 1 }}>{`${intl.formatMessage({ id: "sidenav.label.results" })} ${
             totalResultsCount ? `(${totalResultsCount})` : ""
           }`}</h4>
         </div>
