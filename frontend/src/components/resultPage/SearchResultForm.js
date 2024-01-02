@@ -330,29 +330,51 @@ export function SearchResultForm(props) {
                   <>
                     <Column lg={3}>
                       <Field name="collectionDate">
-                        {({ field }) => (
-                          <TextInput
-                            placeholder={"Collection Date(dd/mm/yyyy)"}
-                            name={field.name}
+                        {({ field, form }) => (
+                          <DatePicker
                             id={field.name}
-                            labelText={
-                              <FormattedMessage id="search.label.collectiondate" />
+                            name={field.name}
+                            datePickerType="single"
+                            dateFormat="d/m/Y"
+                            onChange={(date) =>
+                              form.setFieldValue(
+                                field.name,
+                                new Date(date).toLocaleDateString("fr-FR")
+                              )
                             }
-                          />
+                          >
+                            <DatePickerInput
+                              labelText={
+                                <FormattedMessage id="search.label.collectiondate" />
+                              }
+                              placeholder="dd/mm/yyyy"
+                            />
+                          </DatePicker>
                         )}
                       </Field>
                     </Column>
                     <Column lg={3}>
                       <Field name="recievedDate">
-                        {({ field }) => (
-                          <TextInput
-                            placeholder={"Received Date(dd/mm/yyyy)"}
-                            name={field.name}
+                        {({ field, form }) => (
+                          <DatePicker
                             id={field.name}
-                            labelText={
-                              <FormattedMessage id="search.label.recieveddate" />
+                            name={field.name}
+                            datePickerType="single"
+                            dateFormat="d/m/Y"
+                            onChange={(date) =>
+                              form.setFieldValue(
+                                field.name,
+                                new Date(date).toLocaleDateString("fr-FR")
+                              )
                             }
-                          />
+                          >
+                            <DatePickerInput
+                              labelText={
+                                <FormattedMessage id="search.label.recieveddate" />
+                              }
+                              placeholder="dd/mm/yyyy"
+                            />
+                          </DatePicker>
                         )}
                       </Field>
                     </Column>
