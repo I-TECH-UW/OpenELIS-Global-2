@@ -22,6 +22,7 @@ import { postToOpenElisServer, getFromOpenElisServer } from "../utils/Utils";
 import EditOrderEntryAdditionalQuestions from "./EditOrderEntryAdditionalQuestions";
 import OrderSuccessMessage from "../addOrder/OrderSuccessMessage";
 import { FormattedMessage, useIntl } from "react-intl";
+import PatientHeader from "../common/PatientHeader";
 
 export let sampleObject = {
   index: 0,
@@ -210,58 +211,18 @@ const ModifyOrder = () => {
         </Column>
       </Grid>
 
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Section>
-            <Section>
-              {orderFormValues?.sampleOrderItems ? (
-                <div className="patient-header">
-                  <div className="patient-name">
-                    <Tag type="blue">
-                      <FormattedMessage id="patient.label.name" /> :
-                    </Tag>
-                    {orderFormValues.patientName}
-                  </div>
-                  <div className="patient-dob">
-                    {" "}
-                    <Tag type="blue">
-                      <FormattedMessage id="patient.label.sex" /> :
-                    </Tag>
-                    {orderFormValues.gender === "M" ? (
-                      <FormattedMessage id="patient.male" />
-                    ) : (
-                      <FormattedMessage id="patient.female" />
-                    )}{" "}
-                    <Tag type="blue">
-                      <FormattedMessage id="patient.dob" /> :
-                    </Tag>{" "}
-                    {orderFormValues.dob}
-                  </div>
-                  <div className="patient-id">
-                    <Tag type="blue">
-                      <FormattedMessage id="quick.entry.accession.number" /> :
-                    </Tag>
-                    {orderFormValues.accessionNumber}{" "}
-                  </div>
-                  <div className="patient-id">
-                    <Tag type="blue">
-                      <FormattedMessage id="patient.natioanalid" /> :
-                    </Tag>
-                    {orderFormValues.nationalId}
-                  </div>
-                </div>
-              ) : (
-                <div className="patient-header">
-                  <div className="patient-name">
-                    {" "}
-                    <FormattedMessage id="sample.label.noorder" />{" "}
-                  </div>
-                </div>
-              )}
-            </Section>
-          </Section>
-        </Column>
-      </Grid>
+
+      <PatientHeader
+        id={orderFormValues?.nationalId}
+        patientName={orderFormValues?.patientName}
+        gender={orderFormValues?.gender}
+        dob={orderFormValues?.dob}
+        nationalId={orderFormValues?.nationalId}
+        accesionNumber={orderFormValues?.accessionNumber}
+        isOrderPage={true}
+      >
+        {" "}
+      </PatientHeader>
       <Stack gap={10}>
         <div className="pageContent">
           {notificationVisible === true ? <AlertDialog /> : ""}
