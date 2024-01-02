@@ -11,11 +11,17 @@ const PatientHeader = (props) => {
     firstName,
     gender,
     dob,
+    age = null,
     patientName = null,
     subjectNumber = null,
-    nationalId,
+    nationalId = null,
     accesionNumber = null,
+    orderDate = null,
+    referringFacility = null,
+    department = null,
+    requester = null,
     isOrderPage = false,
+    className = "patient-header",
   } = props;
   const patternUrl = GeoPattern.generate(id).toDataUri();
   return (
@@ -24,9 +30,9 @@ const PatientHeader = (props) => {
         <Section>
           <Section>
             {id ? (
-              <div className="patient-header">
+              <div className={className}>
                 <Grid>
-                  <Column lg={5}>
+                  <Column lg={4}>
                     <div className="patientAvatar" role="img">
                       <Avatar
                         alt={"Patient avatar"}
@@ -59,16 +65,23 @@ const PatientHeader = (props) => {
                         <FormattedMessage id="patient.female" />
                       )}{" "}
                       <Tag type="blue">
-                        <FormattedMessage id="patient.dob" /> :
+                        {age ? (
+                          <FormattedMessage id="patient.label.age" />
+                        ) : (
+                          <FormattedMessage id="patient.dob" />
+                        )}{" "}
+                        :
                       </Tag>{" "}
-                      {dob}
+                      {age ? age : dob}
                     </div>
-                    <div className="patient-id">
-                      <Tag type="blue">
-                        <FormattedMessage id="patient.natioanalid" /> :
-                      </Tag>
-                      {nationalId}
-                    </div>
+                    {nationalId && (
+                      <div className="patient-id">
+                        <Tag type="blue">
+                          <FormattedMessage id="patient.natioanalid" /> :
+                        </Tag>
+                        {nationalId}
+                      </div>
+                    )}
                     {subjectNumber && (
                       <div className="patient-id">
                         <Tag type="blue">
@@ -86,11 +99,38 @@ const PatientHeader = (props) => {
                         {accesionNumber}{" "}
                       </div>
                     )}
+                    {orderDate && (
+                      <div className="patient-id">
+                        <div className="patient-id">
+                          <Tag type="blue">
+                            <FormattedMessage id="sample.label.orderdate" /> :
+                          </Tag>
+                          {orderDate}
+
+                          <Tag type="blue">
+                          <FormattedMessage id="sample.label.requester" />: :
+                        </Tag>
+                        {requester}
+                        </div>
+                      </div>
+                    )}
+                    {referringFacility && (
+                      <div className="patient-id">
+                        <Tag type="blue">
+                          <FormattedMessage id="sample.label.facility" />:
+                        </Tag>
+                        {referringFacility}{" "}
+                        <Tag type="blue">
+                          <FormattedMessage id="sample.label.dept" /> :
+                        </Tag>{" "}
+                        {department}
+                      </div>
+                    )}
                   </Column>
                 </Grid>
               </div>
             ) : (
-              <div className="patient-header">
+              <div className={className}>
                 <div className="patient-name">
                   {" "}
                   {isOrderPage ? (

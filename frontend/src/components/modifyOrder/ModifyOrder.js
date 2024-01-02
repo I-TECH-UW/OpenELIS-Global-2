@@ -219,6 +219,7 @@ const ModifyOrder = () => {
         dob={orderFormValues?.dob}
         nationalId={orderFormValues?.nationalId}
         accesionNumber={orderFormValues?.accessionNumber}
+        className="patient-header3"
         isOrderPage={true}
       >
         {" "}
