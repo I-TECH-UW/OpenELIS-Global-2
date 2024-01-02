@@ -42,7 +42,9 @@
     "styled-components": "^5.3.6",
     "swr": "2.0.3",
     "web-vitals": "^2.1.4",
-    "yup": "^0.29.2"
+    "yup": "^0.29.2",
+    "react-avatar": "5.0.3" ,
+    "geopattern":"1.2.3"
   },
   "scripts": {
     "start": "GENERATE_SOURCEMAP=false HTTPS=true react-scripts start",
