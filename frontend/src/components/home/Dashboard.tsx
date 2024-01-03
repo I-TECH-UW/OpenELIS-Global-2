@@ -103,12 +103,26 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
       value: counts.delayedTurnAround,
     },
   ];
+
+  const handleClick = (buttonId: number) =>{
+    alert(`You Pressed Button with ID ${buttonId}`);
+  }
   return (
     <>
       {loading && <Loading description="Loading Dasboard..." />}
       <div className="dashboard-container">
         {tileList.map((tile, index) => (
-          <ClickableTile key={index} className="dashboard-tile">
+          <ClickableTile key={index} className="dashboard-tile"
+          // onClick={(e) => {
+          //   e.preventDefault();
+          //   alert("Jesus Loves Me !"+ index);
+          // }}
+
+          onClick={(e) => {
+            e.preventDefault();
+            handleClick(index);
+          }}
+          >
             <h3 className="tile-title">{tile.title}</h3>
             <p className="tile-subtitle">{tile.subTitle}</p>
             <p className="tile-value">{tile.value}</p>
