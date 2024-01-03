@@ -241,6 +241,7 @@ const AddOrder = (props) => {
       sampleOrderItems: {
         ...orderFormValues.sampleOrderItems,
         referringSiteName: e.target.value,
+        referringSiteId: "",
       },
     });
   }
@@ -251,6 +252,7 @@ const AddOrder = (props) => {
       sampleOrderItems: {
         ...orderFormValues.sampleOrderItems,
         referringSiteId: siteId,
+        referringSiteName: "",
       },
     });
   }
@@ -505,6 +507,11 @@ const AddOrder = (props) => {
                   configurationProperties.restrictFreeTextRefSiteEntry ===
                   "true"
                 )
+              }
+              value={
+                orderFormValues.sampleOrderItems.referringSiteId != ""
+                  ? orderFormValues.sampleOrderItems.referringSiteId
+                  : orderFormValues.sampleOrderItems.referringSiteName
               }
               onChange={handleSiteName}
               onSelect={handleAutoCompleteSiteName}
