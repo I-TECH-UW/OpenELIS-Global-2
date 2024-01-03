@@ -41,7 +41,7 @@ const PatientHeader = (props) => {
                           patientName ? patientName : lastName + " " + firstName
                         }
                         src={""}
-                        size={"120"}
+                        size={referringFacility ? "140" : "120"}
                         textSizeRatio={2}
                         style={{
                           backgroundImage: `url(${patternUrl})`,
