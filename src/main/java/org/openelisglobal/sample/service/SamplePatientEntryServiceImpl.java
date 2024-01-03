@@ -216,7 +216,9 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         }
 
         if (updateData.getProgramSample() != null) {
-            updateData.getProgramSample().setQuestionnaireResponseUuid(UUID.randomUUID());
+            if(updateData.getProgramQuestionnaireResponse() != null){
+              updateData.getProgramSample().setQuestionnaireResponseUuid(UUID.randomUUID());
+            }
             updateData.getProgramSample().setSample(updateData.getSample());
 
             if (updateData.getProgramSample() instanceof PathologySample) {

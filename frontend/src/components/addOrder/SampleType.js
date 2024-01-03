@@ -486,6 +486,7 @@ const SampleType = (props) => {
             value={sampleXml.collectionDate}
             labelText={intl.formatMessage({ id: "sample.collection.date" })}
             className="inputText"
+            disallowFutureDate={true}
           />
 
           <CustomTimePicker
