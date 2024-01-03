@@ -13,6 +13,12 @@
     background-color: #f4f4f4;
 }
 
+.expandable-below-tile {
+    border-radius: 3px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f4f4f4;
+}
+
 .tile-title {
     margin: 0;
     font-size: 1.2rem;

@@ -1,5 +1,5 @@
 import React from "react";
-import { Tile, ClickableTile, Loading } from "@carbon/react";
+import { Tile, ClickableTile, ExpandableTile, TileAboveTheFoldContent, TileBelowTheFoldContent, Loading } from "@carbon/react";
 import "./Dashboard.css";
 import { ArrowUpRight } from "@carbon/react/icons";
 import { useState, useEffect, useRef } from "react";
@@ -104,8 +104,8 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     },
   ];
 
-  const handleClick = (buttonId: number) =>{
-    alert(`You Pressed Button with ID ${buttonId}`);
+  const handleClick = (buttonId: any) =>{
+    alert(`You Pressed Button ${buttonId}`);
   }
   return (
     <>
@@ -113,11 +113,6 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
       <div className="dashboard-container">
         {tileList.map((tile, index) => (
           <ClickableTile key={index} className="dashboard-tile"
-          // onClick={(e) => {
-          //   e.preventDefault();
-          //   alert("Jesus Loves Me !"+ index);
-          // }}
-
           onClick={(e) => {
             e.preventDefault();
             handleClick(index);
@@ -130,8 +125,30 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
               <ArrowUpRight size={20} className="clickable-icon" />
             </div>
           </ClickableTile>
+          
         ))}
       </div>
+      
+      {tileList.map((tile, index) => ( 
+      <div className="dashboard-container">
+      <ExpandableTile id="expandable-tile-1" className="dashboard-tile" tileCollapsedIconText="Interact to Expand tile" 
+      tileExpandedIconText="Interact to Collapse tile">
+      
+      <TileAboveTheFoldContent className="dashboard-tile">
+      <h3 className="tile-title">{tile.title}</h3>
+      <p className="tile-subtitle">{tile.subTitle}</p>
+      <p className="tile-value">{tile.value}</p>
+      </TileAboveTheFoldContent>
+
+      <TileBelowTheFoldContent className="expandable-below-tile">
+        <div style={{
+        height: '400px'
+      }}>Below the fold content here</div>
+      </TileBelowTheFoldContent>
+
+    </ExpandableTile>
+      </div>
+      ))}
     </>
   );
 };
