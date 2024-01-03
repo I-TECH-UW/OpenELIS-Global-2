@@ -637,5 +637,8 @@
     "eorder.instructions.enter3":" to accept the order as is, or select ",
     "eorder.instructions.enter4":" to make changes ",
     "invalid.json": "JSON is invalid",
-    "example": "Example"
+    "example": "Example" ,
+    "label.test.results" : "Test Results",
+    "label.test.resultsData" : "Test results data"
+
 }
