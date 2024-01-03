@@ -23,7 +23,7 @@ function TestSectionSelectForm(props) {
   useEffect(() => {
     mounted.current = true;
     let testSectionId = new URLSearchParams(window.location.search).get(
-      "test_section_id"
+      "testSectionId"
     );
     testSectionId = testSectionId ? testSectionId : "";
     getFromOpenElisServer("/rest/user-test-sections", (fetchedTestSections) => {

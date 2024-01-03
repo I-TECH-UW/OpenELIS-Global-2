@@ -23,7 +23,7 @@ function TestSelectForm(props) {
   useEffect(() => {
     mounted.current = true;
     let testId = new URLSearchParams(window.location.search).get(
-      "test_id"
+      "testId"
     );
     testId = testId ? testId : ""; 
     getFromOpenElisServer("/rest/tests", (fetchedTests) => {

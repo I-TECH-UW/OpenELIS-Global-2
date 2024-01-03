@@ -23,7 +23,7 @@ function PanelSelectForm(props) {
   useEffect(() => {
     mounted.current = true;
     let panelId = new URLSearchParams(window.location.search).get(
-      "panel_id"
+      "panelId"
     );
     panelId = panelId ? panelId : "";
     getFromOpenElisServer("/rest/panels", (fetchedPanels) => {
