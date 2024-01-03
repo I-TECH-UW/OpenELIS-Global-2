@@ -33,7 +33,12 @@ const PatientHeader = (props) => {
               <div className={className}>
                 <Grid>
                   <Column lg={4}>
-                    <div className="patientAvatar" role="img">
+                    <div
+                      className={
+                        referringFacility ? "patientAvatar2" : "patientAvatar"
+                      }
+                      role="img"
+                    >
                       <Avatar
                         alt={"Patient avatar"}
                         color="rgba(0,0,0,0)"
@@ -41,7 +46,7 @@ const PatientHeader = (props) => {
                           patientName ? patientName : lastName + " " + firstName
                         }
                         src={""}
-                        size={referringFacility ? "130" : "120"}
+                        size={referringFacility ? "150" : "120"}
                         textSizeRatio={2}
                         style={{
                           backgroundImage: `url(${patternUrl})`,
