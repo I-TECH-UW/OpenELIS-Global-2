@@ -108,10 +108,6 @@ const Index = () => {
       .catch((error) => {
         console.error(error);
         failure();
-      })
-      .catch((error) => {
-        console.error(error);
-        failure();
       });
   };
 

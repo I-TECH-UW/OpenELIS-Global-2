@@ -58,21 +58,26 @@ export default function App() {
           //includes the browser sessionId in the Header for Authentication on the backend server
           { credentials: "include" },
         );
-        const jsonResp = await response.json();
-        console.debug(JSON.stringify(jsonResp));
-        if (jsonResp.authenticated) {
-          localStorage.setItem("CSRF", jsonResp.csrf);
+        if (response.status === 200) {
+          const jsonResp = await response.json();
+          console.debug(JSON.stringify(jsonResp));
+          if (jsonResp.authenticated) {
+            localStorage.setItem("CSRF", jsonResp.csrf);
+          }
+          if (
+            !Object.keys(jsonResp).every(
+              (key) => jsonResp[key] === userSessionDetails[key],
+            )
+          ) {
+            setUserSessionDetails(jsonResp);
+          }
+          setErrorLoadingSessionDetails(false);
+          return jsonResp;
+        } else {
+          throw new Error(
+            "Did not receive a successful response from the backend while retrieving user session details",
+          );
         }
-
-        if (
-          !Object.keys(jsonResp).every(
-            (key) => jsonResp[key] === userSessionDetails[key],
-          )
-        ) {
-          setUserSessionDetails(jsonResp);
-        }
-        setErrorLoadingSessionDetails(false);
-        return jsonResp;
       } catch (error) {
         console.error(error);
         if (counter === 10) {
