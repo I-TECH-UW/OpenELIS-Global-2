@@ -7,6 +7,8 @@ import { getFromOpenElisServer } from "../utils/Utils";
 function TestSelectForm(props) {
   const mounted = useRef(false);
   const [tests, setTests] = useState([]);
+  const [defaultTestId, setDefaultTestId] = useState("");
+  const [defaultTestLabel, setDefaultTestLabel] = useState("");
 
   const handleChange = (e) => {
     props.value(e.target.value, e.target.selectedOptions[0].text);
@@ -20,7 +22,18 @@ function TestSelectForm(props) {
 
   useEffect(() => {
     mounted.current = true;
-    getFromOpenElisServer("/rest/test-list", getTests);
+    let testId = new URLSearchParams(window.location.search).get(
+      "testId"
+    );
+    testId = testId ? testId : ""; 
+    getFromOpenElisServer("/rest/tests", (fetchedTests) => {
+      let test = fetchedTests.find(test => test.id === testId);
+      let testLabel = test ? test.value : "";
+      setDefaultTestId(testId);
+      setDefaultTestLabel(testLabel);
+      props.value(testId, testLabel);
+      getTests(fetchedTests);
+    })
     return () => {
       mounted.current = false;
     };
@@ -40,9 +53,11 @@ function TestSelectForm(props) {
             labelText=""
             onChange={handleChange}
           >
-            <SelectItem text="" value="" />
-            {tests.map((item, idx) => {
-              return <SelectItem key={idx} text={item.value} value={item.id} />;
+            <SelectItem text={defaultTestLabel} value={defaultTestId} />
+            {tests
+              .filter(item => item.id !== defaultTestId)
+              .map((item, idx) => {
+                return <SelectItem key={idx} text={item.value} value={item.id} />;
             })}
           </Select>
         </Column>
