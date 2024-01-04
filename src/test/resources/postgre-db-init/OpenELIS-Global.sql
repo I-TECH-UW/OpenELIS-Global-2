@@ -3254,7 +3254,7 @@ COMMENT ON COLUMN clinlims.orders.is_external IS 'Indicates if current order wil
 -- Name: COLUMN orders.external_order_number; Type: COMMENT; Schema: clinlims; Owner: clinlims
 --
 
-COMMENT ON COLUMN clinlims.orders.external_order_number IS 'External order number';
+COMMENT ON COLUMN clinlims.orders.external_order_number IS 'External lab number';
 
 
 --
@@ -4276,7 +4276,7 @@ COMMENT ON COLUMN clinlims.project.is_active IS 'Flag indicating if project is a
 -- Name: COLUMN project.reference_to; Type: COMMENT; Schema: clinlims; Owner: clinlims
 --
 
-COMMENT ON COLUMN clinlims.project.reference_to IS 'External reference information such as Grant number, contract number or purchase order number associated with this project.';
+COMMENT ON COLUMN clinlims.project.reference_to IS 'External reference information such as Grant number, contract number or purchase lab number associated with this project.';
 
 
 --
@@ -6105,7 +6105,7 @@ COMMENT ON COLUMN clinlims.sample.status_id IS 'foriegn key to status of analysi
 -- Name: COLUMN sample.referring_id; Type: COMMENT; Schema: clinlims; Owner: clinlims
 --
 
-COMMENT ON COLUMN clinlims.sample.referring_id IS 'The external number supplied the referrer.  AKA Order number';
+COMMENT ON COLUMN clinlims.sample.referring_id IS 'The external number supplied the referrer.  AKA Lab number';
 
 
 --

@@ -165,7 +165,7 @@
     "sidenav.label.results.patient" : "By Patient" ,
     "sidenav.label.results.order" : "By Order" ,
     "sidenav.label.results.testdate" : "By Test Date" ,
-    "sidenav.label.results.byrange" : "By Range of Order numbers" ,
+    "sidenav.label.results.byrange" : "By Range of Lab numbers" ,
     "sidenav.label.validation" : "Validation" ,
     "sidenav.label.validation.routine" : "Routine",
     "sidenav.label.validation.study" : "Study",

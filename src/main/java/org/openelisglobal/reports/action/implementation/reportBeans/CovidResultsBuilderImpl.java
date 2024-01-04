@@ -54,7 +54,7 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
 
     protected static final String DATE_PROPERTY_NAME = "date of test";
     protected static final String RESULT_PROPERTY_NAME = "result";
-    protected static final String ORDER_NUMBER_PROPERTY_NAME = "order number";
+    protected static final String ORDER_NUMBER_PROPERTY_NAME = "lab number";
     protected static final String PATIENT_LAST_NAME_PROPERTY_NAME = "family name";
     protected static final String PATIENT_FIRST_NAME_PROPERTY_NAME = "given name";
     protected static final String PATIENT_DATE_OF_BIRTH_PROPERTY_NAME = "date of birth";

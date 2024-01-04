@@ -48,7 +48,7 @@ describe('Order Entity', function () {
 
     });
 
-    it('Should click generate Lab Order Number', function () {
+    it('Should click generate Lab Number', function () {
         orderEntityPage.generateLabOrderNumber();
         cy.wait(1000);
     });
