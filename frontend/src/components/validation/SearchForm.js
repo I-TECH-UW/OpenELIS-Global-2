@@ -158,27 +158,33 @@ const SearchForm = (props) => {
     if (param === "order") {
       setDoRagnge(false);
     }
-    switch(searchBy){
-      case "routine":
+    switch (searchBy) {
+      case "routine": {
         let testSectionId = new URLSearchParams(window.location.search).get(
-          "testSectionId"
+          "testSectionId",
         );
         testSectionId = testSectionId ? testSectionId : "";
-        getFromOpenElisServer("/rest/user-test-sections", (fetchedTestSections) => {
-          let testSection = fetchedTestSections.find(testSection => testSection.id === testSectionId);
-          let testSectionLabel = testSection ? testSection.value : "";
-          setDefaultTestSectionId(testSectionId);
-          setDefaultTestSectionLabel(testSectionLabel);
-          fetchTestSections(fetchedTestSections);
-        })
-        if(testSectionId){
+        getFromOpenElisServer(
+          "/rest/user-test-sections",
+          (fetchedTestSections) => {
+            let testSection = fetchedTestSections.find(
+              (testSection) => testSection.id === testSectionId,
+            );
+            let testSectionLabel = testSection ? testSection.value : "";
+            setDefaultTestSectionId(testSectionId);
+            setDefaultTestSectionLabel(testSectionLabel);
+            fetchTestSections(fetchedTestSections);
+          },
+        );
+        if (testSectionId) {
           let values = { unitType: testSectionId };
           handleSubmit(values);
         }
         break;
-      
+      }
+
       case "order":
-      case "range":
+      case "range": {
         let accessionNumber = new URLSearchParams(window.location.search).get(
           "accessionNumber",
         );
@@ -191,16 +197,16 @@ const SearchForm = (props) => {
           setSearchFormValues(searchValues);
         }
         break;
-      case "testDate":
-        let date = new URLSearchParams(window.location.search).get(
-          "date",
-        )
+      }
+      case "testDate": {
+        let date = new URLSearchParams(window.location.search).get("date");
         if (date) {
           setTestDate(date);
-          handleSubmit({defaultDate: date});
+          handleSubmit({ defaultDate: date });
         }
         break;
-    } 
+      }
+    }
 
     setNextPage(null);
     setPreviousPage(null);
@@ -324,14 +330,21 @@ const SearchForm = (props) => {
                 id="unitType"
                 onChange={submitOnSelect}
               >
-                <SelectItem text={defaultTestSectionLabel} value={defaultTestSectionId} />
+                <SelectItem
+                  text={defaultTestSectionLabel}
+                  value={defaultTestSectionId}
+                />
                 {testSections
-                  .filter(item => item.id !== defaultTestSectionId)
+                  .filter((item) => item.id !== defaultTestSectionId)
                   .map((test, index) => {
-                  return (
-                    <SelectItem key={index} text={test.value} value={test.id} />
-                  );
-                })}
+                    return (
+                      <SelectItem
+                        key={index}
+                        text={test.value}
+                        value={test.id}
+                      />
+                    );
+                  })}
               </Select>
             </Column>
             <Column lg={10} />
