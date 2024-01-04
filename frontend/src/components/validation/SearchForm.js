@@ -35,6 +35,11 @@ const SearchForm = (props) => {
   const [searchBy, setSearchBy] = useState();
   const [doRange, setDoRagnge] = useState(true);
   const [testSections, setTestSections] = useState([]);
+  const [defaultTestSectionId, setDefaultTestSectionId] = useState("");
+  const [defaultTestSectionLabel, setDefaultTestSectionLabel] = useState("");
+  const [searchFormValues, setSearchFormValues] = useState(
+    ValidationSearchFormValues,
+  );
   const [testDate, setTestDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [nextPage, setNextPage] = useState(null);
@@ -102,7 +107,8 @@ const SearchForm = (props) => {
       ? values.accessionNumber.split("-")[0]
       : "";
     var unitType = values.unitType ? values.unitType : "";
-    var date = testDate ? testDate : "";
+    var defaultDate = values.defaultDate ? values.defaultDate : "";
+    var date = testDate ? testDate : defaultDate;
     let searchEndPoint =
       "/rest/accessionValidation?" +
       "accessionNumber=" +
@@ -152,16 +158,60 @@ const SearchForm = (props) => {
     if (param === "order") {
       setDoRagnge(false);
     }
-    getFromOpenElisServer("/rest/user-test-sections", fetchTestSections);
+    switch(searchBy){
+      case "routine":
+        let testSectionId = new URLSearchParams(window.location.search).get(
+          "testSectionId"
+        );
+        testSectionId = testSectionId ? testSectionId : "";
+        getFromOpenElisServer("/rest/user-test-sections", (fetchedTestSections) => {
+          let testSection = fetchedTestSections.find(testSection => testSection.id === testSectionId);
+          let testSectionLabel = testSection ? testSection.value : "";
+          setDefaultTestSectionId(testSectionId);
+          setDefaultTestSectionLabel(testSectionLabel);
+          fetchTestSections(fetchedTestSections);
+        })
+        if(testSectionId){
+          let values = { unitType: testSectionId };
+          handleSubmit(values);
+        }
+        break;
+      
+      case "order":
+      case "range":
+        let accessionNumber = new URLSearchParams(window.location.search).get(
+          "accessionNumber",
+        );
+        if (accessionNumber) {
+          let searchValues = {
+            ...searchFormValues,
+            accessionNumber: accessionNumber,
+          };
+          handleSubmit(searchValues);
+          setSearchFormValues(searchValues);
+        }
+        break;
+      case "testDate":
+        let date = new URLSearchParams(window.location.search).get(
+          "date",
+        )
+        if (date) {
+          setTestDate(date);
+          handleSubmit({defaultDate: date});
+        }
+        break;
+    } 
+
     setNextPage(null);
     setPreviousPage(null);
     setPagination(false);
-  }, []);
+  }, [searchBy, doRange]);
   return (
     <>
       {isLoading && <Loading></Loading>}
       <Formik
-        initialValues={ValidationSearchFormValues}
+        initialValues={searchFormValues}
+        enableReinitialize={true}
         //validationSchema={}
         onSubmit={handleSubmit}
         onChange
@@ -274,8 +324,10 @@ const SearchForm = (props) => {
                 id="unitType"
                 onChange={submitOnSelect}
               >
-                <SelectItem text="" value="" />
-                {testSections.map((test, index) => {
+                <SelectItem text={defaultTestSectionLabel} value={defaultTestSectionId} />
+                {testSections
+                  .filter(item => item.id !== defaultTestSectionId)
+                  .map((test, index) => {
                   return (
                     <SelectItem key={index} text={test.value} value={test.id} />
                   );
