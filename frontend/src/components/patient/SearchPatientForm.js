@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../Style.css";
 import { getFromOpenElisServer } from "../utils/Utils";
@@ -40,6 +40,9 @@ function SearchPatientForm(props) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [loading, setLoading] = useState(false);
+  const [searchFormValues, setSearchFormValues] = useState(
+    SearchPatientFormValues,
+  );
   const handleSubmit = (values) => {
     setLoading(true);
     values.dateOfBirth = dob;
@@ -107,12 +110,25 @@ function SearchPatientForm(props) {
       setPageSize(pageInfo.pageSize);
     }
   };
-
+  useEffect(() => {
+    let patientId = new URLSearchParams(window.location.search).get(
+      "patientId",
+    );
+    if (patientId) {
+      let searchValues = {
+        ...searchFormValues,
+        patientId: patientId,
+      };
+      setSearchFormValues(searchValues);
+      handleSubmit(searchValues);
+    }
+  }, []);
   return (
     <>
       {loading && <Loading />}
       <Formik
-        initialValues={SearchPatientFormValues}
+        initialValues={searchFormValues}
+        enableReinitialize={true}
         // validationSchema={}
         onSubmit={handleSubmit}
         onChange
@@ -141,6 +157,7 @@ function SearchPatientForm(props) {
                 {({ field }) => (
                   <TextInput
                     name={field.name}
+                    value={values[field.name]}
                     labelText={intl.formatMessage({
                       id: "patient.id",
                       defaultMessage: "Patient Id",
