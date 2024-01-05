@@ -94,8 +94,7 @@ public class PatientDashBoardProvider {
     }
     
     private double calculateAverageReceptionToResultTime() {
-        List<Analysis> analyses = analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
-            iStatusService.getStatusID(AnalysisStatus.TechnicalAcceptance));
+        List<Analysis> analyses = analysisService.getAnalysesForStatusId(iStatusService.getStatusID(AnalysisStatus.TechnicalAcceptance));
         
         List<Long> hours = new ArrayList<>();
         analyses.forEach(analysis -> {
