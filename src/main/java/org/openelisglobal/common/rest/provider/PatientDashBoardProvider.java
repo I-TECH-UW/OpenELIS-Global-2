@@ -183,7 +183,7 @@ public class PatientDashBoardProvider {
                     OrderDisplayBean orderBean = new OrderDisplayBean();
                     Sample sample = analysis.getSampleItem() != null ? analysis.getSampleItem().getSample() : null;
                     if (sample != null) {
-                        orderBean.setPriority(sample.getPriority().toString());
+                        orderBean.setPriority(sample.getPriority() != null ?sample.getPriority().toString() : "");
                         orderBean.setLabNumber(sample.getAccessionNumber() != null ? sample.getAccessionNumber() : "");
                         orderBean.setPatientId(sampleHumanService.getPatientForSample(sample).getNationalId());
                     }
