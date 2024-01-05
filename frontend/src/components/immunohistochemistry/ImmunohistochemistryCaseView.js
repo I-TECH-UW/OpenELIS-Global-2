@@ -35,67 +35,8 @@ import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { SearchResults } from "../resultPage/SearchResultForm";
 import { FormattedMessage, useIntl } from "react-intl";
 import PatientHeader from "../common/PatientHeader";
+import QuestionnaireResponse from "../common/QuestionnaireResponse";
 import "./../pathology/PathologyDashboard.css";
-
-export const QuestionnaireResponse = ({ questionnaireResponse }) => {
-  const renderQuestionResponse = (item) => {
-    console.debug(JSON.stringify(item));
-    return (
-      <>
-        <div className="questionnaireResponseItem">
-          <Grid>
-            <Column lg={6} md={8} sm={4}>
-              <h6>{item.text}:</h6>{" "}
-            </Column>
-            <Column lg={10} md={8} sm={4}>
-              {item.answer &&
-                item.answer.map((answer, index) => {
-                  return <Tag key={index}>{renderAnswer(answer)}</Tag>;
-                })}
-            </Column>
-          </Grid>
-        </div>
-      </>
-    );
-  };
-
-  const renderAnswer = (answer) => {
-    console.debug(JSON.stringify(answer));
-
-    var display = "";
-    if ("valueString" in answer) {
-      display = answer.valueString;
-    } else if ("valueBoolean" in answer) {
-      display = answer.valueBoolean;
-    } else if ("valueCoding" in answer) {
-      display = answer.valueCoding.display;
-    } else if ("valueDate" in answer) {
-      display = answer.valueDate;
-    } else if ("valueDecimal" in answer) {
-      display = answer.valueDecimal;
-    } else if ("valueInteger" in answer) {
-      display = answer.valueInteger;
-    } else if ("valueQuantity" in answer) {
-      display = answer.valueQuantity.value + answer.valueQuantity.unit;
-    } else if ("valueTime" in answer) {
-      display = answer.valueTime;
-    }
-    return (
-      <>
-        <span className="questionnaireResponseAnswer">{display}</span>
-      </>
-    );
-  };
-
-  return (
-    <>
-      {questionnaireResponse &&
-        questionnaireResponse.item.map((item, index) => {
-          return <span key={index}>{renderQuestionResponse(item)}</span>;
-        })}
-    </>
-  );
-};
 
 function ImmunohistochemistryCaseView() {
   const componentMounted = useRef(false);

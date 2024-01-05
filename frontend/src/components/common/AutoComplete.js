@@ -22,6 +22,8 @@ function AutoComplete(props) {
         );
         if (filteredSuggestion[0]) {
           setTextValue(filteredSuggestion[0].value);
+        } else {
+          setTextValue(props.value);
         }
       }
     }

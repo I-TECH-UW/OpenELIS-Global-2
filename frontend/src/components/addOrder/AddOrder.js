@@ -241,6 +241,7 @@ const AddOrder = (props) => {
       sampleOrderItems: {
         ...orderFormValues.sampleOrderItems,
         referringSiteName: e.target.value,
+        referringSiteId: "",
       },
     });
   }
@@ -251,6 +252,7 @@ const AddOrder = (props) => {
       sampleOrderItems: {
         ...orderFormValues.sampleOrderItems,
         referringSiteId: siteId,
+        referringSiteName: "",
       },
     });
   }
@@ -457,8 +459,13 @@ const AddOrder = (props) => {
               id={"order_requestDate"}
               labelText={intl.formatMessage({ id: "sample.requestDate" })}
               autofillDate={true}
-              value={orderFormValues.sampleOrderItems.requestDate}
+              value={
+                orderFormValues.sampleOrderItems.requestDate
+                  ? orderFormValues.sampleOrderItems.requestDate
+                  : configurationProperties.currentDateAsText
+              }
               className="inputDate"
+              disallowFutureDate={true}
               onChange={(date) => handleDatePickerChange("requestDate", date)}
             />
 
@@ -467,7 +474,12 @@ const AddOrder = (props) => {
               labelText={intl.formatMessage({ id: "sample.receivedDate" })}
               className="inputDate"
               autofillDate={true}
-              value={orderFormValues.sampleOrderItems.receivedDateForDisplay}
+              value={
+                orderFormValues.sampleOrderItems.receivedDateForDisplay
+                  ? orderFormValues.sampleOrderItems.receivedDateForDisplay
+                  : configurationProperties.currentDateAsText
+              }
+              disallowFutureDate={true}
               onChange={(date) => handleDatePickerChange("receivedDate", date)}
             />
           </div>
@@ -492,6 +504,7 @@ const AddOrder = (props) => {
               })}
               value={orderFormValues.sampleOrderItems.nextVisitDate}
               autofillDate={false}
+              disallowPastDate={true}
               onChange={(date) => handleDatePickerChange("nextVisitDate", date)}
             />
           </div>
@@ -505,6 +518,11 @@ const AddOrder = (props) => {
                   configurationProperties.restrictFreeTextRefSiteEntry ===
                   "true"
                 )
+              }
+              value={
+                orderFormValues.sampleOrderItems.referringSiteId != ""
+                  ? orderFormValues.sampleOrderItems.referringSiteId
+                  : orderFormValues.sampleOrderItems.referringSiteName
               }
               onChange={handleSiteName}
               onSelect={handleAutoCompleteSiteName}

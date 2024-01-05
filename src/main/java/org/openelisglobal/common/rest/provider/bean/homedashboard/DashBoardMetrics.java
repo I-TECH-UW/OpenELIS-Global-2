@@ -1,6 +1,6 @@
 package org.openelisglobal.common.rest.provider.bean.homedashboard;
 
-public class DashBoardCount {
+public class DashBoardMetrics {
     
     Integer ordersInProgress = 0;
     

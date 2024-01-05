@@ -6,14 +6,11 @@
     padding: 50px;
 }
 
+.dashboard-view {
+    padding: 50px;
+}
 .dashboard-tile {
     padding: 20px;
-    border-radius: 3px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #f4f4f4;
-}
-
-.expandable-below-tile {
     border-radius: 3px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #f4f4f4;
@@ -41,6 +38,28 @@
     right: 10px;
 }
 
-.clickable-icon {
+.icon-wrapper {
+    transition: border-color 0.3s; /* Add a smooth transition effect for the border */
+  }
+  
+  .icon-wrapper:hover {
+    border: 1px solid #78a9ff; /* Add a blue border on hover */
     cursor: pointer;
+  }
+
+  .tile-title-view {
+    margin: 0;
+    font-size: 1.6rem;
+  }
+
+.tile-subtitle-view {
+    margin-top: 5px;
+    color: #666;
 }
+
+.tile-value-view {
+    margin-top: 10px;
+    font-size: 1.9rem;
+    font-weight: bold;
+}
+

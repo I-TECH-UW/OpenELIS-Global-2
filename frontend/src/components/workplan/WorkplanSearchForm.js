@@ -44,7 +44,6 @@ export default function WorkplanSearchForm(props) {
 
   const handleSelectedValue = (v, l) => {
     if (mounted.current) {
-      setIsLoading(true);
       setSelectedValue(v);
       setSelectedLabel(l);
       props.selectedValue(v);
@@ -87,6 +86,7 @@ export default function WorkplanSearchForm(props) {
 
   useEffect(() => {
     mounted.current = true;
+    setIsLoading(true);
     setNextPage(null);
     setPreviousPage(null);
     setPagination(false);
