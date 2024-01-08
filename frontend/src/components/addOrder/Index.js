@@ -603,6 +603,7 @@ const Index = () => {
         sampleXmlString = '<?xml version="1.0" encoding="utf-8"?>';
         sampleXmlString += "<samples>";
         let tests = null;
+        let panels = "";
         samples.map((sampleItem) => {
           if (sampleItem.tests.length > 0) {
             tests = Object.keys(sampleItem.tests)
@@ -610,7 +611,15 @@ const Index = () => {
                 return sampleItem.tests[i].id;
               })
               .join(",");
-            sampleXmlString += `<sample sampleID='${sampleItem.sampleTypeId}' date='${sampleItem.sampleXML.collectionDate}' time='${sampleItem.sampleXML.collectionTime}' collector='${sampleItem.sampleXML.collector}' tests='${tests}' testSectionMap='' testSampleTypeMap='' panels='' rejected='${sampleItem.sampleXML.rejected}' rejectReasonId='${sampleItem.sampleXML.rejectionReason}' initialConditionIds=''/>`;
+
+            if (sampleItem?.panels.length > 0) {
+              panels = Object.keys(sampleItem.panels)
+                .map(function (i) {
+                  return sampleItem.panels[i].id;
+                })
+                .join(",");
+            }
+            sampleXmlString += `<sample sampleID='${sampleItem.sampleTypeId}' date='${sampleItem.sampleXML.collectionDate}' time='${sampleItem.sampleXML.collectionTime}' collector='${sampleItem.sampleXML.collector}' tests='${tests}' testSectionMap='' testSampleTypeMap='' panels='${panels}' rejected='${sampleItem.sampleXML.rejected}' rejectReasonId='${sampleItem.sampleXML.rejectionReason}' initialConditionIds=''/>`;
           }
           if (sampleItem.referralItems.length > 0) {
             const referredInstitutes = Object.keys(sampleItem.referralItems)
