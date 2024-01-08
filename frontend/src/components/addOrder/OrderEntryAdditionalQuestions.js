@@ -348,7 +348,7 @@ const OrderEntryAdditionalQuestions = ({
         },
       });
       getFromOpenElisServer(
-        "/program/" + event.target.value + "/questionnaire",
+        "/rest/program/" + event.target.value + "/questionnaire",
         (res) => setAdditionalQuestions(res, event),
       );
     }
