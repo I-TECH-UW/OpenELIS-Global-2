@@ -82,6 +82,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   useEffect(() => {
     if (selectedTile != null) {
+       setLoading(true);
       if (selectedTile.type == "AVERAGE_TURN_AROUND_TIME") {
         getFromOpenElisServer(
           "/rest/home-dashboard/turn-around-time-metrics",
@@ -109,7 +110,15 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
   };
 
   const loadData = (data) => {
-    setData(data);
+    if (data && data.length > 0) {
+      setData(
+        data.map((entry , index) => {
+          return { ...entry, id: "" + index };
+        }),
+      );
+    } else {
+      setData([]);
+    }
     setLoading(false);
   };
 

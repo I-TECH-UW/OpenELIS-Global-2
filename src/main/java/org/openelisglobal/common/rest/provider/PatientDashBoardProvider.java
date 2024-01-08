@@ -68,7 +68,6 @@ public class PatientDashBoardProvider {
     @Autowired
     private TestService testService;
     
-   
     private double calculateAverageReceptionToValidationTime() {
         List<Analysis> analyses = analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
             iStatusService.getStatusID(AnalysisStatus.Finalized));
@@ -94,8 +93,8 @@ public class PatientDashBoardProvider {
     }
     
     private double calculateAverageReceptionToResultTime() {
-        List<Analysis> analyses = analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
-            iStatusService.getStatusID(AnalysisStatus.TechnicalAcceptance));
+        List<Analysis> analyses = analysisService
+                .getAnalysesForStatusId(iStatusService.getStatusID(AnalysisStatus.TechnicalAcceptance));
         
         List<Long> hours = new ArrayList<>();
         analyses.forEach(analysis -> {
@@ -178,16 +177,22 @@ public class PatientDashBoardProvider {
     
     private List<OrderDisplayBean> convertAnalysesToOrderBean(List<Analysis> analyses) {
         List<OrderDisplayBean> orderBeanList = new ArrayList<>();
-        analyses.forEach(analysis -> {
-            OrderDisplayBean orderBean = new OrderDisplayBean();
-            orderBean.setPriority(analysis.getSampleItem().getSample().getPriority().toString());
-            orderBean.setOrderDate(analysis.getStartedDateForDisplay());
-            orderBean.setLabNumber(analysis.getSampleItem().getSample().getAccessionNumber());
-            orderBean.setTestName(analysis.getTest().getLocalizedName());
-            orderBean.setPatientId(
-                sampleHumanService.getPatientForSample(analysis.getSampleItem().getSample()).getNationalId());
-            orderBeanList.add(orderBean);
-        });
+        if (analyses != null) {
+            analyses.forEach(analysis -> {
+                if (analysis != null) {
+                    OrderDisplayBean orderBean = new OrderDisplayBean();
+                    Sample sample = analysis.getSampleItem() != null ? analysis.getSampleItem().getSample() : null;
+                    if (sample != null) {
+                        orderBean.setPriority(sample.getPriority() != null ?sample.getPriority().toString() : "");
+                        orderBean.setLabNumber(sample.getAccessionNumber() != null ? sample.getAccessionNumber() : "");
+                        orderBean.setPatientId(sampleHumanService.getPatientForSample(sample).getNationalId());
+                    }
+                    orderBean.setOrderDate(analysis.getStartedDateForDisplay());
+                    orderBean.setTestName(analysis.getTest() != null ? analysis.getTest().getLocalizedName() : "");
+                    orderBeanList.add(orderBean);
+                }
+            });
+        }
         
         return orderBeanList;
     }
@@ -229,7 +234,7 @@ public class PatientDashBoardProvider {
         
         return orderBeanList;
     }
-
+    
     @GetMapping(value = "home-dashboard/metrics", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public DashBoardMetrics getDasBoardTiles() {

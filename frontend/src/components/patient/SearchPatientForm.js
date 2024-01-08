@@ -71,6 +71,7 @@ function SearchPatientForm(props) {
       patientsResults.forEach((item) => (item.id = item.patientID));
       setPatientSearchResults(patientsResults);
     } else {
+      setPatientSearchResults([]);
       addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "patient.search.nopatient" }),
