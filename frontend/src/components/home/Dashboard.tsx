@@ -260,7 +260,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     ).value;
 
     const tile: Tile = {
-      title: "Orders Entered By User Today",
+      title: <FormattedMessage id="dashboard.user.orders.today.label" />,
       subTitle: firstName + " " + lastName,
       type: "ORDERS_FOR_USER",
       value: value,
