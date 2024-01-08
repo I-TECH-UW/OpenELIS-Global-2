@@ -13,4 +13,60 @@
             <column name="antimicrobial_resistance" type="boolean" defaultValueBoolean="false"/>
         </addColumn>
     </changeSet>
+
+    <changeSet author="abertnamanya" id="03092023-menu-item">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="menu"/>
+        </preConditions>
+        <comment>Add More Items into the menu</comment>
+        <insert tableName="menu">
+            <column name="id" value="193"/>
+            <column name="parent_id" value="58"/>
+            <column name="presentation_order" value="6"/>
+            <column name="element_id" value="menu_reports_whonet_export"/>
+            <column name="action_url" value="/Report?type=patient&amp;report=whonet_export"/>
+           <column name="display_key" value="reports.export.whonet"/>
+            <column name="tool_tip_key" value="tooltip.reports.export.whonet"/>
+            <column name="is_active" value="true"/>
+        </insert>
+
+        <comment>Update user manual action url</comment>
+        <update tableName="menu">
+            <column name="action_url" value="https://docs.google.com/document/d/1vA4h1FgT05y77Q340hq3vNUToaGf9D1J/" />
+            <where>id = '175'</where>
+        </update>
+
+        <comment>Deactivate process documentation menu Item</comment>
+        <update tableName="menu">
+            <column name="is_active" value="false" />
+            <where>id = '176'</where>
+        </update>
+
+        <comment>Add Tutorials menu item</comment>
+        <insert tableName="menu">
+            <column name="id" value="194"/>
+            <column name="parent_id" value="38"/>
+            <column name="presentation_order" value="2"/>
+            <column name="element_id" value="menu_help_banner.tutorials"/>
+            <column name="action_url" value="https://www.youtube.com/@openelisglobal6214"/>
+            <column name="display_key" value="banner.menu.help.tutorials"/>
+            <column name="tool_tip_key" value="tooltip.banner.menu.help.tutorials"/>
+            <column name="is_active" value="true"/>
+            <column name="new_window" value="true"/>
+        </insert>
+
+        <comment>Add release notes menu item</comment>
+        <insert tableName="menu">
+            <column name="id" value="195"/>
+            <column name="parent_id" value="38"/>
+            <column name="presentation_order" value="3"/>
+            <column name="element_id" value="menu_help_banner.release.notes"/>
+            <column name="action_url" value="http://roadmap.openelis-global.org/"/>
+            <column name="display_key" value="banner.menu.help.releaseNotes"/>
+            <column name="tool_tip_key" value="tooltip.banner.menu.help.releaseNotes"/>
+            <column name="is_active" value="true"/>
+            <column name="new_window" value="true"/>
+        </insert>
+
+    </changeSet>
 </databaseChangeLog>
