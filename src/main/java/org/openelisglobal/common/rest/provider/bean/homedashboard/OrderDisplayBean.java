@@ -12,6 +12,43 @@ public class OrderDisplayBean {
     
     private String testName;
     
+    private String userFirstName;
+    
+    private String userLastName;
+    
+    private int countOfOrdersEntered;
+
+    private String id ;
+     
+    public String getUserFirstName() {
+        return userFirstName;
+    }
+
+    
+    public void setUserFirstName(String userFirstName) {
+        this.userFirstName = userFirstName;
+    }
+
+    
+    public String getUserLastName() {
+        return userLastName;
+    }
+
+    
+    public void setUserLastName(String userLastName) {
+        this.userLastName = userLastName;
+    }
+
+    
+    public int getCountOfOrdersEntered() {
+        return countOfOrdersEntered;
+    }
+
+    
+    public void setCountOfOrdersEntered(int countOfOrdersEntered) {
+        this.countOfOrdersEntered = countOfOrdersEntered;
+    }
+
     public String getOrderDate() {
         return orderDate;
     }
@@ -51,5 +88,12 @@ public class OrderDisplayBean {
     public void setPriority(String priority) {
         this.priority = priority;
     }
-    
+ 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }
