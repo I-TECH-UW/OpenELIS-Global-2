@@ -227,7 +227,19 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   const handleMinimizeClick = () => {
     console.log("Icon clicked!");
-    setSelectedTile(null);
+    if (selectedTile.type == "ORDERS_FOR_USER") {
+      const tile: Tile = {
+        title: <FormattedMessage id="dashboard.user.orders.label" />,
+        subTitle: (
+          <FormattedMessage id="dashboard.user.orders.subtitle.label" />
+        ),
+        type: "ORDERS_ENTERED_BY_USER_TODAY",
+        value: counts.orderEnterdByUserToday,
+      };
+      setSelectedTile(tile);
+    } else {
+      setSelectedTile(null);
+    }
   };
 
   const handleMaximizeClick = (tile) => {
