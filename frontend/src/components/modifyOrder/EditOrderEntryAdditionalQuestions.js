@@ -30,7 +30,7 @@ const EditOrderEntryAdditionalQuestions = ({
   useEffect(() => {
     if (orderFormValues?.sampleOrderItems?.programId) {
       getFromOpenElisServer(
-        "/program/" +
+        "/rest/program/" +
           orderFormValues.sampleOrderItems.programId +
           "/questionnaire",
         setDefaultAdditionalQuestions,
@@ -55,7 +55,7 @@ const EditOrderEntryAdditionalQuestions = ({
       });
     } else {
       getFromOpenElisServer(
-        "/program/" + event.target.value + "/questionnaire",
+        "/rest/program/" + event.target.value + "/questionnaire",
         setAdditionalQuestions,
       );
       setOrderFormValues({

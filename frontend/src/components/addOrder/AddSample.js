@@ -65,6 +65,7 @@ const AddSample = (props) => {
         console.debug(JSON.stringify(newState));
         props.setSamples(newState);
     }
+    props.setSamples(newState);
   };
 
   const removeSample = (index) => {

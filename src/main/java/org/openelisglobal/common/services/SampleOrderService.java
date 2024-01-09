@@ -164,9 +164,11 @@ public class SampleOrderService {
                     ProgramSample programSample = programSampleService.getProgrammeSampleBySample(Integer.valueOf(sample.getId()), programName);
                     if (programSample != null) {
                         sampleOrder.setProgramId(programSample.getProgram().getId());
-                        sampleOrder.setAdditionalQuestions(
+                        if(programSample.getQuestionnaireResponseUuid() != null){
+                           sampleOrder.setAdditionalQuestions(
                             fhirUtil.getLocalFhirClient().read().resource(QuestionnaireResponse.class)
                                     .withId(programSample.getQuestionnaireResponseUuid().toString()).execute());
+                        }
                     }
 
             RequesterService requesterService = new RequesterService(sample.getId());

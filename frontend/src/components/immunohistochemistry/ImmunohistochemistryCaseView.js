@@ -34,67 +34,9 @@ import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { SearchResults } from "../resultPage/SearchResultForm";
 import { FormattedMessage, useIntl } from "react-intl";
+import PatientHeader from "../common/PatientHeader";
+import QuestionnaireResponse from "../common/QuestionnaireResponse";
 import "./../pathology/PathologyDashboard.css";
-
-export const QuestionnaireResponse = ({ questionnaireResponse }) => {
-  const renderQuestionResponse = (item) => {
-    console.debug(JSON.stringify(item));
-    return (
-      <>
-        <div className="questionnaireResponseItem">
-          <Grid>
-            <Column lg={6} md={8} sm={4}>
-              <h6>{item.text}:</h6>{" "}
-            </Column>
-            <Column lg={10} md={8} sm={4}>
-              {item.answer &&
-                item.answer.map((answer, index) => {
-                  return <Tag key={index}>{renderAnswer(answer)}</Tag>;
-                })}
-            </Column>
-          </Grid>
-        </div>
-      </>
-    );
-  };
-
-  const renderAnswer = (answer) => {
-    console.debug(JSON.stringify(answer));
-
-    var display = "";
-    if ("valueString" in answer) {
-      display = answer.valueString;
-    } else if ("valueBoolean" in answer) {
-      display = answer.valueBoolean;
-    } else if ("valueCoding" in answer) {
-      display = answer.valueCoding.display;
-    } else if ("valueDate" in answer) {
-      display = answer.valueDate;
-    } else if ("valueDecimal" in answer) {
-      display = answer.valueDecimal;
-    } else if ("valueInteger" in answer) {
-      display = answer.valueInteger;
-    } else if ("valueQuantity" in answer) {
-      display = answer.valueQuantity.value + answer.valueQuantity.unit;
-    } else if ("valueTime" in answer) {
-      display = answer.valueTime;
-    }
-    return (
-      <>
-        <span className="questionnaireResponseAnswer">{display}</span>
-      </>
-    );
-  };
-
-  return (
-    <>
-      {questionnaireResponse &&
-        questionnaireResponse.item.map((item, index) => {
-          return <span key={index}>{renderQuestionResponse(item)}</span>;
-        })}
-    </>
-  );
-};
 
 function ImmunohistochemistryCaseView() {
   const componentMounted = useRef(false);
@@ -872,67 +814,24 @@ function ImmunohistochemistryCaseView() {
         <Column lg={16}>
           <Section>
             <Section>
-              {immunohistochemistrySampleInfo ? (
-                <div className="patient-header2">
-                  <div className="patient-name">
-                    <Tag type="blue">
-                      <FormattedMessage id="patient.label.name" /> :
-                    </Tag>
-                    {immunohistochemistrySampleInfo.lastName}{" "}
-                    {immunohistochemistrySampleInfo.firstName}
-                  </div>
-                  <div className="patient-dob">
-                    {" "}
-                    <Tag type="blue">
-                      {" "}
-                      <FormattedMessage id="patient.label.sex" />:
-                    </Tag>
-                    {immunohistochemistrySampleInfo.sex === "M" ? (
-                      <FormattedMessage id="patient.male" />
-                    ) : (
-                      <FormattedMessage id="patient.female" />
-                    )}
-                    <Tag type="blue">
-                      <FormattedMessage id="patient.label.age" /> :
-                    </Tag>
-                    {immunohistochemistrySampleInfo.age}{" "}
-                  </div>
-                  <div className="patient-id">
-                    <Tag type="blue">
-                      <FormattedMessage id="sample.label.orderdate" /> :
-                    </Tag>
-                    {immunohistochemistrySampleInfo.requestDate}
-                  </div>
-                  <div className="patient-id">
-                    <Tag type="blue">
-                      <FormattedMessage id="sample.label.labnumber" /> :
-                    </Tag>
-                    {immunohistochemistrySampleInfo.labNumber}
-                  </div>
-                  <div className="patient-id">
-                    <Tag type="blue">
-                      <FormattedMessage id="sample.label.facility" />:
-                    </Tag>
-                    {immunohistochemistrySampleInfo.referringFacility}{" "}
-                    <Tag type="blue">
-                      <FormattedMessage id="sample.label.dept" /> :
-                    </Tag>{" "}
-                    {immunohistochemistrySampleInfo.department}
-                  </div>
-                  <div className="patient-id">
-                    <Tag type="blue">
-                      <FormattedMessage id="sample.label.requester" />: :
-                    </Tag>
-                    {immunohistochemistrySampleInfo.requester}
-                  </div>
-                </div>
-              ) : (
-                <div className="patient-header2">
-                  <div className="patient-name">
-                    <FormattedMessage id="patient.label.nopatientid" />{" "}
-                  </div>
-                </div>
-              )}
+              <PatientHeader
+                id={immunohistochemistrySampleInfo.labNumber}
+                lastName={immunohistochemistrySampleInfo.lastName}
+                firstName={immunohistochemistrySampleInfo.firstName}
+                gender={immunohistochemistrySampleInfo.sex}
+                age={immunohistochemistrySampleInfo.age}
+                orderDate={immunohistochemistrySampleInfo.requestDate}
+                referringFacility={
+                  immunohistochemistrySampleInfo.referringFacility
+                }
+                department={immunohistochemistrySampleInfo.department}
+                requester={immunohistochemistrySampleInfo.requester}
+                accesionNumber={immunohistochemistrySampleInfo.labNumber}
+                className="patient-header2"
+                isOrderPage={true}
+              >
+                {" "}
+              </PatientHeader>
             </Section>
           </Section>
           <Section>

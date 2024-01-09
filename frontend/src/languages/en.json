@@ -353,8 +353,9 @@
     "dashboard.avg.turn.around.label": "Average Turn Around time",
     "dashboard.partially.completed.label": "Partially Completed Today",
     "dashboard.partially.completed..subtitle.label": "Total Orders Completed Today",
-    "dashboard.user.orders.label": "Orders Entered By User",
-    "dashboard.user.orders.subtitle.label": "Entered by user Today",
+    "dashboard.user.orders.label": "Orders Entered By Users",
+    "dashboard.user.orders.today.label": "Orders Entered By User Today",
+    "dashboard.user.orders.subtitle.label": "Entered by users Today",
     "dashboard.rejected.orders": "Orders Rejected",
     "dashboard.rejected.orders.subtitle": "Rejected By Lab Today",
     "dashboard.unprints.results.label": "Un Printed Results",
@@ -680,5 +681,7 @@
     "sidenav.label.results.patient" : "By Patient" ,
     "sidenav.label.results.order" : "By Order" ,
     "sidenav.label.results.testdate" : "By Test Date" ,
-    "sidenav.label.results.byrange" : "By Range of Order numbers" 
+    "sidenav.label.results.byrange" : "By Range of Order numbers",
+    "label.test.results" : "Test Results",
+    "label.test.resultsData" : "Test results data"
 }

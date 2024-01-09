@@ -32,7 +32,7 @@ const SampleType = (props) => {
   const componentMounted = useRef(false);
   const sampleTypesRef = useRef(null);
 
-  const { index, rejectSampleReasons, removeSample } = props;
+  const { index, rejectSampleReasons, removeSample, sample } = props;
 
   const [sampleTypes, setSampleTypes] = useState([]);
   const [selectedSampleType, setSelectedSampleType] = useState({
@@ -57,19 +57,23 @@ const SampleType = (props) => {
   const [selectedPanels, setSelectedPanels] = useState([]);
   const [panelSearchTerm, setPanelSearchTerm] = useState("");
   const [searchBoxPanels, setSearchBoxPanels] = useState([]);
-  const [sampleXml, setSampleXml] = useState({
-    collectionDate:
-      configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
-        ? configurationProperties.currentDateAsText
-        : "",
-    collector: "",
-    rejected: false,
-    rejectionReason: "",
-    collectionTime:
-      configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
-        ? configurationProperties.currentTimeAsText
-        : "",
-  });
+  const [sampleXml, setSampleXml] = useState(
+    sample?.sampleXML != null
+      ? sample.sampleXML
+      : {
+          collectionDate:
+            configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
+              ? configurationProperties.currentDateAsText
+              : "",
+          collector: "",
+          rejected: false,
+          rejectionReason: "",
+          collectionTime:
+            configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
+              ? configurationProperties.currentTimeAsText
+              : "",
+        },
+  );
   const [loading, setLoading] = useState(true);
 
   const defaultSelect = { id: "", value: "Choose Rejection Reason" };
@@ -479,8 +483,10 @@ const SampleType = (props) => {
               configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
             }
             onChange={(date) => handleCollectionDate(date)}
+            value={sampleXml.collectionDate}
             labelText={intl.formatMessage({ id: "sample.collection.date" })}
             className="inputText"
+            disallowFutureDate={true}
           />
 
           <CustomTimePicker
@@ -489,6 +495,7 @@ const SampleType = (props) => {
               configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
             }
             onChange={(time) => handleCollectionTime(time)}
+            value={sampleXml.collectionTime}
             className="inputText"
             labelText={intl.formatMessage({ id: "sample.collection.time" })}
           />
@@ -498,6 +505,7 @@ const SampleType = (props) => {
             id={"collector_" + index}
             onChange={(value) => handleCollector(value)}
             defaultValue={""}
+            value={sampleXml.collector}
             labelText={intl.formatMessage({ id: "collector.label" })}
             className="inputText"
           />
