@@ -6,6 +6,7 @@ import ReflexTestManagement from "./reflexTests/ReflexTestManagement";
 import ProgramManagement from "./program/ProgramManagement";
 import LabNumberManagement from "./labNumber/LabNumberManagement";
 import {
+  GlobalMenuManagement,
   BillingMenuManagement,
   NonConformityMenuManagement,
   PatientMenuManagement,
@@ -59,6 +60,9 @@ function Admin() {
             title={intl.formatMessage({ id: "sidenav.label.admin.menu" })}
             renderIcon={TableOfContents}
           >
+            <SideNavMenuItem href="#globalMenuManagement">
+              <FormattedMessage id="sidenav.label.admin.menu.global" />
+            </SideNavMenuItem>
             <SideNavMenuItem href="#billingMenuManagement">
               <FormattedMessage id="sidenav.label.admin.menu.billing" />
             </SideNavMenuItem>
@@ -93,6 +97,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#program">
         <ProgramManagement />
+      </PathRoute>
+      <PathRoute path="#globalMenuManagement">
+        <GlobalMenuManagement />
       </PathRoute>
       <PathRoute path="#billingMenuManagement">
         <BillingMenuManagement />

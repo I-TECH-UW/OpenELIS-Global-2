@@ -204,6 +204,12 @@ export default function App() {
                   role="Global Administrator"
                 />
                 <SecureRoute
+                  path="/MasterListsPage"
+                  exact
+                  component={() => <>{(window.location.href = "/admin")}</>}
+                  role="Global Administrator"
+                />
+                <SecureRoute
                   path="/PathologyDashboard"
                   exact
                   component={() => <PathologyDashboard />}
@@ -246,7 +252,7 @@ export default function App() {
                   labUnitRole={{ Cytology: ["Results"] }}
                 />
                 <SecureRoute
-                  path="/AddOrder"
+                  path="/SamplePatientEntry"
                   exact
                   component={() => <AddOrder />}
                   role={["Reception"]}
@@ -258,13 +264,13 @@ export default function App() {
                   role="Reception"
                 />
                 <SecureRoute
-                  path="/FindOrder"
+                  path="/SampleEdit"
                   exact
                   component={() => <FindOrder />}
                   role="Reception"
                 />
                 <SecureRoute
-                  path="/EOrder"
+                  path="/ElectronicOrders"
                   exact
                   component={() => <EOrderPage />}
                   role="Reception"
@@ -318,9 +324,55 @@ export default function App() {
                   role="Global Administrator"
                 />
                 <SecureRoute
+                  path="/LogbookResults"
+                  exact
+                  component={() => (
+                    <>
+                      {
+                        (window.location.href =
+                          "/result?type=unit&doRange=false")
+                      }
+                    </>
+                  )}
+                  role="Global Administrator"
+                />
+                <SecureRoute
+                  path="/PatientResults"
+                  exact
+                  component={() => (
+                    <>
+                      {
+                        (window.location.href =
+                          "/result?type=patient&doRange=false")
+                      }
+                    </>
+                  )}
+                  role="Global Administrator"
+                />
+                <SecureRoute
                   path="/AccessionResults"
                   exact
-                  component={() => <Admin />}
+                  component={() => (
+                    <>
+                      {
+                        (window.location.href =
+                          "/result?type=order&doRange=false")
+                      }
+                    </>
+                  )}
+                  role="Global Administrator"
+                />
+                <SecureRoute
+                  path="/RangeResults"
+                  exact
+                  component={() => (
+                    <>
+                      {
+                        (window.location.href =
+                          "/result?type=range&doRange=true")
+                      }
+                    </>
+                  )}
                   role="Global Administrator"
                 />
                 <SecureRoute
@@ -339,6 +391,38 @@ export default function App() {
                   path="/validation"
                   exact
                   component={() => <StudyValidation />}
+                  role="Global Administrator"
+                />
+                <SecureRoute
+                  path="/ResultValidation"
+                  exact
+                  component={() => (
+                    <>{(window.location.href = "/validation?type=routine")}</>
+                  )}
+                  role="Global Administrator"
+                />
+                <SecureRoute
+                  path="/AccessionValidation"
+                  exact
+                  component={() => (
+                    <>{(window.location.href = "/validation?type=order")}</>
+                  )}
+                  role="Global Administrator"
+                />
+                <SecureRoute
+                  path="/AccessionValidationRange"
+                  exact
+                  component={() => (
+                    <>{(window.location.href = "/validation?type=range")}</>
+                  )}
+                  role="Global Administrator"
+                />
+                <SecureRoute
+                  path="/ResultValidationByTestDate"
+                  exact
+                  component={() => (
+                    <>{(window.location.href = "/validation?type=testDate")}</>
+                  )}
                   role="Global Administrator"
                 />
                 <Route path="*" component={() => <RedirectOldUI />} />

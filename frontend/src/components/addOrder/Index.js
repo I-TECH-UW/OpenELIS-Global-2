@@ -107,6 +107,18 @@ const Index = () => {
       })
       .catch((error) => {
         console.error(error);
+        if (error instanceof SyntaxError) {
+          addNotification({
+            title: intl.formatMessage({
+              id: "notification.title",
+            }),
+            message: intl.formatMessage({
+              id: "notification.response.syntax.error",
+            }),
+            kind: NotificationKinds.error,
+          });
+          setNotificationVisible(true);
+        }
         failure();
       });
   };

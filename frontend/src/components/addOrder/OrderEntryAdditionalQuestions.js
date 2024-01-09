@@ -252,7 +252,7 @@ export const ProgramSelect = ({
     console.debug("default programChange function does nothing");
   },
   orderFormValues,
-  editable
+  editable,
 }) => {
   const componentMounted = useRef(false);
 
@@ -349,7 +349,9 @@ const OrderEntryAdditionalQuestions = ({
       });
       getFromOpenElisServer(
         "/program/" + event.target.value + "/questionnaire",
-        (res) => setAdditionalQuestions(res, event),
+        (res) => {
+          setAdditionalQuestions(res, event);
+        },
       );
     }
   };
