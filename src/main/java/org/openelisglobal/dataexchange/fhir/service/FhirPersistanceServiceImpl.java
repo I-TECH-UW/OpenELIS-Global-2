@@ -379,6 +379,18 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
                 }
             }
         }
+         if (serviceRequest == null) {
+            LogEvent.logDebug(this.getClass().getName(), "", "no service request with identifier " + referringId);
+            
+            bundle = localFhirClient.search()//
+                    .forResource(ServiceRequest.class)//
+                    .returnBundle(Bundle.class)//
+                    .where(ServiceRequest.RES_ID.exactly().code(referringId)).execute();
+            if (bundle.hasEntry()) {
+                serviceRequest = (ServiceRequest) bundle.getEntryFirstRep().getResource();
+            }
+            
+        }
         if (serviceRequest == null) {
             LogEvent.logDebug(this.getClass().getName(), "",
                 "no service request with identifier " + referringId + " with configured systems");
