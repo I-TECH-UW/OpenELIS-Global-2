@@ -266,6 +266,7 @@
 			<column name="presentation_order" value="130" />
 			<where>element_id='menu_help'</where>
 		</update>
+	</changeSet>
 	 
 	<changeSet author="csteele" id="11">
 		<comment>update action url of report urls</comment>
