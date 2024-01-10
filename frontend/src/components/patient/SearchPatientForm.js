@@ -27,10 +27,10 @@ import { patientSearchHeaderData } from "../data/PatientResultsTableHeaders";
 import { Formik, Field } from "formik";
 import SearchPatientFormValues from "../formModel/innitialValues/SearchPatientFormValues";
 import { NotificationContext } from "../layout/Layout";
-import { NotificationKinds } from "../common/CustomNotification";
+import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 
 function SearchPatientForm(props) {
-  const { setNotificationVisible, addNotification } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
   const intl = useIntl();
@@ -126,6 +126,7 @@ function SearchPatientForm(props) {
   }, []);
   return (
     <>
+      {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading />}
       <Formik
         initialValues={searchFormValues}
