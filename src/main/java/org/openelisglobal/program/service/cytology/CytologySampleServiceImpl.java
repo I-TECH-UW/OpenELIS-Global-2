@@ -191,7 +191,7 @@ public class CytologySampleServiceImpl extends BaseObjectServiceImpl<CytologySam
                             .add(new ResultSet(result, null, null, patient, sample, new HashMap<>(), false));
                     }           
 
-                    analysis.setStartedDateForDisplay(testResultItem.getTestDate());
+                    //analysis.setStartedDateForDisplay(testResultItem.getTestDate());
 
                     // This needs to be refactored -- part of the logic is in
                     // getStatusForTestResult. RetroCI over rides to whatever was set before

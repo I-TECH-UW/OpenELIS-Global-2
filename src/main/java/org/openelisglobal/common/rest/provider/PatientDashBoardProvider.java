@@ -76,7 +76,7 @@ public class PatientDashBoardProvider {
     SystemUserService systemUserService;
     
     private double calculateAverageReceptionToValidationTime() {
-        List<Analysis> analyses = analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
+        List<Analysis> analyses = analysisService.getAnalysesCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
             iStatusService.getStatusID(AnalysisStatus.Finalized));
         
         List<Long> hours = new ArrayList<>();
@@ -100,8 +100,10 @@ public class PatientDashBoardProvider {
     }
     
     private double calculateAverageReceptionToResultTime() {
-        List<Analysis> analyses = analysisService
-                .getAnalysesForStatusId(iStatusService.getStatusID(AnalysisStatus.TechnicalAcceptance));
+        Set<Integer> statusIdSet = new HashSet<>();
+        statusIdSet.add(Integer.parseInt(iStatusService.getStatusID(AnalysisStatus.SampleRejected)));
+        List<Analysis> analyses = analysisService.getAnalysesResultEnteredOnExcludedByStatusId(DateUtil.getNowAsSqlDate(),
+            statusIdSet);
         
         List<Long> hours = new ArrayList<>();
         analyses.forEach(analysis -> {
@@ -124,7 +126,7 @@ public class PatientDashBoardProvider {
     }
     
     private double calculateAverageResultToValidationTime() {
-        List<Analysis> analyses = analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
+        List<Analysis> analyses = analysisService.getAnalysesCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
             iStatusService.getStatusID(AnalysisStatus.Finalized));
         
         List<Long> hours = new ArrayList<>();
@@ -148,7 +150,7 @@ public class PatientDashBoardProvider {
     }
     
     private List<Analysis> analysesWithDelayedTurnAroundTime() {
-        List<Analysis> analyses = analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
+        List<Analysis> analyses = analysisService.getAnalysesCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
             iStatusService.getStatusID(AnalysisStatus.Finalized));
         
         List<Analysis> delayedAnalyses = new ArrayList<>();
@@ -167,7 +169,7 @@ public class PatientDashBoardProvider {
     }
     
     private List<Analysis> unprintedResults() {
-        List<Analysis> analyses = analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
+        List<Analysis> analyses = analysisService.getAnalysesCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
             iStatusService.getStatusID(AnalysisStatus.Finalized));
         
         List<Analysis> unprintedAnalyses = new ArrayList<>();
@@ -374,7 +376,7 @@ public class PatientDashBoardProvider {
                         .getAnalysesForStatusId(iStatusService.getStatusID(AnalysisStatus.TechnicalAcceptance));
                 return convertAnalysesToOrderBean(analyses);
             case ORDERS_COMPLETED_TODAY:
-                analyses = analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
+                analyses = analysisService.getAnalysesCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
                     iStatusService.getStatusID(AnalysisStatus.Finalized));
                 return convertAnalysesToOrderBean(analyses);
             case ORDERS_PATIALLY_COMPLETED_TODAY:
