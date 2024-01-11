@@ -208,7 +208,9 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
     List<Analysis> getStudyAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
             LocalDate upperDate);
 
-    List<Analysis> getAnalysisCompletedOnByStatusId(Date completedDate, String statusId);  
+    List<Analysis> getAnalysesCompletedOnByStatusId(Date completedDate, String statusId);  
+
+    List<Analysis> getAnalysesResultEnteredOnExcludedByStatusId(Date completedDate, Set<Integer> statusIds);  
 
     int getCountOfAnalysisCompletedOnByStatusId(Date completedDate, List<Integer> statusIds); 
     

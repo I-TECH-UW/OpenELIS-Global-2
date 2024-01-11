@@ -731,7 +731,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         if (testResultItem.getAnalysisMethod() != null) {
             analysis.setAnalysisType(testResultItem.getAnalysisMethod());
         }
-        analysis.setStartedDateForDisplay(testDate);
+       // analysis.setStartedDateForDisplay(testDate);
 
         // This needs to be refactored -- part of the logic is in
         // getStatusForTestResult. RetroCI over rides to whatever was set before
