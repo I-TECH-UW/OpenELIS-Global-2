@@ -15,7 +15,7 @@ import {
   Grid,
   Column,
   Section,
-  Heading
+  Heading,
 } from "@carbon/react";
 import AutoComplete from "../../common/AutoComplete.js";
 import { Add, Subtract, Save } from "@carbon/react/icons";
@@ -189,7 +189,6 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
       });
     }
   };
-
 
   const addOperation = (index: number, type: OperationType) => {
     const list = [...calculationList];
@@ -391,7 +390,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
       case "TEST_RESULT":
         return (
           <>
-            <div className="first-row">
+            <Column lg={5}>
               <Select
                 id={index + "_" + operationIndex + "_sample"}
                 name="sampleId"
@@ -399,7 +398,6 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                   <FormattedMessage id="rulebuilder.label.selectSample" />
                 }
                 value={operation.sampleId}
-                className="inputSelect"
                 onChange={(e) => {
                   handleSampleSelected(e, "TEST_RESULT", index, operationIndex);
                   handleOperationFieldChange(
@@ -419,14 +417,13 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                   />
                 ))}
               </Select>
-            </div>
-            <div className="first-row">
+            </Column>
+            <Column lg={5}>
               <AutoComplete
                 id={index + "_" + operationIndex + "_testresult"}
                 label={
                   <FormattedMessage id="testcalculation.label.searchNumericTest" />
                 }
-                class="inputText"
                 name="operationtestName"
                 value={operation.value}
                 onSelect={(id) =>
@@ -438,71 +435,77 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                     : []
                 }
               ></AutoComplete>
-            </div>
+            </Column>
           </>
         );
       case "MATH_FUNCTION":
         return (
-          <div className="first-row">
-            <Select
-              id={index + "_" + operationIndex + "_mathfunction"}
-              name="value"
-              labelText={
-                <FormattedMessage id="testcalculation.label.mathFucntion" />
-              }
-              value={operation.value}
-              className="inputSelect2"
-              onChange={(e) => {
-                handleOperationFieldChange(e, index, operationIndex);
-              }}
-              required
-            >
-              <SelectItem text="" value="" />
-              {mathFunctions.map((fn, fn_index) => (
-                <SelectItem text={fn.value} value={fn.id} key={fn_index} />
-              ))}
-            </Select>
-          </div>
+          <>
+            <Column lg={5}>
+              <Select
+                id={index + "_" + operationIndex + "_mathfunction"}
+                name="value"
+                labelText={
+                  <FormattedMessage id="testcalculation.label.mathFucntion" />
+                }
+                value={operation.value}
+                onChange={(e) => {
+                  handleOperationFieldChange(e, index, operationIndex);
+                }}
+                required
+              >
+                <SelectItem text="" value="" />
+                {mathFunctions.map((fn, fn_index) => (
+                  <SelectItem text={fn.value} value={fn.id} key={fn_index} />
+                ))}
+              </Select>
+            </Column>
+            <Column lg={5}> </Column>
+          </>
         );
       case "INTEGER":
         return (
-          <div className="first-row">
-            <TextInput
-              name="value"
-              className="inputText2"
-              type="number"
-              id={index + "_" + operationIndex + "_integer"}
-              labelText={
-                <FormattedMessage id="testcalculation.label.integer" />
-              }
-              value={operation.value}
-              onChange={(e) => {
-                handleOperationFieldChange(e, index, operationIndex);
-              }}
-            />
-          </div>
+          <>
+            <Column lg={5}>
+              <TextInput
+                name="value"
+                type="number"
+                id={index + "_" + operationIndex + "_integer"}
+                labelText={
+                  <FormattedMessage id="testcalculation.label.integer" />
+                }
+                value={operation.value}
+                onChange={(e) => {
+                  handleOperationFieldChange(e, index, operationIndex);
+                }}
+              />
+            </Column>
+            <Column lg={5}> </Column>
+          </>
         );
       case "PATIENT_ATTRIBUTE":
         return (
-          <div className="first-row">
-            <Select
-              id={index + "_" + operationIndex + "_patientattribute"}
-              name="value"
-              labelText={
-                <FormattedMessage id="testcalculation.label.patientAttribute" />
-              }
-              value={operation.value}
-              className="inputSelect2"
-              onChange={(e) => {
-                handleOperationFieldChange(e, index, operationIndex);
-              }}
-              required
-            >
-              <SelectItem text="" value="" />
-              <SelectItem text="Patient Age(Years)" value="AGE" />
-              <SelectItem text="Patient Weight(Kg)" value="WEIGHT" />
-            </Select>
-          </div>
+          <>
+            <Column lg={5}>
+              <Select
+                id={index + "_" + operationIndex + "_patientattribute"}
+                name="value"
+                labelText={
+                  <FormattedMessage id="testcalculation.label.patientAttribute" />
+                }
+                value={operation.value}
+                onChange={(e) => {
+                  handleOperationFieldChange(e, index, operationIndex);
+                }}
+                required
+              >
+                <SelectItem text="" value="" />
+                <SelectItem text="Patient Age(Years)" value="AGE" />
+                <SelectItem text="Patient Weight(Kg)" value="WEIGHT" />
+              </Select>
+            </Column>
+            <Column lg={5}> </Column>
+          </>
         );
     }
   }
@@ -580,17 +583,17 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
 
   return (
     <div className="adminPageContent">
-      <Grid >
-          <Column lg={16}>
+      <Grid>
+        <Column lg={16}>
+          <Section>
             <Section>
-            <Section>
-                <Heading>
-                  <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
+              <Heading>
+                <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
               </Heading>
-              </Section>
             </Section>
-          </Column>
-        </Grid>
+          </Section>
+        </Column>
+      </Grid>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading></Loading>}
       {calculationList.map((calculation, index) => (
@@ -734,20 +737,26 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                               : ""}
                           </div>
                         </div>
+                        <Grid>
+                          <Column lg={16}>
+                            {" "}
+                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
+                          </Column>
+                          <Column lg={16}>
+                            {" "}
+                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
+                          </Column>
+                        </Grid>
                         {calculation.operations.map(
                           (operation, operation_index) => (
-                            <div
-                              key={index + "_" + operation_index}
-                              className="inlineDiv"
-                            >
+                            <Grid key={index + "_" + operation_index}>
                               {getOperationInputByType(
                                 index,
                                 operation_index,
                                 operation.type,
                                 operation,
                               )}
-                              <div>&nbsp; &nbsp;</div>
-                              <div className="second-row">
+                              <Column lg={2}>
                                 {operation.type !== "" && (
                                   <IconButton
                                     renderIcon={Subtract}
@@ -760,13 +769,8 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                                     }
                                   />
                                 )}
-                              </div>
-                              <div>
-                                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                                &nbsp; &nbsp; &nbsp;
-                              </div>
-                              <div>
-                                {/* {calculation.operations.length - 1 === operation_index && ( */}
+                              </Column>
+                              <Column lg={4}>
                                 <Select
                                   id={
                                     index +
@@ -804,8 +808,16 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                                   />
                                 </Select>
                                 {/* )} */}
-                              </div>
-                            </div>
+                              </Column>
+                              <Column lg={16}>
+                                {" "}
+                                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
+                              </Column>
+                              <Column lg={16}>
+                                {" "}
+                                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
+                              </Column>
+                            </Grid>
                           ),
                         )}
                       </div>
