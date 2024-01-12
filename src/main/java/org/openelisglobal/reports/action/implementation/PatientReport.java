@@ -753,7 +753,7 @@ public abstract class PatientReport extends Report {
                             reportResult = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
                             if (quantification != null
                                     && quantification.getParentResult().getId().equals(sibResult.getId())) {
-                                reportResult += ": " + quantification.getValue(true);
+                                reportResult += ": " + quantification.getValue();
                             }
                         }
                     }
@@ -796,7 +796,7 @@ public abstract class PatientReport extends Report {
                                     && quantifiedResult.getParentResult().getId().equals(subResult.getId())
                                     && !GenericValidator.isBlankOrNull(quantifiedResult.getValue())) {
                                 multiResult.append(": ");
-                                multiResult.append(quantifiedResult.getValue(true));
+                                multiResult.append(quantifiedResult.getValue());
                             }
                             multiResult.append("\n");
                         }
@@ -1039,7 +1039,7 @@ public abstract class PatientReport extends Report {
                 reportResult = dictionary.getId() != null ? dictionary.getLocalizedName() : "";
             }
         } else {
-            reportResult = result.getValue(true);
+            reportResult = result.getValue();
         }
         return reportResult;
     }
