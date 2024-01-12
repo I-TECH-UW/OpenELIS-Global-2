@@ -564,11 +564,7 @@ abstract public class CSVRoutineColumnBuilder {
                 + "\"si_id\" numeric(10) ");
         for (Test col : allTests) {
             String testName = TestServiceImpl.getLocalizedTestNameWithType(col);
-            if (!"CD4".equals(testName)) { // CD4 is listed as a test name but
-                                           // it isn't clear it should be line
-                                           // 446 may also have to be changed
-                query.append("\n, " + prepareColumnName(testName) + " varchar(200) ");
-            }
+            query.append("\n, " + prepareColumnName(testName) + " varchar(200) ");
         }
         query.append(" ) \n");
         // left join all sample Items from the right sample range to the results table.
@@ -664,9 +660,7 @@ abstract public class CSVRoutineColumnBuilder {
     protected void addAllResultsColumns() {
         for (Test test : allTests) {
             String testTag = TestServiceImpl.getLocalizedTestNameWithType(test);
-            if (!"CD4".equals(testTag)) {
-                add(testTag, TestServiceImpl.getLocalizedTestNameWithType(test), TEST_RESULT);
-            }
+            add(testTag, TestServiceImpl.getLocalizedTestNameWithType(test), TEST_RESULT);
         }
     }
 
