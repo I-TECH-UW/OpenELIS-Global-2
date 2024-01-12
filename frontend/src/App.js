@@ -321,7 +321,7 @@ export default function App() {
                   path="/result"
                   exact
                   component={() => <ResultSearch />}
-                  role="Global Administrator"
+                  role="Results"
                 />
                 <SecureRoute
                   path="/LogbookResults"
@@ -334,7 +334,7 @@ export default function App() {
                       }
                     </>
                   )}
-                  role="Global Administrator"
+                  role="Results"
                 />
                 <SecureRoute
                   path="/PatientResults"
@@ -347,7 +347,7 @@ export default function App() {
                       }
                     </>
                   )}
-                  role="Global Administrator"
+                  role="Results"
                 />
                 <SecureRoute
                   path="/AccessionResults"
@@ -360,7 +360,20 @@ export default function App() {
                       }
                     </>
                   )}
-                  role="Global Administrator"
+                  role="Results"
+                />
+                <SecureRoute
+                  path="/StatusResults"
+                  exact
+                  component={() => (
+                    <>
+                      {
+                        (window.location.href =
+                          "result?type=date&doRange=false")
+                      }
+                    </>
+                  )}
+                  role="Results"
                 />
                 <SecureRoute
                   path="/RangeResults"
@@ -373,25 +386,25 @@ export default function App() {
                       }
                     </>
                   )}
-                  role="Global Administrator"
+                  role="Results"
                 />
                 <SecureRoute
                   path="/RoutineReports"
                   exact
                   component={() => <RoutineReports />}
-                  role="Global Administrator"
+                  role="Reports"
                 />
                 <SecureRoute
                   path="/StudyReports"
                   exact
                   component={() => <StudyReports />}
-                  role="Global Administrator"
+                  role="Reports"
                 />
                 <SecureRoute
                   path="/validation"
                   exact
                   component={() => <StudyValidation />}
-                  role="Global Administrator"
+                  role="Validation"
                 />
                 <SecureRoute
                   path="/ResultValidation"
@@ -399,7 +412,7 @@ export default function App() {
                   component={() => (
                     <>{(window.location.href = "/validation?type=routine")}</>
                   )}
-                  role="Global Administrator"
+                  role="Validation"
                 />
                 <SecureRoute
                   path="/AccessionValidation"
@@ -407,7 +420,7 @@ export default function App() {
                   component={() => (
                     <>{(window.location.href = "/validation?type=order")}</>
                   )}
-                  role="Global Administrator"
+                  role="Validation"
                 />
                 <SecureRoute
                   path="/AccessionValidationRange"
@@ -415,7 +428,7 @@ export default function App() {
                   component={() => (
                     <>{(window.location.href = "/validation?type=range")}</>
                   )}
-                  role="Global Administrator"
+                  role="Validation"
                 />
                 <SecureRoute
                   path="/ResultValidationByTestDate"
@@ -423,7 +436,7 @@ export default function App() {
                   component={() => (
                     <>{(window.location.href = "/validation?type=testDate")}</>
                   )}
-                  role="Global Administrator"
+                  role="Validation"
                 />
                 <Route path="*" component={() => <RedirectOldUI />} />
               </Switch>
