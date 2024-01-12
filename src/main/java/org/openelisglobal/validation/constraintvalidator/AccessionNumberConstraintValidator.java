@@ -37,7 +37,7 @@ public class AccessionNumberConstraintValidator implements ConstraintValidator<V
             return !AccessionNumberUtil.containsBlackListCharacters(value);
         }
         if (AccessionFormat.ALPHANUM_DASH.equals(validateAccessionNumberConstraint.format())) {
-            return value.matches("^[a-zA-Z0-9-]*$");
+            return value.matches("^[a-zA-Z0-9-*]*$");
         }
         try {
             return ValidationResults.SUCCESS

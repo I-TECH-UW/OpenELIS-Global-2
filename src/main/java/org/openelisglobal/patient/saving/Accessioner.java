@@ -370,8 +370,11 @@ public abstract class Accessioner implements IAccessioner {
 			PatientManagementInfo patientInfo = new PatientManagementInfo();
 			patientInfo.setPatientPK(patientInDB.getId());
             try {
+            	if(ObjectUtils.isEmpty(fhirTransformService)) {
+            		fhirTransformService = SpringContext.getBean(FhirTransformService.class);
+            	}
                 fhirTransformService.transformPersistOrderEntryFhirObjects(updateData, patientInfo, false, null);
-            } catch (FhirTransformationException | FhirPersistanceException e) {
+            } catch (Exception  e) {
                 LogEvent.logError(e);
             }
             //end update fhir resources

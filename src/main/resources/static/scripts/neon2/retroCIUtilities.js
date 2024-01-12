@@ -332,21 +332,3 @@ function checkAccessionNumber(accessionNumber) {
     }
 }
 
-function processAccessionSuccess(xhr) {
-    var formField = xhr.responseXML.getElementsByTagName("formfield").item(0);
-    var message = xhr.responseXML.getElementsByTagName("message").item(0);
-    var success = false;
-
-    //if (message.firstChild.nodeValue == "valid") {
-    if (message.firstChild.nodeValue == "SAMPLE_NOT_FOUND") {
-        success = true;
-    }
-    var labElement = formField.firstChild.nodeValue;
-    selectFieldErrorDisplay(success, $(labElement));
-
-    if (!success) {
-        alert(message.firstChild.nodeValue);
-    }
-
-}
-
