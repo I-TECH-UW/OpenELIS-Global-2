@@ -43,6 +43,8 @@ public class PatientSearchRestController {
     SampleHumanService sampleHumanService;
     @Autowired
     SearchResultsService searchResultsService;
+    @Autowired
+    private PagingProperties PagingProperties;
 
     @GetMapping(value = "patient-search-results", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -55,7 +57,17 @@ public class PatientSearchRestController {
             @RequestParam(required = false) String labNumber, 
             @RequestParam(required = false) String dateOfBirth,
             @RequestParam(required = false) String gender) {
+            @RequestParam(required = false, defaultValue = "0") int page) {
 
+int pageSize = pagingProperties.getResultsPageSize();
+ int offset = page * pageSize;
+
+          List<PatientSearchResults> results = searchResultsService.getPaginatedSearcgResults(
+
+           lastName, firstName, STNumber, subjectNumber, nationalID, guid, labNumber, dateOfBirth, gender,
+                offset, pageSize);
+                return results;
+                  }
         List<PatientSearchResults> results = new ArrayList<>();
         if (!GenericValidator.isBlankOrNull(labNumber)) {
             Patient patient = getPatientForLabNumber(labNumber);
