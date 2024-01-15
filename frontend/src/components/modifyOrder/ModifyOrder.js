@@ -204,7 +204,7 @@ const ModifyOrder = () => {
             <BreadcrumbItem href="/">
               {intl.formatMessage({ id: "home.label" })}
             </BreadcrumbItem>
-            <BreadcrumbItem href="/FindOrder">
+            <BreadcrumbItem href="/SampleEdit">
               {intl.formatMessage({ id: "sample.label.search.Order" })}
             </BreadcrumbItem>
           </Breadcrumb>
