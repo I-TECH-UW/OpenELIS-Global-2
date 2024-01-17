@@ -17,12 +17,13 @@ If you are new to **OpenELIS**, we recommend starting with our [Installation](in
 1. Mutesasira Moses 
 1. Casey Iiams-Hauser 
 1. Herbert Yiga
+1. Brynn McKinney
 
 ## Selected Projects for GSoC 2024
   |Project Name|Project Rating|Project Description|Required Skills |Selected Contributor | Mentors|
   |--|--|--|--|--|--|
   |Improve Responsiveness for OpenELIS 3x| Large |The new OpenELIS React Front end needs to display correctly on different screen sizes ie Large(Desktop) and medium (Tablet) . The objective of this project is to improve the responsiveness of OpenELIS 3x, ensuring a seamless user experience across various devices and screen sizes |React , Typescript , Javascript, Carbon Design System| `TBD`| Gita Cliff|
-  |Enhanced Search Functionality for OpenELIS|Medium| This project aims to enhance the search capabilities within the OpenELIS system, providing users with a more effiecient way for retrieving vital information efficiently . We would need to Integrate a Search Engine library For indexing key coulmns and providing a faster way to Search Results |Java , Spring |`TBD`| Mutesasira Moses|
+  |Enhanced Search Functionality for OpenELIS|Large| This project aims to enhance the search capabilities within the OpenELIS system, providing users with a more effiecient way for retrieving vital information efficiently . We would need to Integrate a Search Engine library For indexing key coulmns and providing a faster way to Search Results |Java , Spring |`TBD`| Mutesasira Moses|
   |Improve Integration Tests Coverage | Large| The current Service Layer Integration tests only cover a few components .This project aims to Improve Integration Tests Coverage for the critical components with in the application .Integration tests play a pivotal role in validating the interactions between various modules and ensuring the seamless functioning of the entire system |Java , Spring ,J-Unit|`TBD`| Reagan Makoba|
   |Improve E2E Tests Coverage|  Large| The Current E2E tests have a very low test coverage and are not very stable. This project is dedicated to improve the End-to-End (E2E) testing coverage for the New React front end and ensuring robust validation of the entire application workflow . E2E tests play a critical role in verifying the seamless interaction between various components, ensuring that the application functions as expected from the user's perspective |react , cypress |`TBD`| Namanya Abert|
   |Rewite Admin Page components from JSP to React|  Large| Most of the current Admin page Functionalities are still on the old JSP UI. This project aims at re-writing key admin components from JSP  to React including User management , Organization Management and Provider Management |react , TypescripT, java , Spring , REST |`TBD`| Casey Iiams-Hauser|
