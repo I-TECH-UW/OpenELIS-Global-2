@@ -3,10 +3,13 @@ package org.openelisglobal.common.rest.provider;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.openelisglobal.analysis.service.AnalysisService;
@@ -15,12 +18,10 @@ import org.openelisglobal.common.rest.provider.bean.homedashboard.AverageTimeDis
 import org.openelisglobal.common.rest.provider.bean.homedashboard.DashBoardMetrics;
 import org.openelisglobal.common.rest.provider.bean.homedashboard.DashBoardTile;
 import org.openelisglobal.common.rest.provider.bean.homedashboard.OrderDisplayBean;
-import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
@@ -28,6 +29,8 @@ import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.systemuser.service.SystemUserService;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.uhn.fhir.rest.client.api.IGenericClient;
@@ -68,8 +72,11 @@ public class PatientDashBoardProvider {
     @Autowired
     private TestService testService;
     
+    @Autowired
+    SystemUserService systemUserService;
+    
     private double calculateAverageReceptionToValidationTime() {
-        List<Analysis> analyses = analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
+        List<Analysis> analyses = analysisService.getAnalysesCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
             iStatusService.getStatusID(AnalysisStatus.Finalized));
         
         List<Long> hours = new ArrayList<>();
@@ -93,8 +100,10 @@ public class PatientDashBoardProvider {
     }
     
     private double calculateAverageReceptionToResultTime() {
-        List<Analysis> analyses = analysisService
-                .getAnalysesForStatusId(iStatusService.getStatusID(AnalysisStatus.TechnicalAcceptance));
+        Set<Integer> statusIdSet = new HashSet<>();
+        statusIdSet.add(Integer.parseInt(iStatusService.getStatusID(AnalysisStatus.SampleRejected)));
+        List<Analysis> analyses = analysisService.getAnalysesResultEnteredOnExcludedByStatusId(DateUtil.getNowAsSqlDate(),
+            statusIdSet);
         
         List<Long> hours = new ArrayList<>();
         analyses.forEach(analysis -> {
@@ -117,7 +126,7 @@ public class PatientDashBoardProvider {
     }
     
     private double calculateAverageResultToValidationTime() {
-        List<Analysis> analyses = analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
+        List<Analysis> analyses = analysisService.getAnalysesCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
             iStatusService.getStatusID(AnalysisStatus.Finalized));
         
         List<Long> hours = new ArrayList<>();
@@ -141,7 +150,7 @@ public class PatientDashBoardProvider {
     }
     
     private List<Analysis> analysesWithDelayedTurnAroundTime() {
-        List<Analysis> analyses = analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
+        List<Analysis> analyses = analysisService.getAnalysesCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
             iStatusService.getStatusID(AnalysisStatus.Finalized));
         
         List<Analysis> delayedAnalyses = new ArrayList<>();
@@ -160,7 +169,7 @@ public class PatientDashBoardProvider {
     }
     
     private List<Analysis> unprintedResults() {
-        List<Analysis> analyses = analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
+        List<Analysis> analyses = analysisService.getAnalysesCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
             iStatusService.getStatusID(AnalysisStatus.Finalized));
         
         List<Analysis> unprintedAnalyses = new ArrayList<>();
@@ -181,9 +190,10 @@ public class PatientDashBoardProvider {
             analyses.forEach(analysis -> {
                 if (analysis != null) {
                     OrderDisplayBean orderBean = new OrderDisplayBean();
+                    orderBean.setId(analysis.getId());
                     Sample sample = analysis.getSampleItem() != null ? analysis.getSampleItem().getSample() : null;
                     if (sample != null) {
-                        orderBean.setPriority(sample.getPriority() != null ?sample.getPriority().toString() : "");
+                        orderBean.setPriority(sample.getPriority() != null ? sample.getPriority().toString() : "");
                         orderBean.setLabNumber(sample.getAccessionNumber() != null ? sample.getAccessionNumber() : "");
                         orderBean.setPatientId(sampleHumanService.getPatientForSample(sample).getNationalId());
                     }
@@ -195,6 +205,54 @@ public class PatientDashBoardProvider {
         }
         
         return orderBeanList;
+    }
+    
+    private List<OrderDisplayBean> convertAnalysesToUserOrdersBean(List<Analysis> analyses) {
+        List<OrderDisplayBean> userOrders = new ArrayList<>();
+        Map<String, List<Analysis>> userOrdersMap = new HashMap<>();
+        analyses.forEach(analysis -> {
+            String systemUserId = analysis.getSampleItem().getSample().getSysUserId();
+            if (userOrdersMap.containsKey(systemUserId)) {
+                userOrdersMap.get(systemUserId).add(analysis);
+            } else {
+                List<Analysis> userAnalyses = new ArrayList<>();
+                userAnalyses.add(analysis);
+                userOrdersMap.put(systemUserId, userAnalyses);
+            }
+        });
+        
+        userOrdersMap.forEach((userId, analysisList) -> {
+            OrderDisplayBean userOrderBean = new OrderDisplayBean();
+            SystemUser user = systemUserService.get(userId);
+            if (user != null) {
+                userOrderBean.setId(userId);
+                userOrderBean.setUserFirstName(user.getFirstName());
+                userOrderBean.setUserLastName(user.getLastName());
+                userOrderBean.setCountOfOrdersEntered(userOrdersMap.get(userId).size());
+                userOrders.add(userOrderBean);
+            }
+            
+        });
+        return userOrders;
+    }
+    
+    private List<OrderDisplayBean> getUserOrderBeans(List<Analysis> analyses, String userId) {
+        Map<String, List<Analysis>> userOrdersMap = new HashMap<>();
+        analyses.forEach(analysis -> {
+            String systemUserId = analysis.getSampleItem().getSample().getSysUserId();
+            if (userOrdersMap.containsKey(systemUserId)) {
+                userOrdersMap.get(systemUserId).add(analysis);
+            } else {
+                List<Analysis> userAnalyses = new ArrayList<>();
+                userAnalyses.add(analysis);
+                userOrdersMap.put(systemUserId, userAnalyses);
+            }
+        });
+        
+        if (userOrdersMap.get(userId) != null) {
+            return convertAnalysesToOrderBean(userOrdersMap.get(userId));
+        }
+        return new ArrayList<>();
     }
     
     private List<OrderDisplayBean> convertElectronicToOrderBean(List<ElectronicOrder> eOrders) {
@@ -291,9 +349,10 @@ public class PatientDashBoardProvider {
                     metrics.setAverageTurnAroudTime(calculateAverageReceptionToValidationTime());
                     break;
                 case DELAYED_TURN_AROUND:
-                    
                     metrics.setDelayedTurnAround(analysesWithDelayedTurnAroundTime().size());
                     break;
+                default:
+                     break;
             }
         });
         
@@ -302,7 +361,8 @@ public class PatientDashBoardProvider {
     
     @GetMapping(value = "home-dashboard/{listType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<OrderDisplayBean> getDashBoardDisplayList(@PathVariable DashBoardTile.TileType listType) {
+    public List<OrderDisplayBean> getDashBoardDisplayList(@PathVariable DashBoardTile.TileType listType,
+            @RequestParam(required = false) String systemUserId) {
         
         Set<Integer> statusIdSet;
         List<Analysis> analyses;
@@ -316,7 +376,7 @@ public class PatientDashBoardProvider {
                         .getAnalysesForStatusId(iStatusService.getStatusID(AnalysisStatus.TechnicalAcceptance));
                 return convertAnalysesToOrderBean(analyses);
             case ORDERS_COMPLETED_TODAY:
-                analyses = analysisService.getAnalysisCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
+                analyses = analysisService.getAnalysesCompletedOnByStatusId(DateUtil.getNowAsSqlDate(),
                     iStatusService.getStatusID(AnalysisStatus.Finalized));
                 return convertAnalysesToOrderBean(analyses);
             case ORDERS_PATIALLY_COMPLETED_TODAY:
@@ -325,12 +385,11 @@ public class PatientDashBoardProvider {
                 statusIdSet.add(Integer.parseInt(iStatusService.getStatusID(AnalysisStatus.Finalized)));
                 analyses = analysisService.getAnalysisStartedOnExcludedByStatusId(DateUtil.getNowAsSqlDate(), statusIdSet);
                 return convertAnalysesToOrderBean(analyses);
-            
             case ORDERS_ENTERED_BY_USER_TODAY:
                 statusIdSet = new HashSet<>();
                 statusIdSet.add(Integer.parseInt(iStatusService.getStatusID(AnalysisStatus.SampleRejected)));
                 analyses = analysisService.getAnalysisStartedOnExcludedByStatusId(DateUtil.getNowAsSqlDate(), statusIdSet);
-                return convertAnalysesToOrderBean(analyses);
+                return convertAnalysesToUserOrdersBean(analyses);
             case ORDERS_REJECTED_TODAY:
                 analyses = analysisService.getAnalysisStartedOnRangeByStatusId(DateUtil.getNowAsSqlDate(),
                     DateUtil.getNowAsSqlDate(), iStatusService.getStatusID(AnalysisStatus.SampleRejected));
@@ -345,7 +404,15 @@ public class PatientDashBoardProvider {
                 return new ArrayList<>();
             case DELAYED_TURN_AROUND:
                 return convertAnalysesToOrderBean(analysesWithDelayedTurnAroundTime());
-            
+            case ORDERS_FOR_USER:
+                if (StringUtils.isNotBlank(systemUserId)) {
+                    statusIdSet = new HashSet<>();
+                    statusIdSet.add(Integer.parseInt(iStatusService.getStatusID(AnalysisStatus.SampleRejected)));
+                    analyses = analysisService.getAnalysisStartedOnExcludedByStatusId(DateUtil.getNowAsSqlDate(),
+                        statusIdSet);
+                    return getUserOrderBeans(analyses, systemUserId);
+                }
+                
         }
         return new ArrayList<>();
     }

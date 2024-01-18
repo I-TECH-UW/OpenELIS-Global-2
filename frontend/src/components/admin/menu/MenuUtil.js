@@ -48,12 +48,14 @@ export const MenuCheckBox = (props) => {
             checked={curMenuItem?.menu.isActive}
             onChange={(_, { checked }) => {
               if (path === "$" || !path) {
-                setMenuItem({
-                  ...setMenuIsActiveToValueIncludeChildren(
-                    checked,
-                    curMenuItem,
-                  ),
-                });
+                if (curMenuItem.menu.elementId !== "menu_sidenav") {
+                  setMenuItem({
+                    ...setMenuIsActiveToValueIncludeChildren(
+                      checked,
+                      curMenuItem,
+                    ),
+                  });
+                }
               } else {
                 let newMenuItem = { ...menuItem };
                 var jp = require("jsonpath");

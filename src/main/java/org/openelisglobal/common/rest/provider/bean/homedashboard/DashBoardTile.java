@@ -15,7 +15,8 @@ public class DashBoardTile {
         UN_PRINTED_RESULTS,
         INCOMING_ORDERS,
         AVERAGE_TURN_AROUND_TIME,
-        DELAYED_TURN_AROUND;
+        DELAYED_TURN_AROUND,
+        ORDERS_FOR_USER ;
         
         public static Stream<TileType> stream() {
             return Stream.of(TileType.values());

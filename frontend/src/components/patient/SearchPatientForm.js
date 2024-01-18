@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../Style.css";
 import { getFromOpenElisServer } from "../utils/Utils";
@@ -27,10 +27,10 @@ import { patientSearchHeaderData } from "../data/PatientResultsTableHeaders";
 import { Formik, Field } from "formik";
 import SearchPatientFormValues from "../formModel/innitialValues/SearchPatientFormValues";
 import { NotificationContext } from "../layout/Layout";
-import { NotificationKinds } from "../common/CustomNotification";
+import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 
 function SearchPatientForm(props) {
-  const { setNotificationVisible, addNotification } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
   const intl = useIntl();
@@ -40,6 +40,9 @@ function SearchPatientForm(props) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [loading, setLoading] = useState(false);
+  const [searchFormValues, setSearchFormValues] = useState(
+    SearchPatientFormValues,
+  );
   const handleSubmit = (values) => {
     setLoading(true);
     values.dateOfBirth = dob;
@@ -108,12 +111,26 @@ function SearchPatientForm(props) {
       setPageSize(pageInfo.pageSize);
     }
   };
-
+  useEffect(() => {
+    let patientId = new URLSearchParams(window.location.search).get(
+      "patientId",
+    );
+    if (patientId) {
+      let searchValues = {
+        ...searchFormValues,
+        patientId: patientId,
+      };
+      setSearchFormValues(searchValues);
+      handleSubmit(searchValues);
+    }
+  }, []);
   return (
     <>
+      {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading />}
       <Formik
-        initialValues={SearchPatientFormValues}
+        initialValues={searchFormValues}
+        enableReinitialize={true}
         // validationSchema={}
         onSubmit={handleSubmit}
         onChange
@@ -142,6 +159,7 @@ function SearchPatientForm(props) {
                 {({ field }) => (
                   <TextInput
                     name={field.name}
+                    value={values[field.name]}
                     labelText={intl.formatMessage({
                       id: "patient.id",
                       defaultMessage: "Patient Id",

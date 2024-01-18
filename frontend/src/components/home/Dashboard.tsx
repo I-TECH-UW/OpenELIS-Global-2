@@ -29,8 +29,9 @@ interface DashBoardProps {}
 interface Tile {
   title: string | JSX.Element;
   subTitle: string | JSX.Element;
-  type: MetricType | undefined;
+  type: MetricType;
   value: number;
+  id?: number;
 }
 type MetricType =
   | "ORDERS_IN_PROGRESS"
@@ -42,7 +43,8 @@ type MetricType =
   | "UN_PRINTED_RESULTS"
   | "INCOMING_ORDERS"
   | "AVERAGE_TURN_AROUND_TIME"
-  | "DELAYED_TURN_AROUND";
+  | "DELAYED_TURN_AROUND"
+  | "ORDERS_FOR_USER";
 
 const HomeDashBoard: React.FC<DashBoardProps> = () => {
   const [counts, setCounts] = useState({
@@ -82,11 +84,19 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   useEffect(() => {
     if (selectedTile != null) {
-       setLoading(true);
+      setLoading(true);
       if (selectedTile.type == "AVERAGE_TURN_AROUND_TIME") {
         getFromOpenElisServer(
           "/rest/home-dashboard/turn-around-time-metrics",
           loadTimeMetrics,
+        );
+      } else if (selectedTile.type == "ORDERS_FOR_USER") {
+        getFromOpenElisServer(
+          "/rest/home-dashboard/" +
+            selectedTile.type +
+            "?systemUserId=" +
+            selectedTile.id,
+          loadData,
         );
       } else {
         getFromOpenElisServer(
@@ -111,11 +121,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   const loadData = (data) => {
     if (data && data.length > 0) {
-      setData(
-        data.map((entry , index) => {
-          return { ...entry, id: "" + index };
-        }),
-      );
+      setData(data);
     } else {
       setData([]);
     }
@@ -221,11 +227,45 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   const handleMinimizeClick = () => {
     console.log("Icon clicked!");
-    setSelectedTile(null);
+    if (selectedTile.type == "ORDERS_FOR_USER") {
+      const tile: Tile = {
+        title: <FormattedMessage id="dashboard.user.orders.label" />,
+        subTitle: (
+          <FormattedMessage id="dashboard.user.orders.subtitle.label" />
+        ),
+        type: "ORDERS_ENTERED_BY_USER_TODAY",
+        value: counts.orderEnterdByUserToday,
+      };
+      setSelectedTile(tile);
+    } else {
+      setSelectedTile(null);
+    }
   };
 
   const handleMaximizeClick = (tile) => {
     console.log("Icon clicked!");
+    setSelectedTile(tile);
+  };
+
+  const viewUserOrders = (row) => {
+    console.log("Icon clicked!");
+    const firstName = row.cells.find(
+      (e) => e.info.header === "userFirstName",
+    ).value;
+    const lastName = row.cells.find(
+      (e) => e.info.header === "userLastName",
+    ).value;
+    const value = row.cells.find(
+      (e) => e.info.header === "countOfOrdersEntered",
+    ).value;
+
+    const tile: Tile = {
+      title: <FormattedMessage id="dashboard.user.orders.today.label" />,
+      subTitle: firstName + " " + lastName,
+      type: "ORDERS_FOR_USER",
+      value: value,
+      id: row.id,
+    };
     setSelectedTile(tile);
   };
 
@@ -262,6 +302,12 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
           </>
         </TableCell>
       );
+    } else if (cell.info.header === "countOfOrdersEntered" && cell.value) {
+      return (
+        <TableCell key={cell.id}>
+          <Link style={{ color: "blue" }}>{cell.value} </Link>
+        </TableCell>
+      );
     } else {
       return <TableCell key={cell.id}>{cell.value}</TableCell>;
     }
@@ -287,6 +333,21 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     {
       key: "testName",
       header: "Test Name",
+    },
+  ];
+
+  const userHeaders = [
+    {
+      key: "userFirstName",
+      header: "First Name",
+    },
+    {
+      key: "userLastName",
+      header: "Last Name",
+    },
+    {
+      key: "countOfOrdersEntered",
+      header: "Orders Entered",
     },
   ];
 
@@ -347,7 +408,11 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                   <Column lg={16} md={8} sm={4}>
                     <DataTable
                       rows={data.slice((page - 1) * pageSize, page * pageSize)}
-                      headers={orderHeaders}
+                      headers={
+                        selectedTile.type != "ORDERS_ENTERED_BY_USER_TODAY"
+                          ? orderHeaders
+                          : userHeaders
+                      }
                       isSortable
                     >
                       {({ rows, headers, getHeaderProps, getTableProps }) => (
@@ -368,7 +433,15 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                             <TableBody>
                               <>
                                 {rows.map((row) => (
-                                  <TableRow key={row.id}>
+                                  <TableRow
+                                    key={row.id}
+                                    onClick={() => {
+                                      selectedTile.type ==
+                                      "ORDERS_ENTERED_BY_USER_TODAY"
+                                        ? viewUserOrders(row)
+                                        : {};
+                                    }}
+                                  >
                                     {row.cells.map((cell) =>
                                       renderCell(cell, row),
                                     )}

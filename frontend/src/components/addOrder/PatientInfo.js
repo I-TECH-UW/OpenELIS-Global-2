@@ -6,7 +6,7 @@ import { FormattedMessage } from "react-intl";
 import { getFromOpenElisServer } from "../utils/Utils";
 
 const PatientInfo = (props) => {
-  const { orderFormValues, setOrderFormValues ,error } = props;
+  const { orderFormValues, setOrderFormValues, error } = props;
   const componentMounted = useRef(false);
   const [searchPatientTab, setSearchPatientTab] = useState({
     kind: "primary",
@@ -29,7 +29,6 @@ const PatientInfo = (props) => {
         patientUpdateStatus: "UPDATE",
         patientProperties: patient,
       });
-
     }
     handleNewPatientTab();
   };
