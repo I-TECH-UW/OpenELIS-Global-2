@@ -99,7 +99,7 @@ export function SearchResultForm(props) {
       props.setResults?.({ testResult: [] });
       addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "result.search.nopatient" }),
+        message: intl.formatMessage({ id: "patient.search.nopatient" }),
         kind: NotificationKinds.warning,
       });
       setNotificationVisible(true);

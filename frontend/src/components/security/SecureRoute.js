@@ -6,7 +6,7 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
 import { Loading } from "@carbon/react/";
 import config from "../../config.json";
-import { FormattedMessage } from "react-intl";
+import { useIntl } from "react-intl";
 
 const idleTimeout = 1000 * 60 * 15; // milliseconds until idle warning will appear
 const idleWarningTimeout = 1000 * 60 * 1; // milliseconds until logout is automatically processed from idle warning
@@ -17,6 +17,7 @@ function SecureRoute(props) {
   const [loading, setLoading] = useState(false);
 
   const idleTimer = useRef();
+  const intl = useIntl();
 
   const {
     userSessionDetails,
@@ -33,11 +34,11 @@ function SecureRoute(props) {
         console.info("Access Allowed");
       } else {
         const options = {
-          title: <FormattedMessage id="accessDenied.title" />,
-          message: <FormattedMessage id="accessDenied.message" />,
+          title: intl.formatMessage({ id: "accessDenied.title" }),
+          message: intl.formatMessage({ id: "accessDenied.message" }),
           buttons: [
             {
-              label: <FormattedMessage id="accessDenied.okButton" />,
+              label: intl.formatMessage({ id: "accessDenied.okButton" }),
               onClick: () => {
                 window.location.href = window.location.origin;
               },
@@ -100,11 +101,11 @@ function SecureRoute(props) {
     const timeoutEventID = timer();
 
     const options = {
-      title: <FormattedMessage id="stillThere.title" />,
-      message: <FormattedMessage id="stillThere.message" />,
+      title: intl.formatMessage({ id: "stillThere.title" }),
+      message: intl.formatMessage({ id: "stillThere.message" }),
       buttons: [
         {
-          label: <FormattedMessage id="yes.option" />,
+          label: intl.formatMessage({ id: "yes.optio" }),
           onClick: () => {
             clearTimeout(timeoutEventID);
           },
@@ -117,9 +118,9 @@ function SecureRoute(props) {
   return (
     <>
       {loading && <Loading />}
-      {!loading && !userSessionDetails.authenticated && (
-        <FormattedMessage id="notAuthenticated" />
-      )}
+      {!loading &&
+        !userSessionDetails.authenticated &&
+        intl.formatMessage({ id: "notAuthenticated" })}
       {!loading && userSessionDetails.authenticated && permissionGranted && (
         <>
           <IdleTimer

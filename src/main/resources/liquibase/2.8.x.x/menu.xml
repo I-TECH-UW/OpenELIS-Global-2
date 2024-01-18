@@ -279,5 +279,11 @@
 			<where>element_id='menu_reports_study'</where>
 		</update>
 	</changeSet>
+	<changeSet author="moses_mutesa" id="12">
+		<comment>update results search menu options</comment>
+		<delete tableName="menu" schemaName="clinlims">
+			<where>element_id='menu_results_search_testdate'</where>
+		</delete>
+	</changeSet>
 	
 </databaseChangeLog>

@@ -160,7 +160,7 @@
     "menu.accession.validation" : "By Order",
     "menu.accession.validation.range" : "By Range of Order Numbers",
     "menu.validation.date" : "By Date",
-    "banner.menu.results.status" : "By Status",
+    "banner.menu.results.status" : "By Test, Date or Status",
     "banner.menu.sample" : "Order",
     "banner.menu.sampleAdd" : "Add Order" ,
     "banner.menu.sampleEdit" : "Edit Order" ,
