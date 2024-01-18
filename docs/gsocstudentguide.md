@@ -1,7 +1,7 @@
 Welcome! Are you interested in working on a Google Summer of Code project with *OpenELIS*? We' want you to be a successful GSoC developer in our community so we've put together a few guidelines to answer some of your initial questions and help you understand what is expected of students before submitting a proposal, after being accepted, and during the coding period.
-
+See More on Google's [Student Guide](https://google.github.io/gsocguides/student/)
 !!! caution  
-    Only Students who meet both Google's Contributor [Eligibility Requirements](GSoC Contributors) and also follow our Guidelines will be Selected
+    Only Students who meet both Google's Contributor [Eligibility Requirements](https://summerofcode.withgoogle.com/rules) and also follow our Guidelines will be Selected
 
 |Page OutLine|
 |--|
