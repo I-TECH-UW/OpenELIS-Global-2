@@ -316,7 +316,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             if (organization.getIsActive().equalsIgnoreCase(IActionConstants.YES)) {
                 // not case sensitive hemolysis and Hemolysis are considered
                 // duplicates
-                String sql = "from Organization o where ((trim(lower(o.name))) = :name and ((:parentOrgId is null and o.organization is null) or o.organization.id = :parentOrgId) and o.isActive='Y' and o.id != :orgId)";
+                String sql = "from Organization o where ((trim(lower(o.organizationName))) = :organizationName and ((:parentOrgId is null and o.organization is null) or o.organization.id = :parentOrgId) and o.isActive='Y' and o.id != :orgId)";
                 Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
                 // initialize with 0 (for new records where no id has been generated yet
                 String orgId = "0";
@@ -333,7 +333,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
 
                 query.setParameter("orgId", Integer.parseInt(orgId));
-                query.setParameter("name", organization.getName());
+                query.setParameter("organizationName", organization.getOrganizationName());
 
                 list = query.list();
             }
