@@ -232,14 +232,14 @@ function CreatePatientForm(props) {
     }
   };
 
-  const accessionNumberValidationResponse = (res) => {
+  const accessionNumberValidationResponse = (res, numberType, numberValue) => {
     let error;
     if (res.status === false) {
       setNotificationVisible(true);
       addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
-        message: res.body,
+        message: numberType + ":" + numberValue + " Already in use",
       });
       error = "duplicate";
     }
@@ -253,9 +253,10 @@ function CreatePatientForm(props) {
   ) => {
     let error;
     if (numberValue !== "") {
-      error = getFromOpenElisServerSync(
+      error = getFromOpenElisServer(
         `/rest/subjectNumberValidationProvider?fieldId=${fieldId}&numberType=${numberType}&subjectNumber=${numberValue}`,
-        accessionNumberValidationResponse,
+        (response) =>
+          accessionNumberValidationResponse(response, numberType, numberValue),
       );
     }
     return error;

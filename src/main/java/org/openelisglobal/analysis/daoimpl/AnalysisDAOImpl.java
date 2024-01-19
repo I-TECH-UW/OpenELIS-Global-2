@@ -976,7 +976,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
      @Override
     @Transactional(readOnly = true)
-    public List<Analysis> getAnalysisCompletedOnByStatusId(Date completedDate, String statusId)
+    public List<Analysis> getAnalysesCompletedOnByStatusId(Date completedDate, String statusId)
             throws LIMSRuntimeException {
         
 
@@ -1732,6 +1732,25 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
         }
 
         return 0;
+    }
+
+    @Override
+    public List<Analysis> getAnalysesResultEnteredOnExcludedByStatusId(Date completedDate, Set<Integer> statusIds)
+            throws LIMSRuntimeException {
+        String sql = "from Analysis a where a.completedDate = :completedDate and a.statusId not in ( :statusList )";
+
+        try {
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("completedDate", completedDate);
+            query.setParameterList("statusList", statusIds);
+
+            List<Analysis> analysisList = query.list();
+            return analysisList;
+        } catch (HibernateException e) {
+            handleException(e, "getAnalysisResultEnteredOnOnByStatusId");
+        }
+
+        return null;
     }
 
 }
