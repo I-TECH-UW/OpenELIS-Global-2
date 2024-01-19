@@ -281,21 +281,6 @@ function PathologyDashboard() {
 
       <Grid fullWidth={true}>
         <Column lg={16}>
-    {notificationVisible === true ? <AlertDialog /> : ""}
-    {loading && <Loading description="Loading Dasboard..." />}
-
-    {/* Breadcrumbs */}
-    <Breadcrumb>
-      <BreadcrumbItem href="home.label">Home</BreadcrumbItem>
-      <BreadcrumbItem href="/PathologyDashboard" isCurrentPage>
-        Pathology Dashboard
-      </BreadcrumbItem>
-    </Breadcrumb>
-    <Grid fullWidth={true}>
-      
-    </Grid>
-  
-
           <Section>
             <Section>
               <Heading>

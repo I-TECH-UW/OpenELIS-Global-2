@@ -690,20 +690,6 @@ const Index = () => {
 
   return (
     <>
-          <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Breadcrumb>
-            <BreadcrumbItem href="/">
-              {intl.formatMessage({ id: "home.label" })}
-            </BreadcrumbItem>
-            <BreadcrumbItem href="/SamplePatientEntry">
-              {intl.formatMessage({
-                id: "SamplePatientEntry.label",
-              })}
-            </BreadcrumbItem>
-          </Breadcrumb>
-        </Column>
-      </Grid>
       <Stack gap={10}>
         <div className="pageContent">
           {notificationVisible === true ? <AlertDialog /> : ""}
