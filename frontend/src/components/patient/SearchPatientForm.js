@@ -160,33 +160,6 @@ function SearchPatientForm(props) {
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading />}
-      <>
-        {pagination && (
-          <Grid>
-            <Column lg={11} />
-            <Column lg={2}>
-              <Button
-                type=""
-                id="loadpreviousresults"
-                onClick={loadPreviousResultsPage}
-                disabled={previousPage != null ? false : true}
-              >
-                <FormattedMessage id="button.label.loadprevious" />
-              </Button>
-            </Column>
-            <Column lg={2}>
-              <Button
-                type=""
-                id="loadnextresults"
-                disabled={nextPage != null ? false : true}
-                onClick={loadNextResultsPage}
-              >
-                <FormattedMessage id="button.label.loadnext" />
-              </Button>
-            </Column>
-          </Grid>
-        )}
-      </>
       <Formik
         initialValues={searchFormValues}
         enableReinitialize={true}
@@ -346,6 +319,33 @@ function SearchPatientForm(props) {
           </Form>
         )}
       </Formik>
+      <Column lg={16}>
+        {pagination && (
+          <Grid>
+            <Column lg={11} />
+            <Column lg={2}>
+              <Button
+                type=""
+                id="loadpreviousresults"
+                onClick={loadPreviousResultsPage}
+                disabled={previousPage != null ? false : true}
+              >
+                <FormattedMessage id="button.label.loadprevious" />
+              </Button>
+            </Column>
+            <Column lg={2}>
+              <Button
+                type=""
+                id="loadnextresults"
+                disabled={nextPage != null ? false : true}
+                onClick={loadNextResultsPage}
+              >
+                <FormattedMessage id="button.label.loadnext" />
+              </Button>
+            </Column>
+          </Grid>
+        )}
+      </Column>
       <div>
         <Column lg={16}>
           <DataTable
