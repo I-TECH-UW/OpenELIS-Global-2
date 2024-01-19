@@ -223,6 +223,12 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
       type: "AVERAGE_TURN_AROUND_TIME",
       value: timeMetrics.resultToValidation,
     },
+    {
+      title: "Lab Section",
+      subTitle: "Lab Section",
+      type: "AVERAGE_TURN_AROUND_TIME",
+      value: timeMetrics.resultToValidation,
+    },
   ];
 
   const handleMinimizeClick = () => {
