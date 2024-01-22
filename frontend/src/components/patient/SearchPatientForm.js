@@ -6,6 +6,7 @@ import {
   Form,
   TextInput,
   Button,
+  Grid,
   Column,
   DatePicker,
   DatePickerInput,
@@ -40,6 +41,10 @@ function SearchPatientForm(props) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [loading, setLoading] = useState(false);
+  const [nextPage, setNextPage] = useState(null);
+  const [previousPage, setPreviousPage] = useState(null);
+  const [pagination, setPagination] = useState(false);
+  const [url, setUrl] = useState("");
   const [searchFormValues, setSearchFormValues] = useState(
     SearchPatientFormValues,
   );
@@ -67,9 +72,20 @@ function SearchPatientForm(props) {
       "&gender=" +
       values.gender;
     getFromOpenElisServer(searchEndPoint, fetchPatientResults);
+    setUrl(searchEndPoint);
+  };
+  const loadNextResultsPage = () => {
+    setLoading(true);
+    getFromOpenElisServer(url + "&page=" + nextPage, fetchPatientResults);
   };
 
-  const fetchPatientResults = (patientsResults) => {
+  const loadPreviousResultsPage = () => {
+    setLoading(true);
+    getFromOpenElisServer(url + "&page=" + previousPage, fetchPatientResults);
+  };
+
+  const fetchPatientResults = (res) => {
+    let patientsResults = res.patientSearchResults;
     if (patientsResults.length > 0) {
       patientsResults.forEach((item) => (item.id = item.patientID));
       setPatientSearchResults(patientsResults);
@@ -81,6 +97,22 @@ function SearchPatientForm(props) {
         kind: NotificationKinds.warning,
       });
       setNotificationVisible(true);
+    }
+    if (res.paging) {
+      var { totalPages, currentPage } = res.paging;
+      if (totalPages > 1) {
+        setPagination(true);
+        if (parseInt(currentPage) < parseInt(totalPages)) {
+          setNextPage(parseInt(currentPage) + 1);
+        } else {
+          setNextPage(null);
+        }
+        if (parseInt(currentPage) > 1) {
+          setPreviousPage(parseInt(currentPage) - 1);
+        } else {
+          setPreviousPage(null);
+        }
+      }
     }
     setLoading(false);
   };
@@ -287,6 +319,33 @@ function SearchPatientForm(props) {
           </Form>
         )}
       </Formik>
+      <Column lg={16}>
+        {pagination && (
+          <Grid>
+            <Column lg={11} />
+            <Column lg={2}>
+              <Button
+                type=""
+                id="loadpreviousresults"
+                onClick={loadPreviousResultsPage}
+                disabled={previousPage != null ? false : true}
+              >
+                <FormattedMessage id="button.label.loadprevious" />
+              </Button>
+            </Column>
+            <Column lg={2}>
+              <Button
+                type=""
+                id="loadnextresults"
+                disabled={nextPage != null ? false : true}
+                onClick={loadNextResultsPage}
+              >
+                <FormattedMessage id="button.label.loadnext" />
+              </Button>
+            </Column>
+          </Grid>
+        )}
+      </Column>
       <div>
         <Column lg={16}>
           <DataTable
