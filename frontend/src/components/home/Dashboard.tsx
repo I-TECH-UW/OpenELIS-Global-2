@@ -88,8 +88,21 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
       if (selectedTile.type == "AVERAGE_TURN_AROUND_TIME") {
         getFromOpenElisServer(
           "/rest/home-dashboard/turn-around-time-metrics",
-          loadTimeMetrics,
-        );
+        )
+          .then((data) => {
+            setTimeMetrics((prev) => ({
+              ...prev,
+              receptionToValidation: data.receptionToValidation,
+              receptionToResult: data.receptionToResult,
+              resultToValidation: data.resultToValidation,
+            }));
+            setLoading(false);
+          })
+          .catch((error) => {
+            console.error("Error fetching average turnaround time:", error);
+            setLoading(false);
+          });
+    
       } else if (selectedTile.type == "ORDERS_FOR_USER") {
         getFromOpenElisServer(
           "/rest/home-dashboard/" +
