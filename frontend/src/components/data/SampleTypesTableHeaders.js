@@ -1,3 +1,4 @@
+import { FormattedMessage } from 'react-intl';
 export const sampleTypesTableHeader = [
   {
     key: "select_checkBox",
@@ -5,31 +6,31 @@ export const sampleTypesTableHeader = [
   },
   {
     key: "_id",
-    header: "ID",
+    header: <FormattedMessage id="header.ID"/>,
   },
   {
     key: "sampleType",
-    header: "Sample Type",
+    header: <FormattedMessage id="sample.type"/>,
   },
   {
     key: "collectionDate",
-    header: "Collection Date(dd/mm/yyyy)",
+    header: <FormattedMessage id="sample.collection.date"/> +"(dd/mm/yyyy) ",
   },
   {
     key: "collectionTime",
-    header: "Collection Time(hh:mm)",
+    header: <FormattedMessage id="sample.collection.time"/> +"(hh:mm) ",
   },
   {
     key: "collector",
-    header: "Collector",
+    header: <FormattedMessage id= "collector.label"/>,
   },
   {
     key: "reject",
-    header: "Reject",
+    header:<FormattedMessage id="header.reject"/>,
   },
   {
     key: "rejectReason",
-    header: "Reject Reason",
+    header: <FormattedMessage id="header.rejection.reason"/>,
   },
   {
     key: "removeSample",

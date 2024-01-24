@@ -20,90 +20,34 @@ import {
   Loading,
   RadioButtonGroup,
   RadioButton,
-  InlineLoading
+  InlineLoading,
 } from "@carbon/react";
 import { Launch, Subtract } from "@carbon/react/icons";
 import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
+  postToOpenElisServerForPDF,
   hasRole,
 } from "../utils/Utils";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
+import ConfirmPopup from "../common/ConfirmPopup";
+import PatientHeader from "../common/PatientHeader";
+import QuestionnaireResponse from "../common/QuestionnaireResponse";
 import "../pathology/PathologyDashboard.css";
-
-export const QuestionnaireResponse = ({ questionnaireResponse }) => {
-  const renderQuestionResponse = (item) => {
-    console.log(JSON.stringify(item));
-    return (
-      <>
-        <div className="questionnaireResponseItem">
-          <Grid>
-            <Column lg={6} md={8} sm={4}>
-              <h6> {item.text}:</h6>
-            </Column>
-            <Column lg={10} md={8} sm={4}>
-              {item.answer &&
-                item.answer.map((answer, index) => {
-                  return <Tag key={index}>{renderAnswer(answer)}</Tag>;
-                })}
-            </Column>
-          </Grid>
-        </div>
-      </>
-    );
-  };
-
-  const renderAnswer = (answer) => {
-    console.log(JSON.stringify(answer));
-
-    var display = "";
-    if ("valueString" in answer) {
-      display = answer.valueString;
-    } else if ("valueBoolean" in answer) {
-      display = answer.valueBoolean;
-    } else if ("valueCoding" in answer) {
-      display = answer.valueCoding.display;
-    } else if ("valueDate" in answer) {
-      display = answer.valueDate;
-    } else if ("valueDecimal" in answer) {
-      display = answer.valueDecimal;
-    } else if ("valueInteger" in answer) {
-      display = answer.valueInteger;
-    } else if ("valueQuantity" in answer) {
-      display = answer.valueQuantity.value + answer.valueQuantity.unit;
-    } else if ("valueTime" in answer) {
-      display = answer.valueTime;
-    }
-    return (
-      <>
-        <span className="questionnaireResponseAnswer">{display}</span>
-      </>
-    );
-  };
-
-  return (
-    <>
-      {questionnaireResponse &&
-        questionnaireResponse.item.map((item, index) => {
-          return <span key={index}>{renderQuestionResponse(item)}</span>;
-        })}
-    </>
-  );
-};
 
 function CytologyCaseView() {
   const componentMounted = useRef(false);
 
   const { cytologySampleId } = useParams();
 
-  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
-  const { userSessionDetails, setUserSessionDetails } = useContext(
-    UserSessionDetailsContext,
-  );
+  const { userSessionDetails } = useContext(UserSessionDetailsContext);
+
+  const intl = useIntl();
 
   const [pathologySampleInfo, setPathologySampleInfo] = useState({});
 
@@ -138,12 +82,29 @@ function CytologyCaseView() {
   const [loading, setLoading] = useState(true);
   const [loadingReport, setLoadingReport] = useState(false);
   const [reportTypes, setReportTypes] = useState([]);
-  const intl = useIntl();
   const [slidesToAdd, setSlidesToAdd] = useState(1);
+  const [isConfirmOpen, setConfirmOpen] = useState(false);
+  const [reportParams, setReportParams] = useState({
+    0: {
+      submited: false,
+      reportLink: "",
+    },
+  });
+
+  const handleConfirm = () => {
+    var diagnosis = { ...pathologySampleInfo.diagnosis };
+    diagnosis.negativeDiagnosis = true;
+    diagnosis.diagnosisResultsMaps = [];
+    setPathologySampleInfo({
+      ...pathologySampleInfo,
+      diagnosis: diagnosis,
+    });
+    setConfirmOpen(false);
+  };
 
   async function displayStatus(response) {
     var body = await response.json();
-    console.log(body);
+    console.debug(body);
     var status = response.status;
     setNotificationVisible(true);
     if (status == "200") {
@@ -151,49 +112,54 @@ function CytologyCaseView() {
       const save2 = document.getElementById("pathology_save2");
       save1.disabled = true;
       save2.disabled = true;
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.success,
-        title: <FormattedMessage id="notification.title" />,
-        message: "Succesfuly saved",
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "save.success" }),
       });
     } else {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
-        message: "Error while saving",
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.save.msg" }),
       });
     }
   }
 
-  async function writeReport(response) {
-    var report = await response.blob();
-    const url = URL.createObjectURL(report);
-    setLoadingReport(false)
-    console.log(JSON.stringify(report));
-    var status = response.status;
+  const reportStatus = async (pdfGenerated, blob, index) => {
     setNotificationVisible(true);
-    if (status == "200") {
-      setNotificationBody({
+    setLoadingReport(false);
+    if (pdfGenerated) {
+      addNotification({
         kind: NotificationKinds.success,
-        title: <FormattedMessage id="notification.title" />,
-        message: "Succesfuly Generated Report",
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "success.report.status" }),
       });
+      var params = { ...reportParams };
+      if (!params[index]) {
+        params[index] = {};
+      }
+      params[index].submited = true;
+      params[index].reportLink = window.URL.createObjectURL(blob, {
+        type: "application/pdf",
+      });
+      setReportParams(params);
 
-      var win = window.open();
-      win.document.write(
-        '<iframe src="' +
-          url +
-          '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>',
-      );
+      var newReports = [...pathologySampleInfo.reports];
+      let encodedFile = await toBase64(blob);
+      newReports[index].base64Image = encodedFile;
+      setPathologySampleInfo({
+        ...pathologySampleInfo,
+        reports: newReports,
+      });
     } else {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
-        message: "Error while Generating Report",
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.report.status" }),
       });
     }
-  }
-
+  };
 
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -270,9 +236,10 @@ function CytologyCaseView() {
         diagnosis: diagnosis,
       };
     }
-
-    console.log(" ..submit....");
-    console.log(JSON.stringify(submitValues));
+    console.group("submitting");
+    console.debug(" ..submit....");
+    console.debug(JSON.stringify(submitValues));
+    console.groupEnd();
     postToOpenElisServerFullResponse(
       "/rest/cytology/caseView/" + cytologySampleId,
       JSON.stringify(submitValues),
@@ -416,69 +383,22 @@ function CytologyCaseView() {
         <Column lg={16}>
           <Section>
             <Section>
-              {pathologySampleInfo ? (
-                <div className="patient-header2">
-                  <div className="patient-name">
-                    <Tag type="blue">
-                      {" "}
-                      <FormattedMessage id="patient.label.name" />:
-                    </Tag>
-                    {pathologySampleInfo.lastName}{" "}
-                    {pathologySampleInfo.firstName}
-                  </div>
-                  <div className="patient-dob">
-                    {" "}
-                    <Tag type="blue">
-                      <FormattedMessage id="patient.label.sex" /> :
-                    </Tag>
-                    {pathologySampleInfo.sex === "M" ? (
-                      <FormattedMessage id="patient.male" />
-                    ) : (
-                      <FormattedMessage id="patient.female" />
-                    )}
-                    <Tag type="blue">
-                      <FormattedMessage id="patient.label.age" /> :
-                    </Tag>
-                    {pathologySampleInfo.age}{" "}
-                  </div>
-                  <div className="patient-id">
-                    <Tag type="blue">
-                      <FormattedMessage id="sample.label.orderdate" /> :
-                    </Tag>
-                    {pathologySampleInfo.requestDate}
-                  </div>
-                  <div className="patient-id">
-                    <Tag type="blue">
-                      <FormattedMessage id="sample.label.labnumber" /> :
-                    </Tag>
-                    {pathologySampleInfo.labNumber}
-                  </div>
-                  <div className="patient-id">
-                    <Tag type="blue">
-                      {" "}
-                      <FormattedMessage id="sample.label.facility" />:
-                    </Tag>{" "}
-                    {pathologySampleInfo.referringFacility}
-                    <Tag type="blue">
-                      <FormattedMessage id="sample.label.dept" />:{" "}
-                    </Tag>
-                    {pathologySampleInfo.department}
-                  </div>
-                  <div className="patient-id">
-                    <Tag type="blue">
-                      <FormattedMessage id="sample.label.requester" />:{" "}
-                    </Tag>
-                    {pathologySampleInfo.requester}
-                  </div>
-                </div>
-              ) : (
-                <div className="patient-header2">
-                  <div className="patient-name">
-                    {" "}
-                    <FormattedMessage id="patient.label.nopatientid" />{" "}
-                  </div>
-                </div>
-              )}
+              <PatientHeader
+                id={pathologySampleInfo.labNumber}
+                lastName={pathologySampleInfo.lastName}
+                firstName={pathologySampleInfo.firstName}
+                gender={pathologySampleInfo.sex}
+                age={pathologySampleInfo.age}
+                orderDate={pathologySampleInfo.requestDate}
+                referringFacility={pathologySampleInfo.referringFacility}
+                department={pathologySampleInfo.department}
+                requester={pathologySampleInfo.requester}
+                accesionNumber={pathologySampleInfo.labNumber}
+                className="patient-header2"
+                isOrderPage={true}
+              >
+                {" "}
+              </PatientHeader>
             </Section>
           </Section>
           <Section>
@@ -497,6 +417,12 @@ function CytologyCaseView() {
       <Grid fullWidth={true} className="orderLegendBody">
         {notificationVisible === true ? <AlertDialog /> : ""}
         {loading && <Loading description="Loading Dasboard..." />}
+        <ConfirmPopup
+          isOpen={isConfirmOpen}
+          onClose={() => setConfirmOpen(false)}
+          onConfirm={handleConfirm}
+          messageCode="cytology.label.confirmSelect"
+        />
         <Column lg={16} md={8} sm={4}>
           <Button
             id="pathology_save"
@@ -515,7 +441,7 @@ function CytologyCaseView() {
           <Select
             id="status"
             name="status"
-            labelText="Status"
+            labelText={intl.formatMessage({ id: "label.filters.status" })}
             value={pathologySampleInfo.status}
             onChange={(event) => {
               setPathologySampleInfo({
@@ -538,7 +464,7 @@ function CytologyCaseView() {
           <Select
             id="assignedTechnician"
             name="assignedTechnician"
-            labelText={<FormattedMessage id="assigned.technician.label" />}
+            labelText={intl.formatMessage({ id: "assigned.technician.label" })}
             value={pathologySampleInfo.assignedTechnicianId}
             onChange={(event) => {
               setPathologySampleInfo({
@@ -560,7 +486,9 @@ function CytologyCaseView() {
           <Select
             id="assignedPathologist"
             name="assignedPathologist"
-            labelText={<FormattedMessage id="assigned.cytopathologist.label" />}
+            labelText={intl.formatMessage({
+              id: "assigned.cytopathologist.label",
+            })}
             value={pathologySampleInfo.assignedPathologistId}
             onChange={(e) => {
               setPathologySampleInfo({
@@ -595,7 +523,9 @@ function CytologyCaseView() {
                   <>
                     <Column lg={2} md={8} sm={4}>
                       <IconButton
-                        label={intl.formatMessage({ id: "label.button.remove.slide" })}
+                        label={intl.formatMessage({
+                          id: "label.button.remove.slide",
+                        })}
                         onClick={() => {
                           var info = { ...pathologySampleInfo };
                           info["slides"].splice(index, 1);
@@ -615,7 +545,9 @@ function CytologyCaseView() {
                           <FormattedMessage id="pathology.label.slide.number" />
                         }
                         hideLabel={true}
-                        placeholder={intl.formatMessage({ id: "pathology.label.slide.number" })}
+                        placeholder={intl.formatMessage({
+                          id: "pathology.label.slide.number",
+                        })}
                         value={slide.slideNumber}
                         type="number"
                         onChange={(e) => {
@@ -635,7 +567,9 @@ function CytologyCaseView() {
                           <FormattedMessage id="pathology.label.location" />
                         }
                         hideLabel={true}
-                        placeholder={intl.formatMessage({ id: "pathology.label.location" })}
+                        placeholder={intl.formatMessage({
+                          id: "pathology.label.location",
+                        })}
                         value={slide.location}
                         onChange={(e) => {
                           var newSlides = [...pathologySampleInfo.slides];
@@ -721,13 +655,17 @@ function CytologyCaseView() {
             <Column lg={2} md={8} sm={4}>
               <TextInput
                 id="slidesToAdd"
-                labelText={intl.formatMessage({ id: "pathology.label.slide.add.number" })}
+                labelText={intl.formatMessage({
+                  id: "pathology.label.slide.add.number",
+                })}
                 hideLabel={true}
-                placeholder={intl.formatMessage({ id: "pathology.label.slide.add.number" })}
+                placeholder={intl.formatMessage({
+                  id: "pathology.label.slide.add.number",
+                })}
                 value={slidesToAdd}
                 type="number"
-                  onChange={(e) => {
-                    setSlidesToAdd(e.target.value);
+                onChange={(e) => {
+                  setSlidesToAdd(e.target.value);
                 }}
               />
             </Column>
@@ -736,11 +674,11 @@ function CytologyCaseView() {
                 onClick={() => {
                   const maxSlideNumber = pathologySampleInfo.slides.reduce(
                     (max, slide) => {
-                      const slideNumber = slide.slideNumber || 0; 
+                      const slideNumber = slide.slideNumber || 0;
                       return Math.ceil(Math.max(max, slideNumber));
                     },
                     0,
-                  ); 
+                  );
 
                   var allSlides = pathologySampleInfo.slides || [];
                   Array.from({ length: slidesToAdd }, (_, index) => {
@@ -748,11 +686,11 @@ function CytologyCaseView() {
                       id: "",
                       slideNumber: maxSlideNumber + 1 + index,
                     });
-                  })
+                  });
 
                   setPathologySampleInfo({
                     ...pathologySampleInfo,
-                    slides: allSlides
+                    slides: allSlides,
                   });
                 }}
               >
@@ -784,7 +722,9 @@ function CytologyCaseView() {
                 <SelectItem
                   disabled
                   value="ADD"
-                  text={intl.formatMessage({ id: "immunohistochemistry.label.addreport" })}
+                  text={intl.formatMessage({
+                    id: "immunohistochemistry.label.addreport",
+                  })}
                 />
                 {reportTypes.map((report, index) => {
                   return (
@@ -813,7 +753,9 @@ function CytologyCaseView() {
                   <>
                     <Column lg={2} md={8} sm={4}>
                       <IconButton
-                        label={intl.formatMessage({ id: "label.button.remove.report" })}
+                        label={intl.formatMessage({
+                          id: "label.button.remove.report",
+                        })}
                         onClick={() => {
                           var info = { ...pathologySampleInfo };
                           info["reports"].splice(index, 1);
@@ -836,7 +778,7 @@ function CytologyCaseView() {
                         iconDescription="file upload"
                         multiple={false}
                         accept={["image/jpeg", "image/png", "application/pdf"]}
-                        disabled={false}
+                        disabled={reportParams[index]?.submited}
                         name=""
                         buttonKind="primary"
                         size="lg"
@@ -859,46 +801,68 @@ function CytologyCaseView() {
                       />
                     </Column>
                     <Column lg={4}>
-                      <h6>{
-                        reportTypes.filter(
-                          (type) => type.id === report.reportType,
-                        )[0]?.value
-                      }</h6>
+                      <h6>
+                        {
+                          reportTypes.filter(
+                            (type) => type.id === report.reportType,
+                          )[0]?.value
+                        }
+                      </h6>
                     </Column>
-                    <Column lg={2} md={1} sm={2}>
-                      {pathologySampleInfo.reports[index].image && (
-                        <>
-                          <Button
-                            onClick={() => {
-                              var win = window.open();
-                              win.document.write(
-                                '<iframe src="' +
-                                  report.fileType +
-                                  ";base64," +
-                                  report.image +
-                                  '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>',
-                              );
-                            }}
-                          >
-                            <Launch />{" "}
-                            <FormattedMessage id="pathology.label.view" />
-                          </Button>
-                        </>
-                      )}
-                    </Column>
+
+                    {pathologySampleInfo.reports[index].image && (
+                      <>
+                        {!reportParams[index]?.submited && (
+                          <Column lg={2} md={1} sm={2}>
+                            <Button
+                              onClick={() => {
+                                var win = window.open();
+                                win.document.write(
+                                  '<iframe src="' +
+                                    report.fileType +
+                                    ";base64," +
+                                    report.image +
+                                    '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>',
+                                );
+                              }}
+                            >
+                              <Launch />{" "}
+                              <FormattedMessage id="pathology.label.view" />
+                            </Button>
+                          </Column>
+                        )}
+                      </>
+                    )}
+
+                    {reportParams[index]?.submited && (
+                      <Column lg={2} md={1} sm={2}>
+                        <Button
+                          onClick={() => {
+                            window.open(
+                              reportParams[index]?.reportLink,
+                              "_blank",
+                            );
+                          }}
+                        >
+                          <Launch />{" "}
+                          <FormattedMessage id="pathology.label.view" />
+                        </Button>
+                      </Column>
+                    )}
                     <Column lg={3} md={2} sm={2}>
                       <Button
-                       id ={"generate_report_"+index}
+                        disabled={reportParams[index]?.submited}
+                        id={"generate_report_" + index}
                         onClick={(e) => {
                           setLoadingReport(true);
                           const form = {
                             report: "PatientCytologyReport",
                             programSampleId: cytologySampleId,
                           };
-                          postToOpenElisServerFullResponse(
+                          postToOpenElisServerForPDF(
                             "/rest/ReportPrint",
                             JSON.stringify(form),
-                            writeReport,
+                            (e, blob) => reportStatus(e, blob, index),
                           );
                         }}
                       >
@@ -906,7 +870,7 @@ function CytologyCaseView() {
                         <FormattedMessage id="button.label.genarateReport" />
                       </Button>
                     </Column>
-                    <Column lg={2} md={2} sm={2}/>
+                    <Column lg={2} md={2} sm={2} />
                     <Column lg={16} md={8} sm={4}>
                       <div> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                     </Column>
@@ -1003,7 +967,9 @@ function CytologyCaseView() {
                       valueSelected={
                         pathologySampleInfo.specimenAdequacy?.values[0]?.id
                       }
-                      legendText={<FormattedMessage id="label.button.select" />}
+                      legendText={intl.formatMessage({
+                        id: "label.button.select",
+                      })}
                       name="adequacy"
                       id="adequacy"
                       onChange={(value) => {
@@ -1042,16 +1008,22 @@ function CytologyCaseView() {
                     ? pathologySampleInfo.diagnosis.negativeDiagnosis
                     : true
                 }
-                labelText={<FormattedMessage id="cytology.label.negative" />}
+                labelText={intl.formatMessage({
+                  id: "cytology.label.negative",
+                })}
                 id="checked"
                 onChange={(e) => {
-                  var diagnosis = { ...pathologySampleInfo.diagnosis };
-                  diagnosis.negativeDiagnosis = e.target.checked;
-                  diagnosis.diagnosisResultsMaps = [];
-                  setPathologySampleInfo({
-                    ...pathologySampleInfo,
-                    diagnosis: diagnosis,
-                  });
+                  if (e.target.checked) {
+                    setConfirmOpen(true);
+                  } else {
+                    var diagnosis = { ...pathologySampleInfo.diagnosis };
+                    diagnosis.negativeDiagnosis = e.target.checked;
+                    diagnosis.diagnosisResultsMaps = [];
+                    setPathologySampleInfo({
+                      ...pathologySampleInfo,
+                      diagnosis: diagnosis,
+                    });
+                  }
                 }}
               />
             </Column>
@@ -1253,9 +1225,13 @@ function CytologyCaseView() {
                         <FormattedMessage id="cytology.label.other" /> :
                         <TextInput
                           id="otherNeoPlasms"
-                          labelText="Enter text rest"
+                          labelText={intl.formatMessage({
+                            id: "enterText.label",
+                          })}
                           hideLabel={true}
-                          placeholder="Other Malignant"
+                          placeholder={intl.formatMessage({
+                            id: "otherMalignant.placeholder",
+                          })}
                           value={
                             filterDiagnosisResultsByCategory(
                               "EPITHELIAL_CELL_ABNORMALITY",
@@ -1317,7 +1293,9 @@ function CytologyCaseView() {
                       <Column lg={4} md={8} sm={4}>
                         <FilterableMultiSelect
                           id="nonNeoPlastic"
-                          titleText="Select Result"
+                          titleText={intl.formatMessage({
+                            id: "selectResult.title",
+                          })}
                           items={diagnosisResultNonNeoPlasticCellular}
                           itemToString={(item) => (item ? item.value : "")}
                           initialSelectedItems={
@@ -1420,7 +1398,9 @@ function CytologyCaseView() {
                       <Column lg={4} md={8} sm={4}>
                         <FilterableMultiSelect
                           id="reactiveChanges"
-                          titleText="Select Result"
+                          titleText={intl.formatMessage({
+                            id: "selectResult.title",
+                          })}
                           items={diagnosisResultReactiveCellular}
                           itemToString={(item) => (item ? item.value : "")}
                           initialSelectedItems={
@@ -1520,7 +1500,9 @@ function CytologyCaseView() {
                       <Column lg={4} md={8} sm={4}>
                         <FilterableMultiSelect
                           id="organisms"
-                          titleText="Select Result"
+                          titleText={intl.formatMessage({
+                            id: "selectResult.title",
+                          })}
                           items={diagnosisResultOrganisms}
                           itemToString={(item) => (item ? item.value : "")}
                           initialSelectedItems={
@@ -1617,7 +1599,9 @@ function CytologyCaseView() {
                       <Column lg={4} md={8} sm={4}>
                         <FilterableMultiSelect
                           id="OTHER"
-                          titleText="Select Result"
+                          titleText={intl.formatMessage({
+                            id: "selectResult.title",
+                          })}
                           items={diagnosisResultOther}
                           itemToString={(item) => (item ? item.value : "")}
                           initialSelectedItems={
@@ -1709,18 +1693,23 @@ function CytologyCaseView() {
               )}
           </>
         )}
-        <Column lg={16}>
-          <Checkbox
-            labelText={<FormattedMessage id="pathology.label.release" />}
-            id="release"
-            onChange={() => {
-              setPathologySampleInfo({
-                ...pathologySampleInfo,
-                release: !pathologySampleInfo.release,
-              });
-            }}
-          />
-        </Column>
+        {pathologySampleInfo.assignedPathologistId &&
+          pathologySampleInfo.assignedTechnicianId && (
+            <Column lg={16}>
+              <Checkbox
+                labelText={intl.formatMessage({
+                  id: "pathology.label.release",
+                })}
+                id="release"
+                onChange={() => {
+                  setPathologySampleInfo({
+                    ...pathologySampleInfo,
+                    release: !pathologySampleInfo.release,
+                  });
+                }}
+              />
+            </Column>
+          )}
         <Column lg={16}>
           <Button
             id="pathology_save2"
@@ -1729,7 +1718,7 @@ function CytologyCaseView() {
               save(e);
             }}
           >
-             <FormattedMessage id="label.button.save" />
+            <FormattedMessage id="label.button.save" />
           </Button>
         </Column>
       </Grid>

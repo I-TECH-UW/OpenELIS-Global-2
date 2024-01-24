@@ -1,5 +1,6 @@
 import React from "react";
 import GlobalSideBar from "../common/GlobalSideBar";
+import { FormattedMessage, injectIntl } from "react-intl";
 import {
   IbmWatsonDiscovery,
   IbmWatsonNaturalLanguageUnderstanding,
@@ -10,137 +11,138 @@ export const RoutineReportsMenu = {
   className: "resultSideNav",
   sideNavMenuItems: [
     {
-      title: "Patient Status Report",
+      title: <FormattedMessage id="sidenav.title.statusreport"/>,
       icon: IbmWatsonDiscovery,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=patientCILNSP_vreduit",
-          label: "Patient Status Report",
+          label: <FormattedMessage id="sidenav.label.statusreport"/>,
         },
       ],
     },
     {
-      title: "Aggregate Reports",
+      title: <FormattedMessage id="sidenav.title.aggregatereport"/>,
       icon: Microscope,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl +
             "/Report?type=indicator&report=statisticsReport",
-          label: "Statistics Report",
+          label: <FormattedMessage id= "sidenav.label.statisticsreport"/>,
         },
         {
           link:
             config.serverBaseUrl +
             "/Report?type=indicator&report=indicatorHaitiLNSPAllTests",
-          label: "Summary of All Tests",
+          label: <FormattedMessage id= "sidenav.label.testsummary"/>
         },
         {
           link:
             config.serverBaseUrl +
             "/Report?type=indicator&report=indicatorCDILNSPHIV",
-          label: "HIV Test Summary",
+          label: <FormattedMessage id="sideNav.label.hivtestsummary"/>,
         },
       ],
     },
     {
-      title: "Rejection Report",
+      title: <FormattedMessage id="sideNav.title.rejectionreport"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl +
             "/Report?type=indicator&report=sampleRejectionReport",
-          label: "Rejection Report",
+          label: <FormattedMessage id="sideNav.label.rejectionreport"/>,
         },
       ],
     },
     {
-      title: "Activity Report",
+      title: <FormattedMessage id="sideNav.title.activityreport"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl +
             "/Report?type=indicator&report=activityReportByTest",
-          label: "By Test Type",
+          label: <FormattedMessage id="sideNav.label.bytesttype"/>,
         },
         {
           link:
             config.serverBaseUrl +
             "/Report?type=indicator&report=activityReportByPanel",
-          label: "By Panel Type",
+          label:  <FormattedMessage id="sideNav.label.bypaneltype"/>,
         },
         {
           link:
             config.serverBaseUrl +
             "/Report?type=indicator&report=activityReportByTestSection",
-          label: "By Unit",
+          label: <FormattedMessage id="sideNav.label.byunit"/>,
         },
       ],
     },
     {
-      title: "Referred Tests Report",
+      title: <FormattedMessage id="sideNav.title.referredtestreport" defaultMessage="Referred Tests Report"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl + "/Report?type=patient&report=referredOut",
-          label: "Referred Tests Report",
+          label: <FormattedMessage id="sideNav.label.referredtestreport"/>,
         },
       ],
     },
     {
-      title: "Non conformity Reports",
+      title: <FormattedMessage id="sideNav.title.noncomformityreports"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=haitiNonConformityByDate",
-          label: "By Date",
+          label:  <FormattedMessage id="sideNav.label.noncomformityreportsbydate"/>,
         },
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=haitiNonConformityBySectionReason",
-          label: "By unit and Reason",
+          label: <FormattedMessage id="sideNav.label.noncomformityreportsbyunit"/>,
         },
       ],
     },
     {
-      title: "Delayed Validation",
+      title: <FormattedMessage id="sideNav.title.delayedvalidation"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl +
             "/ReportPrint?type=indicator&report=validationBacklog",
-          label: "Delayed Validation",
+          label: <FormattedMessage id="sideNav.label.delayedvalidation"/>,
+          icon: IbmWatsonNaturalLanguageUnderstanding,
         },
       ],
     },
     {
-      title: "Audit Trail",
+      title: <FormattedMessage id="sideNav.title.audittrail"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link: config.serverBaseUrl + "/AuditTrailReport",
-          label: "Audit Trail",
+          label:  <FormattedMessage id="sideNav.label.audittrail"/>,
         },
       ],
     },
     {
-      title: "Export Routine CSV file",
+      title: <FormattedMessage id="sideNav.title.exportcsvfile"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=CISampleRoutineExport",
-          label: "Export Routine CSV file",
+          label: <FormattedMessage id="sideNav.label.exportcsvfile"/>,
         },
       ],
     },
@@ -155,4 +157,4 @@ const Routine = () => {
   );
 };
 
-export default Routine;
+export default injectIntl(Routine);

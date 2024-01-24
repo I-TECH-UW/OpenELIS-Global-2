@@ -894,7 +894,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
 
         if (taskLocation == null) {
             LogEvent.logWarn(this.getClass().getSimpleName(), "getTaskLoctionFromServer",
-                    "remoteTask doesn't reference a Location, or referenced patient returned null");
+                    "remoteTask doesn't reference a Location");
         }
         return taskLocation;
     }

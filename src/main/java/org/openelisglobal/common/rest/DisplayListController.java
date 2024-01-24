@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
+import org.openelisglobal.common.rest.provider.bean.TestDisplayBean;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.IStatusService;
@@ -23,6 +24,8 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.dictionary.service.DictionaryService;
+import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
@@ -38,8 +41,11 @@ import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.testresult.service.TestResultService;
+import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,6 +57,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/rest/")
 public class DisplayListController extends BaseRestController{
+    @Value("${org.itech.login.saml:false}")
+    private Boolean useSAML;
+    @Value("${org.itech.login.oauth:false}")
+    private Boolean useOAUTH;
 
     @Autowired
     private ProviderService  providerService;
@@ -78,6 +88,12 @@ public class DisplayListController extends BaseRestController{
 
 	@Autowired
 	private SiteInformationService siteInformationService;
+
+	@Autowired
+	private TestResultService testResultService;
+	
+	@Autowired
+	DictionaryService dictionaryService;
 
 	private static boolean HAS_NFS_PANEL = false;
 
@@ -264,7 +280,7 @@ public class DisplayListController extends BaseRestController{
 			    Property.allowResultRejection));
 
 		configs.put(Property.AccessionFormat.toString(), ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat));
-
+		configs.put(Property.USE_ALPHANUM_ACCESSION_PREFIX.toString(), ConfigurationProperties.getInstance().getPropertyValue(Property.USE_ALPHANUM_ACCESSION_PREFIX));
 		return configs;
 	}
 
@@ -283,20 +299,23 @@ public class DisplayListController extends BaseRestController{
 			    Property.PHONE_FORMAT));
 	    configs.put(Property.releaseNumber.toString(), ConfigurationProperties.getInstance().getPropertyValue(
 			    Property.releaseNumber));
-	    configs.put(Property.restrictFreeTextProviderEntry.toString(), ConfigurationProperties.getInstance().getPropertyValue(
-			    Property.restrictFreeTextProviderEntry));
-	    configs.put(Property.restrictFreeTextProviderEntry.toString(), ConfigurationProperties.getInstance().getPropertyValue(
-			    Property.restrictFreeTextProviderEntry));
+	    configs.put(Property.ACCESSION_NUMBER_VALIDATE.toString(), ConfigurationProperties.getInstance().getPropertyValue(
+			    Property.ACCESSION_NUMBER_VALIDATE));
+	    configs.put(Property.AUTOFILL_COLLECTION_DATE.toString(), ConfigurationProperties.getInstance().getPropertyValue(
+			    Property.AUTOFILL_COLLECTION_DATE));
+	    configs.put(Property.ACCEPT_EXTERNAL_ORDERS.toString(), ConfigurationProperties.getInstance().getPropertyValue(
+			    Property.ACCEPT_EXTERNAL_ORDERS));
 		configs.put("currentDateAsText", DateUtil.getCurrentDateAsText());
 		configs.put("currentTimeAsText",DateUtil.getCurrentTimeAsText());
 		configs.put(Property.BANNER_TEXT.toString(), localizationService
 		.getLocalizedValueById(ConfigurationProperties.getInstance().getPropertyValue(Property.BANNER_TEXT)));
-		SiteInformation patientManagementTab = siteInformationService.getSiteInformationByName("Patient management tab");
 		SiteInformation studyManagementTab = siteInformationService.getSiteInformationByName("Study Management tab");
-		SiteInformation nonConformityTab = siteInformationService.getSiteInformationByName("Non Conformity tab");
-		configs.put("patientManagementTab", patientManagementTab != null ? patientManagementTab.getValue() : "false");
 		configs.put("studyManagementTab", studyManagementTab != null ? studyManagementTab.getValue() : "false");
-		configs.put("nonConformityTab", nonConformityTab != null ? nonConformityTab.getValue() : "false");
+		configs.put("useSaml", useSAML ? "true" : "false");
+		configs.put("useOauth", useOAUTH ? "true" : "false");
+		configs.put(Property.SUBJECT_ON_WORKPLAN.toString(), ConfigurationProperties.getInstance().getPropertyValue(Property.SUBJECT_ON_WORKPLAN));
+		configs.put(Property.NEXT_VISIT_DATE_ON_WORKPLAN.toString(), ConfigurationProperties.getInstance().getPropertyValue(Property.NEXT_VISIT_DATE_ON_WORKPLAN));
+		configs.put(Property.configurationName.toString(), ConfigurationProperties.getInstance().getPropertyValue(Property.configurationName));
         return configs;
 	}
 
@@ -410,6 +429,42 @@ public class DisplayListController extends BaseRestController{
 		});
 		
 		return list;
+	}
+
+	@GetMapping(value = "test-display-beans", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<TestDisplayBean> getTestBeansBySample(@RequestParam(required = false) String sampleType) {
+		List<TestDisplayBean> testItems = new ArrayList<>();
+		List<Test> testList = new ArrayList<>();
+		if (StringUtils.isNotBlank(sampleType)) {
+			testList = typeOfSampleService.getActiveTestsBySampleTypeId(sampleType, false);
+		} else {
+			return testItems;
+		}
+		
+		for (Test test : testList) {
+			TestDisplayBean testDisplayBean = new TestDisplayBean(test.getId(),
+			        TestServiceImpl.getLocalizedTestNameWithType(test), testService.getResultType(test));
+			List<IdValuePair> resultList = new ArrayList<>();
+			List<TestResult> results = testResultService.getActiveTestResultsByTest(test.getId());
+			results.forEach(result -> {
+				if (result.getValue() != null) {
+					Dictionary dict = dictionaryService.getDictionaryById(result.getValue());
+					resultList.add(new IdValuePair(dict.getId(), dict.getLocalizedName()));
+				}
+			});
+			testDisplayBean.setResultList(resultList);
+			testItems.add(testDisplayBean);
+			
+			Collections.sort(testItems, new Comparator<TestDisplayBean>() {
+				
+				@Override
+				public int compare(TestDisplayBean o1, TestDisplayBean o2) {
+					return o1.getValue().compareTo(o2.getValue());
+				}
+			});
+		}
+		return testItems;
 	}
 	
 }

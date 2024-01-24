@@ -55,6 +55,12 @@
 				<param name="useNamed">true</param>
 			</type>
 		</property>
+		<property name="internalNote" type="java.lang.String">
+			<column name="internal_note" length="50" />
+		</property>
+		<property name="externalNote" type="java.lang.String">
+			<column name="external_note" length="50" />
+		</property>
 	</class>
 	<!-- 	<query name="testreflex.getNext"> -->
 	<!-- 		from TestReflex tr order by tr.test.testName, -->

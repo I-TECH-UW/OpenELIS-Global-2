@@ -3,9 +3,10 @@ import { Button, Stack } from "@carbon/react";
 import SearchPatientForm from "../patient/SearchPatientForm";
 import CreatePatientForm from "../patient/CreatePatientForm";
 import { FormattedMessage } from "react-intl";
+import { getFromOpenElisServer } from "../utils/Utils";
 
 const PatientInfo = (props) => {
-  const { orderFormValues, setOrderFormValues } = props;
+  const { orderFormValues, setOrderFormValues, error } = props;
   const componentMounted = useRef(false);
   const [searchPatientTab, setSearchPatientTab] = useState({
     kind: "primary",
@@ -22,6 +23,13 @@ const PatientInfo = (props) => {
 
   const getSelectedPatient = (patient) => {
     setSelectedPatient(patient);
+    if (orderFormValues) {
+      setOrderFormValues({
+        ...orderFormValues,
+        patientUpdateStatus: "UPDATE",
+        patientProperties: patient,
+      });
+    }
     handleNewPatientTab();
   };
 
@@ -50,12 +58,34 @@ const PatientInfo = (props) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (
+      orderFormValues.patientProperties.guid &&
+      !orderFormValues.patientProperties.lastName
+    ) {
+      const searchEndPoint =
+        "/rest/patient-search-results?" +
+        "guid=" +
+        orderFormValues.patientProperties.guid;
+      getFromOpenElisServer(searchEndPoint, (searchPatients) => {
+        if (searchPatients.length > 0) {
+          const searchEndPoint =
+            "/rest/patient-details?patientID=" + searchPatients[0].patientID;
+          getFromOpenElisServer(searchEndPoint, (patientDetails) => {
+            getSelectedPatient(patientDetails);
+            handleNewPatientTab();
+          });
+        }
+      });
+    }
+  }, [orderFormValues.patientProperties.guid]);
+
   return (
     <>
       <Stack gap={10}>
         <div className="orderLegendBody">
           <h3>
-            <FormattedMessage id="sidenav.label.patient" />
+            <FormattedMessage id="banner.menu.patient" />
           </h3>
           <div className="tabsLayout">
             <Button
@@ -78,7 +108,7 @@ const PatientInfo = (props) => {
                 selectedPatient={selectedPatient}
                 orderFormValues={orderFormValues}
                 setOrderFormValues={setOrderFormValues}
-                getSelectedPatient={getSelectedPatient}
+                error={error}
               />
             )}
           </div>

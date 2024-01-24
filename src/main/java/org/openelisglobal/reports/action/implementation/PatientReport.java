@@ -186,6 +186,18 @@ public abstract class PatientReport extends Report {
         return true;
     }
 
+    protected String convertToAlphaNumericDisplay(Sample currentSample) {
+        String displayAccesionNumber = "";
+        if (AccessionFormat.ALPHANUM.toString()
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            displayAccesionNumber = AlphanumAccessionValidator
+                    .convertAlphaNumLabNumForDisplay(sampleService.getAccessionNumber(currentSample).split("-")[0]);
+        } else {
+            displayAccesionNumber = sampleService.getAccessionNumber(currentSample).split("-")[0];
+        }
+        return displayAccesionNumber;
+    }
+
     public void setRequestParameters(ReportForm form) {
         form.setReportName(getReportNameForParameterPage());
 
@@ -260,7 +272,7 @@ public abstract class PatientReport extends Report {
             for (Sample sample : reportSampleList) {
                 currentSample = sample;
                 handledOrders.add(sample.getId());
-                sampleCompleteMap.put(sample.getAccessionNumber(), Boolean.TRUE);
+                sampleCompleteMap.put(convertToAlphaNumericDisplay(sample), Boolean.TRUE);
                 findCompletionDate();
                 findPatientFromSample();
                 findContactInfo();
@@ -570,7 +582,7 @@ public abstract class PatientReport extends Report {
                         AnalysisStatus.TechnicalRejected)
                         && ConfigurationProperties.getInstance().isPropertyValueEqual(
                                 ConfigurationProperties.Property.VALIDATE_REJECTED_TESTS, "false"))) {
-            sampleCompleteMap.put(sampleService.getAccessionNumber(currentSample), Boolean.FALSE);
+            sampleCompleteMap.put(convertToAlphaNumericDisplay(currentSample), Boolean.FALSE);
             setEmptyResult(data);
         } else {
             if (resultList.isEmpty()) {
@@ -601,7 +613,7 @@ public abstract class PatientReport extends Report {
     private void setCorrectedStatus(Result result, ClinicalPatientData data) {
         if (currentAnalysis.isCorrectedSincePatientReport() && !GenericValidator.isBlankOrNull(result.getValue())) {
             data.setCorrectedResult(true);data.setContactInfo(currentContactInfo);
-            sampleCorrectedMap.put(sampleService.getAccessionNumber(currentSample), true);
+            sampleCorrectedMap.put(convertToAlphaNumericDisplay(currentSample), true);
             currentAnalysis.setCorrectedSincePatientReport(false);
             updatedAnalysis.add(currentAnalysis);
         }

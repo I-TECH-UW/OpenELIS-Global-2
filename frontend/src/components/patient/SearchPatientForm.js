@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../Style.css";
 import { getFromOpenElisServer } from "../utils/Utils";
@@ -6,6 +6,7 @@ import {
   Form,
   TextInput,
   Button,
+  Grid,
   Column,
   DatePicker,
   DatePickerInput,
@@ -27,18 +28,26 @@ import { patientSearchHeaderData } from "../data/PatientResultsTableHeaders";
 import { Formik, Field } from "formik";
 import SearchPatientFormValues from "../formModel/innitialValues/SearchPatientFormValues";
 import { NotificationContext } from "../layout/Layout";
-import { NotificationKinds } from "../common/CustomNotification";
+import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 
 function SearchPatientForm(props) {
-  const { setNotificationVisible, setNotificationBody } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
+
+  const intl = useIntl();
 
   const [dob, setDob] = useState("");
   const [patientSearchResults, setPatientSearchResults] = useState([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [loading, setLoading] = useState(false);
-  const intl = useIntl();
+  const [nextPage, setNextPage] = useState(null);
+  const [previousPage, setPreviousPage] = useState(null);
+  const [pagination, setPagination] = useState(false);
+  const [url, setUrl] = useState("");
+  const [searchFormValues, setSearchFormValues] = useState(
+    SearchPatientFormValues,
+  );
   const handleSubmit = (values) => {
     setLoading(true);
     values.dateOfBirth = dob;
@@ -56,24 +65,54 @@ function SearchPatientForm(props) {
       values.patientId +
       "&labNumber=" +
       values.labNumber +
+      "&guid=" +
+      values.guid +
       "&dateOfBirth=" +
       values.dateOfBirth +
       "&gender=" +
       values.gender;
     getFromOpenElisServer(searchEndPoint, fetchPatientResults);
+    setUrl(searchEndPoint);
+  };
+  const loadNextResultsPage = () => {
+    setLoading(true);
+    getFromOpenElisServer(url + "&page=" + nextPage, fetchPatientResults);
   };
 
-  const fetchPatientResults = (patientsResults) => {
+  const loadPreviousResultsPage = () => {
+    setLoading(true);
+    getFromOpenElisServer(url + "&page=" + previousPage, fetchPatientResults);
+  };
+
+  const fetchPatientResults = (res) => {
+    let patientsResults = res.patientSearchResults;
     if (patientsResults.length > 0) {
       patientsResults.forEach((item) => (item.id = item.patientID));
       setPatientSearchResults(patientsResults);
     } else {
-      setNotificationBody({
-        title: <FormattedMessage id="notification.title" />,
-        message: "No patients found matching search terms",
+      setPatientSearchResults([]);
+      addNotification({
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "patient.search.nopatient" }),
         kind: NotificationKinds.warning,
       });
       setNotificationVisible(true);
+    }
+    if (res.paging) {
+      var { totalPages, currentPage } = res.paging;
+      if (totalPages > 1) {
+        setPagination(true);
+        if (parseInt(currentPage) < parseInt(totalPages)) {
+          setNextPage(parseInt(currentPage) + 1);
+        } else {
+          setNextPage(null);
+        }
+        if (parseInt(currentPage) > 1) {
+          setPreviousPage(parseInt(currentPage) - 1);
+        } else {
+          setPreviousPage(null);
+        }
+      }
     }
     setLoading(false);
   };
@@ -104,20 +143,35 @@ function SearchPatientForm(props) {
       setPageSize(pageInfo.pageSize);
     }
   };
-
+  useEffect(() => {
+    let patientId = new URLSearchParams(window.location.search).get(
+      "patientId",
+    );
+    if (patientId) {
+      let searchValues = {
+        ...searchFormValues,
+        patientId: patientId,
+      };
+      setSearchFormValues(searchValues);
+      handleSubmit(searchValues);
+    }
+  }, []);
   return (
     <>
+      {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading />}
       <Formik
-        initialValues={SearchPatientFormValues}
+        initialValues={searchFormValues}
+        enableReinitialize={true}
         // validationSchema={}
         onSubmit={handleSubmit}
         onChange
       >
         {({
-          //values,
+          values,
           //errors,
           //touched,
+          setFieldValue,
           handleChange,
           handleBlur,
           handleSubmit,
@@ -127,11 +181,17 @@ function SearchPatientForm(props) {
             onChange={handleChange}
             onBlur={handleBlur}
           >
+            <Field name="guid">
+              {({ field }) => (
+                <input type="hidden" name={field.name} id={field.name} />
+              )}
+            </Field>
             <div className="inlineDiv">
               <Field name="patientId">
                 {({ field }) => (
                   <TextInput
                     name={field.name}
+                    value={values[field.name]}
                     labelText={intl.formatMessage({
                       id: "patient.id",
                       defaultMessage: "Patient Id",
@@ -142,7 +202,7 @@ function SearchPatientForm(props) {
                 )}
               </Field>
               <Field name="labNumber">
-                {({ field, setFieldValue }) => (
+                {({ field }) => (
                   <CustomLabNumberInput
                     name={field.name}
                     labelText={intl.formatMessage({
@@ -151,8 +211,9 @@ function SearchPatientForm(props) {
                     })}
                     id={field.name}
                     className="inputText"
+                    value={values[field.name]}
                     onChange={(e, rawValue) => {
-                      setFieldValue(rawValue);
+                      setFieldValue(field.name, rawValue);
                     }}
                   />
                 )}
@@ -258,6 +319,33 @@ function SearchPatientForm(props) {
           </Form>
         )}
       </Formik>
+      <Column lg={16}>
+        {pagination && (
+          <Grid>
+            <Column lg={11} />
+            <Column lg={2}>
+              <Button
+                type=""
+                id="loadpreviousresults"
+                onClick={loadPreviousResultsPage}
+                disabled={previousPage != null ? false : true}
+              >
+                <FormattedMessage id="button.label.loadprevious" />
+              </Button>
+            </Column>
+            <Column lg={2}>
+              <Button
+                type=""
+                id="loadnextresults"
+                disabled={nextPage != null ? false : true}
+                onClick={loadNextResultsPage}
+              >
+                <FormattedMessage id="button.label.loadnext" />
+              </Button>
+            </Column>
+          </Grid>
+        )}
+      </Column>
       <div>
         <Column lg={16}>
           <DataTable

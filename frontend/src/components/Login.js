@@ -18,21 +18,36 @@ import {
 import { Formik } from "formik";
 import { AlertDialog, NotificationKinds } from "./common/CustomNotification";
 import UserSessionDetailsContext from "../UserSessionDetailsContext";
-import { NotificationContext } from "./layout/Layout";
+import { ConfigurationContext, NotificationContext } from "./layout/Layout";
 
 function Login(props) {
-  const { notificationVisible, setNotificationBody, setNotificationVisible } =
+  const { notificationVisible, addNotification, setNotificationVisible } =
     useContext(NotificationContext);
-  const { userSessionDetails } = useContext(UserSessionDetailsContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
+
+  const { userSessionDetails, refresh } = useContext(UserSessionDetailsContext);
   const [submitting, setSubmitting] = useState(false);
   const firstInput = createRef();
 
   useEffect(() => {
     firstInput.current.focus();
+
+    const interval = setInterval(() => {
+      checkLogin();
+    }, 1000 * 3);
+
+    return () => clearInterval(interval); // clear your interval to prevent memory leaks.
+  }, []);
+
+  useEffect(() => {
     if (userSessionDetails.authenticated) {
       window.location.href = "/";
     }
-  }, []);
+  }, [userSessionDetails]);
+
+  const checkLogin = () => {
+    refresh();
+  };
 
   const loginMessage = () => {
     return (
@@ -67,15 +82,19 @@ function Login(props) {
       body: qs.stringify(data),
     })
       .then(async (response) => {
+        setSubmitting(false);
         // get json response here
         let data = await response.json();
-        setSubmitting(false);
         if (response.status === 200) {
           window.location.href = "/";
         } else {
-          setNotificationBody({
-            title: <FormattedMessage id="notification.title" />,
-            message: <FormattedMessage id={data.error} />,
+          addNotification({
+            title: props.intl.formatMessage({
+              id: "notification.title",
+            }),
+            message: props.intl.formatMessage({
+              id: data.error,
+            }),
             kind: NotificationKinds.error,
           });
           setNotificationVisible(true);
@@ -83,7 +102,30 @@ function Login(props) {
       })
       .catch((error) => {
         setSubmitting(false);
-        console.log(error);
+        console.error(error);
+        if (error instanceof SyntaxError) {
+          addNotification({
+            title: props.intl.formatMessage({
+              id: "notification.title",
+            }),
+            message: props.intl.formatMessage({
+              id: "notification.login.syntax.error",
+            }),
+            kind: NotificationKinds.error,
+          });
+          setNotificationVisible(true);
+        } else {
+          addNotification({
+            title: props.intl.formatMessage({
+              id: "notification.title",
+            }),
+            message: props.intl.formatMessage({
+              id: "notification.login.generic.error",
+            }),
+            kind: NotificationKinds.error,
+          });
+          setNotificationVisible(true);
+        }
       });
   };
 
@@ -113,7 +155,7 @@ function Login(props) {
                       doLogin(values);
                     })
                     .catch((error) => {
-                      console.log(error);
+                      console.error(error);
                     });
                 }}
               >
@@ -163,6 +205,30 @@ function Login(props) {
                           className={submitting ? "show" : "hidden"}
                         />
                       </Button>
+                      {configurationProperties?.useSaml == "true" && (
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            const POPUP_HEIGHT = 700;
+                            const POPUP_WIDTH = 600;
+                            const top =
+                              window.outerHeight / 2 +
+                              window.screenY -
+                              POPUP_HEIGHT / 2;
+                            const left =
+                              window.outerWidth / 2 +
+                              window.screenX -
+                              POPUP_WIDTH / 2;
+                            window.open(
+                              config.serverBaseUrl + "/LoginPage?useSAML=true",
+                              "SAML Popup",
+                              `height=${POPUP_HEIGHT},width=${POPUP_WIDTH},top=${top},left=${left}`,
+                            );
+                          }}
+                        >
+                          <FormattedMessage id="label.button.login.sso" />
+                        </Button>
+                      )}
                     </Stack>
                   </Form>
                 )}

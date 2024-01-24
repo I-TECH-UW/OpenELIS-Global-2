@@ -13,19 +13,25 @@ import {
   TableRow,
   Pagination,
 } from "@carbon/react";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "../Style.css";
 import "./wpStyle.css";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import WorkplanSearchForm from "./WorkplanSearchForm";
 import {
   postToOpenElisServerForPDF,
   convertAlphaNumLabNumForDisplay,
 } from "../utils/Utils";
+import { NotificationContext } from "../layout/Layout";
+import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { ConfigurationContext } from "../layout/Layout";
 
 export default function Workplan(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
+  const { notificationVisible, setNotificationVisible, addNotification } =
+    useContext(NotificationContext);
+
+  const intl = useIntl();
 
   const [testsList, setTestsList] = useState([]);
   const [subjectOnWorkplan, setSubjectOnWorkplan] = useState(false);
@@ -34,32 +40,63 @@ export default function Workplan(props) {
   const [selectedValue, setSelectedValue] = useState("");
   const [selectedLabel, setSelectedLabel] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
 
   const type = props.type;
   let title = "";
+  let sourceTitle = "";
   switch (type) {
-    case "test":
+    case "test": {
       title = <FormattedMessage id="workplan.test.title" />;
+      sourceTitle = "WorkPlanByTest";
       break;
-    case "panel":
+    }
+    case "panel": {
       title = <FormattedMessage id="workplan.panel.title" />;
+      sourceTitle = "WorkPlanByPanel";
       break;
-    case "unit":
+    }
+    case "unit": {
       title = <FormattedMessage id="workplan.unit.title" />;
+      sourceTitle = "WorkPlanByTestSection";
       break;
-    case "priority":
+    }
+    case "priority": {
       title = <FormattedMessage id="workplan.priority.title" />;
+      sourceTitle = "WorkPlanByPriority";
       break;
-    default:
+    }
+    default: {
       title = "";
+      sourceTitle = "";
+    }
   }
 
+  useEffect(() => {
+    setSubjectOnWorkplan(configurationProperties.SUBJECT_ON_WORKPLAN);
+    setNextVisitOnWorkplan(configurationProperties.NEXT_VISIT_DATE_ON_WORKPLAN);
+    setConfigurationName(configurationProperties.configurationName);
+  }, []);
+
+  const reportStatus = (pdfGenerated) => {
+    setNotificationVisible(true);
+    if (pdfGenerated) {
+      addNotification({
+        kind: NotificationKinds.success,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "success.report.status" }),
+      });
+    } else {
+      addNotification({
+        kind: NotificationKinds.error,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.report.status" }),
+      });
+    }
+  };
+
   const handleTestsList = (tests) => {
-    setTestsList(tests.tests);
-    setSubjectOnWorkplan(tests.SUBJECT_ON_WORKPLAN);
-    setNextVisitOnWorkplan(tests.NEXT_VISIT_DATE_ON_WORKPLAN);
-    setConfigurationName(tests.configurationName);
+    setTestsList(tests.workplanTests);
   };
   const handleSelectedValue = (val) => {
     setSelectedValue(val);
@@ -91,6 +128,7 @@ export default function Workplan(props) {
     postToOpenElisServerForPDF(
       "/rest/printWorkplanReport",
       JSON.stringify(form),
+      reportStatus,
     );
   };
 
@@ -135,6 +173,7 @@ export default function Workplan(props) {
   return (
     <>
       <Grid fullWidth={true}>
+        {notificationVisible === true ? <AlertDialog /> : ""}
         <Column lg={16}>
           <Section>
             <Section>
@@ -199,12 +238,12 @@ export default function Workplan(props) {
                         <TableHeader>
                           <FormattedMessage id="quick.entry.accession.number" />
                         </TableHeader>
-                        {subjectOnWorkplan.toLowerCase() === "true" && (
+                        {subjectOnWorkplan?.toLowerCase() === "true" && (
                           <TableHeader>
                             <FormattedMessage id="patient.subject.number" />
                           </TableHeader>
                         )}
-                        {nextVisitOnWorkplan.toLowerCase() === "true" && (
+                        {nextVisitOnWorkplan?.toLowerCase() === "true" && (
                           <TableHeader>
                             <FormattedMessage id="sample.entry.nextVisit.date" />
                           </TableHeader>
@@ -276,7 +315,7 @@ export default function Workplan(props) {
                                   <Link
                                     style={{ color: "blue" }}
                                     href={
-                                      "/result?type=order&doRange=false&accessionNumber=" +
+                                      `/result?type=order&doRange=false&source=${sourceTitle}&accessionNumber=` +
                                       row.accessionNumber
                                     }
                                   >
@@ -288,12 +327,13 @@ export default function Workplan(props) {
                                   </Link>
                                 )}
                               </TableCell>
-                              {subjectOnWorkplan.toLowerCase() === "true" && (
+                              {subjectOnWorkplan?.toLowerCase() === "true" && (
                                 <TableCell>
                                   {showAccessionNumber && row.patientInfo}
                                 </TableCell>
                               )}
-                              {nextVisitOnWorkplan.toLowerCase() === "true" && (
+                              {nextVisitOnWorkplan?.toLowerCase() ===
+                                "true" && (
                                 <TableCell>
                                   {showAccessionNumber && row.nextVisitDate}
                                 </TableCell>
@@ -321,7 +361,7 @@ export default function Workplan(props) {
                     onChange={handlePageChange}
                     page={page}
                     pageSize={pageSize}
-                    pageSizes={[10, 20, 30]}
+                    pageSizes={[10, 20, 50, 100]}
                     totalItems={testsList.length}
                   ></Pagination>
                 </>

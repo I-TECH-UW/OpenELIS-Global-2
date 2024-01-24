@@ -101,7 +101,7 @@ public class DisplayListService implements LocaleChangeListener {
         CYTOLOGY_DIAGNOSIS_RESULT_EPITHELIAL_CELL_SQUAMOUS ,CYTOLOGY_DIAGNOSIS_RESULT_EPITHELIAL_CELL_GLANDULAR ,CYTOLOGY_DIAGNOSIS_RESULT_NON_NEO_PLASTIC_CELLULAR,
         CYTOLOGY_DIAGNOSIS_RESULT_REACTIVE_CELLULAR ,CYTOLOGY_DIAGNOSIS_RESULT_ORGANISMS , CYTOLOGY_DIAGNOSIS_RESULT_OTHER,
 		TB_ORDER_REASONS, TB_DIAGNOSTIC_REASONS, TB_FOLLOWUP_REASONS, TB_ANALYSIS_METHODS, TB_SAMPLE_ASPECTS,
-		TB_FOLLOWUP_LINE1, TB_FOLLOWUP_LINE2, ARV_ORG_LIST ;
+		TB_FOLLOWUP_LINE1, TB_FOLLOWUP_LINE2, ARV_ORG_LIST ,IHC_BREAST_CANCER_REPORT_INTENSITY ,IHC_BREAST_CANCER_REPORT_CERBB2_PATTERN ,IHC_BREAST_CANCER_REPORT_MOLE_SUBTYPE;
 
     }
     private static Map<ListType, List<IdValuePair>> typeToListMap;
@@ -227,6 +227,9 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.CYTOLOGY_REPORT_TYPES, createCytologyReportTypeList());
         typeToListMap.put(ListType.PATHOLOGY_REQUEST_STATUS, createPathologyRequestStatusList());
         typeToListMap.put(ListType.PATHOLOGY_TECHNIQUES, createDictionaryListForCategory("pathology_techniques"));
+        typeToListMap.put(ListType.IHC_BREAST_CANCER_REPORT_INTENSITY, createDictionaryListForCategory("ihc_breast_cancer_report_intensity"));
+        typeToListMap.put(ListType.IHC_BREAST_CANCER_REPORT_CERBB2_PATTERN, createDictionaryListForCategory("ihc_breast_cancer_report_cerbb2_pattern"));
+        typeToListMap.put(ListType.IHC_BREAST_CANCER_REPORT_MOLE_SUBTYPE, createDictionaryListForCategory("ihc_breast_cancer_report_molecular_subtype"));
         typeToListMap.put(ListType.CYTOLOGY_SATISFACTORY_FOR_EVALUATION, createDictionaryListForCategory("cytology_adequacy_satisfactory"));
         typeToListMap.put(ListType.CYTOLOGY_UN_SATISFACTORY_FOR_EVALUATION, createDictionaryListForCategory("cytology_adequacy_unsatisfactory"));
         typeToListMap.put(ListType.PATHOLOGIST_REQUESTS, createDictionaryListForCategory("pathologist_requests"));
@@ -473,8 +476,9 @@ public class DisplayListService implements LocaleChangeListener {
         typeToListMap.put(ListType.ELECTRONIC_ORDER_STATUSES, createElectronicOrderStatusList());
         typeToListMap.put(ListType.PRACTITIONER_PERSONS, createActivePractitionerPersonsList());
         typeToListMap.put(ListType.ORDER_PRIORITY, createSamplePriorityList());
-        
-        
+        typeToListMap.put(ListType.IHC_BREAST_CANCER_REPORT_INTENSITY, createDictionaryListForCategory("ihc_breast_cancer_report_intensity"));
+        typeToListMap.put(ListType.IHC_BREAST_CANCER_REPORT_CERBB2_PATTERN, createDictionaryListForCategory("ihc_breast_cancer_report_cerbb2_pattern"));
+        typeToListMap.put(ListType.IHC_BREAST_CANCER_REPORT_MOLE_SUBTYPE, createDictionaryListForCategory("ihc_breast_cancer_report_molecular_subtype"));
         typeToListMap.put(ListType.PATHOLOGY_TECHNIQUES, createDictionaryListForCategory("pathology_techniques"));
         typeToListMap.put(ListType.PATHOLOGIST_REQUESTS, createDictionaryListForCategory("pathologist_requests"));
         typeToListMap.put(ListType.PATHOLOGIST_CONCLUSIONS, createDictionaryListForCategory("pathologist_conclusions"));

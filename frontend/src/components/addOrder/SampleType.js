@@ -15,9 +15,9 @@ import CustomSelect from "../common/CustomSelect";
 import CustomDatePicker from "../common/CustomDatePicker";
 import CustomTimePicker from "../common/CustomTimePicker";
 import { NotificationKinds } from "../common/CustomNotification";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { getFromOpenElisServer } from "../utils/Utils";
-import { NotificationContext } from "../layout/Layout";
+import { NotificationContext, ConfigurationContext } from "../layout/Layout";
 import { sampleTypeTestsStructure } from "../data/SampleEntryTestsForTypeProvider";
 import CustomTextInput from "../common/CustomTextInput";
 import OrderReferralRequest from "../addOrder/OrderReferralRequest";
@@ -25,10 +25,16 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 
 const SampleType = (props) => {
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
-  const { index, rejectSampleReasons, removeSample, sample } = props;
-  const componentMounted = useRef(true);
-  const [sampleTypes, setSampleTypes] = useState([]);
+  const { configurationProperties } = useContext(ConfigurationContext);
+
+  const intl = useIntl();
+
+  const componentMounted = useRef(false);
   const sampleTypesRef = useRef(null);
+
+  const { index, rejectSampleReasons, removeSample, sample } = props;
+
+  const [sampleTypes, setSampleTypes] = useState([]);
   const [selectedSampleType, setSelectedSampleType] = useState({
     id: null,
     name: "",
@@ -44,20 +50,30 @@ const SampleType = (props) => {
   const [referralOrganizations, setReferralOrganizations] = useState([]);
   const [testSearchTerm, setTestSearchTerm] = useState("");
   const [referralRequests, setReferralRequests] = useState([]);
-  const { setNotificationVisible, setNotificationBody } =
+  const { setNotificationVisible, addNotification } =
     useContext(NotificationContext);
   const [rejectionReasonsDisabled, setRejectionReasonsDisabled] =
     useState(true);
   const [selectedPanels, setSelectedPanels] = useState([]);
   const [panelSearchTerm, setPanelSearchTerm] = useState("");
   const [searchBoxPanels, setSearchBoxPanels] = useState([]);
-  const [sampleXml, setSampleXml] = useState({
-    collectionDate: "",
-    collector: "",
-    rejected: false,
-    rejectionReason: "",
-    collectionTime: "",
-  });
+  const [sampleXml, setSampleXml] = useState(
+    sample?.sampleXML != null
+      ? sample.sampleXML
+      : {
+          collectionDate:
+            configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
+              ? configurationProperties.currentDateAsText
+              : "",
+          collector: "",
+          rejected: false,
+          rejectionReason: "",
+          collectionTime:
+            configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
+              ? configurationProperties.currentTimeAsText
+              : "",
+        },
+  );
   const [loading, setLoading] = useState(true);
 
   const defaultSelect = { id: "", value: "Choose Rejection Reason" };
@@ -299,10 +315,10 @@ const SampleType = (props) => {
 
   function handleRejection(checked) {
     if (checked) {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.warning,
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id="reject.order.sample.notification" />,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "reject.order.sample.notification" }),
       });
       setNotificationVisible(true);
     }
@@ -405,6 +421,7 @@ const SampleType = (props) => {
   };
 
   useEffect(() => {
+    componentMounted.current = true;
     getFromOpenElisServer(
       "/rest/referral-reasons",
       displayReferralReasonsOptions,
@@ -447,7 +464,7 @@ const SampleType = (props) => {
         <CustomCheckBox
           id={"reject_" + index}
           onChange={(value) => handleRejection(value)}
-          label={<FormattedMessage id="sample.reject.label" />}
+          label={intl.formatMessage({ id: "sample.reject.label" })}
         />
         {sampleXml.rejected && (
           <CustomSelect
@@ -462,17 +479,25 @@ const SampleType = (props) => {
         <div className="inlineDiv">
           <CustomDatePicker
             id={"collectionDate_" + index}
-            autofillDate={true}
+            autofillDate={
+              configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
+            }
             onChange={(date) => handleCollectionDate(date)}
-            labelText={<FormattedMessage id="sample.collection.date" />}
+            value={sampleXml.collectionDate}
+            labelText={intl.formatMessage({ id: "sample.collection.date" })}
             className="inputText"
+            disallowFutureDate={true}
           />
 
           <CustomTimePicker
             id={"collectionTime_" + index}
+            autofillTime={
+              configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
+            }
             onChange={(time) => handleCollectionTime(time)}
+            value={sampleXml.collectionTime}
             className="inputText"
-            labelText={<FormattedMessage id="sample.collection.time" />}
+            labelText={intl.formatMessage({ id: "sample.collection.time" })}
           />
         </div>
         <div className="inlineDiv">
@@ -480,7 +505,8 @@ const SampleType = (props) => {
             id={"collector_" + index}
             onChange={(value) => handleCollector(value)}
             defaultValue={""}
-            labelText={<FormattedMessage id="collector.label" />}
+            value={sampleXml.collector}
+            labelText={intl.formatMessage({ id: "collector.label" })}
             className="inputText"
           />
         </div>
@@ -519,8 +545,12 @@ const SampleType = (props) => {
               <Search
                 size="lg"
                 id={`panels_search_` + index}
-                labelText={"Search Available panel"}
-                placeholder={"Choose Available panel"}
+                labelText={
+                  <FormattedMessage id="label.search.availablepanel" />
+                }
+                placeholder={intl.formatMessage({
+                  id: "choose.availablepanel",
+                })}
                 onChange={handlePanelSearchChange}
                 value={(() => {
                   if (panelSearchTerm) {
@@ -573,6 +603,10 @@ const SampleType = (props) => {
                     labelText={panel.name}
                     id={`panel_` + index + "_" + panel.panelId}
                     key={index + panel.panelId}
+                    checked={
+                      selectedPanels.filter((item) => item.id === panel.panelId)
+                        .length > 0
+                    }
                   />
                 );
               })}
@@ -603,12 +637,20 @@ const SampleType = (props) => {
               <></>
             )}
           </div>
-          <FormGroup legendText={"Search through the available tests"}>
+          <FormGroup
+            legendText={intl.formatMessage({
+              id: "legend.search.availabletests",
+            })}
+          >
             <Search
               size="lg"
               id={`tests_search_` + index}
-              labelText={"Search Available Test"}
-              placeholder={"Choose Available test"}
+              labelText={
+                <FormattedMessage id="label.search.available.targetest" />
+              }
+              placeholder={intl.formatMessage({
+                id: "holder.choose.availabletest",
+              })}
               onChange={handleTestSearchChange}
               value={(() => {
                 if (testSearchTerm) {
@@ -641,7 +683,7 @@ const SampleType = (props) => {
                     <Layer>
                       <Tile className={"emptyFilterTests"}>
                         <span>
-                          No test found matching
+                          <FormattedMessage id="title.notestfoundmatching" />
                           <strong> "{testSearchTerm}"</strong>{" "}
                         </span>
                       </Tile>
@@ -661,7 +703,11 @@ const SampleType = (props) => {
                   labelText={test.name}
                   id={`test_` + index + "_" + test.id}
                   key={`test_checkBox_` + index + test.id}
-                  checked={test.userBenchChoice}
+                  checked={
+                    selectedTests.filter((item) => item.id === test.id).length >
+                    0
+                  }
+                  // checked={test.userBenchChoice}
                 />
               );
             })}
@@ -670,7 +716,9 @@ const SampleType = (props) => {
         <div className="requestTestReferral">
           <Checkbox
             id={`useReferral_` + index}
-            labelText="Refer test to a reference lab"
+            labelText={intl.formatMessage({
+              id: "label.refertest.referencelab",
+            })}
             onChange={handleReferralRequest}
           />
           {requestTestReferral === true && (

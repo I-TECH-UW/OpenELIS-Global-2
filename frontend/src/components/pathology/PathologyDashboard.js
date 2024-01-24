@@ -29,14 +29,17 @@ import {
 } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog } from "../common/CustomNotification";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import "./PathologyDashboard.css";
 
 function PathologyDashboard() {
   const componentMounted = useRef(false);
 
+  const intl = useIntl();
+
   const { notificationVisible } = useContext(NotificationContext);
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
+
   const [statuses, setStatuses] = useState([]);
   const [pathologyEntries, setPathologyEntries] = useState([]);
   const [page, setPage] = useState(1);
@@ -44,7 +47,12 @@ function PathologyDashboard() {
   const [filters, setFilters] = useState({
     searchTerm: "",
     myCases: false,
-    statuses: [],
+    statuses: [
+      {
+        id: "GROSSING",
+        value: "Grossing",
+      },
+    ],
   });
   const [counts, setCounts] = useState({
     inProgress: 0,
@@ -129,14 +137,16 @@ function PathologyDashboard() {
   };
 
   const setPathologyEntriesWithIds = (entries) => {
-    if (componentMounted.current && entries && entries.length > 0) {
-      setPathologyEntries(
-        entries.map((entry) => {
-          return { ...entry, id: "" + entry.pathologySampleId };
-        }),
-      );
-    }
     if (componentMounted.current) {
+      if (entries && entries.length > 0) {
+        setPathologyEntries(
+          entries.map((entry) => {
+            return { ...entry, id: "" + entry.pathologySampleId };
+          }),
+        );
+      } else {
+        setPathologyEntries([]);
+      }
       setLoading(false);
     }
   };
@@ -217,18 +227,39 @@ function PathologyDashboard() {
   };
 
   const tileList = [
-    { title: "Cases in Progress", count: counts.inProgress },
-    { title: "Awaiting Pathology Review", count: counts.awaitingReview },
     {
-      title: "Additional Pathology Requests",
+      title: <FormattedMessage id="pathology.label.casesInProgress" />,
+      count: counts.inProgress,
+    },
+    {
+      title: <FormattedMessage id="pathology.label.review" />,
+      count: counts.awaitingReview,
+    },
+    {
+      title: <FormattedMessage id="pathology.label.requests" />,
       count: counts.additionalRequests,
     },
-    { title: "Complete (Week " + getPastWeek() + " )", count: counts.complete },
+    {
+      title:
+        intl.formatMessage({ id: "pathology.label.complete" }) +
+        "(Week " +
+        getPastWeek() +
+        " )",
+      count: counts.complete,
+    },
   ];
 
   useEffect(() => {
     componentMounted.current = true;
-    setFilters({ ...filters, statuses: statuses });
+    setFilters({
+      ...filters,
+      statuses: [
+        {
+          id: "GROSSING",
+          value: "Grossing",
+        },
+      ],
+    });
 
     return () => {
       componentMounted.current = false;
@@ -276,15 +307,19 @@ function PathologyDashboard() {
               onChange={(e) =>
                 setFilters({ ...filters, searchTerm: e.target.value })
               }
-              placeholder="Search by LabNo or Family Name"
-              labelText="Search by LabNo or Family Name"
+              placeholder={intl.formatMessage({
+                id: "label.seacrh.labno.family",
+              })}
+              labelText={intl.formatMessage({
+                id: "label.seacrh.labno.family",
+              })}
             />
           </Column>
           <Column lg={8} md={4} sm={2}>
             <div className="inlineDivBlock">
               <div>Filters:</div>
               <Checkbox
-                labelText="My cases"
+                labelText={intl.formatMessage({ id: "label.filters.mycases" })}
                 id="filterMyCases"
                 value={filters.myCases}
                 onChange={(e) =>
@@ -294,12 +329,15 @@ function PathologyDashboard() {
               <Select
                 id="statusFilter"
                 name="statusFilter"
-                labelText="Status"
+                labelText={intl.formatMessage({ id: "label.filters.status" })}
                 defaultValue="placeholder"
+                value={
+                  filters.statuses.length > 1 ? "All" : filters.statuses[0].id
+                }
                 onChange={setStatusFilter}
                 noLabel
               >
-                <SelectItem disabled hidden value="placeholder" text="Status" />
+                <SelectItem disabled value="placeholder" text="Status" />
                 <SelectItem text="All" value="All" />
                 {statuses.map((status, index) => {
                   return (
@@ -323,31 +361,31 @@ function PathologyDashboard() {
               headers={[
                 {
                   key: "requestDate",
-                  header: "Request Date",
+                  header: <FormattedMessage id="sample.requestDate" />,
                 },
                 {
                   key: "status",
-                  header: "Stage",
+                  header: <FormattedMessage id="pathology.label.stage" />,
                 },
                 {
                   key: "lastName",
-                  header: "Last Name",
+                  header: <FormattedMessage id="patient.last.name" />,
                 },
                 {
                   key: "firstName",
-                  header: "First Name",
+                  header: <FormattedMessage id="patient.first.name" />,
                 },
                 {
                   key: "assignedTechnician",
-                  header: "Assigned Technician",
+                  header: <FormattedMessage id="assigned.technician.label" />,
                 },
                 {
                   key: "assignedPathologist",
-                  header: "Assigned Pathologist",
+                  header: <FormattedMessage id="assigned.pathologist.label" />,
                 },
                 {
                   key: "labNumber",
-                  header: "Lab Number",
+                  header: <FormattedMessage id="sample.label.labnumber" />,
                 },
               ]}
               isSortable

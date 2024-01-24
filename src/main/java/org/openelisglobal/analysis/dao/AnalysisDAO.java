@@ -228,5 +228,15 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
     List<Analysis> getStudyAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
             LocalDate upperDate);
 
-    List<Analysis> getAnalysisCompletedOnByStatusId(Date completedDate, String statusId) throws LIMSRuntimeException;;        
+    List<Analysis> getAnalysesCompletedOnByStatusId(Date completedDate, String statusId) throws LIMSRuntimeException;
+
+    List<Analysis> getAnalysesResultEnteredOnExcludedByStatusId(Date completedDate, Set<Integer> statusIds) throws LIMSRuntimeException;
+    
+    int getCountOfAnalysesForStatusIds(List<Integer> statusIdList);
+
+    int getCountOfAnalysisCompletedOnByStatusId(Date completedDate, List<Integer> statusIds);
+
+    int getCountOfAnalysisStartedOnExcludedByStatusId(Date collectionDate, Set<Integer> statusIds);
+
+    int getCountOfAnalysisStartedOnByStatusId(Date startedDate, List<Integer> statusIds); 
 }

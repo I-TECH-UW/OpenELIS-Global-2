@@ -29,7 +29,7 @@ import {
 } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog } from "../common/CustomNotification";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import "../pathology/PathologyDashboard.css";
 
 function CytologyDashboard() {
@@ -42,7 +42,12 @@ function CytologyDashboard() {
   const [filters, setFilters] = useState({
     searchTerm: "",
     myCases: false,
-    statuses: [],
+    statuses: [
+      {
+        id: "PREPARING_SLIDES",
+        value: "Preparing slides",
+      },
+    ],
   });
   const [counts, setCounts] = useState({
     inProgress: 0,
@@ -52,6 +57,7 @@ function CytologyDashboard() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const intl = useIntl();
 
   const setStatusList = (statusList) => {
     if (componentMounted.current) {
@@ -127,14 +133,16 @@ function CytologyDashboard() {
   };
 
   const setPathologyEntriesWithIds = (entries) => {
-    if (componentMounted.current && entries && entries.length > 0) {
-      setPathologyEntries(
-        entries.map((entry) => {
-          return { ...entry, id: "" + entry.pathologySampleId };
-        }),
-      );
-    }
     if (componentMounted.current) {
+      if (entries && entries.length > 0) {
+        setPathologyEntries(
+          entries.map((entry) => {
+            return { ...entry, id: "" + entry.pathologySampleId };
+          }),
+        );
+      } else {
+        setPathologyEntries([]);
+      }
       setLoading(false);
     }
   };
@@ -215,14 +223,35 @@ function CytologyDashboard() {
   };
 
   const tileList = [
-    { title: "Cases in Progress", count: counts.inProgress },
-    { title: "Awaiting Cytopathologist Review", count: counts.awaitingReview },
-    { title: "Complete (Week " + getPastWeek() + " )", count: counts.complete },
+    {
+      title: intl.formatMessage({ id: "pathology.label.casesInProgress" }),
+      count: counts.inProgress,
+    },
+    {
+      title: intl.formatMessage({ id: "cytology.label.review" }),
+      count: counts.awaitingReview,
+    },
+    {
+      title:
+        intl.formatMessage({ id: "pathology.label.complete" }) +
+        "(Week " +
+        getPastWeek() +
+        " )",
+      count: counts.complete,
+    },
   ];
 
   useEffect(() => {
     componentMounted.current = true;
-    setFilters({ ...filters, statuses: statuses });
+    setFilters({
+      ...filters,
+      statuses: [
+        {
+          id: "PREPARING_SLIDES",
+          value: "Preparing slides",
+        },
+      ],
+    });
 
     return () => {
       componentMounted.current = false;
@@ -270,15 +299,21 @@ function CytologyDashboard() {
               onChange={(e) =>
                 setFilters({ ...filters, searchTerm: e.target.value })
               }
-              placeholder="Search by LabNo or Family Name"
-              labelText="Search by LabNo or Family Name"
+              placeholder={intl.formatMessage({
+                id: "label.seacrh.labno.family",
+              })}
+              labelText={intl.formatMessage({
+                id: "label.seacrh.labno.family",
+              })}
             />
           </Column>
           <Column lg={8} md={4} sm={2}>
             <div className="inlineDivBlock">
-              <div>Filters:</div>
+              <div>
+                <FormattedMessage id="filters.label" />
+              </div>
               <Checkbox
-                labelText="My cases"
+                labelText={intl.formatMessage({ id: "label.filters.mycases" })}
                 id="filterMyCases"
                 value={filters.myCases}
                 onChange={(e) =>
@@ -288,13 +323,22 @@ function CytologyDashboard() {
               <Select
                 id="statusFilter"
                 name="statusFilter"
-                labelText="Status"
-                defaultValue="placeholder"
+                labelText={intl.formatMessage({ id: "label.filters.status" })}
+                value={
+                  filters.statuses.length > 1 ? "All" : filters.statuses[0].id
+                }
                 onChange={setStatusFilter}
                 noLabel
               >
-                <SelectItem disabled hidden value="placeholder" text="Status" />
-                <SelectItem text="All" value="All" />
+                <SelectItem
+                  disabled
+                  value="placeholder"
+                  text={intl.formatMessage({ id: "label.filters.status" })}
+                />
+                <SelectItem
+                  text={intl.formatMessage({ id: "all.label" })}
+                  value="All"
+                />
                 {statuses.map((status, index) => {
                   return (
                     <SelectItem
@@ -317,31 +361,35 @@ function CytologyDashboard() {
               headers={[
                 {
                   key: "requestDate",
-                  header: "Request Date",
+                  header: intl.formatMessage({ id: "sample.requestDate" }),
                 },
                 {
                   key: "status",
-                  header: "Stage",
+                  header: intl.formatMessage({ id: "label.filters.status" }),
                 },
                 {
                   key: "lastName",
-                  header: "Last Name",
+                  header: intl.formatMessage({ id: "patient.last.name" }),
                 },
                 {
                   key: "firstName",
-                  header: "First Name",
+                  header: intl.formatMessage({ id: "patient.first.name" }),
                 },
                 {
                   key: "assignedTechnician",
-                  header: "Assigned Technician",
+                  header: intl.formatMessage({
+                    id: "label.button.select.technician",
+                  }),
                 },
                 {
                   key: "assignedCytoPathologist",
-                  header: "Assigned CytoPathologist",
+                  header: intl.formatMessage({
+                    id: "assigned.cytopathologist.label",
+                  }),
                 },
                 {
                   key: "labNumber",
-                  header: "Lab Number",
+                  header: intl.formatMessage({ id: "sample.label.labnumber" }),
                 },
               ]}
               isSortable

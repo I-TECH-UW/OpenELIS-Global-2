@@ -3,6 +3,7 @@ import { Button, Row } from "@carbon/react";
 import config from "../../config.json";
 import { SampleOrderFormValues } from "../formModel/innitialValues/OrderEntryFormValues";
 import { sampleObject } from "./Index";
+import { FormattedMessage } from "react-intl";
 
 const OrderSuccessMessage = (props) => {
   const { orderFormValues, setOrderFormValues, setSamples, setPage } = props;
@@ -64,10 +65,12 @@ const OrderSuccessMessage = (props) => {
           width="120"
           height="120"
         />
-        <h4>Save successful</h4>
+        <h4>
+          <FormattedMessage id="save.success"/>
+        </h4>
         <Row>
           <Button className="" onClick={handlePrintBarCode}>
-            Print Barcode
+            <FormattedMessage id="print.barcode"/>
           </Button>
         </Row>
         <Row>
@@ -77,7 +80,7 @@ const OrderSuccessMessage = (props) => {
               kind="tertiary"
               onClick={handleAnotherSiteOrder}
             >
-              Place same site order
+              <FormattedMessage id="request.samesite.order"/>
             </Button>
           )}
         </Row>

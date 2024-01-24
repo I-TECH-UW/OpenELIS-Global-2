@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import SearchPatientForm from "../patient/SearchPatientForm";
 import { Button, Column, TextInput, Grid, Form } from "@carbon/react";
 import { FormattedMessage } from "react-intl";
+import CustomLabNumberInput from "../common/CustomLabNumberInput";
 
 function SearchOrder() {
   const [selectedPatient, setSelectedPatient] = useState({});
@@ -10,7 +11,7 @@ function SearchOrder() {
 
   const getSelectedPatient = (patient) => {
     setSelectedPatient(patient);
-    console.log("selectedPatient:" + selectedPatient);
+    console.debug("selectedPatient:" + selectedPatient);
   };
 
   useEffect(() => {
@@ -30,7 +31,8 @@ function SearchOrder() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    window.location.href = "/ModifyOrder?accessionNumber=" + accessionNumber;
+    var labNumber = accessionNumber ? accessionNumber.split("-")[0] : "";
+    window.location.href = "/ModifyOrder?accessionNumber=" + labNumber;
   };
 
   return (
@@ -39,17 +41,26 @@ function SearchOrder() {
         <Form onSubmit={handleSearch}>
           <Grid>
             <Column lg={16}>
-              <h4> <FormattedMessage id="sample.label.search.labnumber" /></h4>
+              <h4>
+                <FormattedMessage id="sample.label.search.labnumber" />
+              </h4>
             </Column>
             <Column lg={4}>
-              <TextInput
-                type="text"
+              <CustomLabNumberInput
+                placeholder={"Enter Lab No"}
+                id="labNumber"
+                name="labNumber"
                 value={accessionNumber}
-                onChange={(e) => setAccessionNumber(e.target.value)}
+                onChange={(e, rawVal) =>
+                  setAccessionNumber(rawVal ? rawVal : e?.target?.value)
+                }
+                labelText={<FormattedMessage id="search.label.accession" />}
               />
             </Column>
             <Column lg={2}>
-              <Button type="submit"> <FormattedMessage id="label.button.submit" /></Button>
+              <Button type="submit">
+                <FormattedMessage id="label.button.submit" />
+              </Button>
             </Column>
           </Grid>
         </Form>

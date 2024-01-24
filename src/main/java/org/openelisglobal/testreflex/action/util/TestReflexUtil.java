@@ -652,6 +652,23 @@ public class TestReflexUtil {
                         notes.add(note);
                     }
                 }
+                if(StringUtils.isNotBlank(reflex.getInternalNote())){
+                    Note note = noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
+                            reflex.getInternalNote(),
+                            "Reflex Rule Internal Note", "1");
+                    if (!noteService.duplicateNoteExists(note)) {
+                        notes.add(note);
+                    }        
+                }
+
+                 if(StringUtils.isNotBlank(reflex.getExternalNote())){
+                    Note note = noteService.createSavableNote(newAnalysis, NoteType.EXTERNAL,
+                            reflex.getExternalNote(),
+                            "Reflex Rule External Note", "1");
+                    if (!noteService.duplicateNoteExists(note)) {
+                        notes.add(note);
+                    }        
+                }
                 noteService.saveAll(notes);
                 return Optional.of(newAnalysis);
             }

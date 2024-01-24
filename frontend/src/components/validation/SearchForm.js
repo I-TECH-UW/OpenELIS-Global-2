@@ -17,7 +17,7 @@ import {
   Grid,
 } from "@carbon/react";
 import CustomLabNumberInput from "../common/CustomLabNumberInput";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { Formik, Field } from "formik";
 import ValidationSearchFormValues from "../formModel/innitialValues/ValidationSearchFormValues";
 import { getFromOpenElisServer } from "../utils/Utils";
@@ -26,18 +26,47 @@ import { NotificationKinds } from "../common/CustomNotification";
 import { format } from "date-fns";
 
 const SearchForm = (props) => {
-  const { setNotificationVisible, setNotificationBody } =
+  const { setNotificationVisible, addNotification } =
     useContext(NotificationContext);
+
+  const intl = useIntl();
+
   const [searchResults, setSearchResults] = useState();
   const [searchBy, setSearchBy] = useState();
   const [doRange, setDoRagnge] = useState(true);
   const [testSections, setTestSections] = useState([]);
+  const [defaultTestSectionId, setDefaultTestSectionId] = useState("");
+  const [defaultTestSectionLabel, setDefaultTestSectionLabel] = useState("");
+  const [searchFormValues, setSearchFormValues] = useState(
+    ValidationSearchFormValues,
+  );
   const [testDate, setTestDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [nextPage, setNextPage] = useState(null);
+  const [previousPage, setPreviousPage] = useState(null);
+  const [pagination, setPagination] = useState(false);
+  const [url, setUrl] = useState("");
+
   const validationResults = (data) => {
     if (data) {
       setSearchResults(data);
       setIsLoading(false);
+      if (data.paging) {
+        var { totalPages, currentPage } = data.paging;
+        if (totalPages > 1) {
+          setPagination(true);
+          if (parseInt(currentPage) < parseInt(totalPages)) {
+            setNextPage(parseInt(currentPage) + 1);
+          } else {
+            setNextPage(null);
+          }
+          if (parseInt(currentPage) > 1) {
+            setPreviousPage(parseInt(currentPage) - 1);
+          } else {
+            setPreviousPage(null);
+          }
+        }
+      }
       if (data.resultList.length > 0) {
         const newResultsList = data.resultList.map((data, id) => {
           let tempData = { ...data };
@@ -55,10 +84,10 @@ const SearchForm = (props) => {
           resultList: [],
         }));
 
-        setNotificationBody({
+        addNotification({
           kind: NotificationKinds.warning,
-          title: <FormattedMessage id="notification.title" />,
-          message: "No Results found to be validated",
+          title: intl.formatMessage({ id: "notification.title" }),
+          message: intl.formatMessage({ id: "validation.search.noresult" }),
         });
         setNotificationVisible(true);
       }
@@ -70,10 +99,16 @@ const SearchForm = (props) => {
   }, [searchResults]);
 
   const handleSubmit = (values) => {
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
     setIsLoading(true);
-    var accessionNumber = values.accessionNumber ? values.accessionNumber : "";
+    var accessionNumber = values.accessionNumber
+      ? values.accessionNumber.split("-")[0]
+      : "";
     var unitType = values.unitType ? values.unitType : "";
-    var date = testDate ? testDate : "";
+    var defaultDate = values.defaultDate ? values.defaultDate : "";
+    var date = testDate ? testDate : defaultDate;
     let searchEndPoint =
       "/rest/accessionValidation?" +
       "accessionNumber=" +
@@ -84,16 +119,29 @@ const SearchForm = (props) => {
       date +
       "&doRange=" +
       doRange;
-
+    setUrl(searchEndPoint);
     getFromOpenElisServer(searchEndPoint, validationResults);
   };
 
   const handleChange = () => {};
+
+  const loadNextResultsPage = () => {
+    setIsLoading(true);
+    getFromOpenElisServer(url + "&page=" + nextPage, validationResults);
+  };
+
+  const loadPreviousResultsPage = () => {
+    setIsLoading(true);
+    getFromOpenElisServer(url + "&page=" + previousPage, validationResults);
+  };
   const fetchTestSections = (response) => {
     setTestSections(response);
   };
 
   const submitOnSelect = (e) => {
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
     var values = { unitType: e.target.value };
     handleSubmit(values);
   };
@@ -110,13 +158,66 @@ const SearchForm = (props) => {
     if (param === "order") {
       setDoRagnge(false);
     }
-    getFromOpenElisServer("/rest/user-test-sections", fetchTestSections);
-  }, []);
+    switch (searchBy) {
+      case "routine": {
+        let testSectionId = new URLSearchParams(window.location.search).get(
+          "testSectionId",
+        );
+        testSectionId = testSectionId ? testSectionId : "";
+        getFromOpenElisServer(
+          "/rest/user-test-sections",
+          (fetchedTestSections) => {
+            let testSection = fetchedTestSections.find(
+              (testSection) => testSection.id === testSectionId,
+            );
+            let testSectionLabel = testSection ? testSection.value : "";
+            setDefaultTestSectionId(testSectionId);
+            setDefaultTestSectionLabel(testSectionLabel);
+            fetchTestSections(fetchedTestSections);
+          },
+        );
+        if (testSectionId) {
+          let values = { unitType: testSectionId };
+          handleSubmit(values);
+        }
+        break;
+      }
+
+      case "order":
+      case "range": {
+        let accessionNumber = new URLSearchParams(window.location.search).get(
+          "accessionNumber",
+        );
+        if (accessionNumber) {
+          let searchValues = {
+            ...searchFormValues,
+            accessionNumber: accessionNumber,
+          };
+          handleSubmit(searchValues);
+          setSearchFormValues(searchValues);
+        }
+        break;
+      }
+      case "testDate": {
+        let date = new URLSearchParams(window.location.search).get("date");
+        if (date) {
+          setTestDate(date);
+          handleSubmit({ defaultDate: date });
+        }
+        break;
+      }
+    }
+
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
+  }, [searchBy, doRange]);
   return (
     <>
       {isLoading && <Loading></Loading>}
       <Formik
-        initialValues={ValidationSearchFormValues}
+        initialValues={searchFormValues}
+        enableReinitialize={true}
         //validationSchema={}
         onSubmit={handleSubmit}
         onChange
@@ -125,6 +226,7 @@ const SearchForm = (props) => {
           values,
           errors,
           touched,
+          setFieldValue,
           handleChange,
           //handleBlur,
           handleSubmit,
@@ -151,6 +253,10 @@ const SearchForm = (props) => {
                             placeholder={"Enter Lab No"}
                             name={field.name}
                             id={field.name}
+                            value={values[field.name]}
+                            onChange={(e, rawValue) => {
+                              setFieldValue(field.name, rawValue);
+                            }}
                             labelText={
                               searchBy == "order" ? (
                                 <FormattedMessage id="search.label.accession" />
@@ -219,23 +325,60 @@ const SearchForm = (props) => {
           <Grid>
             <Column lg={6}>
               <Select
-                labelText={<FormattedMessage id="search.label.testunit" />}
+                labelText={intl.formatMessage({ id: "search.label.testunit" })}
                 name="unitType"
                 id="unitType"
                 onChange={submitOnSelect}
               >
-                <SelectItem text="" value="" />
-                {testSections.map((test, index) => {
-                  return (
-                    <SelectItem key={index} text={test.value} value={test.id} />
-                  );
-                })}
+                <SelectItem
+                  text={defaultTestSectionLabel}
+                  value={defaultTestSectionId}
+                />
+                {testSections
+                  .filter((item) => item.id !== defaultTestSectionId)
+                  .map((test, index) => {
+                    return (
+                      <SelectItem
+                        key={index}
+                        text={test.value}
+                        value={test.id}
+                      />
+                    );
+                  })}
               </Select>
             </Column>
             <Column lg={10} />
           </Grid>
         </>
       )}
+
+      <>
+        {pagination && (
+          <Grid>
+            <Column lg={11} />
+            <Column lg={2}>
+              <Button
+                type=""
+                id="loadpreviousresults"
+                onClick={loadPreviousResultsPage}
+                disabled={previousPage != null ? false : true}
+              >
+                <FormattedMessage id="button.label.loadprevious" />
+              </Button>
+            </Column>
+            <Column lg={2}>
+              <Button
+                type=""
+                id="loadnextresults"
+                disabled={nextPage != null ? false : true}
+                onClick={loadNextResultsPage}
+              >
+                <FormattedMessage id="button.label.loadnext" />
+              </Button>
+            </Column>
+          </Grid>
+        )}
+      </>
     </>
   );
 };

@@ -11,6 +11,7 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import CustomTextInput from "../common/CustomTextInput";
 import CustomSelect from "../common/CustomSelect";
 import CustomDatePicker from "../common/CustomDatePicker";
+import { useIntl } from "react-intl";
 
 function requiredSymbol(value) {
   return (
@@ -21,17 +22,6 @@ function requiredSymbol(value) {
   );
 }
 
-const header = [
-  { key: "reason", header: requiredSymbol("Reason for Referral") },
-  { key: "referrer", header: "Referrer" },
-  {
-    key: "institute",
-    header: requiredSymbol("Institute"),
-  },
-  { key: "", header: "Sent Date\n" + "(dd/mm/yyyy)" },
-  { key: "name", header: requiredSymbol("Test Name") },
-];
-
 const OrderReferralRequest = ({
   index,
   selectedTests,
@@ -40,6 +30,7 @@ const OrderReferralRequest = ({
   referralRequests,
   setReferralRequests,
 }) => {
+  const intl = useIntl();
   const [referralRows, setReferralRows] = useState([]);
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
 
@@ -64,10 +55,39 @@ const OrderReferralRequest = ({
   function handleSentDatePicker(date, index) {
     if (date != null) {
       const update = [...referralRequests];
-      update[index].sentDate = date;
+      if (update[index]) {
+        update[index].sentDate = date;
+      }
       setReferralRequests(update);
     }
   }
+
+  const header = [
+    {
+      key: "reason",
+      header: requiredSymbol(
+        intl.formatMessage({ id: "referral.label.reason" }),
+      ),
+    },
+    { key: "referrer", header: intl.formatMessage({ id: "referrer.label" }) },
+    {
+      key: "institute",
+      header: requiredSymbol(
+        intl.formatMessage({ id: "referral.label.institute" }),
+      ),
+    },
+    {
+      key: "",
+      header:
+        intl.formatMessage({ id: "referral.label.sentdate" }) +
+        "\n" +
+        "(dd/mm/yyyy)",
+    },
+    {
+      key: "name",
+      header: requiredSymbol(intl.formatMessage({ id: "search.label.test" })),
+    },
+  ];
 
   const updateUIRender = () => {
     const rows = [];
@@ -102,7 +122,7 @@ const OrderReferralRequest = ({
               id={"referralReasonId_" + id}
               options={referralReasons}
               value={
-                referralRequests[i].reasonForReferral
+                referralRequests[i]?.reasonForReferral
                   ? referralRequests[i].reasonForReferral
                   : null
               }
@@ -113,7 +133,7 @@ const OrderReferralRequest = ({
             <CustomTextInput
               id={"referrer_" + id}
               defaultValue={
-                referralRequests[i].referrer
+                referralRequests[i]?.referrer
                   ? referralRequests[i].referrer
                   : obj.referrer
               }
@@ -126,7 +146,7 @@ const OrderReferralRequest = ({
               id={"referredInstituteId_" + id}
               options={referralOrganizations}
               value={
-                referralRequests[i].institute
+                referralRequests[i]?.institute
                   ? referralRequests[i].institute
                   : null
               }
@@ -140,7 +160,7 @@ const OrderReferralRequest = ({
               autofillDate={true}
               className="orderReferralSentDate"
               value={
-                referralRequests[i].sentDate
+                referralRequests[i]?.sentDate
                   ? referralRequests[i].sentDate
                   : null
               }

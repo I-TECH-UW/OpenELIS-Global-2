@@ -28,14 +28,18 @@ import {
 } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog } from "../common/CustomNotification";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import "./../pathology/PathologyDashboard.css";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 
 function ImmunohistochemistryDashboard() {
   const componentMounted = useRef(false);
 
+  const { userSessionDetails } = useContext(UserSessionDetailsContext);
   const { notificationVisible } = useContext(NotificationContext);
+
+  const intl = useIntl();
+
   const [counts, setCounts] = useState({
     inProgress: 0,
     awaitingReview: 0,
@@ -47,9 +51,13 @@ function ImmunohistochemistryDashboard() {
   const [filters, setFilters] = useState({
     searchTerm: "",
     myCases: false,
-    statuses: [],
+    statuses: [
+      {
+        id: "IN_PROGRESS",
+        value: "In Progress",
+      },
+    ],
   });
-  const { userSessionDetails } = useContext(UserSessionDetailsContext);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -92,12 +100,22 @@ function ImmunohistochemistryDashboard() {
     }
   };
   const tileList = [
-    { title: "Cases in Progress", count: counts.inProgress },
     {
-      title: "Awaiting Immunohistochemistry Review",
+      title: intl.formatMessage({ id: "pathology.label.casesInProgress" }),
+      count: counts.inProgress,
+    },
+    {
+      title: intl.formatMessage({ id: "immunohistochemistry.label.review" }),
       count: counts.awaitingReview,
     },
-    { title: "Complete (Week " + getPastWeek() + " )", count: counts.complete },
+    {
+      title:
+        intl.formatMessage({ id: "pathology.label.complete" }) +
+        "(Week " +
+        getPastWeek() +
+        " )",
+      count: counts.complete,
+    },
   ];
 
   const setStatusList = (statusList) => {
@@ -172,14 +190,16 @@ function ImmunohistochemistryDashboard() {
   };
 
   const setImmunohistochemistryEntriesWithIds = (entries) => {
-    if (componentMounted.current && entries && entries.length > 0) {
-      setImmunohistochemistryEntries(
-        entries.map((entry) => {
-          return { ...entry, id: "" + entry.immunohistochemistrySampleId };
-        }),
-      );
-    }
     if (componentMounted.current) {
+      if (entries && entries.length > 0) {
+        setImmunohistochemistryEntries(
+          entries.map((entry) => {
+            return { ...entry, id: "" + entry.immunohistochemistrySampleId };
+          }),
+        );
+      } else {
+        setImmunohistochemistryEntries([]);
+      }
       setLoading(false);
     }
   };
@@ -237,7 +257,15 @@ function ImmunohistochemistryDashboard() {
 
   useEffect(() => {
     componentMounted.current = true;
-    setFilters({ ...filters, statuses: statuses });
+    setFilters({
+      ...filters,
+      statuses: [
+        {
+          id: "IN_PROGRESS",
+          value: "In Progress",
+        },
+      ],
+    });
 
     return () => {
       componentMounted.current = false;
@@ -303,11 +331,13 @@ function ImmunohistochemistryDashboard() {
                 id="statusFilter"
                 name="statusFilter"
                 labelText="Status"
-                defaultValue="placeholder"
+                value={
+                  filters.statuses.length > 1 ? "All" : filters.statuses[0].id
+                }
                 onChange={setStatusFilter}
                 noLabel
               >
-                <SelectItem disabled hidden value="placeholder" text="Status" />
+                <SelectItem disabled value="placeholder" text="Status" />
                 <SelectItem text="All" value="All" />
                 {statuses.map((status, index) => {
                   return (

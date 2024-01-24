@@ -1,11 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DatePicker, DatePickerInput } from "@carbon/react";
-import { ConfigurationContext } from "../layout/Layout";
 import { format } from "date-fns";
 
 const CustomDatePicker = (props) => {
-  const { configurationProperties } = useContext(ConfigurationContext);
-  const [currentDate, setCurrentDate] = useState(props.value);
+  
+  const [currentDate, setCurrentDate] = useState(
+    props.value ? props.value : "",
+  );
 
   function handleDatePickerChange(e) {
     let date = new Date(e[0]);
@@ -13,13 +14,6 @@ const CustomDatePicker = (props) => {
     setCurrentDate(formatDate);
     props.onChange(currentDate);
   }
-
-  useEffect(() => {
-    const date = configurationProperties.currentDateAsText;
-    if (props.autofillDate) {
-      setCurrentDate(date);
-    }
-  }, [configurationProperties]);
 
   useEffect(() => {
     props.onChange(currentDate);
@@ -34,6 +28,8 @@ const CustomDatePicker = (props) => {
         datePickerType="single"
         value={currentDate}
         onChange={(e) => handleDatePickerChange(e)}
+        maxDate={props.disallowFutureDate ? new Date() : null}
+        minDate={props.disallowPastDate ? new Date() : null}
       >
         <DatePickerInput
           id={props.id}

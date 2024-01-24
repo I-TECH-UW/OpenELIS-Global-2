@@ -22,6 +22,7 @@ import { postToOpenElisServer, getFromOpenElisServer } from "../utils/Utils";
 import EditOrderEntryAdditionalQuestions from "./EditOrderEntryAdditionalQuestions";
 import OrderSuccessMessage from "../addOrder/OrderSuccessMessage";
 import { FormattedMessage, useIntl } from "react-intl";
+import PatientHeader from "../common/PatientHeader";
 
 export let sampleObject = {
   index: 0,
@@ -35,6 +36,10 @@ export let sampleObject = {
   referralItems: [],
 };
 const ModifyOrder = () => {
+  const componentMounted = useRef(false);
+
+  const intl = useIntl();
+
   const firstPageNumber = 0;
   const lastPageNumber = 3;
   const programPageNumber = firstPageNumber + 0;
@@ -45,8 +50,6 @@ const ModifyOrder = () => {
   const [page, setPage] = useState(firstPageNumber);
   const [orderFormValues, setOrderFormValues] = useState(ModifyOrderFormValues);
   const [samples, setSamples] = useState([sampleObject]);
-
-  const componentMounted = useRef(false);
 
   useEffect(() => {
     componentMounted.current = true;
@@ -76,14 +79,14 @@ const ModifyOrder = () => {
     }
   };
 
-  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
   const showAlertMessage = (msg, kind) => {
     setNotificationVisible(true);
-    setNotificationBody({
+    addNotification({
       kind: kind,
-      title: <FormattedMessage id="notification.title" />,
+      title: intl.formatMessage({ id: "notification.title" }),
       message: msg,
     });
   };
@@ -104,7 +107,7 @@ const ModifyOrder = () => {
   const handleSubmitOrderForm = (e) => {
     e.preventDefault();
     setPage(page + 1);
-    console.log(JSON.stringify(orderFormValues));
+    console.debug(JSON.stringify(orderFormValues));
     postToOpenElisServer(
       "/rest/sample-edit",
       JSON.stringify(orderFormValues),
@@ -192,7 +195,6 @@ const ModifyOrder = () => {
   const handleTabClickHandler = (e) => {
     setPage(e);
   };
-  const intl = useIntl();
 
   return (
     <>
@@ -202,65 +204,26 @@ const ModifyOrder = () => {
             <BreadcrumbItem href="/">
               {intl.formatMessage({ id: "home.label" })}
             </BreadcrumbItem>
-            <BreadcrumbItem href="/FindOrder">
+            <BreadcrumbItem href="/SampleEdit">
               {intl.formatMessage({ id: "sample.label.search.Order" })}
             </BreadcrumbItem>
           </Breadcrumb>
         </Column>
       </Grid>
 
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Section>
-            <Section>
-              {orderFormValues?.sampleOrderItems ? (
-                <div className="patient-header">
-                  <div className="patient-name">
-                    <Tag type="blue">
-                      <FormattedMessage id="patient.label.name" /> :
-                    </Tag>
-                    {orderFormValues.patientName}
-                  </div>
-                  <div className="patient-dob">
-                    {" "}
-                    <Tag type="blue">
-                      <FormattedMessage id="patient.label.sex" /> :
-                    </Tag>
-                    {orderFormValues.gender === "M" ? (
-                      <FormattedMessage id="patient.male" />
-                    ) : (
-                      <FormattedMessage id="patient.female" />
-                    )}{" "}
-                    <Tag type="blue">
-                      <FormattedMessage id="patient.dob" /> :
-                    </Tag>{" "}
-                    {orderFormValues.dob}
-                  </div>
-                  <div className="patient-id">
-                    <Tag type="blue">
-                      <FormattedMessage id="quick.entry.accession.number" /> :
-                    </Tag>
-                    {orderFormValues.accessionNumber}{" "}
-                  </div>
-                  <div className="patient-id">
-                    <Tag type="blue">
-                      <FormattedMessage id="patient.natioanalid" /> :
-                    </Tag>
-                    {orderFormValues.nationalId}
-                  </div>
-                </div>
-              ) : (
-                <div className="patient-header">
-                  <div className="patient-name">
-                    {" "}
-                    <FormattedMessage id="sample.label.noorder" />{" "}
-                  </div>
-                </div>
-              )}
-            </Section>
-          </Section>
-        </Column>
-      </Grid>
+
+      <PatientHeader
+        id={orderFormValues?.nationalId}
+        patientName={orderFormValues?.patientName}
+        gender={orderFormValues?.gender}
+        dob={orderFormValues?.dob}
+        nationalId={orderFormValues?.nationalId}
+        accesionNumber={orderFormValues?.accessionNumber}
+        className="patient-header3"
+        isOrderPage={true}
+      >
+        {" "}
+      </PatientHeader>
       <Stack gap={10}>
         <div className="pageContent">
           {notificationVisible === true ? <AlertDialog /> : ""}
@@ -277,15 +240,15 @@ const ModifyOrder = () => {
                   onChange={(e) => handleTabClickHandler(e)}
                 >
                   <ProgressStep
-                    label={
-                      <FormattedMessage id="order.step.program.selection" />
-                    }
+                    label={intl.formatMessage({
+                      id: "order.step.program.selection",
+                    })}
                   />
                   <ProgressStep
-                    label={<FormattedMessage id="sample.add.action" />}
+                    label={intl.formatMessage({ id: "sample.add.action" })}
                   />
                   <ProgressStep
-                    label={<FormattedMessage id="order.label.add" />}
+                    label={intl.formatMessage({ id: "order.label.add" })}
                   />
                 </ProgressIndicator>
               )}
@@ -332,7 +295,7 @@ const ModifyOrder = () => {
                     className="forwardButton"
                     onClick={() => navigateForward()}
                   >
-                    {<FormattedMessage id="next.action.button" />}
+                    <FormattedMessage id="next.action.button" />
                   </Button>
                 )}
 
@@ -342,7 +305,7 @@ const ModifyOrder = () => {
                     className="forwardButton"
                     onClick={handleSubmitOrderForm}
                   >
-                    {<FormattedMessage id="label.button.submit" />}
+                    <FormattedMessage id="label.button.submit" />
                   </Button>
                 )}
               </div>

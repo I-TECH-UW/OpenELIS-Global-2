@@ -36,7 +36,7 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.paging.PagingProperties;
+//import org.openelisglobal.common.paging.PagingProperties;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.StringUtil;
@@ -216,7 +216,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
             query.setParameter("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("statusIdList", statusIdList);
-            query.setMaxResults(SpringContext.getBean(PagingProperties.class).getValidationPageSize());
+           // query.setMaxResults(SpringContext.getBean(PagingProperties.class).getValidationPageSize());
 
             return query.list();
         } catch (RuntimeException e) {
@@ -241,7 +241,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
             query.setParameter("accessionNumber", accessionNumber);
             query.setParameterList("statusIdList", statusIdList);
-            query.setMaxResults(SpringContext.getBean(PagingProperties.class).getValidationPageSize());
+            //query.setMaxResults(SpringContext.getBean(PagingProperties.class).getValidationPageSize());
 
             return query.list();
         } catch (RuntimeException e) {
@@ -976,7 +976,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
 
      @Override
     @Transactional(readOnly = true)
-    public List<Analysis> getAnalysisCompletedOnByStatusId(Date completedDate, String statusId)
+    public List<Analysis> getAnalysesCompletedOnByStatusId(Date completedDate, String statusId)
             throws LIMSRuntimeException {
         
 
@@ -1256,7 +1256,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setParameter("testSectionId", Integer.parseInt(testSectionId));
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
-            query.setMaxResults(SpringContext.getBean(PagingProperties.class).getResultsPageSize());
+           // query.setMaxResults(SpringContext.getBean(PagingProperties.class).getResultsPageSize());
 
             List<Analysis> analysisList = query.list();
 
@@ -1537,7 +1537,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             query.setParameter("accessionNumber", accessionNumber);
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
-            query.setMaxResults(SpringContext.getBean(PagingProperties.class).getResultsPageSize());
+            //query.setMaxResults(SpringContext.getBean(PagingProperties.class).getResultsPageSize());
 
             List<Analysis> analysisList = query.list();
 
@@ -1595,7 +1595,7 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             }
             query.setParameterList("analysisStatusList", analysisStatusList);
             query.setParameterList("sampleStatusList", sampleStatusList);
-            query.setMaxResults(SpringContext.getBean(PagingProperties.class).getResultsPageSize());
+            //query.setMaxResults(SpringContext.getBean(PagingProperties.class).getResultsPageSize());
 
             List<Analysis> analysisList = query.list();
 
@@ -1660,6 +1660,97 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             handleException(e, "getAnalysisForSiteBetweenResultDates");
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public int getCountOfAnalysesForStatusIds(List<Integer> statusIdList) {
+         String hql = "SELECT COUNT(*) From Analysis a WHERE  a.statusId IN (:analysisStatusList)";
+        try {
+            Query<Long> query = entityManager.unwrap(Session.class).createQuery(hql, Long.class);
+            query.setParameterList("analysisStatusList", statusIdList);
+
+            Long count = query.uniqueResult();
+            return count.intValue();
+
+        } catch (HibernateException e) {
+            handleException(e, "getCountOfAnalysesForStatusIds");
+        }
+
+        return 0;
+    }
+
+    @Override
+    public int getCountOfAnalysisCompletedOnByStatusId(Date completedDate, List<Integer> statusIds) {
+        String sql = "SELECT COUNT(*) From Analysis a where a.releasedDate = :releasedDate and a.statusId in ( :statusList )";
+
+        try {
+            Query<Long> query = entityManager.unwrap(Session.class).createQuery(sql, Long.class);
+            query.setParameter("releasedDate", completedDate);
+            query.setParameterList("statusList", statusIds);
+
+            Long count = query.uniqueResult();
+            return count.intValue();
+        } catch (HibernateException e) {
+            handleException(e, "getCountOfAnalysisCompletedOnByStatusId");
+        }
+
+        return 0;
+    }
+
+    @Override
+    public int getCountOfAnalysisStartedOnExcludedByStatusId(Date collectionDate, Set<Integer> statusIds) {
+
+        String sql = "SELECT COUNT(*) from Analysis a where a.startedDate = :startedDate and a.statusId not in ( :statusList )";
+
+        try {
+            Query<Long> query = entityManager.unwrap(Session.class).createQuery(sql, Long.class);
+            query.setParameter("startedDate", collectionDate);
+            query.setParameterList("statusList", statusIds);
+
+            Long count = query.uniqueResult();
+            return count.intValue();
+        } catch (HibernateException e) {
+            handleException(e, "getCountOfAnalysisStartedOnExcludedByStatusId");
+        }
+
+        return 0;
+    }
+
+    @Override
+    public int getCountOfAnalysisStartedOnByStatusId(Date startedDate, List<Integer> statusIds) {
+         String sql = "SELECT COUNT(*) from Analysis a where a.startedDate = :startedDate and a.statusId in ( :statusList )";
+
+        try {
+            Query<Long> query = entityManager.unwrap(Session.class).createQuery(sql, Long.class);
+            query.setParameter("startedDate", startedDate);
+            query.setParameterList("statusList", statusIds);
+
+            Long count = query.uniqueResult();
+            return count.intValue();
+        } catch (HibernateException e) {
+            handleException(e, "getCountOfAnalysisStartedOnByStatusId");
+        }
+
+        return 0;
+    }
+
+    @Override
+    public List<Analysis> getAnalysesResultEnteredOnExcludedByStatusId(Date completedDate, Set<Integer> statusIds)
+            throws LIMSRuntimeException {
+        String sql = "from Analysis a where a.completedDate = :completedDate and a.statusId not in ( :statusList )";
+
+        try {
+            Query<Analysis> query = entityManager.unwrap(Session.class).createQuery(sql, Analysis.class);
+            query.setParameter("completedDate", completedDate);
+            query.setParameterList("statusList", statusIds);
+
+            List<Analysis> analysisList = query.list();
+            return analysisList;
+        } catch (HibernateException e) {
+            handleException(e, "getAnalysisResultEnteredOnOnByStatusId");
+        }
+
+        return null;
     }
 
 }

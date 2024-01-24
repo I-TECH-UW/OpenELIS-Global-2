@@ -1,21 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
-import { ConfigurationContext } from "../layout/Layout";
+import React, { useEffect, useState } from "react";
 import { TimePicker } from "@carbon/react";
 
 const CustomTimePicker = (props) => {
-  const { configurationProperties } = useContext(ConfigurationContext);
-  const [currentTime, setCurrentTime] = useState(null);
+  const [currentTime, setCurrentTime] = useState(
+    props.value ? props.value : "",
+  );
 
   function handleTimePicker(e) {
     let time = e.target.value;
     setCurrentTime(time);
     props.onChange(time);
   }
-
-  useEffect(() => {
-    setCurrentTime(configurationProperties.currentTimeAsText);
-  }, [configurationProperties]);
-
   useEffect(() => {
     props.onChange(currentTime);
   }, [currentTime]);

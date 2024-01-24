@@ -360,6 +360,11 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     }
 
     @Override
+    public int getCountOfAnalysesForStatusIds(List<Integer> statusIdList) {
+        return  baseObjectDAO.getCountOfAnalysesForStatusIds(statusIdList);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAnalysesBySampleStatusIdExcludingByStatusId(String sampleStatus,
             Set<Integer> excludedStatusIds) {
@@ -745,7 +750,27 @@ public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String>
     }
 
     @Override
-    public List<Analysis> getAnalysisCompletedOnByStatusId(Date completedDate, String statusId) {
-        return baseObjectDAO.getAnalysisCompletedOnByStatusId(completedDate ,statusId);
+    public List<Analysis> getAnalysesCompletedOnByStatusId(Date completedDate, String statusId) {
+        return baseObjectDAO.getAnalysesCompletedOnByStatusId(completedDate ,statusId);
+    }
+
+    @Override
+    public int getCountOfAnalysisCompletedOnByStatusId(Date completedDate, List<Integer> statusIds) {
+        return baseObjectDAO.getCountOfAnalysisCompletedOnByStatusId(completedDate, statusIds);
+    }
+
+    @Override
+    public int getCountOfAnalysisStartedOnExcludedByStatusId(Date collectionDate, Set<Integer> statusIds) {
+        return baseObjectDAO.getCountOfAnalysisStartedOnExcludedByStatusId(collectionDate ,statusIds);
+    }
+
+    @Override
+    public int getCountOfAnalysisStartedOnByStatusId(Date startedDate, List<Integer> statusIds) {
+        return baseObjectDAO.getCountOfAnalysisStartedOnByStatusId(startedDate, statusIds);
+    }
+
+    @Override
+    public List<Analysis> getAnalysesResultEnteredOnExcludedByStatusId(Date completedDate, Set<Integer> statusIds) {
+        return baseObjectDAO.getAnalysesResultEnteredOnExcludedByStatusId(completedDate, statusIds);
     }
 }

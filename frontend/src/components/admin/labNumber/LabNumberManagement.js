@@ -30,11 +30,11 @@ import { ConfigurationContext } from "../../layout/Layout";
 function LabNumberManagement() {
   const intl = useIntl();
 
-  const componentMounted = useRef(true);
+  const componentMounted = useRef(false);
 
   const { configurationProperties, reloadConfiguration } =
     useContext(ConfigurationContext);
-  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
   const [currentLabNumForDisplay, setCurrentLabNumForDisplay] = useState(
@@ -48,6 +48,7 @@ function LabNumberManagement() {
   const [labNumberValues, setLabNumberValues] = useState(LabNumberFormValues);
 
   useEffect(() => {
+    componentMounted.current = true;
     loadValues();
     return () => {
       componentMounted.current = false;
@@ -56,9 +57,6 @@ function LabNumberManagement() {
 
   useEffect(() => {
     fetchCurrentLabNumberNoIncrement();
-    return () => {
-      componentMounted.current = false;
-    };
   }, [configurationProperties]);
 
   useEffect(() => {
@@ -66,21 +64,13 @@ function LabNumberManagement() {
       fetchLegacyLabNumNoIncrement();
     }
     generateSampleLabNum();
-    return () => {
-      componentMounted.current = false;
-    };
   }, [labNumberValues]);
 
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
-    //TODO use better strategy developed with greg
-    var names = name.split(".");
     const updatedValues = { ...labNumberValues };
-    if (names.length === 1) {
-      updatedValues[name] = value;
-    } else if (names.length === 2) {
-      updatedValues[names[0]][names[1]] = value;
-    }
+    var jp = require("jsonpath");
+    jp.value(updatedValues, name, value);
     setLabNumberValues(updatedValues);
   };
 
@@ -88,18 +78,18 @@ function LabNumberManagement() {
     setNotificationVisible(true);
     setIsSubmitting(false);
     if (res.status == "200") {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.success,
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id="success.add.edited.msg" />,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "success.add.edited.msg" }),
       });
       var body = await res.json();
-      setLabNumberValues(body);
+      setLabNumberValues({ ...LabNumberFormValues, ...body });
     } else {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id="error.add.edited.msg" />,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.add.edited.msg" }),
       });
     }
     reloadConfiguration();
@@ -107,7 +97,7 @@ function LabNumberManagement() {
 
   const loadValues = () => {
     getFromOpenElisServer("/rest/labnumbermanagement", (body) => {
-      setLabNumberValues(body);
+      setLabNumberValues({ ...LabNumberFormValues, ...body });
       setLoading(false);
     });
   };
@@ -166,7 +156,7 @@ function LabNumberManagement() {
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading />}
       <div className="adminPageContent">
-        <Grid >
+        <Grid>
           <Column lg={16}>
             <Section>
               <Section>
@@ -192,32 +182,37 @@ function LabNumberManagement() {
           </div>
           {labNumberValues.labNumberType === "ALPHANUM" && (
             <>
-              <div className="inlineDiv">
-                <Checkbox
-                  type="checkbox"
-                  name="usePrefix"
-                  id="usePrefix"
-                  labelText={intl.formatMessage({ id: "labNumber.usePrefix" })}
-                  checked={labNumberValues.usePrefix}
-                  onClick={() => {
-                    const updatedValues = { ...labNumberValues };
-                    updatedValues.usePrefix = !labNumberValues.usePrefix;
-                    setLabNumberValues(updatedValues);
-                  }}
-                />
-              </div>
-              <div className="inlineDiv">
-                <TextInput
-                  type="text"
-                  name="alphanumPrefix"
-                  id="alphanumPrefix"
-                  labelText={intl.formatMessage({ id: "labNumber.prefix" })}
-                  disabled={!labNumberValues.usePrefix}
-                  value={labNumberValues.alphanumPrefix}
-                  onChange={handleFieldChange}
-                  enableCounter={true}
-                  maxCount={5}
-                />
+              <div className="formInlineDiv">
+                <div className="formInlineDiv">
+                  <TextInput
+                    type="text"
+                    name="alphanumPrefix"
+                    id="alphanumPrefix"
+                    labelText={intl.formatMessage({ id: "labNumber.prefix" })}
+                    disabled={!labNumberValues.usePrefix}
+                    value={labNumberValues.alphanumPrefix}
+                    onChange={handleFieldChange}
+                    enableCounter={true}
+                    maxCount={5}
+                  />
+                  <span className="middleAlignVertical">
+                    <Checkbox
+                      type="checkbox"
+                      name="usePrefix"
+                      id="usePrefix"
+                      labelText={intl.formatMessage({
+                        id: "labNumber.usePrefix",
+                      })}
+                      checked={labNumberValues.usePrefix}
+                      onClick={() => {
+                        const updatedValues = { ...labNumberValues };
+                        updatedValues.usePrefix = !labNumberValues.usePrefix;
+                        setLabNumberValues(updatedValues);
+                      }}
+                    />
+                  </span>
+                </div>
+                <div></div>
               </div>
             </>
           )}

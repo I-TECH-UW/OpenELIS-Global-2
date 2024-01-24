@@ -22,6 +22,9 @@ import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
 import org.openelisglobal.internationalization.MessageUtil;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties({ "serialVersionUID", "id", "parent", "click_action", "localizedTitle","localizedTooltip" })
 public class Menu extends BaseObject<String> {
 
     private static final long serialVersionUID = 1L;

@@ -21,10 +21,6 @@
   font-size: 12px;
 }
 
-div {
-  display: block;
-}
-
 .userDetails {
   padding: 5%; 
 }
@@ -42,7 +38,7 @@ li.clickableUserDetails:hover  {
 }
 
 .adminPageContent {
-  margin-left: 20%;
+  margin-left: 10%;
   margin-right: 5%;
 }
 
@@ -165,6 +161,31 @@ button {
 
 .inlineChildDiv {
   margin-left : 1%
+}
+
+.middleAlign {
+  height: 100%;
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+}
+
+.middleAlignHorizontal {
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+}
+.middleAlignVertical {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  /* justify-content: center; */
+}
+.bottomAlign {
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  /* justify-content: center; */
 }
 
 .formInlineDiv {
@@ -395,4 +416,36 @@ button {
 
 .hidden {
   visibility: hidden;
+}
+
+.font1 {
+  font-size: 14px;
+  color: #201f1f;
+}
+
+.requiredlabel {
+  color: #FF0000;
+}
+
+.my-custom-table {
+  margin: 20px;
+}
+
+.my-custom-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+.my-custom-table th, .my-custom-table td {
+  padding: 8px;
+  text-align: left;
+}
+
+.my-custom-table th {
+  background-color: #f4f4f4;
+}
+
+.my-custom-table tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
 }

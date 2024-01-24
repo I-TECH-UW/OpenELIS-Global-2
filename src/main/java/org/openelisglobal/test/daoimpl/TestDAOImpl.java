@@ -636,6 +636,9 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
     @Override
     @Transactional(readOnly = true)
     public List<Test> getTestsByLoincCode(String loincCode) {
+        if (loincCode == null) {
+            LogEvent.logWarn(this.getClass().getSimpleName(), "getTestsByLoincCode", "loincCode is null");
+        }
         String sql = "From Test t where t.loinc = :loinc";
         try {
             Query<Test> query = entityManager.unwrap(Session.class).createQuery(sql, Test.class);

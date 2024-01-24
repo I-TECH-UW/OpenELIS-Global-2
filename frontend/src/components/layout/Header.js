@@ -29,14 +29,37 @@ import {
   Theme,
   HeaderPanel,
 } from "@carbon/react";
+import { getFromOpenElisServer } from "../utils/Utils";
 
 function OEHeader(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
   const { userSessionDetails, logout } = useContext(UserSessionDetailsContext);
-  const [switchCollapsed, setSwitchCollapsed] = useState(true);
+
   const userSwitchRef = createRef();
   const headerPanelRef = createRef();
+
   const intl = useIntl();
+
+  const [switchCollapsed, setSwitchCollapsed] = useState(true);
+  const [menus, setMenus] = useState({
+    menu: [{ menu: {}, childMenus: [] }],
+    menu_billing: { menu: {}, childMenus: [] },
+    menu_nonconformity: { menu: {}, childMenus: [] },
+  });
+
+  const handleMenuItems = (tag, res) => {
+    if (res) {
+      let newMenus = menus;
+      newMenus[tag] = res;
+      setMenus(newMenus);
+    }
+  };
+
+  useEffect(() => {
+    getFromOpenElisServer("/rest/menu", (res) => {
+      handleMenuItems("menu", res);
+    });
+  }, []);
 
   const panelSwitchLabel = () => {
     return userSessionDetails.authenticated ? "User" : "Lang";
@@ -74,8 +97,52 @@ function OEHeader(props) {
     );
   };
 
+  const generateMenuItems = (menuItem, index, level) => {
+    if (menuItem.menu.isActive) {
+      if (level === 0 && menuItem.childMenus.length > 0) {
+        return (
+          <SideNavMenu
+            aria-label={intl.formatMessage({
+              id: menuItem.menu.displayKey,
+            })}
+            title={intl.formatMessage({
+              id: menuItem.menu.displayKey,
+            })}
+            key={"menu_" + index + "_" + level}
+          >
+            {menuItem.childMenus.map((childMenuItem, index) => {
+              return generateMenuItems(childMenuItem, index, level + 1);
+            })}
+          </SideNavMenu>
+        );
+      } else {
+        return (
+          <React.Fragment key={"menu_" + index + "_" + level}>
+            <SideNavMenuItem
+              href={menuItem.menu.actionURL}
+              target={menuItem.menu.openInNewWindow ? "_blank" : ""}
+            >
+              {level > 1 &&
+                "\xA0\xA0\xA0".repeat(level - 2 < 0 ? 0 : level - 2) +
+                  "-\xA0\xA0\xA0"}
+              <FormattedMessage id={menuItem.menu.displayKey} />
+            </SideNavMenuItem>
+            {menuItem.childMenus.map((childMenuItem, index) => {
+              return generateMenuItems(childMenuItem, index, level + 1);
+            })}
+          </React.Fragment>
+        );
+      }
+    } else {
+      return (
+        <React.Fragment key={"menu_" + index + "_" + level}></React.Fragment>
+      );
+    }
+  };
+
   return (
     <>
+      {/* TODO make this generate from Menu table like it did before */}
       <div className="container">
         <Theme>
           <HeaderContainer
@@ -92,10 +159,10 @@ function OEHeader(props) {
                 <HeaderName href="/" prefix="">
                   <span id="header-logo">{logo()}</span>
                   <div className="banner">
-                    <h5>{configurationProperties.BANNER_TEXT}</h5>
+                    <h5>{configurationProperties?.BANNER_TEXT}</h5>
                     <p>
                       <FormattedMessage id="header.label.version" /> &nbsp;{" "}
-                      {configurationProperties.releaseNumber}
+                      {configurationProperties?.releaseNumber}
                     </p>
                   </div>
                 </HeaderName>
@@ -178,7 +245,7 @@ function OEHeader(props) {
                       <label className="cds--label">
                         {" "}
                         <FormattedMessage id="header.label.version" />:{" "}
-                        {configurationProperties.releaseNumber}
+                        {configurationProperties?.releaseNumber}
                       </label>
                     </li>
                   </ul>
@@ -191,185 +258,12 @@ function OEHeader(props) {
                       isPersistent={false}
                     >
                       <SideNavItems>
-                        <SideNavMenu
-                          aria-label="Order"
-                          title={intl.formatMessage({
-                            id: "sidenav.label.order",
-                          })}
-                        >
-                          <SideNavMenuItem href="/AddOrder">
-                            <FormattedMessage id="sidenav.label.addorder" />
-                          </SideNavMenuItem>
-                          <SideNavMenuItem href="/FindOrder">
-                            <FormattedMessage id="sidenav.label.editorder" />
-                          </SideNavMenuItem>
-                          <SideNavMenuItem
-                            href={config.serverBaseUrl + "/ElectronicOrders"}
-                          >
-                            <FormattedMessage id="sidenav.label.incomingorder" />
-                          </SideNavMenuItem>
-                          <SideNavMenuItem
-                            href={
-                              config.serverBaseUrl + "/SampleBatchEntrySetup"
-                            }
-                          >
-                            <FormattedMessage id="sidenav.label.batchorder" />
-                          </SideNavMenuItem>
-                          <SideNavMenuItem
-                            href={config.serverBaseUrl + "/PrintBarcode"}
-                          >
-                            <FormattedMessage id="sidenav.label.barcode" />
-                          </SideNavMenuItem>
-                        </SideNavMenu>
-                        {configurationProperties.patientManagementTab ==
-                          "true" && (
-                          <SideNavMenu aria-label="Patient" title="Patient">
-                            <SideNavMenuItem href="/PatientManagement">
-                              <FormattedMessage id="sidenav.label.editpatient" />
-                            </SideNavMenuItem>
-                            <SideNavMenuItem href="/PatientHistory">
-                              <FormattedMessage id="sidenav.label.patientHistory" />
-                            </SideNavMenuItem>
-                          </SideNavMenu>
-                        )}
-                        {configurationProperties.nonConformityTab == "true" && (
-                          <SideNavMenu
-                            aria-label="Non-Conforming Events"
-                            title={intl.formatMessage({
-                              id: "sidenav.label.nonConform",
-                            })}
-                          >
-                            <SideNavMenuItem
-                              href={
-                                config.serverBaseUrl +
-                                "/ReportNonConformingEvent"
-                              }
-                            >
-                              <FormattedMessage id="sidenav.label.nonConform.report" />
-                            </SideNavMenuItem>
-                            <SideNavMenuItem
-                              href={
-                                config.serverBaseUrl + "/ViewNonConformingEvent"
-                              }
-                            >
-                              <FormattedMessage id="sidenav.label.nonConform.view" />
-                            </SideNavMenuItem>
-                            <SideNavMenuItem
-                              href={
-                                config.serverBaseUrl + "/NCECorrectiveAction"
-                              }
-                            >
-                              <FormattedMessage id="sidenav.label.nonConform.actions" />
-                            </SideNavMenuItem>
-                          </SideNavMenu>
-                        )}
-                        <SideNavMenu aria-label="Workplan" title="Workplan">
-                          <SideNavMenuItem href={"/WorkplanByTest"}>
-                            <FormattedMessage id="sidenav.label.workplan.test" />
-                          </SideNavMenuItem>
-                          <SideNavMenuItem href={"/WorkPlanByPanel"}>
-                            <FormattedMessage id="sidenav.label.workplan.panel" />
-                          </SideNavMenuItem>
-                          <SideNavMenuItem href={"/WorkPlanByTestSection"}>
-                            <FormattedMessage id="sidenav.label.workplan.unit" />
-                          </SideNavMenuItem>
-                          <SideNavMenuItem href={"/WorkplanByPriority"}>
-                            <FormattedMessage id="sidenav.label.workplan.priority" />
-                          </SideNavMenuItem>
-                        </SideNavMenu>
-                        <SideNavMenu aria-label="Pathology" title="Pathology">
-                          <SideNavMenuItem href={"/PathologyDashboard"}>
-                            <FormattedMessage id="sidenav.label.pathology.dashboard" />
-                          </SideNavMenuItem>
-                        </SideNavMenu>
-                        <SideNavMenu
-                          aria-label="Immunohistochemistry"
-                          title={intl.formatMessage({
-                            id: "sidenav.label.immunochem",
-                          })}
-                        >
-                          <SideNavMenuItem
-                            href={"/ImmunohistochemistryDashboard"}
-                          >
-                            <FormattedMessage id="sidenav.label.pathology.dashboard" />
-                          </SideNavMenuItem>
-                        </SideNavMenu>
-                        <SideNavMenu
-                          aria-label="Cytology"
-                          title={intl.formatMessage({
-                            id: "sidenav.label.cytology",
-                          })}
-                        >
-                          <SideNavMenuItem href={"/CytologyDashboard"}>
-                            <FormattedMessage id="sidenav.label.pathology.dashboard" />
-                          </SideNavMenuItem>
-                        </SideNavMenu>
-                        <SideNavMenu aria-label="Results" title="Results">
-                          <SideNavMenuItem href="/result?type=unit&doRange=false">
-                            <FormattedMessage id="sidenav.label.results.unit" />
-                          </SideNavMenuItem>
-                          <SideNavMenuItem href="/result?type=patient&doRange=false">
-                            <FormattedMessage id="sidenav.label.results.patient" />
-                          </SideNavMenuItem>
-                          <SideNavMenuItem href="/result?type=order&doRange=false">
-                            <FormattedMessage id="sidenav.label.results.order" />
-                          </SideNavMenuItem>
-                          <SideNavMenuItem href="/result?type=range&doRange=true">
-                            <FormattedMessage id="sidenav.label.results.byrange" />
-                          </SideNavMenuItem>
-                          <SideNavMenuItem href="/result?type=date&doRange=false">
-                            <FormattedMessage id="sidenav.label.results.testdate" />
-                          </SideNavMenuItem>
-                        </SideNavMenu>
-                        <SideNavMenu
-                          aria-label="Validation"
-                          title={intl.formatMessage({
-                            id: "sidenav.label.validation",
-                          })}
-                        >
-                          <SideNavMenuItem href="/validation?type=routine">
-                            <FormattedMessage id="sidenav.label.validation.routine" />
-                          </SideNavMenuItem>
-                          {configurationProperties.studyManagementTab ==
-                            "true" && (
-                            <SideNavMenuItem
-                              href={
-                                config.serverBaseUrl +
-                                "/ResultValidationRetroC?type=Immunology"
-                              }
-                            >
-                              <FormattedMessage id="sidenav.label.validation.study" />
-                            </SideNavMenuItem>
-                          )}
-                          <SideNavMenuItem href="/validation?type=order">
-                            <FormattedMessage id="sidenav.label.validation.order" />
-                          </SideNavMenuItem>
-                          <SideNavMenuItem href="/validation?type=testDate">
-                            <FormattedMessage id="sidenav.label.validation.testdate" />
-                          </SideNavMenuItem>
-                          <SideNavMenuItem href="/validation?type=range">
-                            <FormattedMessage id="sidenav.label.results.byrange" />
-                          </SideNavMenuItem>
-                        </SideNavMenu>
-
-                        <SideNavMenu aria-label="Reports" title="Reports">
-                          <SideNavMenuItem href="/RoutineReports">
-                            <FormattedMessage id="sidenav.label.reports.routine" />
-                          </SideNavMenuItem>
-                          <SideNavMenuItem href="/StudyReports">
-                            <FormattedMessage id="sidenav.label.reports.study" />
-                          </SideNavMenuItem>
-                        </SideNavMenu>
-                        <SideNavMenuItem href="/admin">
-                          <FormattedMessage id="sidenav.label.admin" />
-                        </SideNavMenuItem>
-
-                        <SideNavMenuItem
-                          target="_blank"
-                          href={"http://ozone.uwdigi.org:8069/"}
-                        >
-                          <FormattedMessage id="admin.billing" />
-                        </SideNavMenuItem>
+                        {menus["menu"].map((childMenuItem, index) => {
+                          // ignore the Home Menu in the new UI
+                          if (childMenuItem.menu.elementId != "menu_home") {
+                            return generateMenuItems(childMenuItem, index, 0);
+                          }
+                        })}
                       </SideNavItems>
                     </SideNav>
                   </>

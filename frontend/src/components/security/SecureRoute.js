@@ -6,6 +6,7 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
 import { Loading } from "@carbon/react/";
 import config from "../../config.json";
+import { useIntl } from "react-intl";
 
 const idleTimeout = 1000 * 60 * 15; // milliseconds until idle warning will appear
 const idleWarningTimeout = 1000 * 60 * 1; // milliseconds until logout is automatically processed from idle warning
@@ -16,26 +17,28 @@ function SecureRoute(props) {
   const [loading, setLoading] = useState(false);
 
   const idleTimer = useRef();
+  const intl = useIntl();
 
-  const { userSessionDetails, isCheckingLogin, logout } = useContext(
-    UserSessionDetailsContext,
-  );
+  const {
+    userSessionDetails,
+    errorLoadingSessionDetails,
+    isCheckingLogin,
+    logout,
+  } = useContext(UserSessionDetailsContext);
 
   useEffect(() => {
-    setLoading(isCheckingLogin());
+    setLoading(!errorLoadingSessionDetails && isCheckingLogin());
     if (userSessionDetails.authenticated) {
       console.info("Authenticated");
-      // console.log(JSON.stringify(jsonResp))
       if (hasPermission(userSessionDetails)) {
         console.info("Access Allowed");
       } else {
         const options = {
-          title: "Access Denied",
-          message:
-            "You do not have access to this module ,please contact your system administrator",
+          title: intl.formatMessage({ id: "accessDenied.title" }),
+          message: intl.formatMessage({ id: "accessDenied.message" }),
           buttons: [
             {
-              label: "OK",
+              label: intl.formatMessage({ id: "accessDenied.okButton" }),
               onClick: () => {
                 window.location.href = window.location.origin;
               },
@@ -50,7 +53,7 @@ function SecureRoute(props) {
     } else if ("authenticated" in userSessionDetails) {
       window.location.href = config.loginRedirect;
     }
-  }, [userSessionDetails]);
+  }, [userSessionDetails, errorLoadingSessionDetails]);
 
   const hasPermission = (userDetails = userSessionDetails) => {
     var hasRole =
@@ -79,16 +82,16 @@ function SecureRoute(props) {
   };
 
   const handleOnAction = (event) => {
-    console.log("no action is defined on the IdleTimer", event);
+    console.debug("no action is defined on the IdleTimer", event);
   };
 
   const handleOnActive = (event) => {
-    console.log("user is active", event);
+    console.debug("user is active", event);
     setIsIdle(false);
   };
 
   const handleOnIdle = (event) => {
-    console.log("user is idle", event);
+    console.debug("user is idle", event);
     setIsIdle(true);
 
     const timer = () =>
@@ -98,11 +101,11 @@ function SecureRoute(props) {
     const timeoutEventID = timer();
 
     const options = {
-      title: "Still there?",
-      message: "user session is about to time out",
+      title: intl.formatMessage({ id: "stillThere.title" }),
+      message: intl.formatMessage({ id: "stillThere.message" }),
       buttons: [
         {
-          label: "Yes",
+          label: intl.formatMessage({ id: "yes.optio" }),
           onClick: () => {
             clearTimeout(timeoutEventID);
           },
@@ -115,7 +118,9 @@ function SecureRoute(props) {
   return (
     <>
       {loading && <Loading />}
-      {!loading && !userSessionDetails.authenticated && "Not Authenticated"}
+      {!loading &&
+        !userSessionDetails.authenticated &&
+        intl.formatMessage({ id: "notAuthenticated" })}
       {!loading && userSessionDetails.authenticated && permissionGranted && (
         <>
           <IdleTimer

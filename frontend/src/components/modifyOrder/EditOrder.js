@@ -16,23 +16,28 @@ import { priorities } from "../data/orderOptions";
 import { NotificationKinds } from "../common/CustomNotification";
 import AutoComplete from "../common/AutoComplete";
 import OrderResultReporting from "../addOrder/OrderResultReporting";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { ConfigurationContext } from "../layout/Layout";
 const AddOrder = (props) => {
   const { orderFormValues, setOrderFormValues, samples } = props;
-  const componentMounted = useRef(true);
+
+  const componentMounted = useRef(false);
+
+  const { setNotificationVisible, addNotification } =
+    useContext(NotificationContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
+
+  const intl = useIntl();
+
   const [otherSamplingVisible, setOtherSamplingVisible] = useState(false);
   const [providers, setProviders] = useState([]);
   const [paymentOptions, setPaymentOptions] = useState([]);
   const [samplingPerformed, setSamplingPerformed] = useState([]);
   const [allowSiteNameOptions, setAllowSiteNameOptions] = useState("false");
   const [allowRequesterOptions, setAllowRequesterOptions] = useState("false");
-  const { setNotificationVisible, setNotificationBody } =
-    useContext(NotificationContext);
   const [siteNames, setSiteNames] = useState([]);
   const [innitialized, setInnitialized] = useState(false);
   const [phoneFormat, setPhoneFormat] = useState("");
-  const { configurationProperties } = useContext(ConfigurationContext);
   const [departments, setDepartments] = useState([]);
 
   const handleDatePickerChange = (datePicker, date) => {
@@ -176,9 +181,9 @@ const AddOrder = (props) => {
   function accessionNumberValidationResults(res) {
     if (res.status === false) {
       setNotificationVisible(true);
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
+        title: intl.formatMessage({ id: "notification.title" }),
         message: res.body,
       });
     }
@@ -270,8 +275,8 @@ const AddOrder = (props) => {
 
   function fetchPhoneNoValidation(res) {
     if (res.status === false) {
-      setNotificationBody({
-        title: <FormattedMessage id="notification.title" />,
+      addNotification({
+        title: intl.formatMessage({ id: "notification.title" }),
         message: res.body,
         kind: NotificationKinds.error,
       });
@@ -377,6 +382,7 @@ const AddOrder = (props) => {
   };
 
   useEffect(() => {
+    componentMounted.current = true;
     getFromOpenElisServer("/rest/SamplePatientEntry", getSampleEntryPreform);
     window.scrollTo(0, 0);
     return () => {
@@ -404,7 +410,9 @@ const AddOrder = (props) => {
                 onMouseLeave={handleLabNoValidation}
                 onChange={handleLabNo}
                 onKeyPress={handleKeyPress}
-                labelText={<FormattedMessage id="sample.label.labnumber.new" />}
+                labelText={intl.formatMessage({
+                  id: "sample.label.labnumber.new",
+                })}
                 id="labNo"
                 className="inputText"
               />
@@ -419,7 +427,7 @@ const AddOrder = (props) => {
               className="inputText"
               id="priorityId"
               name="priority"
-              labelText={<FormattedMessage id="workplan.priority.list" />}
+              labelText={intl.formatMessage({ id: "workplan.priority.list" })}
               value={orderFormValues.sampleOrderItems.priority}
               onChange={handlePriority}
               required
@@ -438,7 +446,7 @@ const AddOrder = (props) => {
           <div className="inlineDiv">
             <CustomDatePicker
               id={"order_requestDate"}
-              labelText={"Request Date"}
+              labelText={intl.formatMessage({ id: "sample.requestDate" })}
               autofillDate={true}
               value={orderFormValues.sampleOrderItems.requestDate}
               className="inputDate"
@@ -447,7 +455,7 @@ const AddOrder = (props) => {
 
             <CustomDatePicker
               id={"order_receivedDate"}
-              labelText={<FormattedMessage id="sample.receivedDate" />}
+              labelText={intl.formatMessage({ id: "sample.receivedDate" })}
               className="inputDate"
               autofillDate={true}
               value={orderFormValues.sampleOrderItems.receivedDateForDisplay}
@@ -458,7 +466,7 @@ const AddOrder = (props) => {
             <TimePicker
               id="order_receivedTime"
               className="inputTime"
-              labelText={<FormattedMessage id="order.reception.time" />}
+              labelText={intl.formatMessage({ id: "order.reception.time" })}
               onChange={handleReceivedTime}
               value={
                 orderFormValues.sampleOrderItems.receivedTime
@@ -470,7 +478,9 @@ const AddOrder = (props) => {
             <CustomDatePicker
               id={"order_nextVisitDate"}
               className="inputDate"
-              labelText={<FormattedMessage id="sample.entry.nextVisit.date" />}
+              labelText={intl.formatMessage({
+                id: "sample.entry.nextVisit.date",
+              })}
               value={orderFormValues.sampleOrderItems.nextVisitDate}
               autofillDate={false}
               onChange={(date) => handleDatePickerChange("nextVisitDate", date)}
@@ -480,7 +490,7 @@ const AddOrder = (props) => {
             {allowSiteNameOptions === "false" ? (
               <TextInput
                 name="siteName"
-                labelText={<FormattedMessage id="order.site.name" />}
+                labelText={intl.formatMessage({ id: "order.site.name" })}
                 onChange={handleSiteName}
                 value={
                   orderFormValues.sampleOrderItems.referringSiteName == null
@@ -496,9 +506,11 @@ const AddOrder = (props) => {
                 id="siteName"
                 className="inputText"
                 onSelect={handleAutoCompleteSiteName}
-                label={<FormattedMessage id="order.search.site.name" />}
+                label={intl.formatMessage({ id: "order.search.site.name" })}
                 class="inputText"
-                invalidText={<FormattedMessage id="order.invalid.site.name" />}
+                invalidText={intl.formatMessage({
+                  id: "order.invalid.site.name",
+                })}
                 style={{ width: "!important 100%" }}
                 suggestions={siteNames.length > 0 ? siteNames : []}
                 required
@@ -509,7 +521,7 @@ const AddOrder = (props) => {
               className="inputText"
               id="requesterDepartmentId"
               name="requesterDepartmentId"
-              labelText={<FormattedMessage id="order.department.label" />}
+              labelText={intl.formatMessage({ id: "order.department.label" })}
               onChange={handleRequesterDept}
               required
             >
@@ -531,7 +543,9 @@ const AddOrder = (props) => {
                 name="requesterId"
                 id="requesterId"
                 onSelect={handleProviderSelectOptions}
-                label={<FormattedMessage id="order.search.requester.label" />}
+                label={intl.formatMessage({
+                  id: "order.search.requester.label",
+                })}
                 class="inputText"
                 style={{ width: "!important 100%" }}
                 invalidText={
@@ -574,14 +588,18 @@ const AddOrder = (props) => {
               onChange={handleRequesterWorkPhone}
               value={orderFormValues.sampleOrderItems.providerWorkPhone}
               onMouseLeave={handlePhoneNoValidation}
-              labelText={<FormattedMessage id="order.requester.phone.label" />}
+              labelText={intl.formatMessage({
+                id: "order.requester.phone.label",
+              })}
               id="providerWorkPhoneId"
               className="inputText"
             />
 
             <TextInput
               name="providerFax"
-              labelText={<FormattedMessage id="order.requester.fax.label" />}
+              labelText={intl.formatMessage({
+                id: "order.requester.fax.label",
+              })}
               disabled={allowRequesterOptions !== "false"}
               onChange={handleRequesterFax}
               value={orderFormValues.sampleOrderItems.providerFax}
@@ -592,7 +610,9 @@ const AddOrder = (props) => {
           <div className="inlineDiv">
             <TextInput
               name="providerEmail"
-              labelText={<FormattedMessage id="order.requester.email.label" />}
+              labelText={intl.formatMessage({
+                id: "order.requester.email.label",
+              })}
               disabled={allowRequesterOptions !== "false"}
               onChange={handleRequesterEmail}
               value={orderFormValues.sampleOrderItems.providerEmail}
@@ -605,12 +625,14 @@ const AddOrder = (props) => {
               id="paymentOptionSelectionId"
               name="paymentOptionSelections"
               value={orderFormValues.sampleOrderItems.paymentOptionSelection}
-              labelText={<FormattedMessage id="order.payment.status.label" />}
+              labelText={intl.formatMessage({
+                id: "order.payment.status.label",
+              })}
               onChange={handlePaymentStatus}
               required
             >
               <SelectItem value="" text="" />
-              {paymentOptions.map((option) => {
+              {paymentOptions?.map((option) => {
                 return (
                   <SelectItem
                     key={option.id}
@@ -646,7 +668,7 @@ const AddOrder = (props) => {
             </Select>
             <TextInput
               name="testLocationCodeOther"
-              labelText={<FormattedMessage id="order.if.other.label" />}
+              labelText={intl.formatMessage({ id: "order.if.other.label" })}
               onChange={handleOtherLocationCode}
               className="inputText"
               value={orderFormValues.sampleOrderItems.otherLocationCode}
@@ -666,8 +688,10 @@ const AddOrder = (props) => {
           </div>
         </div>
         <div className="orderLegendBody">
-          <h3>{<FormattedMessage id="order.result.reporting.heading" />}</h3>
-          {samples.map((sample, index) => {
+          <h3>
+            <FormattedMessage id="order.result.reporting.heading" />
+          </h3>
+          {samples?.map((sample, index) => {
             if (sample.tests.length > 0) {
               return (
                 <div key={index}>

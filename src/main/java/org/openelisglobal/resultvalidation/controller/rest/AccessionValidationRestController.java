@@ -196,7 +196,13 @@ public class AccessionValidationRestController extends BaseResultValidationContr
                 } else {
                     if (StringUtils.isNotBlank(form.getAccessionNumber())) {
                         Sample sample = getSample(form.getAccessionNumber());
-                        resultList = resultsValidationUtility.getValidationAnalysisBySample(sample);
+                        if (sample == null) {
+                            setEmptyResults(form);
+                            return form;
+                        }
+                        else {
+                            resultList = resultsValidationUtility.getValidationAnalysisBySample(sample);
+                        }
                     }
                     
                 }
@@ -607,6 +613,11 @@ public class AccessionValidationRestController extends BaseResultValidationContr
 
     private Patient getPatient(Sample sample) {
         return sampleHumanService.getPatientForSample(sample);
+    }
+
+    private void setEmptyResults(ResultValidationForm form)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        form.setResultList(new ArrayList<AnalysisItem>());
     }
 
     @Override

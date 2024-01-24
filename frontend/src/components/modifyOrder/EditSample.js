@@ -20,14 +20,18 @@ import {
 import { Add } from "@carbon/react/icons";
 import { getFromOpenElisServer } from "../utils/Utils";
 import EditSampleType from "./EditSampleType";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import {
   OrderCurrentTestsHeaders,
   OrderPossibleTestsHeaders,
 } from "../data/orderCurrentTestsHeaders";
 const EditSample = (props) => {
   const { samples, setSamples, orderFormValues, setOrderFormValues } = props;
-  const componentMounted = useRef(true);
+
+  const componentMounted = useRef(false);
+
+  const intl = useIntl();
+
   const [elementsCounter, setElementsCounter] = useState(0);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -195,6 +199,7 @@ const EditSample = (props) => {
   };
 
   useEffect(() => {
+    componentMounted.current = true;
     getFromOpenElisServer(
       "/rest/test-rejection-reasons",
       fetchRejectSampleReasons,
@@ -313,7 +318,9 @@ const EditSample = (props) => {
             isSortable
           >
             {({ rows, headers, getHeaderProps, getTableProps }) => (
-              <TableContainer title="Current Tests">
+              <TableContainer
+                title={intl.formatMessage({ id: "currentests.title" })}
+              >
                 <Table {...getTableProps()}>
                   <TableHead>
                     <TableRow>
@@ -360,7 +367,9 @@ const EditSample = (props) => {
             isSortable
           >
             {({ rows, headers, getHeaderProps, getTableProps }) => (
-              <TableContainer title="Available Tests">
+              <TableContainer
+                title={intl.formatMessage({ id: "availabletests.title" })}
+              >
                 <Table {...getTableProps()}>
                   <TableHead>
                     <TableRow>
