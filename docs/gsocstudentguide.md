@@ -1,4 +1,4 @@
-Welcome! Are you interested in working on a Google Summer of Code project with *OpenELIS*? We' want you to be a successful GSoC developer in our community so we've put together a few guidelines to answer some of your initial questions and help you understand what is expected of students before submitting a proposal, after being accepted, and during the coding period.
+Welcome! Are you interested in working on a Google Summer of Code project with *OpenELIS Global*? We' want you to be a successful GSoC developer in our community so we've put together a few guidelines to answer some of your initial questions and help you understand what is expected of students before submitting a proposal, after being accepted, and during the coding period.
 See More on Google's [Student Guide](https://google.github.io/gsocguides/student/)
 !!! caution  
     Only Students who meet both Google's Contributor [Eligibility Requirements](https://summerofcode.withgoogle.com/rules) and also follow our Guidelines will be Selected
@@ -14,9 +14,9 @@ See More on Google's [Student Guide](https://google.github.io/gsocguides/student
 ## Before the Application
  1. Sign Up at [OpenELIS Talk](https://talk.openelis-global.org/) and get an ID 
  1. Introduce yourself on OpenELIS Talk on the [community introduction page](https://talk.openelis-global.org/t/welcome-please-introduce-yourself/155/8)
- 1. Become familiar with **OpenELIS**
+ 1. Become familiar with **OpenELIS Global**
    See our [Installation](https://docs.openelis-global.org/en/latest/install/) and [Developer](https://docs.openelis-global.org/en/latest/dev_setup/) Instructions
- 1. Review project ideas & ask questions [here ](https://github.com/I-TECH-UW/OpenELIS-Global-2/wiki/Google-Summer-of-Code-(GSOC)#selected-projects-for-gsoc-2024) 
+ 1. Review project [ideas](./gsoc.md) & ask questions 
 1. Work on [Introductory Issues](https://github.com/orgs/I-TECH-UW/projects/6) to get Familiar with the Project 
 
 ## Proposal Template 
