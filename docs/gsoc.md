@@ -1,9 +1,9 @@
 
  <img src="https://github.com/I-TECH-UW/OpenELIS-Global-2/assets/29783151/a17e5666-156d-4882-91a0-606c8dc2f52e" alt="gsoc" width="800" align="center"/>  
 
-[**OpenELIS**](https://openelis-global.org/) is hoping to be a mentoring organization for [Google Summer of Code](https://summerofcode.withgoogle.com/) 2024 for the first Time.  We're extremely excited about the projects and mentorship opportunities available this year. Coding for **OpenELIS** is a great way to practice your coding skills and, at the same time help making a positive impact on the world through empowering labs with the best tools and support to deliver quality health care to clients.
+[**OpenELIS Global**](https://openelis-global.org/) is hoping to be a mentoring organization for [Google Summer of Code](https://summerofcode.withgoogle.com/) 2024 for the first Time.  We're extremely excited about the projects and mentorship opportunities available this year. Coding for **OpenELIS Global** is a great way to practice your coding skills and, at the same time help making a positive impact on the world through empowering labs with the best tools and support to deliver quality health care to clients.
 
-If you are new to **OpenELIS**, we recommend starting with our [Installation](install.md) and [Developer](dev_setup.md) Instructions
+If you are new to **OpenELIS Global**, we recommend starting with our [Installation](install.md) and [Developer](dev_setup.md) Instructions
 
 ||Page Outline |
 |--|--|
@@ -33,7 +33,7 @@ If you are new to **OpenELIS**, we recommend starting with our [Installation](in
 | Date | Status | Activity |
 |------|--------|----------|
 | 20/Nov/2023    | ✅      | GSoC 2024 Anounced |
-| 22/Jan/2024    | ⌛      | Mentoring organizations can begin submitting applications to Google |
+| 22/Jan/2024    | ✅      | Mentoring organizations can begin submitting applications to Google |
 | 06/Feb/2024   | ⌛      | Mentoring organization application deadline |
 | 21/Feb/20204  | ⌛      | List of accepted mentoring organizations announced |
 | 22/Feb/20204  | ⌛      | Potential GSoC contributors discuss application ideas with mentoring organizations |
