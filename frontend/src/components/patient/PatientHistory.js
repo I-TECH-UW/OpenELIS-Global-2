@@ -1,7 +1,7 @@
 import React from "react";
 import { FormattedMessage, useIntl, injectIntl } from "react-intl";
 import "../Style.css";
-import { Heading, Grid, Column, Section, Breadcrumb, BreadcrumbItem, } from "@carbon/react";
+import { Heading, Grid, Column, Section, Breadcrumb, BreadcrumbItem } from "@carbon/react";
 import SearchPatientForm from "./SearchPatientForm";
 import { useState, useEffect, useRef } from "react";
 
