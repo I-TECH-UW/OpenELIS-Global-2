@@ -1,7 +1,7 @@
 name: OpenELis Frontend QA framework workflow
 on:
   push:
-    branches: [ '2.8' ]
+    branches: [ 'develop_3x' ]
   workflow_dispatch:
 jobs:
   install:
