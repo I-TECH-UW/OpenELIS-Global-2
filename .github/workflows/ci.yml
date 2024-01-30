@@ -1,9 +1,9 @@
 name: OpenELIS-Global-2 CI Build 
 on:
   push:
-    branches: [develop ,'2.8']
+    branches: [develop ,'develop_3x']
   pull_request:
-    branches: [develop ,'2.8']
+    branches: [develop ,'develop_3x']
   workflow_dispatch:
 
 jobs:

@@ -37,7 +37,7 @@ services:
             
     oe.openelis.org:
         container_name: openelisglobal-webapp 
-        image: itechuw/openelis-global-2:2.8    
+        image: itechuw/openelis-global-2:develop_3x    
         depends_on:
             - database
             - certs
@@ -96,7 +96,7 @@ services:
 
          
     frontend.openelis.org:
-        image: itechuw/openelis-global-2-frontend:2.8
+        image: itechuw/openelis-global-2-frontend:develop_3x
         container_name: openelisglobal-front-end
         networks:
         - default
