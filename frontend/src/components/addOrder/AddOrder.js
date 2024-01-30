@@ -526,7 +526,12 @@ const AddOrder = (props) => {
               }
               onChange={handleSiteName}
               onSelect={handleAutoCompleteSiteName}
-              label={intl.formatMessage({ id: "order.search.site.name" })}
+              label={
+                <>
+                  <FormattedMessage id="order.search.site.name" />{" "}
+                  <span className="requiredlabel">*</span>
+                </>
+              }
               class="inputText"
               style={{ width: "!important 100%" }}
               suggestions={siteNames.length > 0 ? siteNames : []}
