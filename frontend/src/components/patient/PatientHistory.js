@@ -16,11 +16,7 @@ const PatientHistory = () => {
     }
   };
 
-  const [newPatientTab, setNewPatientTab] = useState({
-    kind: "tertiary",
-    active: false,
-  });
-
+  
   useEffect(() => {
     componentMounted.current = true;
     openPatientResults(selectedPatient.patientPK);
@@ -44,13 +40,6 @@ const PatientHistory = () => {
           <BreadcrumbItem href="/">
             {intl.formatMessage({id:"home.label"})}
           </BreadcrumbItem>
-          {newPatientTab.active && (
-              <BreadcrumbItem href="/PatientHistory">
-                {intl.formatMessage({
-                  id: "label.page.patientHistory",
-                })}
-              </BreadcrumbItem>
-            )}
         </Breadcrumb>
       </Column>
     </Grid>
