@@ -9,11 +9,13 @@ import {
   Select,
   SelectItem,
   TextInput,
+  Breadcrumb,
+  BreadcrumbItem
 } from "@carbon/react";
 import { React, useEffect, useState } from "react";
 import CustomDatePicker from "../common/CustomDatePicker";
 
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedMessage, useIntl, injectIntl } from "react-intl";
 import { getFromOpenElisServer } from "../utils/Utils";
 
 const EOrderSearch = ({
@@ -89,6 +91,15 @@ const EOrderSearch = ({
 
   return (
     <>
+    <Grid fullWidth={true}>
+      <Column lg={16}>
+        <Breadcrumb>
+          <BreadcrumbItem href="/">
+            {intl.formatMessage({id:"home.label"})}
+          </BreadcrumbItem>
+        </Breadcrumb>
+      </Column>
+    </Grid>
       <Grid fullWidth={true}>
         <Column lg={16}>
           <Section>
