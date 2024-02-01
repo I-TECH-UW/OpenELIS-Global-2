@@ -20,7 +20,7 @@ See More on Google's [Student Guide](https://google.github.io/gsocguides/student
 1. Work on [Introductory Issues](https://github.com/orgs/I-TECH-UW/projects/6) to get Familiar with the Project 
 
 ## Proposal Template 
- 1. Use this [GSOC Template](https://docs.google.com/document/d/1nPcu-UMaibHuASPU6sLnG18sf0ZRoh0fEjzeGZvHcYQ/edit#heading=h.3tq62aycf5sk) to create your Application and Proposal write up.  
+ 1. Use this [GSOC Template](https://docs.google.com/document/d/1LaBPJluKTRhfRyV-nnHgow3oXgyLrrpI6_v835TuPHU/edit?usp=drive_link) to create your Application and Proposal write up.  
  1. Complete all the mandatory Fields for your application to be accepted
  1. Submit your application through Google’s website. See Google's GSOC Get Started page [here](https://summerofcode.withgoogle.com/get-started/)
 
