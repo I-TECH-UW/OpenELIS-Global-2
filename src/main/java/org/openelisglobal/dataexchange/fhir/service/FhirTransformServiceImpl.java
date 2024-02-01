@@ -435,8 +435,10 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 	}
 
 	private void updateReferringServiceRequestWithSampleInfo(Sample sample, ServiceRequest serviceRequest) {
-		serviceRequest.setRequisition(
+		if(!serviceRequest.hasRequisition()){
+           serviceRequest.setRequisition(
 		    this.createIdentifier(fhirConfig.getOeFhirSystem() + "/samp_labNo", sample.getAccessionNumber()));
+		}
 	}
 
 	private Optional<Task> getReferringTaskForSample(Sample sample) {
@@ -907,6 +909,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 		}
 
 		Map<String, Task> referingTaskMap = new HashMap<>();
+		Map<String, ServiceRequest> referingServiceRequestMap = new HashMap<>();
 		for (Sample sample : sampleUpdateList) {
 			Task task = this.transformToTask(sample.getId());
 			Optional<Task> referringTask = getReferringTaskForSample(sample);
@@ -921,6 +924,22 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 					referingTaskMap.put(referringTask.get().getIdElement().getIdPart(), referringTask.get());
 					this.addToOperations(fhirOperations, tempIdGenerator, referringTask.get());
 				}
+			}
+			Optional<ServiceRequest> referingServiceRequest = getReferringServiceRequestForSample(sample);
+			if (referingServiceRequest.isPresent()) {
+				if (referingServiceRequestMap.containsKey(referingServiceRequest.get().getIdElement().getIdPart())) {
+					ServiceRequest existingServiceRequest = referingServiceRequestMap
+					        .get(referingServiceRequest.get().getIdElement().getIdPart());
+					updateReferringServiceRequestWithSampleInfo(sample, existingServiceRequest);
+					referingServiceRequestMap.put(existingServiceRequest.getIdElement().getIdPart(), existingServiceRequest);
+					this.addToOperations(fhirOperations, tempIdGenerator, existingServiceRequest);
+				} else {
+					updateReferringServiceRequestWithSampleInfo(sample, referingServiceRequest.get());
+					referingServiceRequestMap.put(referingServiceRequest.get().getIdElement().getIdPart(),
+					    referingServiceRequest.get());
+					this.addToOperations(fhirOperations, tempIdGenerator, referingServiceRequest.get());
+				}
+				
 			}
 			this.addToOperations(fhirOperations, tempIdGenerator, task);
 		}
