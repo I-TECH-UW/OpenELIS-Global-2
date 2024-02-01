@@ -1,5 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, ProgressIndicator, ProgressStep, Stack } from "@carbon/react";
+import {
+  Button,
+  ProgressIndicator,
+  ProgressStep,
+  Stack,
+  Breadcrumb,
+  BreadcrumbItem,
+  Grid,
+  Column,
+} from "@carbon/react";
 import PatientInfo from "./PatientInfo";
 import AddSample from "./AddSample";
 import AddOrder from "./AddOrder";
@@ -690,6 +699,15 @@ const Index = () => {
 
   return (
     <>
+      <Grid fullWidth={true}>
+        <Column lg={16}>
+          <Breadcrumb>
+            <BreadcrumbItem href="/">
+              {intl.formatMessage({ id: "home.label" })}
+            </BreadcrumbItem>
+          </Breadcrumb>
+        </Column>
+      </Grid>
       <Stack gap={10}>
         <div className="pageContent">
           {notificationVisible === true ? <AlertDialog /> : ""}

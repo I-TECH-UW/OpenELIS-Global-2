@@ -69,18 +69,19 @@ public class PatientSearchRestController {
             if (!GenericValidator.isBlankOrNull(labNumber)) {
                 Patient patient = getPatientForLabNumber(labNumber);
                 if (patient == null || GenericValidator.isBlankOrNull(patient.getId())) {
+                    form.setPatientSearchResults(results);
                     return form;
                 } else {
                     PatientSearchResults searchResult = getSearchResultsForPatient(patient, null);
                     searchResult.setDataSourceName(MessageUtil.getMessage("patient.local.source"));
                     results.add(searchResult);
-
                 }
             } else {
                 if (GenericValidator.isBlankOrNull(lastName) && GenericValidator.isBlankOrNull(firstName)
                         && GenericValidator.isBlankOrNull(STNumber) && GenericValidator.isBlankOrNull(subjectNumber)
                         && GenericValidator.isBlankOrNull(nationalID) && GenericValidator.isBlankOrNull(guid) && GenericValidator.isBlankOrNull(dateOfBirth)
                         && GenericValidator.isBlankOrNull(gender)) {
+                    form.setPatientSearchResults(results);
                     return form;
                 }
                 results = searchResultsService.getSearchResults(lastName, firstName, STNumber,
