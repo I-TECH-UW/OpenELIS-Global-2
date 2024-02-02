@@ -89,7 +89,7 @@ Hapi-fhir-jpaserver is used alongside OpenELIS to provide FHIR support. Older ve
 
     1.  `SELECT pg_table_size('pg_largeobject');`
 
-1.  Run the `pg_upgrade` as in the pg_upgrade section below
+1.  Run the `pg_upgrade` as in the "Migrate with pg_upgrade" section below
 
 1.  Collect metrics around the data to see that data loss has not occurred.
 

@@ -35,6 +35,7 @@ nav:
        - Adding a Requester to the Consolidated server: add_dr.md
        - Database Profiles Mass facility and test catalog updates: dbprofiles.md
        - Entity Relation Diagram: entity relation diagram.md
+    - Interacting with the co-resident FHIR store: directFHIRCommunication.md
     - Troubleshooting: troubleshooting.md
     - Google Summer of Code :
         - GSoC 2024: gsoc.md
