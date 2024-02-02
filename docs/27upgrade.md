@@ -69,7 +69,7 @@ Hapi-fhir-jpaserver is used alongside OpenELIS to provide FHIR support. Older ve
 }
     `
 
-1.  Send each optimize request as a POST request to the FHIR server
+1.  Send each optimize request as a POST request to the FHIR server (detailed instructions for making POST requests to the FHIR server can be found [here](directFHIRCommunication.md))
 
     1.  `sudo curl -X POST -H "Content-Type: application/json" -d '@task-optimize.json' --cert /etc/openelis-global/cert.pem --key /etc/openelis-global/key.pem  -k 'https://localhost:8444/fhir/$reindex'`
 
