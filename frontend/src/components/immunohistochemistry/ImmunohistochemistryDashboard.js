@@ -31,6 +31,7 @@ import { AlertDialog } from "../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
 import "./../pathology/PathologyDashboard.css";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
+import HomeBreadCrumb from "../common/HomeBreadCrumb";
 
 function ImmunohistochemistryDashboard() {
   const componentMounted = useRef(false);
@@ -284,6 +285,7 @@ function ImmunohistochemistryDashboard() {
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading description="Loading Dasboard..." />}
+      <HomeBreadCrumb/>
       <Grid fullWidth={true}>
         <Column lg={16}>
           <Section>
