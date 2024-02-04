@@ -5,6 +5,8 @@ import {
   Select,
   SelectItem,
   Button,
+  Breadcrumb,
+  BreadcrumbItem,
   Grid,
   Column,
   Section,
@@ -241,6 +243,26 @@ function CytologyDashboard() {
     },
   ];
 
+  const [breadcrumbs, setBreadcrumbs] = useState([]);
+
+  useEffect(() => {
+    setBreadcrumbs([
+      <a href="/" key="home">
+    <FormattedMessage id="breadcrumb.home" />
+    </a>,
+    <a href="/CytologyDashboard" key="cytology.label.title">
+    <FormattedMessage id="cytology.label.title" />
+    </a>,
+    
+    
+  ]);
+
+    return () => {
+      componentMounted.current = false;
+    };
+  }, [userSessionDetails]);
+  
+
   useEffect(() => {
     componentMounted.current = true;
     setFilters({
@@ -282,6 +304,16 @@ function CytologyDashboard() {
           </Section>
         </Column>
       </Grid>
+
+      {notificationVisible === true ? <AlertDialog /> : ""}
+      <Breadcrumb>
+        {breadcrumbs.map((breadcrumb, index) => (
+          <BreadcrumbItem key={index} href="/">
+            {breadcrumb}
+          </BreadcrumbItem>
+        ))}
+      </Breadcrumb>
+      
       <div className="dashboard-container">
         {tileList.map((tile, index) => (
           <Tile key={index} className="dashboard-tile">

@@ -198,19 +198,24 @@ const ModifyOrder = () => {
 
   return (
     <>
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Breadcrumb>
-            <BreadcrumbItem href="/">
-              {intl.formatMessage({ id: "home.label" })}
-            </BreadcrumbItem>
-            <BreadcrumbItem href="/SampleEdit">
-              {intl.formatMessage({ id: "sample.label.search.Order" })}
-            </BreadcrumbItem>
-          </Breadcrumb>
-        </Column>
-      </Grid>
+<Grid fullWidth={true}>
+  <Column lg={16}>
+    <Section>
+      <h1>
+        <FormattedMessage id="modify.order.title" />
+      </h1>
+      <Breadcrumb>
+        <BreadcrumbItem href="/">
+          {intl.formatMessage({ id: "home.label" })}
 
+        </BreadcrumbItem>
+        <BreadcrumbItem href="/Modifyorder">
+          {intl.formatMessage({ id: "Modify order" })}
+        </BreadcrumbItem>
+      </Breadcrumb>
+    </Section>
+  </Column>
+</Grid>
 
       <PatientHeader
         id={orderFormValues?.nationalId}

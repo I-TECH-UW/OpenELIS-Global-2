@@ -5,6 +5,8 @@ import {
   Select,
   SelectItem,
   Button,
+  Breadcrumb,
+  BreadcrumbItem,
   Grid,
   Column,
   Tile,
@@ -31,7 +33,6 @@ import { AlertDialog } from "../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
 import "./../pathology/PathologyDashboard.css";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
-
 function ImmunohistochemistryDashboard() {
   const componentMounted = useRef(false);
 
@@ -239,6 +240,18 @@ function ImmunohistochemistryDashboard() {
     window.location.href = "/ImmunohistochemistryCaseView/" + id;
   };
 
+  const breadcrumbs = [
+    {
+      text: intl.formatMessage({ id: "breadcrumb.home" }),
+      href: "/"
+    },
+    {
+      text: intl.formatMessage({ id: "sidenav.label.immunochem" }),
+      href: "/sidenav.label.immunochem"
+    }
+  ];
+  
+
   useEffect(() => {
     componentMounted.current = true;
     getFromOpenElisServer(
@@ -295,6 +308,15 @@ function ImmunohistochemistryDashboard() {
           </Section>
         </Column>
       </Grid>
+
+      <Breadcrumb>
+  {breadcrumbs.map((breadcrumb, index) => (
+    <BreadcrumbItem key={index} href={breadcrumb.href}>
+      {breadcrumb.text}
+    </BreadcrumbItem>
+  ))}
+</Breadcrumb>
+
       <div className="dashboard-container">
         {tileList.map((tile, index) => (
           <Tile key={index} className="dashboard-tile">

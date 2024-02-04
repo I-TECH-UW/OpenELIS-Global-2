@@ -5,6 +5,8 @@ import {
   Select,
   SelectItem,
   Button,
+  Breadcrumb,
+  BreadcrumbItem,
   Grid,
   Column,
   Section,
@@ -40,6 +42,24 @@ function PathologyDashboard() {
   const { notificationVisible } = useContext(NotificationContext);
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
 
+  const [breadcrumbs, setBreadcrumbs] = useState([]);
+
+  useEffect(() => {
+    setBreadcrumbs([
+      <a href="/" key="home">
+    <FormattedMessage id="breadcrumb.home" />
+    </a>,
+     <a href="/PathologyDashboard" key="sidenav.label.pathology">
+     <FormattedMessage id="sidenav.label.pathology"/>
+     </a>,
+    
+  ]);
+
+    return () => {
+      componentMounted.current = false;
+    };
+  }, [userSessionDetails]);
+  
   const [statuses, setStatuses] = useState([]);
   const [pathologyEntries, setPathologyEntries] = useState([]);
   const [page, setPage] = useState(1);
@@ -290,6 +310,16 @@ function PathologyDashboard() {
           </Section>
         </Column>
       </Grid>
+
+      {notificationVisible === true ? <AlertDialog /> : ""}
+      <Breadcrumb>
+        {breadcrumbs.map((breadcrumb, index) => (
+          <BreadcrumbItem key={index} href="/">
+            {breadcrumb}
+          </BreadcrumbItem>
+        ))}
+      </Breadcrumb>
+
       <div className="dashboard-container">
         {tileList.map((tile, index) => (
           <Tile key={index} className="dashboard-tile">
