@@ -17,15 +17,6 @@ import {
   DatePickerInput,
   RadioButton,
   RadioButtonGroup,
-  DataTable,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableHeader,
-  TableBody,
-  TableCell,
-  Pagination,
   Loading,
   Select,
   SelectItem,
@@ -34,7 +25,6 @@ import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import CustomDatePicker from "../common/CustomDatePicker";
 import AutoComplete from "../common/AutoComplete";
 import { ConfigurationContext } from "../layout/Layout";
-import { patientSearchHeaderData } from "../data/PatientResultsTableHeaders";
 import { Formik, Field } from "formik";
 import SearchPatientFormValues from "../formModel/innitialValues/SearchPatientFormValues";
 import { NotificationContext } from "../layout/Layout";
@@ -43,8 +33,7 @@ import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 function SelectReportValues(props) {
   const [orderFormValues, setOrderFormValues] = useState({
     sampleOrderItems: {},
-    // other state properties
-  });
+  }); // Here used useState Moke props Date and remove console errors
   // const { orderFormValues, setOrderFormValues, samples } = props;
   const { configurationProperties } = useContext(ConfigurationContext);
   const { notificationVisible, setNotificationVisible, addNotification } =
@@ -294,11 +283,9 @@ function SelectReportValues(props) {
         <FormLabel>
           <Section>
             <Section>
-              <Section>
-                <Heading>
-                  <FormattedMessage id="openreports.patientTestStatus" />
-                </Heading>
-              </Section>
+              <Heading>
+                <FormattedMessage id="openreports.patientTestStatus" />
+              </Heading>
             </Section>
           </Section>
         </FormLabel>
@@ -335,14 +322,15 @@ function SelectReportValues(props) {
                 <h5>
                   <FormattedMessage id="report.enter.labNumber.headline" />
                 </h5>
+                <br />
                 <h6>
                   <span>
                     <FormattedMessage id="sample.search.scanner.instructions" />
+                    <br />
                     <FormattedMessage id="sample.search.scanner.instructions.highaccession" />
                   </span>
                 </h6>
               </div>
-              {/* css edit needed */}
               <div className="inlineDiv">
                 <Field name="From">
                   {({ field }) => (
@@ -380,11 +368,12 @@ function SelectReportValues(props) {
                 <h5>
                   <FormattedMessage id="report.enter.patient.headline" />
                 </h5>
+                <br />
                 <h6>
                   <FormattedMessage id="report.enter.patient.headline.description" />
                 </h6>
               </div>
-              <span className="inlineDiv">
+              <div className="inlineDiv">
                 <Field name="patientId">
                   {({ field }) => (
                     <TextInput
@@ -416,6 +405,8 @@ function SelectReportValues(props) {
                     />
                   )}
                 </Field>
+              </div>
+              <div className="inlineDiv">
                 <Field name="lastName">
                   {({ field }) => (
                     <TextInput
@@ -442,7 +433,7 @@ function SelectReportValues(props) {
                     />
                   )}
                 </Field>
-              </span>
+              </div>
               <div className="inlineDiv">
                 <Field name="dateOfBirth">
                   {({ field }) => (
@@ -499,6 +490,22 @@ function SelectReportValues(props) {
                   )}
                 </Field>
               </div>
+              <div className="formInlineDiv">
+                <div className="searchActionButtons">
+                  <Button kind="tertiary">
+                    <FormattedMessage
+                      id="label.button.externalsearch"
+                      defaultMessage="External Search"
+                    />
+                  </Button>
+                  <Button type="submit">
+                    <FormattedMessage
+                      id="label.button.search"
+                      defaultMessage="Search"
+                    />
+                  </Button>
+                </div>
+              </div>
               <div>
                 <h5>
                   <FormattedMessage id="report.enter.site.headline" />
@@ -508,7 +515,10 @@ function SelectReportValues(props) {
                 {allowSiteNameOptions === "false" ? (
                   <TextInput
                     name="siteName"
-                    labelText={intl.formatMessage({ id: "order.site.name" })}
+                    labelText={intl.formatMessage({
+                      id: "order.site.name",
+                      defaultMessage: "Site Name",
+                    })}
                     onChange={handleSiteName}
                     value={
                       orderFormValues.sampleOrderItems.referringSiteName == null
@@ -541,6 +551,7 @@ function SelectReportValues(props) {
                   name="requesterDepartmentId"
                   labelText={intl.formatMessage({
                     id: "order.department.label",
+                    defaultMessage: "ward/dept/unit",
                   })}
                   onChange={handleRequesterDept}
                   required
@@ -579,11 +590,13 @@ function SelectReportValues(props) {
               <h6>
                 <FormattedMessage id="report.patient.site.description" />
               </h6>
+              <br />
               <div>
                 <Checkbox
                   onChange={(data) => {}}
                   labelText={intl.formatMessage({
                     id: "report.label.site.onlyResults",
+                    defaultMessage: "Only Reports with results",
                   })}
                   id="checkbox-label-1"
                 />
@@ -601,7 +614,10 @@ function SelectReportValues(props) {
               <div className="inlineDiv">
                 <CustomDatePicker
                   id={"order_requestDate"}
-                  labelText={intl.formatMessage({ id: "eorder.date.start" })}
+                  labelText={intl.formatMessage({
+                    id: "eorder.date.start",
+                    defaultMessage: "Start Date",
+                  })}
                   autofillDate={true}
                   value={orderFormValues.sampleOrderItems.startDate}
                   className="inputDate"
@@ -611,7 +627,10 @@ function SelectReportValues(props) {
                 />
                 <CustomDatePicker
                   id={"order_receivedDate"}
-                  labelText={intl.formatMessage({ id: "eorder.date.end" })}
+                  labelText={intl.formatMessage({
+                    id: "eorder.date.end",
+                    defaultMessage: "End Date",
+                  })}
                   className="inputDate"
                   autofillDate={true}
                   value={orderFormValues.sampleOrderItems.endDate}
@@ -620,94 +639,6 @@ function SelectReportValues(props) {
                   }
                 />
               </div>
-              {/* <Column lg={16}>
-          {pagination && (
-            <Grid>
-              <Column lg={11} />
-              <Column lg={2}>
-                <Button
-                  type=""
-                  id="loadpreviousresults"
-                  onClick={loadPreviousResultsPage}
-                  disabled={previousPage != null ? false : true}
-                >
-                  <FormattedMessage id="button.label.loadprevious" />
-                </Button>
-              </Column>
-              <Column lg={2}>
-                <Button
-                  type=""
-                  id="loadnextresults"
-                  disabled={nextPage != null ? false : true}
-                  onClick={loadNextResultsPage}
-                >
-                  <FormattedMessage id="button.label.loadnext" />
-                </Button>
-              </Column>
-            </Grid>
-          )}
-        </Column>
-        <div>
-          <Column lg={16}>
-            <DataTable
-              rows={patientSearchResults}
-              headers={patientSearchHeaderData}
-              isSortable
-            >
-              {({ rows, headers, getHeaderProps, getTableProps }) => (
-                <TableContainer title="Patient Results">
-                  <Table {...getTableProps()}>
-                    <TableHead>
-                      <TableRow>
-                        <TableHeader></TableHeader>
-                        {headers.map((header) => (
-                          <TableHeader
-                            key={header.key}
-                            {...getHeaderProps({ header })}
-                          >
-                            {header.header}
-                          </TableHeader>
-                        ))}
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      <>
-                        {rows
-                          .slice((page - 1) * pageSize)
-                          .slice(0, pageSize)
-                          .map((row) => (
-                            <TableRow key={row.id}>
-                              <TableCell>
-                                {" "}
-                                <RadioButton
-                                  name="radio-group"
-                                  onClick={patientSelected}
-                                  labelText=""
-                                  id={row.id}
-                                />
-                              </TableCell>
-                              {row.cells.map((cell) => (
-                                <TableCell key={cell.id}>
-                                  {cell.value}
-                                </TableCell>
-                              ))}
-                            </TableRow>
-                          ))}
-                      </>
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              )}
-            </DataTable>
-            <Pagination
-              onChange={handlePageChange}
-              page={page}
-              pageSize={pageSize}
-              pageSizes={[5, 10, 20, 30]}
-              totalItems={patientSearchResults.length}
-            ></Pagination>
-          </Column>
-        </div> */}
               <div className="formInlineDiv">
                 <div className="searchActionButtons">
                   <Button type="submit">
