@@ -37,6 +37,7 @@ import RoutineIndex from "./components/Reports/routine/Index.js";
 import StudyIndex from "./components/Reports/study/index.js";
 import PrintBarcode from "./components/printBarcode/Index";
 
+import SelectReportValues from "./components/Reports/routine/patientStatusReport/SelectReportValues.js";
 
 export default function App() {
   let i18nConfig = {
@@ -255,6 +256,13 @@ export default function App() {
                   path="/CytologyDashboard"
                   exact
                   component={() => <CytologyDashboard />}
+                  role=""
+                  labUnitRole={{ Cytology: ["Results"] }}
+                />
+                <SecureRoute
+                  path="/SelectReportValues"
+                  exact
+                  component={() => <SelectReportValues />}
                   role=""
                   labUnitRole={{ Cytology: ["Results"] }}
                 />
