@@ -4,6 +4,7 @@ import Footer from "./Footer";
 import { Content, Theme } from "@carbon/react";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { getFromOpenElisServer } from "../utils/Utils";
+import BreadCrumbs from "../breadCrumbs/breadcrumb";
 
 export const ConfigurationContext = createContext(null);
 export const NotificationContext = createContext(null);
@@ -66,6 +67,7 @@ export default function Layout(props) {
         <div className="d-flex flex-column min-vh-100">
           <Header onChangeLanguage={props.onChangeLanguage} />
           <Theme theme="white">
+            <BreadCrumbs />
             <Content>{children}</Content>
           </Theme>
           <Footer />

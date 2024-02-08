@@ -21,11 +21,13 @@
     "dayjs": "^1.10.4",
     "formik": "^2.2.9",
     "formik-error-focus": "2.0.0",
+    "geopattern": "1.2.3",
     "jsonpath": "^1.1.1",
     "lodash-es": "^4.17.15",
     "prettier-eslint": "^15.0.1",
     "qs": "6.11.0",
     "react": "^17.0.2",
+    "react-avatar": "5.0.3",
     "react-confirm-alert": "^2.7.0",
     "react-data-table-component": "^7.5.3",
     "react-dom": "^17.0.2",
@@ -43,8 +45,7 @@
     "swr": "2.0.3",
     "web-vitals": "^2.1.4",
     "yup": "^0.29.2",
-    "react-avatar": "5.0.3" ,
-    "geopattern":"1.2.3"
+    "zustand": "^4.5.0"
   },
   "scripts": {
     "start": "GENERATE_SOURCEMAP=false HTTPS=true react-scripts start",
