@@ -8,6 +8,7 @@ import Login from "./components/Login";
 import { Admin } from "./components";
 import ResultSearch from "./components/resultPage/ResultSearch";
 import UserSessionDetailsContext from "./UserSessionDetailsContext";
+import { getFromOpenElisServer } from "./components/utils/Utils";
 import "./App.css";
 import messages_en from "./languages/en.json";
 import messages_fr from "./languages/fr.json";
@@ -137,7 +138,7 @@ export default function App() {
       });
   };
 
-  const changeLanguage = (lang) => {
+  const changeLanguageReact = (lang) => {
     switch (lang) {
       case "en":
         i18nConfig.messages = messages_en;
@@ -155,8 +156,17 @@ export default function App() {
     setLocale(lang);
   };
 
+  const changeLanguageBackend = (lang) => {
+    if (userSessionDetails.authenticated) {
+      getFromOpenElisServer("/Home?lang=" + lang, () => {});
+    } else {
+      getFromOpenElisServer("/LoginPage?lang=" + lang, () => {});
+    }
+  };
+
   const onChangeLanguage = (lang) => {
-    changeLanguage(lang);
+    changeLanguageReact(lang);
+    changeLanguageBackend(lang);
   };
 
   const refresh = async (callback) => {
