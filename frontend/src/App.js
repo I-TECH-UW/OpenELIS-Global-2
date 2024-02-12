@@ -260,13 +260,6 @@ export default function App() {
                   labUnitRole={{ Cytology: ["Results"] }}
                 />
                 <SecureRoute
-                  path="/SelectReportValues"
-                  exact
-                  component={() => <SelectReportValues />}
-                  role=""
-                  labUnitRole={{ Cytology: ["Results"] }}
-                />
-                <SecureRoute
                   path="/CytologyCaseView/:cytologySampleId"
                   exact
                   component={() => <CytologyCaseView />}

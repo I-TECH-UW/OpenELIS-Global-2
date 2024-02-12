@@ -76,6 +76,7 @@ const RoutineIndex = () => {
             {type === "indicator" &&
               report === "indicatorCDILNSPHIV" &&
               (<HIVTestSummary/>)}
+
           </>
         )}
       </div>

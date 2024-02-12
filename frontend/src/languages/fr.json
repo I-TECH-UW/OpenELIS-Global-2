@@ -485,6 +485,7 @@
     "banner.menu.sampleConsult": "Consulter",
     "banner.menu.sampleCreate" : "Etude",
     "banner.menu.study.eorders" : "Demandes Electroniques",
+    "banner.menu.reports":"Rapports",
     "banner.menu.reports.study": "Etude",
     "reports.export.byDate": "Exporter en Fichier CSV",
     "reports.export.byDate_routine": "Exporter Routine en Fichier CSV",
