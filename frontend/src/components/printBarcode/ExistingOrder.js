@@ -24,9 +24,11 @@ const ExistingOrder = () => {
   const intl = useIntl();
   const componentMounted = useRef(false);
   const [accessionNumber, setAccessionNumber] = useState("");
-  const [labelSets, setLabelSets] = useState(1);
+  const [orderLabels, setOrderLabels] = useState(1);
   const [patientSearchResults, setPatientSearchResults] = useState(null);
   const [orderResults, setOrderResults] = useState(null);
+  const [source, setSource] = useState("about:blank");
+  const [renderBarcode, setRenderBarcode] = useState(false);
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
   useEffect(() => {
@@ -69,6 +71,27 @@ const ExistingOrder = () => {
       `/rest/sample-edit?accessionNumber=${accessionNumber}`,
       fetchOrderData
     );
+  };
+
+  const printLabelSets = () => {
+    setSource(
+      `/LabelMakerServlet?labNo=${accessionNumber}&type=default&quantity=`
+    );
+    setRenderBarcode(true);
+  };
+
+  const printOrderLabels = () => {
+    setSource(
+      `/LabelMakerServlet?labNo=${accessionNumber}&type=order&quantity=${orderLabels}`
+    );
+    setRenderBarcode(true);
+  };
+
+  const printSpecimenLabels = (specimenAccessionNumber) => {
+    setSource(
+      `/LabelMakerServlet?labNo=${specimenAccessionNumber}&type=specimen&quantity=1`
+    );
+    setRenderBarcode(true);
   };
 
   return (
@@ -147,7 +170,7 @@ const ExistingOrder = () => {
               <FormattedMessage id="barcode.print.set.instruction" />
             </Column>
             <Column>
-              <Button>
+              <Button onClick={printLabelSets}>
                 <FormattedMessage id="barcode.print.set.button" />
               </Button>
             </Column>
@@ -175,29 +198,35 @@ const ExistingOrder = () => {
                     min={1}
                     max={100}
                     defaultValue={1}
-                    onChange={(_, state) => setLabelSets(state.value)}
+                    onChange={(_, state) => setOrderLabels(state.value)}
                     id="numberToPrint"
                     className="inputText"
                   />
                 ),
                 button: (
-                  <Button>
+                  <Button onClick={printOrderLabels}>
                     <FormattedMessage id="barcode.print.individual.button" />
                   </Button>
                 ),
               },
-              {
-                id: "row2",
-                labelType: "Specimen",
-                accessionNumber: orderResults[0].accessionNumber,
-                additionalInfo: orderResults[0].sampleType,
-                numberToPrint: 1,
-                button: (
-                  <Button>
-                    <FormattedMessage id="barcode.print.individual.button" />
-                  </Button>
-                ),
-              },
+              ...orderResults
+                .filter((result) => result.accessionNumber)
+                .map((result, index) => ({
+                  id: `row${index + 2}`,
+                  labelType: "Specimen",
+                  accessionNumber: result.accessionNumber,
+                  additionalInfo: result.sampleType,
+                  numberToPrint: 1,
+                  button: (
+                    <Button
+                      onClick={() =>
+                        printSpecimenLabels(result.accessionNumber)
+                      }
+                    >
+                      <FormattedMessage id="barcode.print.individual.button" />
+                    </Button>
+                  ),
+                })),
             ]}
           >
             {({ rows, headers, getHeaderProps, getTableProps }) => (
@@ -228,6 +257,18 @@ const ExistingOrder = () => {
               </TableContainer>
             )}
           </DataTable>
+        </div>
+      )}
+      {renderBarcode && (
+        <div className="orderLegendBody">
+          <Grid>
+            <Column lg={16}>
+              <h4>
+                <FormattedMessage id="barcode.header" />
+              </h4>
+            </Column>
+          </Grid>
+          <iframe src={source} width="100%" height="500px" />
         </div>
       )}
     </>

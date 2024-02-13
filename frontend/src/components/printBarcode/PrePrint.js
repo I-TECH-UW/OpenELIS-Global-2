@@ -28,10 +28,10 @@ const PrePrint = () => {
   const [labelSets, setLabelSets] = useState(1);
   const [orderLabelsPerSet, setOrderLabelsPerSet] = useState(1);
   const [specimenLabelsPerSet, setSpecimenLabelsPerSet] = useState(1);
+  const [facilityId, setFacilityId] = useState("");
 
-  const handleInputChange = () => {
-    //TODO
-  };
+  const [source, setSource] = useState("about:blank");
+  const [renderBarcode, setRenderBarcode] = useState(false);
 
   function findTestById(testId) {
     return sampleTypeTests.tests.find((test) => test.id === testId);
@@ -130,6 +130,25 @@ const PrePrint = () => {
   const handleFetchSampleTypeTests = (e) => {
     const { value } = e.target;
     setSelectedSampleTypeId(value);
+    setSelectedTests([]);
+    setSelectedPanels([]);
+  };
+
+  const prePrintLabels = () => {
+    console.log(selectedPanels);
+    const selectedTestIds = selectedTests
+      .map((selectedTest) => selectedTest.id)
+      .join(",");
+    const params = new URLSearchParams({
+      prePrinting: "true",
+      numSetsOfLabels: labelSets,
+      numOrderLabelsPerSet: orderLabelsPerSet,
+      numSpecimenLabelsPerSet: specimenLabelsPerSet,
+      facilityName: facilityId,
+      testIds: selectedTestIds,
+    });
+    setSource(`LabelMakerServlet?${params.toString()}`);
+    setRenderBarcode(true);
   };
 
   useEffect(() => {
@@ -199,7 +218,7 @@ const PrePrint = () => {
           <Column lg={8}>
             <TextInput
               id="facilityId"
-              onChange={handleInputChange}
+              onChange={(e) => setFacilityId(e.target.value)}
               labelText={"Facility ID"}
             />
           </Column>
@@ -285,17 +304,27 @@ const PrePrint = () => {
               })}
           </Column>
           <Column lg={16}>
-            <Button
-              disabled={!selectedSampleTypeId}
-              onClick={() => {
-                //TODO
-              }}
-            >
+            <FormattedMessage id="barcode.print.preprint.note" />
+          </Column>
+          <Column lg={16}>
+            <Button disabled={!selectedSampleTypeId} onClick={prePrintLabels}>
               <FormattedMessage id="barcode.print.preprint.button" />
             </Button>
           </Column>
         </Grid>
       </div>
+      {renderBarcode && (
+        <div className="orderLegendBody">
+          <Grid>
+            <Column lg={16}>
+              <h4>
+                <FormattedMessage id="barcode.header" />
+              </h4>
+            </Column>
+          </Grid>
+          <iframe src={source} width="100%" height="500px" />
+        </div>
+      )}
     </>
   );
 };
