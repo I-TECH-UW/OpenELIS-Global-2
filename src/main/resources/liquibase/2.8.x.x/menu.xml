@@ -279,11 +279,23 @@
 			<where>element_id='menu_reports_study'</where>
 		</update>
 	</changeSet>
+
 	<changeSet author="moses_mutesa" id="12">
 		<comment>update results search menu options</comment>
 		<delete tableName="menu" schemaName="clinlims">
 			<where>element_id='menu_results_search_testdate'</where>
 		</delete>
+	</changeSet>
+	 
+	<changeSet author="csteele" id="13">
+		<comment>add column to track if Menu shows up in old UI</comment>
+		<addColumn tableName="menu" schemaName="clinlims">
+			<column name="hide_in_old_ui" type="BOOLEAN" defaultValueBoolean="false"/>
+		</addColumn>
+		<update tableName="menu" schemaName="clinlims">
+			<column name="hide_in_old_ui" valueBoolean="true" />
+			<where>element_id in ('menu_billing', 'menu_patienthistory', 'menu_pathology', 'menu_pathologydashboard', 'menu_immunochem', 'menu_immunochemdashboard', 'menu_cytology', 'menu_cytologydashboard', 'menu_results_search_testdate')</where>
+		</update>
 	</changeSet>
 	
 </databaseChangeLog>
