@@ -1,5 +1,7 @@
 package org.openelisglobal.result.service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,6 +12,7 @@ import java.util.UUID;
 
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.ResultSaveService;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
@@ -72,21 +75,17 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
         for (ResultSet resultSet : actionDataSet.getNewResults()) {
             resultSet.result.setResultEvent(Event.PRELIMINARY_RESULT);
             resultSet.result.setFhirUuid(UUID.randomUUID());
-            String resultId = resultService.insert(resultSet.result);
+            String resultId;
+            //resultId = resultService.insert(resultSet.result);
 
             checkAnalysis = resultSet.result.getAnalysis();
             checkSampleItem = checkAnalysis.getSampleItem();
             checkSample = checkSampleItem.getSample();
-//            System.out.println(">>>: " +
-//                    checkAnalysis.getId() + " " +
-//                    checkSampleItem.getId() + " " +
-//                    checkSample.getId() + " " +
-//                    checkSample.getAccessionNumber());
 
             checkResult = resultService.getResultsForTestAndSample(checkSample.getId(),
                     checkAnalysis.getTest().getId());
             if (checkResult.size() == 0) {
-                resultService.insert(resultSet.result);
+                resultId = resultService.insert(resultSet.result);
             } else {
                 continue;
             }

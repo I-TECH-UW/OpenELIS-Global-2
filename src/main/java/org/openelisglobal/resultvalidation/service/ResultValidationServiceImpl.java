@@ -60,7 +60,9 @@ public class ResultValidationServiceImpl implements ResultValidationService {
             if (resultUpdate.getId() != null) {
                 resultService.update(resultUpdate);
             } else {
-                resultService.insert(resultUpdate);
+                LogEvent.logWarn(this.getClass().getSimpleName(), "persistdata", "validating a result that doesn't exist yet. Creating result.");
+                String id = resultService.insert(resultUpdate);
+                LogEvent.logWarn(this.getClass().getSimpleName(), "persistdata", "Result with id: " + id + " created while validating");
             }
             if (isResultAnalysisFinalized(resultUpdate, analysisUpdateList)) {
                 try {

@@ -1,6 +1,8 @@
 package org.openelisglobal.common.service;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -238,6 +240,13 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
             getBaseObjectDAO().evict(oldObject);
             auditTrailDAO.saveHistory(baseObject, oldObject, baseObject.getSysUserId(), auditTrailType,
                     getBaseObjectDAO().getTableName());
+        }
+        if (baseObject.getLastupdated() == null) {
+            // this is done so detached objects that are being updated don't do an insert operation
+            // when their version value is null (hiberante behaviour)
+            LogEvent.logWarn(this.getClass().getSimpleName(), "update", "running update on an object with a missing version field can result in unintended inserts instead of updates");
+            LogEvent.logWarn(this.getClass().getSimpleName(), "update", "setting lastUpdated to now for object: " + baseObject.getClass().getSimpleName() + " with id: " + baseObject.getId());
+            baseObject.setLastupdated(Timestamp.from(Instant.now()));
         }
         return getBaseObjectDAO().update(baseObject);
 
