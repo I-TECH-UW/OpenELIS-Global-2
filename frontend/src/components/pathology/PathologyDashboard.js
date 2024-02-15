@@ -19,6 +19,8 @@ import {
   Tile,
   Loading,
   Pagination,
+  Breadcrumb,
+  BreadcrumbItem
 } from "@carbon/react";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { Search } from "@carbon/react";
@@ -278,7 +280,15 @@ function PathologyDashboard() {
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading description="Loading Dasboard..." />}
-
+      <Grid fullWidth={true}>
+        <Column lg={16}>
+        <Breadcrumb>
+          <BreadcrumbItem href="/">
+            {intl.formatMessage({id:"home.label"})}
+          </BreadcrumbItem>
+        </Breadcrumb>
+        </Column>
+      </Grid>
       <Grid fullWidth={true}>
         <Column lg={16}>
           <Section>

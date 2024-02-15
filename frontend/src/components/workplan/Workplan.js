@@ -12,6 +12,8 @@ import {
   TableHeader,
   TableRow,
   Pagination,
+  Breadcrumb,
+  BreadcrumbItem
 } from "@carbon/react";
 import React, { useState, useContext, useEffect } from "react";
 import "../Style.css";
@@ -172,6 +174,15 @@ export default function Workplan(props) {
   let currentAccessionNumber = "";
   return (
     <>
+      <Grid fullWidth={true}>
+      <Column lg={16}>
+        <Breadcrumb>
+          <BreadcrumbItem href="/">
+            {intl.formatMessage({id:"home.label"})}
+          </BreadcrumbItem>
+        </Breadcrumb>
+      </Column>
+    </Grid>
       <Grid fullWidth={true}>
         {notificationVisible === true ? <AlertDialog /> : ""}
         <Column lg={16}>
