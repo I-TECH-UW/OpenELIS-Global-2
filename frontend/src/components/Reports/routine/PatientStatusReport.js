@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../../Style.css";
 import { getFromOpenElisServer } from "../../utils/Utils";
@@ -35,9 +35,14 @@ import {
 
 function PatientStatusReport(props) {
   const [orderFormValues, setOrderFormValues] = useState({
-    sampleOrderItems: {},
+    sampleOrderItems: {
+      referringSiteId: "",
+      referringSiteName: "",
+      startDate: "",
+      endDate: "",
+    },
   }); // Here used useState Moke props Date and remove console errors
-  // const { orderFormValues, setOrderFormValues, samples } = props;
+  // const { orderFormValues, setOrderFormValues, samples, error } = props;
   const { configurationProperties } = useContext(ConfigurationContext);
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
@@ -46,21 +51,20 @@ function PatientStatusReport(props) {
   const items = [
     {
       id: "option-0",
-      text: "Select Date Type",
-    },
-    {
-      id: "option-1",
       text: "Result Date",
     },
     {
-      id: "option-2",
+      id: "option-1",
       text: "Order Date",
     },
   ];
 
+  const componentMounted = useRef(false);
+
   const [dob, setDob] = useState("");
   const [patientSearchResults, setPatientSearchResults] = useState([]);
   const [page, setPage] = useState(1);
+  const [siteNames, setSiteNames] = useState([]);
   const [pageSize, setPageSize] = useState(5);
   const [loading, setLoading] = useState(false);
   const [nextPage, setNextPage] = useState(null);
@@ -103,10 +107,6 @@ function PatientStatusReport(props) {
         referringSiteId: siteId,
       },
     });
-    getFromOpenElisServer(
-      "/rest/departments-for-site?refferingSiteId=" + siteId,
-      loadDepartments
-    );
   }
   const loadDepartments = (data) => {
     setDepartments(data);
@@ -192,8 +192,8 @@ function PatientStatusReport(props) {
   const handleDatePickerChangeDate = (datePicker, date) => {
     let obj = null;
     switch (datePicker) {
-      case "requestDate":
-        obj = { ...orderFormValues.sampleOrderItems, requestDate: date };
+      case "startDate":
+        obj = { ...orderFormValues.sampleOrderItems, startDate: date };
         break;
       case "receivedDate":
         obj = {
@@ -201,8 +201,8 @@ function PatientStatusReport(props) {
           receivedDateForDisplay: date,
         };
         break;
-      case "nextVisitDate":
-        obj = { ...orderFormValues.sampleOrderItems, nextVisitDate: date };
+      case "endDate":
+        obj = { ...orderFormValues.sampleOrderItems, endDate: date };
         break;
       default:
     }
@@ -219,6 +219,29 @@ function PatientStatusReport(props) {
     const searchEndPoint =
       "/rest/patient-details?patientID=" + patientSelected.patientID;
     getFromOpenElisServer(searchEndPoint, fetchPatientDetails);
+  };
+
+  useEffect(() => {
+    getFromOpenElisServer(
+      "/rest/departments-for-site?refferingSiteId=" +
+        (orderFormValues.sampleOrderItems.referringSiteId || ""),
+      loadDepartments
+    );
+  }, [orderFormValues.sampleOrderItems.referringSiteId]);
+
+  useEffect(() => {
+    componentMounted.current = true;
+    getFromOpenElisServer("/rest/SamplePatientEntry", getSampleEntryPreform);
+    window.scrollTo(0, 0);
+    return () => {
+      componentMounted.current = false;
+    };
+  }, []);
+
+  const getSampleEntryPreform = (response) => {
+    if (componentMounted.current) {
+      setSiteNames(response.sampleOrderItems.referringSiteList);
+    }
   };
 
   const handlePageChange = (pageInfo) => {
@@ -511,40 +534,34 @@ function PatientStatusReport(props) {
               </Column>
             </Grid>
             <div className="inlineDiv">
-              {allowSiteNameOptions === "false" ? (
-                <TextInput
-                  name="siteName"
-                  labelText={intl.formatMessage({
-                    id: "order.site.name",
-                    defaultMessage: "Site Name",
-                  })}
-                  onChange={handleSiteName}
-                  value={
-                    orderFormValues.sampleOrderItems.referringSiteName == null
-                      ? ""
-                      : orderFormValues.sampleOrderItems.referringSiteName
-                  }
-                  id="siteName"
-                  className="inputText"
-                />
-              ) : (
-                <AutoComplete
-                  name="siteName"
-                  id="siteName"
-                  className="inputText"
-                  onSelect={handleAutoCompleteSiteName}
-                  label={intl.formatMessage({
-                    id: "order.search.site.name",
-                  })}
-                  class="inputText"
-                  invalidText={intl.formatMessage({
-                    id: "order.invalid.site.name",
-                  })}
-                  style={{ width: "!important 100%" }}
-                  suggestions={siteNames.length > 0 ? siteNames : []}
-                  required
-                />
-              )}
+              <AutoComplete
+                name="siteName"
+                id="siteName"
+                className="inputText"
+                allowFreeText={
+                  !(
+                    configurationProperties.restrictFreeTextRefSiteEntry ===
+                    "true"
+                  )
+                }
+                value={
+                  orderFormValues.sampleOrderItems.referringSiteId != ""
+                    ? orderFormValues.sampleOrderItems.referringSiteId
+                    : orderFormValues.sampleOrderItems.referringSiteName
+                }
+                onChange={handleSiteName}
+                onSelect={handleAutoCompleteSiteName}
+                label={
+                  <>
+                    <FormattedMessage id="order.search.site.name" />{" "}
+                    <span className="requiredlabel">*</span>
+                  </>
+                }
+                class="inputText"
+                style={{ width: "!important 100%" }}
+                suggestions={siteNames.length > 0 ? siteNames : []}
+                required
+              />
 
               <Select
                 className="inputText"
@@ -555,7 +572,6 @@ function PatientStatusReport(props) {
                   defaultMessage: "ward/dept/unit",
                 })}
                 onChange={handleRequesterDept}
-                required
               >
                 <SelectItem value="" text="" />
                 {departments.map((department, index) => (
@@ -566,27 +582,6 @@ function PatientStatusReport(props) {
                   />
                 ))}
               </Select>
-              {allowRequesterOptions === "false" ? (
-                ""
-              ) : (
-                <div className="inlineDiv">
-                  <AutoComplete
-                    name="requesterId"
-                    id="requesterId"
-                    onSelect={handleProviderSelectOptions}
-                    label={intl.formatMessage({
-                      id: "order.search.requester.label",
-                    })}
-                    class="inputText"
-                    style={{ width: "!important 100%" }}
-                    invalidText={
-                      <FormattedMessage id="order.invalid.requester.name.label" />
-                    }
-                    suggestions={providers.length > 0 ? providers : []}
-                    required
-                  />
-                </div>
-              )}
             </div>
             <Grid fullWidth={true}>
               <Column lg={16}>
