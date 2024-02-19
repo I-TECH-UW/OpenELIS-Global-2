@@ -18,10 +18,21 @@ import {
   RadioButton,
   RadioButtonGroup,
   Loading,
+  DataTable,
+  Pagination,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableHeader,
+  TableBody,
+  TableCell,
   Select,
   SelectItem,
 } from "@carbon/react";
 import CustomLabNumberInput from "../../common/CustomLabNumberInput";
+import config from "../../../config.json";
+import { patientSearchHeaderData } from "../../data/PatientResultsTableHeaders";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import AutoComplete from "../../common/AutoComplete";
 import { ConfigurationContext } from "../../layout/Layout";
@@ -40,6 +51,15 @@ function PatientStatusReport(props) {
       referringSiteName: "",
       startDate: "",
       endDate: "",
+      form: "",
+      form: "",
+      patientId: "",
+      labNumber: "",
+      lastName: "",
+      firstName: "",
+      dateOfBirth: "",
+      gender: "",
+      checkbox: "",
     },
   }); // Here used useState Moke props Date and remove console errors
   // const { orderFormValues, setOrderFormValues, samples, error } = props;
@@ -48,19 +68,22 @@ function PatientStatusReport(props) {
     useContext(NotificationContext);
 
   const intl = useIntl();
-  const items = [
+  const itemList = [
     {
       id: "option-0",
       text: "Result Date",
+      tag: "RESULT_DATE",
     },
     {
       id: "option-1",
       text: "Order Date",
+      tag: "ORDER_DATE",
     },
   ];
 
   const componentMounted = useRef(false);
-
+  const [checkbox, setCheckbox] = useState("off");
+  const [items, setItems] = useState(itemList[0].tag);
   const [dob, setDob] = useState("");
   const [patientSearchResults, setPatientSearchResults] = useState([]);
   const [page, setPage] = useState(1);
@@ -78,6 +101,44 @@ function PatientStatusReport(props) {
   const [allowSiteNameOptions, setAllowSiteNameOptions] = useState("false");
   const [departments, setDepartments] = useState([]);
   const [allowRequesterOptions, setAllowRequesterOptions] = useState("false");
+
+  const handleReportPrint = () => {
+    let barcodesPdf =
+      config.serverBaseUrl +
+      `/ReportPrint?report=patientCILNSP_vreduit&type=patient&accessionDirect=${orderFormValues.sampleOrderItems.form}&highAccessionDirect=${orderFormValues.sampleOrderItems.form}&dateOfBirthSearchValue=${orderFormValues.sampleOrderItems.dateOfBirth}&selPatient=${orderFormValues.sampleOrderItems.patientId}&referringSiteId=${orderFormValues.sampleOrderItems.referringSiteId}&referringSiteDepartmentId=${orderFormValues.sampleOrderItems.referringSiteName}&_onlyResults=${checkbox}&dateType=${items}&lowerDateRange=${orderFormValues.sampleOrderItems.startDate}&upperDateRange=${orderFormValues.sampleOrderItems.endDate}`;
+    window.open(barcodesPdf);
+  };
+
+  const handleSubmit = (values) => {
+    setLoading(true);
+    values.dateOfBirth = dob;
+    const searchEndPoint =
+      "/rest/patient-search-results?" +
+      "from=" +
+      values.from +
+      "&to=" +
+      values.to +
+      "&lastName=" +
+      values.lastName +
+      "&firstName=" +
+      values.firstName +
+      "&STNumber=" +
+      values.patientId +
+      "&subjectNumber=" +
+      values.patientId +
+      "&nationalID=" +
+      values.patientId +
+      "&labNumber=" +
+      values.labNumber +
+      "&guid=" +
+      values.guid +
+      "&dateOfBirth=" +
+      values.dateOfBirth +
+      "&gender=" +
+      values.gender;
+    getFromOpenElisServer(searchEndPoint, fetchPatientResults);
+    setUrl(searchEndPoint);
+  };
 
   function handleSiteName(e) {
     setOrderFormValues({
@@ -105,6 +166,7 @@ function PatientStatusReport(props) {
       sampleOrderItems: {
         ...orderFormValues.sampleOrderItems,
         referringSiteId: siteId,
+        referringSiteName: "",
       },
     });
   }
@@ -112,32 +174,6 @@ function PatientStatusReport(props) {
     setDepartments(data);
   };
 
-  const handleSubmit = (values) => {
-    setLoading(true);
-    values.dateOfBirth = dob;
-    const searchEndPoint =
-      "/rest/patient-search-results?" +
-      "lastName=" +
-      values.lastName +
-      "&firstName=" +
-      values.firstName +
-      "&STNumber=" +
-      values.patientId +
-      "&subjectNumber=" +
-      values.patientId +
-      "&nationalID=" +
-      values.patientId +
-      "&labNumber=" +
-      values.labNumber +
-      "&guid=" +
-      values.guid +
-      "&dateOfBirth=" +
-      values.dateOfBirth +
-      "&gender=" +
-      values.gender;
-    getFromOpenElisServer(searchEndPoint, fetchPatientResults);
-    setUrl(searchEndPoint);
-  };
   const loadNextResultsPage = () => {
     setLoading(true);
     getFromOpenElisServer(url + "&page=" + nextPage, fetchPatientResults);
@@ -195,12 +231,6 @@ function PatientStatusReport(props) {
       case "startDate":
         obj = { ...orderFormValues.sampleOrderItems, startDate: date };
         break;
-      case "receivedDate":
-        obj = {
-          ...orderFormValues.sampleOrderItems,
-          receivedDateForDisplay: date,
-        };
-        break;
       case "endDate":
         obj = { ...orderFormValues.sampleOrderItems, endDate: date };
         break;
@@ -221,6 +251,22 @@ function PatientStatusReport(props) {
     getFromOpenElisServer(searchEndPoint, fetchPatientDetails);
   };
 
+  const getSampleEntryPreform = (response) => {
+    if (componentMounted.current) {
+      setSiteNames(response.sampleOrderItems.referringSiteList);
+    }
+  };
+
+  const handlePageChange = (pageInfo) => {
+    if (page != pageInfo.page) {
+      setPage(pageInfo.page);
+    }
+
+    if (pageSize != pageInfo.pageSize) {
+      setPageSize(pageInfo.pageSize);
+    }
+  };
+
   useEffect(() => {
     getFromOpenElisServer(
       "/rest/departments-for-site?refferingSiteId=" +
@@ -238,21 +284,6 @@ function PatientStatusReport(props) {
     };
   }, []);
 
-  const getSampleEntryPreform = (response) => {
-    if (componentMounted.current) {
-      setSiteNames(response.sampleOrderItems.referringSiteList);
-    }
-  };
-
-  const handlePageChange = (pageInfo) => {
-    if (page != pageInfo.page) {
-      setPage(pageInfo.page);
-    }
-
-    if (pageSize != pageInfo.pageSize) {
-      setPageSize(pageInfo.pageSize);
-    }
-  };
   useEffect(() => {
     let patientId = new URLSearchParams(window.location.search).get(
       "patientId"
@@ -276,8 +307,8 @@ function PatientStatusReport(props) {
         ...orderFormValues,
         sampleOrderItems: {
           ...orderFormValues.sampleOrderItems,
-          startDate: configurationProperties.currentDateAsText,
-          endDate: configurationProperties.currentDateAsText,
+          startDate: "",
+          endDate: "",
         },
       });
       setAllowSiteNameOptions(
@@ -348,9 +379,9 @@ function PatientStatusReport(props) {
               </Column>
             </Grid>
             <div className="inlineDiv">
-              <Field name="From">
+              <Field name="from">
                 {({ field }) => (
-                  <TextInput
+                  <CustomLabNumberInput
                     name={field.name}
                     value={values[field.name]}
                     labelText={intl.formatMessage({
@@ -359,20 +390,23 @@ function PatientStatusReport(props) {
                     })}
                     id={field.name}
                     className="inputText"
+                    onChange={(e, rawValue) => {
+                      setFieldValue(field.name, rawValue);
+                    }}
                   />
                 )}
               </Field>
-              <Field name="To">
+              <Field name="to">
                 {({ field }) => (
                   <CustomLabNumberInput
                     name={field.name}
+                    value={values[field.name]}
                     labelText={intl.formatMessage({
                       id: "to.title",
                       defaultMessage: "To",
                     })}
                     id={field.name}
                     className="inputText"
-                    value={values[field.name]}
                     onChange={(e, rawValue) => {
                       setFieldValue(field.name, rawValue);
                     }}
@@ -394,6 +428,23 @@ function PatientStatusReport(props) {
               </Column>
             </Grid>
             <div className="inlineDiv">
+              <Field name="labNumber">
+                {({ field }) => (
+                  <CustomLabNumberInput
+                    name={field.name}
+                    labelText={intl.formatMessage({
+                      id: "eorder.labNumber",
+                      defaultMessage: "Lab Number",
+                    })}
+                    id={field.name}
+                    className="inputText"
+                    value={values[field.name]}
+                    onChange={(e, rawValue) => {
+                      setFieldValue(field.name, rawValue);
+                    }}
+                  />
+                )}
+              </Field>
               <Field name="patientId">
                 {({ field }) => (
                   <TextInput
@@ -405,23 +456,6 @@ function PatientStatusReport(props) {
                     })}
                     id={field.name}
                     className="inputText"
-                  />
-                )}
-              </Field>
-              <Field name="labNumber">
-                {({ field }) => (
-                  <CustomLabNumberInput
-                    name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "patient.prev.lab.no",
-                      defaultMessage: "Previous Lab Number",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                    value={values[field.name]}
-                    onChange={(e, rawValue) => {
-                      setFieldValue(field.name, rawValue);
-                    }}
                   />
                 )}
               </Field>
@@ -526,6 +560,95 @@ function PatientStatusReport(props) {
                 </Button>
               </div>
             </div>
+            <Column lg={16}>
+              {pagination && (
+                <Grid>
+                  <Column lg={11} />
+                  <Column lg={2}>
+                    <Button
+                      type=""
+                      id="loadpreviousresults"
+                      onClick={loadPreviousResultsPage}
+                      disabled={previousPage != null ? false : true}
+                    >
+                      <FormattedMessage id="button.label.loadprevious" />
+                    </Button>
+                  </Column>
+                  <Column lg={2}>
+                    <Button
+                      type=""
+                      id="loadnextresults"
+                      disabled={nextPage != null ? false : true}
+                      onClick={loadNextResultsPage}
+                    >
+                      <FormattedMessage id="button.label.loadnext" />
+                    </Button>
+                  </Column>
+                </Grid>
+              )}
+            </Column>
+            <div>
+              <Column lg={16}>
+                <DataTable
+                  rows={patientSearchResults}
+                  headers={patientSearchHeaderData}
+                  isSortable
+                >
+                  {({ rows, headers, getHeaderProps, getTableProps }) => (
+                    <TableContainer title="Patient Results">
+                      <Table {...getTableProps()}>
+                        <TableHead>
+                          <TableRow>
+                            <TableHeader></TableHeader>
+                            {headers.map((header) => (
+                              <TableHeader
+                                key={header.key}
+                                {...getHeaderProps({ header })}
+                              >
+                                {header.header}
+                              </TableHeader>
+                            ))}
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          <>
+                            {rows
+                              .slice((page - 1) * pageSize)
+                              .slice(0, pageSize)
+                              .map((row) => (
+                                <TableRow key={row.id}>
+                                  <TableCell>
+                                    {" "}
+                                    <RadioButton
+                                      name="radio-group"
+                                      onClick={patientSelected}
+                                      labelText=""
+                                      id={row.id}
+                                    />
+                                  </TableCell>
+                                  {row.cells.map((cell) => (
+                                    <TableCell key={cell.id}>
+                                      {cell.value}
+                                    </TableCell>
+                                  ))}
+                                </TableRow>
+                              ))}
+                          </>
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  )}
+                </DataTable>
+                <Pagination
+                  onChange={handlePageChange}
+                  page={page}
+                  pageSize={pageSize}
+                  pageSizes={[5, 10, 20, 30]}
+                  totalItems={patientSearchResults.length}
+                ></Pagination>
+              </Column>
+            </div>
+            <br />
             <Grid fullWidth={true}>
               <Column lg={16}>
                 <h5>
@@ -553,14 +676,12 @@ function PatientStatusReport(props) {
                 onSelect={handleAutoCompleteSiteName}
                 label={
                   <>
-                    <FormattedMessage id="order.search.site.name" />{" "}
-                    <span className="requiredlabel">*</span>
+                    <FormattedMessage id="order.site.name" />
                   </>
                 }
                 class="inputText"
                 style={{ width: "!important 100%" }}
                 suggestions={siteNames.length > 0 ? siteNames : []}
-                required
               />
 
               <Select
@@ -594,7 +715,9 @@ function PatientStatusReport(props) {
             <Grid fullWidth={true}>
               <Column lg={8}>
                 <Checkbox
-                  onChange={(data) => {}}
+                  onChange={() => {
+                    setCheckbox("on");
+                  }}
                   labelText={intl.formatMessage({
                     id: "report.label.site.onlyResults",
                     defaultMessage: "Only Reports with results",
@@ -605,10 +728,13 @@ function PatientStatusReport(props) {
                   <Dropdown
                     id="default"
                     titleText="Date Type"
-                    initialSelectedItem={items[0]}
+                    initialSelectedItem={itemList[0]}
                     label="Option 1"
-                    items={items}
+                    items={itemList}
                     itemToString={(item) => (item ? item.text : "")}
+                    onChange={(selectedItem) => {
+                      setItems(selectedItem.tag);
+                    }}
                   />
                 </div>
                 <div className="inlineDiv">
@@ -643,7 +769,7 @@ function PatientStatusReport(props) {
             </Grid>
             <div className="formInlineDiv">
               <div className="searchActionButtons">
-                <Button type="submit">
+                <Button type="button" onClick={handleReportPrint}>
                   <FormattedMessage id="label.button.generatePrintableVersion" />
                 </Button>
               </div>
