@@ -52,7 +52,8 @@ function PatientStatusReport(props) {
       startDate: "",
       endDate: "",
       form: "",
-      form: "",
+      to: "",
+      dateType: "",
       patientId: "",
       labNumber: "",
       lastName: "",
@@ -105,7 +106,7 @@ function PatientStatusReport(props) {
   const handleReportPrint = () => {
     let barcodesPdf =
       config.serverBaseUrl +
-      `/ReportPrint?report=patientCILNSP_vreduit&type=patient&accessionDirect=${orderFormValues.sampleOrderItems.form}&highAccessionDirect=${orderFormValues.sampleOrderItems.form}&dateOfBirthSearchValue=${orderFormValues.sampleOrderItems.dateOfBirth}&selPatient=${orderFormValues.sampleOrderItems.patientId}&referringSiteId=${orderFormValues.sampleOrderItems.referringSiteId}&referringSiteDepartmentId=${orderFormValues.sampleOrderItems.referringSiteName}&_onlyResults=${checkbox}&dateType=${items}&lowerDateRange=${orderFormValues.sampleOrderItems.startDate}&upperDateRange=${orderFormValues.sampleOrderItems.endDate}`;
+      `/ReportPrint?report=patientCILNSP_vreduit&type=patient&accessionDirect=${orderFormValues.sampleOrderItems.form}&highAccessionDirect=${orderFormValues.sampleOrderItems.to}&dateOfBirthSearchValue=${orderFormValues.sampleOrderItems.dateOfBirth}&selPatient=${orderFormValues.sampleOrderItems.patientId}&referringSiteId=${orderFormValues.sampleOrderItems.referringSiteId}&referringSiteDepartmentId=${orderFormValues.sampleOrderItems.referringSiteName}&_onlyResults=${checkbox}&dateType=${items}&lowerDateRange=${orderFormValues.sampleOrderItems.startDate}&upperDateRange=${orderFormValues.sampleOrderItems.endDate}`;
     window.open(barcodesPdf);
   };
 
@@ -139,6 +140,84 @@ function PatientStatusReport(props) {
     getFromOpenElisServer(searchEndPoint, fetchPatientResults);
     setUrl(searchEndPoint);
   };
+
+  function encodeDate(dateString) {
+    if (typeof dateString === "string" && dateString.trim() !== "") {
+      return dateString.split("/").map(encodeURIComponent).join("%2F");
+    } else {
+      return "";
+    }
+  }
+
+  function handlePatientIdFrom(e) {
+    setOrderFormValues({
+      ...orderFormValues,
+      sampleOrderItems: {
+        ...orderFormValues.sampleOrderItems,
+        form: e.target.value,
+      },
+    });
+  }
+
+  function handlePatientIdTo(e) {
+    setOrderFormValues({
+      ...orderFormValues,
+      sampleOrderItems: {
+        ...orderFormValues.sampleOrderItems,
+        to: e.target.value,
+      },
+    });
+  }
+  //
+
+  function handleLabNumber(e) {
+    setOrderFormValues({
+      ...orderFormValues,
+      sampleOrderItems: {
+        ...orderFormValues.sampleOrderItems,
+        labNumber: e.target.value,
+      },
+    });
+  }
+  function handlePatientId(e) {
+    setOrderFormValues({
+      ...orderFormValues,
+      sampleOrderItems: {
+        ...orderFormValues.sampleOrderItems,
+        patientId: e.target.value,
+      },
+    });
+  }
+
+  function handleLastName(e) {
+    setOrderFormValues({
+      ...orderFormValues,
+      sampleOrderItems: {
+        ...orderFormValues.sampleOrderItems,
+        lastName: e.target.value,
+      },
+    });
+  }
+
+  function handleFirstName(e) {
+    setOrderFormValues({
+      ...orderFormValues,
+      sampleOrderItems: {
+        ...orderFormValues.sampleOrderItems,
+        firstName: e.target.value,
+      },
+    });
+  }
+
+  function handleGender(e) {
+    setOrderFormValues({
+      ...orderFormValues,
+      sampleOrderItems: {
+        ...orderFormValues.sampleOrderItems,
+        gender: e.target.value,
+      },
+    });
+  }
 
   function handleSiteName(e) {
     setOrderFormValues({
@@ -222,17 +301,28 @@ function PatientStatusReport(props) {
   };
 
   const handleDatePickerChange = (...e) => {
+    let updatedDate = encodeDate(e[1]);
+
+    setOrderFormValues({
+      ...orderFormValues,
+      sampleOrderItems: {
+        ...orderFormValues.sampleOrderItems,
+        dateOfBirth: updatedDate,
+      },
+    });
+
     setDob(e[1]);
   };
 
   const handleDatePickerChangeDate = (datePicker, date) => {
+    let updatedDate = encodeDate(date);
     let obj = null;
     switch (datePicker) {
       case "startDate":
-        obj = { ...orderFormValues.sampleOrderItems, startDate: date };
+        obj = { ...orderFormValues.sampleOrderItems, startDate: updatedDate };
         break;
       case "endDate":
-        obj = { ...orderFormValues.sampleOrderItems, endDate: date };
+        obj = { ...orderFormValues.sampleOrderItems, endDate: updatedDate };
         break;
       default:
     }
@@ -246,6 +336,15 @@ function PatientStatusReport(props) {
     const patientSelected = patientSearchResults.find((patient) => {
       return patient.patientID == e.target.id;
     });
+
+    setOrderFormValues({
+      ...orderFormValues,
+      sampleOrderItems: {
+        ...orderFormValues.sampleOrderItems,
+        patientId: patientSelected.patientID,
+      },
+    });
+
     const searchEndPoint =
       "/rest/patient-details?patientID=" + patientSelected.patientID;
     getFromOpenElisServer(searchEndPoint, fetchPatientDetails);
@@ -303,12 +402,14 @@ function PatientStatusReport(props) {
 
   useEffect(() => {
     if (!innitialized) {
+      let updatedDate = encodeDate(configurationProperties.currentDateAsText);
       setOrderFormValues({
         ...orderFormValues,
         sampleOrderItems: {
           ...orderFormValues.sampleOrderItems,
-          startDate: "",
-          endDate: "",
+          dateOfBirth: updatedDate,
+          startDate: updatedDate,
+          endDate: updatedDate,
         },
       });
       setAllowSiteNameOptions(
@@ -390,9 +491,7 @@ function PatientStatusReport(props) {
                     })}
                     id={field.name}
                     className="inputText"
-                    onChange={(e, rawValue) => {
-                      setFieldValue(field.name, rawValue);
-                    }}
+                    onChange={handlePatientIdFrom}
                   />
                 )}
               </Field>
@@ -407,9 +506,7 @@ function PatientStatusReport(props) {
                     })}
                     id={field.name}
                     className="inputText"
-                    onChange={(e, rawValue) => {
-                      setFieldValue(field.name, rawValue);
-                    }}
+                    onChange={handlePatientIdTo}
                   />
                 )}
               </Field>
@@ -439,9 +536,7 @@ function PatientStatusReport(props) {
                     id={field.name}
                     className="inputText"
                     value={values[field.name]}
-                    onChange={(e, rawValue) => {
-                      setFieldValue(field.name, rawValue);
-                    }}
+                    onChange={handleLabNumber}
                   />
                 )}
               </Field>
@@ -456,6 +551,7 @@ function PatientStatusReport(props) {
                     })}
                     id={field.name}
                     className="inputText"
+                    onChange={handlePatientId}
                   />
                 )}
               </Field>
@@ -471,6 +567,7 @@ function PatientStatusReport(props) {
                     })}
                     id={field.name}
                     className="inputText"
+                    onChange={handleLastName}
                   />
                 )}
               </Field>
@@ -484,6 +581,7 @@ function PatientStatusReport(props) {
                     })}
                     id={field.name}
                     className="inputText"
+                    onChange={handleFirstName}
                   />
                 )}
               </Field>
@@ -523,6 +621,7 @@ function PatientStatusReport(props) {
                     })}
                     name={field.name}
                     id="search_patient_gender"
+                    onChange={handleGender}
                   >
                     <RadioButton
                       id="search-radio-1"
@@ -726,14 +825,17 @@ function PatientStatusReport(props) {
                 />
                 <div className="inlineDiv">
                   <Dropdown
-                    id="default"
+                    id="dateType"
+                    name="dateType"
                     titleText="Date Type"
-                    initialSelectedItem={itemList[0]}
-                    label="Option 1"
+                    initialSelectedItem={itemList.find(
+                      (item) => item.tag === items
+                    )}
+                    label="Date Type"
                     items={itemList}
                     itemToString={(item) => (item ? item.text : "")}
                     onChange={(selectedItem) => {
-                      setItems(selectedItem.tag);
+                      setItems(selectedItem.selectedItem.tag);
                     }}
                   />
                 </div>
