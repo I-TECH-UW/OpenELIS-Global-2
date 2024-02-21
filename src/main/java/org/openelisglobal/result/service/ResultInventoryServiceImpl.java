@@ -2,7 +2,7 @@ package org.openelisglobal.result.service;
 
 import java.util.List;
 
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.result.dao.ResultInventoryDAO;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.result.valueholder.ResultInventory;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ResultInventoryServiceImpl extends BaseObjectServiceImpl<ResultInventory, String>
+public class ResultInventoryServiceImpl extends AuditableBaseObjectServiceImpl<ResultInventory, String>
         implements ResultInventoryService {
     @Autowired
     protected ResultInventoryDAO baseObjectDAO;

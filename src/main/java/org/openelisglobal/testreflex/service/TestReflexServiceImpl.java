@@ -9,7 +9,7 @@ import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.service.TestServiceImpl;
@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.openelisglobal.testreflex.action.bean.ReflexRuleAction;
 
 @Service
-public class TestReflexServiceImpl extends BaseObjectServiceImpl<TestReflex, String> implements TestReflexService {
+public class TestReflexServiceImpl extends AuditableBaseObjectServiceImpl<TestReflex, String> implements TestReflexService {
     @Autowired
     protected TestReflexDAO baseObjectDAO;
     @Autowired

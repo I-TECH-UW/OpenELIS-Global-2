@@ -1,13 +1,13 @@
 package org.openelisglobal.inventory.service;
 
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.inventory.dao.InventoryLocationDAO;
 import org.openelisglobal.inventory.valueholder.InventoryLocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class InventoryLocationServiceImpl extends BaseObjectServiceImpl<InventoryLocation, String>
+public class InventoryLocationServiceImpl extends AuditableBaseObjectServiceImpl<InventoryLocation, String>
         implements InventoryLocationService {
     @Autowired
     protected InventoryLocationDAO baseObjectDAO;

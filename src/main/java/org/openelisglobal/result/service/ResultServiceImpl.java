@@ -13,7 +13,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -39,7 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @DependsOn({ "springContext" })
-public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> implements ResultService {
+public class ResultServiceImpl extends AuditableBaseObjectServiceImpl<Result, String> implements ResultService {
 
     private static String TABLE_REFERENCE_ID;
 

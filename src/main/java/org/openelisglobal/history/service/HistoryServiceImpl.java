@@ -8,13 +8,13 @@ import org.openelisglobal.audittrail.dao.HistoryDAO;
 import org.openelisglobal.audittrail.valueholder.History;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class HistoryServiceImpl extends BaseObjectServiceImpl<History, String> implements HistoryService {
+public class HistoryServiceImpl extends AuditableBaseObjectServiceImpl<History, String> implements HistoryService {
     @Autowired
     protected HistoryDAO baseObjectDAO;
 

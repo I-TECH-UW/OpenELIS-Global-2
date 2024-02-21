@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.dao.BaseDAO;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.notification.dao.TestNotificationConfigDAO;
 import org.openelisglobal.notification.valueholder.NotificationConfigOption;
 import org.openelisglobal.notification.valueholder.NotificationPayloadTemplate;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class TestNotificationConfigServiceImpl extends BaseObjectServiceImpl<TestNotificationConfig, Integer>
+public class TestNotificationConfigServiceImpl extends AuditableBaseObjectServiceImpl<TestNotificationConfig, Integer>
         implements TestNotificationConfigService {
 
     @Autowired

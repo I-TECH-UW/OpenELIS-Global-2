@@ -8,7 +8,7 @@ import java.util.Map;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.exception.LIMSFrozenRecordException;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.dictionary.dao.DictionaryDAO;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, String> implements DictionaryService {
+public class DictionaryServiceImpl extends AuditableBaseObjectServiceImpl<Dictionary, String> implements DictionaryService {
     @Autowired
     protected DictionaryDAO baseObjectDAO;
 

@@ -1,13 +1,13 @@
 package org.openelisglobal.program.service;
 
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.program.dao.ProgramSampleDAO;
 import org.openelisglobal.program.valueholder.ProgramSample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProgramSampleServiceImpl extends BaseObjectServiceImpl<ProgramSample, Integer>
+public class ProgramSampleServiceImpl extends AuditableBaseObjectServiceImpl<ProgramSample, Integer>
         implements ProgramSampleService {
     @Autowired
     protected ProgramSampleDAO baseObjectDAO;

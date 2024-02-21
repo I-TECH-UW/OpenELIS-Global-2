@@ -8,7 +8,7 @@ import javax.annotation.PostConstruct;
 
 import org.hibernate.Hibernate;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.util.LocaleChangeListener;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.localization.valueholder.Localization;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @DependsOn({ "springContext" })
-public class UnitOfMeasureServiceImpl extends BaseObjectServiceImpl<UnitOfMeasure, String>
+public class UnitOfMeasureServiceImpl extends AuditableBaseObjectServiceImpl<UnitOfMeasure, String>
         implements UnitOfMeasureService, LocaleChangeListener {
 
     private Map<String, String> unitOfMeasureIdToNameMap = null;

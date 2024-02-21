@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.reports.dao.DocumentTrackDAO;
 import org.openelisglobal.reports.valueholder.DocumentTrack;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class DocumentTrackServiceImpl extends BaseObjectServiceImpl<DocumentTrack, String>
+public class DocumentTrackServiceImpl extends AuditableBaseObjectServiceImpl<DocumentTrack, String>
         implements DocumentTrackService {
     @Autowired
     protected DocumentTrackDAO baseObjectDAO;

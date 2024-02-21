@@ -75,7 +75,7 @@ public class AppConfig implements WebMvcConfigurer {
     @Autowired
     CommonPageAttributesInterceptor pageAttributesInterceptor;
     @Autowired
-    RequestMappingHandlerMapping requestMappingHandlerMapping;
+    LocaleChangeInterceptor localeChangeInterceptor;
 
     @Bean
     public ViewResolver internalResourceViewResolver() {
@@ -84,32 +84,6 @@ public class AppConfig implements WebMvcConfigurer {
         viewResolver.setSuffix("");
         viewResolver.setContentType("text/html; charset=UTF-8");
         return viewResolver;
-    }
-
-    @Bean
-    public MessageSource messageSource() {
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("classpath:/languages/message");
-        messageSource.setDefaultEncoding("UTF-8");
-        messageSource.setUseCodeAsDefaultMessage(true);
-        MessageUtil.setMessageSource(messageSource);
-        return messageSource;
-    }
-
-    @Bean("localeResolver")
-    public LocaleResolver localeResolver() {
-        GlobalLocaleResolver localeResolver = new GlobalLocaleResolver();
-        String localeName = ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_LANG_LOCALE);
-        localeResolver.setDefaultLocale(Locale.forLanguageTag(localeName));
-        LocaleContextHolder.setDefaultLocale(Locale.forLanguageTag(localeName));
-        return localeResolver;
-    }
-
-    @Bean
-    public LocaleChangeInterceptor localeChangeInterceptor() {
-        LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
-        localeChangeInterceptor.setParamName("lang");
-        return localeChangeInterceptor;
     }
 
     @Bean(name = "filterMultipartResolver")
@@ -123,7 +97,7 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(localeChangeInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(localeChangeInterceptor).addPathPatterns("/**");
         registry.addInterceptor(moduleAuthenticationInterceptor).addPathPatterns("/**")
                 .excludePathPatterns(SecurityConfig.OPEN_PAGES)//
                 .excludePathPatterns(SecurityConfig.LOGIN_PAGES)//
