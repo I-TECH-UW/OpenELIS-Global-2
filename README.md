@@ -36,7 +36,7 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 
     Note : For Reflecting Local changes in the Running Containers ;
  * Any Changes to the [Front-end](./frontend/) React Source Code  will be directly Hot Reloaded in the UI
- * For changes to the [Backend](./src/) Java Source code  
+ * For changes to the [Back-end](./src/) Java Source code  
    - Run the maven build again  to re-build the War file
 
           mvn clean install -DskipTests
