@@ -34,6 +34,25 @@ import { getFromOpenElisServer } from "../utils/Utils";
 function OEHeader(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
   const { userSessionDetails, logout } = useContext(UserSessionDetailsContext);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+
+  const handleSearch = () => {
+    // Perform search logic here and simulating search results forexample
+    const results = [
+      { id: 1, name: 'Patient 1' },
+      { id: 2, name: 'Patient 2' },
+    ];
+    setSearchResults(results);
+    setShowSearchResults(true);
+  };
+
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    setShowSearchResults(false);
+    setSearchResults([]);
+  };
 
   const userSwitchRef = createRef();
   const headerPanelRef = createRef();
