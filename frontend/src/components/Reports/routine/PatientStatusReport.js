@@ -37,7 +37,6 @@ import CustomDatePicker from "../../common/CustomDatePicker";
 import AutoComplete from "../../common/AutoComplete";
 import { ConfigurationContext } from "../../layout/Layout";
 import { Formik, Field } from "formik";
-import SearchPatientFormValues from "../../formModel/innitialValues/SearchPatientFormValues";
 import PatientStatusReportFormValues from "../../formModel/innitialValues/PatientStatusReportFormValues";
 import { NotificationContext } from "../../layout/Layout";
 import {
@@ -46,10 +45,10 @@ import {
 } from "../../common/CustomNotification";
 
 function PatientStatusReport(props) {
-  const [reportFormValues, setReportFormValues] = useState({
-    PatientStatusReportFormValues,
-  });
-  // const { reportFormValues, setReportFormValues, samples, error } = props;
+  const [reportFormValues, setReportFormValues] = useState(
+    PatientStatusReportFormValues
+  );
+  // const { reportFormValues, setReportFormValues, getSelectedPatient, samples, error } = props;
   const { configurationProperties } = useContext(ConfigurationContext);
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
@@ -82,17 +81,13 @@ function PatientStatusReport(props) {
   const [previousPage, setPreviousPage] = useState(null);
   const [pagination, setPagination] = useState(false);
   const [url, setUrl] = useState("");
-  //searchFromValues dependency need to be removed
-  const [searchFormValues, setSearchFormValues] = useState(
-    SearchPatientFormValues
-  );
   const [innitialized, setInnitialized] = useState(false);
   const [departments, setDepartments] = useState([]);
 
   const handleReportPrint = () => {
     let barcodesPdf =
       config.serverBaseUrl +
-      `/ReportPrint?report=patientCILNSP_vreduit&type=patient&accessionDirect=${reportFormValues.PatientStatusReportFormValues.form}&highAccessionDirect=${reportFormValues.PatientStatusReportFormValues.to}&dateOfBirthSearchValue=${reportFormValues.PatientStatusReportFormValues.dateOfBirth}&selPatient=${reportFormValues.PatientStatusReportFormValues.patientId}&referringSiteId=${reportFormValues.PatientStatusReportFormValues.referringSiteId}&referringSiteDepartmentId=${reportFormValues.PatientStatusReportFormValues.referringSiteName}&onlyResults=${result}&_onlyResults=${checkbox}&dateType=${items}&lowerDateRange=${reportFormValues.PatientStatusReportFormValues.startDate}&upperDateRange=${reportFormValues.PatientStatusReportFormValues.endDate}`;
+      `/ReportPrint?report=patientCILNSP_vreduit&type=patient&accessionDirect=${reportFormValues.form}&highAccessionDirect=${reportFormValues.to}&dateOfBirthSearchValue=${reportFormValues.dateOfBirth}&selPatient=${reportFormValues.selectedPatientId}&referringSiteId=${reportFormValues.referringSiteId}&referringSiteDepartmentId=${reportFormValues.referringSiteName}&onlyResults=${result}&_onlyResults=${checkbox}&dateType=${items}&lowerDateRange=${reportFormValues.startDate}&upperDateRange=${reportFormValues.endDate}`;
     window.open(barcodesPdf);
   };
 
@@ -139,101 +134,70 @@ function PatientStatusReport(props) {
   function handlePatientIdFrom(e) {
     setReportFormValues({
       ...reportFormValues,
-      PatientStatusReportFormValues: {
-        ...reportFormValues.PatientStatusReportFormValues,
-        form: e.target.value,
-      },
+      form: e.target.value,
     });
   }
 
   function handlePatientIdTo(e) {
     setReportFormValues({
       ...reportFormValues,
-      PatientStatusReportFormValues: {
-        ...reportFormValues.PatientStatusReportFormValues,
-        to: e.target.value,
-      },
+      to: e.target.value,
     });
   }
-  //
 
   function handleLabNumber(e) {
     setReportFormValues({
       ...reportFormValues,
-      PatientStatusReportFormValues: {
-        ...reportFormValues.PatientStatusReportFormValues,
-        labNumber: e.target.value,
-      },
+      labNumber: e.target.value,
     });
   }
   function handlePatientId(e) {
     setReportFormValues({
       ...reportFormValues,
-      PatientStatusReportFormValues: {
-        ...reportFormValues.PatientStatusReportFormValues,
-        patientId: e.target.value,
-      },
+      patientId: e.target.value,
     });
   }
 
   function handleLastName(e) {
     setReportFormValues({
       ...reportFormValues,
-      PatientStatusReportFormValues: {
-        ...reportFormValues.PatientStatusReportFormValues,
-        lastName: e.target.value,
-      },
+      lastName: e.target.value,
     });
   }
 
   function handleFirstName(e) {
     setReportFormValues({
       ...reportFormValues,
-      PatientStatusReportFormValues: {
-        ...reportFormValues.PatientStatusReportFormValues,
-        firstName: e.target.value,
-      },
+      firstName: e.target.value,
     });
   }
 
-  function handleGender(selectedValue) {
+  function handleGender(e) {
     setReportFormValues({
       ...reportFormValues,
-      PatientStatusReportFormValues: {
-        ...reportFormValues.PatientStatusReportFormValues,
-        gender: selectedValue,
-      },
+      gender: e,
     });
   }
 
   function handleSiteName(e) {
     setReportFormValues({
       ...reportFormValues,
-      PatientStatusReportFormValues: {
-        ...reportFormValues.PatientStatusReportFormValues,
-        referringSiteName: e.target.value,
-      },
+      referringSiteName: e.target.value,
     });
   }
 
   function handleRequesterDept(e) {
     setReportFormValues({
       ...reportFormValues,
-      PatientStatusReportFormValues: {
-        ...reportFormValues.PatientStatusReportFormValues,
-        referringSiteDepartmentId: e.target.value,
-      },
+      referringSiteDepartmentId: e.target.value,
     });
   }
 
   function handleAutoCompleteSiteName(siteId) {
     setReportFormValues({
       ...reportFormValues,
-      PatientStatusReportFormValues: {
-        ...reportFormValues.PatientStatusReportFormValues,
-        referringSiteId: siteId,
-        referringSiteName: "",
-      },
+      referringSiteId: siteId,
+      referringSiteName: "",
     });
   }
   const loadDepartments = (data) => {
@@ -292,10 +256,7 @@ function PatientStatusReport(props) {
 
     setReportFormValues({
       ...reportFormValues,
-      PatientStatusReportFormValues: {
-        ...reportFormValues.PatientStatusReportFormValues,
-        dateOfBirth: updatedDate,
-      },
+      dateOfBirth: updatedDate,
     });
 
     setDob(e[1]);
@@ -307,13 +268,13 @@ function PatientStatusReport(props) {
     switch (datePicker) {
       case "startDate":
         obj = {
-          ...reportFormValues.PatientStatusReportFormValues,
+          ...reportFormValues,
           startDate: updatedDate,
         };
         break;
       case "endDate":
         obj = {
-          ...reportFormValues.PatientStatusReportFormValues,
+          ...reportFormValues,
           endDate: updatedDate,
         };
         break;
@@ -332,10 +293,7 @@ function PatientStatusReport(props) {
 
     setReportFormValues({
       ...reportFormValues,
-      PatientStatusReportFormValues: {
-        ...reportFormValues.PatientStatusReportFormValues,
-        patientId: patientSelected.patientID,
-      },
+      selectedPatientId: e.target.id,
     });
 
     const searchEndPoint =
@@ -362,10 +320,10 @@ function PatientStatusReport(props) {
   useEffect(() => {
     getFromOpenElisServer(
       "/rest/departments-for-site?refferingSiteId=" +
-        (reportFormValues.PatientStatusReportFormValues.referringSiteId || ""),
+        (reportFormValues.referringSiteId || ""),
       loadDepartments
     );
-  }, [reportFormValues.PatientStatusReportFormValues.referringSiteId]);
+  }, [reportFormValues.referringSiteId]);
 
   useEffect(() => {
     componentMounted.current = true;
@@ -382,34 +340,32 @@ function PatientStatusReport(props) {
     );
     if (patientId) {
       let searchValues = {
-        ...searchFormValues,
+        ...reportFormValues,
         patientId: patientId,
       };
-      setSearchFormValues(searchValues);
+      setReportFormValues(searchValues);
       handleSubmit(searchValues);
     }
-  }, []);
+  }, [reportFormValues]);
 
   useEffect(() => {
     if (!innitialized) {
       let updatedDate = encodeDate(configurationProperties.currentDateAsText);
       setReportFormValues({
         ...reportFormValues,
-        PatientStatusReportFormValues: {
-          ...reportFormValues.PatientStatusReportFormValues,
-          dateOfBirth: updatedDate,
-          startDate: updatedDate,
-          endDate: updatedDate,
-        },
+        dateOfBirth: updatedDate,
+        startDate: updatedDate,
+        endDate: updatedDate,
       });
-      // setAllowSiteNameOptions(
-      //   configurationProperties.restrictFreeTextRefSiteEntry
-      // );
     }
-    if (reportFormValues.PatientStatusReportFormValues.dateOfBirth != "") {
+    if (reportFormValues.dateOfBirth != "") {
       setInnitialized(true);
     }
-  }, [reportFormValues]);
+  }, [
+    reportFormValues,
+    innitialized,
+    configurationProperties.currentDateAsText,
+  ]);
 
   return (
     <>
@@ -426,7 +382,7 @@ function PatientStatusReport(props) {
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading />}
       <Formik
-        initialValues={searchFormValues}
+        initialValues={reportFormValues}
         enableReinitialize={true}
         // validationSchema={}
         onSubmit={handleSubmit}
@@ -763,12 +719,9 @@ function PatientStatusReport(props) {
                   )
                 }
                 value={
-                  reportFormValues.PatientStatusReportFormValues
-                    .referringSiteId != ""
-                    ? reportFormValues.PatientStatusReportFormValues
-                        .referringSiteId
-                    : reportFormValues.PatientStatusReportFormValues
-                        .referringSiteName
+                  reportFormValues.referringSiteId != ""
+                    ? reportFormValues.referringSiteId
+                    : reportFormValues.referringSiteName
                 }
                 onChange={handleSiteName}
                 onSelect={handleAutoCompleteSiteName}
@@ -852,9 +805,7 @@ function PatientStatusReport(props) {
                       defaultMessage: "Start Date",
                     })}
                     autofillDate={true}
-                    value={
-                      reportFormValues.PatientStatusReportFormValues.startDate
-                    }
+                    value={reportFormValues.startDate}
                     className="inputDate"
                     onChange={(date) =>
                       handleDatePickerChangeDate("startDate", date)
@@ -868,9 +819,7 @@ function PatientStatusReport(props) {
                     })}
                     className="inputDate"
                     autofillDate={true}
-                    value={
-                      reportFormValues.PatientStatusReportFormValues.endDate
-                    }
+                    value={reportFormValues.endDate}
                     onChange={(date) =>
                       handleDatePickerChangeDate("endDate", date)
                     }

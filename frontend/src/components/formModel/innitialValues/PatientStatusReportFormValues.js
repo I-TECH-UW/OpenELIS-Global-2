@@ -1,6 +1,7 @@
 const PatientStatusReportFormValues = {
   labNumber: "",
   patientId: "",
+  selectedPatientId: "",
   lastName: "",
   firstName: "",
   dateOfBirth: "",
