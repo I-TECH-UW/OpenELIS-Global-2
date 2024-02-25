@@ -5,7 +5,8 @@ import {
     Grid,
     Column,
   } from "@carbon/react";
-
+  import { useIntl } from "react-intl";
+  
   const GenericBreadCrumb = () => {
     const intl = useIntl();
 
