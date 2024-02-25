@@ -327,7 +327,7 @@ const Validation = (props) => {
             </picture>
             <b>
               {" "}
-              <FormattedMessage id="validation.label.nonconform" />
+              <FormattedMessage id="banner.menu.resultvalidation" />
             </b>
           </Column>
           <Column lg={3}>
