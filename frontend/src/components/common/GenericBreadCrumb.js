@@ -6,9 +6,14 @@ import {
     Column,
   } from "@carbon/react";
   import { useIntl } from "react-intl";
-  
+
   const GenericBreadCrumb = () => {
     const intl = useIntl();
+
+    const items = [
+      { id: 1, label: intl.formatMessage({ id: "home.label" }), url: "/" },
+      { id: 2, label: intl.formatMessage({ id: "sidenav.label.reports.routine" }), url: '/routineReports' },
+    ];
 
     return(
       <>
