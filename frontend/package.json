@@ -50,7 +50,9 @@
     "start": "GENERATE_SOURCEMAP=false HTTPS=true react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "cy:run": "cypress run --headless --browser chrome",
+    "cy:open": "cypress open --browser chrome"
   },
   "eslintConfig": {
     "extends": [
