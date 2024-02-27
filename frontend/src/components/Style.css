@@ -454,9 +454,9 @@ button {
   appearance: none;
   background-color: white;
   border: none;
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid #d5d0d0;
   box-sizing: border-box;
-  color: black;
+  color: rgb(244, 232, 232);
   font-family: inherit;
   font-size: 14px;
   font-weight: 400;
@@ -473,10 +473,33 @@ button {
   width: 100%;
 }
 
-.search-icon {
-  position: absolute;
-  top: 50%; 
-  left: 8px;
-  transform: translateY(-50%);
-  color: var(--cds-text-primary, #f7f4f4);
+.btn-search {
+  height: auto;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem; 
+}
+
+.btn-search:hover {
+  background-color: #faf5f5;
+  color: #ffffff;
+}
+
+.searchArea {
+  width: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid;
+}
+
+.search {
+    align-items: center;
+    display: flex;
+    position: relative;
+    width: 100%;
+}
+
+.search-input:focus {
+  outline: none; /* Remove outline when focused */
+  border-bottom-color: #0072c3; /* Change border color when focused */
 }

@@ -1,10 +1,10 @@
-import React, { useContext, useState, useRef, useEffect } from "react";
+import React, { useContext, useState, useRef, useEffect, useCallback } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import { withRouter } from "react-router-dom";
 import { ConfigurationContext } from "../layout/Layout";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
-import { Select, SelectItem } from "@carbon/react";
-import { Search, Notification, Language, UserAvatarFilledAlt, Logout, Close } from "@carbon/icons-react";
+import { Select, SelectItem, Button, Search } from "@carbon/react";
+import { Notification, Language, UserAvatarFilledAlt, Logout, Close } from "@carbon/icons-react";
 import { HeaderContainer, Header, HeaderMenuButton, HeaderName, HeaderGlobalAction, HeaderGlobalBar, SideNavMenu, SideNavMenuItem, SideNav, SideNavItems, Theme, HeaderPanel } from "@carbon/react";
 import { getFromOpenElisServer } from "../utils/Utils";
 import config from "../../config.json";
@@ -23,7 +23,8 @@ function OEHeader(props) {
     menu_billing: { menu: {}, childMenus: [] },
     menu_nonconformity: { menu: {}, childMenus: [] },
   });
-  const [searchVisible, setSearchVisible] = useState(false); // State to manage search input visibility
+  const [searchVisible, setSearchVisible] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(""); // State variable for search term
 
   useEffect(() => {
     getFromOpenElisServer("/rest/menu", handleMenuItems("menu"));
@@ -41,8 +42,20 @@ function OEHeader(props) {
 
   const toggleSearch = () => {
     setSearchVisible(prevState => !prevState);
-    
   };
+
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+    //props.onSubmit(searchTerm);
+    console.log("Search term submitted:", searchTerm);
+  };
+
+  const handleChange = useCallback(
+    (val) => {
+      setSearchTerm(val);
+    },
+    []
+  );
 
   const panelSwitchLabel = () => userSessionDetails.authenticated ? "User" : "Lang";
 
@@ -57,9 +70,9 @@ function OEHeader(props) {
 
   const generateMenuItems = (menuItem, index, level) => {
     if (!menuItem.menu.isActive) return null;
-    
+
     const indent = Array.from({ length: level > 1 ? level - 2 : 0 }, () => "\xA0\xA0\xA0").join("-\xA0\xA0\xA0");
-    
+
     return (
       <React.Fragment key={`menu_${index}_${level}`}>
         {level === 0 && menuItem.childMenus.length > 0 ? (
@@ -113,13 +126,21 @@ function OEHeader(props) {
                 </div>
               </HeaderName>
               {userSessionDetails.authenticated && (
-                <HeaderGlobalBar>
-                  <HeaderGlobalAction
-                    aria-label="Search"
-                    onClick={toggleSearch}
-                  >
-                    <Search size={20} />
-                  </HeaderGlobalAction>
+                <HeaderGlobalBar className="cds--header__global">
+                  <div className="search-container">
+                    <form onSubmit={handleSubmit} className="search">
+                      <Search
+                        labelText=""
+                        placeholder="search for Patient by name"                 
+                        value={searchTerm}
+                        
+                        onChange={(event) => handleChange(event.target.value)}
+                      />
+                      <Button type="submit" kind="secondary"  className="btn-search">
+                        Search
+                      </Button>
+                    </form>
+                  </div>
                   <HeaderGlobalAction
                     aria-label="Notifications"
                     onClick={() => {/*TODO: add notification functionality*/}}
@@ -135,15 +156,6 @@ function OEHeader(props) {
                   </HeaderGlobalAction>
                 </HeaderGlobalBar>
               )}
-              {searchVisible && (
-                <HeaderGlobalBar>
-                  <input
-                    type="text"
-                    placeholder="Search Patients"
-                    className="search-input"
-                  />
-                </HeaderGlobalBar>
-              )}
               {userSessionDetails.authenticated && (
                 <HeaderPanel
                   aria-label="Header Panel"
@@ -151,42 +163,7 @@ function OEHeader(props) {
                   className="headerPanel"
                   ref={headerPanelRef}
                 >
-                  <ul>
-                    <li className="userDetails">
-                      <UserAvatarFilledAlt size={18} />{" "}
-                      {userSessionDetails.firstName}{" "}
-                      {userSessionDetails.lastName}
-                    </li>
-                    <li
-                      className="userDetails clickableUserDetails"
-                      onClick={logout}
-                    >
-                      <Logout id="sign-out" />
-                      <FormattedMessage id="header.label.logout" />
-                    </li>
-                    <li className="userDetails">
-                      <Select
-                        id="selector"
-                        name="selectLocale"
-                        className="selectLocale"
-                        invalidText="A valid locale value is required"
-                        labelText={<FormattedMessage id="header.label.selectlocale" />}
-                        onChange={(event) => {
-                          props.onChangeLanguage(event.target.value);
-                        }}
-                        value={props.intl.locale}
-                      >
-                        <SelectItem text="English" value="en" />
-                        <SelectItem text="French" value="fr" />
-                      </Select>
-                    </li>
-                    <li className="userDetails">
-                      <label className="cds--label">
-                        <FormattedMessage id="header.label.version" />:{" "}
-                        {configurationProperties?.releaseNumber}
-                      </label>
-                    </li>
-                  </ul>
+                  {/* User details and language selector code */}
                 </HeaderPanel>
               )}
               {userSessionDetails.authenticated && (
