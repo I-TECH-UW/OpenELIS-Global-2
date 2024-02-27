@@ -7,6 +7,7 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 
 [![Publish Docker Image Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish.yml)
 
+
 ### Running OpenELIS in Docker
 #### Running docker compose With pre-released docker images
     docker-compose up -d
@@ -16,22 +17,24 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 
 #### Running docker compose With locally compiled/built Artifacts (ie the War file and React code) For Developers
 1. Clone the Repository
-
+       
          git clone https://github.com/I-TECH-UW/OpenELIS-Global-2.git 
+         NOTE: To  be able to build dataexport separatelyhttps://github.com/I-TECH-UW/dataexport and  ensure you are running on java 
 
 2. innitialize and build sub modules
 
-        git submodule update --init --recursive
         cd OpenELIS-Global-2/dataexport
+        git submodule update --init --recursive
         mvn clean install -DskipTests
 
 3.   Build the War file
 
-            cd OpenELIS-Global-2
+            Change directory(cd) .. since you are  already in OpenELIS-Global-2/dataexport
+
             mvn clean install -DskipTests
 
 4. Start the containers to mount the locally compiled artifacts
-
+     
         docker-compose -f dev.docker-compose.yml up -d    
 
     Note : For Reflecting Local changes in the Running Containers ;
