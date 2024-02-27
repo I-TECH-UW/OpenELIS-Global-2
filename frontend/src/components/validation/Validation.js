@@ -334,7 +334,7 @@ const Validation = (props) => {
             <Checkbox
               id={"saveallnormal"}
               name={"autochecks"}
-              labelText="Savel All normal"
+              labelText={intl.formatMessage({ id: "validation.accept.normal" })}
               onChange={(e) => {
                 const nomalResults = props.results.resultList?.filter(
                   (result) => result.normal == true,
@@ -353,7 +353,7 @@ const Validation = (props) => {
             <Checkbox
               id={"saveallresults"}
               name={"autochecks"}
-              labelText="Savel All Results"
+              labelText={intl.formatMessage({ id: "validation.accept.all" })}
               onChange={(e) => {
                 const nomalResults = props.results.resultList;
                 nomalResults.forEach((result) => {
@@ -370,7 +370,7 @@ const Validation = (props) => {
             <Checkbox
               id={"retestalltests"}
               name={"autochecks"}
-              labelText="Retest All Tests"
+              labelText={intl.formatMessage({ id: "validation.reject.all" })}
               onChange={(e) => {
                 const nomalResults = props.results.resultList;
                 nomalResults.forEach((result) => {
