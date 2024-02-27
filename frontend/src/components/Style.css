@@ -454,23 +454,22 @@ button {
   appearance: none;
   background-color: white;
   border: none;
-  border-bottom: 1px solid var(--cds-border-strong);
+  border-bottom: 1px solid #000;
   box-sizing: border-box;
-  color: black; /* Set text color to black */
+  color: black;
   font-family: inherit;
-  font-size: 100%;
-  font-size: var(--cds-body-compact-01-font-size, .875rem);
-  font-weight: var(--cds-body-compact-01-font-weight, 400);
-  letter-spacing: var(--cds-body-compact-01-letter-spacing, .16px);
-  line-height: var(--cds-body-compact-01-line-height, 1.28572);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.16px;
+  line-height: 1.28572;
   margin: 0;
   order: 1;
   outline: 2px solid transparent;
   outline-offset: -2px;
-  padding: 0 2.5rem; /* Add padding for search icon */
+  padding: 0 2.5rem;
   text-overflow: ellipsis;
-  transition: background-color .11s cubic-bezier(.2, 0, .38, .9), outline .11s cubic-bezier(.2, 0, .38, .9);
-  vertical-align: baseline;
+  transition: background-color 0.3s ease, outline 0.3s ease;
+  vertical-align: middle;
   width: 100%;
 }
 
