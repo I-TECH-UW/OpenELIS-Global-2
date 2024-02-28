@@ -503,3 +503,20 @@ button {
   outline: none; /* Remove outline when focused */
   border-bottom-color: #0072c3; /* Change border color when focused */
 }
+.overlay-container {
+  position: relative;
+}
+
+.patient-overlay {
+  position: absolute;
+  top: calc(100% + 10px); 
+  left: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 9999; /* Ensure the overlay is above other elements */
+  max-height: 200px; /* Limit the height if needed */
+  overflow-y: auto; /* Enable vertical scrolling if needed */
+}

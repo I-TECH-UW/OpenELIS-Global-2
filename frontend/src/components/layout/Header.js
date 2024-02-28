@@ -9,6 +9,47 @@ import { HeaderContainer, Header, HeaderMenuButton, HeaderName, HeaderGlobalActi
 import { getFromOpenElisServer } from "../utils/Utils";
 import config from "../../config.json";
 import "../Style.css";
+import { Modal } from "@carbon/react";
+
+function PatientOverlay({ searchTerm, onClose }) {
+  const [patients, setPatients] = useState([]);
+
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        /// for testing purposes, i will first use dammy patients
+        const dummyPatients = [
+          { id: 1, name: "Patient 1" },
+          { id: 2, name: "Patient 2" },
+          { id: 3, name: "Patient 3" },
+          { id: 4, name: "Patient 4" },
+        ];
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setPatients(dummyPatients);
+      } catch (error) {
+        console.error("Error fetching patients:", error);
+      }
+    };
+
+    if (searchTerm !== "") {
+      fetchPatients();
+    }
+  }, [searchTerm]);
+
+  return (
+    <Modal
+      open={searchTerm !== ""}
+      modalHeading="Patients"
+      onRequestClose={onClose}
+    >
+      <ul>
+        {patients.map((patient) => (
+          <li key={patient.id}>{patient.name}</li>
+        ))}
+      </ul>
+    </Modal>
+  );
+}
 
 function OEHeader(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
@@ -23,8 +64,8 @@ function OEHeader(props) {
     menu_billing: { menu: {}, childMenus: [] },
     menu_nonconformity: { menu: {}, childMenus: [] },
   });
-  const [searchVisible, setSearchVisible] = useState(false);
-  const [searchTerm, setSearchTerm] = useState(""); // State variable for search term
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showOverlay, setShowOverlay] = useState(false);
 
   useEffect(() => {
     getFromOpenElisServer("/rest/menu", handleMenuItems("menu"));
@@ -40,22 +81,17 @@ function OEHeader(props) {
     setSwitchCollapsed(prevState => !prevState);
   };
 
-  const toggleSearch = () => {
-    setSearchVisible(prevState => !prevState);
-  };
-
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    //props.onSubmit(searchTerm);
-    console.log("Search term submitted:", searchTerm);
+    const term = evt.target.searchTerm.value;
+    setSearchTerm(term);
+    setShowOverlay(true);
+    console.log("Search term submitted:", term);
   };
 
-  const handleChange = useCallback(
-    (val) => {
-      setSearchTerm(val);
-    },
-    []
-  );
+  const handleChange = useCallback((val) => {
+    setSearchTerm(val);
+  }, []);
 
   const panelSwitchLabel = () => userSessionDetails.authenticated ? "User" : "Lang";
 
@@ -102,7 +138,7 @@ function OEHeader(props) {
   };
 
   return (
-    <div className="container">
+    <div className="container overlay-container">
       <Theme>
         <HeaderContainer
           render={({ isSideNavExpanded, onClickSideNavExpand }) => (
@@ -128,18 +164,26 @@ function OEHeader(props) {
               {userSessionDetails.authenticated && (
                 <HeaderGlobalBar className="cds--header__global">
                   <div className="search-container">
-                    <form onSubmit={handleSubmit} className="search">
-                      <Search
-                        labelText=""
-                        placeholder="search for Patient by name"                 
-                        value={searchTerm}
-                        
-                        onChange={(event) => handleChange(event.target.value)}
+                  <form onSubmit={handleSubmit} className="search">
+                  <Search
+                    labelText=""
+                    placeholder="search for Patient by name"
+                    value={searchTerm}
+                    onChange={(event) => handleChange(event.target.value)}
+                    id="searchTerm"
+                  />
+                  <Button type="submit" kind="secondary" className="btn-search">
+                    Search
+                  </Button>
+                  {showOverlay && (
+                    <div className="patient-overlay">
+                      <PatientOverlay
+                        searchTerm={searchTerm}
+                        onClose={() => setShowOverlay(false)}
                       />
-                      <Button type="submit" kind="secondary"  className="btn-search">
-                        Search
-                      </Button>
-                    </form>
+                    </div>
+                  )}
+                </form>
                   </div>
                   <HeaderGlobalAction
                     aria-label="Notifications"
