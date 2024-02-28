@@ -589,7 +589,7 @@
     "title.notestfoundmatching":"No test Found Matching",
     "label.refertest.referencelab":"Refer test to a reference lab",
     "dashboard.avg.turn.around.subtitle.label":"Reception to Validation",
-    "label.seacrh.labno.family":"Search by LabNo or Family Name",
+    "label.search.labno.family":"Search by LabNo or Family Name",
     "label.filters.mycases":"My cases",
     "label.filters.status":"Status",
     "filters.label" :"Filters",
@@ -683,5 +683,9 @@
     "sidenav.label.results.testdate" : "By Test Date" ,
     "sidenav.label.results.byrange" : "By Range of Order numbers",
     "label.test.results" : "Test Results",
-    "label.test.resultsData" : "Test results data"
+    "label.test.resultsData" : "Test results data",
+    "result.outOfValidRange.msg" : "The value you entered (red field) is outside the range of allowable values for that record. Please check the value",
+    "validation.accept.normal" : "Save All Normal",
+    "validation.accept.all":"Save All Results",
+    "validation.reject.all":"Retest All Tests"
 }

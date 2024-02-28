@@ -314,15 +314,21 @@ function ImmunohistochemistryDashboard() {
               onChange={(e) =>
                 setFilters({ ...filters, searchTerm: e.target.value })
               }
-              placeholder="Search by LabNo or Family Name"
-              labelText="Search by LabNo or Family Name"
+              placeholder={intl.formatMessage({
+                id: "label.search.labno.family",
+              })}
+              labelText={intl.formatMessage({
+                id: "label.search.labno.family",
+              })}
             />
           </Column>
           <Column lg={8} md={4} sm={2}>
             <div className="inlineDivBlock">
               <div>Filters:</div>
               <Checkbox
-                labelText="My cases"
+                labelText={intl.formatMessage({
+                  id: "label.filters.mycases",
+                })}
                 id="filterMyCases"
                 value={filters.myCases}
                 onChange={(e) =>
@@ -332,7 +338,9 @@ function ImmunohistochemistryDashboard() {
               <Select
                 id="statusFilter"
                 name="statusFilter"
-                labelText="Status"
+                labelText={intl.formatMessage({
+                  id: "label.filters.status",
+                })}
                 value={
                   filters.statuses.length > 1 ? "All" : filters.statuses[0].id
                 }
