@@ -6,17 +6,50 @@ import {
     Column,
   } from "@carbon/react";
   import { useIntl } from "react-intl";
+  import { Link, useLocation } from 'react-router-dom';
 
-  const GenericBreadCrumb = () => {
+  const GenericHomeBreadCrumb = () => {
     const intl = useIntl();
 
-    const items = [
-      { id: 1, label: intl.formatMessage({ id: "home.label" }), url: "/" },
-      { id: 2, label: intl.formatMessage({ id: "sidenav.label.reports.routine" }), url: '/routineReports' },
-    ];
+    
+const Breadcrumbs = ({ title, breadcrumbs }) => {
+  return (
+    <Grid fullWidth={true}>
+    <Column lg={16}>
+      <Breadcrumb>
+        <BreadcrumbItem href="/">
+
+        {breadcrumbs.map((crumb, index) => (
+        <span key={index}>
+          {index < breadcrumbs.length - 1 ? (
+            <Link to={crumb.link}>{crumb.label}</Link>
+          ) : (
+            <span>{crumb.label}</span>
+          )}
+          {index < breadcrumbs.length - 1 && '>'}
+        </span>
+      ))}
+
+        </BreadcrumbItem>
+      </Breadcrumb>
+    </Column>
+   </Grid>
+  );
+};
+
+const breadcrumbData = [
+  { path: '/', title: intl.formatMessage({ id: "home.label" }) },
+  { path: '/ResultValidation', title: intl.formatMessage({ id: "sidenav.label.validation" }) }
+];
+
+const location = useLocation();
+const currentPath = location.pathname;
+const currentData = breadcrumbData[currentPath];
+
 
     return(
       <>
+      {currentData && <Breadcrumbs {...currentData} />}
        <Grid fullWidth={true}>
         <Column lg={16}>
           <Breadcrumb>
@@ -30,4 +63,4 @@ import {
     );
   };
 
-  export default GenericBreadCrumb;
+  export default GenericHomeBreadCrumb;
