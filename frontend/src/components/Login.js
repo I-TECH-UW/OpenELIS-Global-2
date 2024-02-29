@@ -82,9 +82,9 @@ function Login(props) {
       body: qs.stringify(data),
     })
       .then(async (response) => {
+        setSubmitting(false);
         // get json response here
         let data = await response.json();
-        setSubmitting(false);
         if (response.status === 200) {
           window.location.href = "/";
         } else {
@@ -102,17 +102,30 @@ function Login(props) {
       })
       .catch((error) => {
         setSubmitting(false);
-        addNotification({
-          title: props.intl.formatMessage({
-            id: "notification.title",
-          }),
-          message: props.intl.formatMessage({
-            id: "notification.login.generic.error",
-          }),
-          kind: NotificationKinds.error,
-        });
-        setNotificationVisible(true);
         console.error(error);
+        if (error instanceof SyntaxError) {
+          addNotification({
+            title: props.intl.formatMessage({
+              id: "notification.title",
+            }),
+            message: props.intl.formatMessage({
+              id: "notification.login.syntax.error",
+            }),
+            kind: NotificationKinds.error,
+          });
+          setNotificationVisible(true);
+        } else {
+          addNotification({
+            title: props.intl.formatMessage({
+              id: "notification.title",
+            }),
+            message: props.intl.formatMessage({
+              id: "notification.login.generic.error",
+            }),
+            kind: NotificationKinds.error,
+          });
+          setNotificationVisible(true);
+        }
       });
   };
 

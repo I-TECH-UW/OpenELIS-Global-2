@@ -58,7 +58,7 @@ function ProgramManagement() {
     } else {
       setLoading(true);
       getFromOpenElisServer(
-        "/program/" + event.target.value,
+        "/rest/program/" + event.target.value,
         setAdditionalQuestions,
       );
     }
@@ -142,7 +142,7 @@ function ProgramManagement() {
       delete submitValues["additionalOrderEntryQuestions"];
     }
     postToOpenElisServerFullResponse(
-      "/program",
+      "/rest/program",
       JSON.stringify(submitValues),
       displayStatus,
     );

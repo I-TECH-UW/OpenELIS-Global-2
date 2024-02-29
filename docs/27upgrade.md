@@ -1,3 +1,103 @@
+# FHIR BLOBs
+
+Hapi-fhir-jpaserver is used alongside OpenELIS to provide FHIR support. Older versions of the project made extensive use of the Postgres BLOB data type. This data type cannot be handled in the same way as "normal" Postgres data types. Because of this, upgrading a large DB with many BLOBs takes a long time, is very memory intensive, and is prone to failing if enough memory isn't available. Due to these reasons, it is recommended to upgrade your hapi-fhir-jpaserver to at least 6.6.0 before upgrading your DB, so you can run the reindex command which moves all resources (smaller than a configurable limit) into the normal table structure.
+
+## Instructions for updating FHIR BLOBs
+
+1.  Stop the existing containers besides the database
+
+    1.  sudo docker stop openelisglobal-webapp autoheal-oe external-fhir-api
+
+1.  Collect metrics around the data to see what you're working with
+
+    1.  sudo docker exec -it openelisglobal-database psql -Uclinlims
+
+    1.  SELECT COUNT(*) FROM clinlims.hfj_res_ver;
+
+    1.  SELECT pg_table_size('pg_largeobject');
+
+1.  Run the script for upgrading hapi-fhir-jpaserver data structure in the database
+
+    1.  wget https://github.com/hapifhir/hapi-fhir/releases/download/v6.2.0/hapi-fhir-6.2.0-cli.tar.bz2
+
+    1.  bzip2 -d hapi-fhir-6.2.0-cli.tar.bz2
+
+    1.  tar xf hapi-fhir-6.2.0-cli.tar
+
+    1.  ./hapi-fhir-cli migrate-database -d POSTGRES_9_4 -u "jdbc:postgresql://localhost:15432/clinlims currentSchema=clinlims" -n "clinlims" --no-column-shrink -p <password>
+
+1.  Collect metrics around the data to see that data loss has not occurred
+
+    1.  sudo docker exec -it openelisglobal-database psql -Uclinlims
+
+    1.  SELECT COUNT(*) FROM clinlims.hfj_res_ver;
+
+    1.  SELECT pg_table_size('pg_largeobject');
+
+1.  Run 2.7 OE installer 
+
+    1.  wget <online-path-to-2.7-installer>
+
+    1.  tar -xzf <installer-tar.gz>
+
+    1.  cd <installer-dir>
+
+    1.  sudo python3 OpenELIS.py
+
+    1.  No to logical db backup, docker cleans, and backup script
+
+1.  Modify the docker-compose.yml
+
+    1.  Change db container image from 14.4 to 9.5
+
+1.  Start the containers. From this point until the db migration is started, these commands can be run in the background while normal use of the application(s) goes ahead
+
+    1.  sudo docker-compose up -d
+
+1.  Create files to submit to the updated FHIR store to trigger a reindex of the various data types from BLOBs to regular column data. Resource types that are commonly used, leading to the bulk of the BLOBs are: Task, Patient, ServiceRequest, DiagnosticReport, Observation, Specimen, Practitioner, Organization, Location, QuestionnaireResponse
+
+```
+{
+  "resourceType": "Parameters",
+  "parameter": [ {
+    "name": "url",
+    "valueString": "<ResourceType>?"
+  }, {
+    "name": "optimizeStorage",
+    "valueString": "ALL_VERSIONS"
+  } ]
+}
+```
+
+1.  Send each optimize request as a POST request to the FHIR server
+
+    1.  sudo curl -X POST -H "Content-Type: application/json" -d '@task-optimize.json' --cert /etc/openelis-global/cert.pem --key /etc/openelis-global/key.pem  -k 'https://localhost:8444/fhir/$reindex'
+
+1.  Wait for the reindexes to succeed (checking the logs of the FHIR container should give some indication that they are running or not)
+
+1.  Run the vacuum lob command to clean up the database (first run is a test)
+
+    1.  sudo docker exec -it openelisglobal-database vacuumlo -Uclinlims --dry-run
+
+    1.  sudo docker exec -it openelisglobal-database vacuumlo -Uclinlims 
+
+1.  Collect metrics around the data to see that data loss has not occurred. The pg_largeobject should be MUCH smaller, but hfj_res_ver should be similar to before.
+
+    1.  sudo docker exec -it openelisglobal-database psql -Uclinlims
+
+    1.  SELECT COUNT(*) FROM clinlims.hfj_res_ver;
+
+    1.  SELECT pg_table_size('pg_largeobject');
+
+1.  Run the pg_upgrade as in the pg_upgrade section below
+
+1.  Collect metrics around the data to see that data loss has not occurred.
+
+    1.  sudo docker exec -it openelisglobal-database psql -Uclinlims
+
+    1.  SELECT COUNT(*) FROM clinlims.hfj_res_ver;
+
+    1.  SELECT pg_table_size('pg_largeobject');
 
 
 # **Migrate with pg_upgrade**
@@ -70,7 +170,7 @@ If you are running these commands on a remote server, it is recommended to use a
         b)     sudo docker run -it --rm -v /var/lib/openelis-global/db/:/var/lib/postgresql/  ctsteele/postgres-migration:9.5-14 --link
 
 
-    8.     replace old db with new db
+    6.     replace old db with new db
 
 
         a)     sudo mv /var/lib/openelis-global/data /var/lib/openelis-global/data2
@@ -79,7 +179,7 @@ If you are running these commands on a remote server, it is recommended to use a
         b)     sudo mv /var/lib/openelis-global/db/14/data /var/lib/openelis-global/data
 
 
-    9.  ensure file permissions and db access permissions are correct 
+    7.  ensure file permissions and db access permissions are correct 
     
 
         a)     sudo chown -R tomcat2:tomcat2 /var/lib/openelis-global/data
@@ -89,16 +189,16 @@ If you are running these commands on a remote server, it is recommended to use a
     
     
     
-    10.     run the setup script for the new version with updated db, ignoring db backup couldn’t occur step
+    8.     run the setup script for the new version with updated db, ignoring db backup couldn’t occur step
 
 
         a)     sudo python3 setup_OpenELIS.py
 
 
-    11.  ensure systems start up and that data is present
+    9.  ensure systems start up and that data is present
 
 
-    12.  optionally delete old db (or move to a secure backup server)
+    10.  optionally delete old db (or move to a secure backup server)
 
 
         a)     sudo rm /var/lib/openelis-global/db /var/lib/openelis-global/data2

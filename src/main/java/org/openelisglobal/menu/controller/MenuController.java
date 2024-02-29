@@ -32,7 +32,7 @@ public class MenuController {
         return findMenuItem(elementId, MenuUtil.getMenuTree());
     }
 
-    @PostMapping("/rest/menu/")
+    @PostMapping("/rest/menu")
     public List<MenuItem> postMenuTree(@RequestBody List<MenuItem> menuItems) {
         return menuService.save(menuItems);
     }

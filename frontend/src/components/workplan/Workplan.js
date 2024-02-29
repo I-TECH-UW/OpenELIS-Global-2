@@ -44,21 +44,32 @@ export default function Workplan(props) {
 
   const type = props.type;
   let title = "";
+  let sourceTitle = "";
   switch (type) {
-    case "test":
+    case "test": {
       title = <FormattedMessage id="workplan.test.title" />;
+      sourceTitle = "WorkPlanByTest";
       break;
-    case "panel":
+    }
+    case "panel": {
       title = <FormattedMessage id="workplan.panel.title" />;
+      sourceTitle = "WorkPlanByPanel";
       break;
-    case "unit":
+    }
+    case "unit": {
       title = <FormattedMessage id="workplan.unit.title" />;
+      sourceTitle = "WorkPlanByTestSection";
       break;
-    case "priority":
+    }
+    case "priority": {
       title = <FormattedMessage id="workplan.priority.title" />;
+      sourceTitle = "WorkPlanByPriority";
       break;
-    default:
+    }
+    default: {
       title = "";
+      sourceTitle = "";
+    }
   }
 
   useEffect(() => {
@@ -304,7 +315,7 @@ export default function Workplan(props) {
                                   <Link
                                     style={{ color: "blue" }}
                                     href={
-                                      "/result?type=order&doRange=false&accessionNumber=" +
+                                      `/result?type=order&doRange=false&source=${sourceTitle}&accessionNumber=` +
                                       row.accessionNumber
                                     }
                                   >

@@ -54,6 +54,14 @@ export function SearchResultForm(props) {
   const [searchBy, setSearchBy] = useState({ type: "", doRange: false });
   const [patient, setPatient] = useState({ patientPK: "" });
   const [testSections, setTestSections] = useState([]);
+  const [defaultTestSectionId, setDefaultTestSectionId] = useState("");
+  const [defaultTestSectionLabel, setDefaultTestSectionLabel] = useState("");
+  const [defaultTestId, setDefaultTestId] = useState("");
+  const [defaultTestLabel, setDefaultTestLabel] = useState("");
+  const [defaultSampleStatusId, setDefaultSampleStatusId] = useState("");
+  const [defaultSampleStatusLabel, setDefaultSampleStatusLabel] = useState("");
+  const [defaultAnalysisStatusId, setDefaultAnalysisStatusId] = useState("");
+  const [defaultAnalysisStatusLabel, setDefaultAnalysisStatusLabel] = useState("");
   const [searchFormValues, setSearchFormValues] = useState(
     SearchResultFormValues,
   );
@@ -91,7 +99,7 @@ export function SearchResultForm(props) {
       props.setResults?.({ testResult: [] });
       addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "result.search.nopatient" }),
+        message: intl.formatMessage({ id: "patient.search.nopatient" }),
         kind: NotificationKinds.warning,
       });
       setNotificationVisible(true);
@@ -202,13 +210,58 @@ export function SearchResultForm(props) {
 
   useEffect(() => {
     componentMounted.current = true;
-    getFromOpenElisServer("/rest/test-list", getTests);
-    getFromOpenElisServer(
-      "/rest/analysis-status-types",
-      getAnalysisStatusTypes,
+    let testId = new URLSearchParams(window.location.search).get(
+      "selectedTest"
     );
-    getFromOpenElisServer("/rest/sample-status-types", getSampleStatusTypes);
-    getFromOpenElisServer("/rest/user-test-sections", fetchTestSections);
+    testId = testId ? testId : "";
+    getFromOpenElisServer("/rest/test-list", (fetchedTests) => {
+      let test = fetchedTests.find(test => test.id === testId);
+      let testLabel = test ? test.value : "";
+      setDefaultTestId(testId);
+      setDefaultTestLabel(testLabel);
+      getTests(fetchedTests);
+    })
+
+    let sampleStatusId = new URLSearchParams(window.location.search).get(
+      "selectedSampleStatus"
+    );
+    sampleStatusId = sampleStatusId ? sampleStatusId : "";
+    getFromOpenElisServer("/rest/sample-status-types", (fetchedSampleStatusTypes) => {
+      let sampleStatus = fetchedSampleStatusTypes.find(sampleStatus => sampleStatus.id === sampleStatusId);
+      let sampleStatusLabel = sampleStatus ? sampleStatus.value : "";
+      setDefaultSampleStatusId(sampleStatusId);
+      setDefaultSampleStatusLabel(sampleStatusLabel);
+      getSampleStatusTypes(fetchedSampleStatusTypes);
+    })
+
+    let analysisStatusId = new URLSearchParams(window.location.search).get(
+      "selectedAnalysisStatus"
+    );
+    analysisStatusId = analysisStatusId ? analysisStatusId : "";
+    getFromOpenElisServer("/rest/analysis-status-types", (fetchedAnalysisStatusTypes) => {
+      let analysisStatus = fetchedAnalysisStatusTypes.find(analysisStatus => analysisStatus.id === analysisStatusId);
+      let analysisStatusLabel = analysisStatus ? analysisStatus.value : "";
+      setDefaultAnalysisStatusId(analysisStatusId);
+      setDefaultAnalysisStatusLabel(analysisStatusLabel);
+      getAnalysisStatusTypes(fetchedAnalysisStatusTypes);
+    })
+
+    let testSectionId = new URLSearchParams(window.location.search).get(
+      "testSectionId"
+    );
+    testSectionId = testSectionId ? testSectionId : "";
+    getFromOpenElisServer("/rest/user-test-sections", (fetchedTestSections) => {
+      let testSection = fetchedTestSections.find(testSection => testSection.id === testSectionId);
+      let testSectionLabel = testSection ? testSection.value : "";
+      setDefaultTestSectionId(testSectionId);
+      setDefaultTestSectionLabel(testSectionLabel);
+      fetchTestSections(fetchedTestSections);
+    })
+    if(testSectionId){
+      let values = { unitType: testSectionId };
+      querySearch(values);
+    }
+
     let displayFormType = new URLSearchParams(window.location.search).get(
       "type",
     );
@@ -227,6 +280,34 @@ export function SearchResultForm(props) {
       let searchValues = {
         ...searchFormValues,
         accessionNumber: accessionNumber,
+      };
+      setSearchFormValues(searchValues);
+      querySearch(searchValues);
+    }
+    let collectionDate = new URLSearchParams(window.location.search).get(
+      "collectionDate",
+    )
+    let recievedDate = new URLSearchParams(window.location.search).get(
+      "recievedDate",
+    )
+    let selectedTest = new URLSearchParams(window.location.search).get(
+      "selectedTest",
+    )
+    let selectedSampleStatus = new URLSearchParams(window.location.search).get(
+      "selectedSampleStatus",
+    )
+    let selectedAnalysisStatus = new URLSearchParams(window.location.search).get(
+      "selectedAnalysisStatus",
+    )
+    
+    if(collectionDate || recievedDate || selectedTest || selectedSampleStatus || selectedAnalysisStatus){
+      let searchValues = {
+        ...searchFormValues,
+        collectionDate: collectionDate ?  collectionDate : "",
+        recievedDate: recievedDate ?  recievedDate : "",
+        testName: selectedTest ? selectedTest : "",
+        sampleStatusType: selectedSampleStatus ? selectedSampleStatus : "",
+        analysisStatus: selectedAnalysisStatus ? selectedAnalysisStatus : "",  
       };
       setSearchFormValues(searchValues);
       querySearch(searchValues);
@@ -301,6 +382,7 @@ export function SearchResultForm(props) {
                             placeholder={"Enter LabNo"}
                             name={field.name}
                             id={field.name}
+                            defaultValue={values["accessionNumber"]}
                             labelText={
                               <FormattedMessage id="search.label.fromaccession" />
                             }
@@ -329,30 +411,54 @@ export function SearchResultForm(props) {
                 {searchBy.type === "date" && (
                   <>
                     <Column lg={3}>
-                      <Field name="collectionDate">
-                        {({ field }) => (
-                          <TextInput
-                            placeholder={"Collection Date(dd/mm/yyyy)"}
-                            name={field.name}
+                    <Field name="collectionDate">
+                        {({ field, form }) => (
+                          <DatePicker
                             id={field.name}
-                            labelText={
-                              <FormattedMessage id="search.label.collectiondate" />
+                            name={field.name}
+                            datePickerType="single"
+                            dateFormat="d/m/Y"
+                            value={values[field.name]}
+                            onChange={(date) =>
+                              form.setFieldValue(
+                                field.name,
+                                new Date(date).toLocaleDateString("fr-FR")
+                              )
                             }
-                          />
+                          >
+                            <DatePickerInput
+                              labelText={
+                                <FormattedMessage id="search.label.collectiondate" />
+                              }
+                              placeholder="dd/mm/yyyy"
+                            />
+                          </DatePicker>
                         )}
                       </Field>
                     </Column>
                     <Column lg={3}>
-                      <Field name="recievedDate">
-                        {({ field }) => (
-                          <TextInput
-                            placeholder={"Received Date(dd/mm/yyyy)"}
-                            name={field.name}
+                    <Field name="recievedDate">
+                        {({ field, form }) => (
+                          <DatePicker
                             id={field.name}
-                            labelText={
-                              <FormattedMessage id="search.label.recieveddate" />
+                            name={field.name}
+                            datePickerType="single"
+                            dateFormat="d/m/Y"
+                            value={values[field.name]}
+                            onChange={(date) =>
+                              form.setFieldValue(
+                                field.name,
+                                new Date(date).toLocaleDateString("fr-FR")
+                              )
                             }
-                          />
+                          >
+                            <DatePickerInput
+                              labelText={
+                                <FormattedMessage id="search.label.recieveddate" />
+                              }
+                              placeholder="dd/mm/yyyy"
+                            />
+                          </DatePicker>
                         )}
                       </Field>
                     </Column>
@@ -366,8 +472,10 @@ export function SearchResultForm(props) {
                             name={field.name}
                             id={field.name}
                           >
-                            <SelectItem text="" value="" />
-                            {tests.map((test, index) => {
+                            <SelectItem text={defaultTestLabel} value={defaultTestId} />
+                            {tests
+                              .filter(item => item.id !== defaultTestId)
+                              .map((test, index) => {
                               return (
                                 <SelectItem
                                   key={index}
@@ -390,8 +498,10 @@ export function SearchResultForm(props) {
                             name={field.name}
                             id={field.name}
                           >
-                            <SelectItem text="" value="" />
-                            {analysisStatusTypes.map((test, index) => {
+                            <SelectItem text={defaultAnalysisStatusLabel} value={defaultAnalysisStatusId} />
+                            {analysisStatusTypes
+                              .filter(item => item.id !== defaultAnalysisStatusId)
+                              .map((test, index) => {
                               return (
                                 <SelectItem
                                   key={index}
@@ -414,8 +524,10 @@ export function SearchResultForm(props) {
                             name={field.name}
                             id={field.name}
                           >
-                            <SelectItem text="" value="" />
-                            {sampleStatusTypes.map((test, index) => {
+                            <SelectItem text={defaultSampleStatusLabel} value={defaultSampleStatusId} />
+                            {sampleStatusTypes
+                              .filter(item => item.id !== defaultSampleStatusId)
+                              .map((test, index) => {
                               return (
                                 <SelectItem
                                   key={index}
@@ -464,8 +576,10 @@ export function SearchResultForm(props) {
                 id="unitType"
                 onChange={submitOnSelect}
               >
-                <SelectItem text="" value="" />
-                {testSections.map((test, index) => {
+                <SelectItem text={defaultTestSectionLabel} value={defaultTestSectionId} />
+                {testSections
+                  .filter(item => item.id !== defaultTestSectionId)
+                  .map((test, index) => {
                   return (
                     <SelectItem key={index} text={test.value} value={test.id} />
                   );
