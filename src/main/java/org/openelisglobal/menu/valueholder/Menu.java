@@ -49,6 +49,8 @@ public class Menu extends BaseObject<String> {
 
     private boolean isActive;
 
+    private boolean hideInOldUI;
+
     public String getId() {
         return id;
     }
@@ -147,5 +149,13 @@ public class Menu extends BaseObject<String> {
 
     public void setIsActive(boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public boolean isHideInOldUI() {
+        return hideInOldUI;
+    }
+
+    public void setHideInOldUI(boolean hideInOldUI) {
+        this.hideInOldUI = hideInOldUI;
     }
 }

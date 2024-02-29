@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
@@ -35,7 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @DependsOn({ "springContext" })
-public class ResultLimitServiceImpl extends BaseObjectServiceImpl<ResultLimit, String> implements ResultLimitService {
+public class ResultLimitServiceImpl extends AuditableBaseObjectServiceImpl<ResultLimit, String> implements ResultLimitService {
 
     private static final double INVALID_PATIENT_AGE = Double.MIN_VALUE;
 

@@ -130,7 +130,7 @@ public class MenuUtil {
         int topLevelCount = 0;
         for (MenuItem menuItem : menuTree) {
             Menu menu = menuItem.getMenu();
-            if (menu.getIsActive()) {
+            if (menu.getIsActive() && !menu.isHideInOldUI()) {
                 if (topLevel) {
                     if (topLevelCount == 0) {
                         html.append("\t<li id=\"nav-first\" >\n");

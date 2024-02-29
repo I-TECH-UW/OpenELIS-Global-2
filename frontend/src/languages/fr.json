@@ -36,6 +36,11 @@
     "banner.menu.referredOut" : "Referred Out",
     "banner.menu.results.status" : "Par Test, Date ou Statut",
     "banner.menu.billing" :"Facturation",
+    "banner.menu.help": "Aide",
+    "banner.menu.help.usermanual": "Manuel de l'utilisateur",
+    "banner.menu.help.documents": "Documentation des processus",
+    "banner.menu.help.formVL": "Formulaire VL",
+    "banner.menu.help.formDBS": "Formulaire DBS",
     "label.page.patientHistory": "Antécédents du patient",
     "workplan.page.title"                :"Plan de Travail {0}",
     "workplan.panel.title"               :"Plan de Travail par Panel",
@@ -558,7 +563,7 @@
     "column.name.pastNotes": "Notes antérieures",
     "instructions.copy.labnum": "Copier le numéro de laboratoire",
     "dashboard.avg.turn.around.subtitle.label":"Réception à Validation",
-    "label.seacrh.labno.family":"Recherche par numéro de laboratoire ou nom de famille",
+    "label.search.labno.family":"Recherche par numéro de laboratoire ou nom de famille",
     "label.filters.mycases":"Mes cas",
     "label.filters.status":"Statut",
     "filters.label":"Filtres",
@@ -642,5 +647,10 @@
     "sidenav.label.results.patient" : "Par Patient",
     "sidenav.label.results.order" : "Par Commande",
     "sidenav.label.results.testdate" : "Par Date de Test",
-    "sidenav.label.results.byrange" : "Par plage de numéros de commande"
+    "sidenav.label.results.byrange" : "Par plage de numéros de commande",    
+    "result.outOfValidRange.msg" : "La valeur que vous avez entr\u00E9e (en champ rouge) est hors de la gamme des valeurs admissible pour ce bilan. Pri\u00E8re de v\u00E9rifier la valeur.",
+    "validation.accept.normal" : "Enregistrer tous les normals",
+    "validation.accept.all":"Enregistrer tous les r\u00E9sultats",
+    "validation.reject.all":" Retester tous les r\u00E9sultats"
+
 }
