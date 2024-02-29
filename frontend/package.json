@@ -16,6 +16,8 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "@pnotify/core": "^5.2.0",
+    "@pnotify/mobile": "^5.2.0",
     "cors": "^2.8.5",
     "d3": "^7.6.1",
     "dayjs": "^1.10.4",

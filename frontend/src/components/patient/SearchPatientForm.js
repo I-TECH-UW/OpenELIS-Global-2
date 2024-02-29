@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../Style.css";
 import { getFromOpenElisServer } from "../utils/Utils";
@@ -27,13 +27,10 @@ import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import { patientSearchHeaderData } from "../data/PatientResultsTableHeaders";
 import { Formik, Field } from "formik";
 import SearchPatientFormValues from "../formModel/innitialValues/SearchPatientFormValues";
-import { NotificationContext } from "../layout/Layout";
-import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
+
+import { Notification } from "../common/Notification";
 
 function SearchPatientForm(props) {
-  const { notificationVisible, setNotificationVisible, addNotification } =
-    useContext(NotificationContext);
-
   const intl = useIntl();
 
   const [dob, setDob] = useState("");
@@ -46,7 +43,7 @@ function SearchPatientForm(props) {
   const [pagination, setPagination] = useState(false);
   const [url, setUrl] = useState("");
   const [searchFormValues, setSearchFormValues] = useState(
-    SearchPatientFormValues,
+    SearchPatientFormValues
   );
   const handleSubmit = (values) => {
     setLoading(true);
@@ -91,12 +88,9 @@ function SearchPatientForm(props) {
       setPatientSearchResults(patientsResults);
     } else {
       setPatientSearchResults([]);
-      addNotification({
-        title: intl.formatMessage({ id: "notification.title" }),
+      Notification.warning({
         message: intl.formatMessage({ id: "patient.search.nopatient" }),
-        kind: NotificationKinds.warning,
       });
-      setNotificationVisible(true);
     }
     if (res.paging) {
       var { totalPages, currentPage } = res.paging;
@@ -145,7 +139,7 @@ function SearchPatientForm(props) {
   };
   useEffect(() => {
     let patientId = new URLSearchParams(window.location.search).get(
-      "patientId",
+      "patientId"
     );
     if (patientId) {
       let searchValues = {
@@ -158,7 +152,6 @@ function SearchPatientForm(props) {
   }, []);
   return (
     <>
-      {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading />}
       <Formik
         initialValues={searchFormValues}
