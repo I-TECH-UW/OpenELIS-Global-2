@@ -7,33 +7,30 @@ import { getFromOpenElisServer } from "../utils/Utils";
 function TestSelectForm(props) {
   const mounted = useRef(false);
   const [tests, setTests] = useState([]);
-  const [defaultTestId, setDefaultTestId] = useState("");
-  const [defaultTestLabel, setDefaultTestLabel] = useState("");
+  const [selectedTestId, setSelectedTestId] = useState("");
 
   const handleChange = (e) => {
-    props.value(e.target.value, e.target.selectedOptions[0].text);
-  };
-
-  const getTests = (res) => {
-    if (mounted.current) {
-      setTests(res);
+    setSelectedTestId(e.target.value); // Update the selected test ID state
+    if (e.target.value !== "") {
+      const selectedOptionText = e.target.selectedOptions[0].text;
+      props.value(e.target.value, selectedOptionText);
     }
   };
 
   useEffect(() => {
     mounted.current = true;
-    let testId = new URLSearchParams(window.location.search).get(
-      "testId"
-    );
-    testId = testId ? testId : ""; 
     getFromOpenElisServer("/rest/tests", (fetchedTests) => {
-      let test = fetchedTests.find(test => test.id === testId);
-      let testLabel = test ? test.value : "";
-      setDefaultTestId(testId);
-      setDefaultTestLabel(testLabel);
-      props.value(testId, testLabel);
-      getTests(fetchedTests);
-    })
+      setTests(fetchedTests);
+      const urlParams = new URLSearchParams(window.location.search);
+      const testIdFromURL = urlParams.get("testId") || "";
+      if (testIdFromURL) {
+        const matchingTest = fetchedTests.find((test) => test.id === testIdFromURL);
+        if (matchingTest) {
+          setSelectedTestId(testIdFromURL); // Set the selected test ID if found
+          props.value(testIdFromURL, matchingTest.value); // Update the parent component
+        }
+      }
+    });
     return () => {
       mounted.current = false;
     };
@@ -44,21 +41,19 @@ function TestSelectForm(props) {
       <Grid fullWidth={true}>
         <Column lg={16}>
           <Select
-            defaultValue="placeholder-item"
             id="select-1"
-            invalidText={
-              <FormattedMessage id="workplan.panel.selection.error.msg" />
+            invalidText={<FormattedMessage id="workplan.panel.selection.error.msg" />}
+            helperText={props.title
             }
-            helperText={props.title}
             labelText=""
             onChange={handleChange}
+            value={selectedTestId} // Control the selected value with state
           >
-            <SelectItem text={defaultTestLabel} value={defaultTestId} />
-            {tests
-              .filter(item => item.id !== defaultTestId)
-              .map((item, idx) => {
-                return <SelectItem key={idx} text={item.value} value={item.id} />;
-            })}
+            {/* The placeholder item, not selectable once others are available */}
+            {selectedTestId === "" && <SelectItem text={`Select Test Type`} value="" />}
+            {tests.map((item, idx) => (
+              <SelectItem key={idx} text={item.value} value={item.id} />
+            ))}
           </Select>
         </Column>
       </Grid>
