@@ -586,6 +586,7 @@
     "enterText.label":"Entrez le reste du texte",
     "otherMalignant.placeholder" :"Autre malin",
     "selectResult.title":"Sélectionner le résultat",
+    "selectReportValues.title":"Choisir les valeurs du rapport",
     "accessDenied.title":"Accès refusé",
     "accessDenied.message":"Vous n'avez pas accès à ce module, veuillez contacter votre administrateur système",
     "accessDenied.okButton" :"D'ACCORD",
