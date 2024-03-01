@@ -103,43 +103,42 @@ function OEHeader(props) {
     if (menuItem.menu.isActive) {
       if (level === 0 && menuItem.childMenus.length > 0) {
         return (
-          <SideNavMenu
-            aria-label={intl.formatMessage({
-              id: menuItem.menu.displayKey,
-            })}
-            title={intl.formatMessage({
-              id: menuItem.menu.displayKey,
-            })}
-            key={"menu_" + index + "_" + level}
-            defaultExpanded={
-              menuItem.expanded ||
-              menuItem.childMenus.some((element) => {
-                return element.expanded;
-              })
-            }
-          >
-            {menuItem.childMenus.map((childMenuItem, index) => {
-              return generateMenuItems(
-                childMenuItem,
-                index,
-                level + 1,
-                path + ".childMenus[" + index + "]",
-              );
-            })}
-          </SideNavMenu>
+          <React.Fragment key={path}>
+            <SideNavMenu
+              aria-label={intl.formatMessage({
+                id: menuItem.menu.displayKey,
+              })}
+              title={intl.formatMessage({
+                id: menuItem.menu.displayKey,
+              })}
+              key={"menu_" + index + "_" + level}
+              defaultExpanded={menuItem.expanded}
+            >
+              {menuItem.childMenus.map((childMenuItem, index) => {
+                return generateMenuItems(
+                  childMenuItem,
+                  index,
+                  level + 1,
+                  path + ".childMenus[" + index + "]",
+                );
+              })}
+            </SideNavMenu>
+          </React.Fragment>
         );
       } else if (level === 0) {
         return (
-          <SideNavMenuItem
-            href={menuItem.menu.actionURL}
-            target={menuItem.menu.openInNewWindow ? "_blank" : ""}
-          >
-            {renderSideNavMenuItemLabel(menuItem, level)}
-          </SideNavMenuItem>
+          <React.Fragment key={path}>
+            <SideNavMenuItem
+              href={menuItem.menu.actionURL}
+              target={menuItem.menu.openInNewWindow ? "_blank" : ""}
+            >
+              {renderSideNavMenuItemLabel(menuItem, level)}
+            </SideNavMenuItem>
+          </React.Fragment>
         );
       } else {
         return (
-          <React.Fragment key={"menu_" + index + "_" + level}>
+          <React.Fragment key={path}>
             <SideNavMenuItem className="reduced-padding-nav-menu-item">
               <span style={{ display: "flex", width: "100%" }}>
                 {!menuItem.menu.actionURL &&
@@ -168,9 +167,7 @@ function OEHeader(props) {
         );
       }
     } else {
-      return (
-        <React.Fragment key={"menu_" + index + "_" + level}></React.Fragment>
-      );
+      return <React.Fragment key={path}></React.Fragment>;
     }
   };
 
