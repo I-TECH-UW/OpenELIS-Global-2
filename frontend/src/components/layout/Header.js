@@ -13,6 +13,8 @@ import {
   UserAvatarFilledAlt,
   Logout,
   Close,
+  ChevronDown,
+  ChevronUp,
 } from "@carbon/icons-react";
 
 import {
@@ -97,7 +99,7 @@ function OEHeader(props) {
     );
   };
 
-  const generateMenuItems = (menuItem, index, level) => {
+  const generateMenuItems = (menuItem, index, level, path) => {
     if (menuItem.menu.isActive) {
       if (level === 0 && menuItem.childMenus.length > 0) {
         return (
@@ -109,27 +111,59 @@ function OEHeader(props) {
               id: menuItem.menu.displayKey,
             })}
             key={"menu_" + index + "_" + level}
+            defaultExpanded={
+              menuItem.expanded ||
+              menuItem.childMenus.some((element) => {
+                return element.expanded;
+              })
+            }
           >
             {menuItem.childMenus.map((childMenuItem, index) => {
-              return generateMenuItems(childMenuItem, index, level + 1);
+              return generateMenuItems(
+                childMenuItem,
+                index,
+                level + 1,
+                path + ".childMenus[" + index + "]",
+              );
             })}
           </SideNavMenu>
+        );
+      } else if (level === 0) {
+        return (
+          <SideNavMenuItem
+            href={menuItem.menu.actionURL}
+            target={menuItem.menu.openInNewWindow ? "_blank" : ""}
+          >
+            {renderSideNavMenuItemLabel(menuItem, level)}
+          </SideNavMenuItem>
         );
       } else {
         return (
           <React.Fragment key={"menu_" + index + "_" + level}>
-            <SideNavMenuItem
-              href={menuItem.menu.actionURL}
-              target={menuItem.menu.openInNewWindow ? "_blank" : ""}
-            >
-              {level > 1 &&
-                "\xA0\xA0\xA0".repeat(level - 2 < 0 ? 0 : level - 2) +
-                  "-\xA0\xA0\xA0"}
-              <FormattedMessage id={menuItem.menu.displayKey} />
+            <SideNavMenuItem className="reduced-padding-nav-menu-item">
+              <span style={{ display: "flex", width: "100%" }}>
+                {!menuItem.menu.actionURL &&
+                  menuItem.childMenus.length < 1 &&
+                  console.warn("menu entry has no action url and no child")}
+                {menuItem.childMenus.length < 1 &&
+                  renderSingleNavButton(menuItem, index, level, path)}
+                {!menuItem.menu.actionURL &&
+                  menuItem.childMenus.length >= 1 &&
+                  renderSingleDropdownButton(menuItem, index, level, path)}
+                {menuItem.menu.actionURL &&
+                  menuItem.childMenus.length >= 1 &&
+                  renderDualNavDropdownButton(menuItem, index, level, path)}
+              </span>
             </SideNavMenuItem>
-            {menuItem.childMenus.map((childMenuItem, index) => {
-              return generateMenuItems(childMenuItem, index, level + 1);
-            })}
+            {menuItem.expanded &&
+              menuItem.childMenus.map((childMenuItem, index) => {
+                return generateMenuItems(
+                  childMenuItem,
+                  index,
+                  level + 1,
+                  path + ".childMenus[" + index + "]",
+                );
+              })}
           </React.Fragment>
         );
       }
@@ -138,6 +172,112 @@ function OEHeader(props) {
         <React.Fragment key={"menu_" + index + "_" + level}></React.Fragment>
       );
     }
+  };
+
+  const renderSingleNavButton = (menuItem, index, level, path) => {
+    const marginValue = (level - 1) * 0.5 + "rem";
+    return (
+      <button
+        className={"custom-sidenav-button"}
+        style={{ "margin-left": marginValue }}
+        onClick={() => {
+          if (menuItem.menu.openInNewWindow) {
+            window.open(menuItem.menu.actionURL);
+          } else {
+            window.location.href = menuItem.menu.actionURL;
+          }
+        }}
+      >
+        {renderSideNavMenuItemLabel(menuItem, level)}
+      </button>
+    );
+  };
+
+  const renderSingleDropdownButton = (menuItem, index, level, path) => {
+    const marginValue = (level - 1) * 0.5 + "rem";
+    return (
+      <button
+        className={"custom-sidenav-button"}
+        style={{ "margin-left": marginValue }}
+        onClick={(e) => {
+          onClickSideNavItem(e, menuItem, path);
+        }}
+      >
+        {renderSideNavMenuItemLabel(menuItem, level)}
+        {renderSideNavChevron(menuItem)}
+      </button>
+    );
+  };
+
+  const renderDualNavDropdownButton = (menuItem, index, level, path) => {
+    const marginValue = (level - 1) * 0.5 + "rem";
+    return (
+      <>
+        <button
+          className={
+            menuItem.menu.actionURL
+              ? "custom-sidenav-button"
+              : "custom-sidenav-button-unclickable"
+          }
+          style={{ "margin-left": marginValue }}
+          onClick={() => {
+            if (menuItem.menu.openInNewWindow) {
+              window.open(menuItem.menu.actionURL);
+            } else {
+              window.location.href = menuItem.menu.actionURL;
+            }
+          }}
+        >
+          {renderSideNavMenuItemLabel(menuItem, level)}
+        </button>
+        {menuItem.childMenus.length > 0 && (
+          <button
+            className="custom-sidenav-button"
+            onClick={(e) => {
+              onClickSideNavItem(e, menuItem, path);
+            }}
+          >
+            {renderSideNavChevron(menuItem)}
+          </button>
+        )}
+      </>
+    );
+  };
+
+  const renderSideNavChevron = (menuItem) => {
+    return (
+      <>
+        {menuItem.expanded && (
+          <div className="cds--side-nav__icon cds--side-nav__icon--small cds--side-nav__submenu-chevron">
+            <ChevronUp />
+          </div>
+        )}
+        {!menuItem.expanded && (
+          <div className="cds--side-nav__icon cds--side-nav__icon--small cds--side-nav__submenu-chevron">
+            <ChevronDown />
+          </div>
+        )}
+      </>
+    );
+  };
+
+  const renderSideNavMenuItemLabel = (menuItem, level) => {
+    const fontPercent = 100 - 5 * (level - 1) + "%";
+    return (
+      <span style={{ "font-size": fontPercent }}>
+        <FormattedMessage id={menuItem.menu.displayKey} />
+      </span>
+    );
+  };
+
+  const onClickSideNavItem = (e, menuItem, path) => {
+    e.preventDefault();
+    const newMenus = { ...menus };
+    const newMenuItem = { ...menuItem };
+    newMenuItem.expanded = !newMenuItem.expanded;
+    var jp = require("jsonpath");
+    jp.value(newMenus, path, newMenuItem);
+    setMenus(newMenus);
   };
 
   return (
@@ -261,7 +401,12 @@ function OEHeader(props) {
                         {menus["menu"].map((childMenuItem, index) => {
                           // ignore the Home Menu in the new UI
                           if (childMenuItem.menu.elementId != "menu_home") {
-                            return generateMenuItems(childMenuItem, index, 0);
+                            return generateMenuItems(
+                              childMenuItem,
+                              index,
+                              0,
+                              "$.menu[" + index + "]",
+                            );
                           }
                         })}
                       </SideNavItems>
