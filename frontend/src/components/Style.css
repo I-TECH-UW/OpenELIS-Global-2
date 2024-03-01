@@ -480,3 +480,12 @@ button {
 .cds--side-nav__link:hover {
   background-color: var(--cds-background-hover, #072655);
 }
+
+@media screen and (max-width:792px) {
+  .banner h5{
+    font-size: 2vw;
+  }
+  .banner p {
+    font-size: 1.5vw;
+  }
+}
