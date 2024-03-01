@@ -11,10 +11,10 @@ import {
   Loading,
 } from "@carbon/react";
 import { injectIntl, FormattedMessage, useIntl } from "react-intl";
-import { SampleOrderFormValues } from "../../formModel/innitialValues/OrderEntryFormValues";
-// import PatientStatusReport from "./PatientStatusReport";
-import Aggregate from "./aggregate";
 import config from "../../../config.json";
+import Aggregate from "./aggregate";
+import SummaryOfAllTest from "./summaryOfAllTest";
+import HIVTestSummary from "./hivTestSummary";
 
 const RoutineIndex = () => {
   const intl = useIntl();
@@ -25,28 +25,10 @@ const RoutineIndex = () => {
   const [report, setReport] = useState("");
   const [source, setSource] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [orderFormValues, setOrderFormValues] = useState(SampleOrderFormValues);
-  const [samples, setSamples] = useState([]);
-  const [errors, setErrors] = useState([]);
-
-  const elementError = (path) => {
-    if (errors?.errors?.length > 0) {
-      let error = errors.inner?.find((e) => e.path === path);
-      if (error) {
-        return error.message;
-      } else {
-        return null;
-      }
-    }
-  };
+ 
 
   useEffect(() => {
-    let sourceFromUrl = new URLSearchParams(window.location.search).get(
-      "source"
-    );
-    let sources = ["PatientStatusReport"];
-    sourceFromUrl = sources.includes(sourceFromUrl) ? sourceFromUrl : "";
-    setSource(sourceFromUrl);
+   
 
     const params = new URLSearchParams(window.location.search);
     const paramType = params.get("type");
@@ -55,14 +37,7 @@ const RoutineIndex = () => {
     setType(paramType);
     setReport(paramReport);
 
-    const path = window.location.pathname;
-    const pathParts = path.split("/");
-    const source = pathParts[pathParts.length - 1];
-
-    if (source === "AuditTrailReport") {
-      setIsLoading(false);
-      return (window.location.href = `${config.serverBaseUrl}/${source}`);
-    }
+   
 
     if (paramType && paramReport) {
       setIsLoading(false);
@@ -79,13 +54,7 @@ const RoutineIndex = () => {
             <BreadcrumbItem href="/">
               {intl.formatMessage({ id: "home.label" })}
             </BreadcrumbItem>
-            {source && (
-              <BreadcrumbItem href={`/${source}`}>
-                {intl.formatMessage({
-                  id: "banner.menu.reports",
-                })}
-              </BreadcrumbItem>
-            )}
+          
           </Breadcrumb>
         </Column>
       </Grid>
@@ -114,11 +83,12 @@ const RoutineIndex = () => {
 
             {type === "indicator" &&
               report === "indicatorHaitiLNSPAllTests" &&
-              (window.location.href = `${config.serverBaseUrl}/Report?type=${type}&report=${report}`)}
+              ( <SummaryOfAllTest /> )}
+
 
             {type === "indicator" &&
               report === "indicatorCDILNSPHIV" &&
-              (window.location.href = `${config.serverBaseUrl}/Report?type=${type}&report=${report}`)}
+              (<HIVTestSummary/>)}
 
             {type === "indicator" &&
               report === "sampleRejectionReport" &&

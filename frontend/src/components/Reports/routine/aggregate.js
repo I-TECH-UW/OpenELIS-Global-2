@@ -7,6 +7,7 @@ import {
   Column,
   Section,
   Button,
+  Loading,
   Dropdown,
   DropdownItem
 } from "@carbon/react";
@@ -103,7 +104,7 @@ const Aggregate = () => {
         </Section>
       </FormLabel>
       {notificationVisible && <AlertDialog />}
-      {loading && <div>Loading...</div>}
+      {loading && <Loading/>}
       <Grid fullWidth={true}>
   <Column lg={16}>
       <Form>

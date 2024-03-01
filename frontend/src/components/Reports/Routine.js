@@ -32,15 +32,11 @@ export const RoutineReportsMenu = {
           label: <FormattedMessage id= "sidenav.label.statisticsreport"/>,
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=indicator&report=indicatorHaitiLNSPAllTests",
+          link: "/SummaryOfAllTests?type=indicator&report=indicatorHaitiLNSPAllTests",
           label: <FormattedMessage id= "sidenav.label.testsummary"/>
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=indicator&report=indicatorCDILNSPHIV",
+          link:"/HIVTestSummary?type=indicator&report=indicatorCDILNSPHIV",
           label: <FormattedMessage id="sideNav.label.hivtestsummary"/>,
         },
       ],

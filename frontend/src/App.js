@@ -408,6 +408,30 @@ export default function App() {
                   role="Reports"
                 />
                 <SecureRoute
+                  path="/Report"
+                  exact
+                  component={() => <RoutineIndex />}
+                  role="Reports"
+                />
+                <SecureRoute
+                  path="/StatisticsReport"
+                  exact
+                  component={() => <RoutineIndex />}
+                  role="Reports"
+                />
+                <SecureRoute
+                  path="/SummaryOfAllTests"
+                  exact
+                  component={() => <RoutineIndex />}
+                  role="Reports"
+                />
+                <SecureRoute
+                  path="/HIVTestSummary"
+                  exact
+                  component={() => <RoutineIndex />}
+                  role="Reports"
+                />
+                <SecureRoute
                   path="/StudyReports"
                   exact
                   component={() => <StudyReports />}
@@ -427,12 +451,8 @@ export default function App() {
                   )}
                   role="Validation"
                 />
-                 <SecureRoute
-                  path="/StatisticsReport"
-                  exact
-                  component={() => <RoutineIndex />}
-                  role="Reports"
-                />
+                
+                  
                 <SecureRoute
                   path="/AccessionValidation"
                   exact
