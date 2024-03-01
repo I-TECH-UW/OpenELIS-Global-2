@@ -1,4 +1,11 @@
-import React, { useContext, useState, createRef, useEffect } from "react";
+import React, {
+  useContext,
+  useState,
+  createRef,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+} from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import { withRouter } from "react-router-dom";
 import { ConfigurationContext } from "../layout/Layout";
@@ -39,6 +46,7 @@ function OEHeader(props) {
 
   const userSwitchRef = createRef();
   const headerPanelRef = createRef();
+  const scrollRef = useRef(window.scrollY);
 
   const intl = useIntl();
 
@@ -49,13 +57,10 @@ function OEHeader(props) {
     menu_nonconformity: { menu: {}, childMenus: [] },
   });
 
-  const handleMenuItems = (tag, res) => {
-    if (res) {
-      let newMenus = menus;
-      newMenus[tag] = res;
-      setMenus(newMenus);
-    }
-  };
+  scrollRef.current = window.scrollY;
+  useLayoutEffect(() => {
+    window.scrollTo(0, scrollRef.current);
+  }, []);
 
   useEffect(() => {
     getFromOpenElisServer("/rest/menu", (res) => {
@@ -65,6 +70,14 @@ function OEHeader(props) {
 
   const panelSwitchLabel = () => {
     return userSessionDetails.authenticated ? "User" : "Lang";
+  };
+
+  const handleMenuItems = (tag, res) => {
+    if (res) {
+      let newMenus = menus;
+      newMenus[tag] = res;
+      setMenus(newMenus);
+    }
   };
 
   const clickPanelSwitch = () => {
@@ -154,15 +167,21 @@ function OEHeader(props) {
                   renderDualNavDropdownButton(menuItem, index, level, path)}
               </span>
             </SideNavMenuItem>
-            {menuItem.expanded &&
-              menuItem.childMenus.map((childMenuItem, index) => {
-                return generateMenuItems(
-                  childMenuItem,
-                  index,
-                  level + 1,
-                  path + ".childMenus[" + index + "]",
-                );
-              })}
+            {menuItem.childMenus.map((childMenuItem, index) => {
+              return (
+                <span
+                  key={path + ".childMenus[" + index + "].span"}
+                  style={{ display: menuItem.expanded ? "" : "none" }}
+                >
+                  {generateMenuItems(
+                    childMenuItem,
+                    index,
+                    level + 1,
+                    path + ".childMenus[" + index + "]",
+                  )}
+                </span>
+              );
+            })}
           </React.Fragment>
         );
       }
@@ -310,11 +329,6 @@ function OEHeader(props) {
                     </p>
                   </div>
                 </HeaderName>
-                {userSessionDetails.authenticated && true && (
-                  <>
-                    {/* <HeaderMenuItem target="_blank" href={config.serverBaseUrl + "/MasterListsPage"}><FormattedMessage id="admin.billing"/></HeaderMenuItem> */}
-                  </>
-                )}
                 <HeaderGlobalBar>
                   {userSessionDetails.authenticated && (
                     <>
