@@ -77,7 +77,7 @@ const summaryOfAllTest = () => {
         <Section>
           <Section>
             <h1>
-              Test Report Summary
+              <FormattedMessage id="openreports.all.test.summary.title" />
             </h1>
           </Section>
         </Section>
@@ -93,7 +93,8 @@ const summaryOfAllTest = () => {
                   <br />
                   <br />
                   <h5>
-                  Select the Date Range for the Test Report Summary 
+              <FormattedMessage id="select.dateRange" />
+                  
                   </h5>
                 </Section>
                 <div className="inlineDiv">
@@ -130,7 +131,7 @@ const summaryOfAllTest = () => {
             <Section>
               <br />
               <Button type="button" onClick={handleSubmit}>
-                <FormattedMessage id="submit" defaultMessage="Generate printable version" />
+                <FormattedMessage id="label.button.generatePrintableVersion" defaultMessage="Generate printable version" />
               </Button>
             </Section>
           </Form>

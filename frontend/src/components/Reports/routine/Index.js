@@ -12,7 +12,7 @@ import {
 } from "@carbon/react";
 import { injectIntl, FormattedMessage, useIntl } from "react-intl";
 import config from "../../../config.json";
-import Aggregate from "./aggregate";
+import StatisticsReport from "./statisticsReport";
 import SummaryOfAllTest from "./summaryOfAllTest";
 import HIVTestSummary from "./hivTestSummary";
 
@@ -79,7 +79,7 @@ const RoutineIndex = () => {
 
             {type === "indicator" &&
               report === "statisticsReport" &&
-              (<Aggregate />)}
+              (<StatisticsReport />)}
 
             {type === "indicator" &&
               report === "indicatorHaitiLNSPAllTests" &&
@@ -121,9 +121,6 @@ const RoutineIndex = () => {
               report === "validationBacklog" &&
               (window.location.href = `${config.serverBaseUrl}/ReportPrint?type=${type}&report=${report}`)}
 
-            {type === "indicator" &&
-              report === "indicatorHaitiLNSPAllTests" &&
-              (window.location.href = `${config.serverBaseUrl}/Report?type=${type}&report=${report}`)}
           </>
         )}
       </div>

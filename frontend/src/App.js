@@ -34,7 +34,7 @@ import ImmunohistochemistryCaseView from "./components/immunohistochemistry/Immu
 import RoutedResultsViewer from "./components/patient/resultsViewer/results-viewer.tsx";
 import EOrderPage from "./components/eOrder/Index";
 import RoutineIndex from "./components/Reports/routine/Index.js";
-import Aggregate from "./components/Reports/routine/aggregate.js";
+
 
 
 export default function App() {

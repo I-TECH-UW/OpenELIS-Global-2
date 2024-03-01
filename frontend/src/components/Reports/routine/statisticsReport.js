@@ -22,7 +22,7 @@ const timeFrames = [
   { id: 'OUT_OF_NORMAL_WORK_HOURS', description: 'Out of Normal Work Hours (15h31-8h59)' }
 ];
 
-const Aggregate = () => {
+const statisticsReport = () => {
   const intl = useIntl();
   const [labUnits, setLabUnits] = useState([]);
   const [priorities, setPriorities] = useState([]);
@@ -50,7 +50,7 @@ const Aggregate = () => {
     const baseParams = 'report=statisticsReport&type=indicator';
     const labUnitsParams = selectedLabUnits.map(unit => `labSections=${encodeURIComponent(unit)}`).join('&');
     const prioritiesParams = selectedPriorities.map(priority => `priority=${encodeURIComponent(priority)}`).join('&');
-    const timeFramesParams = selectedTimeFrames.map(frame => `receptionTime=${encodeURIComponent(frame)}`).join('&'); // Use frame.id instead of frame
+    const timeFramesParams = selectedTimeFrames.map(frame => `receptionTime=${encodeURIComponent(frame)}`).join('&'); 
     const yearParam = `upperYear=${encodeURIComponent(selectedYear.value)}`;
 
     // Constructing the base URL
@@ -97,8 +97,8 @@ const Aggregate = () => {
         <Section>
           <Section>
             <h1>
-              {/* <FormattedMessage id="openreports.patientTestStatus" /> */}
-              Statistics Report
+              <FormattedMessage id="openreports.stat.aggregate" />
+              
             </h1>
           </Section>
         </Section>
@@ -114,7 +114,8 @@ const Aggregate = () => {
               <br />
               <br />
               <h5>
-                Select the lab unit(s) you would like to create the test for, you may select as many as you would like
+              <FormattedMessage id="select.labUnits" />
+
               </h5>
             </Section>
             <div>
@@ -149,7 +150,8 @@ const Aggregate = () => {
             <Section>
               <br />
               <h5>
-                Select the priority of the tests you would like to show
+              <FormattedMessage id="select.priority.tests" />
+
               </h5>
             </Section>
             <div className='inlineDiv'>
@@ -184,10 +186,12 @@ const Aggregate = () => {
             <Section>
               <br />
               <h5>
-                Select time frames you would like to generate the reports for.
+              <FormattedMessage id="select.timeFrame" />
+
               </h5>
               <br />
-              <h7>NOTE: all dates and times are based on reception time. EG: a test received on Jan 31 at 11:59 pm and resulted Feb 1 at 9:30am would show as out of normal hours in January</h7>
+              <h7><FormattedMessage id="select.timeFrame.Note" />
+              </h7>
             </Section>
             <div>
               <Checkbox
@@ -221,7 +225,8 @@ const Aggregate = () => {
             <Section>
               <br />
               <h5>
-                Select year you would like to generate the report for
+              <FormattedMessage id="select.year.report" />
+
               </h5>
             </Section>
           </Column>
@@ -240,7 +245,7 @@ const Aggregate = () => {
         <br />
         <Section><br />
         <Button type="button" onClick={handleSubmit}>
-          <FormattedMessage id="submit" defaultMessage="Generate printable version" />
+          <FormattedMessage id="label.button.generatePrintableVersion" defaultMessage="Generate printable version" />
         </Button>
       
 
@@ -252,4 +257,4 @@ const Aggregate = () => {
   );
 };
 
-export default Aggregate;
+export default statisticsReport;

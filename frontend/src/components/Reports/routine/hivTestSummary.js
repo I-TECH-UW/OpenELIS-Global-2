@@ -77,7 +77,8 @@ const hivTestSummary = () => {
         <Section>
           <Section>
             <h1>
-              HIV Test Summary
+            <FormattedMessage id="openreports.hiv.aggregate" />
+
             </h1>
           </Section>
         </Section>
@@ -93,7 +94,8 @@ const hivTestSummary = () => {
                   <br />
                   <br />
                   <h5>
-                  Select the Date Range for the Report Summary 
+                  <FormattedMessage id="select.dateRange" />
+
                   </h5>
                 </Section>
                 <div className="inlineDiv">
@@ -130,7 +132,7 @@ const hivTestSummary = () => {
             <Section>
               <br />
               <Button type="button" onClick={handleSubmit}>
-                <FormattedMessage id="submit" defaultMessage="Generate printable version" />
+                <FormattedMessage id="label.button.generatePrintableVersion" defaultMessage="Generate printable version" />
               </Button>
             </Section>
           </Form>
