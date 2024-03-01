@@ -477,7 +477,7 @@
     "reports.auditTrail": "Examen d'audit",
     "openreports.patientreports.title": "R\u00E9sultats du patient",
     "openreports.all.test.summary.title" :"Résumé du rapport de test",
-
+    "openreports.hiv.aggregate": "Résumé du Test VIH",
     "reports.patient.ARV.version1 ": "ARV-Version 1",
     "reports.patient.ARVFollowup.version1": "ARV-Bilan de Suivi Version 1",
     "reports.patient.ARVFollowup.version2": "ARV-Bilan de Suivi Version 2",
