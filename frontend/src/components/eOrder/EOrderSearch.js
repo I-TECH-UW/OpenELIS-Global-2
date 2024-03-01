@@ -9,14 +9,14 @@ import {
   Select,
   SelectItem,
   TextInput,
-  Breadcrumb,
-  BreadcrumbItem
 } from "@carbon/react";
 import { React, useEffect, useState } from "react";
 import CustomDatePicker from "../common/CustomDatePicker";
 
 import { FormattedMessage, useIntl, injectIntl } from "react-intl";
 import { getFromOpenElisServer } from "../utils/Utils";
+import HomeBreadCrumb from "../common/HomeBreadCrumb";
+let breadcrumbs = [{ label: "home.label", link: "/" }];
 
 const EOrderSearch = ({
   setEOrders = (eOrders) => {
@@ -66,7 +66,7 @@ const EOrderSearch = ({
     });
     getFromOpenElisServer(
       "/rest/ElectronicOrders?" + params.toString(),
-      parseEOrders,
+      parseEOrders
     );
   }
 
@@ -91,15 +91,7 @@ const EOrderSearch = ({
 
   return (
     <>
-    <Grid fullWidth={true}>
-      <Column lg={16}>
-        <Breadcrumb>
-          <BreadcrumbItem href="/">
-            {intl.formatMessage({id:"home.label"})}
-          </BreadcrumbItem>
-        </Breadcrumb>
-      </Column>
-    </Grid>
+      <HomeBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         <Column lg={16}>
           <Section>

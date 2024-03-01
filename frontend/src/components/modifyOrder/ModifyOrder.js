@@ -5,10 +5,6 @@ import {
   ProgressIndicator,
   ProgressStep,
   Stack,
-  Breadcrumb,
-  BreadcrumbItem,
-  Grid,
-  Column,
   Section,
   Tag,
 } from "@carbon/react";
@@ -23,6 +19,11 @@ import EditOrderEntryAdditionalQuestions from "./EditOrderEntryAdditionalQuestio
 import OrderSuccessMessage from "../addOrder/OrderSuccessMessage";
 import { FormattedMessage, useIntl } from "react-intl";
 import PatientHeader from "../common/PatientHeader";
+import HomeBreadCrumb from "../common/HomeBreadCrumb";
+let breadcrumbs = [
+  { label: "home.label", link: "/" },
+  { label: "sample.label.search.Order", link: "/SampleEdit" },
+];
 
 export let sampleObject = {
   index: 0,
@@ -198,19 +199,7 @@ const ModifyOrder = () => {
 
   return (
     <>
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Breadcrumb>
-            <BreadcrumbItem href="/">
-              {intl.formatMessage({ id: "home.label" })}
-            </BreadcrumbItem>
-            <BreadcrumbItem href="/SampleEdit">
-              {intl.formatMessage({ id: "sample.label.search.Order" })}
-            </BreadcrumbItem>
-          </Breadcrumb>
-        </Column>
-      </Grid>
-
+      <HomeBreadCrumb breadcrumbs={breadcrumbs} />
 
       <PatientHeader
         id={orderFormValues?.nationalId}

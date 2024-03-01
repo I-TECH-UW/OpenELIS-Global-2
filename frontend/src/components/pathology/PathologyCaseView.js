@@ -16,8 +16,6 @@ import {
   FileUploader,
   Tag,
   TextArea,
-  Breadcrumb,
-  BreadcrumbItem,
   Loading,
   InlineLoading
 } from "@carbon/react";
@@ -35,8 +33,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import PatientHeader from "../common/PatientHeader";
 import QuestionnaireResponse from "../common/QuestionnaireResponse";
 import "./PathologyDashboard.css";
-
-
+import HomeBreadCrumb from "../common/HomeBreadCrumb";
 
 function PathologyCaseView() {
   const intl = useIntl();
@@ -200,6 +197,10 @@ function PathologyCaseView() {
       displayStatus,
     );
   };
+  let breadcrumbs = [
+    { label: "home.label", link: "/" },
+    { label: "pathology.label.dashboard", link: "/PathologyDashboard" },
+  ];
 
   const setInitialPathologySampleInfo = (e) => {
     if (
@@ -259,18 +260,7 @@ function PathologyCaseView() {
 
   return (
     <>
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Breadcrumb>
-            <BreadcrumbItem href="/">
-              {intl.formatMessage({ id: "home.label" })}
-            </BreadcrumbItem>
-            <BreadcrumbItem href="/PathologyDashboard">
-              {intl.formatMessage({ id: "pathology.label.dashboard" })}
-            </BreadcrumbItem>
-          </Breadcrumb>
-        </Column>
-      </Grid>
+      <HomeBreadCrumb breadcrumbs={breadcrumbs} />
 
       <Grid fullWidth={true}>
         <Column lg={16}>
