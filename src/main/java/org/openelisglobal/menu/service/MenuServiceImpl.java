@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.menu.dao.MenuDAO;
 import org.openelisglobal.menu.util.MenuItem;
 import org.openelisglobal.menu.util.MenuUtil;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class MenuServiceImpl extends BaseObjectServiceImpl<Menu, String> implements MenuService {
+public class MenuServiceImpl extends AuditableBaseObjectServiceImpl<Menu, String> implements MenuService {
     @Autowired
     protected MenuDAO baseObjectDAO;
 

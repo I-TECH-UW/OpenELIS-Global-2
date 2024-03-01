@@ -11,7 +11,7 @@ import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.login.dao.LoginUserDAO;
 import org.openelisglobal.login.valueholder.LoginUser;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class LoginUserServiceImpl extends BaseObjectServiceImpl<LoginUser, Integer> implements LoginUserService {
+public class LoginUserServiceImpl extends AuditableBaseObjectServiceImpl<LoginUser, Integer> implements LoginUserService {
 
     @Autowired
     protected LoginUserDAO baseObjectDAO;

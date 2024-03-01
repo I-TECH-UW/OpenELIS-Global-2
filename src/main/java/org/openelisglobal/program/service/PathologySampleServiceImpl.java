@@ -14,7 +14,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.ResultSaveService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
@@ -62,7 +62,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PathologySampleServiceImpl extends BaseObjectServiceImpl<PathologySample, Integer> implements PathologySampleService {
+public class PathologySampleServiceImpl extends AuditableBaseObjectServiceImpl<PathologySample, Integer> implements PathologySampleService {
     
     @Autowired
     protected PathologySampleDAO baseObjectDAO;

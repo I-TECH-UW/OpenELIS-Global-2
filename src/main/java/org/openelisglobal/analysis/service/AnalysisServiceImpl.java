@@ -13,7 +13,7 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.dao.AnalysisDAO;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.services.IReportTrackingService;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.QAService;
@@ -45,7 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @DependsOn({ "springContext" })
-public class AnalysisServiceImpl extends BaseObjectServiceImpl<Analysis, String> implements AnalysisService {
+public class AnalysisServiceImpl extends AuditableBaseObjectServiceImpl<Analysis, String> implements AnalysisService {
 
     @Autowired
     protected AnalysisDAO baseObjectDAO;

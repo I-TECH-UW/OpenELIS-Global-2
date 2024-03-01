@@ -8,7 +8,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.util.LocaleChangeListener;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.systemusersection.service.SystemUserSectionService;
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @DependsOn({ "springContext" })
-public class TestSectionServiceImpl extends BaseObjectServiceImpl<TestSection, String>
+public class TestSectionServiceImpl extends AuditableBaseObjectServiceImpl<TestSection, String>
         implements TestSectionService, LocaleChangeListener {
 
     private Map<String, String> testUnitIdToNameMap;

@@ -334,7 +334,7 @@ const Validation = (props) => {
             <Checkbox
               id={"saveallnormal"}
               name={"autochecks"}
-              labelText="Savel All normal"
+              labelText={intl.formatMessage({ id: "validation.accept.normal" })}
               onChange={(e) => {
                 const nomalResults = props.results.resultList?.filter(
                   (result) => result.normal == true,
@@ -353,7 +353,7 @@ const Validation = (props) => {
             <Checkbox
               id={"saveallresults"}
               name={"autochecks"}
-              labelText="Savel All Results"
+              labelText={intl.formatMessage({ id: "validation.accept.all" })}
               onChange={(e) => {
                 const nomalResults = props.results.resultList;
                 nomalResults.forEach((result) => {
@@ -370,7 +370,7 @@ const Validation = (props) => {
             <Checkbox
               id={"retestalltests"}
               name={"autochecks"}
-              labelText="Retest All Tests"
+              labelText={intl.formatMessage({ id: "validation.reject.all" })}
               onChange={(e) => {
                 const nomalResults = props.results.resultList;
                 nomalResults.forEach((result) => {
@@ -417,7 +417,39 @@ const Validation = (props) => {
                     : 0
                   : 0
               }
-            ></Pagination>
+              forwardText={intl.formatMessage({ id: "pagination.forward" })}
+              backwardText={intl.formatMessage({ id: "pagination.backward" })}
+              itemRangeText={(min, max, total) =>
+                intl.formatMessage(
+                  { id: "pagination.item-range" },
+                  { min: min, max: max, total: total },
+                )
+              }
+              itemsPerPageText={intl.formatMessage({
+                id: "pagination.items-per-page",
+              })}
+              itemText={(min, max) =>
+                intl.formatMessage(
+                  { id: "pagination.item" },
+                  { min: min, max: max },
+                )
+              }
+              pageNumberText={intl.formatMessage({
+                id: "pagination.page-number",
+              })}
+              pageRangeText={(_current, total) =>
+                intl.formatMessage(
+                  { id: "pagination.page-range" },
+                  { total: total },
+                )
+              }
+              pageText={(page, pagesUnknown) =>
+                intl.formatMessage(
+                  { id: "pagination.page" },
+                  { page: pagesUnknown ? "" : page },
+                )
+              }
+            />
 
             <Button
               type="button"

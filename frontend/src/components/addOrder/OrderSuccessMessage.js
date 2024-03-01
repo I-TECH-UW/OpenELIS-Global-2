@@ -12,9 +12,7 @@ const OrderSuccessMessage = (props) => {
    
     let barcodesPdf =
       config.serverBaseUrl +
-      `/LabelMakerServlet?labNo=${
-        orderFormValues.sampleOrderItems.labNo
-      }&type=order&quantity=${1}`;
+      `/LabelMakerServlet?labNo=${orderFormValues.sampleOrderItems.labNo}`;
     window.open(barcodesPdf);
   };
 
@@ -67,11 +65,11 @@ const OrderSuccessMessage = (props) => {
           height="120"
         />
         <h4>
-          <FormattedMessage id="save.success"/>
+          <FormattedMessage id="save.success" />
         </h4>
         <Row>
           <Button className="" onClick={handlePrintBarCode}>
-            <FormattedMessage id="print.barcode"/>
+            <FormattedMessage id="print.barcode" />
           </Button>
         </Row>
         <Row>
@@ -81,7 +79,7 @@ const OrderSuccessMessage = (props) => {
               kind="tertiary"
               onClick={handleAnotherSiteOrder}
             >
-              <FormattedMessage id="request.samesite.order"/>
+              <FormattedMessage id="request.samesite.order" />
             </Button>
           )}
         </Row>
