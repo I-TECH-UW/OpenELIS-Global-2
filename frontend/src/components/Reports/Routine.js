@@ -18,6 +18,7 @@ export const RoutineReportsMenu = {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=patientCILNSP_vreduit",
+        
           label: <FormattedMessage id="sidenav.label.statusreport"/>,
         },
       ],
@@ -27,9 +28,7 @@ export const RoutineReportsMenu = {
       icon: Microscope,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=indicator&report=statisticsReport",
+          link: "/StatisticsReport?type=indicator&report=statisticsReport",
           label: <FormattedMessage id= "sidenav.label.statisticsreport"/>,
         },
         {

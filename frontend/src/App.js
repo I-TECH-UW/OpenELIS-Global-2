@@ -33,6 +33,9 @@ import ImmunohistochemistryDashboard from "./components/immunohistochemistry/Imm
 import ImmunohistochemistryCaseView from "./components/immunohistochemistry/ImmunohistochemistryCaseView";
 import RoutedResultsViewer from "./components/patient/resultsViewer/results-viewer.tsx";
 import EOrderPage from "./components/eOrder/Index";
+import RoutineIndex from "./components/Reports/routine/Index.js";
+import Aggregate from "./components/Reports/routine/aggregate.js";
+
 
 export default function App() {
   let i18nConfig = {
@@ -423,6 +426,12 @@ export default function App() {
                     <>{(window.location.href = "/validation?type=routine")}</>
                   )}
                   role="Validation"
+                />
+                 <SecureRoute
+                  path="/StatisticsReport"
+                  exact
+                  component={() => <RoutineIndex />}
+                  role="Reports"
                 />
                 <SecureRoute
                   path="/AccessionValidation"
