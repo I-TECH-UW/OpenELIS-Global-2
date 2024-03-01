@@ -272,11 +272,18 @@ function OEHeader(props) {
 
   const onClickSideNavItem = (e, menuItem, path) => {
     e.preventDefault();
+    setMenuItemExpanded(e, menuItem, path);
+  };
+
+  const setMenuItemExpanded = (e, menuItem, path) => {
     const newMenus = { ...menus };
     const newMenuItem = { ...menuItem };
     newMenuItem.expanded = !newMenuItem.expanded;
     var jp = require("jsonpath");
     jp.value(newMenus, path, newMenuItem);
+    // fixes bug where top level parent closes when no children are expanded
+    const parentPath = path.substring(0, path.lastIndexOf("."));
+    jp.value(newMenus, parentPath + ".expanded", true);
     setMenus(newMenus);
   };
 
