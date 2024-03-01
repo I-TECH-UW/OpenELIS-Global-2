@@ -449,3 +449,11 @@ button {
 .my-custom-table tbody tr:nth-child(odd) {
   background-color: #f9f9f9;
 }
+@media screen and (max-width:792px) {
+  .banner h5{
+    font-size: 2vw;
+  }
+  .banner p {
+    font-size: 1.5vw;
+  }
+}
