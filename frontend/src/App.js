@@ -159,7 +159,7 @@ export default function App() {
     setLocale(lang);
   };
 
-  const changeLanguageBackend = (lang) => {
+  const changeLanguageBackend = async (lang) => {
     if (userSessionDetails.authenticated) {
       getFromOpenElisServer("/Home?lang=" + lang, () => {});
     } else {
