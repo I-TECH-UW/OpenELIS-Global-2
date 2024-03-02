@@ -23,13 +23,13 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 
 2. innitialize and build sub modules
 
-        cd OpenELIS-Global-2/dataexport
         git submodule update --init --recursive
+        cd OpenELIS-Global-2/dataexport
         mvn clean install -DskipTests
 
 3.   Build the War file
 
-            Change directory(cd) .. since you are  already in OpenELIS-Global-2/dataexport
+        cd .. since you are  already in OpenELIS-Global-2/dataexport
 
             mvn clean install -DskipTests
 
