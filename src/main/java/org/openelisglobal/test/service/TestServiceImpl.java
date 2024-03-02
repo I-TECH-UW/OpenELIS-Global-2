@@ -16,7 +16,7 @@ import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.LocaleChangeListener;
 import org.openelisglobal.common.util.SystemConfiguration;
@@ -48,7 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @DependsOn({ "springContext" })
-public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> implements TestService, LocaleChangeListener {
+public class TestServiceImpl extends AuditableBaseObjectServiceImpl<Test, String> implements TestService, LocaleChangeListener {
 
     public enum Entity {
         TEST_NAME, TEST_AUGMENTED_NAME, TEST_REPORTING_NAME

@@ -11,7 +11,7 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.validator.GenericValidator;
 import org.jasypt.util.text.TextEncryptor;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.util.ConfigurationSideEffects;
 import org.openelisglobal.siteinformation.dao.SiteInformationDAO;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class SiteInformationServiceImpl extends BaseObjectServiceImpl<SiteInformation, String>
+public class SiteInformationServiceImpl extends AuditableBaseObjectServiceImpl<SiteInformation, String>
         implements SiteInformationService {
 
     // this approach of getting the entity manager is not recommended in the service

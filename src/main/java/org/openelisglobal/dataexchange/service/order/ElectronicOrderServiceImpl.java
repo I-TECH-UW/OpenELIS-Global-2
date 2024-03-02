@@ -13,7 +13,7 @@ import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Task;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.RequesterService.Requester;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 
 @Service
-public class ElectronicOrderServiceImpl extends BaseObjectServiceImpl<ElectronicOrder, String>
+public class ElectronicOrderServiceImpl extends AuditableBaseObjectServiceImpl<ElectronicOrder, String>
 		implements ElectronicOrderService {
 	@Autowired
 	protected ElectronicOrderDAO baseObjectDAO;

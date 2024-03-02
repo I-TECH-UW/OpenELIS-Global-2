@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ReferenceTablesServiceImpl extends BaseObjectServiceImpl<ReferenceTables, String>
         implements ReferenceTablesService {
+            
     @Autowired
     protected ReferenceTablesDAO baseObjectDAO;
 

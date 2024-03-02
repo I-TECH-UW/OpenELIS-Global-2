@@ -1,14 +1,14 @@
 package org.openelisglobal.qaevent.service;
 
 import org.openelisglobal.common.dao.BaseDAO;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.qaevent.dao.LabComponentDAO;
 import org.openelisglobal.qaevent.valueholder.LabComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LabComponentServiceImpl extends BaseObjectServiceImpl<LabComponent, String>
+public class LabComponentServiceImpl extends AuditableBaseObjectServiceImpl<LabComponent, String>
         implements LabComponentService {
 
     @Autowired

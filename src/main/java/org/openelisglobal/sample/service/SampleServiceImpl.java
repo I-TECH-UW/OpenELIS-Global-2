@@ -11,7 +11,7 @@ import javax.annotation.PostConstruct;
 
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
@@ -50,7 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @DependsOn({ "springContext" })
-public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> implements SampleService {
+public class SampleServiceImpl extends AuditableBaseObjectServiceImpl<Sample, String> implements SampleService {
 
     private static String TABLE_REFERENCE_ID;
 
