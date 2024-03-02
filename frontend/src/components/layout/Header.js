@@ -117,25 +117,31 @@ function OEHeader(props) {
       if (level === 0 && menuItem.childMenus.length > 0) {
         return (
           <React.Fragment key={path}>
-            <SideNavMenu
-              aria-label={intl.formatMessage({
-                id: menuItem.menu.displayKey,
-              })}
-              title={intl.formatMessage({
-                id: menuItem.menu.displayKey,
-              })}
-              key={"menu_" + index + "_" + level}
-              defaultExpanded={menuItem.expanded}
+            <span
+              onClick={(e) => {
+                setMenuItemExpanded(e, menuItem, path);
+              }}
             >
-              {menuItem.childMenus.map((childMenuItem, index) => {
-                return generateMenuItems(
-                  childMenuItem,
-                  index,
-                  level + 1,
-                  path + ".childMenus[" + index + "]",
-                );
-              })}
-            </SideNavMenu>
+              <SideNavMenu
+                aria-label={intl.formatMessage({
+                  id: menuItem.menu.displayKey,
+                })}
+                title={intl.formatMessage({
+                  id: menuItem.menu.displayKey,
+                })}
+                key={"menu_" + index + "_" + level}
+                defaultExpanded={menuItem.expanded}
+              >
+                {menuItem.childMenus.map((childMenuItem, index) => {
+                  return generateMenuItems(
+                    childMenuItem,
+                    index,
+                    level + 1,
+                    path + ".childMenus[" + index + "]",
+                  );
+                })}
+              </SideNavMenu>
+            </span>
           </React.Fragment>
         );
       } else if (level === 0) {
@@ -155,15 +161,15 @@ function OEHeader(props) {
             <SideNavMenuItem className="reduced-padding-nav-menu-item">
               <span style={{ display: "flex", width: "100%" }}>
                 {!menuItem.menu.actionURL &&
-                  menuItem.childMenus.length < 1 &&
+                  hasActiveChildMenu(menuItem) &&
                   console.warn("menu entry has no action url and no child")}
-                {menuItem.childMenus.length < 1 &&
+                {hasActiveChildMenu(menuItem) &&
                   renderSingleNavButton(menuItem, index, level, path)}
                 {!menuItem.menu.actionURL &&
-                  menuItem.childMenus.length >= 1 &&
+                  !hasActiveChildMenu(menuItem) &&
                   renderSingleDropdownButton(menuItem, index, level, path)}
                 {menuItem.menu.actionURL &&
-                  menuItem.childMenus.length >= 1 &&
+                  !hasActiveChildMenu(menuItem) &&
                   renderDualNavDropdownButton(menuItem, index, level, path)}
               </span>
             </SideNavMenuItem>
@@ -188,6 +194,15 @@ function OEHeader(props) {
     } else {
       return <React.Fragment key={path}></React.Fragment>;
     }
+  };
+
+  const hasActiveChildMenu = (menuItem) => {
+    return (
+      menuItem.childMenus.length < 1 &&
+      menuItem.childMenus.some((element) => {
+        return element.isActive;
+      })
+    );
   };
 
   const renderSingleNavButton = (menuItem, index, level, path) => {
@@ -288,6 +303,7 @@ function OEHeader(props) {
 
   const onClickSideNavItem = (e, menuItem, path) => {
     e.preventDefault();
+    e.stopPropagation();
     setMenuItemExpanded(e, menuItem, path);
   };
 
@@ -297,9 +313,6 @@ function OEHeader(props) {
     newMenuItem.expanded = !newMenuItem.expanded;
     var jp = require("jsonpath");
     jp.value(newMenus, path, newMenuItem);
-    // fixes bug where top level parent closes when no children are expanded
-    const parentPath = path.substring(0, path.lastIndexOf("."));
-    jp.value(newMenus, parentPath + ".expanded", true);
     setMenus(newMenus);
   };
 
