@@ -192,6 +192,7 @@ function SearchPatientForm(props) {
                   <TextInput
                     name={field.name}
                     value={values[field.name]}
+                    placeholder="Enter Patient Id"
                     labelText={intl.formatMessage({
                       id: "patient.id",
                       defaultMessage: "Patient Id",
@@ -205,6 +206,7 @@ function SearchPatientForm(props) {
                 {({ field }) => (
                   <CustomLabNumberInput
                     name={field.name}
+                    placeholder="Enter Previous Lab Number"
                     labelText={intl.formatMessage({
                       id: "patient.prev.lab.no",
                       defaultMessage: "Previous Lab Number",
@@ -224,6 +226,7 @@ function SearchPatientForm(props) {
                 {({ field }) => (
                   <TextInput
                     name={field.name}
+                    placeholder="Enter Last Name"
                     labelText={intl.formatMessage({
                       id: "patient.last.name",
                       defaultMessage: "Last Name",
@@ -237,6 +240,7 @@ function SearchPatientForm(props) {
                 {({ field }) => (
                   <TextInput
                     name={field.name}
+                    placeholder="Enter First Name"
                     labelText={intl.formatMessage({
                       id: "patient.first.name",
                       defaultMessage: "First Name",
