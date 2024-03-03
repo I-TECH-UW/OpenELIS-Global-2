@@ -153,7 +153,7 @@ export default function WorkplanSearchForm(props) {
         <Column lg={16}>
           {selectedLabel && (
             <Section>
-              <h4 className="contentHeader1">&nbsp; {selectedLabel} </h4>
+              <h4 className="contentHeader1">&nbsp; {(selectedLabel==="Select Test Type")?"":selectedLabel} </h4>
             </Section>
           )}
         </Column>
