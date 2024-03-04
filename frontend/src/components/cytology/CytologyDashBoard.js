@@ -301,10 +301,10 @@ function CytologyDashboard() {
                 setFilters({ ...filters, searchTerm: e.target.value })
               }
               placeholder={intl.formatMessage({
-                id: "label.seacrh.labno.family",
+                id: "label.search.labno.family",
               })}
               labelText={intl.formatMessage({
-                id: "label.seacrh.labno.family",
+                id: "label.search.labno.family",
               })}
             />
           </Column>
