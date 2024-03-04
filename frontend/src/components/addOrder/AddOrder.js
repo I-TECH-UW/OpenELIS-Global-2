@@ -412,6 +412,7 @@ const AddOrder = (props) => {
             <div className="inputText">
               <CustomLabNumberInput
                 name="labNo"
+                placeholder="Enter Lab Number"
                 value={orderFormValues.sampleOrderItems.labNo}
                 onMouseLeave={handleLabNoValidation}
                 onChange={handleLabNo}
@@ -586,6 +587,7 @@ const AddOrder = (props) => {
           <div className="inlineDiv">
             <TextInput
               name="requesterFirstName"
+              placeholder="Enter Requester's First Name"
               labelText={
                 <>
                   <FormattedMessage id="order.requester.firstName.label" />
@@ -607,6 +609,7 @@ const AddOrder = (props) => {
 
             <TextInput
               name="requesterLastName"
+              placeholder="Enter Requester's Last Name"
               labelText={
                 <>
                   <FormattedMessage id="order.requester.lastName.label" />
@@ -629,6 +632,7 @@ const AddOrder = (props) => {
           <div className="inlineDiv">
             <TextInput
               name="providerWorkPhone"
+              placeholder="Enter Requester's Phone No."
               disabled={
                 configurationProperties.restrictFreeTextProviderEntry === "true"
               }
@@ -644,6 +648,7 @@ const AddOrder = (props) => {
 
             <TextInput
               name="providerFax"
+              placeholder="Enter Requester's Fax No."
               labelText={intl.formatMessage({
                 id: "order.requester.fax.label",
               })}
@@ -659,6 +664,7 @@ const AddOrder = (props) => {
           <div className="inlineDiv">
             <TextInput
               name="providerEmail"
+              placeholder="Enter Requester's Email"
               labelText={intl.formatMessage({
                 id: "order.requester.email.label",
               })}
