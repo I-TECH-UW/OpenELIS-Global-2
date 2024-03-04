@@ -31,6 +31,7 @@ import { NotificationContext } from "../layout/Layout";
 import { AlertDialog } from "../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
 import "./PathologyDashboard.css";
+import GenericHomeBreadCrumb from "../common/GenericBreadCrumb";
 
 function PathologyDashboard() {
   const componentMounted = useRef(false);
@@ -278,7 +279,8 @@ function PathologyDashboard() {
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading description="Loading Dasboard..." />}
-
+      
+      <GenericHomeBreadCrumb/>
       <Grid fullWidth={true}>
         <Column lg={16}>
           <Section>
