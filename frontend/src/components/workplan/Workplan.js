@@ -25,6 +25,7 @@ import {
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { ConfigurationContext } from "../layout/Layout";
+import GenericHomeBreadCrumb from "../common/GenericBreadCrumb";
 
 export default function Workplan(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
@@ -172,6 +173,7 @@ export default function Workplan(props) {
   let currentAccessionNumber = "";
   return (
     <>
+      <GenericHomeBreadCrumb/>
       <Grid fullWidth={true}>
         {notificationVisible === true ? <AlertDialog /> : ""}
         <Column lg={16}>
