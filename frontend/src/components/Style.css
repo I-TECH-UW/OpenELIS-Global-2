@@ -248,3 +248,47 @@ button,
   width: 100%;
   z-index: 999;
 }
+
+.my-custom-table tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+.cds--side-nav__link-text {
+  width: 100%;
+}
+
+.custom-sidenav-button {
+  box-sizing: border-box;
+  margin: 0;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  background-color: var(--cds-background-hover, #072655);
+  color: var(--cds-text-secondary, #ffffff);
+  transition: color 110ms, background-color 110ms, outline 110ms;
+  -webkit-user-select: none;
+  user-select: none;
+  width: 100%
+}
+
+.custom-sidenav-button:hover {
+  background-color: var(--cds-background, #295785);
+}
+
+.reduced-padding-nav-menu-item > a.cds--side-nav__link {
+   padding-left: 1rem !important;
+}
+
+.cds--side-nav__link:hover {
+  background-color: var(--cds-background-hover, #072655);
+}
+
+@media screen and (max-width:792px) {
+  .banner h5{
+    font-size: 2vw;
+  }
+  .banner p {
+    font-size: 1.5vw;
+  }
+}

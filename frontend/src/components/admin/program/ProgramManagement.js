@@ -184,7 +184,7 @@ function ProgramManagement() {
           <div className="formInlineDiv">
             <Select
               id="additionalQuestionsSelect"
-              labelText="program"
+              labelText="Program"
               onChange={handleProgramSelection}
             >
               <SelectItem

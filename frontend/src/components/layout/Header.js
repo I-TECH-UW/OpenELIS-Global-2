@@ -48,7 +48,6 @@ function OEHeader(props) {
   const headerPanelRef = createRef();
   const scrollRef = useRef(window.scrollY);
   const [patientSearchResults, setPatientSearchResults] = useState([]);
-
   const intl = useIntl();
 
   const [switchCollapsed, setSwitchCollapsed] = useState(true);
@@ -168,6 +167,7 @@ function OEHeader(props) {
             <SideNavMenuItem className="reduced-padding-nav-menu-item">
               <span style={{ display: "flex", width: "100%" }}>
                 {!menuItem.menu.actionURL &&
+
                   hasActiveChildMenu(menuItem) &&
                   console.warn("menu entry has no action url and no child")}
                 {hasActiveChildMenu(menuItem) &&
@@ -177,6 +177,17 @@ function OEHeader(props) {
                   renderSingleDropdownButton(menuItem, index, level, path)}
                 {menuItem.menu.actionURL &&
                   !hasActiveChildMenu(menuItem) &&
+
+                  !hasActiveChildMenu(menuItem) &&
+                  console.warn("menu entry has no action url and no child")}
+                {!hasActiveChildMenu(menuItem) &&
+                  renderSingleNavButton(menuItem, index, level, path)}
+                {!menuItem.menu.actionURL &&
+                  hasActiveChildMenu(menuItem) &&
+                  renderSingleDropdownButton(menuItem, index, level, path)}
+                {menuItem.menu.actionURL &&
+                  hasActiveChildMenu(menuItem) &&
+
                   renderDualNavDropdownButton(menuItem, index, level, path)}
               </span>
             </SideNavMenuItem>
@@ -200,7 +211,132 @@ function OEHeader(props) {
       }
     } else {
       return <React.Fragment key={path}></React.Fragment>;
+
     }
+  };
+
+  const hasActiveChildMenu = (menuItem) => {
+    if (menuItem.menu.elementId === "menu_reports_routine") {
+      console.log("reports");
+
+    }
+    return (
+      menuItem.childMenus.length >= 1 &&
+      menuItem.childMenus.some((element) => {
+        return element.menu.isActive;
+      })
+    );
+  };
+
+  const renderSingleNavButton = (menuItem, index, level, path) => {
+    const marginValue = (level - 1) * 0.5 + "rem";
+    return (
+      <button
+        className={"custom-sidenav-button"}
+        style={{ "margin-left": marginValue }}
+        onClick={() => {
+          if (menuItem.menu.openInNewWindow) {
+            window.open(menuItem.menu.actionURL);
+          } else {
+            window.location.href = menuItem.menu.actionURL;
+          }
+        }}
+      >
+        {renderSideNavMenuItemLabel(menuItem, level)}
+      </button>
+    );
+  };
+
+  const renderSingleDropdownButton = (menuItem, index, level, path) => {
+    const marginValue = (level - 1) * 0.5 + "rem";
+    return (
+      <button
+        className={"custom-sidenav-button"}
+        style={{ "margin-left": marginValue }}
+        onClick={(e) => {
+          onClickSideNavItem(e, menuItem, path);
+        }}
+      >
+        {renderSideNavMenuItemLabel(menuItem, level)}
+        {renderSideNavChevron(menuItem)}
+      </button>
+    );
+  };
+
+  const renderDualNavDropdownButton = (menuItem, index, level, path) => {
+    const marginValue = (level - 1) * 0.5 + "rem";
+    return (
+      <>
+        <button
+          className={
+            menuItem.menu.actionURL
+              ? "custom-sidenav-button"
+              : "custom-sidenav-button-unclickable"
+          }
+          style={{ "margin-left": marginValue }}
+          onClick={() => {
+            if (menuItem.menu.openInNewWindow) {
+              window.open(menuItem.menu.actionURL);
+            } else {
+              window.location.href = menuItem.menu.actionURL;
+            }
+          }}
+        >
+          {renderSideNavMenuItemLabel(menuItem, level)}
+        </button>
+        {menuItem.childMenus.length > 0 && (
+          <button
+            className="custom-sidenav-button"
+            onClick={(e) => {
+              onClickSideNavItem(e, menuItem, path);
+            }}
+          >
+            {renderSideNavChevron(menuItem)}
+          </button>
+        )}
+      </>
+    );
+  };
+
+  const renderSideNavChevron = (menuItem) => {
+    return (
+      <>
+        {menuItem.expanded && (
+          <div className="cds--side-nav__icon cds--side-nav__icon--small cds--side-nav__submenu-chevron">
+            <ChevronUp />
+          </div>
+        )}
+        {!menuItem.expanded && (
+          <div className="cds--side-nav__icon cds--side-nav__icon--small cds--side-nav__submenu-chevron">
+            <ChevronDown />
+          </div>
+        )}
+      </>
+    );
+  };
+
+  const renderSideNavMenuItemLabel = (menuItem, level) => {
+    const fontPercent = 100 - 5 * (level - 1) + "%";
+    return (
+      <span style={{ "font-size": fontPercent }}>
+        <FormattedMessage id={menuItem.menu.displayKey} />
+      </span>
+    );
+  };
+
+  const onClickSideNavItem = (e, menuItem, path) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setMenuItemExpanded(e, menuItem, path);
+  };
+
+  const setMenuItemExpanded = (e, menuItem, path) => {
+    const newMenus = { ...menus };
+    const newMenuItem = { ...menuItem };
+    newMenuItem.expanded = !newMenuItem.expanded;
+    var jp = require("jsonpath");
+    jp.value(newMenus, path, newMenuItem);
+    setMenus(newMenus);
   };
 
   const hasActiveChildMenu = (menuItem) => {
