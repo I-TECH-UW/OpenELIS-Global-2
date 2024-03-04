@@ -1,234 +1,535 @@
-import React, { useContext, useState, useRef, useEffect, useCallback } from "react";
+import React, {
+  useContext,
+  useState,
+  createRef,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+} from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import { withRouter } from "react-router-dom";
 import { ConfigurationContext } from "../layout/Layout";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
-import { Select, SelectItem, Button, Search } from "@carbon/react";
-import { Notification, Language, UserAvatarFilledAlt, Logout, Close } from "@carbon/icons-react";
-import { HeaderContainer, Header, HeaderMenuButton, HeaderName, HeaderGlobalAction, HeaderGlobalBar, SideNavMenu, SideNavMenuItem, SideNav, SideNavItems, Theme, HeaderPanel } from "@carbon/react";
-import { getFromOpenElisServer } from "../utils/Utils";
-import config from "../../config.json";
 import "../Style.css";
-import { Modal } from "@carbon/react";
+import { Select, SelectItem, Search, Modal } from "@carbon/react";
+import config from "../../config.json";
+import SearchPatientForm from "../patient/SearchPatientForm";
+import {
+  Notification,
+  Language,
+  UserAvatarFilledAlt,
+  Logout,
+  Close,
+  ChevronDown,
+  ChevronUp,
+} from "@carbon/icons-react";
 
-function PatientOverlay({ searchTerm, onClose }) {
-  const [patients, setPatients] = useState([]);
-
-  useEffect(() => {
-    const fetchPatients = async () => {
-      try {
-        /// for testing purposes, i will first use dammy patients
-        const dummyPatients = [
-          { id: 1, name: "Patient 1" },
-          { id: 2, name: "Patient 2" },
-          { id: 3, name: "Patient 3" },
-          { id: 4, name: "Patient 4" },
-        ];
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setPatients(dummyPatients);
-      } catch (error) {
-        console.error("Error fetching patients:", error);
-      }
-    };
-
-    if (searchTerm !== "") {
-      fetchPatients();
-    }
-  }, [searchTerm]);
-
-  return (
-    <Modal
-      open={searchTerm !== ""}
-      modalHeading="Patients"
-      onRequestClose={onClose}
-    >
-      <ul>
-        {patients.map((patient) => (
-          <li key={patient.id}>{patient.name}</li>
-        ))}
-      </ul>
-    </Modal>
-  );
-}
+import {
+  HeaderContainer,
+  Header,
+  HeaderMenuButton,
+  HeaderName,
+  HeaderGlobalAction,
+  HeaderGlobalBar,
+  SideNavMenu,
+  SideNavMenuItem,
+  SideNav,
+  SideNavItems,
+  Theme,
+  HeaderPanel,
+} from "@carbon/react";
+import { getFromOpenElisServer } from "../utils/Utils";
 
 function OEHeader(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
   const { userSessionDetails, logout } = useContext(UserSessionDetailsContext);
-  const userSwitchRef = useRef(null);
-  const headerPanelRef = useRef(null);
+
+  const userSwitchRef = createRef();
+  const headerPanelRef = createRef();
+  const scrollRef = useRef(window.scrollY);
+  const [patientSearchResults, setPatientSearchResults] = useState([]);
+
   const intl = useIntl();
 
   const [switchCollapsed, setSwitchCollapsed] = useState(true);
   const [menus, setMenus] = useState({
-    menu: [],
+    menu: [{ menu: {}, childMenus: [] }],
     menu_billing: { menu: {}, childMenus: [] },
     menu_nonconformity: { menu: {}, childMenus: [] },
   });
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showOverlay, setShowOverlay] = useState(false);
 
-  useEffect(() => {
-    getFromOpenElisServer("/rest/menu", handleMenuItems("menu"));
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  scrollRef.current = window.scrollY;
+  useLayoutEffect(() => {
+    window.scrollTo(0, scrollRef.current);
   }, []);
 
-  const handleMenuItems = (tag) => (res) => {
+  useEffect(() => {
+    getFromOpenElisServer("/rest/menu", (res) => {
+      handleMenuItems("menu", res);
+    });
+  }, []);
+
+  const panelSwitchLabel = () => {
+    return userSessionDetails.authenticated ? "User" : "Lang";
+  };
+
+  const handleMenuItems = (tag, res) => {
     if (res) {
-      setMenus(prevMenus => ({ ...prevMenus, [tag]: res }));
+      let newMenus = menus;
+      newMenus[tag] = res;
+      setMenus(newMenus);
     }
   };
 
-  const toggleSwitchCollapsed = () => {
-    setSwitchCollapsed(prevState => !prevState);
+  const clickPanelSwitch = () => {
+    setSwitchCollapsed(!switchCollapsed);
   };
-
-  const handleSubmit = (evt) => {
-    evt.preventDefault();
-    const term = evt.target.searchTerm.value;
-    setSearchTerm(term);
-    setShowOverlay(true);
-    console.log("Search term submitted:", term);
-  };
-
-  const handleChange = useCallback((val) => {
-    setSearchTerm(val);
-  }, []);
-
-  const panelSwitchLabel = () => userSessionDetails.authenticated ? "User" : "Lang";
 
   const panelSwitchIcon = () => {
-    const Icon = userSessionDetails.authenticated ? (switchCollapsed ? UserAvatarFilledAlt : Close) : (switchCollapsed ? Language : Close);
-    return <Icon size={20} />;
+    return userSessionDetails.authenticated ? (
+      switchCollapsed ? (
+        <UserAvatarFilledAlt size={20} />
+      ) : (
+        <Close size={20} />
+      )
+    ) : switchCollapsed ? (
+      <Language size={20} />
+    ) : (
+      <Close size={20} />
+    );
+  };
+  
+  const logo = () => {
+    return (
+      <>
+        <picture>
+          <img
+            className="logo"
+            src={`../images/openelis_logo.png`}
+            alt="logo"
+          />
+        </picture>
+      </>
+    );
   };
 
-  const logo = () => (
-    <img className="logo" src="../images/openelis_logo.png" alt="logo" />
-  );
-
-  const generateMenuItems = (menuItem, index, level) => {
-    if (!menuItem.menu.isActive) return null;
-
-    const indent = Array.from({ length: level > 1 ? level - 2 : 0 }, () => "\xA0\xA0\xA0").join("-\xA0\xA0\xA0");
-
-    return (
-      <React.Fragment key={`menu_${index}_${level}`}>
-        {level === 0 && menuItem.childMenus.length > 0 ? (
-          <SideNavMenu
-            aria-label={intl.formatMessage({ id: menuItem.menu.displayKey })}
-            title={intl.formatMessage({ id: menuItem.menu.displayKey })}
-          >
-            {menuItem.childMenus.map((childMenuItem, index) =>
-              generateMenuItems(childMenuItem, index, level + 1)
-            )}
-          </SideNavMenu>
-        ) : (
-          <>
+  const generateMenuItems = (menuItem, index, level, path) => {
+    if (menuItem.menu.isActive) {
+      if (level === 0 && menuItem.childMenus.length > 0) {
+        return (
+          <React.Fragment key={path}>
+            <span
+              onClick={(e) => {
+                setMenuItemExpanded(e, menuItem, path);
+              }}
+            >
+              <SideNavMenu
+                aria-label={intl.formatMessage({
+                  id: menuItem.menu.displayKey,
+                })}
+                title={intl.formatMessage({
+                  id: menuItem.menu.displayKey,
+                })}
+                key={"menu_" + index + "_" + level}
+                defaultExpanded={menuItem.expanded}
+              >
+                {menuItem.childMenus.map((childMenuItem, index) => {
+                  return generateMenuItems(
+                    childMenuItem,
+                    index,
+                    level + 1,
+                    path + ".childMenus[" + index + "]",
+                  );
+                })}
+              </SideNavMenu>
+            </span>
+          </React.Fragment>
+        );
+      } else if (level === 0) {
+        return (
+          <React.Fragment key={path}>
             <SideNavMenuItem
               href={menuItem.menu.actionURL}
               target={menuItem.menu.openInNewWindow ? "_blank" : ""}
             >
-              {indent}<FormattedMessage id={menuItem.menu.displayKey} />
+              {renderSideNavMenuItemLabel(menuItem, level)}
             </SideNavMenuItem>
-            {menuItem.childMenus.map((childMenuItem, index) =>
-              generateMenuItems(childMenuItem, index, level + 1)
-            )}
-          </>
-        )}
-      </React.Fragment>
+          </React.Fragment>
+        );
+      } else {
+        return (
+          <React.Fragment key={path}>
+            <SideNavMenuItem className="reduced-padding-nav-menu-item">
+              <span style={{ display: "flex", width: "100%" }}>
+                {!menuItem.menu.actionURL &&
+                  hasActiveChildMenu(menuItem) &&
+                  console.warn("menu entry has no action url and no child")}
+                {hasActiveChildMenu(menuItem) &&
+                  renderSingleNavButton(menuItem, index, level, path)}
+                {!menuItem.menu.actionURL &&
+                  !hasActiveChildMenu(menuItem) &&
+                  renderSingleDropdownButton(menuItem, index, level, path)}
+                {menuItem.menu.actionURL &&
+                  !hasActiveChildMenu(menuItem) &&
+                  renderDualNavDropdownButton(menuItem, index, level, path)}
+              </span>
+            </SideNavMenuItem>
+            {menuItem.childMenus.map((childMenuItem, index) => {
+              return (
+                <span
+                  key={path + ".childMenus[" + index + "].span"}
+                  style={{ display: menuItem.expanded ? "" : "none" }}
+                >
+                  {generateMenuItems(
+                    childMenuItem,
+                    index,
+                    level + 1,
+                    path + ".childMenus[" + index + "]",
+                  )}
+                </span>
+              );
+            })}
+          </React.Fragment>
+        );
+      }
+    } else {
+      return <React.Fragment key={path}></React.Fragment>;
+    }
+  };
+
+  const hasActiveChildMenu = (menuItem) => {
+    return (
+      menuItem.childMenus.length < 1 &&
+      menuItem.childMenus.some((element) => {
+        return element.isActive;
+      })
     );
   };
 
+  const renderSingleNavButton = (menuItem, index, level, path) => {
+    const marginValue = (level - 1) * 0.5 + "rem";
+    return (
+      <button
+        className={"custom-sidenav-button"}
+        style={{ "margin-left": marginValue }}
+        onClick={() => {
+          if (menuItem.menu.openInNewWindow) {
+            window.open(menuItem.menu.actionURL);
+          } else {
+            window.location.href = menuItem.menu.actionURL;
+          }
+        }}
+      >
+        {renderSideNavMenuItemLabel(menuItem, level)}
+      </button>
+    );
+  };
+
+  const renderSingleDropdownButton = (menuItem, index, level, path) => {
+    const marginValue = (level - 1) * 0.5 + "rem";
+    return (
+      <button
+        className={"custom-sidenav-button"}
+        style={{ "margin-left": marginValue }}
+        onClick={(e) => {
+          onClickSideNavItem(e, menuItem, path);
+        }}
+      >
+        {renderSideNavMenuItemLabel(menuItem, level)}
+        {renderSideNavChevron(menuItem)}
+      </button>
+    );
+  };
+
+  const renderDualNavDropdownButton = (menuItem, index, level, path) => {
+    const marginValue = (level - 1) * 0.5 + "rem";
+    return (
+      <>
+        <button
+          className={
+            menuItem.menu.actionURL
+              ? "custom-sidenav-button"
+              : "custom-sidenav-button-unclickable"
+          }
+          style={{ "margin-left": marginValue }}
+          onClick={() => {
+            if (menuItem.menu.openInNewWindow) {
+              window.open(menuItem.menu.actionURL);
+            } else {
+              window.location.href = menuItem.menu.actionURL;
+            }
+          }}
+        >
+          {renderSideNavMenuItemLabel(menuItem, level)}
+        </button>
+        {menuItem.childMenus.length > 0 && (
+          <button
+            className="custom-sidenav-button"
+            onClick={(e) => {
+              onClickSideNavItem(e, menuItem, path);
+            }}
+          >
+            {renderSideNavChevron(menuItem)}
+          </button>
+        )}
+      </>
+    );
+  };
+
+  const renderSideNavChevron = (menuItem) => {
+    return (
+      <>
+        {menuItem.expanded && (
+          <div className="cds--side-nav__icon cds--side-nav__icon--small cds--side-nav__submenu-chevron">
+            <ChevronUp />
+          </div>
+        )}
+        {!menuItem.expanded && (
+          <div className="cds--side-nav__icon cds--side-nav__icon--small cds--side-nav__submenu-chevron">
+            <ChevronDown />
+          </div>
+        )}
+      </>
+    );
+  };
+
+  const renderSideNavMenuItemLabel = (menuItem, level) => {
+    const fontPercent = 100 - 5 * (level - 1) + "%";
+    return (
+      <span style={{ "font-size": fontPercent }}>
+        <FormattedMessage id={menuItem.menu.displayKey} />
+      </span>
+    );
+  };
+
+  const onClickSideNavItem = (e, menuItem, path) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setMenuItemExpanded(e, menuItem, path);
+  };
+
+  const setMenuItemExpanded = (e, menuItem, path) => {
+    const newMenus = { ...menus };
+    const newMenuItem = { ...menuItem };
+    newMenuItem.expanded = !newMenuItem.expanded;
+    var jp = require("jsonpath");
+    jp.value(newMenus, path, newMenuItem);
+    setMenus(newMenus);
+  };
+
+  const handleChangeSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSubmitSearch = (values) => {
+    setIsLoading(true);
+  
+    const searchEndPoint =
+      "/rest/patient-search-results?" +
+      "lastName=" +
+      encodeURIComponent(values.lastName) +
+      "&firstName=" +
+      encodeURIComponent(values.firstName) +
+      "&STNumber=";
+  
+    // Send GET request to the server
+    getFromOpenElisServer(
+      searchEndPoint,
+      (res) => {
+        setIsLoading(false);
+        if (res && res.patientSearchResults) {
+          setPatientSearchResults(res.patientSearchResults);
+          setShowModal(true); // Show modal when results are loaded
+        } else {
+          setPatientSearchResults([]);
+        }
+        setIsSearching(true);
+      },
+      (error) => {
+        setIsLoading(false);
+        // Handle error here, like showing a message to the user
+        console.error("Error fetching patient search results:", error);
+      }
+    );
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const fetchPatientDetails = (patientDetails) => {
+    props.getSelectedPatient(patientDetails);
+  };
+
   return (
-    <div className="container overlay-container">
-      <Theme>
-        <HeaderContainer
-          render={({ isSideNavExpanded, onClickSideNavExpand }) => (
-            <Header id="mainHeader" className="mainHeader" aria-label="">
-              {userSessionDetails.authenticated && (
-                <HeaderMenuButton
-                  aria-label={isSideNavExpanded ? "Close menu" : "Open menu"}
-                  onClick={onClickSideNavExpand}
-                  isActive={isSideNavExpanded}
-                  isCollapsible={true}
-                />
-              )}
-              <HeaderName href="/" prefix="">
-                <span id="header-logo">{logo()}</span>
-                <div className="banner">
-                  <h5>{configurationProperties?.BANNER_TEXT}</h5>
-                  <p>
-                    <FormattedMessage id="header.label.version" /> &nbsp;
-                    {configurationProperties?.releaseNumber}
-                  </p>
-                </div>
-              </HeaderName>
-              {userSessionDetails.authenticated && (
-                <HeaderGlobalBar className="cds--header__global">
-                  <div className="search-container">
-                  <form onSubmit={handleSubmit} className="search">
-                  <Search
-                    labelText=""
-                    placeholder="search for Patient by name"
-                    value={searchTerm}
-                    onChange={(event) => handleChange(event.target.value)}
-                    id="searchTerm"
+    <>
+      <div className="container">
+        <Theme>
+          <HeaderContainer
+            render={({ isSideNavExpanded, onClickSideNavExpand }) => (
+              <Header id="mainHeader" className="mainHeader" aria-label="">
+                {userSessionDetails.authenticated && (
+                  <HeaderMenuButton
+                    aria-label={isSideNavExpanded ? "Close menu" : "Open menu"}
+                    onClick={onClickSideNavExpand}
+                    isActive={isSideNavExpanded}
+                    isCollapsible={true}
                   />
-                  <Button type="submit" kind="secondary" className="btn-search">
-                    Search
-                  </Button>
-                  {showOverlay && (
-                    <div className="patient-overlay">
-                      <PatientOverlay
-                        searchTerm={searchTerm}
-                        onClose={() => setShowOverlay(false)}
-                      />
-                    </div>
-                  )}
-                </form>
+                )}
+                <HeaderName href="/" prefix="">
+                  <span id="header-logo">{logo()}</span>
+                  <div className="banner">
+                    <h5>{configurationProperties?.BANNER_TEXT}</h5>
+                    <p>
+                      <FormattedMessage id="header.label.version" /> &nbsp;{" "}
+                      {configurationProperties?.releaseNumber}
+                    </p>
                   </div>
-                  <HeaderGlobalAction
-                    aria-label="Notifications"
-                    onClick={() => {/*TODO: add notification functionality*/}}
-                  >
-                    <Notification size={20} />
-                  </HeaderGlobalAction>
+                </HeaderName>
+                <HeaderGlobalBar>
+                  {userSessionDetails.authenticated && (
+                    <>
+                      <form onSubmit={handleSubmitSearch}>
+                        <Search
+                          labelText=""
+                          placeholder="Search for patients"
+                          value={searchTerm}
+                          onChange={handleChangeSearch}
+                          id="searchTerm"
+                        />
+                      </form>
+                     {searchResults.length > 0 && (
+                        <Modal
+                          open={isSearching}
+                          modalHeading="Search Results"
+                          onRequestClose={() => {
+                            setSearchResults([]);
+                            setIsSearching(true);
+                          }}
+                        >
+                          <ul>
+                            {searchResults.map((result) => (
+                              <li key={result.id}>{result.name}</li>
+                            ))}
+                          </ul>
+                        </Modal>
+                      )}
+                      <HeaderGlobalAction
+                        aria-label="Notifications"
+                        onClick={() => {
+                          /*TODO add notification functionality*/
+                        }}
+                      >
+                        <Notification size={20} />
+                      </HeaderGlobalAction>
+                    </>
+                  )}
                   <HeaderGlobalAction
                     aria-label={panelSwitchLabel()}
-                    onClick={toggleSwitchCollapsed}
+                    onClick={clickPanelSwitch}
                     ref={userSwitchRef}
                   >
                     {panelSwitchIcon()}
                   </HeaderGlobalAction>
                 </HeaderGlobalBar>
-              )}
-              {userSessionDetails.authenticated && (
                 <HeaderPanel
                   aria-label="Header Panel"
                   expanded={!switchCollapsed}
                   className="headerPanel"
                   ref={headerPanelRef}
                 >
-                  {/* User details and language selector code */}
-                </HeaderPanel>
-              )}
-              {userSessionDetails.authenticated && (
-                <SideNav
-                  aria-label="Side navigation"
-                  expanded={isSideNavExpanded}
-                  isPersistent={false}
-                >
-                  <SideNavItems>
-                    {menus["menu"].map((childMenuItem, index) =>
-                      childMenuItem.menu.elementId !== "menu_home" &&
-                      generateMenuItems(childMenuItem, index, 0)
+                  <ul>
+                    {userSessionDetails.authenticated && (
+                      <>
+                        <li className="userDetails">
+                          <UserAvatarFilledAlt size={18} />{" "}
+                          {userSessionDetails.firstName}{" "}
+                          {userSessionDetails.lastName}
+                        </li>
+                        <li
+                          className="userDetails clickableUserDetails"
+                          onClick={logout}
+                        >
+                          <Logout id="sign-out" />
+                          <FormattedMessage id="header.label.logout" />
+                        </li>
+                      </>
                     )}
-                  </SideNavItems>
-                </SideNav>
-              )}
-            </Header>
-          )}
-        />
-      </Theme>
-    </div>
+                    <li className="userDetails">
+                      <Select
+                        id="selector"
+                        name="selectLocale"
+                        className="selectLocale"
+                        invalidText="A valid locale value is required"
+                        labelText={
+                          <FormattedMessage id="header.label.selectlocale" />
+                        }
+                        onChange={(event) => {
+                          props.onChangeLanguage(event.target.value);
+                        }}
+                        value={props.intl.locale}
+                      >
+                        <SelectItem text="English" value="en" />
+                        <SelectItem text="French" value="fr" />
+                      </Select>
+                    </li>
+                    <li className="userDetails">
+                      <label className="cds--label">
+                        {" "}
+                        <FormattedMessage id="header.label.version" />:{" "}
+                        {configurationProperties?.releaseNumber}
+                      </label>
+                    </li>
+                  </ul>
+                </HeaderPanel>
+                {userSessionDetails.authenticated && (
+                  <>
+                    <SideNav
+                      aria-label="Side navigation"
+                      expanded={isSideNavExpanded}
+                      isPersistent={false}
+                    >
+                      <SideNavItems>
+                        {menus["menu"].map((childMenuItem, index) => {
+                          // ignore the Home Menu in the new UI
+                          if (childMenuItem.menu.elementId != "menu_home") {
+                            return generateMenuItems(
+                              childMenuItem,
+                              index,
+                              0,
+                              "$.menu[" + index + "]",
+                            );
+                          }
+                        })}
+                      </SideNavItems>
+                    </SideNav>
+                  </>
+                )}
+              </Header>
+            )}
+          />
+        </Theme>
+      </div>
+      {showModal && (
+    <Modal
+       open={showModal}
+       modalHeading="Search Results"
+       onRequestClose={closeModal}
+    >
+    <ul>
+      {searchResults.map((result) => (
+        <li key={result.id}>{result.name}</li>
+      ))}
+    </ul>
+  </Modal>
+)}
+    </>
   );
 }
 
