@@ -26,7 +26,8 @@ jobs:
         working-directory: frontend
 
       - name: Run Frontend Qa Workflow
-        run: npx cypress run –headless
+#        run: npx cypress run --e2e
+        run: npx cypress run –-headless
         working-directory: frontend
 
 

@@ -1,12 +1,33 @@
 {
+  "patient": {
+    "firstName": "Mutesasira",
+    "lastName": "Moses",
+    "subjectNumber": "WX1FNBDKPLD",
+    "nationalId": "KLDOPQB017LHJ",
+    "DOB": "11/05/1994",
+    "phoneNo": "+225-09-66-89-12",
+    "gender": "Male"
+  },
+  "program": "People living with HIV Program - Initial Visit",
   "samples": [
     {
-      "sampleType": "Serum"
+      "sampleType": "Serum",
+      "collectionDate": "05/06/2023",
+      "collectionTime": "11:30",
+      "collector": "Opio Paul"
     }
   ],
-  "siteName": "example site",
+  "labNo": "DEV01230000000010000",
+  "priority": "Timed",
+  "requestDate": "27/10/2023",
+  "receivedDate": "27/10/2023",
+  "receptionTime": "01:20",
+  "nextVisitDate": "28/10/2023",
+  "siteName": "6666 - TESTING ARV",
   "requester": {
     "firstName": "Optimus",
-    "lastName": "Prime"
+    "lastName": "Prime",
+    "email": "optimus@gmail.com",
+    "phoneNumber": "+225-00-67-12-13"
   }
 }

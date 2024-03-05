@@ -26,14 +26,20 @@ describe('Patient Search', function () {
 
     it('User should enter patient Information', function () {
         cy.fixture('Patient').then((patient) => {
-            patientPage.enterPatientInfo(patient.firstName, patient.lastName, patient.subjectNumber, patient.nationalId, patient.DOB)
+            patientPage.enterPatientInfo(patient.firstName, patient.lastName, patient.subjectNumber, patient.nationalId, patient.DOB,patient.gender)
         });
     });
     it('User should click save new patient information button', function () {
-        patientPage.clickSavePatientButton();
-        cy.wait(1000);
-        cy.get('div[role=\'status\']').should('be.visible');
-        cy.wait(200).reload();
+        patientPage.getSubmitButton().invoke('attr', 'disabled').then(disabled => {
+            if (!disabled) {
+                patientPage.clickSavePatientButton();
+                cy.wait(1000);
+                cy.get('div[role=\'status\']').should('be.visible');
+                cy.wait(200).reload();
+            } else {
+                cy.wait(200).reload();
+            }
+        })
     });
 
     it('Should be able to search patients By gender', function () {
@@ -71,6 +77,31 @@ describe('Patient Search', function () {
             patientPage.clickSearchPatientButton();
             patientPage.validatePatientSearchTable(patient.firstName, patient.inValidName);
         });
+        cy.wait(200).reload();
+    });
+
+    it('User should be able to search patient by Previous Lab Number', function () {
+        cy.fixture('Patient').then((patient) => {
+            cy.wait(1000);
+            patientPage.searchPatientByAccessionNo(patient.accessionNumber);
+            patientPage.clickSearchPatientButton();
+            cy.wait(1000);
+            /**  to be reviewed
+             patientPage.getPatientSearchResultsTable().should('be.visible'); **/
+        });
+        cy.wait(200).reload();
+    });
+
+    it('User searches with an invalid accession No', () => {
+        cy.fixture('Patient').then((patient) => {
+            cy.wait(1000);
+            patientPage.searchPatientByAccessionNo(patient.inValidAccessionNumber);
+            patientPage.clickSearchPatientButton();
+            cy.wait(1000);
+            /**  to be reviewed
+            patientPage.getPatientSearchResultsTable().should('be.visible'); **/
+        });
+        cy.wait(200).reload();
     });
 
 

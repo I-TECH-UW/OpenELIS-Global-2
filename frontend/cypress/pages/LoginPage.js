@@ -12,6 +12,12 @@ class LoginPage {
         cy.visit('/login');
     }
 
+    logoutSession(){
+        cy.clearLocalStorage();
+        cy.clearCookies();
+        this.visit();
+    }
+
     getUsernameElement() {
         return cy.getElement(`.inputText .cds--text-input--md`);
     }
