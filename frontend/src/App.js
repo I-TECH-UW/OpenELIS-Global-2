@@ -33,6 +33,7 @@ import ImmunohistochemistryDashboard from "./components/immunohistochemistry/Imm
 import ImmunohistochemistryCaseView from "./components/immunohistochemistry/ImmunohistochemistryCaseView";
 import RoutedResultsViewer from "./components/patient/resultsViewer/results-viewer.tsx";
 import EOrderPage from "./components/eOrder/Index";
+import PrintBarcode from "./components/printBarcode/Index";
 
 export default function App() {
   let i18nConfig = {
@@ -283,6 +284,12 @@ export default function App() {
                   path="/ElectronicOrders"
                   exact
                   component={() => <EOrderPage />}
+                  role="Reception"
+                />
+                <SecureRoute
+                  path="/PrintBarcode"
+                  exact
+                  component={() => <PrintBarcode />}
                   role="Reception"
                 />
                 <SecureRoute
