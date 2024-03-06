@@ -34,6 +34,7 @@ import ImmunohistochemistryCaseView from "./components/immunohistochemistry/Immu
 import RoutedResultsViewer from "./components/patient/resultsViewer/results-viewer.tsx";
 import EOrderPage from "./components/eOrder/Index";
 import PrintBarcode from "./components/printBarcode/Index";
+import RoutineIndex from "./components/Reports/routine/Index.js";
 
 export default function App() {
   let i18nConfig = {
@@ -411,6 +412,25 @@ export default function App() {
                   component={() => <RoutineReports />}
                   role="Reports"
                 />
+              <SecureRoute
+                  path="/ByTestType"
+                  exact
+                  component={() => <RoutineIndex />}
+                  role="Reports"
+                />
+                <SecureRoute
+                  path="/ByPanelType"
+                  exact
+                  component={() => <RoutineIndex />}
+                  role="Reports"
+                />
+                <SecureRoute
+                  path="/ByUnit"
+                  exact
+                  component={() => <RoutineIndex />}
+                  role="Reports"
+                />
+                
                 <SecureRoute
                   path="/StudyReports"
                   exact

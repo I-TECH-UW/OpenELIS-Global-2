@@ -63,21 +63,15 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=indicator&report=activityReportByTest",
+          link:"/ByTestType?type=indicator&report=activityReportByTest",
           label: <FormattedMessage id="sideNav.label.bytesttype"/>,
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=indicator&report=activityReportByPanel",
+          link:"/ByPanelType?type=indicator&report=activityReportByPanel",
           label:  <FormattedMessage id="sideNav.label.bypaneltype"/>,
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=indicator&report=activityReportByTestSection",
+          link:"/ByUnit?type=indicator&report=activityReportByTestSection",
           label: <FormattedMessage id="sideNav.label.byunit"/>,
         },
       ],
