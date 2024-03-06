@@ -39,9 +39,13 @@ function SearchOrder() {
     <>
       <div className="orderLegendBody">
         <Form onSubmit={handleSearch}>
+          <Grid>
+            <Column lg={16} sm={4}>
               <h4>
                 <FormattedMessage id="sample.label.search.labnumber" />
               </h4>
+            </Column>
+            <Column lg={16} sm={4}>
               <div className="inlineDiv">
               <CustomLabNumberInput
                 placeholder={"Enter Lab No"}
@@ -53,25 +57,30 @@ function SearchOrder() {
                 }
                 labelText={<FormattedMessage id="search.label.accession" />}
               />
-            </div>
-            <Grid>
-            <Column >
+              </div>
+            </Column>
+            <Column lg={2}>
               <Button type="submit">
                 <FormattedMessage id="label.button.submit" />
               </Button>
             </Column>
-          </Grid>             
+          </Grid>
         </Form>
-      </div> 
+      </div>
       <div className="orderLegendBody">
+        <Grid>
+          <Column lg={16}>
             <h4>
               {" "}
               <FormattedMessage id="sample.label.search.patient" />
             </h4>
-          <div className="container">
+          </Column>
+          <Column lg={16} md={8} sm={4}>
             <SearchPatientForm
               getSelectedPatient={getSelectedPatient}
-            ></SearchPatientForm></div>
+            ></SearchPatientForm>
+          </Column>
+        </Grid>
       </div>
     </>
   );
