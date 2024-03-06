@@ -74,8 +74,7 @@ const RoutineIndex = () => {
         {isLoading && <Loading />}
         {!isLoading && (
           <>
-            {type === "patient" && report === "patientCILNSP_vreduit" &&   
-            (window.location.href = `${config.serverBaseUrl}/Report?type=${type}&report=${report}`)}
+           
 
             {type === "indicator" &&
               report === "statisticsReport" &&
@@ -89,37 +88,6 @@ const RoutineIndex = () => {
             {type === "indicator" &&
               report === "indicatorCDILNSPHIV" &&
               (<HIVTestSummary/>)}
-
-            {type === "indicator" &&
-              report === "sampleRejectionReport" &&
-              (window.location.href = `${config.serverBaseUrl}/Report?type=${type}&report=${report}`)}
-
-            {type === "indicator" &&
-              report === "activityReportByTest" &&
-              (window.location.href = `${config.serverBaseUrl}/Report?type=${type}&report=${report}`)}
-
-            {type === "indicator" &&
-              report === "activityReportByPanel" &&
-              (window.location.href = `${config.serverBaseUrl}/Report?type=${type}&report=${report}`)}
-
-            {type === "indicator" &&
-              report === "activityReportByTestSection" &&
-              (window.location.href = `${config.serverBaseUrl}/Report?type=${type}&report=${report}`)}
-
-            {type === "patient" &&
-              report === "referredOut" &&
-              (window.location.href = `${config.serverBaseUrl}/Report?type=${type}&report=${report}`)}
-            {type === "patient" &&
-              report === "haitiNonConformityByDate" &&
-              (window.location.href = `${config.serverBaseUrl}/Report?type=${type}&report=${report}`)}
-
-            {type === "patient" &&
-              report === "CISampleRoutineExport" &&
-              (window.location.href = `${config.serverBaseUrl}/Report?type=${type}&report=${report}`)}
-
-            {type === "indicator" &&
-              report === "validationBacklog" &&
-              (window.location.href = `${config.serverBaseUrl}/ReportPrint?type=${type}&report=${report}`)}
 
           </>
         )}
