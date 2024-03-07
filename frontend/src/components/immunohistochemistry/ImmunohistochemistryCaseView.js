@@ -35,7 +35,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import PatientHeader from "../common/PatientHeader";
 import QuestionnaireResponse from "../common/QuestionnaireResponse";
 import "./../pathology/PathologyDashboard.css";
-import HomeBreadCrumb from "../common/HomeBreadCrumb";
+import PageBreadCrumb from "../common/PageBreadCrumb";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -791,7 +791,7 @@ function ImmunohistochemistryCaseView() {
 
   return (
     <>
-      <HomeBreadCrumb breadcrumbs={breadcrumbs} />
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
 
       <Grid fullWidth={true}>
         <Column lg={16}>

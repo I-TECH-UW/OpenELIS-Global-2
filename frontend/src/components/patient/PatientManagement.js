@@ -4,7 +4,7 @@ import "../Style.css";
 import { Heading, Grid, Column, Section, Button } from "@carbon/react";
 import SearchPatientForm from "./SearchPatientForm";
 import CreatePatientForm from "./CreatePatientForm";
-import HomeBreadCrumb from "../common/HomeBreadCrumb";
+import PageBreadCrumb from "../common/PageBreadCrumb";
 let breadcrumbs = [
   { label: "home.label", link: "/" },
   { label: "patient.label.modify", link: "/PatientManagement" },
@@ -39,7 +39,7 @@ function PatientManagement() {
 
   return (
     <>
-      <HomeBreadCrumb breadcrumbs={breadcrumbs} />
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         <Column lg={16}>
           <Section>

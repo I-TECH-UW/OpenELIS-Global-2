@@ -4,7 +4,7 @@ import "../Style.css";
 import { Heading, Grid, Column, Section } from "@carbon/react";
 import SearchPatientForm from "./SearchPatientForm";
 import { useState, useEffect, useRef } from "react";
-import HomeBreadCrumb from "../common/HomeBreadCrumb";
+import PageBreadCrumb from "../common/PageBreadCrumb";
 let breadcrumbs = [{ label: "home.label", link: "/" }];
 
 const PatientHistory = () => {
@@ -33,7 +33,7 @@ const PatientHistory = () => {
 
   return (
     <>
-      <HomeBreadCrumb breadcrumbs={breadcrumbs} />
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         <Column lg={16}>
           <Section>

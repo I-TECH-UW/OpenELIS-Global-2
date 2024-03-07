@@ -15,7 +15,7 @@ import CustomDatePicker from "../common/CustomDatePicker";
 
 import { FormattedMessage, useIntl, injectIntl } from "react-intl";
 import { getFromOpenElisServer } from "../utils/Utils";
-import HomeBreadCrumb from "../common/HomeBreadCrumb";
+import PageBreadCrumb from "../common/PageBreadCrumb";
 let breadcrumbs = [{ label: "home.label", link: "/" }];
 
 const EOrderSearch = ({
@@ -91,7 +91,7 @@ const EOrderSearch = ({
 
   return (
     <>
-      <HomeBreadCrumb breadcrumbs={breadcrumbs} />
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         <Column lg={16}>
           <Section>

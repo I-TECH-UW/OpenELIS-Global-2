@@ -31,6 +31,7 @@ import { AlertDialog } from "../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
 import "./../pathology/PathologyDashboard.css";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
+import PageBreadCrumb from "../common/PageBreadCrumb";
 
 function ImmunohistochemistryDashboard() {
   const componentMounted = useRef(false);
@@ -280,10 +281,13 @@ function ImmunohistochemistryDashboard() {
     };
   }, [filters]);
 
+  let breadcrumbs = [{ label: "home.label", link: "/" }];
+
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading description="Loading Dasboard..." />}
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         <Column lg={16}>
           <Section>

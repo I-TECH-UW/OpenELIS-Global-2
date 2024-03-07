@@ -33,7 +33,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import PatientHeader from "../common/PatientHeader";
 import QuestionnaireResponse from "../common/QuestionnaireResponse";
 import "./PathologyDashboard.css";
-import HomeBreadCrumb from "../common/HomeBreadCrumb";
+import PageBreadCrumb from "../common/PageBreadCrumb";
 
 function PathologyCaseView() {
   const intl = useIntl();
@@ -260,7 +260,7 @@ function PathologyCaseView() {
 
   return (
     <>
-      <HomeBreadCrumb breadcrumbs={breadcrumbs} />
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
 
       <Grid fullWidth={true}>
         <Column lg={16}>

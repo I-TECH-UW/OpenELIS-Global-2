@@ -19,7 +19,7 @@ import EditOrderEntryAdditionalQuestions from "./EditOrderEntryAdditionalQuestio
 import OrderSuccessMessage from "../addOrder/OrderSuccessMessage";
 import { FormattedMessage, useIntl } from "react-intl";
 import PatientHeader from "../common/PatientHeader";
-import HomeBreadCrumb from "../common/HomeBreadCrumb";
+import PageBreadCrumb from "../common/PageBreadCrumb";
 let breadcrumbs = [
   { label: "home.label", link: "/" },
   { label: "sample.label.search.Order", link: "/SampleEdit" },
@@ -199,7 +199,7 @@ const ModifyOrder = () => {
 
   return (
     <>
-      <HomeBreadCrumb breadcrumbs={breadcrumbs} />
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
 
       <PatientHeader
         id={orderFormValues?.nationalId}

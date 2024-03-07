@@ -10,7 +10,7 @@ import {
 import SearchOrder from "./SearchOrder";
 import { AlertDialog } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
-import HomeBreadCrumb from "../common/HomeBreadCrumb";
+import PageBreadCrumb from "../common/PageBreadCrumb";
 let breadcrumbs = [{ label: "home.label", link: "/" }];
 
 const Index = () => {
@@ -18,7 +18,7 @@ const Index = () => {
   return (
     <div className="pageContent">
       {notificationVisible === true ? <AlertDialog /> : ""}
-      <HomeBreadCrumb breadcrumbs={breadcrumbs} />
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         <Column lg={12}>
           <Section>

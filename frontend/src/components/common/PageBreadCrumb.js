@@ -2,7 +2,7 @@ import { Breadcrumb, BreadcrumbItem, Column, Grid } from "@carbon/react";
 import React from "react";
 import { useIntl } from "react-intl";
 
-const HomeBreadCrumb = ({ breadcrumbs }) => {
+const PageBreadCrumb = ({ breadcrumbs }) => {
   const intl = useIntl();
 
   return (
@@ -22,4 +22,4 @@ const HomeBreadCrumb = ({ breadcrumbs }) => {
   );
 };
 
-export default HomeBreadCrumb;
+export default PageBreadCrumb;
