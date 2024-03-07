@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { Form, FormLabel, Grid, Column, Section, Button } from "@carbon/react";
+import { Form, FormLabel, Grid, Column, Section, Button, Loading, Card } from "@carbon/react";
 import CustomDatePicker from "../../common/CustomDatePicker";
-import Loading from "../../common/Loading";
-import AlertDialog from "../../common/AlertDialog";
+import { AlertDialog } from "../../common/CustomNotification";
 import config from "../../../config.json";
 import "../../Style.css";
 
-
-const ActivityReportByTest = () => {
+const activityReportByTest = () => {
   const intl = useIntl();
 
   const [loading, setLoading] = useState(false);
@@ -26,7 +24,7 @@ const ActivityReportByTest = () => {
     }
   };
 
-  const handleDatePickerChangeDate = (datePicker, date) => {
+  const handleChangeDatePicker = (datePicker, date) => {
     const updatedDate = encodeDate(date);
     setReportFormValues(prevState => ({
       ...prevState,
@@ -50,7 +48,7 @@ const ActivityReportByTest = () => {
         <Section>
           <Section>
             <h1>
-              <FormattedMessage id="openreports.activity.title"/>
+              <FormattedMessage id="sidenav.label.workplan.test"/>
             </h1>
           </Section>
         </Section>
@@ -80,7 +78,7 @@ const ActivityReportByTest = () => {
                     value={reportFormValues.startDate}
                     className="inputDate"
                     onChange={(date) =>
-                      handleDatePickerChangeDate("startDate", date)
+                      handleChangeDatePicker("startDate", date)
                     }
                   />
                   <CustomDatePicker
@@ -93,13 +91,14 @@ const ActivityReportByTest = () => {
                     autofillDate={true}
                     value={reportFormValues.endDate}
                     onChange={(date) =>
-                      handleDatePickerChangeDate("endDate", date)
+                      handleChangeDatePicker("endDate", date)
                     }
                   />
                 </div>
               </Column>
             </Grid>
             <br />
+           
             <Section>
               <br />
               <Button type="button" onClick={handleSubmit}>
@@ -113,4 +112,4 @@ const ActivityReportByTest = () => {
   );
 };
 
-export default ActivityReportByTest;
+export default activityReportByTest;

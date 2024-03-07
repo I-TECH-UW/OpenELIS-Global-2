@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { Form, FormLabel, Grid, Column, Section, Button } from "@carbon/react";
+import { Form, FormLabel, Grid, Column, Section, Button, Loading } from "@carbon/react";
 import CustomDatePicker from "../../common/CustomDatePicker";
-import Loading from "../../common/Loading";
-import AlertDialog from "../../common/AlertDialog";
+import { AlertDialog } from "../../common/CustomNotification";
 import config from "../../../config.json";
 import "../../Style.css";
 
 
-const ActivityReportByUnit = () => {
+const activityReportByUnit = () => {
   const intl = useIntl();
 
   const [loading, setLoading] = useState(false);
@@ -50,7 +49,7 @@ const ActivityReportByUnit = () => {
         <Section>
           <Section>
             <h1>
-              <FormattedMessage id="openreports.activity.title"/>
+              <FormattedMessage id="By Unit"/>
             </h1>
           </Section>
         </Section>
@@ -113,4 +112,4 @@ const ActivityReportByUnit = () => {
   );
 };
 
-export default ActivityReportByUnit;
+export default activityReportByUnit;

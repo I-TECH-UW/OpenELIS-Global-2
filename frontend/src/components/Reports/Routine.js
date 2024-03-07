@@ -71,7 +71,7 @@ export const RoutineReportsMenu = {
           label:  <FormattedMessage id="sideNav.label.bypaneltype"/>,
         },
         {
-          link:"/ByUnit?type=indicator&report=activityReportByTestSection",
+          link:"/ByUnit?type=indicator&report=activityReportByUnit",
           label: <FormattedMessage id="sideNav.label.byunit"/>,
         },
       ],

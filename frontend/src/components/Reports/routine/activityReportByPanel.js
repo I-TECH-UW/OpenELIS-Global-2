@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { Form, FormLabel, Grid, Column, Section, Button } from "@carbon/react";
+import { Form, FormLabel, Grid, Column, Section, Button, Loading } from "@carbon/react";
 import CustomDatePicker from "../../common/CustomDatePicker";
-import Loading from "../../common/Loading";
-import AlertDialog from "../../common/AlertDialog";
+import { AlertDialog } from "../../common/CustomNotification";
 import config from "../../../config.json";
+
 import "../../Style.css";
 
-
-const ActivityReportByPanel = () => {
+const activityReportByPanel = () => { 
   const intl = useIntl();
 
   const [loading, setLoading] = useState(false);
@@ -26,7 +25,7 @@ const ActivityReportByPanel = () => {
     }
   };
 
-  const handleDatePickerChangeDate = (datePicker, date) => {
+  const handleChangeDatePicker = (datePicker, date) => {
     const updatedDate = encodeDate(date);
     setReportFormValues(prevState => ({
       ...prevState,
@@ -50,7 +49,7 @@ const ActivityReportByPanel = () => {
         <Section>
           <Section>
             <h1>
-              <FormattedMessage id="openreports.activity.title"/>
+              <FormattedMessage id="sidenav.label.workplan.panel"/>
             </h1>
           </Section>
         </Section>
@@ -63,7 +62,6 @@ const ActivityReportByPanel = () => {
             <Grid fullWidth={true}>
               <Column lg={10}>
                 <Section>
-                  <br />
                   <br />
                   <h5>
                     <FormattedMessage id="select.dateRange" />
@@ -80,7 +78,7 @@ const ActivityReportByPanel = () => {
                     value={reportFormValues.startDate}
                     className="inputDate"
                     onChange={(date) =>
-                      handleDatePickerChangeDate("startDate", date)
+                      handleChangeDatePicker("startDate", date)
                     }
                   />
                   <CustomDatePicker
@@ -93,7 +91,7 @@ const ActivityReportByPanel = () => {
                     autofillDate={true}
                     value={reportFormValues.endDate}
                     onChange={(date) =>
-                      handleDatePickerChangeDate("endDate", date)
+                      handleChangeDatePicker("endDate", date)
                     }
                   />
                 </div>
@@ -113,4 +111,4 @@ const ActivityReportByPanel = () => {
   );
 };
 
-export default ActivityReportByPanel;
+export default activityReportByPanel;

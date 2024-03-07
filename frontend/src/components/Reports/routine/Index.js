@@ -11,8 +11,11 @@ import {
   Loading,
 } from "@carbon/react";
 import { injectIntl, FormattedMessage, useIntl } from "react-intl";
-import { SampleOrderFormValues } from "../../formModel/innitialValues/OrderEntryFormValues";
 import config from "../../../config.json";
+
+import ActivityReportByTest from "./activityReportByTest";
+import ActivityReportByPanel from "./activityReportByPanel";
+import ActivityReportByUnit from "./activityReportByUnit";
 
 const RoutineIndex = () => {
   const intl = useIntl();
@@ -23,29 +26,9 @@ const RoutineIndex = () => {
   const [report, setReport] = useState("");
   const [source, setSource] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [orderFormValues, setOrderFormValues] = useState(SampleOrderFormValues);
-  const [samples, setSamples] = useState([]);
-  const [errors, setErrors] = useState([]);
-
-  const elementError = (path) => {
-    if (errors?.errors?.length > 0) {
-      let error = errors.inner?.find((e) => e.path === path);
-      if (error) {
-        return error.message;
-      } else {
-        return null;
-      }
-    }
-  };
+ 
 
   useEffect(() => {
-    let sourceFromUrl = new URLSearchParams(window.location.search).get(
-      "source"
-    );
-    let sources = ["PatientStatusReport"];
-    sourceFromUrl = sources.includes(sourceFromUrl) ? sourceFromUrl : "";
-    setSource(sourceFromUrl);
-
     const params = new URLSearchParams(window.location.search);
     const paramType = params.get("type");
     const paramReport = params.get("report");
@@ -53,15 +36,7 @@ const RoutineIndex = () => {
     setType(paramType);
     setReport(paramReport);
 
-    const path = window.location.pathname;
-    const pathParts = path.split("/");
-    const source = pathParts[pathParts.length - 1];
-
-    if (source === "AuditTrailReport") {
-      setIsLoading(false);
-      return (window.location.href = `${config.serverBaseUrl}/${source}`);
-    }
-
+  
     if (paramType && paramReport) {
       setIsLoading(false);
     } else {
@@ -77,25 +52,8 @@ const RoutineIndex = () => {
             <BreadcrumbItem href="/">
               {intl.formatMessage({ id: "home.label" })}
             </BreadcrumbItem>
-            {source && (
-              <BreadcrumbItem href={`/${source}`}>
-                {intl.formatMessage({
-                  id: "banner.menu.reports",
-                })}
-              </BreadcrumbItem>
-            )}
+          
           </Breadcrumb>
-        </Column>
-      </Grid>
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Section>
-            <Section>
-              <Heading>
-                <FormattedMessage id="selectReportValues.title" />
-              </Heading>
-            </Section>
-          </Section>
         </Column>
       </Grid>
       <div className="orderLegendBody">
@@ -103,20 +61,17 @@ const RoutineIndex = () => {
         {isLoading && <Loading />}
         {!isLoading && (
           <>
-            {type === "patient" && report === "patientCILNSP_vreduit" &&   
-            (window.location.href = `${config.serverBaseUrl}/Report?type=${type}&report=${report}`)}
-
-            {type === "activity" &&
+            {type === "indicator" &&
               report === "activityReportByTest" &&
-              (window.location.href = `${config.serverBaseUrl}/Report?type=${type}&report=${report}`)}
+              (<ActivityReportByTest />)}
 
-            {type === "activity" &&
+            {type === "indicator" &&
               report === "activityReportByPanel" &&
-              (window.location.href = `${config.serverBaseUrl}/Report?type=${type}&report=${report}`)}
+              (<ActivityReportByPanel />)}
 
-            {type === "activity" &&
-              report === "activityReportByTestSection" &&
-              (window.location.href = `${config.serverBaseUrl}/Report?type=${type}&report=${report}`)}
+            {type === "indicator" &&
+              report === "activityReportByUnit" &&
+              (<ActivityReportByUnit />)}
 
           </>
         )}
