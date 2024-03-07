@@ -439,8 +439,6 @@ export default function App() {
                   )}
                   role="Validation"
                 />
-                
-                  
                 <SecureRoute
                   path="/AccessionValidation"
                   exact
