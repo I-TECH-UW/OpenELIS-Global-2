@@ -137,6 +137,19 @@ function /*void*/ synchronizeCheckBoxes(){
 	}
 }
 
+	function validateSiteSubjectNumber(field){
+		 const siteSubjectNumber = /^([0-9A-Za-z]{5}\/[0-9A-Za-z]{2})\/[\d]{2}\/[\d]{5}[Ee]?$/g;
+		 if(field.value){
+			  if(siteSubjectNumber.test(field.value)){
+				  field.classList.remove("error");
+			  }
+			  else{
+				  field.classList.add("error");
+			  }
+		 }
+	}
+
+
 function  /*void*/ savePage() {
 	if ( projectChecker != null && projectChecker.checkAllFields != undefined) {
 		projectChecker.checkAllFields(false);

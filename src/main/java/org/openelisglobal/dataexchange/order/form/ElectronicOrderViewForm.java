@@ -50,7 +50,7 @@ public class ElectronicOrderViewForm extends BaseForm {
     private String qaAuthorizer;
 
     private String qaNote;
-
+    
     public ElectronicOrderViewForm() {
         setFormName("ElectronicOrderViewForm");
     }

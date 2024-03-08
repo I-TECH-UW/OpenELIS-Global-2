@@ -18,10 +18,13 @@ import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.DateTimeType;
 import org.hl7.fhir.r4.model.DecimalType;
+import org.hl7.fhir.r4.model.Encounter;
+import org.hl7.fhir.r4.model.Encounter.EncounterParticipantComponent;
 import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Location;
 import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Period;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.ResourceType;
@@ -81,6 +84,9 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 
 	@Value("${org.openelisglobal.requester.identifier:}")
 	private String requestFhirUuid;
+	
+    @Value("${org.openelisglobal.fhir.subscriber}")
+    private String defaultRemoteServer;
 
 	@Autowired
 	private ElectronicOrderService electronicOrderService;
@@ -106,6 +112,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 	private ServiceRequest serviceRequest = null;
 	private Specimen specimen = null;
 	private Patient fhirPatient = null;
+	private Encounter encounter = null;
 	private static String OPENMRS_SYSTEM_URL = "https://openmrs.org";
 	public static final String REFERRING_ORG_TYPE = "referring clinic";
 	public static final String ARV_ORG_TYPE = "ARV Service Loc";
@@ -179,6 +186,7 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 				if (eOrder != null) {
 					form.setElectronicOrder(eOrder);
 					IGenericClient localFhirClient = fhirUtil.getLocalFhirClient();
+					IGenericClient remoteFhirClient = fhirUtil.getFhirClient(defaultRemoteServer);
 					for (String remotePath : fhirConfig.getRemoteStorePaths()) {
 						Bundle srBundle = (Bundle) localFhirClient.search().forResource(ServiceRequest.class)
 								.where(ServiceRequest.RES_ID.exactly().code(externalOrderNumber))
@@ -218,6 +226,13 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 							.resource(Patient.class)//
 							.withId(serviceRequest.getSubject().getReferenceElement().getIdPart())//
 							.execute();
+					encounter = remoteFhirClient.read().resource(Encounter.class)
+							.withId(serviceRequest.getEncounter().getReferenceElement().getIdPart()).execute();
+					if (ObjectUtils.isEmpty(encounter)) {
+						LogEvent.logDebug(this.getClass().getName(), "processRequest", "Not found matching Ecounter "
+								+ serviceRequest.getEncounter().getReferenceElement().getIdPart());
+					}
+
 					if (fhirPatient != null) {
 						LogEvent.logDebug(this.getClass().getName(), "processRequest",
 								"found matching patient " + fhirPatient.getIdElement().getIdPart());
@@ -392,6 +407,31 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 					}
 				}
 			}
+			
+			if (ObjectUtils.isNotEmpty(encounter)) { // nameofsampler
+				List<EncounterParticipantComponent> participants = encounter.getParticipant();
+				if (ObjectUtils.isNotEmpty(participants)) {
+					if (ObjectUtils.isNotEmpty(participants.get(1))) { // get the second one for Sampler
+						String samplerReference = participants.get(1).getIndividual().getReference();
+						Practitioner sampler = fhirUtil.getLocalFhirClient().read().resource(Practitioner.class)
+								.withId(samplerReference).execute();
+						sampler.getName().forEach(humanName -> {
+							String lastName = humanName.getFamily();
+							String firstName = String.join("", humanName.getGiven().stream().map(e -> e.asStringValue())
+									.collect(Collectors.toList()));
+							observationData.setNameOfSampler(lastName + " " + firstName);
+						});
+					}
+				}
+			}
+			if (ObjectUtils.isNotEmpty(encounter)) { // get Collection Date
+				Period period = encounter.getPeriod();
+				if (ObjectUtils.isNotEmpty(period)) {
+					DateTimeType collectionDateType = period.getStartElement();				
+					if (ObjectUtils.isNotEmpty(collectionDateType))
+						form.setInterviewDate( DateUtil.formatDateAsText(collectionDateType.getValue()));
+				}
+			} 
 			if (parameter.getType().getCodingFirstRep().getCode().equals("CI0050001AAAAAAAAAAAAAAAAAAAAAAAAAAA")) {// vlOtherReasonForRequest
 				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
 					if (parameter.getValue() instanceof StringType) {
@@ -448,10 +488,10 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 					}
 				}
 			}
-			if (parameter.getType().getCodingFirstRep().getCode().equals("165270AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")) {// vl.priorVLValue
+			if (parameter.getType().getCodingFirstRep().getCode().equals("CI0050030AAAAAAAAAAAAAAAAAAAAAAAAAAA")) {// vl.priorVLValue
 				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
-					if (parameter.getValue() instanceof DecimalType) {
-						DecimalType priorVLValueType = (DecimalType) parameter.getValue();
+					if (parameter.getValue() instanceof StringType) {
+						StringType priorVLValueType = (StringType) parameter.getValue();
 						observationData.setPriorVLValue(priorVLValueType.getValue().toString());
 					}
 				}
@@ -486,7 +526,8 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
 					if (parameter.getValue() instanceof DateTimeType) {
 						DateTimeType dateValue = (DateTimeType) parameter.getValue();
-						observationData.setDemandcd4Date(DateUtil.formatDateAsText(dateValue.getValue()));
+						if (ObjectUtils.isNotEmpty(dateValue))
+							observationData.setDemandcd4Date(DateUtil.formatDateAsText(dateValue.getValue()));
 					}
 				}
 			}
@@ -494,7 +535,16 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
 					if (parameter.getValue() instanceof DateTimeType) {
 						DateTimeType dateValue = (DateTimeType) parameter.getValue();
-						observationData.setPriorVLDate(DateUtil.formatDateAsText(dateValue.getValue()));
+						if (ObjectUtils.isNotEmpty(dateValue))
+							observationData.setPriorVLDate(DateUtil.formatDateAsText(dateValue.getValue()));
+					}
+				}
+			}
+			if (parameter.getType().getCodingFirstRep().getCode().equals("CI0050020AAAAAAAAAAAAAAAAAAAAAAAAAAA")) {// vl.priorVLLab
+				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
+					if (parameter.getValue() instanceof StringType) {
+						StringType priorVLLab = (StringType) parameter.getValue();
+						observationData.setPriorVLLab(priorVLLab.getValueAsString());
 					}
 				}
 			}
@@ -518,7 +568,8 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
 					if (parameter.getValue() instanceof DateTimeType) {
 						DateTimeType dateValue = (DateTimeType) parameter.getValue();
-						observationData.setInitcd4Date(DateUtil.formatDateAsText(dateValue.getValue()));
+						if (ObjectUtils.isNotEmpty(dateValue))
+							observationData.setInitcd4Date(DateUtil.formatDateAsText(dateValue.getValue()));
 					}
 				}
 			}
@@ -600,15 +651,10 @@ public class SampleEntryByProjectController extends BaseSampleEntryController {
 				if (ObjectUtils.isNotEmpty(parameter.getValue())) {
 					if (parameter.getValue() instanceof DateTimeType) {
 						DateTimeType dateValue = (DateTimeType) parameter.getValue();
-						form.setInterviewTime(DateUtil.formatTimeAsText(dateValue.getValue()));
+						if (ObjectUtils.isNotEmpty(dateValue))
+							form.setInterviewTime(DateUtil.formatTimeAsText(dateValue.getValue()));
 					}
 				}
-			}
-		}
-		if (ObjectUtils.isNotEmpty(serviceRequest)) { // date de prélèvement
-			if (ObjectUtils.isNotEmpty(serviceRequest.getOccurrencePeriod())) {
-				Date startDate = serviceRequest.getOccurrencePeriod().getStart();
-				form.setInterviewDate(DateUtil.formatDateAsText(startDate));
 			}
 		}
 

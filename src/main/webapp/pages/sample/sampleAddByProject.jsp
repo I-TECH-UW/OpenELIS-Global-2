@@ -15,12 +15,6 @@
 <c:set var="formName" value="${form.formName}" />
 <c:set var="requestType" value="${type}" />
 <c:set var="genericDomain" value="" />
-<%--       
-<bean:define id="requestType" value='<%=(String)request.getSession().getAttribute("type")%>' />
-<bean:define id="idSeparator"   value='<%=SystemConfiguration.getInstance().getDefaultIdSeparator()%>' />
-<bean:define id="accessionFormat" value='<%=ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat)%>' />
-<bean:define id="genericDomain" value='' /> --%>
-
 
 <%
 String requestType = (String) request.getParameter("type");
@@ -181,7 +175,6 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 		if (typeof (showSuccessMessage) === 'function') {
 			showSuccessMessage(false); //refers to last save
 		}
-		// Adds warning when leaving page if content has been entered into makeDirty form fields
 		function formWarning() {
 			return "<spring:message code="banner.menu.dataLossWarning"/>";
 		}
@@ -236,7 +229,6 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 	}
 
 	function initializeStudySelection() {
-		//selectStudy($('projectFormName').value);
 		selectStudy(sessionStorage.getItem("selectedDivId"));
 	}
 
@@ -253,14 +245,8 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 			$("projectFormName").value = divId;
 			switch (divId) {
 			case "EID_Id":
-				//location.replace("SampleEntryByProject?type=initial");
-				//savePage__("SampleEntryByProject?type=" + type);
-				//return;
 				break;
 			case "VL_Id":
-				//location.replace("SampleEntryByProject?type=initial");
-				//savePage__("SampleEntryByProject?type=" + type);
-				//return;
 				break;
 			}
 			toggleDisabledDiv(document.getElementById(divId), true);
@@ -313,7 +299,7 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 	}
 
 	function /*void*/savePage__(action) {
-		window.onbeforeunload = null; // Added to flag that formWarning alert isn't needed.
+		window.onbeforeunload = null; 
 		var form = document.getElementById("mainForm");
 		if (action == null) {
 			action = "SampleEntryByProject?type=" + type
@@ -344,7 +330,7 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 
 <b><spring:message code="sample.entry.project.form" /></b>
 <select name="studyForms" onchange="switchStudyForm(this.value);"
-	id="studyFormsId">
+	id="studyFormsId" autofocus="autofocus">
 	<option value="0" selected></option>
 	<option value="InitialARV_Id"><spring:message
 			code="sample.entry.project.initialARV.title" /></option>
@@ -1175,7 +1161,9 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 				<td><spring:message
 						code="sample.entry.project.EID.siteInfantNumber" /></td>
 				<td><form:input path="siteSubjectNumber"
-						onchange="eid.checkSiteSubjectNumber(true)" cssClass="text" />
+						id="eid.siteSubjectNumber"
+						onkeyup="addPatientCodeSlashes(this, event);"
+						onchange="eid.checkSiteSubjectNumber(true);validateSiteSubjectNumber(this)" cssClass="text"  maxlength="18"/>
 					<div id="eid.siteSubjectNumberMessage" class="blank"></div></td>
 			</tr>
 
@@ -1200,7 +1188,7 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 				<td></td>
 				<td><spring:message code="patient.project.eidWhichPCR" /></td>
 				<td><form:select path="observations.whichPCR" id="eid.whichPCR"
-						onchange="eid.checkEIDWhichPCR(true)">
+						onchange="eid.checkEIDWhichPCR(this)">
 						<form:option value="">&nbsp;</form:option>
 						<form:options items="${form.dictionaryLists['EID_WHICH_PCR']}"
 							itemLabel="localizedName" itemValue="id" />
@@ -1307,7 +1295,7 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 				<td><spring:message code="patient.project.eidTypeOfClinic" /></td>
 				<td><form:select path="observations.eidTypeOfClinic"
 						id="eid.eidTypeOfClinic"
-						onchange="makeDirty();compareAllObservationHistoryFields(true)">
+						onchange="makeDirty();projectChecker.displayTypeOfClinicOther();compareAllObservationHistoryFields(true)">
 						<form:option value="">&nbsp;</form:option>
 						<form:options
 							items="${form.dictionaryLists['EID_TYPE_OF_CLINIC']}"
@@ -1315,7 +1303,18 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 					</form:select>
 					<div id="eid.eidTypeOfClinicMessage" class="blank"></div></td>
 			</tr>
-
+		    <tr id="eid.eidTypeOfClinicOtherRow" style="display: none">
+		        <td>
+		        </td>
+		        <td class="observationsSubquestion"><em><spring:message code="patient.project.specify" /></em></td>
+		        <td>
+		            <form:input path="observations.eidTypeOfClinicOther"
+		                      onchange="makeDirty();compareAllObservationHistoryFields(true)"
+		                      cssClass="text"
+		                      id="eid.eidTypeOfClinicOther" />
+		            <div id="eid.eidTypeOfClinicOtherMessage" class="blank"></div>
+		        </td>
+		    </tr>
 			<tr>
 				<td></td>
 				<td><spring:message code="patient.project.eidHowChildFed" /></td>
@@ -2357,15 +2356,9 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 				<td><spring:message code="patient.site.subject.number" /></td>
 				<td><form:input path="siteSubjectNumber"
 						id="vl.siteSubjectNumber" cssClass="text"
-						onchange="vl.checkSiteSubjectNumber(true)" />
+						onkeyup="addPatientCodeSlashes(this, event);"
+						onchange="vl.checkSiteSubjectNumber(true);validateSiteSubjectNumber(this)" maxlength="18"/>
 						<div id="vl.siteSubjectNumberMessage" class="blank"></div></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td><spring:message code="sample.entry.project.upidCode" /></td>
-				<td><form:input path="upidCode" cssClass="text"
-						id="vl.upidCode" maxlength="15" />
-					<div id="vl.upidCodeMessage" class="blank"></div></td>
 			</tr>
 			<tr>
 				<td class="required">*</td>
@@ -2527,7 +2520,6 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 			<tr>
 				<td colspan="5"><hr /></td>
 			</tr>
-			<%-- _________________________________________________ --%>
 
 			<tr>
 				<td></td>
@@ -2557,7 +2549,6 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 			<tr>
 				<td colspan="5"><hr /></td>
 			</tr>
-			<%-- _________________________________________________ --%>
 
 			<tr>
 				<td></td>
@@ -2598,7 +2589,6 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 			<tr>
 				<td colspan="5"><hr /></td>
 			</tr>
-			<%-- _________________________________________________ --%>
 
 			<tr>
 				<td></td>
@@ -2639,8 +2629,6 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 			<tr>
 				<td colspan="5"><hr /></td>
 			</tr>
-			<%-- _________________________________________________ --%>
-
 			<tr>
 				<td></td>
 				<td class="observationsQuestion"><spring:message
@@ -2967,7 +2955,6 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 						<div id="rt.asanteTestMessage" class="blank"></div></td>
 			</tr>
 		</table>
-
 	</div>
 	<div id="HPV_Id" style="display: none;">
 		<table>
@@ -3155,10 +3142,6 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 </div>
 
 <script type="text/javascript">
-	// On load using the built in feature of OpenElis pages onLoad
-	/**
-	 * A list of answers that equate to yes in certain lists when comparing (cross check or 2nd entry for a match).
-	 */
 	yesesInDiseases = [
 <%=Encode.forJavaScript(org.openelisglobal.dictionary.ObservationHistoryList.YES_NO.getList().get(0).getId())%>
 	,
@@ -3225,14 +3208,8 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 		this.idPre = "rtn.";
 
 		this.checkAllSampleFields = function(blanksAllowed) {
-			// this.checkCenterName(blanksAllowed);
-			// this.checkCenterCode(blanksAllowed);
 			this.checkInterviewDate(blanksAllowed);
 			this.checkReceivedDate(blanksAllowed);
-			//var receivedTimeField = $(this.idPre + "receivedTimeForDisplay");
-			//compareSampleField( receivedTimeField.id, false, blanksAllowed);
-			//var interviewTimeField = $(this.idPre + "interviewTime");
-			//compareSampleField( interviewTimeField.id, false, blanksAllowed, "collectionTimeForDisplay");
 			this.checkInterviewTime(true);
 			this.checkReceivedTime(true);
 		}
@@ -3241,7 +3218,6 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 			this.checkSampleItem($("rtn.dryTubeTaken"));
 			this.checkSampleItem($('rtn.dryTubeTaken'),
 					$('rtn.serologyHIVTest'));
-			// TODO PAHill list ALL sampleItem and Test fields
 		}
 	}
 
@@ -3250,6 +3226,21 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 
 	function EidProjectChecker() {
 		this.idPre = "eid.";
+		
+	    this.displayTypeOfClinicOther = function () {
+	        var field = $("eid.eidTypeOfClinic");
+	        enableSelectedRequiredSubfield(field, $("eid.eidTypeOfClinicOther"), -1, "eid.eidTypeOfClinicOtherRow" );
+	    }
+	    
+	    this.checkEIDWhichPCR = function (field) {
+	        makeDirty();
+	        if (field.selectedIndex == 1) {
+	            var otherField = $("eid.reasonForSecondPCRTest"); 
+	            otherField.selectedIndex = otherField.options.length - 1;  
+	        }
+	        compareAllObservationHistoryFields(true)
+	    }
+	    	    
 	}
 
 	EidProjectChecker.prototype = new BaseProjectChecker();
@@ -3259,7 +3250,6 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 		this.idPre = "ind.";
 
 		this.checkAllSampleFields = function(blanksAllowed) {
-			// this.checkCenterName(blanksAllowed);
 			this.checkCenterCode(blanksAllowed);
 			this.checkInterviewDate(blanksAllowed);
 			this.checkReceivedDate(blanksAllowed);
@@ -3291,8 +3281,6 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 		this.idPre = "spe."
 
 		this.checkAllSampleFields = function(blanksAllowed) {
-			// this.checkCenterName(blanksAllowed);
-			// this.checkCenterCode(blanksAllowed);
 			this.checkInterviewDate(blanksAllowed);
 			this.checkReceivedDate(blanksAllowed);
 			this.checkInterviewTime(true);
@@ -3314,7 +3302,7 @@ var requestType = '<%=Encode.forJavaScript(requestType)%>';
 		this.checkDate = function(field, blanksAllowed) {
 			makeDirty();
 			if (field == null)
-				return; // just so we don't have to have this field on all forms, but is listed in checkAllSampleFields
+				return; 
 			checkValidDate(field);
 			checkRequiredField(field, blanksAllowed);
 			compareSampleField(field.id, false, blanksAllowed);

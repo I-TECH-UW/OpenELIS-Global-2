@@ -69,7 +69,7 @@ public class ExportTrendsByDate extends CSVSampleExportReport implements IReport
     }
 
     protected String getReportNameForParameterPage() {
-        return MessageUtil.getMessage("reports.label.project.export") + " " + "Date d'impression du rapport";// StringUtil.getContextualMessageForKey("sample.collectionDate");
+        return MessageUtil.getMessage("reports.label.project.export") + " " + MessageUtil.getMessage("sample.export.releasedDate");
     }
 
     @Override

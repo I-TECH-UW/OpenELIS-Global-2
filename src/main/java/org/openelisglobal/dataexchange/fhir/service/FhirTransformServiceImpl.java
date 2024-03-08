@@ -393,7 +393,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 		orderEntryObjects.patient = patient;
 
 		// requester
-		if(ObjectUtils.isNotEmpty(updateData.getProvider())) {
+		if (ObjectUtils.isNotEmpty(updateData.getProvider())) {
 			Practitioner requester = transformProviderToPractitioner(updateData.getProvider().getId());
 			this.addToOperations(fhirOperations, tempIdGenerator, requester);
 			orderEntryObjects.requester = requester;
@@ -438,9 +438,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 	}
 
 	private void updateReferringServiceRequestWithSampleInfo(Sample sample, ServiceRequest serviceRequest) {
-		if(!serviceRequest.hasRequisition()){
-           serviceRequest.setRequisition(
-		    this.createIdentifier(fhirConfig.getOeFhirSystem() + "/samp_labNo", sample.getAccessionNumber()));
+		if (!serviceRequest.hasRequisition()) {
+			serviceRequest.setRequisition(
+					this.createIdentifier(fhirConfig.getOeFhirSystem() + "/samp_labNo", sample.getAccessionNumber()));
 		}
 	}
 
@@ -504,9 +504,19 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 		}
 		if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Entered))) {
 			task.setStatus(TaskStatus.READY);
-		} else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Started))) {
+		} 
+		else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Started)) 
+				|| sample.getStatusId().equals(statusService.getStatusID(AnalysisStatus.TechnicalAcceptance))) {
 			task.setStatus(TaskStatus.INPROGRESS);
-		} else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Finished))) {
+		}
+		else if (sample.getStatusId().equals(statusService.getStatusID(AnalysisStatus.TechnicalRejected))) {
+			task.setStatus(TaskStatus.FAILED);
+		}
+		else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.NonConforming_depricated))
+				|| sample.getStatusId().equals(statusService.getStatusID(AnalysisStatus.BiologistRejected))) {
+			task.setStatus(TaskStatus.REJECTED);
+		}
+		else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Finished))) {
 			task.setStatus(TaskStatus.COMPLETED);
 		} else {
 			task.setStatus(TaskStatus.NULL);
@@ -932,17 +942,18 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 			if (referingServiceRequest.isPresent()) {
 				if (referingServiceRequestMap.containsKey(referingServiceRequest.get().getIdElement().getIdPart())) {
 					ServiceRequest existingServiceRequest = referingServiceRequestMap
-					        .get(referingServiceRequest.get().getIdElement().getIdPart());
+							.get(referingServiceRequest.get().getIdElement().getIdPart());
 					updateReferringServiceRequestWithSampleInfo(sample, existingServiceRequest);
-					referingServiceRequestMap.put(existingServiceRequest.getIdElement().getIdPart(), existingServiceRequest);
+					referingServiceRequestMap.put(existingServiceRequest.getIdElement().getIdPart(),
+							existingServiceRequest);
 					this.addToOperations(fhirOperations, tempIdGenerator, existingServiceRequest);
 				} else {
 					updateReferringServiceRequestWithSampleInfo(sample, referingServiceRequest.get());
 					referingServiceRequestMap.put(referingServiceRequest.get().getIdElement().getIdPart(),
-					    referingServiceRequest.get());
+							referingServiceRequest.get());
 					this.addToOperations(fhirOperations, tempIdGenerator, referingServiceRequest.get());
 				}
-				
+
 			}
 			this.addToOperations(fhirOperations, tempIdGenerator, task);
 		}
@@ -1035,19 +1046,16 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 			LogEvent.logError(this.getClass().getName(), "transformResultToObservation",
 					"recording result for analysis that is not started.");
 			observation.setStatus(ObservationStatus.UNKNOWN);
-		} else {
+		} 
+		else if(result.getAnalysis().getStatusId().equals(statusService.getStatusID(AnalysisStatus.BiologistRejected))) {
+			observation.setStatus(ObservationStatus.CANCELLED);
+		}
+		else {
 			observation.setStatus(ObservationStatus.PRELIMINARY);
 		}
 
 		if (!GenericValidator.isBlankOrNull(result.getValue())) {
-			// in case of Viral load test
-			if (result.getAnalysis().getTest().getName().equalsIgnoreCase("Viral Load")) {
-				Quantity quantity = new Quantity();
-				long finalResult = result.getVLValueAsNumber();
-				quantity.setValue(finalResult);
-				quantity.setUnit(resultService.getUOM(result));
-				observation.setValue(quantity);
-			} else if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())
+			if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())
 					&& !"0".equals(result.getValue())) {
 				Dictionary dictionary = dictionaryService.getDataForId(result.getValue());
 				observation.setValue(new CodeableConcept(
@@ -1074,10 +1082,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 		observation.addBasedOn(this.createReferenceFor(ResourceType.ServiceRequest, analysis.getFhirUuidAsString()));
 		observation.setSpecimen(this.createReferenceFor(ResourceType.Specimen, sampleItem.getFhirUuidAsString()));
 		observation.setSubject(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
-//        observation.setIssued(result.getOriginalLastupdated());
-		observation.setIssued(analysis.getReleasedDate());//update to get Released Date instead of commpleted date
-		observation.setEffective(new DateTimeType(result.getLastupdated()));
-//      observation.setIssued(new Date());
+		observation.setIssued(result.getOriginalLastupdated());// update to get Released Date instead of commpleted date
+		//observation.setEffective(new DateTimeType(result.getLastupdated()));
+		observation.setEffective(new DateTimeType(analysis.getReleasedDate()));
 		return observation;
 	}
 

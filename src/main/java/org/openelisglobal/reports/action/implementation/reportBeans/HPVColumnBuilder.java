@@ -66,14 +66,14 @@ public class HPVColumnBuilder extends CIStudyColumnBuilder {
 	protected void defineAllReportColumns() {
 		defineBasicColumns();
 		add("type_of_sample_name", "TYPE_OF_SAMPLE", NONE);
-		//add("analysis_status_id", "ANALYSIS_STATUS", ANALYSIS_STATUS);
+		// add("analysis_status_id", "ANALYSIS_STATUS", ANALYSIS_STATUS);
 		add("hivStatus", "STAT_VIH", Strategy.DICT);
 		add("started_date", "STARTED_DATE", DATE_TIME);
 		add("completed_date", "COMPLETED_DATE", DATE_TIME);
 		add("released_date", "RELEASED_DATE", DATE_TIME);
 		add("hpvsamplingmethod", "SAMPLING_METHOD", Strategy.DICT);
 		add("nameOfDoctor", "NAME_MED", NONE);
-		//add("HPV HR", "HPV TEST RESULT", NONE);
+		// add("HPV HR", "HPV TEST RESULT", NONE);
 		addAllResultsColumns();
 
 	}
@@ -149,8 +149,7 @@ public class HPVColumnBuilder extends CIStudyColumnBuilder {
 		String WHERE_SAMPLE_PATIENT_ORG = " WHERE " + "\n pat.id = sh.patient_id " + "\n AND sh.samp_id = s.id "
 				+ "\n AND " + dateColumn + " >= '" + formatDateForDatabaseSql(lowDate) + "'" + "\n AND " + dateColumn
 				+ " <= '" + formatDateForDatabaseSql(highDate) + "'" + "\n " + "\n AND sq.requester_type_id = rq.id "
-				+ "\n AND sq.sample_id= s.id " + "\n AND pat.person_id = per.id " + "\n AND o.id = sq.requester_id   "
-		;
+				+ "\n AND sq.sample_id= s.id " + "\n AND pat.person_id = per.id " + "\n AND o.id = sq.requester_id   ";
 		return WHERE_SAMPLE_PATIENT_ORG;
 	}
 
@@ -162,7 +161,19 @@ public class HPVColumnBuilder extends CIStudyColumnBuilder {
 
 	@Override
 	public void makeSQL() {
-
+		String dateColumn = "s.entered_date ";
+		switch (dateType) {
+		case ORDER_DATE:
+			dateColumn = "s.entered_date ";
+			break;
+		case RESULT_DATE:
+			dateColumn = "a.released_date ";
+			break;
+		case PRINT_DATE:
+			dateColumn = "a.released_date ";
+		default:
+			break;
+		}
 		query = new StringBuilder();
 		Date lowDate = dateRange.getLowDate();
 		Date highDate = dateRange.getHighDate();
@@ -182,9 +193,9 @@ public class HPVColumnBuilder extends CIStudyColumnBuilder {
 		query.append(FROM_SAMPLE_PATIENT_ORGANIZATION);
 
 		// all observation history from expressions
-		appendObservationHistoryCrosstab(lowDate, highDate);
+		appendObservationHistoryCrosstab(lowDate, highDate, dateColumn);
 
-		appendResultCrosstab(lowDate, highDate);
+		appendResultCrosstab(lowDate, highDate, dateColumn);
 		query.append(",  clinlims.analysis as a \n");
 
 		query.append(" LEFT JOIN  clinlims.result as r on r.analysis_id = a.id \n"
@@ -193,7 +204,7 @@ public class HPVColumnBuilder extends CIStudyColumnBuilder {
 
 		// and finally the join that puts these all together. Each cross table should be
 		// listed here otherwise it's not in the result and you'll get a full join
-		query.append(buildWhereSamplePatienOrgSQL(lowDatePostgres, highDatePostgres)
+		query.append(buildWhereSamplePatienOrgSQL(lowDatePostgres, highDatePostgres, dateColumn)
 				// insert joining of any other crosstab here.
 				+ "\n AND s.id = demo.samp_id " + "\n AND s.id = result.samp_id " + "\n ORDER BY s.accession_number ");
 		// no don't insert another crosstab or table here, go up before the main WHERE
