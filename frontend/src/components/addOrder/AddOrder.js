@@ -412,7 +412,7 @@ const AddOrder = (props) => {
             <div className="inputText">
               <CustomLabNumberInput
                 name="labNo"
-                placeholder="Enter Lab Number"
+                placeholder= {intl.formatMessage({id:"input.placeholder.labNo"})}
                 value={orderFormValues.sampleOrderItems.labNo}
                 onMouseLeave={handleLabNoValidation}
                 onChange={handleLabNo}
@@ -587,7 +587,7 @@ const AddOrder = (props) => {
           <div className="inlineDiv">
             <TextInput
               name="requesterFirstName"
-              placeholder="Enter Requester's First Name"
+              placeholder={intl.formatMessage({id:"input.placeholder.requesterFirstName"})}
               labelText={
                 <>
                   <FormattedMessage id="order.requester.firstName.label" />
@@ -609,7 +609,7 @@ const AddOrder = (props) => {
 
             <TextInput
               name="requesterLastName"
-              placeholder="Enter Requester's Last Name"
+              placeholder={intl.formatMessage({id:"input.placeholder.requesterLastName"})}
               labelText={
                 <>
                   <FormattedMessage id="order.requester.lastName.label" />
@@ -632,7 +632,7 @@ const AddOrder = (props) => {
           <div className="inlineDiv">
             <TextInput
               name="providerWorkPhone"
-              placeholder="Enter Requester's Phone No."
+              placeholder={intl.formatMessage({id:"input.placeholder.providerWorkPhone"})}
               disabled={
                 configurationProperties.restrictFreeTextProviderEntry === "true"
               }
@@ -648,7 +648,7 @@ const AddOrder = (props) => {
 
             <TextInput
               name="providerFax"
-              placeholder="Enter Requester's Fax No."
+              placeholder={intl.formatMessage({id:"input.placeholder.providerFax"})}
               labelText={intl.formatMessage({
                 id: "order.requester.fax.label",
               })}
@@ -664,7 +664,7 @@ const AddOrder = (props) => {
           <div className="inlineDiv">
             <TextInput
               name="providerEmail"
-              placeholder="Enter Requester's Email"
+              placeholder={intl.formatMessage({id:"input.placeholder.providerEmail"})}
               labelText={intl.formatMessage({
                 id: "order.requester.email.label",
               })}

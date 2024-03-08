@@ -697,5 +697,11 @@
     "pagination.page-number": "Page Number",
     "pagination.page-range": "of {total} {total, plural, one {page} other {pages}}",
     "reports.export": "Export",    
-    "reports.export.whonet": "WHONET Report"
+    "reports.export.whonet": "WHONET Report",
+    "input.placeholder.labNo":"Enter Lab Number",
+    "input.placeholder.requesterFirstName":"Enter Requester's First Name",
+    "input.placeholder.requesterLastName":"Enter Requester's Last Name",
+    "input.placeholder.providerWorkPhone":"Enter Requester's Phone Number",
+    "input.placeholder.providerFax":"Enter Requester's Fax Number",
+    "input.placeholder.providerEmail":"Enter Requester's Email"
 }
