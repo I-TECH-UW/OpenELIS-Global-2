@@ -6,6 +6,7 @@ import {
   IbmWatsonNaturalLanguageUnderstanding,
   Microscope,
 } from "@carbon/icons-react";
+import config from "../../config.json";
 export const RoutineReportsMenu = {
   className: "resultSideNav",
   sideNavMenuItems: [
@@ -14,7 +15,7 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonDiscovery,
       SideNavMenuItem: [
         {
-          link: "/PatientStatusReport?type=patient&report=patientCILNSP_vreduit",
+          link: "/RoutineReport?type=patient&report=patientCILNSP_vreduit",
           label: <FormattedMessage id="sidenav.label.statusreport"/>,
         },
       ],
@@ -24,15 +25,15 @@ export const RoutineReportsMenu = {
       icon: Microscope,
       SideNavMenuItem: [
         {
-          link: "/StatisticsReport?type=indicator&report=statisticsReport",
+          link: "/RoutineReport?type=indicator&report=statisticsReport",
           label: <FormattedMessage id= "sidenav.label.statisticsreport"/>,
         },
         {
-          link: "/SummaryOfAllTests?type=indicator&report=indicatorHaitiLNSPAllTests",
+          link: "/RoutineReport?type=indicator&report=indicatorHaitiLNSPAllTests",
           label: <FormattedMessage id= "sidenav.label.testsummary"/>
         },
         {
-          link:"/HIVTestSummary?type=indicator&report=indicatorCDILNSPHIV",
+          link:"/RoutineReport?type=indicator&report=indicatorCDILNSPHIV",
           label: <FormattedMessage id="sideNav.label.hivtestsummary"/>,
         },
       ],
@@ -42,7 +43,9 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:"/RejectionReport?type=indicator&report=sampleRejectionReport",
+          link:
+            config.serverBaseUrl +
+            "/Report?type=indicator&report=sampleRejectionReport",
           label: <FormattedMessage id="sideNav.label.rejectionreport"/>,
         },
       ],
@@ -52,15 +55,15 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:"/ByTestType?type=indicator&report=activityReportByTest",
+          link: "/ActivityReport?type=indicator&report=activityReportByTest",
           label: <FormattedMessage id="sideNav.label.bytesttype"/>,
         },
         {
-          link:"/ByPanelType?type=indicator&report=activityReportByPanel",
+          link: "/ActivityReport?type=indicator&report=activityReportByPanel",
           label:  <FormattedMessage id="sideNav.label.bypaneltype"/>,
         },
         {
-          link:"/ByUnit?type=indicator&report=activityReportByTestSection",
+          link: "/ActivityReport?type=indicator&report=activityReportByTestSection",
           label: <FormattedMessage id="sideNav.label.byunit"/>,
         },
       ],
@@ -70,7 +73,8 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:"/ReferredTestsReport?type=patient&report=referredOut",
+          link:
+            config.serverBaseUrl + "/Report?type=patient&report=referredOut",
           label: <FormattedMessage id="sideNav.label.referredtestreport"/>,
         },
       ],
@@ -80,11 +84,15 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:"/NCRByDate?type=patient&report=haitiNonConformityByDate",
+          link:
+            config.serverBaseUrl +
+            "/Report?type=patient&report=haitiNonConformityByDate",
           label:  <FormattedMessage id="sideNav.label.noncomformityreportsbydate"/>,
         },
         {
-          link:"/NCRByUnitAndReason?type=patient&report=haitiNonConformityBySectionReason",
+          link:
+            config.serverBaseUrl +
+            "/Report?type=patient&report=haitiNonConformityBySectionReason",
           label: <FormattedMessage id="sideNav.label.noncomformityreportsbyunit"/>,
         },
       ],
@@ -94,7 +102,9 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:"/DelayedValidation?type=indicator&report=validationBacklog",
+          link:
+            config.serverBaseUrl +
+            "/ReportPrint?type=indicator&report=validationBacklog",
           label: <FormattedMessage id="sideNav.label.delayedvalidation"/>,
           icon: IbmWatsonNaturalLanguageUnderstanding,
         },
@@ -105,7 +115,7 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link: "/AuditTrailReport",
+          link: config.serverBaseUrl + "/AuditTrailReport",
           label:  <FormattedMessage id="sideNav.label.audittrail"/>,
         },
       ],
@@ -115,7 +125,9 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:"/ExportRoutineCSVfile?type=patient&report=CISampleRoutineExport",
+          link:
+            config.serverBaseUrl +
+            "/Report?type=patient&report=CISampleRoutineExport",
           label: <FormattedMessage id="sideNav.label.exportcsvfile"/>,
         },
       ],

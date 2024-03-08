@@ -79,14 +79,8 @@ const RoutineIndex = () => {
         {isLoading && <Loading />}
         {!isLoading && (
           <>
-            {type === "patient" && report === "patientCILNSP_vreduit" && (
-              <PatientStatusReport
-                orderFormValues={orderFormValues}
-                setOrderFormValues={setOrderFormValues}
-                samples={samples}
-                error={elementError}
-              /> //{...props} can be sent from here
-            )}
+            {type === "patient" && report === "patientCILNSP_vreduit" && 
+            (<PatientStatusReport />)}
 
             {type === "indicator" &&
               report === "statisticsReport" &&
@@ -99,7 +93,6 @@ const RoutineIndex = () => {
             {type === "indicator" &&
               report === "indicatorCDILNSPHIV" &&
               (<HIVTestSummary/>)}
-
           </>
         )}
       </div>
