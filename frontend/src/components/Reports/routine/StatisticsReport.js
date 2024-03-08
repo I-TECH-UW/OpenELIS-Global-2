@@ -9,7 +9,8 @@ import {
   Button,
   Loading,
   Dropdown,
-  DropdownItem
+  DropdownItem ,
+  Loading,
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from 'react-intl';
 import { getFromOpenElisServer } from "../../utils/Utils";

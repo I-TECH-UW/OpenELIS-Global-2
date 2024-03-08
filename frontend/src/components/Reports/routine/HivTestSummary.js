@@ -6,7 +6,7 @@ import {
     Column,
     Section,
     Button,
-    
+    Loading,
   } from "@carbon/react";
 import { FormattedMessage, useIntl } from 'react-intl';
 import "../../Style.css";
@@ -17,7 +17,6 @@ import config from "../../../config.json";
 
 const HivTestSummary = () => {
   const intl = useIntl();
-
   const [loading, setLoading] = useState(false);
   const [notificationVisible, setNotificationVisible] = useState(false);
   const [reportFormValues, setReportFormValues] = useState({
