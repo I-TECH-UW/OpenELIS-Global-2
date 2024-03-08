@@ -22,7 +22,7 @@ const timeFrames = [
   { id: 'OUT_OF_NORMAL_WORK_HOURS', description: 'Out of Normal Work Hours (15h31-8h59)' }
 ];
 
-const statisticsReport = () => {
+const StatisticsReport = () => {
   const intl = useIntl();
   const [labUnits, setLabUnits] = useState([]);
   const [priorities, setPriorities] = useState([]);
@@ -257,4 +257,4 @@ const statisticsReport = () => {
   );
 };
 
-export default statisticsReport;
+export default StatisticsReport;
