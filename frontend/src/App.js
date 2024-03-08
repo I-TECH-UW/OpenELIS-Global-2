@@ -345,66 +345,31 @@ export default function App() {
                 <SecureRoute
                   path="/LogbookResults"
                   exact
-                  component={() => (
-                    <>
-                      {
-                        (window.location.href =
-                          "/result?type=unit&doRange=false")
-                      }
-                    </>
-                  )}
+                  component={() => <ResultSearch />}
                   role="Results"
                 />
                 <SecureRoute
                   path="/PatientResults"
                   exact
-                  component={() => (
-                    <>
-                      {
-                        (window.location.href =
-                          "/result?type=patient&doRange=false")
-                      }
-                    </>
-                  )}
+                  component={() => <ResultSearch />}
                   role="Results"
                 />
                 <SecureRoute
                   path="/AccessionResults"
                   exact
-                  component={() => (
-                    <>
-                      {
-                        (window.location.href =
-                          "/result?type=order&doRange=false")
-                      }
-                    </>
-                  )}
+                  component={() => <ResultSearch />}
                   role="Results"
                 />
                 <SecureRoute
                   path="/StatusResults"
                   exact
-                  component={() => (
-                    <>
-                      {
-                        (window.location.href =
-                          "result?type=date&doRange=false")
-                      }
-                    </>
-                  )}
+                  component={() => <ResultSearch />}
                   role="Results"
                 />
                 <SecureRoute
                   path="/RangeResults"
                   exact
-                  component={() => (
-                    <>
-                      {
-                        (window.location.href =
-                          "/result?type=range&doRange=true")
-                      }
-                    </>
-                  )}
+                  component={() => <ResultSearch />}
                   role="Results"
                 />
                 <SecureRoute
@@ -414,7 +379,7 @@ export default function App() {
                   role="Reports"
                 />
                 <SecureRoute
-                  path="/AggregateReports"
+                  path="/RoutineReport"
                   exact
                   component={() => <RoutineIndex />}
                   role="Reports"
@@ -434,25 +399,19 @@ export default function App() {
                 <SecureRoute
                   path="/ResultValidation"
                   exact
-                  component={() => (
-                    <>{(window.location.href = "/validation?type=routine")}</>
-                  )}
+                  component={() => <StudyValidation />}
                   role="Validation"
                 />
                 <SecureRoute
                   path="/AccessionValidation"
                   exact
-                  component={() => (
-                    <>{(window.location.href = "/validation?type=order")}</>
-                  )}
+                  component={() => <StudyValidation />}
                   role="Validation"
                 />
                 <SecureRoute
                   path="/AccessionValidationRange"
                   exact
-                  component={() => (
-                    <>{(window.location.href = "/validation?type=range")}</>
-                  )}
+                  component={() => <StudyValidation />}
                   role="Validation"
                 />
                 <SecureRoute

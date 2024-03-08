@@ -29,7 +29,7 @@ const statisticsReport = () => {
   const [selectedLabUnits, setSelectedLabUnits] = useState([]);
   const [selectedPriorities, setSelectedPriorities] = useState([]);
   const [selectedTimeFrames, setSelectedTimeFrames] = useState([]);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedYear, setSelectedYear] = useState({ value: new Date().getFullYear(), label: new Date().getFullYear()});
 
   const [loading, setLoading] = useState(false);
   const [notificationVisible, setNotificationVisible] = useState(false);
