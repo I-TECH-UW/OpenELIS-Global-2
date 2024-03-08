@@ -122,7 +122,11 @@ function GenericReport(props) {
       upperDateRange: reportFormValues.endDate
     });
   
-    const barcodesPdf = `${config.serverBaseUrl}/ReportPrint?${queryParams}`;
+    const queryString = Object.keys(reportParams)
+    .map(key => `${key}=${reportParams[key]}`)
+    .join('&');
+
+  const barcodesPdf = `${config.serverBaseUrl}/ReportPrint?${queryString}`;
     window.open(barcodesPdf);
   };
   

@@ -19,10 +19,14 @@ function ReportByLabNo(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form values:", values);
-    // You can perform further actions here, such as API calls or state updates
-  };
-
+  
+    const baseParams = `report=${props.report}&type=patient`;
+    const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
+    const url = `${baseUrl}?${baseParams}&accessionDirect=${values.from}&highAccessionDirect=${values.to}`;
+  
+    window.open(url, '_blank');
+   };
+  
   return (
     <>
       <Form onSubmit={handleSubmit}>
@@ -37,11 +41,8 @@ function ReportByLabNo(props) {
               </h3>
             </Section>
             </Section>
-
-
-              <br />
-      
-              <Grid fullWidth={true}>
+             <br />
+          <Grid fullWidth={true}>
           <Column lg={16}>
           <Section>
               <h5>
@@ -58,9 +59,7 @@ function ReportByLabNo(props) {
         </Grid>
         <br />
         <Grid fullWidth={true}>
-
-
-          <Column lg={7}>
+        <Column lg={7}>
             <CustomLabNumberInput
               name="from"
               value={values.from}

@@ -15,32 +15,23 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonDiscovery,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=patientARVInitial1",
-          label: <FormattedMessage id="sideNav.label.arvreports1"/>,
+         link: "/StudyReport?type=patient&report=patientARVInitial1",
+         label: <FormattedMessage id="sideNav.label.arvreports1"/>,
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=patientARVInitial2",
+          link:"/StudyReport?type=patient&report=patientARVInitial2",
           label:<FormattedMessage id="sideNav.label.arvreports2"/>,
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=patientARVFollowup1",
+          link:"/StudyReport?type=patient&report=patientARVFollowup1",
           label: <FormattedMessage id="sideNav.label.arvfollowup1"/>,
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=patientARVFollowup2",
+          link:"/StudyReport?type=patient&report=patientARVFollowup2",
           label: <FormattedMessage id="sideNav.label.arvfollowup2"/>,
         },
         {
-          link:
-            config.serverBaseUrl + "/Report?type=patient&report=patientARV1",
+          link:"/StudyReport?type=patient&report=patientARV1",
           label: <FormattedMessage id="sideNav.label.arvversion1"/>,
         },
       ],
@@ -50,13 +41,11 @@ export const RoutineReportsMenu = {
       icon: Microscope,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl + "/Report?type=patient&report=patientEID1",
+          link:"/StudyReport?type=patient&report=patientEID1",
           label: <FormattedMessage id="sideNav.label.eidreports1"/>,
         },
         {
-          link:
-            config.serverBaseUrl + "/Report?type=patient&report=patientEID2",
+          link:"/StudyReport?type=patient&report=patientEID2",
           label: <FormattedMessage id="sideNav.label.eidreports2"/>,
         },
       ],
@@ -66,7 +55,7 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link: config.serverBaseUrl + "/Report?type=patient&report=patientVL1",
+          link: "/StudyReport?type=patient&report=patientVL1",
           label: <FormattedMessage id="sideNav.label.vlversionnational"/>,
         },
       ],
@@ -76,15 +65,12 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=patientIndeterminate1",
+
+          link:"/StudyReport?type=patient&report=patientIndeterminate1",
           label: <FormattedMessage id="sideNav.label.intermediatereport1"/>,
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=patientIndeterminate2",
+          link: "/StudyReport?type=patient&report=patientIndeterminate2",
           label: <FormattedMessage id="sideNav.label.intermediatereport2"/>,
         },
         {
@@ -100,9 +86,8 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=patientSpecialReport",
+          
+          link: "/StudyReport?type=patient&report=patientSpecialReport",
           label: <FormattedMessage id="sideNav.label.specialrequest"/>,
         },
       ],

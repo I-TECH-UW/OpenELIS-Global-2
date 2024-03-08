@@ -121,10 +121,6 @@ const StudyIndex = () => {
              (<ReportByLabNo report="patientSpecialReport"  id="server.error.msg"/>)}
 
 
-             {type === "patient" && report === "patientEID1" &&   
-             (<ReportByLabNo report="patientEID1"  id="server.error.msg"/>)}
-
-
           </>
         )}
       </div>
