@@ -65,7 +65,7 @@ const activityReportByUnit = () => {
                   <br />
                   <br />
                   <h5>
-                    <FormattedMessage id="select.dateRange" />
+                    <FormattedMessage id="select.date Range" />
                   </h5>
                 </Section>
                 <div className="inlineDiv">

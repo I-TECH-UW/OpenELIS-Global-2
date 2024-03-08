@@ -4,6 +4,7 @@ import { Form, FormLabel, Grid, Column, Section, Button, Loading, Card } from "@
 import CustomDatePicker from "../../common/CustomDatePicker";
 import { AlertDialog } from "../../common/CustomNotification";
 import config from "../../../config.json";
+import TestSelectForm from '../../workplan/TestSelectForm';
 import "../../Style.css";
 
 const activityReportByTest = () => {
@@ -11,6 +12,8 @@ const activityReportByTest = () => {
 
   const [loading, setLoading] = useState(false);
   const [notificationVisible, setNotificationVisible] = useState(false);
+  const [selectedValue, setSelectedValue] = useState("");
+
   const [reportFormValues, setReportFormValues] = useState({
     startDate: null,
     endDate: null
@@ -34,7 +37,8 @@ const activityReportByTest = () => {
 
   const handleSubmit = () => {
     setLoading(true);
-    const baseParams = 'report=indicator&report=activityReportByTest';
+    const baseParams = 'report=activityReportByTest&type=indicator';
+
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
     const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.startDate}&lowerDateRange=${reportFormValues.endDate}`;
     window.open(url, '_blank');
@@ -42,6 +46,15 @@ const activityReportByTest = () => {
     setNotificationVisible(true);
   };
 
+
+  const handleSelectedValue = (v, l) => {
+    if (mounted.current) {
+      setSelectedValue(v);
+      setSelectedLabel(l);
+      props.selectedValue(v);
+      props.selectedLabel(l);
+    }
+  };
   return (
     <>
       <FormLabel>
@@ -61,10 +74,9 @@ const activityReportByTest = () => {
             <Grid fullWidth={true}>
               <Column lg={10}>
                 <Section>
-                  <br />
-                  <br />
+                  <br />               
                   <h5>
-                    <FormattedMessage id="select.dateRange" />
+                    <FormattedMessage id="select.date Range" />
                   </h5>
                 </Section>
                 <div className="inlineDiv">
@@ -94,11 +106,15 @@ const activityReportByTest = () => {
                       handleChangeDatePicker("endDate", date)
                     }
                   />
-                </div>
+                </div> 
               </Column>
             </Grid>
-            <br />
-           
+        <Column lg={6}>
+          <Form className="container-form">
+             Test type: <TestSelectForm  value={handleSelectedValue}/>
+          </Form>
+        </Column>
+            <br /> 
             <Section>
               <br />
               <Button type="button" onClick={handleSubmit}>
