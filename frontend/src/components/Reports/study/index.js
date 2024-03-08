@@ -11,9 +11,8 @@ import {
   Loading,
 } from "@carbon/react";
 import { injectIntl, FormattedMessage, useIntl } from "react-intl";
-import config from "../../../config.json";
-import ReportByLabNo from "../common/ReportByLabNo";
-import GenericReport from "../common/GenericReport";
+import ReportByLabNo from "./common/ReportByLabNo";
+import GenericReport from "./common/GenericReport";
 
 
 const StudyIndex = () => {
@@ -54,7 +53,6 @@ const StudyIndex = () => {
             <BreadcrumbItem href="/">
               {intl.formatMessage({ id: "home.label" })}
             </BreadcrumbItem>
-
           </Breadcrumb>
         </Column>
       </Grid>
@@ -75,50 +73,45 @@ const StudyIndex = () => {
         {!isLoading && (
           <>
             {type === "patient" && report === "patientARVInitial1" &&   
-             (<ReportByLabNo report="patientARVInitial1"  id="server.error.msg"/>)}
+             (<ReportByLabNo report="patientARVInitial1"  id="header.label.ARV"/>)}
 
 
              {type === "patient" && report === "patientARVInitial2" &&   
-             (<ReportByLabNo report="patientARVInitial2"  id="server.error.msg"/>)}
-
+             (<ReportByLabNo report="patientARVInitial2"  id="header.label.ARV"/>)}
 
 
              {type === "patient" && report === "patientARVFollowup1" &&   
-             (<ReportByLabNo report="patientARVFollowup1"  id="server.error.msg"/>)}
-
+             (<ReportByLabNo report="patientARVFollowup1"  id="header.label.followup"/>)}
 
 
              {type === "patient" && report === "patientARVFollowup2" &&   
-             (<ReportByLabNo report="patientARVFollowup2"  id="server.error.msg"/>)}
+             (<ReportByLabNo report="patientARVFollowup2"  id="header.label.followup"/>)}
 
 
              {type === "patient" && report === "patientARV1" &&   
-             (<ReportByLabNo report="patientARV1"  id="server.error.msg"/>)}
+             (<ReportByLabNo report="patientARV1"  id="header.label.intialFollowup"/>)}
 
 
              {type === "patient" && report === "patientEID1" &&   
-             (<GenericReport report="patientEID1"  id="server.error.msg"/>)}
+             (<GenericReport report="patientEID1"  id="header.label.EID"/>)}
 
              {type === "patient" && report === "patientEID2" &&   
-             (<GenericReport report="patientEID1"  id="server.error.msg"/>)}
+             (<GenericReport report="patientEID2"  id="header.label.EID"/>)}
 
 
              {type === "patient" && report === "patientVL1" &&   
-             (<GenericReport report="patientVL1"  id="server.error.msg"/>)}
-
+             (<GenericReport report="patientVL1"  id="banner.menu.resultvalidation.viralload"/>)}
 
 
              {type === "patient" && report === "patientIndeterminate1" &&   
-             (<ReportByLabNo report="patientIndeterminate1"  id="server.error.msg"/>)}
-
-
+             (<ReportByLabNo report="patientIndeterminate1"  id="project.IndeterminateStudy.name"/>)}
 
              {type === "patient" && report === "patientIndeterminate2" &&   
-             (<ReportByLabNo report="patientIndeterminate2"  id="server.error.msg"/>)}
+             (<ReportByLabNo report="patientIndeterminate2"  id="project.IndeterminateStudy.name"/>)}
 
 
              {type === "patient" && report === "patientSpecialReport" &&   
-             (<ReportByLabNo report="patientSpecialReport"  id="server.error.msg"/>)}
+             (<ReportByLabNo report="patientSpecialReport"  id="header.label.specialRequest"/>)}
 
 
           </>

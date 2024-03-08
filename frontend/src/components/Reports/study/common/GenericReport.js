@@ -1,7 +1,7 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
-import "../../Style.css";
-import { getFromOpenElisServer } from "../../utils/Utils";
+import "../../../Style.css";
+import { getFromOpenElisServer } from "../../../utils/Utils";
 import {
   Form,
   FormLabel,
@@ -30,40 +30,22 @@ import {
   Select,
   SelectItem,
 } from "@carbon/react";
-import CustomLabNumberInput from "../../common/CustomLabNumberInput";
-import config from "../../../config.json";
-import { patientSearchHeaderData } from "../../data/PatientResultsTableHeaders";
-import CustomDatePicker from "../../common/CustomDatePicker";
-import AutoComplete from "../../common/AutoComplete";
-import { ConfigurationContext } from "../../layout/Layout";
+import CustomLabNumberInput from "../../../common/CustomLabNumberInput";
+import config from "../../../../config.json";
+import { patientSearchHeaderData } from "../../../data/PatientResultsTableHeaders";
+import CustomDatePicker from "../../../common/CustomDatePicker";
+import AutoComplete from "../../../common/AutoComplete";
+import { ConfigurationContext } from "../../../layout/Layout";
 import { Formik, Field } from "formik";
-// import PatientStatusReportFormValues from "../../formModel/innitialValues/PatientStatusReportFormValues";
-import { NotificationContext } from "../../layout/Layout";
+import PatientStatusReportFormValues from "../../../formModel/innitialValues/PatientStatusReportFormValues";
+import { NotificationContext } from "../../../layout/Layout";
 import {
   AlertDialog,
   NotificationKinds,
-} from "../../common/CustomNotification";
+} from "../../../common/CustomNotification";
 
 function GenericReport(props) {
-    const PatientStatusReportFormValues = {
-        labNumber: "",
-        patientId: "",
-        selectedPatientId: "",
-        lastName: "",
-        firstName: "",
-        dateOfBirth: "",
-        guid: "",
-        gender: "",
-        referringSiteId: "",
-        referringSiteName: "",
-        startDate: "",
-        endDate: "",
-        form: "",
-        to: "",
-        dateType: "",
-        checkbox: "",
-      };
-
+    
   const [reportFormValues, setReportFormValues] = useState(
     PatientStatusReportFormValues
   );
@@ -104,33 +86,28 @@ function GenericReport(props) {
   const [departments, setDepartments] = useState([]);
 
   const handleReportPrint = () => {
-    const { report } = props; 
+   
+    const baseUrl = `${config.serverBaseUrl}/ReportPrint?report=${props.report}&type=patient`;
   
-    const queryParams = new URLSearchParams({
-      report: report,
-      type: 'patient',
-      accessionDirect: reportFormValues.form,
-      highAccessionDirect: reportFormValues.to,
-      dateOfBirthSearchValue: reportFormValues.dateOfBirth,
-      selPatient: reportFormValues.selectedPatientId,
-      referringSiteId: reportFormValues.referringSiteId,
-      referringSiteDepartmentId: reportFormValues.referringSiteName,
-      onlyResults: result, 
-      _onlyResults: checkbox, 
-      dateType: items, 
-      lowerDateRange: reportFormValues.startDate,
-      upperDateRange: reportFormValues.endDate
-    });
-  
-    const queryString = Object.keys(reportParams)
-    .map(key => `${key}=${reportParams[key]}`)
-    .join('&');
-
-  const barcodesPdf = `${config.serverBaseUrl}/ReportPrint?${queryString}`;
-    window.open(barcodesPdf);
+    const queryParams = [
+      `accessionDirect=${reportFormValues.form}`,
+      `highAccessionDirect=${reportFormValues.to}`,
+      `dateOfBirthSearchValue=${reportFormValues.dateOfBirth}`,
+      `selPatient=${reportFormValues.selectedPatientId}`,
+      `referringSiteId=${reportFormValues.referringSiteId}`,
+      `referringSiteDepartmentId=${reportFormValues.referringSiteName}`,
+      `onlyResults=${result}`,
+      `_onlyResults=${checkbox}`,
+      `dateType=${items}`,
+      `lowerDateRange=${reportFormValues.startDate}`,
+      `upperDateRange=${reportFormValues.endDate}`
+    ];
+   
+    const URL = `${baseUrl}&${queryParams.join('&')}`;
+    window.open(URL);
   };
   
-
+  
   const handleSubmit = (values) => {
     setLoading(true);
     values.dateOfBirth = dob; 
@@ -419,7 +396,7 @@ function GenericReport(props) {
         <Section>
           <Section>
             <Heading>
-              <FormattedMessage id="openreports.patientTestStatus" />
+            <FormattedMessage id={props.id}/>
             </Heading>
           </Section>
         </Section>
@@ -453,17 +430,11 @@ function GenericReport(props) {
             <Grid fullWidth={true}>
               <Column lg={8}>
                 <Section>
+                <br />
+                <br />
                   <h5>
-                    <FormattedMessage id={props.id}/>
-                    {/* {props.id ? <FormattedMessage id={props.id}/> : "hello"} */}
-
-                  </h5>
-                  <br />
-                  <h6>
                     <FormattedMessage id="sample.search.scanner.instructions" />
-                    <br />
-                    <FormattedMessage id="sample.search.scanner.instructions.highaccession" />
-                  </h6>
+                  </h5>
                 </Section>
               </Column>
             </Grid>
@@ -508,13 +479,12 @@ function GenericReport(props) {
             <Grid fullWidth={true}>
               <Column lg={16}>
                 <Section>
-                  <h5>
+                  <h4>
                     <FormattedMessage id="report.enter.patient.headline" />
-                  </h5>
-                  <br />
-                  <h6>
+                  </h4>
+                  <h7>
                     <FormattedMessage id="report.enter.patient.headline.description" />
-                  </h6>
+                  </h7>
                 </Section>
               </Column>
             </Grid>
@@ -744,6 +714,7 @@ function GenericReport(props) {
                 ></Pagination>
               </Column>
             </div>
+            <br />
             <br />
             <Grid fullWidth={true}>
               <Column lg={16}>

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import { Form, Grid, Column, Section, Button } from "@carbon/react";
-import CustomLabNumberInput from "../../common/CustomLabNumberInput";
-import { AlertDialog } from "../../common/CustomNotification";
+import CustomLabNumberInput from "../../../common/CustomLabNumberInput";
+import config from "../../../../config.json";
+
 
 function ReportByLabNo(props) {
  
@@ -34,10 +35,7 @@ function ReportByLabNo(props) {
             <Section>
             <Section>
               <h3>
-                {/* <FormattedMessage
-                  id={props.id || "default.id"}
-                  defaultMessage="Hello"
-                /> */} ARV - Initial
+              <FormattedMessage id={props.id}/>
               </h3>
             </Section>
             </Section>
@@ -46,12 +44,10 @@ function ReportByLabNo(props) {
           <Column lg={16}>
           <Section>
               <h5>
-                {/* <FormattedMessage id="sample.search.scanner.instructions" /> */}
-                Generate a report or range of reports by Order Number / Lab Number
+                <FormattedMessage id="report.enter.labNumber.headline" />
               </h5>
               <h7>
-              Scan or Enter Manually. For a single report, leave the box at the right empty
-                {/* <FormattedMessage id="sample.search.scanner.instructions.highaccession" /> */}
+                <FormattedMessage id="sample.search.scanner.instructions" />
               </h7>
               
               </Section>
