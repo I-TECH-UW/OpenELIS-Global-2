@@ -9,6 +9,7 @@ const OrderSuccessMessage = (props) => {
   const { orderFormValues, setOrderFormValues, setSamples, setPage } = props;
 
   const handlePrintBarCode = () => {
+   
     let barcodesPdf =
       config.serverBaseUrl +
       `/LabelMakerServlet?labNo=${orderFormValues.sampleOrderItems.labNo}`;
