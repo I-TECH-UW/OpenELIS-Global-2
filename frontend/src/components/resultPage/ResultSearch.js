@@ -1,45 +1,42 @@
-import React, { useEffect, useState }from "react";
+import React, { useEffect, useState } from "react";
 import "../Style.css";
-import { injectIntl ,FormattedMessage, useIntl } from "react-intl";
+import { injectIntl, FormattedMessage, useIntl } from "react-intl";
 import ResultSearchPage from "./SearchResultForm";
-import {
-
-  Heading,
-  Grid,
-  Column,
-  Section,
-  Breadcrumb,
-  BreadcrumbItem,
-} from "@carbon/react";
+import { Heading, Grid, Column, Section } from "@carbon/react";
+import PageBreadCrumb from "../common/PageBreadCrumb";
 
 function ResultSearch() {
-  const intl = useIntl();
   const [source, setSource] = useState("");
   useEffect(() => {
-    let sourceFromUrl = new URLSearchParams(window.location.search).get("source");
-    let sources = ["WorkPlanByTest", "WorkPlanByPanel", "WorkPlanByTestSection", "WorkPlanByPriority"];
+    let sourceFromUrl = new URLSearchParams(window.location.search).get(
+      "source"
+    );
+    let sources = [
+      "WorkPlanByTest",
+      "WorkPlanByPanel",
+      "WorkPlanByTestSection",
+      "WorkPlanByPriority",
+    ];
     sourceFromUrl = sources.includes(sourceFromUrl) ? sourceFromUrl : "";
     setSource(sourceFromUrl);
   }, []);
   return (
     <>
-    <Grid fullWidth={true}>
-      <Column lg={16}>
-        <Breadcrumb>
-          <BreadcrumbItem href="/">
-            {intl.formatMessage({ id: "home.label" })}
-          </BreadcrumbItem>
-          {source && (
-            <BreadcrumbItem href={`/${source}`}>
-              {intl.formatMessage({
-                id: "banner.menu.workplan",
-              })}
-            </BreadcrumbItem>
-          )}
-        </Breadcrumb>
-      </Column>
-    </Grid>
-    <Grid fullWidth={true}>
+      <PageBreadCrumb
+        breadcrumbs={
+          source
+            ? [
+                { label: "home.label", link: "/" },
+                {
+                  label: "banner.menu.workplan",
+                  link: `/${source}`,
+                },
+              ]
+            : [{ label: "home.label", link: "/" }]
+        }
+      />
+
+      <Grid fullWidth={true}>
         <Column lg={16}>
           <Section>
             <Section>

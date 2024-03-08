@@ -151,7 +151,7 @@ export const RoutineReportsMenu = {
 };
 const Routine = () => {
   return (
-    <>
+    <> 
       <GlobalSideBar sideNav={RoutineReportsMenu} />
     </>
   );
