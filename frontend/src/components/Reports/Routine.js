@@ -46,9 +46,7 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=indicator&report=sampleRejectionReport",
+          link: "/RoutineReport?type=indicator&report=sampleRejectionReport",
           label: <FormattedMessage id="sideNav.label.rejectionreport"/>,
         },
       ],
