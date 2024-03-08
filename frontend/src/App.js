@@ -417,9 +417,7 @@ export default function App() {
                 <SecureRoute
                   path="/ResultValidationByTestDate"
                   exact
-                  component={() => (
-                    <>{(window.location.href = "/validation?type=testDate")}</>
-                  )}
+                  component={() => <StudyValidation />}
                   role="Validation"
                 />
                 <Route path="*" component={() => <RedirectOldUI />} />
