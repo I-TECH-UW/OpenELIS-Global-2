@@ -28,15 +28,15 @@ export const RoutineReportsMenu = {
       icon: Microscope,
       SideNavMenuItem: [
         {
-          link: "/AggregateReports?type=indicator&report=statisticsReport",
+          link: "/RoutineReport?type=indicator&report=statisticsReport",
           label: <FormattedMessage id= "sidenav.label.statisticsreport"/>,
         },
         {
-          link: "/AggregateReports?type=indicator&report=indicatorHaitiLNSPAllTests",
+          link: "/RoutineReport?type=indicator&report=indicatorHaitiLNSPAllTests",
           label: <FormattedMessage id= "sidenav.label.testsummary"/>
         },
         {
-          link:"/AggregateReports?type=indicator&report=indicatorCDILNSPHIV",
+          link:"/RoutineReport?type=indicator&report=indicatorCDILNSPHIV",
           label: <FormattedMessage id="sideNav.label.hivtestsummary"/>,
         },
       ],
