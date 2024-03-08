@@ -12,9 +12,9 @@ import {
 } from "@carbon/react";
 import { injectIntl, FormattedMessage, useIntl } from "react-intl";
 import config from "../../../config.json";
-import StatisticsReport from "./statisticsReport";
-import SummaryOfAllTest from "./summaryOfAllTest";
-import HIVTestSummary from "./hivTestSummary";
+import StatisticsReport from "./StatisticsReport";
+import SummaryOfAllTest from "./SummaryOfAllTest";
+import HIVTestSummary from "./HivTestSummary";
 
 const RoutineIndex = () => {
   const intl = useIntl();

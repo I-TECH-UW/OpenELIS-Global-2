@@ -7,7 +7,7 @@ import {
     Section,
     Button,
     
-  } from "@carbon/react";
+  }from "@carbon/react";
 import { FormattedMessage, useIntl } from 'react-intl';
 import "../../Style.css";
 import { AlertDialog } from "../../common/CustomNotification";
@@ -15,7 +15,7 @@ import CustomDatePicker from "../../common/CustomDatePicker";
 import config from "../../../config.json";
 
 
-const hivTestSummary = () => {
+const SummaryOfAllTest = () => {
   const intl = useIntl();
 
   const [loading, setLoading] = useState(false);
@@ -59,7 +59,7 @@ const hivTestSummary = () => {
   const handleSubmit = () => {
     setLoading(true);
 
-    const baseParams = 'report=indicatorCDILNSPHIV&type=indicator';
+    const baseParams = 'report=indicatorHaitiLNSPAllTests&type=indicator';
 
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
     const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.startDate}&lowerDateRange=${reportFormValues.endDate}`;
@@ -77,8 +77,7 @@ const hivTestSummary = () => {
         <Section>
           <Section>
             <h1>
-            <FormattedMessage id="openreports.hiv.aggregate" />
-
+              <FormattedMessage id="openreports.all.test.summary.title" />
             </h1>
           </Section>
         </Section>
@@ -94,8 +93,8 @@ const hivTestSummary = () => {
                   <br />
                   <br />
                   <h5>
-                  <FormattedMessage id="select.dateRange" />
-
+              <FormattedMessage id="select.dateRange" />
+                  
                   </h5>
                 </Section>
                 <div className="inlineDiv">
@@ -143,4 +142,4 @@ const hivTestSummary = () => {
   );
 };
 
-export default hivTestSummary;
+export default SummaryOfAllTest;
