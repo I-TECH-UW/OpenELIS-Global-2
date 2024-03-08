@@ -82,8 +82,7 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl + "/Report?type=patient&report=referredOut",
+          link:"/RoutineReport?type=patient&report=referredOut",
           label: <FormattedMessage id="sideNav.label.referredtestreport"/>,
         },
       ],

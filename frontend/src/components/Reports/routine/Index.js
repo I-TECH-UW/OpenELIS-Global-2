@@ -15,6 +15,7 @@ import config from "../../../config.json";
 import StatisticsReport from "./StatisticsReport";
 import SummaryOfAllTest from "./SummaryOfAllTest";
 import HIVTestSummary from "./HivTestSummary";
+import ReferredOutTestSummary from "./ReferedOutTestSummary";
 
 const RoutineIndex = () => {
   const intl = useIntl();
@@ -88,6 +89,11 @@ const RoutineIndex = () => {
             {type === "indicator" &&
               report === "indicatorCDILNSPHIV" &&
               (<HIVTestSummary/>)}
+            {
+                type === "patient" && 
+                report === "referredOut" &&
+                (<ReferredOutTestSummary/>)
+              }
 
           </>
         )}

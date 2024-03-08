@@ -663,6 +663,6 @@
     "pagination.items-per-page": "Entrées par page",
     "pagination.page": "page {page}",
     "pagination.page-number": "Numéro de page",
-    "pagination.page-range": "de {total} {total, plural, one {page} other {pages}}"
-
+    "pagination.page-range": "de {total} {total, plural, one {page} other {pages}}",
+    "externalreports.title": "Exporter un fichier CSV par date de collecte"
 }
