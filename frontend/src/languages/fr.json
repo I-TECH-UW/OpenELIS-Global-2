@@ -16,6 +16,8 @@
     "label.button.cancel": "Annuler",
     "label.button.confirmDelete": "Confirmation de la suppression",
     "label.button.generatePrintableVersion": "Générer une version imprimable",
+    "label.report.byNationalId":"Numéro d'Identification Nationale / Identifiant Santé Unique",
+    "label.study.Reports":"Études Rapports",
     "login.title": "Identifiant",
     "login.subtitle": "Identifiant",
     "login.msg.username": "Nom d'utilisateur",

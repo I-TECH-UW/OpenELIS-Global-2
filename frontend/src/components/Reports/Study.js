@@ -112,9 +112,7 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=patientCollection",
+          link:"/StudyReport?type=patient&report=patientCollection",
           label:  <FormattedMessage id="sideNav.label.collectedarvpatientreports"/>,
         },
       ],
@@ -124,9 +122,7 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=patientAssociated",
+          link:"/StudyReport?type=patient&report=patientAssociated",
           label: <FormattedMessage id="sideNav.label.associatedpatientreport"/>,
         },
       ],

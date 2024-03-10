@@ -12,6 +12,8 @@
     "label.button.confirmAction": "Confirm Action",
     "label.button.confirmTitle": "Are You Sure ?",
     "label.button.generatePrintableVersion": "Generate Printable Version",
+    "label.report.byNationalId":"By National ID / Unique Health ID number",
+    "label.study.Reports":"Study Reports",
     "login.title": "Login",
     "login.subtitle": "Login",
     "login.msg.username": "Username",
