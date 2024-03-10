@@ -35,7 +35,7 @@ class PatientEntryPage {
         cy.enterText(this.firstNameSelector, firstName);
         cy.enterText(this.dateOfBirth, dateOfBirth);
         this.getMaleGenderRadioButton().click();
-        cy.getElement('.cds--accordion__heading > .cds--accordion__title').click();
+        cy.getElement('#submit').click();
     }
 
     clickSavePatientButton() {
@@ -84,6 +84,17 @@ class PatientEntryPage {
                 const trimmedText = cellText.trim();
                 expect(trimmedText).to.contain(actualName);
                 expect(trimmedText).not.eq(inValidName)
+            });
+    }
+
+    validatePatientByGender(expectedGender) {
+        this.getPatientSearchResultsTable().find('tr')
+            .last()
+            .find('td:nth-child(4)') 
+            .invoke('text')
+            .then((cellText) => {
+                const trimmedText = cellText.trim();
+                expect(trimmedText).to.eq(expectedGender);
             });
     }
 
