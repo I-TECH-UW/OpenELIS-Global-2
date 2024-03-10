@@ -94,13 +94,8 @@ function PatientStatusReport(props) {
   const handleSubmit = (values) => {
     setLoading(true);
     values.dateOfBirth = dob;
-    //input fix needed
     const searchEndPoint =
       "/rest/patient-search-results?" +
-      "from=" +
-      values.from +
-      "&to=" +
-      values.to +
       "&lastName=" +
       values.lastName +
       "&firstName=" +
@@ -279,6 +274,10 @@ function PatientStatusReport(props) {
         };
         break;
       default:
+        obj = {
+        startDate : encodeDate(configurationProperties.currentDateAsText),
+        endDate : encodeDate(configurationProperties.currentDateAsText)
+        }
     }
     setReportFormValues({
       ...reportFormValues,
@@ -408,7 +407,7 @@ function PatientStatusReport(props) {
               )}
             </Field>
             <Grid fullWidth={true}>
-              <Column lg={8}>
+              <Column lg={16} md={8} sm={4}>
                 <Section>
                   <h5>
                     <FormattedMessage id="report.enter.labNumber.headline" />
@@ -461,7 +460,7 @@ function PatientStatusReport(props) {
               </Field>
             </div>
             <Grid fullWidth={true}>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 <Section>
                   <h5>
                     <FormattedMessage id="report.enter.patient.headline" />
@@ -611,7 +610,7 @@ function PatientStatusReport(props) {
                 </Button>
               </div>
             </div>
-            <Column lg={16}>
+            <Column lg={16} md={8} sm={4}>
               {pagination && (
                 <Grid>
                   <Column lg={11} />
@@ -639,7 +638,7 @@ function PatientStatusReport(props) {
               )}
             </Column>
             <div>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 <DataTable
                   rows={patientSearchResults}
                   headers={patientSearchHeaderData}
@@ -701,7 +700,7 @@ function PatientStatusReport(props) {
             </div>
             <br />
             <Grid fullWidth={true}>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 <h5>
                   <FormattedMessage id="report.enter.site.headline" />
                 </h5>
@@ -756,7 +755,7 @@ function PatientStatusReport(props) {
               </Select>
             </div>
             <Grid fullWidth={true}>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 <h6>
                   <FormattedMessage id="report.patient.site.description" />
                 </h6>
@@ -764,7 +763,7 @@ function PatientStatusReport(props) {
             </Grid>
             <br />
             <Grid fullWidth={true}>
-              <Column lg={8}>
+              <Column lg={8} md={8} sm={4}>
                 <Checkbox
                   onChange={() => {
                     if (checkbox === "on") {

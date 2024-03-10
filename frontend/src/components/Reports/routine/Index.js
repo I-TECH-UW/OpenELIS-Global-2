@@ -24,20 +24,6 @@ const RoutineIndex = () => {
   const [type, setType] = useState("");
   const [report, setReport] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [orderFormValues, setOrderFormValues] = useState(SampleOrderFormValues);
-  const [samples, setSamples] = useState([]);
-  const [errors, setErrors] = useState([]);
-
-  const elementError = (path) => {
-    if (errors?.errors?.length > 0) {
-      let error = errors.inner?.find((e) => e.path === path);
-      if (error) {
-        return error.message;
-      } else {
-        return null;
-      }
-    }
-  };
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
