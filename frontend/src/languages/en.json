@@ -1055,5 +1055,18 @@
   "organization.next": "Next Page",
   "showing": "Showing",
   "of": "of",
-  "results.label.refer": "Refer test to a reference lab"
+  "results.label.refer": "Refer test to a reference lab",
+  "referral.label.referredOutTests": "ReferredOutTests",
+  "referral.out.head": "Referrals",
+  "referral.out.request": "Results By Date / Test / Unit Date Type :",
+  "referral.out.note": "Note if searching by result date, only tests with results will appear.",
+  "referral.date.start": "Start Date (dd/mm/yyyy)",
+  "referral.date.end": "End Date (dd/mm/yyyy)",
+  "referral.result.labnumber": "Results By Lab Number",
+  "referral.main.button": "Search referrals by patient",
+  "referral.units": "Unit(s)",
+  "referral.test": "Test(s)",
+  "referral.error": "No Referrals matching criteria",
+  "referral.input": "Scan OR Enter Manually",
+  "referral.search": "Search"
 }
