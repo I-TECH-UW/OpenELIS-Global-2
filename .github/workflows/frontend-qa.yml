@@ -1,0 +1,32 @@
+name: OpenELis Frontend QA framework workflow
+on:
+  push:
+    branches: [ 'none' ]
+  workflow_dispatch:
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout OpenELIS-Global2
+        uses: actions/checkout@v2
+        with:
+         repository: ${{github.repository}} 
+         
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+           
+      - name: Install dependencies
+        run: npm install
+        working-directory: frontend
+
+      - name: Install React scripts
+        run: npm install react-scripts@5.0.1 -g
+        working-directory: frontend
+
+      - name: Run Frontend Qa Workflow
+        run: npx cypress run –headless
+        working-directory: frontend
+
+

@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context logEffectiveWebXml="false"> 
+    <Resources cacheMaxSize="102400" />
+    <Resource auth="Container" 
+        driverClassName="org.postgresql.Driver" 
+        maxTotal="20" maxIdle="10" maxWaitMillis="-1"
+        name="jdbc/LimsDS" 
+        type="javax.sql.DataSource" 
+        url="${datasource.url}"
+        username="${datasource.username}"
+        password="${datasource.password}" />
+        
+        <CookieProcessor 
+        	className="org.apache.tomcat.util.http.Rfc6265CookieProcessor" 
+        	sameSiteCookies="strict" />
+</Context>
+

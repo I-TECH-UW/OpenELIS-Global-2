@@ -1,0 +1,1490 @@
+
+/* 
+* OpenELIS Main Stylesheet
+* Main styles used by OpenELIS
+* 
+* Authored by:
+* Clinical Informatics Research Group, University of Washington School of Nursing.
+* http://cirg.washington.edu
+*/
+
+
+/***** New organization of CSS - started 201106  *****/
+
+/***** Overrides of default browser styles *****/
+body {
+	/* FIXME - set margin to 0 and then define main content area with margin/padding */
+	margin: 8px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	color: #444;
+	background-color: #FFFFFF;
+	margin-top: 0;
+}
+
+label, input, password, button, select, textarea {
+	font-size: 13px;
+}
+
+input:focus, password:focus, select:focus, textarea:focus {
+	outline: none;
+}
+
+a img {
+	border: 0;
+}
+
+a:link, a:visited {
+	color: #663300;
+	text-decoration: none;
+}
+
+a:active {
+	color: #ff6600;
+	text-decoration: none;
+}
+
+h1 {
+	font-size: 23px;
+	line-height: normal;
+	color: #235689;
+	background-color: #DADDDD;
+	width: 100%;
+	border: none;
+}
+
+h2, h3 {
+	width: 100%;
+	color: #369;
+}
+
+h2 {
+	font-size: 17px;
+	background-color: #E0E3E3;
+	line-height: normal;
+}
+
+h3 {
+	font-size: 15px;
+	background-color: #F0F3F3;
+}
+
+p, ul {
+	color: #000000;
+	background-color: #FFFFFF;
+}
+
+ol {
+	color: #000000;
+	background-color: #C8DADA;
+}
+
+textarea {
+	width: 100%;
+}
+
+table {
+	font-size: 13px;
+	font-style: normal;
+	background-color: #FFFFFF;
+	color: #336699;
+	border: #ccc999 none;
+}
+
+th {
+	color: #336699;
+	background-color: #C8DADA;
+	text-align: center;
+}
+
+tr {
+	text-align: left;
+	vertical-align: middle;
+}
+
+caption {
+	text-align: left;
+	font-size: 23px;
+	color: #336699;
+}
+
+.caption {
+	text-align: left;
+	font-size: 23px;
+	color: #336699;
+}
+
+.catalog-label {
+	font-size: 13px;
+	font-style: italic;
+	color: #000000;
+}
+
+.tab {
+	margin-left: 40px;
+}
+
+.half-tab {
+	margin-left: 20px;
+}
+
+/***** End overrides of default browser styles *****/
+
+/***** Styles for header area *****/
+/* See menu.css for styling menu */
+#header {
+	font-size: 13px;
+	line-height: 1em;
+	min-width: 970px;
+	margin: 0 -8px;
+	/* FIXME - temporarily using negative margin b/c default body settings and need to create content area with padding for main tables */
+	padding: 10px 0 0 5px;
+	height: 86px;
+	overflow: visible;
+	background: #486086; /* Old browsers */
+	background: -moz-linear-gradient(top, #486086 0%, #557aaf 100%);
+	/* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #486086),
+		color-stop(100%, #557aaf)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #486086 0%, #557aaf 100%);
+	/* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #486086 0%, #557aaf 100%);
+	/* Opera11.10+ */
+	background: -ms-linear-gradient(top, #486086 0%, #557aaf 100%);
+	/* IE10+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#486086',
+		endColorstr='#557aaf', GradientType=0); /* IE6-9 */
+	background: linear-gradient(top, #486086 0%, #557aaf 100%); /* W3C */
+}
+
+#header a, #header a:active, #header a:visited {
+	font-size: 13px;
+}
+
+#oe-logo {
+	float: left;
+	margin: 0 5px 0 0
+}
+
+#oe-logo-img {
+	width: auto;
+	height: 71 px;
+}
+
+#oe-title {
+	font-size: 22px;
+	line-height: 27px;
+	color: #fff;
+	font-weight: bold;
+	white-space: nowrap;
+}
+
+#oe-logo, #oe-title { /* used for linking back to OE home */
+	cursor: pointer
+}
+
+#oe-version {
+	line-height: 18px;
+	margin-top: 4px;
+	font-weight: bold;
+	color: #ddd;
+	overflow: auto;
+	display: inline-block /* Fixes child float problem in IE quirks mode */
+}
+
+#appVersion {
+	float: left;
+	font-size: 11px
+}
+/* Alert displays when TrainingInstallation = true */
+#training-alert {
+	float: left;
+	letter-spacing: 1px;
+	background-color: #fff;
+	color: #470016;
+	margin-left: 40px;
+	padding: 0 10px;
+	font-size: 12px;
+	white-space: nowrap; /* keep on one line */
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+#training-alert span:before {
+	content: "✧";
+	padding-right: 10px;
+}
+
+#training-alert span:after {
+	content: "✧";
+	padding-left: 10px;
+}
+
+#user-info {
+	font-size: 13px;
+	-webkit-border-radius: 0 0 0 10px;
+	-moz-border-radius: 0 0 0 10px;
+	border-radius: 0 0 0 10px;
+	float: right;
+	padding: 10px;
+	margin-top: -10px;
+	color: #555;
+	background-image: url('../images/menu/gradient_user_info.svg');
+	/* for IE9 - abouthalf.com/2010/10/25/internet-explorer-9-gradients-with-rounded-corners */
+	background-color: #ffa73d; /* Old browsers */
+	background: -moz-linear-gradient(top, #ffa73d 0%, #ffc57f 100%);
+	/* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffa73d),
+		color-stop(100%, #ffc57f)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #ffa73d 0%, #ffc57f 100%);
+	/* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #ffa73d 0%, #ffc57f 100%);
+	/* Opera11.10+ */
+	background: -ms-linear-gradient(top, #ffa73d 0%, #ffc57f 100%);
+	/* IE10+ */
+	/* filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffa73d', endColorstr='#ffc57f',GradientType=0 ); IE6-9 */
+	background: linear-gradient(top, #ffa73d 0%, #ffc57f 100%); /* W3C */
+	background-size: 100% 100%;
+	/* Size, repeat and position required for IE corners/gradients issue */
+	background-repeat: repeat-x;
+	background-position: 0 0;
+}
+
+#user-info a {
+	color: #607890;
+	text-decoration: underline
+}
+
+#user-info a:hover {
+	color: #036
+}
+
+#language-chooser {
+	text-align: center;
+	margin: 10px 0 5px
+}
+
+#language-chooser a {
+	color: #036;
+	text-decoration: underline
+}
+
+#language-chooser a:hover, #language-chooser a:active {
+	color: #D54e21
+}
+/***** End - Styles for header area *****/
+
+/***** Styles used in conjunction with Bootstrap  *****/
+/* Needed to match /images/ path in OE */
+[class^="icon-"], [class*=" icon-"] {
+	background-image: url("../images/glyphicons-halflings.png");
+}
+
+.icon-white, .nav-tabs>.active>a>[class^="icon-"], .nav-tabs>.active>a>[class*=" icon-"],
+	.nav-pills>.active>a>[class^="icon-"], .nav-pills>.active>a>[class*=" icon-"],
+	.nav-list>.active>a>[class^="icon-"], .nav-list>.active>a>[class*=" icon-"],
+	.navbar-inverse .nav>.active>a>[class^="icon-"], .navbar-inverse .nav>.active>a>[class*=" icon-"],
+	.dropdown-menu>li>a:hover>[class^="icon-"], .dropdown-menu>li>a:hover>[class*=" icon-"],
+	.dropdown-menu>.active>a>[class^="icon-"], .dropdown-menu>.active>a>[class*=" icon-"]
+	{
+	background-image: url("../images/glyphicons-halflings-white.png");
+}
+/* .table-small creates a smaller version of the default bootstrap table */
+.table-small td {
+	padding: 2px 4px;
+}
+
+.table-small th {
+	padding: 4px;
+	background-color: #C8DADA;
+	color: #369;
+	font-size: 1.1em
+}
+
+.table-small .affix {
+	position: fixed;
+	top: 0;
+	display: table-row
+}
+/* Additions for UI to table headers for sorting */
+table .header {
+	cursor: pointer;
+}
+
+table .header:after {
+	content: "";
+	float: right;
+	margin-top: 7px;
+	border-width: 0 4px 4px;
+	border-style: solid;
+	border-color: #000 transparent;
+	visibility: hidden;
+	margin-left: 2px;
+}
+
+table .headerSortUp, table .headerSortDown {
+	color: #246;
+	background-color: #b0bfbf;
+	-webkit-box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);
+	-moz-box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);
+	box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);
+}
+
+table .header:hover:after {
+	visibility: visible;
+}
+
+table .headerSortDown:after, table .headerSortDown:hover:after {
+	visibility: visible;
+	filter: alpha(opacity = 60);
+	-khtml-opacity: 0.6;
+	-moz-opacity: 0.6;
+	opacity: 0.6;
+}
+
+table .headerSortUp:after {
+	border-bottom: none;
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 4px solid #000;
+	visibility: visible;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	filter: alpha(opacity = 60);
+	-khtml-opacity: 0.6;
+	-moz-opacity: 0.6;
+	opacity: 0.6;
+}
+
+.oe-report {
+	min-width: 840px;
+	margin-left: 10px;
+}
+
+.oe-report div {
+	margin-bottom: 6px;
+}
+
+.oe-report input {
+	margin-bottom: 0
+}
+/* Alerts from bootstrap 2.1.1 */
+.alert {
+	padding: 8px 35px 8px 14px;
+	margin-bottom: 20px;
+	color: #c09853;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+	background-color: #fcf8e3;
+	border: 1px solid #fbeed5;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+
+.alert h4 {
+	margin: 0;
+}
+
+.alert .close {
+	position: relative;
+	top: -2px;
+	right: -21px;
+	line-height: 20px;
+}
+
+.alert-success {
+	color: #468847;
+	background-color: #dff0d8;
+	border-color: #d6e9c6;
+}
+
+.alert-danger, .alert-error {
+	color: #b94a48;
+	background-color: #f2dede;
+	border-color: #eed3d7;
+}
+
+.alert-info {
+	color: #3a87ad;
+	background-color: #d9edf7;
+	border-color: #bce8f1;
+}
+
+.alert-block {
+	padding-top: 14px;
+	padding-bottom: 14px;
+}
+
+.alert-block>p, .alert-block>ul {
+	margin-bottom: 0;
+}
+
+.alert-block p+p {
+	margin-top: 5px;
+}
+/* Added by mark47 */
+.alert>div {
+	margin-bottom: 2px
+}
+
+.alert>div:last-child {
+	margin-bottom: 0px
+}
+
+/***** End Styles used in conjunction with Bootstrap *****/
+
+/***** Styles used with DataTables jQuery plug-in *****/
+/* Most are in conjunction with bootstrap */
+div.dataTables_length label {
+	width: 460px;
+	float: left;
+	text-align: left;
+}
+
+div.dataTables_length select {
+	width: 75px;
+}
+
+div.dataTables_info {
+	padding-top: 8px;
+	width: 300px
+}
+
+.dataTables_wrapper {
+	min-width: 840px;
+}
+/* Hides table and controls by default. jQuery shows them after load */
+#advancedTable, .show-table-options {
+	display: none;
+}
+/* Auto to allow table to shrink to content. Set max width by td. */
+.dataTable {
+	width: auto;
+}
+
+.dataTable th {
+	min-width: 54px /* Needed to keeper audit trail headers on one line. */
+}
+
+.dataTable td {
+	max-width: 400px;
+}
+
+div.dataTables_filter {
+	margin-left: 24px;
+}
+
+.filter-options div, .filter-options label, div.dataTables_filter input
+	{
+	display: inline-block;
+}
+
+.filter-options input, .filter-options select {
+	margin-bottom: 0
+}
+
+.filter-options input {
+	width: 90px /* Makes default filter size smaller */
+}
+/* Row striping and hover styles */
+.sorting_1 {
+	background-color: #f7f7f7
+}
+
+.table-striped tbody tr:nth-child(odd) td.sorting_1 {
+	background-color: #f2f2f2
+}
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover td.sorting_1,
+	.table-hover tbody tr:hover th {
+	background-color: #e5e5e5;
+}
+/* Extra classes used in OE datatables */
+.reset-sort {
+	margin-right: 12px;
+}
+
+.show-table-options select {
+	width: 160px;
+}
+
+.time-stamp {
+	white-space: nowrap; /* Keeps time from wrapping */
+}
+/***** End Styles used with DataTables jQuery plug-in *****/
+.order-details {
+	font-weight: bold;
+	white-space: nowrap;
+	display: none;
+}
+
+.order-details span {
+	margin-right: 15px;
+	font-weight: normal;
+}
+
+.order-details .order-number {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.loading-note {
+	margin: 20px 50px;
+	font-size: 16px;
+}
+
+.loading-note img {
+	float: left;
+	margin-right: 20px;
+}
+/* Used for disabled fields in validation results. Width to match std input box size. */
+.results-readonly {
+	display: inline-block;
+	padding: 1px;
+	margin: 2px;
+	border: 1px solid transparent;
+	width: 65px;
+}
+
+.results-readonly.invalidHighlight {
+	padding: 2px 4px 2px 4px;
+	border: none;
+}
+
+.confirmation {
+	border: 2px solid transparent;
+	color: #336699;
+}
+
+input.disabled-text-button {
+	color: #808080;
+}
+/***** To Be Sorted *****/
+th.leftVertical, td.leftVertical {
+	border-left-style: solid;
+	border-left-color: black;
+	border-left-width: 1px;
+	padding: 5px;
+}
+
+th.headerGroup {
+	font-size: 16px;
+}
+
+div.textcontent {
+	font-size: 13px;
+	color: #000000;
+	border: none;
+	background-color: transparent;
+}
+
+div.indent {
+	padding-left: 40px;
+}
+
+div.colorFill {
+	background-color: #F0F3F3;
+}
+
+div.TableMatch {
+	font-size: 13px;
+	font-style: normal;
+	background-color: #FFFFFF;
+	color: #336699;
+	border: #ccc999 none;
+}
+
+table.data {
+	width: 95%;
+	padding: 6px;
+}
+
+tr.evenRow {
+	background-color: #C8DADA;
+}
+
+tr.evenRowHead {
+	background-color: #B8CACA;
+	padding: 20px;
+}
+
+tr.oddRow {
+	background-color: #F0F3F3;
+}
+
+tr.oddRowHead {
+	background-color: #E0E3E3;
+}
+
+td.InterstitialHead {
+	padding: 10px;
+	border-top: 1;
+	border-top-color: black;
+	border-top-style: solid;
+}
+
+td.HeadSeperator {
+	border-top: 1;
+	border-top-color: black;
+	border-top-style: solid;
+}
+
+td.Highlight {
+	background-color: #E0E026;
+	border: 0;
+}
+
+td.ruled {
+	border-top: 1px solid #b0c2c2;
+	border-collapse: collapse;
+}
+
+td.textcontent {
+	font-size: 17px;
+	color: #000000;
+	border: none;
+	background-color: #FFFFFF;
+}
+
+pre.code {
+	padding-left: 2em;
+	color: #336699;
+}
+
+h1.title, .title {
+	background-color: #8FD098;
+	border-color: #8FD098 #8FD098 #8FD098;
+}
+
+h1.txtHeader {
+	background-color: transparent;
+	border: 0;
+}
+
+button.style {
+	background-color: red;
+	width: 150px;
+	height: 150px;
+	color: #CC9933;
+}
+
+/* --- AUTOCOMPLETE CSS --- */
+.autocomplete {
+	position: absolute;
+	color: #333;
+	background-color: #fff;
+	border: 1px solid #666;
+	overflow: hidden;
+}
+
+.autocomplete ul {
+	padding: 0;
+	margin: 0;
+	list-style: none;
+	overflow: auto;
+}
+
+.autocomplete li {
+	display: block;
+	white-space: nowrap;
+	cursor: pointer;
+	margin: 0;
+	padding-left: 5px;
+	padding-right: 5px;
+	border: 1px solid #fff;
+}
+
+.autocomplete li.selected {
+	background-color: #cef;
+	border-top: 1px solid #9bc;
+	border-bottom: 1px solid #9bc;
+}
+
+.ui-autocomplete {
+	min-width: 240px
+}
+
+.ui-autocomplete-input {
+	min-width: 266px
+}
+
+/* Animated throbber */
+input.form-autocomplete {
+	background: url('../images/throbber.gif') no-repeat 100% 2px;
+	background-color: #FFFFFF;
+}
+
+input.error {
+	border-color: #FF0000;
+}
+/* --- HTML CONTENT CSS --- */
+#modelDescription {
+	position: absolute;
+	left: 300px;
+	width: 300px;
+	min-height: 100px;
+	background: #ffe;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #666 #ccc #ccc #666;
+	padding: 5px;
+}
+
+#htmlContentForm {
+	width: 350px;
+}
+
+/* --- CALLOUT CSS --- */
+.olbg {
+	background-color: #999;
+}
+
+.olcg {
+	background-color: #000;
+}
+
+.olfg {
+	background-color: #ddd;
+}
+
+.olcap {
+	font-size: 12px;
+	font-weight: bold;
+	color: #fff;
+}
+
+a.olclo {
+	font-size: 10px;
+	font-weight: bold;
+	color: #ddd;
+}
+
+a.olclo:hover {
+	color: #fff;
+}
+
+.oltxt {
+	font-size: 12px;
+	color: #000;
+}
+
+/* --- Tree CSS --- */
+.tree {
+	list-style: none;
+	margin-left: 5px;
+	padding-left: 5px;
+}
+
+.expandedNode {
+	margin-left: 0;
+	padding-left: 0;
+	list-style: none;
+	padding-left: 10px;
+	background-image: url(../img/arrow_down.gif);
+	background-repeat: no-repeat;
+	background-position: 0 .5em;
+}
+
+.expandedNode:hover {
+	cursor: pointer;
+}
+
+.collapsedNode {
+	margin-left: 0;
+	padding-left: 0;
+	list-style: none;
+	padding-left: 10px;
+	background-image: url(../img/arrow.gif);
+	background-repeat: no-repeat;
+	background-position: 0 .5em;
+}
+
+.collapsedNode:hover {
+	cursor: pointer;
+}
+
+/*DIANE*/
+div.blank {
+	/*background: url('../images/empty.gif') no-repeat 100% 2px;*/
+	/*bugzilla 1904 adding additional field is pushing buttons off screen - this helps*/
+	padding: 2px;
+	background-color: transparent;
+	float: left;
+}
+
+div.spacebuttons {
+	background-color: #F0F3F3;
+}
+
+div.badmessage {
+	background: url('../images/bad.gif') no-repeat 100% 2px;
+	padding: 10px;
+	background-color: transparent;
+	float: left;
+}
+
+span.badmessage {
+	background: url('../images/bad.gif') no-repeat 100% 2px;
+	padding: 8px;
+	background-color: transparent;
+}
+
+div.questionmessage {
+	background: url('../images/question.gif') no-repeat 100% 2px;
+	padding: 5px;
+	background-color: #F0F3F3;
+	float: left;
+}
+
+div.notepad {
+	background: url('../images/notepad.gif') no-repeat 100% 2px;
+	background-color: #F0F3F3;
+	padding-left: 7px;
+	padding-right: 7px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	float: right;
+}
+
+div.notepaddata {
+	background: url('../images/notepaddata.gif') no-repeat 100% 2px;
+	background-color: #F0F3F3;
+	padding-left: 7px;
+	padding-right: 7px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	float: right;
+}
+
+.tooltip {
+	position: absolute;
+	white-space: nowrap;
+	background-color: #F0F3F3;
+	border: 1px solid black;
+	font-size: 13px;
+	z-index: 100;
+}
+
+.tooltip h4 {
+	font-size: 11px;
+	background-color: #FFCC99;
+	margin: -2px -4px 3px -4px;
+	padding: 1px 4px 1px 4px;
+}
+
+div.ttquestionmessage {
+	background: url('../images/question.gif') no-repeat 100% 2px;
+	padding: 5px;
+	background-color: #F0F3F3;
+	/*float: left;*/
+	position: absolute;
+}
+
+input.text, input.password {
+	float: left;
+	text-align: left;
+}
+
+input.readOnly {
+	border: 0;
+}
+
+td.popuplistheader {
+	text-align: center;
+	font-size: medium;
+	font-weight: bold;
+	font-style: italic;
+	padding: 5px;
+}
+
+td.popuplistdata {
+	text-align: left;
+	padding: 5px;
+	vertical-align: middle;
+}
+
+.requiredlabel {
+	color: #FF0000;
+}
+
+ul.leftnavigation {
+	font-size: 13px;
+	color: #000000;
+	background-color: #C8DADA;
+}
+
+div.scrollhorizontal {
+	width: 350px;
+	height: 100%;
+	overflow-x: scroll;
+}
+
+div.scrollvertical {
+	width: 100%;
+	height: 150px;
+	overflow-y: scroll;
+}
+
+div.scrollhorizontalvertical {
+	width: 350px;
+	height: 200px;
+	overflow-x: scroll;
+	overflow-y: scroll;
+}
+
+/*bugzilla #1346 add ability to hover over accession number and
+  view patient/person information (first and last name and external id)*/
+a.hoverinformation:link {
+	text-decoration: none;
+	font-size: 12px;
+	color: #336699;
+	background-color: #F0F3F3;
+}
+
+a.hoverinformation:active {
+	color: #336700;
+}
+
+a.hoverinformation:visited {
+	color: #336799;
+}
+
+/*bugzilla #1348/1853 add ability to sort columns in a table*/
+a.sortableheader:link, .sorthead {
+	font-size: 13px;
+}
+
+/* bugzilla 1772*/
+.normal {
+	background-color: #FFFFFF
+}
+
+.highlight {
+	background-color: #C8DADA
+}
+
+/*AIS- bugzilla #1863*/
+.withouthighlight {
+	background-color: #FFFFFF;
+	border-color: #336699;
+	border-width: 1.8px;
+	border-style: solid;
+}
+
+.highlight {
+	background-color: #C8DADA;
+	border-color: #336699;
+	border-width: 1.8px;
+	border-style: solid;
+}
+
+.yellowHighlight {
+	background-color: #faf6b1;
+	border-color: #336699;
+	border-width: 1.8px;
+	border-style: solid;
+}
+
+.invalidHighlight {
+	background-color: #ffA0A0;
+	border-color: #FF0000;
+	border-width: 1.8px;
+	border-style: solid;
+	padding: 0 10px;
+}
+
+.textButton {
+	background-color: transparent;
+	color: #111111;
+	text-align: center;
+	padding: 2;
+	border-style: none;
+	text-decoration: underline;
+}
+
+.error {
+	border-color: red;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - -
+
+Title : Lightbox CSS
+Author : Kevin Hale
+URL : http://particletree.com/features/lightbox-gone-wild/
+
+Created : January 13, 2006
+Modified : February 1, 2006
+
+- - - - - - - - - - - - - - - - - - - - - */
+#lightbox {
+	display: none;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	z-index: 9999;
+	width: 500px;
+	height: 400px;
+	margin: -220px 0 0 -250px;
+	border: 1px solid #fff;
+	/*diane replaced background*/
+	/*background:#FDFCE9;*/
+	background-color: #F0F3F3;
+	/*diane added color for test*/
+	color: #F0F3F3;
+	text-align: left;
+}
+
+#lightbox[id] {
+	position: fixed;
+}
+
+#overlay {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 5000;
+	background-color: #999;
+	-moz-opacity: 0.4;
+	opacity: .40;
+	filter: alpha(opacity = 40);
+}
+
+#overlay[id] {
+	position: fixed;
+}
+
+#lightbox.done #lbLoadMessage {
+	display: none;
+}
+
+#lightbox.done #lbContent {
+	display: block;
+}
+
+#lightbox.loading #lbContent {
+	display: none;
+}
+
+#lightbox.loading #lbLoadMessage {
+	display: block;
+}
+
+#lightbox.done img {
+	width: 100%;
+	height: 100%;
+}
+
+div.lbscrollvertical {
+	width: 100%;
+	overflow-y: scroll;
+	position: absolute;
+	top: 60px;
+	bottom: 140px;
+	height: 300px;
+}
+
+div.lbfooter {
+	width: 100%;
+	position: absolute;
+	top: 360px;
+	bottom: 40px;
+	height: 100px;
+}
+
+.observationsQuestion {
+	width: 33%;
+}
+
+.observationsSubquestion {
+	width: 33%;
+	padding-left: 2em;
+}
+
+.observationsSubSubquestion {
+	width: 33%;
+	padding-left: 4em;
+}
+
+.bulletItem {
+	text-align: right;
+}
+
+#studies select {
+	float: left;
+	padding: 2px;
+}
+
+td.required {
+	color: #FF0000;
+	text-align: right;
+}
+
+.sectionTitle {
+	font-size: 14px;
+	color: #336699;
+	background-color: #F0F3F3;
+	width: 100%;
+	padding: 4px;
+	margin: 3px;
+	font-weight: bold;
+}
+
+/* an extra row intended to be used for DHTML as a template for adding another row */
+tr.rowTemplate {
+	display: none
+}
+
+/* END bugzilla 1895 */
+.important-text {
+	color: #FF0000
+}
+
+.indented-important-message {
+	margin-left: 10px;
+	font-weight: bold;
+	font-style: italic
+}
+
+/* for jquery drag and drop sortable */
+.sortable {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	border: 2px solid silver;
+}
+
+.sortable li {
+	margin: 0 3px 3px 3px;
+	padding: 0.4em;
+	padding-left: 1.5em;
+	font-size: 1.0em;
+	height: 16px;
+}
+
+#dictionaryNameSortUI li {
+	height: auto;
+	text-align: left;
+}
+
+.sortable li span {
+	position: absolute;
+	margin-left: -1.3em;
+}
+
+.ui-state-default_oe, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default {
+	border: 1px solid #d3d3d3 /*{borderColorDefault}*/;
+	background: #e6e6e6 /*{bgColorDefault}*/ 50% /*{bgDefaultXPos}*/ 50%
+		/*{bgDefaultYPos}*/ repeat-x /*{bgDefaultRepeat}*/;
+	font-weight: normal /*{fwDefault}*/;
+	color: #555555 /*{fcDefault}*/;
+}
+
+.ui-state-defaulta_oe a, .ui-state-default a:link, .ui-state-default a:visited
+	{
+	color: #555555 /*{fcDefault}*/;
+	text-decoration: none;
+}
+
+#sortOrder td {
+	vertical-align: top;
+}
+
+#sampleTypeSortOrder td {
+	vertical-align: top;
+}
+
+/* Experimental CSS for use on updated OE forms */
+.oe-form {
+	max-width: 800px;
+	color: #369;
+	line-height: 18px;
+	padding: 0 1em
+}
+
+.oe-form div, .oe-form p, .oe-form ul, .oe-form li {
+	color: #336699
+}
+
+.oe-form ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.oe-form ul ul {
+	overflow: auto
+}
+
+.oe-form li {
+	clear: both;
+	padding-bottom: 1em
+}
+/*.oe-form label { 
+  width:180px; display:block; float:left; line-height:26px;
+} */
+.inline-more {
+	padding-left: 1.5em /* Use to include more info on same form line */
+}
+
+.field-note, div.field-note {
+	padding-top: 0.2em;
+	font-style: italic;
+	font-size: 12px
+}
+
+.top-label {
+	display: block;
+	width: auto;
+	margin-bottom: 0.2em
+}
+
+.oe-form h3 {
+	margin: 1em 0 .75em
+}
+
+.oe-form li input[type=radio] {
+	margin-left: 0
+}
+
+input[type=radio]+label {
+	margin-right: 0.5em
+		/* Adds spacing after 1st radio button on horizontal line */
+}
+
+.altered {
+	color: #00bb00;
+}
+
+/* End experimental CSS for use on updated OE forms */
+tr.border_top td {
+	border-top: 1pt solid black;
+}
+
+.btn-link {
+	background: none !important;
+	color: inherit;
+	border: none;
+	padding: 0 !important;
+	font: inherit;
+	/*border is optional*/
+	border-bottom: 1px solid #444;
+	cursor: pointer;
+}
+
+view-non-conforming-section-1 > td {
+	width: 25%;
+}
+
+.view-non-conforming-descriptions {
+	width: 35%;
+}
+
+.full-table {
+	width: 80%;
+	text-align: center;
+}
+
+.center-caption {
+	text-align: center;
+}
+
+.corrective-action-section-1 {
+	width: 40%;
+	float: left;
+}
+
+.corrective-action-section-2 {
+	width: 60%;
+	float: left;
+}
+
+.half-table {
+	width: 50%;
+}
+
+.column-right-text {
+	float: right;
+}
+
+.form-div {
+	width: 100%;
+	margin-bottom: 5px;
+}
+
+.form-div label {
+	margin-bottom: 5px;
+	display: inline-block;
+}
+
+.form-control {
+	display: block;
+	padding: 5px 10px;
+}
+
+.edit-report-form {
+	padding: 10px 20px;
+}
+
+.current-report {
+	background: #5eb95e;
+}
+
+.report-ordering-panel {
+	width: 400px;
+}
+
+
+.result-select-box {
+	width: 90%;
+	margin: 10px auto;
+	display: inline-block;
+}
+
+.result-list-test {
+	width: 200px;
+	float: left;
+	margin: 10px;
+}
+
+.result-list-test select {
+	width: 100%;
+}
+
+.new-select-list-item {
+	background: #5eb95e;
+}
+
+.available-tests-cation {
+	text-align: center;
+	margin: 6px 0px;
+}
+
+.highlighted-tests a {
+	color: #5eb95e;
+}
+
+.rename-result-list-table {
+	margin: 0px auto;
+	width: 50%;
+}
+
+.rename-result-list-form {
+	width: 50%;
+	min-height: 50px;
+	margin: 20px auto;
+}
+  
+.form-div {
+	width: 100%;
+	margin-bottom: 5px;
+}
+
+.form-div label {
+	margin-bottom: 5px;
+	display: inline-block;
+}
+
+.form-control {
+	display: block;
+	padding: 5px 10px;
+}
+
+.edit-report-form {
+	padding: 10px 20px;
+}
+
+.current-report {
+	background: #5eb95e;
+}
+
+.report-ordering-panel {
+	width: 400px;
+}
+
+.view-non-conforming-section-1 > td {
+	width: 25%;
+}
+
+.report-nce-table {
+	min-width: 60%;
+}
+
+
+.report-nce-values-col {
+	width: 60%
+}
+
+.corrective-action-section-1 {
+	width: 40%;
+	float: left;
+}
+
+.corrective-action-section-2 {
+	width: 60%;
+	float: left;
+}
+
+.half-table {
+	width: 50%;
+}
+
+.column-right-text {
+	float: right;
+}
+
+
+.local-search {
+  color: #66b947;
+}
+
+.external-search {
+  color: #3c74b6;
+}
+
+.center-text {
+	text-align: center;
+}
+
+.alt-color-table th, .alt-color-table td {
+	padding: 0px 5px;
+}
+
+.alt-color-table tr:nth-child(even) {
+	background-color: #C8DADA;
+}
+
+.alt-color-table tr:nth-child(odd) {
+	background-color: #F0F3F3;
+}
+
+th.highlight-header {
+	color: #FFFFFF;
+	background-color: #3c74b6;
+}
+
+th.highlight-header-rev {
+	color: #FFFFFF;
+	background-color: #3c74b6;
+}
+
+.unsynced-resource td {
+	background-color: #ffcac8;
+}
+
+.hidden-text {
+	display: none;
+}
+
+.show-text-hover:hover .hidden-text {
+	display: inline;
+}
+
+
+

@@ -1,0 +1,37 @@
+package org.openelisglobal.dataexchange.fhir.service;
+
+import java.util.List;
+
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.ServiceRequest;
+import org.hl7.fhir.r4.model.Task;
+import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.InterpreterResults;
+import org.openelisglobal.dataexchange.order.action.IOrderInterpreter.OrderType;
+import org.openelisglobal.dataexchange.order.action.MessagePatient;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.sample.valueholder.OrderPriority;
+
+public interface TaskInterpreter {
+
+    public List<String> getUnsupportedTests();
+
+    public List<String> getUnsupportedPanels();
+
+    String getReferringOrderNumber();
+
+    String getMessage();
+
+    MessagePatient getMessagePatient();
+
+    public OrderType getOrderType();
+
+    List<InterpreterResults> getResultStatus();
+
+    Test getTest();
+
+    OrderPriority getOrderPriority();
+
+    List<InterpreterResults> interpret(Task incomingTask, ServiceRequest incomingServiceRequest,
+            Patient incomingPatient);
+
+}

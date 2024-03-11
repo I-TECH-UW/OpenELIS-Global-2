@@ -1,0 +1,18 @@
+[submodule "plugins"]
+	path = plugins
+	url = https://github.com/openelisglobal/openelisglobal-plugins.git
+[submodule "tools/Liquibase-Outdated"]
+	path = tools/Liquibase-Outdated
+	url = https://github.com/I-TECH-UW/Liquibase-Outdated.git
+[submodule "tools/Password-Migrator"]
+	path = tools/Password-Migrator
+	url = https://github.com/I-TECH-UW/Password-Migrator.git
+[submodule "Consolidated-Server"]
+	path = Consolidated-Server
+	url = git@github.com:I-TECH-UW/Consolidated-Server.git
+[submodule "hapi-fhir-jpaserver-starter"]
+	path = hapi-fhir-jpaserver-starter
+	url = https://github.com/I-TECH-UW/hapi-fhir-jpaserver-starter.git
+[submodule "dataexport"]
+	path = dataexport
+	url = https://github.com/I-TECH-UW/dataexport.git

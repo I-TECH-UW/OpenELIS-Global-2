@@ -1,0 +1,687 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PatientReport" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="552" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="aef8cdbd-c816-467f-a8b2-d0d32793e5ac">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["../reports/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="siteId" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="siteName" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="directorName" class="java.lang.String"/>
+	<parameter name="headerName" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["GeneralHeader.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="usePageNumbers" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["true"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="additionalSiteInfo" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="useSTNumber" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[Boolean.TRUE]]></defaultValueExpression>
+	</parameter>
+	<parameter name="leftHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="rightHeaderImage" class="java.io.InputStream" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nationalId" class="java.lang.String"/>
+	<field name="gender" class="java.lang.String"/>
+	<field name="stNumber" class="java.lang.String"/>
+	<field name="testName" class="java.lang.String"/>
+	<field name="result" class="java.lang.String"/>
+	<field name="accessionNumber" class="java.lang.String"/>
+	<field name="recievedDate" class="java.lang.String"/>
+	<field name="conclusion" class="java.lang.String"/>
+	<field name="contactInfo" class="java.lang.String"/>
+	<field name="siteInfo" class="java.lang.String"/>
+	<field name="uom" class="java.lang.String"/>
+	<field name="note" class="java.lang.String"/>
+	<field name="age" class="java.lang.String"/>
+	<field name="testSection" class="java.lang.String"/>
+	<field name="testRefRange" class="java.lang.String"/>
+	<field name="dept" class="java.lang.String"/>
+	<field name="commune" class="java.lang.String"/>
+	<field name="completeFlag" class="java.lang.String"/>
+	<field name="panelName" class="java.lang.String"/>
+	<field name="separator" class="java.lang.Boolean"/>
+	<field name="orderFinishDate" class="java.lang.String"/>
+	<field name="orderDate" class="java.lang.String"/>
+	<field name="patientSiteNumber" class="java.lang.String"/>
+	<field name="patientName" class="java.lang.String"/>
+	<field name="abnormalResult" class="java.lang.Boolean"/>
+	<field name="collectionDateTime" class="java.lang.String"/>
+	<field name="correctedResult" class="java.lang.Boolean"/>
+	<field name="parentMarker" class="java.lang.Boolean"/>
+	<field name="alerts" class="java.lang.String"/>
+	<group name="person" isStartNewPage="true" isResetPageNumber="true">
+		<groupExpression><![CDATA[$F{accessionNumber}]]></groupExpression>
+	</group>
+	<group name="Accession Number" isStartNewPage="true" isResetPageNumber="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{accessionNumber}]]></groupExpression>
+		<groupHeader>
+			<band height="113" splitType="Prevent">
+				<line>
+					<reportElement x="-1" y="-1" width="548" height="1" uuid="83ac5cd2-22a9-4526-be87-e75296617f0e"/>
+				</line>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="87" height="14" backcolor="#CCCCCC" uuid="255762a8-c944-44a4-990e-d2fa77dbf54f"/>
+					<box leftPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Nom, Pr�nom]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="87" y="0" width="317" height="14" uuid="9b93c188-c2c4-4d6b-b16f-a7c640cf4c42"/>
+					<box leftPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{patientName}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="297" y="78" width="254" height="14" uuid="78fa9d7a-38af-46c6-aeb9-90d68d003733"/>
+					<box leftPadding="4">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$R{report.label.orderNo}+" "+ $F{accessionNumber}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
+					<reportElement x="0" y="78" width="297" height="14" isPrintWhenDetailOverflows="true" uuid="51300568-7a21-4d11-bdeb-8a8302e18e1f"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$R{report.label.orderDateTime}+" " + $F{orderDate}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="404" y="0" width="50" height="14" backcolor="#CCCCCC" uuid="d5e70598-192a-4ab0-91c3-6939b39038b8"/>
+					<box leftPadding="3">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Age]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="14" width="68" height="14" backcolor="#CCCCCC" uuid="768e8656-3fcf-48bd-bd34-210b2f53dd3b">
+						<printWhenExpression><![CDATA[$P{useSTNumber}]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[# ST Code]]></text>
+				</staticText>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="454" y="0" width="33" height="14" uuid="f649b0c4-e8d8-4543-9754-69e3d435289a"/>
+					<box leftPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{age}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="68" y="14" width="336" height="14" uuid="aeef6afc-5c9e-4825-8f5c-e574dd813978">
+						<printWhenExpression><![CDATA[$P{useSTNumber}]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{stNumber}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="404" y="14" width="50" height="14" backcolor="#CCCCCC" uuid="b38399b2-6752-4d3e-847a-d3020930cdb5"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[ # ID Nat]]></text>
+				</staticText>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="526" y="0" width="25" height="14" uuid="2028c459-94ef-49ff-af3c-6d5580163903">
+						<printWhenExpression><![CDATA[!"0".equals($F{gender})]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{gender}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="454" y="14" width="97" height="14" uuid="f3c6c40b-059f-46b0-a753-5945650b5182"/>
+					<box leftPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{nationalId}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="487" y="0" width="39" height="14" backcolor="#CCCCCC" uuid="1c1ea43b-e940-40d7-8c2e-3815cc46067c"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[  Sexe]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="42" width="69" height="14" backcolor="#CCCCCC" uuid="3634108b-29dc-4b1c-a5ef-8d54fe99cc93"/>
+					<box leftPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<text><![CDATA[Demandeur]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="69" y="42" width="482" height="14" uuid="fea5006e-9944-4fe9-970c-cdba806dc236"/>
+					<box leftPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{contactInfo}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="220" y="28" width="67" height="14" backcolor="#CCCCCC" uuid="e0e9ba39-e9e6-4509-8b0a-45dd2bb59a19"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[  Commune]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="28" width="50" height="14" backcolor="#CCCCCC" uuid="c7402b77-cf03-40d3-8a46-8cb05073bba2"/>
+					<box leftPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[D�part.]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="50" y="28" width="170" height="14" uuid="504d3380-aa24-4683-9bc7-650d9315fcb2"/>
+					<box leftPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{dept}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="287" y="28" width="264" height="14" uuid="b27215c9-fb37-4299-9488-5bcd28e25747"/>
+					<box leftPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{commune}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="14" width="120" height="14" backcolor="#CCCCCC" uuid="a740f5db-895e-42c5-9516-459e1d157cb7">
+						<printWhenExpression><![CDATA[!$P{useSTNumber}]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Code du Patient au Site]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="120" y="14" width="284" height="14" uuid="92fa45df-05f6-4fdc-9fc4-012878bbc211">
+						<printWhenExpression><![CDATA[!$P{useSTNumber}]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{patientSiteNumber}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="56" width="89" height="14" backcolor="#CCCCCC" uuid="616d5972-59a8-420b-8fb3-ceedd78180e5"/>
+					<box leftPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<text><![CDATA[Site Demandeur]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="89" y="56" width="463" height="14" uuid="99ceb6d0-3554-492e-bb58-8997fa7e7264"/>
+					<box leftPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{siteInfo}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement x="-1" y="92" width="553" height="20" isPrintWhenDetailOverflows="true" uuid="6dfe1b56-396a-4ffe-b4f9-3c594983660d"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$R{report.label.collectionDateTime}+" " + ($F{collectionDateTime} != null ? $F{collectionDateTime}: "" )]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<group name="section name" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{testSection}]]></groupExpression>
+		<groupHeader>
+			<band height="44" splitType="Prevent">
+				<frame>
+					<reportElement mode="Opaque" x="0" y="0" width="552" height="43" backcolor="#CCCCCC" uuid="c5dea1fc-3e3a-4871-a936-8976bd01e30c"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+				</frame>
+				<staticText>
+					<reportElement mode="Opaque" x="1" y="14" width="162" height="29" backcolor="#CCCCCC" uuid="322257ef-1c61-4331-ae23-1a7492ed370c"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Test]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="330" y="14" width="144" height="29" backcolor="#CCCCCC" uuid="fe588da0-2f82-40e1-95b5-79b4016863e6"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Valeur de R�f�rence]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="472" y="14" width="79" height="29" backcolor="#CCCCCC" uuid="efe6296f-1639-4655-83a3-3186fc5c4db1"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Unit�]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="162" y="14" width="118" height="29" backcolor="#CCCCCC" uuid="50db0dfb-45bc-40d8-93d8-5d5bb66abf5e"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[R�sultat]]></text>
+				</staticText>
+				<textField>
+					<reportElement mode="Opaque" x="2" y="1" width="548" height="14" backcolor="#CCCCCC" uuid="c477f981-a3e2-42ad-b755-0adc9eabd6f2"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{testSection}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="280" y="14" width="50" height="29" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC" uuid="77c6a21d-c960-48d5-b763-139b21afe20a"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Alerte]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="2" splitType="Stretch">
+			<line>
+				<reportElement key="line" x="0" y="-45" width="534" height="1" forecolor="#000000" uuid="f35ee557-55f4-4f30-a11e-fb7a7ae45fbd"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="158" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="552" height="130" printWhenGroupChanges="person" uuid="2a6c37f4-771d-4dc8-b176-2a397ad6bb35"/>
+				<subreportParameter name="leftHeaderImage">
+					<subreportParameterExpression><![CDATA[$P{leftHeaderImage}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="labName2">
+					<subreportParameterExpression><![CDATA[$P{additionalSiteInfo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="orderFinishDate">
+					<subreportParameterExpression><![CDATA[$F{orderFinishDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="labName1">
+					<subreportParameterExpression><![CDATA[$P{siteName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="reportTitle">
+					<subreportParameterExpression><![CDATA[$R{report.analysisReport}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="rightHeaderImage">
+					<subreportParameterExpression><![CDATA[$P{rightHeaderImage}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="directorName">
+					<subreportParameterExpression><![CDATA[$P{directorName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="completeFlag">
+					<subreportParameterExpression><![CDATA[$F{completeFlag}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + $P{headerName}]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="134" width="552" height="22" isRemoveLineWhenBlank="true" backcolor="#FFFFFF" uuid="c363e4b2-fc1b-46d8-92e9-b403eb73374d">
+					<printWhenExpression><![CDATA[$F{correctedResult}]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rapport corrig�]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Prevent"/>
+	</columnHeader>
+	<detail>
+		<band height="52" splitType="Prevent">
+			<rectangle>
+				<reportElement positionType="Float" x="0" y="36" width="10" height="16" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" forecolor="#999999" backcolor="#999999" uuid="5049d1d9-1ec8-41e2-9437-41e16ec6f7c0">
+					<printWhenExpression><![CDATA[$F{note} != null]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<frame>
+				<reportElement x="0" y="18" width="552" height="18" forecolor="#000000" uuid="827f0fe9-0ea0-49d5-b468-795448b83ba9"/>
+				<box>
+					<pen lineWidth="0.25" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineColor="#000000"/>
+					<leftPen lineWidth="0.25" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineColor="#000000"/>
+				</box>
+				<rectangle>
+					<reportElement stretchType="RelativeToBandHeight" x="1" y="0" width="550" height="18" backcolor="#E0E0E0" uuid="cb4047cd-264d-486f-a50c-7d7540d684db">
+						<printWhenExpression><![CDATA[$F{parentMarker}]]></printWhenExpression>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="163" y="0" width="117" height="18" uuid="a42554c8-db9e-41cf-8399-9ec75b329e87">
+						<printWhenExpression><![CDATA[!$F{abnormalResult}]]></printWhenExpression>
+					</reportElement>
+					<box topPadding="2" bottomPadding="2" rightPadding="4">
+						<topPen lineWidth="0.0" lineColor="#CCCCCC"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0" lineColor="#CCCCCC"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="styled">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{result}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight">
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="162" height="18" isPrintWhenDetailOverflows="true" uuid="e12e2ee7-0e4c-47b3-8485-2b004b69bf12"/>
+					<box topPadding="2" leftPadding="4" bottomPadding="2">
+						<pen lineStyle="Solid" lineColor="#000000"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="html"/>
+					<textFieldExpression><![CDATA[$F{testName}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="330" y="0" width="144" height="18" uuid="ec29299f-74f4-4aa9-8b8e-709857b00165"/>
+					<box topPadding="2" bottomPadding="2">
+						<topPen lineWidth="0.0" lineColor="#CCCCCC"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0" lineColor="#CCCCCC"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{testRefRange}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="280" y="0" width="50" height="18" backcolor="#FFFFFF" uuid="98fc234c-99f0-4480-a9f9-7c8d413279b4"/>
+					<box>
+						<leftPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+						<font fontName="SansSerif" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{alerts}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="474" y="0" width="78" height="18" uuid="fd0c7b8c-2be6-4f5a-ac17-e4c954f026ee"/>
+					<box topPadding="2" bottomPadding="2">
+						<topPen lineWidth="0.0" lineColor="#CCCCCC"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0" lineColor="#CCCCCC"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{uom}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="163" y="0" width="117" height="18" forecolor="#000000" backcolor="#F0F0F0" uuid="690d048e-eab9-4c59-90a5-baa00dbe54ba">
+						<printWhenExpression><![CDATA[$F{abnormalResult}]]></printWhenExpression>
+					</reportElement>
+					<box topPadding="2" bottomPadding="2" rightPadding="4">
+						<topPen lineWidth="0.0" lineColor="#CCCCCC"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0" lineColor="#CCCCCC"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="styled">
+						<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{result}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<textField>
+				<reportElement mode="Opaque" x="0" y="0" width="552" height="18" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#EAEAEA" uuid="be970bcf-5d71-43bf-9ca6-c9e0ba0184e9">
+					<printWhenExpression><![CDATA[$F{separator}]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="4">
+					<pen lineWidth="0.5" lineColor="#000000"/>
+					<topPen lineWidth="0.5" lineColor="#000000"/>
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{panelName} == null ? "Les tests qui ne font pas partie d'un panel" : "Panel: " + $F{panelName}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Opaque" x="10" y="36" width="542" height="16" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="4c3571ab-98ab-43e7-82dd-375173ee8185">
+					<printWhenExpression><![CDATA[$F{note} != null]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="2" leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5" lineColor="#000000"/>
+					<topPen lineWidth="0.5" lineColor="#000000"/>
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement markup="styled"/>
+				<textFieldExpression><![CDATA[$F{note}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="83" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="19" width="370" height="61" uuid="bbad2ed3-4d01-4ee2-b09a-d69bfbcabd65"/>
+				<box topPadding="0" leftPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[Remarques g�n�rales du laboratoire]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="370" y="19" width="182" height="61" uuid="9fcaee6f-cb20-4d9e-988b-d84b57fb3a14"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[Signature / Validation]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="372" y="59" width="100" height="20" uuid="b7833a58-f16a-4709-a926-027853c1ae30"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Date:]]></text>
+			</staticText>
+			<line>
+				<reportElement key="line" x="0" y="80" width="552" height="1" forecolor="#000000" uuid="4199fc09-5a7c-4803-943c-7e68dbe84eaa"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="0" width="552" height="19" uuid="3a7ad019-8f5f-4549-81d5-66dd05ff6da5"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[ B = Inf�rieure � la Normale        E =  Sup�rieure � la Normale        * = Anormale]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="27" splitType="Stretch">
+			<textField>
+				<reportElement x="429" y="4" width="80" height="20" uuid="79566cef-0097-4d0b-87df-e0fc7586c127">
+					<printWhenExpression><![CDATA[$P{usePageNumbers}.equals("true")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$R{report.label.page}+" "+$V{PAGE_NUMBER}+" sur"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="Accession Number">
+				<reportElement x="509" y="4" width="40" height="20" uuid="c64df684-d1f5-4d98-8660-8c732aa26b43">
+					<printWhenExpression><![CDATA[$P{usePageNumbers}.equals("true")]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="6" y="4" width="104" height="20" uuid="a12d9374-0770-41da-a8cc-28f9ae51f2d0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Date du rapport: ]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="110" y="4" width="100" height="20" uuid="4e3cf2bd-f92d-4a09-8a77-865947644276"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

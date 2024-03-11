@@ -1,0 +1,278 @@
+/*=====================*/
+/* 
+* OpenELIS Menu Stylesheet
+* Includes styles for main menu navigation for OpenELIS.
+* Menu system based on Superfish jquery plugin: http://users.tpg.com.au/j_birch/plugins/superfish
+* 
+* Authored by:
+* Clinical Informatics Research Group, University of Washington School of Nursing.
+* http://cirg.washington.edu
+*/
+/*=====================*/
+
+/***** Styles specific to Superfish menu system *****/
+.nav-menu, .nav-menu * {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	font-size: 13px /* added by mark47 to match OE styles */
+}
+
+.nav-menu {
+	line-height: 1.0;
+}
+
+.nav-menu ul {
+	position: absolute;
+	top: -999em;
+	width: 10em; /* left offset of submenus need to match (see below) */
+}
+
+.nav-menu ul li {
+	width: 100%;
+}
+
+.nav-menu li:hover {
+	visibility: inherit; /* fixes IE7 'sticky bug' */
+}
+
+.nav-menu li {
+	float: left;
+	position: relative;
+	line-height: inherit;
+}
+
+.nav-menu a {
+	display: block;
+	position: relative;
+}
+
+.nav-menu li:hover ul, .nav-menu li.sfHover ul {
+	left: 0;
+	top: 2.5em; /* match top ul list item height */
+	z-index: 99;
+}
+
+ul.nav-menu li:hover li ul, ul.nav-menu li.sfHover li ul {
+	top: -999em;
+}
+
+ul.nav-menu li li:hover ul, ul.nav-menu li li.sfHover ul {
+	left: 10em; /* match ul width */
+	top: 0;
+}
+
+ul.nav-menu li li:hover li ul, ul.nav-menu li li.sfHover li ul {
+	top: -999em;
+}
+
+ul.nav-menu li li li:hover ul, ul.nav-menu li li li.sfHover ul {
+	left: 10em; /* match ul width */
+	top: 0;
+}
+/*** End of Superfish specific menus ***/
+
+/***** OE Menu Styles *****/
+ul.nav-menu {
+	background-color: transparent; /* overrides default UL style */
+	white-space: nowrap; /* Keep items on one line */
+}
+
+.nav-menu ul, .nav-menu ul li, .nav-menu ul li ul {
+	display: block
+}
+
+.nav-menu li ul a {
+	display: block;
+	width: auto;
+	white-space: nowrap
+}
+
+#main-nav {
+	font-size: 13px;
+	margin-top: 4px;
+	min-width: 940px
+} /* FIXME: min-width to prevent wrapping of nav items. */
+#main-nav a {
+	color: #444444
+}
+
+/*** corners for first and last top-level items ***/
+#nav-first, #nav-first a {
+	-webkit-border-radius: 10px 0px 0px 0px;
+	-moz-border-radius: 10px 0px 0px 0px;
+	border-radius: 10px 0px 0px 0px;
+	border-left: 0px
+}
+
+#nav-last, #nav-last a {
+	-webkit-border-radius: 0px 10px 0px 0px;
+	-moz-border-radius: 0px 10px 0px 0px;
+	border-radius: 0px 10px 0px 0px;
+}
+
+#nav-first ul li a, #nav-last ul li a {
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0px;
+	border-radius: 0px;
+}
+
+#nav-first ul li ul li a {
+	border-left: 1px solid #fff
+}
+
+/*** Styles for Superfish menus ***/
+.nav-menu {
+	float: left;
+}
+
+.nav-menu a {
+	border-left: 1px solid #fff;
+	padding: 10px 0.85em;
+	text-decoration: none;
+}
+
+.nav-menu li ul li a {
+	border-top: 1px solid #FFF3E5;
+}
+
+.nav-menu a, .nav-menu a:visited {
+	/* visited pseudo selector so IE6 applies text colour*/
+	color: #13a;
+}
+
+/* Required for IE corners/gradients issue */
+.nav-menu li, .nav-menu li:hover, .nav-menu li.sfHover, .nav-menu a:focus,
+	.nav-menu a:hover, .nav-menu a:active {
+	background-size: 100% 100%;
+	background-repeat: repeat-x;
+	background-position: 0 0;
+}
+
+.nav-menu li {
+	background-image: url('../images/menu/gradient_menu_item.svg');
+	/* for IE9 - abouthalf.com/2010/10/25/internet-explorer-9-gradients-with-rounded-corners */
+	background-color: #ff920a; /* Old browsers */
+	background: -moz-linear-gradient(top, #ff920a 0%, #ffc57f 100%);
+	/* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ff920a),
+		color-stop(100%, #ffc57f)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #ff920a 0%, #ffc57f 100%);
+	/* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #ff920a 0%, #ffc57f 100%);
+	/* Opera11.10+ */
+	background: -ms-linear-gradient(top, #ff920a 0%, #ffc57f 100%);
+	/* IE10+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff920a',
+		endColorstr='#FFC57F', GradientType=0); /* IE6-9 */
+	background: linear-gradient(top, #ff920a 0%, #ffc57f 100%); /* W3C */
+}
+
+.nav-menu li li, .nav-menu li ul li:hover, .nav-menu li ul li.sfHover,
+	.nav-menu li ul a:focus, .nav-menu li ul a:hover, .nav-menu li ul a:active
+	{
+	filter: none; /* IE6-9 */
+}
+
+.nav-menu li li {
+	background: #FFD5A3;
+}
+
+.nav-menu li ul li:hover, .nav-menu li ul li.sfHover, .nav-menu li ul a:focus,
+	.nav-menu li ul a:hover, .nav-menu li ul a:active {
+	background: #FFE0BC;
+}
+
+.nav-menu li:hover, .nav-menu li.sfHover, .nav-menu a:focus, .nav-menu a:hover,
+	.nav-menu a:active {
+	background-image: url('../images/menu/gradient_menu_item_hover.svg');
+	/* for IE9 - abouthalf.com/2010/10/25/internet-explorer-9-gradients-with-rounded-corners */
+	background-color: #ffb356; /* Old browsers */
+	background: -moz-linear-gradient(top, #ffb356 0%, #ffd5a3 100%);
+	/* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffb356),
+		color-stop(100%, #ffd5a3)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #ffb356 0%, #ffd5a3 100%);
+	/* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #ffb356 0%, #ffd5a3 100%);
+	/* Opera11.10+ */
+	background: -ms-linear-gradient(top, #ffb356 0%, #ffd5a3 100%);
+	/* IE10+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FFB356',
+		endColorstr='#FFD5A3', GradientType=0); /* IE6-9 */
+	background: linear-gradient(top, #ffb356 0%, #ffd5a3 100%); /* W3C */
+}
+
+.no-link {
+	cursor: default
+}
+/*** arrows **/
+.nav-menu a.sf-with-ul {
+	padding-right: 2em;
+	min-width: 1px;
+	/* trigger IE7 hasLayout so spans position accurately */
+}
+
+.sf-sub-indicator {
+	position: absolute;
+	display: block;
+	right: .75em;
+	top: 1.05em; /* IE6 only */
+	width: 10px;
+	height: 10px;
+	text-indent: -999em;
+	overflow: hidden;
+	background: url('../images/menu/arrows-ffffff.png') no-repeat -10px 0px;
+	/* 8-bit indexed alpha png. IE6 gets solid image only */
+}
+
+a>.sf-sub-indicator { /* give all except IE6 the correct values */
+	top: .8em;
+	background-position: 0 -100px;
+	/* use translucent arrow for modern browsers*/
+}
+/* apply hovers to modern browsers */
+a:focus>.sf-sub-indicator, a:hover>.sf-sub-indicator, a:active>.sf-sub-indicator,
+	li:hover>a>.sf-sub-indicator, li.sfHover>a>.sf-sub-indicator {
+	background-position: -10px -100px;
+	/* arrow hovers for modern browsers*/
+}
+
+/* point right for anchors in subs */
+.nav-menu ul .sf-sub-indicator {
+	background-position: -10px 0;
+}
+
+.nav-menu ul a>.sf-sub-indicator {
+	background-position: 0 0;
+}
+/* apply hovers to modern browsers */
+.nav-menu ul a:focus>.sf-sub-indicator, .nav-menu ul a:hover>.sf-sub-indicator,
+	.nav-menu ul a:active>.sf-sub-indicator, .nav-menu ul li:hover>a>.sf-sub-indicator,
+	.nav-menu ul li.sfHover>a>.sf-sub-indicator {
+	background-position: -10px 0; /* arrow hovers for modern browsers*/
+}
+
+/*** shadows for all but IE6 ***/
+.sf-shadow ul {
+	background: url('../images/menu/shadow.png') no-repeat bottom right;
+	padding: 0 8px 9px 0;
+	-moz-border-radius-bottomleft: 17px;
+	-moz-border-radius-topright: 17px;
+	-webkit-border-top-right-radius: 17px;
+	-webkit-border-bottom-left-radius: 17px;
+}
+
+.sf-shadow ul.sf-shadow-off {
+	background: transparent;
+}
+
+/*** home menu item with icon ***/
+#menu_home {
+	width: 70px;
+	height: 13px
+}
+/* Fixes problem w/ enlargement on hover */
+a#menu_home:hover {
+	background-size: auto auto;
+}

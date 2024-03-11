@@ -1,0 +1,1301 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE taglib
+  PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+  "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+
+<taglib xmlns="http://java.sun.com/JSP/TagLibraryDescriptor">
+  <tlib-version>1.1</tlib-version>
+  <jsp-version>1.2</jsp-version>
+  <short-name>Ajax Tag Library</short-name>
+  <uri>http://ajaxtags.org/tags/ajax</uri>
+  <description>Ajax Tag Library</description>
+
+  <tag>
+    <name>select</name>
+    <tag-class>org.ajaxtags.tags.AjaxSelectTag</tag-class>
+    <description>
+      Builds the JavaScript required to populate a select box based on some event
+    </description>
+
+    <attribute>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Name of the JavaScript object created</description>
+    </attribute>
+
+    <attribute>
+      <name>attachTo</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Name of the JavaScript object to which select box will attach.  You must define 'var'
+        for this to work.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>baseUrl</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        URL of server-side action or servlet that processes search and returns list of values used
+        in target select field
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>source</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        The initial select field that will form the basis for the search via AJAX
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>target</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Select field where value of AJAX search will be populated</description>
+    </attribute>
+
+    <attribute>
+      <name>parameters</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        A comma-separated list of parameters to pass to the server-side action or servlet
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>eventType</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Specifies the event type to attach to the source field(s)</description>
+    </attribute>
+
+    <attribute>
+      <name>executeOnLoad</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Indicates whether the target select/dropdown should be populated when the object is
+        initialized (this is essentially when the form loads) [default=false]
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>defaultOptions</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        A comma-seperated list of values of options to be marked as selected by default if they
+        exist in the new set of options
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>preFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Function to execute before Ajax is begun</description>
+    </attribute>
+
+    <attribute>
+      <name>postFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute after Ajax is finished, allowing for a chain of additional functions to
+        execute
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>errorFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute if there is a server exception (non-200 HTTP response)
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>parser</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The response parser to implement [default=ResponseHtmlParser]</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>autocomplete</name>
+    <tag-class>org.ajaxtags.tags.AjaxAutocompleteTag</tag-class>
+    <description>
+      Builds the JavaScript required to populate an input field as the user types
+    </description>
+
+    <attribute>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Name of the JavaScript object created</description>
+    </attribute>
+
+    <attribute>
+      <name>attachTo</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Name of the JavaScript object to which autocompleter will attach.  You must define 'var'
+        for this to work.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>baseUrl</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        URL of server-side action or servlet that processes search and returns list of values used
+        in autocomplete dropdown
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>source</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Text field where label of autocomplete selection will be populated; also the field in which
+        the user types out the search string
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>target</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Text field where value of autocomplete selection will be populated; you may set this to the
+        same value as the source field
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>parameters</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        A comma-separated list of parameters to pass to the server-side action or servlet
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>className</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>CSS class name to apply to the popup autocomplete dropdown</description>
+    </attribute>
+
+    <attribute>
+      <name>minimumCharacters</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Minimum number of characters needed before autocomplete is executed</description>
+    </attribute>
+
+    <attribute>
+      <name>indicator</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>ID of indicator region that will show during Ajax request call</description>
+    </attribute>
+
+    <attribute>
+      <name>appendSeparator</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        The separator to use for the target field when values are appended [default=space].  If
+        appendValue is not set or is set to "false", this parameter has no effect.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>preFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Function to execute before Ajax is begun</description>
+    </attribute>
+
+    <attribute>
+      <name>postFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute after Ajax is finished, allowing for a chain of additional functions to
+        execute
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>errorFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute if there is a server exception (non-200 HTTP response)
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>parser</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The response parser to implement [default=ResponseHtmlParser]</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>toggle</name>
+    <tag-class>org.ajaxtags.tags.AjaxToggleTag</tag-class>
+    <description>Builds the JavaScript required to toggle an image on/off</description>
+
+    <attribute>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Name of the JavaScript object created</description>
+    </attribute>
+
+    <attribute>
+      <name>attachTo</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Name of the JavaScript object to which toggle will attach.  You must define 'var'
+        for this to work.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>baseUrl</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        URL of server-side action or servlet that processes a simple command from a toggle action;
+        responds with a single option value and label
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>parameters</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        A comma-separated list of parameters to pass to the server-side action or servlet
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>source</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>A unique ID for each toggle tag</description>
+    </attribute>
+
+    <attribute>
+      <name>ratings</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Comma-delimited list of rating values</description>
+    </attribute>
+
+    <attribute>
+      <name>defaultRating</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The default rating to use from the 'ratings' list</description>
+    </attribute>
+
+    <attribute>
+      <name>state</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>ID of hidden form field used to hold the current state</description>
+    </attribute>
+
+    <attribute>
+      <name>onOff</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Whether this is a simple on/off (two-value) rating [default=false]</description>
+    </attribute>
+
+    <attribute>
+      <name>containerClass</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>CSS style class for the container wrapping the toggle</description>
+    </attribute>
+
+    <attribute>
+      <name>messageClass</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        CSS style class for the message displayed as you mouseover each toggle image
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>selectedClass</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>CSS style class for the rating that's selected</description>
+    </attribute>
+
+    <attribute>
+      <name>selectedLessClass</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        CSS style class for the rating that is less than the selected one as you mouseover
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>selectedOverClass</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        CSS style class for the rating that is greater than the selected one as you mouseover
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>overClass</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        CSS style class for the rating that is greater than the selected one
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>preFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Function to execute before Ajax is begun</description>
+    </attribute>
+
+    <attribute>
+      <name>postFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute after Ajax is finished, allowing for a chain of additional functions to
+        execute
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>errorFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute if there is a server exception (non-200 HTTP response)
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>parser</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The response parser to implement [default=ResponseTextParser]</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>updateField</name>
+    <tag-class>org.ajaxtags.tags.AjaxFormFieldTag</tag-class>
+    <description>
+      Builds the JavaScript required to update one or more form fields based on the value of another
+      single field
+    </description>
+
+    <attribute>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Name of the JavaScript object created</description>
+    </attribute>
+
+    <attribute>
+      <name>attachTo</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Name of the JavaScript object to which updateField will attach.  You must define 'var'
+        for this to work.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>baseUrl</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        URL of server-side action or servlet that processes a simple command
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>source</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The form field that will hold the parameter passed to the servlet</description>
+    </attribute>
+
+    <attribute>
+      <name>target</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        A comma-delimited list of form field IDs that will be populated with results
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>action</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>ID of form button or image tag that will fire the onclick event</description>
+    </attribute>
+
+    <attribute>
+      <name>parameters</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        A comma-separated list of parameters to pass to the server-side action or servlet
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>eventType</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Specifies the event type to attach to the source field(s)</description>
+    </attribute>
+
+    <attribute>
+      <name>preFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Function to execute before Ajax is begun</description>
+    </attribute>
+
+    <attribute>
+      <name>postFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute after Ajax is finished, allowing for a chain of additional functions to
+        execute
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>errorFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute if there is a server exception (non-200 HTTP response)
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>parser</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The response parser to implement [default=ResponseHtmlParser]</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>callout</name>
+    <tag-class>org.ajaxtags.tags.AjaxCalloutTag</tag-class>
+    <description>
+      Builds the JavaScript required to hook a callout or popup balloon to a link, image, or other
+      HTML element's onclick event
+    </description>
+
+    <attribute>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Name of the JavaScript object created</description>
+    </attribute>
+
+    <attribute>
+      <name>attachTo</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Name of the JavaScript object to which callout will attach.  You must define 'var'
+        for this to work.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>baseUrl</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        URL of server-side action or servlet that processes a simple command
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>source</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The ID of the element to which the callout will be attached</description>
+    </attribute>
+
+    <attribute>
+      <name>sourceClass</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The CSS class name of the elements to which the callout will be attached</description>
+    </attribute>
+
+    <attribute>
+      <name>parameters</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        A comma-separated list of parameters to pass to the server-side action or servlet
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>title</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Title for callout's box header.</description>
+    </attribute>
+
+    <attribute>
+      <name>overlib</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Options for OverLib.</description>
+    </attribute>
+
+    <attribute>
+      <name>preFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Function to execute before Ajax is begun</description>
+    </attribute>
+
+    <attribute>
+      <name>postFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute after Ajax is finished, allowing for a chain of additional functions to
+        execute
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>errorFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute if there is a server exception (non-200 HTTP response)
+      </description>
+    </attribute>
+    
+    <attribute>
+      <name>openEventType</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Event that will trigger the callout
+      </description>
+    </attribute>
+    
+    <attribute>
+      <name>closeEventType</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Event that will close the box 
+      </description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>htmlContent</name>
+    <tag-class>org.ajaxtags.tags.AjaxHtmlContentTag</tag-class>
+    <description>
+      Builds the JavaScript required to hook a content area (e.g., DIV tag) to a link, image, or
+      other HTML element's onclick event
+    </description>
+
+    <attribute>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Name of the JavaScript object created</description>
+    </attribute>
+
+    <attribute>
+      <name>attachTo</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Name of the JavaScript object to which htmlContent will attach.  You must define 'var'
+        for this to work.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>baseUrl</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        URL of server-side action or servlet that processes a simple command
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>source</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The ID of the element to which the event will be attached</description>
+    </attribute>
+
+    <attribute>
+      <name>sourceClass</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The CSS class name of the elements to which the event will be attached</description>
+    </attribute>
+
+    <attribute>
+      <name>parameters</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        A comma-separated list of parameters to pass to the server-side action or servlet
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>target</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        ID of DIV tag or other element that will be filled with the response's HTML
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>eventType</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Specifies the event type to attach to the source field(s)</description>
+    </attribute>
+
+    <attribute>
+      <name>preFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Function to execute before Ajax is begun</description>
+    </attribute>
+
+    <attribute>
+      <name>postFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute after Ajax is finished, allowing for a chain of additional functions to
+        execute
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>errorFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute if there is a server exception (non-200 HTTP response)
+      </description>
+    </attribute>
+  </tag>
+
+  <tag>
+  	<name>tree</name>
+	<tag-class>org.ajaxtags.tags.AjaxTreeTag</tag-class>
+	<description>
+	  TODO
+	</description>
+	
+    <attribute>
+      <name>styleId</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The ID of the tree </description>
+    </attribute>
+    
+    <attribute>
+      <name>preFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Function to execute before Ajax is called</description>
+    </attribute>
+
+    <attribute>
+      <name>postFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute after Ajax is finished, allowing for a chain of additional functions to
+        execute
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>errorFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute if there is a server exception (non-200 HTTP response)
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>parser</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The response parser to implement [default=ResponseHtmlParser]</description>
+    </attribute>
+    
+    <attribute>
+      <name>baseUrl</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The URL to use for the AJAX action, which will return content for this node</description>
+    </attribute>
+    
+    <attribute>
+      <name>collapsedClass</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>CSS style class for the node image(when collapsed)</description>
+    </attribute>
+    
+    <attribute>
+      <name>expandedClass</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>CSS style class for the node image(when expanded)</description>
+    </attribute>
+    
+    
+    <attribute>
+      <name>treeClass</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>CSS style class for the unsorted list</description>
+    </attribute>
+    
+    <attribute>
+      <name>nodeClass</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>CSS style class for the node(does not include the image)</description>
+    </attribute>
+    
+    <attribute>
+      <name>parameters</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        A comma-separated list of parameters to pass to the server-side action or servlet
+      </description>
+    </attribute>
+    
+  </tag>
+  
+  <tag>
+    <name>tabPanel</name>
+    <tag-class>org.ajaxtags.tags.AjaxTabPanelTag</tag-class>
+    <description>
+      TODO
+    </description>
+
+    <attribute>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Name of the JavaScript object created</description>
+    </attribute>
+
+    <attribute>
+      <name>attachTo</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Name of the JavaScript object to which tabPanel will attach.  You must define 'var'
+        for this to work.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>panelStyleId</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The ID of the tab panel</description>
+    </attribute>
+
+    <attribute>
+      <name>contentStyleId</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The ID of the tab panel content</description>
+    </attribute>
+
+    <attribute>
+      <name>panelStyleClass</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The CSS classname of the tab panel</description>
+    </attribute>
+
+    <attribute>
+      <name>contentStyleClass</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The CSS classname of the tab panel content</description>
+    </attribute>
+
+    <attribute>
+      <name>currentStyleClass</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The CSS classname to use for the active tab</description>
+    </attribute>
+
+    <attribute>
+      <name>preFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Function to execute before Ajax is called</description>
+    </attribute>
+
+    <attribute>
+      <name>postFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute after Ajax is finished, allowing for a chain of additional functions to
+        execute
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>errorFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute if there is a server exception (non-200 HTTP response)
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>parser</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The response parser to implement [default=ResponseHtmlParser]</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>tab</name>
+    <tag-class>org.ajaxtags.tags.AjaxTabPageTag</tag-class>
+    <description>
+      TODO
+    </description>
+
+    <attribute>
+      <name>baseUrl</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        The URL to use for the AJAX action, which will return content for this tab
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>parameters</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        A comma-separated list of parameters to pass to the server-side action or servlet
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>caption</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The caption for this tab</description>
+    </attribute>
+
+    <attribute>
+      <name>defaultTab</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Indicates whether this tab is the initial one loaded [true|false]</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>portlet</name>
+    <tag-class>org.ajaxtags.tags.AjaxPortletTag</tag-class>
+    <description>Builds the JavaScript required to build a portlet style view</description>
+
+    <attribute>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Name of the JavaScript object created</description>
+    </attribute>
+
+    <attribute>
+      <name>attachTo</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Name of the JavaScript object to which portlet will attach.  You must define 'var'
+        for this to work.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>baseUrl</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        URL of server-side action or servlet that processes a simple command
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>source</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The ID of the portlet</description>
+    </attribute>
+
+    <attribute>
+      <name>parameters</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        A comma-separated list of parameters to pass to the server-side action or servlet
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>classNamePrefix</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        CSS class name prefix to use for the portlet's 'Box', 'Tools', 'Refresh', 'Size', 'Close',
+        'Title', and 'Content' elements
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>title</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Title for portlet header</description>
+    </attribute>
+
+    <attribute>
+      <name>imageClose</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Image used for the close icon</description>
+    </attribute>
+
+    <attribute>
+      <name>imageMaximize</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Image used for the maximize icon</description>
+    </attribute>
+
+    <attribute>
+      <name>imageMinimize</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Image used for the minimize icon</description>
+    </attribute>
+
+    <attribute>
+      <name>imageRefresh</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Image used for the refresh icon</description>
+    </attribute>
+
+    <attribute>
+      <name>refreshPeriod</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        The time (in seconds) the portlet waits before automatically refreshing its content. If no
+        period is specified, the portlet will not refresh itself automatically, but must be
+        commanded to do so by clicking the refresh image/link (if one is defined). Lastly, the
+        refresh will not occur until after the first time the content is loaded, so if executeOnLoad
+        is set to false, the refresh will not begin until you manually refresh the first time.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>executeOnLoad</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Indicates whether the portlet's content should be retrieved when the page loads
+        [default=true]
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>expireDays</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Number of days cookie should persist</description>
+    </attribute>
+
+    <attribute>
+      <name>expireHours</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Number of hours cookie should persist</description>
+    </attribute>
+
+    <attribute>
+      <name>expireMinutes</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Number of minutes cookie should persist</description>
+    </attribute>
+
+    <attribute>
+      <name>preFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Function to execute before Ajax is begun</description>
+    </attribute>
+
+    <attribute>
+      <name>postFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute after Ajax is finished, allowing for a chain of additional functions to
+        execute
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>errorFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute if there is a server exception (non-200 HTTP response)
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>parser</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>The response parser to implement [default=ResponseHtmlParser]</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>area</name>
+    <tag-class>org.ajaxtags.tags.AjaxAreaTag</tag-class>
+    <description>
+      Builds the JavaScript required to wrap an area on the page with AJAX capabilities.
+    </description>
+
+    <attribute>
+      <name>id</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Name of ID used for enclosing DIV tag written by tag</description>
+    </attribute>
+
+    <attribute>
+      <name>ajaxFlag</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        A true/false flag to indicate whether the rest of the page should be ignored in an AJAX
+        call [default=false]
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>style</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Inline CSS style properties</description>
+    </attribute>
+
+    <attribute>
+      <name>styleClass</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>CSS class name to use</description>
+    </attribute>
+
+    <attribute>
+      <name>ajaxAnchors</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Whether to rewrite HTML anchor tags with an onclick event</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>displayTag</name>
+    <tag-class>org.ajaxtags.tags.AjaxDisplayTag</tag-class>
+    <description>
+      Builds the JavaScript required to wrap a DisplayTag with AJAX capability.
+    </description>
+
+    <attribute>
+      <name>id</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Name of ID used for enclosing DIV tag written by tag</description>
+    </attribute>
+
+    <attribute>
+      <name>ajaxFlag</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        A true/false flag to indicate whether the rest of the page should be ignored in an AJAX
+        call [default=false]
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>style</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Inline CSS style properties</description>
+    </attribute>
+
+    <attribute>
+      <name>styleClass</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>CSS class name to use</description>
+    </attribute>
+
+    <attribute>
+      <name>pagelinksClass</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        CSS class name of the DisplayTag's navigation links, often named "pagelinks" by default in
+        DisplayTag
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>tableClass</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>CSS class name of the DisplayTag's table</description>
+    </attribute>
+
+    <attribute>
+      <name>columnClass</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        The CSS class of the TD within the THEAD of the table that should have its HREFs rewritten.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>baseUrl</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        URL of server-side page where DisplayTable is created. Useful in a Struts/Tiles environment
+        where several JSPs are combined in a response and you need just the single JSP for the
+        DisplayTable.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>postFunction</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Function to execute after Ajax is finished, allowing for a chain of additional functions to
+        execute
+      </description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>anchors</name>
+    <tag-class>org.ajaxtags.tags.AjaxAnchorsTag</tag-class>
+    <description>
+      Builds the JavaScript required to rewrite HTML anchor tags with onclick events to enable AJAX
+      capabilities.
+    </description>
+
+    <attribute>
+      <name>target</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        The target region on the page where the AJAX response will be written, often a DIV tag
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>ajaxFlag</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        A true/false flag to indicate whether the rest of the page should be ignored in an AJAX
+        call [default=false]
+      </description>
+    </attribute>
+  </tag>
+
+</taglib>

@@ -1,0 +1,10 @@
+The files in this directory pertain to backing up the OpenELIS database.
+The script currently installed by default sends the backup files to Seattle. 
+a different destination is wanted then there are two generic versions. 
+
+OffSiteBackupLinux.pl is configured for Linux and sends files via ftp.
+OffSiteBackupWindows.pl. is configured for Windows and sends files via http.
+
+More information on configuration can be found in BackupHowTo.docx
+
+receive-file.pl is a perl script to be used on the receiving http server.
