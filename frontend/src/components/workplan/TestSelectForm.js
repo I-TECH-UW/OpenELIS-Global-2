@@ -26,7 +26,7 @@ function TestSelectForm(props) {
       "testId"
     );
     testId = testId ? testId : ""; 
-    getFromOpenElisServer("/rest/tests", (fetchedTests) => {
+    getFromOpenElisServer("/rest/tests", async (fetchedTests) => {
       let test = fetchedTests.find(test => test.id === testId);
       let testLabel = test ? test.value : "";
       setDefaultTestId(testId);
