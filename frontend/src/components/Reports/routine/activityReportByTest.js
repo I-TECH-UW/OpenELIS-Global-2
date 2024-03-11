@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { Form, FormLabel, Grid, Column, Section, Button, Loading, Card } from "@carbon/react";
 import CustomDatePicker from "../../common/CustomDatePicker";
@@ -6,18 +6,19 @@ import { AlertDialog } from "../../common/CustomNotification";
 import config from "../../../config.json";
 import TestSelectForm from '../../workplan/TestSelectForm';
 import "../../Style.css";
+import { getFromOpenElisServer } from '../../utils/Utils';
 
-const activityReportByTest = () => {
+const ActivityReportByTest = () => {
   const intl = useIntl();
-
+  const mounted = useRef(false);
   const [loading, setLoading] = useState(false);
   const [notificationVisible, setNotificationVisible] = useState(false);
-  const [selectedValue, setSelectedValue] = useState("");
-
   const [reportFormValues, setReportFormValues] = useState({
     startDate: null,
     endDate: null
   });
+  const [testList, setTestList] = useState([]);
+  const [selectedValue, setSelectedValue] = useState("");
 
   const encodeDate = (dateString) => {
     if (typeof dateString === "string" && dateString.trim() !== "") {
@@ -38,7 +39,6 @@ const activityReportByTest = () => {
   const handleSubmit = () => {
     setLoading(true);
     const baseParams = 'report=activityReportByTest&type=indicator';
-
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
     const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.startDate}&lowerDateRange=${reportFormValues.endDate}`;
     window.open(url, '_blank');
@@ -46,15 +46,29 @@ const activityReportByTest = () => {
     setNotificationVisible(true);
   };
 
-
   const handleSelectedValue = (v, l) => {
     if (mounted.current) {
       setSelectedValue(v);
-      setSelectedLabel(l);
-      props.selectedValue(v);
-      props.selectedLabel(l);
     }
   };
+
+  useEffect(() => {
+    mounted.current = true;
+    const fetchTestList = async () => {
+      try {
+        const data = getFromOpenElisServer('/rest/test-list');
+        setTestList(data);
+      } catch (error) {
+        throw new Error('Error fetching test list:', error);
+      }
+    };
+
+    fetchTestList();
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
+
   return (
     <>
       <FormLabel>
@@ -76,7 +90,7 @@ const activityReportByTest = () => {
                 <Section>
                   <br />               
                   <h5>
-                    <FormattedMessage id="select.date Range" />
+                    <FormattedMessage id="select date Range" />
                   </h5>
                 </Section>
                 <div className="inlineDiv">
@@ -109,11 +123,11 @@ const activityReportByTest = () => {
                 </div> 
               </Column>
             </Grid>
-        <Column lg={6}>
-          <Form className="container-form">
-             Test type: <TestSelectForm  value={handleSelectedValue}/>
-          </Form>
-        </Column>
+            <Column lg={6}>
+              <Form className="container-form">
+                Test type: <TestSelectForm testList={testList} value={handleSelectedValue}/>
+              </Form>
+            </Column>
             <br /> 
             <Section>
               <br />
@@ -128,4 +142,4 @@ const activityReportByTest = () => {
   );
 };
 
-export default activityReportByTest;
+export default ActivityReportByTest;

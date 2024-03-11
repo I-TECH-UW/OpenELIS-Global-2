@@ -582,6 +582,8 @@
     "column.name.pastNotes": "Past Notes",
     "instructions.copy.labnum": "Copy Lab Number",
     "Activity.report.By.test":"Activity report By test",
+    "Activity.report.By.panel":"Activity report By panel",
+    "Activity.report.By.unit":"Activity report By unit",
     "sample.requestDate": "Request Date",
     "currentests.title":"Current Tests",
     "availabletests.title":"Available Tests",
