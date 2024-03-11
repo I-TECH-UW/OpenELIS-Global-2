@@ -284,10 +284,30 @@ export function SearchResultForm(props) {
       querySearch(values);
     }
 
-    let displayFormType = new URLSearchParams(window.location.search).get(
-      "type",
-    );
-    let doRange = new URLSearchParams(window.location.search).get("doRange");
+    
+    var displayFormType = "";
+    var doRange = "";
+    if(window.location.pathname == "/result"){
+      displayFormType = new URLSearchParams(window.location.search).get(
+        "type",
+      );
+      doRange = new URLSearchParams(window.location.search).get("doRange");
+    } else if(window.location.pathname == "/LogbookResults"){
+      displayFormType = "unit" ;
+      doRange = "false";
+    } else if(window.location.pathname == "/PatientResults"){
+      displayFormType = "patient" ;
+      doRange = "false";
+    }else if(window.location.pathname == "/AccessionResults"){
+      displayFormType = "order" ;
+      doRange = "false";
+    }else if(window.location.pathname == "/StatusResults"){
+      displayFormType = "date" ;
+      doRange = "false";
+    } else if(window.location.pathname == "/RangeResults"){
+      displayFormType = "range" ;
+      doRange = "true";
+    }
     setSearchBy({
       type: displayFormType,
       doRange: doRange,
@@ -295,6 +315,7 @@ export function SearchResultForm(props) {
   }, []);
 
   useEffect(() => {
+   
     let accessionNumber = new URLSearchParams(window.location.search).get(
       "accessionNumber",
     );
