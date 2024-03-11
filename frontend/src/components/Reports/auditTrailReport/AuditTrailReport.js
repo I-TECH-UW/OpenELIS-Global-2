@@ -19,26 +19,8 @@ import PageBreadCrumb from "../../common/PageBreadCrumb";
 import config from "../../../config.json";
 
 const AuditTrailReport = () => {
-    const breadcrumbs = [
-        { label: "home.label", link: "/" },
-        { label: "study.audittrail", link: "/AuditTrailReports" },
-    ];
-
   return (
-    <><br />
-    <PageBreadCrumb breadcrumbs={breadcrumbs} />
-        <Grid fullWidth={true}>
-        <Column lg={16}>
-            <Section>
-            <Section>
-                <Heading>
-                <FormattedMessage id="selectReportValues.title" />
-                </Heading>
-            </Section>
-            </Section>
-        </Column>
-        </Grid>
-        </>
+    <div>Audit Trail Report</div>
   )
 }
 
