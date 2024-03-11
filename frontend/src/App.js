@@ -310,7 +310,7 @@ export default function App() {
                   exact
                   component={() => <RoutedResultsViewer />}
                   role="Reception"
-                />o
+                />
                 <SecureRoute
                   path="/WorkPlanByTestSection"
                   exact

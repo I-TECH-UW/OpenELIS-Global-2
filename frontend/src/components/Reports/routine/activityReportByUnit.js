@@ -8,7 +8,6 @@ import TestSelectForm from '../../workplan/TestSelectForm';
 import "../../Style.css";
 import { getFromOpenElisServer } from '../../utils/Utils';
 
-
 const activityReportByUnit = () => {
   const intl = useIntl();
   const mounted = useRef(false);
