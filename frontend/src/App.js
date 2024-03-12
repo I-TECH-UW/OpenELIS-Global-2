@@ -33,9 +33,10 @@ import ImmunohistochemistryDashboard from "./components/immunohistochemistry/Imm
 import ImmunohistochemistryCaseView from "./components/immunohistochemistry/ImmunohistochemistryCaseView";
 import RoutedResultsViewer from "./components/patient/resultsViewer/results-viewer.tsx";
 import EOrderPage from "./components/eOrder/Index";
-import AuditTrailReport from "./components/Reports/auditTrailReport/AuditTrailReport.js";
 import RoutineIndex from "./components/Reports/routine/Index.js";
 import PrintBarcode from "./components/printBarcode/Index";
+import AuditTrail from "./components/Reports/auditTrailReport/index.js";
+import AuditTrailReport from "./components/Reports/auditTrailReport/index.js";
 
 
 export default function App() {
@@ -382,7 +383,7 @@ export default function App() {
                 <SecureRoute
                   path="/AuditTrailReport"
                   exact
-                  component={() => <AuditTrailReport />}
+                  component={() => <AuditTrailReport/>}
                   role="Reports"
                 />
                 <SecureRoute

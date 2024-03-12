@@ -1,32 +1,37 @@
-import React, { useContext, useState, useEffect } from "react";
-import { AlertDialog } from "../../common/CustomNotification";
-import { NotificationContext } from "../../layout/Layout";
-import {
-  Heading,
-  Grid,
-  Column,
-  Section
-} from "@carbon/react";
-import { FormattedMessage} from "react-intl";
+import React, { useState, useEffect } from "react";
+import { useIntl } from 'react-intl';
 import PageBreadCrumb from "../../common/PageBreadCrumb";
-import AuditTrailReport from "./AuditTrailReport";
+import AuditTrail from "./AuditTrail";
 
-const AuditTrail = () => {
+const AuditTrailReport = () => {
+    const [breadcrumbs, setBreadCrumbs] = useState([]);
+    const intl = useIntl();
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const paramType = params.get("type");
+
+        const middleBreadcrumb = {
+            label:  intl.formatMessage({id: paramType === "study" ? "label.study.Reports" : "label.routine.Reports"}),
+            link: paramType === "study" ? "/StudyReports" : "/RoutineReports"
+        }
+
+        const breadCrumbArr = [
+            { label: intl.formatMessage({ id: "home.label" }), link: "/" },
+            middleBreadcrumb,
+            {label: intl.formatMessage({id: "label.audittrail.Reports"}), link: `/AuditTrailReport?type=${paramType}`}
+        ]
+
+        setBreadCrumbs(breadCrumbArr);
+    }, [])
+
     return(
         <>
             <br />
             <PageBreadCrumb breadcrumbs={breadcrumbs} />
-            <Grid fullWidth={true}>
-            <Column lg={16}>
-                <Section>
-                <Section>
-                    <Heading>
-                    <FormattedMessage id="selectReportValues.title" />
-                    </Heading>
-                </Section>
-                </Section>
-            </Column>
-            </Grid>
-            </>
+            <AuditTrail />
+        </>
     )
 }
+
+export default AuditTrailReport;

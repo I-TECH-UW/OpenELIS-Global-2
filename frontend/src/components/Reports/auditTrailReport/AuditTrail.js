@@ -18,7 +18,7 @@ import CustomLabNumberInput from '../../common/CustomLabNumberInput';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 
-const AuditTrailReport = () => {
+const AuditTrail = () => {
     const [labNo, setLabNo] = useState("");
     const [isLabNoError, setIsLabNoError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -60,7 +60,7 @@ const AuditTrailReport = () => {
         <br/>
         <Form>
           <Grid fullWidth={true}>
-            <Column lg={6}>
+            <Column lg={6} md={16} sm={4}>
               <CustomLabNumberInput
                 id="labNo"
                 labelText={intl.formatMessage({
@@ -100,4 +100,4 @@ const AuditTrailReport = () => {
     )
 }
 
-export default AuditTrailReport
+export default AuditTrail
