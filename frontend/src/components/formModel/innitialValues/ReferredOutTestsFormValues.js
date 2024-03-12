@@ -7,14 +7,12 @@ const ReferredOutTestsFormValues = {
   dateOfBirth: "",
   guid: "",
   gender: "",
-  referringSiteId: "",
-  referringSiteName: "",
   startDate: "",
   endDate: "",
-  form: "",
-  to: "",
   dateType: "",
   checkbox: "",
+  testUnitIds : [],
+  testTestIds : []
 };
 
 //same attribute fix needed
