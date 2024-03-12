@@ -100,9 +100,8 @@ export const RoutineReportsMenu = {
         },
         {
           link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=haitiNonConformityBySectionReason",
-          label: <FormattedMessage id="sideNav.label.noncomformityreportsbyunit"/>,
+            config.serverBaseUrl +"/NonconformityReportsByUnit",
+          label: <FormattedMessage id="NonconformityReportsByUnit"/>,
         },
       ],
     },

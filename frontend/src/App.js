@@ -35,7 +35,7 @@ import RoutedResultsViewer from "./components/patient/resultsViewer/results-view
 import EOrderPage from "./components/eOrder/Index";
 import RoutineIndex from "./components/Reports/routine/Index.js";
 import PrintBarcode from "./components/printBarcode/Index";
-
+import NonconformityReportsByUnit from "./components/Reports/routine/Nonconformity-Unit.js";
 
 export default function App() {
   let i18nConfig = {
@@ -210,6 +210,13 @@ export default function App() {
                   component={() => <Home />}
                   role=""
                 />
+                <SecureRoute
+                path="/NonconformityReportsByUnit"
+                exact
+                component={() => NonconformityReportsByUnit}
+                role="Reports" // Define the appropriate role
+              />
+
                 <SecureRoute
                   path="/admin"
                   exact
