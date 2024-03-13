@@ -1,18 +1,14 @@
 import LoginPage from "../pages/LoginPage";
 
 const login = new LoginPage();
-
+beforeEach("user visits login page",()=>{
+    cy.clearAllCookies();
+    login.visit();
+});
+afterEach("close browser",()=>{
+    cy.clearAllLocalStorage();
+})
 describe('Failing or Succeeding to Login', function () {
-
-    before("User visits login page", () => {
-        login.visit();
-        // login.acceptSelfAssignedCert();
-    });
-
-    after('Close Browser', () => {
-       cy.clearLocalStorage();
-    })
-
     it('Should validate user authentication', function () {
         cy.fixture('Users').then((users) => {
             users.forEach((user) => {
@@ -30,6 +26,11 @@ describe('Failing or Succeeding to Login', function () {
                     cy.get('div[role=\'status\']').should('be.visible');
                 }
             });
+            cy.wait(2000);
+            cy.url().should('include','/');
+            cy.get('[data-test="panelSwitchIcon"').should('be.visible');
+            cy.get('[data-test="openMenu"').should('be.visible');
+            cy.get('[data-test="logo"').should('be.visible').should('have.id','header-logo');
         });
     });
 

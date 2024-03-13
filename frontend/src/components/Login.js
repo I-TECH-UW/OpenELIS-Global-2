@@ -168,6 +168,7 @@ function Login(props) {
                         </Heading>
                       </FormLabel>
                       <TextInput
+                        data-test="username"
                         className="inputText"
                         id="loginName"
                         invalidText={props.intl.formatMessage({
@@ -182,8 +183,9 @@ function Login(props) {
                         })}
                         autoComplete="off"
                         ref={firstInput}
-                      />
+                      />          
                       <TextInput.PasswordInput
+                        data-test="password"
                         className="inputText"
                         id="password"
                         invalidText={props.intl.formatMessage({

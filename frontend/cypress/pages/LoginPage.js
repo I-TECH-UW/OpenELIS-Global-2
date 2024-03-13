@@ -13,11 +13,11 @@ class LoginPage {
     }
 
     getUsernameElement() {
-        return cy.getElement(`.inputText .cds--text-input--md`);
+        return cy.getElement('[data-test="username"]');
     }
 
     getPasswordElement() {
-        return cy.getElement(`input#password`);
+        return cy.getElement(`[data-test="password"]`);
     }
 
     enterUsername(value) {
