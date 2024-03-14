@@ -5,8 +5,8 @@ import CustomDatePicker from "../../common/CustomDatePicker";
 import { AlertDialog } from "../../common/CustomNotification";
 import config from "../../../config.json";
 import "../../Style.css";
-import { getFromOpenElisServer } from '../../utils/Utils';
-import PanelSelectForm from '../../workplan/PanelSelectForm';
+import { getFromOpenElisServer } from "../../utils/Utils";
+import PanelSelectForm from "../../workplan/PanelSelectForm";
 
 const ActivityReportByPanel = () => {
   const intl = useIntl();

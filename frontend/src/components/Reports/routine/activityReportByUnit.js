@@ -4,15 +4,17 @@ import { Form, FormLabel, Grid, Column, Section, Button, Loading } from "@carbon
 import CustomDatePicker from "../../common/CustomDatePicker";
 import { AlertDialog } from "../../common/CustomNotification";
 import config from "../../../config.json";
-import TestSelectForm from '../../workplan/TestSelectForm';
+import TestSelectForm from "../../workplan/TestSelectForm";
+import TestSectionSelectForm from "../../workplan/TestSectionSelectForm";
 import "../../Style.css";
-import { getFromOpenElisServer } from '../../utils/Utils';
+import { getFromOpenElisServer } from "../../utils/Utils";
 
 const activityReportByUnit = () => {
   const intl = useIntl();
   const mounted = useRef(false);
   const [loading, setLoading] = useState(false);
   const [notificationVisible, setNotificationVisible] = useState(false);
+  const [SelectedValue, setSelectedValue] = useState(false);
   const [reportFormValues, setReportFormValues] = useState({
     startDate: null,
     endDate: null
@@ -26,7 +28,6 @@ const activityReportByUnit = () => {
       return "";
     }
   };
-
 
   const handleChangeDatePicker = (datePicker, date) => {
     const updatedDate = encodeDate(date);
@@ -56,7 +57,8 @@ const activityReportByUnit = () => {
     mounted.current = true;
     const fetchUnitList = async () => {
       try {
-        const data = await getFromOpenElisServer("/rest/panels");
+        const data = getFromOpenElisServer('/rest/test-sections');
+        console.log(data);
         setUnitList(data);
       } catch (error) {
         throw new Error('Error fetching units list:', error);
@@ -126,7 +128,7 @@ const activityReportByUnit = () => {
             </Grid>
             <Column lg={6}>
               <Form className="container-form">
-                Panel type: <TestSelectForm unitList={unitList} value={handleSelectedValue}/>
+                Unit type: <TestSectionSelectForm unitList={unitList} value={handleSelectedValue}/>
               </Form>
             </Column>
             <br /> 

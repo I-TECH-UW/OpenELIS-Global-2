@@ -4,9 +4,9 @@ import { Form, FormLabel, Grid, Column, Section, Button, Loading, Card } from "@
 import CustomDatePicker from "../../common/CustomDatePicker";
 import { AlertDialog } from "../../common/CustomNotification";
 import config from "../../../config.json";
-import TestSelectForm from '../../workplan/TestSelectForm';
+import TestSelectForm from "../../workplan/TestSelectForm";
 import "../../Style.css";
-import { getFromOpenElisServer } from '../../utils/Utils';
+import { getFromOpenElisServer } from "../../utils/Utils";
 
 const ActivityReportByTest = () => {
   const intl = useIntl();
