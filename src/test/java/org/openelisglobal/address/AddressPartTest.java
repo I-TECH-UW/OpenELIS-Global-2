@@ -16,23 +16,20 @@ public class AddressPartTest {
 
     @Test
     public void testSetAndGetId() {
-        String id = "123";
-        addressPart.setId(id);
-        assertEquals(id, addressPart.getId());
+        addressPart.setId("123");
+        assertEquals("123", addressPart.getId());
     }
-
+    
     @Test
     public void testSetAndGetPartName() {
-        String partName = "Street";
-        addressPart.setPartName(partName);
-        assertEquals(partName, addressPart.getPartName());
+        addressPart.setPartName("Street");
+        assertEquals("Street", addressPart.getPartName());
     }
 
     @Test
     public void testSetAndGetDisplayOrder() {
-        String displayOrder = "1";
-        addressPart.setDisplayOrder(displayOrder);
-        assertEquals(displayOrder, addressPart.getDisplayOrder());
+        addressPart.setDisplayOrder("1");
+        assertEquals("1", addressPart.getDisplayOrder());
     }
 }
 

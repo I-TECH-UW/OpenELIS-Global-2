@@ -19,33 +19,27 @@ public class PersonAddressTest {
 
     @Test
     public void testSetAndGetPersonId() {
-        String personId = "123";
-        personAddress.setPersonId(personId);
-        Assert.assertEquals(personId, personAddress.getPersonId());
+        personAddress.setPersonId("123");
+        Assert.assertEquals("123", personAddress.getPersonId());
     }
 
     @Test
     public void testSetAndGetAddressPartId() {
-        String addressPartId = "456";
-        personAddress.setAddressPartId(addressPartId);
-        Assert.assertEquals(addressPartId, personAddress.getAddressPartId());
+        personAddress.setAddressPartId("456");
+        Assert.assertEquals("456", personAddress.getAddressPartId());
     }
 
     @Test
     public void testSetAndGetUniqueIdentifier() {
-        String uniqueIdentifier = "unique123";
-        personAddress.setUniqueIdentifyer(uniqueIdentifier);
-        Assert.assertEquals(uniqueIdentifier, personAddress.getUniqueIdentifyer());
+        personAddress.setUniqueIdentifyer("unique123");
+        Assert.assertEquals("unique123", personAddress.getUniqueIdentifyer());
     }
 
     @Test
     public void testGetStringId() {
-        String personId = "123";
-        String addressPartId = "456";
-        personAddress.setPersonId(personId);
-        personAddress.setAddressPartId(addressPartId);
-        String expectedStringId = personId + addressPartId;
-        Assert.assertEquals(expectedStringId, personAddress.getStringId());
+        personAddress.setPersonId("123");
+        personAddress.setAddressPartId("456");
+        Assert.assertEquals("123456", personAddress.getStringId());
     }
 
     // Add more test cases for other methods as needed

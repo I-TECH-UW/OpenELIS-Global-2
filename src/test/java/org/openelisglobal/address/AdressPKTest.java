@@ -16,16 +16,14 @@ public class AdressPKTest {
 
 	    @Test
 	    public void testSetAndGetTargetId() {
-	        String targetId = "123";
-	        addressPK.setTargetId(targetId);
-	        Assert.assertEquals(targetId, addressPK.getTargetId());
+	        addressPK.setTargetId("123");
+	        Assert.assertEquals("123", addressPK.getTargetId());
 	    }
 
 	    @Test
 	    public void testSetAndGetAddressPartId() {
-	        String addressPartId = "456";
-	        addressPK.setAddressPartId(addressPartId);
-	        Assert.assertEquals(addressPartId, addressPK.getAddressPartId());
+	        addressPK.setAddressPartId("456");
+	        Assert.assertEquals("456", addressPK.getAddressPartId());
 	    }
 
 	    @Test

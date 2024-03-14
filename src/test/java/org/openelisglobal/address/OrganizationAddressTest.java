@@ -16,34 +16,30 @@ public class OrganizationAddressTest {
 
     @Test
     public void testSetAndGetOrganizationId() {
-        String organizationId = "123";
-        organizationAddress.setOrganizationId(organizationId);
-        Assert.assertEquals(organizationId, organizationAddress.getOrganizationId());
+        organizationAddress.setOrganizationId("123");
+        Assert.assertEquals("123", organizationAddress.getOrganizationId());
     }
 
     @Test
     public void testSetAndGetAddressPartId() {
-        String addressPartId = "456";
-        organizationAddress.setAddressPartId(addressPartId);
-        Assert.assertEquals(addressPartId, organizationAddress.getAddressPartId());
+        organizationAddress.setAddressPartId("456");
+        Assert.assertEquals("456", organizationAddress.getAddressPartId());
     }
 
     @Test
     public void testSetAndGetUniqueIdentifier() {
-        String uniqueIdentifier = "unique123";
-        organizationAddress.setUniqueIdentifyer(uniqueIdentifier);
-        Assert.assertEquals(uniqueIdentifier, organizationAddress.getUniqueIdentifyer());
+        organizationAddress.setUniqueIdentifyer("unique123");
+        Assert.assertEquals("unique123", organizationAddress.getUniqueIdentifyer());
     }
 
     @Test
     public void testGetStringId() {
         String organizationId = "123";
         String addressPartId = "456";
-        organizationAddress.setOrganizationId(organizationId);
-        organizationAddress.setAddressPartId(addressPartId);
-        String expectedStringId = organizationId + addressPartId;
-        Assert.assertEquals(expectedStringId, organizationAddress.getStringId());
+        organizationAddress.setOrganizationId("123");
+        organizationAddress.setAddressPartId("456");
+        Assert.assertEquals("123456", organizationAddress.getStringId());
     }
 
-    // Add more test cases for other methods as needed
+   
 }
