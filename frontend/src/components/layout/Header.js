@@ -161,15 +161,15 @@ function OEHeader(props) {
             <SideNavMenuItem className="reduced-padding-nav-menu-item">
               <span style={{ display: "flex", width: "100%" }}>
                 {!menuItem.menu.actionURL &&
-                  hasActiveChildMenu(menuItem) &&
+                  !hasActiveChildMenu(menuItem) &&
                   console.warn("menu entry has no action url and no child")}
-                {hasActiveChildMenu(menuItem) &&
+                {!hasActiveChildMenu(menuItem) &&
                   renderSingleNavButton(menuItem, index, level, path)}
                 {!menuItem.menu.actionURL &&
-                  !hasActiveChildMenu(menuItem) &&
+                  hasActiveChildMenu(menuItem) &&
                   renderSingleDropdownButton(menuItem, index, level, path)}
                 {menuItem.menu.actionURL &&
-                  !hasActiveChildMenu(menuItem) &&
+                  hasActiveChildMenu(menuItem) &&
                   renderDualNavDropdownButton(menuItem, index, level, path)}
               </span>
             </SideNavMenuItem>
@@ -197,10 +197,13 @@ function OEHeader(props) {
   };
 
   const hasActiveChildMenu = (menuItem) => {
+    if (menuItem.menu.elementId === "menu_reports_routine") {
+      console.log("reports");
+    }
     return (
-      menuItem.childMenus.length < 1 &&
+      menuItem.childMenus.length >= 1 &&
       menuItem.childMenus.some((element) => {
-        return element.isActive;
+        return element.menu.isActive;
       })
     );
   };

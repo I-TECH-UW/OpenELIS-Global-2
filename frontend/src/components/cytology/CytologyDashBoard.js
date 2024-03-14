@@ -31,6 +31,7 @@ import { NotificationContext } from "../layout/Layout";
 import { AlertDialog } from "../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
 import "../pathology/PathologyDashboard.css";
+import PageBreadCrumb from "../common/PageBreadCrumb";
 
 function CytologyDashboard() {
   const componentMounted = useRef(false);
@@ -266,10 +267,14 @@ function CytologyDashboard() {
     };
   }, [filters]);
 
+  let breadcrumbs = [{ label: "home.label", link: "/" }];
+
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading description="Loading Dasboard..." />}
+
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
 
       <Grid fullWidth={true}>
         <Column lg={16}>
