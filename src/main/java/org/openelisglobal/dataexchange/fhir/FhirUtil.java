@@ -1,11 +1,8 @@
 package org.openelisglobal.dataexchange.fhir;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.commons.validator.GenericValidator;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -16,7 +13,6 @@ import org.apache.http.util.EntityUtils;
 import org.itech.fhir.dataexport.core.service.FhirClientFetcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.client.api.IClientInterceptor;

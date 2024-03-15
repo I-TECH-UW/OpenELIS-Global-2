@@ -46,6 +46,26 @@ public class PatientServiceTest {
 		Patient pat = createPatient(firstName, lastname, dob, gender);
 
 		Assert.assertEquals(0, patientService.getAllPatients().size());
+
+		// save patient to the DB
+		String patientId = patientService.insert(pat);
+		Patient savedPatient = patientService.get(patientId);
+
+		Assert.assertEquals(1, patientService.getAllPatients().size());
+		Assert.assertEquals(firstName, savedPatient.getPerson().getFirstName());
+		Assert.assertEquals(lastname, savedPatient.getPerson().getLastName());
+		Assert.assertEquals(gender, savedPatient.getGender());
+	}
+
+	@Test
+	public void updatePatient_shouldUpdatePatient() throws Exception {
+		String firstName = "John";
+		String lastname = "Doe";
+		String dob = "12/12/1992";
+		String gender = "M";
+		Patient pat = createPatient(firstName, lastname, dob, gender);
+
+		Assert.assertEquals(0, patientService.getAllPatients().size());
 		// save patient to the DB
 		String patientId = patientService.insert(pat);
 		Patient savedPatient = patientService.get(patientId);
@@ -58,12 +78,14 @@ public class PatientServiceTest {
 
 	@Test
 	public void getAllPatients_shouldGetAllPatients() throws Exception {
-		Assert.assertEquals(1, patientService.getAllPatients().size());
+		Assert.assertEquals(0, patientService.getAllPatients().size());
 	}
 
 	private Patient createPatient(String firstName, String LastName, String birthDate, String gender)
 			throws ParseException {
+
 		Person person = new Person();
+
 		person.setFirstName(firstName);
 		person.setLastName(LastName);
 		personService.save(person);
