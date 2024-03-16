@@ -51,7 +51,7 @@ function Login(props) {
 
   const loginMessage = () => {
     return (
-      <>
+      <div className="centeredContainer">
         <div>
           <picture>
             <img
@@ -66,7 +66,7 @@ function Login(props) {
         <div>
           <FormattedMessage id="login.notice.message" />
         </div>
-      </>
+      </div>
     );
   };
 
@@ -131,114 +131,117 @@ function Login(props) {
 
   return (
     <>
-      <div className="loginPageContent">
+      <div className="loginPageContent  centeredContainer">
         {notificationVisible === true ? <AlertDialog /> : ""}
-        <Grid fullWidth={true}>
+        <div className="centeredContainer">
           <Column lg={0} md={0} sm={4}>
             {loginMessage()}
           </Column>
           <Column lg={4} md={4} sm={4}>
-            <Section>
-              <Formik
-                initialValues={{
-                  username: "",
-                  password: "",
-                }}
-                onSubmit={(values) => {
-                  fetch(config.serverBaseUrl + "/LoginPage", {
-                    //includes the browser sessionId in the Header for Authentication on the backend server
-                    credentials: "include",
-                    method: "GET",
-                  })
-                    .then((response) => response.status)
-                    .then(() => {
-                      doLogin(values);
-                    })
-                    .catch((error) => {
-                      console.error(error);
-                    });
-                }}
-              >
-                {({ isValid, handleChange, handleSubmit }) => (
-                  <Form onSubmit={handleSubmit} onChange={handleChange}>
-                    <Stack gap={5}>
-                      <FormLabel>
-                        <Heading>
-                          <FormattedMessage id="login.title" />
-                        </Heading>
-                      </FormLabel>
-                      <TextInput
-                        className="inputText"
-                        id="loginName"
-                        invalidText={props.intl.formatMessage({
-                          id: "login.msg.username.missing",
-                        })}
-                        labelText={props.intl.formatMessage({
-                          id: "login.msg.username",
-                        })}
-                        hideLabel={true}
-                        placeholder={props.intl.formatMessage({
-                          id: "login.msg.username",
-                        })}
-                        autoComplete="off"
-                        ref={firstInput}
-                      />
-                      <TextInput.PasswordInput
-                        className="inputText"
-                        id="password"
-                        invalidText={props.intl.formatMessage({
-                          id: "login.msg.password.missing",
-                        })}
-                        labelText={props.intl.formatMessage({
-                          id: "login.msg.password",
-                        })}
-                        hideLabel={true}
-                        placeholder={props.intl.formatMessage({
-                          id: "login.msg.password",
-                        })}
-                      />
-                      <Button type="submit" disabled={!isValid}>
-                        <FormattedMessage id="label.button.submit" />
-                        <Loading
-                          small={true}
-                          withOverlay={false}
-                          className={submitting ? "show" : "hidden"}
-                        />
-                      </Button>
-                      {configurationProperties?.useSaml == "true" && (
-                        <Button
-                          type="button"
-                          onClick={() => {
-                            const POPUP_HEIGHT = 700;
-                            const POPUP_WIDTH = 600;
-                            const top =
-                              window.outerHeight / 2 +
-                              window.screenY -
-                              POPUP_HEIGHT / 2;
-                            const left =
-                              window.outerWidth / 2 +
-                              window.screenX -
-                              POPUP_WIDTH / 2;
-                            window.open(
-                              config.serverBaseUrl + "/LoginPage?useSAML=true",
-                              "SAML Popup",
-                              `height=${POPUP_HEIGHT},width=${POPUP_WIDTH},top=${top},left=${left}`,
-                            );
-                          }}
-                        >
-                          <FormattedMessage id="label.button.login.sso" />
-                        </Button>
-                      )}
-                    </Stack>
-                  </Form>
-                )}
-              </Formik>
-            </Section>
+            
           </Column>
           <Column lg={8} md={4} sm={0}>
             {loginMessage()}
           </Column>
-        </Grid>
+        </div>
+        
+        <div>
+          <Formik
+            initialValues={{
+              username: "",
+              password: "",
+            }}
+            onSubmit={(values) => {
+              fetch(config.serverBaseUrl + "/LoginPage", {
+                //includes the browser sessionId in the Header for Authentication on the backend server
+                credentials: "include",
+                method: "GET",
+              })
+                .then((response) => response.status)
+                .then(() => {
+                  doLogin(values);
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+            }}
+          >
+            {({ isValid, handleChange, handleSubmit }) => (
+              <Form onSubmit={handleSubmit} onChange={handleChange}>
+                <div className="centeredContainer">
+
+                  <FormLabel>
+                    <Heading>
+                      <FormattedMessage id="login.title" />
+                    </Heading>
+                  </FormLabel>
+                  <TextInput
+                    className="inputText"
+                    id="loginName"
+                    invalidText={props.intl.formatMessage({
+                      id: "login.msg.username.missing",
+                    })}
+                    labelText={props.intl.formatMessage({
+                      id: "login.msg.username",
+                    })}
+                    hideLabel={true}
+                    placeholder={props.intl.formatMessage({
+                      id: "login.msg.username",
+                    })}
+                    autoComplete="off"
+                    ref={firstInput}
+                  />
+                  <TextInput.PasswordInput
+                    className="inputText"
+                    id="password"
+                    invalidText={props.intl.formatMessage({
+                      id: "login.msg.password.missing",
+                    })}
+                    labelText={props.intl.formatMessage({
+                      id: "login.msg.password",
+                    })}
+                    hideLabel={true}
+                    placeholder={props.intl.formatMessage({
+                      id: "login.msg.password",
+                    })}
+                  />
+                  <Button type="submit" disabled={!isValid}>
+                    <FormattedMessage id="label.button.submit" />
+                    <Loading
+                      small={true}
+                      withOverlay={false}
+                      className={submitting ? "show" : "hidden"}
+                    />
+                  </Button>
+	                  {configurationProperties?.useSaml == "true" && (
+	                    <Button
+	                      type="button"
+	                      onClick={() => {
+	                        const POPUP_HEIGHT = 700;
+	                        const POPUP_WIDTH = 600;
+	                        const top =
+	                          window.outerHeight / 2 +
+	                          window.screenY -
+	                          POPUP_HEIGHT / 2;
+	                        const left =
+	                          window.outerWidth / 2 +
+	                          window.screenX -
+	                          POPUP_WIDTH / 2;
+	                        window.open(
+	                          config.serverBaseUrl + "/LoginPage?useSAML=true",
+	                          "SAML Popup",
+	                          `height=${POPUP_HEIGHT},width=${POPUP_WIDTH},top=${top},left=${left}`,
+	                        );
+	                      }}
+	                    >
+	                      <FormattedMessage id="label.button.login.sso" />
+	                    </Button>
+	                  )}
+	                </div>
+              </Form>
+	            )}
+          </Formik>
+        </div>
       </div>
     </>
   );
