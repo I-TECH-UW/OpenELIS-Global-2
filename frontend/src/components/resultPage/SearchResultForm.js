@@ -393,7 +393,7 @@ export function SearchResultForm(props) {
           >
             <Stack gap={2}>
               <Grid>
-                <Column lg={16}>
+                <Column lg={16} md={8} sm={4}>
                   <h4>
                     <FormattedMessage id="label.button.search" />
                   </h4>
@@ -459,7 +459,7 @@ export function SearchResultForm(props) {
 
                 {searchBy.type === "date" && (
                   <>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="collectionDate">
                         {({ field, form }) => (
                           <DatePicker
@@ -485,7 +485,7 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="recievedDate">
                         {({ field, form }) => (
                           <DatePicker
@@ -511,7 +511,7 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="testName">
                         {({ field }) => (
                           <Select
@@ -540,7 +540,7 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="analysisStatus">
                         {({ field }) => (
                           <Select
@@ -571,7 +571,7 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="sampleStatusType">
                         {({ field }) => (
                           <Select
@@ -607,7 +607,7 @@ export function SearchResultForm(props) {
                 )}
 
                 {searchBy.type !== "patient" && searchBy.type !== "unit" && (
-                  <Column lg={16}>
+                  <Column lg={16} md={8} sm={4}>
                     <Button
                       style={{ marginTop: "16px" }}
                       type="submit"
@@ -1548,7 +1548,7 @@ export function SearchResults(props) {
                 }
               />
 
-              <Button type="button" id="submit" onClick={handleSave}>
+              <Button type="button" id="submit" onClick={handleSave} style={{marginTop:"16px"}}>
                 <FormattedMessage id="label.button.save" />
               </Button>
             </Form>
