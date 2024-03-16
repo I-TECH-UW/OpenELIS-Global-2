@@ -257,7 +257,7 @@ const SearchForm = (props) => {
 
                 {(searchBy === "order" || searchBy === "range") && (
                   <>
-                    <Column lg={6}>
+                    <Column lg={6} md={8} sm={4}>
                       <Field name="accessionNumber">
                         {({ field }) => (
                           <CustomLabNumberInput
@@ -285,7 +285,7 @@ const SearchForm = (props) => {
 
                 {searchBy === "testDate" && (
                   <>
-                    <Column lg={6}>
+                    <Column lg={6} md={8} sm={4}>
                       <Field name="date">
                         {({ field }) => (
                           <DatePicker
@@ -315,7 +315,7 @@ const SearchForm = (props) => {
                   </>
                 )}
                 {searchBy !== "routine" && (
-                  <Column lg={16}>
+                  <Column lg={16} md={8} sm={4}>
                     <Button
                       type="submit"
                       id="submit"
@@ -334,7 +334,7 @@ const SearchForm = (props) => {
       {searchBy === "routine" && (
         <>
           <Grid>
-            <Column lg={6}>
+            <Column lg={6} md={8} sm={4}>
               <Select
                 labelText={intl.formatMessage({ id: "search.label.testunit" })}
                 name="unitType"
