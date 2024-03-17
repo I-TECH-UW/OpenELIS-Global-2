@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Form,
-    FormLabel,
-    Grid,
-    Column,
-    Section,
-    Button,
-    Loading,
-  } from "@carbon/react";
+  Form,
+  FormLabel,
+  Grid,
+  Column,
+  Section,
+  Button,
+  Loading,
+} from "@carbon/react";
 import { FormattedMessage, useIntl } from 'react-intl';
 import "../../../Style.css";
 import { AlertDialog } from "../../../common/CustomNotification";
 import CustomDatePicker from "../../../common/CustomDatePicker";
 import config from "../../../../config.json";
-
 
 const ReportByDate = (props) => {
   const intl = useIntl();
@@ -23,8 +22,6 @@ const ReportByDate = (props) => {
     startDate: null,
     endDate: null
   });
-
-
 
   function encodeDate(dateString) {
     if (typeof dateString === "string" && dateString.trim() !== "") {
@@ -73,24 +70,23 @@ const ReportByDate = (props) => {
         <Section>
           <Section>
             <h1>
-            <FormattedMessage id={props.id}/>
-             </h1>
+              <FormattedMessage id={props.id}/>
+            </h1>
           </Section>
         </Section>
       </FormLabel>
       {notificationVisible && <AlertDialog />}
       {loading && <Loading />}
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={12} sm={8}>
           <Form>
             <Grid fullWidth={true}>
-              <Column lg={10}>
+              <Column lg={10} md={8} sm={4}>
                 <Section>
                   <br />
                   <br />
                   <h5>
-                  <FormattedMessage id="label.select.dateRange" />
-
+                    <FormattedMessage id="label.select.dateRange" />
                   </h5>
                 </Section>
                 <div className="inlineDiv">
@@ -133,7 +129,6 @@ const ReportByDate = (props) => {
           </Form>
         </Column>
       </Grid>
-
     </>
   );
 };
