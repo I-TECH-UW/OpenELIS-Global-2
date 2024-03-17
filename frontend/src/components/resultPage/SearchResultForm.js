@@ -400,7 +400,7 @@ export function SearchResultForm(props) {
                 </Column>
                 {searchBy.type === "order" && (
                   <>
-                    <Column lg={6}>
+                    <Column lg={6} md={4} sm={4}>
                       <Field name="accessionNumber">
                         {({ field }) => (
                           <CustomLabNumberInput
@@ -424,7 +424,7 @@ export function SearchResultForm(props) {
 
                 {searchBy.type === "range" && (
                   <>
-                    <Column lg={6}>
+                    <Column lg={6} sm={4}>
                       <Field name="startLabNo">
                         {({ field }) => (
                           <TextInput
@@ -439,7 +439,7 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={6}>
+                    <Column lg={6} sm={4}>
                       <Field name="endLabNo">
                         {({ field }) => (
                           <TextInput
@@ -631,7 +631,7 @@ export function SearchResultForm(props) {
       {searchBy.type === "unit" && (
         <>
           <Grid>
-            <Column lg={6}>
+            <Column lg={6} md={4} sm={4}>
               <Select
                 labelText={intl.formatMessage({ id: "search.label.testunit" })}
                 name="unitType"
@@ -1464,7 +1464,7 @@ export function SearchResults(props) {
         {props.results?.testResult?.length > 0 && (
           <Grid style={{ marginTop: "20px" }} className="gridBoundary">
             <Column lg={3} />
-            <Column lg={7}>
+            <Column lg={7} sm={4}>
               <picture>
                 <img
                   src={config.serverBaseUrl + "/images/nonconforming.gif"}
