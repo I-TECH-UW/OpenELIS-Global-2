@@ -34,6 +34,7 @@ import ImmunohistochemistryCaseView from "./components/immunohistochemistry/Immu
 import RoutedResultsViewer from "./components/patient/resultsViewer/results-viewer.tsx";
 import EOrderPage from "./components/eOrder/Index";
 import RoutineIndex from "./components/Reports/routine/Index.js";
+import StudyIndex from "./components/Reports/study/index.js";
 import PrintBarcode from "./components/printBarcode/Index";
 
 
@@ -388,6 +389,12 @@ export default function App() {
                   path="/StudyReports"
                   exact
                   component={() => <StudyReports />}
+                  role="Reports"
+                />
+                <SecureRoute
+                  path="/StudyReport"
+                  exact
+                  component={() => <StudyIndex />}
                   role="Reports"
                 />
                 <SecureRoute
