@@ -4,11 +4,10 @@ import "../../Style.css";
 import { getFromOpenElisServer } from "../../utils/Utils";
 import {
   Form,
-  FormLabel,
-  Checkbox,
   Dropdown,
   Heading,
   Grid,
+  FilterableMultiSelect,
   Column,
   Section,
   TextInput,
@@ -27,15 +26,13 @@ import {
   TableHeader,
   TableBody,
   TableCell,
-  Select,
-  SelectItem,
+  Tag,
 } from "@carbon/react";
 import CustomLabNumberInput from "../../common/CustomLabNumberInput";
 import config from "../../../config.json";
 import { patientSearchHeaderData } from "../../data/PatientResultsTableHeaders";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
-import AutoComplete from "../../common/AutoComplete";
 import { ConfigurationContext } from "../../layout/Layout";
 import { Formik, Field } from "formik";
 import ReferredOutTestsFormValues from "../../formModel/innitialValues/ReferredOutTestsFormValues";
@@ -73,11 +70,13 @@ function ReferredOutTests(props) {
     },
   ];
 
-  const searchTypeValues = ["PATIENT","LAB_NUMBER","TEST_AND_DATES"]
+  const searchTypeValues = ["TEST_AND_DATES", "LAB_NUMBER", "PATIENT"];
 
   const componentMounted = useRef(false);
-  const [checkbox, setCheckbox] = useState("on");
-  const [result, setResult] = useState("false");
+  const [testUnits, setTestUnits] = useState([]);
+  const [testUnitsIdList, setTestUnitsIdList] = useState([]);
+  const [testNames, setTestNames] = useState([]);
+  const [testNamesIdList, setTestNamesIdList] = useState([]);
   const [items, setItems] = useState(itemList[0].tag);
   const [dob, setDob] = useState("");
   const [patientSearchResults, setPatientSearchResults] = useState([]);
@@ -88,7 +87,7 @@ function ReferredOutTests(props) {
   const [previousPage, setPreviousPage] = useState(null);
   const [pagination, setPagination] = useState(false);
   const [url, setUrl] = useState("");
-  const [searchType, setSearchType] = useState("") // where form is filled!
+  const [searchType, setSearchType] = useState("");
   const [innitialized, setInnitialized] = useState(false);
   const [tests, setTests] = useState([]);
   const [testSections, setTestSections] = useState([]);
@@ -98,14 +97,21 @@ function ReferredOutTests(props) {
   const [defaultTestLabel, setDefaultTestLabel] = useState("");
 
   // search endpoint fix needed
-  const handleSearchReferralPatient = () => {
+  // const handleSearchReferralPatient = () => {
+  //   let referredOutTestsOutPut =
+  //     config.serverBaseUrl +
+  //     `/ReferredOutTests?report=patientCILNSP_vreduit&type=patient&accessionDirect=${referredOutTestsFormValues.form}&highAccessionDirect=${referredOutTestsFormValues.to}&dateOfBirthSearchValue=${referredOutTestsFormValues.dateOfBirth}&selPatient=${referredOutTestsFormValues.selectedPatientId}&referringSiteId=${referredOutTestsFormValues.referringSiteId}&referringSiteDepartmentId=${referredOutTestsFormValues.referringSiteName}&onlyResults=${result}&_onlyResults=${checkbox}&dateType=${items}&lowerDateRange=${referredOutTestsFormValues.startDate}&upperDateRange=${referredOutTestsFormValues.endDate}`;
+  //   window.open(referredOutTestsOutPut);
+  // };
+
+  const handleReferredOutPatient = () => {
     let referredOutTestsOutPut =
       config.serverBaseUrl +
-      `/ReferredOutTests?report=patientCILNSP_vreduit&type=patient&accessionDirect=${referredOutTestsFormValues.form}&highAccessionDirect=${referredOutTestsFormValues.to}&dateOfBirthSearchValue=${referredOutTestsFormValues.dateOfBirth}&selPatient=${referredOutTestsFormValues.selectedPatientId}&referringSiteId=${referredOutTestsFormValues.referringSiteId}&referringSiteDepartmentId=${referredOutTestsFormValues.referringSiteName}&onlyResults=${result}&_onlyResults=${checkbox}&dateType=${items}&lowerDateRange=${referredOutTestsFormValues.startDate}&upperDateRange=${referredOutTestsFormValues.endDate}`;
+      `/ReferredOutTests?searchType=${searchType}&dateType=${items}&startDate=${referredOutTestsFormValues.startDate}&endDate=${referredOutTestsFormValues.endDate}&${testUnitsIdList}_testUnitIds=1${testNamesIdList}&_testIds=1&labNumber=${referredOutTestsFormValues.labNumberInput}&dateOfBirthSearchValue=${referredOutTestsFormValues.dateOfBirth}&selPatient=${referredOutTestsFormValues.selectedPatientId}&_csrf=${localStorage.getItem("CSRF")}`;
+      
+      console.error(referredOutTestsOutPut)
     window.open(referredOutTestsOutPut);
   };
-
-  let uri = config.serverBaseUrl + `/ReferredOutTests?searchType=${searchType}&dateType=${items}&startDate=${referredOutTestsFormValues.startDate}&endDate=${referredOutTestsFormValues.endDate}&_testUnitIds=${referredOutTestsFormValues.testUnitIds}&_testIds=${referredOutTestsFormValues.testTestIds}&labNumber=${referredOutTestsFormValues.labNumber}&dateOfBirthSearchValue=${referredOutTestsFormValues.dateOfBirth}&selPatient=${referredOutTestsFormValues.selectedPatientId}&_csrf=${localStorage.getItem("CSRF")}`
 
   // const handleSearchReferralPatient = () => {
   //   let referredOutTestsOutPut =
@@ -115,6 +121,15 @@ function ReferredOutTests(props) {
   // };
 
   //ReferredOutTests?searchType=PATIENT&dateType=SENT&startDate=&endDate=&_testUnitIds=1&_testIds=1&labNumber=DEV01240000000000003&dateOfBirthSearchValue=&selPatient=4&_csrf=f6b25f58-8652-4119-899f-b25fff72345e
+
+  // TODO
+  // pathologyCaseView
+  // multiselect show case [done]
+  // settingup test,testis states
+  // searchtype state fixup
+  // endpoint fix 
+  // multiple end [test/unit] point addition handle
+  // cleanUp left
 
   const handleSubmit = (values) => {
     setLoading(true);
@@ -154,10 +169,8 @@ function ReferredOutTests(props) {
   function handleLabNumberSearch(e) {
     setReferredOutTestsFormValues({
       ...referredOutTestsFormValues,
-      labNumber: e.target.value,
+      labNumberInput: e.target.value,
     });
-    setSearchType(searchTypeValues[1])
-    console.error(searchType)
   }
 
   function handleLabNumber(e) {
@@ -271,15 +284,14 @@ function ReferredOutTests(props) {
         break;
       default:
         obj = {
-          startDate : encodeDate(configurationProperties.currentDateAsText),
-          endDate : encodeDate(configurationProperties.currentDateAsText)
-        }
+          startDate: encodeDate(configurationProperties.currentDateAsText),
+          endDate: encodeDate(configurationProperties.currentDateAsText),
+        };
     }
     setReferredOutTestsFormValues({
       ...referredOutTestsFormValues,
       PatientStatusReportFormValues: obj,
     });
-    setSearchType(searchTypeValues[2])
   };
 
   const patientSelected = (e) => {
@@ -296,7 +308,6 @@ function ReferredOutTests(props) {
       "/rest/patient-details?patientID=" + patientSelected.patientID;
     getFromOpenElisServer(searchEndPoint, fetchPatientDetails);
   };
-
 
   const handlePageChange = (pageInfo) => {
     if (page != pageInfo.page) {
@@ -323,26 +334,37 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       testUnitIds: e.target.value,
     });
+    setSearchType(searchTypeValues[0]);
     setNextPage(null);
     setPreviousPage(null);
     setPagination(false);
     var values = { unitType: e.target.value };
     handleSubmit(values);
-    setSearchType(searchTypeValues[2])
-  }
+  };
 
   const submitOnSelectTest = (e) => {
     setReferredOutTestsFormValues({
       ...referredOutTestsFormValues,
       testTestIds: e.target.value,
     });
+    setSearchType(searchTypeValues[0]);
     setNextPage(null);
     setPreviousPage(null);
     setPagination(false);
     var values = { testName: e.target.value };
     handleSubmit(values);
-    setSearchType(searchTypeValues[2])
-  }
+  };
+
+  useEffect(() =>{
+    if(testNames.testNames){
+      var testNamesIdList = testNames.testNames.map((test) => ("testIds="+test.id+"&")).join("");
+      setTestNamesIdList(testNamesIdList);
+    }
+    if(testUnits.testUnits){
+      var testUnitsIdList = testUnits.testUnits.map((test) => ("testUnitIds="+test.id+"&")).join("");
+      setTestUnitsIdList(testUnitsIdList);
+    }
+  },[testNames,testUnits])
 
   useEffect(() => {
     componentMounted.current = true;
@@ -355,6 +377,7 @@ function ReferredOutTests(props) {
       let testLabel = test ? test.value : "";
       setDefaultTestId(testId);
       setDefaultTestLabel(testLabel);
+      setTestUnits(testLabel);
       getTests(fetchedTests);
     });
 
@@ -369,6 +392,7 @@ function ReferredOutTests(props) {
       let testSectionLabel = testSection ? testSection.value : "";
       setDefaultTestSectionId(testSectionId);
       setDefaultTestSectionLabel(testSectionLabel);
+      setTestNames(testSectionLabel);
       fetchTestSections(fetchedTestSections);
     });
     if (testSectionId) {
@@ -470,8 +494,8 @@ function ReferredOutTests(props) {
                         items={itemList}
                         itemToString={(item) => (item ? item.text : "")}
                         onChange={(item) => {
+                          setSearchType(searchTypeValues[0]);
                           setItems(item.selectedItem.tag);
-                          setSearchType(searchTypeValues[2])
                         }}
                       />
                       <h5 style={{ paddingTop: "10px", paddingLeft: "6px" }}>
@@ -506,74 +530,90 @@ function ReferredOutTests(props) {
                         }
                       />
                     </div>
-                    <div className="inlineDiv">
+                    <br/>
+                    <div className="formInlineDiv">
                       <Grid fullWidth={true}>
-                        <Column lg={6} md={4} sm={2}>
-                          <Select
-                            labelText={intl.formatMessage({
-                              id: "search.label.testunit",
-                            })}
-                            name="unitType"
-                            id="unitType"
-                            onChange={submitOnSelectUnit}
-                          >
-                            <SelectItem
-                              text={defaultTestSectionLabel}
-                              value={defaultTestSectionId}
-                            />
-                            {testSections
-                              .filter(
-                                (item) => item.id !== defaultTestSectionId
-                              )
-                              .map((test, index) => {
-                                return (
-                                  <SelectItem
-                                    key={index}
-                                    text={test.value}
-                                    value={test.id}
-                                  />
-                                );
-                              })}
-                          </Select>
+                        <Column lg={16} md={8} sm={4}>
+                          <FilterableMultiSelect
+                            id="testunits"
+                            titleText={
+                              <FormattedMessage id="search.label.testunit" />
+                            }
+                            items={testSections}
+                            itemToString={(item) => (item ? item.value : "")}
+                            onChange={(changes) => {
+                              setTestUnits({
+                                ...testUnits,
+                                testUnits: changes.selectedItems,
+                              });
+                            }}
+                            selectionFeedback="top-after-reopen"
+                          />
                         </Column>
-                        <Column lg={10} md={4} sm={2}>
-                          <Field name="testName">
-                            {({ field }) => (
-                              <Select
-                                labelText={
-                                  <FormattedMessage id="search.label.test" />
-                                }
-                                name={field.name}
-                                id={field.name}
-                                onChange={submitOnSelectTest}
+                        <br/>
+                        <Column lg={16} md={8} sm={4}>
+                          {testUnits.testUnits &&
+                            testUnits.testUnits.map((test, index) => (
+                              <Tag
+                                key={index}
+                                filter
+                                onClose={() => {
+                                  var info = { ...testUnits };
+                                  info["testUnits"].splice(index, 1);
+                                  setTestUnits(info);
+                                }}
                               >
-                                <SelectItem
-                                  text={defaultTestLabel}
-                                  value={defaultTestId}
-                                />
-                                {tests
-                                  .filter((item) => item.id !== defaultTestId)
-                                  .map((test, index) => {
-                                    return (
-                                      <SelectItem
-                                        key={index}
-                                        text={test.value}
-                                        value={test.id}
-                                      />
-                                    );
-                                  })}
-                              </Select>
-                            )}
-                          </Field>
+                                {test.value}
+                              </Tag>
+                            ))}
+                        </Column>
+                      </Grid>
+                      <Grid fullWidth={true}>
+                        <Column lg={16} md={8} sm={4}>
+                          <FilterableMultiSelect
+                            id="testnames"
+                            titleText={
+                              <FormattedMessage id="search.label.test" />
+                            }
+                            items={tests}
+                            itemToString={(item) => (item ? item.value : "")}
+                            onChange={(changes) => {
+                              setTestNames({
+                                ...testNames,
+                                testNames: changes.selectedItems,
+                              });
+                            }}
+                            selectionFeedback="top-after-reopen"
+                          />
+                        </Column>
+                        <br/>
+                        <Column lg={16} md={8} sm={4}>
+                          {testNames.testNames &&
+                            testNames.testNames.map((test, index) => (
+                              <Tag
+                                key={index}
+                                filter
+                                onClose={() => {
+                                  var info = { ...testNames };
+                                  info["testNames"].splice(index, 1);
+                                  setTestNames(info);
+                                }}
+                              >
+                                {test.value}
+                              </Tag>
+                            ))}
                         </Column>
                       </Grid>
                     </div>
                     <div className="formInlineDiv">
                       <div className="searchActionButtons">
-                        <Button type="submit">
+                        <Button
+                          type="submit"
+                          onClick={handleReferredOutPatient}
+                        >
                           <FormattedMessage
-                            id="label.button.search"
-                            defaultMessage="Search"
+                            id="referral.button.unitTestSearch"
+                            defaultMessage="Search By Unit(s) & Test(s)"
                           />
                         </Button>
                       </div>
@@ -587,11 +627,11 @@ function ReferredOutTests(props) {
                   <Section>
                     <div className="formInlineDiv">
                       <h5>
-                        <FormattedMessage id="referral.result.labnumber" />
+                        <FormattedMessage id="referral.result.labNumber" />
                       </h5>
                     </div>
                     <br />
-                    <Field name="labNumber">
+                    <Field name="labNumberInput">
                       {({ field }) => (
                         <CustomLabNumberInput
                           name={field.name}
@@ -604,6 +644,7 @@ function ReferredOutTests(props) {
                           value={values[field.name]}
                           onChange={(e, rawValue) => {
                             setFieldValue(field.name, rawValue);
+                            setSearchType(searchTypeValues[1]);
                             handleLabNumberSearch(e);
                           }}
                         />
@@ -612,10 +653,13 @@ function ReferredOutTests(props) {
                     <br />
                     <div className="formInlineDiv">
                       <div className="searchActionButtons">
-                        <Button type="submit">
+                        <Button
+                          type="submit"
+                          onClick={handleReferredOutPatient}
+                        >
                           <FormattedMessage
-                            id="label.button.search"
-                            defaultMessage="Search"
+                            id="referral.button.labSearch"
+                            defaultMessage="Search Patient"
                           />
                         </Button>
                       </div>
@@ -752,8 +796,8 @@ function ReferredOutTests(props) {
                       <div className="searchActionButtons">
                         <Button type="submit">
                           <FormattedMessage
-                            id="label.button.search"
-                            defaultMessage="Search"
+                            id="referral.button.patientSearch"
+                            defaultMessage="Search Patient"
                           />
                         </Button>
                       </div>
@@ -851,8 +895,11 @@ function ReferredOutTests(props) {
               </div>
               <div className="formInlineDiv">
                 <div className="searchActionButtons">
-                  <Button type="button" onClick={handleSearchReferralPatient}>
-                    <FormattedMessage id="referral.main.button" />
+                  <Button type="button" onClick={handleReferredOutPatient}>
+                    <FormattedMessage
+                      id="referral.main.button"
+                      defaultMessage="Search Referrals By Patient"
+                    />
                   </Button>
                 </div>
               </div>
