@@ -1,5 +1,6 @@
 const ReferredOutTestsFormValues = {
   labNumber: "",
+  labNumberInput: "",
   patientId: "",
   selectedPatientId: "",
   lastName: "",
@@ -11,9 +12,10 @@ const ReferredOutTestsFormValues = {
   endDate: "",
   dateType: "",
   checkbox: "",
-  testUnitIds : [],
-  testTestIds : []
+  testUnitIds : "",
+  testTestIds : "",
+  searchTypeValues : ["TEST_AND_DATES", "LAB_NUMBER", "PATIENT"]
 };
 
-//same attribute fix needed
+// some attribute fix needed
 export default ReferredOutTestsFormValues;
