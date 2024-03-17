@@ -57,7 +57,7 @@ function ReferredOutTests(props) {
     useContext(NotificationContext);
 
   const intl = useIntl();
-  const itemList = [
+  const dateTypeList = [
     {
       id: "option-0",
       text: "Sent Date",
@@ -70,14 +70,12 @@ function ReferredOutTests(props) {
     },
   ];
 
-  const searchTypeValues = ["TEST_AND_DATES", "LAB_NUMBER", "PATIENT"];
-
   const componentMounted = useRef(false);
   const [testUnits, setTestUnits] = useState([]);
   const [testUnitsIdList, setTestUnitsIdList] = useState([]);
   const [testNames, setTestNames] = useState([]);
   const [testNamesIdList, setTestNamesIdList] = useState([]);
-  const [items, setItems] = useState(itemList[0].tag);
+  const [dateType, setDateType] = useState(dateTypeList[0].tag);
   const [dob, setDob] = useState("");
   const [patientSearchResults, setPatientSearchResults] = useState([]);
   const [page, setPage] = useState(1);
@@ -91,45 +89,14 @@ function ReferredOutTests(props) {
   const [innitialized, setInnitialized] = useState(false);
   const [tests, setTests] = useState([]);
   const [testSections, setTestSections] = useState([]);
-  const [defaultTestSectionId, setDefaultTestSectionId] = useState("");
-  const [defaultTestSectionLabel, setDefaultTestSectionLabel] = useState("");
-  const [defaultTestId, setDefaultTestId] = useState("");
-  const [defaultTestLabel, setDefaultTestLabel] = useState("");
-
-  // search endpoint fix needed
-  // const handleSearchReferralPatient = () => {
-  //   let referredOutTestsOutPut =
-  //     config.serverBaseUrl +
-  //     `/ReferredOutTests?report=patientCILNSP_vreduit&type=patient&accessionDirect=${referredOutTestsFormValues.form}&highAccessionDirect=${referredOutTestsFormValues.to}&dateOfBirthSearchValue=${referredOutTestsFormValues.dateOfBirth}&selPatient=${referredOutTestsFormValues.selectedPatientId}&referringSiteId=${referredOutTestsFormValues.referringSiteId}&referringSiteDepartmentId=${referredOutTestsFormValues.referringSiteName}&onlyResults=${result}&_onlyResults=${checkbox}&dateType=${items}&lowerDateRange=${referredOutTestsFormValues.startDate}&upperDateRange=${referredOutTestsFormValues.endDate}`;
-  //   window.open(referredOutTestsOutPut);
-  // };
 
   const handleReferredOutPatient = () => {
     let referredOutTestsOutPut =
       config.serverBaseUrl +
-      `/ReferredOutTests?searchType=${searchType}&dateType=${items}&startDate=${referredOutTestsFormValues.startDate}&endDate=${referredOutTestsFormValues.endDate}&${testUnitsIdList}_testUnitIds=1${testNamesIdList}&_testIds=1&labNumber=${referredOutTestsFormValues.labNumberInput}&dateOfBirthSearchValue=${referredOutTestsFormValues.dateOfBirth}&selPatient=${referredOutTestsFormValues.selectedPatientId}&_csrf=${localStorage.getItem("CSRF")}`;
-      
-      console.error(referredOutTestsOutPut)
+      `/ReferredOutTests?searchType=${searchType}&dateType=${dateType}&startDate=${referredOutTestsFormValues.startDate}&endDate=${referredOutTestsFormValues.endDate}&${testUnitsIdList}_testUnitIds=1&${testNamesIdList}_testIds=1&labNumber=${referredOutTestsFormValues.labNumberInput}&dateOfBirthSearchValue=${referredOutTestsFormValues.dateOfBirth}&selPatient=${referredOutTestsFormValues.selectedPatientId}&_csrf=${localStorage.getItem("CSRF")}`;
+
     window.open(referredOutTestsOutPut);
   };
-
-  // const handleSearchReferralPatient = () => {
-  //   let referredOutTestsOutPut =
-  //     config.serverBaseUrl +
-  //     `/ReferredOutTests?report=patientCILNSP_vreduit&type=patient&accessionDirect=${referredOutTestsFormValues.form}&highAccessionDirect=${referredOutTestsFormValues.to}&dateOfBirthSearchValue=${referredOutTestsFormValues.dateOfBirth}&selPatient=${referredOutTestsFormValues.selectedPatientId}&referringSiteId=${referredOutTestsFormValues.referringSiteId}&referringSiteDepartmentId=${referredOutTestsFormValues.referringSiteName}&onlyResults=${result}&_onlyResults=${checkbox}&dateType=${items}&lowerDateRange=${referredOutTestsFormValues.startDate}&upperDateRange=${referredOutTestsFormValues.endDate}`;
-  //   window.open(referredOutTestsOutPut);
-  // };
-
-  //ReferredOutTests?searchType=PATIENT&dateType=SENT&startDate=&endDate=&_testUnitIds=1&_testIds=1&labNumber=DEV01240000000000003&dateOfBirthSearchValue=&selPatient=4&_csrf=f6b25f58-8652-4119-899f-b25fff72345e
-
-  // TODO
-  // pathologyCaseView
-  // multiselect show case [done]
-  // settingup test,testis states
-  // searchtype state fixup
-  // endpoint fix 
-  // multiple end [test/unit] point addition handle
-  // cleanUp left
 
   const handleSubmit = (values) => {
     setLoading(true);
@@ -171,6 +138,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       labNumberInput: e.target.value,
     });
+    setSearchType(referredOutTestsFormValues.searchTypeValues[1])
   }
 
   function handleLabNumber(e) {
@@ -178,6 +146,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       labNumber: e.target.value,
     });
+    setSearchType(referredOutTestsFormValues.searchTypeValues[2])
   }
 
   function handlePatientId(e) {
@@ -185,6 +154,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       patientId: e.target.value,
     });
+    setSearchType(referredOutTestsFormValues.searchTypeValues[2])
   }
 
   function handleLastName(e) {
@@ -192,6 +162,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       lastName: e.target.value,
     });
+    setSearchType(referredOutTestsFormValues.searchTypeValues[2])
   }
 
   function handleFirstName(e) {
@@ -199,6 +170,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       firstName: e.target.value,
     });
+    setSearchType(referredOutTestsFormValues.searchTypeValues[2])
   }
 
   function handleGender(e) {
@@ -206,6 +178,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       gender: e,
     });
+    setSearchType(referredOutTestsFormValues.searchTypeValues[2])
   }
 
   const loadNextResultsPage = () => {
@@ -264,6 +237,7 @@ function ReferredOutTests(props) {
     });
 
     setDob(e[1]);
+    setSearchType(referredOutTestsFormValues.searchTypeValues[2])
   };
 
   const handleDatePickerChangeDate = (datePicker, date) => {
@@ -292,6 +266,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       PatientStatusReportFormValues: obj,
     });
+    setSearchType(referredOutTestsFormValues.searchTypeValues[0])
   };
 
   const patientSelected = (e) => {
@@ -303,6 +278,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       selectedPatientId: e.target.id,
     });
+    setSearchType(referredOutTestsFormValues.searchTypeValues[2])
 
     const searchEndPoint =
       "/rest/patient-details?patientID=" + patientSelected.patientID;
@@ -329,32 +305,6 @@ function ReferredOutTests(props) {
     }
   };
 
-  const submitOnSelectUnit = (e) => {
-    setReferredOutTestsFormValues({
-      ...referredOutTestsFormValues,
-      testUnitIds: e.target.value,
-    });
-    setSearchType(searchTypeValues[0]);
-    setNextPage(null);
-    setPreviousPage(null);
-    setPagination(false);
-    var values = { unitType: e.target.value };
-    handleSubmit(values);
-  };
-
-  const submitOnSelectTest = (e) => {
-    setReferredOutTestsFormValues({
-      ...referredOutTestsFormValues,
-      testTestIds: e.target.value,
-    });
-    setSearchType(searchTypeValues[0]);
-    setNextPage(null);
-    setPreviousPage(null);
-    setPagination(false);
-    var values = { testName: e.target.value };
-    handleSubmit(values);
-  };
-
   useEffect(() =>{
     if(testNames.testNames){
       var testNamesIdList = testNames.testNames.map((test) => ("testIds="+test.id+"&")).join("");
@@ -375,8 +325,6 @@ function ReferredOutTests(props) {
     getFromOpenElisServer("/rest/test-list", (fetchedTests) => {
       let test = fetchedTests.find((test) => test.id === testId);
       let testLabel = test ? test.value : "";
-      setDefaultTestId(testId);
-      setDefaultTestLabel(testLabel);
       setTestUnits(testLabel);
       getTests(fetchedTests);
     });
@@ -390,8 +338,6 @@ function ReferredOutTests(props) {
         (testSection) => testSection.id === testSectionId
       );
       let testSectionLabel = testSection ? testSection.value : "";
-      setDefaultTestSectionId(testSectionId);
-      setDefaultTestSectionLabel(testSectionLabel);
       setTestNames(testSectionLabel);
       fetchTestSections(fetchedTestSections);
     });
@@ -488,14 +434,14 @@ function ReferredOutTests(props) {
                       <Dropdown
                         id="dateType"
                         name="dateType"
-                        initialSelectedItem={itemList.find(
-                          (item) => item.tag === items
+                        initialSelectedItem={dateTypeList.find(
+                          (item) => item.tag === dateType
                         )}
-                        items={itemList}
+                        items={dateTypeList}
                         itemToString={(item) => (item ? item.text : "")}
                         onChange={(item) => {
-                          setSearchType(searchTypeValues[0]);
-                          setItems(item.selectedItem.tag);
+                          setSearchType(referredOutTestsFormValues.searchTypeValues[0]);
+                          setDateType(item.selectedItem.tag);
                         }}
                       />
                       <h5 style={{ paddingTop: "10px", paddingLeft: "6px" }}>
@@ -608,12 +554,12 @@ function ReferredOutTests(props) {
                     <div className="formInlineDiv">
                       <div className="searchActionButtons">
                         <Button
-                          type="submit"
+                          type="button"
                           onClick={handleReferredOutPatient}
                         >
                           <FormattedMessage
                             id="referral.button.unitTestSearch"
-                            defaultMessage="Search By Unit(s) & Test(s)"
+                            defaultMessage="Search Referrals By Unit(s) & Test(s)"
                           />
                         </Button>
                       </div>
@@ -644,7 +590,7 @@ function ReferredOutTests(props) {
                           value={values[field.name]}
                           onChange={(e, rawValue) => {
                             setFieldValue(field.name, rawValue);
-                            setSearchType(searchTypeValues[1]);
+                            setSearchType(referredOutTestsFormValues.searchTypeValues[1]);
                             handleLabNumberSearch(e);
                           }}
                         />
@@ -654,12 +600,12 @@ function ReferredOutTests(props) {
                     <div className="formInlineDiv">
                       <div className="searchActionButtons">
                         <Button
-                          type="submit"
+                          type="button"
                           onClick={handleReferredOutPatient}
                         >
                           <FormattedMessage
                             id="referral.button.labSearch"
-                            defaultMessage="Search Patient"
+                            defaultMessage="Search Referrals By Lab Number"
                           />
                         </Button>
                       </div>

@@ -36,6 +36,7 @@ import EOrderPage from "./components/eOrder/Index";
 import RoutineIndex from "./components/reports/routine/Index.js";
 import StudyIndex from "./components/reports/study/index.js";
 import PrintBarcode from "./components/printBarcode/Index";
+import ReferredOutTests from "./components/resultPage/resultsReferredOut/ReferredOutTests.js";
 
 export default function App() {
   let i18nConfig = {
@@ -370,6 +371,12 @@ export default function App() {
                   path="/RangeResults"
                   exact
                   component={() => <ResultSearch />}
+                  role="Results"
+                />
+                <SecureRoute
+                  path="/ReferredOutTests"
+                  exact
+                  component={() => <ReferredOutTests />}
                   role="Results"
                 />
                 <SecureRoute
