@@ -86,7 +86,7 @@ const ReferredOut = () => {
     setLoading(true);
     const baseParams = 'report=referredOut&type=patient';
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
-    const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.startDate}&lowerDateRange=${reportFormValues.endDate}&locationCode=${selectedLocationCode}`;
+    const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.endDate}&lowerDateRange=${reportFormValues.startDate}&locationCode=${selectedLocationCode}`;
 
     const check = window.open(url, '_blank');
     if (check) {
