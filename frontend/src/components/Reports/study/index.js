@@ -27,7 +27,7 @@ const StudyIndex = () => {
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const breadcrumbMap = {
     "patient_patientCollection": "patient.report.collection.name",
-    "patient_patientAssociated": "patient.report.associated.name"
+    "patient_patientAssociated": "patient.report.associated.name",
     "patient_retroCINonConformityByDate": "header.label.nonconformityByDate",
     "patient_retroCInonConformityBySectionReason": "reports.nonConformity.bySectionReason.title",
     "patient_retroCINonConformityByLabno": "header.label.intialFollowup",
