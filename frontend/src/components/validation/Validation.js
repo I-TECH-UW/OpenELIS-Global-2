@@ -455,6 +455,7 @@ const Validation = (props) => {
               type="button"
               onClick={() => handleSave(values)}
               id="submit"
+              style={{ marginTop: "16px" }}
             >
               <FormattedMessage id="label.button.save" />
             </Button>
