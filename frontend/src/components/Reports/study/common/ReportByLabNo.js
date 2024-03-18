@@ -4,9 +4,7 @@ import { Form, Grid, Column, Section, Button } from "@carbon/react";
 import CustomLabNumberInput from "../../../common/CustomLabNumberInput";
 import config from "../../../../config.json";
 
-
 function ReportByLabNo(props) {
- 
   const intl = useIntl();
   const [values, setValues] = useState({ from: '', to: '' });
 
@@ -20,42 +18,38 @@ function ReportByLabNo(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+
     const baseParams = `report=${props.report}&type=patient`;
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
     const url = `${baseUrl}?${baseParams}&accessionDirect=${values.from}&highAccessionDirect=${values.to}`;
-  
+
     window.open(url, '_blank');
-   };
-  
+  };
+
   return (
     <>
       <Form onSubmit={handleSubmit}>
-       
+        <Section>
+          <h3>
+            <FormattedMessage id={props.id}/>
+          </h3>
+        </Section>
+        <br />
+        <Grid fullWidth={true}>
+          <Column lg={16} md={8} sm={6}>
             <Section>
-            <Section>
-              <h3>
-              <FormattedMessage id={props.id}/>
-              </h3>
-            </Section>
-            </Section>
-             <br />
-          <Grid fullWidth={true}>
-          <Column lg={16}>
-          <Section>
               <h5>
                 <FormattedMessage id="report.enter.labNumber.headline" />
               </h5>
               <h7>
                 <FormattedMessage id="sample.search.scanner.instructions" />
               </h7>
-              
-              </Section>
+            </Section>
           </Column>
         </Grid>
         <br />
         <Grid fullWidth={true}>
-        <Column lg={7}>
+          <Column lg={7} md={4} sm={3}>
             <CustomLabNumberInput
               name="from"
               value={values.from}
@@ -68,7 +62,7 @@ function ReportByLabNo(props) {
               onChange={handleChange}
             />
           </Column>
-          <Column lg={7}>
+          <Column lg={7} md={4} sm={3}>
             <CustomLabNumberInput
               name="to"
               value={values.to}
@@ -81,17 +75,16 @@ function ReportByLabNo(props) {
               onChange={handleChange}
             />
           </Column>
-        
         </Grid>
         <br />
-              <br />
+        <br />
         <Grid fullWidth={true}>
-          <Column lg={16}>
-           <Section>
-                <Button type="submit">
-                  <FormattedMessage id="label.button.generatePrintableVersion" />
-                </Button>
-                </Section>
+          <Column lg={16} md={8} sm={6}>
+            <Section>
+              <Button type="submit">
+                <FormattedMessage id="label.button.generatePrintableVersion" />
+              </Button>
+            </Section>
           </Column>
         </Grid>
       </Form>
