@@ -69,7 +69,4 @@ jobs:
         with:
           context: ./frontend
           push: false
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{github.repository}}:latest
-          cache-to: type=inline
+          
