@@ -12,6 +12,8 @@ import {
 } from "@carbon/react";
 import { injectIntl, FormattedMessage, useIntl } from "react-intl";
 import ReportByID from "./common/ReportByID";
+import ReportByDate from "./common/ReportByDate";
+import ReportByLabNo from "./common/ReportByLabNo";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 
 const StudyIndex = () => {
@@ -26,6 +28,10 @@ const StudyIndex = () => {
   const breadcrumbMap = {
     "patient_patientCollection": "patient.report.collection.name",
     "patient_patientAssociated": "patient.report.associated.name"
+    "patient_retroCINonConformityByDate": "header.label.nonconformityByDate",
+    "patient_retroCInonConformityBySectionReason": "reports.nonConformity.bySectionReason.title",
+    "patient_retroCINonConformityByLabno": "header.label.intialFollowup",
+    "patient_retroCIFollowupRequiredByLocation": "reports.followupRequired.byLocation"
   };
 
   useEffect(() => {
@@ -82,11 +88,23 @@ const StudyIndex = () => {
             {type === "patient" && report === "patientAssociated" && (
               <ReportByID report="patientAssociated" id="patient.report.associated.name" />
             )}
+            {type === "patient" && report === "retroCINonConformityByDate" &&   
+             (<ReportByDate report="retroCINonConformityByDate"  id="header.label.nonconformityByDate"/>)}
+
+             {type === "patient" && report === "retroCInonConformityBySectionReason" &&   
+             (<ReportByDate report="retroCInonConformityBySectionReason"  id="reports.nonConformity.bySectionReason.title"/>)}
+
+             {type === "patient" && report === "retroCINonConformityByLabno" &&   
+             (<ReportByLabNo report="retroCINonConformityByLabno"  id="header.label.intialFollowup"/>)}
+
+             {type === "patient" && report === "retroCIFollowupRequiredByLocation" &&   
+             (<ReportByDate report="retroCIFollowupRequiredByLocation"  id="reports.followupRequired.byLocation"/>)}
           </>
         )}
       </div>
     </>
   );
 };
+
 
 export default injectIntl(StudyIndex);

@@ -150,21 +150,15 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=retroCINonConformityByDate",
+          link:"/StudyReport?type=patient&report=retroCINonConformityByDate",
           label: <FormattedMessage id="sideNav.label.noncomformityreportsbydate"/>,
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=retroCInonConformityBySectionReason",
+          link:"/StudyReport?type=patient&report=retroCInonConformityBySectionReason",
           label: config.serverBaseUrl + <FormattedMessage id="sideNav.label.noncomformityreportsbyunit"/>,
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=retroCINonConformityByLabno",
+          link:"/StudyReport?type=patient&report=retroCINonConformityByLabno",
           label: <FormattedMessage id="sideNav.label.noncomformityreportsbylabno"/>,
         },
         {
@@ -174,9 +168,7 @@ export const RoutineReportsMenu = {
           label: <FormattedMessage id="sideNav.label.noncomformitynotification"/>,
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=retroCIFollowupRequiredByLocation",
+          link:"/StudyReport?type=patient&report=retroCIFollowupRequiredByLocation",
           label:<FormattedMessage id="sideNav.label.followuprequired"/>,
         },
       ],
