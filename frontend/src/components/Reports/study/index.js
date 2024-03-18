@@ -11,6 +11,7 @@ import {
   Loading,
 } from "@carbon/react";
 import { injectIntl, FormattedMessage, useIntl } from "react-intl";
+import ReportByID from "./common/ReportByID";
 import ReportByDate from "./common/ReportByDate";
 import ReportByLabNo from "./common/ReportByLabNo";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
@@ -25,6 +26,8 @@ const StudyIndex = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const breadcrumbMap = {
+    "patient_patientCollection": "patient.report.collection.name",
+    "patient_patientAssociated": "patient.report.associated.name",
     "patient_retroCINonConformityByDate": "header.label.nonconformityByDate",
     "patient_retroCInonConformityBySectionReason": "reports.nonConformity.bySectionReason.title",
     "patient_retroCINonConformityByLabno": "header.label.intialFollowup",
@@ -79,7 +82,13 @@ const StudyIndex = () => {
         {isLoading && <Loading />}
         {!isLoading && (
           <>
-          {type === "patient" && report === "retroCINonConformityByDate" &&   
+            {type === "patient" && report === "patientCollection" && (
+              <ReportByID report="patientCollection" id="patient.report.collection.name" />
+            )}
+            {type === "patient" && report === "patientAssociated" && (
+              <ReportByID report="patientAssociated" id="patient.report.associated.name" />
+            )}
+            {type === "patient" && report === "retroCINonConformityByDate" &&   
              (<ReportByDate report="retroCINonConformityByDate"  id="header.label.nonconformityByDate"/>)}
 
              {type === "patient" && report === "retroCInonConformityBySectionReason" &&   
@@ -96,5 +105,6 @@ const StudyIndex = () => {
     </>
   );
 };
+
 
 export default injectIntl(StudyIndex);

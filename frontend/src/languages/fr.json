@@ -16,6 +16,8 @@
     "label.button.cancel": "Annuler",
     "label.button.confirmDelete": "Confirmation de la suppression",
     "label.button.generatePrintableVersion": "Générer une version imprimable",
+    "label.report.byNationalId":"Numéro d'Identification Nationale / Identifiant Santé Unique",
+    "label.study.Reports":"Études Rapports",
     "login.title": "Identifiant",
     "label.study.Reports":"Études Rapports",
     "report.enter.labNumber.headline": "Générer un rapport ou une plage de rapports par numéro de numéro de laboratoire",

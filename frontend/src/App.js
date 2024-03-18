@@ -391,7 +391,7 @@ export default function App() {
                   component={() => <StudyReports />}
                   role="Reports"
                 />
-                <SecureRoute
+                 <SecureRoute
                   path="/StudyReport"
                   exact
                   component={() => <StudyIndex />}
