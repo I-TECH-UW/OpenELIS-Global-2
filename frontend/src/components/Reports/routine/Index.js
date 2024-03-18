@@ -11,7 +11,6 @@ import {
   Loading,
 } from "@carbon/react";
 import { injectIntl, FormattedMessage, useIntl } from "react-intl";
-import config from "../../../config.json";
 import StatisticsReport from "./StatisticsReport";
 import SummaryOfAllTest from "./SummaryOfAllTest";
 import HIVTestSummary from "./HivTestSummary";
@@ -23,22 +22,15 @@ const RoutineIndex = () => {
 
   const [type, setType] = useState("");
   const [report, setReport] = useState("");
-  const [source, setSource] = useState("");
   const [isLoading, setIsLoading] = useState(true);
  
 
   useEffect(() => {
-   
-
     const params = new URLSearchParams(window.location.search);
     const paramType = params.get("type");
     const paramReport = params.get("report");
-
     setType(paramType);
     setReport(paramReport);
-
-   
-
     if (paramType && paramReport) {
       setIsLoading(false);
     } else {
@@ -54,7 +46,6 @@ const RoutineIndex = () => {
             <BreadcrumbItem href="/">
               {intl.formatMessage({ id: "home.label" })}
             </BreadcrumbItem>
-          
           </Breadcrumb>
         </Column>
       </Grid>
@@ -74,8 +65,6 @@ const RoutineIndex = () => {
         {isLoading && <Loading />}
         {!isLoading && (
           <>
-           
-
             {type === "indicator" &&
               report === "statisticsReport" &&
               (<StatisticsReport />)}
@@ -84,11 +73,9 @@ const RoutineIndex = () => {
               report === "indicatorHaitiLNSPAllTests" &&
               ( <SummaryOfAllTest /> )}
 
-
             {type === "indicator" &&
               report === "indicatorCDILNSPHIV" &&
               (<HIVTestSummary/>)}
-
           </>
         )}
       </div>
