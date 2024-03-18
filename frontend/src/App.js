@@ -37,7 +37,6 @@ import RoutineIndex from "./components/Reports/routine/Index.js";
 import StudyIndex from "./components/Reports/study/index.js";
 import PrintBarcode from "./components/printBarcode/Index";
 
-
 export default function App() {
   let i18nConfig = {
     locale: navigator.language.split(/[-_]/)[0],
