@@ -61,7 +61,7 @@ const RejectionReport = () => {
     const baseParams = 'report=sampleRejectionReport&type=indicator';
 
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
-    const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.startDate}&lowerDateRange=${reportFormValues.endDate}`;
+    const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.endDate}&lowerDateRange=${reportFormValues.startDate}`;
 
     window.open(url, '_blank');
 
