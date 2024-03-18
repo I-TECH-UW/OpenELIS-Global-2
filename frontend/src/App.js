@@ -33,6 +33,8 @@ import ImmunohistochemistryDashboard from "./components/immunohistochemistry/Imm
 import ImmunohistochemistryCaseView from "./components/immunohistochemistry/ImmunohistochemistryCaseView";
 import RoutedResultsViewer from "./components/patient/resultsViewer/results-viewer.tsx";
 import EOrderPage from "./components/eOrder/Index";
+import SampleBatchEntrySetup from "./components/samplebatchentry/SampleBatchEntrySetup.js";
+
 
 export default function App() {
   let i18nConfig = {
@@ -332,6 +334,12 @@ export default function App() {
                   exact
                   component={() => <ResultSearch />}
                   role="Results"
+                />
+                <SecureRoute
+                  path="/SampleBatchEntrySetup"
+                  exact
+                  component={() => < SampleBatchEntrySetup/>}
+                  role="Reception"
                 />
                 <SecureRoute
                   path="/LogbookResults"

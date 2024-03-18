@@ -184,6 +184,7 @@
     "sidenav.label.immunochem" : "Immunohistochemistry",
     "sidenav.label.cytology" : "Cytology" ,
     "sidenav.label.results" : "Results",
+    "sidenav.label.SampleBatchEntrySetup" : "SampleBatchEntrySetup",
     "sidenav.label.results.unit" : "By Unit",
     "sidenav.label.results.patient" : "By Patient" ,
     "sidenav.label.results.order" : "By Order" ,
@@ -423,6 +424,10 @@
     "sample.label.search.labnumber" : "Search By Accesion Number"  ,
     "sample.label.search.patient" : "Search By Patient" ,
     "sample.label.search.Order" : "Search Order" ,
+    "sampleorder.label.currentDate" : "Current Date",
+    "sampleorder.label.currentTime" : "Current Time",
+    "sampleorder.label.recievedDate" : "Received Date",
+    "sampleorder.label.receptionTime" : "Reception Time",
     "label.button.remove.slide": "Remove Slide",
     "label.button.remove.block": "Remove Block",
     "label.button.remove.report": "Remove Report",
@@ -696,6 +701,7 @@
     "pagination.page": "page {page}",
     "pagination.page-number": "Page Number",
     "pagination.page-range": "of {total} {total, plural, one {page} other {pages}}",
-    "reports.export": "Export",    
+    "reports.export": "Export", 
     "reports.export.whonet": "WHONET Report"
+    
 }
