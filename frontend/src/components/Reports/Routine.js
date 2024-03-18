@@ -98,13 +98,15 @@ export const RoutineReportsMenu = {
             "/Report?type=patient&report=haitiNonConformityByDate",
           label:  <FormattedMessage id="sideNav.label.noncomformityreportsbydate"/>,
         },
+
         {
           link:
-            config.serverBaseUrl +"/NonconformityReportsByUnit",
-          label: <FormattedMessage id="NonconformityReportsByUnit"/>,
+    "/RoutineReport?type=patient&report=haitiNonConformityBySectionReason",
+  label: <FormattedMessage id="sideNav.label.nonconformityreportsbyunit"/>,
         },
       ],
     },
+    
     {
       title: <FormattedMessage id="sideNav.title.delayedvalidation"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,

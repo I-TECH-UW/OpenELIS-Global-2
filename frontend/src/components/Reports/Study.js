@@ -163,7 +163,7 @@ export const RoutineReportsMenu = {
           link:
             config.serverBaseUrl +
             "/Report?type=patient&report=retroCInonConformityBySectionReason",
-          label: config.serverBaseUrl + <FormattedMessage id="sideNav.label.noncomformityreportsbyunit"/>,
+          label: <FormattedMessage id="sideNav.label.noncomformityreportsbyunit"/>,
         },
         {
           link:

@@ -15,7 +15,7 @@ import config from "../../../config.json";
 import StatisticsReport from "./StatisticsReport";
 import SummaryOfAllTest from "./SummaryOfAllTest";
 import HIVTestSummary from "./HivTestSummary";
-
+import NonconformityReportsByUnit from "./Nonconformity-Unit";
 const RoutineIndex = () => {
   const intl = useIntl();
   const { setNotificationVisible, addNotification, notificationVisible } =
@@ -88,6 +88,10 @@ const RoutineIndex = () => {
             {type === "indicator" &&
               report === "indicatorCDILNSPHIV" &&
               (<HIVTestSummary/>)}
+
+            {type === "patient" &&
+              report === "haitiNonConformityBySectionReason" && 
+                (<NonconformityReportsByUnit />)}
 
           </>
         )}
