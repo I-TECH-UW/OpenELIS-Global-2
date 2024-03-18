@@ -11,11 +11,12 @@ import {
   Loading,
 } from "@carbon/react";
 import { injectIntl, FormattedMessage, useIntl } from "react-intl";
-import config from "../../../config.json";
+import PatientStatusReport from "./PatientStatusReport";
 import StatisticsReport from "./StatisticsReport";
 import SummaryOfAllTest from "./SummaryOfAllTest";
 import HIVTestSummary from "./HivTestSummary";
 import NonconformityReportsByUnit from "./Nonconformity-Unit";
+
 const RoutineIndex = () => {
   const intl = useIntl();
   const { setNotificationVisible, addNotification, notificationVisible } =
@@ -23,22 +24,14 @@ const RoutineIndex = () => {
 
   const [type, setType] = useState("");
   const [report, setReport] = useState("");
-  const [source, setSource] = useState("");
   const [isLoading, setIsLoading] = useState(true);
- 
 
   useEffect(() => {
-   
-
     const params = new URLSearchParams(window.location.search);
     const paramType = params.get("type");
     const paramReport = params.get("report");
-
     setType(paramType);
     setReport(paramReport);
-
-   
-
     if (paramType && paramReport) {
       setIsLoading(false);
     } else {
@@ -54,7 +47,6 @@ const RoutineIndex = () => {
             <BreadcrumbItem href="/">
               {intl.formatMessage({ id: "home.label" })}
             </BreadcrumbItem>
-          
           </Breadcrumb>
         </Column>
       </Grid>
@@ -74,7 +66,8 @@ const RoutineIndex = () => {
         {isLoading && <Loading />}
         {!isLoading && (
           <>
-           
+            {type === "patient" && report === "patientCILNSP_vreduit" && 
+            (<PatientStatusReport />)}
 
             {type === "indicator" &&
               report === "statisticsReport" &&
@@ -84,11 +77,9 @@ const RoutineIndex = () => {
               report === "indicatorHaitiLNSPAllTests" &&
               ( <SummaryOfAllTest /> )}
 
-
             {type === "indicator" &&
               report === "indicatorCDILNSPHIV" &&
               (<HIVTestSummary/>)}
-
             {type === "patient" &&
               report === "haitiNonConformityBySectionReason" && 
                 (<NonconformityReportsByUnit />)}

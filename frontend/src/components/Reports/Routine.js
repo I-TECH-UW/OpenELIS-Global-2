@@ -15,10 +15,7 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonDiscovery,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=patientCILNSP_vreduit",
-        
+          link: "/RoutineReport?type=patient&report=patientCILNSP_vreduit",
           label: <FormattedMessage id="sidenav.label.statusreport"/>,
         },
       ],
@@ -46,9 +43,7 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=indicator&report=sampleRejectionReport",
+          link: "/RoutineReport?type=indicator&report=sampleRejectionReport",
           label: <FormattedMessage id="sideNav.label.rejectionreport"/>,
         },
       ],
