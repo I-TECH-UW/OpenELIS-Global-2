@@ -5,6 +5,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.hibernate.ObjectNotFoundException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +21,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertThrows;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { BaseTestConfig.class, PatientTestConfig.class })
@@ -37,6 +41,24 @@ public class PatientServiceTest {
 
 	}
 
+	@Test
+	public void getAllPatients_shouldGetAllPatients() throws Exception {
+		Assert.assertEquals(1, patientService.getAllPatients().size());
+	}
+	@Test
+	public void deletePatient_shouldDeleteNewPatient() throws Exception {
+		String firstName = "Peter";
+		String lastname = "Master";
+		String dob = "9/12/1993";
+		String gender = "M";
+		Patient pat = createPatient(firstName, lastname, dob, gender);
+		String patientId = patientService.insert(pat);
+		Patient savedPatient = patientService.get(patientId);
+		patientService.delete(savedPatient);
+		assertThrows(ObjectNotFoundException.class, () -> {
+			patientService.get(patientId);
+		});
+	}
 	@Test
 	public void createPatient_shouldCreateNewPatient() throws Exception {
 		String firstName = "John";
@@ -57,23 +79,8 @@ public class PatientServiceTest {
 		Assert.assertEquals(gender, savedPatient.getGender());
 	}
 
-	@Test
-	public void deletePatient_shouldDeleteNewPatient() throws Exception {
-		String firstName = "Peter";
-		String lastname = "Master";
-		String dob = "9/12/1993";
-		String gender = "M";
-		Patient pat = createPatient(firstName, lastname, dob, gender);
-		String patientId = patientService.insert(pat);
-		Patient savedPatient = patientService.get(patientId);
-		patientService.delete(savedPatient);
-		Assert.assertEquals(0, patientService.getAllPatients().size());
-	}
 
-	@Test
-	public void getAllPatients_shouldGetAllPatients() throws Exception {
-		Assert.assertEquals(0, patientService.getAllPatients().size());
-	}
+
 
 	private Patient createPatient(String firstName, String LastName, String birthDate, String gender)
 			throws ParseException {
