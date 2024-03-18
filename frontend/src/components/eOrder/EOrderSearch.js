@@ -93,7 +93,7 @@ const EOrderSearch = ({
     <>
       <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>
@@ -142,7 +142,6 @@ const EOrderSearch = ({
         <FormattedMessage id="eorder.search2.text" />
         <br></br>
         <div className="formInlineDiv">
-          <div className="formInlineDiv">
             <CustomDatePicker
               id={"eOrder_startDate"}
               labelText={intl.formatMessage({ id: "eorder.date.start" })}
@@ -150,6 +149,8 @@ const EOrderSearch = ({
               className="inputDate"
               onChange={(date) => setStartDate(date)}
             />
+            </div>
+            <div className="formInlineDiv">
             <CustomDatePicker
               id={"eOrder_startDate"}
               labelText={intl.formatMessage({ id: "eorder.date.end" })}
@@ -187,13 +188,15 @@ const EOrderSearch = ({
                   setAllInfo(e.currentTarget.checked);
                 }}
               />
+               <div className="formInlineDiv">
+                <div></div>
               <Button onClick={searchByDateAndStatus}>
                 <FormattedMessage id="label.button.search" />
               </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
       {searchCompleted && !hasEOrders && (
         <FormattedMessage id="eorder.search.noresults" />
       )}
