@@ -284,10 +284,30 @@ export function SearchResultForm(props) {
       querySearch(values);
     }
 
-    let displayFormType = new URLSearchParams(window.location.search).get(
-      "type",
-    );
-    let doRange = new URLSearchParams(window.location.search).get("doRange");
+    
+    var displayFormType = "";
+    var doRange = "";
+    if(window.location.pathname == "/result"){
+      displayFormType = new URLSearchParams(window.location.search).get(
+        "type",
+      );
+      doRange = new URLSearchParams(window.location.search).get("doRange");
+    } else if(window.location.pathname == "/LogbookResults"){
+      displayFormType = "unit" ;
+      doRange = "false";
+    } else if(window.location.pathname == "/PatientResults"){
+      displayFormType = "patient" ;
+      doRange = "false";
+    }else if(window.location.pathname == "/AccessionResults"){
+      displayFormType = "order" ;
+      doRange = "false";
+    }else if(window.location.pathname == "/StatusResults"){
+      displayFormType = "date" ;
+      doRange = "false";
+    } else if(window.location.pathname == "/RangeResults"){
+      displayFormType = "range" ;
+      doRange = "true";
+    }
     setSearchBy({
       type: displayFormType,
       doRange: doRange,
@@ -295,6 +315,7 @@ export function SearchResultForm(props) {
   }, []);
 
   useEffect(() => {
+   
     let accessionNumber = new URLSearchParams(window.location.search).get(
       "accessionNumber",
     );
@@ -1493,7 +1514,39 @@ export function SearchResults(props) {
                 pageSize={pageSize}
                 pageSizes={[10, 20, 50, 100]}
                 totalItems={props.results?.testResult?.length}
-              ></Pagination>
+                forwardText={intl.formatMessage({ id: "pagination.forward" })}
+                backwardText={intl.formatMessage({ id: "pagination.backward" })}
+                itemRangeText={(min, max, total) =>
+                  intl.formatMessage(
+                    { id: "pagination.item-range" },
+                    { min: min, max: max, total: total },
+                  )
+                }
+                itemsPerPageText={intl.formatMessage({
+                  id: "pagination.items-per-page",
+                })}
+                itemText={(min, max) =>
+                  intl.formatMessage(
+                    { id: "pagination.item" },
+                    { min: min, max: max },
+                  )
+                }
+                pageNumberText={intl.formatMessage({
+                  id: "pagination.page-number",
+                })}
+                pageRangeText={(_current, total) =>
+                  intl.formatMessage(
+                    { id: "pagination.page-range" },
+                    { total: total },
+                  )
+                }
+                pageText={(page, pagesUnknown) =>
+                  intl.formatMessage(
+                    { id: "pagination.page" },
+                    { page: pagesUnknown ? "" : page },
+                  )
+                }
+              />
 
               <Button type="button" id="submit" onClick={handleSave}>
                 <FormattedMessage id="label.button.save" />
