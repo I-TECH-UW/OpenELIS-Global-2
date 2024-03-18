@@ -15,6 +15,7 @@ import PatientStatusReport from "./PatientStatusReport";
 import StatisticsReport from "./StatisticsReport";
 import SummaryOfAllTest from "./SummaryOfAllTest";
 import HIVTestSummary from "./HivTestSummary";
+import RejectionReport from "./RejectionReport";
 
 const RoutineIndex = () => {
   const intl = useIntl();
@@ -79,6 +80,11 @@ const RoutineIndex = () => {
             {type === "indicator" &&
               report === "indicatorCDILNSPHIV" &&
               (<HIVTestSummary/>)}
+
+              {type === "indicator" &&
+              report === "sampleRejectionReport" &&
+              (<RejectionReport/>)}
+
           </>
         )}
       </div>
