@@ -8,6 +8,8 @@ name: Publish 3.X FrontEnd Docker image
 on:
   push:
     branches: [ 'develop_3x']
+  pull_request:
+    branches: [develop_3x]   
   release:
     types: [published]
   workflow_dispatch:
@@ -51,6 +53,7 @@ jobs:
           images: ${{ env.DOCKER_NAME }}
 
       - name: Build and push Docker image
+        if: github.event_name == 'push'
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
@@ -60,3 +63,16 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{github.repository}}:latest
           cache-to: type=inline
+
+      - name: Build Docker image
+        if: github.event_name == 'pull_request'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile.prod
+          push: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{github.repository}}:latest
+          cache-to: type=inline
+    
