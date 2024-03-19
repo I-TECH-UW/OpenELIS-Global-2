@@ -127,7 +127,7 @@ export const RoutineReportsMenu = {
       SideNavMenuItem: [
         {
           link:
-            "/CISampleRoutineExport?type=patient&report=CISampleRoutineExport",
+            "/RoutineReport?type=patient&report=CISampleRoutineExport",
           label: <FormattedMessage id="sideNav.label.exportcsvfile"/>,
         },
       ],
