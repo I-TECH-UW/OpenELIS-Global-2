@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
-    Form,
-    FormLabel,
-    Grid,
-    Column,
-    Section,
-    Button,
-    Loading,
-  } from "@carbon/react";
-import { FormattedMessage, useIntl } from 'react-intl';
+  Form,
+  FormLabel,
+  Grid,
+  Column,
+  Section,
+  Button,
+  Loading,
+  Heading,
+} from "@carbon/react";
+import { FormattedMessage, useIntl } from "react-intl";
 import "../../Style.css";
 import { AlertDialog } from "../../common/CustomNotification";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import config from "../../../config.json";
-
+import PageBreadCrumb from "../../common/PageBreadCrumb";
 
 const RejectionReport = () => {
   const intl = useIntl();
@@ -21,10 +22,8 @@ const RejectionReport = () => {
   const [notificationVisible, setNotificationVisible] = useState(false);
   const [reportFormValues, setReportFormValues] = useState({
     startDate: null,
-    endDate: null
+    endDate: null,
   });
-
-
 
   function encodeDate(dateString) {
     if (typeof dateString === "string" && dateString.trim() !== "") {
@@ -58,85 +57,111 @@ const RejectionReport = () => {
   const handleSubmit = () => {
     setLoading(true);
 
-    const baseParams = 'report=sampleRejectionReport&type=indicator';
+    const baseParams = "report=sampleRejectionReport&type=indicator";
 
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
     const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.endDate}&lowerDateRange=${reportFormValues.startDate}`;
 
-    window.open(url, '_blank');
-
+    window.open(url, "_blank");
 
     setLoading(false);
     setNotificationVisible(true);
   };
 
+  const breadcrumbs = [
+    { label: "home.label", link: "/" },
+    { label: "routine.reports", link: "/RoutineReports" },
+    {
+      label: "openreports.mgt.rejection",
+      link: "/RoutineReport?type=indicator&report=sampleRejectionReport",
+    },
+  ];
+
   return (
     <>
-      <FormLabel>
-        <Section>
-          <Section>
-            <h1>
-            <FormattedMessage id="openreports.mgt.rejection" />
-             </h1>
-          </Section>
-        </Section>
-      </FormLabel>
-      {notificationVisible && <AlertDialog />}
-      {loading && <Loading />}
+      <br />
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         <Column lg={16}>
-          <Form>
-            <Grid fullWidth={true}>
-              <Column lg={10}>
-                <Section>
-                  <br />
-                  <br />
-                  <h5>
-                  <FormattedMessage id="select.dateRange" />
-
-                  </h5>
-                </Section>
-                <div className="inlineDiv">
-                  <CustomDatePicker
-                    id={"startDate"}
-                    labelText={intl.formatMessage({
-                      id: "eorder.date.start",
-                      defaultMessage: "Start Date",
-                    })}
-                    autofillDate={true}
-                    value={reportFormValues.startDate}
-                    className="inputDate"
-                    onChange={(date) =>
-                      handleDatePickerChangeDate("startDate", date)
-                    }
-                  />
-                  <CustomDatePicker
-                    id={"endDate"}
-                    labelText={intl.formatMessage({
-                      id: "eorder.date.end",
-                      defaultMessage: "End Date",
-                    })}
-                    className="inputDate"
-                    autofillDate={true}
-                    value={reportFormValues.endDate}
-                    onChange={(date) =>
-                      handleDatePickerChangeDate("endDate", date)
-                    }
-                  />
-                </div>
-              </Column>
-            </Grid>
-            <br />
+          <Section>
             <Section>
-              <br />
-              <Button type="button" onClick={handleSubmit}>
-                <FormattedMessage id="label.button.generatePrintableVersion" defaultMessage="Generate printable version" />
-              </Button>
+              <Heading>
+                <FormattedMessage id="selectReportValues.title" />
+              </Heading>
             </Section>
-          </Form>
+          </Section>
         </Column>
       </Grid>
-
+      <div className="orderLegendBody">
+        {notificationVisible && <AlertDialog />}
+        {loading && <Loading />}
+        <Grid fullWidth={true}>
+          <Column lg={16}>
+            <Section>
+              <Section>
+                <Heading>
+                  <FormattedMessage id="openreports.mgt.rejection" />
+                </Heading>
+              </Section>
+            </Section>
+          </Column>
+        </Grid>
+        <Grid fullWidth={true}>
+          <Column lg={16}>
+            <Form>
+              <Grid fullWidth={true}>
+                <Column lg={10}>
+                  <Section>
+                    <br />
+                    <br />
+                    <h5>
+                      <FormattedMessage id="select.dateRange" />
+                    </h5>
+                  </Section>
+                  <div className="inlineDiv">
+                    <CustomDatePicker
+                      id={"startDate"}
+                      labelText={intl.formatMessage({
+                        id: "eorder.date.start",
+                        defaultMessage: "Start Date",
+                      })}
+                      autofillDate={true}
+                      value={reportFormValues.startDate}
+                      className="inputDate"
+                      onChange={(date) =>
+                        handleDatePickerChangeDate("startDate", date)
+                      }
+                    />
+                    <CustomDatePicker
+                      id={"endDate"}
+                      labelText={intl.formatMessage({
+                        id: "eorder.date.end",
+                        defaultMessage: "End Date",
+                      })}
+                      className="inputDate"
+                      autofillDate={true}
+                      value={reportFormValues.endDate}
+                      onChange={(date) =>
+                        handleDatePickerChangeDate("endDate", date)
+                      }
+                    />
+                  </div>
+                </Column>
+              </Grid>
+              <br />
+              <Section>
+                <br />
+                <Button type="button" onClick={handleSubmit}>
+                  <FormattedMessage
+                    id="label.button.generatePrintableVersion"
+                    defaultMessage="Generate printable version"
+                  />
+                </Button>
+              </Section>
+            </Form>
+          </Column>
+        </Grid>
+      </div>
     </>
   );
 };
