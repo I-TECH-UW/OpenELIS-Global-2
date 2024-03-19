@@ -16,6 +16,7 @@ import StatisticsReport from "./StatisticsReport";
 import SummaryOfAllTest from "./SummaryOfAllTest";
 import HIVTestSummary from "./HivTestSummary";
 import RejectionReport from "./RejectionReport";
+import ReferredOut from "./ReferredOut";
 
 const RoutineIndex = () => {
   const intl = useIntl();
@@ -32,6 +33,7 @@ const RoutineIndex = () => {
     const paramReport = params.get("report");
     setType(paramType);
     setReport(paramReport);
+
     if (paramType && paramReport) {
       setIsLoading(false);
     } else {
@@ -40,34 +42,17 @@ const RoutineIndex = () => {
   }, []);
 
   return (
-    <>
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Breadcrumb>
-            <BreadcrumbItem href="/">
-              {intl.formatMessage({ id: "home.label" })}
-            </BreadcrumbItem>
-          </Breadcrumb>
-        </Column>
-      </Grid>
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Section>
-            <Section>
-              <Heading>
-                <FormattedMessage id="selectReportValues.title" />
-              </Heading>
-            </Section>
-          </Section>
-        </Column>
-      </Grid>
-      <div className="orderLegendBody">
+      <>
         {notificationVisible === true && <AlertDialog />}
         {isLoading && <Loading />}
         {!isLoading && (
           <>
             {type === "patient" && report === "patientCILNSP_vreduit" && 
             (<PatientStatusReport />)}
+            
+            {type === "patient" && 
+             report === "referredOut" && 
+             (<ReferredOut />)}
 
             {type === "indicator" &&
               report === "statisticsReport" &&
@@ -87,8 +72,7 @@ const RoutineIndex = () => {
 
           </>
         )}
-      </div>
-    </>
+      </>
   );
 };
 

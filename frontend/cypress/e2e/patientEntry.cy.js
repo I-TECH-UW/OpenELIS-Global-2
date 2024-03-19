@@ -43,7 +43,7 @@ describe('Patient Search', function () {
         cy.wait(200)
         patientPage.clickSearchPatientButton();
         cy.fixture('Patient').then((patient) => {
-            patientPage.validatePatientSearchTable(patient.firstName, patient.inValidName);
+            patientPage.validatePatientByGender("M");
         });
         cy.wait(200).reload();
     });
