@@ -316,7 +316,7 @@ const Validation = (props) => {
     <>
       {props.results?.resultList?.length > 0 && (
         <Grid style={{ marginTop: "20px" }} className="gridBoundary">
-          <Column lg={7}>
+          <Column lg={7} md={8} sm={2}>
             <picture>
               <img
                 src={config.serverBaseUrl + "/images/nonconforming.gif"}
@@ -330,7 +330,7 @@ const Validation = (props) => {
               <FormattedMessage id="validation.label.nonconform" />
             </b>
           </Column>
-          <Column lg={3}>
+          <Column lg={3} md={2} sm={4}>
             <Checkbox
               id={"saveallnormal"}
               name={"autochecks"}
@@ -349,7 +349,7 @@ const Validation = (props) => {
               }}
             />
           </Column>
-          <Column lg={3}>
+          <Column lg={3} md={2} sm={4}>
             <Checkbox
               id={"saveallresults"}
               name={"autochecks"}
@@ -366,7 +366,7 @@ const Validation = (props) => {
               }}
             />
           </Column>
-          <Column lg={3}>
+          <Column lg={3} md={2} sm={4}>
             <Checkbox
               id={"retestalltests"}
               name={"autochecks"}
@@ -455,6 +455,7 @@ const Validation = (props) => {
               type="button"
               onClick={() => handleSave(values)}
               id="submit"
+              style={{ marginTop: "16px" }}
             >
               <FormattedMessage id="label.button.save" />
             </Button>

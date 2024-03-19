@@ -1,5 +1,5 @@
 /* src/components/Dashboard.css */
-.dashboard-container {
+.home-dashboard-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 50px;
@@ -62,4 +62,10 @@
     font-size: 1.9rem;
     font-weight: bold;
 }
-
+@media (max-width: 425px) {
+    .home-dashboard-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 22px;
+        padding: 22px;
+    }
+}

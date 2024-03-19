@@ -25,6 +25,7 @@ import {
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { ConfigurationContext } from "../layout/Layout";
+import PageBreadCrumb from "../common/PageBreadCrumb";
 
 export default function Workplan(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
@@ -170,8 +171,15 @@ export default function Workplan(props) {
   let rowColorIndex = 2;
   let showAccessionNumber = false;
   let currentAccessionNumber = "";
+
+  let breadcrumbs = [
+    { label: "home.label", link: "/" },
+  ];
+
+
   return (
     <>
+    <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         {notificationVisible === true ? <AlertDialog /> : ""}
         <Column lg={16}>
