@@ -755,4 +755,6 @@
     "input.placeholder.providerWorkPhone":"Enter Requester's Phone Number",
     "input.placeholder.providerFax":"Enter Requester's Fax Number",
     "input.placeholder.providerEmail":"Enter Requester's Email"
+    "openreports.mgt.nonconformity.date": "Non ConformityReport by Date",
+    "openreports.mgt.nonconformity.section": "Non Conformity Report by Unit and Reason"
 }

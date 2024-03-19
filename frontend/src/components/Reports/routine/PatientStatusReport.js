@@ -42,7 +42,6 @@ import {
   AlertDialog,
   NotificationKinds,
 } from "../../common/CustomNotification";
-import PageBreadCrumb from "../../common/PageBreadCrumb";
 
 function PatientStatusReport(props) {
   const [reportFormValues, setReportFormValues] = useState(
@@ -380,22 +379,7 @@ function PatientStatusReport(props) {
 
   return (
     <>
-      <br />
-      <PageBreadCrumb breadcrumbs={breadcrumbs} />
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Section>
-            <Section>
-              <Heading>
-                <FormattedMessage id="selectReportValues.title" />
-              </Heading>
-            </Section>
-          </Section>
-        </Column>
-      </Grid>
-      <div className="orderLegendBody">
-        {notificationVisible === true ? <AlertDialog /> : ""}
-        {loading && <Loading />}
+
         <Grid fullWidth={true}>
           <Column lg={16}>
             <Section>
@@ -865,7 +849,7 @@ function PatientStatusReport(props) {
             </Form>
           )}
         </Formik>
-      </div>
+   
     </>
   );
 }
