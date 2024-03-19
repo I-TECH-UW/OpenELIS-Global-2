@@ -43,6 +43,7 @@ import {
   AlertDialog,
   NotificationKinds,
 } from "../../common/CustomNotification";
+import PageBreadCrumb from "../../common/PageBreadCrumb";
 
 function PatientStatusReport(props) {
   const [reportFormValues, setReportFormValues] = useState(
@@ -366,18 +367,28 @@ function PatientStatusReport(props) {
     configurationProperties.currentDateAsText,
   ]);
 
+  const breadcrumbs = [
+    { label: "home.label", link: "/" },
+    { label: "routine.reports", link: "/RoutineReports" },
+    { label: "openreports.patientTestStatus", link: "/RoutineReport?type=patient&report=patientCILNSP_vreduit" },
+  ];
+
   return (
     <>
-      <FormLabel>
-        <Section>
+      <br />
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
+      <Grid fullWidth={true}>
+        <Column lg={16}>
           <Section>
-            <Heading>
-              <FormattedMessage id="openreports.patientTestStatus" />
-            </Heading>
+            <Section>
+              <Heading>
+                <FormattedMessage id="openreports.patientTestStatus" />
+              </Heading>
+            </Section>
           </Section>
-        </Section>
-      </FormLabel>
-
+        </Column>
+      </Grid>
+      <div className='orderLegendBody'>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading />}
       <Formik
@@ -836,6 +847,7 @@ function PatientStatusReport(props) {
           </Form>
         )}
       </Formik>
+      </div>
     </>
   );
 }
