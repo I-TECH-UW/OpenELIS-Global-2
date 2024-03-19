@@ -42,17 +42,6 @@ const RoutineIndex = () => {
       <>
       <br/>
       <PageBreadCrumb breadcrumbs={[{ label: "home.label", link: "/" },{ label: "routine.reports", link: "/RoutineReports" },]}/>
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Section>
-            <Section>
-              <Heading>
-                <FormattedMessage id="selectReportValues.title" />
-              </Heading>
-            </Section>
-          </Section>
-        </Column>
-      </Grid>
       <div className="orderLegendBody">
       
         {notificationVisible === true && <AlertDialog />}
