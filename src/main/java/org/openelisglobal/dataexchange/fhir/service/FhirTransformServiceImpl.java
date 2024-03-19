@@ -298,7 +298,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 				Practitioner requester = transformProviderToPractitioner(provider);
 				if (requesters.containsKey(requester.getIdElement().getIdPart())) {
 					LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
-							"practitioner collision with id: " + fhirPatient.getIdElement().getIdPart());
+							"practitioner collision with id: " + requester.getIdElement().getIdPart());
 				}
 				requesters.put(requester.getIdElement().getIdPart(), requester);
 			}
