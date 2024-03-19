@@ -73,12 +73,11 @@ export const RoutineReportsMenu = {
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.referredtestreport" defaultMessage="Referred Tests Report"/>,
+      title: <FormattedMessage id="sideNav.title.referredtestreport" defaultMessage="Referred Out Tests Report"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl + "/Report?type=patient&report=referredOut",
+          link:"/RoutineReport?type=patient&report=referredOut",
           label: <FormattedMessage id="sideNav.label.referredtestreport"/>,
         },
       ],
@@ -89,14 +88,12 @@ export const RoutineReportsMenu = {
       SideNavMenuItem: [
         {
           link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=haitiNonConformityByDate",
+            "/RoutineReport?type=patient&report=haitiNonConformityByDate",
           label:  <FormattedMessage id="sideNav.label.noncomformityreportsbydate"/>,
         },
         {
           link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=haitiNonConformityBySectionReason",
+            "/RoutineReport?type=patient&report=haitiNonConformityBySectionReason",
           label: <FormattedMessage id="sideNav.label.noncomformityreportsbyunit"/>,
         },
       ],
@@ -130,8 +127,7 @@ export const RoutineReportsMenu = {
       SideNavMenuItem: [
         {
           link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=CISampleRoutineExport",
+            "/RoutineReport?type=patient&report=CISampleRoutineExport",
           label: <FormattedMessage id="sideNav.label.exportcsvfile"/>,
         },
       ],
