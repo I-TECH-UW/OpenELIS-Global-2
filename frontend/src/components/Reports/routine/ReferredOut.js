@@ -100,22 +100,7 @@ const ReferredOut = () => {
 
   return (
     <>
-      <br />
-      <PageBreadCrumb breadcrumbs={breadcrumbs} />
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Section>
-            <Section>
-              <Heading>
-                <FormattedMessage id="selectReportValues.title" />
-              </Heading>
-            </Section>
-          </Section>
-        </Column>
-      </Grid>
-      <div className='orderLegendBody'>
-        {notificationVisible && <AlertDialog />}
-        {loading && <Loading />}
+      
         <Grid fullWidth={true}>
           <Column lg={16}>
             <Section>
@@ -207,7 +192,7 @@ const ReferredOut = () => {
             </Form>
           </Column>
         </Grid>
-      </div>
+    
     </>
   );
 };
