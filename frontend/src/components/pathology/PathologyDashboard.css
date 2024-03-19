@@ -69,3 +69,13 @@
   /* text-align: left; */
   margin-top: 20px;
 }
+@media screen and (max-width: 450px){
+  .dashboard-container{
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding:20px;
+  }
+  .tile-title {
+    font-size: 0.9rem;
+}
+}
