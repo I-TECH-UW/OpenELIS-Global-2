@@ -73,12 +73,11 @@ export const RoutineReportsMenu = {
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.referredtestreport" defaultMessage="Referred Tests Report"/>,
+      title: <FormattedMessage id="sideNav.title.referredtestreport" defaultMessage="Referred Out Tests Report"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl + "/Report?type=patient&report=referredOut",
+          link:"/RoutineReport?type=patient&report=referredOut",
           label: <FormattedMessage id="sideNav.label.referredtestreport"/>,
         },
       ],
