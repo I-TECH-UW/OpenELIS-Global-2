@@ -42,7 +42,7 @@
     "login.msg.password.missing": "Votre mot de passe requis",
     "login.notice.message": "Veuillez entrer dans le logiciel de Syst\u00E8me d'Information \u00C9lectronique de Laboratoire:",
     "error.invalidcredentials": "L'identifiant ou le mot de passe est incorrect",
-    "patient.label.modify" : "Ajouter/Modifier un patient" ,
+    "patient.label.modify" : "Ajouter ou modifier un patient" ,
     "patient.label.info" : "Informations sur les patients",
     "breadcrumb.home" : "Domicile",
     "admin.legacy" :"Précédent Admin",
