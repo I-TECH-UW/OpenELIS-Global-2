@@ -748,5 +748,7 @@
     "pagination.page-number": "Page Number",
     "pagination.page-range": "of {total} {total, plural, one {page} other {pages}}",
     "reports.export": "Export",    
-    "reports.export.whonet": "WHONET Report"
+    "reports.export.whonet": "WHONET Report",
+    "openreports.mgt.nonconformity.date": "Non ConformityReport by Date",
+    "openreports.mgt.nonconformity.section": "Non Conformity Report by Unit and Reason"
 }

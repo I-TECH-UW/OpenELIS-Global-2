@@ -88,14 +88,12 @@ export const RoutineReportsMenu = {
       SideNavMenuItem: [
         {
           link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=haitiNonConformityByDate",
+            "/RoutineReport?type=patient&report=haitiNonConformityByDate",
           label:  <FormattedMessage id="sideNav.label.noncomformityreportsbydate"/>,
         },
         {
           link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=haitiNonConformityBySectionReason",
+            "/RoutineReport?type=patient&report=haitiNonConformityBySectionReason",
           label: <FormattedMessage id="sideNav.label.noncomformityreportsbyunit"/>,
         },
       ],
@@ -129,8 +127,7 @@ export const RoutineReportsMenu = {
       SideNavMenuItem: [
         {
           link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=CISampleRoutineExport",
+            "/RoutineReport?type=patient&report=CISampleRoutineExport",
           label: <FormattedMessage id="sideNav.label.exportcsvfile"/>,
         },
       ],
