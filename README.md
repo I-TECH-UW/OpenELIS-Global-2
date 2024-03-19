@@ -65,25 +65,3 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 1. Scroll down on the warning page.
 2. Click on the "Advanced" button.
 3. Finally, click on "Proceed to https://localhost" to access the development environment.
-
-# Pull Requests Requirements
-
-- [ ] The PR title includes a brief description of the work done, including the ticket number if applicable.
-- [ ] The PR includes a video showing the changes for the work done.
-- [ ] The PR title follows conventional commit label standards.
-- [ ] The changes conform to the OpenElis Global x3 Styleguide and design documentation.
-- [ ] The changes include tests or are validated by existing tests.
-
-## Summary
-
-## Screenshots
-
-[Add relevant screenshots here if applicable]
-
-## Related Issue
-
-[Add a link to the related issue or mention it here if applicable]
-
-## Other
-
-[Add any additional information or notes here]
