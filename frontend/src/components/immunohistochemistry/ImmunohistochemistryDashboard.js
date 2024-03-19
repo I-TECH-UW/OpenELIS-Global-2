@@ -302,7 +302,7 @@ function ImmunohistochemistryDashboard() {
       <div className="dashboard-container">
         {tileList.map((tile, index) => (
           <Tile key={index} className="dashboard-tile">
-            <h3 className="tile-title">{tile.title}</h3>
+            <h3 className="tile-title tile-title-Immuno">{tile.title}</h3>
             <p className="tile-value">{tile.count}</p>
           </Tile>
         ))}
