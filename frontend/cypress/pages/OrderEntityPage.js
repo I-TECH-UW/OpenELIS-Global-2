@@ -25,7 +25,7 @@ class OrderEntityPage {
         cy.get('.testPanels .cds--checkbox-wrapper:nth-child(4) .cds--checkbox').check({force: true});
     }
     generateLabOrderNumber(){
-        cy.getElement('.cds--link').click();
+        cy.getElement(':nth-child(3) > .cds--link').click();
     }
 
     enterSiteName(siteName){
