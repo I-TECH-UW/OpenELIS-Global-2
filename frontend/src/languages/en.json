@@ -21,7 +21,7 @@
     "login.notice.message": "Notice: Access to this service is for authorized personnel only. If you do not have the expressed authorization of the administrator, you must exit now. This organization prohibits unauthorized access, disclosure, duplication, modification, diversion, destruction, loss, misuse, or theft of its information.",
     "error.invalidcredentials": "Username or Password are incorrect",
     "patient.label.modify" :"Add Or Modify Patient" ,
-    "patient.label.PatientHistory" :"PatientHistory" ,
+    "patient.label.PatientHistory" :"Patient History" ,
     "patient.label.info" : "Patient Information",
     "breadcrumb.home" : "Home",
     "admin.legacy" :"Legacy Admin",
