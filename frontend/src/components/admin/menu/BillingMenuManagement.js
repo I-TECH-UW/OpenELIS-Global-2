@@ -85,7 +85,7 @@ function BillingMenuManagement() {
       {loading && <Loading />}
       <div className="adminPageContent">
         <Grid>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <Section>
               <Heading>
                 <FormattedMessage id="menu.billing.title" />
@@ -106,7 +106,9 @@ function BillingMenuManagement() {
                         menu: { ...menuItem.menu, actionURL: e.target.value },
                       });
                     }}
-                    type="text"
+                    type="url"
+                    required
+                    pattern="https?://.*"
                   />
                 </div>
                 <div className="formInlineDiv">
