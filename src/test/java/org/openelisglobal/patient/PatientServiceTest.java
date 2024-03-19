@@ -1,11 +1,9 @@
 package org.openelisglobal.patient;
-
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import org.hibernate.ObjectNotFoundException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,7 +19,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import static org.junit.Assert.assertThrows;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -54,6 +51,7 @@ public class PatientServiceTest {
 		Patient pat = createPatient(firstName, lastname, dob, gender);
 		String patientId = patientService.insert(pat);
 		Patient savedPatient = patientService.get(patientId);
+		Assert.assertNotEquals(null,savedPatient);
 		patientService.delete(savedPatient);
 		assertThrows(ObjectNotFoundException.class, () -> {
 			patientService.get(patientId);
