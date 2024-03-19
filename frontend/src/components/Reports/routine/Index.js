@@ -6,17 +6,14 @@ import {
   Grid,
   Column,
   Section,
-  Breadcrumb,
-  BreadcrumbItem,
   Loading,
 } from "@carbon/react";
 import { injectIntl, FormattedMessage, useIntl } from "react-intl";
 import PatientStatusReport from "./PatientStatusReport";
 import StatisticsReport from "./StatisticsReport";
-import SummaryOfAllTest from "./SummaryOfAllTest";
-import HIVTestSummary from "./HivTestSummary";
-import RejectionReport from "./RejectionReport";
 import ReferredOut from "./ReferredOut";
+import ReportByDate from "../study/common/ReportByDate";
+import PageBreadCrumb from "../../common/PageBreadCrumb";
 
 const RoutineIndex = () => {
   const intl = useIntl();
@@ -43,6 +40,21 @@ const RoutineIndex = () => {
 
   return (
       <>
+      <br/>
+      <PageBreadCrumb breadcrumbs={[{ label: "home.label", link: "/" },{ label: "routine.reports", link: "/RoutineReports" },]}/>
+      <Grid fullWidth={true}>
+        <Column lg={16}>
+          <Section>
+            <Section>
+              <Heading>
+                <FormattedMessage id="selectReportValues.title" />
+              </Heading>
+            </Section>
+          </Section>
+        </Column>
+      </Grid>
+      <div className="orderLegendBody">
+      
         {notificationVisible === true && <AlertDialog />}
         {isLoading && <Loading />}
         {!isLoading && (
@@ -53,6 +65,28 @@ const RoutineIndex = () => {
             {type === "patient" && 
              report === "referredOut" && 
              (<ReferredOut />)}
+            
+            {type === "patient" &&
+              report === "haitiNonConformityBySectionReason" && (
+                <ReportByDate
+                  report={"haitiNonConformityBySectionReason"}
+                  id={"openreports.mgt.nonconformity.section"}
+                />
+              )}
+
+            {type === "patient" && report === "haitiNonConformityByDate" && (
+              <ReportByDate
+                report={"haitiNonConformityByDate"}
+                id={"openreports.mgt.nonconformity.date"}
+              />
+            )}
+
+            {type === "patient" && report === "CISampleRoutineExport" && (
+              <ReportByDate
+                report={"CISampleRoutineExport"}
+                id={"sideNav.label.exportcsvfile"}
+              />
+            )}
 
             {type === "indicator" &&
               report === "statisticsReport" &&
@@ -60,19 +94,34 @@ const RoutineIndex = () => {
 
             {type === "indicator" &&
               report === "indicatorHaitiLNSPAllTests" &&
-              ( <SummaryOfAllTest /> )}
+              (<ReportByDate
+                  report={"indicatorHaitiLNSPAllTests"}
+                  id={"openreports.all.test.summary.title"}
+                />)}
 
             {type === "indicator" &&
               report === "indicatorCDILNSPHIV" &&
-              (<HIVTestSummary/>)}
+               (
+                <ReportByDate
+                  report={"indicatorHaitiLNSPAllTests"}
+                  id={"openreports.all.test.summary.title"}
+                />
+              )}
 
               {type === "indicator" &&
               report === "sampleRejectionReport" &&
-              (<RejectionReport/>)}
+              (<ReportByDate
+                report={"sampleRejectionReport"}
+                id={"openreports.mgt.rejection"}
+              />)}
 
           </>
         )}
+
+     
+      </div>
       </>
+      
   );
 };
 
