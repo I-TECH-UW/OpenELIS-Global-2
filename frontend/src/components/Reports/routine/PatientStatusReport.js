@@ -4,7 +4,6 @@ import "../../Style.css";
 import { getFromOpenElisServer } from "../../utils/Utils";
 import {
   Form,
-  FormLabel,
   Checkbox,
   Dropdown,
   Heading,
@@ -43,6 +42,7 @@ import {
   AlertDialog,
   NotificationKinds,
 } from "../../common/CustomNotification";
+import PageBreadCrumb from "../../common/PageBreadCrumb";
 
 function PatientStatusReport(props) {
   const [reportFormValues, setReportFormValues] = useState(
@@ -50,8 +50,11 @@ function PatientStatusReport(props) {
   );
   // const { reportFormValues, setReportFormValues, getSelectedPatient, samples, error } = props;
   const { configurationProperties } = useContext(ConfigurationContext);
-  const { notificationVisible, setNotificationVisible, addNotification } =
-    useContext(NotificationContext);
+  const {
+    notificationVisible,
+    setNotificationVisible,
+    addNotification,
+  } = useContext(NotificationContext);
 
   const intl = useIntl();
   const itemList = [
@@ -275,9 +278,9 @@ function PatientStatusReport(props) {
         break;
       default:
         obj = {
-        startDate : encodeDate(configurationProperties.currentDateAsText),
-        endDate : encodeDate(configurationProperties.currentDateAsText)
-        }
+          startDate: encodeDate(configurationProperties.currentDateAsText),
+          endDate: encodeDate(configurationProperties.currentDateAsText),
+        };
     }
     setReportFormValues({
       ...reportFormValues,
@@ -366,476 +369,503 @@ function PatientStatusReport(props) {
     configurationProperties.currentDateAsText,
   ]);
 
+  const breadcrumbs = [
+    { label: "home.label", link: "/" },
+    { label: "routine.reports", link: "/RoutineReports" },
+    {
+      label: "openreports.patientTestStatus",
+      link: "/RoutineReport?type=patient&report=patientCILNSP_vreduit",
+    },
+  ];
+
   return (
     <>
-      <FormLabel>
-        <Section>
+      <br />
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
+      <Grid fullWidth={true}>
+        <Column lg={16}>
           <Section>
-            <Heading>
-              <FormattedMessage id="openreports.patientTestStatus" />
-            </Heading>
+            <Section>
+              <Heading>
+                <FormattedMessage id="selectReportValues.title" />
+              </Heading>
+            </Section>
           </Section>
-        </Section>
-      </FormLabel>
-
-      {notificationVisible === true ? <AlertDialog /> : ""}
-      {loading && <Loading />}
-      <Formik
-        initialValues={reportFormValues}
-        enableReinitialize={true}
-        // validationSchema={}
-        onSubmit={handleSubmit}
-        onChange
-      >
-        {({
-          values,
-          //errors,
-          //touched,
-          setFieldValue,
-          handleChange,
-          handleBlur,
-          handleSubmit,
-        }) => (
-          <Form
-            onSubmit={handleSubmit}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          >
-            <Field name="guid">
-              {({ field }) => (
-                <input type="hidden" name={field.name} id={field.name} />
-              )}
-            </Field>
-            <Grid fullWidth={true}>
-              <Column lg={16} md={8} sm={4}>
-                <Section>
-                  <h5>
-                    <FormattedMessage id="report.enter.labNumber.headline" />
-                  </h5>
-                  <br />
-                  <h6>
-                    <FormattedMessage id="sample.search.scanner.instructions" />
+        </Column>
+      </Grid>
+      <div className="orderLegendBody">
+        {notificationVisible === true ? <AlertDialog /> : ""}
+        {loading && <Loading />}
+        <Grid fullWidth={true}>
+          <Column lg={16}>
+            <Section>
+              <Section>
+                <Heading>
+                  <FormattedMessage id="openreports.patientTestStatus" />
+                </Heading>
+              </Section>
+            </Section>
+          </Column>
+        </Grid>
+        <Formik
+          initialValues={reportFormValues}
+          enableReinitialize={true}
+          // validationSchema={}
+          onSubmit={handleSubmit}
+          onChange
+        >
+          {({
+            values,
+            //errors,
+            //touched,
+            setFieldValue,
+            handleChange,
+            handleBlur,
+            handleSubmit,
+          }) => (
+            <Form
+              onSubmit={handleSubmit}
+              onChange={handleChange}
+              onBlur={handleBlur}
+            >
+              <Field name="guid">
+                {({ field }) => (
+                  <input type="hidden" name={field.name} id={field.name} />
+                )}
+              </Field>
+              <Grid fullWidth={true}>
+                <Column lg={16} md={8} sm={4}>
+                  <Section>
                     <br />
-                    <FormattedMessage id="sample.search.scanner.instructions.highaccession" />
-                  </h6>
-                </Section>
-              </Column>
-            </Grid>
-            <div className="inlineDiv">
-              <Field name="from">
-                {({ field }) => (
-                  <CustomLabNumberInput
-                    name={field.name}
-                    value={values[field.name]}
-                    labelText={intl.formatMessage({
-                      id: "from.title",
-                      defaultMessage: "From",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                    onChange={(e, rawValue) => {
-                      setFieldValue(field.name, rawValue);
-                      handlePatientIdFrom(e);
-                    }}
-                  />
-                )}
-              </Field>
-              <Field name="to">
-                {({ field }) => (
-                  <CustomLabNumberInput
-                    name={field.name}
-                    value={values[field.name]}
-                    labelText={intl.formatMessage({
-                      id: "to.title",
-                      defaultMessage: "To",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                    onChange={(e, rawValue) => {
-                      setFieldValue(field.name, rawValue);
-                      handlePatientIdTo(e);
-                    }}
-                  />
-                )}
-              </Field>
-            </div>
-            <Grid fullWidth={true}>
-              <Column lg={16} md={8} sm={4}>
-                <Section>
-                  <h5>
-                    <FormattedMessage id="report.enter.patient.headline" />
-                  </h5>
-                  <br />
-                  <h6>
-                    <FormattedMessage id="report.enter.patient.headline.description" />
-                  </h6>
-                </Section>
-              </Column>
-            </Grid>
-            <div className="inlineDiv">
-              <Field name="labNumber">
-                {({ field }) => (
-                  <CustomLabNumberInput
-                    name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "eorder.labNumber",
-                      defaultMessage: "Lab Number",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                    value={values[field.name]}
-                    onChange={(e, rawValue) => {
-                      setFieldValue(field.name, rawValue);
-                      handleLabNumber(e);
-                    }}
-                  />
-                )}
-              </Field>
-              <Field name="patientId">
-                {({ field }) => (
-                  <TextInput
-                    name={field.name}
-                    value={values[field.name]}
-                    labelText={intl.formatMessage({
-                      id: "patient.id",
-                      defaultMessage: "Patient Id",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                    onChange={handlePatientId}
-                  />
-                )}
-              </Field>
-            </div>
-            <div className="inlineDiv">
-              <Field name="lastName">
-                {({ field }) => (
-                  <TextInput
-                    name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "patient.last.name",
-                      defaultMessage: "Last Name",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                    onChange={handleLastName}
-                  />
-                )}
-              </Field>
-              <Field name="firstName">
-                {({ field }) => (
-                  <TextInput
-                    name={field.name}
-                    labelText={intl.formatMessage({
-                      id: "patient.first.name",
-                      defaultMessage: "First Name",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                    onChange={handleFirstName}
-                  />
-                )}
-              </Field>
-            </div>
-            <div className="inlineDiv">
-              <Field name="dateOfBirth">
-                {({ field }) => (
-                  <DatePicker
-                    onChange={handleDatePickerChange}
-                    name={field.name}
-                    dateFormat="d/m/Y"
-                    datePickerType="single"
-                    light={true}
-                    className="inputText"
-                  >
-                    <DatePickerInput
-                      id="date-picker-default-id"
-                      placeholder="dd/mm/yyyy"
-                      labelText={intl.formatMessage({
-                        id: "patient.dob",
-                        defaultMessage: "Date of Birth",
-                      })}
-                      type="text"
+                    <br />
+                    <h5>
+                      <FormattedMessage id="report.enter.labNumber.headline" />
+                    </h5>
+                    <br />
+                    <h6>
+                      <FormattedMessage id="sample.search.scanner.instructions" />
+                      <br />
+                      <FormattedMessage id="sample.search.scanner.instructions.highaccession" />
+                    </h6>
+                  </Section>
+                </Column>
+              </Grid>
+              <div className="inlineDiv">
+                <Field name="from">
+                  {({ field }) => (
+                    <CustomLabNumberInput
                       name={field.name}
-                    />
-                  </DatePicker>
-                )}
-              </Field>
-              <Field name="gender">
-                {({ field }) => (
-                  <RadioButtonGroup
-                    className="inputText"
-                    defaultSelected=""
-                    legendText={intl.formatMessage({
-                      id: "patient.gender",
-                      defaultMessage: "Gender",
-                    })}
-                    name={field.name}
-                    id="search_patient_gender"
-                    onChange={handleGender}
-                  >
-                    <RadioButton
-                      id="search-radio-1"
+                      value={values[field.name]}
                       labelText={intl.formatMessage({
-                        id: "patient.male",
-                        defaultMessage: "Male",
+                        id: "from.title",
+                        defaultMessage: "From",
                       })}
-                      value="M"
+                      id={field.name}
+                      className="inputText"
+                      onChange={(e, rawValue) => {
+                        setFieldValue(field.name, rawValue);
+                        handlePatientIdFrom(e);
+                      }}
                     />
-                    <RadioButton
-                      id="search-radio-2"
-                      labelText={intl.formatMessage({
-                        id: "patient.female",
-                        defaultMessage: "Female",
-                      })}
-                      value="F"
-                    />
-                  </RadioButtonGroup>
-                )}
-              </Field>
-            </div>
-            <div className="formInlineDiv">
-              <div className="searchActionButtons">
-                <Button kind="tertiary">
-                  <FormattedMessage
-                    id="label.button.externalsearch"
-                    defaultMessage="External Search"
-                  />
-                </Button>
-                <Button type="submit">
-                  <FormattedMessage
-                    id="label.button.search"
-                    defaultMessage="Search"
-                  />
-                </Button>
-              </div>
-            </div>
-            <Column lg={16} md={8} sm={4}>
-              {pagination && (
-                <Grid>
-                  <Column lg={11} />
-                  <Column lg={2}>
-                    <Button
-                      type=""
-                      id="loadpreviousresults"
-                      onClick={loadPreviousResultsPage}
-                      disabled={previousPage != null ? false : true}
-                    >
-                      <FormattedMessage id="button.label.loadprevious" />
-                    </Button>
-                  </Column>
-                  <Column lg={2}>
-                    <Button
-                      type=""
-                      id="loadnextresults"
-                      disabled={nextPage != null ? false : true}
-                      onClick={loadNextResultsPage}
-                    >
-                      <FormattedMessage id="button.label.loadnext" />
-                    </Button>
-                  </Column>
-                </Grid>
-              )}
-            </Column>
-            <div>
-              <Column lg={16} md={8} sm={4}>
-                <DataTable
-                  rows={patientSearchResults}
-                  headers={patientSearchHeaderData}
-                  isSortable
-                >
-                  {({ rows, headers, getHeaderProps, getTableProps }) => (
-                    <TableContainer title="Patient Results">
-                      <Table {...getTableProps()}>
-                        <TableHead>
-                          <TableRow>
-                            <TableHeader></TableHeader>
-                            {headers.map((header) => (
-                              <TableHeader
-                                key={header.key}
-                                {...getHeaderProps({ header })}
-                              >
-                                {header.header}
-                              </TableHeader>
-                            ))}
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          <>
-                            {rows
-                              .slice((page - 1) * pageSize)
-                              .slice(0, pageSize)
-                              .map((row) => (
-                                <TableRow key={row.id}>
-                                  <TableCell>
-                                    {" "}
-                                    <RadioButton
-                                      name="radio-group"
-                                      onClick={patientSelected}
-                                      labelText=""
-                                      id={row.id}
-                                    />
-                                  </TableCell>
-                                  {row.cells.map((cell) => (
-                                    <TableCell key={cell.id}>
-                                      {cell.value}
-                                    </TableCell>
-                                  ))}
-                                </TableRow>
-                              ))}
-                          </>
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
                   )}
-                </DataTable>
-                <Pagination
-                  onChange={handlePageChange}
-                  page={page}
-                  pageSize={pageSize}
-                  pageSizes={[5, 10, 20, 30]}
-                  totalItems={patientSearchResults.length}
-                ></Pagination>
-              </Column>
-            </div>
-            <br />
-            <Grid fullWidth={true}>
-              <Column lg={16} md={8} sm={4}>
-                <h5>
-                  <FormattedMessage id="report.enter.site.headline" />
-                </h5>
-              </Column>
-            </Grid>
-            <div className="inlineDiv">
-              <AutoComplete
-                name="siteName"
-                id="siteName"
-                className="inputText"
-                allowFreeText={
-                  !(
-                    configurationProperties.restrictFreeTextRefSiteEntry ===
-                    "true"
-                  )
-                }
-                value={
-                  reportFormValues.referringSiteId != ""
-                    ? reportFormValues.referringSiteId
-                    : reportFormValues.referringSiteName
-                }
-                onChange={handleSiteName}
-                onSelect={handleAutoCompleteSiteName}
-                label={
-                  <>
-                    <FormattedMessage id="order.site.name" />
-                  </>
-                }
-                class="inputText"
-                style={{ width: "!important 100%" }}
-                suggestions={siteNames.length > 0 ? siteNames : []}
-              />
-
-              <Select
-                className="inputText"
-                id="requesterDepartmentId"
-                name="requesterDepartmentId"
-                labelText={intl.formatMessage({
-                  id: "order.department.label",
-                  defaultMessage: "ward/dept/unit",
-                })}
-                onChange={handleRequesterDept}
-              >
-                <SelectItem value="" text="" />
-                {departments.map((department, index) => (
-                  <SelectItem
-                    key={index}
-                    text={department.value}
-                    value={department.id}
-                  />
-                ))}
-              </Select>
-            </div>
-            <Grid fullWidth={true}>
-              <Column lg={16} md={8} sm={4}>
-                <h6>
-                  <FormattedMessage id="report.patient.site.description" />
-                </h6>
-              </Column>
-            </Grid>
-            <br />
-            <Grid fullWidth={true}>
-              <Column lg={8} md={8} sm={4}>
-                <Checkbox
-                  onChange={() => {
-                    if (checkbox === "on") {
-                      setResult("true");
-                      setCheckbox("off");
-                    } else {
-                      setResult("false");
-                      setCheckbox("on");
-                    }
-                  }}
-                  labelText={intl.formatMessage({
-                    id: "report.label.site.onlyResults",
-                    defaultMessage: "Only Reports with results",
-                  })}
-                  id="checkbox-label-1"
-                />
-                <div className="inlineDiv">
-                  <Dropdown
-                    id="dateType"
-                    name="dateType"
-                    titleText="Date Type"
-                    initialSelectedItem={itemList.find(
-                      (item) => item.tag === items
-                    )}
-                    label="Date Type"
-                    items={itemList}
-                    itemToString={(item) => (item ? item.text : "")}
-                    onChange={(item) => {
-                      setItems(item.selectedItem.tag);
-                    }}
-                  />
-                </div>
-                <div className="inlineDiv">
-                  <CustomDatePicker
-                    id={"startDate"}
-                    labelText={intl.formatMessage({
-                      id: "eorder.date.start",
-                      defaultMessage: "Start Date",
-                    })}
-                    autofillDate={true}
-                    value={reportFormValues.startDate}
-                    className="inputDate"
-                    onChange={(date) =>
-                      handleDatePickerChangeDate("startDate", date)
-                    }
-                  />
-                  <CustomDatePicker
-                    id={"endDate"}
-                    labelText={intl.formatMessage({
-                      id: "eorder.date.end",
-                      defaultMessage: "End Date",
-                    })}
-                    className="inputDate"
-                    autofillDate={true}
-                    value={reportFormValues.endDate}
-                    onChange={(date) =>
-                      handleDatePickerChangeDate("endDate", date)
-                    }
-                  />
-                </div>
-              </Column>
-            </Grid>
-            <div className="formInlineDiv">
-              <div className="searchActionButtons">
-                <Button type="button" onClick={handleReportPrint}>
-                  <FormattedMessage id="label.button.generatePrintableVersion" />
-                </Button>
+                </Field>
+                <Field name="to">
+                  {({ field }) => (
+                    <CustomLabNumberInput
+                      name={field.name}
+                      value={values[field.name]}
+                      labelText={intl.formatMessage({
+                        id: "to.title",
+                        defaultMessage: "To",
+                      })}
+                      id={field.name}
+                      className="inputText"
+                      onChange={(e, rawValue) => {
+                        setFieldValue(field.name, rawValue);
+                        handlePatientIdTo(e);
+                      }}
+                    />
+                  )}
+                </Field>
               </div>
-            </div>
-          </Form>
-        )}
-      </Formik>
+              <Grid fullWidth={true}>
+                <Column lg={16} md={8} sm={4}>
+                  <Section>
+                    <h5>
+                      <FormattedMessage id="report.enter.patient.headline" />
+                    </h5>
+                    <br />
+                    <h6>
+                      <FormattedMessage id="report.enter.patient.headline.description" />
+                    </h6>
+                  </Section>
+                </Column>
+              </Grid>
+              <div className="inlineDiv">
+                <Field name="labNumber">
+                  {({ field }) => (
+                    <CustomLabNumberInput
+                      name={field.name}
+                      labelText={intl.formatMessage({
+                        id: "eorder.labNumber",
+                        defaultMessage: "Lab Number",
+                      })}
+                      id={field.name}
+                      className="inputText"
+                      value={values[field.name]}
+                      onChange={(e, rawValue) => {
+                        setFieldValue(field.name, rawValue);
+                        handleLabNumber(e);
+                      }}
+                    />
+                  )}
+                </Field>
+                <Field name="patientId">
+                  {({ field }) => (
+                    <TextInput
+                      name={field.name}
+                      value={values[field.name]}
+                      labelText={intl.formatMessage({
+                        id: "patient.id",
+                        defaultMessage: "Patient Id",
+                      })}
+                      id={field.name}
+                      className="inputText"
+                      onChange={handlePatientId}
+                    />
+                  )}
+                </Field>
+              </div>
+              <div className="inlineDiv">
+                <Field name="lastName">
+                  {({ field }) => (
+                    <TextInput
+                      name={field.name}
+                      labelText={intl.formatMessage({
+                        id: "patient.last.name",
+                        defaultMessage: "Last Name",
+                      })}
+                      id={field.name}
+                      className="inputText"
+                      onChange={handleLastName}
+                    />
+                  )}
+                </Field>
+                <Field name="firstName">
+                  {({ field }) => (
+                    <TextInput
+                      name={field.name}
+                      labelText={intl.formatMessage({
+                        id: "patient.first.name",
+                        defaultMessage: "First Name",
+                      })}
+                      id={field.name}
+                      className="inputText"
+                      onChange={handleFirstName}
+                    />
+                  )}
+                </Field>
+              </div>
+              <div className="inlineDiv">
+                <Field name="dateOfBirth">
+                  {({ field }) => (
+                    <DatePicker
+                      onChange={handleDatePickerChange}
+                      name={field.name}
+                      dateFormat="d/m/Y"
+                      datePickerType="single"
+                      light={true}
+                      className="inputText"
+                    >
+                      <DatePickerInput
+                        id="date-picker-default-id"
+                        placeholder="dd/mm/yyyy"
+                        labelText={intl.formatMessage({
+                          id: "patient.dob",
+                          defaultMessage: "Date of Birth",
+                        })}
+                        type="text"
+                        name={field.name}
+                      />
+                    </DatePicker>
+                  )}
+                </Field>
+                <Field name="gender">
+                  {({ field }) => (
+                    <RadioButtonGroup
+                      className="inputText"
+                      defaultSelected=""
+                      legendText={intl.formatMessage({
+                        id: "patient.gender",
+                        defaultMessage: "Gender",
+                      })}
+                      name={field.name}
+                      id="search_patient_gender"
+                      onChange={handleGender}
+                    >
+                      <RadioButton
+                        id="search-radio-1"
+                        labelText={intl.formatMessage({
+                          id: "patient.male",
+                          defaultMessage: "Male",
+                        })}
+                        value="M"
+                      />
+                      <RadioButton
+                        id="search-radio-2"
+                        labelText={intl.formatMessage({
+                          id: "patient.female",
+                          defaultMessage: "Female",
+                        })}
+                        value="F"
+                      />
+                    </RadioButtonGroup>
+                  )}
+                </Field>
+              </div>
+              <div className="formInlineDiv">
+                <div className="searchActionButtons">
+                  <Button kind="tertiary">
+                    <FormattedMessage
+                      id="label.button.externalsearch"
+                      defaultMessage="External Search"
+                    />
+                  </Button>
+                  <Button type="submit">
+                    <FormattedMessage
+                      id="label.button.search"
+                      defaultMessage="Search"
+                    />
+                  </Button>
+                </div>
+              </div>
+              <Column lg={16} md={8} sm={4}>
+                {pagination && (
+                  <Grid>
+                    <Column lg={11} />
+                    <Column lg={2}>
+                      <Button
+                        type=""
+                        id="loadpreviousresults"
+                        onClick={loadPreviousResultsPage}
+                        disabled={previousPage != null ? false : true}
+                      >
+                        <FormattedMessage id="button.label.loadprevious" />
+                      </Button>
+                    </Column>
+                    <Column lg={2}>
+                      <Button
+                        type=""
+                        id="loadnextresults"
+                        disabled={nextPage != null ? false : true}
+                        onClick={loadNextResultsPage}
+                      >
+                        <FormattedMessage id="button.label.loadnext" />
+                      </Button>
+                    </Column>
+                  </Grid>
+                )}
+              </Column>
+              <div>
+                <Column lg={16} md={8} sm={4}>
+                  <DataTable
+                    rows={patientSearchResults}
+                    headers={patientSearchHeaderData}
+                    isSortable
+                  >
+                    {({ rows, headers, getHeaderProps, getTableProps }) => (
+                      <TableContainer title="Patient Results">
+                        <Table {...getTableProps()}>
+                          <TableHead>
+                            <TableRow>
+                              <TableHeader></TableHeader>
+                              {headers.map((header) => (
+                                <TableHeader
+                                  key={header.key}
+                                  {...getHeaderProps({ header })}
+                                >
+                                  {header.header}
+                                </TableHeader>
+                              ))}
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            <>
+                              {rows
+                                .slice((page - 1) * pageSize)
+                                .slice(0, pageSize)
+                                .map((row) => (
+                                  <TableRow key={row.id}>
+                                    <TableCell>
+                                      {" "}
+                                      <RadioButton
+                                        name="radio-group"
+                                        onClick={patientSelected}
+                                        labelText=""
+                                        id={row.id}
+                                      />
+                                    </TableCell>
+                                    {row.cells.map((cell) => (
+                                      <TableCell key={cell.id}>
+                                        {cell.value}
+                                      </TableCell>
+                                    ))}
+                                  </TableRow>
+                                ))}
+                            </>
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    )}
+                  </DataTable>
+                  <Pagination
+                    onChange={handlePageChange}
+                    page={page}
+                    pageSize={pageSize}
+                    pageSizes={[5, 10, 20, 30]}
+                    totalItems={patientSearchResults.length}
+                  ></Pagination>
+                </Column>
+              </div>
+              <br />
+              <Grid fullWidth={true}>
+                <Column lg={16} md={8} sm={4}>
+                  <h5>
+                    <FormattedMessage id="report.enter.site.headline" />
+                  </h5>
+                </Column>
+              </Grid>
+              <div className="inlineDiv">
+                <AutoComplete
+                  name="siteName"
+                  id="siteName"
+                  className="inputText"
+                  allowFreeText={
+                    !(
+                      configurationProperties.restrictFreeTextRefSiteEntry ===
+                      "true"
+                    )
+                  }
+                  value={
+                    reportFormValues.referringSiteId != ""
+                      ? reportFormValues.referringSiteId
+                      : reportFormValues.referringSiteName
+                  }
+                  onChange={handleSiteName}
+                  onSelect={handleAutoCompleteSiteName}
+                  label={
+                    <>
+                      <FormattedMessage id="order.site.name" />
+                    </>
+                  }
+                  class="inputText"
+                  style={{ width: "!important 100%" }}
+                  suggestions={siteNames.length > 0 ? siteNames : []}
+                />
+
+                <Select
+                  className="inputText"
+                  id="requesterDepartmentId"
+                  name="requesterDepartmentId"
+                  labelText={intl.formatMessage({
+                    id: "order.department.label",
+                    defaultMessage: "ward/dept/unit",
+                  })}
+                  onChange={handleRequesterDept}
+                >
+                  <SelectItem value="" text="" />
+                  {departments.map((department, index) => (
+                    <SelectItem
+                      key={index}
+                      text={department.value}
+                      value={department.id}
+                    />
+                  ))}
+                </Select>
+              </div>
+              <Grid fullWidth={true}>
+                <Column lg={16} md={8} sm={4}>
+                  <h6>
+                    <FormattedMessage id="report.patient.site.description" />
+                  </h6>
+                </Column>
+              </Grid>
+              <br />
+              <Grid fullWidth={true}>
+                <Column lg={8} md={8} sm={4}>
+                  <Checkbox
+                    onChange={() => {
+                      if (checkbox === "on") {
+                        setResult("true");
+                        setCheckbox("off");
+                      } else {
+                        setResult("false");
+                        setCheckbox("on");
+                      }
+                    }}
+                    labelText={intl.formatMessage({
+                      id: "report.label.site.onlyResults",
+                      defaultMessage: "Only Reports with results",
+                    })}
+                    id="checkbox-label-1"
+                  />
+                  <div className="inlineDiv">
+                    <Dropdown
+                      id="dateType"
+                      name="dateType"
+                      titleText="Date Type"
+                      initialSelectedItem={itemList.find(
+                        (item) => item.tag === items
+                      )}
+                      label="Date Type"
+                      items={itemList}
+                      itemToString={(item) => (item ? item.text : "")}
+                      onChange={(item) => {
+                        setItems(item.selectedItem.tag);
+                      }}
+                    />
+                  </div>
+                  <div className="inlineDiv">
+                    <CustomDatePicker
+                      id={"startDate"}
+                      labelText={intl.formatMessage({
+                        id: "eorder.date.start",
+                        defaultMessage: "Start Date",
+                      })}
+                      autofillDate={true}
+                      value={reportFormValues.startDate}
+                      className="inputDate"
+                      onChange={(date) =>
+                        handleDatePickerChangeDate("startDate", date)
+                      }
+                    />
+                    <CustomDatePicker
+                      id={"endDate"}
+                      labelText={intl.formatMessage({
+                        id: "eorder.date.end",
+                        defaultMessage: "End Date",
+                      })}
+                      className="inputDate"
+                      autofillDate={true}
+                      value={reportFormValues.endDate}
+                      onChange={(date) =>
+                        handleDatePickerChangeDate("endDate", date)
+                      }
+                    />
+                  </div>
+                </Column>
+              </Grid>
+              <div className="formInlineDiv">
+                <div className="searchActionButtons">
+                  <Button type="button" onClick={handleReportPrint}>
+                    <FormattedMessage id="label.button.generatePrintableVersion" />
+                  </Button>
+                </div>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>
     </>
   );
 }
