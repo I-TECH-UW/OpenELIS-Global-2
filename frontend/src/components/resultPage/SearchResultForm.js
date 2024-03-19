@@ -34,11 +34,20 @@ import { ConfigurationContext } from "../layout/Layout";
 import config from "../../config.json";
 
 function ResultSearchPage() {
-  const [resultForm, setResultForm] = useState({ testResult: [] });
+  const [originalResultForm, setOriginalResultForm] = useState({
+    testResult: [],
+  });
+  const [resultForm, setResultForm] = useState(originalResultForm);
+
+  const setResults = (resultForm) => {
+    setOriginalResultForm(resultForm);
+    setResultForm(resultForm);
+  };
+
   return (
     <>
-      <SearchResultForm setResults={setResultForm} />
-      <SearchResults results={resultForm} />
+      <SearchResultForm setResults={setResults} />
+      <SearchResults results={resultForm} setResultForm={setResultForm} />
     </>
   );
 }
@@ -61,7 +70,8 @@ export function SearchResultForm(props) {
   const [defaultSampleStatusId, setDefaultSampleStatusId] = useState("");
   const [defaultSampleStatusLabel, setDefaultSampleStatusLabel] = useState("");
   const [defaultAnalysisStatusId, setDefaultAnalysisStatusId] = useState("");
-  const [defaultAnalysisStatusLabel, setDefaultAnalysisStatusLabel] = useState("");
+  const [defaultAnalysisStatusLabel, setDefaultAnalysisStatusLabel] =
+    useState("");
   const [searchFormValues, setSearchFormValues] = useState(
     SearchResultFormValues,
   );
@@ -211,61 +221,93 @@ export function SearchResultForm(props) {
   useEffect(() => {
     componentMounted.current = true;
     let testId = new URLSearchParams(window.location.search).get(
-      "selectedTest"
+      "selectedTest",
     );
     testId = testId ? testId : "";
     getFromOpenElisServer("/rest/test-list", (fetchedTests) => {
-      let test = fetchedTests.find(test => test.id === testId);
+      let test = fetchedTests.find((test) => test.id === testId);
       let testLabel = test ? test.value : "";
       setDefaultTestId(testId);
       setDefaultTestLabel(testLabel);
       getTests(fetchedTests);
-    })
+    });
 
     let sampleStatusId = new URLSearchParams(window.location.search).get(
-      "selectedSampleStatus"
+      "selectedSampleStatus",
     );
     sampleStatusId = sampleStatusId ? sampleStatusId : "";
-    getFromOpenElisServer("/rest/sample-status-types", (fetchedSampleStatusTypes) => {
-      let sampleStatus = fetchedSampleStatusTypes.find(sampleStatus => sampleStatus.id === sampleStatusId);
-      let sampleStatusLabel = sampleStatus ? sampleStatus.value : "";
-      setDefaultSampleStatusId(sampleStatusId);
-      setDefaultSampleStatusLabel(sampleStatusLabel);
-      getSampleStatusTypes(fetchedSampleStatusTypes);
-    })
+    getFromOpenElisServer(
+      "/rest/sample-status-types",
+      (fetchedSampleStatusTypes) => {
+        let sampleStatus = fetchedSampleStatusTypes.find(
+          (sampleStatus) => sampleStatus.id === sampleStatusId,
+        );
+        let sampleStatusLabel = sampleStatus ? sampleStatus.value : "";
+        setDefaultSampleStatusId(sampleStatusId);
+        setDefaultSampleStatusLabel(sampleStatusLabel);
+        getSampleStatusTypes(fetchedSampleStatusTypes);
+      },
+    );
 
     let analysisStatusId = new URLSearchParams(window.location.search).get(
-      "selectedAnalysisStatus"
+      "selectedAnalysisStatus",
     );
     analysisStatusId = analysisStatusId ? analysisStatusId : "";
-    getFromOpenElisServer("/rest/analysis-status-types", (fetchedAnalysisStatusTypes) => {
-      let analysisStatus = fetchedAnalysisStatusTypes.find(analysisStatus => analysisStatus.id === analysisStatusId);
-      let analysisStatusLabel = analysisStatus ? analysisStatus.value : "";
-      setDefaultAnalysisStatusId(analysisStatusId);
-      setDefaultAnalysisStatusLabel(analysisStatusLabel);
-      getAnalysisStatusTypes(fetchedAnalysisStatusTypes);
-    })
+    getFromOpenElisServer(
+      "/rest/analysis-status-types",
+      (fetchedAnalysisStatusTypes) => {
+        let analysisStatus = fetchedAnalysisStatusTypes.find(
+          (analysisStatus) => analysisStatus.id === analysisStatusId,
+        );
+        let analysisStatusLabel = analysisStatus ? analysisStatus.value : "";
+        setDefaultAnalysisStatusId(analysisStatusId);
+        setDefaultAnalysisStatusLabel(analysisStatusLabel);
+        getAnalysisStatusTypes(fetchedAnalysisStatusTypes);
+      },
+    );
 
     let testSectionId = new URLSearchParams(window.location.search).get(
-      "testSectionId"
+      "testSectionId",
     );
     testSectionId = testSectionId ? testSectionId : "";
     getFromOpenElisServer("/rest/user-test-sections", (fetchedTestSections) => {
-      let testSection = fetchedTestSections.find(testSection => testSection.id === testSectionId);
+      let testSection = fetchedTestSections.find(
+        (testSection) => testSection.id === testSectionId,
+      );
       let testSectionLabel = testSection ? testSection.value : "";
       setDefaultTestSectionId(testSectionId);
       setDefaultTestSectionLabel(testSectionLabel);
       fetchTestSections(fetchedTestSections);
-    })
-    if(testSectionId){
+    });
+    if (testSectionId) {
       let values = { unitType: testSectionId };
       querySearch(values);
     }
 
-    let displayFormType = new URLSearchParams(window.location.search).get(
-      "type",
-    );
-    let doRange = new URLSearchParams(window.location.search).get("doRange");
+    
+    var displayFormType = "";
+    var doRange = "";
+    if(window.location.pathname == "/result"){
+      displayFormType = new URLSearchParams(window.location.search).get(
+        "type",
+      );
+      doRange = new URLSearchParams(window.location.search).get("doRange");
+    } else if(window.location.pathname == "/LogbookResults"){
+      displayFormType = "unit" ;
+      doRange = "false";
+    } else if(window.location.pathname == "/PatientResults"){
+      displayFormType = "patient" ;
+      doRange = "false";
+    }else if(window.location.pathname == "/AccessionResults"){
+      displayFormType = "order" ;
+      doRange = "false";
+    }else if(window.location.pathname == "/StatusResults"){
+      displayFormType = "date" ;
+      doRange = "false";
+    } else if(window.location.pathname == "/RangeResults"){
+      displayFormType = "range" ;
+      doRange = "true";
+    }
     setSearchBy({
       type: displayFormType,
       doRange: doRange,
@@ -273,6 +315,7 @@ export function SearchResultForm(props) {
   }, []);
 
   useEffect(() => {
+   
     let accessionNumber = new URLSearchParams(window.location.search).get(
       "accessionNumber",
     );
@@ -286,28 +329,34 @@ export function SearchResultForm(props) {
     }
     let collectionDate = new URLSearchParams(window.location.search).get(
       "collectionDate",
-    )
+    );
     let recievedDate = new URLSearchParams(window.location.search).get(
       "recievedDate",
-    )
+    );
     let selectedTest = new URLSearchParams(window.location.search).get(
       "selectedTest",
-    )
+    );
     let selectedSampleStatus = new URLSearchParams(window.location.search).get(
       "selectedSampleStatus",
-    )
-    let selectedAnalysisStatus = new URLSearchParams(window.location.search).get(
-      "selectedAnalysisStatus",
-    )
-    
-    if(collectionDate || recievedDate || selectedTest || selectedSampleStatus || selectedAnalysisStatus){
+    );
+    let selectedAnalysisStatus = new URLSearchParams(
+      window.location.search,
+    ).get("selectedAnalysisStatus");
+
+    if (
+      collectionDate ||
+      recievedDate ||
+      selectedTest ||
+      selectedSampleStatus ||
+      selectedAnalysisStatus
+    ) {
       let searchValues = {
         ...searchFormValues,
-        collectionDate: collectionDate ?  collectionDate : "",
-        recievedDate: recievedDate ?  recievedDate : "",
+        collectionDate: collectionDate ? collectionDate : "",
+        recievedDate: recievedDate ? recievedDate : "",
         testName: selectedTest ? selectedTest : "",
         sampleStatusType: selectedSampleStatus ? selectedSampleStatus : "",
-        analysisStatus: selectedAnalysisStatus ? selectedAnalysisStatus : "",  
+        analysisStatus: selectedAnalysisStatus ? selectedAnalysisStatus : "",
       };
       setSearchFormValues(searchValues);
       querySearch(searchValues);
@@ -344,14 +393,14 @@ export function SearchResultForm(props) {
           >
             <Stack gap={2}>
               <Grid>
-                <Column lg={16}>
+                <Column lg={16} md={8} sm={4}>
                   <h4>
                     <FormattedMessage id="label.button.search" />
                   </h4>
                 </Column>
                 {searchBy.type === "order" && (
                   <>
-                    <Column lg={6}>
+                    <Column lg={6} md={4} sm={4}>
                       <Field name="accessionNumber">
                         {({ field }) => (
                           <CustomLabNumberInput
@@ -375,7 +424,7 @@ export function SearchResultForm(props) {
 
                 {searchBy.type === "range" && (
                   <>
-                    <Column lg={6}>
+                    <Column lg={6} sm={4}>
                       <Field name="startLabNo">
                         {({ field }) => (
                           <TextInput
@@ -390,7 +439,7 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={6}>
+                    <Column lg={6} sm={4}>
                       <Field name="endLabNo">
                         {({ field }) => (
                           <TextInput
@@ -410,8 +459,8 @@ export function SearchResultForm(props) {
 
                 {searchBy.type === "date" && (
                   <>
-                    <Column lg={3}>
-                    <Field name="collectionDate">
+                    <Column lg={3} md={4} sm={4}>
+                      <Field name="collectionDate">
                         {({ field, form }) => (
                           <DatePicker
                             id={field.name}
@@ -422,7 +471,7 @@ export function SearchResultForm(props) {
                             onChange={(date) =>
                               form.setFieldValue(
                                 field.name,
-                                new Date(date).toLocaleDateString("fr-FR")
+                                new Date(date).toLocaleDateString("fr-FR"),
                               )
                             }
                           >
@@ -436,8 +485,8 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3}>
-                    <Field name="recievedDate">
+                    <Column lg={3} md={4} sm={4}>
+                      <Field name="recievedDate">
                         {({ field, form }) => (
                           <DatePicker
                             id={field.name}
@@ -448,7 +497,7 @@ export function SearchResultForm(props) {
                             onChange={(date) =>
                               form.setFieldValue(
                                 field.name,
-                                new Date(date).toLocaleDateString("fr-FR")
+                                new Date(date).toLocaleDateString("fr-FR"),
                               )
                             }
                           >
@@ -462,7 +511,7 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="testName">
                         {({ field }) => (
                           <Select
@@ -472,23 +521,26 @@ export function SearchResultForm(props) {
                             name={field.name}
                             id={field.name}
                           >
-                            <SelectItem text={defaultTestLabel} value={defaultTestId} />
+                            <SelectItem
+                              text={defaultTestLabel}
+                              value={defaultTestId}
+                            />
                             {tests
-                              .filter(item => item.id !== defaultTestId)
+                              .filter((item) => item.id !== defaultTestId)
                               .map((test, index) => {
-                              return (
-                                <SelectItem
-                                  key={index}
-                                  text={test.value}
-                                  value={test.id}
-                                />
-                              );
-                            })}
+                                return (
+                                  <SelectItem
+                                    key={index}
+                                    text={test.value}
+                                    value={test.id}
+                                  />
+                                );
+                              })}
                           </Select>
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="analysisStatus">
                         {({ field }) => (
                           <Select
@@ -498,23 +550,28 @@ export function SearchResultForm(props) {
                             name={field.name}
                             id={field.name}
                           >
-                            <SelectItem text={defaultAnalysisStatusLabel} value={defaultAnalysisStatusId} />
+                            <SelectItem
+                              text={defaultAnalysisStatusLabel}
+                              value={defaultAnalysisStatusId}
+                            />
                             {analysisStatusTypes
-                              .filter(item => item.id !== defaultAnalysisStatusId)
+                              .filter(
+                                (item) => item.id !== defaultAnalysisStatusId,
+                              )
                               .map((test, index) => {
-                              return (
-                                <SelectItem
-                                  key={index}
-                                  text={test.value}
-                                  value={test.id}
-                                />
-                              );
-                            })}
+                                return (
+                                  <SelectItem
+                                    key={index}
+                                    text={test.value}
+                                    value={test.id}
+                                  />
+                                );
+                              })}
                           </Select>
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="sampleStatusType">
                         {({ field }) => (
                           <Select
@@ -524,18 +581,23 @@ export function SearchResultForm(props) {
                             name={field.name}
                             id={field.name}
                           >
-                            <SelectItem text={defaultSampleStatusLabel} value={defaultSampleStatusId} />
+                            <SelectItem
+                              text={defaultSampleStatusLabel}
+                              value={defaultSampleStatusId}
+                            />
                             {sampleStatusTypes
-                              .filter(item => item.id !== defaultSampleStatusId)
+                              .filter(
+                                (item) => item.id !== defaultSampleStatusId,
+                              )
                               .map((test, index) => {
-                              return (
-                                <SelectItem
-                                  key={index}
-                                  text={test.value}
-                                  value={test.id}
-                                />
-                              );
-                            })}
+                                return (
+                                  <SelectItem
+                                    key={index}
+                                    text={test.value}
+                                    value={test.id}
+                                  />
+                                );
+                              })}
                           </Select>
                         )}
                       </Field>
@@ -545,7 +607,7 @@ export function SearchResultForm(props) {
                 )}
 
                 {searchBy.type !== "patient" && searchBy.type !== "unit" && (
-                  <Column lg={16}>
+                  <Column lg={16} md={8} sm={4}>
                     <Button
                       style={{ marginTop: "16px" }}
                       type="submit"
@@ -569,21 +631,28 @@ export function SearchResultForm(props) {
       {searchBy.type === "unit" && (
         <>
           <Grid>
-            <Column lg={6}>
+            <Column lg={6} md={4} sm={4}>
               <Select
                 labelText={intl.formatMessage({ id: "search.label.testunit" })}
                 name="unitType"
                 id="unitType"
                 onChange={submitOnSelect}
               >
-                <SelectItem text={defaultTestSectionLabel} value={defaultTestSectionId} />
+                <SelectItem
+                  text={defaultTestSectionLabel}
+                  value={defaultTestSectionId}
+                />
                 {testSections
-                  .filter(item => item.id !== defaultTestSectionId)
+                  .filter((item) => item.id !== defaultTestSectionId)
                   .map((test, index) => {
-                  return (
-                    <SelectItem key={index} text={test.value} value={test.id} />
-                  );
-                })}
+                    return (
+                      <SelectItem
+                        key={index}
+                        text={test.value}
+                        value={test.id}
+                      />
+                    );
+                  })}
               </Select>
             </Column>
             <Column lg={10} />
@@ -637,6 +706,7 @@ export function SearchResults(props) {
   const [referralReasons, setReferralReasons] = useState([]);
   const [rejectReasons, setRejectReasons] = useState([]);
   const [rejectedItems, setRejectedItems] = useState({});
+  const [validationState, setValidationState] = useState({});
   const saveStatus = "";
 
   const componentMounted = useRef(false);
@@ -956,8 +1026,41 @@ export function SearchResults(props) {
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
                 labelText=""
-                type="number"
-                onChange={(e) => handleChange(e, row.id)}
+                // type="number"
+                style={validationState[row.id]?.style}
+                onChange={(e) => {
+                  let value = e.target.value;
+                  let newValidationState = { ...validationState };
+                  let validation = (newValidationState[row.id] =
+                    validateNumericResults(value, row));
+                  e.target.value = validation.newValue;
+                  validation.style = {
+                    ...validation?.style,
+                    borderColor: validation.isCritical
+                      ? "orange"
+                      : validation.isInvalid
+                      ? "red"
+                      : "",
+                    background: validation.outsideValid
+                      ? "#ffa0a0"
+                      : validation.outsideNormal
+                      ? "#ffffa0"
+                      : "var(--cds-field)",
+                  };
+
+                  setValidationState(newValidationState);
+                  handleChange(e, row.id);
+                  if (
+                    validation.isInvalid &&
+                    configurationProperties.ALERT_FOR_INVALID_RESULTS
+                  ) {
+                    alert(
+                      intl.formatMessage({
+                        id: "result.outOfValidRange.msg",
+                      }),
+                    );
+                  }
+                }}
               />
             );
 
@@ -1111,11 +1214,118 @@ export function SearchResults(props) {
       </Grid>
     </>
   );
-
   const validateResults = (e, rowId) => {
     console.debug("validateResults:" + e.target.value);
     // e.target.value;
     handleChange(e, rowId);
+  };
+
+  const validateNumericResults = (value, row) => {
+    //ignore < or > from the analyser on validation
+    var greaterThanOrLessThan = "";
+    if (("" + value).startsWith("<") || ("" + value).startsWith(">")) {
+      greaterThanOrLessThan = value.charAt(0);
+    }
+    var actualValue = ("" + value).replace(/[<>]/g, "");
+    let validation = {
+      isInvalid: false,
+      outsideNormal: false,
+      isCritical: false,
+      isBlank: false,
+      isNaN: false,
+      outsideValid: false,
+      newValue: value,
+    };
+    //commented out for now
+    let isSpecialCase = "XXXX" == actualValue.toUpperCase();
+    validation = { ...validation, ...validateNumberFormat(value, row) };
+
+    // resultBox.style.borderColor = validFormat ? "" : "red";
+
+    // if( isSpecialCase ){
+    //   resultBox.title = "";
+    //   value = greaterThanOrLessThan + actualValue.toUpperCase();
+    //   resultBox.style.borderColor = "";
+    //   resultBox.style.background = "#ffffff";
+    //   $("valid_" + row).value = true;
+    //   return;
+    // }
+    if (validation.isNaN) {
+      return { ...validation };
+    } else if (
+      row.lowCritical != row.highCritical &&
+      actualValue > row.lowCritical &&
+      actualValue < row.highCritical
+    ) {
+      return { ...validation, isCritical: true };
+    } else if (
+      row.lowerAbnormalRange != row.upperAbnormalRange &&
+      (actualValue < row.lowerAbnormalRange ||
+        actualValue > row.upperAbnormalRange)
+    ) {
+      return { ...validation, isInvalid: true, outsideValid: true };
+      // resultBox.style.background = "#ffa0a0";
+      // resultBox.title = "En dehors de la plage valide"; //FIXME: Uses hardcoded French labels. Switch to refer to resource file.
+      // $("valid_" + row).value = false;
+      // if( outOfValidRangeMsg ){
+      //   alert( outOfValidRangeMsg);
+      // }
+    } else if (
+      row.lowerNormalRange != row.upperNormalRange &&
+      (actualValue < row.lowerNormalRange || actualValue > row.upperNormalRange)
+    ) {
+      return { ...validation, outsideNormal: true };
+      // resultBox.style.background = "#ffffa0";
+      // resultBox.title = "En dehors de la plage normale"; //FIXME: Uses hardcoded French labels. Switch to refer to resource file.
+      // $("valid_" + row).value = true;
+    } else {
+      return { ...validation, outsideNormal: false };
+      // resultBox.style.background = "#ffffff";
+      // resultBox.title = "";
+      // $("valid_" + row).value = true;
+    }
+  };
+
+  const validateNumberFormat = (value, row) => {
+    //ignore < or > from the analyser on validation
+    var greaterThanOrLessThan = "";
+    if (("" + value).startsWith("<") || ("" + value).startsWith(">")) {
+      greaterThanOrLessThan = value.charAt(0);
+    }
+    var actualValue = ("" + value).replace(/[<>]/g, "");
+
+    let validation = { isInvalid: false };
+    if (!actualValue) {
+      return { ...validation, isInvalid: true, isBlank: true };
+      // resultBox.title = "";
+      // resultBox.style.background = "#ffffff";
+      // $("valid_" + row).value = false;
+      // return true;
+    }
+
+    if (actualValue.trim() == ".") {
+      validation = {
+        ...validation,
+        newValue: greaterThanOrLessThan + "0.0",
+      };
+    }
+
+    if (isNaN(actualValue)) {
+      return { ...validation, isInvalid: true, isNaN: true };
+      // $("valid_" + row).value = false;
+      // return false;
+    }
+
+    if (!isNaN(row.significantDigits)) {
+      validation = {
+        ...validation,
+        newValue:
+          greaterThanOrLessThan +
+          Math.round(actualValue, row.significantDigits),
+      };
+    }
+
+    return validation;
   };
 
   const handleChange = (e, rowId) => {
@@ -1125,11 +1335,12 @@ export function SearchResults(props) {
     );
     // setState({value: e.target.value})
     console.debug("State updated to ", e.target.value);
-    var form = props.results;
+    var form = { ...props.results };
     var jp = require("jsonpath");
     jp.value(form, name, value);
     var isModified = "testResult[" + rowId + "].isModified";
     jp.value(form, isModified, "true");
+    props.setResultForm(form);
   };
 
   const handleRejectCheckBoxChange = (e, rowId) => {
@@ -1253,7 +1464,7 @@ export function SearchResults(props) {
         {props.results?.testResult?.length > 0 && (
           <Grid style={{ marginTop: "20px" }} className="gridBoundary">
             <Column lg={3} />
-            <Column lg={7}>
+            <Column lg={7} sm={4}>
               <picture>
                 <img
                   src={config.serverBaseUrl + "/images/nonconforming.gif"}
@@ -1303,9 +1514,41 @@ export function SearchResults(props) {
                 pageSize={pageSize}
                 pageSizes={[10, 20, 50, 100]}
                 totalItems={props.results?.testResult?.length}
-              ></Pagination>
+                forwardText={intl.formatMessage({ id: "pagination.forward" })}
+                backwardText={intl.formatMessage({ id: "pagination.backward" })}
+                itemRangeText={(min, max, total) =>
+                  intl.formatMessage(
+                    { id: "pagination.item-range" },
+                    { min: min, max: max, total: total },
+                  )
+                }
+                itemsPerPageText={intl.formatMessage({
+                  id: "pagination.items-per-page",
+                })}
+                itemText={(min, max) =>
+                  intl.formatMessage(
+                    { id: "pagination.item" },
+                    { min: min, max: max },
+                  )
+                }
+                pageNumberText={intl.formatMessage({
+                  id: "pagination.page-number",
+                })}
+                pageRangeText={(_current, total) =>
+                  intl.formatMessage(
+                    { id: "pagination.page-range" },
+                    { total: total },
+                  )
+                }
+                pageText={(page, pagesUnknown) =>
+                  intl.formatMessage(
+                    { id: "pagination.page" },
+                    { page: pagesUnknown ? "" : page },
+                  )
+                }
+              />
 
-              <Button type="button" id="submit" onClick={handleSave}>
+              <Button type="button" id="submit" onClick={handleSave} style={{marginTop:"16px"}}>
                 <FormattedMessage id="label.button.save" />
               </Button>
             </Form>

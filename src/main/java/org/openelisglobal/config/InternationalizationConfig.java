@@ -33,16 +33,6 @@ public class InternationalizationConfig {
         return messageSource;
     }
 
-    @Bean("localeResolver")
-    @Primary
-    public LocaleResolver localeResolver() {
-        GlobalLocaleResolver localeResolver = new GlobalLocaleResolver();
-        String localeName = ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_LANG_LOCALE);
-        localeResolver.setDefaultLocale(Locale.forLanguageTag(localeName));
-        LocaleContextHolder.setDefaultLocale(Locale.forLanguageTag(localeName));
-        return localeResolver;
-    }
-
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();

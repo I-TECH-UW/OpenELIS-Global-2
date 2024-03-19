@@ -15,8 +15,6 @@ import {
   Section,
   FileUploader,
   Tag,
-  Breadcrumb,
-  BreadcrumbItem,
   Loading,
   RadioButtonGroup,
   RadioButton,
@@ -37,6 +35,11 @@ import ConfirmPopup from "../common/ConfirmPopup";
 import PatientHeader from "../common/PatientHeader";
 import QuestionnaireResponse from "../common/QuestionnaireResponse";
 import "../pathology/PathologyDashboard.css";
+import PageBreadCrumb from "../common/PageBreadCrumb";
+let breadcrumbs = [
+  { label: "home.label", link: "/" },
+  { label: "cytology.label.dashboard", link: "/CytologyDashboard" },
+];
 
 function CytologyCaseView() {
   const componentMounted = useRef(false);
@@ -55,7 +58,7 @@ function CytologyCaseView() {
 
   const [statuses, setStatuses] = useState([]);
   const [satisfactoryForEvaluation, setSatisfactoryForEvaluation] = useState(
-    [],
+    []
   );
   const [unSatisfactoryForEvaluation, setUnSatisfactoryForEvaluation] =
     useState([]);
@@ -196,7 +199,7 @@ function CytologyCaseView() {
             var newResultMap = resultMap;
             var results = filterDiagnosisResultsByCategory(
               resultMap.category,
-              resultMap.resultType,
+              resultMap.resultType
             ).results.map((e) => {
               return e.id;
             });
@@ -355,18 +358,7 @@ function CytologyCaseView() {
 
   return (
     <>
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Breadcrumb>
-            <BreadcrumbItem href="/">
-              {intl.formatMessage({ id: "home.label" })}
-            </BreadcrumbItem>
-            <BreadcrumbItem href="/CytologyDashboard">
-              {intl.formatMessage({ id: "cytology.label.dashboard" })}
-            </BreadcrumbItem>
-          </Breadcrumb>
-        </Column>
-      </Grid>
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
 
       <Grid fullWidth={true}>
         <Column lg={16}>
@@ -1418,7 +1410,7 @@ function CytologyCaseView() {
                             var filteredMapIndex =
                               diagnosisResultsMaps?.findIndex(
                                 (r) =>
-                                  r.category === "REACTIVE_CELLULAR_CHANGES",
+                                  r.category === "REACTIVE_CELLULAR_CHANGES"
                               );
                             var diagnosisResultMap = {};
                             var newDiagnosisResultMaps = [];
@@ -1453,7 +1445,7 @@ function CytologyCaseView() {
                       <Column lg={12} md={4} sm={2}>
                         {filterDiagnosisResultsByCategory(
                           "REACTIVE_CELLULAR_CHANGES",
-                          "DICTIONARY",
+                          "DICTIONARY"
                         )?.results.map((result, index) => (
                           <Tag
                             key={index}
