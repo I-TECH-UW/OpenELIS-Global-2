@@ -96,7 +96,7 @@ public class PatientDashBoardProvider {
             }
             
         }
-        return (double) sum / hours.size();
+        return hours.isEmpty() ? 0.0 : (double) sum / hours.size();
     }
     
     private double calculateAverageReceptionToResultTime() {
@@ -122,7 +122,7 @@ public class PatientDashBoardProvider {
             }
             
         }
-        return (double) sum / hours.size();
+        return hours.isEmpty() ? 0.0 : (double) sum / hours.size();
     }
     
     private double calculateAverageResultToValidationTime() {
@@ -146,7 +146,7 @@ public class PatientDashBoardProvider {
             }
             
         }
-        return (double) sum / hours.size();
+        return hours.isEmpty() ? 0.0 : (double) sum / hours.size();
     }
     
     private List<Analysis> analysesWithDelayedTurnAroundTime() {

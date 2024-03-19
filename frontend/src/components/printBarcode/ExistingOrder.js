@@ -100,12 +100,12 @@ const ExistingOrder = () => {
       <div className="orderLegendBody">
         <Form onSubmit={handleSearch}>
           <Grid>
-            <Column lg={16}>
+            <Column lg={16} md={8} sm={4}>
               <h4>
                 <FormattedMessage id="sample.entry.search.barcode" />
               </h4>
             </Column>
-            <Column lg={4}>
+            <Column lg={8} md={8} sm={4}>
               <CustomLabNumberInput
                 placeholder={"Enter Lab No"}
                 id="labNumber"
@@ -118,11 +118,13 @@ const ExistingOrder = () => {
                 labelText={<FormattedMessage id="search.label.accession" />}
               />
             </Column>
-            <Column lg={2}>
-              <Button type="submit">
+            <div className="tabsLayout">
+            <Column lg={16} md={8} sm={4}>
+              <Button type="submit" className="btn">
                 <FormattedMessage id="label.button.submit" />
               </Button>
             </Column>
+            </div>
           </Grid>
         </Form>
         {patientSearchResults !== null && orderResults !== null && (
@@ -161,19 +163,21 @@ const ExistingOrder = () => {
       {patientSearchResults !== null && orderResults !== null && (
         <div className="orderLegendBody">
           <Grid>
-            <Column lg={16}>
+            <Column lg={16} md={8} sm={4}>
               <h4>
                 <FormattedMessage id="barcode.print.section.set" />
               </h4>
             </Column>
-            <Column lg={6}>
+            <Column lg={16} md={8} sm={4}>
               <FormattedMessage id="barcode.print.set.instruction" />
             </Column>
+            <div className="tabsLayout">
             <Column>
               <Button onClick={printLabelSets}>
                 <FormattedMessage id="barcode.print.set.button" />
               </Button>
             </Column>
+            </div>
           </Grid>
         </div>
       )}
@@ -262,7 +266,7 @@ const ExistingOrder = () => {
       {renderBarcode && (
         <div className="orderLegendBody">
           <Grid>
-            <Column lg={16}>
+            <Column lg={16} md={8} sm={4}>
               <h4>
                 <FormattedMessage id="barcode.header" />
               </h4>

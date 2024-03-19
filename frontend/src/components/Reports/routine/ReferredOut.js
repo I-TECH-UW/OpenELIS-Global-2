@@ -1,28 +1,57 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Form,
+  Heading,
+  Select,
+  SelectItem,
   Grid,
   Column,
   Section,
   Button,
   Loading,
-  Heading,
 } from "@carbon/react";
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedMessage, useIntl } from 'react-intl';
 import "../../Style.css";
+import { getFromOpenElisServer } from "../../utils/Utils";
 import { AlertDialog } from "../../common/CustomNotification";
 import CustomDatePicker from "../../common/CustomDatePicker";
-import config from "../../../config.json";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
+import config from "../../../config.json";
 
-const HivTestSummary = () => {
+const ReferredOut = () => {
   const intl = useIntl();
   const [loading, setLoading] = useState(false);
   const [notificationVisible, setNotificationVisible] = useState(false);
-  const [reportFormValues, setReportFormValues] = useState({
-    startDate: null,
-    endDate: null,
-  });
+  const [reportFormValues, setReportFormValues] = useState({ startDate: null, endDate: null });
+  const componentMounted = useRef(false);
+  const [locationCodes, setLocationCodes] = useState([]);
+  const [selectedLocationCode, setSelectedLocationCode] = useState('');
+
+  const handleSelectionChange = (event) => {
+    const selectedValue = event.target.value;
+    setSelectedLocationCode(selectedValue);
+  };
+  
+  const fetchLocationCodes = (locationCodez) => {
+    if (componentMounted.current) {
+      setLocationCodes(locationCodez);
+    }
+  };
+
+  useEffect(() => {
+    componentMounted.current = true;
+    getFromOpenElisServer("/rest/referral-organizations", fetchLocationCodes);
+    return () => {
+      componentMounted.current = false;
+    };
+  }, []);
+
+
+  const breadcrumbs = [
+    { label: "home.label", link: "/" },
+    { label: "routine.reports", link: "/RoutineReports" },
+    { label: "external.referrals.report", link: "/RoutineReport?type=patient&report=referredOut" },
+  ];
 
   function encodeDate(dateString) {
     if (typeof dateString === "string" && dateString.trim() !== "") {
@@ -53,28 +82,21 @@ const HivTestSummary = () => {
     setReportFormValues(obj);
   };
 
-  const handleSubmit = () => {
+  const handlePrinting = () => {
     setLoading(true);
-
-    const baseParams = "report=indicatorCDILNSPHIV&type=indicator";
-
+    const baseParams = 'report=referredOut&type=patient';
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
-    const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.startDate}&lowerDateRange=${reportFormValues.endDate}`;
+    const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.endDate}&lowerDateRange=${reportFormValues.startDate}&locationCode=${selectedLocationCode}`;
 
-    window.open(url, "_blank");
-
-    setLoading(false);
-    setNotificationVisible(true);
+    const check = window.open(url, '_blank');
+    if (check) {
+      setLoading(false);
+      setNotificationVisible(true);
+    } else {
+      setLoading(false);
+      <AlertDialog />
+    }
   };
-
-  const breadcrumbs = [
-    { label: "home.label", link: "/" },
-    { label: "routine.reports", link: "/RoutineReports" },
-    {
-      label: "openreports.hiv.aggregate",
-      link: "/RoutineReport?type=indicator&report=indicatorCDILNSPHIV",
-    },
-  ];
 
   return (
     <>
@@ -91,7 +113,7 @@ const HivTestSummary = () => {
           </Section>
         </Column>
       </Grid>
-      <div className="orderLegendBody">
+      <div className='orderLegendBody'>
         {notificationVisible && <AlertDialog />}
         {loading && <Loading />}
         <Grid fullWidth={true}>
@@ -99,7 +121,7 @@ const HivTestSummary = () => {
             <Section>
               <Section>
                 <Heading>
-                  <FormattedMessage id="openreports.hiv.aggregate" />
+                  <FormattedMessage id="externalReferredOutTests.title" />
                 </Heading>
               </Section>
             </Section>
@@ -114,14 +136,14 @@ const HivTestSummary = () => {
                     <br />
                     <br />
                     <h5>
-                      <FormattedMessage id="select.dateRange" />
+                      <FormattedMessage id="select.datarange.label" />
                     </h5>
                   </Section>
                   <div className="inlineDiv">
                     <CustomDatePicker
                       id={"startDate"}
                       labelText={intl.formatMessage({
-                        id: "eorder.date.start",
+                        id: "select.start.date.referredTests",
                         defaultMessage: "Start Date",
                       })}
                       autofillDate={true}
@@ -134,7 +156,7 @@ const HivTestSummary = () => {
                     <CustomDatePicker
                       id={"endDate"}
                       labelText={intl.formatMessage({
-                        id: "eorder.date.end",
+                        id: "select.end.date.referredTests",
                         defaultMessage: "End Date",
                       })}
                       className="inputDate"
@@ -147,14 +169,39 @@ const HivTestSummary = () => {
                   </div>
                 </Column>
               </Grid>
+              <Grid fullWidth={true}>
+                <Column lg={10}>
+                  <Section>
+                    <br />
+                    <br />
+                    <h5>
+                      <FormattedMessage id="select.referral.centre.is.required" />
+                    </h5>
+                  </Section>
+                  {locationCodes.length > 0 && (
+                    <div className="inputText">
+                      <Select
+                        id="locationcode"
+                        value={selectedLocationCode}
+                        onChange={handleSelectionChange}
+                        labelText={intl.formatMessage({
+                          id: "select.referral.centre",
+                          defaultMessage: "Laboratory",
+                        })}
+                      >
+                        <SelectItem value="" text="" />
+                        {locationCodes.map((locationcode) => (
+                          <SelectItem key={locationcode.id} value={locationcode.id} text={locationcode.value} />
+                        ))}
+                      </Select>
+                    </div>)}
+                </Column>
+              </Grid>
               <br />
               <Section>
                 <br />
-                <Button type="button" onClick={handleSubmit}>
-                  <FormattedMessage
-                    id="label.button.generatePrintableVersion"
-                    defaultMessage="Generate printable version"
-                  />
+                <Button type="button" onClick={handlePrinting}>
+                  <FormattedMessage id="label.button.generatePrintableVersion" defaultMessage="Generate printable version" />
                 </Button>
               </Section>
             </Form>
@@ -165,4 +212,4 @@ const HivTestSummary = () => {
   );
 };
 
-export default HivTestSummary;
+export default ReferredOut;

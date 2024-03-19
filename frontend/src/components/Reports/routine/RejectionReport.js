@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Form,
+  FormLabel,
   Grid,
   Column,
   Section,
@@ -15,7 +16,7 @@ import CustomDatePicker from "../../common/CustomDatePicker";
 import config from "../../../config.json";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 
-const HivTestSummary = () => {
+const RejectionReport = () => {
   const intl = useIntl();
   const [loading, setLoading] = useState(false);
   const [notificationVisible, setNotificationVisible] = useState(false);
@@ -56,10 +57,10 @@ const HivTestSummary = () => {
   const handleSubmit = () => {
     setLoading(true);
 
-    const baseParams = "report=indicatorCDILNSPHIV&type=indicator";
+    const baseParams = "report=sampleRejectionReport&type=indicator";
 
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
-    const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.startDate}&lowerDateRange=${reportFormValues.endDate}`;
+    const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.endDate}&lowerDateRange=${reportFormValues.startDate}`;
 
     window.open(url, "_blank");
 
@@ -71,8 +72,8 @@ const HivTestSummary = () => {
     { label: "home.label", link: "/" },
     { label: "routine.reports", link: "/RoutineReports" },
     {
-      label: "openreports.hiv.aggregate",
-      link: "/RoutineReport?type=indicator&report=indicatorCDILNSPHIV",
+      label: "openreports.mgt.rejection",
+      link: "/RoutineReport?type=indicator&report=sampleRejectionReport",
     },
   ];
 
@@ -99,7 +100,7 @@ const HivTestSummary = () => {
             <Section>
               <Section>
                 <Heading>
-                  <FormattedMessage id="openreports.hiv.aggregate" />
+                  <FormattedMessage id="openreports.mgt.rejection" />
                 </Heading>
               </Section>
             </Section>
@@ -165,4 +166,4 @@ const HivTestSummary = () => {
   );
 };
 
-export default HivTestSummary;
+export default RejectionReport;
