@@ -1,14 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Form,
-  FormLabel,
-  Grid,
-  Column,
-  Section,
-  Button,
-  Loading,
-} from "@carbon/react";
-import { FormattedMessage, useIntl } from 'react-intl';
+import React, { useState } from "react";
+import { Form, FormLabel, Grid, Column, Section, Button, Loading } from "@carbon/react";
+import { FormattedMessage, useIntl } from "react-intl";
 import "../../../Style.css";
 import { AlertDialog } from "../../../common/CustomNotification";
 import CustomDatePicker from "../../../common/CustomDatePicker";
@@ -18,9 +10,11 @@ const ReportByDate = (props) => {
   const intl = useIntl();
   const [loading, setLoading] = useState(false);
   const [notificationVisible, setNotificationVisible] = useState(false);
+
   const [reportFormValues, setReportFormValues] = useState({
     startDate: null,
-    endDate: null
+    endDate: null,
+    error: null,
   });
 
   function encodeDate(dateString) {
@@ -53,13 +47,29 @@ const ReportByDate = (props) => {
   };
 
   const handleSubmit = () => {
+    if (!reportFormValues.startDate || !reportFormValues.endDate)  {
+      setReportFormValues({
+        ...reportFormValues,
+        error: intl.formatMessage({
+          id: "error.dateRange.start",
+          defaultMessage: "Please select Start and end date.",
+        }),
+      });
+      return;
+    }
+
+    setReportFormValues({
+      ...reportFormValues,
+      error: "",
+    })
+
     setLoading(true);
 
     const baseParams = `report=${props.report}&type=patient`;
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
-    const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.startDate}&lowerDateRange=${reportFormValues.endDate}`;
+    const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.endDate}&lowerDateRange=${reportFormValues.startDate}`;
 
-    window.open(url, '_blank');
+    window.open(url, "_blank");
     setLoading(false);
     setNotificationVisible(true);
   };
@@ -70,7 +80,7 @@ const ReportByDate = (props) => {
         <Section>
           <Section>
             <h1>
-              <FormattedMessage id={props.id}/>
+              <FormattedMessage id={props.id} />
             </h1>
           </Section>
         </Section>
@@ -91,30 +101,30 @@ const ReportByDate = (props) => {
                 </Section>
                 <div className="inlineDiv">
                   <CustomDatePicker
+                    key="startDate"
                     id={"startDate"}
                     labelText={intl.formatMessage({
                       id: "eorder.date.start",
                       defaultMessage: "Start Date",
                     })}
+                    disallowFutureDate={true}
                     autofillDate={true}
                     value={reportFormValues.startDate}
                     className="inputDate"
-                    onChange={(date) =>
-                      handleDatePickerChangeDate("startDate", date)
-                    }
+                    onChange={(date) => handleDatePickerChangeDate("startDate", date)}
                   />
                   <CustomDatePicker
+                    key="endDate"
                     id={"endDate"}
                     labelText={intl.formatMessage({
                       id: "eorder.date.end",
                       defaultMessage: "End Date",
                     })}
+                    disallowFutureDate={true}
                     className="inputDate"
                     autofillDate={true}
                     value={reportFormValues.endDate}
-                    onChange={(date) =>
-                      handleDatePickerChangeDate("endDate", date)
-                    }
+                    onChange={(date) => handleDatePickerChangeDate("endDate", date)}
                   />
                 </div>
               </Column>
@@ -122,8 +132,17 @@ const ReportByDate = (props) => {
             <br />
             <Section>
               <br />
+              {reportFormValues.error !== "" && (
+                <div style={{ color: "#c62828", margin: 4 }}>
+                  {reportFormValues.error}
+                </div>
+              )}
+
               <Button type="button" onClick={handleSubmit}>
-                <FormattedMessage id="label.button.generatePrintableVersion" defaultMessage="Generate printable version" />
+                <FormattedMessage
+                  id="label.button.generatePrintableVersion"
+                  defaultMessage="Generate printable version"
+                />
               </Button>
             </Section>
           </Form>
