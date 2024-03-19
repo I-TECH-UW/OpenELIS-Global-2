@@ -292,3 +292,9 @@ button,
     font-size: 1.5vw;
   }
 }
+
+@media screen and (max-width: 400px) {
+  .inlineDiv {
+    flex-direction: column;
+  }
+}

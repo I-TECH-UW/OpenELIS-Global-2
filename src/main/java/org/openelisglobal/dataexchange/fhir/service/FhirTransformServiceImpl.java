@@ -233,94 +233,114 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             List<Analysis> analysises = analysisService.getAnalysesBySampleId(sampleId);
             List<Result> results = resultService.getResultsForSample(sample);
 
-			if (sample.getFhirUuid() == null) {
+			if (sample != null && sample.getFhirUuid() == null) {
 				sample.setFhirUuid(UUID.randomUUID());
 			}
-			if (patient.getFhirUuid() == null) {
+			if (patient != null && patient.getFhirUuid() == null) {
 				patient.setFhirUuid(UUID.randomUUID());
 			}
-			if (provider.getFhirUuid() == null) {
+			if (provider != null && provider.getFhirUuid() == null) {
 				provider.setFhirUuid(UUID.randomUUID());
 			}
-			sampleItems.stream().forEach((e) -> {
-				if (e.getFhirUuid() == null) {
-					e.setFhirUuid(UUID.randomUUID());
+			
+			if (sampleItems != null) {
+				sampleItems.stream().forEach((e) -> {
+					if (e.getFhirUuid() == null) {
+						e.setFhirUuid(UUID.randomUUID());
+					}
+				});
+			}
+
+			if (analysises != null) {
+				analysises.stream().forEach((e) -> {
+					if (e.getFhirUuid() == null) {
+						e.setFhirUuid(UUID.randomUUID());
+					}
+				});
+			}
+
+			if (results != null) {
+				results.stream().forEach((e) -> {
+					if (e.getFhirUuid() == null) {
+						e.setFhirUuid(UUID.randomUUID());
+					}
+				});
+			}
+			
+			if (sample != null) {
+				Task task = this.transformToTask(sample);
+				if (tasks.containsKey(task.getIdElement().getIdPart())) {
+					LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+							"task collision with id: " + task.getIdElement().getIdPart());
 				}
-			});
-
-			analysises.stream().forEach((e) -> {
-				if (e.getFhirUuid() == null) {
-					e.setFhirUuid(UUID.randomUUID());
+				tasks.put(task.getIdElement().getIdPart(), task);
+	
+				Optional<Task> referringTask = getReferringTaskForSample(sample);
+				if (referringTask.isPresent()) {
+					updateReferringTaskWithTaskInfo(referringTask.get(), task);
+					if (tasks.containsKey(referringTask.get().getIdElement().getIdPart())) {
+						LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+								"referring task collision with id: " + referringTask.get().getIdElement().getIdPart());
+					}
 				}
-			});
+			}
 
-            results.stream().forEach((e) -> {
-                if (e.getFhirUuid() == null) {
-                    e.setFhirUuid(UUID.randomUUID());
-                }
-            });
-            Task task = this.transformToTask(sample);
-            if (tasks.containsKey(task.getIdElement().getIdPart())) {
-                LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
-                        "task collision with id: " + task.getIdElement().getIdPart());
-            }
-            tasks.put(task.getIdElement().getIdPart(), task);
+			if (patient != null) {
+				org.hl7.fhir.r4.model.Patient fhirPatient = this.transformToFhirPatient(patient);
+				if (fhirPatients.containsKey(fhirPatient.getIdElement().getIdPart())) {
+					LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+							"patient collision with id: " + fhirPatient.getIdElement().getIdPart());
+				}
+				fhirPatients.put(fhirPatient.getIdElement().getIdPart(), fhirPatient);
+			}
 
-            Optional<Task> referringTask = getReferringTaskForSample(sample);
-            if (referringTask.isPresent()) {
-                updateReferringTaskWithTaskInfo(referringTask.get(), task);
-                if (tasks.containsKey(referringTask.get().getIdElement().getIdPart())) {
-                    LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
-                            "referring task collision with id: " + referringTask.get().getIdElement().getIdPart());
-                }
-            }
+			if (provider != null) {
+				Practitioner requester = transformProviderToPractitioner(provider);
+				if (requesters.containsKey(requester.getIdElement().getIdPart())) {
+					LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+							"practitioner collision with id: " + requester.getIdElement().getIdPart());
+				}
+				requesters.put(requester.getIdElement().getIdPart(), requester);
+			}
 
-            org.hl7.fhir.r4.model.Patient fhirPatient = this.transformToFhirPatient(patient);
-            if (fhirPatients.containsKey(fhirPatient.getIdElement().getIdPart())) {
-                LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
-                        "patient collision with id: " + fhirPatient.getIdElement().getIdPart());
-            }
-            fhirPatients.put(fhirPatient.getIdElement().getIdPart(), fhirPatient);
-
-            Practitioner requester = transformProviderToPractitioner(provider);
-            if (requesters.containsKey(requester.getIdElement().getIdPart())) {
-                LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
-                        "practitioner collision with id: " + fhirPatient.getIdElement().getIdPart());
-            }
-            requesters.put(requester.getIdElement().getIdPart(), requester);
-
-            for (SampleItem sampleItem : sampleItems) {
-                Specimen specimen = this.transformToSpecimen(sampleItem);
-                if (specimens.containsKey(specimen.getIdElement().getIdPart())) {
-                    LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
-                            "specimen collision with id: " + specimen.getIdElement().getIdPart());
-                }
-                specimens.put(specimen.getIdElement().getIdPart(), specimen);
-            }
-            for (Analysis analysis : analysises) {
-                ServiceRequest serviceRequest = this.transformToServiceRequest(analysis);
-                if (serviceRequests.containsKey(serviceRequest.getIdElement().getIdPart())) {
-                    LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
-                            "serviceRequest collision with id: " + serviceRequest.getIdElement().getIdPart());
-                }
-                serviceRequests.put(serviceRequest.getIdElement().getIdPart(), serviceRequest);
-                if (statusService.matches(analysis.getStatusId(), AnalysisStatus.Finalized)) {
-                    DiagnosticReport diagnosticReport = this.transformResultToDiagnosticReport(analysis);
-                    if (diagnosticReports.containsKey(analysis.getFhirUuidAsString())) {
-                        LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
-                                "diagnosticReport collision with id: " + diagnosticReport.getIdElement().getIdPart());
-                    }
-                    diagnosticReports.put(analysis.getFhirUuidAsString(), diagnosticReport);
-                }
-            }
-            for (Result result : results) {
-                Observation observation = this.transformResultToObservation(result);
-                if (observations.containsKey(observation.getIdElement().getIdPart())) {
-                    LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
-                            "observation collision with id: " + observation.getIdElement().getIdPart());
-                }
-                observations.put(observation.getIdElement().getIdPart(), observation);
-            }
+			if (sampleItems != null) {
+				for (SampleItem sampleItem : sampleItems) {
+					Specimen specimen = this.transformToSpecimen(sampleItem);
+					if (specimens.containsKey(specimen.getIdElement().getIdPart())) {
+						LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+								"specimen collision with id: " + specimen.getIdElement().getIdPart());
+					}
+					specimens.put(specimen.getIdElement().getIdPart(), specimen);
+				}
+			}
+			if (analysises != null) {
+				for (Analysis analysis : analysises) {
+					ServiceRequest serviceRequest = this.transformToServiceRequest(analysis);
+					if (serviceRequests.containsKey(serviceRequest.getIdElement().getIdPart())) {
+						LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+								"serviceRequest collision with id: " + serviceRequest.getIdElement().getIdPart());
+					}
+					serviceRequests.put(serviceRequest.getIdElement().getIdPart(), serviceRequest);
+					if (statusService.matches(analysis.getStatusId(), AnalysisStatus.Finalized)) {
+						DiagnosticReport diagnosticReport = this.transformResultToDiagnosticReport(analysis);
+						if (diagnosticReports.containsKey(analysis.getFhirUuidAsString())) {
+							LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+									"diagnosticReport collision with id: " + diagnosticReport.getIdElement().getIdPart());
+						}
+						diagnosticReports.put(analysis.getFhirUuidAsString(), diagnosticReport);
+					}
+				}
+			}
+			if (results != null) {
+				for (Result result : results) {
+					Observation observation = this.transformResultToObservation(result);
+					if (observations.containsKey(observation.getIdElement().getIdPart())) {
+						LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+								"observation collision with id: " + observation.getIdElement().getIdPart());
+					}
+					observations.put(observation.getIdElement().getIdPart(), observation);
+				}
+			}
         }
 
 		for (Task task : tasks.values()) {
@@ -341,7 +361,6 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 		for (DiagnosticReport diagnosticReport : diagnosticReports.values()) {
 			this.addToOperations(fhirOperations, tempIdGenerator, diagnosticReport);
 		}
-
 		for (Practitioner requester : requesters.values()) {
 			this.addToOperations(fhirOperations, tempIdGenerator, requester);
 		}

@@ -12,14 +12,18 @@ import {
 
 } from "@carbon/react";
 import { injectIntl ,FormattedMessage} from "react-intl";
+import PageBreadCrumb from "../common/PageBreadCrumb";
+
+let breadcrumbs = [{ label: "home.label", link: "/" }];
 
 const Index = () => {
   const { notificationVisible } = useContext(NotificationContext);
   const [results, setResults] = useState({ resultList: [] });
   return (
     <>
+   <PageBreadCrumb breadcrumbs={breadcrumbs} />
     <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>

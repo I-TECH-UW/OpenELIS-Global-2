@@ -15,9 +15,7 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonDiscovery,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=patientCILNSP_vreduit",
+          link: "/RoutineReport?type=patient&report=patientCILNSP_vreduit",
           label: <FormattedMessage id="sidenav.label.statusreport"/>,
         },
       ],
@@ -27,21 +25,15 @@ export const RoutineReportsMenu = {
       icon: Microscope,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=indicator&report=statisticsReport",
+          link: "/RoutineReport?type=indicator&report=statisticsReport",
           label: <FormattedMessage id= "sidenav.label.statisticsreport"/>,
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=indicator&report=indicatorHaitiLNSPAllTests",
+          link: "/RoutineReport?type=indicator&report=indicatorHaitiLNSPAllTests",
           label: <FormattedMessage id= "sidenav.label.testsummary"/>
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=indicator&report=indicatorCDILNSPHIV",
+          link:"/RoutineReport?type=indicator&report=indicatorCDILNSPHIV",
           label: <FormattedMessage id="sideNav.label.hivtestsummary"/>,
         },
       ],
@@ -51,9 +43,7 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=indicator&report=sampleRejectionReport",
+          link: "/RoutineReport?type=indicator&report=sampleRejectionReport",
           label: <FormattedMessage id="sideNav.label.rejectionreport"/>,
         },
       ],
@@ -83,12 +73,11 @@ export const RoutineReportsMenu = {
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.referredtestreport" defaultMessage="Referred Tests Report"/>,
+      title: <FormattedMessage id="sideNav.title.referredtestreport" defaultMessage="Referred Out Tests Report"/>,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl + "/Report?type=patient&report=referredOut",
+          link:"/RoutineReport?type=patient&report=referredOut",
           label: <FormattedMessage id="sideNav.label.referredtestreport"/>,
         },
       ],
@@ -151,7 +140,7 @@ export const RoutineReportsMenu = {
 };
 const Routine = () => {
   return (
-    <>
+    <> 
       <GlobalSideBar sideNav={RoutineReportsMenu} />
     </>
   );

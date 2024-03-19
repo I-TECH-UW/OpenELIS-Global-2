@@ -284,10 +284,30 @@ export function SearchResultForm(props) {
       querySearch(values);
     }
 
-    let displayFormType = new URLSearchParams(window.location.search).get(
-      "type",
-    );
-    let doRange = new URLSearchParams(window.location.search).get("doRange");
+    
+    var displayFormType = "";
+    var doRange = "";
+    if(window.location.pathname == "/result"){
+      displayFormType = new URLSearchParams(window.location.search).get(
+        "type",
+      );
+      doRange = new URLSearchParams(window.location.search).get("doRange");
+    } else if(window.location.pathname == "/LogbookResults"){
+      displayFormType = "unit" ;
+      doRange = "false";
+    } else if(window.location.pathname == "/PatientResults"){
+      displayFormType = "patient" ;
+      doRange = "false";
+    }else if(window.location.pathname == "/AccessionResults"){
+      displayFormType = "order" ;
+      doRange = "false";
+    }else if(window.location.pathname == "/StatusResults"){
+      displayFormType = "date" ;
+      doRange = "false";
+    } else if(window.location.pathname == "/RangeResults"){
+      displayFormType = "range" ;
+      doRange = "true";
+    }
     setSearchBy({
       type: displayFormType,
       doRange: doRange,
@@ -295,6 +315,7 @@ export function SearchResultForm(props) {
   }, []);
 
   useEffect(() => {
+   
     let accessionNumber = new URLSearchParams(window.location.search).get(
       "accessionNumber",
     );
@@ -372,14 +393,14 @@ export function SearchResultForm(props) {
           >
             <Stack gap={2}>
               <Grid>
-                <Column lg={16}>
+                <Column lg={16} md={8} sm={4}>
                   <h4>
                     <FormattedMessage id="label.button.search" />
                   </h4>
                 </Column>
                 {searchBy.type === "order" && (
                   <>
-                    <Column lg={6}>
+                    <Column lg={6} md={4} sm={4}>
                       <Field name="accessionNumber">
                         {({ field }) => (
                           <CustomLabNumberInput
@@ -403,7 +424,7 @@ export function SearchResultForm(props) {
 
                 {searchBy.type === "range" && (
                   <>
-                    <Column lg={6}>
+                    <Column lg={6} sm={4}>
                       <Field name="startLabNo">
                         {({ field }) => (
                           <TextInput
@@ -418,7 +439,7 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={6}>
+                    <Column lg={6} sm={4}>
                       <Field name="endLabNo">
                         {({ field }) => (
                           <TextInput
@@ -438,7 +459,7 @@ export function SearchResultForm(props) {
 
                 {searchBy.type === "date" && (
                   <>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="collectionDate">
                         {({ field, form }) => (
                           <DatePicker
@@ -464,7 +485,7 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="recievedDate">
                         {({ field, form }) => (
                           <DatePicker
@@ -490,7 +511,7 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="testName">
                         {({ field }) => (
                           <Select
@@ -519,7 +540,7 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="analysisStatus">
                         {({ field }) => (
                           <Select
@@ -550,7 +571,7 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="sampleStatusType">
                         {({ field }) => (
                           <Select
@@ -586,7 +607,7 @@ export function SearchResultForm(props) {
                 )}
 
                 {searchBy.type !== "patient" && searchBy.type !== "unit" && (
-                  <Column lg={16}>
+                  <Column lg={16} md={8} sm={4}>
                     <Button
                       style={{ marginTop: "16px" }}
                       type="submit"
@@ -610,7 +631,7 @@ export function SearchResultForm(props) {
       {searchBy.type === "unit" && (
         <>
           <Grid>
-            <Column lg={6}>
+            <Column lg={6} md={4} sm={4}>
               <Select
                 labelText={intl.formatMessage({ id: "search.label.testunit" })}
                 name="unitType"
@@ -1443,7 +1464,7 @@ export function SearchResults(props) {
         {props.results?.testResult?.length > 0 && (
           <Grid style={{ marginTop: "20px" }} className="gridBoundary">
             <Column lg={3} />
-            <Column lg={7}>
+            <Column lg={7} sm={4}>
               <picture>
                 <img
                   src={config.serverBaseUrl + "/images/nonconforming.gif"}
@@ -1527,7 +1548,7 @@ export function SearchResults(props) {
                 }
               />
 
-              <Button type="button" id="submit" onClick={handleSave}>
+              <Button type="button" id="submit" onClick={handleSave} style={{marginTop:"16px"}}>
                 <FormattedMessage id="label.button.save" />
               </Button>
             </Form>
