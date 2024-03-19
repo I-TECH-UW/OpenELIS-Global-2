@@ -126,16 +126,26 @@ const StatisticsReport = () => {
           <Section>
             <Section>
               <Heading>
-                <FormattedMessage id="openreports.stat.aggregate" />
+                <FormattedMessage id="selectReportValues.title" />
               </Heading>
             </Section>
           </Section>
         </Column>
       </Grid>
-
       <div className="orderLegendBody">
         {notificationVisible && <AlertDialog />}
         {loading && <Loading />}
+        <Grid fullWidth={true}>
+          <Column lg={16}>
+            <Section>
+              <Section>
+                <Heading>
+                  <FormattedMessage id="openreports.stat.aggregate" />
+                </Heading>
+              </Section>
+            </Section>
+          </Column>
+        </Grid>
         <Grid fullWidth={true}>
           <Column lg={16}>
             <Form>

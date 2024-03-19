@@ -86,7 +86,7 @@ const RejectionReport = () => {
           <Section>
             <Section>
               <Heading>
-                <FormattedMessage id="openreports.mgt.rejection" />
+                <FormattedMessage id="selectReportValues.title" />
               </Heading>
             </Section>
           </Section>
@@ -95,6 +95,17 @@ const RejectionReport = () => {
       <div className="orderLegendBody">
         {notificationVisible && <AlertDialog />}
         {loading && <Loading />}
+        <Grid fullWidth={true}>
+          <Column lg={16}>
+            <Section>
+              <Section>
+                <Heading>
+                  <FormattedMessage id="openreports.mgt.rejection" />
+                </Heading>
+              </Section>
+            </Section>
+          </Column>
+        </Grid>
         <Grid fullWidth={true}>
           <Column lg={16}>
             <Form>

@@ -86,7 +86,7 @@ const SummaryOfAllTest = () => {
           <Section>
             <Section>
               <Heading>
-                <FormattedMessage id="openreports.all.test.summary.title" />
+                <FormattedMessage id="selectReportValues.title" />
               </Heading>
             </Section>
           </Section>
@@ -95,6 +95,17 @@ const SummaryOfAllTest = () => {
       <div className="orderLegendBody">
         {notificationVisible && <AlertDialog />}
         {loading && <Loading />}
+        <Grid fullWidth={true}>
+          <Column lg={16}>
+            <Section>
+              <Section>
+                <Heading>
+                  <FormattedMessage id="openreports.all.test.summary.title" />
+                </Heading>
+              </Section>
+            </Section>
+          </Column>
+        </Grid>
         <Grid fullWidth={true}>
           <Column lg={16}>
             <Form>

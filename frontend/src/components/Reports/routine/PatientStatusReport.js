@@ -387,7 +387,7 @@ function PatientStatusReport(props) {
           <Section>
             <Section>
               <Heading>
-                <FormattedMessage id="openreports.patientTestStatus" />
+                <FormattedMessage id="selectReportValues.title" />
               </Heading>
             </Section>
           </Section>
@@ -396,6 +396,17 @@ function PatientStatusReport(props) {
       <div className="orderLegendBody">
         {notificationVisible === true ? <AlertDialog /> : ""}
         {loading && <Loading />}
+        <Grid fullWidth={true}>
+          <Column lg={16}>
+            <Section>
+              <Section>
+                <Heading>
+                  <FormattedMessage id="openreports.patientTestStatus" />
+                </Heading>
+              </Section>
+            </Section>
+          </Column>
+        </Grid>
         <Formik
           initialValues={reportFormValues}
           enableReinitialize={true}
@@ -425,6 +436,8 @@ function PatientStatusReport(props) {
               <Grid fullWidth={true}>
                 <Column lg={16} md={8} sm={4}>
                   <Section>
+                    <br />
+                    <br />
                     <h5>
                       <FormattedMessage id="report.enter.labNumber.headline" />
                     </h5>

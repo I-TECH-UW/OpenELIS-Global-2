@@ -85,7 +85,7 @@ const HivTestSummary = () => {
           <Section>
             <Section>
               <Heading>
-                <FormattedMessage id="openreports.hiv.aggregate" />
+                <FormattedMessage id="selectReportValues.title" />
               </Heading>
             </Section>
           </Section>
@@ -94,6 +94,17 @@ const HivTestSummary = () => {
       <div className="orderLegendBody">
         {notificationVisible && <AlertDialog />}
         {loading && <Loading />}
+        <Grid fullWidth={true}>
+          <Column lg={16}>
+            <Section>
+              <Section>
+                <Heading>
+                  <FormattedMessage id="openreports.hiv.aggregate" />
+                </Heading>
+              </Section>
+            </Section>
+          </Column>
+        </Grid>
         <Grid fullWidth={true}>
           <Column lg={16}>
             <Form>
