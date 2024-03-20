@@ -490,6 +490,14 @@ button {
   .banner p {
     font-size: 1.5vw;
   }
+  .formInlineDiv{
+    grid-template-columns: 1fr;
+  }
+}
+@media screen and (max-width: 550px) {
+  .adminPageContent{
+    margin-left: 15%;
+  }
 }
 @media screen and (max-width: 400px) {
   .inlineDiv {
