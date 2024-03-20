@@ -69,6 +69,7 @@
   /* text-align: left; */
   margin-top: 20px;
 }
+
 @media screen and (max-width: 450px){
   .dashboard-container{
     grid-template-columns: repeat(2, 1fr);
@@ -77,5 +78,30 @@
   }
   .tile-title {
     font-size: 0.9rem;
+}
+.tile-title-Immuno{
+  font-size: 0.6rem;
+}
+}
+@media screen and (max-width: 1150px) and (min-width:700px){
+.dashboard-container{
+  gap: 40px;
+  padding:30px;
+}
+.dashboard-tile {
+  min-width: 175px;
+}
+.tile-title-Immuno{
+  font-size: 0.9rem;
+}
+}
+@media screen and (max-width: 700px) and (min-width:450px){
+.dashboard-container{
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  padding:30px;
+}
+.tile-title-Immuno{
+  font-size: 0.9rem;
 }
 }
