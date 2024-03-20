@@ -485,12 +485,13 @@ button {
 
 @media screen and (max-width: 792px) {
   .banner h5 {
-    font-size: 2vw;
+    font-size: 1.8vw;
   }
   .banner p {
-    font-size: 1.5vw;
+    font-size: 1.4vw;
   }
 }
+
 @media screen and (max-width: 400px) {
   .inlineDiv {
     flex-direction: column;
