@@ -491,7 +491,7 @@ button {
     font-size: 1.5vw;
   }
 }
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 460px) {
   .inlineDiv {
     flex-direction: column;
   }
