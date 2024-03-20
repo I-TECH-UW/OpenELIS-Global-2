@@ -45,9 +45,8 @@ import {
 } from "../../../common/CustomNotification";
 
 function GenericReport(props) {
-    
   const [reportFormValues, setReportFormValues] = useState(
-    PatientStatusReportFormValues
+    PatientStatusReportFormValues,
   );
 
   const { configurationProperties } = useContext(ConfigurationContext);
@@ -86,9 +85,8 @@ function GenericReport(props) {
   const [departments, setDepartments] = useState([]);
 
   const handleReportPrint = () => {
-   
     const baseUrl = `${config.serverBaseUrl}/ReportPrint?report=${props.report}&type=patient`;
-  
+
     const queryParams = [
       `accessionDirect=${reportFormValues.form}`,
       `highAccessionDirect=${reportFormValues.to}`,
@@ -100,18 +98,17 @@ function GenericReport(props) {
       `_onlyResults=${checkbox}`,
       `dateType=${items}`,
       `lowerDateRange=${reportFormValues.startDate}`,
-      `upperDateRange=${reportFormValues.endDate}`
+      `upperDateRange=${reportFormValues.endDate}`,
     ];
-   
-    const URL = `${baseUrl}&${queryParams.join('&')}`;
+
+    const URL = `${baseUrl}&${queryParams.join("&")}`;
     window.open(URL);
   };
-  
-  
+
   const handleSubmit = (values) => {
     setLoading(true);
-    values.dateOfBirth = dob; 
-  
+    values.dateOfBirth = dob;
+
     const {
       from,
       to,
@@ -120,10 +117,11 @@ function GenericReport(props) {
       patientId,
       labNumber,
       guid,
-      gender
+      gender,
     } = values;
-  
-    const searchEndPoint = `/rest/patient-search-results?` +
+
+    const searchEndPoint =
+      `/rest/patient-search-results?` +
       `from=${from}&` +
       `to=${to}&` +
       `lastName=${lastName}&` +
@@ -135,11 +133,10 @@ function GenericReport(props) {
       `guid=${guid}&` +
       `dateOfBirth=${values.dateOfBirth}&` +
       `gender=${gender}`;
-  
+
     getFromOpenElisServer(searchEndPoint, fetchPatientResults);
     setUrl(searchEndPoint);
   };
-  
 
   function encodeDate(dateString) {
     if (typeof dateString === "string" && dateString.trim() !== "") {
@@ -148,7 +145,6 @@ function GenericReport(props) {
       return "";
     }
   }
-
 
   function handlePatientIdTo(e) {
     setReportFormValues({
@@ -164,7 +160,6 @@ function GenericReport(props) {
     });
   }
 
-  
   function handleFirstName(e) {
     setReportFormValues({
       ...reportFormValues,
@@ -177,7 +172,6 @@ function GenericReport(props) {
       lastName: e.target.value,
     });
   }
-
 
   function handleGender(e) {
     setReportFormValues({
@@ -193,7 +187,6 @@ function GenericReport(props) {
     });
   }
 
-  
   function handlePatientIdFrom(e) {
     setReportFormValues({
       ...reportFormValues,
@@ -207,7 +200,6 @@ function GenericReport(props) {
       patientId: e.target.value,
     });
   }
-
 
   function handleRequesterDept(e) {
     setReportFormValues({
@@ -344,7 +336,7 @@ function GenericReport(props) {
     getFromOpenElisServer(
       "/rest/departments-for-site?refferingSiteId=" +
         (reportFormValues.referringSiteId || ""),
-      loadDepartments
+      loadDepartments,
     );
   }, [reportFormValues.referringSiteId]);
 
@@ -359,7 +351,7 @@ function GenericReport(props) {
 
   useEffect(() => {
     let patientId = new URLSearchParams(window.location.search).get(
-      "patientId"
+      "patientId",
     );
     if (patientId) {
       let searchValues = {
@@ -396,7 +388,7 @@ function GenericReport(props) {
         <Section>
           <Section>
             <Heading>
-            <FormattedMessage id={props.id}/>
+              <FormattedMessage id={props.id} />
             </Heading>
           </Section>
         </Section>
@@ -430,8 +422,8 @@ function GenericReport(props) {
             <Grid fullWidth={true}>
               <Column lg={8}>
                 <Section>
-                <br />
-                <br />
+                  <br />
+                  <br />
                   <h5>
                     <FormattedMessage id="sample.search.scanner.instructions" />
                   </h5>
@@ -803,7 +795,7 @@ function GenericReport(props) {
                     name="dateType"
                     titleText="Date Type"
                     initialSelectedItem={itemList.find(
-                      (item) => item.tag === items
+                      (item) => item.tag === items,
                     )}
                     label="Date Type"
                     items={itemList}

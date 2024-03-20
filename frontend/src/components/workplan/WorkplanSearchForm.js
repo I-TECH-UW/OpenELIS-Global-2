@@ -103,7 +103,6 @@ export default function WorkplanSearchForm(props) {
     setPagination(false);
   }, []);
 
-
   return (
     <>
       <Grid fullWidth={true}>

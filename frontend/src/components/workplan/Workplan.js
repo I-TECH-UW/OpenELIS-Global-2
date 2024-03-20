@@ -172,14 +172,11 @@ export default function Workplan(props) {
   let showAccessionNumber = false;
   let currentAccessionNumber = "";
 
-  let breadcrumbs = [
-    { label: "home.label", link: "/" },
-  ];
-
+  let breadcrumbs = [{ label: "home.label", link: "/" }];
 
   return (
     <>
-    <PageBreadCrumb breadcrumbs={breadcrumbs} />
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         {notificationVisible === true ? <AlertDialog /> : ""}
         <Column lg={16} md={8} sm={4}>

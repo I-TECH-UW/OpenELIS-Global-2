@@ -1,6 +1,5 @@
-
-export * from './test-results';
-export * from './workspace';
+export * from "./test-results";
+export * from "./workspace";
 
 export interface DashbardConfig {
   columns: number;
