@@ -42,7 +42,7 @@
     "login.msg.password.missing": "Votre mot de passe requis",
     "login.notice.message": "Veuillez entrer dans le logiciel de Syst\u00E8me d'Information \u00C9lectronique de Laboratoire:",
     "error.invalidcredentials": "L'identifiant ou le mot de passe est incorrect",
-    "patient.label.modify" : "Ajouter/Modifier un patient" ,
+    "patient.label.modify" : "Ajouter ou modifier un patient" ,
     "patient.label.info" : "Informations sur les patients",
     "breadcrumb.home" : "Domicile",
     "admin.legacy" :"Précédent Admin",
@@ -690,6 +690,8 @@
     "pagination.items-per-page": "Entrées par page",
     "pagination.page": "page {page}",
     "pagination.page-number": "Numéro de page",
-    "pagination.page-range": "de {total} {total, plural, one {page} other {pages}}"
+    "pagination.page-range": "de {total} {total, plural, one {page} other {pages}}",
+    "openreports.mgt.nonconformity.date": "Rapport de non-conformité par date",
+    "openreports.mgt.nonconformity.section": "Rapport de non-conformité par unité et raison"
 
 }
