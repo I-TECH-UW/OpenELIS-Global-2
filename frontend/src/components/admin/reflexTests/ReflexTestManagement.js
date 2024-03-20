@@ -8,7 +8,7 @@ function ReflexTestManagement() {
   return (
     <>
       <div className="adminPageContent">
-      <Grid >
+        <Grid>
           <Column lg={16}>
             <Section>
               <Section>
