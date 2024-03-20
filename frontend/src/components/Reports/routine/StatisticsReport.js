@@ -120,7 +120,7 @@ const StatisticsReport = () => {
   return (
     <>
         <Grid fullWidth={true}>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <Section>
               <Section>
                 <Heading>
@@ -131,10 +131,10 @@ const StatisticsReport = () => {
           </Column>
         </Grid>
         <Grid fullWidth={true}>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <Form>
               <Grid fullWidth={true}>
-                <Column lg={16}>
+                <Column lg={16} md={8} sm={4}>
                   <Section>
                     <br />
                     <br />
@@ -175,7 +175,7 @@ const StatisticsReport = () => {
                 </Column>
               </Grid>
               <Grid fullWidth={true}>
-                <Column lg={8}>
+                <Column lg={16} md={8} sm={4}>
                   <Section>
                     <br />
                     <h5>
@@ -217,7 +217,7 @@ const StatisticsReport = () => {
                 </Column>
               </Grid>
               <Grid fullWidth={true}>
-                <Column lg={8}>
+                <Column lg={16} md={8} sm={4}>
                   <Section>
                     <br />
                     <h5>
@@ -261,7 +261,7 @@ const StatisticsReport = () => {
                 </Column>
               </Grid>
               <Grid fullWidth={true}>
-                <Column lg={6}>
+                <Column lg={16} md={8} sm={4}>
                   <Section>
                     <br />
                     <h5>
@@ -269,7 +269,7 @@ const StatisticsReport = () => {
                     </h5>
                   </Section>
                 </Column>
-                <Column lg={2}>
+                <Column lg={2} md={2} sm={2}>
                   <Dropdown
                     id="year-picker"
                     label="Select Year"

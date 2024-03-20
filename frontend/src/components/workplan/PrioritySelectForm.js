@@ -23,17 +23,19 @@ function PanelSelectForm(props) {
   useEffect(() => {
     mounted.current = true;
     let priorityId = new URLSearchParams(window.location.search).get(
-      "priority"
+      "priority",
     );
     priorityId = priorityId ? priorityId : "";
     getFromOpenElisServer("/rest/priorities", (fetchedPriorities) => {
-      let priority= fetchedPriorities.find(priority => priority.id === priorityId);
+      let priority = fetchedPriorities.find(
+        (priority) => priority.id === priorityId,
+      );
       let priorityLabel = priority ? priority.value : "";
       setDefaultPriorityId(priorityId);
       setDefaultPriorityLabel(priorityLabel);
       props.value(priorityId, priorityLabel);
       getTests(fetchedPriorities);
-    })
+    });
     return () => {
       mounted.current = false;
     };
@@ -55,10 +57,12 @@ function PanelSelectForm(props) {
           >
             <SelectItem text={defaultPriorityLabel} value={defaultPriorityId} />
             {tests
-              .filter(item => item.id !== defaultPriorityId)
+              .filter((item) => item.id !== defaultPriorityId)
               .map((item, idx) => {
-                return <SelectItem key={idx} text={item.value} value={item.id} />;
-            })}
+                return (
+                  <SelectItem key={idx} text={item.value} value={item.id} />
+                );
+              })}
           </Select>
         </Column>
       </Grid>
