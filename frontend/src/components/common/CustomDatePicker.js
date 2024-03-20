@@ -3,7 +3,6 @@ import { DatePicker, DatePickerInput } from "@carbon/react";
 import { format } from "date-fns";
 
 const CustomDatePicker = (props) => {
-  
   const [currentDate, setCurrentDate] = useState(
     props.value ? props.value : "",
   );

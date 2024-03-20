@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Form, FormLabel, Grid, Column, Section, Button, Loading } from "@carbon/react";
+import {
+  Form,
+  FormLabel,
+  Grid,
+  Column,
+  Section,
+  Button,
+  Loading,
+} from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
 import "../../../Style.css";
 import { AlertDialog } from "../../../common/CustomNotification";
@@ -47,7 +55,7 @@ const ReportByDate = (props) => {
   };
 
   const handleSubmit = () => {
-    if (!reportFormValues.startDate || !reportFormValues.endDate)  {
+    if (!reportFormValues.startDate || !reportFormValues.endDate) {
       setReportFormValues({
         ...reportFormValues,
         error: intl.formatMessage({
@@ -61,7 +69,7 @@ const ReportByDate = (props) => {
     setReportFormValues({
       ...reportFormValues,
       error: "",
-    })
+    });
 
     setLoading(true);
 
@@ -111,7 +119,9 @@ const ReportByDate = (props) => {
                     autofillDate={true}
                     value={reportFormValues.startDate}
                     className="inputDate"
-                    onChange={(date) => handleDatePickerChangeDate("startDate", date)}
+                    onChange={(date) =>
+                      handleDatePickerChangeDate("startDate", date)
+                    }
                   />
                   <CustomDatePicker
                     key="endDate"
@@ -124,7 +134,9 @@ const ReportByDate = (props) => {
                     className="inputDate"
                     autofillDate={true}
                     value={reportFormValues.endDate}
-                    onChange={(date) => handleDatePickerChangeDate("endDate", date)}
+                    onChange={(date) =>
+                      handleDatePickerChangeDate("endDate", date)
+                    }
                   />
                 </div>
               </Column>
