@@ -107,7 +107,7 @@ export default function WorkplanSearchForm(props) {
   return (
     <>
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <h5 className="contentHeader2">
               <FormattedMessage id="label.form.searchby" />
@@ -150,7 +150,7 @@ export default function WorkplanSearchForm(props) {
       <hr />
       <br />
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           {selectedLabel && (
             <Section>
               <h4 className="contentHeader1">&nbsp; {selectedLabel} </h4>

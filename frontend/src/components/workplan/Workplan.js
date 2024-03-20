@@ -182,7 +182,7 @@ export default function Workplan(props) {
     <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         {notificationVisible === true ? <AlertDialog /> : ""}
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>{title}</Heading>
@@ -194,7 +194,7 @@ export default function Workplan(props) {
       </Grid>
       <div className="orderLegendBody">
         <Grid fullWidth={true}>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <WorkplanSearchForm
               type={type}
               createTestsList={handleTestsList}
@@ -208,7 +208,7 @@ export default function Workplan(props) {
             <hr />
             <br />
             <Grid fullWidth={true}>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 <Button
                   size="md"
                   type="button"
