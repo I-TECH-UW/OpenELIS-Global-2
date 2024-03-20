@@ -22,18 +22,16 @@ function TestSelectForm(props) {
 
   useEffect(() => {
     mounted.current = true;
-    let testId = new URLSearchParams(window.location.search).get(
-      "testId"
-    );
-    testId = testId ? testId : ""; 
-    getFromOpenElisServer("/rest/tests", async (fetchedTests) => {
-      let test = fetchedTests.find(test => test.id === testId);
+    let testId = new URLSearchParams(window.location.search).get("testId");
+    testId = testId ? testId : "";
+    getFromOpenElisServer("/rest/tests", (fetchedTests) => {
+      let test = fetchedTests.find((test) => test.id === testId);
       let testLabel = test ? test.value : "";
       setDefaultTestId(testId);
       setDefaultTestLabel(testLabel);
       props.value(testId, testLabel);
       getTests(fetchedTests);
-    })
+    });
     return () => {
       mounted.current = false;
     };
@@ -55,10 +53,12 @@ function TestSelectForm(props) {
           >
             <SelectItem text={defaultTestLabel} value={defaultTestId} />
             {tests
-              .filter(item => item.id !== defaultTestId)
+              .filter((item) => item.id !== defaultTestId)
               .map((item, idx) => {
-                return <SelectItem key={idx} text={item.value} value={item.id} />;
-            })}
+                return (
+                  <SelectItem key={idx} text={item.value} value={item.id} />
+                );
+              })}
           </Select>
         </Column>
       </Grid>

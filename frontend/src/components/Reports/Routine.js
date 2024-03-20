@@ -11,116 +11,115 @@ export const RoutineReportsMenu = {
   className: "resultSideNav",
   sideNavMenuItems: [
     {
-      title: <FormattedMessage id="sidenav.title.statusreport"/>,
+      title: <FormattedMessage id="sidenav.title.statusreport" />,
       icon: IbmWatsonDiscovery,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=patientCILNSP_vreduit",
-        
-          label: <FormattedMessage id="sidenav.label.statusreport"/>,
+          link: "/RoutineReport?type=patient&report=patientCILNSP_vreduit",
+          label: <FormattedMessage id="sidenav.label.statusreport" />,
         },
       ],
     },
     {
-      title: <FormattedMessage id="sidenav.title.aggregatereport"/>,
+      title: <FormattedMessage id="sidenav.title.aggregatereport" />,
       icon: Microscope,
       SideNavMenuItem: [
         {
           link: "/RoutineReport?type=indicator&report=statisticsReport",
-          label: <FormattedMessage id= "sidenav.label.statisticsreport"/>,
+          label: <FormattedMessage id="sidenav.label.statisticsreport" />,
         },
         {
           link: "/RoutineReport?type=indicator&report=indicatorHaitiLNSPAllTests",
-          label: <FormattedMessage id= "sidenav.label.testsummary"/>
+          label: <FormattedMessage id="sidenav.label.testsummary" />,
         },
         {
-          link:"/RoutineReport?type=indicator&report=indicatorCDILNSPHIV",
-          label: <FormattedMessage id="sideNav.label.hivtestsummary"/>,
+          link: "/RoutineReport?type=indicator&report=indicatorCDILNSPHIV",
+          label: <FormattedMessage id="sideNav.label.hivtestsummary" />,
         },
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.rejectionreport"/>,
+      title: <FormattedMessage id="sideNav.title.rejectionreport" />,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=indicator&report=sampleRejectionReport",
-          label: <FormattedMessage id="sideNav.label.rejectionreport"/>,
+          link: "/RoutineReport?type=indicator&report=sampleRejectionReport",
+          label: <FormattedMessage id="sideNav.label.rejectionreport" />,
         },
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.activityreport"/>,
+      title: <FormattedMessage id="sideNav.title.activityreport" />,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl +
             "/Report?type=indicator&report=activityReportByTest",
-          label: <FormattedMessage id="sideNav.label.bytesttype"/>,
+          label: <FormattedMessage id="sideNav.label.bytesttype" />,
         },
         {
           link:
             config.serverBaseUrl +
             "/Report?type=indicator&report=activityReportByPanel",
-          label:  <FormattedMessage id="sideNav.label.bypaneltype"/>,
+          label: <FormattedMessage id="sideNav.label.bypaneltype" />,
         },
         {
           link:
             config.serverBaseUrl +
             "/Report?type=indicator&report=activityReportByTestSection",
-          label: <FormattedMessage id="sideNav.label.byunit"/>,
+          label: <FormattedMessage id="sideNav.label.byunit" />,
         },
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.referredtestreport" defaultMessage="Referred Tests Report"/>,
+      title: (
+        <FormattedMessage
+          id="sideNav.title.referredtestreport"
+          defaultMessage="Referred Out Tests Report"
+        />
+      ),
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl + "/Report?type=patient&report=referredOut",
-          label: <FormattedMessage id="sideNav.label.referredtestreport"/>,
+          link: "/RoutineReport?type=patient&report=referredOut",
+          label: <FormattedMessage id="sideNav.label.referredtestreport" />,
         },
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.noncomformityreports"/>,
+      title: <FormattedMessage id="sideNav.title.noncomformityreports" />,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=haitiNonConformityByDate",
-          label:  <FormattedMessage id="sideNav.label.noncomformityreportsbydate"/>,
+          link: "/RoutineReport?type=patient&report=haitiNonConformityByDate",
+          label: (
+            <FormattedMessage id="sideNav.label.noncomformityreportsbydate" />
+          ),
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=haitiNonConformityBySectionReason",
-          label: <FormattedMessage id="sideNav.label.noncomformityreportsbyunit"/>,
+          link: "/RoutineReport?type=patient&report=haitiNonConformityBySectionReason",
+          label: (
+            <FormattedMessage id="sideNav.label.noncomformityreportsbyunit" />
+          ),
         },
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.delayedvalidation"/>,
+      title: <FormattedMessage id="sideNav.title.delayedvalidation" />,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
           link:
             config.serverBaseUrl +
             "/ReportPrint?type=indicator&report=validationBacklog",
-          label: <FormattedMessage id="sideNav.label.delayedvalidation"/>,
+          label: <FormattedMessage id="sideNav.label.delayedvalidation" />,
           icon: IbmWatsonNaturalLanguageUnderstanding,
         },
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.audittrail"/>,
+      title: <FormattedMessage id="sideNav.title.audittrail" />,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
@@ -130,14 +129,12 @@ export const RoutineReportsMenu = {
       ],
     },
     {
-      title: <FormattedMessage id="sideNav.title.exportcsvfile"/>,
+      title: <FormattedMessage id="sideNav.title.exportcsvfile" />,
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=CISampleRoutineExport",
-          label: <FormattedMessage id="sideNav.label.exportcsvfile"/>,
+          link: "/RoutineReport?type=patient&report=CISampleRoutineExport",
+          label: <FormattedMessage id="sideNav.label.exportcsvfile" />,
         },
       ],
     },
@@ -146,7 +143,7 @@ export const RoutineReportsMenu = {
 };
 const Routine = () => {
   return (
-    <> 
+    <>
       <GlobalSideBar sideNav={RoutineReportsMenu} />
     </>
   );

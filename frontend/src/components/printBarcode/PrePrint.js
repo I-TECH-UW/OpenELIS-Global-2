@@ -12,6 +12,7 @@ import {
 } from "@carbon/react";
 import { getFromOpenElisServer } from "../utils/Utils";
 import { sampleTypeTestsStructure } from "../data/SampleEntryTestsForTypeProvider";
+import "../Style.css";
 
 const PrePrint = () => {
   const intl = useIntl();
@@ -20,7 +21,7 @@ const PrePrint = () => {
   const [selectedSampleTypeId, setSelectedSampleTypeId] = useState(null);
 
   const [sampleTypeTests, setSampleTypeTests] = useState(
-    sampleTypeTestsStructure
+    sampleTypeTestsStructure,
   );
   const [selectedTests, setSelectedTests] = useState([]);
   const [selectedPanels, setSelectedPanels] = useState([]);
@@ -159,7 +160,7 @@ const PrePrint = () => {
     if (selectedSampleTypeId !== null) {
       getFromOpenElisServer(
         `/rest/sample-type-tests?sampleType=${selectedSampleTypeId}`,
-        fetchSampleTypeTests
+        fetchSampleTypeTests,
       );
     }
   }, [selectedSampleTypeId]);
@@ -168,12 +169,12 @@ const PrePrint = () => {
     <>
       <div className="orderLegendBody">
         <Grid>
-          <Column lg={16}>
+          <Column lg={8} md={8} sm={4}>
             <h4>
               <FormattedMessage id="barcode.print.preprint" />
             </h4>
           </Column>
-          <Column lg={16}>
+          <Column lg={8} md={8} sm={4}>
             <NumberInput
               min={1}
               max={100}
@@ -184,7 +185,7 @@ const PrePrint = () => {
               className="inputText"
             />
           </Column>
-          <Column lg={8}>
+          <Column lg={8} md={8} sm={4}>
             <NumberInput
               min={1}
               max={100}
@@ -195,7 +196,7 @@ const PrePrint = () => {
               className="inputText"
             />
           </Column>
-          <Column lg={8}>
+          <Column lg={8} md={8} sm={4}>
             <NumberInput
               min={1}
               max={100}
@@ -206,7 +207,7 @@ const PrePrint = () => {
               className="inputText"
             />
           </Column>
-          <Column lg={8}>
+          <Column lg={8} md={8} sm={4}>
             <NumberInput
               readOnly
               value={labelSets * (orderLabelsPerSet + specimenLabelsPerSet)}
@@ -215,7 +216,7 @@ const PrePrint = () => {
               className="inputText"
             />
           </Column>
-          <Column lg={8}>
+          <Column lg={8} md={8} sm={4}>
             <TextInput
               id="facilityId"
               onChange={(e) => setFacilityId(e.target.value)}
@@ -226,12 +227,12 @@ const PrePrint = () => {
       </div>
       <div className="orderLegendBody">
         <Grid>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <h4>
               <FormattedMessage id="label.button.sample" />
             </h4>
           </Column>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <Select
               id="selectSampleType"
               className="selectSampleType"
@@ -255,7 +256,7 @@ const PrePrint = () => {
               ))}
             </Select>
           </Column>
-          <Column lg={4}>
+          <Column lg={16} md={8} sm={4}>
             {selectedSampleTypeId && (
               <h4>
                 <FormattedMessage id="sample.entry.panels" />
@@ -279,7 +280,7 @@ const PrePrint = () => {
                 );
               })}
           </Column>
-          <Column lg={4}>
+          <Column lg={16} md={8} sm={4}>
             {selectedSampleTypeId && (
               <h4>
                 <FormattedMessage id="sample.entry.available.tests" />
@@ -303,20 +304,22 @@ const PrePrint = () => {
                 );
               })}
           </Column>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <FormattedMessage id="barcode.print.preprint.note" />
           </Column>
-          <Column lg={16}>
-            <Button disabled={!selectedSampleTypeId} onClick={prePrintLabels}>
-              <FormattedMessage id="barcode.print.preprint.button" />
-            </Button>
-          </Column>
+          <div className="tabsLayout">
+            <Column lg={8} md={8} sm={4}>
+              <Button disabled={!selectedSampleTypeId} onClick={prePrintLabels}>
+                <FormattedMessage id="barcode.print.preprint.button" />
+              </Button>
+            </Column>
+          </div>
         </Grid>
       </div>
       {renderBarcode && (
         <div className="orderLegendBody">
           <Grid>
-            <Column lg={16}>
+            <Column lg={16} md={8} sm={4}>
               <h4>
                 <FormattedMessage id="barcode.header" />
               </h4>

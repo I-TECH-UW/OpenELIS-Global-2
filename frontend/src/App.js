@@ -39,7 +39,6 @@ import PrintBarcode from "./components/printBarcode/Index";
 import AuditTrail from "./components/Reports/auditTrailReport/index.js";
 import AuditTrailReport from "./components/Reports/auditTrailReport/index.js";
 
-
 export default function App() {
   let i18nConfig = {
     locale: navigator.language.split(/[-_]/)[0],
@@ -399,7 +398,7 @@ export default function App() {
                   component={() => <StudyReports />}
                   role="Reports"
                 />
-                 <SecureRoute
+                <SecureRoute
                   path="/StudyReport"
                   exact
                   component={() => <StudyIndex />}
