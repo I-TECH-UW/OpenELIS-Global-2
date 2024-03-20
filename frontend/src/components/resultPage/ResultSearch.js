@@ -37,7 +37,7 @@ function ResultSearch() {
       />
 
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>
