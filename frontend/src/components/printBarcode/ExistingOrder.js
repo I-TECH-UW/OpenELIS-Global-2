@@ -65,31 +65,31 @@ const ExistingOrder = () => {
     e.preventDefault();
     getFromOpenElisServer(
       `/rest/patient-search-results?labNumber=${accessionNumber}`,
-      fetchPatientData
+      fetchPatientData,
     );
     getFromOpenElisServer(
       `/rest/sample-edit?accessionNumber=${accessionNumber}`,
-      fetchOrderData
+      fetchOrderData,
     );
   };
 
   const printLabelSets = () => {
     setSource(
-      `/LabelMakerServlet?labNo=${accessionNumber}&type=default&quantity=`
+      `/LabelMakerServlet?labNo=${accessionNumber}&type=default&quantity=`,
     );
     setRenderBarcode(true);
   };
 
   const printOrderLabels = () => {
     setSource(
-      `/LabelMakerServlet?labNo=${accessionNumber}&type=order&quantity=${orderLabels}`
+      `/LabelMakerServlet?labNo=${accessionNumber}&type=order&quantity=${orderLabels}`,
     );
     setRenderBarcode(true);
   };
 
   const printSpecimenLabels = (specimenAccessionNumber) => {
     setSource(
-      `/LabelMakerServlet?labNo=${specimenAccessionNumber}&type=specimen&quantity=1`
+      `/LabelMakerServlet?labNo=${specimenAccessionNumber}&type=specimen&quantity=1`,
     );
     setRenderBarcode(true);
   };
@@ -119,11 +119,11 @@ const ExistingOrder = () => {
               />
             </Column>
             <div className="tabsLayout">
-            <Column lg={16} md={8} sm={4}>
-              <Button type="submit" className="btn">
-                <FormattedMessage id="label.button.submit" />
-              </Button>
-            </Column>
+              <Column lg={16} md={8} sm={4}>
+                <Button type="submit" className="btn">
+                  <FormattedMessage id="label.button.submit" />
+                </Button>
+              </Column>
             </div>
           </Grid>
         </Form>
@@ -172,11 +172,11 @@ const ExistingOrder = () => {
               <FormattedMessage id="barcode.print.set.instruction" />
             </Column>
             <div className="tabsLayout">
-            <Column>
-              <Button onClick={printLabelSets}>
-                <FormattedMessage id="barcode.print.set.button" />
-              </Button>
-            </Column>
+              <Column>
+                <Button onClick={printLabelSets}>
+                  <FormattedMessage id="barcode.print.set.button" />
+                </Button>
+              </Column>
             </div>
           </Grid>
         </div>

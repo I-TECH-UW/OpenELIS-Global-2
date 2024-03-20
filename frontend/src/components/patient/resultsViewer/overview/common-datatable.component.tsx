@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 import {
   DataTable,
   Table,
@@ -8,11 +8,11 @@ import {
   TableRow,
   TableCell,
   TableBody,
-} from '@carbon/react';
-import { OBSERVATION_INTERPRETATION ,useLayoutType } from '../commons';
-import { OverviewPanelData } from '../overview/useOverviewData';
+} from "@carbon/react";
+import { OBSERVATION_INTERPRETATION, useLayoutType } from "../commons";
+import { OverviewPanelData } from "../overview/useOverviewData";
 //import styles from './common-datatable.scss';
-import  './common-datatable.scss';
+import "./common-datatable.scss";
 
 interface CommonDataTableProps {
   data: Array<OverviewPanelData>;
@@ -25,22 +25,35 @@ interface CommonDataTableProps {
   description?: React.ReactNode;
 }
 
-const CommonDataTable: React.FC<CommonDataTableProps> = ({ title, data, description, toolbar, tableHeaders }) => {
+const CommonDataTable: React.FC<CommonDataTableProps> = ({
+  title,
+  data,
+  description,
+  toolbar,
+  tableHeaders,
+}) => {
   const interpretationToCSS = {
-    OFF_SCALE_HIGH: 'offScaleHigh',
-    CRITICALLY_HIGH: 'criticallyHigh',
-    HIGH: 'high',
-    OFF_SCALE_LOW: 'offScaleLow',
-    CRITICALLY_LOW: 'criticallyLow',
-    LOW: 'low',
-    NORMAL: '',
+    OFF_SCALE_HIGH: "offScaleHigh",
+    CRITICALLY_HIGH: "criticallyHigh",
+    HIGH: "high",
+    OFF_SCALE_LOW: "offScaleLow",
+    CRITICALLY_LOW: "criticallyLow",
+    LOW: "low",
+    NORMAL: "",
   };
 
-  const isTablet = useLayoutType() === 'tablet';
+  const isTablet = useLayoutType() === "tablet";
 
   return (
     <DataTable rows={data} headers={tableHeaders} size="sm" useZebraStyles>
-      {({ rows, headers, getHeaderProps, getRowProps, getTableProps, getTableContainerProps }) => (
+      {({
+        rows,
+        headers,
+        getHeaderProps,
+        getRowProps,
+        getTableProps,
+        getTableContainerProps,
+      }) => (
         <TableContainer
           className="tableContainer desktop"
           title={title}
@@ -57,7 +70,11 @@ const CommonDataTable: React.FC<CommonDataTableProps> = ({ title, data, descript
             <TableHead>
               <TableRow>
                 {headers.map((header) => (
-                  <TableHeader key={header.key} {...getHeaderProps({ header })} isSortable>
+                  <TableHeader
+                    key={header.key}
+                    {...getHeaderProps({ header })}
+                    isSortable
+                  >
                     {header.header}
                   </TableHeader>
                 ))}
@@ -65,12 +82,18 @@ const CommonDataTable: React.FC<CommonDataTableProps> = ({ title, data, descript
             </TableHead>
             <TableBody>
               {rows.map((row, i) => (
-                <TypedTableRow key={row.id} interpretation={data[i]?.interpretation} {...getRowProps({ row })}>
+                <TypedTableRow
+                  key={row.id}
+                  interpretation={data[i]?.interpretation}
+                  {...getRowProps({ row })}
+                >
                   {row.cells.map((cell) => {
                     return (
                       <TableCell
                         className={
-                          cell.value?.interpretation ? interpretationToCSS[cell.value.interpretation] : ''
+                          cell.value?.interpretation
+                            ? interpretationToCSS[cell.value.interpretation]
+                            : ""
                         }
                         key={cell.id}
                       >
@@ -92,25 +115,25 @@ const TypedTableRow: React.FC<{
   interpretation: OBSERVATION_INTERPRETATION;
 }> = ({ interpretation, ...props }) => {
   switch (interpretation) {
-    case 'OFF_SCALE_HIGH':
-      return <TableRow {...props} className='off-scale-high' />;
+    case "OFF_SCALE_HIGH":
+      return <TableRow {...props} className="off-scale-high" />;
 
-    case 'CRITICALLY_HIGH':
-      return <TableRow {...props} className='critically-high' />;
+    case "CRITICALLY_HIGH":
+      return <TableRow {...props} className="critically-high" />;
 
-    case 'HIGH':
-      return <TableRow {...props} className='high' />;
+    case "HIGH":
+      return <TableRow {...props} className="high" />;
 
-    case 'OFF_SCALE_LOW':
-      return <TableRow {...props} className='off-scale-low' />;
+    case "OFF_SCALE_LOW":
+      return <TableRow {...props} className="off-scale-low" />;
 
-    case 'CRITICALLY_LOW':
-      return <TableRow {...props} className='critically-low' />;
+    case "CRITICALLY_LOW":
+      return <TableRow {...props} className="critically-low" />;
 
-    case 'LOW':
-      return <TableRow {...props} className='low' />;
+    case "LOW":
+      return <TableRow {...props} className="low" />;
 
-    case 'NORMAL':
+    case "NORMAL":
     default:
       return <TableRow {...props} />;
   }
