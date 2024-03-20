@@ -15,32 +15,29 @@ public class PersonAddressTest {
     @Before
     public void setUp() {
         personAddress = new PersonAddress();
+        personAddress.setPersonId("123");
+        personAddress.setAddressPartId("456");
+        personAddress.setUniqueIdentifyer("unique123");
     }
 
     @Test
-    public void testSetAndGetPersonId() {
-        personAddress.setPersonId("123");
+    public void testPersonId() { 
         Assert.assertEquals("123", personAddress.getPersonId());
     }
 
     @Test
-    public void testSetAndGetAddressPartId() {
-        personAddress.setAddressPartId("456");
+    public void testAddressPartId() {
         Assert.assertEquals("456", personAddress.getAddressPartId());
     }
-
+    
     @Test
-    public void testSetAndGetUniqueIdentifier() {
-        personAddress.setUniqueIdentifyer("unique123");
+    public void testUniqueIdentifier() {
         Assert.assertEquals("unique123", personAddress.getUniqueIdentifyer());
     }
 
     @Test
-    public void testGetStringId() {
-        personAddress.setPersonId("123");
-        personAddress.setAddressPartId("456");
+    public void testStringId() {
         Assert.assertEquals("123456", personAddress.getStringId());
     }
 
-    // Add more test cases for other methods as needed
 }
