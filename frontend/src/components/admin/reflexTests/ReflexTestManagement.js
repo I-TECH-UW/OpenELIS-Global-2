@@ -5,7 +5,7 @@ import { Grid, Column, Section, Heading } from "@carbon/react";
 import { FormattedMessage } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 
-let breadcrumbs = [{ label: "home.label", link: "/" }];
+const breadcrumbs = [{ label: "home.label", link: "/" }];
 
 function ReflexTestManagement() {
   return (

@@ -37,7 +37,7 @@ import {
 } from "../../common/CustomNotification";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 
-let breadcrumbs = [{ label: "home.label", link: "/" }];
+const breadcrumbs = [{ label: "home.label", link: "/" }];
 interface CalculatedValueProps {}
 
 type TestListField = "TEST_RESULT" | "FINAL_RESULT";
