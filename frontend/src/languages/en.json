@@ -752,11 +752,14 @@
   "reports.export.whonet": "WHONET Report",
   "openreports.mgt.nonconformity.date": "Non ConformityReport by Date",
   "openreports.mgt.nonconformity.section": "Non Conformity Report by Unit and Reason",
+  "input.placeholder.patientId": "Enter Patient Id" ,
+  "input.placeholder.prevLabNumber": "Enter Previous Lab Number",
+  "input.placeholder.patientLastName": "Enter Patient's Last Name",
+  "input.placeholder.patientFirstName": "Enter Patient's First Name",
   "input.placeholder.labNo":"Enter Lab Number",
   "input.placeholder.requesterFirstName":"Enter Requester's First Name",
   "input.placeholder.requesterLastName":"Enter Requester's Last Name",
   "input.placeholder.providerWorkPhone":"Enter Requester's Phone Number",
   "input.placeholder.providerFax":"Enter Requester's Fax Number",
   "input.placeholder.providerEmail":"Enter Requester's Email"
-
 }
