@@ -22,18 +22,16 @@ function PanelSelectForm(props) {
 
   useEffect(() => {
     mounted.current = true;
-    let panelId = new URLSearchParams(window.location.search).get(
-      "panelId"
-    );
+    let panelId = new URLSearchParams(window.location.search).get("panelId");
     panelId = panelId ? panelId : "";
     getFromOpenElisServer("/rest/panels", (fetchedPanels) => {
-      let panel = fetchedPanels.find(panel => panel.id === panelId);
+      let panel = fetchedPanels.find((panel) => panel.id === panelId);
       let panelLabel = panel ? panel.value : "";
       setDefaultPanelId(panelId);
       setDefaultPanelLabel(panelLabel);
       props.value(panelId, panelLabel);
       getPanels(fetchedPanels);
-    })
+    });
     return () => {
       mounted.current = false;
     };
@@ -55,10 +53,12 @@ function PanelSelectForm(props) {
           >
             <SelectItem text={defaultPanelLabel} value={defaultPanelId} />
             {panels
-              .filter(item => item.id !== defaultPanelId)
+              .filter((item) => item.id !== defaultPanelId)
               .map((item, idx) => {
-                return <SelectItem key={idx} text={item.value} value={item.id} />;
-            })}
+                return (
+                  <SelectItem key={idx} text={item.value} value={item.id} />
+                );
+              })}
           </Select>
         </Column>
       </Grid>

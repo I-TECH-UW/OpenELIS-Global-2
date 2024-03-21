@@ -23,17 +23,19 @@ function TestSectionSelectForm(props) {
   useEffect(() => {
     mounted.current = true;
     let testSectionId = new URLSearchParams(window.location.search).get(
-      "testSectionId"
+      "testSectionId",
     );
     testSectionId = testSectionId ? testSectionId : "";
     getFromOpenElisServer("/rest/user-test-sections", (fetchedTestSections) => {
-      let testSection = fetchedTestSections.find(testSection => testSection.id === testSectionId);
+      let testSection = fetchedTestSections.find(
+        (testSection) => testSection.id === testSectionId,
+      );
       let testSectionLabel = testSection ? testSection.value : "";
       setDefaultTestSectionId(testSectionId);
       setDefaultTestSectionLabel(testSectionLabel);
       props.value(testSectionId, testSectionLabel);
       getTestUnits(fetchedTestSections);
-    })
+    });
     return () => {
       mounted.current = false;
     };
@@ -53,12 +55,17 @@ function TestSectionSelectForm(props) {
             labelText=""
             onChange={handleChange}
           >
-            <SelectItem text={defaultTestSectionLabel} value={defaultTestSectionId} />
+            <SelectItem
+              text={defaultTestSectionLabel}
+              value={defaultTestSectionId}
+            />
             {testUnits
-              .filter(item => item.id !== defaultTestSectionId)
+              .filter((item) => item.id !== defaultTestSectionId)
               .map((item, idx) => {
-                return <SelectItem key={idx} text={item.value} value={item.id} />;
-            })}
+                return (
+                  <SelectItem key={idx} text={item.value} value={item.id} />
+                );
+              })}
           </Select>
         </Column>
       </Grid>
