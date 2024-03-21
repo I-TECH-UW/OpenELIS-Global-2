@@ -18,7 +18,7 @@ import CustomLabNumberInput from '../../common/CustomLabNumberInput';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 
-const AuditTrail = () => {
+const AuditTrailReport = ({report, id}) => {
     const [labNo, setLabNo] = useState("");
     const [isLabNoError, setIsLabNoError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +48,7 @@ const AuditTrail = () => {
             <Section>
                 <Section>
                 <Heading>
-                    <FormattedMessage id="reports.auditTrail" />
+                    <FormattedMessage id={id} />
                 </Heading>
                 </Section>
             </Section>
@@ -100,4 +100,4 @@ const AuditTrail = () => {
     )
 }
 
-export default AuditTrail
+export default AuditTrailReport

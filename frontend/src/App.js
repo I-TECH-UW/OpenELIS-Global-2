@@ -36,8 +36,6 @@ import EOrderPage from "./components/eOrder/Index";
 import RoutineIndex from "./components/Reports/routine/Index.js";
 import StudyIndex from "./components/Reports/study/index.js";
 import PrintBarcode from "./components/printBarcode/Index";
-import AuditTrail from "./components/Reports/auditTrailReport/index.js";
-import AuditTrailReport from "./components/Reports/auditTrailReport/index.js";
 
 export default function App() {
   let i18nConfig = {
@@ -378,12 +376,6 @@ export default function App() {
                   path="/RoutineReports"
                   exact
                   component={() => <RoutineReports />}
-                  role="Reports"
-                />
-                <SecureRoute
-                  path="/AuditTrailReport"
-                  exact
-                  component={() => <AuditTrailReport/>}
                   role="Reports"
                 />
                 <SecureRoute

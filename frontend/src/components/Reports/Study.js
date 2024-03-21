@@ -188,7 +188,7 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link: "/AuditTrailReport?type=study",
+          link: "/StudyReport?type=study&report=auditTrail",
           label:<FormattedMessage id="sideNav.label.audittrail"/>,
         },
       ],
