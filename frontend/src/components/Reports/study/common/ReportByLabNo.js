@@ -6,13 +6,13 @@ import config from "../../../../config.json";
 
 function ReportByLabNo(props) {
   const intl = useIntl();
-  const [values, setValues] = useState({ from: '', to: '' });
+  const [values, setValues] = useState({ from: "", to: "" });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setValues(prevState => ({
+    setValues((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -23,7 +23,7 @@ function ReportByLabNo(props) {
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
     const url = `${baseUrl}?${baseParams}&accessionDirect=${values.from}&highAccessionDirect=${values.to}`;
 
-    window.open(url, '_blank');
+    window.open(url, "_blank");
   };
 
   return (
@@ -31,7 +31,7 @@ function ReportByLabNo(props) {
       <Form onSubmit={handleSubmit}>
         <Section>
           <h3>
-            <FormattedMessage id={props.id}/>
+            <FormattedMessage id={props.id} />
           </h3>
         </Section>
         <br />

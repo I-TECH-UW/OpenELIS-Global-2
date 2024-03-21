@@ -154,17 +154,17 @@ const SearchForm = (props) => {
 
   useEffect(() => {
     var param = "";
-    if(window.location.pathname == "/validation"){
+    if (window.location.pathname == "/validation") {
       param = new URLSearchParams(window.location.search).get("type");
-    } else if(window.location.pathname == "/ResultValidation"){
-      param = "routine" ;
-    } else if(window.location.pathname == "/AccessionValidation"){
-      param = "order" ;
-    }else if(window.location.pathname == "/AccessionValidationRange"){
-      param = "range" ;
-    }else if(window.location.pathname == "/ResultValidationByTestDate"){
+    } else if (window.location.pathname == "/ResultValidation") {
+      param = "routine";
+    } else if (window.location.pathname == "/AccessionValidation") {
+      param = "order";
+    } else if (window.location.pathname == "/AccessionValidationRange") {
+      param = "range";
+    } else if (window.location.pathname == "/ResultValidationByTestDate") {
       param = "testDate";
-    } 
+    }
     setSearchBy(param);
     if (param === "order") {
       setDoRagnge(false);

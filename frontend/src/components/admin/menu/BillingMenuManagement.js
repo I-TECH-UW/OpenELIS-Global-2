@@ -20,7 +20,9 @@ import {
   NotificationKinds,
 } from "../../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
+import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 
+let breadcrumbs = [{ label: "home.label", link: "/" }];
 function BillingMenuManagement() {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
@@ -84,6 +86,7 @@ function BillingMenuManagement() {
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading />}
       <div className="adminPageContent">
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
         <Grid>
           <Column lg={16} md={8} sm={4}>
             <Section>

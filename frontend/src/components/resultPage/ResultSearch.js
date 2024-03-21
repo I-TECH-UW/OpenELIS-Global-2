@@ -9,7 +9,7 @@ function ResultSearch() {
   const [source, setSource] = useState("");
   useEffect(() => {
     let sourceFromUrl = new URLSearchParams(window.location.search).get(
-      "source"
+      "source",
     );
     let sources = [
       "WorkPlanByTest",
