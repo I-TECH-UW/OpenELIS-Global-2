@@ -1,3 +1,4 @@
+
 {
   "language.select.label": "French",
   "label.button.submit": "Connecter",
@@ -696,5 +697,16 @@
   "input.placeholder.patientId": "Entrez le numéro du patient",
   "input.placeholder.prevLabNumber": "Entrez le numéro de laboratoire précédent",
   "input.placeholder.patientLastName": "Entrez le nom de famille du patient",
-  "input.placeholder.patientFirstName": "Entrez le prénom du patient"
+  "input.placeholder.patientFirstName": "Entrez le prénom du patient",
+  "openreports.mgt.nonconformity.section": "Rapport de non-conformité par unité et raison", 
+  "reports.export.whonet": "WHONET Report",
+  "menu.accession.validation": "Recherche par Ordonnance",
+  "menu.accession.validation.range":"Recherche gamme par Ordonnance",
+  "menu.validation.date": "Rechercher par date de test",
+  "input.placeholder.labNo":"Saisir le numéro de laboratoire",
+  "input.placeholder.requesterFirstName":"Saisir le prénom du demandeur",
+  "input.placeholder.requesterLastName":"Saisir le nom de famille du demandeur",
+  "input.placeholder.providerWorkPhone":"Saisir le numéro de téléphone du demandeur",
+  "input.placeholder.providerFax":"Saisir le numéro de fax du demandeur",
+  "input.placeholder.providerEmail":"Saisir l'adresse e-mail du demandeur"
 }
