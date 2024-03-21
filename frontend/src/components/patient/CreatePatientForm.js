@@ -52,6 +52,11 @@ function CreatePatientForm(props) {
     months: "",
     days: "",
   });
+  const [nationalId, setNationalId] = useState(props.selectedPatient.nationalId);
+  const handleNationalIdChange = (event) => {
+	  const newValue = event.target.value;
+	  setNationalId(newValue);
+  };
   const handleDatePickerChange = (values, ...e) => {
     var patient = values;
     patient.birthDateForDisplay = e[1];
@@ -234,7 +239,7 @@ function CreatePatientForm(props) {
 
   const accessionNumberValidationResponse = (res, numberType, numberValue) => {
     let error;
-    if (res.status === false) {
+    if (res.status === false && props.selectedPatient.nationalId !==nationalId) {
       setNotificationVisible(true);
       addNotification({
         kind: NotificationKinds.error,
@@ -427,6 +432,7 @@ function CreatePatientForm(props) {
                         values.nationalId,
                       );
                     }}
+                    onChange={handleNationalIdChange} 
                   />
                 )}
               </Field>
