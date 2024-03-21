@@ -113,9 +113,9 @@ const PatientHeader = (props) => {
                           {orderDate}
 
                           <Tag type="blue">
-                          <FormattedMessage id="sample.label.requester" />: :
-                        </Tag>
-                        {requester}
+                            <FormattedMessage id="sample.label.requester" />: :
+                          </Tag>
+                          {requester}
                         </div>
                       </div>
                     )}
