@@ -78,8 +78,6 @@ public class PatientServiceTest {
 	}
 
 
-
-
 	private Patient createPatient(String firstName, String LastName, String birthDate, String gender)
 			throws ParseException {
 		Person person = new Person();
