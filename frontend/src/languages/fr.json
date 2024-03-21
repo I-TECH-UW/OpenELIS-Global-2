@@ -1,3 +1,4 @@
+
 {
   "language.select.label": "French",
   "label.button.submit": "Connecter",
@@ -692,5 +693,16 @@
   "pagination.page-number": "Numéro de page",
   "pagination.page-range": "de {total} {total, plural, one {page} other {pages}}",
   "openreports.mgt.nonconformity.date": "Rapport de non-conformité par date",
-  "openreports.mgt.nonconformity.section": "Rapport de non-conformité par unité et raison"
+  "openreports.mgt.nonconformity.section": "Rapport de non-conformité par unité et raison", 
+  "reports.export.whonet": "WHONET Report",
+  "menu.accession.validation": "Recherche par Ordonnance",
+  "menu.accession.validation.range":"Recherche gamme par Ordonnance",
+  "menu.validation.date": "Rechercher par date de test",
+  "input.placeholder.labNo":"Saisir le numéro de laboratoire",
+  "input.placeholder.requesterFirstName":"Saisir le prénom du demandeur",
+  "input.placeholder.requesterLastName":"Saisir le nom de famille du demandeur",
+  "input.placeholder.providerWorkPhone":"Saisir le numéro de téléphone du demandeur",
+  "input.placeholder.providerFax":"Saisir le numéro de fax du demandeur",
+  "input.placeholder.providerEmail":"Saisir l'adresse e-mail du demandeur"
+
 }
