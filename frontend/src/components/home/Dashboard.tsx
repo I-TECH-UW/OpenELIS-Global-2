@@ -357,7 +357,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     <>
       {loading && <Loading description="Loading Dasboard..." />}
       {selectedTile == null ? (
-        <div className="dashboard-container">
+        <div className="home-dashboard-container">
           {tileList.map((tile, index) => (
             <ClickableTile key={index} className="dashboard-tile">
               <h3 className="tile-title">{tile.title}</h3>
@@ -395,7 +395,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
             <div className="gridBoundary">
               {selectedTile.type == "AVERAGE_TURN_AROUND_TIME" ? (
                 <>
-                  <div className="dashboard-container">
+                  <div className="home-dashboard-container">
                     {averageTimeTileList.map((tile, index) => (
                       <Tile key={index} className="dashboard-tile">
                         <h3 className="tile-title">{tile.title}</h3>
