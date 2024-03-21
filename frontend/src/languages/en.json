@@ -1,5 +1,4 @@
 {
-
   "language.select.label": "English",
   "label.button.submit": "Submit",
   "label.button.changepassword": "Change Password",
@@ -761,5 +760,6 @@
   "input.placeholder.requesterLastName":"Enter Requester's Last Name",
   "input.placeholder.providerWorkPhone":"Enter Requester's Phone Number",
   "input.placeholder.providerFax":"Enter Requester's Fax Number",
-  "input.placeholder.providerEmail":"Enter Requester's Email"
+  "input.placeholder.providerEmail":"Enter Requester's Email",
+  "input.placeholder.selectTest":"Select Test Type"
 }
