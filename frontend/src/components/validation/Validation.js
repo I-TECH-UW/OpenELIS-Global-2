@@ -316,7 +316,7 @@ const Validation = (props) => {
     <>
       {props.results?.resultList?.length > 0 && (
         <Grid style={{ marginTop: "20px" }} className="gridBoundary">
-          <Column lg={7}>
+          <Column lg={7} md={8} sm={2}>
             <picture>
               <img
                 src={config.serverBaseUrl + "/images/nonconforming.gif"}
@@ -330,11 +330,11 @@ const Validation = (props) => {
               <FormattedMessage id="validation.label.nonconform" />
             </b>
           </Column>
-          <Column lg={3}>
+          <Column lg={3} md={2} sm={4}>
             <Checkbox
               id={"saveallnormal"}
               name={"autochecks"}
-              labelText="Savel All normal"
+              labelText={intl.formatMessage({ id: "validation.accept.normal" })}
               onChange={(e) => {
                 const nomalResults = props.results.resultList?.filter(
                   (result) => result.normal == true,
@@ -349,11 +349,11 @@ const Validation = (props) => {
               }}
             />
           </Column>
-          <Column lg={3}>
+          <Column lg={3} md={2} sm={4}>
             <Checkbox
               id={"saveallresults"}
               name={"autochecks"}
-              labelText="Savel All Results"
+              labelText={intl.formatMessage({ id: "validation.accept.all" })}
               onChange={(e) => {
                 const nomalResults = props.results.resultList;
                 nomalResults.forEach((result) => {
@@ -366,11 +366,11 @@ const Validation = (props) => {
               }}
             />
           </Column>
-          <Column lg={3}>
+          <Column lg={3} md={2} sm={4}>
             <Checkbox
               id={"retestalltests"}
               name={"autochecks"}
-              labelText="Retest All Tests"
+              labelText={intl.formatMessage({ id: "validation.reject.all" })}
               onChange={(e) => {
                 const nomalResults = props.results.resultList;
                 nomalResults.forEach((result) => {
@@ -417,12 +417,45 @@ const Validation = (props) => {
                     : 0
                   : 0
               }
-            ></Pagination>
+              forwardText={intl.formatMessage({ id: "pagination.forward" })}
+              backwardText={intl.formatMessage({ id: "pagination.backward" })}
+              itemRangeText={(min, max, total) =>
+                intl.formatMessage(
+                  { id: "pagination.item-range" },
+                  { min: min, max: max, total: total },
+                )
+              }
+              itemsPerPageText={intl.formatMessage({
+                id: "pagination.items-per-page",
+              })}
+              itemText={(min, max) =>
+                intl.formatMessage(
+                  { id: "pagination.item" },
+                  { min: min, max: max },
+                )
+              }
+              pageNumberText={intl.formatMessage({
+                id: "pagination.page-number",
+              })}
+              pageRangeText={(_current, total) =>
+                intl.formatMessage(
+                  { id: "pagination.page-range" },
+                  { total: total },
+                )
+              }
+              pageText={(page, pagesUnknown) =>
+                intl.formatMessage(
+                  { id: "pagination.page" },
+                  { page: pagesUnknown ? "" : page },
+                )
+              }
+            />
 
             <Button
               type="button"
               onClick={() => handleSave(values)}
               id="submit"
+              style={{ marginTop: "16px" }}
             >
               <FormattedMessage id="label.button.save" />
             </Button>

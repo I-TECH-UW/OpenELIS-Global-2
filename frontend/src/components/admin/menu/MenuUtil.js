@@ -2,6 +2,8 @@ import React from "react";
 import { Checkbox } from "@carbon/react";
 import { useIntl } from "react-intl";
 
+export const updateMenuWithElementId = (newMenus, field, value) => {};
+
 export const MenuCheckBox = (props) => {
   const intl = useIntl();
 
@@ -42,8 +44,8 @@ export const MenuCheckBox = (props) => {
               id: labelKey
                 ? labelKey
                 : curMenuItem.menu.displayKey
-                ? curMenuItem.menu.displayKey
-                : "missing display key",
+                  ? curMenuItem.menu.displayKey
+                  : "missing display key",
             })}
             checked={curMenuItem?.menu.isActive}
             onChange={(_, { checked }) => {
