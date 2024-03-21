@@ -485,14 +485,28 @@ button {
 
 @media screen and (max-width: 792px) {
   .banner h5 {
-    font-size: 2vw;
+    font-size: 1.8vw;
   }
   .banner p {
-    font-size: 1.5vw;
+    font-size: 1.4vw;
+  }
+  .formInlineDiv{
+    grid-template-columns: 1fr;
   }
 }
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 550px) {
+  .adminPageContent{
+    margin-left: 15%;
+  }
+}
+
+@media screen and (max-width: 460px) {
   .inlineDiv {
     flex-direction: column;
+  }
+}
+@media screen and (max-width:500px) {
+  .adminPageContent{
+    margin-left: 17%;
   }
 }
