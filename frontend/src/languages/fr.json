@@ -692,6 +692,11 @@
   "pagination.page-number": "Numéro de page",
   "pagination.page-range": "de {total} {total, plural, one {page} other {pages}}",
   "openreports.mgt.nonconformity.date": "Rapport de non-conformité par date",
+  "openreports.mgt.nonconformity.section": "Rapport de non-conformité par unité et raison",
+  "input.placeholder.patientId": "Entrez le numéro du patient",
+  "input.placeholder.prevLabNumber": "Entrez le numéro de laboratoire précédent",
+  "input.placeholder.patientLastName": "Entrez le nom de famille du patient",
+  "input.placeholder.patientFirstName": "Entrez le prénom du patient",
   "openreports.mgt.nonconformity.section": "Rapport de non-conformité par unité et raison", 
   "reports.export.whonet": "WHONET Report",
   "menu.accession.validation": "Recherche par Ordonnance",
@@ -703,5 +708,4 @@
   "input.placeholder.providerWorkPhone":"Saisir le numéro de téléphone du demandeur",
   "input.placeholder.providerFax":"Saisir le numéro de fax du demandeur",
   "input.placeholder.providerEmail":"Saisir l'adresse e-mail du demandeur"
-
 }
