@@ -695,5 +695,6 @@
     "pagination.items-per-page": "Items per page",
     "pagination.page": "page {page}",
     "pagination.page-number": "Page Number",
-    "pagination.page-range": "of {total} {total, plural, one {page} other {pages}}"
+    "pagination.page-range": "of {total} {total, plural, one {page} other {pages}}",
+    "input.placeholder.selectTest":"Select Test Type"
 }

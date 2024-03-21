@@ -653,6 +653,6 @@
     "pagination.items-per-page": "Entrées par page",
     "pagination.page": "page {page}",
     "pagination.page-number": "Numéro de page",
-    "pagination.page-range": "de {total} {total, plural, one {page} other {pages}}"
-
+    "pagination.page-range": "de {total} {total, plural, one {page} other {pages}}",
+    "input.placeholder.selectTest":"Sélectionnez le type de test"
 }
