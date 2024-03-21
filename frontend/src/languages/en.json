@@ -1,4 +1,5 @@
 {
+
   "language.select.label": "English",
   "label.button.submit": "Submit",
   "label.button.changepassword": "Change Password",
@@ -753,5 +754,12 @@
   "reports.export": "Export",
   "reports.export.whonet": "WHONET Report",
   "openreports.mgt.nonconformity.date": "Non ConformityReport by Date",
-  "openreports.mgt.nonconformity.section": "Non Conformity Report by Unit and Reason"
+  "openreports.mgt.nonconformity.section": "Non Conformity Report by Unit and Reason",
+  "input.placeholder.labNo":"Enter Lab Number",
+  "input.placeholder.requesterFirstName":"Enter Requester's First Name",
+  "input.placeholder.requesterLastName":"Enter Requester's Last Name",
+  "input.placeholder.providerWorkPhone":"Enter Requester's Phone Number",
+  "input.placeholder.providerFax":"Enter Requester's Fax Number",
+  "input.placeholder.providerEmail":"Enter Requester's Email"
+
 }
