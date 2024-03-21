@@ -8,7 +8,7 @@ import PageBreadCrumb from "../common/PageBreadCrumb";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
-  { label: "patient.label.PatientHistory", link: "/PatientHistory" },
+  { label: "label.page.patientHistory", link: "/PatientHistory" },
 ];
 const PatientHistory = () => {
   const [selectedPatient, setSelectedPatient] = useState({});

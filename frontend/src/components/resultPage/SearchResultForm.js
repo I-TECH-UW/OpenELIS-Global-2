@@ -284,28 +284,25 @@ export function SearchResultForm(props) {
       querySearch(values);
     }
 
-    
     var displayFormType = "";
     var doRange = "";
-    if(window.location.pathname == "/result"){
-      displayFormType = new URLSearchParams(window.location.search).get(
-        "type",
-      );
+    if (window.location.pathname == "/result") {
+      displayFormType = new URLSearchParams(window.location.search).get("type");
       doRange = new URLSearchParams(window.location.search).get("doRange");
-    } else if(window.location.pathname == "/LogbookResults"){
-      displayFormType = "unit" ;
+    } else if (window.location.pathname == "/LogbookResults") {
+      displayFormType = "unit";
       doRange = "false";
-    } else if(window.location.pathname == "/PatientResults"){
-      displayFormType = "patient" ;
+    } else if (window.location.pathname == "/PatientResults") {
+      displayFormType = "patient";
       doRange = "false";
-    }else if(window.location.pathname == "/AccessionResults"){
-      displayFormType = "order" ;
+    } else if (window.location.pathname == "/AccessionResults") {
+      displayFormType = "order";
       doRange = "false";
-    }else if(window.location.pathname == "/StatusResults"){
-      displayFormType = "date" ;
+    } else if (window.location.pathname == "/StatusResults") {
+      displayFormType = "date";
       doRange = "false";
-    } else if(window.location.pathname == "/RangeResults"){
-      displayFormType = "range" ;
+    } else if (window.location.pathname == "/RangeResults") {
+      displayFormType = "range";
       doRange = "true";
     }
     setSearchBy({
@@ -315,7 +312,6 @@ export function SearchResultForm(props) {
   }, []);
 
   useEffect(() => {
-   
     let accessionNumber = new URLSearchParams(window.location.search).get(
       "accessionNumber",
     );
@@ -1039,13 +1035,13 @@ export function SearchResults(props) {
                     borderColor: validation.isCritical
                       ? "orange"
                       : validation.isInvalid
-                      ? "red"
-                      : "",
+                        ? "red"
+                        : "",
                     background: validation.outsideValid
                       ? "#ffa0a0"
                       : validation.outsideNormal
-                      ? "#ffffa0"
-                      : "var(--cds-field)",
+                        ? "#ffffa0"
+                        : "var(--cds-field)",
                   };
 
                   setValidationState(newValidationState);
@@ -1548,7 +1544,12 @@ export function SearchResults(props) {
                 }
               />
 
-              <Button type="button" id="submit" onClick={handleSave} style={{marginTop:"16px"}}>
+              <Button
+                type="button"
+                id="submit"
+                onClick={handleSave}
+                style={{ marginTop: "16px" }}
+              >
                 <FormattedMessage id="label.button.save" />
               </Button>
             </Form>
