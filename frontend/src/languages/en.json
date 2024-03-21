@@ -750,5 +750,9 @@
   "reports.export": "Export",
   "reports.export.whonet": "WHONET Report",
   "openreports.mgt.nonconformity.date": "Non ConformityReport by Date",
-  "openreports.mgt.nonconformity.section": "Non Conformity Report by Unit and Reason"
+  "openreports.mgt.nonconformity.section": "Non Conformity Report by Unit and Reason",
+  "input.placeholder.patientId": "Enter Patient Id" ,
+  "input.placeholder.prevLabNumber": "Enter Previous Lab Number",
+  "input.placeholder.patientLastName": "Enter Patient's Last Name",
+  "input.placeholder.patientFirstName": "Enter Patient's First Name"
 }

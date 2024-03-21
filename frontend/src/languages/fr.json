@@ -692,5 +692,9 @@
   "pagination.page-number": "Numéro de page",
   "pagination.page-range": "de {total} {total, plural, one {page} other {pages}}",
   "openreports.mgt.nonconformity.date": "Rapport de non-conformité par date",
-  "openreports.mgt.nonconformity.section": "Rapport de non-conformité par unité et raison"
+  "openreports.mgt.nonconformity.section": "Rapport de non-conformité par unité et raison",
+  "input.placeholder.patientId": "Entrez le numéro du patient",
+  "input.placeholder.prevLabNumber": "Entrez le numéro de laboratoire précédent",
+  "input.placeholder.patientLastName": "Entrez le nom de famille du patient",
+  "input.placeholder.patientFirstName": "Entrez le prénom du patient"
 }
