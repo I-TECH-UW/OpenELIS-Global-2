@@ -40,23 +40,23 @@ function SearchOrder() {
       <div className="orderLegendBody">
         <Form onSubmit={handleSearch}>
           <Grid>
-            <Column lg={16} sm={4}>
+            <Column lg={16} md={8} sm={4}>
               <h4>
                 <FormattedMessage id="sample.label.search.labnumber" />
               </h4>
             </Column>
-            <Column lg={16} sm={4}>
+            <Column lg={16} md={8} sm={4}>
               <div className="inlineDiv">
-              <CustomLabNumberInput
-                placeholder={"Enter Lab No"}
-                id="labNumber"
-                name="labNumber"
-                value={accessionNumber}
-                onChange={(e, rawVal) =>
-                  setAccessionNumber(rawVal ? rawVal : e?.target?.value)
-                }
-                labelText={<FormattedMessage id="search.label.accession" />}
-              />
+                <CustomLabNumberInput
+                  placeholder={"Enter Lab No"}
+                  id="labNumber"
+                  name="labNumber"
+                  value={accessionNumber}
+                  onChange={(e, rawVal) =>
+                    setAccessionNumber(rawVal ? rawVal : e?.target?.value)
+                  }
+                  labelText={<FormattedMessage id="search.label.accession" />}
+                />
               </div>
             </Column>
             <Column lg={2}>

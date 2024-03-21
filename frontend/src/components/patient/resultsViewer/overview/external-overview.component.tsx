@@ -1,15 +1,20 @@
-import React, { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Button, DataTableSkeleton } from '@carbon/react';
-import { ArrowRight } from '@carbon/react/icons';
-import { navigate } from '../commons';
-import { EmptyState, ExternalOverviewProps, PanelFilterProps, PatientData } from '../commons';
-import { parseSingleEntry, OverviewPanelEntry } from './useOverviewData';
-import usePatientResultsData from '../loadPatientTestData/usePatientResultsData';
-import CommonOverview from './common-overview.component';
+import React, { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { Button, DataTableSkeleton } from "@carbon/react";
+import { ArrowRight } from "@carbon/react/icons";
+import { navigate } from "../commons";
+import {
+  EmptyState,
+  ExternalOverviewProps,
+  PanelFilterProps,
+  PatientData,
+} from "../commons";
+import { parseSingleEntry, OverviewPanelEntry } from "./useOverviewData";
+import usePatientResultsData from "../loadPatientTestData/usePatientResultsData";
+import CommonOverview from "./common-overview.component";
 //import styles from './external-overview.scss';
-import  './external-overview.scss';
-import './recent-overview.scss';
+import "./external-overview.scss";
+import "./recent-overview.scss";
 
 const resultsToShow = 3;
 
@@ -19,34 +24,55 @@ function getFilteredOverviewData(sortedObs: PatientData, filter) {
       return entries.map((e) => [e, uuid, type, panelName] as PanelFilterProps);
     })
     .filter(filter)
-    .map(([entry, uuid, type, panelName]: PanelFilterProps): OverviewPanelEntry => {
-      return [
-        panelName,
-        type,
-        parseSingleEntry(entry, type, panelName),
-        new Date(entry.effectiveDateTime),
-        new Date(entry.issued),
+    .map(
+      ([
+        entry,
         uuid,
-      ];
-    })
+        type,
+        panelName,
+      ]: PanelFilterProps): OverviewPanelEntry => {
+        return [
+          panelName,
+          type,
+          parseSingleEntry(entry, type, panelName),
+          new Date(entry.effectiveDateTime),
+          new Date(entry.issued),
+          uuid,
+        ];
+      },
+    )
     .sort(([, , , date1], [, , , date2]) => date2.getTime() - date1.getTime());
 }
 
-function useFilteredOverviewData(patientUuid: string, filter: (filterProps: PanelFilterProps) => boolean = () => true) {
+function useFilteredOverviewData(
+  patientUuid: string,
+  filter: (filterProps: PanelFilterProps) => boolean = () => true,
+) {
   const { sortedObs, loaded, error } = usePatientResultsData(patientUuid);
 
-  const overviewData = useMemo(() => getFilteredOverviewData(sortedObs, filter), [filter, sortedObs]);
+  const overviewData = useMemo(
+    () => getFilteredOverviewData(sortedObs, filter),
+    [filter, sortedObs],
+  );
 
   return { overviewData, loaded, error };
 }
 
-const ExternalOverview: React.FC<ExternalOverviewProps> = ({ patientUuid, filter }) => {
+const ExternalOverview: React.FC<ExternalOverviewProps> = ({
+  patientUuid,
+  filter,
+}) => {
   const { t } = useTranslation();
-  const { overviewData, loaded, error } = useFilteredOverviewData(patientUuid, filter);
+  const { overviewData, loaded, error } = useFilteredOverviewData(
+    patientUuid,
+    filter,
+  );
 
-  const cardTitle = t('recentResults', 'Recent Results');
+  const cardTitle = t("recentResults", "Recent Results");
   const handleSeeAll = useCallback(() => {
-    navigate({ to: `\${openmrsSpaBase}/patient/${patientUuid}/chart/test-results` });
+    navigate({
+      to: `\${openmrsSpaBase}/patient/${patientUuid}/chart/test-results`,
+    });
   }, [patientUuid]);
 
   return (
@@ -58,14 +84,16 @@ const ExternalOverview: React.FC<ExternalOverviewProps> = ({ patientUuid, filter
               return (
                 <div className="widgetCard">
                   <div className="externalOverviewHeader">
-                    <h4 className="productiveHeading03 text02" >{cardTitle}</h4>
+                    <h4 className="productiveHeading03 text02">{cardTitle}</h4>
                     <Button
                       kind="ghost"
-                      renderIcon={(props) => <ArrowRight size={16} {...props} />}
+                      renderIcon={(props) => (
+                        <ArrowRight size={16} {...props} />
+                      )}
                       iconDescription="See all results"
                       onClick={handleSeeAll}
                     >
-                      {t('seeAllResults', 'See all results')}
+                      {t("seeAllResults", "See all results")}
                     </Button>
                   </div>
                   <CommonOverview
@@ -80,13 +108,18 @@ const ExternalOverview: React.FC<ExternalOverviewProps> = ({ patientUuid, filter
                   />
                   {overviewData.length > resultsToShow && (
                     <Button onClick={handleSeeAll} kind="ghost">
-                      {t('moreResultsAvailable', 'More results available')}
+                      {t("moreResultsAvailable", "More results available")}
                     </Button>
                   )}
                 </div>
               );
             } else {
-              return <EmptyState headerTitle={cardTitle} displayText={t('recentTestResults', 'recent test results')} />;
+              return (
+                <EmptyState
+                  headerTitle={cardTitle}
+                  displayText={t("recentTestResults", "recent test results")}
+                />
+              );
             }
           })()}
         </>
@@ -100,5 +133,5 @@ const ExternalOverview: React.FC<ExternalOverviewProps> = ({ patientUuid, filter
 export default ExternalOverview;
 
 const RecentResultsGrid = (props) => {
-  return <div {...props} className='recent-results-grid' />;
+  return <div {...props} className="recent-results-grid" />;
 };
