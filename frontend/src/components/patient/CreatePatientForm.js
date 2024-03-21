@@ -54,8 +54,8 @@ function CreatePatientForm(props) {
   });
   const [nationalId, setNationalId] = useState(props.selectedPatient.nationalId);
   const handleNationalIdChange = (event) => {
-	  const newValue = event.target.value;
-	  setNationalId(newValue);
+    const newValue = event.target.value;
+    setNationalId(newValue);
   };
   const handleDatePickerChange = (values, ...e) => {
     var patient = values;
