@@ -1,4 +1,3 @@
-
 {
   "language.select.label": "French",
   "label.button.submit": "Connecter",
@@ -707,5 +706,6 @@
   "input.placeholder.requesterLastName":"Saisir le nom de famille du demandeur",
   "input.placeholder.providerWorkPhone":"Saisir le numéro de téléphone du demandeur",
   "input.placeholder.providerFax":"Saisir le numéro de fax du demandeur",
-  "input.placeholder.providerEmail":"Saisir l'adresse e-mail du demandeur"
+  "input.placeholder.providerEmail":"Saisir l'adresse e-mail du demandeur",
+  "input.placeholder.selectTest":"Sélectionnez le type de test"
 }
