@@ -4,7 +4,6 @@ import "../../Style.css";
 import { getFromOpenElisServer } from "../../utils/Utils";
 import {
   Form,
-  FormLabel,
   Checkbox,
   Dropdown,
   Heading,
@@ -46,7 +45,7 @@ import {
 
 function PatientStatusReport(props) {
   const [reportFormValues, setReportFormValues] = useState(
-    PatientStatusReportFormValues
+    PatientStatusReportFormValues,
   );
   // const { reportFormValues, setReportFormValues, getSelectedPatient, samples, error } = props;
   const { configurationProperties } = useContext(ConfigurationContext);
@@ -275,9 +274,9 @@ function PatientStatusReport(props) {
         break;
       default:
         obj = {
-        startDate : encodeDate(configurationProperties.currentDateAsText),
-        endDate : encodeDate(configurationProperties.currentDateAsText)
-        }
+          startDate: encodeDate(configurationProperties.currentDateAsText),
+          endDate: encodeDate(configurationProperties.currentDateAsText),
+        };
     }
     setReportFormValues({
       ...reportFormValues,
@@ -320,7 +319,7 @@ function PatientStatusReport(props) {
     getFromOpenElisServer(
       "/rest/departments-for-site?refferingSiteId=" +
         (reportFormValues.referringSiteId || ""),
-      loadDepartments
+      loadDepartments,
     );
   }, [reportFormValues.referringSiteId]);
 
@@ -335,7 +334,7 @@ function PatientStatusReport(props) {
 
   useEffect(() => {
     let patientId = new URLSearchParams(window.location.search).get(
-      "patientId"
+      "patientId",
     );
     if (patientId) {
       let searchValues = {
@@ -366,20 +365,28 @@ function PatientStatusReport(props) {
     configurationProperties.currentDateAsText,
   ]);
 
+  const breadcrumbs = [
+    { label: "home.label", link: "/" },
+    { label: "routine.reports", link: "/RoutineReports" },
+    {
+      label: "openreports.patientTestStatus",
+      link: "/RoutineReport?type=patient&report=patientCILNSP_vreduit",
+    },
+  ];
+
   return (
     <>
-      <FormLabel>
-        <Section>
+      <Grid fullWidth={true}>
+        <Column lg={16}>
           <Section>
-            <Heading>
-              <FormattedMessage id="openreports.patientTestStatus" />
-            </Heading>
+            <Section>
+              <Heading>
+                <FormattedMessage id="openreports.patientTestStatus" />
+              </Heading>
+            </Section>
           </Section>
-        </Section>
-      </FormLabel>
-
-      {notificationVisible === true ? <AlertDialog /> : ""}
-      {loading && <Loading />}
+        </Column>
+      </Grid>
       <Formik
         initialValues={reportFormValues}
         enableReinitialize={true}
@@ -409,6 +416,8 @@ function PatientStatusReport(props) {
             <Grid fullWidth={true}>
               <Column lg={16} md={8} sm={4}>
                 <Section>
+                  <br />
+                  <br />
                   <h5>
                     <FormattedMessage id="report.enter.labNumber.headline" />
                   </h5>
@@ -786,7 +795,7 @@ function PatientStatusReport(props) {
                     name="dateType"
                     titleText="Date Type"
                     initialSelectedItem={itemList.find(
-                      (item) => item.tag === items
+                      (item) => item.tag === items,
                     )}
                     label="Date Type"
                     items={itemList}
