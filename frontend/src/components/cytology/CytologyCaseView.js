@@ -58,7 +58,7 @@ function CytologyCaseView() {
 
   const [statuses, setStatuses] = useState([]);
   const [satisfactoryForEvaluation, setSatisfactoryForEvaluation] = useState(
-    []
+    [],
   );
   const [unSatisfactoryForEvaluation, setUnSatisfactoryForEvaluation] =
     useState([]);
@@ -199,7 +199,7 @@ function CytologyCaseView() {
             var newResultMap = resultMap;
             var results = filterDiagnosisResultsByCategory(
               resultMap.category,
-              resultMap.resultType
+              resultMap.resultType,
             ).results.map((e) => {
               return e.id;
             });
@@ -1410,7 +1410,7 @@ function CytologyCaseView() {
                             var filteredMapIndex =
                               diagnosisResultsMaps?.findIndex(
                                 (r) =>
-                                  r.category === "REACTIVE_CELLULAR_CHANGES"
+                                  r.category === "REACTIVE_CELLULAR_CHANGES",
                               );
                             var diagnosisResultMap = {};
                             var newDiagnosisResultMaps = [];
@@ -1445,7 +1445,7 @@ function CytologyCaseView() {
                       <Column lg={12} md={4} sm={2}>
                         {filterDiagnosisResultsByCategory(
                           "REACTIVE_CELLULAR_CHANGES",
-                          "DICTIONARY"
+                          "DICTIONARY",
                         )?.results.map((result, index) => (
                           <Tag
                             key={index}

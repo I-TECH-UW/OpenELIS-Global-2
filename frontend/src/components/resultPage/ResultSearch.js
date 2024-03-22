@@ -9,7 +9,7 @@ function ResultSearch() {
   const [source, setSource] = useState("");
   useEffect(() => {
     let sourceFromUrl = new URLSearchParams(window.location.search).get(
-      "source"
+      "source",
     );
     let sources = [
       "WorkPlanByTest",
@@ -37,7 +37,7 @@ function ResultSearch() {
       />
 
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>

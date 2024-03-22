@@ -3,15 +3,8 @@ import SearchForm from "./SearchForm";
 import Validation from "./Validation";
 import { AlertDialog } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
-import {
-
-  Heading,
-  Grid,
-  Column,
-  Section,
-
-} from "@carbon/react";
-import { injectIntl ,FormattedMessage} from "react-intl";
+import { Heading, Grid, Column, Section } from "@carbon/react";
+import { injectIntl, FormattedMessage } from "react-intl";
 import PageBreadCrumb from "../common/PageBreadCrumb";
 
 let breadcrumbs = [{ label: "home.label", link: "/" }];
@@ -21,9 +14,9 @@ const Index = () => {
   const [results, setResults] = useState({ resultList: [] });
   return (
     <>
-   <PageBreadCrumb breadcrumbs={breadcrumbs} />
-    <Grid fullWidth={true}>
-        <Column lg={16}>
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
+      <Grid fullWidth={true}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>
@@ -34,11 +27,11 @@ const Index = () => {
           </Section>
         </Column>
       </Grid>
-    <div className="orderLegendBody">
-      {notificationVisible === true ? <AlertDialog /> : ""}
-      <SearchForm setResults={setResults} />
-      <Validation results={results} />
-    </div>
+      <div className="orderLegendBody">
+        {notificationVisible === true ? <AlertDialog /> : ""}
+        <SearchForm setResults={setResults} />
+        <Validation results={results} />
+      </div>
     </>
   );
 };

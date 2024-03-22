@@ -145,7 +145,6 @@ const EditOrderEntryAdditionalQuestions = ({
     }
   };
 
-
   return (
     <>
       <Stack gap={10}>
