@@ -6,9 +6,6 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 [![Build Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/ci.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/ci.yml)
 
 [![Publish Docker Image Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish.yml)
-### Google Summer of Code 2024 guide
-
-If you are here looking for becoming a GSoC'24 contributor, here is a [guide](./guide_docs.md).
 
 ### Running OpenELIS in Docker
 #### Running docker compose With pre-released docker images
