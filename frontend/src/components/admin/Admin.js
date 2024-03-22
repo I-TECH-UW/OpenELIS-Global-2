@@ -18,6 +18,7 @@ import {
   TableOfContents,
   ChartBubble,
   Catalog,
+  Settings
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -77,10 +78,10 @@ function Admin() {
             <SideNavMenuItem href="#studyMenuManagement">
               <FormattedMessage id="sidenav.label.admin.menu.study" />
             </SideNavMenuItem>
-              <SideNavMenuItem href="#commonproperties">
-              <FormattedMessage id="sidenav.label.admin.menu.commonproperties" defaultMessage={"Common Properties"} />
-            </SideNavMenuItem>
           </SideNavMenu>
+          <SideNavLink href="#commonproperties" renderIcon={Settings}>
+            <FormattedMessage id="sidenav.label.admin.commonproperties" defaultMessage={"Common Properties"} />
+          </SideNavLink>
           <SideNavLink
             renderIcon={Catalog}
             target="_blank"
