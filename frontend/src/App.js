@@ -219,7 +219,7 @@ export default function App() {
                 <SecureRoute
                   path="/MasterListsPage"
                   exact
-                  component={() => <>{(window.location.href = "/admin")}</>}
+                  component={() => <Admin />}
                   role="Global Administrator"
                 />
                 <SecureRoute

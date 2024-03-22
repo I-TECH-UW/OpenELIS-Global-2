@@ -18,6 +18,7 @@ import {
   TableOfContents,
   ChartBubble,
   Catalog,
+  Settings
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -29,6 +30,7 @@ import {
   SideNavMenuItem,
 } from "@carbon/react";
 import GenericHomeBreadCrumb from "../common/GenericBreadCrumb";
+import { CommonProperties } from "./menu/CommonProperties";
 
 function Admin() {
   const intl = useIntl();
@@ -78,6 +80,9 @@ function Admin() {
               <FormattedMessage id="sidenav.label.admin.menu.study" />
             </SideNavMenuItem>
           </SideNavMenu>
+          <SideNavLink href="#commonproperties" renderIcon={Settings}>
+            <FormattedMessage id="sidenav.label.admin.commonproperties" defaultMessage={"Common Properties"} />
+          </SideNavLink>
           <SideNavLink
             renderIcon={Catalog}
             target="_blank"
@@ -114,6 +119,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#studyMenuManagement">
         <StudyMenuManagement />
+      </PathRoute>
+        <PathRoute path="#commonproperties">
+       <CommonProperties />
       </PathRoute>
     </>
   );

@@ -8,6 +8,7 @@ import StatisticsReport from "./StatisticsReport";
 import ReferredOut from "./ReferredOut";
 import ReportByDate from "../study/common/ReportByDate";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
+import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
 
 const RoutineIndex = () => {
   const intl = useIntl();
@@ -98,6 +99,13 @@ const RoutineIndex = () => {
                 report={"sampleRejectionReport"}
                 id={"openreports.mgt.rejection"}
               />
+            )}
+
+            {type === "routine" && report === "auditTrail" && (
+            <AuditTrailReport  
+                report={"auditTrail"}
+                id={"reports.auditTrail"}
+            />
             )}
           </>
         )}
