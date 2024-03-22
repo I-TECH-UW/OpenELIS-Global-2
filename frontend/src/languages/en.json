@@ -240,6 +240,7 @@
   "sidenav.label.admin.organizationmgt": "Organization Management",
   "sidenav.label.admin.usermgt": "User Management",
   "sidenav.label.admin.labNumber": "Lab Number Management",
+  "sidenav.label.admin.commonproperties" : "Application Properties",
   "sidenav.title.statusreport": "Patient Status Report",
   "sidenav.label.statusreport": "Patient Status Report",
   "sidenav.title.aggregatereport": "Aggregate Reports",
