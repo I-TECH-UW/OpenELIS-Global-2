@@ -181,7 +181,7 @@ OpenELIS Global 2 utilizes a multi-repository approach and leverages Maven for p
 
 ```
 .
-├── Dater export              // Git submodule which holds OpenElis data sotre api. 
+├── Dater export              // Git submodule which holds OpenElis data store api. 
 |
 ├── Frontend                     // Contains new frontend  UI admin dashboards written in React.
 |   |
@@ -317,7 +317,7 @@ If you have any issue, please head to [OpenElis talk forum](https://talk.openeli
 - [An Overview of OpenElis](https://www.youtube.com/watch?v=YZQMHHaHIcY)
 
 ## FAQs
-- Why I get this exception when try to natively `Could not find artifact org.itech:dataexport-api:pom:0.0.0.8` trying to run my application with tomcat ?
+- Why I get this exception  `Could not find artifact org.itech:dataexport-api:pom:0.0.0.8` trying to run and start the server to run my application ?
     - Kindly make sure you have done the second setp well. You can run these commands to solve the issue.
 
           git submodule update --init --recursive
