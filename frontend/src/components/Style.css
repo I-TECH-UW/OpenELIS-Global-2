@@ -510,3 +510,17 @@ button {
     margin-left: 17%;
   }
 }
+
+@media screen and (max-width:320px) {
+  .logo {
+    height: 35px;
+  }
+  
+  #header-logo {
+    margin-left: 0px;
+  }
+
+  .banner p {
+    font-size: 1.6vw;
+  }
+}

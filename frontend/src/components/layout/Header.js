@@ -335,7 +335,7 @@ function OEHeader(props) {
                     isCollapsible={true}
                   />
                 )}
-                <HeaderName href="/" prefix="">
+                <HeaderName href="/" prefix="" style={{padding: '0px'}}>
                   <span id="header-logo">{logo()}</span>
                   <div className="banner">
                     <h5>{configurationProperties?.BANNER_TEXT}</h5>
