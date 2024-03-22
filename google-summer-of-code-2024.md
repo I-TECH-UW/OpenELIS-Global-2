@@ -9,21 +9,159 @@
 ## Introduction
 ![](https://)
 
-Getting started Guide for onbarding GSoC'24 prospective contributors in `openElis Global 2`.
+Getting started Guide for onbarding GSoC'24 prospective contributors in `OpenElis Global`.
 
-We understand how painful it might be for new onboarding contributors to get started to `openElis Global 2` , As the project continues to evolve, it’s essential to ensure that our documentation remains up-to-date and accessible. We understand that navigating a new project can be challenging, especially for prospective contributors. Therefore, this documentation serves as a central hub for all information related to our project, making it easier for newcomers to get started.
+We understand how painful it might be for new onboarding contributors to get started to `penElis Global 2` , As the project continues to evolve, it’s essential to ensure that our documentation remains up-to-date and accessible. We understand that navigating a new project can be challenging, especially for prospective contributors. Therefore, this documentation serves as a central hub for all information related to our project, making it easier for newcomers to get started.
 
 ## OpenELIS Global 2
 
-This laboratory information management tool rewrite onto Java Spring, and with all new technology and features. Please see our [website](http://www.openelis-global.org/) for more information.
+This is a laboratory information management tool rewrite onto Java Spring, and with all new technology and features. Please see our [website](http://www.openelis-global.org/) for more information.
 
 You can find more information on how to set up OpenELIS at our [docs page](http://docs.openelis-global.org/)
 
-[![Build Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/ci.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/ci.yml)
 
 
-[![Publish Docker Image Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish.yml)
+## Before the Application
 
+* Sign Up at OpenELIS Talk and get an ID , Introduce yourself on OpenELIS Talk on the community introduction page
+* Become familiar with OpenELIS Global See our Installation and Developer Instructions
+* Review [project ideas](#project_ideas) & ask questions
+* Work on [Introductory Issues](https://github.com/orgs/I-TECH-UW/projects/6) to get Familiar with the Project
+
+## How to apply
+
+OpenElis is proud to be a participating mentoring open source organization for [Google Summer of Code 2024](https://summerofcode.withgoogle.com/), Helping to bring in a fresh group of people who want to join and support open source projects.
+
+For timeline, see [Official Google Summer of Code 2024](https://developers.google.com/open-source/gsoc/timeline) Timeline for more details.
+
+Almost anyone in the world [over 18 years of age](https://opensource.googleblog.com/2021/11/expanding-google-summer-of-code-in-2022.html) Anyone who enjoys coding and is curious about the amazing world of open source can join us as a GSoC 2024 contributor.
+
+Most exciting news for the 2024 season is the [focus project different project ideas ](#project_ideas); allowing participation from those who can only  devote part of their summer to exploring open source.
+
+For details and rules of Google Summer of Code 2024, please see the [GSoC 2024 Official Website](https://summerofcode.withgoogle.com/). For timeline, see [Official Google Summer of Code 2024 Timeline](https://developers.google.com/open-source/gsoc/timeline) for more details.
+
+### **Contacting OpenElis**
+
+For general information, please visit our 24/7 community channel for Google Summer of Code 2024 : [https://talk.openelis-global.org](https://talk.openelis-global.org/)
+
+Join our [Google Summer of Code 2024 Team ](https://talk.openelis-global.org/) today, introduce yourself to the friendly community, and interact with other contributors/mentors and meet the team.
+
+If you have ideas and proposals that are not on our idea list, or if a mentor is not available, you can also email to:
+
+GSoC+2024@OpenElis
+
+But better yet, you can post your idea in the [New GSoC 2024 Ideas looking for mentors](https://talk.openelis-global.org) channel and possibly getting some immediate community feedback or support for your idea.
+
+Interested contributors are also encouraged to interact directly with our team and community on:
+
+[https://talk.openelis-global.org](https://talk.openelis-global.org)
+
+As well as on GitHub:
+
+[https://github.com/I-TECH-UW/OpenELIS-Global-2](https://github.com/I-TECH-UW/OpenELIS-Global-2)
+
+-----
+<body>
+
+<a id="project_ideas">
+## 📂 Project Ideas
+
+> This is the GSoC 2024 project ideas list for OpenElis.  As we continue to engage community mentors for 2024, the project ideas are subject to some changes.
+
+### 💡 Improve Responsiveness for OpenELIS 3x
+
+👥 **Mentor(s):**    Gita Cliff
+
+💬 **Description:**
+
+The new OpenELIS React Front end needs to display correctly on different screen sizes ie Large(Desktop) and medium (Tablet) . The objective of this project is to improve the responsiveness of OpenELIS 3x, ensuring a seamless user experience across various devices and screen sizes.
+
+💪 **Desired Skills:**  React , Typescript , Javascript, Carbon Design System.
+
+🎯 **Goals/Deliverables:** Improved 3x UI Responsivenes across different devices.
+
+⏳ **Project Duration:** 350 hours
+
+-----
+
+### 💡Enhanced Search Functionality for OpenELIS
+
+👥 **Mentor(s):** Mutesasira Moses
+
+💬 **Description:**
+This project aims to enhance the search capabilities within the OpenELIS system, providing users with a more effiecient way for retrieving vital information efficiently . We would need to Integrate a Search Engine library For indexing key coulmns and providing a faster way to Search Results
+
+💪 **Desired Skills:** Java, Spring
+
+🎯 **Goals/Deliverables:** Enhanced and Efficient Search Functionality
+⏳ **Project Duration:** 350 hours.
+
+-----
+
+### 💡Improve Integration Tests Coverage
+
+👥 **Mentor(s):** Reagan Makoba
+
+💬 **Description:**
+The current Service Layer Integration tests only cover a few components .This project aims to Improve Integration Tests Coverage for the critical components with in the application .Integration tests play a pivotal role in validating the interactions between various modules and ensuring the seamless functioning of the entire system .
+
+💪 **Desired Skills:**
+Java , Spring ,J-Unit.
+
+🎯 **Goals/Deliverables:** Atleast 70 % Test coverage for the Service Layer.
+
+⏳ **Project Duration:** 350 hours
+
+-----
+
+### 💡Improve E2E Tests Coverage
+
+👥 **Mentor(s):** Namanya Abert
+
+💬 **Description:**
+The Current E2E tests have a very low test coverage and are not very stable. This project is dedicated to improve the End-to-End (E2E) testing coverage for the New React front end and ensuring robust validation of the entire application workflow . E2E tests play a critical role in verifying the seamless interaction between various components, ensuring that the application functions as expected from the user's perspective
+
+💪 **Desired Skills:**
+react , cypress
+
+🎯 **Goals/Deliverables:** Atleast 70% Test Coverage for the new UI.
+
+⏳ **Project Duration:** 350 hours
+
+
+-----
+
+### 💡Rewite Admin Page components from JSP to React
+👥 **Mentor(s):** Casey Iiams-Hauser
+
+💬 **Description:**
+Most of the current Admin page Functionalities are still on the old JSP UI. This project aims at re-writing key admin components from JSP to React including User management , Organization Management and Provider Management.
+
+💪 **Desired Skills:** react , TypescripT, java , Spring , REST.
+
+🎯 **Goals/Deliverables:** Admin Functionalities migrated to the new React UI.
+
+⏳ **Project Duration:** 350 hours
+
+-----
+
+### 💡Add Support for User UI Notifications
+
+👥 **Mentor(s):** Hugo Costa, Gabriel Casals
+
+💬 **Description:**
+This projects aims at adding support for User Notifications in the new Front End ie when critical Orders and Results are made. This will require creating a generic Notification framework that can support adding any kind of System Notifications whenever needed.
+
+💪 **Desired Skills:** React , Typescript, java , Spring , REST.
+
+🎯 **Goals/Deliverables:** A Generic Notification Framework for Displaying user Notifications
+
+⏳ **Project Duration:** 175 hours
+</a>
+
+</body>
+
+-----
 
 # Contributing
 
