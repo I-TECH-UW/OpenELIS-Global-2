@@ -16,6 +16,7 @@ import ReportByID from "./common/ReportByID";
 import ReportByDate from "./common/ReportByDate";
 import ReportByLabNo from "./common/ReportByLabNo";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
+import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
 
 const StudyIndex = () => {
   const intl = useIntl();
@@ -47,6 +48,7 @@ const StudyIndex = () => {
     patient_patientIndeterminate1: "project.IndeterminateStudy.name",
     patient_patientIndeterminate2: "project.IndeterminateStudy.name",
     patient_patientSpecialReport: "header.label.specialRequest",
+    study_auditTrail: "reports.auditTrail"
   };
 
   useEffect(() => {
@@ -212,6 +214,13 @@ const StudyIndex = () => {
                   id="reports.followupRequired.byLocation"
                 />
               )}
+
+            {type === "study" && report === "auditTrail" && (
+              <AuditTrailReport  
+                  report={"auditTrail"}
+                  id={"reports.auditTrail"}
+              />
+            )}
           </>
         )}
       </div>
