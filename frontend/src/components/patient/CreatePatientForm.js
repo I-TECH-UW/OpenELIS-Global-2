@@ -283,23 +283,27 @@ function CreatePatientForm(props) {
     setHealthDistricts(districts);
   };
 
-  const handleSubmit = (values) => {
-    if ("years" in values) {
-      delete values.years;
+  const handleSubmit = async (values, { resetForm }) => {
+  if ("years" in values) {
+    delete values.years;
+  }
+  if ("months" in values) {
+    delete values.months;
+  }
+  if ("days" in values) {
+    delete values.days;
+  }
+  console.debug(JSON.stringify(values));
+  postToOpenElisServer(
+    "/rest/patient-management",
+    JSON.stringify(values),
+    (status) => {
+      handlePost(status);
+      resetForm({ values: CreatePatientFormValues });
     }
-    if ("months" in values) {
-      delete values.months;
-    }
-    if ("days" in values) {
-      delete values.days;
-    }
-    console.debug(JSON.stringify(values));
-    postToOpenElisServer(
-      "/rest/patient-management",
-      JSON.stringify(values),
-      handlePost,
-    );
-  };
+  );
+};
+
 
   const handlePost = (status) => {
     setNotificationVisible(true);
@@ -536,6 +540,7 @@ function CreatePatientForm(props) {
                     dateFormat="d/m/Y"
                     datePickerType="single"
                     light={true}
+                    maxDate={new Date()}  
                     className="inputText"
                   >
                     <DatePickerInput
