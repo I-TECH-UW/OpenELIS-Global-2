@@ -1,7 +1,7 @@
 ##
 # Build Stage
 #
-FROM maven:3-jdk-11 as build
+FROM maven:3-jdk-11 as build-arm64
 
 RUN apt-get -y update
 RUN apt-get -y install git apache2-utils
@@ -100,4 +100,5 @@ RUN chown tomcat_admin:tomcat /docker-entrypoint.sh; \
 USER tomcat_admin
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
+
 
