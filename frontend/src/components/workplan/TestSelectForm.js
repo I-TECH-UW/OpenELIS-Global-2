@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Column, Grid, Select, SelectItem } from "@carbon/react";
-import { FormattedMessage, injectIntl } from "react-intl";
+import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../Style.css";
 import { getFromOpenElisServer } from "../utils/Utils";
 
@@ -20,13 +20,15 @@ function TestSelectForm(props) {
     }
   };
 
+  const intl = useIntl();
+
   useEffect(() => {
     mounted.current = true;
     let testId = new URLSearchParams(window.location.search).get("testId");
     testId = testId ? testId : "";
     getFromOpenElisServer("/rest/tests", (fetchedTests) => {
       let test = fetchedTests.find((test) => test.id === testId);
-      let testLabel = test ? test.value : "";
+      let testLabel = test ? test.value : intl.formatMessage({id:"input.placeholder.selectTest"});
       setDefaultTestId(testId);
       setDefaultTestLabel(testLabel);
       props.value(testId, testLabel);
