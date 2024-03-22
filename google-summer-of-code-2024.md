@@ -147,7 +147,7 @@ Most of the current Admin page Functionalities are still on the old JSP UI. This
 
 ### 💡Add Support for User UI Notifications
 
-👥 **Mentor(s):** Hugo Costa, Gabriel Casals
+👥 **Mentor(s):** Caleb Steele-Lane
 
 💬 **Description:**
 This projects aims at adding support for User Notifications in the new Front End ie when critical Orders and Results are made. This will require creating a generic Notification framework that can support adding any kind of System Notifications whenever needed.
