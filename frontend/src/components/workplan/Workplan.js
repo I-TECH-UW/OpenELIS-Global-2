@@ -183,11 +183,7 @@ export default function Workplan(props) {
 
   return (
     <>
-<<<<<<< HEAD
-      <GenericHomeBreadCrumb/>
-=======
     <PageBreadCrumb breadcrumbs={breadcrumbs} />
->>>>>>> 581e2fdfa93911db7d7c2dd04ae493dcdc54cab7
       <Grid fullWidth={true}>
         {notificationVisible === true ? <AlertDialog /> : ""}
         <Column lg={16}>

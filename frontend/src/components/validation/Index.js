@@ -12,13 +12,9 @@ import {
 
 } from "@carbon/react";
 import { injectIntl ,FormattedMessage} from "react-intl";
-<<<<<<< HEAD
-import GenericHomeBreadCrumb from "../common/GenericBreadCrumb";
-=======
 import PageBreadCrumb from "../common/PageBreadCrumb";
 
 let breadcrumbs = [{ label: "home.label", link: "/" }];
->>>>>>> 581e2fdfa93911db7d7c2dd04ae493dcdc54cab7
 
 const Index = () => {
   const { notificationVisible } = useContext(NotificationContext);
