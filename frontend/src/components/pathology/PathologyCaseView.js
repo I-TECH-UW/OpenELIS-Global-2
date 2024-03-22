@@ -17,7 +17,7 @@ import {
   Tag,
   TextArea,
   Loading,
-  InlineLoading
+  InlineLoading,
 } from "@carbon/react";
 import { Launch, Subtract } from "@carbon/react/icons";
 import {

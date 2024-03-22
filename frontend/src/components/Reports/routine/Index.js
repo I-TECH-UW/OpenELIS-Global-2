@@ -1,20 +1,14 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AlertDialog } from "../../common/CustomNotification";
 import { NotificationContext } from "../../layout/Layout";
-import {
-  Heading,
-  Grid,
-  Column,
-  Section,
-  Breadcrumb,
-  BreadcrumbItem,
-  Loading,
-} from "@carbon/react";
+import { Heading, Grid, Column, Section, Loading } from "@carbon/react";
 import { injectIntl, FormattedMessage, useIntl } from "react-intl";
-import config from "../../../config.json";
+import PatientStatusReport from "./PatientStatusReport";
 import StatisticsReport from "./StatisticsReport";
-import SummaryOfAllTest from "./SummaryOfAllTest";
-import HIVTestSummary from "./HivTestSummary";
+import ReferredOut from "./ReferredOut";
+import ReportByDate from "../study/common/ReportByDate";
+import PageBreadCrumb from "../../common/PageBreadCrumb";
+import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
 
 const RoutineIndex = () => {
   const intl = useIntl();
@@ -23,21 +17,14 @@ const RoutineIndex = () => {
 
   const [type, setType] = useState("");
   const [report, setReport] = useState("");
-  const [source, setSource] = useState("");
   const [isLoading, setIsLoading] = useState(true);
- 
 
   useEffect(() => {
-   
-
     const params = new URLSearchParams(window.location.search);
     const paramType = params.get("type");
     const paramReport = params.get("report");
-
     setType(paramType);
     setReport(paramReport);
-
-   
 
     if (paramType && paramReport) {
       setIsLoading(false);
@@ -48,47 +35,78 @@ const RoutineIndex = () => {
 
   return (
     <>
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Breadcrumb>
-            <BreadcrumbItem href="/">
-              {intl.formatMessage({ id: "home.label" })}
-            </BreadcrumbItem>
-          
-          </Breadcrumb>
-        </Column>
-      </Grid>
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Section>
-            <Section>
-              <Heading>
-                <FormattedMessage id="selectReportValues.title" />
-              </Heading>
-            </Section>
-          </Section>
-        </Column>
-      </Grid>
+      <br />
+      <PageBreadCrumb
+        breadcrumbs={[
+          { label: "home.label", link: "/" },
+          { label: "routine.reports", link: "/RoutineReports" },
+        ]}
+      />
       <div className="orderLegendBody">
         {notificationVisible === true && <AlertDialog />}
         {isLoading && <Loading />}
         {!isLoading && (
           <>
-           
+            {type === "patient" && report === "patientCILNSP_vreduit" && (
+              <PatientStatusReport />
+            )}
+
+            {type === "patient" && report === "referredOut" && <ReferredOut />}
+
+            {type === "patient" &&
+              report === "haitiNonConformityBySectionReason" && (
+                <ReportByDate
+                  report={"haitiNonConformityBySectionReason"}
+                  id={"openreports.mgt.nonconformity.section"}
+                />
+              )}
+
+            {type === "patient" && report === "haitiNonConformityByDate" && (
+              <ReportByDate
+                report={"haitiNonConformityByDate"}
+                id={"openreports.mgt.nonconformity.date"}
+              />
+            )}
+
+            {type === "patient" && report === "CISampleRoutineExport" && (
+              <ReportByDate
+                report={"CISampleRoutineExport"}
+                id={"sideNav.label.exportcsvfile"}
+              />
+            )}
+
+            {type === "indicator" && report === "statisticsReport" && (
+              <StatisticsReport />
+            )}
 
             {type === "indicator" &&
-              report === "statisticsReport" &&
-              (<StatisticsReport />)}
+              report === "indicatorHaitiLNSPAllTests" && (
+                <ReportByDate
+                  report={"indicatorHaitiLNSPAllTests"}
+                  id={"openreports.all.test.summary.title"}
+                />
+              )}
 
-            {type === "indicator" &&
-              report === "indicatorHaitiLNSPAllTests" &&
-              ( <SummaryOfAllTest /> )}
+            {type === "indicator" && report === "indicatorCDILNSPHIV" && (
+              <ReportByDate
+                report={"indicatorHaitiLNSPAllTests"}
+                id={"openreports.all.test.summary.title"}
+              />
+            )}
 
+            {type === "indicator" && report === "sampleRejectionReport" && (
+              <ReportByDate
+                report={"sampleRejectionReport"}
+                id={"openreports.mgt.rejection"}
+              />
+            )}
 
-            {type === "indicator" &&
-              report === "indicatorCDILNSPHIV" &&
-              (<HIVTestSummary/>)}
-
+            {type === "routine" && report === "auditTrail" && (
+            <AuditTrailReport  
+                report={"auditTrail"}
+                id={"reports.auditTrail"}
+            />
+            )}
           </>
         )}
       </div>
