@@ -1,4 +1,4 @@
-package org.openelisglobal.menu.commonpropertiescontroller;
+package org.openelisglobal.common.rest.provider;
 
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
@@ -26,7 +26,7 @@ public class CommonPropertiesController {
                 MapPropertySource mapPropertySource = (MapPropertySource) propertySource;
                 Arrays.stream(mapPropertySource.getPropertyNames()).forEach(propertyName -> {
                     // Filter properties with prefix starting "org.openelis"
-                    if (propertyName.startsWith("org.openelis")) {
+                    if (propertyName.startsWith("org.openelisglobal")) {
                         properties.put(propertyName, mapPropertySource.getProperty(propertyName).toString());
                     }
                 });
