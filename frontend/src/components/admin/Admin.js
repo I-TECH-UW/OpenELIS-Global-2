@@ -28,7 +28,7 @@ import {
   SideNavMenu,
   SideNavMenuItem,
 } from "@carbon/react";
-import { CommonProperties } from "./menu/ApplicationProperties";
+import { CommonProperties } from "./menu/CommonProperties";
 
 
 function Admin() {
