@@ -28,6 +28,8 @@ import {
   SideNavMenu,
   SideNavMenuItem,
 } from "@carbon/react";
+import { CommonProperties } from "./menu/ApplicationProperties";
+
 
 function Admin() {
   const intl = useIntl();
@@ -75,6 +77,9 @@ function Admin() {
             <SideNavMenuItem href="#studyMenuManagement">
               <FormattedMessage id="sidenav.label.admin.menu.study" />
             </SideNavMenuItem>
+              <SideNavMenuItem href="#commonproperties">
+              <FormattedMessage id="sidenav.label.admin.menu.commonproperties" defaultMessage={"Common Properties"} />
+            </SideNavMenuItem>
           </SideNavMenu>
           <SideNavLink
             renderIcon={Catalog}
@@ -112,6 +117,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#studyMenuManagement">
         <StudyMenuManagement />
+      </PathRoute>
+        <PathRoute path="#commonproperties">
+       <CommonProperties />
       </PathRoute>
     </>
   );
