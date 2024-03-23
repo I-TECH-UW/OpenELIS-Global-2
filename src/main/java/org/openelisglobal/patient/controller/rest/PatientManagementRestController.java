@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
@@ -58,7 +59,7 @@ public class PatientManagementRestController extends BaseRestController {
 
     @PostMapping(value = "patient-management", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void savepatient(HttpServletRequest request, @Validated(SamplePatientEntryForm.SamplePatientEntry.class) @RequestBody PatientManagementInfo patientInfo ,BindingResult bindingResult)
+    public void savepatient(HttpServletRequest request, @Validated(SamplePatientEntryForm.SamplePatientEntry.class) @RequestBody PatientManagementInfo patientInfo , BindingResult bindingResult, HttpServletResponse response)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException{
 
         if (StringUtils.isNotBlank(patientInfo.getPatientPK())) {
@@ -90,6 +91,7 @@ public class PatientManagementRestController extends BaseRestController {
 
                 }
                 request.setAttribute(ALLOW_EDITS_KEY, "false");
+                response.setStatus(400);
 
             } catch (FhirTransformationException | FhirPersistanceException e) {
                 LogEvent.logError(e);
@@ -101,10 +103,10 @@ public class PatientManagementRestController extends BaseRestController {
     private void preparePatientData(Errors errors ,HttpServletRequest request, PatientManagementInfo patientInfo,
             Patient patient) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-        validatePatientInfo(errors, patientInfo);
-        if (errors.hasErrors()) {
-           return;
-        }
+//        validatePatientInfo(errors, patientInfo);
+//        if (errors.hasErrors()) {
+//           return;
+//        }
 
         initMembers(patient);
         patientInfo.setPatientIdentities(new ArrayList<PatientIdentity>());

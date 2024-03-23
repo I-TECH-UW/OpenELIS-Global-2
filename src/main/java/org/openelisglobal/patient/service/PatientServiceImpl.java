@@ -14,9 +14,12 @@ import org.openelisglobal.address.valueholder.AddressPart;
 import org.openelisglobal.address.valueholder.PersonAddress;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
+import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
 import org.openelisglobal.gender.service.GenderService;
 import org.openelisglobal.gender.valueholder.Gender;
@@ -36,9 +39,11 @@ import org.openelisglobal.patienttype.util.PatientTypeMap;
 import org.openelisglobal.patienttype.valueholder.PatientPatientType;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.search.service.SearchResultsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Errors;
 
 @Service
 public class PatientServiceImpl extends AuditableBaseObjectServiceImpl<Patient, String> implements PatientService {
@@ -96,6 +101,9 @@ public class PatientServiceImpl extends AuditableBaseObjectServiceImpl<Patient, 
 
     @Autowired
     private PatientContactService patientContactService;
+
+    @Autowired
+    private SearchResultsService search;
 
     @PostConstruct
     public void initializeGlobalVariables() {
@@ -613,6 +621,10 @@ public class PatientServiceImpl extends AuditableBaseObjectServiceImpl<Patient, 
     public void persistPatientData(PatientManagementInfo patientInfo, Patient patient, String sysUserId)
             throws LIMSRuntimeException {
         if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {
+            Errors errors = validatePatientInfo(patientInfo);
+            if(errors.hasErrors()){
+                throw new LIMSRuntimeException("This Id already exists");
+            }
             personService.insert(patient.getPerson());
         } else if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {
             personService.update(patient.getPerson());
@@ -830,6 +842,47 @@ public class PatientServiceImpl extends AuditableBaseObjectServiceImpl<Patient, 
     @Override
     public Patient getByExternalId(String id) {
         return baseObjectDAO.getByExternalId(id);
+    }
+
+
+    private Errors validatePatientInfo(PatientManagementInfo patientInfo) {
+        Errors errors = new BaseErrors();
+        boolean disallowDuplicateSubjectNumbers = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "false");
+        boolean disallowDuplicateNationalIds = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_NATIONAL_IDS, "false");
+        if (disallowDuplicateSubjectNumbers || disallowDuplicateNationalIds) {
+            String newSTNumber = org.apache.commons.validator.GenericValidator.isBlankOrNull(patientInfo.getSTnumber()) ? null
+                    : patientInfo.getSTnumber();
+            String newSubjectNumber = org.apache.commons.validator.GenericValidator.isBlankOrNull(patientInfo.getSubjectNumber()) ? null
+                    : patientInfo.getSubjectNumber();
+            String newNationalId = org.apache.commons.validator.GenericValidator.isBlankOrNull(patientInfo.getNationalId()) ? null
+                    : patientInfo.getNationalId();
+
+            List<PatientSearchResults> results = search.getSearchResults(null, null, newSTNumber, newSubjectNumber,
+                    newNationalId, null, null, null, null, null);
+
+            if (!results.isEmpty()) {
+
+                for (PatientSearchResults result : results) {
+                    if (!result.getPatientID().equals(patientInfo.getPatientPK())) {
+                        if (disallowDuplicateSubjectNumbers && newSTNumber != null
+                                && newSTNumber.equals(result.getSTNumber())) {
+                            errors.reject("error.duplicate.STNumber", null, null);
+                        }
+                        if (disallowDuplicateSubjectNumbers && newSubjectNumber != null
+                                && newSubjectNumber.equals(result.getSubjectNumber())) {
+                            errors.reject("error.duplicate.subjectNumber", null, null);
+                        }
+                        if (disallowDuplicateNationalIds && newNationalId != null
+                                && newNationalId.equals(result.getNationalId())) {
+                            errors.reject("error.duplicate.nationalId", null, null);
+                        }
+                    }
+                }
+            }
+        }
+        return errors;
     }
 
 }
