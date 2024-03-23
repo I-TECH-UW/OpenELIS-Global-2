@@ -384,7 +384,7 @@ function OEHeader(props) {
                     {userSessionDetails.authenticated && (
                       <>
                         <li className="userDetails">
-                          <UserAvatarFilledAlt size={18} />{" "}
+                          <UserAvatarFilledAlt size={18} style={{marginRight: '4px'}}/>
                           {userSessionDetails.firstName}{" "}
                           {userSessionDetails.lastName}
                         </li>
@@ -392,7 +392,7 @@ function OEHeader(props) {
                           className="userDetails clickableUserDetails"
                           onClick={logout}
                         >
-                          <Logout id="sign-out" />
+                          <Logout id="sign-out" style={{marginRight: '3px'}}/>
                           <FormattedMessage id="header.label.logout" />
                         </li>
                       </>
