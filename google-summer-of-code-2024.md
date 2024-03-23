@@ -9,9 +9,9 @@
 ## Introduction
 ![](https://)
 
-Getting started Guide for onbarding GSoC'24 prospective contributors in `OpenElis Global`.
+Getting started Guide for onboarding GSoC'24 prospective contributors in `OpenElis Global` AKA `OpenElis Global 2` .
 
-We understand how painful it might be for new onboarding contributors to get started to `penElis Global 2` , As the project continues to evolve, it’s essential to ensure that our documentation remains up-to-date and accessible. We understand that navigating a new project can be challenging, especially for prospective contributors. Therefore, this documentation serves as a central hub for all information related to our project, making it easier for newcomers to get started.
+We understand how painful it might be for new onboarding contributors to get started to `OpenElis Global 2` , As the project continues to evolve, it’s essential to ensure that our documentation remains up-to-date and accessible. We understand that navigating a new project can be challenging, especially for prospective contributors. Therefore, this documentation serves as a central hub for all information related to our project, making it easier for newcomers to get started.
 
 ## OpenELIS Global 2
 
@@ -61,9 +61,9 @@ As well as on GitHub:
 [https://github.com/I-TECH-UW/OpenELIS-Global-2](https://github.com/I-TECH-UW/OpenELIS-Global-2)
 
 -----
-<body>
 
 <a id="project_ideas">
+
 ## 📂 Project Ideas
 
 > This is the GSoC 2024 project ideas list for OpenElis.  As we continue to engage community mentors for 2024, the project ideas are subject to some changes.
@@ -159,8 +159,6 @@ This projects aims at adding support for User Notifications in the new Front End
 ⏳ **Project Duration:** 175 hours
 </a>
 
-</body>
-
 -----
 
 # Contributing
@@ -181,7 +179,7 @@ OpenELIS Global 2 utilizes a multi-repository approach and leverages Maven for p
 
 ```
 .
-├── Dater export              // Git submodule which holds OpenElis data store api. 
+├── Dater export              // Git submodule which holds OpenElis data sotre api. 
 |
 ├── Frontend                     // Contains new frontend  UI admin dashboards written in React.
 |   |
@@ -317,7 +315,7 @@ If you have any issue, please head to [OpenElis talk forum](https://talk.openeli
 - [An Overview of OpenElis](https://www.youtube.com/watch?v=YZQMHHaHIcY)
 
 ## FAQs
-- Why I get this exception  `Could not find artifact org.itech:dataexport-api:pom:0.0.0.8` trying to run and start the server to run my application ?
+- Why I get this exception when try to natively `Could not find artifact org.itech:dataexport-api:pom:0.0.0.8` trying to run my application with tomcat ?
     - Kindly make sure you have done the second setp well. You can run these commands to solve the issue.
 
           git submodule update --init --recursive
