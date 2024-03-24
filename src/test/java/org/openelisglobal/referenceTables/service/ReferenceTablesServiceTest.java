@@ -93,17 +93,19 @@ public class ReferenceTablesServiceTest {
         Assert.assertTrue(referenceTablesService.getAllReferenceTablesForHl7Encoding().size() > 0 );
     }
 
-//
+// Get all reference tables test
     @Test
     public void getAllReferenceTables_shouldGetAll() {
         Assert.assertTrue(referenceTablesService.getAllReferenceTables().size() > 0);
     }
 
+//    Get all reference tables count test
     @Test
     public void getTotalReferenceTableCount_shouldReturnTotalTablesCount() {
         Assert.assertTrue(referenceTablesService.getTotalReferenceTableCount() > 0);
     }
 
+//    get page of reference tables
     @Test
     public void getPageOfReferenceTables_shouldReturnPageOfReferenceTables() {
         Assert.assertTrue(referenceTablesService.getPageOfReferenceTables(1).size() > 0);
