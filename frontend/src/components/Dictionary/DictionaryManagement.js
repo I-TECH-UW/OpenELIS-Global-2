@@ -6,7 +6,7 @@ import PageBreadCrumb from "../common/PageBreadCrumb";
 
 const breadcrumbs = [
   { label: "home.label", link: "/" },
-  { label: "patient.label.modify", link: "/PatientManagement" },
+  { label: "dictionary.label.modify", link: "/DictionaryManagement" },
 ];
 
 function DictionaryManagement() {
@@ -18,7 +18,7 @@ function DictionaryManagement() {
           <Section>
             <Section>
               <Heading>
-                <FormattedMessage id="patient.label.modify" />
+                <FormattedMessage id="dictionary.label.modify" />
               </Heading>
             </Section>
           </Section>
