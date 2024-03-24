@@ -1,11 +1,14 @@
 # OpenELIS Global 2
-This is the OpenELIS rewrite onto Java Spring, and with all new technology and features. Please see our [website](http://www.openelis-global.org/) for more information. 
+This is the OpenELIS rewrite onto Java Spring, and with all new technology and features. Please see our [website](http://www.openelis-global.org/) for more information.
 
 You can find more information on how to set up OpenELIS at our [docs page](http://docs.openelis-global.org/)
 
 [![Build Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/ci.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/ci.yml)
 
 [![Publish Docker Image Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish.yml)
+### Google Summer of Code 2024 guide
+
+If you are here looking for becoming a GSoC'24 contributor, here is a [guide](./google-summer-of-code-2024).
 
 ### Running OpenELIS in Docker
 #### Running docker compose With pre-released docker images
@@ -35,18 +38,18 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 
         docker-compose -f dev.docker-compose.yml up -d    
 
-    Note : For Reflecting Local changes in the Running Containers ;
- * Any Changes to the [Front-end](./frontend/) React Source Code  will be directly Hot Reloaded in the UI
- * For changes to the [Back-end](./src/) Java Source code  
-   - Run the maven build again  to re-build the War file
+   Note : For Reflecting Local changes in the Running Containers ;
+* Any Changes to the [Front-end](./frontend/) React Source Code  will be directly Hot Reloaded in the UI
+* For changes to the [Back-end](./src/) Java Source code
+    - Run the maven build again  to re-build the War file
 
-          mvn clean install -DskipTests
+           mvn clean install -DskipTests
 
-   -  Recreate the Openelis webapp container
+    -  Recreate the Openelis webapp container
 
-          docker-compose -f dev.docker-compose.yml up -d  --no-deps --force-recreate oe.openelis.org          
+           docker-compose -f dev.docker-compose.yml up -d  --no-deps --force-recreate oe.openelis.org          
 
-#### The Instaces can be accesed at 
+#### The Instaces can be accesed at
 
 | Instance  |     URL       | credentials (user : password)|
 |---------- |:-------------:|------:                       |
