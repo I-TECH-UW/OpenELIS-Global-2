@@ -40,6 +40,7 @@ import PrintBarcode from "./components/printBarcode/Index";
 import NonConformIndex from "./components/nonconform/index";
 import SampleBatchEntrySetup from "./components/batchOrderEntry/SampleBatchEntrySetup.js";
 import AuditTrailReportIndex from "./components/reports/auditTrailReport/Index.js";
+import DictionaryManagement from "./components/Dictionary/DictionaryManagement.js";
 
 export default function App() {
   let i18nConfig = {
@@ -319,6 +320,12 @@ export default function App() {
                   path="/PrintBarcode"
                   exact
                   component={() => <PrintBarcode />}
+                  role="Reception"
+                />
+                <SecureRoute
+                  path="/DictionaryManagement"
+                  exact
+                  component={() => <DictionaryManagement />}
                   role="Reception"
                 />
                 <SecureRoute
