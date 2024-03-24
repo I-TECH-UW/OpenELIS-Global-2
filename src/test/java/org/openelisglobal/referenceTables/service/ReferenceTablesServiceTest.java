@@ -34,41 +34,32 @@ public class ReferenceTablesServiceTest {
     ReferenceTables createdReferenceTable;
     ReferenceTables referenceTablesEntity;
 
-    private String tableName;
-    private String keepHistory;
-    private String isHl7Encoded;
 
 // Initializing objects and variables to use in testing
     @Before
     public void setUp(){
         referenceTablesEntity = new ReferenceTables();
         createdReferenceTable = new ReferenceTables();
-        tableName = "VILLAGE history";
-        keepHistory = "Y";
-        isHl7Encoded = "N";
+        referenceTablesEntity.setTableName("VILLAGE history");
+        referenceTablesEntity.setKeepHistory("Y");
+        referenceTablesEntity.setIsHl7Encoded("N");
     }
 
 //    Saving referenceTable test
     @Test
     public void save_shouldSaveReferenceTable() {
-        referenceTablesEntity.setTableName(tableName);
-        referenceTablesEntity.setKeepHistory(keepHistory);
-        referenceTablesEntity.setIsHl7Encoded(isHl7Encoded);
         createdReferenceTable =  referenceTablesService.save(referenceTablesEntity);
         Assert.assertNotEquals(null,referenceTablesService.get(createdReferenceTable.getId()));
         Assert.assertEquals(createdReferenceTable.getId(),createdReferenceTable.getId());
-        Assert.assertEquals(tableName, createdReferenceTable.getTableName());
-        Assert.assertEquals(isHl7Encoded,createdReferenceTable.getIsHl7Encoded());
-        Assert.assertEquals(keepHistory,createdReferenceTable.getKeepHistory());
+        Assert.assertEquals(referenceTablesEntity.getTableName(), createdReferenceTable.getTableName());
+        Assert.assertEquals(referenceTablesEntity.getIsHl7Encoded(),createdReferenceTable.getIsHl7Encoded());
+        Assert.assertEquals(referenceTablesEntity.getKeepHistory(),createdReferenceTable.getKeepHistory());
 
     }
 
 //    Inserting reference table test, checking for duplication
     @Test
     public void insert_shouldInsertNewReferenceTables() {
-        referenceTablesEntity.setTableName(tableName);
-        referenceTablesEntity.setKeepHistory(keepHistory);
-        referenceTablesEntity.setIsHl7Encoded(isHl7Encoded);
         assertThrows(LIMSRuntimeException.class, () -> {
             referenceTablesService.insert(referenceTablesEntity);
         });
@@ -77,17 +68,18 @@ public class ReferenceTablesServiceTest {
 //    Updating reference table test
     @Test
     public void update_shouldUpdateReferenceTable() {
-        tableName = "CELL history";
-        keepHistory = "N";
-        isHl7Encoded = "Y";
-        createdReferenceTable.setTableName(tableName);
-        createdReferenceTable.setKeepHistory(keepHistory);
-        createdReferenceTable.setIsHl7Encoded(isHl7Encoded);
+        referenceTablesEntity.setTableName("CELL history");
+        referenceTablesEntity.setKeepHistory("N");
+        referenceTablesEntity.setIsHl7Encoded("Y");
+
+        createdReferenceTable.setTableName(referenceTablesEntity.getTableName());
+        createdReferenceTable.setKeepHistory(referenceTablesEntity.getKeepHistory());
+        createdReferenceTable.setIsHl7Encoded(referenceTablesEntity.getIsHl7Encoded());
         createdReferenceTable = referenceTablesService.update(createdReferenceTable);
 
-        Assert.assertEquals(tableName,createdReferenceTable.getTableName());
-        Assert.assertEquals(keepHistory, createdReferenceTable.getKeepHistory());
-        Assert.assertEquals(isHl7Encoded, createdReferenceTable.getIsHl7Encoded());
+        Assert.assertEquals(referenceTablesEntity.getTableName(),createdReferenceTable.getTableName());
+        Assert.assertEquals(referenceTablesEntity.getKeepHistory(), createdReferenceTable.getKeepHistory());
+        Assert.assertEquals(referenceTablesEntity.getIsHl7Encoded(), createdReferenceTable.getIsHl7Encoded());
     }
 
 //    Getting all reference tables for Hl7Encoding test
@@ -113,10 +105,4 @@ public class ReferenceTablesServiceTest {
     public void getPageOfReferenceTables_shouldReturnPageOfReferenceTables() {
         Assert.assertTrue(referenceTablesService.getPageOfReferenceTables(1).size() > 0);
     }
-
-//      @Test
-//    public void getReferenceTableByName() {
-//        Assert.assertNotEquals(null,referenceTablesService.getReferenceTableByName(createdReferenceTable));
-//    }
-
 }
