@@ -17,6 +17,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.assertThrows;
 
+/**
+ * @author Valens NIYONSENGA
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { BaseTestConfig.class, TestConfig.class })
 @TestPropertySource("classpath:common.properties")
