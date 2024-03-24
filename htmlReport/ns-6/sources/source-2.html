@@ -1,0 +1,417 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PatientEntryByProjectForm</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.openelisglobal.patient.form</a>
+</div>
+
+<h1>Coverage Summary for Class: PatientEntryByProjectForm (org.openelisglobal.patient.form)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PatientEntryByProjectForm</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/51)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/69)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.openelisglobal.patient.form;
+&nbsp;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;import javax.validation.Valid;
+&nbsp;import javax.validation.constraints.Min;
+&nbsp;import javax.validation.constraints.Pattern;
+&nbsp;
+&nbsp;import org.openelisglobal.common.form.BaseForm;
+&nbsp;import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
+&nbsp;import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
+&nbsp;import org.openelisglobal.common.validator.ValidationHelper;
+&nbsp;import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
+&nbsp;import org.openelisglobal.dictionary.ObservationHistoryList;
+&nbsp;import org.openelisglobal.organization.util.OrganizationTypeList;
+&nbsp;import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
+&nbsp;import org.openelisglobal.patient.saving.form.IAccessionerForm;
+&nbsp;import org.openelisglobal.patient.valueholder.ObservationData;
+&nbsp;import org.openelisglobal.sample.form.ProjectData;
+&nbsp;import org.openelisglobal.validation.annotations.ValidAccessionNumber;
+&nbsp;import org.openelisglobal.validation.annotations.ValidDate;
+&nbsp;import org.openelisglobal.validation.annotations.ValidName;
+&nbsp;import org.openelisglobal.validation.annotations.ValidTime;
+&nbsp;import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
+&nbsp;
+&nbsp;public class PatientEntryByProjectForm extends BaseForm implements IAccessionerForm {
+&nbsp;	// for display
+&nbsp;	private Map&lt;String, Object&gt; formLists;
+&nbsp;
+&nbsp;	// for display
+&nbsp;	private Map&lt;String, ObservationHistoryList&gt; dictionaryLists;
+&nbsp;
+&nbsp;	// for display
+&nbsp;	private Map&lt;String, OrganizationTypeList&gt; organizationTypeLists;
+&nbsp;
+<b class="nc">&nbsp;	@Pattern(regexp = ValidationHelper.ID_REGEX)</b>
+&nbsp;	private String patientPK = &quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;	@Pattern(regexp = ValidationHelper.ID_REGEX)</b>
+&nbsp;	private String samplePK = &quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;	@ValidDate(relative = DateRelation.PAST)</b>
+&nbsp;	private String interviewDate = &quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;	@ValidTime</b>
+&nbsp;	private String interviewTime = &quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;	@ValidDate(relative = DateRelation.PAST)</b>
+&nbsp;	private String receivedDateForDisplay = &quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;	@ValidTime</b>
+&nbsp;	private String receivedTimeForDisplay = &quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;	@ValidDate(relative = DateRelation.TODAY)</b>
+&nbsp;	private String currentDate = &quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;	private PatientUpdateStatus patientUpdateStatus = PatientUpdateStatus.ADD;</b>
+&nbsp;
+<b class="nc">&nbsp;	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)</b>
+&nbsp;	private String subjectNumber = &quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)</b>
+&nbsp;	private String siteSubjectNumber = &quot;&quot;;
+&nbsp;	
+<b class="nc">&nbsp;	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)</b>
+&nbsp;	private String upidCode = &quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;    @ValidAccessionNumber(format = AccessionFormat.PROGRAMNUM)</b>
+&nbsp;    private String labNo = &quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;	@Pattern(regexp = ValidationHelper.ID_REGEX)</b>
+&nbsp;	private String centerName = &quot;&quot;;
+&nbsp;
+&nbsp;	@Min(0)
+&nbsp;	private Integer centerCode;
+&nbsp;
+<b class="nc">&nbsp;	@ValidName(nameType = NameType.FIRST_NAME)</b>
+&nbsp;	private String firstName = &quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;	@ValidName(nameType = NameType.LAST_NAME)</b>
+&nbsp;	private String lastName = &quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;	@Pattern(regexp = ValidationHelper.GENDER_REGEX)</b>
+&nbsp;	private String gender = &quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;	@ValidDate(relative = DateRelation.PAST)</b>
+&nbsp;	private String birthDateForDisplay = &quot;&quot;;
+&nbsp;
+&nbsp;	@Valid
+&nbsp;	private ObservationData observations;
+&nbsp;
+&nbsp;	@Valid
+&nbsp;	private ProjectData projectData;
+&nbsp;
+&nbsp;	@Valid
+&nbsp;	private ElectronicOrder electronicOrder;
+&nbsp;
+&nbsp;	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
+&nbsp;	private String patientFhirUuid;
+&nbsp;
+<b class="nc">&nbsp;	public PatientEntryByProjectForm() {</b>
+<b class="nc">&nbsp;		setFormName(&quot;patientEntryByProjectForm&quot;);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public Map&lt;String, Object&gt; getFormLists() {
+<b class="nc">&nbsp;		return formLists;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setFormLists(Map&lt;String, Object&gt; formLists) {
+<b class="nc">&nbsp;		this.formLists = formLists;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public Map&lt;String, ObservationHistoryList&gt; getDictionaryLists() {
+<b class="nc">&nbsp;		return dictionaryLists;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setDictionaryLists(Map&lt;String, ObservationHistoryList&gt; dictionaryLists) {
+<b class="nc">&nbsp;		this.dictionaryLists = dictionaryLists;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public Map&lt;String, OrganizationTypeList&gt; getOrganizationTypeLists() {
+<b class="nc">&nbsp;		return organizationTypeLists;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setOrganizationTypeLists(Map&lt;String, OrganizationTypeList&gt; organizationTypeLists) {
+<b class="nc">&nbsp;		this.organizationTypeLists = organizationTypeLists;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public String getPatientPK() {
+<b class="nc">&nbsp;		return patientPK;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setPatientPK(String patientPK) {
+<b class="nc">&nbsp;		this.patientPK = patientPK;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public String getSamplePK() {
+<b class="nc">&nbsp;		return samplePK;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setSamplePK(String samplePK) {
+<b class="nc">&nbsp;		this.samplePK = samplePK;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public String getInterviewDate() {
+<b class="nc">&nbsp;		return interviewDate;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setInterviewDate(String interviewDate) {
+<b class="nc">&nbsp;		this.interviewDate = interviewDate;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public String getInterviewTime() {
+<b class="nc">&nbsp;		return interviewTime;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setInterviewTime(String interviewTime) {
+<b class="nc">&nbsp;		this.interviewTime = interviewTime;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public String getReceivedDateForDisplay() {
+<b class="nc">&nbsp;		return receivedDateForDisplay;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setReceivedDateForDisplay(String receivedDateForDisplay) {
+<b class="nc">&nbsp;		this.receivedDateForDisplay = receivedDateForDisplay;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public String getReceivedTimeForDisplay() {
+<b class="nc">&nbsp;		return receivedTimeForDisplay;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setReceivedTimeForDisplay(String receivedTimeForDisplay) {
+<b class="nc">&nbsp;		this.receivedTimeForDisplay = receivedTimeForDisplay;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public String getCurrentDate() {
+<b class="nc">&nbsp;		return currentDate;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setCurrentDate(String currentDate) {
+<b class="nc">&nbsp;		this.currentDate = currentDate;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public PatientUpdateStatus getPatientUpdateStatus() {
+<b class="nc">&nbsp;		return patientUpdateStatus;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setPatientUpdateStatus(PatientUpdateStatus patientUpdateStatus) {
+<b class="nc">&nbsp;		this.patientUpdateStatus = patientUpdateStatus;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public String getSubjectNumber() {
+<b class="nc">&nbsp;		return subjectNumber;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setSubjectNumber(String subjectNumber) {
+<b class="nc">&nbsp;		this.subjectNumber = subjectNumber;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public String getSiteSubjectNumber() {
+<b class="nc">&nbsp;		return siteSubjectNumber;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setSiteSubjectNumber(String siteSubjectNumber) {
+<b class="nc">&nbsp;		this.siteSubjectNumber = siteSubjectNumber;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public String getLabNo() {
+<b class="nc">&nbsp;		return labNo;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setLabNo(String labNo) {
+<b class="nc">&nbsp;		this.labNo = labNo;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public String getCenterName() {
+<b class="nc">&nbsp;		return centerName;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setCenterName(String centerName) {
+<b class="nc">&nbsp;		this.centerName = centerName;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public Integer getCenterCode() {
+<b class="nc">&nbsp;		return centerCode;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setCenterCode(Integer centerCode) {
+<b class="nc">&nbsp;		this.centerCode = centerCode;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public String getFirstName() {
+<b class="nc">&nbsp;		return firstName;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setFirstName(String firstName) {
+<b class="nc">&nbsp;		this.firstName = firstName;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public String getLastName() {
+<b class="nc">&nbsp;		return lastName;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setLastName(String lastName) {
+<b class="nc">&nbsp;		this.lastName = lastName;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public String getGender() {
+<b class="nc">&nbsp;		return gender;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setGender(String gender) {
+<b class="nc">&nbsp;		this.gender = gender;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public String getBirthDateForDisplay() {
+<b class="nc">&nbsp;		return birthDateForDisplay;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setBirthDateForDisplay(String birthDateForDisplay) {
+<b class="nc">&nbsp;		this.birthDateForDisplay = birthDateForDisplay;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@Override
+&nbsp;	public ObservationData getObservations() {
+<b class="nc">&nbsp;		return observations;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@Override
+&nbsp;	public void setObservations(ObservationData observations) {
+<b class="nc">&nbsp;		this.observations = observations;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@Override
+&nbsp;	public ProjectData getProjectData() {
+<b class="nc">&nbsp;		return projectData;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@Override
+&nbsp;	public void setProjectData(ProjectData projectData) {
+<b class="nc">&nbsp;		this.projectData = projectData;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@Override
+&nbsp;	public ElectronicOrder getElectronicOrder() {
+<b class="nc">&nbsp;		return electronicOrder;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@Override
+&nbsp;	public void setElectronicOrder(ElectronicOrder electronicOrder) {
+<b class="nc">&nbsp;		this.electronicOrder = electronicOrder;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@Override
+&nbsp;	public String getPatientFhirUuid() {
+<b class="nc">&nbsp;		return patientFhirUuid;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@Override
+&nbsp;	public void setPatientFhirUuid(String patientFhirUuid) {
+<b class="nc">&nbsp;		this.patientFhirUuid = patientFhirUuid;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public String getUpidCode() {
+<b class="nc">&nbsp;		return upidCode;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setUpidCode(String upidCode) {
+<b class="nc">&nbsp;		this.upidCode = upidCode;</b>
+&nbsp;	}
+&nbsp;	
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-23 09:33</div>
+</div>
+</body>
+</html>

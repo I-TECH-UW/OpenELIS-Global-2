@@ -1,0 +1,551 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PatientClinicalInfo</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.openelisglobal.patient.action.bean</a>
+</div>
+
+<h1>Coverage Summary for Class: PatientClinicalInfo (org.openelisglobal.patient.action.bean)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PatientClinicalInfo</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/69)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/73)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/**
+&nbsp; * The contents of this file are subject to the Mozilla Public License
+&nbsp; * Version 1.1 (the &quot;License&quot;); you may not use this file except in
+&nbsp; * compliance with the License. You may obtain a copy of the License at
+&nbsp; * http://www.mozilla.org/MPL/
+&nbsp; *
+&nbsp; * Software distributed under the License is distributed on an &quot;AS IS&quot;
+&nbsp; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+&nbsp; * License for the specific language governing rights and limitations under
+&nbsp; * the License.
+&nbsp; *
+&nbsp; * The Original Code is OpenELIS code.
+&nbsp; *
+&nbsp; * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
+&nbsp; *
+&nbsp; */
+&nbsp;package org.openelisglobal.patient.action.bean;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import javax.validation.constraints.Pattern;
+&nbsp;
+&nbsp;import org.openelisglobal.validation.annotations.SafeHtml;
+&nbsp;import org.openelisglobal.common.util.IdValuePair;
+&nbsp;import org.openelisglobal.common.validator.ValidationHelper;
+&nbsp;import org.openelisglobal.sample.form.SamplePatientEntryForm.SamplePatientEntryBatch;
+&nbsp;import org.openelisglobal.samplebatchentry.form.SampleBatchEntryForm;
+&nbsp;
+<b class="nc">&nbsp;public class PatientClinicalInfo implements Serializable {</b>
+&nbsp;
+&nbsp;    private static final long serialVersionUID = 1L;
+&nbsp;    private static final String YES_NO_UNKNOWN_REGEX = &quot;^yes$|^no|^unknown$&quot;;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String tbExtraPulmanary;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String tbCerebral;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String tbMenigitis;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String tbPrurigol;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String tbDiarrhae;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String stdColonCancer;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String stdCandidiasis;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String stdKaposi;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String stdZona;
+&nbsp;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String stdOther;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String arvProphyaxixReceiving;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String arvProphyaxixType;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String arvTreatmentReceiving;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String arvTreatmentRemembered;
+&nbsp;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String arvTreatment1;
+&nbsp;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String arvTreatment2;
+&nbsp;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String arvTreatment3;
+&nbsp;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String arvTreatment4;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String cotrimoxazoleReceiving;
+&nbsp;
+&nbsp;    @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String cotrimoxazoleType;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String infectionExtraPulmanary;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String infectionCerebral;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String infectionMeningitis;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String infectionPrurigol;
+&nbsp;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String infectionOther;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String stdInfectionColon;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String stdInfectionCandidiasis;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String stdInfectionKaposi;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String stdInfectionZona;
+&nbsp;
+&nbsp;    @Pattern(regexp = YES_NO_UNKNOWN_REGEX, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String infectionUnderTreatment;
+&nbsp;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String weight;
+&nbsp;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SampleBatchEntryForm.SampleBatchEntrySetup.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String karnofskyScore;
+&nbsp;
+&nbsp;    // for display
+&nbsp;    private List&lt;IdValuePair&gt; prophyaxixTypes;
+&nbsp;
+&nbsp;    // for display
+&nbsp;    private List&lt;IdValuePair&gt; arvStages;
+&nbsp;
+&nbsp;    public String getTbExtraPulmanary() {
+<b class="nc">&nbsp;        return tbExtraPulmanary;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setTbExtraPulmanary(String tbExtraPulmanary) {
+<b class="nc">&nbsp;        this.tbExtraPulmanary = tbExtraPulmanary;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getTbCerebral() {
+<b class="nc">&nbsp;        return tbCerebral;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setTbCerebral(String tbCerebral) {
+<b class="nc">&nbsp;        this.tbCerebral = tbCerebral;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getTbMenigitis() {
+<b class="nc">&nbsp;        return tbMenigitis;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setTbMenigitis(String tbMenigitis) {
+<b class="nc">&nbsp;        this.tbMenigitis = tbMenigitis;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getTbPrurigol() {
+<b class="nc">&nbsp;        return tbPrurigol;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setTbPrurigol(String tbPrurigol) {
+<b class="nc">&nbsp;        this.tbPrurigol = tbPrurigol;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getTbDiarrhae() {
+<b class="nc">&nbsp;        return tbDiarrhae;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setTbDiarrhae(String tbDiarrhae) {
+<b class="nc">&nbsp;        this.tbDiarrhae = tbDiarrhae;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getStdColonCancer() {
+<b class="nc">&nbsp;        return stdColonCancer;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStdColonCancer(String stdColonCancer) {
+<b class="nc">&nbsp;        this.stdColonCancer = stdColonCancer;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getStdCandidiasis() {
+<b class="nc">&nbsp;        return stdCandidiasis;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStdCandidiasis(String stdCandidiasis) {
+<b class="nc">&nbsp;        this.stdCandidiasis = stdCandidiasis;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getStdKaposi() {
+<b class="nc">&nbsp;        return stdKaposi;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStdKaposi(String stdKaposi) {
+<b class="nc">&nbsp;        this.stdKaposi = stdKaposi;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getStdZona() {
+<b class="nc">&nbsp;        return stdZona;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStdZona(String stdZona) {
+<b class="nc">&nbsp;        this.stdZona = stdZona;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getStdOther() {
+<b class="nc">&nbsp;        return stdOther;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStdOther(String stdOther) {
+<b class="nc">&nbsp;        this.stdOther = stdOther;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getArvProphyaxixReceiving() {
+<b class="nc">&nbsp;        return arvProphyaxixReceiving;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setArvProphyaxixReceiving(String arvProphyaxixReceiving) {
+<b class="nc">&nbsp;        this.arvProphyaxixReceiving = arvProphyaxixReceiving;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getArvProphyaxixType() {
+<b class="nc">&nbsp;        return arvProphyaxixType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setArvProphyaxixType(String arvProphyaxixType) {
+<b class="nc">&nbsp;        this.arvProphyaxixType = arvProphyaxixType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getArvTreatmentReceiving() {
+<b class="nc">&nbsp;        return arvTreatmentReceiving;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setArvTreatmentReceiving(String arvTreatmentReceiving) {
+<b class="nc">&nbsp;        this.arvTreatmentReceiving = arvTreatmentReceiving;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getArvTreatmentRemembered() {
+<b class="nc">&nbsp;        return arvTreatmentRemembered;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setArvTreatmentRemembered(String arvTreatmentRemembered) {
+<b class="nc">&nbsp;        this.arvTreatmentRemembered = arvTreatmentRemembered;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getArvTreatment1() {
+<b class="nc">&nbsp;        return arvTreatment1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setArvTreatment1(String arvTreatment1) {
+<b class="nc">&nbsp;        this.arvTreatment1 = arvTreatment1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getArvTreatment2() {
+<b class="nc">&nbsp;        return arvTreatment2;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setArvTreatment2(String arvTreatment2) {
+<b class="nc">&nbsp;        this.arvTreatment2 = arvTreatment2;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getArvTreatment3() {
+<b class="nc">&nbsp;        return arvTreatment3;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setArvTreatment3(String arvTreatment3) {
+<b class="nc">&nbsp;        this.arvTreatment3 = arvTreatment3;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getArvTreatment4() {
+<b class="nc">&nbsp;        return arvTreatment4;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setArvTreatment4(String arvTreatment4) {
+<b class="nc">&nbsp;        this.arvTreatment4 = arvTreatment4;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getCotrimoxazoleReceiving() {
+<b class="nc">&nbsp;        return cotrimoxazoleReceiving;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCotrimoxazoleReceiving(String cotrimoxazoleReceiving) {
+<b class="nc">&nbsp;        this.cotrimoxazoleReceiving = cotrimoxazoleReceiving;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getCotrimoxazoleType() {
+<b class="nc">&nbsp;        return cotrimoxazoleType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCotrimoxazoleType(String cotrimoxazoleType) {
+<b class="nc">&nbsp;        this.cotrimoxazoleType = cotrimoxazoleType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getInfectionExtraPulmanary() {
+<b class="nc">&nbsp;        return infectionExtraPulmanary;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setInfectionExtraPulmanary(String infectionExtraPulmanary) {
+<b class="nc">&nbsp;        this.infectionExtraPulmanary = infectionExtraPulmanary;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getInfectionMeningitis() {
+<b class="nc">&nbsp;        return infectionMeningitis;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setInfectionMeningitis(String infectionMenigitis) {
+<b class="nc">&nbsp;        infectionMeningitis = infectionMenigitis;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getInfectionPrurigol() {
+<b class="nc">&nbsp;        return infectionPrurigol;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setInfectionPrurigol(String infectionPrurigol) {
+<b class="nc">&nbsp;        this.infectionPrurigol = infectionPrurigol;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getInfectionOther() {
+<b class="nc">&nbsp;        return infectionOther;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setInfectionOther(String infectionOther) {
+<b class="nc">&nbsp;        this.infectionOther = infectionOther;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getStdInfectionColon() {
+<b class="nc">&nbsp;        return stdInfectionColon;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStdInfectionColon(String stdInfectionColon) {
+<b class="nc">&nbsp;        this.stdInfectionColon = stdInfectionColon;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getStdInfectionCandidiasis() {
+<b class="nc">&nbsp;        return stdInfectionCandidiasis;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStdInfectionCandidiasis(String stdInfectionCandidiasis) {
+<b class="nc">&nbsp;        this.stdInfectionCandidiasis = stdInfectionCandidiasis;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getStdInfectionKaposi() {
+<b class="nc">&nbsp;        return stdInfectionKaposi;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStdInfectionKaposi(String stdInfectionKaposi) {
+<b class="nc">&nbsp;        this.stdInfectionKaposi = stdInfectionKaposi;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getStdInfectionZona() {
+<b class="nc">&nbsp;        return stdInfectionZona;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStdInfectionZona(String stdInfectionZona) {
+<b class="nc">&nbsp;        this.stdInfectionZona = stdInfectionZona;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getInfectionUnderTreatment() {
+<b class="nc">&nbsp;        return infectionUnderTreatment;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setInfectionUnderTreatment(String infectionUnderTreatment) {
+<b class="nc">&nbsp;        this.infectionUnderTreatment = infectionUnderTreatment;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getWeight() {
+<b class="nc">&nbsp;        return weight;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setWeight(String weight) {
+<b class="nc">&nbsp;        this.weight = weight;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getKarnofskyScore() {
+<b class="nc">&nbsp;        return karnofskyScore;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setKarnofskyScore(String karnofskyScore) {
+<b class="nc">&nbsp;        this.karnofskyScore = karnofskyScore;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;IdValuePair&gt; getProphyaxixTypes() {
+<b class="nc">&nbsp;        if (prophyaxixTypes == null) {</b>
+<b class="nc">&nbsp;            prophyaxixTypes = new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return prophyaxixTypes;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setProphyaxixTypes(List&lt;IdValuePair&gt; prophyaxixTypes) {
+<b class="nc">&nbsp;        this.prophyaxixTypes = prophyaxixTypes;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;IdValuePair&gt; getArvStages() {
+<b class="nc">&nbsp;        if (arvStages == null) {</b>
+<b class="nc">&nbsp;            arvStages = new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return arvStages;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setArvStages(List&lt;IdValuePair&gt; arvStages) {
+<b class="nc">&nbsp;        this.arvStages = arvStages;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getInfectionCerebral() {
+<b class="nc">&nbsp;        return infectionCerebral;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setInfectionCerebral(String infectionCerebral) {
+<b class="nc">&nbsp;        this.infectionCerebral = infectionCerebral;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-23 09:33</div>
+</div>
+</body>
+</html>

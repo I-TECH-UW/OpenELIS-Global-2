@@ -1,0 +1,137 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PatientDAO</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.openelisglobal.patient.dao</a>
+</div>
+
+<h1>Coverage Summary for Class: PatientDAO (org.openelisglobal.patient.dao)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">PatientDAO</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/**
+&nbsp;* The contents of this file are subject to the Mozilla Public License
+&nbsp;* Version 1.1 (the &quot;License&quot;); you may not use this file except in
+&nbsp;* compliance with the License. You may obtain a copy of the License at
+&nbsp;* http://www.mozilla.org/MPL/
+&nbsp;*
+&nbsp;* Software distributed under the License is distributed on an &quot;AS IS&quot;
+&nbsp;* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+&nbsp;* License for the specific language governing rights and limitations under
+&nbsp;* the License.
+&nbsp;*
+&nbsp;* The Original Code is OpenELIS code.
+&nbsp;*
+&nbsp;* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+&nbsp;*/
+&nbsp;package org.openelisglobal.patient.dao;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.openelisglobal.common.dao.BaseDAO;
+&nbsp;import org.openelisglobal.common.exception.LIMSRuntimeException;
+&nbsp;import org.openelisglobal.patient.valueholder.Patient;
+&nbsp;import org.openelisglobal.person.valueholder.Person;
+&nbsp;
+&nbsp;/**
+&nbsp; * @author diane benz
+&nbsp; *
+&nbsp; *         To change this generated comment edit the template variable
+&nbsp; *         &quot;typecomment&quot;: Window&gt;Preferences&gt;Java&gt;Templates. To enable and
+&nbsp; *         disable the creation of type comments go to
+&nbsp; *         Window&gt;Preferences&gt;Java&gt;Code Generation.
+&nbsp; */
+&nbsp;public interface PatientDAO extends BaseDAO&lt;Patient, String&gt; {
+&nbsp;
+&nbsp;//	public boolean insertData(Patient patient) throws LIMSRuntimeException;
+&nbsp;
+&nbsp;//	public void deleteData(List patients) throws LIMSRuntimeException;
+&nbsp;
+&nbsp;    List&lt;Patient&gt; getAllPatients() throws LIMSRuntimeException;
+&nbsp;
+&nbsp;    List&lt;Patient&gt; getPageOfPatients(int startingRecNo) throws LIMSRuntimeException;
+&nbsp;
+&nbsp;    void getData(Patient patient) throws LIMSRuntimeException;
+&nbsp;
+&nbsp;//	public void updateData(Patient patient) throws LIMSRuntimeException;
+&nbsp;
+&nbsp;    boolean externalIDExists(String patientExternalID);
+&nbsp;
+&nbsp;    Patient readPatient(String idString);
+&nbsp;
+&nbsp;    Patient getPatientByPerson(Person person) throws LIMSRuntimeException;
+&nbsp;
+&nbsp;    Patient getPatientByNationalId(String nationalId);
+&nbsp;
+&nbsp;    Patient getPatientBySubjectNumber(String subjectNumber);
+&nbsp;
+&nbsp;    List&lt;Patient&gt; getPatientsByNationalId(String nationalId) throws LIMSRuntimeException;
+&nbsp;
+&nbsp;    Patient getPatientByExternalId(String externalId);
+&nbsp;
+&nbsp;    List&lt;String&gt; getPatientIdentityBySampleStatusIdAndProject(List&lt;Integer&gt; inclusiveStatusIdList, String study)
+&nbsp;            throws LIMSRuntimeException;
+&nbsp;
+&nbsp;    Patient getData(String patientId) throws LIMSRuntimeException;
+&nbsp;
+&nbsp;    List&lt;Patient&gt; getAllMissingFhirUuid();
+&nbsp;
+&nbsp;    Patient getByExternalId(String id);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-23 09:33</div>
+</div>
+</body>
+</html>

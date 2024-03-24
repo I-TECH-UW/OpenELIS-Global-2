@@ -1,0 +1,181 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PatientService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.openelisglobal.patient.service</a>
+</div>
+
+<h1>Coverage Summary for Class: PatientService (org.openelisglobal.patient.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">PatientService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.openelisglobal.patient.service;
+&nbsp;
+&nbsp;import java.sql.Timestamp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;import org.openelisglobal.common.service.BaseObjectService;
+&nbsp;import org.openelisglobal.patient.action.bean.PatientManagementInfo;
+&nbsp;import org.openelisglobal.patient.valueholder.Patient;
+&nbsp;import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
+&nbsp;import org.openelisglobal.person.valueholder.Person;
+&nbsp;
+&nbsp;public interface PatientService extends BaseObjectService&lt;Patient, String&gt; {
+&nbsp;
+&nbsp;    void getData(Patient patient);
+&nbsp;
+&nbsp;    Patient getData(String patientId);
+&nbsp;
+&nbsp;    Patient getPatientByNationalId(String subjectNumber);
+&nbsp;
+&nbsp;    List&lt;Patient&gt; getPatientsByNationalId(String nationalId);
+&nbsp;
+&nbsp;    Patient getPatientByPerson(Person person);
+&nbsp;
+&nbsp;    List&lt;Patient&gt; getPageOfPatients(int startingRecNo);
+&nbsp;
+&nbsp;    Patient getPatientByExternalId(String externalId);
+&nbsp;
+&nbsp;    List&lt;Patient&gt; getAllPatients();
+&nbsp;
+&nbsp;    boolean externalIDExists(String patientExternalID);
+&nbsp;
+&nbsp;    Patient readPatient(String idString);
+&nbsp;
+&nbsp;    List&lt;String&gt; getPatientIdentityBySampleStatusIdAndProject(List&lt;Integer&gt; inclusiveStatusIdList, String study);
+&nbsp;
+&nbsp;    void persistPatientData(PatientManagementInfo patientInfo, Patient patient, String sysUserId);
+&nbsp;
+&nbsp;    String getGUID(Patient patient);
+&nbsp;
+&nbsp;    String getNationalId(Patient patient);
+&nbsp;
+&nbsp;    String getSTNumber(Patient patient);
+&nbsp;
+&nbsp;    String getSubjectNumber(Patient patient);
+&nbsp;
+&nbsp;    String getFirstName(Patient patient);
+&nbsp;
+&nbsp;    String getLastName(Patient patient);
+&nbsp;
+&nbsp;    String getLastFirstName(Patient patient);
+&nbsp;
+&nbsp;    String getGender(Patient patient);
+&nbsp;
+&nbsp;    String getLocalizedGender(Patient patient);
+&nbsp;
+&nbsp;    Map&lt;String, String&gt; getAddressComponents(Patient patient);
+&nbsp;
+&nbsp;    String getEnteredDOB(Patient patient);
+&nbsp;
+&nbsp;    Timestamp getDOB(Patient patient);
+&nbsp;
+&nbsp;    String getPhone(Patient patient);
+&nbsp;
+&nbsp;    Person getPerson(Patient patient);
+&nbsp;
+&nbsp;    String getPatientId(Patient patient);
+&nbsp;
+&nbsp;    String getBirthdayForDisplay(Patient patient);
+&nbsp;
+&nbsp;    List&lt;PatientIdentity&gt; getIdentityList(Patient patient);
+&nbsp;
+&nbsp;    String getExternalId(Patient patient);
+&nbsp;
+&nbsp;    String getAKA(Patient patient);
+&nbsp;
+&nbsp;    String getMother(Patient patient);
+&nbsp;
+&nbsp;    String getInsurance(Patient patient);
+&nbsp;
+&nbsp;    String getOccupation(Patient patient);
+&nbsp;
+&nbsp;    String getOrgSite(Patient patient);
+&nbsp;
+&nbsp;    String getMothersInitial(Patient patient);
+&nbsp;
+&nbsp;    String getEducation(Patient patient);
+&nbsp;
+&nbsp;    String getMaritalStatus(Patient patient);
+&nbsp;
+&nbsp;    String getHealthDistrict(Patient patient);
+&nbsp;
+&nbsp;    String getHealthRegion(Patient patient);
+&nbsp;
+&nbsp;    String getObNumber(Patient patient);
+&nbsp;
+&nbsp;    String getPCNumber(Patient patient);
+&nbsp;
+&nbsp;    Patient getPatientForGuid(String patientGuid);
+&nbsp;
+&nbsp;    String getNationality(Patient patient);
+&nbsp;
+&nbsp;    String getOtherNationality(Patient patient);
+&nbsp;
+&nbsp;    Patient getPatientBySubjectNumber(String subjectNumber);
+&nbsp;
+&nbsp;    void insertNewPatientAddressInfo(String partId, String value, String type, Patient patient, String sysUserId);
+&nbsp;
+&nbsp;    List&lt;Patient&gt; getAllMissingFhirUuid();
+&nbsp;
+&nbsp;    Patient getByExternalId(String idPart);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-23 09:33</div>
+</div>
+</body>
+</html>

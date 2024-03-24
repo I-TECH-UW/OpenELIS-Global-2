@@ -1,0 +1,308 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PatientEntryByProjectController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.openelisglobal.patient.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: PatientEntryByProjectController (org.openelisglobal.patient.controller)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PatientEntryByProjectController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/80)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PatientEntryByProjectController$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/81)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.openelisglobal.patient.controller;
+&nbsp;
+&nbsp;import java.lang.reflect.InvocationTargetException;
+&nbsp;import java.util.Date;
+&nbsp;
+&nbsp;import javax.servlet.http.HttpServletRequest;
+&nbsp;import javax.validation.Valid;
+&nbsp;
+&nbsp;import org.openelisglobal.common.util.DateUtil;
+&nbsp;import org.openelisglobal.patient.form.PatientEntryByProjectForm;
+&nbsp;import org.openelisglobal.patient.saving.Accessioner;
+&nbsp;import org.openelisglobal.patient.saving.IPatientEditUpdate;
+&nbsp;import org.openelisglobal.patient.saving.IPatientEntry;
+&nbsp;import org.openelisglobal.patient.saving.IPatientEntryAfterAnalyzer;
+&nbsp;import org.openelisglobal.patient.saving.IPatientEntryAfterSampleEntry;
+&nbsp;import org.openelisglobal.patient.saving.IPatientSecondEntry;
+&nbsp;import org.openelisglobal.patient.saving.RequestType;
+&nbsp;import org.openelisglobal.patient.validator.PatientEntryByProjectFormValidator;
+&nbsp;import org.openelisglobal.spring.util.SpringContext;
+&nbsp;import org.owasp.encoder.Encode;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Controller;
+&nbsp;import org.springframework.validation.BindingResult;
+&nbsp;import org.springframework.web.bind.WebDataBinder;
+&nbsp;import org.springframework.web.bind.annotation.InitBinder;
+&nbsp;import org.springframework.web.bind.annotation.ModelAttribute;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestMethod;
+&nbsp;import org.springframework.web.servlet.ModelAndView;
+&nbsp;import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+&nbsp;
+&nbsp;@Controller
+<b class="nc">&nbsp;public class PatientEntryByProjectController extends BasePatientEntryByProject {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private PatientEntryByProjectFormValidator formValidator;
+&nbsp;
+&nbsp;    @InitBinder
+&nbsp;    public void initBinder(WebDataBinder binder) {
+<b class="nc">&nbsp;        String[] allowedFields = getBasePatientEntryByProjectFields().toArray(new String[0]);</b>
+<b class="nc">&nbsp;        binder.setAllowedFields(allowedFields);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(value = &quot;/PatientEntryByProject&quot;, method = RequestMethod.GET)
+&nbsp;    public ModelAndView showPatientEntryByProject(HttpServletRequest request)
+&nbsp;            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+&nbsp;
+<b class="nc">&nbsp;        PatientEntryByProjectForm form = new PatientEntryByProjectForm();</b>
+&nbsp;
+<b class="nc">&nbsp;        String todayAsText = DateUtil.formatDateAsText(new Date());</b>
+&nbsp;
+<b class="nc">&nbsp;        request.getSession().setAttribute(SAVE_DISABLED, TRUE);</b>
+&nbsp;
+&nbsp;        // retrieve the current project, before clearing, so that we can set it on
+&nbsp;        // later.
+<b class="nc">&nbsp;        String projectFormName = Accessioner.findProjectFormName(form);</b>
+<b class="nc">&nbsp;        updateRequestType(request);</b>
+&nbsp;
+<b class="nc">&nbsp;        addAllPatientFormLists(form);</b>
+&nbsp;
+<b class="nc">&nbsp;        form.setCurrentDate(todayAsText);</b>
+<b class="nc">&nbsp;        form.setReceivedDateForDisplay(todayAsText);</b>
+<b class="nc">&nbsp;        form.setInterviewDate(todayAsText);</b>
+&nbsp;        // put the projectFormName back in.
+<b class="nc">&nbsp;        setProjectFormName(form, projectFormName);</b>
+&nbsp;
+<b class="nc">&nbsp;        addFlashMsgsToRequest(request);</b>
+&nbsp;
+<b class="nc">&nbsp;        return findForward(FWD_SUCCESS, form);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // TODO consider making separate method for each type of form entry so can use
+&nbsp;    // @Validated(VL.class, EID.class, etc..) to access seperate logic
+&nbsp;    @RequestMapping(value = &quot;/PatientEntryByProject&quot;, method = RequestMethod.POST)
+&nbsp;    public ModelAndView showPatientEntryByProjectUpdate(HttpServletRequest request,
+&nbsp;            @ModelAttribute(&quot;form&quot;) @Valid PatientEntryByProjectForm form, BindingResult result,
+&nbsp;            RedirectAttributes redirectAttributes)
+&nbsp;            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+<b class="nc">&nbsp;        formValidator.validate(form, result);</b>
+<b class="nc">&nbsp;        if (result.hasErrors()) {</b>
+<b class="nc">&nbsp;            saveErrors(result);</b>
+<b class="nc">&nbsp;            return findForward(FWD_FAIL_INSERT, form);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        String sysUserId = getSysUserId(request);</b>
+<b class="nc">&nbsp;        addAllPatientFormLists(form);</b>
+<b class="nc">&nbsp;        IPatientEditUpdate patientEditUpdateAccessioner = SpringContext.getBean(IPatientEditUpdate.class);</b>
+<b class="nc">&nbsp;        patientEditUpdateAccessioner.setRequest(request);</b>
+<b class="nc">&nbsp;        patientEditUpdateAccessioner.setFieldsFromForm(form);</b>
+<b class="nc">&nbsp;        patientEditUpdateAccessioner.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;        String forward = FWD_FAIL_INSERT;</b>
+<b class="nc">&nbsp;        if (patientEditUpdateAccessioner.canAccession()) {</b>
+<b class="nc">&nbsp;            forward = handleSave(request, patientEditUpdateAccessioner);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        IPatientSecondEntry patientSecondEntryAccessioner = SpringContext.getBean(IPatientSecondEntry.class);</b>
+<b class="nc">&nbsp;        patientSecondEntryAccessioner.setRequest(request);</b>
+<b class="nc">&nbsp;        patientSecondEntryAccessioner.setFieldsFromForm(form);</b>
+<b class="nc">&nbsp;        patientSecondEntryAccessioner.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;        if (patientSecondEntryAccessioner.canAccession()) {</b>
+<b class="nc">&nbsp;            forward = handleSave(request, patientSecondEntryAccessioner);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        IPatientEntry patientEntryAccessioner = SpringContext.getBean(IPatientEntry.class);</b>
+<b class="nc">&nbsp;        patientEntryAccessioner.setRequest(request);</b>
+<b class="nc">&nbsp;        patientEntryAccessioner.setFieldsFromForm(form);</b>
+<b class="nc">&nbsp;        patientEntryAccessioner.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;        if (patientEntryAccessioner.canAccession()) {</b>
+<b class="nc">&nbsp;            forward = handleSave(request, patientEntryAccessioner);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        IPatientEntryAfterSampleEntry patientEntryAfterSampleEntryAccessioner = SpringContext</b>
+<b class="nc">&nbsp;                .getBean(IPatientEntryAfterSampleEntry.class);</b>
+<b class="nc">&nbsp;        patientEntryAfterSampleEntryAccessioner.setRequest(request);</b>
+<b class="nc">&nbsp;        patientEntryAfterSampleEntryAccessioner.setFieldsFromForm(form);</b>
+<b class="nc">&nbsp;        patientEntryAfterSampleEntryAccessioner.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;        if (patientEntryAfterSampleEntryAccessioner.canAccession()) {</b>
+<b class="nc">&nbsp;            forward = handleSave(request, patientEntryAfterSampleEntryAccessioner);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        IPatientEntryAfterAnalyzer patientEntryAfterAnalyzerAccessioner = SpringContext</b>
+<b class="nc">&nbsp;                .getBean(IPatientEntryAfterAnalyzer.class);</b>
+<b class="nc">&nbsp;        patientEntryAfterAnalyzerAccessioner.setRequest(request);</b>
+<b class="nc">&nbsp;        patientEntryAfterAnalyzerAccessioner.setFieldsFromForm(form);</b>
+<b class="nc">&nbsp;        patientEntryAfterAnalyzerAccessioner.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;        if (patientEntryAfterAnalyzerAccessioner.canAccession()) {</b>
+<b class="nc">&nbsp;            forward = handleSave(request, patientEntryAfterAnalyzerAccessioner);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (FWD_FAIL_INSERT.equals(forward) || forward == null) {</b>
+<b class="nc">&nbsp;            logAndAddMessage(request, &quot;performAction&quot;, &quot;errors.UpdateException&quot;);</b>
+<b class="nc">&nbsp;            forward = FWD_FAIL_INSERT;</b>
+<b class="nc">&nbsp;        } else if (FWD_SUCCESS_INSERT.equals(forward)) {</b>
+<b class="nc">&nbsp;            redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return findForward(forward, form);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    protected String findLocalForward(String forward) {
+<b class="nc">&nbsp;        if (FWD_SUCCESS.equals(forward)) {</b>
+<b class="nc">&nbsp;            return &quot;patientEntryByProjectDefinition&quot;;</b>
+<b class="nc">&nbsp;        } else if (FWD_FAIL.equals(forward)) {</b>
+<b class="nc">&nbsp;            return &quot;homePageDefinition&quot;;</b>
+<b class="nc">&nbsp;        } else if (FWD_SUCCESS_INSERT.equals(forward)) {</b>
+<b class="nc">&nbsp;            String redirectURL = &quot;/PatientEntryByProject?type=&quot; + Encode.forUriComponent(request.getParameter(&quot;type&quot;));</b>
+<b class="nc">&nbsp;            return &quot;redirect:&quot; + redirectURL;</b>
+<b class="nc">&nbsp;        } else if (FWD_FAIL_INSERT.equals(forward)) {</b>
+<b class="nc">&nbsp;            return &quot;patientEntryByProjectDefinition&quot;;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return &quot;PageNotFound&quot;;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    protected String getPageTitleKey() {
+<b class="nc">&nbsp;        return &quot;patient.project.title&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    protected String getPageSubtitleKey() {
+<b class="nc">&nbsp;        RequestType requestType = getRequestType(request);</b>
+<b class="nc">&nbsp;        String pageKey = null;</b>
+<b class="nc">&nbsp;        switch (requestType) {</b>
+&nbsp;        case INITIAL: {
+<b class="nc">&nbsp;            pageKey = &quot;banner.menu.createPatient.Initial&quot;;</b>
+<b class="nc">&nbsp;            break;</b>
+&nbsp;        }
+&nbsp;        case VERIFY: {
+<b class="nc">&nbsp;            pageKey = &quot;banner.menu.createPatient.Verify&quot;;</b>
+<b class="nc">&nbsp;            break;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        default: {
+<b class="nc">&nbsp;            pageKey = &quot;banner.menu.createPatient.Initial&quot;;</b>
+&nbsp;        }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return pageKey;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-23 09:33</div>
+</div>
+</body>
+</html>

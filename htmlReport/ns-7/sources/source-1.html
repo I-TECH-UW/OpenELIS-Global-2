@@ -1,0 +1,1513 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Accessioner</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.openelisglobal.patient.saving</a>
+</div>
+
+<h1>Coverage Summary for Class: Accessioner (org.openelisglobal.patient.saving)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Accessioner</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/68)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/466)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Accessioner$SampleItemAnalysisCollection</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/69)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/469)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/*
+&nbsp; * The contents of this file are subject to the Mozilla Public License
+&nbsp; * Version 1.1 (the &quot;License&quot;); you may not use this file except in
+&nbsp; * compliance with the License. You may obtain a copy of the License at
+&nbsp; * http://www.mozilla.org/MPL/
+&nbsp; *
+&nbsp; * Software distributed under the License is distributed on an &quot;AS IS&quot;
+&nbsp; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+&nbsp; * License for the specific language governing rights and limitations under
+&nbsp; * the License.
+&nbsp; *
+&nbsp; * The Original Code is OpenELIS code.
+&nbsp; *
+&nbsp; * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+&nbsp; *
+&nbsp; * Contributor(s): CIRG, University of Washington, Seattle WA.
+&nbsp; */
+&nbsp;
+&nbsp;/**
+&nbsp; * Cote d&#39;Ivoire
+&nbsp; * @author pahill
+&nbsp; * @since 2010-06-15
+&nbsp; **/
+&nbsp;package org.openelisglobal.patient.saving;
+&nbsp;
+&nbsp;import static org.openelisglobal.sample.util.CI.ProjectForm.EID;
+&nbsp;import static org.openelisglobal.sample.util.CI.ProjectForm.SPECIAL_REQUEST;
+&nbsp;
+&nbsp;import java.lang.reflect.InvocationTargetException;
+&nbsp;import java.sql.Timestamp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.HashSet;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Map.Entry;
+&nbsp;import java.util.Set;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;import org.apache.commons.beanutils.PropertyUtils;
+&nbsp;import org.apache.commons.lang3.ObjectUtils;
+&nbsp;import org.apache.commons.validator.GenericValidator;
+&nbsp;import org.openelisglobal.analysis.service.AnalysisService;
+&nbsp;import org.openelisglobal.analysis.valueholder.Analysis;
+&nbsp;import org.openelisglobal.common.action.IActionConstants;
+&nbsp;import org.openelisglobal.common.exception.LIMSException;
+&nbsp;import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
+&nbsp;import org.openelisglobal.common.exception.LIMSRuntimeException;
+&nbsp;import org.openelisglobal.common.log.LogEvent;
+&nbsp;import org.openelisglobal.common.services.IStatusService;
+&nbsp;import org.openelisglobal.common.services.StatusService;
+&nbsp;import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+&nbsp;import org.openelisglobal.common.services.StatusService.OrderStatus;
+&nbsp;import org.openelisglobal.common.services.StatusService.RecordStatus;
+&nbsp;import org.openelisglobal.common.services.StatusService.SampleStatus;
+&nbsp;import org.openelisglobal.common.services.StatusSet;
+&nbsp;import org.openelisglobal.common.util.DateUtil;
+&nbsp;import org.openelisglobal.common.util.StringUtil;
+&nbsp;import org.openelisglobal.common.util.SystemConfiguration;
+&nbsp;import org.openelisglobal.note.service.NoteService;
+&nbsp;import org.openelisglobal.note.service.NoteServiceImpl;
+&nbsp;import org.openelisglobal.note.valueholder.Note;
+&nbsp;import org.openelisglobal.observationhistory.service.ObservationHistoryService;
+&nbsp;import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
+&nbsp;import org.openelisglobal.observationhistorytype.ObservationHistoryTypeMap;
+&nbsp;import org.openelisglobal.observationhistorytype.service.ObservationHistoryTypeService;
+&nbsp;import org.openelisglobal.observationhistorytype.valueholder.ObservationHistoryType;
+&nbsp;import org.openelisglobal.organization.service.OrganizationService;
+&nbsp;import org.openelisglobal.organization.valueholder.Organization;
+&nbsp;import org.openelisglobal.patient.saving.form.IAccessionerForm;
+&nbsp;import org.openelisglobal.patient.service.PatientService;
+&nbsp;import org.openelisglobal.patient.util.PatientUtil;
+&nbsp;import org.openelisglobal.patient.valueholder.ObservationData;
+&nbsp;import org.openelisglobal.patient.valueholder.Patient;
+&nbsp;import org.openelisglobal.patientidentity.service.PatientIdentityService;
+&nbsp;import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
+&nbsp;import org.openelisglobal.patientidentitytype.util.PatientIdentityTypeMap;
+&nbsp;import org.openelisglobal.person.service.PersonService;
+&nbsp;import org.openelisglobal.person.valueholder.Person;
+&nbsp;import org.openelisglobal.project.service.ProjectService;
+&nbsp;import org.openelisglobal.project.valueholder.Project;
+&nbsp;import org.openelisglobal.referencetables.service.ReferenceTablesService;
+&nbsp;import org.openelisglobal.sample.form.ProjectData;
+&nbsp;import org.openelisglobal.sample.service.SampleService;
+&nbsp;import org.openelisglobal.sample.util.CI.BaseProjectFormMapper;
+&nbsp;import org.openelisglobal.sample.util.CI.BaseProjectFormMapper.TypeOfSampleTests;
+&nbsp;import org.openelisglobal.sample.util.CI.IProjectFormMapper;
+&nbsp;import org.openelisglobal.sample.util.CI.ProjectForm;
+&nbsp;import org.openelisglobal.sample.util.CI.ProjectFormMapperFactory;
+&nbsp;import org.openelisglobal.sample.util.CI.form.IProjectForm;
+&nbsp;import org.openelisglobal.sample.valueholder.Sample;
+&nbsp;import org.openelisglobal.samplehuman.service.SampleHumanService;
+&nbsp;import org.openelisglobal.samplehuman.valueholder.SampleHuman;
+&nbsp;import org.openelisglobal.sampleitem.service.SampleItemService;
+&nbsp;import org.openelisglobal.sampleitem.valueholder.SampleItem;
+&nbsp;import org.openelisglobal.sampleorganization.service.SampleOrganizationService;
+&nbsp;import org.openelisglobal.sampleorganization.valueholder.SampleOrganization;
+&nbsp;import org.openelisglobal.sampleproject.service.SampleProjectService;
+&nbsp;import org.openelisglobal.sampleproject.valueholder.SampleProject;
+&nbsp;import org.openelisglobal.spring.util.SpringContext;
+&nbsp;import org.openelisglobal.test.service.TestService;
+&nbsp;import org.openelisglobal.test.valueholder.Test;
+&nbsp;import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.beans.factory.annotation.Qualifier;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;import org.springframework.validation.Errors;
+&nbsp;
+&nbsp;/**
+&nbsp; * Update/Creates, as needed, a Sample and Patient and all associated parts in
+&nbsp; * order to enter that patient in the system. To use one of these to accession,
+&nbsp; * you should:
+&nbsp; * &lt;nl&gt;
+&nbsp; * &lt;li&gt;Provide a constructor (which probably includes whatever structure comes
+&nbsp; * from your UI form, so it can be used below).
+&nbsp; * &lt;li&gt;set the expected new RecordStatus for the patient and sample (maybe in
+&nbsp; * the constructor), but you can change that later.
+&nbsp; * &lt;li&gt;implement canAccession() to decide if this is the right time to try this
+&nbsp; * accession algorithm.
+&nbsp; * &lt;li&gt;implement validate* and match* methods to make sure all the entities
+&nbsp; * created and found hang together.
+&nbsp; * &lt;li&gt;implement the missing populate* methods (including providing any empty
+&nbsp; * implementation).
+&nbsp; * &lt;li&gt;possibly override the persist* methods, if there is more to do than
+&nbsp; * simply saving what has been built (delete any old ones? Update instead?).
+&nbsp; * &lt;/nl&gt;
+&nbsp; * Use:&lt;br/&gt;
+&nbsp; * if (myAccessioner1.canAccession()) { if (!myAccession1.accession(...)) {
+&nbsp; * errors = myAccession1.getMessages(); saveErrors(request, errors);
+&nbsp; * request.setAttribute(Globals.ERROR_KEY, errors); return
+&nbsp; * mapping.findForward(FWD_FAIL); } else { return
+&nbsp; * mapping.findForward(FWD_SUCCESS); } } else (myAccession2.canAccession() { ...
+&nbsp; * }
+&nbsp; *
+&nbsp; * PAH 07/2010 This object is still a work in progress. For example, we have a
+&nbsp; * member for projectFormMapper, but all its use in the subclasses at this time
+&nbsp; * . Maybe the projectFormMapper should just be injected after creation? It is
+&nbsp; * also the case that there are form field property names listed in these
+&nbsp; * various acccesioning classes when the formFieldMapper class is really the
+&nbsp; * class that should know the right place to find values on the submitted form.
+&nbsp; *
+&nbsp; * @author pahill
+&nbsp; */
+&nbsp;
+&nbsp;public abstract class Accessioner implements IAccessioner {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * a set of possible analysis status that means an analysis is done
+&nbsp;     */
+<b class="nc">&nbsp;    private Set&lt;String&gt; analysisDone = new HashSet&lt;&gt;();</b>
+&nbsp;    {
+<b class="nc">&nbsp;        analysisDone</b>
+<b class="nc">&nbsp;                .add(SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.Finalized));</b>
+<b class="nc">&nbsp;        analysisDone.add(SpringContext.getBean(IStatusService.class)</b>
+<b class="nc">&nbsp;                .getStatusID(StatusService.AnalysisStatus.NonConforming_depricated));</b>
+<b class="nc">&nbsp;        analysisDone</b>
+<b class="nc">&nbsp;                .add(SpringContext.getBean(IStatusService.class).getStatusID(StatusService.AnalysisStatus.Canceled));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sample or Patient Entry always mark the type of an analysis as a MANUAL type.
+&nbsp;     */
+&nbsp;    private static final String DEFAULT_ANALYSIS_TYPE = IActionConstants.ANALYSIS_TYPE_MANUAL;
+&nbsp;    // private static String OBSERVATION_HISTORY_YES_ID = null;
+<b class="nc">&nbsp;    private static String SAMPLE_TABLE_ID = null;</b>
+&nbsp;
+&nbsp;    static {
+<b class="nc">&nbsp;        SAMPLE_TABLE_ID = SpringContext.getBean(ReferenceTablesService.class).getReferenceTableByName(&quot;sample&quot;).getId();</b>
+&nbsp;        // OBSERVATION_HISTORY_YES_ID = new
+&nbsp;        // DictionaryServiceImpl().getDictionaryByDictEntry(&quot;Demographic Response Yes
+&nbsp;        // (in Yes or No)&quot;).getId();
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Find the projectFormName where ever we normally store it. This is for that
+&nbsp;     * could which needs this information before creating a projectFormMapper
+&nbsp;     *
+&nbsp;     * @param form
+&nbsp;     * @return the current projectFormName
+&nbsp;     * @throws IllegalAccessException
+&nbsp;     * @throws InvocationTargetException
+&nbsp;     * @throws NoSuchMethodException
+&nbsp;     */
+&nbsp;    public static String findProjectFormName(IAccessionerForm form) {
+<b class="nc">&nbsp;        ObservationData observations = form.getObservations();</b>
+<b class="nc">&nbsp;        if (observations == null) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return observations.getProjectFormName();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param dynaBean
+&nbsp;     * @return
+&nbsp;     * @throws NoSuchMethodException
+&nbsp;     * @throws InvocationTargetException
+&nbsp;     * @throws IllegalAccessException
+&nbsp;     * @throws LIMSRuntimeException
+&nbsp;     */
+&nbsp;    public static IProjectFormMapper getProjectFormMapper(IAccessionerForm form) throws LIMSRuntimeException {
+<b class="nc">&nbsp;        return new ProjectFormMapperFactory().getProjectInitializer(findProjectFormName(form), form);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param dynaBean
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    public static IProjectFormMapper getProjectFormMapper(String projectFormName, IAccessionerForm form) {
+<b class="nc">&nbsp;        return new ProjectFormMapperFactory().getProjectInitializer(projectFormName, form);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected String accessionNumber;
+&nbsp;    protected String patientIdentifier;
+&nbsp;    protected String patientSiteSubjectNo;
+&nbsp;    protected StatusSet statusSet;
+&nbsp;    @Autowired
+&nbsp;    @Qualifier(&quot;defaultErrors&quot;)
+&nbsp;    Errors messages;
+&nbsp;
+&nbsp;    protected java.sql.Date today;
+&nbsp;    protected String todayAsText;
+&nbsp;    protected String sysUserId;
+&nbsp;    protected ProjectForm projectForm;
+&nbsp;
+&nbsp;    protected Patient patientInDB;
+<b class="nc">&nbsp;    private List&lt;PatientIdentity&gt; patientIdentities = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;    protected List&lt;ObservationHistory&gt; observationHistories = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;    Map&lt;String, List&lt;ObservationHistory&gt;&gt; observationHistoryLists = null;</b>
+&nbsp;
+&nbsp;    protected Sample sample;
+<b class="nc">&nbsp;    protected List&lt;SampleItemAnalysisCollection&gt; sampleItemsAnalysis = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;    protected List&lt;SampleOrganization&gt; sampleOrganizations = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;    protected SampleHuman sampleHuman;
+&nbsp;    protected SampleProject sampleProject;
+&nbsp;
+&nbsp;    protected RecordStatus newPatientStatus;
+&nbsp;    protected RecordStatus newSampleStatus;
+&nbsp;
+<b class="nc">&nbsp;    protected PatientService patientService = SpringContext.getBean(PatientService.class);</b>
+<b class="nc">&nbsp;    protected PersonService personService = SpringContext.getBean(PersonService.class);</b>
+<b class="nc">&nbsp;    protected PatientIdentityService identityService = SpringContext.getBean(PatientIdentityService.class);</b>
+<b class="nc">&nbsp;    protected SampleService sampleService = SpringContext.getBean(SampleService.class);</b>
+<b class="nc">&nbsp;    protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);</b>
+<b class="nc">&nbsp;    protected SampleProjectService sampleProjectService = SpringContext.getBean(SampleProjectService.class);</b>
+<b class="nc">&nbsp;    protected ObservationHistoryService observationHistoryService = SpringContext</b>
+<b class="nc">&nbsp;            .getBean(ObservationHistoryService.class);</b>
+<b class="nc">&nbsp;    protected ProjectService projectService = SpringContext.getBean(ProjectService.class);</b>
+<b class="nc">&nbsp;    protected OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);</b>
+<b class="nc">&nbsp;    protected SampleOrganizationService sampleOrganizationService = SpringContext</b>
+<b class="nc">&nbsp;            .getBean(SampleOrganizationService.class);</b>
+<b class="nc">&nbsp;    protected SampleItemService sampleItemService = SpringContext.getBean(SampleItemService.class);</b>
+<b class="nc">&nbsp;    protected TestService testService = SpringContext.getBean(TestService.class);</b>
+<b class="nc">&nbsp;    protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);</b>
+<b class="nc">&nbsp;    private NoteService noteService = SpringContext.getBean(NoteService.class);</b>
+&nbsp;
+&nbsp;    protected boolean existingSample;
+&nbsp;    protected boolean existingPatient;
+&nbsp;    protected IProjectFormMapper projectFormMapper;
+&nbsp;
+&nbsp;    protected Patient patientToDelete;
+<b class="nc">&nbsp;    protected List&lt;Analysis&gt; analysisToUpdate = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;    protected List&lt;Analysis&gt; analysisToDelete = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;    protected List&lt;SampleItem&gt; sampleItemsToDelete = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;    private boolean aDifferentPatientRecord = false;</b>
+&nbsp;    private ProjectData projectData;
+&nbsp;
+&nbsp;    protected Accessioner(String sampleIdentifier, String patientIdentifier, String siteSubjectNo, String sysUserId) {
+<b class="nc">&nbsp;        this();</b>
+<b class="nc">&nbsp;        setAccessionNumber(sampleIdentifier);</b>
+<b class="nc">&nbsp;        setPatientIdentifier(patientIdentifier);</b>
+<b class="nc">&nbsp;        setPatientSiteSubjectNo(siteSubjectNo);</b>
+<b class="nc">&nbsp;        setSysUserId(sysUserId);</b>
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    public Accessioner() {</b>
+<b class="nc">&nbsp;        today = new java.sql.Date(System.currentTimeMillis());</b>
+<b class="nc">&nbsp;        todayAsText = DateUtil.formatDateAsText(today);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAccessionNumber(String sampleIdentifier) {
+<b class="nc">&nbsp;        accessionNumber = sampleIdentifier;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPatientIdentifier(String patientIdentifier) {
+<b class="nc">&nbsp;        this.patientIdentifier = patientIdentifier;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPatientSiteSubjectNo(String patientSiteSubjectNo) {
+<b class="nc">&nbsp;        this.patientSiteSubjectNo = patientSiteSubjectNo;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public final void setSysUserId(String sysUserId) {
+<b class="nc">&nbsp;        this.sysUserId = sysUserId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Primary entry point for processing a patient/sample combination Check the
+&nbsp;     * messages, on true there may have been errors
+&nbsp;     *
+&nbsp;     * @return TRUE =&gt; errors FALSE =&gt; did not do it, had a problem doing it. @ @
+&nbsp;     * @throws IllegalAccessException
+&nbsp;     * @throws LIMSRuntimeException
+&nbsp;     * @throws NoSuchMethodException
+&nbsp;     * @throws InvocationTargetException
+&nbsp;     * @throws LIMSException
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    @Transactional // only works if this class is autowired in
+&nbsp;    public String save() throws IllegalAccessException, LIMSRuntimeException, InvocationTargetException,
+&nbsp;            NoSuchMethodException, LIMSException {
+&nbsp;        try {
+<b class="nc">&nbsp;            if (!canAccession()) {</b>
+<b class="nc">&nbsp;                return null;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            existingPatient = findPatient();</b>
+<b class="nc">&nbsp;            if (existingPatient &amp;&amp; !validateFoundPatient()) {</b>
+<b class="nc">&nbsp;                return IActionConstants.FWD_FAIL_INSERT;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            existingSample = findSample();</b>
+<b class="nc">&nbsp;            if (existingSample &amp;&amp; !validateFoundSample()) {</b>
+<b class="nc">&nbsp;                return IActionConstants.FWD_FAIL_INSERT;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            if (!matchPatientAndSample()) {</b>
+<b class="nc">&nbsp;                return IActionConstants.FWD_FAIL_INSERT;</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            populatePatientData();</b>
+<b class="nc">&nbsp;            populateSampleData();</b>
+<b class="nc">&nbsp;            populateSampleHuman();</b>
+<b class="nc">&nbsp;            populateObservationHistory();</b>
+<b class="nc">&nbsp;			updateSampleWithElectronicEOrders();</b>
+&nbsp;
+&nbsp;            // all of the following methods are assumed to only write when
+&nbsp;            // necessary
+<b class="nc">&nbsp;            persistPatient();</b>
+<b class="nc">&nbsp;            persistIdentityTypes();</b>
+&nbsp;
+<b class="nc">&nbsp;            persistSampleData();</b>
+&nbsp;
+<b class="nc">&nbsp;            persistSampleHuman();</b>
+&nbsp;
+<b class="nc">&nbsp;            persistObservationHistory();</b>
+&nbsp;
+&nbsp;            // persistObservationHistoryLists();// no more running name has been changed to
+&nbsp;            // persistObservationHistoryLists2
+<b class="nc">&nbsp;            persistObservationHistoryLists2();</b>
+<b class="nc">&nbsp;            persistRecordStatus();</b>
+<b class="nc">&nbsp;            deleteOldPatient();</b>
+<b class="nc">&nbsp;            populateAndPersistUnderInvestigationNote();</b>
+<b class="nc">&nbsp;            return IActionConstants.FWD_SUCCESS_INSERT;</b>
+<b class="nc">&nbsp;        } catch (IllegalAccessException e) {</b>
+<b class="nc">&nbsp;            logAndAddMessage(&quot;save()&quot;, &quot;errors.InsertException&quot;, e);</b>
+<b class="nc">&nbsp;            throw e;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private void populateAndPersistUnderInvestigationNote() {
+&nbsp;        // N.B. The notes is being attached to the Sample table rather than the
+&nbsp;        // observation history because the observation history table
+&nbsp;        // is being updated by inserting new observation histories and then
+&nbsp;        // deleting the old ones. Any references to the old observation history
+&nbsp;        // under investigation row are being lost. Until we fix that the notes
+&nbsp;        // will be attached to the sample with note type of &quot;UnderInvestigation&quot;
+<b class="nc">&nbsp;        if (// OBSERVATION_HISTORY_YES_ID.equals(observationData.getUnderInvestigation()) &amp;&amp;</b>
+&nbsp;            // &lt;-- not sure of the business rules around this
+<b class="nc">&nbsp;        !GenericValidator.isBlankOrNull(projectData.getUnderInvestigationNote())) {</b>
+&nbsp;
+<b class="nc">&nbsp;            Note note = new Note();</b>
+<b class="nc">&nbsp;            note.setNoteType(Note.EXTERNAL);</b>
+<b class="nc">&nbsp;            note.setReferenceId(sample.getId());</b>
+<b class="nc">&nbsp;            note.setReferenceTableId(SAMPLE_TABLE_ID);</b>
+&nbsp;
+<b class="nc">&nbsp;            List&lt;Note&gt; noteList = noteService.getNotesByNoteTypeRefIdRefTable(note);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (noteList != null &amp;&amp; !noteList.isEmpty()) {</b>
+<b class="nc">&nbsp;                note = noteList.get(0);</b>
+<b class="nc">&nbsp;                note.setText(</b>
+<b class="nc">&nbsp;                        note.getText() + &quot;&lt;br/&gt;&quot; + getActionLabel() + &quot;: &quot; + projectData.getUnderInvestigationNote());</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                note.setText(getActionLabel() + &quot;: &quot; + projectData.getUnderInvestigationNote());</b>
+<b class="nc">&nbsp;                note.setSubject(&quot;UnderInvestigation&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            note.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;            note.setSystemUser(NoteServiceImpl.createSystemUser(sysUserId));</b>
+&nbsp;
+<b class="nc">&nbsp;            if (note.getId() == null) {</b>
+<b class="nc">&nbsp;                noteService.insert(note);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                noteService.update(note);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void persistSampleData() {
+<b class="nc">&nbsp;        persistSample();</b>
+<b class="nc">&nbsp;        persistSampleProject();</b>
+<b class="nc">&nbsp;        persistSampleOrganization();</b>
+<b class="nc">&nbsp;        persisteSampleItemsChanged();</b>
+<b class="nc">&nbsp;        persistSampleItemsAndAnalysis();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This is probably the result of Sample(Second)Entry, so nothing to due by
+&nbsp;     * default
+&nbsp;     */
+&nbsp;    private void persisteSampleItemsChanged() {
+&nbsp;        // analysisService.delete(analysisToDelete);
+<b class="nc">&nbsp;        analysisService.deleteAll(analysisToDelete);</b>
+<b class="nc">&nbsp;        sampleItemService.deleteAll(sampleItemsToDelete);</b>
+<b class="nc">&nbsp;        for (Analysis analysis : analysisToUpdate) {</b>
+<b class="nc">&nbsp;            analysisService.update(analysis);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method is called when this object contains a patient from the database
+&nbsp;     * found by ID. Sometimes we need to validate some of the fields with the values
+&nbsp;     * from the input. Place an error in the messages list to return an error.
+&nbsp;     *
+&nbsp;     * @return TRUE =&gt; all is well with the patient we have found in the database
+&nbsp;     *         vs. the data coming from the input.
+&nbsp;     */
+&nbsp;    protected boolean validateFoundPatient() {
+<b class="nc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method is called when this object contains a sample from the database
+&nbsp;     * found by ID. Sometimes we need to validate some of the fields with the values
+&nbsp;     * from the input. Place an error in the messages list to return an error.
+&nbsp;     *
+&nbsp;     * @return TRUE =&gt; all is well with the SAMPLE we have found in the database vs.
+&nbsp;     *         the data coming from the input.
+&nbsp;     */
+&nbsp;    protected boolean validateFoundSample() {
+<b class="nc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method is called when there is something to check to make sure the
+&nbsp;     * patient and sample go together correctly.
+&nbsp;     *
+&nbsp;     * @return TRUE =&gt; all looks good.
+&nbsp;     */
+&nbsp;    protected boolean matchPatientAndSample() {
+<b class="nc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Use appropriate means to come up with a patient and its person record.
+&nbsp;     *
+&nbsp;     * @return TRUE =&gt; patient was found in the database, FALSE =&gt; patient not
+&nbsp;     *         found, simply created.
+&nbsp;     */
+&nbsp;    protected boolean findPatient() {
+<b class="nc">&nbsp;        String patientId = statusSet.getPatientId();</b>
+<b class="nc">&nbsp;        String sampleId = statusSet.getSampleId();</b>
+<b class="nc">&nbsp;        String unknownPatient = PatientUtil.getUnknownPatient().getId();</b>
+<b class="nc">&nbsp;        if (sampleId == null) {</b>
+&nbsp;            // no sample =&gt; nothing to leverage so build up from what we have
+<b class="nc">&nbsp;            return createPatientByIdentifiers();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (patientId.equals(unknownPatient)) {</b>
+&nbsp;            // the UNKNOWN patient, so we&#39;ll create a new one
+<b class="nc">&nbsp;            setADifferentPatient(true);</b>
+<b class="nc">&nbsp;            return createNewPatient();</b>
+&nbsp;        }
+&nbsp;        // the patient is already associated with the existing sample and its
+&nbsp;        // not the unknown one
+<b class="nc">&nbsp;        patientInDB = patientService.readPatient(patientId);</b>
+<b class="nc">&nbsp;        if (patientIdentifiersDoNotMatch()) {</b>
+<b class="nc">&nbsp;            Patient otherPatient = findPatientByIndentifiers();</b>
+<b class="nc">&nbsp;            if (otherPatient == null) { // unknown</b>
+<b class="nc">&nbsp;                int otherSamplesOnCurrentPatient = sampleHumanService.getSamplesForPatient(patientId).size() - 1;</b>
+<b class="nc">&nbsp;                if (otherSamplesOnCurrentPatient == 0) {</b>
+&nbsp;                    // stick with the existing patient of the sample, update it
+<b class="nc">&nbsp;                    return true;</b>
+&nbsp;                } else {
+&nbsp;                    // it&#39;s a new patient, so we might have to move some old
+&nbsp;                    // pointers around.
+<b class="nc">&nbsp;                    setADifferentPatient(true);</b>
+<b class="nc">&nbsp;                    return createNewPatient();</b>
+&nbsp;                }
+&nbsp;            } else {
+&nbsp;                // it&#39;s another existing patient, so use that and don&#39;t forget
+&nbsp;                // we&#39;re doing that.
+<b class="nc">&nbsp;                patientInDB = otherPatient;</b>
+<b class="nc">&nbsp;                setADifferentPatient(false);</b>
+<b class="nc">&nbsp;                return true;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private boolean patientIdentifiersDoNotMatch() {
+&nbsp;
+<b class="nc">&nbsp;        String existingSubjectNo = StringUtil.replaceNullWithEmptyString(patientInDB.getNationalId()).trim();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (!GenericValidator.isBlankOrNull(patientIdentifier) &amp;&amp; patientIdentifier.equals(existingSubjectNo)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        String existingSiteSubjectNo = StringUtil.replaceNullWithEmptyString(patientInDB.getExternalId()).trim();</b>
+&nbsp;
+<b class="nc">&nbsp;        return !(!GenericValidator.isBlankOrNull(patientSiteSubjectNo)</b>
+<b class="nc">&nbsp;                &amp;&amp; patientSiteSubjectNo.equals(existingSiteSubjectNo));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Either find it by the primary or secondary identifier or return a new one
+&nbsp;     */
+&nbsp;    private boolean createPatientByIdentifiers() {
+<b class="nc">&nbsp;        patientInDB = findPatientByIndentifiers();</b>
+<b class="nc">&nbsp;        return patientInDB != null || createNewPatient();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Patient findPatientByIndentifiers() {
+&nbsp;        Patient aPatient;
+<b class="nc">&nbsp;        if (patientIdentifier != &quot;&quot;) {</b>
+<b class="nc">&nbsp;            aPatient = patientService.getPatientByNationalId(patientIdentifier);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            String externalId = projectFormMapper.getSiteSubjectNumber();</b>
+<b class="nc">&nbsp;            aPatient = patientService.getPatientByExternalId(externalId);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return aPatient;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return FALSE since it doesn&#39;t already exist
+&nbsp;     */
+&nbsp;    protected boolean createNewPatient() {
+<b class="nc">&nbsp;        patientInDB = new Patient();</b>
+<b class="nc">&nbsp;        patientInDB.setPerson(new Person());</b>
+<b class="nc">&nbsp;        return false;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @return true = existing sample
+&nbsp;     * @throws LIMSRuntimeException
+&nbsp;     * @throws LIMSInvalidConfigurationException
+&nbsp;     */
+&nbsp;    protected boolean findSample() throws LIMSRuntimeException, LIMSInvalidConfigurationException {
+<b class="nc">&nbsp;        sample = sampleService.getSampleByAccessionNumber(accessionNumber);</b>
+<b class="nc">&nbsp;        String sampleId = statusSet.getSampleId();</b>
+&nbsp;        // if there is sample for the given acc. number is an existing sample it
+&nbsp;        // had better be same one we found when we loading the sampleSet
+<b class="nc">&nbsp;        if (sample != null &amp;&amp; !isNewSample()) {</b>
+<b class="nc">&nbsp;            if (!sample.getId().equals(sampleId)) {</b>
+<b class="nc">&nbsp;                messages.reject(&quot;errors.may_not_reuse_accession_number&quot;, sample.getAccessionNumber());</b>
+<b class="nc">&nbsp;                throw new RuntimeException(</b>
+<b class="nc">&nbsp;                        &quot;You can not re-use an existing accessionNumber &quot; + sample.getAccessionNumber());</b>
+&nbsp;            }
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        } else {
+&nbsp;            // the accession number is unknown, so load/build the sample using
+&nbsp;            // the sampleStatus ID
+<b class="nc">&nbsp;            sample = new Sample();</b>
+<b class="nc">&nbsp;            if (sampleId == null) {</b>
+<b class="nc">&nbsp;                return false; // it brand new, no existing accessionNumber in</b>
+&nbsp;                // use, not known sampleId provided
+&nbsp;            } else {
+<b class="nc">&nbsp;                sample = knownSampleTemplate();</b>
+<b class="nc">&nbsp;                sampleService.getData(sample);</b>
+<b class="nc">&nbsp;                sample.setAccessionNumber(accessionNumber);</b>
+<b class="nc">&nbsp;                return true; // it existed previously, but we have a new</b>
+&nbsp;                // (edited) accesionNumber
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private Sample knownSampleTemplate() {
+<b class="nc">&nbsp;        Sample sample = new Sample();</b>
+<b class="nc">&nbsp;        sample.setId(statusSet.getSampleId());</b>
+<b class="nc">&nbsp;        return sample;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return if the sample we are working with is NOT in the database this object
+&nbsp;     *         is about to create it.
+&nbsp;     */
+&nbsp;    protected boolean isNewSample() {
+<b class="nc">&nbsp;        return sample.getId() == null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return TRUE if the patient is not the known patient already associated with
+&nbsp;     *         the known sample.
+&nbsp;     */
+&nbsp;    protected boolean isADifferentPatient() {
+<b class="nc">&nbsp;        return aDifferentPatientRecord;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Call this to record that when we started, the patient record associated with
+&nbsp;     * the original sample record is NOT the record we are now working with. We
+&nbsp;     * record this because, once we updating records to write, we can longer compare
+&nbsp;     * IDs to come up with the answer.
+&nbsp;     */
+&nbsp;    protected void setADifferentPatient(boolean force) {
+&nbsp;        // TODO &#39;force&#39; was added as a safety because aDifferentPatientRecourd was not
+&nbsp;        // being set to true when it should
+&nbsp;        // have. The original test for aDifferentPatientRecord may still be needed, in
+&nbsp;        // the two places force is set
+&nbsp;        // to true
+<b class="nc">&nbsp;        aDifferentPatientRecord = (force || patientInDB == null || statusSet.getPatientId() != patientInDB.getId());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Test this object to see if we should even begin. This is intended for
+&nbsp;     * checking existing patient/sample record status.
+&nbsp;     *
+&nbsp;     * @return TRUE =&gt; all is well; FALSE (Default) =&gt; this particular version of
+&nbsp;     *         the accession process is not appropriate for the status combination.
+&nbsp;     */
+&nbsp;    abstract public boolean canAccession();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * load up this object with any new observation history records, including lists
+&nbsp;     *
+&nbsp;     * @throws NoSuchMethodException
+&nbsp;     * @throws InvocationTargetException
+&nbsp;     * @throws IllegalAccessException
+&nbsp;     */
+&nbsp;    protected void populateObservationHistory()
+&nbsp;            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+<b class="nc">&nbsp;        projectFormMapper.getForm();</b>
+<b class="nc">&nbsp;        ObservationData observationData = (ObservationData) (PropertyUtils.getProperty(projectFormMapper.getForm(),</b>
+&nbsp;                &quot;observations&quot;));
+<b class="nc">&nbsp;        observationHistories = projectFormMapper.readObservationHistories(observationData);</b>
+<b class="nc">&nbsp;        observationHistoryLists = projectFormMapper.readObservationHistoryLists(observationData);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public StatusSet findStatusSet() {
+<b class="nc">&nbsp;        if (statusSet == null) {</b>
+<b class="nc">&nbsp;            String sampleId = projectFormMapper.getSampleId();</b>
+<b class="nc">&nbsp;            if (GenericValidator.isBlankOrNull(sampleId)) {</b>
+<b class="nc">&nbsp;                statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNumber);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                statusSet = SpringContext.getBean(IStatusService.class).getStatusSetForSampleId(sampleId);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return statusSet;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Move data from the form to the sample and sample related objects, include
+&nbsp;     * SampleOrganization but not to any of the entities which tie a patient to a
+&nbsp;     * sample; don&#39;t include ObservationHistory and SampleHuman
+&nbsp;     *
+&nbsp;     * @throws LIMSException
+&nbsp;     *
+&nbsp;     * @ if things go wrong.
+&nbsp;     */
+&nbsp;    abstract protected void populateSampleData() throws LIMSException;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Create any appropriate sample human entity
+&nbsp;     *
+&nbsp;     * @
+&nbsp;     */
+&nbsp;    protected void populateSampleHuman() {
+<b class="nc">&nbsp;        if (isNewSample()) {</b>
+<b class="nc">&nbsp;            sample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Entered));</b>
+<b class="nc">&nbsp;            sampleHuman = new SampleHuman();</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            if (isNewPatient() || isADifferentPatient()) {</b>
+<b class="nc">&nbsp;                sampleHuman = new SampleHuman();</b>
+<b class="nc">&nbsp;                sampleHuman.setSampleId(sample.getId());</b>
+<b class="nc">&nbsp;                sampleHumanService.getDataBySample(sampleHuman);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        if (isADifferentPatient()) {</b>
+<b class="nc">&nbsp;            int size = sampleHumanService.getSamplesForPatient(statusSet.getPatientId()).size();</b>
+<b class="nc">&nbsp;            if (size == 1) {</b>
+&nbsp;                // if there is only one sample on the OLD patient of this sample
+&nbsp;                // we can delete it.
+<b class="nc">&nbsp;                patientToDelete = knownPatientTemplate();</b>
+<b class="nc">&nbsp;                patientService.getData(patientToDelete);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private boolean isNewPatient() {
+<b class="nc">&nbsp;        return patientInDB.getId() == null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Build an example Patient record with the ID only for the current patient of
+&nbsp;     * the sample
+&nbsp;     *
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    private Patient knownPatientTemplate() {
+<b class="nc">&nbsp;        Patient patient = new Patient();</b>
+<b class="nc">&nbsp;        patient.setId(statusSet.getPatientId());</b>
+<b class="nc">&nbsp;        return patient;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void populateSample(Timestamp receivedDateForDisplay, Timestamp collectionDateForDisplay) {
+<b class="nc">&nbsp;        sample.setAccessionNumber(accessionNumber);</b>
+<b class="nc">&nbsp;        sample.setReceivedTimestamp(receivedDateForDisplay);</b>
+<b class="nc">&nbsp;        sample.setCollectionDate(collectionDateForDisplay);</b>
+&nbsp;
+&nbsp;        // and all the administration fields.
+<b class="nc">&nbsp;        if (isNewSample()) {</b>
+<b class="nc">&nbsp;            sample.setEnteredDateForDisplay(todayAsText);</b>
+<b class="nc">&nbsp;            sample.setEnteredDate(today);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        sample.setDomain(SystemConfiguration.getInstance().getHumanDomain());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void populateSampleProject() {
+<b class="nc">&nbsp;        if (!isSampleInProject()) {</b>
+<b class="nc">&nbsp;            Project project = projectForm.getProject();</b>
+<b class="nc">&nbsp;            sampleProject = new SampleProject();</b>
+<b class="nc">&nbsp;            sampleProject.setProject(project);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return TRUE only if the sample is already associated with a project.
+&nbsp;     */
+&nbsp;    private boolean isSampleInProject() {
+<b class="nc">&nbsp;        if (isNewSample()) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        SampleProject oldSampleProject = sampleProjectService.getSampleProjectBySampleId(sample.getId());</b>
+<b class="nc">&nbsp;        return oldSampleProject != null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * create a sampleOrganization record, finding any old one to delete. While
+&nbsp;     * there can be more than one organization per sample, this code only supports
+&nbsp;     * one.
+&nbsp;     *
+&nbsp;     * @param organizationId if none null, use it; otherwise do nothing
+&nbsp;     */
+&nbsp;    protected void populateSampleOrganization(String organizationId) {
+<b class="nc">&nbsp;        if (GenericValidator.isBlankOrNull(organizationId)</b>
+<b class="nc">&nbsp;                || organizationId.equals(BaseProjectFormMapper.ORGANIZATION_ID_NONE)) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Organization org = new Organization();</b>
+<b class="nc">&nbsp;        org.setId(organizationId);</b>
+<b class="nc">&nbsp;        organizationService.getData(org);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (null == org.getId()) {</b>
+<b class="nc">&nbsp;            throw new LIMSRuntimeException(&quot;Undefined organization name = &quot; + organizationId</b>
+&nbsp;                    + &quot;. Unable to create sample to organization mapping.&quot;);
+&nbsp;        }
+&nbsp;
+&nbsp;        SampleOrganization oldSampleOrg;
+<b class="nc">&nbsp;        if (!isNewSample()) {</b>
+<b class="nc">&nbsp;            oldSampleOrg = new SampleOrganization();</b>
+<b class="nc">&nbsp;            oldSampleOrg.setSample(sample);</b>
+<b class="nc">&nbsp;            sampleOrganizationService.getDataBySample(oldSampleOrg);</b>
+<b class="nc">&nbsp;            if (oldSampleOrg.getOrganization() != null) { // there may not be an</b>
+&nbsp;                // organiztion
+&nbsp;                // attached yet
+<b class="nc">&nbsp;                String oldOrganizationId = oldSampleOrg.getOrganization().getId();</b>
+<b class="nc">&nbsp;                if (oldOrganizationId.equals(organizationId)) {</b>
+&nbsp;                    return; // we have an existing sample with the right
+&nbsp;                    // organization already, so don&#39;t bother with delete
+&nbsp;                    // or insert
+&nbsp;                }
+<b class="nc">&nbsp;                oldSampleOrg.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;                oldSampleOrg.setOrganization(org);</b>
+<b class="nc">&nbsp;                sampleOrganizations.add(oldSampleOrg);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        SampleOrganization so = new SampleOrganization();</b>
+<b class="nc">&nbsp;        so.setOrganization(org);</b>
+&nbsp;        // sampleOrganization.setSampleOrganizationType(&quot;?&quot;); // nothing
+&nbsp;        // important
+<b class="nc">&nbsp;        so.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;        sampleOrganizations.add(so);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Add to the list of patient identities which will be saved.
+&nbsp;     *
+&nbsp;     * @param patientIdentityTypeName
+&nbsp;     * @param paramValue              a value for a particular patient identity; if
+&nbsp;     *                                null, do nothing.
+&nbsp;     */
+&nbsp;    protected void addPatientIdentity(String patientIdentityTypeName, String paramValue) {
+<b class="nc">&nbsp;        if (paramValue == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        String typeID = PatientIdentityTypeMap.getInstance().getIDForType(patientIdentityTypeName);</b>
+<b class="nc">&nbsp;        PatientIdentity identity = new PatientIdentity();</b>
+<b class="nc">&nbsp;        identity.setPatientId(patientInDB.getId());</b>
+<b class="nc">&nbsp;        identity.setIdentityTypeId(typeID);</b>
+<b class="nc">&nbsp;        identity.setIdentityData(paramValue);</b>
+<b class="nc">&nbsp;        patientIdentities.add(identity);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Assume all the fields on the dynaForm have the right names (see code) and
+&nbsp;     *
+&nbsp;     * @throws IllegalAccessException
+&nbsp;     * @throws InvocationTargetException
+&nbsp;     * @throws NoSuchMethodException
+&nbsp;     */
+&nbsp;    protected void populatePatientData()
+&nbsp;            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+<b class="nc">&nbsp;        IProjectForm form = projectFormMapper.getForm();</b>
+<b class="nc">&nbsp;        Timestamp lastupdated1 = patientInDB.getLastupdated();</b>
+<b class="nc">&nbsp;        PropertyUtils.copyProperties(patientInDB, form);</b>
+<b class="nc">&nbsp;        patientInDB.setLastupdated(lastupdated1);</b>
+<b class="nc">&nbsp;        Person person = patientInDB.getPerson();</b>
+<b class="nc">&nbsp;        PropertyUtils.copyProperties(person, form);</b>
+&nbsp;
+<b class="nc">&nbsp;        patientInDB.setNationalId(convertEmptyToNull(form.getSubjectNumber()));</b>
+<b class="nc">&nbsp;        patientInDB.setExternalId(convertEmptyToNull(form.getSiteSubjectNumber()));</b>
+<b class="nc">&nbsp;		if (ObjectUtils.isNotEmpty(form.getPatientFhirUuid())) {</b>
+<b class="nc">&nbsp;			patientInDB.setFhirUuid(UUID.fromString(form.getPatientFhirUuid()));</b>
+&nbsp;		}
+<b class="nc">&nbsp;        populatePatientBirthDate(form.getBirthDateForDisplay());</b>
+&nbsp;
+<b class="nc">&nbsp;        projectData = form.getProjectData();</b>
+<b class="nc">&nbsp;        if (projectData != null) {</b>
+<b class="nc">&nbsp;            person.setHomePhone(convertEmptyToNull(projectData.getPhoneNumber()));</b>
+<b class="nc">&nbsp;            person.setFax(convertEmptyToNull(projectData.getFaxNumber()));</b>
+<b class="nc">&nbsp;            person.setEmail(convertEmptyToNull(projectData.getEmail()));</b>
+<b class="nc">&nbsp;            person.setStreetAddress(convertEmptyToNull(projectData.getAddress()));</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param value - string to test
+&nbsp;     * @return if the string is null or empty &quot;&quot;, then return null
+&nbsp;     */
+&nbsp;    private String convertEmptyToNull(String value) {
+<b class="nc">&nbsp;        return (GenericValidator.isBlankOrNull(value)) ? null : value;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Given a possibly ambiguous birthday date string, get the right values into
+&nbsp;     * both (1) the patient birthdate and (2) make sure we create a patient_identity
+&nbsp;     * for any ambiguous value.
+&nbsp;     */
+&nbsp;    protected void populatePatientBirthDate(String birthDateForDisplay) {
+<b class="nc">&nbsp;        patientInDB.setBirthDateForDisplay(birthDateForDisplay);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void populateSampleItems(List&lt;TypeOfSampleTests&gt; typeofSampleTestList, Timestamp collectionDate) {
+<b class="nc">&nbsp;        sampleItemsAnalysis = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (typeofSampleTestList.size() == 0) {</b>
+<b class="nc">&nbsp;            messages.reject(&quot;errors.no.tests&quot;);</b>
+<b class="nc">&nbsp;            throw new LIMSRuntimeException(&quot;No tests selected.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        for (TypeOfSampleTests typeofSampleTest : typeofSampleTestList) {</b>
+<b class="nc">&nbsp;            TypeOfSample toSample = typeofSampleTest.typeOfSample;</b>
+<b class="nc">&nbsp;            List&lt;Test&gt; tests = typeofSampleTest.tests;</b>
+<b class="nc">&nbsp;            SampleItem item = buildSampleItem(sample, toSample, collectionDate);</b>
+&nbsp;
+<b class="nc">&nbsp;            sampleItemsAnalysis.add(new SampleItemAnalysisCollection(item, tests));</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected SampleItem buildSampleItem(Sample sample, TypeOfSample typeofsample, Timestamp collectionDate) {
+<b class="nc">&nbsp;        SampleItem item = new SampleItem();</b>
+<b class="nc">&nbsp;        item.setTypeOfSample(typeofsample);</b>
+<b class="nc">&nbsp;        item.setSortOrder(Integer.toString(0));</b>
+<b class="nc">&nbsp;        item.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));</b>
+<b class="nc">&nbsp;        item.setCollectionDate(collectionDate);</b>
+<b class="nc">&nbsp;        return item;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected final class SampleItemAnalysisCollection {
+&nbsp;        public SampleItem item;
+&nbsp;        public List&lt;Test&gt; tests;
+&nbsp;        public String collectionDate;
+&nbsp;
+<b class="nc">&nbsp;        public SampleItemAnalysisCollection(SampleItem item, List&lt;Test&gt; tests) {</b>
+&nbsp;            // Currently we allow a sampleItem w/o any tests requested,
+&nbsp;            // elsewhere we check that at least one test is ordered somewhere.
+&nbsp;            // if (tests.size() == 0) {
+&nbsp;            // messages.add(ActionErrors.GLOBAL_MESSAGE, new
+&nbsp;            // ActionError(&quot;errors.samples.with.no.tests&quot;));
+&nbsp;            // throw new
+&nbsp;            // Exception(&quot;A least one sample was defined without any corresponding test
+&nbsp;            // selected.&quot;);
+&nbsp;            // }
+<b class="nc">&nbsp;            this.item = item;</b>
+<b class="nc">&nbsp;            this.tests = tests;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Delete any new ones and remove any old ones.
+&nbsp;     */
+&nbsp;    protected void persistSampleOrganization() {
+<b class="nc">&nbsp;        for (SampleOrganization so : sampleOrganizations) {</b>
+&nbsp;            // we are in the same transaction, we do not need to reload the sample
+&nbsp;            // sampleService.getData(sample);
+<b class="nc">&nbsp;            so.setSample(sample);</b>
+<b class="nc">&nbsp;            if (so.getId() == null) {</b>
+<b class="nc">&nbsp;                sampleOrganizationService.insert(so);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                sampleOrganizationService.update(so);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void persistSampleItemsAndAnalysis() {
+<b class="nc">&nbsp;        if (0 == sampleItemsAnalysis.size()) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+&nbsp;        // Find all the already created sample items for this sample
+<b class="nc">&nbsp;        Map&lt;String, SampleItem&gt; itemsByType = findExistingSampleTypeItems();</b>
+<b class="nc">&nbsp;        int nextSortOrder = calcLastSortOrder(itemsByType) + 1;</b>
+&nbsp;
+<b class="nc">&nbsp;        String analysisRevision = SystemConfiguration.getInstance().getAnalysisDefaultRevision();</b>
+<b class="nc">&nbsp;        boolean newAnalysis = false;</b>
+<b class="nc">&nbsp;        for (SampleItemAnalysisCollection sampleTestPair : sampleItemsAnalysis) {</b>
+&nbsp;
+&nbsp;            // create new or find existing sample item for testing.
+<b class="nc">&nbsp;            SampleItem item = sampleTestPair.item;</b>
+<b class="nc">&nbsp;            SampleItem existingSampleItem = itemsByType.get(item.getTypeOfSampleId());</b>
+<b class="nc">&nbsp;            if (existingSampleItem == null) {</b>
+<b class="nc">&nbsp;                item.setSample(sample);</b>
+<b class="nc">&nbsp;                item.setSortOrder(Integer.toString(nextSortOrder++));</b>
+<b class="nc">&nbsp;                item.setSysUserId(sysUserId);</b>
+&nbsp;
+<b class="nc">&nbsp;                sampleItemService.insert(item);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                sampleTestPair.item = item = existingSampleItem;</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            List&lt;String&gt; existingTests = findDefinedTestsForItem(item);</b>
+&nbsp;            // insert any missing analysis
+<b class="nc">&nbsp;            for (Test newTest : sampleTestPair.tests) {</b>
+<b class="nc">&nbsp;                testService.getData(newTest);</b>
+<b class="nc">&nbsp;                if (!existingTests.contains(newTest.getId())) {</b>
+<b class="nc">&nbsp;                    Analysis analysis = buildAnalysis(analysisRevision, sampleTestPair, newTest);</b>
+<b class="nc">&nbsp;                    analysisService.insert(analysis);</b>
+<b class="nc">&nbsp;                    newAnalysis = true;</b>
+&nbsp;                }
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;        // if we didn&#39;t create any analysis, we need to check if the sample is
+&nbsp;        // completely done.
+<b class="nc">&nbsp;        if (!newAnalysis) {</b>
+<b class="nc">&nbsp;            completeSample();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param itemsByType
+&nbsp;     * @return the maximum value which has already been used in the set of
+&nbsp;     *         SampleItems
+&nbsp;     */
+&nbsp;    private int calcLastSortOrder(Map&lt;String, SampleItem&gt; itemsByType) {
+<b class="nc">&nbsp;        int max = 0;</b>
+<b class="nc">&nbsp;        for (Entry&lt;String, SampleItem&gt; entry : itemsByType.entrySet()) {</b>
+<b class="nc">&nbsp;            SampleItem sampleItem = entry.getValue();</b>
+<b class="nc">&nbsp;            int curr = Integer.valueOf(sampleItem.getSortOrder());</b>
+<b class="nc">&nbsp;            if (max &lt; curr) {</b>
+<b class="nc">&nbsp;                max = curr;</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return max;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Find all tests of the item which have had analysis already ordered (defined).
+&nbsp;     *
+&nbsp;     * @param item
+&nbsp;     * @return a list of test IDs
+&nbsp;     */
+&nbsp;    private List&lt;String&gt; findDefinedTestsForItem(SampleItem item) {
+<b class="nc">&nbsp;        List&lt;Analysis&gt; analysesForItem = analysisService.getAnalysesBySampleItem(item);</b>
+<b class="nc">&nbsp;        List&lt;String&gt; testIds = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (Analysis analysis : analysesForItem) {</b>
+<b class="nc">&nbsp;            Test test = analysis.getTest();</b>
+<b class="nc">&nbsp;            testIds.add(test.getId());</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return testIds;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Map&lt;String, SampleItem&gt; findExistingSampleTypeItems() {
+<b class="nc">&nbsp;        List&lt;SampleItem&gt; itemsForSample = sampleItemService.getSampleItemsBySampleId(sample.getId());</b>
+<b class="nc">&nbsp;        Map&lt;String, SampleItem&gt; itemsByType = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (SampleItem sampleItem : itemsForSample) {</b>
+<b class="nc">&nbsp;            String id = sampleItem.getTypeOfSampleId();</b>
+<b class="nc">&nbsp;            itemsByType.put(id, sampleItem);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return itemsByType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * If during entry we find (1) all the analysis are finished, and (2) the sample
+&nbsp;     * is not already been declared bad, then we&#39;re ready to mark the sample as
+&nbsp;     * done.
+&nbsp;     *
+&nbsp;     * @
+&nbsp;     */
+&nbsp;	@Transactional
+&nbsp;    public void completeSample() {
+<b class="nc">&nbsp;        if (isAllAnalysisDone() &amp;&amp; !SpringContext.getBean(IStatusService.class)</b>
+<b class="nc">&nbsp;                .getStatusID(OrderStatus.NonConforming_depricated).equals(sample.getStatus())) {</b>
+<b class="nc">&nbsp;            sample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Finished));</b>
+<b class="nc">&nbsp;            sample.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;            sampleService.update(sample);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The question is whether we are ready to update the sample status. TODO Pahill
+&nbsp;     * maybe we could move this to SpringContext.getBean(IStatusService.class)?
+&nbsp;     */
+&nbsp;    private boolean isAllAnalysisDone() {
+<b class="nc">&nbsp;        List&lt;Analysis&gt; analyses = analysisService.getAnalysesBySampleId(sample.getId());</b>
+<b class="nc">&nbsp;        for (Analysis analysis : analyses) {</b>
+<b class="nc">&nbsp;            if (!analysisDone.contains(analysis.getStatusId())) {</b>
+<b class="nc">&nbsp;                return false;</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Analysis buildAnalysis(String analysisRevision, SampleItemAnalysisCollection sampleTestCollection,
+&nbsp;            Test test) {
+<b class="nc">&nbsp;        java.sql.Date collectionDateTime = DateUtil.convertStringDateToSqlDate(sampleTestCollection.collectionDate);</b>
+&nbsp;
+<b class="nc">&nbsp;        Analysis analysis = new Analysis();</b>
+<b class="nc">&nbsp;        analysis.setTest(test);</b>
+<b class="nc">&nbsp;        analysis.setIsReportable(test.getIsReportable());</b>
+<b class="nc">&nbsp;        analysis.setAnalysisType(DEFAULT_ANALYSIS_TYPE);</b>
+<b class="nc">&nbsp;        analysis.setSampleItem(sampleTestCollection.item);</b>
+<b class="nc">&nbsp;        analysis.setRevision(analysisRevision);</b>
+<b class="nc">&nbsp;        analysis.setStartedDate(collectionDateTime);</b>
+<b class="nc">&nbsp;        analysis.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));</b>
+<b class="nc">&nbsp;        analysis.setTestSection(test.getTestSection());</b>
+<b class="nc">&nbsp;        analysis.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;        return analysis;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * save patient
+&nbsp;     */
+&nbsp;    protected void persistPatient() {
+<b class="nc">&nbsp;        if (patientInDB != null) {</b>
+<b class="nc">&nbsp;            Person person = patientInDB.getPerson();</b>
+<b class="nc">&nbsp;            person.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;            patientInDB.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;            if (patientInDB.getId() == null) {</b>
+<b class="nc">&nbsp;                personService.insert(person);</b>
+<b class="nc">&nbsp;                patientService.insert(patientInDB);</b>
+&nbsp;            } else {
+&nbsp;                // The reason for the explicit person update is to capture the
+&nbsp;                // history.
+<b class="nc">&nbsp;                personService.update(person);</b>
+<b class="nc">&nbsp;                patientService.update(patientInDB);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Save whatever patient identities have been created.
+&nbsp;     *
+&nbsp;     * @throws LIMSRuntimeException
+&nbsp;     */
+&nbsp;    public void persistIdentityTypes() throws LIMSRuntimeException {
+&nbsp;
+<b class="nc">&nbsp;        if (0 == patientIdentities.size()) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        for (PatientIdentity identity : patientIdentities) {</b>
+<b class="nc">&nbsp;            identity.setPatientId(patientInDB.getId());</b>
+<b class="nc">&nbsp;            identity.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;            identityService.insert(identity);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void persistSample() throws LIMSRuntimeException {
+<b class="nc">&nbsp;        if (null != sample) {</b>
+<b class="nc">&nbsp;            sample.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;            if (sample.getId() != null) {</b>
+<b class="nc">&nbsp;                sampleService.update(sample);</b>
+&nbsp;                // HibernateUtil.getSession().evict(sample);
+&nbsp;            } else {
+<b class="nc">&nbsp;                sampleService.insertDataWithAccessionNumber(sample);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void persistSampleProject() throws LIMSRuntimeException {
+<b class="nc">&nbsp;        if (null != sampleProject) {</b>
+<b class="nc">&nbsp;            sampleProject.setSample(sample);</b>
+<b class="nc">&nbsp;            sampleProject.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;            sampleProjectService.insert(sampleProject);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Persist any old or new sampleHuman we&#39;re currently holding.
+&nbsp;     */
+&nbsp;    protected void persistSampleHuman() {
+<b class="nc">&nbsp;        if (sampleHuman != null) {</b>
+<b class="nc">&nbsp;			SampleHuman otherSampleHuman = sampleHumanService.getMatch(&quot;sampleId&quot;, sample.getId()).orElse(null);</b>
+<b class="nc">&nbsp;			if (ObjectUtils.isNotEmpty(otherSampleHuman)) {</b>
+<b class="nc">&nbsp;				sampleHuman = otherSampleHuman;</b>
+&nbsp;			}
+<b class="nc">&nbsp;            sampleHuman.setPatientId(patientInDB.getId());</b>
+<b class="nc">&nbsp;            sampleHuman.setSampleId(sample.getId());</b>
+&nbsp;            // we do not store any doctor name as a provider in SampleHuman
+<b class="nc">&nbsp;            sampleHuman.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;            if (null == sampleHuman.getId()) {</b>
+<b class="nc">&nbsp;                sampleHumanService.insert(sampleHuman);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                sampleHumanService.update(sampleHuman);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Persist any simple observations histories in this accession object.
+&nbsp;     */
+&nbsp;    protected void persistObservationHistory() {
+<b class="nc">&nbsp;        if (isADifferentPatient()) {</b>
+<b class="nc">&nbsp;            List&lt;ObservationHistory&gt; oldOHes = observationHistoryService.getAll(knownPatientTemplate(),</b>
+<b class="nc">&nbsp;                    knownSampleTemplate());</b>
+<b class="nc">&nbsp;            for (ObservationHistory oldOh : oldOHes) {</b>
+<b class="nc">&nbsp;                oldOh.setSampleId(sample.getId());</b>
+<b class="nc">&nbsp;                oldOh.setPatientId(patientInDB.getId());</b>
+<b class="nc">&nbsp;                oldOh.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;                observationHistoryService.update(oldOh);</b>
+<b class="nc">&nbsp;            }</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        for (ObservationHistory newOh : observationHistories) {</b>
+<b class="nc">&nbsp;            List&lt;ObservationHistory&gt; existingTypeOHes = observationHistoryService.getAll(patientInDB, sample,</b>
+<b class="nc">&nbsp;                    newOh.getObservationHistoryTypeId());</b>
+<b class="nc">&nbsp;            List&lt;ObservationHistory&gt; deleteTypeOHes = new ArrayList&lt;&gt;();</b>
+&nbsp;            // delete any matching old ones, but only when there are both same
+&nbsp;            // Ob. History type AND the same value type. Why because the
+&nbsp;            // database allows more than one of the same type,
+&nbsp;            // and we store e.g. nationality twice as two types, D=dictionary
+&nbsp;            // for dropdown value, L=value used when there the menu value is
+&nbsp;            // other, and there is a literal with text for other.
+<b class="nc">&nbsp;            String newValueType = newOh.getValueType();</b>
+<b class="nc">&nbsp;            for (ObservationHistory oh : existingTypeOHes) {</b>
+<b class="nc">&nbsp;                if (oh.getValueType().equals(newValueType)) {</b>
+<b class="nc">&nbsp;                    oh.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;                    deleteTypeOHes.add(oh);</b>
+&nbsp;                }
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;            if (deleteTypeOHes.size() &gt; 0) {</b>
+<b class="nc">&nbsp;                observationHistoryService.deleteAll(deleteTypeOHes);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            newOh.setSampleId(sample.getId());</b>
+<b class="nc">&nbsp;            newOh.setPatientId(patientInDB.getId());</b>
+<b class="nc">&nbsp;            newOh.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;            observationHistoryService.insert(newOh);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Note -- this version does not do the delete insert model of updates but we
+&nbsp;    // are putting off
+&nbsp;    // rolling it out because of the cost of testing
+&nbsp;    /*
+&nbsp;     * protected void persistObservationHistory() { if (isADifferentPatient()) {
+&nbsp;     * List&lt;ObservationHistory&gt; oldOHes =
+&nbsp;     * observationHistoryService.getAll(knownPatientTemplate(),
+&nbsp;     * knownSampleTemplate()); for (ObservationHistory oldOh : oldOHes) {
+&nbsp;     * oldOh.setSampleId(sample.getId()); oldOh.setPatientId(patientInDB.getId());
+&nbsp;     * oldOh.setSysUserId(sysUserId); observationHistoryService.update(oldOh); } }
+&nbsp;     *
+&nbsp;     * for (ObservationHistory newOh : observationHistories) { boolean machedInDB =
+&nbsp;     * false; List&lt;ObservationHistory&gt; existingTypeOHes =
+&nbsp;     * observationHistoryService.getAll(patientInDB, sample,
+&nbsp;     * newOh.getObservationHistoryTypeId()); List&lt;ObservationHistory&gt; deleteTypeOHes
+&nbsp;     * = new ArrayList&lt;ObservationHistory&gt;(); // update any matching old ones, but
+&nbsp;     * only when there are both same // Ob. History type AND the same value type.
+&nbsp;     * Why because the // database allows more than one of the same type, // and we
+&nbsp;     * store e.g. nationality twice as two types, D=dictionary // for dropdown
+&nbsp;     * value, L=value used when there the menu value is // other, and there is a
+&nbsp;     * literal with text for other. String newValueType = newOh.getValueType(); for
+&nbsp;     * (ObservationHistory oh : existingTypeOHes) { if
+&nbsp;     * (oh.getValueType().equals(newValueType)) { machedInDB = true; if
+&nbsp;     * (oh.getValue() != null &amp;&amp; !oh.getValue().equals(newOh.getValue())) {
+&nbsp;     * oh.setSysUserId(sysUserId); oh.setValue(newOh.getValue());
+&nbsp;     * observationHistoryService.update(oh);
+&nbsp;     *
+&nbsp;     * } } } // if (deleteTypeOHes.size() &gt; 0) { //
+&nbsp;     * observationHistoryService.delete(deleteTypeOHes); // }
+&nbsp;     *
+&nbsp;     * if (!machedInDB) { newOh.setSampleId(sample.getId());
+&nbsp;     * newOh.setPatientId(patientInDB.getId()); newOh.setSysUserId(sysUserId);
+&nbsp;     * observationHistoryService.insert(newOh); } } }
+&nbsp;     */
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     */
+&nbsp;    protected void persistObservationHistoryLists() {
+<b class="nc">&nbsp;        LogEvent.logInfo(this.getClass().getSimpleName(), &quot;persistObservationHistoryLists&quot;, &quot;FUNCTION NAME PROHIBITED !&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void persistObservationHistoryLists2() {
+<b class="nc">&nbsp;        if (observationHistoryLists == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        for (String listType : observationHistoryLists.keySet()) {</b>
+&nbsp;            // throw away the old list
+<b class="nc">&nbsp;            Map&lt;String, ObservationHistory&gt; oldOHes = findExistingObservationHistories(listType);</b>
+&nbsp;            // LogEvent.logInfo(this.getClass().getSimpleName(), &quot;method unkown&quot;, );
+&nbsp;            // LogEvent.logInfo(this.getClass().getSimpleName(), &quot;method unkown&quot;, listType + &quot;
+&nbsp;            // oldOHes.size = &quot;
+&nbsp;            // +oldOHes.size());
+<b class="nc">&nbsp;            for (ObservationHistory oh : oldOHes.values()) {</b>
+<b class="nc">&nbsp;                oh.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;            observationHistoryService.deleteAll(new ArrayList&lt;&gt;(oldOHes.values()));</b>
+&nbsp;
+&nbsp;            // insert the new
+<b class="nc">&nbsp;            List&lt;ObservationHistory&gt; newOHes = observationHistoryLists.get(listType);</b>
+&nbsp;            // LogEvent.logInfo(this.getClass().getSimpleName(), &quot;method unkown&quot;, listType + &quot;
+&nbsp;            // newOHes.size = &quot;
+&nbsp;            // +newOHes.size());
+<b class="nc">&nbsp;            for (ObservationHistory newOH : newOHes) {</b>
+<b class="nc">&nbsp;                newOH.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;                newOH.setPatientId(patientInDB.getId());</b>
+<b class="nc">&nbsp;                newOH.setSampleId(sample.getId());</b>
+&nbsp;
+<b class="nc">&nbsp;                observationHistoryService.insert(newOH);</b>
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Map&lt;String, ObservationHistory&gt; findExistingObservationHistories(String nameKey) {
+<b class="nc">&nbsp;        Map&lt;String, ObservationHistory&gt; existing = new HashMap&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        String ohTypeId = ObservationHistoryTypeMap.getInstance().getIDForType(nameKey);</b>
+<b class="nc">&nbsp;        List&lt;ObservationHistory&gt; existingOHes = observationHistoryService.getAll(patientInDB, sample, ohTypeId);</b>
+<b class="nc">&nbsp;        for (ObservationHistory oh : existingOHes) {</b>
+<b class="nc">&nbsp;            existing.put(oh.getValue(), oh);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return existing;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void persistRecordStatus() {
+&nbsp;        // Special Request and EID don&#39;t have a patient entry form, so we move
+&nbsp;        // the patient record status when we move the sample record status.
+<b class="nc">&nbsp;        if (projectForm == SPECIAL_REQUEST || projectForm == EID) {</b>
+<b class="nc">&nbsp;            newPatientStatus = newSampleStatus;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        SpringContext.getBean(IStatusService.class).persistRecordStatusForSample(sample, newSampleStatus, patientInDB,</b>
+&nbsp;                newPatientStatus, sysUserId);
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void deleteOldPatient() {
+<b class="nc">&nbsp;		if (patientToDelete != null) {</b>
+&nbsp;			try {
+&nbsp;
+<b class="nc">&nbsp;				List&lt;PatientIdentity&gt; oldIdentities = identityService</b>
+<b class="nc">&nbsp;						.getPatientIdentitiesForPatient(patientToDelete.getId());</b>
+<b class="nc">&nbsp;				for (PatientIdentity listIdentity : oldIdentities) {</b>
+<b class="nc">&nbsp;					identityService.delete(listIdentity.getId(), sysUserId);</b>
+<b class="nc">&nbsp;				}</b>
+<b class="nc">&nbsp;				Person personToDelete = patientToDelete.getPerson();</b>
+<b class="nc">&nbsp;				patientToDelete.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;				patientService.deleteAll(Arrays.asList(patientToDelete));</b>
+<b class="nc">&nbsp;				personToDelete.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;				personService.deleteAll(Arrays.asList(personToDelete));</b>
+&nbsp;
+<b class="nc">&nbsp;			} catch (Exception e) {</b>
+<b class="nc">&nbsp;				LogEvent.logError(e);</b>
+<b class="nc">&nbsp;			}</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;    protected List&lt;ObservationHistory&gt; getObservationHistories() {
+<b class="nc">&nbsp;        return observationHistories;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected SampleService getSimpleSampleService() {
+<b class="nc">&nbsp;        return SpringContext.getBean(SampleService.class);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Errors getMessages() {
+<b class="nc">&nbsp;        return messages;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setMessages(Errors messages) {
+<b class="nc">&nbsp;        this.messages = messages;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /****
+&nbsp;     * Record a thrown exception
+&nbsp;     *
+&nbsp;     * @param methodName where it happened.
+&nbsp;     * @param messageKey default message if there is not already a error recorded.
+&nbsp;     * @param e          the thrown exception of which to print the stack trace.
+&nbsp;     */
+&nbsp;    public void logAndAddMessage(String methodName, String messageKey, Exception e) {
+<b class="nc">&nbsp;        LogEvent.logError(e);</b>
+<b class="nc">&nbsp;        if (!messages.hasErrors()) {</b>
+<b class="nc">&nbsp;            messages.reject(messageKey);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    protected abstract String getActionLabel();
+&nbsp;
+&nbsp;//    protected void persistInitialSampleConditions()
+&nbsp;//            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+&nbsp;//        if (!FormFields.getInstance().useField(Field.InitialSampleCondition)) {
+&nbsp;//            return;
+&nbsp;//        }
+&nbsp;//
+&nbsp;//        try {
+&nbsp;//
+&nbsp;//            String xml = projectFormMapper.getForm().getSampleXML();
+&nbsp;//            // LogEvent.logInfo(this.getClass().getSimpleName(), &quot;method unkown&quot;, &quot;AMANI:&quot;+xml);
+&nbsp;//            Document sampleDom = DocumentHelper.parseText(xml);
+&nbsp;//            for (Iterator i = sampleDom.getRootElement().elementIterator(&quot;sample&quot;); i.hasNext();) {
+&nbsp;//                Element sampleItem = (Element) i.next();
+&nbsp;//                String initialSampleConditionIdString = sampleItem.attributeValue(&quot;initialConditionIds&quot;);
+&nbsp;//                String sampleItemId = sampleItem.attributeValue(&quot;sampleID&quot;);
+&nbsp;//
+&nbsp;//                ObservationHistory observation = new ObservationHistory();
+&nbsp;//
+&nbsp;//                if (!GenericValidator.isBlankOrNull(initialSampleConditionIdString)) {
+&nbsp;//                    String[] initialSampleConditionIds = initialSampleConditionIdString.split(&quot;,&quot;);
+&nbsp;//                    for (int j = 0; j &lt; initialSampleConditionIds.length; j++) {
+&nbsp;//                        observation = new ObservationHistory();
+&nbsp;//                        observation.setValue(initialSampleConditionIds[j]);
+&nbsp;//                        observation.setValueType(ObservationHistory.ValueType.DICTIONARY);
+&nbsp;//                        observation.setObservationHistoryTypeId(getObservationHistoryTypeId(
+&nbsp;//                                SpringContext.getBean(ObservationHistoryTypeService.class), &quot;initialSampleCondition&quot;));
+&nbsp;//                        observation.setSampleId(sample.getId());
+&nbsp;//                        observation.setSampleItemId(sampleItemId);
+&nbsp;//                        observation.setPatientId(patientInDB.getId());
+&nbsp;//                        observation.setSysUserId(sysUserId);
+&nbsp;//                        observationHistoryService.insert(observation);
+&nbsp;//                    }
+&nbsp;//                }
+&nbsp;//            }
+&nbsp;//
+&nbsp;//        } catch (DocumentException e) {
+&nbsp;//            LogEvent.logDebug(e);
+&nbsp;//        }
+&nbsp;//        // dynaForm.set(&quot;orbservations&quot;, observations);
+&nbsp;//
+&nbsp;//    }
+&nbsp;
+&nbsp;	private static String getObservationHistoryTypeId(ObservationHistoryTypeService ohtService, String name) {
+&nbsp;		ObservationHistoryType oht;
+<b class="nc">&nbsp;		oht = ohtService.getByName(name);</b>
+<b class="nc">&nbsp;		if (oht != null) {</b>
+<b class="nc">&nbsp;			return oht.getId();</b>
+&nbsp;		}
+&nbsp;
+<b class="nc">&nbsp;		return null;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	private void updateSampleWithElectronicEOrders() {
+&nbsp;		try {
+<b class="nc">&nbsp;			if (ObjectUtils.isNotEmpty(projectFormMapper.getForm().getElectronicOrder())) {</b>
+<b class="nc">&nbsp;				sample.setReferringId(projectFormMapper.getForm().getElectronicOrder().getExternalId());</b>
+<b class="nc">&nbsp;				sample.setClinicalOrderId(projectFormMapper.getForm().getElectronicOrder().getId());</b>
+&nbsp;			}
+<b class="nc">&nbsp;		} catch (Exception e) {</b>
+<b class="nc">&nbsp;			LogEvent.logError(e);</b>
+<b class="nc">&nbsp;		}</b>
+&nbsp;	}
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-23 09:33</div>
+</div>
+</body>
+</html>

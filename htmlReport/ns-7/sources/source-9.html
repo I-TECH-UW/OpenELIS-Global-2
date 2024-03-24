@@ -1,0 +1,446 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SampleEntry</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.openelisglobal.patient.saving</a>
+</div>
+
+<h1>Coverage Summary for Class: SampleEntry (org.openelisglobal.patient.saving)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SampleEntry</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/113)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SampleEntry$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/114)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/**
+&nbsp;* The contents of this file are subject to the Mozilla Public License
+&nbsp;* Version 1.1 (the &quot;License&quot;); you may not use this file except in
+&nbsp;* compliance with the License. You may obtain a copy of the License at
+&nbsp;* http://www.mozilla.org/MPL/
+&nbsp;*
+&nbsp;* Software distributed under the License is distributed on an &quot;AS IS&quot;
+&nbsp;* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+&nbsp;* License for the specific language governing rights and limitations under
+&nbsp;* the License.
+&nbsp;*
+&nbsp;* The Original Code is OpenELIS code.
+&nbsp;*
+&nbsp;* Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
+&nbsp;*
+&nbsp;*/
+&nbsp;package org.openelisglobal.patient.saving;
+&nbsp;
+&nbsp;import java.sql.Timestamp;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;import javax.servlet.http.HttpServletRequest;
+&nbsp;
+&nbsp;import org.apache.commons.validator.GenericValidator;
+&nbsp;import org.openelisglobal.analysis.valueholder.Analysis;
+&nbsp;import org.openelisglobal.common.exception.LIMSException;
+&nbsp;import org.openelisglobal.common.exception.LIMSRuntimeException;
+&nbsp;import org.openelisglobal.common.provider.query.SampleItemTestProvider;
+&nbsp;import org.openelisglobal.common.services.IStatusService;
+&nbsp;import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+&nbsp;import org.openelisglobal.common.services.StatusService.RecordStatus;
+&nbsp;import org.openelisglobal.common.util.DateUtil;
+&nbsp;import org.openelisglobal.internationalization.MessageUtil;
+&nbsp;import org.openelisglobal.patient.saving.form.IAccessionerForm;
+&nbsp;import org.openelisglobal.sample.form.ProjectData;
+&nbsp;import org.openelisglobal.sample.util.CI.BaseProjectFormMapper;
+&nbsp;import org.openelisglobal.sample.util.CI.BaseProjectFormMapper.TypeOfSampleTests;
+&nbsp;import org.openelisglobal.sample.util.CI.ProjectForm;
+&nbsp;import org.openelisglobal.sampleitem.valueholder.SampleItem;
+&nbsp;import org.openelisglobal.spring.util.SpringContext;
+&nbsp;import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+&nbsp;import org.springframework.context.annotation.Primary;
+&nbsp;import org.springframework.context.annotation.Scope;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Scope(&quot;prototype&quot;)
+&nbsp;@Primary
+&nbsp;public class SampleEntry extends Accessioner implements ISampleEntry {
+&nbsp;
+&nbsp;    protected IAccessionerForm form;
+&nbsp;    protected HttpServletRequest request;
+&nbsp;
+&nbsp;    public SampleEntry(IAccessionerForm form, String sysUserId, HttpServletRequest request) {
+<b class="nc">&nbsp;        this();</b>
+<b class="nc">&nbsp;        setFieldsFromForm(form);</b>
+<b class="nc">&nbsp;        this.request = request;</b>
+<b class="nc">&nbsp;        super.setSysUserId(sysUserId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public SampleEntry() {
+<b class="nc">&nbsp;        super();</b>
+<b class="nc">&nbsp;        newPatientStatus = RecordStatus.NotRegistered;</b>
+<b class="nc">&nbsp;        newSampleStatus = RecordStatus.InitialRegistration;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void setRequest(HttpServletRequest request) {
+<b class="nc">&nbsp;        this.request = request;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public final void setFieldsFromForm(IAccessionerForm form) throws LIMSRuntimeException {
+<b class="nc">&nbsp;        setAccessionNumber(form.getLabNo());</b>
+<b class="nc">&nbsp;        setPatientIdentifier(form.getSubjectNumber());</b>
+<b class="nc">&nbsp;        setProjectFormMapperFromForm(form);</b>
+<b class="nc">&nbsp;        this.form = form;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setProjectFormMapperFromForm(IAccessionerForm form) throws LIMSRuntimeException {
+<b class="nc">&nbsp;        projectFormMapper = getProjectFormMapper(form);</b>
+<b class="nc">&nbsp;        projectFormMapper.setPatientForm(false);</b>
+<b class="nc">&nbsp;        projectForm = projectFormMapper.getProjectForm();</b>
+<b class="nc">&nbsp;        findStatusSet();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean canAccession() {
+<b class="nc">&nbsp;        return (statusSet.getPatientRecordStatus() == null &amp;&amp; statusSet.getSampleRecordStatus() == null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    protected void populateSampleData() throws LIMSException {
+<b class="nc">&nbsp;        Timestamp receivedDate = DateUtil.convertStringDateStringTimeToTimestamp(projectFormMapper.getReceivedDate(),</b>
+<b class="nc">&nbsp;                projectFormMapper.getReceivedTime());</b>
+<b class="nc">&nbsp;        Timestamp collectionDate = DateUtil.convertStringDateStringTimeToTimestamp(</b>
+<b class="nc">&nbsp;                projectFormMapper.getCollectionDate(), projectFormMapper.getCollectionTime());</b>
+<b class="nc">&nbsp;        populateSample(receivedDate, collectionDate);</b>
+<b class="nc">&nbsp;        populateSampleProject();</b>
+<b class="nc">&nbsp;        populateSampleOrganization(projectFormMapper.getOrganizationId());</b>
+<b class="nc">&nbsp;        populateSampleItems();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void populateSampleItems() throws LIMSException {
+<b class="nc">&nbsp;        List&lt;TypeOfSampleTests&gt; typeofSampleTestList = projectFormMapper.getTypeOfSampleTests();</b>
+&nbsp;
+<b class="nc">&nbsp;        boolean testSampleMismatch = false;</b>
+<b class="nc">&nbsp;        testSampleMismatch = (null == typeofSampleTestList) || (typeofSampleTestList.isEmpty());</b>
+&nbsp;
+<b class="nc">&nbsp;        if (!((null == typeofSampleTestList) || (typeofSampleTestList.isEmpty()))) {</b>
+<b class="nc">&nbsp;            for (TypeOfSampleTests typeOfSampleTest : typeofSampleTestList) {</b>
+<b class="nc">&nbsp;                if (typeOfSampleTest.tests.isEmpty()) {</b>
+<b class="nc">&nbsp;                    testSampleMismatch = true;</b>
+<b class="nc">&nbsp;                    break;</b>
+&nbsp;                }
+<b class="nc">&nbsp;            }</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (testSampleMismatch) {</b>
+<b class="nc">&nbsp;            messages.reject(&quot;errors.no.sample&quot;);</b>
+<b class="nc">&nbsp;            throw new LIMSException(&quot;Mis-match between tests and sample types.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Timestamp collectionDate = DateUtil.convertStringDateStringTimeToTimestamp(</b>
+<b class="nc">&nbsp;                projectFormMapper.getCollectionDate(), projectFormMapper.getCollectionTime());</b>
+<b class="nc">&nbsp;        populateSampleItems(typeofSampleTestList, collectionDate);</b>
+<b class="nc">&nbsp;        cleanupSampleItemsAndAnalysis();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Looking at each sampleType which was NOT checked, we pretend that it was
+&nbsp;     * checked and see what analysis WOULD be generated combined with any test. If
+&nbsp;     * there are any of those, we then try to find some sampleItems to delete and
+&nbsp;     * update along with appropriate analysis.
+&nbsp;     *
+&nbsp;     * @param projectFormMapper
+&nbsp;     */
+&nbsp;    // TODO PAHill this code relies on the correct spelling of the
+&nbsp;    // typeOfSample.description. These magic names should be
+&nbsp;    // moved to one central spot so they are easier to find if needed to change.
+&nbsp;    // They also appear in the ProjectFormMapper, so
+&nbsp;    // probably an enum there (BaseProjectFormMapper) could contain the known set
+&nbsp;    // for use there and here.
+&nbsp;
+&nbsp;    protected void cleanupSampleItemsAndAnalysis() {
+<b class="nc">&nbsp;        String sampleId = sample.getId();</b>
+<b class="nc">&nbsp;        if (GenericValidator.isBlankOrNull(sampleId)) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+&nbsp;        // try each type of sample tube and see what real test have gone away.
+<b class="nc">&nbsp;        ProjectData submittedProjectData = projectFormMapper.getProjectData();</b>
+<b class="nc">&nbsp;        if (!submittedProjectData.getDryTubeTaken()) {</b>
+<b class="nc">&nbsp;            cleanupSampleAndAnalysis(sampleId, &quot;Dry Tube&quot;);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            ProjectData tProjectData = buildProjectDataTestsReversed(submittedProjectData);</b>
+<b class="nc">&nbsp;            tProjectData.setDryTubeTaken(true);</b>
+<b class="nc">&nbsp;            cleanupExistingAnalysis(projectForm, sampleId, tProjectData);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (!submittedProjectData.getEdtaTubeTaken()) {</b>
+<b class="nc">&nbsp;            cleanupSampleAndAnalysis(sampleId, &quot;EDTA Tube&quot;);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            ProjectData tProjectData = buildProjectDataTestsReversed(submittedProjectData);</b>
+<b class="nc">&nbsp;            tProjectData.setEdtaTubeTaken(true);</b>
+<b class="nc">&nbsp;            cleanupExistingAnalysis(projectForm, sampleId, tProjectData);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (!submittedProjectData.getDbsTaken()) {</b>
+<b class="nc">&nbsp;            cleanupSampleAndAnalysis(sampleId, &quot;DBS&quot;);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            ProjectData tProjectData = buildProjectDataTestsReversed(submittedProjectData);</b>
+<b class="nc">&nbsp;            tProjectData.setDbsTaken(true);</b>
+<b class="nc">&nbsp;            cleanupExistingAnalysis(projectForm, sampleId, tProjectData);</b>
+&nbsp;        }
+&nbsp;        return;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Check if particular
+&nbsp;     *
+&nbsp;     * @param sampleId
+&nbsp;     * @param typeName
+&nbsp;     */
+&nbsp;    private void cleanupSampleAndAnalysis(String sampleId, String typeName) {
+<b class="nc">&nbsp;        TypeOfSample typeOfSample = BaseProjectFormMapper.getTypeOfSampleByDescription(typeName);</b>
+<b class="nc">&nbsp;        List&lt;SampleItem&gt; sampleItems = sampleItemService.getSampleItemsBySampleIdAndType(sampleId, typeOfSample);</b>
+<b class="nc">&nbsp;        for (SampleItem sampleItem : sampleItems) {</b>
+<b class="nc">&nbsp;            List&lt;Analysis&gt; analyses = analysisService.getAnalysesBySampleItem(sampleItem);</b>
+<b class="nc">&nbsp;            if (cleanupExistingAnalysis(analyses).size() != 0) {</b>
+<b class="nc">&nbsp;                sampleItem.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;                sampleItemsToDelete.add(sampleItem);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Find the analysis which are defined to be associated with checked sampleType
+&nbsp;     * in the projectdata. update list of analysisToDelete, analysisToSave Called
+&nbsp;     * with tests checked that are NOT wanted, so we can find those analysis and
+&nbsp;     * check to delete them
+&nbsp;     *
+&nbsp;     * @param projectFormId - the name of form from the UI (typically the unique DIV
+&nbsp;     *                      id)
+&nbsp;     * @param sampleId      some sample
+&nbsp;     * @param tProjectData  a mocked up set data of data, representing a set of
+&nbsp;     *                      choices
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    private Map&lt;String, SampleItem&gt; cleanupExistingAnalysis(ProjectForm projectForm, String sampleId,
+&nbsp;            ProjectData tProjectData) {
+&nbsp;        try {
+<b class="nc">&nbsp;            List&lt;Analysis&gt; analysisList = SampleItemTestProvider.findAnalysis(sampleId, projectForm.getProjectFormId(),</b>
+&nbsp;                    tProjectData);
+<b class="nc">&nbsp;            return cleanupExistingAnalysis(analysisList);</b>
+<b class="nc">&nbsp;        } catch (IllegalArgumentException e) {</b>
+<b class="nc">&nbsp;            return null; // reversing the test boxes resulted in NO valid resuest, so we can move on.</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private Map&lt;String, SampleItem&gt; cleanupExistingAnalysis(List&lt;Analysis&gt; analysisList) {
+<b class="nc">&nbsp;        String canceledId = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled);</b>
+<b class="nc">&nbsp;        Map&lt;String, SampleItem&gt; sampleItemsToDelete = new HashMap&lt;&gt;();</b>
+&nbsp;        // first we assume we&#39;ll delete them all
+<b class="nc">&nbsp;        for (Analysis analysis : analysisList) {</b>
+<b class="nc">&nbsp;            SampleItem sampleItem = analysis.getSampleItem();</b>
+<b class="nc">&nbsp;            sampleItemsToDelete.put(sampleItem.getId(), sampleItem);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        for (Analysis analysis : analysisList) {</b>
+<b class="nc">&nbsp;            AnalysisStatus analysisStatus = SpringContext.getBean(IStatusService.class)</b>
+<b class="nc">&nbsp;                    .getAnalysisStatusForID(analysis.getStatusId());</b>
+<b class="nc">&nbsp;            switch (analysisStatus) {</b>
+&nbsp;            case NotStarted:
+&nbsp;                // deletable =&gt; leave sampleItem in the Delete list
+<b class="nc">&nbsp;                analysis.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;                analysisToDelete.add(analysis);</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case NonConforming_depricated:
+&nbsp;                // not deletable =&gt; remove the sampleItem from the delete list
+<b class="nc">&nbsp;                SampleItem sampleItem = analysis.getSampleItem();</b>
+<b class="nc">&nbsp;                sampleItemsToDelete.remove(sampleItem.getId());</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            default:
+&nbsp;                // not deletable =&gt; remove the sampleItem from the delete list
+<b class="nc">&nbsp;                sampleItem = analysis.getSampleItem();</b>
+<b class="nc">&nbsp;                sampleItemsToDelete.remove(sampleItem.getId());</b>
+&nbsp;                // save this analysis for later updating
+<b class="nc">&nbsp;                analysis.setStatusId(canceledId);</b>
+<b class="nc">&nbsp;                analysis.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;                analysisToUpdate.add(analysis);</b>
+&nbsp;                break;
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return sampleItemsToDelete;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new projectData object with all Test which are NOT checked in the
+&nbsp;     * submitted projectData now checked in the object returned
+&nbsp;     *
+&nbsp;     * @param ProjectData - nothing but some Test properties are set in this object.
+&nbsp;     */
+&nbsp;    private ProjectData buildProjectDataTestsReversed(ProjectData submitted) {
+<b class="nc">&nbsp;        ProjectData projectData = new ProjectData();</b>
+<b class="nc">&nbsp;        if (!submitted.getCreatinineTest()) {</b>
+<b class="nc">&nbsp;            projectData.setCreatinineTest(true);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (!submitted.getGlycemiaTest()) {</b>
+<b class="nc">&nbsp;            projectData.setGlycemiaTest(true);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (!submitted.getGenotypingTest()) {</b>
+<b class="nc">&nbsp;            projectData.setGenotypingTest(true);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (!submitted.getNfsTest()) {</b>
+<b class="nc">&nbsp;            projectData.setNfsTest(true);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (!submitted.getSerologyHIVTest()) {</b>
+<b class="nc">&nbsp;            projectData.setSerologyHIVTest(true);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (!submitted.getTransaminaseTest()) {</b>
+<b class="nc">&nbsp;            projectData.setTransaminaseTest(true);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (!submitted.getCd4cd8Test()) {</b>
+<b class="nc">&nbsp;            projectData.setCd4cd8Test(true);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return projectData;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @see org.openelisglobal.patient.saving.Accessioner#persistSampleData()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    protected void persistSampleData() {
+&nbsp;        // TODO Auto-generated method stub
+<b class="nc">&nbsp;        super.persistSampleData();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * There are no lists in Sample forms, so no repeating OHs to update. If there
+&nbsp;     * where the base class returning empty lists for all those without values and
+&nbsp;     * then the persist coding deleting all sublists blindly and then rewriting them
+&nbsp;     * would be broken, so be careful if it comes to that.
+&nbsp;     *
+&nbsp;     * @see org.openelisglobal.patient.saving.Accessioner#persistObservationHistoryLists()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    protected void persistObservationHistoryLists() {
+&nbsp;        // do nothing. See note above. Do not delete this method.
+<b class="nc">&nbsp;    }</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    protected String getActionLabel() {
+<b class="nc">&nbsp;        return MessageUtil.getMessage(&quot;banner.menu.createSample.Initial&quot;);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-23 09:33</div>
+</div>
+</body>
+</html>

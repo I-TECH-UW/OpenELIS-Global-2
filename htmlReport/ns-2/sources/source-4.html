@@ -1,0 +1,649 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PatientManagementInfo</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.openelisglobal.patient.action.bean</a>
+</div>
+
+<h1>Coverage Summary for Class: PatientManagementInfo (org.openelisglobal.patient.action.bean)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PatientManagementInfo</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/84)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/99)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/**
+&nbsp; * The contents of this file are subject to the Mozilla Public License
+&nbsp; * Version 1.1 (the &quot;License&quot;); you may not use this file except in
+&nbsp; * compliance with the License. You may obtain a copy of the License at
+&nbsp; * http://www.mozilla.org/MPL/
+&nbsp; *
+&nbsp; * Software distributed under the License is distributed on an &quot;AS IS&quot;
+&nbsp; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+&nbsp; * License for the specific language governing rights and limitations under
+&nbsp; * the License.
+&nbsp; *
+&nbsp; * The Original Code is OpenELIS code.
+&nbsp; *
+&nbsp; * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
+&nbsp; *
+&nbsp; */
+&nbsp;package org.openelisglobal.patient.action.bean;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import javax.validation.Valid;
+&nbsp;import javax.validation.constraints.Email;
+&nbsp;import javax.validation.constraints.NotBlank;
+&nbsp;import javax.validation.constraints.Pattern;
+&nbsp;import javax.validation.constraints.Size;
+&nbsp;
+&nbsp;import org.apache.commons.validator.GenericValidator;
+&nbsp;import org.openelisglobal.validation.annotations.SafeHtml;
+&nbsp;import org.openelisglobal.common.formfields.FormFields.Field;
+&nbsp;import org.openelisglobal.common.services.DisplayListService;
+&nbsp;import org.openelisglobal.common.services.DisplayListService.ListType;
+&nbsp;import org.openelisglobal.common.util.ConfigurationProperties.Property;
+&nbsp;import org.openelisglobal.common.util.IdValuePair;
+&nbsp;import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
+&nbsp;import org.openelisglobal.common.validator.ValidationHelper;
+&nbsp;import org.openelisglobal.dictionary.service.DictionaryService;
+&nbsp;import org.openelisglobal.dictionary.valueholder.Dictionary;
+&nbsp;import org.openelisglobal.organization.service.OrganizationService;
+&nbsp;import org.openelisglobal.organization.valueholder.Organization;
+&nbsp;import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
+&nbsp;import org.openelisglobal.patient.service.PatientTypeService;
+&nbsp;import org.openelisglobal.patient.valueholder.PatientContact;
+&nbsp;import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
+&nbsp;import org.openelisglobal.patienttype.valueholder.PatientType;
+&nbsp;import org.openelisglobal.sample.form.SamplePatientEntryForm;
+&nbsp;import org.openelisglobal.sample.form.SamplePatientEntryForm.SamplePatientEntryBatch;
+&nbsp;import org.openelisglobal.spring.util.SpringContext;
+&nbsp;import org.openelisglobal.validation.annotations.OptionalNotBlank;
+&nbsp;import org.openelisglobal.validation.annotations.ValidDate;
+&nbsp;import org.openelisglobal.validation.annotations.ValidName;
+&nbsp;import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
+&nbsp;
+<b class="nc">&nbsp;public class PatientManagementInfo implements Serializable {</b>
+&nbsp;
+&nbsp;    private static final long serialVersionUID = 1L;
+&nbsp;
+&nbsp;    @ValidDate(relative = DateRelation.TODAY, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String currentDate;
+&nbsp;
+&nbsp;    // TODO removable?
+&nbsp;    private String patientLastUpdated;
+&nbsp;    // TODO removable?
+&nbsp;    private String personLastUpdated;
+&nbsp;
+&nbsp;    private PatientUpdateStatus patientUpdateStatus;
+&nbsp;
+&nbsp;    @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String patientPK;
+&nbsp;    @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String STnumber;
+&nbsp;
+&nbsp;    @OptionalNotBlank(properties = { Property.PATIENT_SUBJECT_NUMBER_REQUIRED }, groups = {
+&nbsp;            SamplePatientEntryForm.SamplePatientEntry.class })
+&nbsp;    @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String subjectNumber;
+&nbsp;    @OptionalNotBlank(properties = { Property.PATIENT_NATIONAL_ID_REQUIRED }, groups = {
+&nbsp;            SamplePatientEntryForm.SamplePatientEntry.class })
+&nbsp;    @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String nationalId;
+&nbsp;    @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String guid;
+&nbsp;//    private UUID fhirUuid;
+&nbsp;
+&nbsp;    @OptionalNotBlank(formFields = { Field.PatientNameRequired }, groups = {
+&nbsp;            SamplePatientEntryForm.SamplePatientEntry.class })
+&nbsp;    @ValidName(nameType = NameType.LAST_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String lastName;
+&nbsp;    @OptionalNotBlank(formFields = { Field.PatientNameRequired }, groups = {
+&nbsp;            SamplePatientEntryForm.SamplePatientEntry.class })
+&nbsp;    @ValidName(nameType = NameType.FIRST_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String firstName;
+&nbsp;    @ValidName(nameType = NameType.FULL_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String aka;
+&nbsp;
+&nbsp;    @ValidName(nameType = NameType.LAST_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String mothersName;
+&nbsp;    @Size(max = 1)
+&nbsp;    private String mothersInitial;
+&nbsp;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String streetAddress;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String city;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String commune;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String addressDepartment;
+&nbsp;
+&nbsp;    @NotBlank(groups = { SamplePatientEntryForm.SamplePatientEntry.class })
+&nbsp;    @Pattern(regexp = ValidationHelper.GENDER_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String gender;
+&nbsp;    // ages are display only
+&nbsp;    private String ageYears;
+&nbsp;    private String ageMonths;
+&nbsp;    private String ageDays;
+<b class="nc">&nbsp;    @ValidDate(relative = DateRelation.PAST, groups = { SamplePatientEntryForm.SamplePatientEntry.class,</b>
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String birthDateForDisplay = &quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;    @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,</b>
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String patientType = &quot;&quot;;
+&nbsp;
+&nbsp;    // for display
+&nbsp;    private static List&lt;PatientType&gt; patientTypes;
+&nbsp;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String insuranceNumber;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String occupation;
+&nbsp;    @Pattern(regexp = ValidationHelper.PHONE_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String primaryPhone;
+&nbsp;    @Email(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
+&nbsp;    private String email;
+&nbsp;
+&nbsp;    public String getEmail() {
+<b class="nc">&nbsp;        return email;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEmail(String email) {
+<b class="nc">&nbsp;        this.email = email;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String healthRegion;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String education;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String maritialStatus;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String nationality;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String healthDistrict;
+&nbsp;    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
+&nbsp;            SamplePatientEntryBatch.class })
+&nbsp;    private String otherNationality;
+&nbsp;
+&nbsp;    @Valid
+&nbsp;    private PatientContact patientContact;
+&nbsp;
+&nbsp;    // for display
+&nbsp;    private static List&lt;Dictionary&gt; addressDepartments;
+&nbsp;
+<b class="nc">&nbsp;    private boolean readOnly = false;</b>
+&nbsp;
+&nbsp;    private List&lt;PatientIdentity&gt; patientIdentities;
+&nbsp;
+&nbsp;    public String getCurrentDate() {
+<b class="nc">&nbsp;        return currentDate;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCurrentDate(String currentDate) {
+<b class="nc">&nbsp;        this.currentDate = currentDate;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getPatientLastUpdated() {
+<b class="nc">&nbsp;        return patientLastUpdated;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPatientLastUpdated(String patientLastUpdated) {
+<b class="nc">&nbsp;        this.patientLastUpdated = patientLastUpdated;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getPersonLastUpdated() {
+<b class="nc">&nbsp;        return personLastUpdated;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPersonLastUpdated(String personLastUpdated) {
+<b class="nc">&nbsp;        this.personLastUpdated = personLastUpdated;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getPatientPK() {
+<b class="nc">&nbsp;        return patientPK;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPatientPK(String patientPK) {
+<b class="nc">&nbsp;        this.patientPK = patientPK;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getSTnumber() {
+<b class="nc">&nbsp;        return STnumber;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setSTnumber(String sTnumber) {
+<b class="nc">&nbsp;        STnumber = sTnumber;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getSubjectNumber() {
+<b class="nc">&nbsp;        return subjectNumber;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setSubjectNumber(String subjectNumber) {
+<b class="nc">&nbsp;        this.subjectNumber = subjectNumber;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getNationalId() {
+<b class="nc">&nbsp;        return nationalId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setNationalId(String nationalId) {
+<b class="nc">&nbsp;        this.nationalId = nationalId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getLastName() {
+<b class="nc">&nbsp;        return lastName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setLastName(String lastName) {
+<b class="nc">&nbsp;        this.lastName = lastName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getFirstName() {
+<b class="nc">&nbsp;        return firstName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setFirstName(String firstName) {
+<b class="nc">&nbsp;        this.firstName = firstName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getAka() {
+<b class="nc">&nbsp;        return aka;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAka(String aka) {
+<b class="nc">&nbsp;        this.aka = aka;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getMothersName() {
+<b class="nc">&nbsp;        return mothersName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setMothersName(String mothersName) {
+<b class="nc">&nbsp;        this.mothersName = mothersName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getMothersInitial() {
+<b class="nc">&nbsp;        return mothersInitial;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setMothersInitial(String mothersInitial) {
+<b class="nc">&nbsp;        this.mothersInitial = mothersInitial;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getStreetAddress() {
+<b class="nc">&nbsp;        return streetAddress;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStreetAddress(String streetAddress) {
+<b class="nc">&nbsp;        this.streetAddress = streetAddress;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getCity() {
+<b class="nc">&nbsp;        return city;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCity(String city) {
+<b class="nc">&nbsp;        this.city = city;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getCommune() {
+<b class="nc">&nbsp;        return commune;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCommune(String commune) {
+<b class="nc">&nbsp;        this.commune = commune;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getBirthDateForDisplay() {
+<b class="nc">&nbsp;        return birthDateForDisplay;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setBirthDateForDisplay(String birthDateForDisplay) {
+<b class="nc">&nbsp;        this.birthDateForDisplay = birthDateForDisplay;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getGender() {
+<b class="nc">&nbsp;        return gender;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setGender(String gender) {
+<b class="nc">&nbsp;        this.gender = gender;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getPatientType() {
+<b class="nc">&nbsp;        return patientType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPatientType(String patientType) {
+<b class="nc">&nbsp;        this.patientType = patientType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getInsuranceNumber() {
+<b class="nc">&nbsp;        return insuranceNumber;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setInsuranceNumber(String insuranceNumber) {
+<b class="nc">&nbsp;        this.insuranceNumber = insuranceNumber;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getOccupation() {
+<b class="nc">&nbsp;        return occupation;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setOccupation(String occupation) {
+<b class="nc">&nbsp;        this.occupation = occupation;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;IdValuePair&gt; getGenders() {
+<b class="nc">&nbsp;        return DisplayListService.getInstance().getList(ListType.GENDERS);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPatientTypes(List&lt;PatientType&gt; patientTypes) {
+<b class="nc">&nbsp;        PatientManagementInfo.patientTypes = patientTypes;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+&nbsp;    public List&lt;PatientType&gt; getPatientTypes() {
+<b class="nc">&nbsp;        if (patientTypes == null) {</b>
+<b class="nc">&nbsp;            patientTypes = SpringContext.getBean(PatientTypeService.class).getAllPatientTypes();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return patientTypes;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAddressDepartment(String addressDepartment) {
+<b class="nc">&nbsp;        this.addressDepartment = addressDepartment;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getAddressDepartment() {
+<b class="nc">&nbsp;        return addressDepartment;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Dictionary&gt; getAddressDepartments() {
+<b class="nc">&nbsp;        if (addressDepartments == null) {</b>
+<b class="nc">&nbsp;            addressDepartments = SpringContext.getBean(DictionaryService.class)</b>
+<b class="nc">&nbsp;                    .getDictionaryEntrysByCategoryAbbreviation(&quot;description&quot;, &quot;haitiDepartment&quot;, true);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return addressDepartments;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getPrimaryPhone() {
+<b class="nc">&nbsp;        return primaryPhone;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPrimaryPhone(String primaryPhone) {
+<b class="nc">&nbsp;        this.primaryPhone = primaryPhone;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;IdValuePair&gt; getHealthRegions() {
+<b class="nc">&nbsp;        return DisplayListService.getInstance().getList(ListType.PATIENT_HEALTH_REGIONS);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;IdValuePair&gt; getHealthDistricts() {
+<b class="nc">&nbsp;        List&lt;IdValuePair&gt; districtsList = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        if (!GenericValidator.isBlankOrNull(healthRegion)) {</b>
+<b class="nc">&nbsp;            List&lt;Organization&gt; districts = SpringContext.getBean(OrganizationService.class)</b>
+<b class="nc">&nbsp;                    .getOrganizationsByParentId(healthRegion);</b>
+<b class="nc">&nbsp;            for (Organization district : districts) {</b>
+<b class="nc">&nbsp;                districtsList.add(new IdValuePair(district.getId(), district.getOrganizationName()));</b>
+<b class="nc">&nbsp;            }</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return districtsList;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getHealthRegion() {
+<b class="nc">&nbsp;        return healthRegion;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setHealthRegion(String healthRegion) {
+<b class="nc">&nbsp;        this.healthRegion = healthRegion;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getHealthDistrict() {
+<b class="nc">&nbsp;        return healthDistrict;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setHealthDistrict(String healthDistrict) {
+<b class="nc">&nbsp;        this.healthDistrict = healthDistrict;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;IdValuePair&gt; getEducationList() {
+<b class="nc">&nbsp;        return DisplayListService.getInstance().getList(ListType.PATIENT_EDUCATION);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;IdValuePair&gt; getMaritialList() {
+<b class="nc">&nbsp;        return DisplayListService.getInstance().getList(ListType.PATIENT_MARITAL_STATUS);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;IdValuePair&gt; getNationalityList() {
+<b class="nc">&nbsp;        return DisplayListService.getInstance().getList(ListType.PATIENT_NATIONALITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getOtherNationality() {
+<b class="nc">&nbsp;        return otherNationality;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setOtherNationality(String otherNationality) {
+<b class="nc">&nbsp;        this.otherNationality = otherNationality;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getEducation() {
+<b class="nc">&nbsp;        return education;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEducation(String education) {
+<b class="nc">&nbsp;        this.education = education;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getMaritialStatus() {
+<b class="nc">&nbsp;        return maritialStatus;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setMaritialStatus(String maritialStatus) {
+<b class="nc">&nbsp;        this.maritialStatus = maritialStatus;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getNationality() {
+<b class="nc">&nbsp;        return nationality;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setNationality(String naionality) {
+<b class="nc">&nbsp;        nationality = naionality;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getGuid() {
+<b class="nc">&nbsp;        return guid;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setGuid(String guid) {
+<b class="nc">&nbsp;        this.guid = guid;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean isReadOnly() {
+<b class="nc">&nbsp;        return readOnly;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setReadOnly(boolean readOnly) {
+<b class="nc">&nbsp;        this.readOnly = readOnly;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getAgeYears() {
+<b class="nc">&nbsp;        return ageYears;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAgeYears(String ageYears) {
+<b class="nc">&nbsp;        this.ageYears = ageYears;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getAgeMonths() {
+<b class="nc">&nbsp;        return ageMonths;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAgeMonths(String ageMonths) {
+<b class="nc">&nbsp;        this.ageMonths = ageMonths;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getAgeDays() {
+<b class="nc">&nbsp;        return ageDays;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAgeDays(String ageDays) {
+<b class="nc">&nbsp;        this.ageDays = ageDays;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public PatientUpdateStatus getPatientUpdateStatus() {
+<b class="nc">&nbsp;        return patientUpdateStatus;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPatientUpdateStatus(PatientUpdateStatus patientUpdateStatus) {
+<b class="nc">&nbsp;        this.patientUpdateStatus = patientUpdateStatus;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;PatientIdentity&gt; getPatientIdentities() {
+<b class="nc">&nbsp;        return patientIdentities;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPatientIdentities(List&lt;PatientIdentity&gt; patientIdentities) {
+<b class="nc">&nbsp;        this.patientIdentities = patientIdentities;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public PatientContact getPatientContact() {
+<b class="nc">&nbsp;        return patientContact;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPatientContact(PatientContact patientContact) {
+<b class="nc">&nbsp;        this.patientContact = patientContact;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;//    public UUID getFhirUuid() {
+&nbsp;//        return fhirUuid;
+&nbsp;//    }
+&nbsp;//
+&nbsp;//    public void setFhirUuid(UUID fhirUuid) {
+&nbsp;//        this.fhirUuid = fhirUuid;
+&nbsp;//    }
+&nbsp;//
+&nbsp;//    public String getFhirUuidAsString() {
+&nbsp;//        return fhirUuid == null ? &quot;&quot; : fhirUuid.toString();
+&nbsp;//    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-23 09:33</div>
+</div>
+</body>
+</html>

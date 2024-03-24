@@ -1,0 +1,312 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > BasePatientEntryByProject</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.openelisglobal.patient.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: BasePatientEntryByProject (org.openelisglobal.patient.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BasePatientEntryByProject</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/62)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.openelisglobal.patient.controller;
+&nbsp;
+&nbsp;import java.lang.reflect.InvocationTargetException;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;import javax.servlet.http.HttpServletRequest;
+&nbsp;
+&nbsp;import org.apache.commons.lang3.tuple.Pair;
+&nbsp;import org.openelisglobal.common.controller.BaseController;
+&nbsp;import org.openelisglobal.common.exception.LIMSException;
+&nbsp;import org.openelisglobal.common.log.LogEvent;
+&nbsp;import org.openelisglobal.common.services.DisplayListService;
+&nbsp;import org.openelisglobal.common.services.DisplayListService.ListType;
+&nbsp;import org.openelisglobal.common.util.IdValuePair;
+&nbsp;import org.openelisglobal.common.validator.BaseErrors;
+&nbsp;import org.openelisglobal.dictionary.ObservationHistoryList;
+&nbsp;import org.openelisglobal.dictionary.valueholder.Dictionary;
+&nbsp;import org.openelisglobal.organization.util.OrganizationTypeList;
+&nbsp;import org.openelisglobal.patient.form.PatientEntryByProjectForm;
+&nbsp;import org.openelisglobal.patient.saving.IAccessioner;
+&nbsp;import org.openelisglobal.patient.saving.RequestType; 
+&nbsp;import org.openelisglobal.patient.valueholder.ObservationData;
+&nbsp;import org.springframework.validation.Errors;
+&nbsp;
+&nbsp;public abstract class BasePatientEntryByProject extends BaseController {
+&nbsp;
+<b class="nc">&nbsp;    private static final String[] BASE_ALLOWED_FIELDS = new String[] { &quot;patientUpdateStatus&quot;, &quot;patientPK&quot;, &quot;samplePK&quot;,</b>
+&nbsp;            &quot;receivedDateForDisplay&quot;, &quot;receivedTimeForDisplay&quot;, &quot;interviewDate&quot;, &quot;interviewTime&quot;, &quot;subjectNumber&quot;,
+&nbsp;            &quot;siteSubjectNumber&quot;, &quot;labNo&quot;, &quot;centerName&quot;, &quot;centerCode&quot;, &quot;lastName&quot;, &quot;firstName&quot;, &quot;gender&quot;,&quot;upidCode&quot;,
+&nbsp;            &quot;birthDateForDisplay&quot;, &quot;observations.projectFormName&quot;, &quot;observations.hivStatus&quot;,
+&nbsp;            &quot;observations.educationLevel&quot;, &quot;observations.maritalStatus&quot;, &quot;observations.nationality&quot;,
+&nbsp;            &quot;observations.nationalityOther&quot;, &quot;observations.legalResidence&quot;, &quot;observations.nameOfDoctor&quot;,
+&nbsp;            &quot;observations.anyPriorDiseases&quot;, &quot;observations.priorDiseases&quot;, &quot;observations.priorDiseasesValue&quot;,
+&nbsp;            &quot;observations.arvProphylaxisBenefit&quot;, &quot;observations.arvProphylaxis&quot;, &quot;observations.currentARVTreatment&quot;,
+&nbsp;            &quot;observations.priorARVTreatment&quot;, &quot;observations.priorARVTreatmentINNsList*&quot;,
+&nbsp;            &quot;observations.cotrimoxazoleTreatment&quot;, &quot;observations.aidsStage&quot;, &quot;observations.anyCurrentDiseases&quot;,
+&nbsp;            &quot;ProjectData.dbsTaken&quot;,&quot;ProjectData.dbsvlTaken&quot;, &quot;ProjectData.pscvlTaken&quot;,&quot;ProjectData.edtaTubeTaken&quot;,&quot;ProjectData.viralLoadTest&quot;, 
+&nbsp;            &quot;observations.currentDiseases&quot;, &quot;observations.currentDiseasesValue&quot;, &quot;observations.currentOITreatment&quot;,
+&nbsp;            &quot;observations.patientWeight&quot;, &quot;observations.karnofskyScore&quot;, &quot;observations.underInvestigation&quot;,
+&nbsp;            &quot;projectData.underInvestigationNote&quot;,
+&nbsp;            //
+&nbsp;            &quot;observations.cd4Count&quot;, &quot;observations.cd4Percent&quot;, &quot;observations.priorCd4Date&quot;,
+&nbsp;            &quot;observations.antiTbTreatment&quot;, &quot;observations.interruptedARVTreatment&quot;,
+&nbsp;            &quot;observations.arvTreatmentAnyAdverseEffects&quot;, &quot;observations.arvTreatmentAdverseEffects*.type&quot;,
+&nbsp;            &quot;observations.arvTreatmentAdverseEffects*.grade&quot;, &quot;observations.arvTreatmentChange&quot;,
+&nbsp;            &quot;observations.arvTreatmentNew&quot;, &quot;observations.arvTreatmentRegime&quot;,
+&nbsp;            &quot;observations.futureARVTreatmentINNsList*&quot;, &quot;observations.cotrimoxazoleTreatmentAnyAdverseEffects&quot;,
+&nbsp;            &quot;observations.cotrimoxazoleTreatmentAdverseEffects*.type&quot;,
+&nbsp;            &quot;observations.cotrimoxazoleTreatmentAdverseEffects*.grade&quot;, &quot;observations.anySecondaryTreatment&quot;,
+&nbsp;            &quot;observations.secondaryTreatment&quot;, &quot;observations.clinicVisits&quot;,
+&nbsp;            //
+&nbsp;            &quot;projectData.EIDSiteName&quot;, &quot;projectData.EIDsiteCode&quot;, &quot;observations.whichPCR&quot;,
+&nbsp;            &quot;observations.reasonForSecondPCRTest&quot;, &quot;observations.nameOfRequestor&quot;, &quot;observations.nameOfSampler&quot;,
+&nbsp;            &quot;observations.eidInfantPTME&quot;, &quot;observations.eidTypeOfClinic&quot;, &quot;observations.eidTypeOfClinicOther&quot;,
+&nbsp;            &quot;observations.eidHowChildFed&quot;, &quot;observations.eidStoppedBreastfeeding&quot;, &quot;observations.eidInfantSymptomatic&quot;,
+&nbsp;            &quot;observations.eidInfantsARV&quot;, &quot;observations.eidInfantCotrimoxazole&quot;, &quot;observations.eidMothersHIVStatus&quot;,
+&nbsp;            &quot;observations.eidMothersARV&quot;,
+&nbsp;            //
+&nbsp;            &quot;projectData.ARVcenterName&quot;, &quot;projectData.ARVcenterCode&quot;, &quot;observations.vlPregnancy&quot;,
+&nbsp;            &quot;observations.vlSuckle&quot;, &quot;observations.arvTreatmentInitDate&quot;, &quot;observations.vlReasonForRequest&quot;,
+&nbsp;            &quot;observations.vlOtherReasonForRequest&quot;, &quot;observations.initcd4Count&quot;, &quot;observations.initcd4Percent&quot;,
+&nbsp;            &quot;observations.initcd4Date&quot;, &quot;observations.demandcd4Count&quot;, &quot;observations.demandcd4Percent&quot;,
+&nbsp;            &quot;observations.demandcd4Date&quot;, &quot;observations.vlBenefit&quot;, &quot;observations.priorVLLab&quot;,
+&nbsp;            &quot;observations.priorVLValue&quot;, &quot;observations.priorVLDate&quot;,
+&nbsp;            //
+&nbsp;            &quot;observations.service&quot;, &quot;observations.hospitalPatient&quot;, &quot;observations.reason&quot;, &quot;ProjectData.asanteTest&quot;,
+&nbsp;			&quot;ProjectData.plasmaTaken&quot;, &quot;ProjectData.serumTaken&quot; };
+&nbsp;
+&nbsp;    protected List&lt;String&gt; getBasePatientEntryByProjectFields() {
+<b class="nc">&nbsp;        List&lt;String&gt; allowedFields = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        allowedFields.addAll(Arrays.asList(BASE_ALLOWED_FIELDS));</b>
+&nbsp;
+<b class="nc">&nbsp;        ObservationData observationData = new ObservationData();</b>
+<b class="nc">&nbsp;        List&lt;Pair&lt;String, String&gt;&gt; priorDiseasesList = observationData.getPriorDiseasesList();</b>
+<b class="nc">&nbsp;        for (Pair&lt;String, String&gt; priorDisease : priorDiseasesList) {</b>
+<b class="nc">&nbsp;            allowedFields.add(&quot;observations.&quot; + priorDisease.getKey());</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        List&lt;Pair&lt;String, String&gt;&gt; currentDiseasesList = observationData.getCurrentDiseasesList();</b>
+<b class="nc">&nbsp;        for (Pair&lt;String, String&gt; currentDisease : currentDiseasesList) {</b>
+<b class="nc">&nbsp;            allowedFields.add(&quot;observations.&quot; + currentDisease.getKey());</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        List&lt;Pair&lt;String, String&gt;&gt; priorRTNDiseasesList = observationData.getRtnPriorDiseasesList();</b>
+<b class="nc">&nbsp;        for (Pair&lt;String, String&gt; priorDisease : priorRTNDiseasesList) {</b>
+<b class="nc">&nbsp;            allowedFields.add(&quot;observations.&quot; + priorDisease.getKey());</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        List&lt;Pair&lt;String, String&gt;&gt; currentRTNDiseasesList = observationData.getRtnCurrentDiseasesList();</b>
+<b class="nc">&nbsp;        for (Pair&lt;String, String&gt; currentDisease : currentRTNDiseasesList) {</b>
+<b class="nc">&nbsp;            allowedFields.add(&quot;observations.&quot; + currentDisease.getKey());</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return allowedFields;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    public BasePatientEntryByProject() {
+<b class="nc">&nbsp;        super();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void updateRequestType(HttpServletRequest httpRequest) {
+<b class="nc">&nbsp;        httpRequest.getSession().setAttribute(&quot;type&quot;, getRequestType(httpRequest).toString().toLowerCase());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected RequestType getRequestType(HttpServletRequest httpRequest) {
+<b class="nc">&nbsp;        String requestTypeStr = httpRequest.getParameter(&quot;type&quot;);</b>
+<b class="nc">&nbsp;        if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(requestTypeStr)) {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                return RequestType.valueOf(requestTypeStr.toUpperCase());</b>
+<b class="nc">&nbsp;            } catch (IllegalArgumentException e) {</b>
+<b class="nc">&nbsp;                LogEvent.logWarn(&quot;BasePatientEntryByProject&quot;, &quot;getRequestType&quot;,</b>
+&nbsp;                        &quot;request type &#39;&quot; + requestTypeStr + &quot;&#39; invalid&quot;);
+<b class="nc">&nbsp;                LogEvent.logWarn(e);</b>
+<b class="nc">&nbsp;                return RequestType.UNKNOWN;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return RequestType.UNKNOWN;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Put the projectFormName in the right place, so that ends up driving the next
+&nbsp;     * patientEntry form to select the right form. The projectFormName is retained
+&nbsp;     * even through form edit/entry(add) reselection, so that all forms know the
+&nbsp;     * current projectForm, so that the user is presented with a good guess on what
+&nbsp;     * they might want to keep doing.
+&nbsp;     *
+&nbsp;     * @param projectFormName @ all from property utils if we&#39;ve coded things wrong
+&nbsp;     *                        in the form def or in this class.
+&nbsp;     */
+&nbsp;    protected void setProjectFormName(PatientEntryByProjectForm form, String projectFormName)
+&nbsp;            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+<b class="nc">&nbsp;        ObservationData observations = form.getObservations();</b>
+<b class="nc">&nbsp;        if (observations == null) {</b>
+<b class="nc">&nbsp;            observations = new ObservationData();</b>
+<b class="nc">&nbsp;            form.setObservations(observations);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        observations.setProjectFormName(projectFormName);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method captures how we deal with the curious accession objects I
+&nbsp;     * (PaHill) created. If someone comes up with a better API (Maybe inject a
+&nbsp;     * messages list to be filled in?) then we can change this bit of plumbing.
+&nbsp;     *
+&nbsp;     * @param request     original request
+&nbsp;     * @param accessioner the object to use to attempt to save.
+&nbsp;     * @return a forward string or null; null =&gt; this attempt to save failed @ if
+&nbsp;     *         things go really bad. Normally, the errors are caught internally an
+&nbsp;     *         appropriate message is added and a forward fail is returned.
+&nbsp;     */
+&nbsp;    protected String handleSave(HttpServletRequest request, IAccessioner accessioner) {
+&nbsp;        String forward;
+&nbsp;        try {
+<b class="nc">&nbsp;            forward = accessioner.save();</b>
+<b class="nc">&nbsp;        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | LIMSException e) {</b>
+<b class="nc">&nbsp;            Errors errors = accessioner.getMessages();</b>
+<b class="nc">&nbsp;            if (errors.hasErrors()) {</b>
+<b class="nc">&nbsp;                saveErrors(errors);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            return FWD_FAIL_INSERT;</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return forward;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Just a utility routine for doing the obvious logging and and appending a
+&nbsp;     * global message.
+&nbsp;     */
+&nbsp;    protected void logAndAddMessage(HttpServletRequest request, String methodName, String messageKey) {
+<b class="nc">&nbsp;        LogEvent.logError(this.getClass().getSimpleName(), methodName, &quot;Unable to enter patient into system&quot;);</b>
+<b class="nc">&nbsp;        Errors errors = new BaseErrors();</b>
+<b class="nc">&nbsp;        errors.reject(messageKey, messageKey);</b>
+<b class="nc">&nbsp;        saveErrors(errors);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * various maps full of a various lists used by the patient entry form
+&nbsp;     * (typically for drop downs) and other forms who want to do patient entry.
+&nbsp;     *
+&nbsp;     * @throws NoSuchMethodException
+&nbsp;     * @throws InvocationTargetException
+&nbsp;     * @throws IllegalAccessException
+&nbsp;     *
+&nbsp;     */
+&nbsp;    public static Map&lt;String, Object&gt; addAllPatientFormLists(PatientEntryByProjectForm form)
+&nbsp;            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+<b class="nc">&nbsp;        Map&lt;String, Object&gt; resultMap = new HashMap&lt;&gt;();</b>
+&nbsp;        //resultMap.put(&quot;GENDERS&quot;, PatientUtil.findGenders());
+&nbsp;
+&nbsp;        //below is more suitable for genders select forms as it is the one used in others forms
+<b class="nc">&nbsp;        List&lt;Dictionary&gt; listOfDictionary = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;IdValuePair&gt; genders = DisplayListService.getInstance().getList(ListType.GENDERS);</b>
+<b class="nc">&nbsp;        for (IdValuePair i : genders) {</b>
+<b class="nc">&nbsp;            Dictionary dictionary = new Dictionary();</b>
+<b class="nc">&nbsp;            dictionary.setId(i.getId());</b>
+<b class="nc">&nbsp;            dictionary.setDictEntry(i.getValue());</b>
+<b class="nc">&nbsp;            listOfDictionary.add(dictionary);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        resultMap.put(&quot;GENDERS&quot;, listOfDictionary);</b>
+&nbsp;        
+<b class="nc">&nbsp;        form.setFormLists(resultMap);</b>
+<b class="nc">&nbsp;        form.setDictionaryLists(ObservationHistoryList.MAP);</b>
+<b class="nc">&nbsp;        form.setOrganizationTypeLists(OrganizationTypeList.MAP);</b>
+&nbsp;
+<b class="nc">&nbsp;        return resultMap;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-23 09:33</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,417 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PatientDAOImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.openelisglobal.patient.daoimpl</a>
+</div>
+
+<h1>Coverage Summary for Class: PatientDAOImpl (org.openelisglobal.patient.daoimpl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PatientDAOImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    22.2%
+  </span>
+  <span class="absValue">
+    (4/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    10.5%
+  </span>
+  <span class="absValue">
+    (13/124)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/**
+&nbsp;* The contents of this file are subject to the Mozilla Public License
+&nbsp;* Version 1.1 (the &quot;License&quot;); you may not use this file except in
+&nbsp;* compliance with the License. You may obtain a copy of the License at
+&nbsp;* http://www.mozilla.org/MPL/
+&nbsp;*
+&nbsp;* Software distributed under the License is distributed on an &quot;AS IS&quot;
+&nbsp;* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+&nbsp;* License for the specific language governing rights and limitations under
+&nbsp;* the License.
+&nbsp;*
+&nbsp;* The Original Code is OpenELIS code.
+&nbsp;*
+&nbsp;* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+&nbsp;*/
+&nbsp;package org.openelisglobal.patient.daoimpl;
+&nbsp;
+&nbsp;import java.lang.reflect.InvocationTargetException;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;import org.apache.commons.beanutils.PropertyUtils;
+&nbsp;import org.hibernate.HibernateException;
+&nbsp;import org.hibernate.Session;
+&nbsp;import org.hibernate.query.NativeQuery;
+&nbsp;import org.hibernate.query.Query;
+&nbsp;import org.openelisglobal.common.daoimpl.BaseDAOImpl;
+&nbsp;import org.openelisglobal.common.exception.LIMSRuntimeException;
+&nbsp;import org.openelisglobal.common.log.LogEvent;
+&nbsp;import org.openelisglobal.common.util.DateUtil;
+&nbsp;import org.openelisglobal.common.util.SystemConfiguration;
+&nbsp;import org.openelisglobal.patient.dao.PatientDAO;
+&nbsp;import org.openelisglobal.patient.valueholder.Patient;
+&nbsp;import org.openelisglobal.person.valueholder.Person;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;/**
+&nbsp; * @author diane benz
+&nbsp; */
+&nbsp;@Component
+&nbsp;@Transactional
+&nbsp;public class PatientDAOImpl extends BaseDAOImpl&lt;Patient, String&gt; implements PatientDAO {
+&nbsp;
+&nbsp;    public PatientDAOImpl() {
+<b class="fc">&nbsp;        super(Patient.class);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Optional&lt;Patient&gt; get(String patientId) {
+<b class="fc">&nbsp;        Optional&lt;Patient&gt; patient = super.get(patientId);</b>
+<b class="fc">&nbsp;        if (patient.isPresent()) {</b>
+<b class="fc">&nbsp;            updateDisplayValues(patient.get());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return patient;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public Patient getData(String patientId) throws LIMSRuntimeException {
+&nbsp;        try {
+<b class="nc">&nbsp;            Patient pat = entityManager.unwrap(Session.class).get(Patient.class, patientId);</b>
+<b class="nc">&nbsp;            if (pat != null) {</b>
+<b class="nc">&nbsp;                updateDisplayValues(pat);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            return pat;</b>
+<b class="nc">&nbsp;        } catch (HibernateException e) {</b>
+<b class="nc">&nbsp;            handleException(e, &quot;getData(patientId)&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public void getData(Patient patient) throws LIMSRuntimeException {
+&nbsp;        try {
+<b class="nc">&nbsp;            Patient pat = entityManager.unwrap(Session.class).get(Patient.class, patient.getId());</b>
+<b class="nc">&nbsp;            if (pat != null) {</b>
+<b class="nc">&nbsp;                updateDisplayValues(pat);</b>
+&nbsp;
+<b class="nc">&nbsp;                PropertyUtils.copyProperties(patient, pat);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                patient.setId(null);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {</b>
+<b class="nc">&nbsp;            LogEvent.logError(e);</b>
+<b class="nc">&nbsp;            throw new LIMSRuntimeException(&quot;Error in Patient getData()&quot;, e);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void updateDisplayValues(Patient pat) {
+<b class="fc">&nbsp;        if (pat.getBirthDate() != null &amp;&amp; pat.getBirthDateForDisplay() == null) {</b>
+<b class="nc">&nbsp;            pat.setBirthDateForDisplay(DateUtil.convertTimestampToStringDate(pat.getBirthDate()));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (pat.getBirthTime() != null) {</b>
+<b class="nc">&nbsp;            pat.setBirthTimeForDisplay(DateUtil.convertSqlDateToStringDate(pat.getBirthTime()));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (pat.getDeathDate() != null) {</b>
+<b class="nc">&nbsp;            pat.setDeathDateForDisplay(DateUtil.convertSqlDateToStringDate(pat.getDeathDate()));</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;Patient&gt; getAllPatients() throws LIMSRuntimeException {
+&nbsp;        List&lt;Patient&gt; list;
+&nbsp;        try {
+<b class="fc">&nbsp;            String sql = &quot;from Patient&quot;;</b>
+<b class="fc">&nbsp;            Query&lt;Patient&gt; query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);</b>
+<b class="fc">&nbsp;            list = query.list();</b>
+<b class="nc">&nbsp;        } catch (RuntimeException e) {</b>
+&nbsp;            // bugzilla 2154
+<b class="nc">&nbsp;            LogEvent.logError(e);</b>
+<b class="nc">&nbsp;            throw new LIMSRuntimeException(&quot;Error in Patient getAllPatients()&quot;, e);</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        return list;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;Patient&gt; getPageOfPatients(int startingRecNo) throws LIMSRuntimeException {
+&nbsp;        List&lt;Patient&gt; patients;
+&nbsp;        try {
+&nbsp;            // calculate maxRow to be one more than the page size
+<b class="nc">&nbsp;            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);</b>
+&nbsp;
+<b class="nc">&nbsp;            String sql = &quot;from Patient t order by t.id&quot;;</b>
+<b class="nc">&nbsp;            Query&lt;Patient&gt; query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);</b>
+<b class="nc">&nbsp;            query.setFirstResult(startingRecNo - 1);</b>
+<b class="nc">&nbsp;            query.setMaxResults(endingRecNo - 1);</b>
+&nbsp;
+<b class="nc">&nbsp;            patients = query.list();</b>
+&nbsp;
+<b class="nc">&nbsp;        } catch (RuntimeException e) {</b>
+&nbsp;            // bugzilla 2154
+<b class="nc">&nbsp;            LogEvent.logError(e);</b>
+<b class="nc">&nbsp;            throw new LIMSRuntimeException(&quot;Error in Patient getPageOfPatients()&quot;, e);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        return patients;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Patient readPatient(String idString) {
+<b class="nc">&nbsp;        Patient pat = null;</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            pat = entityManager.unwrap(Session.class).get(Patient.class, idString);</b>
+<b class="nc">&nbsp;        } catch (RuntimeException e) {</b>
+&nbsp;            // bugzilla 2154
+<b class="nc">&nbsp;            LogEvent.logError(e);</b>
+<b class="nc">&nbsp;            throw new LIMSRuntimeException(&quot;Error in Patient readPatient()&quot;, e);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        return pat;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean externalIDExists(String patientExternalID) {
+&nbsp;
+&nbsp;        List&lt;Patient&gt; results;
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            String sql = &quot;From Patient where external_id = :patientID&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;            Query&lt;Patient&gt; query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);</b>
+<b class="nc">&nbsp;            query.setParameter(&quot;patientID&quot;, patientExternalID);</b>
+&nbsp;
+<b class="nc">&nbsp;            results = query.list();</b>
+<b class="nc">&nbsp;        } catch (RuntimeException e) {</b>
+<b class="nc">&nbsp;            LogEvent.logError(e);</b>
+<b class="nc">&nbsp;            throw new LIMSRuntimeException(&quot;Error in Patient readPatient()&quot;, e);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        return !results.isEmpty();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected Patient getPatientByStringProperty(String propertyName, String propertyValue) {
+&nbsp;        List&lt;Patient&gt; patients;
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            String sql = &quot;From Patient p where p.&quot; + propertyName + &quot; = :&quot; + propertyName;</b>
+<b class="nc">&nbsp;            Query&lt;Patient&gt; query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);</b>
+<b class="nc">&nbsp;            query.setParameter(propertyName, propertyValue);</b>
+<b class="nc">&nbsp;            patients = query.list();</b>
+<b class="nc">&nbsp;        } catch (RuntimeException e) {</b>
+<b class="nc">&nbsp;            LogEvent.logError(e);</b>
+<b class="nc">&nbsp;            throw new LIMSRuntimeException(&quot;Error in Patient getPatientByStringProperty(&quot; + propertyName + &quot;\&quot;, ) &quot;, e);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return patients.isEmpty() ? null : patients.get(0);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public Patient getPatientByNationalId(String nationalId) {
+<b class="nc">&nbsp;        return getPatientByStringProperty(&quot;nationalId&quot;, nationalId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;Patient&gt; getPatientsByNationalId(String nationalId) throws LIMSRuntimeException {
+&nbsp;        try {
+<b class="nc">&nbsp;            String sql = &quot;From Patient p where p.nationalId = :nationalId&quot;;</b>
+<b class="nc">&nbsp;            Query&lt;Patient&gt; query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);</b>
+<b class="nc">&nbsp;            query.setParameter(&quot;nationalId&quot;, nationalId);</b>
+<b class="nc">&nbsp;            List&lt;Patient&gt; patients = query.list();</b>
+<b class="nc">&nbsp;            return patients;</b>
+<b class="nc">&nbsp;        } catch (RuntimeException e) {</b>
+<b class="nc">&nbsp;            handleException(e, &quot;getPatientsByNationalId&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public Patient getPatientByExternalId(String externalId) {
+<b class="nc">&nbsp;        return getPatientByStringProperty(&quot;externalId&quot;, externalId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public Patient getPatientByPerson(Person person) throws LIMSRuntimeException {
+&nbsp;        List&lt;Patient&gt; patients;
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            String sql = &quot;From Patient p where p.person.id = :personID&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;            Query&lt;Patient&gt; query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);</b>
+<b class="nc">&nbsp;            query.setParameter(&quot;personID&quot;, Integer.parseInt(person.getId()));</b>
+&nbsp;
+<b class="nc">&nbsp;            patients = query.list();</b>
+<b class="nc">&nbsp;        } catch (RuntimeException e) {</b>
+<b class="nc">&nbsp;            LogEvent.logError(e);</b>
+<b class="nc">&nbsp;            throw new LIMSRuntimeException(&quot;Error in Patient getPatientByPerson()&quot;, e);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        return patients.size() &gt; 0 ? patients.get(0) : null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional
+&nbsp;    public List&lt;String&gt; getPatientIdentityBySampleStatusIdAndProject(List&lt;Integer&gt; inclusiveStatusIdList,
+&nbsp;            String project) throws LIMSRuntimeException {
+&nbsp;
+<b class="nc">&nbsp;        boolean useIdList = inclusiveStatusIdList != null &amp;&amp; inclusiveStatusIdList.size() &gt; 0;</b>
+&nbsp;
+<b class="nc">&nbsp;        StringBuilder sqlBuilder = new StringBuilder();</b>
+<b class="nc">&nbsp;        sqlBuilder.append(&quot;select COALESCE(pat.national_id, pat.external_id) as subjectNo from clinlims.sample s &quot;);</b>
+<b class="nc">&nbsp;        sqlBuilder.append(&quot;join clinlims.sample_projects sp on sp.samp_id = s.id &quot;);</b>
+<b class="nc">&nbsp;        sqlBuilder.append(&quot;join clinlims.project p on sp.proj_id = p.id &quot;);</b>
+<b class="nc">&nbsp;        sqlBuilder.append(&quot;join clinlims.sample_human sh on sh.samp_id = s.id &quot;);</b>
+<b class="nc">&nbsp;        sqlBuilder.append(&quot;join clinlims.patient pat on pat.id = sh.patient_id  &quot;);</b>
+<b class="nc">&nbsp;        sqlBuilder.append(&quot;where p.name = :project &quot;);</b>
+<b class="nc">&nbsp;        if (useIdList) {</b>
+<b class="nc">&nbsp;            sqlBuilder.append(&quot;and s.status_id in(:statusIdList) &quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sqlBuilder.toString());</b>
+<b class="nc">&nbsp;            if (useIdList) {</b>
+<b class="nc">&nbsp;                query.setParameterList(&quot;statusIdList&quot;, inclusiveStatusIdList);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            query.setParameter(&quot;project&quot;, project);</b>
+&nbsp;
+<b class="nc">&nbsp;            List&lt;String&gt; subjectList = query.list();</b>
+&nbsp;
+<b class="nc">&nbsp;            return subjectList;</b>
+<b class="nc">&nbsp;        } catch (RuntimeException e) {</b>
+<b class="nc">&nbsp;            handleException(e, &quot;getPatientIdentityBySampleStatusIdAndProject&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return new ArrayList&lt;&gt;();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public Patient getPatientBySubjectNumber(String subjectNumber) {
+<b class="nc">&nbsp;        return getPatientByStringProperty(&quot;subjectNumber&quot;, subjectNumber);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;Patient&gt; getAllMissingFhirUuid() {
+<b class="nc">&nbsp;        String sql = &quot;from Patient p where p.fhirUuid is NULL&quot;;</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            Query&lt;Patient&gt; query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);</b>
+<b class="nc">&nbsp;            List&lt;Patient&gt; patientList = query.list();</b>
+&nbsp;
+<b class="nc">&nbsp;            return patientList;</b>
+<b class="nc">&nbsp;        } catch (HibernateException e) {</b>
+<b class="nc">&nbsp;            handleException(e, &quot;getAllMissingFhirUuid&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return new ArrayList&lt;&gt;();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Patient getByExternalId(String id) {
+<b class="nc">&nbsp;        String sql = &quot;from Patient p where p.externalId = :id&quot;;</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            Query&lt;Patient&gt; query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);</b>
+<b class="nc">&nbsp;            query.setParameter(&quot;id&quot;, id);</b>
+<b class="nc">&nbsp;            return query.uniqueResult();</b>
+<b class="nc">&nbsp;        } catch (HibernateException e) {</b>
+<b class="nc">&nbsp;            handleException(e, &quot;getByExternalId&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-23 09:33</div>
+</div>
+</body>
+</html>

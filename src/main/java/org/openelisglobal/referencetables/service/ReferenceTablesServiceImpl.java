@@ -39,6 +39,9 @@ public class ReferenceTablesServiceImpl extends BaseObjectServiceImpl<ReferenceT
 
     }
 
+
+
+
     @Override
     @Transactional(readOnly = true)
     public List<ReferenceTables> getAllReferenceTablesForHl7Encoding() {

@@ -1,0 +1,939 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PatientServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.openelisglobal.patient.service</a>
+</div>
+
+<h1>Coverage Summary for Class: PatientServiceImpl (org.openelisglobal.patient.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PatientServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    7.8%
+  </span>
+  <span class="absValue">
+    (5/64)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    22.8%
+  </span>
+  <span class="absValue">
+    (61/268)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.openelisglobal.patient.service;
+&nbsp;
+&nbsp;import java.sql.Timestamp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;import javax.annotation.PostConstruct;
+&nbsp;
+&nbsp;import org.openelisglobal.address.service.AddressPartService;
+&nbsp;import org.openelisglobal.address.service.PersonAddressService;
+&nbsp;import org.openelisglobal.address.valueholder.AddressPart;
+&nbsp;import org.openelisglobal.address.valueholder.PersonAddress;
+&nbsp;import org.openelisglobal.common.exception.LIMSRuntimeException;
+&nbsp;import org.openelisglobal.common.log.LogEvent;
+&nbsp;import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
+&nbsp;import org.openelisglobal.common.util.DateUtil;
+&nbsp;import org.openelisglobal.common.util.validator.GenericValidator;
+&nbsp;import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
+&nbsp;import org.openelisglobal.gender.service.GenderService;
+&nbsp;import org.openelisglobal.gender.valueholder.Gender;
+&nbsp;import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
+&nbsp;import org.openelisglobal.patient.action.bean.PatientManagementInfo;
+&nbsp;import org.openelisglobal.patient.dao.PatientDAO;
+&nbsp;import org.openelisglobal.patient.util.PatientUtil;
+&nbsp;import org.openelisglobal.patient.valueholder.Patient;
+&nbsp;import org.openelisglobal.patient.valueholder.PatientContact;
+&nbsp;import org.openelisglobal.patientidentity.service.PatientIdentityService;
+&nbsp;import org.openelisglobal.patientidentity.valueholder.PatientIdentity;
+&nbsp;import org.openelisglobal.patientidentitytype.service.PatientIdentityTypeService;
+&nbsp;import org.openelisglobal.patientidentitytype.util.PatientIdentityTypeMap;
+&nbsp;import org.openelisglobal.patientidentitytype.valueholder.PatientIdentityType;
+&nbsp;import org.openelisglobal.patienttype.service.PatientPatientTypeService;
+&nbsp;import org.openelisglobal.patienttype.util.PatientTypeMap;
+&nbsp;import org.openelisglobal.patienttype.valueholder.PatientPatientType;
+&nbsp;import org.openelisglobal.person.service.PersonService;
+&nbsp;import org.openelisglobal.person.valueholder.Person;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;@Service
+&nbsp;public class PatientServiceImpl extends AuditableBaseObjectServiceImpl&lt;Patient, String&gt; implements PatientService {
+&nbsp;
+&nbsp;    public final static String ADDRESS_STREET = &quot;Street&quot;;
+&nbsp;    public final static String ADDRESS_STATE = &quot;State&quot;;
+&nbsp;    public final static String ADDRESS_VILLAGE = &quot;village&quot;;
+&nbsp;    public final static String ADDRESS_DEPT = &quot;department&quot;;
+&nbsp;    public final static String ADDRESS_COMMUNE = &quot;commune&quot;;
+&nbsp;    public final static String ADDRESS_ZIP = &quot;zip&quot;;
+&nbsp;    public final static String ADDRESS_COUNTRY = &quot;Country&quot;;
+&nbsp;    public final static String ADDRESS_CITY = &quot;City&quot;;
+&nbsp;
+&nbsp;    // These have getters
+&nbsp;    private static String PATIENT_ST_IDENTITY;
+&nbsp;    private static String PATIENT_SUBJECT_IDENTITY;
+&nbsp;    private static String PATIENT_HEALTH_DISTRICT_IDENTITY;
+&nbsp;    private static String PATIENT_HEALTH_REGION_IDENTITY;
+&nbsp;
+&nbsp;    // these are only used in this class
+&nbsp;    private static String PATIENT_GUID_IDENTITY;
+&nbsp;    private static String PATIENT_NATIONAL_IDENTITY;
+&nbsp;    private static String PATIENT_AKA_IDENTITY;
+&nbsp;    private static String PATIENT_MOTHER_IDENTITY;
+&nbsp;    private static String PATIENT_INSURANCE_IDENTITY;
+&nbsp;    private static String PATIENT_OCCUPATION_IDENTITY;
+&nbsp;    private static String PATIENT_ORG_SITE_IDENTITY;
+&nbsp;    private static String PATIENT_MOTHERS_INITIAL_IDENTITY;
+&nbsp;    private static String PATIENT_EDUCATION_IDENTITY;
+&nbsp;    private static String PATIENT_MARITAL_IDENTITY;
+&nbsp;    private static String PATIENT_OB_NUMBER_IDENTITY;
+&nbsp;    private static String PATIENT_PC_NUMBER_IDENTITY;
+&nbsp;    private static String PATIENT_NATIONALITY;
+&nbsp;    private static String PATIENT_OTHER_NATIONALITY;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private PatientDAO baseObjectDAO;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private PatientIdentityService patientIdentityService;
+&nbsp;    @Autowired
+&nbsp;    private GenderService genderService;
+&nbsp;    @Autowired
+&nbsp;    private PatientIdentityTypeService identityTypeService;
+&nbsp;    @Autowired
+&nbsp;    private AddressPartService addressPartService;
+&nbsp;    @Autowired
+&nbsp;    private PersonAddressService personAddressService;
+&nbsp;    @Autowired
+&nbsp;    private PatientPatientTypeService patientPatientTypeService;
+&nbsp;    @Autowired
+&nbsp;    private PersonService personService;
+&nbsp;    @Autowired
+&nbsp;    protected FhirPersistanceService fhirPersistanceService;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private PatientContactService patientContactService;
+&nbsp;
+&nbsp;    @PostConstruct
+&nbsp;    public void initializeGlobalVariables() {
+&nbsp;
+<b class="fc">&nbsp;        PatientIdentityType patientType = identityTypeService.getNamedIdentityType(&quot;GUID&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_GUID_IDENTITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        patientType = identityTypeService.getNamedIdentityType(&quot;SUBJECT&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_SUBJECT_IDENTITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        patientType = identityTypeService.getNamedIdentityType(&quot;NATIONAL&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_NATIONAL_IDENTITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        patientType = identityTypeService.getNamedIdentityType(&quot;ST&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_ST_IDENTITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        patientType = identityTypeService.getNamedIdentityType(&quot;AKA&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_AKA_IDENTITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        patientType = identityTypeService.getNamedIdentityType(&quot;MOTHER&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_MOTHER_IDENTITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        patientType = identityTypeService.getNamedIdentityType(&quot;INSURANCE&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_INSURANCE_IDENTITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        patientType = identityTypeService.getNamedIdentityType(&quot;OCCUPATION&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_OCCUPATION_IDENTITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        patientType = identityTypeService.getNamedIdentityType(&quot;ORG_SITE&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_ORG_SITE_IDENTITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        patientType = identityTypeService.getNamedIdentityType(&quot;MOTHERS_INITIAL&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_MOTHERS_INITIAL_IDENTITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        patientType = identityTypeService.getNamedIdentityType(&quot;EDUCATION&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_EDUCATION_IDENTITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        patientType = identityTypeService.getNamedIdentityType(&quot;MARITIAL&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_MARITAL_IDENTITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        patientType = identityTypeService.getNamedIdentityType(&quot;HEALTH DISTRICT&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_HEALTH_DISTRICT_IDENTITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        patientType = identityTypeService.getNamedIdentityType(&quot;HEALTH REGION&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_HEALTH_REGION_IDENTITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        patientType = identityTypeService.getNamedIdentityType(&quot;OB_NUMBER&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_OB_NUMBER_IDENTITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        patientType = identityTypeService.getNamedIdentityType(&quot;PC_NUMBER&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_PC_NUMBER_IDENTITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        patientType = identityTypeService.getNamedIdentityType(&quot;NATIONALITY&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_NATIONALITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        patientType = identityTypeService.getNamedIdentityType(&quot;OTHER NATIONALITY&quot;);</b>
+<b class="fc">&nbsp;        if (patientType != null) {</b>
+<b class="fc">&nbsp;            PATIENT_OTHER_NATIONALITY = patientType.getId();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    PatientServiceImpl() {
+<b class="fc">&nbsp;        super(Patient.class);</b>
+<b class="fc">&nbsp;        this.auditTrailLog = true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    protected PatientDAO getBaseObjectDAO() {
+<b class="fc">&nbsp;        return baseObjectDAO;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String insert(Patient patient) {
+<b class="fc">&nbsp;        if (patient.getFhirUuid() == null) {</b>
+<b class="fc">&nbsp;            patient.setFhirUuid(UUID.randomUUID());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return super.insert(patient);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static String getPatientSTIdentity() {
+<b class="nc">&nbsp;        return PATIENT_ST_IDENTITY;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static String getPatientSubjectIdentity() {
+<b class="nc">&nbsp;        return PATIENT_SUBJECT_IDENTITY;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static String getPatientHealthDistrictIdentity() {
+<b class="nc">&nbsp;        return PATIENT_HEALTH_DISTRICT_IDENTITY;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static String getPatientHealthRegionIdentity() {
+<b class="nc">&nbsp;        return PATIENT_HEALTH_REGION_IDENTITY;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Patient getPatientForGuid(String guid) {
+<b class="nc">&nbsp;        List&lt;PatientIdentity&gt; identites = patientIdentityService.getPatientIdentitiesByValueAndType(guid,</b>
+&nbsp;                PATIENT_GUID_IDENTITY);
+<b class="nc">&nbsp;        if (identites.isEmpty()) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return baseObjectDAO.getData(identites.get(0).getPatientId());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;     * (non-Javadoc)
+&nbsp;     *
+&nbsp;     * @see org.openelisglobal.common.services.IPatientService#getGUID()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getGUID(Patient patient) {
+<b class="nc">&nbsp;        return getIdentityInfo(patient, PATIENT_GUID_IDENTITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;     * (non-Javadoc)
+&nbsp;     *
+&nbsp;     * @see org.openelisglobal.common.services.IPatientService#getNationalId()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getNationalId(Patient patient) {
+<b class="nc">&nbsp;        if (patient == null) {</b>
+<b class="nc">&nbsp;            return &quot;&quot;;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (!GenericValidator.isBlankOrNull(patient.getNationalId())) {</b>
+<b class="nc">&nbsp;            return patient.getNationalId();</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return getIdentityInfo(patient, PATIENT_NATIONAL_IDENTITY);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;     * (non-Javadoc)
+&nbsp;     *
+&nbsp;     * @see org.openelisglobal.common.services.IPatientService#getSTNumber()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getSTNumber(Patient patient) {
+<b class="nc">&nbsp;        return getIdentityInfo(patient, PATIENT_ST_IDENTITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;     * (non-Javadoc)
+&nbsp;     *
+&nbsp;     * @see org.openelisglobal.common.services.IPatientService#getSubjectNumber()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getSubjectNumber(Patient patient) {
+<b class="nc">&nbsp;        return getIdentityInfo(patient, PATIENT_SUBJECT_IDENTITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private String getIdentityInfo(Patient patient, String identityId) {
+<b class="nc">&nbsp;        if (patient == null || GenericValidator.isBlankOrNull(identityId)) {</b>
+<b class="nc">&nbsp;            return &quot;&quot;;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        PatientIdentity identity = patientIdentityService.getPatitentIdentityForPatientAndType(patient.getId(),</b>
+&nbsp;                identityId);
+&nbsp;
+<b class="nc">&nbsp;        if (identity != null) {</b>
+<b class="nc">&nbsp;            return identity.getIdentityData();</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return &quot;&quot;;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;     * (non-Javadoc)
+&nbsp;     *
+&nbsp;     * @see org.openelisglobal.common.services.IPatientService#getFirstName()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getFirstName(Patient patient) {
+<b class="nc">&nbsp;        return personService.getFirstName(patient.getPerson());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;     * (non-Javadoc)
+&nbsp;     *
+&nbsp;     * @see org.openelisglobal.common.services.IPatientService#getLastName()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getLastName(Patient patient) {
+<b class="nc">&nbsp;        return personService.getLastName(patient.getPerson());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;     * (non-Javadoc)
+&nbsp;     *
+&nbsp;     * @see org.openelisglobal.common.services.IPatientService#getLastFirstName()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getLastFirstName(Patient patient) {
+<b class="nc">&nbsp;        return personService.getLastFirstName(patient.getPerson());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;     * (non-Javadoc)
+&nbsp;     *
+&nbsp;     * @see org.openelisglobal.common.services.IPatientService#getGender()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getGender(Patient patient) {
+<b class="nc">&nbsp;        return patient != null ? patient.getGender() : &quot;&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getLocalizedGender(Patient patient) {
+<b class="nc">&nbsp;        String genderType = getGender(patient);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (genderType.length() &gt; 0) {</b>
+<b class="nc">&nbsp;            Gender gender = genderService.getGenderByType(genderType);</b>
+<b class="nc">&nbsp;            if (gender != null) {</b>
+<b class="nc">&nbsp;                return gender.getLocalizedName();</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;     * (non-Javadoc)
+&nbsp;     *
+&nbsp;     * @see org.openelisglobal.common.services.IPatientService#getAddressComponents(
+&nbsp;     * )
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Map&lt;String, String&gt; getAddressComponents(Patient patient) {
+<b class="nc">&nbsp;        return personService.getAddressComponents(patient.getPerson());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;     * (non-Javadoc)
+&nbsp;     *
+&nbsp;     * @see org.openelisglobal.common.services.IPatientService#getEnteredDOB()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getEnteredDOB(Patient patient) {
+<b class="nc">&nbsp;        return patient != null ? patient.getBirthDateForDisplay() : &quot;&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public Timestamp getDOB(Patient patient) {
+<b class="nc">&nbsp;        return patient != null ? patient.getBirthDate() : null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;     * (non-Javadoc)
+&nbsp;     *
+&nbsp;     * @see org.openelisglobal.common.services.IPatientService#getPhone()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getPhone(Patient patient) {
+<b class="nc">&nbsp;        return personService.getPhone(patient.getPerson());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;     * (non-Javadoc)
+&nbsp;     *
+&nbsp;     * @see org.openelisglobal.common.services.IPatientService#getPerson()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public Person getPerson(Patient patient) {
+<b class="nc">&nbsp;        return patient.getPerson();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;     * (non-Javadoc)
+&nbsp;     *
+&nbsp;     * @see org.openelisglobal.common.services.IPatientService#getPatientId()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getPatientId(Patient patient) {
+<b class="nc">&nbsp;        return patient == null ? null : patient.getId();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;     * (non-Javadoc)
+&nbsp;     *
+&nbsp;     * @see org.openelisglobal.common.services.IPatientService#getBirthdayForDisplay
+&nbsp;     * ()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getBirthdayForDisplay(Patient patient) {
+<b class="nc">&nbsp;        return patient != null ? DateUtil.convertTimestampToStringDate(patient.getBirthDate()) : &quot;&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;     * (non-Javadoc)
+&nbsp;     *
+&nbsp;     * @see org.openelisglobal.common.services.IPatientService#getIdentityList()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;PatientIdentity&gt; getIdentityList(Patient patient) {
+<b class="nc">&nbsp;        return patient != null ? PatientUtil.getIdentityListForPatient(patient) : new ArrayList&lt;&gt;();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getExternalId(Patient patient) {
+<b class="nc">&nbsp;        return patient == null ? &quot;&quot; : patient.getExternalId();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getAKA(Patient patient) {
+<b class="nc">&nbsp;        return getIdentityInfo(patient, PATIENT_AKA_IDENTITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getMother(Patient patient) {
+<b class="nc">&nbsp;        return getIdentityInfo(patient, PATIENT_MOTHER_IDENTITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getInsurance(Patient patient) {
+<b class="nc">&nbsp;        return getIdentityInfo(patient, PATIENT_INSURANCE_IDENTITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getOccupation(Patient patient) {
+<b class="nc">&nbsp;        return getIdentityInfo(patient, PATIENT_OCCUPATION_IDENTITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getOrgSite(Patient patient) {
+<b class="nc">&nbsp;        return getIdentityInfo(patient, PATIENT_ORG_SITE_IDENTITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getMothersInitial(Patient patient) {
+<b class="nc">&nbsp;        return getIdentityInfo(patient, PATIENT_MOTHERS_INITIAL_IDENTITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getEducation(Patient patient) {
+<b class="nc">&nbsp;        return getIdentityInfo(patient, PATIENT_EDUCATION_IDENTITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getMaritalStatus(Patient patient) {
+<b class="nc">&nbsp;        return getIdentityInfo(patient, PATIENT_MARITAL_IDENTITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getHealthDistrict(Patient patient) {
+<b class="nc">&nbsp;        return getIdentityInfo(patient, PATIENT_HEALTH_DISTRICT_IDENTITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getHealthRegion(Patient patient) {
+<b class="nc">&nbsp;        return getIdentityInfo(patient, PATIENT_HEALTH_REGION_IDENTITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getObNumber(Patient patient) {
+<b class="nc">&nbsp;        return getIdentityInfo(patient, PATIENT_OB_NUMBER_IDENTITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getPCNumber(Patient patient) {
+<b class="nc">&nbsp;        return getIdentityInfo(patient, PATIENT_PC_NUMBER_IDENTITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getNationality(Patient patient) {
+<b class="nc">&nbsp;        return getIdentityInfo(patient, PATIENT_NATIONALITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public String getOtherNationality(Patient patient) {
+<b class="nc">&nbsp;        return getIdentityInfo(patient, PATIENT_OTHER_NATIONALITY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public void getData(Patient patient) {
+<b class="nc">&nbsp;        getBaseObjectDAO().getData(patient);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public Patient getData(String patientId) {
+<b class="nc">&nbsp;        return getBaseObjectDAO().getData(patientId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public Patient getPatientByNationalId(String nationalId) {
+<b class="nc">&nbsp;        return getBaseObjectDAO().getPatientByNationalId(nationalId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public Patient getPatientBySubjectNumber(String subjectNumber) {
+<b class="nc">&nbsp;        return getBaseObjectDAO().getPatientBySubjectNumber(subjectNumber);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;Patient&gt; getPatientsByNationalId(String nationalId) {
+<b class="nc">&nbsp;        return getBaseObjectDAO().getPatientsByNationalId(nationalId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public Patient getPatientByPerson(Person person) {
+<b class="nc">&nbsp;        return getBaseObjectDAO().getPatientByPerson(person);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;Patient&gt; getPageOfPatients(int startingRecNo) {
+<b class="nc">&nbsp;        return getBaseObjectDAO().getPageOfPatients(startingRecNo);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public Patient getPatientByExternalId(String externalId) {
+<b class="nc">&nbsp;        return getBaseObjectDAO().getPatientByExternalId(externalId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;Patient&gt; getAllPatients() {
+<b class="fc">&nbsp;        return getBaseObjectDAO().getAllPatients();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean externalIDExists(String patientExternalID) {
+<b class="nc">&nbsp;        return getBaseObjectDAO().externalIDExists(patientExternalID);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Patient readPatient(String idString) {
+<b class="nc">&nbsp;        return getBaseObjectDAO().readPatient(idString);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;String&gt; getPatientIdentityBySampleStatusIdAndProject(List&lt;Integer&gt; inclusiveStatusIdList,
+&nbsp;            String study) {
+<b class="nc">&nbsp;        return getBaseObjectDAO().getPatientIdentityBySampleStatusIdAndProject(inclusiveStatusIdList, study);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional
+&nbsp;    public void persistPatientData(PatientManagementInfo patientInfo, Patient patient, String sysUserId)
+&nbsp;            throws LIMSRuntimeException {
+<b class="nc">&nbsp;        if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {</b>
+<b class="nc">&nbsp;            personService.insert(patient.getPerson());</b>
+<b class="nc">&nbsp;        } else if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {</b>
+<b class="nc">&nbsp;            personService.update(patient.getPerson());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        patient.setPerson(patient.getPerson());</b>
+&nbsp;
+<b class="nc">&nbsp;        if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {</b>
+<b class="nc">&nbsp;            UUID uuid = UUID.randomUUID();</b>
+&nbsp;//            patientInfo.setFhirUuid(uuid);
+<b class="nc">&nbsp;            patientInfo.setGuid(uuid.toString());</b>
+<b class="nc">&nbsp;            patient.setFhirUuid(uuid);</b>
+<b class="nc">&nbsp;            insert(patient);</b>
+<b class="nc">&nbsp;        } else if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {</b>
+<b class="nc">&nbsp;            update(patient);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        persistContact(patientInfo, patient);</b>
+<b class="nc">&nbsp;        persistPatientRelatedInformation(patientInfo, patient, sysUserId);</b>
+<b class="nc">&nbsp;        patientInfo.setPatientPK(patient.getId());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void persistContact(PatientManagementInfo patientInfo, Patient patient) {
+<b class="nc">&nbsp;        if (GenericValidator.isBlankOrNull(patientInfo.getPatientContact().getId())) {</b>
+<b class="nc">&nbsp;            PatientContact contact = patientInfo.getPatientContact();</b>
+<b class="nc">&nbsp;            Person contactPerson = patientInfo.getPatientContact().getPerson();</b>
+<b class="nc">&nbsp;            contact.setPatientId(patient.getId());</b>
+<b class="nc">&nbsp;            contact.setSysUserId(patientInfo.getPatientContact().getSysUserId());</b>
+<b class="nc">&nbsp;            contactPerson.setSysUserId(contact.getSysUserId());</b>
+&nbsp;
+<b class="nc">&nbsp;            personService.insert(contactPerson);</b>
+<b class="nc">&nbsp;            patientContactService.insert(contact);</b>
+<b class="nc">&nbsp;        } else {</b>
+<b class="nc">&nbsp;            Person newContactPerson = patientInfo.getPatientContact().getPerson();</b>
+<b class="nc">&nbsp;            PatientContact contact = patientContactService.get(patientInfo.getPatientContact().getId());</b>
+<b class="nc">&nbsp;            Person oldContactPerson = contact.getPerson();</b>
+<b class="nc">&nbsp;            oldContactPerson.setEmail(newContactPerson.getEmail());</b>
+<b class="nc">&nbsp;            oldContactPerson.setLastName(newContactPerson.getLastName());</b>
+<b class="nc">&nbsp;            oldContactPerson.setFirstName(newContactPerson.getFirstName());</b>
+<b class="nc">&nbsp;            oldContactPerson.setPrimaryPhone(newContactPerson.getPrimaryPhone());</b>
+<b class="nc">&nbsp;            contact.setSysUserId(patientInfo.getPatientContact().getSysUserId());</b>
+<b class="nc">&nbsp;            oldContactPerson.setSysUserId(patientInfo.getPatientContact().getSysUserId());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void persistPatientRelatedInformation(PatientManagementInfo patientInfo, Patient patient,
+&nbsp;            String sysUserId) {
+<b class="nc">&nbsp;        persistIdentityTypes(patientInfo, patient, sysUserId);</b>
+<b class="nc">&nbsp;        persistExtraPatientAddressInfo(patientInfo, patient, sysUserId);</b>
+<b class="nc">&nbsp;        persistPatientType(patientInfo, patient, sysUserId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void persistIdentityTypes(PatientManagementInfo patientInfo, Patient patient, String sysUserId) {
+&nbsp;
+<b class="nc">&nbsp;        persistIdentityType(patientInfo.getSTnumber(), &quot;ST&quot;, patientInfo, patient, sysUserId);</b>
+<b class="nc">&nbsp;        persistIdentityType(patientInfo.getMothersName(), &quot;MOTHER&quot;, patientInfo, patient, sysUserId);</b>
+<b class="nc">&nbsp;        persistIdentityType(patientInfo.getAka(), &quot;AKA&quot;, patientInfo, patient, sysUserId);</b>
+<b class="nc">&nbsp;        persistIdentityType(patientInfo.getInsuranceNumber(), &quot;INSURANCE&quot;, patientInfo, patient, sysUserId);</b>
+<b class="nc">&nbsp;        persistIdentityType(patientInfo.getOccupation(), &quot;OCCUPATION&quot;, patientInfo, patient, sysUserId);</b>
+<b class="nc">&nbsp;        persistIdentityType(patientInfo.getSubjectNumber(), &quot;SUBJECT&quot;, patientInfo, patient, sysUserId);</b>
+<b class="nc">&nbsp;        persistIdentityType(patientInfo.getMothersInitial(), &quot;MOTHERS_INITIAL&quot;, patientInfo, patient, sysUserId);</b>
+<b class="nc">&nbsp;        persistIdentityType(patientInfo.getEducation(), &quot;EDUCATION&quot;, patientInfo, patient, sysUserId);</b>
+<b class="nc">&nbsp;        persistIdentityType(patientInfo.getMaritialStatus(), &quot;MARITIAL&quot;, patientInfo, patient, sysUserId);</b>
+<b class="nc">&nbsp;        persistIdentityType(patientInfo.getNationality(), &quot;NATIONALITY&quot;, patientInfo, patient, sysUserId);</b>
+<b class="nc">&nbsp;        persistIdentityType(patientInfo.getHealthDistrict(), &quot;HEALTH DISTRICT&quot;, patientInfo, patient, sysUserId);</b>
+<b class="nc">&nbsp;        persistIdentityType(patientInfo.getHealthRegion(), &quot;HEALTH REGION&quot;, patientInfo, patient, sysUserId);</b>
+<b class="nc">&nbsp;        persistIdentityType(patientInfo.getOtherNationality(), &quot;OTHER NATIONALITY&quot;, patientInfo, patient, sysUserId);</b>
+<b class="nc">&nbsp;        persistIdentityType(patientInfo.getGuid(), &quot;GUID&quot;, patientInfo, patient, sysUserId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void persistExtraPatientAddressInfo(PatientManagementInfo patientInfo, Patient patient, String sysUserId) {
+<b class="nc">&nbsp;        String ADDRESS_PART_DEPT_ID = &quot;&quot;;</b>
+<b class="nc">&nbsp;        String ADDRESS_PART_COMMUNE_ID = &quot;&quot;;</b>
+<b class="nc">&nbsp;        String ADDRESS_PART_VILLAGE_ID = &quot;&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;AddressPart&gt; partList = addressPartService.getAll();</b>
+<b class="nc">&nbsp;        for (AddressPart addressPart : partList) {</b>
+<b class="nc">&nbsp;            if (&quot;department&quot;.equals(addressPart.getPartName())) {</b>
+<b class="nc">&nbsp;                ADDRESS_PART_DEPT_ID = addressPart.getId();</b>
+<b class="nc">&nbsp;            } else if (&quot;commune&quot;.equals(addressPart.getPartName())) {</b>
+<b class="nc">&nbsp;                ADDRESS_PART_COMMUNE_ID = addressPart.getId();</b>
+<b class="nc">&nbsp;            } else if (&quot;village&quot;.equals(addressPart.getPartName())) {</b>
+<b class="nc">&nbsp;                ADDRESS_PART_VILLAGE_ID = addressPart.getId();</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        PersonAddress village = null;</b>
+<b class="nc">&nbsp;        PersonAddress commune = null;</b>
+<b class="nc">&nbsp;        PersonAddress dept = null;</b>
+<b class="nc">&nbsp;        List&lt;PersonAddress&gt; personAddressList = personAddressService</b>
+<b class="nc">&nbsp;                .getAddressPartsByPersonId(patient.getPerson().getId());</b>
+&nbsp;
+<b class="nc">&nbsp;        for (PersonAddress address : personAddressList) {</b>
+<b class="nc">&nbsp;            if (address.getAddressPartId().equals(ADDRESS_PART_COMMUNE_ID)) {</b>
+<b class="nc">&nbsp;                commune = address;</b>
+<b class="nc">&nbsp;                commune.setValue(patientInfo.getCommune());</b>
+<b class="nc">&nbsp;                commune.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;                personAddressService.update(commune);</b>
+<b class="nc">&nbsp;            } else if (address.getAddressPartId().equals(ADDRESS_PART_VILLAGE_ID)) {</b>
+<b class="nc">&nbsp;                village = address;</b>
+<b class="nc">&nbsp;                village.setValue(patientInfo.getCity());</b>
+<b class="nc">&nbsp;                village.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;                personAddressService.update(village);</b>
+<b class="nc">&nbsp;            } else if (address.getAddressPartId().equals(ADDRESS_PART_DEPT_ID)) {</b>
+<b class="nc">&nbsp;                dept = address;</b>
+<b class="nc">&nbsp;                if (!GenericValidator.isBlankOrNull(patientInfo.getAddressDepartment())</b>
+<b class="nc">&nbsp;                        &amp;&amp; !patientInfo.getAddressDepartment().equals(&quot;0&quot;)) {</b>
+<b class="nc">&nbsp;                    dept.setValue(patientInfo.getAddressDepartment());</b>
+<b class="nc">&nbsp;                    dept.setType(&quot;D&quot;);</b>
+<b class="nc">&nbsp;                    dept.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;                    personAddressService.update(dept);</b>
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        if (commune == null) {</b>
+<b class="nc">&nbsp;            insertNewPatientAddressInfo(ADDRESS_PART_COMMUNE_ID, patientInfo.getCommune(), &quot;T&quot;, patient, sysUserId);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (village == null) {</b>
+<b class="nc">&nbsp;            insertNewPatientAddressInfo(ADDRESS_PART_VILLAGE_ID, patientInfo.getCity(), &quot;T&quot;, patient, sysUserId);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (dept == null &amp;&amp; patientInfo.getAddressDepartment() != null</b>
+<b class="nc">&nbsp;                &amp;&amp; !patientInfo.getAddressDepartment().equals(&quot;0&quot;)) {</b>
+<b class="nc">&nbsp;            insertNewPatientAddressInfo(ADDRESS_PART_DEPT_ID, patientInfo.getAddressDepartment(), &quot;D&quot;, patient,</b>
+&nbsp;                    sysUserId);
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void insertNewPatientAddressInfo(String partId, String value, String type, Patient patient,
+&nbsp;            String sysUserId) {
+&nbsp;        PersonAddress address;
+<b class="nc">&nbsp;        address = new PersonAddress();</b>
+<b class="nc">&nbsp;        address.setPersonId(patient.getPerson().getId());</b>
+<b class="nc">&nbsp;        address.setAddressPartId(partId);</b>
+<b class="nc">&nbsp;        address.setType(type);</b>
+<b class="nc">&nbsp;        address.setValue(value);</b>
+<b class="nc">&nbsp;        address.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;        personAddressService.insert(address);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void persistIdentityType(String paramValue, String type, PatientManagementInfo patientInfo, Patient patient,
+&nbsp;            String sysUserId) throws LIMSRuntimeException {
+&nbsp;
+<b class="nc">&nbsp;        Boolean newIdentityNeeded = true;</b>
+<b class="nc">&nbsp;        String typeID = PatientIdentityTypeMap.getInstance().getIDForType(type);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {</b>
+&nbsp;
+<b class="nc">&nbsp;            for (PatientIdentity listIdentity : patientInfo.getPatientIdentities()) {</b>
+<b class="nc">&nbsp;                if (listIdentity.getIdentityTypeId().equals(typeID)) {</b>
+&nbsp;
+<b class="nc">&nbsp;                    newIdentityNeeded = false;</b>
+&nbsp;
+<b class="nc">&nbsp;                    if ((listIdentity.getIdentityData() == null &amp;&amp; !GenericValidator.isBlankOrNull(paramValue))</b>
+<b class="nc">&nbsp;                            || (listIdentity.getIdentityData() != null</b>
+<b class="nc">&nbsp;                                    &amp;&amp; !listIdentity.getIdentityData().equals(paramValue))) {</b>
+<b class="nc">&nbsp;                        listIdentity.setIdentityData(paramValue);</b>
+<b class="nc">&nbsp;                        patientIdentityService.update(listIdentity);</b>
+&nbsp;                    }
+&nbsp;
+&nbsp;                    break;
+&nbsp;                }
+<b class="nc">&nbsp;            }</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (newIdentityNeeded &amp;&amp; !GenericValidator.isBlankOrNull(paramValue)) {</b>
+&nbsp;            // either a new patient or a new identity item
+<b class="nc">&nbsp;            PatientIdentity identity = new PatientIdentity();</b>
+<b class="nc">&nbsp;            identity.setPatientId(patient.getId());</b>
+<b class="nc">&nbsp;            identity.setIdentityTypeId(typeID);</b>
+<b class="nc">&nbsp;            identity.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;            identity.setIdentityData(paramValue);</b>
+<b class="nc">&nbsp;            identity.setLastupdatedFields();</b>
+<b class="nc">&nbsp;            patientIdentityService.insert(identity);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void persistPatientType(PatientManagementInfo patientInfo, Patient patient, String sysUserId) {
+<b class="nc">&nbsp;        String typeName = null;</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            typeName = patientInfo.getPatientType();</b>
+<b class="nc">&nbsp;        } catch (RuntimeException e) {</b>
+<b class="nc">&nbsp;            LogEvent.logInfo(this.getClass().getSimpleName(), &quot;persistPatientType&quot;, &quot;ignoring exception&quot;);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        if (!GenericValidator.isBlankOrNull(typeName) &amp;&amp; !&quot;0&quot;.equals(typeName)) {</b>
+<b class="nc">&nbsp;            String typeID = PatientTypeMap.getInstance().getIDForType(typeName);</b>
+&nbsp;
+<b class="nc">&nbsp;            PatientPatientType patientPatientType = patientPatientTypeService</b>
+<b class="nc">&nbsp;                    .getPatientPatientTypeForPatient(patient.getId());</b>
+&nbsp;
+<b class="nc">&nbsp;            if (patientPatientType == null) {</b>
+<b class="nc">&nbsp;                patientPatientType = new PatientPatientType();</b>
+<b class="nc">&nbsp;                patientPatientType.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;                patientPatientType.setPatientId(patient.getId());</b>
+<b class="nc">&nbsp;                patientPatientType.setPatientTypeId(typeID);</b>
+<b class="nc">&nbsp;                patientPatientTypeService.insert(patientPatientType);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                patientPatientType.setSysUserId(sysUserId);</b>
+<b class="nc">&nbsp;                patientPatientType.setPatientTypeId(typeID);</b>
+<b class="nc">&nbsp;                patientPatientTypeService.update(patientPatientType);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;Patient&gt; getAllMissingFhirUuid() {
+<b class="nc">&nbsp;        return baseObjectDAO.getAllMissingFhirUuid();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Patient getByExternalId(String id) {
+<b class="nc">&nbsp;        return baseObjectDAO.getByExternalId(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-23 09:33</div>
+</div>
+</body>
+</html>

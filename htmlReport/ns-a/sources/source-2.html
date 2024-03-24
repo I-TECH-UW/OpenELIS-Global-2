@@ -1,0 +1,287 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PatientEntryByProjectFormValidator</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.openelisglobal.patient.validator</a>
+</div>
+
+<h1>Coverage Summary for Class: PatientEntryByProjectFormValidator (org.openelisglobal.patient.validator)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PatientEntryByProjectFormValidator</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    11.1%
+  </span>
+  <span class="absValue">
+    (1/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    1.4%
+  </span>
+  <span class="absValue">
+    (1/74)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.openelisglobal.patient.validator;
+&nbsp;
+&nbsp;import org.openelisglobal.common.validator.ValidationHelper;
+&nbsp;import org.openelisglobal.patient.form.PatientEntryByProjectForm;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import org.springframework.validation.Errors;
+&nbsp;import org.springframework.validation.Validator;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;public class PatientEntryByProjectFormValidator implements Validator {</b>
+&nbsp;
+&nbsp;	@Override
+&nbsp;	public boolean supports(Class&lt;?&gt; clazz) {
+<b class="nc">&nbsp;		return PatientEntryByProjectForm.class.isAssignableFrom(clazz);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@Override
+&nbsp;	public void validate(Object target, Errors errors) {
+<b class="nc">&nbsp;		PatientEntryByProjectForm form = (PatientEntryByProjectForm) target;</b>
+&nbsp;
+<b class="nc">&nbsp;		if (&quot;InitialARV_Id&quot;.equals(form.getObservations().getProjectFormName())) {</b>
+<b class="nc">&nbsp;			validateInitialARVForm(form, errors);</b>
+<b class="nc">&nbsp;		} else if (&quot;FollowUpARV_Id&quot;.equals(form.getObservations().getProjectFormName())) {</b>
+<b class="nc">&nbsp;			validateFollowUpARVForm(form, errors);</b>
+<b class="nc">&nbsp;		} else if (&quot;RTN_Id&quot;.equals(form.getObservations().getProjectFormName())) {</b>
+<b class="nc">&nbsp;			validateRTNForm(form, errors);</b>
+<b class="nc">&nbsp;		} else if (&quot;VL_Id&quot;.equals(form.getObservations().getProjectFormName())) {</b>
+<b class="nc">&nbsp;			validateVLForm(form, errors);</b>
+<b class="nc">&nbsp;		} else if (&quot;EID_Id&quot;.equals(form.getObservations().getProjectFormName())) {</b>
+<b class="nc">&nbsp;			validateEIDForm(form, errors);</b>
+<b class="nc">&nbsp;		} else if (&quot;Recency_Id&quot;.equals(form.getObservations().getProjectFormName())) {</b>
+<b class="nc">&nbsp;			validateRecencyForm(form, errors);</b>
+&nbsp;		} else {
+<b class="nc">&nbsp;			errors.reject(&quot;error.formname.unrecognized&quot;, &quot;The provided form name is unrecognized&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	private void validateEIDForm(PatientEntryByProjectForm form, Errors errors) {
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getReceivedDateForDisplay(), &quot;receivedDateForDisplay&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getInterviewDate(), &quot;interviewDate&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getProjectData().getEIDSiteName(), &quot;ProjectData.EIDSiteName&quot;,</b>
+&nbsp;				errors);
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getProjectData().getEIDsiteCode(), &quot;ProjectData.EIDSiteCode&quot;,</b>
+&nbsp;				errors);
+&nbsp;
+<b class="nc">&nbsp;		if (org.apache.commons.validator.GenericValidator.isBlankOrNull(form.getSubjectNumber())</b>
+<b class="nc">&nbsp;				&amp;&amp; org.apache.commons.validator.GenericValidator.isBlankOrNull(form.getSiteSubjectNumber())) {</b>
+<b class="nc">&nbsp;			ValidationHelper.validateFieldRequired(form.getSubjectNumber(), &quot;subjectNumber&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;			ValidationHelper.validateFieldRequired(form.getSiteSubjectNumber(), &quot;siteSubjectNumber&quot;, errors);</b>
+&nbsp;		}
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getLabNo(), &quot;labNo&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getGender(), &quot;gender&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getBirthDateForDisplay(), &quot;birthDateForDisplay&quot;, errors);</b>
+&nbsp;
+&nbsp;	}
+&nbsp;
+&nbsp;	private void validateVLForm(PatientEntryByProjectForm form, Errors errors) {
+&nbsp;//        ValidationHelper.validateFieldRequired(form.getCenterName(), &quot;centerName&quot;, errors);
+&nbsp;//
+&nbsp;//        if (form.getCenterCode() == null) {
+&nbsp;//            errors.rejectValue(&quot;centerCode&quot;, &quot;field.error.required&quot;);
+&nbsp;//        }
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getReceivedDateForDisplay(), &quot;receivedDateForDisplay&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getInterviewDate(), &quot;interviewDate&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		if (org.apache.commons.validator.GenericValidator.isBlankOrNull(form.getSubjectNumber())</b>
+<b class="nc">&nbsp;				&amp;&amp; org.apache.commons.validator.GenericValidator.isBlankOrNull(form.getSiteSubjectNumber())) {</b>
+<b class="nc">&nbsp;			ValidationHelper.validateFieldRequired(form.getSubjectNumber(), &quot;subjectNumber&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;			ValidationHelper.validateFieldRequired(form.getSiteSubjectNumber(), &quot;siteSubjectNumber&quot;, errors);</b>
+&nbsp;		}
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getLabNo(), &quot;labNo&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getBirthDateForDisplay(), &quot;birthDateForDisplay&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getGender(), &quot;gender&quot;, errors);</b>
+&nbsp;
+&nbsp;	}
+&nbsp;
+&nbsp;	private void validateRecencyForm(PatientEntryByProjectForm form, Errors errors) {
+&nbsp;//        ValidationHelper.validateFieldRequired(form.getCenterName(), &quot;centerName&quot;, errors);
+&nbsp;//
+&nbsp;//        if (form.getCenterCode() == null) {
+&nbsp;//            errors.rejectValue(&quot;centerCode&quot;, &quot;field.error.required&quot;);
+&nbsp;//        }
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getReceivedDateForDisplay(), &quot;receivedDateForDisplay&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getInterviewDate(), &quot;interviewDate&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getSiteSubjectNumber(), &quot;siteSubjectNumber&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getLabNo(), &quot;labNo&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getBirthDateForDisplay(), &quot;birthDateForDisplay&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getGender(), &quot;gender&quot;, errors);</b>
+&nbsp;
+&nbsp;	}
+&nbsp;
+&nbsp;	private void validateRTNForm(PatientEntryByProjectForm form, Errors errors) {
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getReceivedDateForDisplay(), &quot;receivedDateForDisplay&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getInterviewDate(), &quot;interviewDate&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getObservations().getNameOfDoctor(), &quot;observations.nameOfDoctor&quot;,</b>
+&nbsp;				errors);
+&nbsp;
+<b class="nc">&nbsp;		if (form.getCenterCode() == null) {</b>
+<b class="nc">&nbsp;			errors.rejectValue(&quot;centerCode&quot;, &quot;field.error.required&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getObservations().getService(), &quot;observations.service&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getGender(), &quot;gender&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getBirthDateForDisplay(), &quot;birthDateForDisplay&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getLabNo(), &quot;labNo&quot;, errors);</b>
+&nbsp;
+&nbsp;	}
+&nbsp;
+&nbsp;	private void validateFollowUpARVForm(PatientEntryByProjectForm form, Errors errors) {
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getReceivedDateForDisplay(), &quot;receivedDateForDisplay&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getInterviewDate(), &quot;interviewDate&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		if (org.apache.commons.validator.GenericValidator.isBlankOrNull(form.getSubjectNumber())</b>
+<b class="nc">&nbsp;				&amp;&amp; org.apache.commons.validator.GenericValidator.isBlankOrNull(form.getSiteSubjectNumber())) {</b>
+<b class="nc">&nbsp;			ValidationHelper.validateFieldRequired(form.getSubjectNumber(), &quot;subjectNumber&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;			ValidationHelper.validateFieldRequired(form.getSiteSubjectNumber(), &quot;siteSubjectNumber&quot;, errors);</b>
+&nbsp;		}
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getLabNo(), &quot;labNo&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		if (form.getCenterCode() == null) {</b>
+<b class="nc">&nbsp;			errors.rejectValue(&quot;centerCode&quot;, &quot;field.error.required&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getGender(), &quot;gender&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getBirthDateForDisplay(), &quot;birthDateForDisplay&quot;, errors);</b>
+&nbsp;
+&nbsp;	}
+&nbsp;
+&nbsp;	private void validateInitialARVForm(PatientEntryByProjectForm form, Errors errors) {
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getReceivedDateForDisplay(), &quot;receivedDateForDisplay&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getInterviewDate(), &quot;interviewDate&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		if (org.apache.commons.validator.GenericValidator.isBlankOrNull(form.getSubjectNumber())</b>
+<b class="nc">&nbsp;				&amp;&amp; org.apache.commons.validator.GenericValidator.isBlankOrNull(form.getSiteSubjectNumber())) {</b>
+<b class="nc">&nbsp;			ValidationHelper.validateFieldRequired(form.getSubjectNumber(), &quot;subjectNumber&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;			ValidationHelper.validateFieldRequired(form.getSiteSubjectNumber(), &quot;siteSubjectNumber&quot;, errors);</b>
+&nbsp;		}
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getLabNo(), &quot;labNo&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getCenterName(), &quot;centerName&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		if (form.getCenterCode() == null) {</b>
+<b class="nc">&nbsp;			errors.rejectValue(&quot;centerCode&quot;, &quot;field.error.required&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getGender(), &quot;gender&quot;, errors);</b>
+&nbsp;
+<b class="nc">&nbsp;		ValidationHelper.validateFieldRequired(form.getBirthDateForDisplay(), &quot;birthDateForDisplay&quot;, errors);</b>
+&nbsp;
+&nbsp;	}
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-23 09:33</div>
+</div>
+</body>
+</html>

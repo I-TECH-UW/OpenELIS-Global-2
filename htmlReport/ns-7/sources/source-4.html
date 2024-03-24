@@ -1,0 +1,208 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PatientEntry</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.openelisglobal.patient.saving</a>
+</div>
+
+<h1>Coverage Summary for Class: PatientEntry (org.openelisglobal.patient.saving)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PatientEntry</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/27)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/*
+&nbsp;* The contents of this file are subject to the Mozilla Public License
+&nbsp;* Version 1.1 (the &quot;License&quot;); you may not use this file except in
+&nbsp;* compliance with the License. You may obtain a copy of the License at
+&nbsp;* http://www.mozilla.org/MPL/
+&nbsp;*
+&nbsp;* Software distributed under the License is distributed on an &quot;AS IS&quot;
+&nbsp;* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+&nbsp;* License for the specific language governing rights and limitations under
+&nbsp;* the License.
+&nbsp;*
+&nbsp;* The Original Code is OpenELIS code.
+&nbsp;*
+&nbsp;* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+&nbsp;*
+&nbsp;* Contributor(s): CIRG, University of Washington, Seattle WA.
+&nbsp;*/
+&nbsp;
+&nbsp;/**
+&nbsp; * Cote d&#39;Ivoire
+&nbsp; * @author pahill
+&nbsp; * @since 2010-06-15
+&nbsp; */
+&nbsp;package org.openelisglobal.patient.saving;
+&nbsp;
+&nbsp;import java.sql.Timestamp;
+&nbsp;
+&nbsp;import javax.servlet.http.HttpServletRequest;
+&nbsp;
+&nbsp;import org.openelisglobal.common.exception.LIMSRuntimeException;
+&nbsp;import org.openelisglobal.common.services.StatusService.RecordStatus;
+&nbsp;import org.openelisglobal.common.util.DateUtil;
+&nbsp;import org.openelisglobal.internationalization.MessageUtil;
+&nbsp;import org.openelisglobal.patient.form.PatientEntryByProjectForm;
+&nbsp;import org.springframework.context.annotation.Primary;
+&nbsp;import org.springframework.context.annotation.Scope;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Scope(&quot;prototype&quot;)
+&nbsp;@Primary
+&nbsp;public class PatientEntry extends Accessioner implements IPatientEntry {
+&nbsp;
+&nbsp;    protected HttpServletRequest request;
+&nbsp;
+&nbsp;    public PatientEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
+&nbsp;            throws LIMSRuntimeException {
+<b class="nc">&nbsp;        this();</b>
+<b class="nc">&nbsp;        setFieldsFromForm(form);</b>
+<b class="nc">&nbsp;        this.request = request;</b>
+<b class="nc">&nbsp;        setSysUserId(sysUserId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public PatientEntry() {
+<b class="nc">&nbsp;        super();</b>
+<b class="nc">&nbsp;        newPatientStatus = RecordStatus.InitialRegistration;</b>
+<b class="nc">&nbsp;        newSampleStatus = RecordStatus.NotRegistered;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void setRequest(HttpServletRequest request) {
+<b class="nc">&nbsp;        this.request = request;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public final void setFieldsFromForm(PatientEntryByProjectForm form) throws LIMSRuntimeException {
+<b class="nc">&nbsp;        setAccessionNumber(form.getLabNo());</b>
+<b class="nc">&nbsp;        setPatientSiteSubjectNo(form.getSiteSubjectNumber());</b>
+<b class="nc">&nbsp;        setPatientIdentifier(form.getSubjectNumber());</b>
+<b class="nc">&nbsp;        setProjectFormMapperFromForm(form);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setProjectFormMapperFromForm(PatientEntryByProjectForm form) throws LIMSRuntimeException {
+<b class="nc">&nbsp;        projectFormMapper = getProjectFormMapper(form);</b>
+<b class="nc">&nbsp;        projectFormMapper.setPatientForm(true);</b>
+<b class="nc">&nbsp;        projectForm = projectFormMapper.getProjectForm();</b>
+<b class="nc">&nbsp;        findStatusSet();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean canAccession() {
+<b class="nc">&nbsp;        return (statusSet.getPatientRecordStatus() == null &amp;&amp; statusSet.getSampleRecordStatus() == null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    protected void populateSampleData() {
+<b class="nc">&nbsp;        Timestamp receivedDate = DateUtil.convertStringDatePreserveStringTimeToTimestamp(</b>
+<b class="nc">&nbsp;                sample.getReceivedDateForDisplay(), sample.getReceived24HourTimeForDisplay(),</b>
+<b class="nc">&nbsp;                projectFormMapper.getReceivedDate(), projectFormMapper.getReceivedTime());</b>
+<b class="nc">&nbsp;        Timestamp collectionDate = DateUtil.convertStringDatePreserveStringTimeToTimestamp(</b>
+<b class="nc">&nbsp;                sample.getCollectionDateForDisplay(), sample.getCollectionTimeForDisplay(),</b>
+<b class="nc">&nbsp;                projectFormMapper.getCollectionDate(), projectFormMapper.getCollectionTime());</b>
+&nbsp;
+<b class="nc">&nbsp;        populateSample(receivedDate, collectionDate);</b>
+<b class="nc">&nbsp;        populateSampleProject();</b>
+<b class="nc">&nbsp;        populateSampleOrganization(projectFormMapper.getOrganizationId());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    protected String getActionLabel() {
+<b class="nc">&nbsp;        return MessageUtil.getMessage(&quot;banner.menu.createPatient.Initial&quot;);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-23 09:33</div>
+</div>
+</body>
+</html>

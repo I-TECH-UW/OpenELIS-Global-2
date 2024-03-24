@@ -1,0 +1,415 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Patient</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.openelisglobal.patient.valueholder</a>
+</div>
+
+<h1>Coverage Summary for Class: Patient (org.openelisglobal.patient.valueholder)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Patient</td>
+<td class="coverageStat">
+  <span class="percent">
+    82.7%
+  </span>
+  <span class="absValue">
+    (43/52)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    81.7%
+  </span>
+  <span class="absValue">
+    (49/60)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Patient$HibernateProxy$qCyUeIqE</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    82.7%
+  </span>
+  <span class="absValue">
+    (43/52)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    81.7%
+  </span>
+  <span class="absValue">
+    (49/60)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/**
+&nbsp; * The contents of this file are subject to the Mozilla Public License
+&nbsp; * Version 1.1 (the &quot;License&quot;); you may not use this file except in
+&nbsp; * compliance with the License. You may obtain a copy of the License at
+&nbsp; * http://www.mozilla.org/MPL/
+&nbsp; *
+&nbsp; * Software distributed under the License is distributed on an &quot;AS IS&quot;
+&nbsp; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+&nbsp; * License for the specific language governing rights and limitations under
+&nbsp; * the License.
+&nbsp; *
+&nbsp; * The Original Code is OpenELIS code.
+&nbsp; *
+&nbsp; * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+&nbsp; */
+&nbsp;package org.openelisglobal.patient.valueholder;
+&nbsp;
+&nbsp;import java.sql.Date;
+&nbsp;import java.sql.Timestamp;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;import org.openelisglobal.common.util.DateUtil;
+&nbsp;import org.openelisglobal.common.valueholder.BaseObject;
+&nbsp;import org.openelisglobal.common.valueholder.ValueHolder;
+&nbsp;import org.openelisglobal.common.valueholder.ValueHolderInterface;
+&nbsp;import org.openelisglobal.person.valueholder.Person;
+&nbsp;
+&nbsp;public class Patient extends BaseObject&lt;String&gt; {
+&nbsp;
+&nbsp;    private static final long serialVersionUID = 1L;
+&nbsp;
+&nbsp;    private String id;
+&nbsp;
+&nbsp;    private String race;
+&nbsp;
+&nbsp;    private String gender;
+&nbsp;
+&nbsp;    private Timestamp birthDate;
+&nbsp;
+&nbsp;    private String birthDateForDisplay;
+&nbsp;
+&nbsp;    private String epiFirstName;
+&nbsp;
+&nbsp;    private String epiMiddleName;
+&nbsp;
+&nbsp;    private String epiLastName;
+&nbsp;
+&nbsp;    private Date birthTime;
+&nbsp;
+&nbsp;    private String birthTimeForDisplay;
+&nbsp;
+&nbsp;    private Date deathDate;
+&nbsp;
+&nbsp;    private String deathDateForDisplay;
+&nbsp;
+&nbsp;    private String nationalId;
+&nbsp;
+&nbsp;    private String ethnicity;
+&nbsp;
+&nbsp;    private String schoolAttend;
+&nbsp;
+&nbsp;    private String medicareId;
+&nbsp;
+&nbsp;    private String medicaidId;
+&nbsp;
+&nbsp;    private String birthPlace;
+&nbsp;
+&nbsp;    private ValueHolderInterface person;
+&nbsp;
+&nbsp;    private String externalId;
+&nbsp;    
+&nbsp;    private String upidCode;
+&nbsp;
+&nbsp;    private String selectedPersonId;
+&nbsp;
+&nbsp;    private String chartNumber;
+&nbsp;
+&nbsp;    private UUID fhirUuid;
+&nbsp;
+&nbsp;    public String getChartNumber() {
+<b class="fc">&nbsp;        return chartNumber;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setChartNumber(String chartNumber) {
+<b class="fc">&nbsp;        this.chartNumber = chartNumber;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Patient() {
+<b class="fc">&nbsp;        super();</b>
+<b class="fc">&nbsp;        person = new ValueHolder();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void setId(String id) {
+<b class="fc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String getId() {
+<b class="fc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Timestamp getBirthDate() {
+<b class="fc">&nbsp;        return birthDate;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setBirthDate(Timestamp birthDate) {
+<b class="fc">&nbsp;        this.birthDate = birthDate;</b>
+<b class="fc">&nbsp;        birthDateForDisplay = DateUtil.convertTimestampToStringDate(birthDate);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getBirthPlace() {
+<b class="fc">&nbsp;        return birthPlace;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setBirthPlace(String birthPlace) {
+<b class="fc">&nbsp;        this.birthPlace = birthPlace;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Date getBirthTime() {
+<b class="fc">&nbsp;        return birthTime;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setBirthTime(Date birthTime) {
+<b class="fc">&nbsp;        this.birthTime = birthTime;</b>
+<b class="fc">&nbsp;        birthTimeForDisplay = DateUtil.convertSqlDateToStringDate(birthTime);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Date getDeathDate() {
+<b class="fc">&nbsp;        return deathDate;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setDeathDate(Date deathDate) {
+<b class="fc">&nbsp;        this.deathDate = deathDate;</b>
+<b class="fc">&nbsp;        deathDateForDisplay = DateUtil.convertSqlDateToStringDate(deathDate);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getEpiFirstName() {
+<b class="fc">&nbsp;        return epiFirstName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEpiFirstName(String epiFirstName) {
+<b class="fc">&nbsp;        this.epiFirstName = epiFirstName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getEpiLastName() {
+<b class="fc">&nbsp;        return epiLastName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEpiLastName(String epiLastName) {
+<b class="fc">&nbsp;        this.epiLastName = epiLastName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getEpiMiddleName() {
+<b class="fc">&nbsp;        return epiMiddleName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEpiMiddleName(String epiMiddleName) {
+<b class="fc">&nbsp;        this.epiMiddleName = epiMiddleName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getEthnicity() {
+<b class="fc">&nbsp;        return ethnicity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEthnicity(String ethnicity) {
+<b class="fc">&nbsp;        this.ethnicity = ethnicity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getExternalId() {
+<b class="fc">&nbsp;        return externalId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setExternalId(String externalId) {
+<b class="fc">&nbsp;        this.externalId = externalId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getGender() {
+<b class="fc">&nbsp;        return gender;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setGender(String gender) {
+<b class="fc">&nbsp;        this.gender = gender;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getMedicaidId() {
+<b class="fc">&nbsp;        return medicaidId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setMedicaidId(String medicaidId) {
+<b class="fc">&nbsp;        this.medicaidId = medicaidId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getMedicareId() {
+<b class="fc">&nbsp;        return medicareId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setMedicareId(String medicareId) {
+<b class="fc">&nbsp;        this.medicareId = medicareId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getNationalId() {
+<b class="fc">&nbsp;        return nationalId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setNationalId(String nationalId) {
+<b class="fc">&nbsp;        this.nationalId = nationalId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Person getPerson() {
+<b class="fc">&nbsp;        return (Person) this.person.getValue();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected ValueHolderInterface getPersonHolder() {
+<b class="nc">&nbsp;        return this.person;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPerson(Person person) {
+<b class="fc">&nbsp;        this.person.setValue(person);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void setPersonHolder(ValueHolderInterface person) {
+<b class="nc">&nbsp;        this.person = person;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getRace() {
+<b class="fc">&nbsp;        return race;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setRace(String race) {
+<b class="fc">&nbsp;        this.race = race;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getSchoolAttend() {
+<b class="fc">&nbsp;        return schoolAttend;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setSchoolAttend(String schoolAttend) {
+<b class="fc">&nbsp;        this.schoolAttend = schoolAttend;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getBirthDateForDisplay() {
+<b class="fc">&nbsp;        return birthDateForDisplay;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setBirthDateForDisplay(String birthDateForDisplay) {
+<b class="fc">&nbsp;        this.birthDateForDisplay = birthDateForDisplay;</b>
+&nbsp;
+<b class="fc">&nbsp;        if (birthDateForDisplay != null) {</b>
+<b class="fc">&nbsp;            birthDate = DateUtil.convertAmbiguousStringDateToTimestamp(birthDateForDisplay);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getBirthTimeForDisplay() {
+<b class="nc">&nbsp;        return birthTimeForDisplay;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setBirthTimeForDisplay(String birthTimeForDisplay) {
+<b class="nc">&nbsp;        this.birthTimeForDisplay = birthTimeForDisplay;</b>
+<b class="nc">&nbsp;        this.birthTime = DateUtil.convertStringDateToSqlDate(birthTimeForDisplay);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setDeathDateForDisplay(String deathDateForDisplay) {
+<b class="nc">&nbsp;        this.deathDateForDisplay = deathDateForDisplay;</b>
+<b class="nc">&nbsp;        this.deathDate = DateUtil.convertStringDateToSqlDate(deathDateForDisplay);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getDeathDateForDisplay() {
+<b class="nc">&nbsp;        return deathDateForDisplay;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setSelectedPersonId(String selectedPersonId) {
+<b class="nc">&nbsp;        this.selectedPersonId = selectedPersonId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getSelectedPersonId() {
+<b class="nc">&nbsp;        return this.selectedPersonId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public UUID getFhirUuid() {
+<b class="fc">&nbsp;        return fhirUuid;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getFhirUuidAsString() {
+<b class="nc">&nbsp;        return fhirUuid == null ? &quot;&quot; : fhirUuid.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setFhirUuid(UUID fhirUuid) {
+<b class="fc">&nbsp;        this.fhirUuid = fhirUuid;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;	public String getUpidCode() {
+<b class="fc">&nbsp;		return upidCode;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void setUpidCode(String upidCode) {
+<b class="fc">&nbsp;		this.upidCode = upidCode;</b>
+&nbsp;	}
+&nbsp; 
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-23 09:33</div>
+</div>
+</body>
+</html>
