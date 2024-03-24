@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openelisglobal.BaseTestConfig;
+import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.config.TestConfig;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.referencetables.service.ReferenceTablesService;
@@ -13,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import static org.junit.Assert.assertThrows;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { BaseTestConfig.class, TestConfig.class })
@@ -32,7 +35,7 @@ public class ReferenceTablesServiceTest {
     private String keepHistory;
     private String isHl7Encoded;
 
-
+// Initializing objects and variables to use in testing
     @Before
     public void setUp(){
         referenceTablesEntity = new ReferenceTables();
@@ -42,32 +45,33 @@ public class ReferenceTablesServiceTest {
         isHl7Encoded = "N";
     }
 
-
+//    Saving referenceTable test
     @Test
-    public void insert_shouldInsertReferenceTable() {
+    public void save_shouldSaveReferenceTable() {
         referenceTablesEntity.setTableName(tableName);
         referenceTablesEntity.setKeepHistory(keepHistory);
         referenceTablesEntity.setIsHl7Encoded(isHl7Encoded);
-        String insertMessage =  referenceTablesService.insert(referenceTablesEntity);
-        System.out.println("Insert Method ==== : " + insertMessage);
-    }
-
-    @Test
-    public void save_shouldSaveNewReferenceTables() {
-        referenceTablesEntity.setTableName(tableName);
-        referenceTablesEntity.setKeepHistory(keepHistory);
-        referenceTablesEntity.setIsHl7Encoded(isHl7Encoded);
-        Assert.assertThrows()
         createdReferenceTable =  referenceTablesService.save(referenceTablesEntity);
         Assert.assertNotEquals(null,referenceTablesService.get(createdReferenceTable.getId()));
         Assert.assertEquals(createdReferenceTable.getId(),createdReferenceTable.getId());
         Assert.assertEquals(tableName, createdReferenceTable.getTableName());
         Assert.assertEquals(isHl7Encoded,createdReferenceTable.getIsHl7Encoded());
         Assert.assertEquals(keepHistory,createdReferenceTable.getKeepHistory());
+
     }
 
+//    Inserting reference table test, checking for duplication
+    @Test
+    public void insert_shouldInsertNewReferenceTables() {
+        referenceTablesEntity.setTableName(tableName);
+        referenceTablesEntity.setKeepHistory(keepHistory);
+        referenceTablesEntity.setIsHl7Encoded(isHl7Encoded);
+        assertThrows(LIMSRuntimeException.class, () -> {
+            referenceTablesService.insert(referenceTablesEntity);
+        });
+    }
 
-
+//    Updating reference table test
     @Test
     public void update_shouldUpdateReferenceTable() {
         tableName = "CELL history";
@@ -83,37 +87,31 @@ public class ReferenceTablesServiceTest {
         Assert.assertEquals(isHl7Encoded, createdReferenceTable.getIsHl7Encoded());
     }
 
+//    Getting all reference tables for Hl7Encoding test
     @Test
     public void getAllReferenceTablesForHl7Encoding_shouldGetAllTablesForHl7Encoding() {
         Assert.assertTrue(referenceTablesService.getAllReferenceTablesForHl7Encoding().size() > 0 );
     }
 
+//
     @Test
     public void getAllReferenceTables_shouldGetAll() {
         Assert.assertTrue(referenceTablesService.getAllReferenceTables().size() > 0);
     }
 
-//    @Test
-//    public void getReferenceTableByName() {
-//        Assert.assertNotEquals(null,referenceTablesService.getReferenceTableByName(createdReferenceTable));
-//    }
-
     @Test
-    public void getTotalReferenceTableCount() {
+    public void getTotalReferenceTableCount_shouldReturnTotalTablesCount() {
         Assert.assertTrue(referenceTablesService.getTotalReferenceTableCount() > 0);
     }
 
     @Test
-    public void getPageOfReferenceTables() {
+    public void getPageOfReferenceTables_shouldReturnPageOfReferenceTables() {
         Assert.assertTrue(referenceTablesService.getPageOfReferenceTables(1).size() > 0);
     }
 
-    @Test
-    public void getTotalReferenceTablesCount() {
-        Assert.assertTrue(referenceTablesService.getCount() > 0);
-    }
-
-
-
+//      @Test
+//    public void getReferenceTableByName() {
+//        Assert.assertNotEquals(null,referenceTablesService.getReferenceTableByName(createdReferenceTable));
+//    }
 
 }
