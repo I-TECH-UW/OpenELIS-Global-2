@@ -706,5 +706,8 @@
   "input.placeholder.providerWorkPhone":"Saisir le numéro de téléphone du demandeur",
   "input.placeholder.providerFax":"Saisir le numéro de fax du demandeur",
   "input.placeholder.providerEmail":"Saisir l'adresse e-mail du demandeur",
-  "input.placeholder.selectTest":"Sélectionnez le type de test"
+  "input.placeholder.selectTest":"Sélectionnez le type de test",
+  "input.placeholder.selectPanel":"Sélectionnez le type de panneau",
+  "input.placeholder.selectPriority":"Sélectionnez la priorité",
+  "input.placeholder.selectTestSection":"Sélectionnez le type d'unité"
 }

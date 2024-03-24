@@ -765,5 +765,8 @@
   "input.placeholder.providerWorkPhone":"Enter Requester's Phone Number",
   "input.placeholder.providerFax":"Enter Requester's Fax Number",
   "input.placeholder.providerEmail":"Enter Requester's Email",
-  "input.placeholder.selectTest":"Select Test Type"
+  "input.placeholder.selectTest":"Select Test Type",
+  "input.placeholder.selectPanel":"Select Panel Type",
+  "input.placeholder.selectPriority":"Select Priority",
+  "input.placeholder.selectTestSection":"Select Unit Type"
 }
