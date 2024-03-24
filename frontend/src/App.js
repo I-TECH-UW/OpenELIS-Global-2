@@ -36,6 +36,7 @@ import EOrderPage from "./components/eOrder/Index";
 import RoutineIndex from "./components/reports/routine/Index.js";
 import StudyIndex from "./components/reports/study/index.js";
 import PrintBarcode from "./components/printBarcode/Index";
+import DictionaryManagement from "./components/Dictionary/DictionaryManagement.js";
 
 export default function App() {
   let i18nConfig = {
@@ -292,6 +293,12 @@ export default function App() {
                   path="/PrintBarcode"
                   exact
                   component={() => <PrintBarcode />}
+                  role="Reception"
+                />
+                <SecureRoute
+                  path="/DictionaryManagement"
+                  exact
+                  component={() => <DictionaryManagement />}
                   role="Reception"
                 />
                 <SecureRoute
