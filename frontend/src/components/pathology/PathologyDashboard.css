@@ -107,6 +107,9 @@
   .dashboard-container{
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+@media screen and (max-width: 700px) and (min-width:450px){
   .tile-title-Immuno{
     font-size: 0.9rem;
   }
