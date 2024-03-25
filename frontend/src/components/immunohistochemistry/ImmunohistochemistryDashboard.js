@@ -31,6 +31,7 @@ import { AlertDialog } from "../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
 import "./../pathology/PathologyDashboard.css";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
+import PageBreadCrumb from "../common/PageBreadCrumb";
 
 function ImmunohistochemistryDashboard() {
   const componentMounted = useRef(false);
@@ -280,10 +281,13 @@ function ImmunohistochemistryDashboard() {
     };
   }, [filters]);
 
+  let breadcrumbs = [{ label: "home.label", link: "/" }];
+
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading description="Loading Dasboard..." />}
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         <Column lg={16}>
           <Section>
@@ -298,7 +302,7 @@ function ImmunohistochemistryDashboard() {
       <div className="dashboard-container">
         {tileList.map((tile, index) => (
           <Tile key={index} className="dashboard-tile">
-            <h3 className="tile-title">{tile.title}</h3>
+            <h3 className="tile-title tile-title-Immuno">{tile.title}</h3>
             <p className="tile-value">{tile.count}</p>
           </Tile>
         ))}
@@ -312,15 +316,21 @@ function ImmunohistochemistryDashboard() {
               onChange={(e) =>
                 setFilters({ ...filters, searchTerm: e.target.value })
               }
-              placeholder="Search by LabNo or Family Name"
-              labelText="Search by LabNo or Family Name"
+              placeholder={intl.formatMessage({
+                id: "label.search.labno.family",
+              })}
+              labelText={intl.formatMessage({
+                id: "label.search.labno.family",
+              })}
             />
           </Column>
           <Column lg={8} md={4} sm={2}>
             <div className="inlineDivBlock">
               <div>Filters:</div>
               <Checkbox
-                labelText="My cases"
+                labelText={intl.formatMessage({
+                  id: "label.filters.mycases",
+                })}
                 id="filterMyCases"
                 value={filters.myCases}
                 onChange={(e) =>
@@ -330,7 +340,9 @@ function ImmunohistochemistryDashboard() {
               <Select
                 id="statusFilter"
                 name="statusFilter"
-                labelText="Status"
+                labelText={intl.formatMessage({
+                  id: "label.filters.status",
+                })}
                 value={
                   filters.statuses.length > 1 ? "All" : filters.statuses[0].id
                 }
@@ -429,7 +441,39 @@ function ImmunohistochemistryDashboard() {
               pageSize={pageSize}
               pageSizes={[10, 20, 30]}
               totalItems={immunohistochemistryEntries.length}
-            ></Pagination>
+              forwardText={intl.formatMessage({ id: "pagination.forward" })}
+              backwardText={intl.formatMessage({ id: "pagination.backward" })}
+              itemRangeText={(min, max, total) =>
+                intl.formatMessage(
+                  { id: "pagination.item-range" },
+                  { min: min, max: max, total: total },
+                )
+              }
+              itemsPerPageText={intl.formatMessage({
+                id: "pagination.items-per-page",
+              })}
+              itemText={(min, max) =>
+                intl.formatMessage(
+                  { id: "pagination.item" },
+                  { min: min, max: max },
+                )
+              }
+              pageNumberText={intl.formatMessage({
+                id: "pagination.page-number",
+              })}
+              pageRangeText={(_current, total) =>
+                intl.formatMessage(
+                  { id: "pagination.page-range" },
+                  { total: total },
+                )
+              }
+              pageText={(page, pagesUnknown) =>
+                intl.formatMessage(
+                  { id: "pagination.page" },
+                  { page: pagesUnknown ? "" : page },
+                )
+              }
+            />
           </Column>
         </Grid>
       </div>

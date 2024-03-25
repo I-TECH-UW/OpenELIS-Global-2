@@ -153,7 +153,18 @@ const SearchForm = (props) => {
   }
 
   useEffect(() => {
-    let param = new URLSearchParams(window.location.search).get("type");
+    var param = "";
+    if (window.location.pathname == "/validation") {
+      param = new URLSearchParams(window.location.search).get("type");
+    } else if (window.location.pathname == "/ResultValidation") {
+      param = "routine";
+    } else if (window.location.pathname == "/AccessionValidation") {
+      param = "order";
+    } else if (window.location.pathname == "/AccessionValidationRange") {
+      param = "range";
+    } else if (window.location.pathname == "/ResultValidationByTestDate") {
+      param = "testDate";
+    }
     setSearchBy(param);
     if (param === "order") {
       setDoRagnge(false);
@@ -246,7 +257,7 @@ const SearchForm = (props) => {
 
                 {(searchBy === "order" || searchBy === "range") && (
                   <>
-                    <Column lg={6}>
+                    <Column lg={6} md={8} sm={4}>
                       <Field name="accessionNumber">
                         {({ field }) => (
                           <CustomLabNumberInput
@@ -274,7 +285,7 @@ const SearchForm = (props) => {
 
                 {searchBy === "testDate" && (
                   <>
-                    <Column lg={6}>
+                    <Column lg={6} md={8} sm={4}>
                       <Field name="date">
                         {({ field }) => (
                           <DatePicker
@@ -304,7 +315,7 @@ const SearchForm = (props) => {
                   </>
                 )}
                 {searchBy !== "routine" && (
-                  <Column lg={16}>
+                  <Column lg={16} md={8} sm={4}>
                     <Button
                       type="submit"
                       id="submit"
@@ -323,7 +334,7 @@ const SearchForm = (props) => {
       {searchBy === "routine" && (
         <>
           <Grid>
-            <Column lg={6}>
+            <Column lg={6} md={8} sm={4}>
               <Select
                 labelText={intl.formatMessage({ id: "search.label.testunit" })}
                 name="unitType"
