@@ -94,7 +94,7 @@ const StatisticsReport = () => {
 
   const handleSelectAllPriorities = (isChecked) => {
     setSelectedPriorities(
-      isChecked ? priorities.map((priority) => priority.id) : []
+      isChecked ? priorities.map((priority) => priority.id) : [],
     );
   };
 
@@ -119,185 +119,182 @@ const StatisticsReport = () => {
 
   return (
     <>
-        <Grid fullWidth={true}>
-          <Column lg={16} md={8} sm={4}>
+      <Grid fullWidth={true}>
+        <Column lg={16} md={8} sm={4}>
+          <Section>
             <Section>
-              <Section>
-                <Heading>
-                  <FormattedMessage id="openreports.stat.aggregate" />
-                </Heading>
-              </Section>
+              <Heading>
+                <FormattedMessage id="openreports.stat.aggregate" />
+              </Heading>
             </Section>
-          </Column>
-        </Grid>
-        <Grid fullWidth={true}>
-          <Column lg={16} md={8} sm={4}>
-            <Form>
-              <Grid fullWidth={true}>
-                <Column lg={16} md={8} sm={4}>
-                  <Section>
-                    <br />
-                    <br />
-                    <h5>
-                      <FormattedMessage id="select.labUnits" />
-                    </h5>
-                  </Section>
-                  <div>
-                    <Checkbox
-                      labelText="All"
-                      id="select-all-lab-units"
-                      checked={selectedLabUnits.length === labUnits.length}
-                      onChange={(event) =>
-                        handleSelectAllLabUnits(event.target.checked)
-                      }
-                    />
-                    {labUnits.map((unit) => (
-                      <Checkbox
-                        key={unit.id}
-                        labelText={intl.formatMessage({
-                          id: unit.value,
-                          defaultMessage: unit.value,
-                        })}
-                        id={unit.id}
-                        checked={selectedLabUnits.includes(unit.id)}
-                        onChange={() => {
-                          setSelectedLabUnits((prev) => {
-                            if (prev.includes(unit.id)) {
-                              return prev.filter((item) => item !== unit.id);
-                            } else {
-                              return [...prev, unit.id];
-                            }
-                          });
-                        }}
-                      />
-                    ))}
-                  </div>
-                </Column>
-              </Grid>
-              <Grid fullWidth={true}>
-                <Column lg={16} md={8} sm={4}>
-                  <Section>
-                    <br />
-                    <h5>
-                      <FormattedMessage id="select.priority.tests" />
-                    </h5>
-                  </Section>
-                  <div className="inlineDiv">
-                    <Checkbox
-                      labelText="All"
-                      id="select-all-priorities"
-                      checked={selectedPriorities.length === priorities.length}
-                      onChange={(event) =>
-                        handleSelectAllPriorities(event.target.checked)
-                      }
-                    />
-                    {priorities.map((priority) => (
-                      <Checkbox
-                        key={priority.id}
-                        labelText={intl.formatMessage({
-                          id: priority.value,
-                          defaultMessage: priority.value,
-                        })}
-                        id={priority.id}
-                        checked={selectedPriorities.includes(priority.id)}
-                        onChange={() => {
-                          setSelectedPriorities((prev) => {
-                            if (prev.includes(priority.id)) {
-                              return prev.filter(
-                                (item) => item !== priority.id
-                              );
-                            } else {
-                              return [...prev, priority.id];
-                            }
-                          });
-                        }}
-                      />
-                    ))}
-                  </div>
-                </Column>
-              </Grid>
-              <Grid fullWidth={true}>
-                <Column lg={16} md={8} sm={4}>
-                  <Section>
-                    <br />
-                    <h5>
-                      <FormattedMessage id="select.timeFrame" />
-                    </h5>
-                    <br />
-                    <h7>
-                      <FormattedMessage id="select.timeFrame.Note" />
-                    </h7>
-                  </Section>
-                  <div>
-                    <Checkbox
-                      labelText="All"
-                      id="select-all-time-frames"
-                      checked={selectedTimeFrames.length === timeFrames.length}
-                      onChange={(event) =>
-                        handleSelectAllTimeFrames(event.target.checked)
-                      }
-                    />
-                    {timeFrames.map((frame) => (
-                      <Checkbox
-                        key={frame.id}
-                        id={frame.id}
-                        labelText={intl.formatMessage({
-                          id: frame.description,
-                          defaultMessage: frame.description,
-                        })}
-                        checked={selectedTimeFrames.includes(frame.id)}
-                        onChange={() => {
-                          setSelectedTimeFrames((prev) => {
-                            if (prev.includes(frame.id)) {
-                              return prev.filter((item) => item !== frame.id);
-                            } else {
-                              return [...prev, frame.id];
-                            }
-                          });
-                        }}
-                      />
-                    ))}
-                  </div>
-                </Column>
-              </Grid>
-              <Grid fullWidth={true}>
-                <Column lg={16} md={8} sm={4}>
-                  <Section>
-                    <br />
-                    <h5>
-                      <FormattedMessage id="select.year.report" />
-                    </h5>
-                  </Section>
-                </Column>
-                <Column lg={2} md={2} sm={2}>
-                  <Dropdown
-                    id="year-picker"
-                    label="Select Year"
-                    selectedItem={selectedYear}
-                    onChange={({ selectedItem }) =>
-                      handleYearChange(selectedItem)
+          </Section>
+        </Column>
+      </Grid>
+      <Grid fullWidth={true}>
+        <Column lg={16} md={8} sm={4}>
+          <Form>
+            <Grid fullWidth={true}>
+              <Column lg={16} md={8} sm={4}>
+                <Section>
+                  <br />
+                  <br />
+                  <h5>
+                    <FormattedMessage id="select.labUnits" />
+                  </h5>
+                </Section>
+                <div>
+                  <Checkbox
+                    labelText="All"
+                    id="select-all-lab-units"
+                    checked={selectedLabUnits.length === labUnits.length}
+                    onChange={(event) =>
+                      handleSelectAllLabUnits(event.target.checked)
                     }
-                    items={years.map((year) => ({
-                      value: year.value,
-                      label: year.label,
-                    }))}
                   />
-                </Column>{" "}
-              </Grid>
+                  {labUnits.map((unit) => (
+                    <Checkbox
+                      key={unit.id}
+                      labelText={intl.formatMessage({
+                        id: unit.value,
+                        defaultMessage: unit.value,
+                      })}
+                      id={unit.id}
+                      checked={selectedLabUnits.includes(unit.id)}
+                      onChange={() => {
+                        setSelectedLabUnits((prev) => {
+                          if (prev.includes(unit.id)) {
+                            return prev.filter((item) => item !== unit.id);
+                          } else {
+                            return [...prev, unit.id];
+                          }
+                        });
+                      }}
+                    />
+                  ))}
+                </div>
+              </Column>
+            </Grid>
+            <Grid fullWidth={true}>
+              <Column lg={16} md={8} sm={4}>
+                <Section>
+                  <br />
+                  <h5>
+                    <FormattedMessage id="select.priority.tests" />
+                  </h5>
+                </Section>
+                <div className="inlineDiv">
+                  <Checkbox
+                    labelText="All"
+                    id="select-all-priorities"
+                    checked={selectedPriorities.length === priorities.length}
+                    onChange={(event) =>
+                      handleSelectAllPriorities(event.target.checked)
+                    }
+                  />
+                  {priorities.map((priority) => (
+                    <Checkbox
+                      key={priority.id}
+                      labelText={intl.formatMessage({
+                        id: priority.value,
+                        defaultMessage: priority.value,
+                      })}
+                      id={priority.id}
+                      checked={selectedPriorities.includes(priority.id)}
+                      onChange={() => {
+                        setSelectedPriorities((prev) => {
+                          if (prev.includes(priority.id)) {
+                            return prev.filter((item) => item !== priority.id);
+                          } else {
+                            return [...prev, priority.id];
+                          }
+                        });
+                      }}
+                    />
+                  ))}
+                </div>
+              </Column>
+            </Grid>
+            <Grid fullWidth={true}>
+              <Column lg={16} md={8} sm={4}>
+                <Section>
+                  <br />
+                  <h5>
+                    <FormattedMessage id="select.timeFrame" />
+                  </h5>
+                  <br />
+                  <h7>
+                    <FormattedMessage id="select.timeFrame.Note" />
+                  </h7>
+                </Section>
+                <div>
+                  <Checkbox
+                    labelText="All"
+                    id="select-all-time-frames"
+                    checked={selectedTimeFrames.length === timeFrames.length}
+                    onChange={(event) =>
+                      handleSelectAllTimeFrames(event.target.checked)
+                    }
+                  />
+                  {timeFrames.map((frame) => (
+                    <Checkbox
+                      key={frame.id}
+                      id={frame.id}
+                      labelText={intl.formatMessage({
+                        id: frame.description,
+                        defaultMessage: frame.description,
+                      })}
+                      checked={selectedTimeFrames.includes(frame.id)}
+                      onChange={() => {
+                        setSelectedTimeFrames((prev) => {
+                          if (prev.includes(frame.id)) {
+                            return prev.filter((item) => item !== frame.id);
+                          } else {
+                            return [...prev, frame.id];
+                          }
+                        });
+                      }}
+                    />
+                  ))}
+                </div>
+              </Column>
+            </Grid>
+            <Grid fullWidth={true}>
+              <Column lg={16} md={8} sm={4}>
+                <Section>
+                  <br />
+                  <h5>
+                    <FormattedMessage id="select.year.report" />
+                  </h5>
+                </Section>
+              </Column>
+              <Column lg={2} md={2} sm={2}>
+                <Dropdown
+                  id="year-picker"
+                  label="Select Year"
+                  selectedItem={selectedYear}
+                  onChange={({ selectedItem }) =>
+                    handleYearChange(selectedItem)
+                  }
+                  items={years.map((year) => ({
+                    value: year.value,
+                    label: year.label,
+                  }))}
+                />
+              </Column>{" "}
+            </Grid>
+            <br />
+            <Section>
               <br />
-              <Section>
-                <br />
-                <Button type="button" onClick={handleSubmit}>
-                  <FormattedMessage
-                    id="label.button.generatePrintableVersion"
-                    defaultMessage="Generate printable version"
-                  />
-                </Button>
-              </Section>
-            </Form>
-          </Column>
-        </Grid>
-      
+              <Button type="button" onClick={handleSubmit}>
+                <FormattedMessage
+                  id="label.button.generatePrintableVersion"
+                  defaultMessage="Generate printable version"
+                />
+              </Button>
+            </Section>
+          </Form>
+        </Column>
+      </Grid>
     </>
   );
 };

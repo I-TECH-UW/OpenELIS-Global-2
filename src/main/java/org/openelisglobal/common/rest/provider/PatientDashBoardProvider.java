@@ -1,5 +1,6 @@
 package org.openelisglobal.common.rest.provider;
 
+import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -9,15 +10,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.provider.query.PatientDashBoardForm;
 import org.openelisglobal.common.rest.provider.bean.homedashboard.AverageTimeDisplayBean;
 import org.openelisglobal.common.rest.provider.bean.homedashboard.DashBoardMetrics;
 import org.openelisglobal.common.rest.provider.bean.homedashboard.DashBoardTile;
 import org.openelisglobal.common.rest.provider.bean.homedashboard.OrderDisplayBean;
+import org.openelisglobal.common.rest.util.PatientDashBoardPaging;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.ExternalOrderStatus;
@@ -358,14 +364,43 @@ public class PatientDashBoardProvider {
         
         return metrics;
     }
-    
+
+    /**
+     *  Get the list of orders to be displayed on the dashboard.
+     *  It will returna a list of orders based on the type of the list in paginated manner.
+     */
     @GetMapping(value = "home-dashboard/{listType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<OrderDisplayBean> getDashBoardDisplayList(@PathVariable DashBoardTile.TileType listType,
-            @RequestParam(required = false) String systemUserId) {
+    public PatientDashBoardForm getDashBoardDisplayList(HttpServletRequest request, @PathVariable DashBoardTile.TileType listType,
+            @RequestParam(required = false) String systemUserId) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         
+        PatientDashBoardForm response = new PatientDashBoardForm();
+        PatientDashBoardPaging paging = new PatientDashBoardPaging();
+        List<OrderDisplayBean> orderDisplayBeans = new ArrayList<>();
+
+        String requestedPage = request.getParameter("page");
+        if (GenericValidator.isBlankOrNull(requestedPage)) {
+            orderDisplayBeans = retreiveOrders(listType, systemUserId);
+            
+            // All the orders retreived are fed into paging to return the first page of the list.
+            paging.setDatabaseResults(request, response, orderDisplayBeans);
+        } else {
+            int requestedPageNumber = Integer.parseInt(requestedPage);
+
+            // Sets the requested page in the response.
+            paging.page(request, response, requestedPageNumber);
+        } 
+
+        return response;
+    }
+
+    /**
+     * Returns the list of orders based on the type of the list provided by the getdashBoardDisplayList method.
+     */
+    private List<OrderDisplayBean> retreiveOrders(DashBoardTile.TileType listType, String systemUserId) {
         Set<Integer> statusIdSet;
         List<Analysis> analyses;
+        
         switch (listType) {
             case ORDERS_IN_PROGRESS:
                 analyses = analysisService.getAnalysesForStatusId(iStatusService.getStatusID(AnalysisStatus.NotStarted));

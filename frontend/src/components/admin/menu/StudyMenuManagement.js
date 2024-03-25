@@ -195,7 +195,7 @@ function StudyMenuManagement() {
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading />}
       <div className="adminPageContent">
-      <PageBreadCrumb breadcrumbs={breadcrumbs} />
+        <PageBreadCrumb breadcrumbs={breadcrumbs} />
         <Grid>
           <Column lg={16}>
             <Section>
