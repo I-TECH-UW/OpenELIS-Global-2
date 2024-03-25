@@ -333,10 +333,11 @@ function OEHeader(props) {
                     onClick={onClickSideNavExpand}
                     isActive={isSideNavExpanded}
                     isCollapsible={true}
+                    data-test="openMenu"
                   />
                 )}
                 <HeaderName href="/" prefix="">
-                  <span id="header-logo">{logo()}</span>
+                  <span id="header-logo" data-test="logo">{logo()}</span>
                   <div className="banner">
                     <h5>{configurationProperties?.BANNER_TEXT}</h5>
                     <p>
@@ -370,6 +371,7 @@ function OEHeader(props) {
                     aria-label={panelSwitchLabel()}
                     onClick={clickPanelSwitch}
                     ref={userSwitchRef}
+                    data-test="panelSwitchIcon"
                   >
                     {panelSwitchIcon()}
                   </HeaderGlobalAction>
@@ -392,7 +394,7 @@ function OEHeader(props) {
                           className="userDetails clickableUserDetails"
                           onClick={logout}
                         >
-                          <Logout id="sign-out" />
+                          <Logout id="sign-out" data-type="logoutIcon"/>
                           <FormattedMessage id="header.label.logout" />
                         </li>
                       </>
