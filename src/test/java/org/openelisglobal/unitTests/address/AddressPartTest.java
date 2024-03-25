@@ -1,4 +1,4 @@
-package org.openelisglobal.address;
+package org.openelisglobal.unitTests.address;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
