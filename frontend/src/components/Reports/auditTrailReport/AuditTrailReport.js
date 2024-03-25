@@ -63,21 +63,20 @@ const AuditTrailReport = ({ id }) => {
           return;
         } else {
           // Add unique id and format timestamp for each item
-          const updatedAuditTrailItems = data.log.map(
-            (item, index) => {
-              const formattedTimeStamp = new Date(
-                item.timeStamp,
-              ).toLocaleString("en-GB", {
+          const updatedAuditTrailItems = data.log.map((item, index) => {
+            const formattedTimeStamp = new Date(item.timeStamp).toLocaleString(
+              "en-GB",
+              {
                 day: "2-digit",
                 month: "2-digit",
                 year: "numeric",
                 hour: "2-digit",
                 minute: "2-digit",
                 hour12: false,
-              }); // Convert timestamp to localized format (DD/MM/YYYY HH:mm)
-              return { ...item, id: index + 1, timeStamp: formattedTimeStamp };
-            },
-          );
+              },
+            ); // Convert timestamp to localized format (DD/MM/YYYY HH:mm)
+            return { ...item, id: index + 1, timeStamp: formattedTimeStamp };
+          });
 
           setIsLabNoError(null);
           setAuditTrailItems(updatedAuditTrailItems);
@@ -243,10 +242,7 @@ const AuditTrailReport = ({ id }) => {
                 </span>
               </div>
               <div style={{ marginBottom: "10px" }}>
-               {
-                  `${data?.sampleOrderItems?.providerFirstName} ${data?.sampleOrderItems?.providerLastName}`
-               
-               }
+                {`${data?.sampleOrderItems?.providerFirstName} ${data?.sampleOrderItems?.providerLastName}`}
               </div>
             </Column>
             <Column lg={8} style={{ marginBottom: "20px" }}>

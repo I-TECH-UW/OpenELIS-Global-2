@@ -490,12 +490,12 @@ button {
   .banner p {
     font-size: 1.4vw;
   }
-  .formInlineDiv{
+  .formInlineDiv {
     grid-template-columns: 1fr;
   }
 }
 @media screen and (max-width: 550px) {
-  .adminPageContent{
+  .adminPageContent {
     margin-left: 15%;
   }
 }
@@ -505,8 +505,8 @@ button {
     flex-direction: column;
   }
 }
-@media screen and (max-width:500px) {
-  .adminPageContent{
+@media screen and (max-width: 500px) {
+  .adminPageContent {
     margin-left: 17%;
   }
 }

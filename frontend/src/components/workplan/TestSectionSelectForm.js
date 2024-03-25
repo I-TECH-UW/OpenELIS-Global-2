@@ -32,7 +32,9 @@ function TestSectionSelectForm(props) {
       let testSection = fetchedTestSections.find(
         (testSection) => testSection.id === testSectionId,
       );
-      let testSectionLabel = testSection ? testSection.value : intl.formatMessage({id:"input.placeholder.selectTestSection"});
+      let testSectionLabel = testSection
+        ? testSection.value
+        : intl.formatMessage({ id: "input.placeholder.selectTestSection" });
       setDefaultTestSectionId(testSectionId);
       setDefaultTestSectionLabel(testSectionLabel);
       props.value(testSectionId, testSectionLabel);
