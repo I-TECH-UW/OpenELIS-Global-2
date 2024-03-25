@@ -95,13 +95,19 @@
 }
 }
 
-@media screen and (max-width: 700px) and (min-width:450px){
-.dashboard-container{
-  grid-template-columns: repeat(2, 1fr);
-  gap: 40px;
-  padding:30px;
+@media (max-width: 925px){
+  .dashboard-container{
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    padding:22px;
+  }
 }
-.tile-title-Immuno{
-  font-size: 0.9rem;
-}
+
+@media (max-width: 500px){
+  .dashboard-container{
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .tile-title-Immuno{
+    font-size: 0.9rem;
+  }
 }
