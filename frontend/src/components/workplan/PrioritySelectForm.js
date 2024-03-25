@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Column, Grid, Select, SelectItem } from "@carbon/react";
-import { FormattedMessage, injectIntl } from "react-intl";
+import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../Style.css";
 import { getFromOpenElisServer } from "../utils/Utils";
 
@@ -20,6 +20,8 @@ function PanelSelectForm(props) {
     }
   };
 
+  const intl = useIntl();
+
   useEffect(() => {
     mounted.current = true;
     let priorityId = new URLSearchParams(window.location.search).get(
@@ -30,7 +32,7 @@ function PanelSelectForm(props) {
       let priority = fetchedPriorities.find(
         (priority) => priority.id === priorityId,
       );
-      let priorityLabel = priority ? priority.value : "";
+      let priorityLabel = priority ? priority.value : intl.formatMessage({id:"input.placeholder.selectPriority"});
       setDefaultPriorityId(priorityId);
       setDefaultPriorityLabel(priorityLabel);
       props.value(priorityId, priorityLabel);
