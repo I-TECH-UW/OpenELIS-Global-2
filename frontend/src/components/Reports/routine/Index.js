@@ -1,19 +1,14 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AlertDialog } from "../../common/CustomNotification";
 import { NotificationContext } from "../../layout/Layout";
-import {
-  Heading,
-  Grid,
-  Column,
-  Section,
-  Loading,
-} from "@carbon/react";
+import { Heading, Grid, Column, Section, Loading } from "@carbon/react";
 import { injectIntl, FormattedMessage, useIntl } from "react-intl";
 import PatientStatusReport from "./PatientStatusReport";
 import StatisticsReport from "./StatisticsReport";
 import ReferredOut from "./ReferredOut";
 import ReportByDate from "../study/common/ReportByDate";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
+import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
 
 const RoutineIndex = () => {
   const intl = useIntl();
@@ -39,22 +34,25 @@ const RoutineIndex = () => {
   }, []);
 
   return (
-      <>
-      <br/>
-      <PageBreadCrumb breadcrumbs={[{ label: "home.label", link: "/" },{ label: "routine.reports", link: "/RoutineReports" },]}/>
+    <>
+      <br />
+      <PageBreadCrumb
+        breadcrumbs={[
+          { label: "home.label", link: "/" },
+          { label: "routine.reports", link: "/RoutineReports" },
+        ]}
+      />
       <div className="orderLegendBody">
-      
         {notificationVisible === true && <AlertDialog />}
         {isLoading && <Loading />}
         {!isLoading && (
           <>
-            {type === "patient" && report === "patientCILNSP_vreduit" && 
-            (<PatientStatusReport />)}
-            
-            {type === "patient" && 
-             report === "referredOut" && 
-             (<ReferredOut />)}
-            
+            {type === "patient" && report === "patientCILNSP_vreduit" && (
+              <PatientStatusReport />
+            )}
+
+            {type === "patient" && report === "referredOut" && <ReferredOut />}
+
             {type === "patient" &&
               report === "haitiNonConformityBySectionReason" && (
                 <ReportByDate
@@ -77,40 +75,42 @@ const RoutineIndex = () => {
               />
             )}
 
-            {type === "indicator" &&
-              report === "statisticsReport" &&
-              (<StatisticsReport />)}
+            {type === "indicator" && report === "statisticsReport" && (
+              <StatisticsReport />
+            )}
 
             {type === "indicator" &&
-              report === "indicatorHaitiLNSPAllTests" &&
-              (<ReportByDate
-                  report={"indicatorHaitiLNSPAllTests"}
-                  id={"openreports.all.test.summary.title"}
-                />)}
-
-            {type === "indicator" &&
-              report === "indicatorCDILNSPHIV" &&
-               (
+              report === "indicatorHaitiLNSPAllTests" && (
                 <ReportByDate
                   report={"indicatorHaitiLNSPAllTests"}
                   id={"openreports.all.test.summary.title"}
                 />
               )}
 
-              {type === "indicator" &&
-              report === "sampleRejectionReport" &&
-              (<ReportByDate
+            {type === "indicator" && report === "indicatorCDILNSPHIV" && (
+              <ReportByDate
+                report={"indicatorHaitiLNSPAllTests"}
+                id={"openreports.all.test.summary.title"}
+              />
+            )}
+
+            {type === "indicator" && report === "sampleRejectionReport" && (
+              <ReportByDate
                 report={"sampleRejectionReport"}
                 id={"openreports.mgt.rejection"}
-              />)}
+              />
+            )}
 
+            {type === "routine" && report === "auditTrail" && (
+              <AuditTrailReport
+                report={"auditTrail"}
+                id={"reports.auditTrail"}
+              />
+            )}
           </>
         )}
-
-     
       </div>
-      </>
-      
+    </>
   );
 };
 

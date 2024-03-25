@@ -12,7 +12,7 @@ import {
 } from "@carbon/react";
 import { getFromOpenElisServer } from "../utils/Utils";
 import { sampleTypeTestsStructure } from "../data/SampleEntryTestsForTypeProvider";
-import "../Style.css"
+import "../Style.css";
 
 const PrePrint = () => {
   const intl = useIntl();
@@ -21,7 +21,7 @@ const PrePrint = () => {
   const [selectedSampleTypeId, setSelectedSampleTypeId] = useState(null);
 
   const [sampleTypeTests, setSampleTypeTests] = useState(
-    sampleTypeTestsStructure
+    sampleTypeTestsStructure,
   );
   const [selectedTests, setSelectedTests] = useState([]);
   const [selectedPanels, setSelectedPanels] = useState([]);
@@ -160,7 +160,7 @@ const PrePrint = () => {
     if (selectedSampleTypeId !== null) {
       getFromOpenElisServer(
         `/rest/sample-type-tests?sampleType=${selectedSampleTypeId}`,
-        fetchSampleTypeTests
+        fetchSampleTypeTests,
       );
     }
   }, [selectedSampleTypeId]);
@@ -308,11 +308,11 @@ const PrePrint = () => {
             <FormattedMessage id="barcode.print.preprint.note" />
           </Column>
           <div className="tabsLayout">
-          <Column lg={8} md={8} sm={4}>
-            <Button disabled={!selectedSampleTypeId} onClick={prePrintLabels}>
-              <FormattedMessage id="barcode.print.preprint.button" />
-            </Button>
-          </Column>
+            <Column lg={8} md={8} sm={4}>
+              <Button disabled={!selectedSampleTypeId} onClick={prePrintLabels}>
+                <FormattedMessage id="barcode.print.preprint.button" />
+              </Button>
+            </Column>
           </div>
         </Grid>
       </div>
