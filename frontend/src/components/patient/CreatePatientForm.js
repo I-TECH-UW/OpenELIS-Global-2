@@ -52,7 +52,9 @@ function CreatePatientForm(props) {
     months: "",
     days: "",
   });
-  const [nationalId, setNationalId] = useState(props.selectedPatient.nationalId);
+  const [nationalId, setNationalId] = useState(
+    props.selectedPatient.nationalId,
+  );
   const handleNationalIdChange = (event) => {
     const newValue = event.target.value;
     setNationalId(newValue);
@@ -239,7 +241,10 @@ function CreatePatientForm(props) {
 
   const accessionNumberValidationResponse = (res, numberType, numberValue) => {
     let error;
-    if (res.status === false && props.selectedPatient.nationalId !==nationalId) {
+    if (
+      res.status === false &&
+      props.selectedPatient.nationalId !== nationalId
+    ) {
       setNotificationVisible(true);
       addNotification({
         kind: NotificationKinds.error,
@@ -284,26 +289,25 @@ function CreatePatientForm(props) {
   };
 
   const handleSubmit = async (values, { resetForm }) => {
-  if ("years" in values) {
-    delete values.years;
-  }
-  if ("months" in values) {
-    delete values.months;
-  }
-  if ("days" in values) {
-    delete values.days;
-  }
-  console.debug(JSON.stringify(values));
-  postToOpenElisServer(
-    "/rest/patient-management",
-    JSON.stringify(values),
-    (status) => {
-      handlePost(status);
-      resetForm({ values: CreatePatientFormValues });
+    if ("years" in values) {
+      delete values.years;
     }
-  );
-};
-
+    if ("months" in values) {
+      delete values.months;
+    }
+    if ("days" in values) {
+      delete values.days;
+    }
+    console.debug(JSON.stringify(values));
+    postToOpenElisServer(
+      "/rest/patient-management",
+      JSON.stringify(values),
+      (status) => {
+        handlePost(status);
+        resetForm({ values: CreatePatientFormValues });
+      },
+    );
+  };
 
   const handlePost = (status) => {
     setNotificationVisible(true);
@@ -436,7 +440,7 @@ function CreatePatientForm(props) {
                         values.nationalId,
                       );
                     }}
-                    onChange={handleNationalIdChange} 
+                    onChange={handleNationalIdChange}
                   />
                 )}
               </Field>
@@ -540,7 +544,7 @@ function CreatePatientForm(props) {
                     dateFormat="d/m/Y"
                     datePickerType="single"
                     light={true}
-                    maxDate={new Date()}  
+                    maxDate={new Date()}
                     className="inputText"
                   >
                     <DatePickerInput

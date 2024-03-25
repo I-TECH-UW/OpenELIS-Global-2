@@ -189,7 +189,7 @@ export const RoutineReportsMenu = {
       SideNavMenuItem: [
         {
           link: "/StudyReport?type=study&report=auditTrail",
-          label:<FormattedMessage id="sideNav.label.audittrail"/>,
+          label: <FormattedMessage id="sideNav.label.audittrail" />,
         },
       ],
     },
