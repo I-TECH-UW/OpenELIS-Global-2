@@ -107,6 +107,17 @@ const RoutineIndex = () => {
                 id={"reports.auditTrail"}
               />
             )}
+             {type === "indicator" && report === "activityReportByTest" && (
+                <ActivityReportByTest />
+              )}
+
+              {type === "indicator" &&  report === "activityReportByPanel" && (
+                <ActivityReportByPanel />
+              )}
+
+              {type === "indicator" && report === "activityReportByTestSection" && (
+                <activityReportByTestSection />
+              )}
           </>
         )}
       </div>

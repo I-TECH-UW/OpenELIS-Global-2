@@ -55,19 +55,19 @@ export const RoutineReportsMenu = {
         {
           link:
             config.serverBaseUrl +
-            "/Report?type=indicator&report=activityReportByTest",
+            "/RoutineReport?type=indicator&report=activityReportByTest",
           label: <FormattedMessage id="sideNav.label.bytesttype" />,
         },
         {
           link:
             config.serverBaseUrl +
-            "/Report?type=indicator&report=activityReportByPanel",
+            "/RoutineReport?type=indicator&report=activityReportByPanel",
           label: <FormattedMessage id="sideNav.label.bypaneltype" />,
         },
         {
           link:
             config.serverBaseUrl +
-            "/Report?type=indicator&report=activityReportByTestSection",
+            "/RoutineReport?type=indicator&report=activityReportByTestSection",
           label: <FormattedMessage id="sideNav.label.byunit" />,
         },
       ],

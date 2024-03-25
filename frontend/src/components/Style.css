@@ -455,6 +455,14 @@ button {
   width: 100%;
 }
 
+.inlineDiv {
+  display: flex;
+  justify-content: space-between;
+}
+
+.inputDate {
+  margin-right: 10px;
+}
 .custom-sidenav-button {
   box-sizing: border-box;
   margin: 0;
@@ -532,3 +540,4 @@ button {
     width: 14rem !important;
    }
  }
+ 
