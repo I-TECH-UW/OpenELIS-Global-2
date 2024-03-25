@@ -1,4 +1,4 @@
-package org.openelisglobal.organizationContact;
+package org.openelisglobal.unitTests.organization;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
