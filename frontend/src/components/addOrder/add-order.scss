@@ -47,6 +47,13 @@
   padding: 2%;
 }
 
+@media (max-width: 1024px) {
+  .orderWorkFlowDiv {
+    margin: 0;
+    padding: 0;
+  }
+}
+
 .ProgressIndicator {
   margin: auto;
   width: 50%;
