@@ -155,7 +155,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
     // Sets next and previous page numbers based on the total pages and current page number.
     if (res && res.paging) {
-      let { totalPages, currentPage } = res.paging;
+      var { totalPages, currentPage } = res.paging;
       if (totalPages > 1) {
         setPagination(true);
         if (parseInt(currentPage) < parseInt(totalPages)) {
