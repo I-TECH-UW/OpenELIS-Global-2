@@ -1,12 +1,7 @@
 import React, { useContext } from "react";
 import { FormattedMessage } from "react-intl";
 
-import {
-  Column,
-  Grid,
-  Heading,
-  Section,
-} from "@carbon/react";
+import { Column, Grid, Heading, Section } from "@carbon/react";
 import SearchOrder from "./SearchOrder";
 import { AlertDialog } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
