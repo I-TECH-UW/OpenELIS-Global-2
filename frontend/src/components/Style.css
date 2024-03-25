@@ -492,12 +492,12 @@ button {
   .banner p {
     font-size: 1.4vw;
   }
-  .formInlineDiv {
+  .formInlineDiv{
     grid-template-columns: 1fr;
   }
 }
 @media screen and (max-width: 550px) {
-  .adminPageContent {
+  .adminPageContent{
     margin-left: 15%;
   }
 }
@@ -507,16 +507,28 @@ button {
     flex-direction: column;
   }
 }
-@media screen and (max-width: 500px) {
-  .adminPageContent {
+@media screen and (max-width:500px) {
+  .adminPageContent{
     margin-left: 17%;
   }
 }
 
+@media screen and (max-width:320px) {
+  .logo {
+    height: 35px;
+  }
+  
+  #header-logo {
+    margin-left: 0px;
+  }
+
+  .banner p {
+    font-size: 1.6vw;
+  }
+}
 
 @media screen and (max-width:375px) {
   .headerPanel {
     width: 14rem !important;
-  }
-}
-
+   }
+ }
