@@ -768,5 +768,22 @@
   "input.placeholder.selectTest":"Select Test Type",
   "input.placeholder.selectPanel":"Select Panel Type",
   "input.placeholder.selectPriority":"Select Priority",
-  "input.placeholder.selectTestSection":"Select Unit Type"
+  "input.placeholder.selectTestSection":"Select Unit Type",
+  "audittrail.table.heading.time": "Time",
+  "audittrail.table.heading.item": "Item",
+  "audittrail.table.heading.action": "Action",
+  "audittrail.table.heading.identifier": "Identifier",
+  "audittrail.table.heading.user": "User",
+  "audittrail.table.heading.oldvalue": "Old Value",
+  "audittrail.table.heading.newvalue": "New Value",
+  "labe.audittrail.labNo.invalidaccessionnumber": "Invalid Accession Number",
+  "label.audittrailreport.priority" : "Priority",
+  "label.audittrailreport.requestdate" : "Request Date",
+  "label.audittrailreport.receiveddate" : "Received Date",
+  "label.audittrailreport.nextvisitdate" :"Next Visit Date",
+  "label.audittrailreport.program" : "Program",
+  "label.audittrailreport.requester" : "Requester",
+  "label.audittrailreport.requester.firstname" : "Requester's First Name",
+  "label.audittrailreport.requester.lastname" : "Requester's Last Name",
+  "label.audittrailreport.sitename": "Site Name"
 }

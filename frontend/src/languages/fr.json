@@ -709,5 +709,22 @@
   "input.placeholder.selectTest":"Sélectionnez le type de test",
   "input.placeholder.selectPanel":"Sélectionnez le type de panneau",
   "input.placeholder.selectPriority":"Sélectionnez la priorité",
-  "input.placeholder.selectTestSection":"Sélectionnez le type d'unité"
+  "input.placeholder.selectTestSection":"Sélectionnez le type d'unité",
+   "audittrail.table.heading.time": "Temps",
+  "audittrail.table.heading.item": "Élément",
+  "audittrail.table.heading.action": "Action",
+  "audittrail.table.heading.identifier": "Identifiant",
+  "audittrail.table.heading.user": "Utilisateur",
+  "audittrail.table.heading.oldvalue": "Ancienne Valeur",
+  "audittrail.table.heading.newvalue": "Nouvelle Valeur",
+  "labe.audittrail.labNo.invalidaccessionnumber" : "Numéro d'accession invalide",
+  "label.audittrailreport.priority": "Priorité",
+  "label.audittrailreport.requestdate": "Date de demande",
+  "label.audittrailreport.receiveddate": "Date de réception",
+  "label.audittrailreport.nextvisitdate": "Date de la prochaine visite",
+  "label.audittrailreport.program": "Programme",
+  "label.audittrailreport.requester": "Demandeur",
+  "label.audittrailreport.requester.firstname": "Prénom du demandeur",
+  "label.audittrailreport.requester.lastname": "Nom de famille du demandeur",
+  "label.audittrailreport.sitename": "Nom du site"
 }
