@@ -5,8 +5,11 @@ import { Heading, Grid, Column, Section } from "@carbon/react";
 import SearchPatientForm from "./SearchPatientForm";
 import { useState, useEffect, useRef } from "react";
 import PageBreadCrumb from "../common/PageBreadCrumb";
-let breadcrumbs = [{ label: "home.label", link: "/" }];
 
+let breadcrumbs = [
+  { label: "home.label", link: "/" },
+  { label: "label.page.patientHistory", link: "/PatientHistory" },
+];
 const PatientHistory = () => {
   const [selectedPatient, setSelectedPatient] = useState({});
   const componentMounted = useRef(false);

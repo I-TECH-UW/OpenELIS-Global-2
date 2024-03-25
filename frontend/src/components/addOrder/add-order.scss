@@ -1,4 +1,4 @@
-@use '@carbon/styles/scss/type';
+@use "@carbon/styles/scss/type";
 
 .singleTest {
   padding: 1rem 0.75rem;
@@ -30,10 +30,10 @@
   min-height: 1rem;
 }
 
-.emptyFilterTests span{
+.emptyFilterTests span {
   color: #d4373a;
 }
-.orderWorkFlowDiv{
+.orderWorkFlowDiv {
   //border: 0.5px solid #295785;
   border-radius: 5px;
   margin: 2%;
@@ -41,7 +41,7 @@
 }
 
 .orderLegendBody {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border-radius: 5px;
   margin: 2%;
   padding: 2%;
@@ -63,7 +63,6 @@
 .navigationButtonsLayout {
   width: 100%;
 }
-
 
 .navigationButtonsLayout .forwardButton {
   float: right;
@@ -111,8 +110,8 @@
   margin-left: 2px;
 }
 
-.cds--accordion__heading{
- background-color:#d9d8d9
+.cds--accordion__heading {
+  background-color: #d9d8d9;
 }
 
 .cds--accordion__content {
@@ -124,7 +123,7 @@
 }
 
 .cds--time-picker__input-field {
-  width: 31.875rem !important
+  width: 31.875rem !important;
 }
 
 .requestTestReferral {
@@ -135,7 +134,7 @@
 .requestTestReferral .cds--checkbox-label-text {
   color: red !important;
 }
-.orderEntrySuccessMsg{
+.orderEntrySuccessMsg {
   width: 240px;
   top: 0;
   bottom: 0;
@@ -143,7 +142,7 @@
   right: 0;
   margin: auto;
 }
-.printBarCodeBtn{
+.printBarCodeBtn {
   width: 220px;
   text-align: center;
 }
@@ -162,22 +161,21 @@
   margin-top: 10px;
 }
 
-.orderReferralSentDate input{
+.orderReferralSentDate input {
   width: 13rem !important;
 }
-#order_requestDate{
+#order_requestDate {
   width: 438px !important;
   margin-right: 10px;
 }
-#order_receivedDate{
+#order_receivedDate {
   width: 438px !important;
   margin-right: 10px;
 }
-#order_receivedTime{
+#order_receivedTime {
   width: 433px !important;
   margin-right: 5px;
 }
-#order_nextVisitDate{
+#order_nextVisitDate {
   width: 438px !important;
 }
-

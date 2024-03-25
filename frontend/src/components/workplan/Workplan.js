@@ -172,17 +172,14 @@ export default function Workplan(props) {
   let showAccessionNumber = false;
   let currentAccessionNumber = "";
 
-  let breadcrumbs = [
-    { label: "home.label", link: "/" },
-  ];
-
+  let breadcrumbs = [{ label: "home.label", link: "/" }];
 
   return (
     <>
-    <PageBreadCrumb breadcrumbs={breadcrumbs} />
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         {notificationVisible === true ? <AlertDialog /> : ""}
-        <Column sm={4} md={8} lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>{title}</Heading>
@@ -194,7 +191,7 @@ export default function Workplan(props) {
       </Grid>
       <div className="orderLegendBody">
         <Grid fullWidth={true}>
-          <Column sm={4} md={8} lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <WorkplanSearchForm
               type={type}
               createTestsList={handleTestsList}
@@ -208,7 +205,7 @@ export default function Workplan(props) {
             <hr />
             <br />
             <Grid fullWidth={true}>
-              <Column sm={4} md={8} lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 <Button
                   size="md"
                   type="button"
