@@ -28,7 +28,9 @@ function PanelSelectForm(props) {
     panelId = panelId ? panelId : "";
     getFromOpenElisServer("/rest/panels", (fetchedPanels) => {
       let panel = fetchedPanels.find((panel) => panel.id === panelId);
-      let panelLabel = panel ? panel.value : intl.formatMessage({id:"input.placeholder.selectPanel"});
+      let panelLabel = panel
+        ? panel.value
+        : intl.formatMessage({ id: "input.placeholder.selectPanel" });
       setDefaultPanelId(panelId);
       setDefaultPanelLabel(panelLabel);
       props.value(panelId, panelLabel);

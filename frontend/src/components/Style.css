@@ -513,8 +513,22 @@ button {
   }
 }
 
+@media screen and (max-width:320px) {
+  .logo {
+    height: 35px;
+  }
+  
+  #header-logo {
+    margin-left: 0px;
+  }
+
+  .banner p {
+    font-size: 1.6vw;
+  }
+}
+
 @media screen and (max-width:375px) {
   .headerPanel {
     width: 14rem !important;
-  }
-}
+   }
+ }
