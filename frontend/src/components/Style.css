@@ -23,6 +23,8 @@
 
 .userDetails {
   padding: 5%;
+  display: flex;
+  align-items: center;
 }
 
 li.userDetails {
@@ -508,5 +510,11 @@ button {
 @media screen and (max-width:500px) {
   .adminPageContent{
     margin-left: 17%;
+  }
+}
+
+@media screen and (max-width:375px) {
+  .headerPanel {
+    width: 14rem !important;
   }
 }
