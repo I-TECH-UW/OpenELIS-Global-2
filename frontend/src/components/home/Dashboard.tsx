@@ -23,7 +23,7 @@ import {
   getFromOpenElisServer,
   convertAlphaNumLabNumForDisplay,
 } from "../utils/Utils.js";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 interface DashBoardProps {}
 
 interface Tile {
@@ -47,6 +47,8 @@ type MetricType =
   | "ORDERS_FOR_USER";
 
 const HomeDashBoard: React.FC<DashBoardProps> = () => {
+  const intl = useIntl();
+
   const [counts, setCounts] = useState({
     ordersInProgress: 0,
     ordersReadyForValidation: 0,
@@ -355,7 +357,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     <>
       {loading && <Loading description="Loading Dasboard..." />}
       {selectedTile == null ? (
-        <div className="dashboard-container">
+        <div className="home-dashboard-container">
           {tileList.map((tile, index) => (
             <ClickableTile key={index} className="dashboard-tile">
               <h3 className="tile-title">{tile.title}</h3>
@@ -393,7 +395,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
             <div className="gridBoundary">
               {selectedTile.type == "AVERAGE_TURN_AROUND_TIME" ? (
                 <>
-                  <div className="dashboard-container">
+                  <div className="home-dashboard-container">
                     {averageTimeTileList.map((tile, index) => (
                       <Tile key={index} className="dashboard-tile">
                         <h3 className="tile-title">{tile.title}</h3>
@@ -459,7 +461,43 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                       pageSize={pageSize}
                       pageSizes={[10, 20, 30, 50, 100]}
                       totalItems={data.length}
-                    ></Pagination>
+                      forwardText={intl.formatMessage({
+                        id: "pagination.forward",
+                      })}
+                      backwardText={intl.formatMessage({
+                        id: "pagination.backward",
+                      })}
+                      itemRangeText={(min, max, total) =>
+                        intl.formatMessage(
+                          { id: "pagination.item-range" },
+                          { min: min, max: max, total: total },
+                        )
+                      }
+                      itemsPerPageText={intl.formatMessage({
+                        id: "pagination.items-per-page",
+                      })}
+                      itemText={(min, max) =>
+                        intl.formatMessage(
+                          { id: "pagination.item" },
+                          { min: min, max: max },
+                        )
+                      }
+                      pageNumberText={intl.formatMessage({
+                        id: "pagination.page-number",
+                      })}
+                      pageRangeText={(_current, total) =>
+                        intl.formatMessage(
+                          { id: "pagination.page-range" },
+                          { total: total },
+                        )
+                      }
+                      pageText={(page, pagesUnknown) =>
+                        intl.formatMessage(
+                          { id: "pagination.page" },
+                          { page: pagesUnknown ? "" : page },
+                        )
+                      }
+                    />
                   </Column>
                 </Grid>
               )}

@@ -192,6 +192,7 @@ function SearchPatientForm(props) {
                   <TextInput
                     name={field.name}
                     value={values[field.name]}
+                    placeholder={intl.formatMessage({id:"input.placeholder.patientId"})}
                     labelText={intl.formatMessage({
                       id: "patient.id",
                       defaultMessage: "Patient Id",
@@ -205,6 +206,7 @@ function SearchPatientForm(props) {
                 {({ field }) => (
                   <CustomLabNumberInput
                     name={field.name}
+                    placeholder={intl.formatMessage({id:"input.placeholder.prevLabNumber"})}
                     labelText={intl.formatMessage({
                       id: "patient.prev.lab.no",
                       defaultMessage: "Previous Lab Number",
@@ -224,6 +226,7 @@ function SearchPatientForm(props) {
                 {({ field }) => (
                   <TextInput
                     name={field.name}
+                    placeholder={intl.formatMessage({id:"input.placeholder.patientLastName"})}
                     labelText={intl.formatMessage({
                       id: "patient.last.name",
                       defaultMessage: "Last Name",
@@ -237,6 +240,7 @@ function SearchPatientForm(props) {
                 {({ field }) => (
                   <TextInput
                     name={field.name}
+                    placeholder={intl.formatMessage({id:"input.placeholder.patientFirstName"})}
                     labelText={intl.formatMessage({
                       id: "patient.first.name",
                       defaultMessage: "First Name",
@@ -402,7 +406,39 @@ function SearchPatientForm(props) {
             pageSize={pageSize}
             pageSizes={[5, 10, 20, 30]}
             totalItems={patientSearchResults.length}
-          ></Pagination>
+            forwardText={intl.formatMessage({ id: "pagination.forward" })}
+            backwardText={intl.formatMessage({ id: "pagination.backward" })}
+            itemRangeText={(min, max, total) =>
+              intl.formatMessage(
+                { id: "pagination.item-range" },
+                { min: min, max: max, total: total },
+              )
+            }
+            itemsPerPageText={intl.formatMessage({
+              id: "pagination.items-per-page",
+            })}
+            itemText={(min, max) =>
+              intl.formatMessage(
+                { id: "pagination.item" },
+                { min: min, max: max },
+              )
+            }
+            pageNumberText={intl.formatMessage({
+              id: "pagination.page-number",
+            })}
+            pageRangeText={(_current, total) =>
+              intl.formatMessage(
+                { id: "pagination.page-range" },
+                { total: total },
+              )
+            }
+            pageText={(page, pagesUnknown) =>
+              intl.formatMessage(
+                { id: "pagination.page" },
+                { page: pagesUnknown ? "" : page },
+              )
+            }
+          />
         </Column>
       </div>
     </>

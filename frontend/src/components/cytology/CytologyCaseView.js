@@ -15,8 +15,6 @@ import {
   Section,
   FileUploader,
   Tag,
-  Breadcrumb,
-  BreadcrumbItem,
   Loading,
   RadioButtonGroup,
   RadioButton,
@@ -37,6 +35,11 @@ import ConfirmPopup from "../common/ConfirmPopup";
 import PatientHeader from "../common/PatientHeader";
 import QuestionnaireResponse from "../common/QuestionnaireResponse";
 import "../pathology/PathologyDashboard.css";
+import PageBreadCrumb from "../common/PageBreadCrumb";
+let breadcrumbs = [
+  { label: "home.label", link: "/" },
+  { label: "cytology.label.dashboard", link: "/CytologyDashboard" },
+];
 
 function CytologyCaseView() {
   const componentMounted = useRef(false);
@@ -355,18 +358,7 @@ function CytologyCaseView() {
 
   return (
     <>
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Breadcrumb>
-            <BreadcrumbItem href="/">
-              {intl.formatMessage({ id: "home.label" })}
-            </BreadcrumbItem>
-            <BreadcrumbItem href="/CytologyDashboard">
-              {intl.formatMessage({ id: "cytology.label.dashboard" })}
-            </BreadcrumbItem>
-          </Breadcrumb>
-        </Column>
-      </Grid>
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
 
       <Grid fullWidth={true}>
         <Column lg={16}>

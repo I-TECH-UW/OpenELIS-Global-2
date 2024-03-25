@@ -356,7 +356,39 @@ const EditSample = (props) => {
             pageSize={pageSize}
             pageSizes={[5, 10, 20, 30]}
             totalItems={orderFormValues.existingTests.length}
-          ></Pagination>
+            forwardText={intl.formatMessage({ id: "pagination.forward" })}
+            backwardText={intl.formatMessage({ id: "pagination.backward" })}
+            itemRangeText={(min, max, total) =>
+              intl.formatMessage(
+                { id: "pagination.item-range" },
+                { min: min, max: max, total: total },
+              )
+            }
+            itemsPerPageText={intl.formatMessage({
+              id: "pagination.items-per-page",
+            })}
+            itemText={(min, max) =>
+              intl.formatMessage(
+                { id: "pagination.item" },
+                { min: min, max: max },
+              )
+            }
+            pageNumberText={intl.formatMessage({
+              id: "pagination.page-number",
+            })}
+            pageRangeText={(_current, total) =>
+              intl.formatMessage(
+                { id: "pagination.page-range" },
+                { total: total },
+              )
+            }
+            pageText={(page, pagesUnknown) =>
+              intl.formatMessage(
+                { id: "pagination.page" },
+                { page: pagesUnknown ? "" : page },
+              )
+            }
+          />
         </Column>
       </div>
       <div className="orderLegendBody">
@@ -405,7 +437,39 @@ const EditSample = (props) => {
             pageSize={pageSize2}
             pageSizes={[5, 10, 20, 30]}
             totalItems={orderFormValues.possibleTests.length}
-          ></Pagination>
+            forwardText={intl.formatMessage({ id: "pagination.forward" })}
+            backwardText={intl.formatMessage({ id: "pagination.backward" })}
+            itemRangeText={(min, max, total) =>
+              intl.formatMessage(
+                { id: "pagination.item-range" },
+                { min: min, max: max, total: total },
+              )
+            }
+            itemsPerPageText={intl.formatMessage({
+              id: "pagination.items-per-page",
+            })}
+            itemText={(min, max) =>
+              intl.formatMessage(
+                { id: "pagination.item" },
+                { min: min, max: max },
+              )
+            }
+            pageNumberText={intl.formatMessage({
+              id: "pagination.page-number",
+            })}
+            pageRangeText={(_current, total) =>
+              intl.formatMessage(
+                { id: "pagination.page-range" },
+                { total: total },
+              )
+            }
+            pageText={(page, pagesUnknown) =>
+              intl.formatMessage(
+                { id: "pagination.page" },
+                { page: pagesUnknown ? "" : page },
+              )
+            }
+          />
         </Column>
       </div>
       <Stack gap={10}>

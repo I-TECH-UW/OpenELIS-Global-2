@@ -19,7 +19,6 @@ import org.openelisglobal.fhir.springserialization.QuestionnaireSerializer;
 import org.openelisglobal.interceptor.CommonPageAttributesInterceptor;
 import org.openelisglobal.interceptor.UrlErrorsInterceptor;
 import org.openelisglobal.internationalization.GlobalLocaleResolver;
-import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.security.SecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,11 +27,11 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -47,7 +46,6 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -76,6 +74,8 @@ public class AppConfig implements WebMvcConfigurer {
     CommonPageAttributesInterceptor pageAttributesInterceptor;
     @Autowired
     LocaleChangeInterceptor localeChangeInterceptor;
+    @Autowired
+    LocaleResolver localResolver;
 
     @Bean
     public ViewResolver internalResourceViewResolver() {
@@ -156,6 +156,17 @@ public class AppConfig implements WebMvcConfigurer {
         }
 
         return mailSender;
+    }
+
+    @Bean("localeResolver")
+    @Primary
+    //this belongs in InternationalizationConfig.java, but putting it there breaks functionality
+    public LocaleResolver localeResolver() {
+         GlobalLocaleResolver localeResolver = new GlobalLocaleResolver();
+        String localeName = ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_LANG_LOCALE);
+        localeResolver.setDefaultLocale(Locale.forLanguageTag(localeName));
+        LocaleContextHolder.setDefaultLocale(Locale.forLanguageTag(localeName));
+        return localeResolver;
     }
 
     @Bean
