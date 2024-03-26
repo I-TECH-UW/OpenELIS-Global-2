@@ -529,6 +529,6 @@ button {
 
 @media screen and (max-width:375px) {
   .headerPanel {
-    width: 14rem !important;
+    width: 14rem;
    }
  }
