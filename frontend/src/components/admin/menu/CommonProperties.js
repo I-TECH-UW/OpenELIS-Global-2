@@ -32,9 +32,9 @@ export const CommonProperties = () => {
         setError(err);
         setLoading(false); // Set loading to false in case of error
       } else {
-        const sortedKeys=  Object.keys(fetchedProperties).sort();
+        const sortedKeys = Object.keys(fetchedProperties).sort();
         let sortedProperties = {};
-        sortedKeys.forEach(key => {
+        sortedKeys.forEach((key) => {
           sortedProperties[key] = fetchedProperties[key];
         });
         setCommonProperties(sortedProperties);

@@ -15,7 +15,6 @@ import CustomDatePicker from "../../../common/CustomDatePicker";
 import config from "../../../../config.json";
 import { encodeDate } from "../../../utils/Utils";
 
-
 const ReportByDate = (props) => {
   const intl = useIntl();
   const [loading, setLoading] = useState(false);
@@ -26,8 +25,6 @@ const ReportByDate = (props) => {
     endDate: null,
     error: null,
   });
-
- 
 
   const handleDatePickerChangeDate = (datePicker, date) => {
     let updatedDate = encodeDate(date);

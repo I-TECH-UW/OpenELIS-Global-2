@@ -1,13 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AlertDialog } from "../../common/CustomNotification";
 import { NotificationContext } from "../../layout/Layout";
-import {
-  Heading,
-  Grid,
-  Column,
-  Section,
-  Loading,
-} from "@carbon/react";
+import { Heading, Grid, Column, Section, Loading } from "@carbon/react";
 import { injectIntl, FormattedMessage, useIntl } from "react-intl";
 import GenericReport from "./common/GenericReport";
 import ReportByID from "./common/ReportByID";
@@ -19,8 +13,7 @@ import ReportByDateCSV from "./common/ReportByDateCSV";
 
 const StudyIndex = () => {
   const intl = useIntl();
-  const { notificationVisible } =
-    useContext(NotificationContext);
+  const { notificationVisible } = useContext(NotificationContext);
 
   const [type, setType] = useState("");
   const [report, setReport] = useState("");
@@ -47,8 +40,8 @@ const StudyIndex = () => {
     patient_patientIndeterminate2: "project.IndeterminateStudy.name",
     patient_patientSpecialReport: "header.label.specialRequest",
     study_auditTrail: "reports.auditTrail",
-    patient_CIStudyExport : "reports.label.cistudyexport",
-    patient_Trends : "reports.label.trends"
+    patient_CIStudyExport: "reports.label.cistudyexport",
+    patient_Trends: "reports.label.trends",
   };
 
   useEffect(() => {
@@ -132,23 +125,19 @@ const StudyIndex = () => {
             {type === "patient" && report === "patientEID1" && (
               <GenericReport report="patientEID1" id="header.label.EID" />
             )}
-            {
-              type === "patient" && report === "CIStudyExport" && (
-               <ReportByDateCSV
+            {type === "patient" && report === "CIStudyExport" && (
+              <ReportByDateCSV
                 report="CIStudyExport"
                 id="header.label.study.ciexport"
               />
-              )
-            }
+            )}
 
-             {
-              type === "patient" && report === "Trends" && (
-               <ReportByDateCSV
+            {type === "patient" && report === "Trends" && (
+              <ReportByDateCSV
                 report="Trends"
                 id="header.label.study.vlloadtrends"
               />
-              )
-            }
+            )}
 
             {type === "patient" && report === "patientEID2" && (
               <GenericReport report="patientEID2" id="header.label.EID" />

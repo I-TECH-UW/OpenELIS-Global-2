@@ -211,9 +211,9 @@ export const convertAlphaNumLabNumForDisplay = (labNumber) => {
 };
 
 export function encodeDate(dateString) {
-    if (typeof dateString === "string" && dateString.trim() !== "") {
-      return dateString.split("/").map(encodeURIComponent).join("%2F");
-    } else {
-      return "";
-    }
+  if (typeof dateString === "string" && dateString.trim() !== "") {
+    return dateString.split("/").map(encodeURIComponent).join("%2F");
+  } else {
+    return "";
   }
+}

@@ -180,7 +180,7 @@ export const RoutineReportsMenu = {
           label: <FormattedMessage id="sideNav.label.generalreport" />,
         },
         {
-          link:  "/StudyReport?type=patient&report=Trends",
+          link: "/StudyReport?type=patient&report=Trends",
           label: <FormattedMessage id="sideNav.label.viralloaddataexport" />,
         },
       ],
