@@ -513,7 +513,7 @@ button {
   }
 }
 
-@media screen and (max-width:320px) {
+@media screen and (max-width:322px) {
   .logo {
     height: 35px;
   }
