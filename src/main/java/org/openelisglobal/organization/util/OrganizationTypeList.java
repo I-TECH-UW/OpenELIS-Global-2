@@ -97,7 +97,7 @@ public enum OrganizationTypeList {
                 Collections.sort(all, comparator);
             }
         } catch (RuntimeException e) {
-            LogEvent.logErrorStack(e);
+            //LogEvent.logErrorStack(e);
             //all = new ArrayList<>(); must not return empty List if sorting fails
         }
         return all;

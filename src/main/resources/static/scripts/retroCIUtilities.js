@@ -169,7 +169,7 @@ function /* boolean */ updateFieldConflict(good, fieldId, message) {
  */
 function processAccessionFailure(xhr)
 {
-    alert("processAccessionFailure");
+    //alert("processAccessionFailure");
 }
 
 function handleLabNoChange( displayField, prefix, isWanted ) {
