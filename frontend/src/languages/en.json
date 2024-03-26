@@ -785,5 +785,12 @@
   "label.audittrailreport.requester": "Requester",
   "label.audittrailreport.requester.firstname": "Requester's First Name",
   "label.audittrailreport.requester.lastname": "Requester's Last Name",
-  "label.audittrailreport.sitename": "Site Name"
+  "label.audittrailreport.sitename": "Site Name",
+  "reports.label.cistudyexport" : "General Report",
+  "header.label.study.ciexport" : "Export a CSV File by Date Type",
+  "report.select.studttype" : "Select Study Type",
+  "error.report.csv.study" : "Please select study type.",
+  "error.report.csv.date" : "Please select date type.",
+  "header.label.study.vlloadtrends" :"Viral Load Data Export Report",
+  "reports.label.trends" : "Trends"
 }

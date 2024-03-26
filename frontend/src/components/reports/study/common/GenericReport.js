@@ -43,6 +43,7 @@ import {
   AlertDialog,
   NotificationKinds,
 } from "../../../common/CustomNotification";
+import { encodeDate } from "../../../utils/Utils";
 
 function GenericReport(props) {
   const [reportFormValues, setReportFormValues] = useState(
@@ -137,14 +138,6 @@ function GenericReport(props) {
     getFromOpenElisServer(searchEndPoint, fetchPatientResults);
     setUrl(searchEndPoint);
   };
-
-  function encodeDate(dateString) {
-    if (typeof dateString === "string" && dateString.trim() !== "") {
-      return dateString.split("/").map(encodeURIComponent).join("%2F");
-    } else {
-      return "";
-    }
-  }
 
   function handlePatientIdTo(e) {
     setReportFormValues({
