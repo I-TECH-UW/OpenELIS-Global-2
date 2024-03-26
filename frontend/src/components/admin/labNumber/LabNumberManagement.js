@@ -26,7 +26,9 @@ import {
 } from "../../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
 import { ConfigurationContext } from "../../layout/Layout";
+import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 
+let breadcrumbs = [{ label: "home.label", link: "/" }];
 function LabNumberManagement() {
   const intl = useIntl();
 
@@ -156,6 +158,7 @@ function LabNumberManagement() {
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading />}
       <div className="adminPageContent">
+        <PageBreadCrumb breadcrumbs={breadcrumbs} />
         <Grid>
           <Column lg={16}>
             <Section>

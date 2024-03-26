@@ -44,8 +44,8 @@ export const MenuCheckBox = (props) => {
               id: labelKey
                 ? labelKey
                 : curMenuItem.menu.displayKey
-                ? curMenuItem.menu.displayKey
-                : "missing display key",
+                  ? curMenuItem.menu.displayKey
+                  : "missing display key",
             })}
             checked={curMenuItem?.menu.isActive}
             onChange={(_, { checked }) => {

@@ -5,9 +5,15 @@ import {
   loadPresentConcepts,
   extractMetaInformation,
   addUserDataToCache,
-} from './helpers';
-import { PatientData, ObsRecord, ConceptUuid, ObsUuid, ObsMetaInfo } from '../commons';
-import uniq from 'lodash-es/uniq';
+} from "./helpers";
+import {
+  PatientData,
+  ObsRecord,
+  ConceptUuid,
+  ObsUuid,
+  ObsMetaInfo,
+} from "../commons";
+import uniq from "lodash-es/uniq";
 
 function parseSingleObsData(
   testConceptNameMap: Record<ConceptUuid, string>,
@@ -21,7 +27,7 @@ function parseSingleObsData(
       // is a panel
       entry.members = new Array(entry.hasMember.length);
       entry.hasMember.forEach((memb, i) => {
-        memberRefs[memb.reference.split('/')[1]] = [entry.members, i];
+        memberRefs[memb.reference.split("/")[1]] = [entry.members, i];
       });
     } else {
       // is a single test
@@ -46,12 +52,16 @@ async function reloadData(patientUuid: string) {
   const entries = await loadObsEntries(patientUuid);
   const allConcepts = await loadPresentConcepts(entries);
 
-  const testConcepts = allConcepts.filter((x) => x.conceptClass.name === 'Test' || x.conceptClass.name === 'LabSet');
+  const testConcepts = allConcepts.filter(
+    (x) => x.conceptClass.name === "Test" || x.conceptClass.name === "LabSet",
+  );
   const testConceptUuids: ConceptUuid[] = testConcepts.map((x) => x.uuid);
   const testConceptNameMap: Record<ConceptUuid, string> = Object.fromEntries(
     testConcepts.map(({ uuid, display }) => [uuid, display]),
   );
-  const obsByClass: Record<ConceptUuid, ObsRecord[]> = Object.fromEntries(testConceptUuids.map((x) => [x, []]));
+  const obsByClass: Record<ConceptUuid, ObsRecord[]> = Object.fromEntries(
+    testConceptUuids.map((x) => [x, []]),
+  );
   const metaInfomation = extractMetaInformation(testConcepts);
 
   // obs that are not panels
@@ -59,7 +69,11 @@ async function reloadData(patientUuid: string) {
 
   // a record of observation uuids that are members of panels, mapped to the place where to put them
   const memberRefs: Record<ObsUuid, [ObsRecord[], number]> = {};
-  const parseEntry = parseSingleObsData(testConceptNameMap, memberRefs, metaInfomation);
+  const parseEntry = parseSingleObsData(
+    testConceptNameMap,
+    memberRefs,
+    metaInfomation,
+  );
 
   entries.forEach((entry) => {
     // remove non test entries (due to unclean FHIR reponse)
@@ -97,11 +111,15 @@ async function reloadData(patientUuid: string) {
     .filter((observations) => observations.some((obs) => obs.members))
     .forEach((observations) => {
       const allSingleMembers = observations.flatMap((obs) => obs.members);
-      const allMemberConcepts = uniq(allSingleMembers.map((member) => member.conceptClass));
+      const allMemberConcepts = uniq(
+        allSingleMembers.map((member) => member.conceptClass),
+      );
 
       for (const concept of allMemberConcepts) {
         const missingEntries = singleEntries.filter(
-          (x) => x.conceptClass === concept && !allSingleMembers.some((member) => member.id === x.id),
+          (x) =>
+            x.conceptClass === concept &&
+            !allSingleMembers.some((member) => member.id === x.id),
         );
 
         for (const missingEntry of missingEntries) {
@@ -126,7 +144,11 @@ async function reloadData(patientUuid: string) {
         return [
           display,
           {
-            entries: val.sort((ent1, ent2) => Date.parse(ent2.effectiveDateTime) - Date.parse(ent1.effectiveDateTime)),
+            entries: val.sort(
+              (ent1, ent2) =>
+                Date.parse(ent2.effectiveDateTime) -
+                Date.parse(ent1.effectiveDateTime),
+            ),
             type,
             uuid,
           },
@@ -141,9 +163,16 @@ async function reloadData(patientUuid: string) {
   return sortedObs;
 }
 
-function loadPatientData(patientUuid: string): [PatientData | undefined, Promise<PatientData>] {
+function loadPatientData(
+  patientUuid: string,
+): [PatientData | undefined, Promise<PatientData>] {
   const [cachedPatientData, shouldReload] = getUserDataFromCache(patientUuid);
-  return [cachedPatientData, shouldReload.then((reload) => (reload ? reloadData(patientUuid) : cachedPatientData))];
+  return [
+    cachedPatientData,
+    shouldReload.then((reload) =>
+      reload ? reloadData(patientUuid) : cachedPatientData,
+    ),
+  ];
 }
 
 export default loadPatientData;

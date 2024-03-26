@@ -106,8 +106,8 @@ export const Questionnaire = ({
                   ? "valueString" in item.initial[0]
                     ? item.initial[0].valueString
                     : "valueCoding" in item.initial[0]
-                    ? item.initial[0].valueCoding
-                    : ""
+                      ? item.initial[0].valueCoding
+                      : ""
                   : ""
               }
               value={getAnswer(item.linkId)}

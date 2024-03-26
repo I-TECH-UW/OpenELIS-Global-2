@@ -35,6 +35,9 @@ import {
   AlertDialog,
   NotificationKinds,
 } from "../../common/CustomNotification";
+import PageBreadCrumb from "../../common/PageBreadCrumb";
+
+const breadcrumbs = [{ label: "home.label", link: "/" }];
 interface CalculatedValueProps {}
 
 type TestListField = "TEST_RESULT" | "FINAL_RESULT";
@@ -583,6 +586,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
 
   return (
     <div className="adminPageContent">
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid>
         <Column lg={16}>
           <Section>

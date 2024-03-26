@@ -25,6 +25,7 @@ import {
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { ConfigurationContext } from "../layout/Layout";
+import PageBreadCrumb from "../common/PageBreadCrumb";
 
 export default function Workplan(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
@@ -170,11 +171,15 @@ export default function Workplan(props) {
   let rowColorIndex = 2;
   let showAccessionNumber = false;
   let currentAccessionNumber = "";
+
+  let breadcrumbs = [{ label: "home.label", link: "/" }];
+
   return (
     <>
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         {notificationVisible === true ? <AlertDialog /> : ""}
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>{title}</Heading>
@@ -186,7 +191,7 @@ export default function Workplan(props) {
       </Grid>
       <div className="orderLegendBody">
         <Grid fullWidth={true}>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <WorkplanSearchForm
               type={type}
               createTestsList={handleTestsList}
@@ -200,7 +205,7 @@ export default function Workplan(props) {
             <hr />
             <br />
             <Grid fullWidth={true}>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 <Button
                   size="md"
                   type="button"
@@ -214,7 +219,7 @@ export default function Workplan(props) {
             </Grid>
             <br />
             <Grid fullWidth={true}>
-              <Column lg={16}>
+              <Column sm={4} md={8} lg={16}>
                 <FormattedMessage id="label.total.tests" /> = {testsList.length}
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <img
@@ -226,7 +231,7 @@ export default function Workplan(props) {
               </Column>
             </Grid>
             <Grid fullWidth={true}>
-              <Column lg={16} md={2}>
+              <Column sm={4} md={8} lg={16}>
                 <>
                   <Table size={"sm"}>
                     <TableHead>
@@ -406,7 +411,7 @@ export default function Workplan(props) {
             </Grid>
             <br />
             <Grid fullWidth={true}>
-              <Column lg={16}>
+              <Column sm={4} md={8} lg={16}>
                 <Button
                   size="md"
                   type="button"
@@ -423,7 +428,7 @@ export default function Workplan(props) {
         {selectedValue && testsList.length === 0 && (
           <h4>
             <Grid>
-              <Column lg={16}>
+              <Column sm={4} md={8} lg={16}>
                 <FormattedMessage id="result.noTestsFound" />
               </Column>
             </Grid>

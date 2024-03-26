@@ -1,6 +1,6 @@
-@use '@carbon/styles/scss/spacing';
-@use '@carbon/styles/scss/type';
-@import '../scss/vars.scss';
+@use "@carbon/styles/scss/spacing";
+@use "@carbon/styles/scss/type";
+@import "../scss/vars.scss";
 
 .action {
   margin-bottom: spacing.$spacing-03;
@@ -15,23 +15,24 @@
 
 .desktopHeading {
   h4 {
-    @include type.type-style('heading-compact-02');
+    @include type.type-style("heading-compact-02");
     color: $text-02;
   }
 }
 
 .tabletHeading {
   h4 {
-    @include type.type-style('heading-03');
+    @include type.type-style("heading-03");
     color: $text-02;
   }
 }
 
-.desktopHeading, .tabletHeading {
+.desktopHeading,
+.tabletHeading {
   text-align: left;
   text-transform: capitalize;
   margin-bottom: spacing.$spacing-05;
-  
+
   h4:after {
     content: "";
     display: block;

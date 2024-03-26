@@ -105,7 +105,7 @@ function SecureRoute(props) {
       message: intl.formatMessage({ id: "stillThere.message" }),
       buttons: [
         {
-          label: intl.formatMessage({ id: "yes.optio" }),
+          label: intl.formatMessage({ id: "yes.option" }),
           onClick: () => {
             clearTimeout(timeoutEventID);
           },

@@ -1,5 +1,3 @@
+import ResultsViewer from "./results-viewer";
 
-
-import ResultsViewer from './results-viewer';
-
-export {  ResultsViewer };
+export { ResultsViewer };

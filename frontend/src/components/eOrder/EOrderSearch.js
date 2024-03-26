@@ -9,14 +9,14 @@ import {
   Select,
   SelectItem,
   TextInput,
-  Breadcrumb,
-  BreadcrumbItem
 } from "@carbon/react";
 import { React, useEffect, useState } from "react";
 import CustomDatePicker from "../common/CustomDatePicker";
 
 import { FormattedMessage, useIntl, injectIntl } from "react-intl";
 import { getFromOpenElisServer } from "../utils/Utils";
+import PageBreadCrumb from "../common/PageBreadCrumb";
+let breadcrumbs = [{ label: "home.label", link: "/" }];
 
 const EOrderSearch = ({
   setEOrders = (eOrders) => {
@@ -91,17 +91,9 @@ const EOrderSearch = ({
 
   return (
     <>
-    <Grid fullWidth={true}>
-      <Column lg={16}>
-        <Breadcrumb>
-          <BreadcrumbItem href="/">
-            {intl.formatMessage({id:"home.label"})}
-          </BreadcrumbItem>
-        </Breadcrumb>
-      </Column>
-    </Grid>
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>
@@ -150,51 +142,54 @@ const EOrderSearch = ({
         <FormattedMessage id="eorder.search2.text" />
         <br></br>
         <div className="formInlineDiv">
-          <div className="formInlineDiv">
-            <CustomDatePicker
-              id={"eOrder_startDate"}
-              labelText={intl.formatMessage({ id: "eorder.date.start" })}
-              value={startDate}
-              className="inputDate"
-              onChange={(date) => setStartDate(date)}
-            />
-            <CustomDatePicker
-              id={"eOrder_startDate"}
-              labelText={intl.formatMessage({ id: "eorder.date.end" })}
-              value={startDate}
-              className="inputDate"
-              onChange={(date) => setEndDate(date)}
-            />
-          </div>
-          <div className="formInlineDiv">
-            <Select
-              id="statusId"
-              labelText={intl.formatMessage({ id: "eorder.status" })}
-              value={statusId}
+          <CustomDatePicker
+            id={"eOrder_startDate"}
+            labelText={intl.formatMessage({ id: "eorder.date.start" })}
+            value={startDate}
+            className="inputDate"
+            onChange={(date) => setStartDate(date)}
+          />
+        </div>
+        <div className="formInlineDiv">
+          <CustomDatePicker
+            id={"eOrder_startDate"}
+            labelText={intl.formatMessage({ id: "eorder.date.end" })}
+            value={startDate}
+            className="inputDate"
+            onChange={(date) => setEndDate(date)}
+          />
+        </div>
+        <div className="formInlineDiv">
+          <Select
+            id="statusId"
+            labelText={intl.formatMessage({ id: "eorder.status" })}
+            value={statusId}
+            onChange={(e) => {
+              setStatusId(e.target.value);
+            }}
+          >
+            <SelectItem value="" text="All Statuses" />
+            {statusOptions.map((statusOption, index) => {
+              return (
+                <SelectItem
+                  key={index}
+                  value={statusOption.id}
+                  text={statusOption.value}
+                />
+              );
+            })}
+          </Select>
+          <div className="formInlineDiv bottomAlign">
+            <Checkbox
+              id="allInfo2"
+              labelText={intl.formatMessage({ id: "eorder.allInfo" })}
+              checked={allInfo}
               onChange={(e) => {
-                setStatusId(e.target.value);
+                setAllInfo(e.currentTarget.checked);
               }}
-            >
-              <SelectItem value="" text="All Statuses" />
-              {statusOptions.map((statusOption, index) => {
-                return (
-                  <SelectItem
-                    key={index}
-                    value={statusOption.id}
-                    text={statusOption.value}
-                  />
-                );
-              })}
-            </Select>
-            <div className="formInlineDiv bottomAlign">
-              <Checkbox
-                id="allInfo2"
-                labelText={intl.formatMessage({ id: "eorder.allInfo" })}
-                checked={allInfo}
-                onChange={(e) => {
-                  setAllInfo(e.currentTarget.checked);
-                }}
-              />
+            />
+            <div className="formInlineDiv">
+              <div></div>
               <Button onClick={searchByDateAndStatus}>
                 <FormattedMessage id="label.button.search" />
               </Button>

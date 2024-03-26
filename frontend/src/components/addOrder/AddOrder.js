@@ -6,7 +6,7 @@ import {
   SelectItem,
   Stack,
   TextInput,
-  TimePicker, 
+  TimePicker,
 } from "@carbon/react";
 import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import CustomDatePicker from "../common/CustomDatePicker";
@@ -412,6 +412,9 @@ const AddOrder = (props) => {
             <div className="inputText">
               <CustomLabNumberInput
                 name="labNo"
+                placeholder={intl.formatMessage({
+                  id: "input.placeholder.labNo",
+                })}
                 value={orderFormValues.sampleOrderItems.labNo}
                 onMouseLeave={handleLabNoValidation}
                 onChange={handleLabNo}
@@ -586,6 +589,9 @@ const AddOrder = (props) => {
           <div className="inlineDiv">
             <TextInput
               name="requesterFirstName"
+              placeholder={intl.formatMessage({
+                id: "input.placeholder.requesterFirstName",
+              })}
               labelText={
                 <>
                   <FormattedMessage id="order.requester.firstName.label" />
@@ -607,6 +613,9 @@ const AddOrder = (props) => {
 
             <TextInput
               name="requesterLastName"
+              placeholder={intl.formatMessage({
+                id: "input.placeholder.requesterLastName",
+              })}
               labelText={
                 <>
                   <FormattedMessage id="order.requester.lastName.label" />
@@ -629,6 +638,9 @@ const AddOrder = (props) => {
           <div className="inlineDiv">
             <TextInput
               name="providerWorkPhone"
+              placeholder={intl.formatMessage({
+                id: "input.placeholder.providerWorkPhone",
+              })}
               disabled={
                 configurationProperties.restrictFreeTextProviderEntry === "true"
               }
@@ -644,6 +656,9 @@ const AddOrder = (props) => {
 
             <TextInput
               name="providerFax"
+              placeholder={intl.formatMessage({
+                id: "input.placeholder.providerFax",
+              })}
               labelText={intl.formatMessage({
                 id: "order.requester.fax.label",
               })}
@@ -659,6 +674,9 @@ const AddOrder = (props) => {
           <div className="inlineDiv">
             <TextInput
               name="providerEmail"
+              placeholder={intl.formatMessage({
+                id: "input.placeholder.providerEmail",
+              })}
               labelText={intl.formatMessage({
                 id: "order.requester.email.label",
               })}

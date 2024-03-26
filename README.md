@@ -15,19 +15,20 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
     docker-compose -f build.docker-compose.yml up -d --build
 
 #### Running docker compose With locally compiled/built Artifacts (ie the War file and React code) For Developers
-1. Clone the Repository
+1. Fork the [OpenELIS-Global Repository](https://github.com/I-TECH-UW/OpenELIS-Global-2.git) and clone the forked repo. The `username` below is the `username` of your Github profile.
 
-         git clone https://github.com/I-TECH-UW/OpenELIS-Global-2.git 
+         git clone https://github.com/username/OpenELIS-Global-2.git 
 
 2. innitialize and build sub modules
 
+        cd OpenELIS-Global-2
         git submodule update --init --recursive
-        cd OpenELIS-Global-2/dataexport
+        cd dataexport
         mvn clean install -DskipTests
 
 3.   Build the War file
 
-            cd OpenELIS-Global-2
+            cd ..
             mvn clean install -DskipTests
 
 4. Start the containers to mount the locally compiled artifacts
@@ -52,3 +53,7 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 | Legacy UI   |  https://localhost/api/OpenELIS-Global/  | admin: adminADMIN! |
 | New React UI  |    https://localhost/  |  admin: adminADMIN!
 
+**Note:** If your browser indicates that the website is not secure after accessing any of these links, simply follow these steps:
+1. Scroll down on the warning page.
+2. Click on the "Advanced" button.
+3. Finally, click on "Proceed to https://localhost" to access the development environment.

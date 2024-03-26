@@ -1,12 +1,16 @@
 import React, { useState } from "react";
-import { FormattedMessage, useIntl, injectIntl } from "react-intl";
+import { FormattedMessage, injectIntl } from "react-intl";
 import "../Style.css";
-import { Heading, Grid, Column, Section, Button, Breadcrumb, BreadcrumbItem, } from "@carbon/react";
+import { Heading, Grid, Column, Section, Button } from "@carbon/react";
 import SearchPatientForm from "./SearchPatientForm";
 import CreatePatientForm from "./CreatePatientForm";
+import PageBreadCrumb from "../common/PageBreadCrumb";
+let breadcrumbs = [
+  { label: "home.label", link: "/" },
+  { label: "patient.label.modify", link: "/PatientManagement" },
+];
 
 function PatientManagement() {
-  const intl = useIntl();
   const [selectedPatient, setSelectedPatient] = useState({});
   const [searchPatientTab, setSearchPatientTab] = useState({
     kind: "primary",
@@ -35,22 +39,7 @@ function PatientManagement() {
 
   return (
     <>
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Breadcrumb>
-            <BreadcrumbItem href="/">
-              {intl.formatMessage({ id: "home.label" })}
-            </BreadcrumbItem>
-            {newPatientTab.active && (
-              <BreadcrumbItem href="/PatientManagement">
-                {intl.formatMessage({
-                  id: "patient.label.modify",
-                })}
-              </BreadcrumbItem>
-            )}
-          </Breadcrumb>
-        </Column>
-      </Grid>
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         <Column lg={16}>
           <Section>

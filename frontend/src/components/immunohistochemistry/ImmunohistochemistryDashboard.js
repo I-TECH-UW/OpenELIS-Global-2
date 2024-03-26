@@ -31,6 +31,7 @@ import { AlertDialog } from "../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
 import "./../pathology/PathologyDashboard.css";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
+import PageBreadCrumb from "../common/PageBreadCrumb";
 
 function ImmunohistochemistryDashboard() {
   const componentMounted = useRef(false);
@@ -280,10 +281,13 @@ function ImmunohistochemistryDashboard() {
     };
   }, [filters]);
 
+  let breadcrumbs = [{ label: "home.label", link: "/" }];
+
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading description="Loading Dasboard..." />}
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         <Column lg={16}>
           <Section>
@@ -298,7 +302,7 @@ function ImmunohistochemistryDashboard() {
       <div className="dashboard-container">
         {tileList.map((tile, index) => (
           <Tile key={index} className="dashboard-tile">
-            <h3 className="tile-title">{tile.title}</h3>
+            <h3 className="tile-title tile-title-Immuno">{tile.title}</h3>
             <p className="tile-value">{tile.count}</p>
           </Tile>
         ))}

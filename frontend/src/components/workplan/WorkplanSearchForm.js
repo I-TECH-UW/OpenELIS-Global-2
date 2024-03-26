@@ -103,11 +103,10 @@ export default function WorkplanSearchForm(props) {
     setPagination(false);
   }, []);
 
-
   return (
     <>
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <h5 className="contentHeader2">
               <FormattedMessage id="label.form.searchby" />
@@ -117,7 +116,7 @@ export default function WorkplanSearchForm(props) {
         </Column>
       </Grid>
       <Grid fullWidth={true}>
-        <Column lg={6}>
+        <Column sm={4} md={4} lg={6}>
           <Form className="container-form">
             {type === "test" && (
               <TestSelectForm title={title} value={handleSelectedValue} />
@@ -136,7 +135,7 @@ export default function WorkplanSearchForm(props) {
             )}
           </Form>
         </Column>
-        <Column lg={4}>
+        <Column sm={1} md={2} lg={4}>
           {isLoading && (
             <img
               src={`images/loading.gif`}
@@ -150,10 +149,10 @@ export default function WorkplanSearchForm(props) {
       <hr />
       <br />
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           {selectedLabel && (
             <Section>
-              <h4 className="contentHeader1">&nbsp; {selectedLabel} </h4>
+              <h4 className="contentHeader1">&nbsp;</h4>
             </Section>
           )}
         </Column>
@@ -161,8 +160,8 @@ export default function WorkplanSearchForm(props) {
       <>
         {pagination && (
           <Grid>
-            <Column lg={11} />
-            <Column lg={2}>
+            <Column sm={4} md={8} lg={11} />
+            <Column sm={2} md={2} lg={2}>
               <Button
                 type=""
                 id="loadpreviousresults"
@@ -172,7 +171,7 @@ export default function WorkplanSearchForm(props) {
                 <FormattedMessage id="button.label.loadprevious" />
               </Button>
             </Column>
-            <Column lg={2}>
+            <Column sm={2} md={2} lg={2}>
               <Button
                 type=""
                 id="loadnextresults"
