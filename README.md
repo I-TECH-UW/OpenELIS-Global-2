@@ -14,7 +14,7 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 #### Building the docker images from source code
     docker-compose -f build.docker-compose.yml up -d --build
 
-#### Running docker containers With locally compiled Artifacts (ie the War file)
+#### Running docker containers With locally compiled Artifacts (ie the War file) for Developers
 1. Clone the Repository
 
          git clone https://github.com/I-TECH-UW/OpenELIS-Global-2.git 
@@ -36,6 +36,17 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 4. Start the containers to mount the locally compiled artifacts
 
         docker-compose  up -d    
+
+    Note : For Reflecting Local changes in the Running Containers ;
+        * For changes to the [Back-end](./src/) Java Source code  
+        - Run the maven build again  to re-build the War file
+
+                mvn clean install -DskipTests
+                
+
+-  Recreate the Openelis webapp container
+
+        docker-compose - up -d  --no-deps --force-recreate oe.openelis.org              
 
 
 #### The Instaces can be accesed at 
