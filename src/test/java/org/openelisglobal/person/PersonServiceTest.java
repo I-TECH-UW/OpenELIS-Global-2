@@ -14,6 +14,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.hibernate.ObjectNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { BaseTestConfig.class, PatientTestConfig.class })
@@ -21,92 +25,90 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ActiveProfiles("test")
 public class PersonServiceTest {
 
-    @Autowired
-    PersonService personService;
+	@Autowired
+	PersonService personService;
+	
+	private static final Logger logger = LoggerFactory.getLogger(PersonService.class);
+	
+	@Before
+	public void init() throws Exception {
+	}
 
-    @Before
-    public void init() throws Exception {
-    }
+	@Test
+	public void createPerson_shouldCreateNewPerson() throws Exception {
+		String firstName = "John";
+		String lastname = "Doe";
 
-    @Test
-    public void createPerson_shouldCreateNewPerson() throws Exception {
-        String firstName = "John";
-        String lastname = "Doe";
+		Person pat = createPerson(firstName, lastname);
 
-        Person pat = createPerson(firstName, lastname);
+		// Assert.assertEquals(0, personService.getAllPersons().size());
+		// save person to the DB
+		String personIdId = personService.insert(pat);
+		Person savedPerson = personService.get(personIdId);
 
-        //Assert.assertEquals(0, personService.getAllPersons().size());
-        // save person to the DB
-        String personIdId = personService.insert(pat);
-        Person savedPerson = personService.get(personIdId);
+		// Assert.assertEquals(1, personService.getAllPersons().size());
+		Assert.assertEquals(firstName, savedPerson.getFirstName());
+		Assert.assertEquals(lastname, savedPerson.getLastName());
+	}
 
-       // Assert.assertEquals(1, personService.getAllPersons().size());
-        Assert.assertEquals(firstName, savedPerson.getFirstName());
-        Assert.assertEquals(lastname, savedPerson.getLastName());
-    }
-    
-    @Test
-    public void updatePerson_shouldUpdateExistingPerson() throws Exception {
-        String firstName = "Sayed";
-        String lastName = "Abdo";
+	@Test
+	public void updatePerson_shouldUpdateExistingPerson() throws Exception {
+		String firstName = "Sayed";
+		String lastName = "Abdo";
 
-        Person person = createPerson(firstName, lastName);
-        String personId = personService.insert(person);
+		Person person = createPerson(firstName, lastName);
+		String personId = personService.insert(person);
 
-        // Modify some details of the person
-        String newFirstName = "UpdateSayed";
-        person.setFirstName(newFirstName);
+		// Modify some details of the person
+		String newFirstName = "UpdateSayed";
+		person.setFirstName(newFirstName);
 
-        personService.update(person);
+		personService.update(person);
 
-        Person updatedPerson = personService.get(personId);
-        Assert.assertEquals(newFirstName, updatedPerson.getFirstName());
-        Assert.assertEquals(lastName, updatedPerson.getLastName());
-    }
-    
-    @Test
-    public void deletePerson_shouldDeleteExistingPerson() throws Exception {
-        String firstName = "Delete";
-        String lastName = "Me";
-        String id = "1";
+		Person updatedPerson = personService.get(personId);
+		Assert.assertEquals(newFirstName, updatedPerson.getFirstName());
+		Assert.assertEquals(lastName, updatedPerson.getLastName());
+	}
 
-        // Create a person object
-        Person person = createPerson(firstName, lastName);
-        person.setSysUserId(id);
+	@Test
+	public void deletePerson_shouldDeleteExistingPerson() throws Exception {
+		String firstName = "Delete";
+		String lastName = "Me";
+		String id = "1";
 
-        // Insert person into the database
-        String personId = personService.insert(person);
-      
-        // Ensure that the person exists in the database
-        Assert.assertNotNull("Ensure that person is exist", personService.get(personId));
+		// Create a person object
+		Person person = createPerson(firstName, lastName);
+		person.setSysUserId(id);
 
-        // Call the delete method
-        
-        personService.delete(personId, person.getSysUserId());
-        Person deletedPerson = null;
-        try {
-            deletedPerson = personService.get(personId);
-        } catch (ObjectNotFoundException e) {
-            System.out.println("Person not found with ID: " + personId);
-        }
+		// Insert person into the database
+		String personId = personService.insert(person);
 
-        // Assert that the retrieved person is null, indicating successful deletion
-        Assert.assertNull("Deleted person should be null", deletedPerson);
-    }
+		// Ensure that the person exists in the database
+		Assert.assertNotNull("Ensure that person is exist", personService.get(personId));
 
- 
-    public void getAllPerson_shouldGetAllPerson() throws Exception {
-        Assert.assertEquals(1, personService.getAllPersons().size());
-    }
-   
-    
-    private Person createPerson(String firstName, String LastName) {
-        Person person = new Person();
-        person.setFirstName(firstName);
-        person.setLastName(LastName);
-        return person;
-    }
-    
+		// Call the delete method
 
+		personService.delete(personId, person.getSysUserId());
+		Person deletedPerson = null;
+		try {
+			deletedPerson = personService.get(personId);
+		} catch (ObjectNotFoundException e) {
+			logger.error("Person not found with ID: {}", personId, e);
+		}
+
+		// Assert that the retrieved person is null, indicating successful deletion
+		Assert.assertNull("Deleted person should be null", deletedPerson);
+	}
+
+	public void getAllPerson_shouldGetAllPerson() throws Exception {
+		Assert.assertEquals(1, personService.getAllPersons().size());
+	}
+
+	private Person createPerson(String firstName, String LastName) {
+		Person person = new Person();
+		person.setFirstName(firstName);
+		person.setLastName(LastName);
+		return person;
+	}
 
 }
