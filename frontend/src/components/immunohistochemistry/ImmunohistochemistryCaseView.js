@@ -14,8 +14,6 @@ import {
   FileUploader,
   Tag,
   Section,
-  Breadcrumb,
-  BreadcrumbItem,
   Stack,
   Loading,
   InlineLoading,
@@ -37,6 +35,15 @@ import { FormattedMessage, useIntl } from "react-intl";
 import PatientHeader from "../common/PatientHeader";
 import QuestionnaireResponse from "../common/QuestionnaireResponse";
 import "./../pathology/PathologyDashboard.css";
+import PageBreadCrumb from "../common/PageBreadCrumb";
+
+let breadcrumbs = [
+  { label: "home.label", link: "/" },
+  {
+    label: "immunohistochemistry.label.dashboard",
+    link: "/ImmunohistochemistryDashboard",
+  },
+];
 
 function ImmunohistochemistryCaseView() {
   const componentMounted = useRef(false);
@@ -784,23 +791,10 @@ function ImmunohistochemistryCaseView() {
 
   return (
     <>
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Breadcrumb>
-            <BreadcrumbItem href="/">
-              {intl.formatMessage({ id: "home.label" })}
-            </BreadcrumbItem>
-            <BreadcrumbItem href="/ImmunohistochemistryDashboard">
-              {intl.formatMessage({
-                id: "immunohistochemistry.label.dashboard",
-              })}
-            </BreadcrumbItem>
-          </Breadcrumb>
-        </Column>
-      </Grid>
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
 
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>
@@ -811,7 +805,7 @@ function ImmunohistochemistryCaseView() {
         </Column>
       </Grid>
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <PatientHeader

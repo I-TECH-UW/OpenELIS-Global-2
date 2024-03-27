@@ -4,6 +4,7 @@ import {
   ClickableTile,
   Loading,
   Grid,
+  Button,
   Column,
   DataTable,
   TableContainer,
@@ -23,7 +24,7 @@ import {
   getFromOpenElisServer,
   convertAlphaNumLabNumForDisplay,
 } from "../utils/Utils.js";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 interface DashBoardProps {}
 
 interface Tile {
@@ -47,6 +48,8 @@ type MetricType =
   | "ORDERS_FOR_USER";
 
 const HomeDashBoard: React.FC<DashBoardProps> = () => {
+  const intl = useIntl();
+
   const [counts, setCounts] = useState({
     ordersInProgress: 0,
     ordersReadyForValidation: 0,
@@ -72,6 +75,16 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [selectedTile, setSelectedTile] = useState<Tile>(null);
+  const [nextPage, setNextPage] = useState(null);
+  const [previousPage, setPreviousPage] = useState(null);
+  const [pagination, setPagination] = useState(false);
+  const [url, setUrl] = useState("");
+
+  useEffect(() => {
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
+  }, []);
 
   useEffect(() => {
     getFromOpenElisServer("/rest/home-dashboard/metrics", loadCount);
@@ -84,6 +97,9 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   useEffect(() => {
     if (selectedTile != null) {
+      setNextPage(null);
+      setPreviousPage(null);
+      setPagination(false);
       setLoading(true);
       if (selectedTile.type == "AVERAGE_TURN_AROUND_TIME") {
         getFromOpenElisServer(
@@ -112,6 +128,16 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     };
   }, [selectedTile]);
 
+  const loadNextResultsPage = () => {
+    setLoading(true);
+    getFromOpenElisServer("/rest/home-dashboard/" + selectedTile.type + "?page=" + nextPage, loadData);
+  };
+
+  const loadPreviousResultsPage = () => {
+    setLoading(true);
+    getFromOpenElisServer("/rest/home-dashboard/" + selectedTile.type + "?page=" + previousPage, loadData);
+  };
+
   const loadCount = (data) => {
     if (componentMounted.current) {
       setCounts(data);
@@ -119,12 +145,33 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     }
   };
 
-  const loadData = (data) => {
-    if (data && data.length > 0) {
-      setData(data);
+  const loadData = (res) => {
+    // If the response object is not null and has displayItems array with length greater than 0 then set it as data.
+    if (res && res.displayItems && res.displayItems.length > 0) {
+      setData(res.displayItems);
     } else {
       setData([]);
     }
+
+    // Sets next and previous page numbers based on the total pages and current page number.
+    if (res && res.paging) {
+      const { totalPages, currentPage } = res.paging;
+      if (totalPages > 1) {
+        setPagination(true);
+        if (parseInt(currentPage) < parseInt(totalPages)) {
+          setNextPage(parseInt(currentPage) + 1);
+        } else {
+          setNextPage(null);
+        }
+
+        if (parseInt(currentPage) > 1) {
+          setPreviousPage(parseInt(currentPage) - 1);
+        } else {
+          setPreviousPage(null);
+        }
+      }
+    }
+
     setLoading(false);
   };
 
@@ -355,7 +402,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     <>
       {loading && <Loading description="Loading Dasboard..." />}
       {selectedTile == null ? (
-        <div className="dashboard-container">
+        <div className="home-dashboard-container">
           {tileList.map((tile, index) => (
             <ClickableTile key={index} className="dashboard-tile">
               <h3 className="tile-title">{tile.title}</h3>
@@ -393,7 +440,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
             <div className="gridBoundary">
               {selectedTile.type == "AVERAGE_TURN_AROUND_TIME" ? (
                 <>
-                  <div className="dashboard-container">
+                  <div className="home-dashboard-container">
                     {averageTimeTileList.map((tile, index) => (
                       <Tile key={index} className="dashboard-tile">
                         <h3 className="tile-title">{tile.title}</h3>
@@ -406,6 +453,31 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
               ) : (
                 <Grid>
                   <Column lg={16} md={8} sm={4}>
+                    {pagination && (
+                      <Grid>
+                        <Column lg={11} />
+                        <Column lg={2}>
+                          <Button
+                            type=""
+                            id="loadpreviousresults"
+                            onClick={loadPreviousResultsPage}
+                            disabled={previousPage != null ? false : true}
+                          >
+                            <FormattedMessage id="button.label.loadprevious" />
+                          </Button>
+                        </Column>
+                        <Column lg={2}>
+                          <Button
+                            type=""
+                            id="loadnextresults"
+                            onClick={loadNextResultsPage}
+                            disabled={nextPage != null ? false : true}
+                          >
+                            <FormattedMessage id="button.label.loadnext" />
+                          </Button>
+                        </Column>
+                      </Grid>
+                    )}
                     <DataTable
                       rows={data.slice((page - 1) * pageSize, page * pageSize)}
                       headers={
@@ -459,7 +531,43 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                       pageSize={pageSize}
                       pageSizes={[10, 20, 30, 50, 100]}
                       totalItems={data.length}
-                    ></Pagination>
+                      forwardText={intl.formatMessage({
+                        id: "pagination.forward",
+                      })}
+                      backwardText={intl.formatMessage({
+                        id: "pagination.backward",
+                      })}
+                      itemRangeText={(min, max, total) =>
+                        intl.formatMessage(
+                          { id: "pagination.item-range" },
+                          { min: min, max: max, total: total },
+                        )
+                      }
+                      itemsPerPageText={intl.formatMessage({
+                        id: "pagination.items-per-page",
+                      })}
+                      itemText={(min, max) =>
+                        intl.formatMessage(
+                          { id: "pagination.item" },
+                          { min: min, max: max },
+                        )
+                      }
+                      pageNumberText={intl.formatMessage({
+                        id: "pagination.page-number",
+                      })}
+                      pageRangeText={(_current, total) =>
+                        intl.formatMessage(
+                          { id: "pagination.page-range" },
+                          { total: total },
+                        )
+                      }
+                      pageText={(page, pagesUnknown) =>
+                        intl.formatMessage(
+                          { id: "pagination.page" },
+                          { page: pagesUnknown ? "" : page },
+                        )
+                      }
+                    />
                   </Column>
                 </Grid>
               )}
