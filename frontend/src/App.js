@@ -36,7 +36,8 @@ import EOrderPage from "./components/eOrder/Index";
 import RoutineIndex from "./components/reports/routine/Index.js";
 import StudyIndex from "./components/reports/study/index.js";
 import PrintBarcode from "./components/printBarcode/Index";
-import DictionaryManagement from "./components/Dictionary/DictionaryManagement.js";
+import DictionaryManagement from "./components/admin/masterListsPage/Dictionary/DictionaryManagement.js";
+import MasterListsPage from "./components/admin/masterListsPage/index.js";
 
 export default function App() {
   let i18nConfig = {
@@ -224,6 +225,18 @@ export default function App() {
                   role="Global Administrator"
                 />
                 <SecureRoute
+                  path="/admin/MasterListsPage"
+                  exact
+                  component={() => <MasterListsPage />}
+                  role="Global Administrator"
+                />
+                <SecureRoute
+                  path="/DictionaryManagement"
+                  exact
+                  component={() => <DictionaryManagement />}
+                  role="Global Administrator"
+                />
+                <SecureRoute
                   path="/PathologyDashboard"
                   exact
                   component={() => <PathologyDashboard />}
@@ -293,12 +306,6 @@ export default function App() {
                   path="/PrintBarcode"
                   exact
                   component={() => <PrintBarcode />}
-                  role="Reception"
-                />
-                <SecureRoute
-                  path="/DictionaryManagement"
-                  exact
-                  component={() => <DictionaryManagement />}
                   role="Reception"
                 />
                 <SecureRoute
