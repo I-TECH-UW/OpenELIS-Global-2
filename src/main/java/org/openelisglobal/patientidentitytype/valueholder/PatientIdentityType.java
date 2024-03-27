@@ -10,6 +10,15 @@ public class PatientIdentityType extends BaseObject<String> {
     private String identityType;
     private String description;
 
+    public PatientIdentityType(String identityType, String identityDescription) {
+        this.identityType = identityType;
+        this.description = identityDescription;
+    }
+
+    public PatientIdentityType() {
+
+    }
+
     public String getId() {
         return id;
     }

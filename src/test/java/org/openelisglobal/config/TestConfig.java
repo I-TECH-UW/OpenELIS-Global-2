@@ -1,4 +1,4 @@
-package org.openelisglobal.patient;
+package org.openelisglobal.config;
 
 import static org.mockito.Mockito.mock;
 
@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Profile;
                 @Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.config.*"),
                 @Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.fhir.*"),
                 @Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.*.fhir.*") })
-public class PatientTestConfig {
+public class TestConfig {
 
     // mock Beans
     @Bean()
