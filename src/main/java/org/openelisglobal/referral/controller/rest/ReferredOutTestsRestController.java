@@ -15,6 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping("/rest/")
@@ -38,17 +42,32 @@ public class ReferredOutTestsRestController {
         form.setTestUnitSelectionList(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_BY_NAME));
     }
 
-    @GetMapping(value = "/ReferredOutTests", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "ReferredOutTests", produces = MediaType.APPLICATION_JSON_VALUE)
     public ReferredOutTestsForm showReferredOutTests(@Valid ReferredOutTestsForm form) {
         setupPageForDisplay(form);
         return form;
     }
 
-    @PostMapping(value = "/ReferredOutTests", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    private void setupPageForDisplayRest(ReferredOutTestsForm form) {
+        if (form.getSearchType() != null) {
+            form.setReferralDisplayItems(referralService.getReferralItems(form));
+            form.setSearchFinished(true);
+        }
+        form.setTestSelectionList(DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS));
+        form.setTestUnitSelectionList(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_BY_NAME));
+    }
+
+    @PostMapping(value = "ReferredOutTests", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
     public ReferredOutTestsForm submitReferredOutTests(@Valid @RequestBody ReferredOutTestsForm form) {
-        setupPageForDisplay(form);
+        setupPageForDisplayRest(form);
         return form;
     }
+
+    // dummy data 
+    // form types fixing or creating
+    // validating response
+    // print out things
     
     public class NonNumericTests {
         public String testId;

@@ -49,7 +49,7 @@ let breadcrumbs = [
 
 function ReferredOutTests(props) {
   const [referredOutTestsFormValues, setReferredOutTestsFormValues] = useState(
-    ReferredOutTestsFormValues
+    ReferredOutTestsFormValues,
   );
   // const { referredOutTestsFormValues, setReferredOutTestsFormValues, getSelectedPatient, samples, error } = props;
   const { configurationProperties } = useContext(ConfigurationContext);
@@ -73,8 +73,12 @@ function ReferredOutTests(props) {
   const componentMounted = useRef(false);
   const [testUnits, setTestUnits] = useState([]);
   const [testUnitsIdList, setTestUnitsIdList] = useState([]);
+  const [testUnitsValuesList, setTestUnitsValuesList] = useState([]);
+  const [testUnitsPair, setTestUnitsPair] = useState([]);
   const [testNames, setTestNames] = useState([]);
   const [testNamesIdList, setTestNamesIdList] = useState([]);
+  const [testNamesValuesList, setTestNamesValuesList] = useState([]);
+  const [testNamesPair, setTestNamesPair] = useState([]);
   const [dateType, setDateType] = useState(dateTypeList[0].tag);
   const [dob, setDob] = useState("");
   const [patientSearchResults, setPatientSearchResults] = useState([]);
@@ -89,13 +93,61 @@ function ReferredOutTests(props) {
   const [innitialized, setInnitialized] = useState(false);
   const [tests, setTests] = useState([]);
   const [testSections, setTestSections] = useState([]);
+  const [responseData, setResponseData] = useState(null);
 
   const handleReferredOutPatient = () => {
-    let referredOutTestsOutPut =
-      config.serverBaseUrl +
-      `/rest/ReferredOutTests?searchType=${searchType}&dateType=${dateType}&startDate=${referredOutTestsFormValues.startDate}&endDate=${referredOutTestsFormValues.endDate}&${testUnitsIdList}_testUnitIds=1&${testNamesIdList}_testIds=1&labNumber=${referredOutTestsFormValues.labNumberInput}&dateOfBirthSearchValue=${referredOutTestsFormValues.dateOfBirth}&selPatient=${referredOutTestsFormValues.selectedPatientId}&_csrf=${localStorage.getItem("CSRF")}`;
+    const referredOutTestsEndpoint =
+      config.serverBaseUrl + "/rest/ReferredOutTests";
+    const csrfToken = localStorage.getItem("CSRF");
 
-    window.open(referredOutTestsOutPut);
+    // const requestBody = {
+    //   searchType: searchType,
+    //   dateType: dateType,
+    //   startDate: referredOutTestsFormValues.startDate,
+    //   endDate: referredOutTestsFormValues.endDate,
+    //   testUnitIds: testUnitsIdList,
+    //   testIds: testNamesIdList,
+    //   labNumber: referredOutTestsFormValues.labNumber,
+    //   labNumberInput: referredOutTestsFormValues.labNumberInput,
+    //   dateOfBirthSearchValue: referredOutTestsFormValues.dateOfBirth,
+    //   selPatient: referredOutTestsFormValues.selectedPatientId,
+    //   _csrf: csrfToken,
+    // };
+
+    const requestBody = {
+      searchType: searchType,
+      dateType: dateType,
+      startDate: referredOutTestsFormValues.endDate,
+      endDate: referredOutTestsFormValues.endDate,
+      testUnitSelectionList: testUnitsPair,
+      testUnitIds: testUnitsIdList,
+      testSelectionList: testNamesPair,
+      testIds: testNamesIdList,
+      // labNumber: referredOutTestsFormValues.labNumber,
+      labNumber: referredOutTestsFormValues.labNumberInput,
+      selPatient: referredOutTestsFormValues.selectedPatientId,
+      // _csrf: csrfToken,
+    };
+
+    fetch(referredOutTestsEndpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-TOKEN": csrfToken,
+      },
+      body: JSON.stringify(requestBody),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to submit data");
+        }
+      })
+      .then((data) => {
+        setResponseData(data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   const handleSubmit = (values) => {
@@ -138,7 +190,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       labNumberInput: e.target.value,
     });
-    setSearchType(referredOutTestsFormValues.searchTypeValues[1])
+    setSearchType(referredOutTestsFormValues.searchTypeValues[1]);
   }
 
   function handleLabNumber(e) {
@@ -146,7 +198,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       labNumber: e.target.value,
     });
-    setSearchType(referredOutTestsFormValues.searchTypeValues[2])
+    setSearchType(referredOutTestsFormValues.searchTypeValues[2]);
   }
 
   function handlePatientId(e) {
@@ -154,7 +206,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       patientId: e.target.value,
     });
-    setSearchType(referredOutTestsFormValues.searchTypeValues[2])
+    setSearchType(referredOutTestsFormValues.searchTypeValues[2]);
   }
 
   function handleLastName(e) {
@@ -162,7 +214,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       lastName: e.target.value,
     });
-    setSearchType(referredOutTestsFormValues.searchTypeValues[2])
+    setSearchType(referredOutTestsFormValues.searchTypeValues[2]);
   }
 
   function handleFirstName(e) {
@@ -170,7 +222,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       firstName: e.target.value,
     });
-    setSearchType(referredOutTestsFormValues.searchTypeValues[2])
+    setSearchType(referredOutTestsFormValues.searchTypeValues[2]);
   }
 
   function handleGender(e) {
@@ -178,7 +230,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       gender: e,
     });
-    setSearchType(referredOutTestsFormValues.searchTypeValues[2])
+    setSearchType(referredOutTestsFormValues.searchTypeValues[2]);
   }
 
   const loadNextResultsPage = () => {
@@ -229,7 +281,8 @@ function ReferredOutTests(props) {
   };
 
   const handleDatePickerChange = (...e) => {
-    let updatedDate = encodeDate(e[1]);
+    // let updatedDate = encodeDate(e[1]);
+    let updatedDate = e[1];
 
     setReferredOutTestsFormValues({
       ...referredOutTestsFormValues,
@@ -237,11 +290,12 @@ function ReferredOutTests(props) {
     });
 
     setDob(e[1]);
-    setSearchType(referredOutTestsFormValues.searchTypeValues[2])
+    setSearchType(referredOutTestsFormValues.searchTypeValues[2]);
   };
 
   const handleDatePickerChangeDate = (datePicker, date) => {
-    let updatedDate = encodeDate(date);
+    // let updatedDate = encodeDate(date);
+    let updatedDate = date;
     let obj = null;
     switch (datePicker) {
       case "startDate":
@@ -258,15 +312,17 @@ function ReferredOutTests(props) {
         break;
       default:
         obj = {
-          startDate: encodeDate(configurationProperties.currentDateAsText),
-          endDate: encodeDate(configurationProperties.currentDateAsText),
+          // startDate: encodeDate(configurationProperties.currentDateAsText),
+          // endDate: encodeDate(configurationProperties.currentDateAsText),
+          startDate: configurationProperties.currentDateAsText,
+          endDate: configurationProperties.currentDateAsText,
         };
     }
     setReferredOutTestsFormValues({
       ...referredOutTestsFormValues,
       PatientStatusReportFormValues: obj,
     });
-    setSearchType(referredOutTestsFormValues.searchTypeValues[0])
+    setSearchType(referredOutTestsFormValues.searchTypeValues[0]);
   };
 
   const patientSelected = (e) => {
@@ -278,7 +334,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       selectedPatientId: e.target.id,
     });
-    setSearchType(referredOutTestsFormValues.searchTypeValues[2])
+    setSearchType(referredOutTestsFormValues.searchTypeValues[2]);
 
     const searchEndPoint =
       "/rest/patient-details?patientID=" + patientSelected.patientID;
@@ -305,21 +361,35 @@ function ReferredOutTests(props) {
     }
   };
 
-  useEffect(() =>{
-    if(testNames.testNames){
-      var testNamesIdList = testNames.testNames.map((test) => ("testIds="+test.id+"&")).join("");
+  useEffect(() => {
+    if (testNames.testNames) {
+      var testNamesIdList = testNames.testNames.map((test) => test.id);
       setTestNamesIdList(testNamesIdList);
+      var testNamesValueList = testNames.testNames.map((test) => test.value);
+      setTestNamesValuesList(testNamesValueList);
+      var testNamesPair = testNames.testNames.map((test) => ({
+        id: test.id,
+        value: test.value,
+      }));
+      setTestNamesPair(testNamesPair);
     }
-    if(testUnits.testUnits){
-      var testUnitsIdList = testUnits.testUnits.map((test) => ("testUnitIds="+test.id+"&")).join("");
+    if (testUnits.testUnits) {
+      var testUnitsIdList = testUnits.testUnits.map((test) => test.id);
       setTestUnitsIdList(testUnitsIdList);
+      var testUnitsValueList = testUnits.testUnits.map((test) => test.value);
+      setTestUnitsValuesList(testUnitsValueList);
+      var testUnitsPair = testUnits.testUnits.map((test) => ({
+        id: test.id,
+        value: test.value,
+      }));
+      setTestUnitsPair(testUnitsPair);
     }
-  },[testNames,testUnits])
+  }, [testNames, testUnits]);
 
   useEffect(() => {
     componentMounted.current = true;
     let testId = new URLSearchParams(window.location.search).get(
-      "selectedTest"
+      "selectedTest",
     );
     testId = testId ? testId : "";
     getFromOpenElisServer("/rest/test-list", (fetchedTests) => {
@@ -330,12 +400,12 @@ function ReferredOutTests(props) {
     });
 
     let testSectionId = new URLSearchParams(window.location.search).get(
-      "testSectionId"
+      "testSectionId",
     );
     testSectionId = testSectionId ? testSectionId : "";
     getFromOpenElisServer("/rest/user-test-sections", (fetchedTestSections) => {
       let testSection = fetchedTestSections.find(
-        (testSection) => testSection.id === testSectionId
+        (testSection) => testSection.id === testSectionId,
       );
       let testSectionLabel = testSection ? testSection.value : "";
       setTestNames(testSectionLabel);
@@ -349,7 +419,7 @@ function ReferredOutTests(props) {
 
   useEffect(() => {
     let patientId = new URLSearchParams(window.location.search).get(
-      "patientId"
+      "patientId",
     );
     if (patientId) {
       let searchValues = {
@@ -363,7 +433,8 @@ function ReferredOutTests(props) {
 
   useEffect(() => {
     if (!innitialized) {
-      let updatedDate = encodeDate(configurationProperties.currentDateAsText);
+      // let updatedDate = encodeDate(configurationProperties.currentDateAsText);
+      let updatedDate = configurationProperties.currentDateAsText;
       setReferredOutTestsFormValues({
         ...referredOutTestsFormValues,
         dateOfBirth: updatedDate,
@@ -435,12 +506,14 @@ function ReferredOutTests(props) {
                         id="dateType"
                         name="dateType"
                         initialSelectedItem={dateTypeList.find(
-                          (item) => item.tag === dateType
+                          (item) => item.tag === dateType,
                         )}
                         items={dateTypeList}
                         itemToString={(item) => (item ? item.text : "")}
                         onChange={(item) => {
-                          setSearchType(referredOutTestsFormValues.searchTypeValues[0]);
+                          setSearchType(
+                            referredOutTestsFormValues.searchTypeValues[0],
+                          );
                           setDateType(item.selectedItem.tag);
                         }}
                       />
@@ -476,15 +549,16 @@ function ReferredOutTests(props) {
                         }
                       />
                     </div>
-                    <br/>
+                    <br />
                     <div className="formInlineDiv">
                       <Grid fullWidth={true}>
                         <Column lg={16} md={8} sm={4}>
                           <FilterableMultiSelect
                             id="testunits"
-                            titleText={
-                              <FormattedMessage id="search.label.testunit" />
-                            }
+                            titleText={intl.formatMessage({
+                              id: "search.label.testunit",
+                              defaultMessage: "Select Test Unit",
+                            })}
                             items={testSections}
                             itemToString={(item) => (item ? item.value : "")}
                             onChange={(changes) => {
@@ -496,7 +570,7 @@ function ReferredOutTests(props) {
                             selectionFeedback="top-after-reopen"
                           />
                         </Column>
-                        <br/>
+                        <br />
                         <Column lg={16} md={8} sm={4}>
                           {testUnits.testUnits &&
                             testUnits.testUnits.map((test, index) => (
@@ -518,9 +592,10 @@ function ReferredOutTests(props) {
                         <Column lg={16} md={8} sm={4}>
                           <FilterableMultiSelect
                             id="testnames"
-                            titleText={
-                              <FormattedMessage id="search.label.test" />
-                            }
+                            titleText={intl.formatMessage({
+                              id: "search.label.test",
+                              defaultMessage: "Select Test Name",
+                            })}
                             items={tests}
                             itemToString={(item) => (item ? item.value : "")}
                             onChange={(changes) => {
@@ -532,7 +607,7 @@ function ReferredOutTests(props) {
                             selectionFeedback="top-after-reopen"
                           />
                         </Column>
-                        <br/>
+                        <br />
                         <Column lg={16} md={8} sm={4}>
                           {testNames.testNames &&
                             testNames.testNames.map((test, index) => (
@@ -590,7 +665,9 @@ function ReferredOutTests(props) {
                           value={values[field.name]}
                           onChange={(e, rawValue) => {
                             setFieldValue(field.name, rawValue);
-                            setSearchType(referredOutTestsFormValues.searchTypeValues[1]);
+                            setSearchType(
+                              referredOutTestsFormValues.searchTypeValues[1],
+                            );
                             handleLabNumberSearch(e);
                           }}
                         />
@@ -853,6 +930,32 @@ function ReferredOutTests(props) {
             </Form>
           )}
         </Formik>
+        <div>
+          herrlo
+          {responseData && (
+            <div>
+              <p>Received Data:</p>
+              <p>Name: {responseData.labNumberInput}</p>
+            </div>
+          )}
+        </div>
+        <div>
+          <button
+            onClick={() => {
+              console.log(
+                testNames,
+                "\n",
+                testUnits,
+                "\n",
+                testUnitsPair,
+                "\n",
+                testNamesPair,
+              );
+            }}
+          >
+            click
+          </button>
+        </div>
       </div>
     </>
   );
