@@ -14,10 +14,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.hibernate.ObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.logging.Level;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { BaseTestConfig.class, PatientTestConfig.class })
@@ -27,9 +25,9 @@ public class PersonServiceTest {
 
 	@Autowired
 	PersonService personService;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(PersonService.class);
-	
+
 	@Before
 	public void init() throws Exception {
 	}
