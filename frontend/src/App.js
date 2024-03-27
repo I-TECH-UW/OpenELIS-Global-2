@@ -22,8 +22,8 @@ import Workplan from "./components/workplan/Workplan";
 import AddOrder from "./components/addOrder/Index";
 import FindOrder from "./components/modifyOrder/Index";
 import ModifyOrder from "./components/modifyOrder/ModifyOrder";
-import RoutineReports from "./components/Reports/Routine";
-import StudyReports from "./components/Reports/Study";
+import RoutineReports from "./components/reports/Routine";
+import StudyReports from "./components/reports/Study";
 import StudyValidation from "./components/validation/Index";
 import PathologyDashboard from "./components/pathology/PathologyDashboard";
 import CytologyDashboard from "./components/cytology/CytologyDashBoard";
@@ -33,8 +33,8 @@ import ImmunohistochemistryDashboard from "./components/immunohistochemistry/Imm
 import ImmunohistochemistryCaseView from "./components/immunohistochemistry/ImmunohistochemistryCaseView";
 import RoutedResultsViewer from "./components/patient/resultsViewer/results-viewer.tsx";
 import EOrderPage from "./components/eOrder/Index";
-import RoutineIndex from "./components/Reports/routine/Index.js";
-import StudyIndex from "./components/Reports/study/index.js";
+import RoutineIndex from "./components/reports/routine/Index.js";
+import StudyIndex from "./components/reports/study/index.js";
 import PrintBarcode from "./components/printBarcode/Index";
 
 export default function App() {
