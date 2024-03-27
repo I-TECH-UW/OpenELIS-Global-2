@@ -1,13 +1,5 @@
 package org.openelisglobal.person;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.util.List;
-import java.util.Map;
-
 import org.hibernate.ObjectNotFoundException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -86,7 +78,7 @@ public class PersonServiceTest {
         String personId = personService.insert(person);
       
         // Ensure that the person exists in the database
-        assertNotNull("Ensure that person is exist", personService.get(personId));
+        Assert.assertNotNull("Ensure that person is exist", personService.get(personId));
 
         // Call the delete method
         
@@ -95,11 +87,11 @@ public class PersonServiceTest {
         try {
             deletedPerson = personService.get(personId);
         } catch (ObjectNotFoundException e) {
-           
+            System.out.println("Person not found with ID: " + personId);
         }
 
         // Assert that the retrieved person is null, indicating successful deletion
-        assertNull("Deleted person should be null", deletedPerson);
+        Assert.assertNull("Deleted person should be null", deletedPerson);
     }
 
  
