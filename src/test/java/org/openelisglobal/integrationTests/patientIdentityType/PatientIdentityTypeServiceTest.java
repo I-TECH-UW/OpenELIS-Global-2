@@ -70,8 +70,8 @@ public class PatientIdentityTypeServiceTest {
 
     @Test
     public void testInsertDuplicatePatientIdentityType() {
-        identityType = "DuplicateName";
-        description = "DuplicateName";
+        identityType = "CELL ID";
+        description = "CELL description";
 
         PatientIdentityType patientIdentityType = new PatientIdentityType();
         patientIdentityType.setIdentityType(identityType);

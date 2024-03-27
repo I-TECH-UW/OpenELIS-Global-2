@@ -40,13 +40,15 @@ public class PatientIdentityTypeServiceTest {
 
     @Before
     public void init(){
+
         String identityType = "MoN Description";
         String identityDescription = "MoN number";
     }
     @Test
     public void insert_shouldInsertIdentityType() {
+
         PatientIdentityType testingPatientIdentityType = new PatientIdentityType(identityType, identityDescription);
-        String expectedIdentityTypeId = "mockedId"; // Assuming a mocked ID
+        String expectedIdentityTypeId = "mockedId";
 
         when(mockDAO.insert(testingPatientIdentityType)).thenReturn(expectedIdentityTypeId);
 
@@ -76,7 +78,7 @@ public class PatientIdentityTypeServiceTest {
     @Test
     public void getAllPatientIdenityTypes_ShouldReturnAllTypes() {
         List<PatientIdentityType> mockList = Arrays.asList(new PatientIdentityType(identityType,identityDescription), new PatientIdentityType("Type 1","Type 1 description"));
-        PatientIdentityTypeDAO mockDAO = Mockito.mock(PatientIdentityTypeDAO.class);
+
         when(mockDAO.getAllPatientIdenityTypes()).thenReturn(mockList);
         PatientIdentityTypeServiceImpl service = new PatientIdentityTypeServiceImpl();
         service.setBaseObjectDAO(mockDAO);
@@ -90,9 +92,7 @@ public class PatientIdentityTypeServiceTest {
     public void insert_DuplicateIdentityType_ShouldThrowException() {
         PatientIdentityType duplicateType = new PatientIdentityType("Primary insurance number","NSURANCE Description");
         duplicateType.setIdentityType("National D");
-        PatientIdentityTypeDAO mockDAO = Mockito.mock(PatientIdentityTypeDAO.class);
         when(mockDAO.duplicatePatientIdentityTypeExists(duplicateType)).thenReturn(true);
-
         PatientIdentityTypeServiceImpl service = new PatientIdentityTypeServiceImpl();
         service.setBaseObjectDAO(mockDAO);
 
