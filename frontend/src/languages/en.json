@@ -203,7 +203,7 @@
   "banner.menu.nonconformity.view": "View New Non-Conforming Events",
   "banner.menu.nonconformity.correctiveActions": "Corrective actions",
   "sidenav.label.workplan": "Workplan",
-  "sidenav.label.workplan.test": "By Test Type",
+  "sidenav.label.workplan.test": "Activity Reports By Test, Panel And TestSection",
   "sidenav.label.workplan.panel": "By Panel Type",
   "banner.menu.workplan.bench": "By Unit",
   "sidenav.label.workplan.priority": "By Priority",

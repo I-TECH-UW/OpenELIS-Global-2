@@ -9,6 +9,8 @@ import ReferredOut from "./ReferredOut";
 import ReportByDate from "../study/common/ReportByDate";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
+import ActivityReportByTest from "./ActivityReportByTest";
+
 
 const RoutineIndex = () => {
   const intl = useIntl();
@@ -78,6 +80,11 @@ const RoutineIndex = () => {
             {type === "indicator" && report === "statisticsReport" && (
               <StatisticsReport />
             )}
+            {type === "indicator" && report === "activityReportByTest" && (
+                <ActivityReportByTest />
+            )}
+
+ 
 
             {type === "indicator" &&
               report === "indicatorHaitiLNSPAllTests" && (
@@ -107,6 +114,7 @@ const RoutineIndex = () => {
                 id={"reports.auditTrail"}
               />
             )}
+              
           </>
         )}
       </div>

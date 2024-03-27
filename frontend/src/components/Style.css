@@ -48,6 +48,14 @@ li.clickableUserDetails:hover {
   margin-left: 2%;
   margin-right: 5%;
 }
+.inlineDiv {
+  display: flex;
+  justify-content: space-between;
+}
+
+.inputDate {
+  margin-right: 10px;
+}
 
 .inputText {
   --cds-text-primary: black;
