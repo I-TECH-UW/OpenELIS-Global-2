@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import React, { useEffect, useState, useRef } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 import { Form, FormLabel, Grid, Column, Section, Button, Loading } from "@carbon/react";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import { AlertDialog } from "../../common/CustomNotification";
@@ -44,16 +44,16 @@ const ActivityReport = () => {
   const handleSubmit = (reportType) => {
     setLoading(true);
     let baseParams = '';
-    if (reportType === 'test') {
-      baseParams = 'Routinereport=activityReportByTest&type=indicator';
-    } else if (reportType === 'panel') {
-      baseParams = 'RoutineReport?type=indicator&report=activityReportByPanel';
-    } else if (reportType === 'unit') {
-      baseParams = 'RoutineReport?type=indicator&report=activityReportByTestSection';
+    if (reportType === "test") {
+      baseParams = "Routinereport=activityReportByTest&type=indicator";
+    } else if (reportType === "panel") {
+      baseParams = "RoutineReport?type=indicator&report=activityReportByPanel";
+    } else if (reportType === "unit") {
+      baseParams = "RoutineReport?type=indicator&report=activityReportByTestSection";
     }
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
     const url = `${baseUrl}?${baseParams}&lowerDateRange=${reportFormValues.startDate}&upperDateRange=${reportFormValues.endDate}`;
-    window.open(url, '_blank');
+    window.open(url, "_blank");
     setLoading(false);
     setNotificationVisible(true);
   };
@@ -75,9 +75,9 @@ const ActivityReport = () => {
 
     const fetchData = async () => {
       try {
-        const testData = await getFromOpenElisServer('/rest/test-list');
+        const testData = await getFromOpenElisServer("/rest/test-list");
         const panelData = await getFromOpenElisServer("/rest/panels");
-        const unitData = await getFromOpenElisServer('/rest/test-sections');
+        const unitData = await getFromOpenElisServer("/rest/test-sections");
         setTestList(testData);
         setPanelList(panelData);
         setUnitList(unitData);
@@ -157,14 +157,14 @@ const ActivityReport = () => {
             <br /> 
             <Section>
               <br />
-              <Button type="button" onClick={() => handleSubmit('test')}>
+              <Button type="button" onClick={() => handleSubmit("test")}>
                 <FormattedMessage id="label.button.generateTestReport" defaultMessage="Generate Test Report" />
               </Button>
-              <Button type="button" onClick={() => handleSubmit('panel')}>
+              <Button type="button" onClick={() => handleSubmit("panel")}>
                 <FormattedMessage id="label.button.generatePanelReport" defaultMessage="Generate Panel Report" />
               </Button>
-              <Button type="button" onClick={() => handleSubmit('unit')}>
-                <FormattedMessage id="label.button.generatePrintableVersion" defaultMessage="Generate printable version" />
+              <Button type="button" onClick={() => handleSubmit("unit")}>
+                <FormattedMessage id="label.button.generatePrintableVersion" defaultMessage="Generate Test Section Report" />
               </Button>
             </Section>
           </Form>
