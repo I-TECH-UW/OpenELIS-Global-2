@@ -22,42 +22,27 @@ const ActivityReport = () => {
   const [testList, setTestList] = useState([]);
   const [panelList, setPanelList] = useState([]);
   const [unitList, setUnitList] = useState([]);
-  const [selectedValue, setSelectedValue] = useState("");
-  const [setValue, setSetValue] = useState("");
-
-  const encodeDate = (dateString) => {
-    if (typeof dateString === "string" && dateString.trim() !== "") {
-      return dateString.split("/").map(encodeURIComponent).join("%2F");
-    } else {
-      return "";
-    }
-  };
 
   const handleChangeDatePicker = (datePicker, date) => {
-    const updatedDate = encodeDate(date);
     setReportFormValues(prevState => ({
       ...prevState,
-      [datePicker]: updatedDate
+      [datePicker]: date
     }));
   };
 
-  const handleSubmit = (reportType) => {
+  const handleSubmit = async (reportType) => {
     setLoading(true);
-    let baseParams = '';
-    if (reportType === "test") {
-      baseParams = "Routinereport=activityReportByTest&type=indicator";
-    } else if (reportType === "panel") {
-      baseParams = "RoutineReport?type=indicator&report=activityReportByPanel";
-    } else if (reportType === "unit") {
-      baseParams = "RoutineReport?type=indicator&report=activityReportByTestSection";
+    try {
+      const baseParams = getBaseParams(reportType);
+      const url = `${config.serverBaseUrl}/ReportPrint?${baseParams}`;
+      window.open(url, "_blank");
+      setNotificationVisible(true);
+    } catch (error) {
+      console.error("Error generating report:", error);
     }
-    const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
-    const url = `${baseUrl}?${baseParams}&lowerDateRange=${reportFormValues.startDate}&upperDateRange=${reportFormValues.endDate}`;
-    window.open(url, "_blank");
     setLoading(false);
-    setNotificationVisible(true);
   };
-
+  
   const handleSelectedValue = (v, l) => {
     if (mounted.current) {
       setSelectedValue(v);
@@ -69,25 +54,49 @@ const ActivityReport = () => {
       setSetValue(v);
     }
   };
+  const getBaseParams = (reportType) => {
+    const { startDate, endDate } = reportFormValues;
+    const formattedStartDate = startDate ? formatDate(startDate) : '';
+    const formattedEndDate = endDate ? formatDate(endDate) : '';
+    let baseParams = '';
+    switch (reportType) {
+      case "test":
+        baseParams = `Routinereport=activityReportByTest&type=indicator&lowerDateRange=${formattedStartDate}&upperDateRange=${formattedEndDate}`;
+        break;
+      case "panel":
+        baseParams = `RoutineReport?type=indicator&report=activityReportByPanel&lowerDateRange=${formattedStartDate}&upperDateRange=${formattedEndDate}`;
+        break;
+      case "unit":
+        baseParams = `RoutineReport?type=indicator&report=activityReportByTestSection&lowerDateRange=${formattedStartDate}&upperDateRange=${formattedEndDate}`;
+        break;
+      default:
+        throw new Error(`Invalid report type: ${reportType}`);
+    }
+    return baseParams;
+  };
+
+  const formatDate = (date) => {
+    return date.toISOString().split('T')[0];
+  };
+
+  const fetchData = async () => {
+    try {
+      const [testData, panelData, unitData] = await Promise.all([
+        getFromOpenElisServer("/rest/test-list"),
+        getFromOpenElisServer("/rest/panels"),
+        getFromOpenElisServer("/rest/test-sections")
+      ]);
+      setTestList(testData);
+      setPanelList(panelData);
+      setUnitList(unitData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   useEffect(() => {
     mounted.current = true;
-
-    const fetchData = async () => {
-      try {
-        const testData = await getFromOpenElisServer("/rest/test-list");
-        const panelData = await getFromOpenElisServer("/rest/panels");
-        const unitData = await getFromOpenElisServer("/rest/test-sections");
-        setTestList(testData);
-        setPanelList(panelData);
-        setUnitList(unitData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
     fetchData();
-
     return () => {
       mounted.current = false;
     };
@@ -112,49 +121,46 @@ const ActivityReport = () => {
             <Grid fullWidth={true}>
               <Column lg={10}>
                 <Section>
-                  <br />               
-                  <h5>
-                    <FormattedMessage id="select date Range" />
-                  </h5>
+                  <br />
+                  <div className="inlineDiv">
+                    <CustomDatePicker
+                      id={"startDate"}
+                      labelText={intl.formatMessage({
+                        id: "select.start.date.referredTests",
+                        defaultMessage: "Start Date",
+                      })}
+                      autofillDate={true}
+                      value={reportFormValues.startDate}
+                      className="inputDate"
+                      onChange={(date) =>
+                        handleChangeDatePicker("startDate", date)
+                      }
+                    />
+                    <CustomDatePicker
+                      id={"endDate"}
+                      labelText={intl.formatMessage({
+                        id: "select.end.date.referredTests",
+                        defaultMessage: "End Date",
+                      })}
+                      className="inputDate"
+                      autofillDate={true}
+                      value={reportFormValues.endDate}
+                      onChange={(date) =>
+                        handleChangeDatePicker("endDate", date)
+                      }
+                    />
+                  </div>
                 </Section>
-                <div className="inlineDiv">
-                  <CustomDatePicker
-                    id={"startDate"}
-                    labelText={intl.formatMessage({
-                      id: "eorder.date.start",
-                      defaultMessage: "Start Date",
-                    })}
-                    autofillDate={true}
-                    value={reportFormValues.startDate}
-                    className="inputDate"
-                    onChange={(date) =>
-                      handleChangeDatePicker("startDate", date)
-                    }
-                  />
-                  <CustomDatePicker
-                    id={"endDate"}
-                    labelText={intl.formatMessage({
-                      id: "eorder.date.end",
-                      defaultMessage: "End Date",
-                    })}
-                    className="inputDate"
-                    autofillDate={true}
-                    value={reportFormValues.endDate}
-                    onChange={(date) =>
-                      handleChangeDatePicker("endDate", date)
-                    }
-                  />
-                </div> 
               </Column>
             </Grid>
             <Column lg={6}>
               <Form className="container-form">
-                Test type: <TestSelectForm testList={testList} value={handleSelectedValue}/>
-                Panel type: <PanelSelectForm panelList={panelList} value={handleSetValue}/>
-                Unit type: <TestSectionSelectForm unitList={unitList} value={handleSelectedValue}/>
+                <TestSelectForm testList={testList} value={handleSelectedValue} />
+                <PanelSelectForm panelList={panelList} value={handleSetValue} />
+                <TestSectionSelectForm unitList={unitList} value={handleSelectedValue} />
               </Form>
             </Column>
-            <br /> 
+            <br />
             <Section>
               <br />
               <Button type="button" onClick={() => handleSubmit("test")}>

@@ -59,14 +59,6 @@ export const RoutineReportsMenu = {
           link:"/RoutineReport?type=indicator&report=activityReportByTest",
           label: <FormattedMessage id="sideNav.label.bytesttype" />,
         },
-        {
-          link:"/RoutineReport?type=indicator&report=activityReportByPanel",
-          label: <FormattedMessage id="sideNav.label.bypaneltype" />,
-        },
-        {
-          link:"/RoutineReport?type=indicator&report=activityReportByTestSection",
-          label: <FormattedMessage id="sideNav.label.byunit" />,
-        },
       ],
     },
     {

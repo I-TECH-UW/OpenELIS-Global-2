@@ -81,6 +81,7 @@ const RoutineIndex = () => {
               <StatisticsReport />
             )}
             {type === "indicator" && report === "activityReportByTest" && (
+              
                 <ActivityReportByTest />
             )}
 
