@@ -102,10 +102,10 @@ const RoutineIndex = () => {
             )}
 
             {type === "routine" && report === "auditTrail" && (
-            <AuditTrailReport  
+              <AuditTrailReport
                 report={"auditTrail"}
                 id={"reports.auditTrail"}
-            />
+              />
             )}
           </>
         )}

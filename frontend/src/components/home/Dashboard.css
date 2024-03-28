@@ -34,8 +34,8 @@
 
 .tile-icon {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 0.1rem;
+  right: 0.1rem;
 }
 
 .icon-wrapper {
@@ -62,13 +62,21 @@
   font-size: 1.9rem;
   font-weight: bold;
 }
-@media (max-width: 425px) {
+
+@media (max-width: 925px) {
   .home-dashboard-container {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 22px;
     padding: 22px;
   }
 }
+
+@media (max-width: 500px) {
+  .home-dashboard-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 846px) {
   .dashboard-view {
     padding: 0;

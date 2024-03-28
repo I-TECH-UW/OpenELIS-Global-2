@@ -7,6 +7,9 @@ import {
   Microscope,
 } from "@carbon/icons-react";
 import config from "../../config.json";
+import PageBreadCrumb from "../common/PageBreadCrumb";
+
+let breadcrumbs = [{ label: "home.label", link: "/" }];
 export const RoutineReportsMenu = {
   className: "resultSideNav",
   sideNavMenuItems: [
@@ -124,7 +127,7 @@ export const RoutineReportsMenu = {
       SideNavMenuItem: [
         {
           link: "/RoutineReport?type=routine&report=auditTrail",
-          label:  <FormattedMessage id="sideNav.label.audittrail"/>,
+          label: <FormattedMessage id="sideNav.label.audittrail" />,
         },
       ],
     },
@@ -144,6 +147,9 @@ export const RoutineReportsMenu = {
 const Routine = () => {
   return (
     <>
+    <div style={{marginLeft: '1%'}}>
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
+     </div>  
       <GlobalSideBar sideNav={RoutineReportsMenu} />
     </>
   );

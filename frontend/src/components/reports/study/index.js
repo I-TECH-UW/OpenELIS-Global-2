@@ -48,7 +48,7 @@ const StudyIndex = () => {
     patient_patientIndeterminate1: "project.IndeterminateStudy.name",
     patient_patientIndeterminate2: "project.IndeterminateStudy.name",
     patient_patientSpecialReport: "header.label.specialRequest",
-    study_auditTrail: "reports.auditTrail"
+    study_auditTrail: "reports.auditTrail",
   };
 
   useEffect(() => {
@@ -216,9 +216,9 @@ const StudyIndex = () => {
               )}
 
             {type === "study" && report === "auditTrail" && (
-              <AuditTrailReport  
-                  report={"auditTrail"}
-                  id={"reports.auditTrail"}
+              <AuditTrailReport
+                report={"auditTrail"}
+                id={"reports.auditTrail"}
               />
             )}
           </>
