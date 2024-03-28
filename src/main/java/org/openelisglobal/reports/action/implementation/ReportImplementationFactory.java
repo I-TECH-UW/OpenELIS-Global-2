@@ -138,6 +138,8 @@ public class ReportImplementationFactory {
                 return new ExportTBOrdersByDate();
             } else if (report.equals("Trends")) {
                 return new ExportTrendsByDate();
+            }else if(report.equals("WHONETExport")){
+                return new WHONETReport();
             }
 
             else if (report.equals("covidResultsReport")) {
@@ -277,6 +279,8 @@ public class ReportImplementationFactory {
                 return new ExportTBOrdersByDate();
             } else if (report.equals("MauritiusProtocolSheet")) {
                 return new MauritiusProtocolSheet();
+            }else if(report.equals("WHONETExport")){
+                 return new WHONETReport();
             }
 
             else if (report.equals("covidResultsReport")) {
