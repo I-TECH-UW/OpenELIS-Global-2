@@ -32,7 +32,12 @@ export const CommonProperties = () => {
         setError(err);
         setLoading(false); // Set loading to false in case of error
       } else {
-        setCommonProperties(fetchedProperties);
+        const sortedKeys=  Object.keys(fetchedProperties).sort();
+        let sortedProperties = {};
+        sortedKeys.forEach(key => {
+          sortedProperties[key] = fetchedProperties[key];
+        });
+        setCommonProperties(sortedProperties);
         setLoading(false); // Set loading to false after data is fetched
       }
     });
