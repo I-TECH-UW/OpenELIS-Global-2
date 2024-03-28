@@ -1,25 +1,25 @@
 import React, { useEffect, useState, useRef } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Form, FormLabel, Grid, Column, Section, Button, Loading, Card } from "@carbon/react";
+import { Form, FormLabel, Grid, Column, Section, Button, Loading } from "@carbon/react";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import { AlertDialog } from "../../common/CustomNotification";
 import config from "../../../config.json";
-import TestSelectForm from "../../workplan/TestSelectForm";
+import TestSectionSelectForm from "../../workplan/TestSectionSelectForm";
 import "../../Style.css";
 import { getFromOpenElisServer } from "../../utils/Utils";
 
-const ActivityReportByTest = () => {
+const ActivityReportByTestSection = () => {
   const intl = useIntl();
   const mounted = useRef(false);
   const [loading, setLoading] = useState(false);
   const [notificationVisible, setNotificationVisible] = useState(false);
+  const [SelectedValue, setSelectedValue] = useState(false);
   const [reportFormValues, setReportFormValues] = useState({
     startDate: null,
     endDate: null
   });
-  const [testList, setTestList] = useState([]);
-  const [selectedValue, setSelectedValue] = useState("");
-
+  const [unitList, setUnitList] = useState([]);
+  
   const encodeDate = (dateString) => {
     if (typeof dateString === "string" && dateString.trim() !== "") {
       return dateString.split("/").map(encodeURIComponent).join("%2F");
@@ -38,15 +38,15 @@ const ActivityReportByTest = () => {
 
   const handleSubmit = () => {
     setLoading(true);
-    const baseParams = "RoutineReport?type=indicator&report=activityReportByTest";
+    const baseParams = "RoutineReport?type=indicator&report=activityReportByTestSection";
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
-    const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.startDate}&lowerDateRange=${reportFormValues.endDate}`;
+    const url = `${baseUrl}?${baseParams}&lowerDateRange=${reportFormValues.startDate}&=upperDateRange${reportFormValues.endDate}`;
     window.open(url, "_blank");
     setLoading(false);
     setNotificationVisible(true);
   };
 
-  const handleSelectedValue = (v, l) => {
+  const handleSelectedValue = (v) => {
     if (mounted.current) {
       setSelectedValue(v);
     }
@@ -54,16 +54,18 @@ const ActivityReportByTest = () => {
 
   useEffect(() => {
     mounted.current = true;
-    const fetchTestList = async () => {
+    const fetchUnitList = async () => {
       try {
-        const data = getFromOpenElisServer("/rest/test-list");
-        setTestList(data);
+        const data = getFromOpenElisServer('/rest/test-sections');
+        console.log(data);
+        setUnitList(data);
       } catch (error) {
-        throw new Error("Error fetching test list:", error);
+        throw new Error("Error fetching units list:", error);
       }
     };
 
-    fetchTestList();
+    fetchUnitList();
+
     return () => {
       mounted.current = false;
     };
@@ -75,7 +77,7 @@ const ActivityReportByTest = () => {
         <Section>
           <Section>
             <h1>
-              <FormattedMessage id="sidenav.label.workplan.test"/>
+              <FormattedMessage id="sidenav.label.workplan.unit"/>
             </h1>
           </Section>
         </Section>
@@ -125,7 +127,7 @@ const ActivityReportByTest = () => {
             </Grid>
             <Column lg={6}>
               <Form className="container-form">
-                Test type: <TestSelectForm testList={testList} value={handleSelectedValue}/>
+                Unit type: <TestSectionSelectForm unitList={unitList} value={handleSelectedValue}/>
               </Form>
             </Column>
             <br /> 
@@ -142,4 +144,4 @@ const ActivityReportByTest = () => {
   );
 };
 
-export default ActivityReportByTest;
+export default ActivityReportByTestSection; 

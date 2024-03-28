@@ -220,6 +220,15 @@ button {
   width: 50%;
 }
 
+.inlineDiv {
+  display: flex;
+  justify-content: space-between;
+}
+
+.inputDate {
+  margin-right: 10px;
+}
+
 .sampleInfo {
   /* margin-left: 0%;  */
   margin-left: 0%;

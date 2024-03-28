@@ -10,7 +10,8 @@ import ReportByDate from "../study/common/ReportByDate";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
 import ActivityReportByTest from "./ActivityReportByTest";
-
+import ActivityReportByPanel from "./ActivityReportByPanel";
+import ActivityReportByTestSection from "./ActivityReportByTestSection";
 
 const RoutineIndex = () => {
   const intl = useIntl();
@@ -81,11 +82,16 @@ const RoutineIndex = () => {
               <StatisticsReport />
             )}
             {type === "indicator" && report === "activityReportByTest" && (
-              
                 <ActivityReportByTest />
             )}
 
- 
+            {type === "indicator" && report === "activityReportByPanel" && (
+                <ActivityReportByPanel />
+            )}
+
+            {type === "indicator" && report === "activityReportByTestSection" && (
+                <ActivityReportByTestSection />
+            )}
 
             {type === "indicator" &&
               report === "indicatorHaitiLNSPAllTests" && (

@@ -1,24 +1,25 @@
 import React, { useEffect, useState, useRef } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Form, FormLabel, Grid, Column, Section, Button, Loading, Card } from "@carbon/react";
+import { Form, FormLabel, Grid, Column, Section, Button, Loading } from "@carbon/react";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import { AlertDialog } from "../../common/CustomNotification";
 import config from "../../../config.json";
-import TestSelectForm from "../../workplan/TestSelectForm";
 import "../../Style.css";
 import { getFromOpenElisServer } from "../../utils/Utils";
+import PanelSelectForm from "../../workplan/PanelSelectForm";
 
-const ActivityReportByTest = () => {
+const ActivityReportByPanel = () => {
   const intl = useIntl();
   const mounted = useRef(false);
+  const [panels, setPanels] = useState([]);
   const [loading, setLoading] = useState(false);
   const [notificationVisible, setNotificationVisible] = useState(false);
+  const [setValue, setSetValue] = useState("");
   const [reportFormValues, setReportFormValues] = useState({
     startDate: null,
     endDate: null
   });
-  const [testList, setTestList] = useState([]);
-  const [selectedValue, setSelectedValue] = useState("");
+  const [panelList, setPanelList] = useState([]);
 
   const encodeDate = (dateString) => {
     if (typeof dateString === "string" && dateString.trim() !== "") {
@@ -38,32 +39,34 @@ const ActivityReportByTest = () => {
 
   const handleSubmit = () => {
     setLoading(true);
-    const baseParams = "RoutineReport?type=indicator&report=activityReportByTest";
+    const baseParams = "report=activityReportByPanel&type=indicator";
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
-    const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.startDate}&lowerDateRange=${reportFormValues.endDate}`;
-    window.open(url, "_blank");
+    const url = `${baseUrl}?${baseParams}&lowerDateRangeupperDateRange=${reportFormValues.startDate}&upperDateRange=${reportFormValues.endDate}`;
+    window.open(url, '_blank');
     setLoading(false);
     setNotificationVisible(true);
   };
 
-  const handleSelectedValue = (v, l) => {
+  const handleSetValue = (v) => {
     if (mounted.current) {
-      setSelectedValue(v);
+      setSetValue(v);
     }
   };
 
   useEffect(() => {
     mounted.current = true;
-    const fetchTestList = async () => {
+    const fetchPanelList = async () => {
       try {
-        const data = getFromOpenElisServer("/rest/test-list");
-        setTestList(data);
+        const data = await getFromOpenElisServer("/rest/panels");
+        console.log("Panel list:", data); 
+        setPanelList(data);
       } catch (error) {
-        throw new Error("Error fetching test list:", error);
+        throw new Error("Error fetching panel list:", error);
       }
     };
 
-    fetchTestList();
+    fetchPanelList();
+
     return () => {
       mounted.current = false;
     };
@@ -75,7 +78,7 @@ const ActivityReportByTest = () => {
         <Section>
           <Section>
             <h1>
-              <FormattedMessage id="sidenav.label.workplan.test"/>
+              <FormattedMessage id="Activity report By panel"/>
             </h1>
           </Section>
         </Section>
@@ -125,7 +128,7 @@ const ActivityReportByTest = () => {
             </Grid>
             <Column lg={6}>
               <Form className="container-form">
-                Test type: <TestSelectForm testList={testList} value={handleSelectedValue}/>
+                Panel type: <PanelSelectForm panelList={panelList} value={handleSetValue}/>
               </Form>
             </Column>
             <br /> 
@@ -142,4 +145,4 @@ const ActivityReportByTest = () => {
   );
 };
 
-export default ActivityReportByTest;
+export default ActivityReportByPanel;

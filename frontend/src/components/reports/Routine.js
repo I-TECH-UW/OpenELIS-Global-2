@@ -1,6 +1,6 @@
 import React from "react";
 import GlobalSideBar from "../common/GlobalSideBar";
-import { FormattedMessage, injectIntl } from "react-intl";
+import { FormattedMessage } from "react-intl";
 import {
   IbmWatsonDiscovery,
   IbmWatsonNaturalLanguageUnderstanding,
@@ -58,6 +58,14 @@ export const RoutineReportsMenu = {
         {
           link:"/RoutineReport?type=indicator&report=activityReportByTest",
           label: <FormattedMessage id="sideNav.label.bytesttype" />,
+        },
+        {
+          link:"/RoutineReport?type=indicator&report=activityReportByPanel",
+          label: <FormattedMessage id="sideNav.label.bypaneltype" />,
+        },
+        {
+          link:"/RoutineReport?type=indicator&report=activityReportByTestSection",
+          label: <FormattedMessage id="sideNav.label.byunit" />,
         },
       ],
     },
@@ -141,4 +149,4 @@ const Routine = () => {
   );
 };
 
-export default injectIntl(Routine);
+export default Routine;
