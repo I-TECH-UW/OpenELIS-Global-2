@@ -52,7 +52,7 @@ function Login(props) {
   const loginMessage = () => {
     return (
       <>
-        <div>
+        <div className="centeredContainer">
           <picture>
             <img
               src={`images/openelis_logo_full.png`}
@@ -131,7 +131,7 @@ function Login(props) {
 
   return (
     <>
-      <div className="loginPageContent">
+      <div className="loginPageContent centeredContainer">
         {notificationVisible === true ? <AlertDialog /> : ""}
         <Grid fullWidth={true}>
           <Column lg={0} md={0} sm={4}>
