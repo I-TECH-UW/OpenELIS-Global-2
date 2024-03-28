@@ -44,7 +44,19 @@ public class MenuUtil {
      *            The menu item to be added
      */
     public static void addMenu(Menu menu) {
+        menu.setIsActive(true);
         insertedMenus.add(menu);
+    }
+
+
+    // Update Menu items added outside the database
+    public static void updateMenu(Menu menu) {
+        insertedMenus.forEach(insertedMenu -> {
+            if (insertedMenu.getElementId().equals(menu.getElementId())) {
+                insertedMenu.setActionURL(menu.getActionURL());
+                insertedMenu.setIsActive(menu.getIsActive());
+            }
+        });
     }
 
     public static void forceRebuild() {

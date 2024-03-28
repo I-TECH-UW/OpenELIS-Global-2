@@ -106,7 +106,7 @@ const ReferredOut = () => {
   return (
     <>
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>
@@ -117,10 +117,10 @@ const ReferredOut = () => {
         </Column>
       </Grid>
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Form>
             <Grid fullWidth={true}>
-              <Column lg={10}>
+              <Column lg={16} md={8} sm={4}>
                 <Section>
                   <br />
                   <br />
@@ -159,7 +159,7 @@ const ReferredOut = () => {
               </Column>
             </Grid>
             <Grid fullWidth={true}>
-              <Column lg={10}>
+              <Column lg={10} md={8} sm={4}>
                 <Section>
                   <br />
                   <br />
