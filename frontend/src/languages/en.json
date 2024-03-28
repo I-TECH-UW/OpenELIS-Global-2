@@ -803,5 +803,21 @@
   "label.audittrailreport.requester": "Requester",
   "label.audittrailreport.requester.firstname": "Requester's First Name",
   "label.audittrailreport.requester.lastname": "Requester's Last Name",
-  "label.audittrailreport.sitename": "Site Name"
+  "label.audittrailreport.sitename": "Site Name",
+  "referral.label.referredOutTests": "ReferredOutTests",
+  "referral.out.head": "Referrals",
+  "referral.out.request": "Results By Date / Test / Unit Date Type :",
+  "referral.out.note": "Note if searching by result date, only tests with results will appear.",
+  "referral.date.start": "Start Date (dd/mm/yyyy)",
+  "referral.date.end": "End Date (dd/mm/yyyy)",
+  "referral.result.labNumber": "Results By Lab Number",
+  "referral.button.labSearch": "Search Referrals By Lab Number",
+  "referral.button.unitTestSearch": "Search Referrals By Unit(s) & Test(s)",
+  "referral.button.patientSearch": "Search Patient",
+  "referral.main.button": "Search Referrals By Patient",
+  "referral.units": "Unit(s)",
+  "referral.test": "Test(s)",
+  "referral.error": "No Referrals matching criteria",
+  "referral.input": "Scan OR Enter Manually",
+  "referral.search": "Search"
 }

@@ -30,6 +30,7 @@ import SearchResultFormValues from "../formModel/innitialValues/SearchResultForm
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
 import SearchPatientForm from "../patient/SearchPatientForm";
+import ReferredOutTests from "./resultsReferredOut/ReferredOutTests";
 import { ConfigurationContext } from "../layout/Layout";
 import config from "../../config.json";
 
@@ -655,6 +656,8 @@ export function SearchResultForm(props) {
           </Grid>
         </>
       )}
+      
+      {searchBy.type === "ReferredOutTests" && (<ReferredOutTests/>)}
 
       <>
         {pagination && (
