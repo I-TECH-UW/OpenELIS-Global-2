@@ -130,12 +130,18 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   const loadNextResultsPage = () => {
     setLoading(true);
-    getFromOpenElisServer("/rest/home-dashboard/" + selectedTile.type + "?page=" + nextPage, loadData);
+    getFromOpenElisServer(
+      "/rest/home-dashboard/" + selectedTile.type + "?page=" + nextPage,
+      loadData,
+    );
   };
 
   const loadPreviousResultsPage = () => {
     setLoading(true);
-    getFromOpenElisServer("/rest/home-dashboard/" + selectedTile.type + "?page=" + previousPage, loadData);
+    getFromOpenElisServer(
+      "/rest/home-dashboard/" + selectedTile.type + "?page=" + previousPage,
+      loadData,
+    );
   };
 
   const loadCount = (data) => {

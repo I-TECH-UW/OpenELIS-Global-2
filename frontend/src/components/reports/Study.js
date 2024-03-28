@@ -147,8 +147,9 @@ export const RoutineReportsMenu = {
         },
         {
           link: "/StudyReport?type=patient&report=retroCInonConformityBySectionReason",
-          label:
-            <FormattedMessage id="sideNav.label.noncomformityreportsbyunit" />,
+          label: (
+            <FormattedMessage id="sideNav.label.noncomformityreportsbyunit" />
+          ),
         },
         {
           link: "/StudyReport?type=patient&report=retroCINonConformityByLabno",
@@ -175,12 +176,11 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl + "/Report?type=patient&report=CIStudyExport",
+          link: "/StudyReport?type=patient&report=CIStudyExport",
           label: <FormattedMessage id="sideNav.label.generalreport" />,
         },
         {
-          link: config.serverBaseUrl + "/Report?type=patient&report=Trends",
+          link: "/StudyReport?type=patient&report=Trends",
           label: <FormattedMessage id="sideNav.label.viralloaddataexport" />,
         },
       ],
@@ -202,7 +202,7 @@ export const RoutineReportsMenu = {
 const Study = () => {
   return (
     <>
-      <div style={{marginLeft: '1%'}}>
+      <div style={{ marginLeft: "1%" }}>
         <PageBreadCrumb breadcrumbs={breadcrumbs} />
       </div>
       <GlobalSideBar sideNav={RoutineReportsMenu} />
