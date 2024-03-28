@@ -87,9 +87,9 @@ function Admin() {
           <SideNavLink
             renderIcon={Catalog}
             target="_blank"
-            href={config.serverBaseUrl + "/MasterListsPage"}
+            href="/admin/MasterListsPage"
           >
-            <FormattedMessage id="admin.legacy" />
+            <FormattedMessage id="master.lists.page" />
           </SideNavLink>
         </SideNavItems>
       </SideNav>
