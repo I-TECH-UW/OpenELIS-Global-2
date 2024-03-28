@@ -48,6 +48,14 @@ li.clickableUserDetails:hover {
   margin-left: 2%;
   margin-right: 5%;
 }
+.inlineDiv {
+  display: flex;
+  justify-content: space-between;
+}
+
+.inputDate {
+  margin-right: 10px;
+}
 
 .inputText {
   --cds-text-primary: black;
@@ -210,6 +218,15 @@ button {
   margin-left: 0%;
   margin-right: 0%;
   width: 50%;
+}
+
+.inlineDiv {
+  display: flex;
+  justify-content: space-between;
+}
+
+.inputDate {
+  margin-right: 10px;
 }
 
 .sampleInfo {
