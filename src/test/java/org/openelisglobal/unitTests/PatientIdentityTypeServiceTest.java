@@ -1,11 +1,5 @@
-package org.openelisglobal.unitTests.patientIdentityType;
+package org.openelisglobal.unitTests;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openelisglobal.BaseTestConfig;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
@@ -13,13 +7,19 @@ import org.openelisglobal.config.TestConfig;
 import org.openelisglobal.patientidentitytype.dao.PatientIdentityTypeDAO;
 import org.openelisglobal.patientidentitytype.service.PatientIdentityTypeServiceImpl;
 import org.openelisglobal.patientidentitytype.valueholder.PatientIdentityType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import java.util.Arrays;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
+
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 @RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration(classes = { BaseTestConfig.class, TestConfig.class })

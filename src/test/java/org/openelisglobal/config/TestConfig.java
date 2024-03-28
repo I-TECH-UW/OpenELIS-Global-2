@@ -26,7 +26,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
-@ComponentScan(basePackages = { "org.openelisglobal.spring", "org.openelisglobal.patient",
+@ComponentScan(basePackages = { "org.openelisglobal.spring",  "org.openelisglobal.systemusersection", "org.openelisglobal.test", "org.openelisglobal.organization", "org.openelisglobal.patient",
         "org.openelisglobal.patientidentity", "org.openelisglobal.gender", "org.openelisglobal.patientidentitytype",
         "org.openelisglobal.patienttype", "org.openelisglobal.address", "org.openelisglobal.dictionary",
         "org.openelisglobal.person" }, excludeFilters = {
