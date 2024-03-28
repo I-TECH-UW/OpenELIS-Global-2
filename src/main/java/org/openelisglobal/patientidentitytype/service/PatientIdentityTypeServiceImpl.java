@@ -67,4 +67,8 @@ public class PatientIdentityTypeServiceImpl extends AuditableBaseObjectServiceIm
     private boolean duplicatePatientIdentityTypeExists(PatientIdentityType patientIdentityType) {
         return baseObjectDAO.duplicatePatientIdentityTypeExists(patientIdentityType);
     }
+
+    public void setBaseObjectDAO(PatientIdentityTypeDAO mockDAO) {
+        this.baseObjectDAO = mockDAO;
+    }
 }
