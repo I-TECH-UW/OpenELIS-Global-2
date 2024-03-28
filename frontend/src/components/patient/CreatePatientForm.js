@@ -383,7 +383,7 @@ function CreatePatientForm(props) {
                       value={values.subjectNumber || ""}
                       name={field.name}
                       labelText={intl.formatMessage({
-                        id: "patient.first.name",
+                        id: "patient.subject.number",
                         defaultMessage: "First Name",
                       })}
                       id={field.name}
