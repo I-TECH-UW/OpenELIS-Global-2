@@ -31,8 +31,21 @@ public class PersonServiceTest {
     public void createPerson_shouldCreateNewPerson() throws Exception {
         String firstName = "John";
         String lastname = "Doe";
+        String cellPhone= "123456";
+        String homePhone= "789012";
+        String email= "man@gmail.com";
+        String fax ="123 4444";
+        String workPhone= "0987654";
+        String city ="mawokota";
+        String country = "uganda";
+        String streetAdress = "kisumali";
+        String zipCode = "256";
+        String state = "bugiri";
 
-        Person pat = createPerson(firstName, lastname);
+
+        
+
+        Person pat = createPerson(firstName, lastname, cellPhone, homePhone, email, fax, workPhone, city, country, streetAdress, zipCode, state);
 
         //Assert.assertEquals(0, personService.getAllPersons().size());
         // save person to the DB
@@ -42,16 +55,84 @@ public class PersonServiceTest {
        // Assert.assertEquals(1, personService.getAllPersons().size());
         Assert.assertEquals(firstName, savedPerson.getFirstName());
         Assert.assertEquals(lastname, savedPerson.getLastName());
+        Assert.assertEquals(cellPhone, savedPerson.getCellPhone());
+        Assert.assertEquals(homePhone, savedPerson.getHomePhone());
+        Assert.assertEquals(email, savedPerson.getEmail());
+        Assert.assertEquals(fax, savedPerson.getFax());
+        Assert.assertEquals(workPhone, savedPerson.getWorkPhone());
+        Assert.assertEquals(city, savedPerson.getCity());
+        Assert.assertEquals(country, savedPerson.getCountry());
+
     }
 
+    @Test
     public void getAllPerson_shouldGetAllPerson() throws Exception {
         Assert.assertEquals(1, personService.getAllPersons().size());
     }
 
-    private Person createPerson(String firstName, String LastName) {
+      @Test
+    public void getFirstName_shouldGetFirstName() throws Exception {
+
+        String firstName = "John";
+        String lastname = "Doe";
+        String cellPhone= "123456";
+        String homePhone= "789012";
+        String email= "man@gmail.com";
+        String fax ="123 4444";
+        String workPhone= "0987654";
+        String city ="mawokota";
+        String country = "uganda";
+        String streetAdress = "kisumali";
+        String zipCode = "256";
+        String state = "bugiri";
+
+
+        
+
+        Person pat = createPerson(firstName, lastname, cellPhone, homePhone, email, fax, workPhone, city, country, streetAdress, zipCode, state);
+
+        Assert.assertEquals("John", personService.getFirstName(pat));
+    }
+
+      @Test
+    public void getLastName_shouldGetLastName() throws Exception {
+
+        String firstName = "John";
+        String lastname = "Doe";
+        String cellPhone= "123456";
+        String homePhone= "789012";
+        String email= "man@gmail.com";
+        String fax ="123 4444";
+        String workPhone= "0987654";
+        String city ="mawokota";
+        String country = "uganda";
+        String streetAdress = "kisumali";
+        String zipCode = "256";
+        String state = "bugiri";
+
+
+        
+
+        Person pat = createPerson(firstName, lastname, cellPhone, homePhone, email, fax, workPhone, city, country, streetAdress, zipCode, state);
+
+        Assert.assertEquals("Doe", personService.getLastName(pat));
+    }
+
+    private Person createPerson(String firstName, String LastName, String cellPhone, String homePhone, String email, 
+    String fax, String workPhone, String city, String country, String streetAdress, String zipCode, String state) {
         Person person = new Person();
         person.setFirstName(firstName);
         person.setLastName(LastName);
+        person.setCellPhone(cellPhone);
+        person.setHomePhone(homePhone);
+        person.setEmail(email);
+        person.setFax(fax);
+        person.setWorkPhone(workPhone);
+        person.setCity(city);
+        person.setCountry(country);
+        person.setStreetAddress(streetAdress);
+        person.setZipCode(zipCode);
+        person.setState(state);
         return person;
     }
 
