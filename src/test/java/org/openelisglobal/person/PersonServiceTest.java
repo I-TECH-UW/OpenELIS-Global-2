@@ -1,5 +1,6 @@
 package org.openelisglobal.person;
 
+import org.hibernate.ObjectNotFoundException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +14,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { BaseTestConfig.class, PatientTestConfig.class })
@@ -20,39 +23,90 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ActiveProfiles("test")
 public class PersonServiceTest {
 
-    @Autowired
-    PersonService personService;
+	@Autowired
+	PersonService personService;
 
-    @Before
-    public void init() throws Exception {
-    }
+	private static final Logger logger = LoggerFactory.getLogger(PersonService.class);
 
-    @Test
-    public void createPerson_shouldCreateNewPerson() throws Exception {
-        String firstName = "John";
-        String lastname = "Doe";
+	@Before
+	public void init() throws Exception {
+	}
 
-        Person pat = createPerson(firstName, lastname);
+	@Test
+	public void createPerson_shouldCreateNewPerson() throws Exception {
+		String firstName = "John";
+		String lastname = "Doe";
 
-        //Assert.assertEquals(0, personService.getAllPersons().size());
-        // save person to the DB
-        String personIdId = personService.insert(pat);
-        Person savedPerson = personService.get(personIdId);
+		Person pat = createPerson(firstName, lastname);
 
-       // Assert.assertEquals(1, personService.getAllPersons().size());
-        Assert.assertEquals(firstName, savedPerson.getFirstName());
-        Assert.assertEquals(lastname, savedPerson.getLastName());
-    }
+		// Assert.assertEquals(0, personService.getAllPersons().size());
+		// save person to the DB
+		String personIdId = personService.insert(pat);
+		Person savedPerson = personService.get(personIdId);
 
-    public void getAllPerson_shouldGetAllPerson() throws Exception {
-        Assert.assertEquals(1, personService.getAllPersons().size());
-    }
+		// Assert.assertEquals(1, personService.getAllPersons().size());
+		Assert.assertEquals(firstName, savedPerson.getFirstName());
+		Assert.assertEquals(lastname, savedPerson.getLastName());
+	}
 
-    private Person createPerson(String firstName, String LastName) {
-        Person person = new Person();
-        person.setFirstName(firstName);
-        person.setLastName(LastName);
-        return person;
-    }
+	@Test
+	public void updatePerson_shouldUpdateExistingPerson() throws Exception {
+		String firstName = "Sayed";
+		String lastName = "Abdo";
+
+		Person person = createPerson(firstName, lastName);
+		String personId = personService.insert(person);
+
+		// Modify some details of the person
+		String newFirstName = "UpdateSayed";
+		person.setFirstName(newFirstName);
+
+		personService.update(person);
+
+		Person updatedPerson = personService.get(personId);
+		Assert.assertEquals(newFirstName, updatedPerson.getFirstName());
+		Assert.assertEquals(lastName, updatedPerson.getLastName());
+	}
+
+	@Test
+	public void deletePerson_shouldDeleteExistingPerson() throws Exception {
+		String firstName = "Delete";
+		String lastName = "Me";
+		String id = "1";
+
+		// Create a person object
+		Person person = createPerson(firstName, lastName);
+		person.setSysUserId(id);
+
+		// Insert person into the database
+		String personId = personService.insert(person);
+
+		// Ensure that the person exists in the database
+		Assert.assertNotNull("Ensure that person is exist", personService.get(personId));
+
+		// Call the delete method
+
+		personService.delete(personId, person.getSysUserId());
+		Person deletedPerson = null;
+		try {
+			deletedPerson = personService.get(personId);
+		} catch (ObjectNotFoundException e) {
+			logger.error("Person not found with ID: {}", personId, e);
+		}
+
+		// Assert that the retrieved person is null, indicating successful deletion
+		Assert.assertNull("Deleted person should be null", deletedPerson);
+	}
+
+	public void getAllPerson_shouldGetAllPerson() throws Exception {
+		Assert.assertEquals(1, personService.getAllPersons().size());
+	}
+
+	private Person createPerson(String firstName, String LastName) {
+		Person person = new Person();
+		person.setFirstName(firstName);
+		person.setLastName(LastName);
+		return person;
+	}
 
 }
