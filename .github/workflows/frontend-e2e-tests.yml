@@ -1,0 +1,41 @@
+name: OpenELis Frontend QA framework workflow
+on:
+  push:
+    branches:
+      - develop_3x
+  workflow_dispatch:
+jobs:
+  e2e:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout OpenELIS-Global2
+        uses: actions/checkout@v2
+        with:
+         repository: ${{github.repository}} 
+
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "14"
+
+      - name: Install Dependencies
+        run: npm i
+        working-directory: frontend
+        
+      - name: Run Cypress
+        uses: cypress-io/github-action@v6.5.0
+        with:
+          start: npm run start
+
+      - name: E2E on Chrome
+        uses: actions/checkout@v4
+      - uses: cypress-io/github-action@v6.5.0
+        with:
+          browser: chrome    
+
+      - name: E2E on Firefox
+        uses: actions/checkout@v4
+      - uses: cypress-io/github-action@v6
+        with:
+          browser: firefox
