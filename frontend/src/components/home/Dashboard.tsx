@@ -144,7 +144,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   const fetchTestSections = (res) => {
     setTestSections(res);
-    setSelectedTestSection(res[0].id);
+    setSelectedTestSection(res[0]?.id);
   };
 
   const loadNextResultsPage = () => {
@@ -316,7 +316,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
       setSelectedTile(tile);
     } else {
       setSelectedTile(null);
-      setSelectedTestSection(testSections[0].id);
+      setSelectedTestSection(testSections[0]?.id);
     }
   };
 
@@ -514,7 +514,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                       <Column lg={16}>
                       <Tabs>
                         <TabList aria-label="List of tabs" contained>
-                          {testSections.map((item, idx) => {
+                          {testSections?.map((item, idx) => {
                             return (
                               <Tab
                                 key={idx}
