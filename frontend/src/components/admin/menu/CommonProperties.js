@@ -27,18 +27,20 @@ export const CommonProperties = () => {
     useContext(NotificationContext);
 
   useEffect(() => {
-    getFromOpenElisServer(
-      "/rest/properties",
-      (fetchedProperties, err) => {
-        if (err) {
-          setError(err);
-          setLoading(false); // Set loading to false in case of error
-        } else {
-          setCommonProperties(fetchedProperties);
-          setLoading(false); // Set loading to false after data is fetched
-        }
-      },
-    );
+    getFromOpenElisServer("/rest/properties", (fetchedProperties, err) => {
+      if (err) {
+        setError(err);
+        setLoading(false); // Set loading to false in case of error
+      } else {
+        const sortedKeys=  Object.keys(fetchedProperties).sort();
+        let sortedProperties = {};
+        sortedKeys.forEach(key => {
+          sortedProperties[key] = fetchedProperties[key];
+        });
+        setCommonProperties(sortedProperties);
+        setLoading(false); // Set loading to false after data is fetched
+      }
+    });
   }, []);
 
   const handleSubmit = () => {
@@ -99,7 +101,7 @@ export const CommonProperties = () => {
                           style={{ gap: "20px" }}
                         >
                           <TextInput
-                            id={key+"-input"}
+                            id={key + "-input"}
                             labelText={shortKey} // Use the modified key without the prefix
                             value={commonProperties[key]}
                             onChange={(e) => {
@@ -120,9 +122,7 @@ export const CommonProperties = () => {
               {commonProperties && (
                 <>
                   {Object.keys(commonProperties)
-                    .slice(
-                      Math.ceil(Object.keys(commonProperties).length / 2),
-                    )
+                    .slice(Math.ceil(Object.keys(commonProperties).length / 2))
                     .map((key) => {
                       // Remove the prefix "org.openelisglobal" using regex
                       let shortKey = key.replace(/^org\.openelisglobal\./, "");
@@ -134,7 +134,7 @@ export const CommonProperties = () => {
                           style={{ gap: "20px" }}
                         >
                           <TextInput
-                            id={key+"-input"}
+                            id={key + "-input"}
                             labelText={shortKey} // Use the modified key without the prefix
                             value={commonProperties[key]}
                             onChange={(e) => {
