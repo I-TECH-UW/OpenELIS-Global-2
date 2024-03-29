@@ -144,7 +144,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   const fetchTestSections = (res) => {
     setTestSections(res);
-    setSelectedTestSection(res[0].value);
+    setSelectedTestSection(res[0].id);
   };
 
   const loadNextResultsPage = () => {
@@ -298,7 +298,8 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     "ORDERS_REJECTED_TODAY",
     "UN_PRINTED_RESULTS",
     "DELAYED_TURN_AROUND",
-    "ORDERS_FOR_USER"
+    "ORDERS_FOR_USER",
+    "ORDERS_PATIALLY_COMPLETED_TODAY"
   ];
 
   const handleMinimizeClick = () => {
@@ -315,7 +316,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
       setSelectedTile(tile);
     } else {
       setSelectedTile(null);
-      setSelectedTestSection(testSections[0].value);
+      setSelectedTestSection(testSections[0].id);
     }
   };
 
@@ -509,6 +510,8 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                       </Grid>
                     )}
                     {tilesWithTabs.includes(selectedTile.type) && (
+                      <Grid>
+                      <Column lg={16}>
                       <Tabs>
                         <TabList aria-label="List of tabs" contained>
                           {testSections.map((item, idx) => {
@@ -516,7 +519,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                               <Tab
                                 key={idx}
                                 onClick={() =>
-                                  setSelectedTestSection(item.value)
+                                  setSelectedTestSection(item.id)
                                 }
                               >
                                 {item.value}
@@ -525,6 +528,8 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                           })}
                         </TabList>
                       </Tabs>
+                      </Column>
+                    </Grid>
                     )}
                     <DataTable
                       rows={data
@@ -584,7 +589,11 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                       page={page}
                       pageSize={pageSize}
                       pageSizes={[10, 20, 30, 50, 100]}
-                      totalItems={data.length}
+                      totalItems={data.filter((item) =>
+                        tilesWithTabs.includes(selectedTile.type)
+                          ? item.testSection === selectedTestSection
+                          : true
+                      ).length}
                       forwardText={intl.formatMessage({
                         id: "pagination.forward",
                       })}
