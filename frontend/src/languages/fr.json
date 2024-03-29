@@ -768,5 +768,6 @@
   "label.audittrailreport.requester": "Demandeur",
   "label.audittrailreport.requester.firstname": "Prénom du demandeur",
   "label.audittrailreport.requester.lastname": "Nom de famille du demandeur",
-  "label.audittrailreport.sitename": "Nom du site"
+  "label.audittrailreport.sitename": "Nom du site" ,
+  "label.user.notestsection": "L'utilisateur actuel n'a pas d'unité de laboratoire assassinée. Veuillez contacter l'administrateur" 
 }
