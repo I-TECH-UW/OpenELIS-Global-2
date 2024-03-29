@@ -1,3 +1,4 @@
+
 import React, { useContext, useState, useEffect } from "react";
 import { AlertDialog } from "../../common/CustomNotification";
 import { NotificationContext } from "../../layout/Layout";
@@ -17,6 +18,7 @@ import ReportByDate from "./common/ReportByDate";
 import ReportByLabNo from "./common/ReportByLabNo";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
+import NonconformityNotification from "./NonconformityNotification";
 
 const StudyIndex = () => {
   const intl = useIntl();
@@ -37,6 +39,8 @@ const StudyIndex = () => {
     patient_retroCINonConformityByLabno: "header.label.intialFollowup",
     patient_retroCIFollowupRequiredByLocation:
       "reports.followupRequired.byLocation",
+    patient_retroCInonConformityNotification:
+    "header.label.noncomformitynotification",
     patient_patientARVInitial1: "header.label.ARV",
     patient_patientARVInitial2: "header.label.ARV",
     patient_patientARVFollowup1: "header.label.followup",
@@ -204,6 +208,13 @@ const StudyIndex = () => {
               <ReportByLabNo
                 report="retroCINonConformityByLabno"
                 id="header.label.intialFollowup"
+              />
+            )}
+            
+             {type === "patient" && report === "retroCInonConformityNotification" && (
+              <NonconformityNotification
+                report="retroCInonConformityNotification"
+                id="header.label.nonConformityNotification"
               />
             )}
 

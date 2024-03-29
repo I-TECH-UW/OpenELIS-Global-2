@@ -236,6 +236,14 @@ export default function App() {
                   role=""
                   labUnitRole={{ Pathology: ["Results"] }}
                 />
+                
+                 <SecureRoute
+                path="/NonconformityNotification"
+                exact
+                component={() => NonconformityNotification}
+                role="Reports" // Define the appropriate role
+              	/>
+              
                 <SecureRoute
                   path="/ImmunohistochemistryDashboard"
                   exact

@@ -9,6 +9,7 @@ import ReferredOut from "./ReferredOut";
 import ReportByDate from "../study/common/ReportByDate";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
+import NonconformityNotification from "../study/NonconformityNotification";
 
 const RoutineIndex = () => {
   const intl = useIntl();
@@ -18,6 +19,10 @@ const RoutineIndex = () => {
   const [type, setType] = useState("");
   const [report, setReport] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  
+  {type === "patient" &&
+              report === "retroCInonConformityNotification" && 
+                (<NonconformityNotification />)}
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -67,6 +72,7 @@ const RoutineIndex = () => {
                 id={"openreports.mgt.nonconformity.date"}
               />
             )}
+
 
             {type === "patient" && report === "CISampleRoutineExport" && (
               <ReportByDate
