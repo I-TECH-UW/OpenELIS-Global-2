@@ -393,7 +393,7 @@ function CreatePatientForm(props) {
                       className="inputText"
                       invalid={errors.subjectNumber && touched.subjectNumber}
                       invalidText={errors.subjectNumber}
-                      placeholder={intl.formatMessage({id:"patient.information.healthid""})}
+                      placeholder={intl.formatMessage({id:"patient.information.healthid"})}
                     />
                   </>
                 )}
