@@ -20,6 +20,8 @@ public class OrderDisplayBean {
 
     private String id ;
      
+    private String testSection;
+
     public String getUserFirstName() {
         return userFirstName;
     }
@@ -95,5 +97,14 @@ public class OrderDisplayBean {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getTestSection() {
+        return testSection;
+    }
+
+    
+    public void setTestSection(String testSection) {
+        this.testSection = testSection;
     }
 }
