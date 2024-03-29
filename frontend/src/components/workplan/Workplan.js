@@ -25,6 +25,7 @@ import {
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { ConfigurationContext } from "../layout/Layout";
+import PageBreadCrumb from "../common/PageBreadCrumb";
 
 export default function Workplan(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
@@ -170,11 +171,15 @@ export default function Workplan(props) {
   let rowColorIndex = 2;
   let showAccessionNumber = false;
   let currentAccessionNumber = "";
+
+  let breadcrumbs = [{ label: "home.label", link: "/" }];
+
   return (
     <>
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         {notificationVisible === true ? <AlertDialog /> : ""}
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>{title}</Heading>
@@ -186,7 +191,7 @@ export default function Workplan(props) {
       </Grid>
       <div className="orderLegendBody">
         <Grid fullWidth={true}>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <WorkplanSearchForm
               type={type}
               createTestsList={handleTestsList}
@@ -200,7 +205,7 @@ export default function Workplan(props) {
             <hr />
             <br />
             <Grid fullWidth={true}>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 <Button
                   size="md"
                   type="button"
@@ -214,7 +219,7 @@ export default function Workplan(props) {
             </Grid>
             <br />
             <Grid fullWidth={true}>
-              <Column lg={16}>
+              <Column sm={4} md={8} lg={16}>
                 <FormattedMessage id="label.total.tests" /> = {testsList.length}
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <img
@@ -226,7 +231,7 @@ export default function Workplan(props) {
               </Column>
             </Grid>
             <Grid fullWidth={true}>
-              <Column lg={16} md={2}>
+              <Column sm={4} md={8} lg={16}>
                 <>
                   <Table size={"sm"}>
                     <TableHead>
@@ -363,14 +368,50 @@ export default function Workplan(props) {
                     pageSize={pageSize}
                     pageSizes={[10, 20, 50, 100]}
                     totalItems={testsList.length}
-                  ></Pagination>
+                    forwardText={intl.formatMessage({
+                      id: "pagination.forward",
+                    })}
+                    backwardText={intl.formatMessage({
+                      id: "pagination.backward",
+                    })}
+                    itemRangeText={(min, max, total) =>
+                      intl.formatMessage(
+                        { id: "pagination.item-range" },
+                        { min: min, max: max, total: total },
+                      )
+                    }
+                    itemsPerPageText={intl.formatMessage({
+                      id: "pagination.items-per-page",
+                    })}
+                    itemText={(min, max) =>
+                      intl.formatMessage(
+                        { id: "pagination.item" },
+                        { min: min, max: max },
+                      )
+                    }
+                    pageNumberText={intl.formatMessage({
+                      id: "pagination.page-number",
+                    })}
+                    pageRangeText={(_current, total) =>
+                      intl.formatMessage(
+                        { id: "pagination.page-range" },
+                        { total: total },
+                      )
+                    }
+                    pageText={(page, pagesUnknown) =>
+                      intl.formatMessage(
+                        { id: "pagination.page" },
+                        { page: pagesUnknown ? "" : page },
+                      )
+                    }
+                  />
                 </>
               </Column>
               <hr />
             </Grid>
             <br />
             <Grid fullWidth={true}>
-              <Column lg={16}>
+              <Column sm={4} md={8} lg={16}>
                 <Button
                   size="md"
                   type="button"
@@ -387,7 +428,7 @@ export default function Workplan(props) {
         {selectedValue && testsList.length === 0 && (
           <h4>
             <Grid>
-              <Column lg={16}>
+              <Column sm={4} md={8} lg={16}>
                 <FormattedMessage id="result.noTestsFound" />
               </Column>
             </Grid>

@@ -31,6 +31,7 @@ import { NotificationContext } from "../layout/Layout";
 import { AlertDialog } from "../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
 import "./PathologyDashboard.css";
+import PageBreadCrumb from "../common/PageBreadCrumb";
 
 function PathologyDashboard() {
   const componentMounted = useRef(false);
@@ -274,10 +275,13 @@ function PathologyDashboard() {
     };
   }, [filters]);
 
+  let breadcrumbs = [{ label: "home.label", link: "/" }];
+
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading description="Loading Dasboard..." />}
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
 
       <Grid fullWidth={true}>
         <Column lg={16}>
@@ -308,10 +312,10 @@ function PathologyDashboard() {
                 setFilters({ ...filters, searchTerm: e.target.value })
               }
               placeholder={intl.formatMessage({
-                id: "label.seacrh.labno.family",
+                id: "label.search.labno.family",
               })}
               labelText={intl.formatMessage({
-                id: "label.seacrh.labno.family",
+                id: "label.search.labno.family",
               })}
             />
           </Column>
@@ -429,7 +433,39 @@ function PathologyDashboard() {
               pageSize={pageSize}
               pageSizes={[10, 20, 30]}
               totalItems={pathologyEntries.length}
-            ></Pagination>
+              forwardText={intl.formatMessage({ id: "pagination.forward" })}
+              backwardText={intl.formatMessage({ id: "pagination.backward" })}
+              itemRangeText={(min, max, total) =>
+                intl.formatMessage(
+                  { id: "pagination.item-range" },
+                  { min: min, max: max, total: total },
+                )
+              }
+              itemsPerPageText={intl.formatMessage({
+                id: "pagination.items-per-page",
+              })}
+              itemText={(min, max) =>
+                intl.formatMessage(
+                  { id: "pagination.item" },
+                  { min: min, max: max },
+                )
+              }
+              pageNumberText={intl.formatMessage({
+                id: "pagination.page-number",
+              })}
+              pageRangeText={(_current, total) =>
+                intl.formatMessage(
+                  { id: "pagination.page-range" },
+                  { total: total },
+                )
+              }
+              pageText={(page, pagesUnknown) =>
+                intl.formatMessage(
+                  { id: "pagination.page" },
+                  { page: pagesUnknown ? "" : page },
+                )
+              }
+            />
           </Column>
         </Grid>
       </div>
