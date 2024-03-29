@@ -68,7 +68,7 @@ export default function App() {
           console.debug(JSON.stringify(jsonResp));
           if (jsonResp.authenticated) {
             localStorage.setItem("CSRF", jsonResp.csrf);
-          }
+          } 
           if (
             !Object.keys(jsonResp).every(
               (key) => jsonResp[key] === userSessionDetails[key],
@@ -283,6 +283,13 @@ export default function App() {
                   component={() => <FindOrder />}
                   role="Reception"
                 />
+                <SecureRoute
+                  path="/SampleBatchEntrySetup"
+                  exact
+                  component={() => <SamlpeBatchEntrySetup />}
+                  role="Reception"
+                />
+
                 <SecureRoute
                   path="/ElectronicOrders"
                   exact

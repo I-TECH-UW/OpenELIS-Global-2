@@ -18,7 +18,7 @@ import SampleType from "./SampleType";
 import BatchOrderEntryFormValues from "../formModel/innitialValues/BatchOrderEntryFormValues";
 import AutoComplete from "../common/AutoComplete";
 import "../Style.css";
-import { getFromOpenElisServer } from "../utils/Utils";
+import { getFromOpenElisServer,postToOpenElisServer } from "../utils/Utils";
 
 const SamlpeBatchEntrySetup = () => {
   const [orderFormValues, setOrderFormValues] = useState(
@@ -214,9 +214,9 @@ const SamlpeBatchEntrySetup = () => {
     });
   }
 
-  function handleSubmitButton1() {
-    console.log(orderFormValues);
-  }
+ 
+
+ 
 
   function handleFormChange(event) {
     const selectedForm = event.target.value;

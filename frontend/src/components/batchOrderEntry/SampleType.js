@@ -12,7 +12,7 @@ import {
 import { FormattedMessage, useIntl } from "react-intl";
 import { getFromOpenElisServer } from "../utils/Utils";
 import { sampleTypeTestsStructure } from "../data/SampleEntryTestsForTypeProvider";
-import "../../../Style.css";
+import "../Style.css";
 
 const SampleType = ({ updateFormValues }) => {
   const intl = useIntl();
