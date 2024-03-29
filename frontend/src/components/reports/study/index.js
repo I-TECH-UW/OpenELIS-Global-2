@@ -18,7 +18,7 @@ import ReportByDate from "./common/ReportByDate";
 import ReportByLabNo from "./common/ReportByLabNo";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
-import NonconformityNotification from "./NonconformityNotification";
+import NonconformityNotification from "../routine/NonconformityNotification";
 
 const StudyIndex = () => {
   const intl = useIntl();

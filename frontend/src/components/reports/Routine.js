@@ -100,6 +100,14 @@ export const RoutineReportsMenu = {
             <FormattedMessage id="sideNav.label.noncomformityreportsbydate" />
           ),
         },
+        
+        {
+        link: "/Report?type=patient&report=retroCInonConformityNotification",
+          label: (
+            <FormattedMessage id="sideNav.label.noncomformitynotification" />
+          ),
+        },
+        
         {
           link: "/RoutineReport?type=patient&report=haitiNonConformityBySectionReason",
           label: (

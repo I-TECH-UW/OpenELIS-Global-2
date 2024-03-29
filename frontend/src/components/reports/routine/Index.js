@@ -9,7 +9,7 @@ import ReferredOut from "./ReferredOut";
 import ReportByDate from "../study/common/ReportByDate";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
-import NonconformityNotification from "../study/NonconformityNotification";
+import NonconformityNotification from "./NonconformityNotification";
 
 const RoutineIndex = () => {
   const intl = useIntl();
