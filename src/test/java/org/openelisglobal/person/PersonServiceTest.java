@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openelisglobal.BaseTestConfig;
+import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.patient.PatientTestConfig;
 import org.openelisglobal.person.dao.PersonDAO;
 import org.openelisglobal.person.service.PersonService;
@@ -176,6 +177,10 @@ public class PersonServiceTest {
 		}
 	}
 
+	public void getAllPerson_shouldGetAllPerson() throws Exception {
+		Assert.assertEquals(1, personService.getAllPersons().size());
+	}
+
 	@Test
 	public void testGetPersonLastName() throws Exception {
 		// Prepare test data
@@ -195,8 +200,29 @@ public class PersonServiceTest {
 		Assert.assertEquals(lastname, actualPerson.getLastName());
 	}
 
-	public void getAllPerson_shouldGetAllPerson() throws Exception {
-		Assert.assertEquals(1, personService.getAllPersons().size());
+	@Test
+	public void testGetPageOfPersons() throws Exception {
+		// Prepare test data
+		int startingRecNo = 1; // Starting record number for pagination
+
+		// Call the method under test
+		List<Person> persons = personService.getPageOfPersons(startingRecNo);
+
+		// Assert the results
+		Assert.assertNotNull(persons);
+		Assert.assertFalse(persons.isEmpty());
+
+		// Get default page size from SystemConfiguration
+		int defaultPageSize = SystemConfiguration.getInstance().getDefaultPageSize();
+
+		// Ensure that the number of returned records does not exceed the default page
+		// size
+		Assert.assertTrue(persons.size() <= defaultPageSize + 1);
+
+		// Check if the records are ordered correctly
+		for (int i = 0; i < persons.size() - 1; i++)
+			Assert.assertTrue(Integer.parseInt(persons.get(i).getId()) < Integer.parseInt(persons.get(i + 1).getId()));
+
 	}
 
 	private Person createPerson(String firstName, String LastName) {
