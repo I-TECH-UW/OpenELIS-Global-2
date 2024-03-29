@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openelisglobal.BaseTestConfig;
 import org.openelisglobal.patient.PatientTestConfig;
+import org.openelisglobal.person.dao.PersonDAO;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,6 +174,25 @@ public class PersonServiceTest {
 			// Assert that the retrieved person is null, indicating successful deletion
 			Assert.assertNull("Deleted person should be null", deletedPerson);
 		}
+	}
+
+	@Test
+	public void testGetPersonLastName() throws Exception {
+		// Prepare test data
+
+		String firstName = "Juhn";
+		String lastname = "Doe3";
+		Person pat = createPerson(firstName, lastname);
+
+		// save person to the DB
+		String personId = personService.insert(pat);
+
+		// Call the method under test
+		Person actualPerson = personService.getPersonByLastName(lastname);
+
+		// Verify the result
+		Assert.assertEquals(firstName, actualPerson.getFirstName());
+		Assert.assertEquals(lastname, actualPerson.getLastName());
 	}
 
 	public void getAllPerson_shouldGetAllPerson() throws Exception {
