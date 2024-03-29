@@ -36,6 +36,7 @@ import EOrderPage from "./components/eOrder/Index";
 import RoutineIndex from "./components/reports/routine/Index.js";
 import StudyIndex from "./components/reports/study/index.js";
 import PrintBarcode from "./components/printBarcode/Index";
+import SamlpeBatchEntrySetup from "./components/batchOrderEntry/SampleBatchEntrySetup.js";
 
 export default function App() {
   let i18nConfig = {
