@@ -1,9 +1,8 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
+import { useHistory } from "react-router-dom";
 import CustomDatePicker from "../common/CustomDatePicker";
 import { ConfigurationContext } from "../layout/Layout";
 import {
-  Link,
-  Stack,
   Select,
   SelectItem,
   Checkbox,
@@ -12,22 +11,27 @@ import {
   Column,
   Section,
   TimePicker,
+  Loading,
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
 import SampleType from "./SampleType";
 import BatchOrderEntryFormValues from "../formModel/innitialValues/BatchOrderEntryFormValues";
+import { NotificationContext } from "../layout/Layout";
+import { AlertDialog } from "../common/CustomNotification";
 import AutoComplete from "../common/AutoComplete";
 import "../Style.css";
-import { getFromOpenElisServer,postToOpenElisServer } from "../utils/Utils";
+import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
+import PageBreadCrumb from "../common/PageBreadCrumb";
 
 const SamlpeBatchEntrySetup = () => {
   const [orderFormValues, setOrderFormValues] = useState(
     BatchOrderEntryFormValues,
   );
   const { configurationProperties } = useContext(ConfigurationContext);
+  const { notificationVisible } = useContext(NotificationContext);
   const intl = useIntl();
   const componentMounted = useRef(false);
-
+  const history = useHistory();
   const [siteNames, setSiteNames] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [facilityChecked, setFacilityChecked] = useState(false);
@@ -35,6 +39,9 @@ const SamlpeBatchEntrySetup = () => {
   const [selectedMethod, setSelectedMethod] = useState("");
   const [selectedForm, setSelectedForm] = useState("");
   const [innitialized, setInnitialized] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  let breadcrumbs = [{ label: "home.label", link: "/" }];
 
   function handleFacilityCheckboxChange() {
     setFacilityChecked(!facilityChecked);
@@ -102,7 +109,6 @@ const SamlpeBatchEntrySetup = () => {
     if (!innitialized) {
       setOrderFormValues({
         ...orderFormValues,
-
         currentDate: configurationProperties.currentDateAsText,
         receivedDateForDisplay: configurationProperties.currentDateAsText,
         nextVisitDate: configurationProperties.currentDateAsText,
@@ -214,9 +220,16 @@ const SamlpeBatchEntrySetup = () => {
     });
   }
 
- 
-
- 
+  function handleSubmitButton1() {
+    console.log(orderFormValues);
+    postToOpenElisServer(
+      "/SampleBatchEntry",
+      JSON.stringify(orderFormValues),
+      () => {
+        history.push("https://localhost/api/OpenELIS-Global/SampleBatchEntry");
+      },
+    );
+  }
 
   function handleFormChange(event) {
     const selectedForm = event.target.value;
@@ -225,6 +238,9 @@ const SamlpeBatchEntrySetup = () => {
 
   return (
     <>
+      {notificationVisible === true ? <AlertDialog /> : ""}
+      {loading && <Loading description="Loading Dasboard..." />}
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         <Column lg={16} md={8} sm={4}>
           <div className="orderLegendBody">
@@ -459,7 +475,7 @@ const SamlpeBatchEntrySetup = () => {
             <Section>
               <div className="inlineDiv">
                 <Button onClick={handleSubmitButton1}>Next</Button>
-                <Button kind="secondary">Cancel</Button>
+                <Button onClick={() => history.push("/")}>Cancel</Button>
               </div>
             </Section>
           </div>
