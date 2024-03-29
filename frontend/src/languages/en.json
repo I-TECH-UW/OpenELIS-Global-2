@@ -826,5 +826,6 @@
   "label.audittrailreport.requester": "Requester",
   "label.audittrailreport.requester.firstname": "Requester's First Name",
   "label.audittrailreport.requester.lastname": "Requester's Last Name",
-  "label.audittrailreport.sitename": "Site Name"
+  "label.audittrailreport.sitename": "Site Name" ,
+  "label.user.notestsection": "Current User has no Assined Lab Unit . Please Contact admin" 
 }
