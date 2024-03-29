@@ -12,6 +12,7 @@ import {
   Section,
   TimePicker,
   Loading,
+  Heading,
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
 import SampleType from "./SampleType";
@@ -23,7 +24,7 @@ import "../Style.css";
 import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
 import PageBreadCrumb from "../common/PageBreadCrumb";
 
-const SamlpeBatchEntrySetup = () => {
+const SampleBatchEntrySetup = () => {
   const [orderFormValues, setOrderFormValues] = useState(
     BatchOrderEntryFormValues,
   );
@@ -222,13 +223,7 @@ const SamlpeBatchEntrySetup = () => {
 
   function handleSubmitButton1() {
     console.log(orderFormValues);
-    postToOpenElisServer(
-      "/SampleBatchEntry",
-      JSON.stringify(orderFormValues),
-      () => {
-        history.push("https://localhost/api/OpenELIS-Global/SampleBatchEntry");
-      },
-    );
+    postToOpenElisServer("/SampleBatchEntry", JSON.stringify(orderFormValues));
   }
 
   function handleFormChange(event) {
@@ -243,7 +238,22 @@ const SamlpeBatchEntrySetup = () => {
       <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         <Column lg={16} md={8} sm={4}>
+          <Section>
+            <Heading>
+              <FormattedMessage
+                id="order.entry.setup"
+                defaultMessage="Batch Order Entry Setup"
+              />
+            </Heading>
+          </Section>
+        </Column>
+      </Grid>
+      <Grid fullWidth={true}>
+        <Column lg={16} md={8} sm={4}>
           <div className="orderLegendBody">
+            <h3>
+              <FormattedMessage id="order.title" defaultMessage="Order" />
+            </h3>
             <Section>
               <div className="inlineDiv">
                 <CustomDatePicker
@@ -291,7 +301,7 @@ const SamlpeBatchEntrySetup = () => {
                   id="order_CurrentTime"
                   className="inputTime"
                   labelText={intl.formatMessage({
-                    id: "order.Current.time",
+                    id: "order.current.time",
                     defaultMessage: "Current Time",
                   })}
                   onChange={handleCurrentTime}
@@ -321,40 +331,72 @@ const SamlpeBatchEntrySetup = () => {
               <Select
                 className="inputText"
                 id="form-dropdown"
-                labelText="Form:"
+                labelText={<FormattedMessage id="order.form.label" />}
                 onChange={handleFormChange}
                 defaultValue=""
               >
-                <SelectItem value="" text="Select Form" />
-                <SelectItem value="routine" text="Routine" />
-                <SelectItem value="EID" text="EID" />
-                <SelectItem value="viralLoad" text="Viral Load" />
+                <SelectItem
+                  value=""
+                  text={intl.formatMessage({ id: "order.form.select" })}
+                />
+                <SelectItem
+                  value="routine"
+                  text={intl.formatMessage({
+                    id: "banner.menu.resultvalidation_routine",
+                  })}
+                />
+                <SelectItem
+                  value="EID"
+                  text={intl.formatMessage({ id: "project.EIDStudy.name" })}
+                />
+                <SelectItem
+                  value="viralLoad"
+                  text={intl.formatMessage({
+                    id: "banner.menu.resultvalidation.viralload",
+                  })}
+                />
               </Select>
             </Section>
           </div>
           <div>
             {selectedForm === "routine" && (
-              <SampleType updateFormValues={updateFormValues} />
+              <>
+                <h3>
+                  <FormattedMessage id="order.legend.sample" />
+                </h3>
+                <SampleType updateFormValues={updateFormValues} />
+              </>
             )}{" "}
             {selectedForm == "EID" && selectedForm && (
               <div className="orderLegendBody">
+                <h3>
+                  <FormattedMessage id="order.legend.sample" />
+                </h3>
                 <Section>
-                  <h3>Specimen Collected</h3>
+                  <h3>
+                    <FormattedMessage id="order.legend.specimen.collected" />
+                  </h3>
                   <Checkbox
-                    labelText="Dry Tube"
+                    labelText={<FormattedMessage id="order.legend.dryTube" />}
                     id="eid_dryTubeTaken"
                     checked={orderFormValues._ProjectDataEID.dryTubeTaken}
                     onChange={handleCheckboxChange}
                   />
                   <Checkbox
-                    labelText="Dry Blood Spot"
+                    labelText={
+                      <FormattedMessage id="order.legend.dryBloodSpot" />
+                    }
                     id="eid_dbsTaken"
                     checked={orderFormValues._ProjectDataEID.dbsTaken}
                     onChange={handleCheckboxChange}
                   />
-                  <h3>Tests</h3>
+                  <h3>
+                    <FormattedMessage id="order.legend.tests" />
+                  </h3>
                   <Checkbox
-                    labelText="DNA PCR"
+                    labelText={
+                      <FormattedMessage id="banner.menu.resultvalidation.dnapcr" />
+                    }
                     id="eid_dnaPCR"
                     checked={orderFormValues._ProjectDataEID.dnaPCR}
                     onChange={handleCheckboxChange}
@@ -364,29 +406,40 @@ const SamlpeBatchEntrySetup = () => {
             )}{" "}
             {selectedForm == "viralLoad" && selectedForm && (
               <div className="orderLegendBody">
+                <h3>
+                  <FormattedMessage id="order.legend.sample" />
+                </h3>
                 <Section>
-                  <h3>Specimen Collected</h3>
+                  <h3>
+                    <FormattedMessage id="order.legend.specimen.collected" />
+                  </h3>
                   <Checkbox
-                    labelText="Dry Tube"
+                    labelText={<FormattedMessage id="order.legend.dryTube" />}
                     id="vl_dryTubeTaken"
                     checked={orderFormValues._ProjectDataVL.dryTubeTaken}
                     onChange={handleCheckboxChange}
                   />
                   <Checkbox
-                    labelText="EDTA Tube"
+                    labelText={<FormattedMessage id="order.legend.EDTATube" />}
                     id="vl_edtaTubeTaken"
                     checked={orderFormValues._ProjectDataVL.edtaTubeTaken}
                     onChange={handleCheckboxChange}
                   />
                   <Checkbox
-                    labelText="Dry Blood Spot"
+                    labelText={
+                      <FormattedMessage id="order.legend.dryBloodSpot" />
+                    }
                     id="vl_dbsTaken"
                     checked={orderFormValues._ProjectDataVL.dbsTaken}
                     onChange={handleCheckboxChange}
                   />
-                  <h3>Tests</h3>
+                  <h3>
+                    <FormattedMessage id="order.legend.tests" />
+                  </h3>
                   <Checkbox
-                    labelText="Viral Load Test"
+                    labelText={
+                      <FormattedMessage id="order.legend.viralLoadTest" />
+                    }
                     id="vl_viralLoadTest"
                     checked={orderFormValues._ProjectDataVL.viralLoadTest}
                     onChange={handleCheckboxChange}
@@ -396,30 +449,44 @@ const SamlpeBatchEntrySetup = () => {
             )}
           </div>
           <div className="orderLegendBody">
+            <h3>
+              <FormattedMessage id="order.legend.configureBarcode" />
+            </h3>
             <Section>
               <Select
                 className="inputText"
                 id="method-dropdown"
-                labelText="Method:"
+                labelText={<FormattedMessage id="referral.label.testmethod" />}
                 onChange={handleMethodChange}
                 defaultValue=""
               >
-                <SelectItem value="" text="Select Method" />
-                <SelectItem value="onDemand" text="On Demand" />
-                <SelectItem value="preDemand" text="Pre Demand" />
+                <SelectItem
+                  value=""
+                  text={intl.formatMessage({ id: "order.legend.selectMethod" })}
+                />
+                <SelectItem
+                  value="onDemand"
+                  text={intl.formatMessage({ id: "order.legend.onDemand" })}
+                />
+                <SelectItem
+                  value="preDemand"
+                  text={intl.formatMessage({ id: "order.legend.preDemand" })}
+                />
               </Select>
             </Section>
             <Section>
-              <p>Optional Fields</p>
+              <p>
+                <FormattedMessage id="order.legend.optionalFields" />
+              </p>
               <div className="inlineDiv">
                 <Checkbox
-                  labelText="Facility"
+                  labelText={<FormattedMessage id="order.legend.facility" />}
                   id="facility-checkbox"
                   checked={facilityChecked}
                   onChange={handleFacilityCheckboxChange}
                 />
                 <Checkbox
-                  labelText="Patient"
+                  labelText={<FormattedMessage id="order.legend.patient" />}
                   id="patient-checkbox"
                   checked={patientChecked}
                   onChange={handlePatientCheckboxChange}
@@ -445,11 +512,7 @@ const SamlpeBatchEntrySetup = () => {
                   }
                   onChange={handleSiteName}
                   onSelect={handleAutoCompleteSiteName}
-                  label={
-                    <>
-                      <FormattedMessage id="order.site.name" />
-                    </>
-                  }
+                  label={<FormattedMessage id="order.legend.siteName" />}
                   class="inputText"
                   style={{ width: "!important 100%" }}
                   suggestions={siteNames.length > 0 ? siteNames : []}
@@ -459,10 +522,7 @@ const SamlpeBatchEntrySetup = () => {
                   className="inputText"
                   id="requesterDepartmentId"
                   name="requesterDepartmentId"
-                  labelText={intl.formatMessage({
-                    id: "order.department.label",
-                    defaultMessage: "ward/dept/unit",
-                  })}
+                  labelText={<FormattedMessage id="sample.label.dept" />}
                   onChange={handleRequesterDept}
                 >
                   <SelectItem value="" text="" />
@@ -474,8 +534,12 @@ const SamlpeBatchEntrySetup = () => {
             </Section>
             <Section>
               <div className="inlineDiv">
-                <Button onClick={handleSubmitButton1}>Next</Button>
-                <Button onClick={() => history.push("/")}>Cancel</Button>
+                <Button onClick={handleSubmitButton1}>
+                  <FormattedMessage id="next.action.button" />
+                </Button>
+                <Button onClick={() => history.push("/")} kind="secondary">
+                  <FormattedMessage id="label.button.cancel" />
+                </Button>
               </div>
             </Section>
           </div>
@@ -485,4 +549,4 @@ const SamlpeBatchEntrySetup = () => {
   );
 };
 
-export default SamlpeBatchEntrySetup;
+export default SampleBatchEntrySetup;
