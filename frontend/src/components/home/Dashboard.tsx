@@ -297,6 +297,8 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     "ORDERS_COMPLETED_TODAY",
     "ORDERS_REJECTED_TODAY",
     "UN_PRINTED_RESULTS",
+    "DELAYED_TURN_AROUND",
+    "ORDERS_FOR_USER"
   ];
 
   const handleMinimizeClick = () => {
