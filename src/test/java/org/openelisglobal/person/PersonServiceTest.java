@@ -1,5 +1,8 @@
 package org.openelisglobal.person;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.ObjectNotFoundException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -50,6 +53,24 @@ public class PersonServiceTest {
 	}
 
 	@Test
+	public void testInsertAll() throws Exception {
+		List<Person> persons = new ArrayList<>();
+		persons.add(createPerson("John", "Doe"));
+		persons.add(createPerson("Jane", "Smith"));
+
+		List<String> returnedIds = personService.insertAll(persons);
+		Person savedPersonOne = personService.get(returnedIds.get(0));
+		Person savedPersonTwo = personService.get(returnedIds.get(1));
+
+		Assert.assertEquals(savedPersonOne.getId(), returnedIds.get(0));
+		Assert.assertEquals("John", savedPersonOne.getFirstName());
+
+		Assert.assertEquals(savedPersonTwo.getId(), returnedIds.get(1));
+		Assert.assertEquals("Jane", savedPersonTwo.getFirstName());
+
+	}
+
+	@Test
 	public void updatePerson_shouldUpdateExistingPerson() throws Exception {
 		String firstName = "Sayed";
 		String lastName = "Abdo";
@@ -66,6 +87,33 @@ public class PersonServiceTest {
 		Person updatedPerson = personService.get(personId);
 		Assert.assertEquals(newFirstName, updatedPerson.getFirstName());
 		Assert.assertEquals(lastName, updatedPerson.getLastName());
+	}
+
+	@Test
+	public void testUpdateAll() throws Exception {
+		// Create a list of Person objects
+		List<Person> persons = new ArrayList<>();
+		persons.add(createPerson("John", "Doe"));
+		persons.add(createPerson("Jane", "Smith"));
+
+		// Insert the persons into the database to get their IDs
+		personService.insertAll(persons);
+
+		// Modify some details of the Person objects
+		persons.get(0).setFirstName("John Updated");
+		persons.get(1).setFirstName("Jane Updated");
+
+		// Call the method under test
+		List<Person> updatedPersons = personService.updateAll(persons);
+
+		// Verify that the size of the returned list matches the size of the input list
+		Assert.assertEquals(persons.size(), updatedPersons.size());
+
+		// Verify that each Person object in the returned list has been updated
+		for (int i = 0; i < persons.size(); i++) {
+			Assert.assertEquals(persons.get(i).getId(), updatedPersons.get(i).getId());
+			Assert.assertEquals(persons.get(i).getFirstName(), updatedPersons.get(i).getFirstName());
+		}
 	}
 
 	@Test
@@ -96,6 +144,35 @@ public class PersonServiceTest {
 
 		// Assert that the retrieved person is null, indicating successful deletion
 		Assert.assertNull("Deleted person should be null", deletedPerson);
+	}
+
+	@Test
+	public void testDeleteAll() throws Exception {
+		// Create a list of Person objects
+		List<Person> persons = new ArrayList<>();
+		persons.add(createPerson("John", "Doe"));
+		persons.add(createPerson("Jane", "Smith"));
+
+		// Insert the persons into the database to get their IDs
+		List<String> insertedIds = personService.insertAll(persons);
+
+		// Call the deleteAll method with the inserted IDs
+		personService.deleteAll(insertedIds, "sysUserId");
+
+		// Verify that all persons have been deleted
+		for (String id : insertedIds) {
+			// Try to retrieve the deleted person by ID
+			Person deletedPerson = null;
+			try {
+				deletedPerson = personService.get(id);
+			} catch (ObjectNotFoundException e) {
+				// Log error if person not found (expected behavior after deletion)
+				logger.error("Person not found with ID: {}", id, e);
+			}
+
+			// Assert that the retrieved person is null, indicating successful deletion
+			Assert.assertNull("Deleted person should be null", deletedPerson);
+		}
 	}
 
 	public void getAllPerson_shouldGetAllPerson() throws Exception {
