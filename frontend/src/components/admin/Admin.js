@@ -11,6 +11,7 @@ import {
   NonConformityMenuManagement,
   PatientMenuManagement,
   StudyMenuManagement,
+  SampleEntryConfigMenu,
 } from "./menu";
 import {
   Microscope,
@@ -19,6 +20,7 @@ import {
   ChartBubble,
   Catalog,
   Settings,
+  CloudSatelliteConfig,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -84,6 +86,20 @@ function Admin() {
               defaultMessage={"Common Properties"}
             />
           </SideNavLink>
+          <SideNavMenu
+            title={intl.formatMessage({ id: "admin.react" })}
+            renderIcon={CloudSatelliteConfig}
+          >
+            <SideNavMenuItem href="#configurationManagement">
+              <FormattedMessage id="sidenav.label.admin.menu.admin.configurationManagment" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#mainMenuManagement">
+              <FormattedMessage id="sidenav.label.admin.menu.admin.mainMenuManagement" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#otherAdminPagesManagement">
+              <FormattedMessage id="sidenav.label.admin.menu.admin.otherAdminPagesManagement" />
+            </SideNavMenuItem>
+          </SideNavMenu>
           <SideNavLink
             renderIcon={Catalog}
             target="_blank"
@@ -123,6 +139,15 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#commonproperties">
         <CommonProperties />
+      </PathRoute>
+      <PathRoute path="#configurationManagement">
+        <SampleEntryConfigMenu />
+      </PathRoute>
+      <PathRoute path="#mainMenuManagement">
+        <SampleEntryConfigMenu />
+      </PathRoute>
+      <PathRoute path="#otherAdminPagesManagement">
+        <SampleEntryConfigMenu />
       </PathRoute>
     </>
   );
