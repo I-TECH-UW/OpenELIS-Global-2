@@ -361,9 +361,6 @@ const SampleBatchEntrySetup = () => {
           <div>
             {selectedForm === "routine" && (
               <>
-                <h3>
-                  <FormattedMessage id="order.legend.sample" />
-                </h3>
                 <SampleType updateFormValues={updateFormValues} />
               </>
             )}{" "}
