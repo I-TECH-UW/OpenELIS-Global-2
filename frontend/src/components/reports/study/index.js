@@ -39,8 +39,7 @@ const StudyIndex = () => {
     patient_retroCInonConformityByLabno: "header.label.intialFollowup",
     patient_retroCIFollowupRequiredByLocation:
       "reports.followupRequired.byLocation",
-    patient_retroCInonConformityNotification:
-    "header.label.nonComformityNotification",
+    patient_retroCInonConformityNotification: "reports.nonConformity.title",
     patient_patientARVInitial1: "header.label.ARV",
     patient_patientARVInitial2: "header.label.ARV",
     patient_patientARVFollowup1: "header.label.followup",

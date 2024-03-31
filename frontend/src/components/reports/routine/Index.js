@@ -19,10 +19,6 @@ const RoutineIndex = () => {
   const [type, setType] = useState("");
   const [report, setReport] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  
-  {type === "patient" &&
-              report === "retroCINonconformityNotification" && 
-                (<NonconformityNotification />)}
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -72,7 +68,10 @@ const RoutineIndex = () => {
                 id={"openreports.mgt.nonconformity.date"}
               />
             )}
-
+            
+ 			{type === "patient" &&
+              report === "NonconformityNotification" && 
+                (<NonconformityNotification />)}
 
             {type === "patient" && report === "CISampleRoutineExport" && (
               <ReportByDate
@@ -80,6 +79,8 @@ const RoutineIndex = () => {
                 id={"sideNav.label.exportcsvfile"}
               />
             )}
+            
+           
 
             {type === "indicator" && report === "statisticsReport" && (
               <StatisticsReport />

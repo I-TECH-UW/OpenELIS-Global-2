@@ -53,7 +53,7 @@ const NonconformityNotification = () => {
 
   return (
     <div>
-      <h2>Non-conformity notification</h2>
+      <h2>Non-Conformity Notification</h2>
       <Form onSubmit={handleSubmit}>
         <FormGroup legendText="Generate a report or range of reports by Lab Number">
           <TextInput
