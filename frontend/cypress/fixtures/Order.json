@@ -8,5 +8,11 @@
   "requester": {
     "firstName": "Optimus",
     "lastName": "Prime"
-  }
+  },
+  "labNo": "",
+  "priority": "",
+  "requestDate": "",
+  "receivedDate": "",
+  "siteName":"",
+  "testName":""
 }
