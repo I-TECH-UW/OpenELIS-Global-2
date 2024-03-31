@@ -44,7 +44,7 @@ function PanelSelectForm(props) {
   return (
     <>
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column sm={4} md={8} lg={16}>
           <Select
             defaultValue="placeholder-item"
             id="select-1"

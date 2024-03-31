@@ -205,6 +205,7 @@ public class PatientDashBoardProvider {
                     }
                     orderBean.setOrderDate(analysis.getStartedDateForDisplay());
                     orderBean.setTestName(analysis.getTest() != null ? analysis.getTest().getLocalizedName() : "");
+                    orderBean.setTestSection(analysis.getTestSection() != null ? analysis.getTestSection().getId(): "");
                     orderBeanList.add(orderBean);
                 }
             });
