@@ -10,12 +10,25 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openelisglobal.address.service.AddressPartService;
+import org.openelisglobal.address.service.PersonAddressService;
 import org.openelisglobal.address.service.OrganizationAddressService;
 import org.openelisglobal.address.valueholder.AddressPK;
 import org.openelisglobal.address.valueholder.AddressPart;
 import org.openelisglobal.address.valueholder.OrganizationAddress;
+import org.openelisglobal.address.valueholder.PersonAddress;
 
 public class AdressServiceTest {
+
+	private PersonAddressService personAddressService;
+	private AddressPartService addressPartService;
+	private OrganizationAddressService organizationAddressService;
+
+	@Before
+	public void setUp() throws Exception {
+		personAddressService = mock(PersonAddressService.class);
+		addressPartService = mock(AddressPartService.class);
+		organizationAddressService = mock(OrganizationAddressService.class);
+	}
 
 	@Before
 	public void init() throws Exception {
@@ -23,22 +36,11 @@ public class AdressServiceTest {
 
 	@Test
 	public void testGetAll() {
-		// Create mock objects
-		AddressPartService addressPartService = mock(AddressPartService.class);
 
 		// Create sample data
 		List<AddressPart> expectedAddressParts = new ArrayList<>();
-
-		// Creating sample AddressPart objects
-		AddressPart addressPart1 = new AddressPart();
-		addressPart1.setId("1");
-		addressPart1.setPartName("Street");
-		addressPart1.setDisplayOrder("1");
-
-		AddressPart addressPart2 = new AddressPart();
-		addressPart2.setId("2");
-		addressPart2.setPartName("City");
-		addressPart2.setDisplayOrder("2");
+		AddressPart addressPart1 = createAddressPart("123", "AB Street", "102");
+		AddressPart addressPart2 = createAddressPart("124", "CD Street", "103");
 
 		// Adding sample AddressPart objects to expectedAddressParts
 		expectedAddressParts.add(addressPart1);
@@ -56,14 +58,9 @@ public class AdressServiceTest {
 
 	@Test
 	public void testGetAddressPartByName() {
-		AddressPartService addressPartService = mock(AddressPartService.class);
-
 		// Create sample data
-		String addressPartName = "Street";
-		AddressPart expectedAddressPart = new AddressPart();
-		expectedAddressPart.setId("1");
-		expectedAddressPart.setPartName("Street");
-		expectedAddressPart.setDisplayOrder("1");
+		String addressPartName = "EF Street";
+		AddressPart expectedAddressPart = createAddressPart("125", "EF Street", "105");
 
 		// Stub the method call on the mock object
 		when(addressPartService.getAddresPartByName(addressPartName)).thenReturn(expectedAddressPart);
@@ -77,24 +74,23 @@ public class AdressServiceTest {
 
 	@Test
 	public void testGetAddressPartsByOrganizationId() {
-		OrganizationAddressService organizationAddressService = mock(OrganizationAddressService.class);
 
 		// Create sample data
 		String organizationId = "1";
 		List<OrganizationAddress> expectedAddresses = new ArrayList<>();
-		OrganizationAddress address1 = new OrganizationAddress();
-		AddressPK addressPK1 = new AddressPK();
-		addressPK1.setAddressPartId("2");
-		address1.setId(addressPK1);
-		address1.setValue("123 Main St");
-		address1.setType("Type1");
+		OrganizationAddress address1 = createOrganizationAddress("2", "123 Main St", "Type1");
+//		AddressPK addressPK1 = new AddressPK();
+//		addressPK1.setAddressPartId("2");
+//		address1.setId(addressPK1);
+//		address1.setValue("123 Main St");
+//		address1.setType("Type1");
 
-		OrganizationAddress address2 = new OrganizationAddress();
-		AddressPK addressPK2 = new AddressPK();
-		addressPK2.setAddressPartId("2");
-		address2.setId(addressPK2);
-		address2.setValue("456 Elm St");
-		address2.setType("Type2");
+		OrganizationAddress address2 = createOrganizationAddress("3", "456 Elm St", "Type2");
+//		AddressPK addressPK2 = new AddressPK();
+//		addressPK2.setAddressPartId("2");
+//		address2.setId(addressPK2);
+//		address2.setValue("456 Elm St");
+//		address2.setType("Type2");
 
 		expectedAddresses.add(address1);
 		expectedAddresses.add(address2);
@@ -108,6 +104,100 @@ public class AdressServiceTest {
 
 		// Verify that the method returned the expected list of OrganizationAddress
 		Assert.assertEquals(expectedAddresses, actualAddresses);
+	}
+
+	@Test
+	public void testGetAddressPartsByPersonId() {
+
+		// Prepare test data
+		String personId = "123";
+		List<PersonAddress> expectedAddresses = new ArrayList<>();
+		PersonAddress address1 = createPersonAddress("11", "Address 2", "Type 1");
+		PersonAddress address2 = createPersonAddress("22", "Address 2", "Type 2");
+		expectedAddresses.add(address1);
+		expectedAddresses.add(address2);
+		when(personAddressService.getAddressPartsByPersonId(personId)).thenReturn(expectedAddresses);
+
+		// When
+		List<PersonAddress> actualAddresses = personAddressService.getAddressPartsByPersonId(personId);
+
+		// Then
+		Assert.assertNotNull(actualAddresses);
+		Assert.assertEquals(expectedAddresses.size(), actualAddresses.size());
+
+	}
+
+	@Test
+	public void testGetByPersonIdAndPartId() {
+		// Create a mock instance of PersonAddressService
+
+		// Prepare test data
+		String personId = "123";
+		String addressPartId = "33";
+		PersonAddress expectedAddress = createPersonAddress("33", "Address 3", "Type 3");
+
+		// Stub the method call on the mock object
+		when(personAddressService.getByPersonIdAndPartId(personId, addressPartId)).thenReturn(expectedAddress);
+
+		// Call the method under test
+		PersonAddress actualAddress = personAddressService.getByPersonIdAndPartId(personId, addressPartId);
+
+		// Verify that the method returned the expected PersonAddress object
+		Assert.assertNotNull(actualAddress);
+		Assert.assertEquals(expectedAddress, actualAddress);
+	}
+
+	@Test
+	public void testInsert() {
+
+		// Prepare test data
+		PersonAddress personAddressToInsert = createPersonAddress("44", "Address 4", "Type 4");
+		AddressPK addressPK = createAddressPK("44");
+		personAddressToInsert.setId(addressPK);
+
+		// Stub the method call on the mock object
+		when(personAddressService.insert(personAddressToInsert)).thenReturn(addressPK);
+
+		// Call the method under test
+		AddressPK insertedAddressPK = personAddressService.insert(personAddressToInsert);
+
+		// Verify that the method returned the expected AddressPK object
+		Assert.assertNotNull(insertedAddressPK);
+		Assert.assertEquals(addressPK, insertedAddressPK);
+	}
+
+//	Helper methods
+
+	AddressPart createAddressPart(String id, String partName, String DisplayOrder) {
+		AddressPart addressPart = new AddressPart();
+		addressPart.setId("1");
+		addressPart.setPartName("Street");
+		addressPart.setDisplayOrder("1");
+		return addressPart;
+	}
+
+	private AddressPK createAddressPK(String addressPartId) {
+		AddressPK addressPK = new AddressPK();
+		addressPK.setAddressPartId(addressPartId);
+		return addressPK;
+	}
+
+	private OrganizationAddress createOrganizationAddress(String addressPartId, String value, String type) {
+		OrganizationAddress organizationAddress = new OrganizationAddress();
+		AddressPK addressPK = createAddressPK(addressPartId);
+		organizationAddress.setId(addressPK);
+		organizationAddress.setValue(value);
+		organizationAddress.setType(type);
+		return organizationAddress;
+	}
+
+	private PersonAddress createPersonAddress(String addressPartId, String value, String type) {
+		PersonAddress personAddress = new PersonAddress();
+		AddressPK addressPK = createAddressPK(addressPartId);
+		personAddress.setId(addressPK);
+		personAddress.setValue(value);
+		personAddress.setType(type);
+		return personAddress;
 	}
 
 }
