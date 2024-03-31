@@ -18,7 +18,7 @@ import ReportByDate from "./common/ReportByDate";
 import ReportByLabNo from "./common/ReportByLabNo";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
-import NonconformityNotification from "../routine/NonconformityNotification";
+import NonconformityNotification from "./NonconformityNotification";
 
 const StudyIndex = () => {
   const intl = useIntl();
@@ -36,11 +36,11 @@ const StudyIndex = () => {
     patient_retroCINonConformityByDate: "header.label.nonconformityByDate",
     patient_retroCInonConformityBySectionReason:
       "reports.nonConformity.bySectionReason.title",
-    patient_retroCINonConformityByLabno: "header.label.intialFollowup",
+    patient_retroCInonConformityByLabno: "header.label.intialFollowup",
     patient_retroCIFollowupRequiredByLocation:
       "reports.followupRequired.byLocation",
     patient_retroCInonConformityNotification:
-    "header.label.noncomformitynotification",
+    "header.label.nonComformityNotification",
     patient_patientARVInitial1: "header.label.ARV",
     patient_patientARVInitial2: "header.label.ARV",
     patient_patientARVFollowup1: "header.label.followup",
@@ -211,10 +211,10 @@ const StudyIndex = () => {
               />
             )}
             
-             {type === "patient" && report === "retroCInonConformityNotification" && (
+             {type === "patient" && report === "retroCINonconformityNotification" && (
               <NonconformityNotification
-                report="retroCInonConformityNotification"
-                id="header.label.nonConformityNotification"
+                report="retroCINonconformityNotification"
+                id="header.label.NonconformityNotification"
               />
             )}
 

@@ -9,7 +9,7 @@ import ReferredOut from "./ReferredOut";
 import ReportByDate from "../study/common/ReportByDate";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
-import NonconformityNotification from "./NonconformityNotification";
+import NonconformityNotification from "../study/NonconformityNotification";
 
 const RoutineIndex = () => {
   const intl = useIntl();
@@ -21,7 +21,7 @@ const RoutineIndex = () => {
   const [isLoading, setIsLoading] = useState(true);
   
   {type === "patient" &&
-              report === "retroCInonConformityNotification" && 
+              report === "retroCINonconformityNotification" && 
                 (<NonconformityNotification />)}
 
   useEffect(() => {

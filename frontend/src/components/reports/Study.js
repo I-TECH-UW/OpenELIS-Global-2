@@ -156,14 +156,17 @@ export const RoutineReportsMenu = {
             <FormattedMessage id="sideNav.label.noncomformityreportsbylabno" />
           ),
         },
+        
         {
           link:
             config.serverBaseUrl +
-            "/Report?type=patient&report=retroCInonConformityNotification",
+            "/Report?type=patient&report=retroCINonconformityNotification",
           label: (
-            <FormattedMessage id="sideNav.label.noncomformitynotification" />
+			<FormattedMessage id="sideNav.label.noncomformitynotification" />
           ),
+          
         },
+        
         {
           link: "/StudyReport?type=patient&report=retroCIFollowupRequiredByLocation",
           label: <FormattedMessage id="sideNav.label.followuprequired" />,
