@@ -492,17 +492,17 @@ function ReflexRule() {
                     <>
                       <div className="section">
                         <Grid>
-                          <Column lg={16}>
+                          <Column lg={16} sm={3}>
                             <h5>
                               <FormattedMessage id="rulebuilder.label.addRuleConditions" />
                             </h5>
                           </Column>
 
-                          <Column lg={16}>
+                          <Column lg={16} sm={3}>
                             {" "}
                             &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
                           </Column>
-                          <Column lg={16}>
+                          <Column lg={16} sm={3}>
                             <Select
                               value={rule.overall}
                               id={index + "_overall"}
@@ -535,7 +535,7 @@ function ReflexRule() {
                         </Grid>
                         {rule.conditions.map((condition, condition_index) => (
                           <Grid key={index + "_" + condition_index}>
-                            <Column lg={3}>
+                            <Column lg={3} sm={4}>
                               <Select
                                 id={index + "_" + condition_index + "_sample"}
                                 name="sampleId"
@@ -570,7 +570,7 @@ function ReflexRule() {
                               </Select>
                             </Column>
 
-                            <Column lg={3}>
+                            <Column lg={3} sm={4}>
                               <AutoComplete
                                 id={
                                   index +
@@ -608,7 +608,7 @@ function ReflexRule() {
                                 required
                               />
                             </Column>
-                            <Column lg={3}>
+                            <Column lg={3} sm={4}>
                               <Select
                                 value={condition.relation}
                                 id={index + "_" + condition_index + "_relation"}
@@ -664,7 +664,7 @@ function ReflexRule() {
                                   )}
                               </Select>
                             </Column>
-                            <Column lg={3}>
+                            <Column lg={3} sm={4}>
                               {testResultList[index] &&
                               testResultList[index][condition_index] &&
                               testResultList[index][condition_index]["type"] ? (
@@ -799,7 +799,7 @@ function ReflexRule() {
                                 </>
                               )}
                             </Column>
-                            <Column lg={2}>
+                            <Column lg={2} sm={4}>
                               {testResultList[index] &&
                                 testResultList[index][condition_index] &&
                                 testResultList[index][condition_index][
@@ -856,7 +856,7 @@ function ReflexRule() {
                                   </>
                                 )}
                             </Column>
-                            <Column lg={1}>
+                            <Column lg={1} sm={4}>
                               {rule.conditions.length !== 1 && (
                                 <IconButton
                                   label={
@@ -878,7 +878,7 @@ function ReflexRule() {
                                 </IconButton>
                               )}
                             </Column>
-                            <Column lg={1}>
+                            <Column lg={1} sm={4}>
                               {rule.conditions.length - 1 ===
                                 condition_index && (
                                 <IconButton
@@ -922,7 +922,7 @@ function ReflexRule() {
                         </div>
                         {rule.actions.map((action, action_index) => (
                           <Grid key={index + "_" + action_index}>
-                            <Column lg={3}>
+                            <Column lg={3} sm={4}>
                               <Select
                                 id={index + "_" + action_index + "_sample"}
                                 name="sampleId"
@@ -956,7 +956,7 @@ function ReflexRule() {
                                 ))}
                               </Select>
                             </Column>
-                            <Column lg={3}>
+                            <Column lg={3} sm={4}>
                               <AutoComplete
                                 id={
                                   index + "_" + action_index + "_reflexTestId"
@@ -984,7 +984,7 @@ function ReflexRule() {
                                 }
                               />
                             </Column>
-                            <Column lg={4}>
+                            <Column lg={4} sm={4}>
                               <TextArea
                                 style={{
                                   width: "100%",
@@ -1007,7 +1007,7 @@ function ReflexRule() {
                                 }
                               />
                             </Column>
-                            <Column lg={4}>
+                            <Column lg={4} sm={4}>
                               <TextArea
                                 name="externalNote"
                                 style={{
@@ -1065,7 +1065,7 @@ function ReflexRule() {
                                 />
                               </RadioButtonGroup>
                             </div> */}
-                            <Column lg={1}>
+                            <Column lg={1} sm={4}>
                               {rule.actions.length !== 1 && (
                                 <IconButton
                                   label={

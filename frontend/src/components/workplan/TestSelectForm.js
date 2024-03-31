@@ -28,7 +28,9 @@ function TestSelectForm(props) {
     testId = testId ? testId : "";
     getFromOpenElisServer("/rest/tests", (fetchedTests) => {
       let test = fetchedTests.find((test) => test.id === testId);
-      let testLabel = test ? test.value : intl.formatMessage({id:"input.placeholder.selectTest"});
+      let testLabel = test
+        ? test.value
+        : intl.formatMessage({ id: "input.placeholder.selectTest" });
       setDefaultTestId(testId);
       setDefaultTestLabel(testLabel);
       props.value(testId, testLabel);
@@ -42,7 +44,7 @@ function TestSelectForm(props) {
   return (
     <>
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column sm={4} md={8} lg={16}>
           <Select
             defaultValue="placeholder-item"
             id="select-1"
