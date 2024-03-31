@@ -13,12 +13,12 @@ before("login", () => {
 
 describe("Modify Order search by accession Number", function () {
   before(function () {
-    const orderEntityTestsPassed = localStorage.getItem(
-      "orderEntityTestsPassed",
-    );
-    if (orderEntityTestsPassed !== "true") {
-      this.skip();
-    }
+    cy.fixture("Order").then((order) => {
+      const orderEntityTestsPassed = order.orderEntityTestsPassed;
+      if (orderEntityTestsPassed !== true) {
+        this.skip();
+      }
+    });
   });
 
   it("User Visits Home Page and goes to Modify Order Page ", function () {
