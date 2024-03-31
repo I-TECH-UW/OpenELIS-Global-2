@@ -28,29 +28,29 @@ If you are new to **OpenELIS**, we recommend starting with our [Installation](in
 
 ## Program Timeline
 | Date | Status | Activity |
-|------|--------|----------|
-|      | ✅      | GSoC 2024 preparations |
-|      | ⌛      | Mentoring organizations can begin submitting applications to Google |
-|      | ⌛      | Mentoring organization application deadline |
-|      | ⌛      | List of accepted mentoring organizations announced |
-|      | ⌛      | March 19: Potential GSoC contributors discuss application ideas with mentoring organizations |
-|      | ⌛      | GSoC contributor application period begins |
-|      | ⌛      | GSoC contributor application deadline |
-|      | ⌛      | GSoC contributor proposal rankings due from Org Admins |
-|      | ⌛      | Accepted GSoC contributor projects announced |
-|      | ⌛      | Community Bonding Period. Students get to know mentors, read documentation, prepare for work on their projects |
-|      | ⌛      | Coding officially begins |
-|      | ⌛      | Coding Period for Medium project |
-|      | ⌛      | Coding Period for Advanced project |
-|      | ⌛      | Mentors and GSoC contributors can begin submitting midterm evaluations |
-|      | ⌛      | Midterm evaluation deadline (standard coding period) |
-|      | ⌛      | Work Period. GSoC contributors work on their project with guidance from Mentors |
-|      | ⌛      | Final week. GSoC contributors submit their final work product and their final mentor evaluation (coding period) |
-|      | ⌛      | Mentors submit final GSoC contributor evaluations (standard coding period) for medium size project. |
-|      | ⌛      | Initial results of Google Summer of Code 2023 announced |
-|      | ⌛      | GSoC contributors with extended timelines continue coding |
-|      | ⌛      | Final date for all GSoC contributors to submit their final work product and final evaluation |
-|      | ⌛      | Final date for mentors to submit evaluations for GSoC contributor projects with extended deadlines |
+|------|---|----------|
+|      | ✅ | GSoC 2024 preparations |
+|      | ✅  | Mentoring organizations can begin submitting applications to Google |
+|      | ✅  | Mentoring organization application deadline |
+|      | ✅  | List of accepted mentoring organizations announced |
+|      | ✅  | March 19: Potential GSoC contributors discuss application ideas with mentoring organizations |
+|      | ✅  | GSoC contributor application period begins |
+|      | ⌛ | GSoC contributor application deadline |
+|      | ⌛ | GSoC contributor proposal rankings due from Org Admins |
+|      | ⌛ | Accepted GSoC contributor projects announced |
+|      | ⌛ | Community Bonding Period. Students get to know mentors, read documentation, prepare for work on their projects |
+|      | ⌛ | Coding officially begins |
+|      | ⌛ | Coding Period for Medium project |
+|      | ⌛ | Coding Period for Advanced project |
+|      | ⌛ | Mentors and GSoC contributors can begin submitting midterm evaluations |
+|      | ⌛ | Midterm evaluation deadline (standard coding period) |
+|      | ⌛ | Work Period. GSoC contributors work on their project with guidance from Mentors |
+|      | ⌛ | Final week. GSoC contributors submit their final work product and their final mentor evaluation (coding period) |
+|      | ⌛ | Mentors submit final GSoC contributor evaluations (standard coding period) for medium size project. |
+|      | ⌛ | Initial results of Google Summer of Code 2023 announced |
+|      | ⌛ | GSoC contributors with extended timelines continue coding |
+|      | ⌛ | Final date for all GSoC contributors to submit their final work product and final evaluation |
+|      | ⌛ | Final date for mentors to submit evaluations for GSoC contributor projects with extended deadlines |
 
 
 ## Guidelines
