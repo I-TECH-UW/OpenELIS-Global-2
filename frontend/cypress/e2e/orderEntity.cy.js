@@ -86,12 +86,4 @@ describe("Order Entity", function () {
   });
 });
 
-// needed this for modifyorder
-after(function () {
-  if (this.currentTest.state === "passed") {
-    cy.fixture("Order").then((order) => {
-      order.orderEntityTestsPassed = true; 
-      cy.writeFile("cypress/fixtures/Order.json", order); 
-    });
-  }
-});
+

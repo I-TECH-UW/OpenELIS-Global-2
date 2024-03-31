@@ -14,8 +14,8 @@ before("login", () => {
 describe("Modify Order search by accession Number", function () {
   before(function () {
     cy.fixture("Order").then((order) => {
-      const orderEntityTestsPassed = order.orderEntityTestsPassed;
-      if (orderEntityTestsPassed !== true) {
+      const labNo = order.labNo;
+      if (labNo == null) {
         this.skip();
       }
     });
