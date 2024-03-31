@@ -54,10 +54,9 @@ describe("Order Entity", function () {
   });
 
   it("Should click generate Lab Order Number and store it in a fixture", function () {
-    cy.intercept("POST", "/generateLabOrderNumber").as("generatedOrderNumber");
     orderEntityPage.generateLabOrderNumber();
-    cy.wait("@generatedOrderNumber").then((interception) => {
-      const generatedOrderNumber = interception.response.body.orderNumber;
+    cy.get("#labNo").then(($input) => {
+      const generatedOrderNumber = $input.val();
       cy.fixture("Order").then((order) => {
         order.labNo = generatedOrderNumber;
         cy.writeFile("cypress/fixtures/Order.json", order);
@@ -65,9 +64,6 @@ describe("Order Entity", function () {
     });
     cy.wait(1000);
   });
-
-
-
 
   it("should Enter or select site name", function () {
     cy.scrollTo("top");
@@ -92,7 +88,7 @@ describe("Order Entity", function () {
 
 // needed this for modifyorder
 after(function () {
-  if (this.currentTest.state === 'passed') {
-    localStorage.setItem('orderEntityTestsPassed', 'true');
+  if (this.currentTest.state === "passed") {
+    localStorage.setItem("orderEntityTestsPassed", "true");
   }
 });

@@ -4,7 +4,7 @@
       "sampleType": "Serum"
     }
   ],
-  "siteName": "example site",
+  "siteName": "279 - CAMES MAN",
   "requester": {
     "firstName": "Optimus",
     "lastName": "Prime"
@@ -13,6 +13,5 @@
   "priority": "",
   "requestDate": "",
   "receivedDate": "",
-  "siteName":"",
-  "testName":""
+  "testName": ""
 }
