@@ -181,6 +181,8 @@
   "immunohistochemistry.label.reports": "Rapports",
   "immunohistochemistry.label.addreport": "Ajouter un Rapport",
   "immunohistochemistry.label.review": "En attente de révision en immunohistochimie",
+  "sidenav.label.immunochem.dashboard": "Tableau de Bord",
+  "sidenav.label.cytology.dashboard": "Tableau de Bord",
   "cytology.label.title": "Cytologie",
   "cytology.label.specimen": "Aptitude de l'Échantillon",
   "cytology.label.negative": "Négatif Pour Lésion ou Malignité Intraépithéliale",
