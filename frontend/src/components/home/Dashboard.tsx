@@ -19,6 +19,7 @@ import {
   Tab,
   Tabs,
   TabList,
+  Tag
 } from "@carbon/react";
 import "./Dashboard.css";
 import { Minimize, Maximize } from "@carbon/react/icons";
@@ -489,7 +490,6 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                         <Column lg={11} />
                         <Column lg={2}>
                           <Button
-                            type=""
                             id="loadpreviousresults"
                             onClick={loadPreviousResultsPage}
                             disabled={previousPage != null ? false : true}
@@ -499,7 +499,6 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                         </Column>
                         <Column lg={2}>
                           <Button
-                            type=""
                             id="loadnextresults"
                             onClick={loadNextResultsPage}
                             disabled={nextPage != null ? false : true}
@@ -511,7 +510,8 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                     )}
                     {tilesWithTabs.includes(selectedTile.type) && (
                       <Grid>
-                      <Column lg={16}>
+                      <Column lg={16} md={8} sm={4}>
+                      {testSections.length > 0 ?( 
                       <Tabs>
                         <TabList aria-label="List of tabs" contained>
                           {testSections?.map((item, idx) => {
@@ -528,6 +528,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                           })}
                         </TabList>
                       </Tabs>
+                      ): (<Tag type="red"><FormattedMessage id="label.user.notestsection" /></Tag>)}     
                       </Column>
                     </Grid>
                     )}
