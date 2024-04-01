@@ -47,6 +47,7 @@ public class DictionaryMenuController extends BaseMenuController<Dictionary> {
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
+    @SuppressWarnings("unused")
     @GetMapping(value = { "/DictionaryMenu", "/SearchDictionaryMenu" })
     public ResponseEntity<Dictionary> showDictionaryMenu() {
         Dictionary dictionary = new Dictionary();
