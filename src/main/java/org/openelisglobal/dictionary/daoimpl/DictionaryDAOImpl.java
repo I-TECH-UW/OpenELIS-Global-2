@@ -270,6 +270,20 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
     }
 
     @Override
+    public List<Dictionary> showDictionaryMenu() {
+        List<Dictionary> results = null;
+        try {
+            String sql = "SELECT dc.categoryName, d.dictEntry, d.localAbbreviation, d.isActive " +
+                    "FROM Dictionary d INNER JOIN d.dictionaryCategory dc";
+            Query<Dictionary> query = entityManager.unwrap(Session.class).createQuery(sql, Dictionary.class);
+            results = query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return results;
+    }
+
+    @Override
     public List<Dictionary> searchByDictEntry(String dictEntry) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Dictionary> cq = cb.createQuery(Dictionary.class);

@@ -125,5 +125,7 @@ public interface DictionaryDAO extends BaseDAO<Dictionary, String> {
 
     public boolean isDictionaryFrozen(Dictionary dictionary);
 
+    List<Dictionary> showDictionaryMenu();
+
     List<Dictionary> searchByDictEntry(String dictEntry);
 }

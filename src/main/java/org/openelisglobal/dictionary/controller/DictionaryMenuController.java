@@ -47,14 +47,9 @@ public class DictionaryMenuController extends BaseMenuController<Dictionary> {
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    @SuppressWarnings("unused")
     @GetMapping(value = { "/DictionaryMenu", "/SearchDictionaryMenu" })
-    public ResponseEntity<Dictionary> showDictionaryMenu() {
-        Dictionary dictionary = new Dictionary();
-        if (dictionary == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        return ResponseEntity.ok(dictionary);
+    public List<Dictionary> showDictionaryMenu() {
+        return dictionaryService.showDictionaryMenu();
     }
 
     @GetMapping("/dictionarymenu/{dictEntry}")

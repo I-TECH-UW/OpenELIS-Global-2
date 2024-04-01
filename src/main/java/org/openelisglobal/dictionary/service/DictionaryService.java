@@ -33,6 +33,8 @@ public interface DictionaryService extends BaseObjectService<Dictionary, String>
     @Transactional(readOnly = true)
     List<Dictionary> searchByDictEntry(String dictEntry);
 
+    List<Dictionary> showDictionaryMenu();
+
     Dictionary getDataForId(String dictId);
 
     void update(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired);

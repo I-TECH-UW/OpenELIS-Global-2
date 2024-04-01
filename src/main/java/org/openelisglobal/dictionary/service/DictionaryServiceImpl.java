@@ -184,6 +184,11 @@ public class DictionaryServiceImpl extends AuditableBaseObjectServiceImpl<Dictio
     }
 
     @Override
+    public List<Dictionary> showDictionaryMenu() {
+        return getBaseObjectDAO().showDictionaryMenu();
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Dictionary getDataForId(String dictId) {
         return getBaseObjectDAO().getDataForId(dictId);
