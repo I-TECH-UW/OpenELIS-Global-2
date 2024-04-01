@@ -36,6 +36,11 @@ import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 /**
  * @author diane benz
  */
@@ -109,9 +114,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
                 query.setParameter("param2", categoryFilter);
             }
 
-            List<Dictionary> list = query.list();
-
-            return list;
+            return query.list();
 
         } catch (RuntimeException e) {
             // bugzilla 2154
@@ -196,8 +199,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
                 query.setParameter("param2", dictionary.getDictionaryCategory().getCategoryName().toLowerCase().trim());
             }
 
-            // initialize with 0 (for new records where no id has been generated
-            // yet
+            // initialize with 0 (for new records where no id has been generated yet
             String dictId = "0";
             if (!StringUtil.isNullorNill(dictionary.getId())) {
                 dictId = dictionary.getId();
@@ -218,10 +220,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         try {
             String sql = "";
             // TODO: when we add other tables that reference dictionary we need
-            // to check those here
-            // also
-            // check references from other tables depending on dictionary
-            // category local abbrev code
+            //  to check those here also check references from other tables depending on dictionary
+            //  category local abbrev code
             if (dictionary.getDictionaryCategory().getLocalAbbreviation()
                     .equals(SystemConfiguration.getInstance().getQaEventDictionaryCategoryType())) {
                 sql = "from QaEvent q where q.type = :param";
@@ -246,8 +246,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
     @Transactional(readOnly = true)
     public Dictionary getDictionaryById(String dictionaryId) throws LIMSRuntimeException {
         try {
-            Dictionary dictionary = entityManager.unwrap(Session.class).get(Dictionary.class, dictionaryId);
-            return dictionary;
+            return entityManager.unwrap(Session.class).get(Dictionary.class, dictionaryId);
         } catch (RuntimeException e) {
             handleException(e, "getDictionaryById");
         }
@@ -262,13 +261,24 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         try {
             Query<Dictionary> query = entityManager.unwrap(Session.class).createQuery(sql, Dictionary.class);
             query.setParameter("id", Integer.parseInt(dictionaryId));
-            Dictionary dictionary = query.uniqueResult();
-            return dictionary;
+            return query.uniqueResult();
 
         } catch (HibernateException e) {
             handleException(e, "getDataForId");
         }
         return null;
+    }
+
+    @Override
+    public List<Dictionary> searchByDictEntry(String dictEntry) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Dictionary> cq = cb.createQuery(Dictionary.class);
+        Root<Dictionary> root = cq.from(Dictionary.class);
+
+        Predicate searchPredicate = cb.like(root.get("dictEntry"), "%" + dictEntry + "%");
+        cq.where(searchPredicate);
+
+        return entityManager.createQuery(cq).getResultList();
     }
 
 }

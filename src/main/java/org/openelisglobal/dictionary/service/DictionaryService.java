@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface DictionaryService extends BaseObjectService<Dictionary, String> {
     void getData(Dictionary dictionary);
@@ -28,6 +29,9 @@ public interface DictionaryService extends BaseObjectService<Dictionary, String>
     Dictionary getDictionaryEntrysByNameAndCategoryDescription(String dictionaryName, String categoryDescription);
 
     List<Dictionary> getDictionaryEntrysByCategoryNameLocalizedSort(String dictionaryCategoryName);
+
+    @Transactional(readOnly = true)
+    List<Dictionary> searchByDictEntry(String dictEntry);
 
     Dictionary getDataForId(String dictId);
 

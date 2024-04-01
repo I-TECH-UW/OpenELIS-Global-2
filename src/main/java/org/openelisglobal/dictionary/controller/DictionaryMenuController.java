@@ -18,18 +18,23 @@ import org.openelisglobal.dictionary.form.DictionaryMenuForm;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
+@RequestMapping(value = "/rest/")
 public class DictionaryMenuController extends BaseMenuController<Dictionary> {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "selectedIDs*" };
@@ -42,22 +47,22 @@ public class DictionaryMenuController extends BaseMenuController<Dictionary> {
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    @RequestMapping(value = { "/DictionaryMenu", "/SearchDictionaryMenu" }, method = RequestMethod.GET)
-    public ModelAndView showDictionaryMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        DictionaryMenuForm form = new DictionaryMenuForm();
-
-        String forward = performMenuAction(form, request);
-        if (FWD_FAIL.equals(forward)) {
-            Errors errors = new BaseErrors();
-            errors.reject("error.generic");
-            redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, errors);
-            return findForward(forward, form);
-        } else {
-            request.setAttribute("menuDefinition", "DictionaryMenuDefinition");
-            addFlashMsgsToRequest(request);
-            return findForward(forward, form);
+    @GetMapping(value = { "/DictionaryMenu", "/SearchDictionaryMenu" })
+    public ResponseEntity<Dictionary> showDictionaryMenu() {
+        Dictionary dictionary = new Dictionary();
+        if (dictionary == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+        return ResponseEntity.ok(dictionary);
+    }
+
+    @GetMapping("/dictionarymenu/{dictEntry}")
+    @SuppressWarnings("unchecked")
+    public ResponseEntity<List<Dictionary>> searchByDictEntry(@PathVariable String dictEntry) {
+        if (dictEntry == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return (ResponseEntity<List<Dictionary>>) dictionaryService.searchByDictEntry(dictEntry);
     }
 
     @Override

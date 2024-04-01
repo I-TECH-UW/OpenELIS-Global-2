@@ -124,4 +124,6 @@ public interface DictionaryDAO extends BaseDAO<Dictionary, String> {
     public boolean duplicateDictionaryExists(Dictionary dictionary);
 
     public boolean isDictionaryFrozen(Dictionary dictionary);
+
+    List<Dictionary> searchByDictEntry(String dictEntry);
 }
