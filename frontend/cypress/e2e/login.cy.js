@@ -16,10 +16,13 @@ describe("Failing or Succeeding to Login", function () {
     cy.fixture("Users").then((users) => {
       users.forEach((user) => {
         login.enterUsername(user.username);
-        login.getUsernameElement().should("contain.value", user.username);
+        login.getUsernameElement().as("usernameField");
+        cy.get("@usernameField").type(user.username);
+        cy.get("@usernameField").should("contain.value", user.username);
 
-        login.enterPassword(user.password);
-        login.getPasswordElement().should("contain.value", user.password);
+        login.getPasswordElement().as("passwordField");
+        cy.get("@passwordField").type(user.password);
+        cy.get("@passwordField").should("contain.value", user.password);
         login.signIn();
 
         if (user.correctPass === true) {
