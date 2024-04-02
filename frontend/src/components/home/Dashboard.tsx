@@ -16,6 +16,10 @@ import {
   TableCell,
   Pagination,
   Link,
+  Tab,
+  Tabs,
+  TabList,
+  Tag
 } from "@carbon/react";
 import "./Dashboard.css";
 import { Minimize, Maximize } from "@carbon/react/icons";
@@ -70,6 +74,8 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
   });
 
   const [data, setData] = useState([]);
+  const [testSections, setTestSections] = useState([]);
+  const [selectedTestSection, setSelectedTestSection] = useState("");
   const [loading, setLoading] = useState(true);
   const componentMounted = useRef(true);
   const [page, setPage] = useState(1);
@@ -127,6 +133,20 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
       componentMounted.current = false;
     };
   }, [selectedTile]);
+
+  useEffect(() => {
+    getFromOpenElisServer("/rest/user-test-sections", (fetchedTestSections) => {
+      fetchTestSections(fetchedTestSections);
+    });
+    return () => {
+      componentMounted.current = false;
+    };
+  }, []);
+
+  const fetchTestSections = (res) => {
+    setTestSections(res);
+    setSelectedTestSection(res[0]?.id);
+  };
 
   const loadNextResultsPage = () => {
     setLoading(true);
@@ -272,6 +292,17 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     },
   ];
 
+  const tilesWithTabs = [
+    "ORDERS_IN_PROGRESS",
+    "ORDERS_READY_FOR_VALIDATION",
+    "ORDERS_COMPLETED_TODAY",
+    "ORDERS_REJECTED_TODAY",
+    "UN_PRINTED_RESULTS",
+    "DELAYED_TURN_AROUND",
+    "ORDERS_FOR_USER",
+    "ORDERS_PATIALLY_COMPLETED_TODAY"
+  ];
+
   const handleMinimizeClick = () => {
     console.log("Icon clicked!");
     if (selectedTile.type == "ORDERS_FOR_USER") {
@@ -286,6 +317,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
       setSelectedTile(tile);
     } else {
       setSelectedTile(null);
+      setSelectedTestSection(testSections[0]?.id);
     }
   };
 
@@ -458,7 +490,6 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                         <Column lg={11} />
                         <Column lg={2}>
                           <Button
-                            type=""
                             id="loadpreviousresults"
                             onClick={loadPreviousResultsPage}
                             disabled={previousPage != null ? false : true}
@@ -468,7 +499,6 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                         </Column>
                         <Column lg={2}>
                           <Button
-                            type=""
                             id="loadnextresults"
                             onClick={loadNextResultsPage}
                             disabled={nextPage != null ? false : true}
@@ -478,8 +508,38 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                         </Column>
                       </Grid>
                     )}
+                    {tilesWithTabs.includes(selectedTile.type) && (
+                      <Grid>
+                      <Column lg={16} md={8} sm={4}>
+                      {testSections.length > 0 ?( 
+                      <Tabs>
+                        <TabList aria-label="List of tabs" contained>
+                          {testSections?.map((item, idx) => {
+                            return (
+                              <Tab
+                                key={idx}
+                                onClick={() =>
+                                  setSelectedTestSection(item.id)
+                                }
+                              >
+                                {item.value}
+                              </Tab>
+                            );
+                          })}
+                        </TabList>
+                      </Tabs>
+                      ): (<Tag type="red"><FormattedMessage id="label.user.notestsection" /></Tag>)}     
+                      </Column>
+                    </Grid>
+                    )}
                     <DataTable
-                      rows={data.slice((page - 1) * pageSize, page * pageSize)}
+                      rows={data
+                        .filter((item) =>
+                          tilesWithTabs.includes(selectedTile.type)
+                            ? item.testSection === selectedTestSection
+                            : true
+                        )
+                        .slice((page - 1) * pageSize, page * pageSize)}
                       headers={
                         selectedTile.type != "ORDERS_ENTERED_BY_USER_TODAY"
                           ? orderHeaders
@@ -530,7 +590,11 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                       page={page}
                       pageSize={pageSize}
                       pageSizes={[10, 20, 30, 50, 100]}
-                      totalItems={data.length}
+                      totalItems={data.filter((item) =>
+                        tilesWithTabs.includes(selectedTile.type)
+                          ? item.testSection === selectedTestSection
+                          : true
+                      ).length}
                       forwardText={intl.formatMessage({
                         id: "pagination.forward",
                       })}
