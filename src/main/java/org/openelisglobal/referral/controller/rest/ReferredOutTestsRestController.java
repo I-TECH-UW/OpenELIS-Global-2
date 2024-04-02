@@ -14,7 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,13 +30,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RequestMapping("/rest/")
 public class ReferredOutTestsRestController {
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "labNumber", "testIds", "testUnitIds", "endDate",
+            "startDate", "dateType", "searchType", "selPatient"
+
+    };
+
     @Autowired
     private ReferralService referralService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.setAllowedFields("labNumber", "testIds", "testUnitIds", "endDate",
-            "startDate", "dateType", "searchType", "selPatient");
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
     
     private void setupPageForDisplay(ReferredOutTestsForm form) {
@@ -53,8 +63,6 @@ public class ReferredOutTestsRestController {
             form.setReferralDisplayItems(referralService.getReferralItems(form));
             form.setSearchFinished(true);
         }
-        form.setTestSelectionList(DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS));
-        form.setTestUnitSelectionList(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_BY_NAME));
     }
 
     @PostMapping(value = "ReferredOutTests", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -63,11 +71,6 @@ public class ReferredOutTestsRestController {
         setupPageForDisplayRest(form);
         return form;
     }
-
-    // dummy data 
-    // form types fixing or creating
-    // validating response
-    // print out things
     
     public class NonNumericTests {
         public String testId;
