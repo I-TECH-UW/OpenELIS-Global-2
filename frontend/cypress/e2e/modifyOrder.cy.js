@@ -12,14 +12,6 @@ before("login", () => {
 });
 
 describe("Modify Order search by accession Number", function () {
-  before(function () {
-    cy.fixture("Order").then((order) => {
-      const labNo = order.labNo;
-      if (labNo == null) {
-        this.skip();
-      }
-    });
-  });
 
   it("User Visits Home Page and goes to Modify Order Page ", function () {
     homePage = loginPage.goToHomePage();
@@ -116,11 +108,13 @@ describe("Modify Order search by patient ", function () {
     modifyOrderPage.clickRespectivePatient();
   });
   it("should check for program selection button and go to next page ", function () {
+    cy.wait(1000);
     modifyOrderPage.checkProgramButton();
     modifyOrderPage.clickNextButton();
   });
 
   it("should be able to record", function () {
+    cy.wait(1000);
     modifyOrderPage.assignValues();
   });
 
