@@ -33,7 +33,7 @@ public interface DictionaryService extends BaseObjectService<Dictionary, String>
     @Transactional(readOnly = true)
     List<Dictionary> searchByDictEntry(String dictEntry);
 
-    List<Dictionary> showDictionaryMenu();
+    List<Object[]> showDictionaryMenu(String dictionaryCategoryName, String dictEntry, String isActive, String localAbbreviation);
 
     Dictionary getDataForId(String dictId);
 

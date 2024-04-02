@@ -184,8 +184,8 @@ public class DictionaryServiceImpl extends AuditableBaseObjectServiceImpl<Dictio
     }
 
     @Override
-    public List<Dictionary> showDictionaryMenu() {
-        return getBaseObjectDAO().showDictionaryMenu();
+    public List<Object[]> showDictionaryMenu(String dictionaryCategoryName, String dictEntry, String isActive, String localAbbreviation) {
+        return getBaseObjectDAO().showDictionaryMenu(dictionaryCategoryName, dictEntry, isActive, localAbbreviation);
     }
 
     @Override
