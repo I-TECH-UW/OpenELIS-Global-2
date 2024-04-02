@@ -9,6 +9,7 @@ import { getFromOpenElisServer } from "../../utils/Utils";
 import PanelSelectForm from "../../workplan/PanelSelectForm";
 import TestSelectForm from "../../workplan/TestSelectForm";
 import TestSectionSelectForm from "../../workplan/TestSectionSelectForm";
+import PropTypes from 'prop-types';
 
 const ActivityReport = ({ reportType }) => {
   const intl = useIntl();
@@ -49,12 +50,17 @@ const ActivityReport = ({ reportType }) => {
     setNotificationVisible(true);
   };
 
+  ActivityReport.propTypes = {
+    reportType: PropTypes.string.isRequired,
+    optionsList: PropTypes.array.isRequired,
+  };
+
   const getReportParams = (type) => {
     switch (type) {
       case 'panel':
-        return `report=activityReportByPanel&type=indicator&lowerDateRangeupperDateRange=${reportFormValues.startDate}&upperDateRange=${reportFormValues.endDate}`;
+        return `RoutineReport=indicator&report=activityReportByPanel&lowerDateRange=${reportFormValues.startDate}&upperDateRange=${reportFormValues.endDate}`;
       case 'test':
-        return `RoutineReport?type=indicator&report=activityReportByTest&upperDateRange=${reportFormValues.startDate}&lowerDateRange=${reportFormValues.endDate}`;
+        return `RoutineReport?type=indicator&report=activityReportByTest&lowerDateRange=${reportFormValues.startDate}&upperDateRange=${reportFormValues.endDate}`;
       case 'testSection':
         return `RoutineReport?type=indicator&report=activityReportByTestSection&lowerDateRange=${reportFormValues.startDate}&=upperDateRange${reportFormValues.endDate}`;
       default:

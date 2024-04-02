@@ -12,6 +12,7 @@ import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
 import ActivityReportByTest from "./ActivityReportByTest";
 import ActivityReportByPanel from "./ActivityReportByPanel";
 import ActivityReportByTestSection from "./ActivityReportByTestSection";
+import ActivityReport from "./ActivityReport";
 
 const RoutineIndex = () => {
   const intl = useIntl();
@@ -92,7 +93,7 @@ const RoutineIndex = () => {
             {type === "indicator" && report === "activityReportByTestSection" && (
                 <ActivityReportByTestSection />
             )}
-
+      
             {type === "indicator" &&
               report === "indicatorHaitiLNSPAllTests" && (
                 <ReportByDate
