@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openelisglobal.BaseTestConfig;
-import org.openelisglobal.integrationTests.patient.PatientTestConfig;
+import org.openelisglobal.config.TestConfig;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { BaseTestConfig.class, PatientTestConfig.class })
+@ContextConfiguration(classes = { BaseTestConfig.class, TestConfig.class })
 @TestPropertySource("classpath:common.properties")
 @ActiveProfiles("test")
 public class PersonServiceTest {
