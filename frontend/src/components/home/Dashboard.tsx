@@ -510,7 +510,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                     )}
                     {tilesWithTabs.includes(selectedTile.type) && (
                       <Grid>
-                      <Column lg={16}>
+                      <Column lg={16} md={8} sm={4}>
                       {testSections.length > 0 ?( 
                       <Tabs>
                         <TabList aria-label="List of tabs" contained>
