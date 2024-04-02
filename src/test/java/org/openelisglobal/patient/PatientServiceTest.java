@@ -108,7 +108,22 @@ class PatientServiceTest {
 		Assert.assertNull(deletedPatient);
 	}
 
+	@Test
+	public void createPatientWithBearerToken() {
+		String token = " ";
 
+
+		RequestSpecification request = given()
+				.contentType(ContentType.JSON)
+				.header("Authorization", "Bearer " + token)
+				.body("{ \"firstName\": \"John\", \"lastName\": \"Doe\", \"dob\": \"12/12/1992\", \"gender\": \"M\" }");
+
+		// Send the POST request to create a patient
+		request.when()
+				.post("/api/patients")
+				.then()
+				.statusCode(201);
+	}
 	private Patient createPatient(String firstName, String LastName, String birthDate, String gender)
 			throws ParseException {
 		Person person = new Person();
