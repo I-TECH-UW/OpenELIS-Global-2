@@ -1,11 +1,11 @@
-package org.openelisglobal.person;
+package org.openelisglobal.integrationTests.person;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openelisglobal.BaseTestConfig;
-import org.openelisglobal.patient.PatientTestConfig;
+import org.openelisglobal.integrationTests.patient.PatientTestConfig;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
 import org.springframework.beans.factory.annotation.Autowired;

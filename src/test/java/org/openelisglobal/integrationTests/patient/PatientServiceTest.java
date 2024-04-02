@@ -1,4 +1,4 @@
-package org.openelisglobal.patient;
+package org.openelisglobal.integrationTests.patient;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;

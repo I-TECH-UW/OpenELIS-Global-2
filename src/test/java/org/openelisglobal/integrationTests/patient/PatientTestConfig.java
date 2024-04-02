@@ -1,4 +1,4 @@
-package org.openelisglobal.patient;
+package org.openelisglobal.integrationTests.patient;
 
 import static org.mockito.Mockito.mock;
 
