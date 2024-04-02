@@ -7,7 +7,7 @@ module.exports = defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
-    baseUrl: "https://openelis28.openelis-global.org",
+    baseUrl: "https://localhost",
     testIsolation: false,
   },
 });
