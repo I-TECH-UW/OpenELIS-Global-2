@@ -71,7 +71,10 @@ const RoutineIndex = () => {
             
  			{type === "patient" &&
               report === "NonconformityNotification" && 
-                (<NonconformityNotification />)}
+                (<NonconformityNotification 
+                	report={"NonconformityNotification"}
+                	id={"sideNav.label.noncomformitynotification"}
+                />)}
 
             {type === "patient" && report === "CISampleRoutineExport" && (
               <ReportByDate
