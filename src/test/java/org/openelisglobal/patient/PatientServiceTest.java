@@ -25,7 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(classes = { BaseTestConfig.class, PatientTestConfig.class })
 @TestPropertySource("classpath:common.properties")
 @ActiveProfiles("test")
-public class PatientServiceTest {
+class PatientServiceTest {
 
 	@Autowired
 	PatientService patientService;
@@ -60,6 +60,54 @@ public class PatientServiceTest {
 	public void getAllPatients_shouldGetAllPatients() throws Exception {
 		Assert.assertEquals(1, patientService.getAllPatients().size());
 	}
+
+	@Test
+	public void updatePatient_shouldUpdateExistingPatient() throws Exception {
+		// Create a new patient
+		String firstName = "John";
+		String lastName = "Doe";
+		String dob = "12/12/1992";
+		String gender = "M";
+		Patient pat = createPatient(firstName, lastName, dob, gender);
+		String patientId = patientService.insert(pat);
+
+		// Get the patient from the database
+		Patient existingPatient = patientService.get(patientId);
+		Assert.assertNotNull(existingPatient);
+
+		// Update patient details
+		String updatedFirstName = "Jane";
+		existingPatient.getPerson().setFirstName(updatedFirstName);
+		patientService.update(existingPatient);
+
+		// Verify the updated details
+		Patient updatedPatient = patientService.get(patientId);
+		Assert.assertNotNull(updatedPatient);
+		Assert.assertEquals(updatedFirstName, updatedPatient.getPerson().getFirstName());
+		Assert.assertEquals(lastName, updatedPatient.getPerson().getLastName()); // Ensure other details remain unchanged
+	}
+	@Test
+	public void deletePatient_shouldDeleteExistingPatient() throws Exception {
+		// Create a new patient
+		String firstName = "John";
+		String lastName = "Doe";
+		String dob = "12/12/1992";
+		String gender = "M";
+		Patient pat = createPatient(firstName, lastName, dob, gender);
+		String patientId = patientService.insert(pat);
+
+		// Get the patient from the database
+		Patient existingPatient = patientService.get(patientId);
+		Assert.assertNotNull(existingPatient);
+
+		// Delete the patient
+		patientService.delete(patientId);
+
+		// Verify that the patient is deleted
+		Patient deletedPatient = patientService.get(patientId);
+		Assert.assertNull(deletedPatient);
+	}
+
 
 	private Patient createPatient(String firstName, String LastName, String birthDate, String gender)
 			throws ParseException {
