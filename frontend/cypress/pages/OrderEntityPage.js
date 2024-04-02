@@ -26,7 +26,7 @@ class OrderEntityPage {
     ).check({ force: true });
   }
   generateLabOrderNumber() {
-    cy.getElement(":nth-child(3) > .cds--link").click();
+    cy.getElement(":nth-child(2) > .cds--link").click();
   }
 
   enterSiteName(siteName) {

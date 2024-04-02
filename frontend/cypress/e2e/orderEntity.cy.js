@@ -53,8 +53,15 @@ describe("Order Entity", function () {
     orderEntityPage.clickNextButton();
   });
 
-  it("Should click generate Lab Order Number", function () {
+  it("Should click generate Lab Order Number and store it in a fixture", function () {
     orderEntityPage.generateLabOrderNumber();
+    cy.get("#labNo").then(($input) => {
+      const generatedOrderNumber = $input.val();
+      cy.fixture("Order").then((order) => {
+        order.labNo = generatedOrderNumber;
+        cy.writeFile("cypress/fixtures/Order.json", order);
+      });
+    });
     cy.wait(1000);
   });
 
@@ -78,3 +85,5 @@ describe("Order Entity", function () {
     orderEntityPage.clickSubmitOrderButton();
   });
 });
+
+
