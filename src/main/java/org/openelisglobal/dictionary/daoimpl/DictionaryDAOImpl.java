@@ -273,7 +273,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         return null;
     }
 
-    public List<Object[]> showDictionaryMenu(String dictionaryCategoryName, String dictEntry, Boolean isActive, String localAbbreviation) {
+    public List<Object[]> showDictionaryMenu(String dictionaryCategoryName, String dictEntry, String isActive, String localAbbreviation) {
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
             CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
             Root<Dictionary> dictionaryRoot = query.from(Dictionary.class);
