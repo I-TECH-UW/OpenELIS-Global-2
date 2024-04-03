@@ -96,7 +96,7 @@ const ReportByDate = (props) => {
       {notificationVisible && <AlertDialog />}
       {loading && <Loading />}
       <Grid fullWidth={true}>
-        <Column lg={16} md={12} sm={8}>
+        <Column lg={16} md={8} sm={4}>
           <Form>
             <Grid fullWidth={true}>
               <Column lg={10} md={8} sm={4}>

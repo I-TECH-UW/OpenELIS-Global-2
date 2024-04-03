@@ -53,7 +53,7 @@ function ReportByID(props) {
         {notificationVisible && <AlertDialog />}
         {loading && <Loading />}
         <Grid fullWidth={true}>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <Section>
               <FormattedMessage id="label.report.byNationalId" />
             </Section>
@@ -61,7 +61,7 @@ function ReportByID(props) {
         </Grid>
         <br />
         <Grid fullWidth={true}>
-          <Column lg={6}>
+          <Column lg={6} md={4} sm={4}>
             <CustomLabNumberInput
               id="nationalID"
               labelText={intl.formatMessage({

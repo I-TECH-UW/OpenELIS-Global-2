@@ -420,7 +420,7 @@ function GenericReport(props) {
               )}
             </Field>
             <Grid fullWidth={true}>
-              <Column lg={8}>
+              <Column lg={8} md={8} sm={4}>
                 <Section>
                   <br />
                   <br />
@@ -469,7 +469,7 @@ function GenericReport(props) {
               </Field>
             </div>
             <Grid fullWidth={true}>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 <Section>
                   <h4>
                     <FormattedMessage id="report.enter.patient.headline" />
@@ -618,7 +618,7 @@ function GenericReport(props) {
                 </Button>
               </div>
             </div>
-            <Column lg={16}>
+            <Column lg={16} md={8} sm={4}>
               {pagination && (
                 <Grid>
                   <Column lg={11} />
@@ -709,7 +709,7 @@ function GenericReport(props) {
             <br />
             <br />
             <Grid fullWidth={true}>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 <h5>
                   <FormattedMessage id="report.enter.site.headline" />
                 </h5>
@@ -764,7 +764,7 @@ function GenericReport(props) {
               </Select>
             </div>
             <Grid fullWidth={true}>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 <h6>
                   <FormattedMessage id="report.patient.site.description" />
                 </h6>
@@ -772,7 +772,7 @@ function GenericReport(props) {
             </Grid>
             <br />
             <Grid fullWidth={true}>
-              <Column lg={8}>
+              <Column lg={8} md={8} sm={4}>
                 <Checkbox
                   onChange={() => {
                     if (checkbox === "on") {
