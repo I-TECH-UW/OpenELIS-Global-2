@@ -11,20 +11,13 @@ describe("Failing or Succeeding to Login", function () {
   after("Close Browser", () => {
     cy.clearLocalStorage();
   });
-
   it("Should validate user authentication", function () {
     cy.fixture("Users").then((users) => {
       users.forEach((user) => {
         login.enterUsername(user.username);
-        login.getUsernameElement().as("usernameField");
-        cy.get("@usernameField").type(user.username);
-        cy.get("@usernameField").should("contain.value", user.username);
-
-        login.getPasswordElement().as("passwordField");
-        cy.get("@passwordField").type(user.password);
-        cy.get("@passwordField").should("contain.value", user.password);
+        login.enterPassword(user.password);
         login.signIn();
-
+  
         if (user.correctPass === true) {
           cy.get("header#mainHeader > button[title='Open menu']")
             .should("exist")
@@ -38,4 +31,5 @@ describe("Failing or Succeeding to Login", function () {
       });
     });
   });
+  
 });
