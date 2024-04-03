@@ -176,11 +176,11 @@ export const RoutineReportsMenu = {
       SideNavMenuItem: [
         {
           link:
-            config.serverBaseUrl + "/Report?type=patient&report=CIStudyExport",
+          "/StudyReport?type=patient&report=CIStudyExport",
           label: <FormattedMessage id="sideNav.label.generalreport" />,
         },
         {
-          link: config.serverBaseUrl + "/Report?type=patient&report=Trends",
+          link:  "/StudyReport?type=patient&report=Trends",
           label: <FormattedMessage id="sideNav.label.viralloaddataexport" />,
         },
       ],

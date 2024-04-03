@@ -17,6 +17,7 @@ import { AlertDialog } from "../../common/CustomNotification";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import config from "../../../config.json";
+import { encodeDate } from "../../utils/Utils";
 
 const ReferredOut = () => {
   const intl = useIntl();
@@ -58,13 +59,6 @@ const ReferredOut = () => {
     },
   ];
 
-  function encodeDate(dateString) {
-    if (typeof dateString === "string" && dateString.trim() !== "") {
-      return dateString.split("/").map(encodeURIComponent).join("%2F");
-    } else {
-      return "";
-    }
-  }
 
   const handleDatePickerChangeDate = (datePicker, date) => {
     let updatedDate = encodeDate(date);

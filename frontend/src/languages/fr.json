@@ -769,5 +769,12 @@
   "label.audittrailreport.requester.firstname": "Prénom du demandeur",
   "label.audittrailreport.requester.lastname": "Nom de famille du demandeur",
   "label.audittrailreport.sitename": "Nom du site" ,
-  "label.user.notestsection": "L'utilisateur actuel n'a pas d'unité de laboratoire assassinée. Veuillez contacter l'administrateur" 
+  "label.user.notestsection": "L'utilisateur actuel n'a pas d'unité de laboratoire assassinée. Veuillez contacter l'administrateur" ,
+  "reports.label.cistudyexport": "Rapport général",
+  "header.label.study.ciexport": "Exporter un fichier CSV par type de date",
+  "report.select.studttype": "Sélectionner le type d'étude",
+  "error.report.csv.study": "Veuillez sélectionner le type d'étude.",
+  "error.report.csv.date": "Veuillez sélectionner le type de date.",
+  "header.label.study.vlloadtrends": "Rapport d'exportation des données de charge virale",
+  "reports.label.trends": "Tendances"
 }
