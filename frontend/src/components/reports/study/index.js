@@ -89,6 +89,17 @@ const StudyIndex = () => {
     <>
       <br />
       <PageBreadCrumb breadcrumbs={breadcrumbs} />
+      <Grid fullWidth={true}>
+        <Column lg={16} md={8} sm={4}>
+          <Section>
+            <Section>
+              <Heading>
+                <FormattedMessage id="selectReportValues.title" />
+              </Heading>
+            </Section>
+          </Section>
+        </Column>
+      </Grid>
       <div className="orderLegendBody">
         {notificationVisible === true && <AlertDialog />}
         {isLoading && <Loading />}

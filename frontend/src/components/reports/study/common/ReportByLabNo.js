@@ -36,7 +36,7 @@ function ReportByLabNo(props) {
         </Section>
         <br />
         <Grid fullWidth={true}>
-          <Column lg={16} md={8} sm={6}>
+          <Column lg={16} md={8} sm={4}>
             <Section>
               <h5>
                 <FormattedMessage id="report.enter.labNumber.headline" />
@@ -79,7 +79,7 @@ function ReportByLabNo(props) {
         <br />
         <br />
         <Grid fullWidth={true}>
-          <Column lg={16} md={8} sm={6}>
+          <Column lg={16} md={8} sm={4}>
             <Section>
               <Button type="submit">
                 <FormattedMessage id="label.button.generatePrintableVersion" />
