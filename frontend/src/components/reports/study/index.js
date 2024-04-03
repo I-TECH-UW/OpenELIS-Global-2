@@ -11,13 +11,13 @@ import {
   Loading,
 } from "@carbon/react";
 import { injectIntl, FormattedMessage, useIntl } from "react-intl";
-import GenericReport from "./common/GenericReport";
-import ReportByID from "./common/ReportByID";
-import ReportByDate from "./common/ReportByDate";
-import ReportByLabNo from "./common/ReportByLabNo";
+import PatientStatusReport from "../common/PatientStatusReport";
+import ReportByID from "../common/ReportByID";
+import ReportByDate from "../common/ReportByDate";
+import ReportByLabNo from "../common/ReportByLabNo";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
-import ReportByDateCSV from "./common/ReportByDateCSV";
+import ReportByDateCSV from "../common/ReportByDateCSV";
 
 const StudyIndex = () => {
   const intl = useIntl();
@@ -159,15 +159,15 @@ const StudyIndex = () => {
             )}
 
             {type === "patient" && report === "patientEID1" && (
-              <GenericReport report="patientEID1" id="header.label.EID" />
+              <PatientStatusReport report="patientEID1" id="header.label.EID" />
             )}
 
             {type === "patient" && report === "patientEID2" && (
-              <GenericReport report="patientEID2" id="header.label.EID" />
+              <ReportByLabNo report="patientEID2" id="header.label.EID" />
             )}
 
             {type === "patient" && report === "patientVL1" && (
-              <GenericReport
+              <PatientStatusReport
                 report="patientVL1"
                 id="banner.menu.resultvalidation.viralload"
               />

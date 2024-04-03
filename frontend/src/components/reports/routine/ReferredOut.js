@@ -15,7 +15,6 @@ import "../../Style.css";
 import { getFromOpenElisServer } from "../../utils/Utils";
 import { AlertDialog } from "../../common/CustomNotification";
 import CustomDatePicker from "../../common/CustomDatePicker";
-import PageBreadCrumb from "../../common/PageBreadCrumb";
 import config from "../../../config.json";
 import { encodeDate } from "../../utils/Utils";
 

@@ -9,11 +9,11 @@ import {
   Loading,
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
-import "../../../Style.css";
-import { AlertDialog } from "../../../common/CustomNotification";
-import CustomDatePicker from "../../../common/CustomDatePicker";
-import config from "../../../../config.json";
-import { encodeDate } from "../../../utils/Utils";
+import "../../Style.css";
+import { AlertDialog } from "../../common/CustomNotification";
+import CustomDatePicker from "../../common/CustomDatePicker";
+import config from "../../../config.json";
+import { encodeDate } from "../../utils/Utils";
 
 const ReportByDate = (props) => {
   const intl = useIntl();

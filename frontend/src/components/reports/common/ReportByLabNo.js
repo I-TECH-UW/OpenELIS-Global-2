@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import { Form, Grid, Column, Section, Button } from "@carbon/react";
-import CustomLabNumberInput from "../../../common/CustomLabNumberInput";
-import config from "../../../../config.json";
+import CustomLabNumberInput from "../../common/CustomLabNumberInput";
+import config from "../../../config.json";
 
 function ReportByLabNo(props) {
   const intl = useIntl();
