@@ -3,6 +3,7 @@ package org.openelisglobal.dictionary.service;
 import java.util.List;
 
 import org.openelisglobal.common.service.BaseObjectService;
+import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +34,7 @@ public interface DictionaryService extends BaseObjectService<Dictionary, String>
     @Transactional(readOnly = true)
     List<Dictionary> searchByDictEntry(String dictEntry);
 
-    List<Object[]> showDictionaryMenu(String dictionaryCategoryName, String dictEntry, String isActive, String localAbbreviation);
+    List<DictionaryDAOImpl.DictionaryMenu> showDictionaryMenu();
 
     Dictionary getDataForId(String dictId);
 

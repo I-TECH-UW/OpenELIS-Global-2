@@ -10,6 +10,7 @@ import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.exception.LIMSFrozenRecordException;
 import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.dictionary.dao.DictionaryDAO;
+import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -184,8 +185,8 @@ public class DictionaryServiceImpl extends AuditableBaseObjectServiceImpl<Dictio
     }
 
     @Override
-    public List<Object[]> showDictionaryMenu(String dictionaryCategoryName, String dictEntry, String isActive, String localAbbreviation) {
-        return getBaseObjectDAO().showDictionaryMenu(dictionaryCategoryName, dictEntry, isActive, localAbbreviation);
+    public List<DictionaryDAOImpl.DictionaryMenu> showDictionaryMenu() {
+        return getBaseObjectDAO().showDictionaryMenu();
     }
 
     @Override

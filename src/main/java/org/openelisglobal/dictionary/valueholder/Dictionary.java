@@ -17,6 +17,10 @@ package org.openelisglobal.dictionary.valueholder;
 
 import java.util.Comparator;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.valueholder.BaseObject;
@@ -27,11 +31,16 @@ import org.openelisglobal.localization.valueholder.Localization;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@Setter
+@Getter
 public class Dictionary extends BaseObject<String> {
 
     private static final long serialVersionUID = 1L;
 
-    public class ComparatorLocalizedName implements Comparator<Dictionary> {
+    @SuppressWarnings("unused")
+    public static class ComparatorLocalizedName implements Comparator<Dictionary> {
         @Override
         public int compare(Dictionary o1, Dictionary o2) {
             return o1.getLocalizedName().compareTo(o2.getDefaultLocalizedName());
@@ -54,22 +63,6 @@ public class Dictionary extends BaseObject<String> {
 
     private ValueHolder localizedDictionaryName;
 
-    public Integer getSortOrder() {
-        return sortOrder;
-    }
-
-    public void setSortOrder(Integer sortOrder) {
-        this.sortOrder = sortOrder;
-    }
-
-    public String getLocalAbbreviation() {
-        return localAbbreviation;
-    }
-
-    public void setLocalAbbreviation(String localAbbreviation) {
-        this.localAbbreviation = localAbbreviation;
-    }
-
     public Dictionary() {
         super();
         this.dictionaryCategory = new ValueHolder();
@@ -79,10 +72,6 @@ public class Dictionary extends BaseObject<String> {
     @Override
     public String getId() {
         return this.id;
-    }
-
-    public String getIsActive() {
-        return this.isActive;
     }
 
     public DictionaryCategory getDictionaryCategory() {
@@ -98,18 +87,6 @@ public class Dictionary extends BaseObject<String> {
         this.id = id;
     }
 
-    public void setIsActive(String isActive) {
-        this.isActive = isActive;
-    }
-
-    public String getDictEntry() {
-        return dictEntry;
-    }
-
-    public void setDictEntry(String dictEntry) {
-        this.dictEntry = dictEntry;
-    }
-
     @JsonIgnore
     public String getDictEntryDisplayValue() {
         String dictEntryDisplayValue;
@@ -121,14 +98,6 @@ public class Dictionary extends BaseObject<String> {
             dictEntryDisplayValue = dictEntry;
         }
         return dictEntryDisplayValue;
-    }
-
-    public String getSelectedDictionaryCategoryId() {
-        return selectedDictionaryCategoryId;
-    }
-
-    public void setSelectedDictionaryCategoryId(String selectedDictionaryCategoryId) {
-        this.selectedDictionaryCategoryId = selectedDictionaryCategoryId;
     }
 
     public Localization getLocalizedDictionaryName() {

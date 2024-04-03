@@ -19,9 +19,9 @@ package org.openelisglobal.dictionary.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import lombok.Data;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -36,6 +36,8 @@ import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.dictionary.dao.DictionaryDAO;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +53,8 @@ import javax.persistence.criteria.Root;
 @Component
 @Transactional
 public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implements DictionaryDAO {
+
+    private static final Logger log = LoggerFactory.getLogger(DictionaryDAOImpl.class);
 
     public DictionaryDAOImpl() {
         super(Dictionary.class);
@@ -273,27 +277,55 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         return null;
     }
 
-    public List<Object[]> showDictionaryMenu(String dictionaryCategoryName, String dictEntry, String isActive, String localAbbreviation) {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-            CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
-            Root<Dictionary> dictionaryRoot = query.from(Dictionary.class);
-            Join<Dictionary, DictionaryCategory> categoryJoin = dictionaryRoot.join("dictionaryCategory");
-
-            List<Predicate> predicates = new ArrayList<>();
-            if (dictionaryCategoryName == null || dictEntry == null || isActive == null || localAbbreviation == null) {
-                return Collections.emptyList();
-            }
-            
-            predicates.add(cb.equal(categoryJoin.get("categoryName"), dictionaryCategoryName));
-            predicates.add(cb.equal(dictionaryRoot.get("dictEntry"), dictEntry));
-            predicates.add(cb.equal(dictionaryRoot.get("isActive"), isActive));
-            predicates.add(cb.equal(dictionaryRoot.get("localAbbreviation"), localAbbreviation));
-
-            query.select(cb.array(categoryJoin.get("name"), dictionaryRoot.get("dictEntry"),
-                    dictionaryRoot.get("localAbbreviation"), dictionaryRoot.get("isActive")));
-            query.where(predicates.toArray(new Predicate[0]));
-        return entityManager.createQuery(query).getResultList();
+    /**
+     * <p>
+     * This class represents a response object containing information about a dictionary
+     * for menu display purposes. It is a Data Transfer Object (DTO) meant to be used for
+     * data serialization and avoids exposing the full structure of the underlying
+     * `Dictionary` entity.
+     * </p>
+     */
+    @Data
+    public static class DictionaryMenu {
+        private String categoryName;
+        private String dictEntry;
+        private String localAbbreviation;
+        private String isActive;
     }
+
+    /**
+     * <p>This should generate the sql query below: <pre>{@code
+     * select category.name, dict_entry, category.local_abbrev, is_active
+     * from dictionary
+     * inner join dictionary_category category
+     * ON dictionary.dictionary_category_id = category.id;
+     * }</pre>
+     * </p>
+     */
+    @Override
+    public List<DictionaryMenu> showDictionaryMenu() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
+        Root<Dictionary> dictionaryRoot = query.from(Dictionary.class);
+        Join<Dictionary, DictionaryCategory> categoryJoin = dictionaryRoot.join("dictionaryCategory");
+
+        query.multiselect(categoryJoin.get("categoryName"),dictionaryRoot.get("dictEntry"),
+                categoryJoin.get("localAbbreviation"),dictionaryRoot.get("isActive"));
+
+        List<Object[]> resultList = entityManager.createQuery(query).getResultList();
+
+        List<DictionaryMenu> dictionaryMenuArrayList = new ArrayList<>();
+        for (Object[] result : resultList) {
+            DictionaryMenu dictionaryMenu = new DictionaryMenu();
+            dictionaryMenu.setCategoryName((String) result[0]);
+            dictionaryMenu.setDictEntry((String) result[1]);
+            dictionaryMenu.setLocalAbbreviation((String) result[2]);
+            dictionaryMenu.setIsActive((String) result[3]);
+            dictionaryMenuArrayList.add(dictionaryMenu);
+        }
+        return dictionaryMenuArrayList;
+    }
+
 
 
     @Override

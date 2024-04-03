@@ -3,6 +3,7 @@ package org.openelisglobal.dictionary.controller;
 import java.util.List;
 
 import org.openelisglobal.common.rest.BaseRestController;
+import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@SuppressWarnings("unused")
 public class DictionaryMenuController extends BaseRestController {
 
     @Autowired
@@ -23,8 +25,8 @@ public class DictionaryMenuController extends BaseRestController {
 
     @RequestMapping(value = "/rest/get-dictionary-menu", produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
     @ResponseBody
-    public List<Object[]> showDictionaryMenu(String dictionaryCategoryName, String dictEntry, String isActive, String localAbbreviation) {
-        return dictionaryService.showDictionaryMenu(dictionaryCategoryName, dictEntry, isActive, localAbbreviation);
+    public List<DictionaryDAOImpl.DictionaryMenu> showDictionaryMenu() {
+        return dictionaryService.showDictionaryMenu();
     }
 
     @RequestMapping(value = "dictionarymenu/{dictEntry}", produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
