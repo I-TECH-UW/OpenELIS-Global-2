@@ -3,10 +3,10 @@ import { AlertDialog } from "../../common/CustomNotification";
 import { NotificationContext } from "../../layout/Layout";
 import { Heading, Grid, Column, Section, Loading } from "@carbon/react";
 import { injectIntl, FormattedMessage, useIntl } from "react-intl";
-import PatientStatusReport from "./PatientStatusReport";
+import PatientStatusReport from "../common/PatientStatusReport";
 import StatisticsReport from "./StatisticsReport";
 import ReferredOut from "./ReferredOut";
-import ReportByDate from "../study/common/ReportByDate";
+import ReportByDate from "../common/ReportByDate";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
 
@@ -48,7 +48,10 @@ const RoutineIndex = () => {
         {!isLoading && (
           <>
             {type === "patient" && report === "patientCILNSP_vreduit" && (
-              <PatientStatusReport />
+              <PatientStatusReport 
+                report={"patientCILNSP_vreduit"}
+                id={"openreports.patientTestStatus" }
+              />
             )}
 
             {type === "patient" && report === "referredOut" && <ReferredOut />}

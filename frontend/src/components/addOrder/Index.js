@@ -751,6 +751,7 @@ const Index = () => {
                 setOrderFormValues={setOrderFormValues}
                 samples={samples}
                 error={elementError}
+                isModifyOrder ={false}
               />
             )}
 
