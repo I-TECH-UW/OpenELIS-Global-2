@@ -17,6 +17,7 @@ import ReportByDate from "./common/ReportByDate";
 import ReportByLabNo from "./common/ReportByLabNo";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
+import ReportByDateCSV from "./common/ReportByDateCSV";
 
 const StudyIndex = () => {
   const intl = useIntl();
@@ -49,6 +50,8 @@ const StudyIndex = () => {
     patient_patientIndeterminate2: "project.IndeterminateStudy.name",
     patient_patientSpecialReport: "header.label.specialRequest",
     study_auditTrail: "reports.auditTrail",
+    patient_CIStudyExport : "reports.label.cistudyexport",
+    patient_Trends : "reports.label.trends"
   };
 
   useEffect(() => {
@@ -86,17 +89,6 @@ const StudyIndex = () => {
     <>
       <br />
       <PageBreadCrumb breadcrumbs={breadcrumbs} />
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Section>
-            <Section>
-              <Heading>
-                <FormattedMessage id="selectReportValues.title" />
-              </Heading>
-            </Section>
-          </Section>
-        </Column>
-      </Grid>
       <div className="orderLegendBody">
         {notificationVisible === true && <AlertDialog />}
         {isLoading && <Loading />}
@@ -115,6 +107,24 @@ const StudyIndex = () => {
                 id="header.label.ARV"
               />
             )}
+
+             {
+              type === "patient" && report === "CIStudyExport" && (
+               <ReportByDateCSV
+                report="CIStudyExport"
+                id="header.label.study.ciexport"
+              />
+              )
+            }
+
+             {
+              type === "patient" && report === "Trends" && (
+               <ReportByDateCSV
+                report="Trends"
+                id="header.label.study.vlloadtrends"
+              />
+              )
+            }
 
             {type === "patient" && report === "patientARVFollowup1" && (
               <ReportByLabNo
