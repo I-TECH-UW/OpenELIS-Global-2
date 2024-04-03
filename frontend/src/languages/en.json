@@ -354,6 +354,7 @@
   "patient.label": "Patient",
   "requester.label": "Requester",
   "search.patient.label": "Search for Patient",
+  
   "patient.information.healthid": "Enter Unique Health Identifier",
   "patient.information.nationalid": "Enter Nationality Identifier",
   "patient.information.lastname": "Enter Patient Last Name",
