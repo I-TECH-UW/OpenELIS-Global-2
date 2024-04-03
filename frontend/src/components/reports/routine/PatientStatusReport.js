@@ -42,6 +42,7 @@ import {
   AlertDialog,
   NotificationKinds,
 } from "../../common/CustomNotification";
+import { encodeDate } from "../../utils/Utils";
 
 function PatientStatusReport(props) {
   const [reportFormValues, setReportFormValues] = useState(
@@ -117,13 +118,7 @@ function PatientStatusReport(props) {
     setUrl(searchEndPoint);
   };
 
-  function encodeDate(dateString) {
-    if (typeof dateString === "string" && dateString.trim() !== "") {
-      return dateString.split("/").map(encodeURIComponent).join("%2F");
-    } else {
-      return "";
-    }
-  }
+
 
   function handlePatientIdFrom(e) {
     setReportFormValues({
@@ -377,7 +372,7 @@ function PatientStatusReport(props) {
   return (
     <>
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>

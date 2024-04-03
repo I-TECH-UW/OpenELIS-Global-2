@@ -13,6 +13,7 @@ import "../../../Style.css";
 import { AlertDialog } from "../../../common/CustomNotification";
 import CustomDatePicker from "../../../common/CustomDatePicker";
 import config from "../../../../config.json";
+import { encodeDate } from "../../../utils/Utils";
 
 const ReportByDate = (props) => {
   const intl = useIntl();
@@ -25,13 +26,6 @@ const ReportByDate = (props) => {
     error: null,
   });
 
-  function encodeDate(dateString) {
-    if (typeof dateString === "string" && dateString.trim() !== "") {
-      return dateString.split("/").map(encodeURIComponent).join("%2F");
-    } else {
-      return "";
-    }
-  }
 
   const handleDatePickerChangeDate = (datePicker, date) => {
     let updatedDate = encodeDate(date);
@@ -96,7 +90,7 @@ const ReportByDate = (props) => {
       {notificationVisible && <AlertDialog />}
       {loading && <Loading />}
       <Grid fullWidth={true}>
-        <Column lg={16} md={12} sm={8}>
+        <Column lg={16} md={8} sm={4}>
           <Form>
             <Grid fullWidth={true}>
               <Column lg={10} md={8} sm={4}>
