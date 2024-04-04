@@ -48,9 +48,9 @@ const RoutineIndex = () => {
         {!isLoading && (
           <>
             {type === "patient" && report === "patientCILNSP_vreduit" && (
-              <PatientStatusReport 
+              <PatientStatusReport
                 report={"patientCILNSP_vreduit"}
-                id={"openreports.patientTestStatus" }
+                id={"openreports.patientTestStatus"}
               />
             )}
 

@@ -58,7 +58,6 @@ const ReferredOut = () => {
     },
   ];
 
-
   const handleDatePickerChangeDate = (datePicker, date) => {
     let updatedDate = encodeDate(date);
     let obj = null;

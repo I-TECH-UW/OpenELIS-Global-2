@@ -274,7 +274,7 @@ const ModifyOrder = () => {
                   setOrderFormValues={setOrderFormValues}
                   samples={samples}
                   error={elementError}
-                  isModifyOrder ={true}
+                  isModifyOrder={true}
                 />
               )}
 

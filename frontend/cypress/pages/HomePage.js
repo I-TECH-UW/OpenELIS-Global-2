@@ -42,10 +42,14 @@ class HomePage {
 
   goToModifyOrderPage() {
     this.openNavigationMenu();
-    cy.getElement(':nth-child(1) > .cds--side-nav__item > .cds--side-nav__submenu').click();
-    cy.get(':nth-child(1) > .cds--side-nav__item > .cds--side-nav__menu > :nth-child(7) > .cds--side-nav__link > .cds--side-nav__link-text > [style="display: flex; width: 100%;"] > .custom-sidenav-button').click();
+    cy.getElement(
+      ":nth-child(1) > .cds--side-nav__item > .cds--side-nav__submenu",
+    ).click();
+    cy.get(
+      ':nth-child(1) > .cds--side-nav__item > .cds--side-nav__menu > :nth-child(7) > .cds--side-nav__link > .cds--side-nav__link-text > [style="display: flex; width: 100%;"] > .custom-sidenav-button',
+    ).click();
     return new ModifyOrderPage();
-}
+  }
 }
 
 export default HomePage;

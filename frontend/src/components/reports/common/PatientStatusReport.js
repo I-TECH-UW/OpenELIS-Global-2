@@ -26,12 +26,11 @@ import SearchPatientForm from "../../patient/SearchPatientForm";
 import { encodeDate } from "../../utils/Utils";
 
 function PatientStatusReport(props) {
-  
   const [reportFormValues, setReportFormValues] = useState(
     PatientStatusReportFormValues,
   );
   const { configurationProperties } = useContext(ConfigurationContext);
-  
+
   const intl = useIntl();
   const itemList = [
     {
@@ -53,13 +52,11 @@ function PatientStatusReport(props) {
   const [siteNames, setSiteNames] = useState([]);
   const [departments, setDepartments] = useState([]);
 
-
   const getSelectedPatient = (patient) => {
     setReportFormValues({
       ...reportFormValues,
       selectedPatientId: patient.patientPK,
     });
-    
   };
 
   const handleReportPrint = () => {
@@ -68,8 +65,6 @@ function PatientStatusReport(props) {
       `/ReportPrint?report=${props.report}&type=patient&accessionDirect=${reportFormValues.form}&highAccessionDirect=${reportFormValues.to}&dateOfBirthSearchValue=&selPatient=${reportFormValues.selectedPatientId}&referringSiteId=${reportFormValues.referringSiteId}&referringSiteDepartmentId=${reportFormValues.referringSiteName}&onlyResults=${result}&_onlyResults=${checkbox}&dateType=${items}&lowerDateRange=${reportFormValues.startDate}&upperDateRange=${reportFormValues.endDate}`;
     window.open(barcodesPdf);
   };
-
- 
 
   function handlePatientIdFrom(e) {
     setReportFormValues({
@@ -84,7 +79,6 @@ function PatientStatusReport(props) {
       to: e.target.value,
     });
   }
-
 
   function handleSiteName(e) {
     setReportFormValues({
@@ -111,32 +105,27 @@ function PatientStatusReport(props) {
     setDepartments(data);
   };
 
-
-
   const handleStartDatePickerChangeDate = (date) => {
     let startDate = encodeDate(date);
     setReportFormValues({
       ...reportFormValues,
       startDate: startDate,
-      })
+    });
   };
 
   const handleEndDatePickerChangeDate = (date) => {
-    let endDate = encodeDate(date);  
+    let endDate = encodeDate(date);
     setReportFormValues({
       ...reportFormValues,
-      endDate : endDate,
-      })
+      endDate: endDate,
+    });
   };
-
-
 
   const getSiteList = (response) => {
     if (componentMounted.current) {
       setSiteNames(response);
     }
   };
-
 
   useEffect(() => {
     getFromOpenElisServer(
@@ -155,9 +144,6 @@ function PatientStatusReport(props) {
     };
   }, []);
 
- 
-
-
   const breadcrumbs = [
     { label: "home.label", link: "/" },
     { label: "routine.reports", link: "/RoutineReports" },
@@ -174,31 +160,30 @@ function PatientStatusReport(props) {
           <Section>
             <Section>
               <Heading>
-                <FormattedMessage id={props.id}/>
+                <FormattedMessage id={props.id} />
               </Heading>
             </Section>
           </Section>
         </Column>
       </Grid>
       <Grid fullWidth={true}>
-          <Column lg={16} md={8} sm={4}>
-            <Section>
-              <h5>
-                <FormattedMessage id="report.enter.patient.headline" />
-              </h5>
-              <br />
-              <h6>
-                <FormattedMessage id="report.enter.patient.headline.description" />
-              </h6>
-            </Section>
-          </Column>
-          <Column lg={16} md={8} sm={4}>
-            <SearchPatientForm
-              getSelectedPatient={getSelectedPatient}
-            >
-            </SearchPatientForm>
-          </Column>
-        </Grid>
+        <Column lg={16} md={8} sm={4}>
+          <Section>
+            <h5>
+              <FormattedMessage id="report.enter.patient.headline" />
+            </h5>
+            <br />
+            <h6>
+              <FormattedMessage id="report.enter.patient.headline.description" />
+            </h6>
+          </Section>
+        </Column>
+        <Column lg={16} md={8} sm={4}>
+          <SearchPatientForm
+            getSelectedPatient={getSelectedPatient}
+          ></SearchPatientForm>
+        </Column>
+      </Grid>
       <Formik
         initialValues={reportFormValues}
         enableReinitialize={true}
@@ -243,49 +228,48 @@ function PatientStatusReport(props) {
               </Column>
             </Grid>
             <Grid>
-            <Column lg={8} md={8} sm={4}>
-              <Field name="from">
-                {({ field }) => (
-                  <CustomLabNumberInput
-                    name={field.name}
-                    value={values[field.name]}
-                    labelText={intl.formatMessage({
-                      id: "from.title",
-                      defaultMessage: "From",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                    onChange={(e, rawValue) => {
-                      setFieldValue(field.name, rawValue);
-                      handlePatientIdFrom(e);
-                    }}
-                  />
-                )}
-              </Field>
+              <Column lg={8} md={8} sm={4}>
+                <Field name="from">
+                  {({ field }) => (
+                    <CustomLabNumberInput
+                      name={field.name}
+                      value={values[field.name]}
+                      labelText={intl.formatMessage({
+                        id: "from.title",
+                        defaultMessage: "From",
+                      })}
+                      id={field.name}
+                      className="inputText"
+                      onChange={(e, rawValue) => {
+                        setFieldValue(field.name, rawValue);
+                        handlePatientIdFrom(e);
+                      }}
+                    />
+                  )}
+                </Field>
               </Column>
               <Column lg={8} md={8} sm={4}>
-              <Field name="to">
-                {({ field }) => (
-                  <CustomLabNumberInput
-                    name={field.name}
-                    value={values[field.name]}
-                    labelText={intl.formatMessage({
-                      id: "to.title",
-                      defaultMessage: "To",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                    onChange={(e, rawValue) => {
-                      setFieldValue(field.name, rawValue);
-                      handlePatientIdTo(e);
-                    }}
-                  />
-                )}
-              </Field>
+                <Field name="to">
+                  {({ field }) => (
+                    <CustomLabNumberInput
+                      name={field.name}
+                      value={values[field.name]}
+                      labelText={intl.formatMessage({
+                        id: "to.title",
+                        defaultMessage: "To",
+                      })}
+                      id={field.name}
+                      className="inputText"
+                      onChange={(e, rawValue) => {
+                        setFieldValue(field.name, rawValue);
+                        handlePatientIdTo(e);
+                      }}
+                    />
+                  )}
+                </Field>
               </Column>
             </Grid>
-            
-     
+
             <br />
             <Grid fullWidth={true}>
               <Column lg={16} md={8} sm={4}>
@@ -295,53 +279,53 @@ function PatientStatusReport(props) {
               </Column>
             </Grid>
             <Grid>
-            <Column lg={8} md={8} sm={4}>
-              <AutoComplete
-                name="siteName"
-                id="siteName"
-                allowFreeText={
-                  !(
-                    configurationProperties.restrictFreeTextRefSiteEntry ===
-                    "true"
-                  )
-                }
-                value={
-                  reportFormValues.referringSiteId != ""
-                    ? reportFormValues.referringSiteId
-                    : reportFormValues.referringSiteName
-                }
-                onChange={handleSiteName}
-                onSelect={handleAutoCompleteSiteName}
-                label={
-                  <>
-                    <FormattedMessage id="order.site.name" />
-                  </>
-                }
-                class="inputText"
-                style={{ width: "!important 100%" }}
-                suggestions={siteNames.length > 0 ? siteNames : []}
-              />
+              <Column lg={8} md={8} sm={4}>
+                <AutoComplete
+                  name="siteName"
+                  id="siteName"
+                  allowFreeText={
+                    !(
+                      configurationProperties.restrictFreeTextRefSiteEntry ===
+                      "true"
+                    )
+                  }
+                  value={
+                    reportFormValues.referringSiteId != ""
+                      ? reportFormValues.referringSiteId
+                      : reportFormValues.referringSiteName
+                  }
+                  onChange={handleSiteName}
+                  onSelect={handleAutoCompleteSiteName}
+                  label={
+                    <>
+                      <FormattedMessage id="order.site.name" />
+                    </>
+                  }
+                  class="inputText"
+                  style={{ width: "!important 100%" }}
+                  suggestions={siteNames.length > 0 ? siteNames : []}
+                />
               </Column>
-             <Column lg={8} md={8} sm={4}>
-              <Select
-                className="inputText"
-                id="requesterDepartmentId"
-                name="requesterDepartmentId"
-                labelText={intl.formatMessage({
-                  id: "order.department.label",
-                  defaultMessage: "ward/dept/unit",
-                })}
-                onChange={handleRequesterDept}
-              >
-                <SelectItem value="" text="" />
-                {departments.map((department, index) => (
-                  <SelectItem
-                    key={index}
-                    text={department.value}
-                    value={department.id}
-                  />
-                ))}
-              </Select>
+              <Column lg={8} md={8} sm={4}>
+                <Select
+                  className="inputText"
+                  id="requesterDepartmentId"
+                  name="requesterDepartmentId"
+                  labelText={intl.formatMessage({
+                    id: "order.department.label",
+                    defaultMessage: "ward/dept/unit",
+                  })}
+                  onChange={handleRequesterDept}
+                >
+                  <SelectItem value="" text="" />
+                  {departments.map((department, index) => (
+                    <SelectItem
+                      key={index}
+                      text={department.value}
+                      value={department.id}
+                    />
+                  ))}
+                </Select>
               </Column>
             </Grid>
             <Grid fullWidth={true}>
@@ -370,56 +354,54 @@ function PatientStatusReport(props) {
                   })}
                   id="checkbox-label-1"
                 />
-               </Column>
-               <Column lg={12} md={8} sm={4}></Column>
-               <Column lg={4} md={8} sm={4}> 
-                  <Dropdown
-                    id="dateType"
-                    name="dateType"
-                    titleText="Date Type"
-                    initialSelectedItem={itemList.find(
-                      (item) => item.tag === items,
-                    )}
-                    label="Date Type"
-                    items={itemList}
-                    itemToString={(item) => (item ? item.text : "")}
-                    onChange={(item) => {
-                      setItems(item.selectedItem.tag);
-                    }}
-                  />
-                </Column>
-                <Column lg={12} md={8} sm={4}></Column>
-                <Column lg={4} md={8} sm={4}> 
-                  <CustomDatePicker
-                    id={"startDate"}
-                    labelText={intl.formatMessage({
-                      id: "eorder.date.start",
-                      defaultMessage: "Start Date",
-                    })}
-                    autofillDate={true}
-                    value={reportFormValues.startDate}
-                    className="inputDate"
-                    onChange={(date) =>
-                      handleStartDatePickerChangeDate(date)
-                    }
-                  />
-                  </Column>
-                  <Column lg={4} md={8} sm={4}>
-                  <CustomDatePicker
-                    id={"endDate"}
-                    labelText={intl.formatMessage({
-                      id: "eorder.date.end",
-                      defaultMessage: "End Date",
-                    })}
-                    className="inputDate"
-                    autofillDate={true}
-                    value={reportFormValues.endDate}
-                    onChange={(date) =>
-                      handleEndDatePickerChangeDate(date)
-                    }
-                  />
               </Column>
-              <Column lg={8} md={8} sm={4}> </Column>
+              <Column lg={12} md={8} sm={4}></Column>
+              <Column lg={4} md={8} sm={4}>
+                <Dropdown
+                  id="dateType"
+                  name="dateType"
+                  titleText="Date Type"
+                  initialSelectedItem={itemList.find(
+                    (item) => item.tag === items,
+                  )}
+                  label="Date Type"
+                  items={itemList}
+                  itemToString={(item) => (item ? item.text : "")}
+                  onChange={(item) => {
+                    setItems(item.selectedItem.tag);
+                  }}
+                />
+              </Column>
+              <Column lg={12} md={8} sm={4}></Column>
+              <Column lg={4} md={8} sm={4}>
+                <CustomDatePicker
+                  id={"startDate"}
+                  labelText={intl.formatMessage({
+                    id: "eorder.date.start",
+                    defaultMessage: "Start Date",
+                  })}
+                  autofillDate={true}
+                  value={reportFormValues.startDate}
+                  className="inputDate"
+                  onChange={(date) => handleStartDatePickerChangeDate(date)}
+                />
+              </Column>
+              <Column lg={4} md={8} sm={4}>
+                <CustomDatePicker
+                  id={"endDate"}
+                  labelText={intl.formatMessage({
+                    id: "eorder.date.end",
+                    defaultMessage: "End Date",
+                  })}
+                  className="inputDate"
+                  autofillDate={true}
+                  value={reportFormValues.endDate}
+                  onChange={(date) => handleEndDatePickerChangeDate(date)}
+                />
+              </Column>
+              <Column lg={8} md={8} sm={4}>
+                {" "}
+              </Column>
             </Grid>
             <div className="formInlineDiv">
               <div className="searchActionButtons">

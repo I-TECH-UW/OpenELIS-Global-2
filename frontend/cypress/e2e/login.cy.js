@@ -17,7 +17,7 @@ describe("Failing or Succeeding to Login", function () {
         login.enterUsername(user.username);
         login.enterPassword(user.password);
         login.signIn();
-  
+
         if (user.correctPass === true) {
           cy.get("header#mainHeader > button[title='Open menu']")
             .should("exist")
@@ -31,5 +31,4 @@ describe("Failing or Succeeding to Login", function () {
       });
     });
   });
-  
 });

@@ -27,7 +27,8 @@ const AddOrder = (props) => {
 
   const componentMounted = useRef(false);
 
-  const {orderFormValues, setOrderFormValues, samples, error ,isModifyOrder} = props;
+  const { orderFormValues, setOrderFormValues, samples, error, isModifyOrder } =
+    props;
   const [otherSamplingVisible, setOtherSamplingVisible] = useState(false);
   const [providers, setProviders] = useState([]);
   const [paymentOptions, setPaymentOptions] = useState([]);
@@ -222,7 +223,7 @@ const AddOrder = (props) => {
         providerEmail: data.person.email,
         providerFax: data.person.fax,
         providerId: data.id,
-        providerPersonId : data.person.id
+        providerPersonId: data.person.id,
       },
     });
   }
@@ -249,16 +250,15 @@ const AddOrder = (props) => {
   }
 
   function clearProviderId(e) {
-    if(e.target.value == ""){
+    if (e.target.value == "") {
       setOrderFormValues({
         ...orderFormValues,
         sampleOrderItems: {
           ...orderFormValues.sampleOrderItems,
           providerId: "",
-          providerPersonId : ""
+          providerPersonId: "",
         },
       });
-
     }
   }
 
@@ -277,21 +277,21 @@ const AddOrder = (props) => {
   };
 
   function handleLabNo(e, rawVal) {
-   if(isModifyOrder){
-    setOrderFormValues({
-      ...orderFormValues,
-      newAccessionNumber: e?.target?.value,
-    });
-   }else {
-    setOrderFormValues({
-      ...orderFormValues,
-      sampleOrderItems: {
-        ...orderFormValues.sampleOrderItems,
-        labNo: rawVal ? rawVal : e?.target?.value,
-      },
-    });
-   }
-    handleLabNoValidationOnChange(e?.target?.value)
+    if (isModifyOrder) {
+      setOrderFormValues({
+        ...orderFormValues,
+        newAccessionNumber: e?.target?.value,
+      });
+    } else {
+      setOrderFormValues({
+        ...orderFormValues,
+        sampleOrderItems: {
+          ...orderFormValues.sampleOrderItems,
+          labNo: rawVal ? rawVal : e?.target?.value,
+        },
+      });
+    }
+    handleLabNoValidationOnChange(e?.target?.value);
     setNotificationVisible(false);
   }
 
@@ -390,12 +390,12 @@ const AddOrder = (props) => {
 
   function fetchGeneratedAccessionNo(res) {
     if (res.status) {
-      if(isModifyOrder){
+      if (isModifyOrder) {
         setOrderFormValues({
           ...orderFormValues,
           newAccessionNumber: res.body,
         });
-      }else{
+      } else {
         setOrderFormValues({
           ...orderFormValues,
           sampleOrderItems: {
@@ -450,14 +450,13 @@ const AddOrder = (props) => {
               value={orderFormValues.sampleOrderItems.externalOrderNumber}
             />
           )}
-          { isModifyOrder  && (
-              <h5>
-                {" "}
-                <FormattedMessage id="sample.label.labnumber" />:{" "}
-                {orderFormValues.accessionNumber}
-              </h5>
-              )
-            }
+          {isModifyOrder && (
+            <h5>
+              {" "}
+              <FormattedMessage id="sample.label.labnumber" />:{" "}
+              {orderFormValues.accessionNumber}
+            </h5>
+          )}
           <div className="formInlineDiv">
             <div className="inputText">
               <CustomLabNumberInput
@@ -465,7 +464,11 @@ const AddOrder = (props) => {
                 placeholder={intl.formatMessage({
                   id: "input.placeholder.labNo",
                 })}
-                value={isModifyOrder? orderFormValues.newAccessionNumber : orderFormValues.sampleOrderItems.labNo}
+                value={
+                  isModifyOrder
+                    ? orderFormValues.newAccessionNumber
+                    : orderFormValues.sampleOrderItems.labNo
+                }
                 //onMouseLeave={handleLabNoValidation}
                 onChange={handleLabNo}
                 onKeyPress={handleKeyPress}
