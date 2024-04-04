@@ -26,7 +26,6 @@ const ReportByDate = (props) => {
     error: null,
   });
 
-
   const handleDatePickerChangeDate = (datePicker, date) => {
     let updatedDate = encodeDate(date);
     let obj = null;

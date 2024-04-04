@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react" 
+import React, { useEffect, useState } from "react";
 import {
   Form,
   FormLabel,
@@ -16,7 +16,6 @@ import { AlertDialog } from "../../common/CustomNotification";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import config from "../../../config.json";
 import { encodeDate, getFromOpenElisServer } from "../../utils/Utils";
-
 
 const ReportByDateCSV = (props) => {
   const intl = useIntl();
@@ -42,8 +41,6 @@ const ReportByDateCSV = (props) => {
       };
     }
   });
-
-
 
   const handleDatePickerChangeDate = (datePicker, date) => {
     let updatedDate = encodeDate(date);
@@ -119,21 +116,18 @@ const ReportByDateCSV = (props) => {
     setNotificationVisible(true);
   };
 
-
-  useEffect(()=>{
-    if(props.report === "CIStudyExport"){
-    getFromOpenElisServer("/rest/projects",(data)=>{
-      setStatusOptions(data)
-      console.log("data",data)
-    })
+  useEffect(() => {
+    if (props.report === "CIStudyExport") {
+      getFromOpenElisServer("/rest/projects", (data) => {
+        setStatusOptions(data);
+        console.log("data", data);
+      });
+    } else {
+      getFromOpenElisServer("/rest/trendsprojects", (data) => {
+        setStatusOptions(data);
+      });
     }
-    else{
-      getFromOpenElisServer("/rest/trendsprojects",(data)=>{
-        setStatusOptions(data)
-      })
-    }
-
-  },[props])
+  }, [props]);
 
   const dateOptions = [
     {

@@ -22,18 +22,17 @@ class LoginPage {
 
   enterUsername(value) {
     const field = this.getUsernameElement();
-    field.should('be.visible').clear();
-    this.getUsernameElement().type(value); 
+    field.should("be.visible").clear();
+    this.getUsernameElement().type(value);
     return this;
   }
-  
+
   enterPassword(value) {
     const field = this.getPasswordElement();
-    field.should('be.visible').clear();
-    this.getPasswordElement().type(value); 
+    field.should("be.visible").clear();
+    this.getPasswordElement().type(value);
     return this;
   }
-  
 
   signIn() {
     const button = cy.getElement(`[type='submit']`);

@@ -396,7 +396,7 @@ public class DisplayListController extends BaseRestController{
 	@GetMapping(value = "test-sections", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	private List<IdValuePair> createTestSectionsList() {
-		return DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS);
+		return DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE);
 	}
 
 	@GetMapping(value = "user-test-sections", produces = MediaType.APPLICATION_JSON_VALUE)

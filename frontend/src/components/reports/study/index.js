@@ -50,8 +50,8 @@ const StudyIndex = () => {
     patient_patientIndeterminate2: "project.IndeterminateStudy.name",
     patient_patientSpecialReport: "header.label.specialRequest",
     study_auditTrail: "reports.auditTrail",
-    patient_CIStudyExport : "reports.label.cistudyexport",
-    patient_Trends : "reports.label.trends"
+    patient_CIStudyExport: "reports.label.cistudyexport",
+    patient_Trends: "reports.label.trends",
   };
 
   useEffect(() => {
@@ -119,23 +119,19 @@ const StudyIndex = () => {
               />
             )}
 
-             {
-              type === "patient" && report === "CIStudyExport" && (
-               <ReportByDateCSV
+            {type === "patient" && report === "CIStudyExport" && (
+              <ReportByDateCSV
                 report="CIStudyExport"
                 id="header.label.study.ciexport"
               />
-              )
-            }
+            )}
 
-             {
-              type === "patient" && report === "Trends" && (
-               <ReportByDateCSV
+            {type === "patient" && report === "Trends" && (
+              <ReportByDateCSV
                 report="Trends"
                 id="header.label.study.vlloadtrends"
               />
-              )
-            }
+            )}
 
             {type === "patient" && report === "patientARVFollowup1" && (
               <ReportByLabNo

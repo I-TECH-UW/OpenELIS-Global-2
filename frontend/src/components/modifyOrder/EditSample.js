@@ -26,7 +26,8 @@ import {
   OrderPossibleTestsHeaders,
 } from "../data/orderCurrentTestsHeaders";
 const EditSample = (props) => {
-  const { samples, setSamples, orderFormValues, setOrderFormValues ,error} = props;
+  const { samples, setSamples, orderFormValues, setOrderFormValues, error } =
+    props;
 
   const componentMounted = useRef(false);
 
