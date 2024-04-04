@@ -56,7 +56,7 @@ type MetricType =
   | "ORDERS_FOR_USER";
 
   interface UserSessionDetails {
-    userSessionDetails: {};
+    userSessionDetails: any;
   }
 
   interface Notification {
