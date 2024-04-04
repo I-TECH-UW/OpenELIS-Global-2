@@ -38,6 +38,7 @@ import StudyIndex from "./components/reports/study/index";
 import PrintBarcode from "./components/printBarcode/Index";
 
 export default function App() {
+
   let i18nConfig = {
     locale: navigator.language.split(/[-_]/)[0],
     defaultLocale: "en",
@@ -198,6 +199,7 @@ export default function App() {
           logout,
           refresh,
         }}
+        
       >
         <>
           <Router>

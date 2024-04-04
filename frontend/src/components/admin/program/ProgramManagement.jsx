@@ -18,7 +18,7 @@ import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
 } from "../../utils/Utils";
-import { Questionnaire } from "../../addOrder/OrderEntryAdditionalQuestions.jsx";
+import { Questionnaire } from "../../addOrder/OrderEntryAdditionalQuestions";
 import { NotificationContext } from "../../layout/Layout";
 import {
   AlertDialog,

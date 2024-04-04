@@ -13,7 +13,7 @@ import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
 } from "../../utils/Utils";
-import { MenuCheckBox } from "./MenuUtil.jsx";
+import { MenuCheckBox } from "./MenuUtil";
 import { NotificationContext } from "../../layout/Layout";
 import {
   AlertDialog,

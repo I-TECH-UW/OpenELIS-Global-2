@@ -1,6 +1,6 @@
 import { injectIntl } from "react-intl";
 import HomeDashBoard from "./home/Dashboard.tsx";
-import PageBreadCrumb from "./common/PageBreadCrumb.jsx";
+import PageBreadCrumb from "./common/PageBreadCrumb";
 
 let breadcrumbs = [{ label: "home.label", link: "/" }];
 

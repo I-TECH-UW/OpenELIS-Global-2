@@ -9,7 +9,7 @@ import {
   Column,
   Section,
 } from "@carbon/react";
-import { MenuCheckBox } from "./MenuUtil.jsx";
+import { MenuCheckBox } from "./MenuUtil";
 import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
