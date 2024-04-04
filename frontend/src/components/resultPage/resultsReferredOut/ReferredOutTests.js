@@ -10,33 +10,19 @@ import {
   FilterableMultiSelect,
   Column,
   Section,
-  TextInput,
   Button,
-  DatePicker,
-  DatePickerInput,
-  RadioButton,
-  RadioButtonGroup,
   Loading,
-  DataTable,
-  Pagination,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableHeader,
-  TableBody,
-  TableCell,
   Tag,
 } from "@carbon/react";
 import CustomLabNumberInput from "../../common/CustomLabNumberInput";
 import config from "../../../config.json";
-import { patientSearchHeaderData } from "../../data/PatientResultsTableHeaders";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import { ConfigurationContext } from "../../layout/Layout";
 import { Formik, Field } from "formik";
 import ReferredOutTestsFormValues from "../../formModel/innitialValues/ReferredOutTestsFormValues";
 import { NotificationContext } from "../../layout/Layout";
+import SearchPatientForm from "../../patient/SearchPatientForm";
 import {
   AlertDialog,
   NotificationKinds,
@@ -51,7 +37,6 @@ function ReferredOutTests(props) {
   const [referredOutTestsFormValues, setReferredOutTestsFormValues] = useState(
     ReferredOutTestsFormValues,
   );
-  // const { referredOutTestsFormValues, setReferredOutTestsFormValues, getSelectedPatient, samples, error } = props;
   const { configurationProperties } = useContext(ConfigurationContext);
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
@@ -80,20 +65,12 @@ function ReferredOutTests(props) {
   const [testNamesValuesList, setTestNamesValuesList] = useState([]);
   const [testNamesPair, setTestNamesPair] = useState([]);
   const [dateType, setDateType] = useState(dateTypeList[0].tag);
-  const [dob, setDob] = useState("");
-  const [patientSearchResults, setPatientSearchResults] = useState([]);
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
   const [loading, setLoading] = useState(false);
-  const [nextPage, setNextPage] = useState(null);
-  const [previousPage, setPreviousPage] = useState(null);
-  const [pagination, setPagination] = useState(false);
-  const [url, setUrl] = useState("");
   const [searchType, setSearchType] = useState("");
   const [innitialized, setInnitialized] = useState(false);
   const [tests, setTests] = useState([]);
   const [testSections, setTestSections] = useState([]);
-  const [responseData, setResponseData] = useState(null);
+  const [responseData, setResponseData] = useState([]); // response post from backend
 
   const handleReferredOutPatient = () => {
     const referredOutTestsEndpoint =
@@ -117,7 +94,7 @@ function ReferredOutTests(props) {
     const requestBody = {
       searchType: searchType,
       dateType: dateType,
-      startDate: referredOutTestsFormValues.endDate,
+      startDate: referredOutTestsFormValues.startDate,
       endDate: referredOutTestsFormValues.endDate,
       testUnitSelectionList: testUnitsPair,
       testUnitIds: testUnitsIdList,
@@ -141,9 +118,11 @@ function ReferredOutTests(props) {
         if (!response.ok) {
           throw new Error("Failed to submit data");
         }
+        return response.json();
       })
       .then((data) => {
-        setResponseData(data);
+        console.error(JSON.stringify(data));
+        setResponseData(JSON.stringify(data));
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -152,38 +131,9 @@ function ReferredOutTests(props) {
 
   const handleSubmit = (values) => {
     setLoading(true);
-    values.dateOfBirth = dob;
-    const searchEndPoint =
-      "/rest/patient-search-results?" +
-      "&lastName=" +
-      values.lastName +
-      "&firstName=" +
-      values.firstName +
-      "&STNumber=" +
-      values.patientId +
-      "&subjectNumber=" +
-      values.patientId +
-      "&nationalID=" +
-      values.patientId +
-      "&labNumber=" +
-      values.labNumber +
-      "&guid=" +
-      values.guid +
-      "&dateOfBirth=" +
-      values.dateOfBirth +
-      "&gender=" +
-      values.gender;
-    getFromOpenElisServer(searchEndPoint, fetchPatientResults);
-    setUrl(searchEndPoint);
+    handleReferredOutPatient();
+    setLoading(false);
   };
-
-  function encodeDate(dateString) {
-    if (typeof dateString === "string" && dateString.trim() !== "") {
-      return dateString.split("/").map(encodeURIComponent).join("%2F");
-    } else {
-      return "";
-    }
-  }
 
   function handleLabNumberSearch(e) {
     setReferredOutTestsFormValues({
@@ -193,108 +143,15 @@ function ReferredOutTests(props) {
     setSearchType(referredOutTestsFormValues.searchTypeValues[1]);
   }
 
-  function handleLabNumber(e) {
+  const getSelectedPatient = (patient) => {
+    setSearchType(referredOutTestsFormValues.searchTypeValues[2]);
     setReferredOutTestsFormValues({
       ...referredOutTestsFormValues,
-      labNumber: e.target.value,
+      selectedPatientId: patient.patientPK,
     });
-    setSearchType(referredOutTestsFormValues.searchTypeValues[2]);
-  }
-
-  function handlePatientId(e) {
-    setReferredOutTestsFormValues({
-      ...referredOutTestsFormValues,
-      patientId: e.target.value,
-    });
-    setSearchType(referredOutTestsFormValues.searchTypeValues[2]);
-  }
-
-  function handleLastName(e) {
-    setReferredOutTestsFormValues({
-      ...referredOutTestsFormValues,
-      lastName: e.target.value,
-    });
-    setSearchType(referredOutTestsFormValues.searchTypeValues[2]);
-  }
-
-  function handleFirstName(e) {
-    setReferredOutTestsFormValues({
-      ...referredOutTestsFormValues,
-      firstName: e.target.value,
-    });
-    setSearchType(referredOutTestsFormValues.searchTypeValues[2]);
-  }
-
-  function handleGender(e) {
-    setReferredOutTestsFormValues({
-      ...referredOutTestsFormValues,
-      gender: e,
-    });
-    setSearchType(referredOutTestsFormValues.searchTypeValues[2]);
-  }
-
-  const loadNextResultsPage = () => {
-    setLoading(true);
-    getFromOpenElisServer(url + "&page=" + nextPage, fetchPatientResults);
-  };
-
-  const loadPreviousResultsPage = () => {
-    setLoading(true);
-    getFromOpenElisServer(url + "&page=" + previousPage, fetchPatientResults);
-  };
-
-  const fetchPatientResults = (res) => {
-    let patientsResults = res.patientSearchResults;
-    if (patientsResults.length > 0) {
-      patientsResults.forEach((item) => (item.id = item.patientID));
-      setPatientSearchResults(patientsResults);
-    } else {
-      setPatientSearchResults([]);
-      addNotification({
-        title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "patient.search.nopatient" }),
-        kind: NotificationKinds.warning,
-      });
-      setNotificationVisible(true);
-    }
-    if (res.paging) {
-      var { totalPages, currentPage } = res.paging;
-      if (totalPages > 1) {
-        setPagination(true);
-        if (parseInt(currentPage) < parseInt(totalPages)) {
-          setNextPage(parseInt(currentPage) + 1);
-        } else {
-          setNextPage(null);
-        }
-        if (parseInt(currentPage) > 1) {
-          setPreviousPage(parseInt(currentPage) - 1);
-        } else {
-          setPreviousPage(null);
-        }
-      }
-    }
-    setLoading(false);
-  };
-
-  const fetchPatientDetails = (patientDetails) => {
-    props.getSelectedPatient(patientDetails);
-  };
-
-  const handleDatePickerChange = (...e) => {
-    // let updatedDate = encodeDate(e[1]);
-    let updatedDate = e[1];
-
-    setReferredOutTestsFormValues({
-      ...referredOutTestsFormValues,
-      dateOfBirth: updatedDate,
-    });
-
-    setDob(e[1]);
-    setSearchType(referredOutTestsFormValues.searchTypeValues[2]);
   };
 
   const handleDatePickerChangeDate = (datePicker, date) => {
-    // let updatedDate = encodeDate(date);
     let updatedDate = date;
     let obj = null;
     switch (datePicker) {
@@ -312,8 +169,6 @@ function ReferredOutTests(props) {
         break;
       default:
         obj = {
-          // startDate: encodeDate(configurationProperties.currentDateAsText),
-          // endDate: encodeDate(configurationProperties.currentDateAsText),
           startDate: configurationProperties.currentDateAsText,
           endDate: configurationProperties.currentDateAsText,
         };
@@ -323,32 +178,6 @@ function ReferredOutTests(props) {
       PatientStatusReportFormValues: obj,
     });
     setSearchType(referredOutTestsFormValues.searchTypeValues[0]);
-  };
-
-  const patientSelected = (e) => {
-    const patientSelected = patientSearchResults.find((patient) => {
-      return patient.patientID == e.target.id;
-    });
-
-    setReferredOutTestsFormValues({
-      ...referredOutTestsFormValues,
-      selectedPatientId: e.target.id,
-    });
-    setSearchType(referredOutTestsFormValues.searchTypeValues[2]);
-
-    const searchEndPoint =
-      "/rest/patient-details?patientID=" + patientSelected.patientID;
-    getFromOpenElisServer(searchEndPoint, fetchPatientDetails);
-  };
-
-  const handlePageChange = (pageInfo) => {
-    if (page != pageInfo.page) {
-      setPage(pageInfo.page);
-    }
-
-    if (pageSize != pageInfo.pageSize) {
-      setPageSize(pageInfo.pageSize);
-    }
   };
 
   const fetchTestSections = (response) => {
@@ -411,10 +240,10 @@ function ReferredOutTests(props) {
       setTestNames(testSectionLabel);
       fetchTestSections(fetchedTestSections);
     });
-    if (testSectionId) {
-      let values = { unitType: testSectionId };
-      querySearch(values);
-    }
+    // if (testSectionId) {
+    //   let values = { unitType: testSectionId };
+    //   querySearch(values);
+    // }
   }, []);
 
   useEffect(() => {
@@ -469,6 +298,32 @@ function ReferredOutTests(props) {
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading />}
       <div className="orderLegendBody">
+        <Grid fullWidth={true}>
+          <Column lg={16} md={8} sm={4}>
+            <Section>
+              <div className="formInlineDiv">
+                <h5>
+                  <FormattedMessage id="referral.main.button" />
+                </h5>
+              </div>
+              <br />
+              <SearchPatientForm
+                getSelectedPatient={getSelectedPatient}
+              ></SearchPatientForm>
+              <div className="formInlineDiv">
+                <div className="searchActionButtons">
+                  <Button type="button" onClick={handleReferredOutPatient}>
+                    <FormattedMessage
+                      id="referral.main.button"
+                      defaultMessage="Search Referrals By Patient"
+                    />
+                  </Button>
+                </div>
+              </div>
+            </Section>
+          </Column>
+        </Grid>
+        <hr />
         <Formik
           initialValues={referredOutTestsFormValues}
           enableReinitialize={true}
@@ -503,8 +358,9 @@ function ReferredOutTests(props) {
                         <FormattedMessage id="referral.out.request" />
                       </h5>
                       <Dropdown
-                        id="dateType"
+                        id={"dateType"}
                         name="dateType"
+                        label="Date Type"
                         initialSelectedItem={dateTypeList.find(
                           (item) => item.tag === dateType,
                         )}
@@ -566,6 +422,9 @@ function ReferredOutTests(props) {
                                 ...testUnits,
                                 testUnits: changes.selectedItems,
                               });
+                              setSearchType(
+                                referredOutTestsFormValues.searchTypeValues[0],
+                              );
                             }}
                             selectionFeedback="top-after-reopen"
                           />
@@ -603,6 +462,9 @@ function ReferredOutTests(props) {
                                 ...testNames,
                                 testNames: changes.selectedItems,
                               });
+                              setSearchType(
+                                referredOutTestsFormValues.searchTypeValues[0],
+                              );
                             }}
                             selectionFeedback="top-after-reopen"
                           />
@@ -691,271 +553,9 @@ function ReferredOutTests(props) {
                 </Column>
               </Grid>
               <hr />
-              <Grid fullWidth={true}>
-                <Column lg={16} md={8} sm={4}>
-                  <Section>
-                    <h5>
-                      <FormattedMessage id="referral.search" />
-                    </h5>
-                    <div className="formInlineDiv">
-                      <Field name="labNumber">
-                        {({ field }) => (
-                          <CustomLabNumberInput
-                            name={field.name}
-                            labelText={intl.formatMessage({
-                              id: "eorder.labNumber",
-                              defaultMessage: "Lab Number",
-                            })}
-                            id={field.name}
-                            className="inputText"
-                            value={values[field.name]}
-                            onChange={(e, rawValue) => {
-                              setFieldValue(field.name, rawValue);
-                              handleLabNumber(e);
-                            }}
-                          />
-                        )}
-                      </Field>
-                      <Field name="patientId">
-                        {({ field }) => (
-                          <TextInput
-                            name={field.name}
-                            value={values[field.name]}
-                            labelText={intl.formatMessage({
-                              id: "patient.id",
-                              defaultMessage: "Patient Id",
-                            })}
-                            id={field.name}
-                            className="inputText"
-                            onChange={handlePatientId}
-                          />
-                        )}
-                      </Field>
-                      <Field name="lastName">
-                        {({ field }) => (
-                          <TextInput
-                            name={field.name}
-                            labelText={intl.formatMessage({
-                              id: "patient.last.name",
-                              defaultMessage: "Last Name",
-                            })}
-                            id={field.name}
-                            className="inputText"
-                            onChange={handleLastName}
-                          />
-                        )}
-                      </Field>
-                      <Field name="firstName">
-                        {({ field }) => (
-                          <TextInput
-                            name={field.name}
-                            labelText={intl.formatMessage({
-                              id: "patient.first.name",
-                              defaultMessage: "First Name",
-                            })}
-                            id={field.name}
-                            className="inputText"
-                            onChange={handleFirstName}
-                          />
-                        )}
-                      </Field>
-                      <Field name="dateOfBirth">
-                        {({ field }) => (
-                          <DatePicker
-                            onChange={handleDatePickerChange}
-                            name={field.name}
-                            dateFormat="d/m/Y"
-                            datePickerType="single"
-                            light={true}
-                            className="inputText"
-                          >
-                            <DatePickerInput
-                              id="date-picker-default-id"
-                              placeholder="dd/mm/yyyy"
-                              labelText={intl.formatMessage({
-                                id: "patient.dob",
-                                defaultMessage: "Date of Birth",
-                              })}
-                              type="text"
-                              name={field.name}
-                            />
-                          </DatePicker>
-                        )}
-                      </Field>
-                      <Field name="gender">
-                        {({ field }) => (
-                          <RadioButtonGroup
-                            className="inputText"
-                            defaultSelected=""
-                            legendText={intl.formatMessage({
-                              id: "patient.gender",
-                              defaultMessage: "Gender",
-                            })}
-                            name={field.name}
-                            id="search_patient_gender"
-                            onChange={handleGender}
-                          >
-                            <RadioButton
-                              id="search-radio-1"
-                              labelText={intl.formatMessage({
-                                id: "patient.male",
-                                defaultMessage: "Male",
-                              })}
-                              value="M"
-                            />
-                            <RadioButton
-                              id="search-radio-2"
-                              labelText={intl.formatMessage({
-                                id: "patient.female",
-                                defaultMessage: "Female",
-                              })}
-                              value="F"
-                            />
-                          </RadioButtonGroup>
-                        )}
-                      </Field>
-                    </div>
-                    <div className="formInlineDiv">
-                      <div className="searchActionButtons">
-                        <Button type="submit">
-                          <FormattedMessage
-                            id="referral.button.patientSearch"
-                            defaultMessage="Search Patient"
-                          />
-                        </Button>
-                      </div>
-                    </div>
-                  </Section>
-                </Column>
-              </Grid>
-              <Column lg={16}>
-                {pagination && (
-                  <Grid>
-                    <Column lg={11} />
-                    <Column lg={2}>
-                      <Button
-                        type=""
-                        id="loadpreviousresults"
-                        onClick={loadPreviousResultsPage}
-                        disabled={previousPage != null ? false : true}
-                      >
-                        <FormattedMessage id="button.label.loadprevious" />
-                      </Button>
-                    </Column>
-                    <Column lg={2}>
-                      <Button
-                        type=""
-                        id="loadnextresults"
-                        disabled={nextPage != null ? false : true}
-                        onClick={loadNextResultsPage}
-                      >
-                        <FormattedMessage id="button.label.loadnext" />
-                      </Button>
-                    </Column>
-                  </Grid>
-                )}
-              </Column>
-              <div>
-                <Column lg={16}>
-                  <DataTable
-                    rows={patientSearchResults}
-                    headers={patientSearchHeaderData}
-                    isSortable
-                  >
-                    {({ rows, headers, getHeaderProps, getTableProps }) => (
-                      <TableContainer title="Patient Results">
-                        <Table {...getTableProps()}>
-                          <TableHead>
-                            <TableRow>
-                              <TableHeader></TableHeader>
-                              {headers.map((header) => (
-                                <TableHeader
-                                  key={header.key}
-                                  {...getHeaderProps({ header })}
-                                >
-                                  {header.header}
-                                </TableHeader>
-                              ))}
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            <>
-                              {rows
-                                .slice((page - 1) * pageSize)
-                                .slice(0, pageSize)
-                                .map((row) => (
-                                  <TableRow key={row.id}>
-                                    <TableCell>
-                                      {" "}
-                                      <RadioButton
-                                        name="radio-group"
-                                        onClick={patientSelected}
-                                        labelText=""
-                                        id={row.id}
-                                      />
-                                    </TableCell>
-                                    {row.cells.map((cell) => (
-                                      <TableCell key={cell.id}>
-                                        {cell.value}
-                                      </TableCell>
-                                    ))}
-                                  </TableRow>
-                                ))}
-                            </>
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                    )}
-                  </DataTable>
-                  <Pagination
-                    onChange={handlePageChange}
-                    page={page}
-                    pageSize={pageSize}
-                    pageSizes={[5, 10, 20, 30]}
-                    totalItems={patientSearchResults.length}
-                  ></Pagination>
-                </Column>
-              </div>
-              <div className="formInlineDiv">
-                <div className="searchActionButtons">
-                  <Button type="button" onClick={handleReferredOutPatient}>
-                    <FormattedMessage
-                      id="referral.main.button"
-                      defaultMessage="Search Referrals By Patient"
-                    />
-                  </Button>
-                </div>
-              </div>
-              <hr />
             </Form>
           )}
         </Formik>
-        <div>
-          herrlo
-          {responseData && (
-            <div>
-              <p>Received Data:</p>
-              <p>Name: {responseData.labNumberInput}</p>
-            </div>
-          )}
-        </div>
-        <div>
-          <button
-            onClick={() => {
-              console.log(
-                testNames,
-                "\n",
-                testUnits,
-                "\n",
-                testUnitsPair,
-                "\n",
-                testNamesPair,
-              );
-            }}
-          >
-            click
-          </button>
-        </div>
       </div>
     </>
   );
