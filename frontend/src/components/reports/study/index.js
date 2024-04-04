@@ -11,12 +11,13 @@ import {
   Loading,
 } from "@carbon/react";
 import { injectIntl, FormattedMessage, useIntl } from "react-intl";
-import GenericReport from "./common/GenericReport";
-import ReportByID from "./common/ReportByID";
-import ReportByDate from "./common/ReportByDate";
-import ReportByLabNo from "./common/ReportByLabNo";
+import PatientStatusReport from "../common/PatientStatusReport";
+import ReportByID from "../common/ReportByID";
+import ReportByDate from "../common/ReportByDate";
+import ReportByLabNo from "../common/ReportByLabNo";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
+import ReportByDateCSV from "../common/ReportByDateCSV";
 
 const StudyIndex = () => {
   const intl = useIntl();
@@ -49,6 +50,8 @@ const StudyIndex = () => {
     patient_patientIndeterminate2: "project.IndeterminateStudy.name",
     patient_patientSpecialReport: "header.label.specialRequest",
     study_auditTrail: "reports.auditTrail",
+    patient_CIStudyExport: "reports.label.cistudyexport",
+    patient_Trends: "reports.label.trends",
   };
 
   useEffect(() => {
@@ -87,7 +90,7 @@ const StudyIndex = () => {
       <br />
       <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>
@@ -116,6 +119,20 @@ const StudyIndex = () => {
               />
             )}
 
+            {type === "patient" && report === "CIStudyExport" && (
+              <ReportByDateCSV
+                report="CIStudyExport"
+                id="header.label.study.ciexport"
+              />
+            )}
+
+            {type === "patient" && report === "Trends" && (
+              <ReportByDateCSV
+                report="Trends"
+                id="header.label.study.vlloadtrends"
+              />
+            )}
+
             {type === "patient" && report === "patientARVFollowup1" && (
               <ReportByLabNo
                 report="patientARVFollowup1"
@@ -138,15 +155,15 @@ const StudyIndex = () => {
             )}
 
             {type === "patient" && report === "patientEID1" && (
-              <GenericReport report="patientEID1" id="header.label.EID" />
+              <PatientStatusReport report="patientEID1" id="header.label.EID" />
             )}
 
             {type === "patient" && report === "patientEID2" && (
-              <GenericReport report="patientEID2" id="header.label.EID" />
+              <ReportByLabNo report="patientEID2" id="header.label.EID" />
             )}
 
             {type === "patient" && report === "patientVL1" && (
-              <GenericReport
+              <PatientStatusReport
                 report="patientVL1"
                 id="banner.menu.resultvalidation.viralload"
               />

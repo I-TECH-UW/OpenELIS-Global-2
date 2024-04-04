@@ -235,7 +235,7 @@ public class ExportTrendsByDate extends CSVSampleExportReport implements IReport
      *
      * @return a list of the correct projects for display
      */
-    protected List<Project> getProjectList() {
+    public List<Project> getProjectList() {
         List<Project> projects = new ArrayList<>();
         Project project = new Project();
         /*
