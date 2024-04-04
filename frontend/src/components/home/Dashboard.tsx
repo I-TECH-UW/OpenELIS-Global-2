@@ -55,6 +55,17 @@ type MetricType =
   | "DELAYED_TURN_AROUND"
   | "ORDERS_FOR_USER";
 
+  interface UserSessionDetails {
+    userSessionDetails: {};
+  }
+
+  interface Notification {
+    notificationVisible: any,
+    setNotificationVisible: any,
+    addNotification: any;
+  }
+
+
 const HomeDashBoard: React.FC<DashBoardProps> = () => {
   const intl = useIntl();
 
@@ -89,8 +100,8 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
   const [previousPage, setPreviousPage] = useState(null);
   const [pagination, setPagination] = useState(false);
   const [url, setUrl] = useState("");
-  const { userSessionDetails } = useContext(UserSessionDetailsContext);
-  const {  notificationVisible, setNotificationVisible, addNotification } = useContext(NotificationContext);
+  const { userSessionDetails } = useContext(UserSessionDetailsContext ) as UserSessionDetails;
+  const { notificationVisible, setNotificationVisible, addNotification } = useContext(NotificationContext) as Notification;
 
   useEffect(() => {
     setNextPage(null);
