@@ -75,7 +75,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   const [data, setData] = useState([]);
   const [testSections, setTestSections] = useState([]);
-  const [selectedTestSection, setSelectedTestSection] = useState("");
+  const [selectedTestSection, setSelectedTestSection] = useState("all");
   const [loading, setLoading] = useState(true);
   const componentMounted = useRef(true);
   const [page, setPage] = useState(1);
@@ -145,7 +145,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   const fetchTestSections = (res) => {
     setTestSections(res);
-    setSelectedTestSection(res[0]?.id);
+    setSelectedTestSection("all");
   };
 
   const loadNextResultsPage = () => {
@@ -216,7 +216,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
       value: counts.ordersReadyForValidation,
     },
     {
-      title: <FormattedMessage id="dashboard.complete.orders.label" />,
+      title: <FormattedMessage id='dashboard.complete.orders.label' />,
       subTitle: <FormattedMessage id="dashboard.orders.subtitle.label" />,
       type: "ORDERS_COMPLETED_TODAY",
       value: counts.ordersCompletedToday,
@@ -317,7 +317,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
       setSelectedTile(tile);
     } else {
       setSelectedTile(null);
-      setSelectedTestSection(testSections[0]?.id);
+      setSelectedTestSection("all");
     }
   };
 
@@ -511,13 +511,20 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                     {tilesWithTabs.includes(selectedTile.type) && (
                       <Grid>
                       <Column lg={16} md={8} sm={4}>
-                      {testSections.length > 0 ?( 
+                     
                       <Tabs>
                         <TabList aria-label="List of tabs" contained>
-                          {testSections?.map((item, idx) => {
+                          <Tab
+                            onClick={() =>
+                              setSelectedTestSection("all")
+                            }
+                            >
+                               <FormattedMessage id="all.label" />
+                          </Tab>
+                          {testSections?.map((item, id) => {
                             return (
                               <Tab
-                                key={idx}
+                                key={id}
                                 onClick={() =>
                                   setSelectedTestSection(item.id)
                                 }
@@ -528,14 +535,14 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                           })}
                         </TabList>
                       </Tabs>
-                      ): (<Tag type="red"><FormattedMessage id="label.user.notestsection" /></Tag>)}     
+        
                       </Column>
                     </Grid>
                     )}
                     <DataTable
                       rows={data
                         .filter((item) =>
-                          tilesWithTabs.includes(selectedTile.type)
+                          tilesWithTabs.includes(selectedTile.type) && selectedTestSection != "all"
                             ? item.testSection === selectedTestSection
                             : true
                         )
@@ -591,7 +598,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                       pageSize={pageSize}
                       pageSizes={[10, 20, 30, 50, 100]}
                       totalItems={data.filter((item) =>
-                        tilesWithTabs.includes(selectedTile.type)
+                        tilesWithTabs.includes(selectedTile.type) && selectedTestSection != "all"
                           ? item.testSection === selectedTestSection
                           : true
                       ).length}

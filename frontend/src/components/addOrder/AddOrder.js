@@ -275,6 +275,7 @@ const AddOrder = (props) => {
       },
     });
    }
+    handleLabNoValidationOnChange(e?.target?.value)
     setNotificationVisible(false);
   }
 
@@ -283,6 +284,16 @@ const AddOrder = (props) => {
       getFromOpenElisServer(
         "/rest/SampleEntryAccessionNumberValidation?ignoreYear=false&ignoreUsage=false&field=labNo&accessionNumber=" +
           orderFormValues.sampleOrderItems.labNo,
+        accessionNumberValidationResults,
+      );
+    }
+  };
+
+  const handleLabNoValidationOnChange = (value) => {
+    if (value !== "") {
+      getFromOpenElisServer(
+        "/rest/SampleEntryAccessionNumberValidation?ignoreYear=false&ignoreUsage=false&field=labNo&accessionNumber=" +
+          value,
         accessionNumberValidationResults,
       );
     }
@@ -439,7 +450,7 @@ const AddOrder = (props) => {
                   id: "input.placeholder.labNo",
                 })}
                 value={isModifyOrder? orderFormValues.newAccessionNumber : orderFormValues.sampleOrderItems.labNo}
-                onMouseLeave={handleLabNoValidation}
+                //onMouseLeave={handleLabNoValidation}
                 onChange={handleLabNo}
                 onKeyPress={handleKeyPress}
                 labelText={
