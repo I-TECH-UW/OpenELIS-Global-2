@@ -209,3 +209,11 @@ export const convertAlphaNumLabNumForDisplay = (labNumber) => {
   }
   return labNumberForDisplay.toUpperCase();
 };
+
+export function encodeDate(dateString) {
+  if (typeof dateString === "string" && dateString.trim() !== "") {
+    return dateString.split("/").map(encodeURIComponent).join("%2F");
+  } else {
+    return "";
+  }
+}

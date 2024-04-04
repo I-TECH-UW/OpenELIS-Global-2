@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import { Form, Grid, Column, Section, Button } from "@carbon/react";
-import CustomLabNumberInput from "../../../common/CustomLabNumberInput";
-import config from "../../../../config.json";
+import CustomLabNumberInput from "../../common/CustomLabNumberInput";
+import config from "../../../config.json";
 
 function ReportByLabNo(props) {
   const intl = useIntl();
@@ -36,7 +36,7 @@ function ReportByLabNo(props) {
         </Section>
         <br />
         <Grid fullWidth={true}>
-          <Column lg={16} md={8} sm={6}>
+          <Column lg={16} md={8} sm={4}>
             <Section>
               <h5>
                 <FormattedMessage id="report.enter.labNumber.headline" />
@@ -79,7 +79,7 @@ function ReportByLabNo(props) {
         <br />
         <br />
         <Grid fullWidth={true}>
-          <Column lg={16} md={8} sm={6}>
+          <Column lg={16} md={8} sm={4}>
             <Section>
               <Button type="submit">
                 <FormattedMessage id="label.button.generatePrintableVersion" />

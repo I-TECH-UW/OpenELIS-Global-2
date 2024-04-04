@@ -6,8 +6,15 @@ module.exports = defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
       // implement node event listeners here
+      config.specPattern = [
+        "cypress/e2e/login.cy.js",
+        "cypress/e2e/patientEntry.cy.js",
+        "cypress/e2e/orderEntity.cy.js",
+        "cypress/e2e/modifyOrder.cy.js",
+      ];
+      return config;
     },
-    baseUrl: "https://openelis28.openelis-global.org",
+    baseUrl: "https://localhost",
     testIsolation: false,
   },
 });

@@ -393,6 +393,9 @@ function CreatePatientForm(props) {
                       className="inputText"
                       invalid={errors.subjectNumber && touched.subjectNumber}
                       invalidText={errors.subjectNumber}
+                      placeholder={intl.formatMessage({
+                        id: "patient.information.healthid",
+                      })}
                     />
                   </>
                 )}
@@ -441,6 +444,9 @@ function CreatePatientForm(props) {
                       );
                     }}
                     onChange={handleNationalIdChange}
+                    placeholder={intl.formatMessage({
+                      id: "patient.information.nationalid",
+                    })}
                   />
                 )}
               </Field>
@@ -460,6 +466,9 @@ function CreatePatientForm(props) {
                     id={field.name}
                     invalid={errors.lastName && touched.lastName}
                     invalidText={errors.lastName}
+                    placeholder={intl.formatMessage({
+                      id: "patient.information.lastname",
+                    })}
                     className="inputText"
                   />
                 )}
@@ -475,6 +484,9 @@ function CreatePatientForm(props) {
                     id={field.name}
                     invalid={errors.firstName && touched.firstName}
                     invalidText={errors.firstName}
+                    placeholder={intl.formatMessage({
+                      id: "patient.information.firstname",
+                    })}
                     className="inputText"
                   />
                 )}
@@ -498,6 +510,9 @@ function CreatePatientForm(props) {
                     invalid={errors.primaryPhone && touched.primaryPhone}
                     invalidText={errors.primaryPhone}
                     className="inputText"
+                    placeholder={intl.formatMessage({
+                      id: "patient.information.primaryphone",
+                    })}
                   />
                 )}
               </Field>
@@ -579,6 +594,9 @@ function CreatePatientForm(props) {
                 type="number"
                 onChange={(e) => handleYearsChange(e, values)}
                 className="inputText"
+                placeholder={intl.formatMessage({
+                  id: "patient.information.age",
+                })}
               />
 
               <TextInput
@@ -589,6 +607,9 @@ function CreatePatientForm(props) {
                 onChange={(e) => handleMonthsChange(e, values)}
                 id="months"
                 className="inputText"
+                placeholder={intl.formatMessage({
+                  id: "patient.information.months",
+                })}
               />
 
               <TextInput
@@ -599,6 +620,9 @@ function CreatePatientForm(props) {
                 labelText={intl.formatMessage({ id: "patient.age.days" })}
                 id="days"
                 className="inputText"
+                placeholder={intl.formatMessage({
+                  id: "patient.information.days",
+                })}
               />
               <div className="error">
                 <ErrorMessage name="birthDateForDisplay"></ErrorMessage>
@@ -619,6 +643,9 @@ function CreatePatientForm(props) {
                         })}
                         id={field.name}
                         className="inputText"
+                        placeholder={intl.formatMessage({
+                          id: "patient.emergency.lastname",
+                        })}
                       />
                     )}
                   </Field>
@@ -632,6 +659,9 @@ function CreatePatientForm(props) {
                         })}
                         id={field.name}
                         className="inputText"
+                        placeholder={intl.formatMessage({
+                          id: "patient.emergency.firstname",
+                        })}
                       />
                     )}
                   </Field>
@@ -647,6 +677,9 @@ function CreatePatientForm(props) {
                         })}
                         id={field.name}
                         className="inputText"
+                        placeholder={intl.formatMessage({
+                          id: "patient.emergency.email",
+                        })}
                       />
                     )}
                   </Field>
@@ -668,6 +701,9 @@ function CreatePatientForm(props) {
                         )}
                         id={field.name}
                         className="inputText"
+                        placeholder={intl.formatMessage({
+                          id: "patient.emergency.phone",
+                        })}
                       />
                     )}
                   </Field>
@@ -693,6 +729,9 @@ function CreatePatientForm(props) {
                         })}
                         id={field.name}
                         className="inputText"
+                        placeholder={intl.formatMessage({
+                          id: "patient.emergency.additional.town",
+                        })}
                       />
                     )}
                   </Field>
@@ -706,6 +745,9 @@ function CreatePatientForm(props) {
                         })}
                         id={field.name}
                         className="inputText"
+                        placeholder={intl.formatMessage({
+                          id: "patient.emergency.additional.street",
+                        })}
                       />
                     )}
                   </Field>
@@ -719,6 +761,9 @@ function CreatePatientForm(props) {
                         })}
                         id={field.name}
                         className="inputText"
+                        placeholder={intl.formatMessage({
+                          id: "patient.emergency.additional.camp",
+                        })}
                       />
                     )}
                   </Field>
@@ -735,6 +780,9 @@ function CreatePatientForm(props) {
                         })}
                         className="inputText"
                         onChange={(e) => handleRegionSelection(e, values)}
+                        helperText={intl.formatMessage({
+                          id: "patient.emergency.additional.region",
+                        })}
                       >
                         <SelectItem text="" value="" />
                         {healthRegions?.map((region, index) => (
@@ -758,6 +806,9 @@ function CreatePatientForm(props) {
                         })}
                         className="inputText"
                         onChange={() => {}}
+                        helperText={intl.formatMessage({
+                          id: "patient.emergency.additional.district",
+                        })}
                       >
                         <SelectItem text="" value="" />
                         {healthDistricts.map((district, index) => (
@@ -783,6 +834,9 @@ function CreatePatientForm(props) {
                         })}
                         className="inputText"
                         onChange={() => {}}
+                        helperText={intl.formatMessage({
+                          id: "patient.emergency.additional.education",
+                        })}
                       >
                         <SelectItem text="" value="" />
                         {educationList.map((education, index) => (
@@ -806,6 +860,9 @@ function CreatePatientForm(props) {
                         })}
                         className="inputText"
                         onChange={() => {}}
+                        helperText={intl.formatMessage({
+                          id: "patient.emergency.additional.maritialstatus",
+                        })}
                       >
                         <SelectItem text="" value="" />
                         {maritalStatuses.map((status, index) => (
@@ -831,6 +888,9 @@ function CreatePatientForm(props) {
                         })}
                         className="inputText"
                         onChange={() => {}}
+                        helperText={intl.formatMessage({
+                          id: "patient.emergency.additional.nationnality",
+                        })}
                       >
                         <SelectItem text="" value="" />
                         {nationalityList.map((nationality, index) => (
@@ -853,6 +913,9 @@ function CreatePatientForm(props) {
                         })}
                         id={field.name}
                         className="inputText"
+                        placeholder={intl.formatMessage({
+                          id: "patient.emergency.additional.othernationality",
+                        })}
                       />
                     )}
                   </Field>
