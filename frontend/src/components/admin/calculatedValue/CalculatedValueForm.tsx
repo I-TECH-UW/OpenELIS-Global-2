@@ -17,7 +17,7 @@ import {
   Section,
   Heading,
 } from "@carbon/react";
-import AutoComplete from "../../common/AutoComplete.js";
+import AutoComplete from "../../common/AutoComplete.jsx";
 import { Add, Subtract, Save } from "@carbon/react/icons";
 import { FormattedMessage } from "react-intl";
 import {
@@ -29,13 +29,13 @@ import {
 import {
   getFromOpenElisServer,
   postToOpenElisServer,
-} from "../../utils/Utils.js";
-import { NotificationContext } from "../../layout/Layout";
+} from "../../utils/Utils";
+import { NotificationContext } from "../../layout/Layout.jsx";
 import {
   AlertDialog,
   NotificationKinds,
-} from "../../common/CustomNotification";
-import PageBreadCrumb from "../../common/PageBreadCrumb";
+} from "../../common/CustomNotification.jsx";
+import PageBreadCrumb from "../../common/PageBreadCrumb.jsx";
 
 const breadcrumbs = [{ label: "home.label", link: "/" }];
 interface CalculatedValueProps {}

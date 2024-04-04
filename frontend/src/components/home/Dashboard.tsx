@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Tile,
   ClickableTile,
@@ -27,7 +26,7 @@ import { useState, useEffect, useRef } from "react";
 import {
   getFromOpenElisServer,
   convertAlphaNumLabNumForDisplay,
-} from "../utils/Utils.js";
+} from "../utils/Utils";
 import { FormattedMessage, useIntl } from "react-intl";
 interface DashBoardProps {}
 

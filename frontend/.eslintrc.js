@@ -19,6 +19,7 @@ module.exports = {
     node: true,
   },
   rules: {
+    "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
     "react/no-unescaped-entities": "warn",
     "react-hooks/exhaustive-deps": "off",
@@ -52,6 +53,7 @@ module.exports = {
        * Typescript Rules
        */
       rules: {
+        "react/react-in-jsx-scope": "off",
         "react/prop-types": "warn",
         "@typescript-eslint/no-empty-function": "warn",
         "@typescript-eslint/no-empty-interface": "warn",

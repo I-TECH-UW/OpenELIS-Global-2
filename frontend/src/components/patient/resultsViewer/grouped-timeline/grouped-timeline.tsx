@@ -135,7 +135,7 @@ const DataRows: React.FC<DataRowsProps> = ({
         const { units = "", range = "", obs: values } = row;
         const isString = isNaN(parseFloat(values?.[0]?.value));
         return (
-          <React.Fragment key={index}>
+          <div key={index}>
             <NewRowStartCell
               {...{
                 units,
@@ -147,7 +147,7 @@ const DataRows: React.FC<DataRowsProps> = ({
               }}
             />
             <GridItems {...{ sortedTimes, obs, zebra: !!(index % 2) }} />
-          </React.Fragment>
+          </div>
         );
       })}
     </Grid>
