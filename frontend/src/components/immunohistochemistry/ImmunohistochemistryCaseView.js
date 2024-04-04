@@ -1073,7 +1073,7 @@ function ImmunohistochemistryCaseView() {
                       {immunohistochemistrySampleInfo.reports[index].image && (
                         <>
                           {!reportParams[index]?.submited && (
-                            <Column lg={3} md={2} sm={2}>
+                            <Column lg={2} md={2} sm={2}>
                               <Button
                                 onClick={() => {
                                   var win = window.open();
