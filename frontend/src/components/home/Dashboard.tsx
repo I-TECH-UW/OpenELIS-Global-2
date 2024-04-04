@@ -23,12 +23,16 @@ import {
 } from "@carbon/react";
 import "./Dashboard.css";
 import { Minimize, Maximize } from "@carbon/react/icons";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef ,useContext } from "react";
 import {
   getFromOpenElisServer,
   convertAlphaNumLabNumForDisplay,
 } from "../utils/Utils.js";
 import { FormattedMessage, useIntl } from "react-intl";
+import UserSessionDetailsContext from "../../UserSessionDetailsContext";
+import { NotificationContext } from "../layout/Layout";
+import { AlertDialog  ,NotificationKinds} from "../common/CustomNotification";
+
 interface DashBoardProps {}
 
 interface Tile {
@@ -85,6 +89,8 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
   const [previousPage, setPreviousPage] = useState(null);
   const [pagination, setPagination] = useState(false);
   const [url, setUrl] = useState("");
+  const { userSessionDetails } = useContext(UserSessionDetailsContext);
+  const {  notificationVisible, setNotificationVisible, addNotification } = useContext(NotificationContext);
 
   useEffect(() => {
     setNextPage(null);
@@ -135,7 +141,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
   }, [selectedTile]);
 
   useEffect(() => {
-    getFromOpenElisServer("/rest/user-test-sections", (fetchedTestSections) => {
+    getFromOpenElisServer("/rest/displayList/TEST_SECTION_ACTIVE", (fetchedTestSections) => {
       fetchTestSections(fetchedTestSections);
     });
     return () => {
@@ -323,7 +329,16 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   const handleMaximizeClick = (tile) => {
     console.log("Icon clicked!");
-    setSelectedTile(tile);
+    if(userSessionDetails.roles.length > 0){
+      setSelectedTile(tile);
+    }else{
+      setNotificationVisible(true)
+      addNotification({
+        kind: NotificationKinds.warning,
+        title: intl.formatMessage({ id: "accessDenied.title" }),
+        message: intl.formatMessage({ id: "accessDenied.message" }),
+      });
+    }
   };
 
   const viewUserOrders = (row) => {
@@ -433,6 +448,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
   return (
     <>
       {loading && <Loading description="Loading Dasboard..." />}
+      {notificationVisible === true ? <AlertDialog /> : ""}
       {selectedTile == null ? (
         <div className="home-dashboard-container">
           {tileList.map((tile, index) => (

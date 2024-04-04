@@ -201,7 +201,7 @@ const AddOrder = (props) => {
       ...orderFormValues,
       sampleOrderItems: {
         ...orderFormValues.sampleOrderItems,
-        providerId: providerId,
+        providerPersonId: providerId,
       },
     });
 
@@ -221,6 +221,8 @@ const AddOrder = (props) => {
         providerWorkPhone: data.person.workPhone,
         providerEmail: data.person.email,
         providerFax: data.person.fax,
+        providerId: data.id,
+        providerPersonId : data.person.id
       },
     });
   }
@@ -244,6 +246,20 @@ const AddOrder = (props) => {
         referringSiteId: "",
       },
     });
+  }
+
+  function clearProviderId(e) {
+    if(e.target.value == ""){
+      setOrderFormValues({
+        ...orderFormValues,
+        sampleOrderItems: {
+          ...orderFormValues.sampleOrderItems,
+          providerId: "",
+          providerPersonId : ""
+        },
+      });
+
+    }
   }
 
   function handleAutoCompleteSiteName(siteId) {
@@ -605,6 +621,7 @@ const AddOrder = (props) => {
                 )
               }
               onSelect={handleProviderSelectOptions}
+              onChange={clearProviderId}
               label={
                 <>
                   <FormattedMessage id="order.search.requester.label" />{" "}
