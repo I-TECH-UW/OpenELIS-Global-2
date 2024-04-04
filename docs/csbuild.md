@@ -84,9 +84,10 @@ Creating a cert with SAN: [https://www.golinuxcloud.com/openssl-generate-csr-cre
 
 Keystore Truststore: [http://docs.openelis-global.org/en/latest/install/](http://docs.openelis-global.org/en/latest/install/)
 
-Pem key  > ./prod/ssl/cs.key
+Pem key  > ./prod/ssl/cs.key & ./prod/ssl/cs_frontend.key
+Ensure the key is encrypted with the same password as the keystore
 
-Pem cert  > ./prod/ssl/cs.crt
+Pem cert  > ./prod/ssl/cs.crt & ./prod/ssl/cs_frontend.crt
 
 Pem key & pem.crt > ./prod/ssl/cs.keystore
 
