@@ -326,8 +326,6 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         return dictionaryMenuArrayList;
     }
 
-
-
     @Override
     public List<Dictionary> searchByDictEntry(String dictEntry) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();

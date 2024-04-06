@@ -1,6 +1,4 @@
-package org.openelisglobal.patient;
-
-import static org.mockito.Mockito.mock;
+package org.openelisglobal;
 
 import org.openelisglobal.audittrail.dao.AuditTrailService;
 import org.openelisglobal.common.util.Versioning;
@@ -19,22 +17,23 @@ import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+
+import static org.mockito.Mockito.mock;
 
 @Configuration
 @ComponentScan(basePackages = { "org.openelisglobal.spring", "org.openelisglobal.patient",
         "org.openelisglobal.patientidentity", "org.openelisglobal.gender", "org.openelisglobal.patientidentitytype",
         "org.openelisglobal.patienttype", "org.openelisglobal.address", "org.openelisglobal.dictionary",
         "org.openelisglobal.person" }, excludeFilters = {
-                @Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.*.controller.*"),
-                @Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.config.*"),
-                @Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.fhir.*"),
-                @Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.*.fhir.*") })
-public class PatientTestConfig {
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.*.controller.*"),
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.config.*"),
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.fhir.*"),
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.*.fhir.*") })
+public class AppTestConfig {
 
     // mock Beans
     @Bean()
