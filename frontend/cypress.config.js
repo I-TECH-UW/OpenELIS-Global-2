@@ -16,5 +16,6 @@ module.exports = defineConfig({
     },
     baseUrl: "https://localhost",
     testIsolation: false,
+    watchForFileChanges: false,
   },
 });
