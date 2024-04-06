@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 import HomePage from "./HomePage";
 import TestProperties from "../common/TestProperties";
 
