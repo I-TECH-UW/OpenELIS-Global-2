@@ -36,6 +36,8 @@ import org.openelisglobal.reports.action.implementation.reportBeans.ARVFollowupC
 import org.openelisglobal.reports.action.implementation.reportBeans.ARVInitialColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.CIColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder;
+import org.openelisglobal.reports.action.implementation.reportBeans.HPVColumnBuilder;
+import org.openelisglobal.reports.action.implementation.reportBeans.HPVColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.RTNColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.RTRIColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.StudyEIDColumnBuilder;
@@ -199,6 +201,8 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
             return new RTNColumnBuilder(dateRange, projectStr);
         }else if (projectTag.equalsIgnoreCase("RTRI")) {
             return new RTRIColumnBuilder(dateRange, projectStr, dateType);
+        }else if (projectTag.equalsIgnoreCase("HPV")) {
+            return new HPVColumnBuilder(dateRange, projectStr, dateType);
         }
         throw new IllegalArgumentException();
     }
@@ -221,6 +225,8 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
         project.setProjectName("Indeterminate Results");
         projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
         project.setProjectName("Recency Testing");
+        projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
+        project.setProjectName("HPV Testing");
         projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
         projects.removeIf(Objects::isNull);
         return projects;

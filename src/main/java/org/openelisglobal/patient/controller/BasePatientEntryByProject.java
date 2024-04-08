@@ -25,6 +25,7 @@ import org.openelisglobal.patient.saving.IAccessioner;
 import org.openelisglobal.patient.saving.RequestType;
 import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.patient.valueholder.ObservationData;
+import org.openelisglobal.sample.form.ProjectData;
 import org.springframework.validation.Errors;
 
 public abstract class BasePatientEntryByProject extends BaseController {
@@ -132,9 +133,14 @@ public abstract class BasePatientEntryByProject extends BaseController {
     protected void setProjectFormName(PatientEntryByProjectForm form, String projectFormName)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         ObservationData observations = form.getObservations();
+        ProjectData projectData = form.getProjectData();
         if (observations == null) {
             observations = new ObservationData();
             form.setObservations(observations);
+        }
+        if (projectData == null) {
+        	projectData = new ProjectData();
+        	form.setProjectData(projectData);
         }
         observations.setProjectFormName(projectFormName);
     }

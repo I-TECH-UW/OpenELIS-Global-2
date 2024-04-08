@@ -153,6 +153,18 @@ function  /*void*/ savePage() {
 	}
 }
 
+	function validateSiteSubjectNumber(field){
+		 const siteSubjectNumber = /^([0-9A-Za-z]{5}\/[0-9A-Za-z]{2})\/[\d]{2}\/[\d]{5}[Ee]?$/g;
+		 if(field.value){
+			  if(siteSubjectNumber.test(field.value)){
+				  field.classList.remove("error");
+			  }
+			  else{
+				  field.classList.add("error");
+			  }
+		 }
+	}
+
 // class BaseLoader to work with the patient search tile and load (or remember) the results returned.
 function BaseLoader() {
 	/** 

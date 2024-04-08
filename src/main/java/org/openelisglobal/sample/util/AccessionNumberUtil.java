@@ -44,7 +44,7 @@ public class AccessionNumberUtil {
 
     private static AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
 
-    private static String blacklistCharacters = ".*['\"<>\\[\\](){};:/?!@#$%^&*+=].*";
+    private static String blacklistCharacters = ".*['\"<>\\[\\](){};:/?!@#$%^&+=].*";
 
     public static boolean containsBlackListCharacters(String value) {
         return value.matches(blacklistCharacters);
