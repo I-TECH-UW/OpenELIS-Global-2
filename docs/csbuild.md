@@ -1,6 +1,3 @@
-<<<<<<< Updated upstream
-docs/directFHIRCommunication.md
-=======
 # Installation
 
 ## Before Running
@@ -110,7 +107,7 @@ ST = <State>
 L = <City>
 O = <Organization>
 OU = <Organization Unit>
-CN = Consolidated-server-CA
+CN = <Consolidated Server CA>
 
 [ req_ext ]
 subjectAltName = @alt_names
@@ -145,9 +142,10 @@ Ensure the key is encrypted with the same password as the keystore
 Make sure OE instances trust the cert (or better yet, the CA) for the Consolidated-server by loading them into their truststore. If the Consolidated-server is behind a load balancer that does ssl offloading, this means OE will need to trust the offloaders  cert or CA
 
 
+
 ## Configuring Projects
 
-Choose one or the other. 
+Choose one or the other
 
 
 ### Quick Config Container(s):
@@ -264,4 +262,3 @@ Choose one or the other
 ## Passwords
 
 ALL passwords should be recorded into the 1Password Vault
->>>>>>> Stashed changes
