@@ -129,7 +129,7 @@ EOF
 
 Move files to correct locations:
 
-`cp openssl/server.crt prod/ssl/cs_frontent.crt`
+`cp openssl/server.crt prod/ssl/cs_frontend.crt`
 
 `cp openssl/server.crt prod/ssl/cs.crt`
 
@@ -139,7 +139,7 @@ Move files to correct locations:
 
 `openssl pkcs12 -inkey prod/ssl/cs.key -in prod/ssl/cs.crt -export -out prod/ssl/cs.keystore`
 
-`keytool -import -alias csCert -file prod/ssl/cs.crt -storetype pkcs12 -keystore prod/ssl/cs.truststore`
+`openssl pkcs12 -export -nokeys -in prod/ssl/cs.crt -out prod/ssl/cs.truststore`
 
 Ensure the key is encrypted with the same password as the keystore
 
