@@ -485,6 +485,14 @@
 			<artifactId>icu4j</artifactId>
 			<version>71.1</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.dbunit/dbunit -->
+		<dependency>
+			<groupId>org.dbunit</groupId>
+			<artifactId>dbunit</artifactId>
+			<version>2.7.3</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- this fixes running test containers on the apple silicon mac -->
 		<!-- see https://github.com/testcontainers/testcontainers-java/issues/3834 -->
 		<dependency>
