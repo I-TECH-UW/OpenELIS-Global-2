@@ -565,7 +565,7 @@ const Index = () => {
     if ("questionnaire" in orderFormValues.sampleOrderItems) {
       delete orderFormValues.sampleOrderItems.questionnaire;
     }
-    console.debug(JSON.stringify(orderFormValues));
+    console.log(JSON.stringify(orderFormValues));
     postToOpenElisServer(
       "/rest/SamplePatientEntry",
       JSON.stringify(orderFormValues),
@@ -751,6 +751,7 @@ const Index = () => {
                 setOrderFormValues={setOrderFormValues}
                 samples={samples}
                 error={elementError}
+                isModifyOrder={false}
               />
             )}
 

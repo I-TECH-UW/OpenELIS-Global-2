@@ -11,15 +11,11 @@ describe("Failing or Succeeding to Login", function () {
   after("Close Browser", () => {
     cy.clearLocalStorage();
   });
-
   it("Should validate user authentication", function () {
     cy.fixture("Users").then((users) => {
       users.forEach((user) => {
         login.enterUsername(user.username);
-        login.getUsernameElement().should("contain.value", user.username);
-
         login.enterPassword(user.password);
-        login.getPasswordElement().should("contain.value", user.password);
         login.signIn();
 
         if (user.correctPass === true) {

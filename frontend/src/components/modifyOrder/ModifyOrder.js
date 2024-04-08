@@ -9,7 +9,7 @@ import {
   Tag,
 } from "@carbon/react";
 import EditSample from "./EditSample";
-import EditOrder from "./EditOrder";
+import AddOrder from "../addOrder/AddOrder";
 import "../addOrder/add-order.scss";
 import { ModifyOrderFormValues } from "../formModel/innitialValues/OrderEntryFormValues";
 import { NotificationContext } from "../layout/Layout";
@@ -51,6 +51,7 @@ const ModifyOrder = () => {
   const [page, setPage] = useState(firstPageNumber);
   const [orderFormValues, setOrderFormValues] = useState(ModifyOrderFormValues);
   const [samples, setSamples] = useState([sampleObject]);
+  const [errors, setErrors] = useState([]);
 
   useEffect(() => {
     componentMounted.current = true;
@@ -114,6 +115,17 @@ const ModifyOrder = () => {
       JSON.stringify(orderFormValues),
       handlePost,
     );
+  };
+
+  const elementError = (path) => {
+    if (errors?.errors?.length > 0) {
+      let error = errors.inner?.find((e) => e.path === path);
+      if (error) {
+        return error.message;
+      } else {
+        return null;
+      }
+    }
   };
   useEffect(() => {
     if (page === samplePageNumber + 1) {
@@ -253,13 +265,16 @@ const ModifyOrder = () => {
                   setOrderFormValues={setOrderFormValues}
                   setSamples={setSamples}
                   samples={samples}
+                  error={elementError}
                 />
               )}
               {page === orderPageNumber && (
-                <EditOrder
+                <AddOrder
                   orderFormValues={orderFormValues}
                   setOrderFormValues={setOrderFormValues}
                   samples={samples}
+                  error={elementError}
+                  isModifyOrder={true}
                 />
               )}
 
