@@ -114,6 +114,20 @@ function Admin() {
           <SideNavLink renderIcon={ChartBubble} href="#program">
             <FormattedMessage id="sidenav.label.admin.program" />
           </SideNavLink>
+          <SideNavMenu
+            renderIcon={Microscope}
+            title={intl.formatMessage({ id: "master.lists.page" })}
+          >
+            <SideNavMenuItem href="/DictionaryMenu">
+              <FormattedMessage id="dictionary.label.modify" />
+            </SideNavMenuItem>
+          </SideNavMenu>
+          <SideNavLink href="#labNumber" renderIcon={CharacterWholeNumber}>
+            <FormattedMessage id="sidenav.label.admin.labNumber" />
+          </SideNavLink>
+          <SideNavLink renderIcon={ChartBubble} href="#program">
+            <FormattedMessage id="sidenav.label.admin.program" />
+          </SideNavLink>
           <SideNavLink href="#commonproperties" renderIcon={Settings}>
             <FormattedMessage
               id="sidenav.label.admin.commonproperties"
