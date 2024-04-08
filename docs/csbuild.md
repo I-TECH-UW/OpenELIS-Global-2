@@ -82,13 +82,13 @@ Create a CA (adapted from instuctions [here](https://scriptcrunch.com/create-ca-
 
 `mkdir openssl && cd openssl`
 
-`openssl genrsa -out ca.key 4096 -aes256`
+`openssl genrsa -aes256 -out ca.key 4096`
 
 `openssl req -x509 -new -nodes -key ca.key -sha256 -days 3652 -out ca.crt`
 
 Create a signed key/cert:
 
-`openssl genrsa -out server.key 2048 -aes256`
+`openssl genrsa -aes256 -out server.key 2048`
 
 Replace the arguments in < > before running the next command
 
