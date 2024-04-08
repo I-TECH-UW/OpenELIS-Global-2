@@ -24,41 +24,20 @@ function DictionaryManagement() {
   const intl = useIntl();
   const componentMounted = useRef(false);
 
-  const [dictionaryMenu, setDictionaryMenu] = useState([]);
+  const [dictionaryMenuz, setDictionaryMenuz] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [isloading, setIsLoading] = useState(false);
 
   const fetchedDictionaryMenu = (dictionaryMenus) => {
     if (componentMounted.current) {
-      setDictionaryMenu(dictionaryMenus);
+      setDictionaryMenuz(dictionaryMenus);
     }
   };
 
-  const headers = [
-    {
-      key: "select",
-      header: "Select",
-    },
-    {
-      key: "category",
-      header: "Category",
-    },
-    {
-      key: "entry",
-      header: "Dictionary Entry",
-    },
-    {
-      key: "abbreviation",
-      header: "Local Abbreviation"
-    },
-    {
-      key: "isActive",
-      header: "Is Active"
-    }
-  ];
-
   useEffect(() => {
     componentMounted.current = true;
-    getFromOpenElisServer("/rest/referral-organizations", fetchedDictionaryMenu);
+    getFromOpenElisServer("/rest/get-dictionary-menu", fetchedDictionaryMenu);
     return () => {
       componentMounted.current = false;
     };
@@ -78,15 +57,16 @@ function DictionaryManagement() {
 
   const tableRows = useMemo(
     () =>
-      dictionaryMenu?.map((customer) => {
+      dictionaryMenuz?.map((menu) => {
         return {
-          id: dictionaryMenu.id,
-          name: dictionaryMenu.name,
-          email: dictionaryMenu.emailAddress,
-          feedback: dictionaryMenu.customerFeedback,
+          id: menu.id,
+          categoryName: menu.categoryName,
+          dictEntry: menu.dictEntry,
+          localAbbreviation: menu.localAbbreviation,
+          isActive: menu.isActive,
         };
       }),
-    [dictionaryMenu]
+    [dictionaryMenuz]
   );
 
   return (
@@ -108,64 +88,68 @@ function DictionaryManagement() {
           </Section>
         </Column>
       </Grid>
+
       <div className="orderLegendBody">
-        <Grid fullWidth={true}>
-          <Column lg={16}>
-            <Form>
-              <Grid fullWidth={true}>
-                <Column lg={10}>
-                  <div className="orderLegendBody">
-                    <TableContainer
-                      title="Dictionary Menu"
-                      description="Showing Dictionary Menu"
-                    >
-                      <DataTable
-                        rows={tableRows}
-                        headers={headers}
-                        isSortable={true}
-                        size="lg"
-                      >
-                        {({
-                          rows,
-                          headers,
-                          getHeaderProps,
-                          getTableProps,
-                          getRowProps,
-                        }) => (
-                          <Table {...getTableProps()}>
-                            <TableHead>
-                              <TableRow>
-                                {headers.map((header) => (
-                                  <TableHeader
-                                    {...getHeaderProps({
-                                      header,
-                                      isSortable: header.isSortable,
-                                    })}
-                                  >
-                                    {header.header?.content ?? header.header}
-                                  </TableHeader>
-                                ))}
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {rows.map((row, index) => (
-                                <TableRow {...getRowProps({ row })}>
-                                  {row.cells.map((cell) => (
-                                    <TableCell key={cell.id}>
-                                      {cell.value?.content ?? cell.value}
-                                    </TableCell>
-                                  ))}
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        )}
-                      </DataTable>
-                    </TableContainer>
-                  </div>
-                </Column>
-              </Grid>
-            </Form>
+        <Grid fullWidth={true} className="gridBoundary">
+          <Column lg={16} md={8} sm={4}>
+            <DataTable
+              rows={tableRows}
+              headers={[
+                {
+                  key: "categoryName",
+                  header: "Category",
+                },
+                {
+                  key: "dictEntry",
+                  header: "Dictionary Entry",
+                },
+                {
+                  key: "localAbbreviation",
+                  header: "Local Abbreviation",
+                },
+                {
+                  key: "isActive",
+                  header: "Is Active",
+                },
+              ]}
+              isSortable
+            >
+              {({
+                rows,
+                headers,
+                getHeaderProps,
+                getTableProps,
+                getRowProps,
+              }) => (
+                <TableContainer title="" description="">
+                  <Table {...getTableProps()}>
+                    <TableHead>
+                      <TableRow>
+                        {headers.map((header) => (
+                          <TableHeader
+                            {...getHeaderProps({
+                              header,
+                              isSortable: header.isSortable,
+                            })}
+                          >
+                            {header.header?.content ?? header.header}
+                          </TableHeader>
+                        ))}
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {rows.map((row, index) => (
+                        <TableRow {...getRowProps({ row })}>
+                          {row.cells.map((cell) => (
+                            <TableCell key={cell.id}>{cell.value}</TableCell>
+                          ))}
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
+            </DataTable>
           </Column>
         </Grid>
       </div>

@@ -287,6 +287,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
      */
     @Data
     public static class DictionaryMenu {
+        private String id;
         private String categoryName;
         private String dictEntry;
         private String localAbbreviation;
@@ -309,7 +310,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         Root<Dictionary> dictionaryRoot = query.from(Dictionary.class);
         Join<Dictionary, DictionaryCategory> categoryJoin = dictionaryRoot.join("dictionaryCategory");
 
-        query.multiselect(categoryJoin.get("categoryName"),dictionaryRoot.get("dictEntry"),
+        query.multiselect(dictionaryRoot.get("id"),categoryJoin.get("categoryName"),dictionaryRoot.get("dictEntry"),
                 categoryJoin.get("localAbbreviation"),dictionaryRoot.get("isActive"));
 
         List<Object[]> resultList = entityManager.createQuery(query).getResultList();
@@ -317,10 +318,11 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         List<DictionaryMenu> dictionaryMenuArrayList = new ArrayList<>();
         for (Object[] result : resultList) {
             DictionaryMenu dictionaryMenu = new DictionaryMenu();
-            dictionaryMenu.setCategoryName((String) result[0]);
-            dictionaryMenu.setDictEntry((String) result[1]);
-            dictionaryMenu.setLocalAbbreviation((String) result[2]);
-            dictionaryMenu.setIsActive((String) result[3]);
+            dictionaryMenu.setId((String) result[0]);
+            dictionaryMenu.setCategoryName((String) result[1]);
+            dictionaryMenu.setDictEntry((String) result[2]);
+            dictionaryMenu.setLocalAbbreviation((String) result[3]);
+            dictionaryMenu.setIsActive((String) result[4]);
             dictionaryMenuArrayList.add(dictionaryMenu);
         }
         return dictionaryMenuArrayList;

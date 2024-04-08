@@ -18,7 +18,7 @@ public class DictionaryMenuRestControllerTest extends BaseWebContextSensitiveTes
         super.setUp();
     }
 
-    // TODO fix this test after figuring out why the endpoint is not hit
+    // TODO fix this test to figure out why the endpoint is not hit
     @Test
     public void getProductsList() throws Exception {
         String uri = "/get-dictionary-menu";
