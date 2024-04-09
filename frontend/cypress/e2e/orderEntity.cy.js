@@ -85,5 +85,3 @@ describe("Order Entity", function () {
     orderEntityPage.clickSubmitOrderButton();
   });
 });
-
-

@@ -17,7 +17,7 @@ import {
   Tag,
   TextArea,
   Loading,
-  InlineLoading
+  InlineLoading,
 } from "@carbon/react";
 import { Launch, Subtract } from "@carbon/react/icons";
 import {
@@ -370,7 +370,7 @@ function PathologyCaseView() {
             })}
           </Select>
         </Column>
-        
+
         <Column lg={4} md={2} sm={2}>
           <Select
             id="assignedPathologist"

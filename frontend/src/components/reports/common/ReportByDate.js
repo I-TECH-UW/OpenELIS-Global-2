@@ -9,11 +9,11 @@ import {
   Loading,
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
-import "../../../Style.css";
-import { AlertDialog } from "../../../common/CustomNotification";
-import CustomDatePicker from "../../../common/CustomDatePicker";
-import config from "../../../../config.json";
-import { encodeDate } from "../../../utils/Utils";
+import "../../Style.css";
+import { AlertDialog } from "../../common/CustomNotification";
+import CustomDatePicker from "../../common/CustomDatePicker";
+import config from "../../../config.json";
+import { encodeDate } from "../../utils/Utils";
 
 const ReportByDate = (props) => {
   const intl = useIntl();
@@ -25,7 +25,6 @@ const ReportByDate = (props) => {
     endDate: null,
     error: null,
   });
-
 
   const handleDatePickerChangeDate = (datePicker, date) => {
     let updatedDate = encodeDate(date);
@@ -90,7 +89,7 @@ const ReportByDate = (props) => {
       {notificationVisible && <AlertDialog />}
       {loading && <Loading />}
       <Grid fullWidth={true}>
-        <Column lg={16} md={12} sm={8}>
+        <Column lg={16} md={8} sm={4}>
           <Form>
             <Grid fullWidth={true}>
               <Column lg={10} md={8} sm={4}>

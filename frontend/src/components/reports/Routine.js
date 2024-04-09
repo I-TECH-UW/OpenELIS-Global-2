@@ -141,9 +141,9 @@ export const RoutineReportsMenu = {
 const Routine = () => {
   return (
     <>
-    <div style={{marginLeft: '1%'}}>
-      <PageBreadCrumb breadcrumbs={breadcrumbs} />
-     </div>  
+      <div style={{ marginLeft: "1%" }}>
+        <PageBreadCrumb breadcrumbs={breadcrumbs} />
+      </div>
       <GlobalSideBar sideNav={RoutineReportsMenu} />
     </>
   );
