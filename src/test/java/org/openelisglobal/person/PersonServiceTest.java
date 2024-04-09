@@ -1,10 +1,13 @@
 package org.openelisglobal.person;
 
+import org.dbunit.IDatabaseTester;
+import org.dbunit.PropertiesBasedJdbcDatabaseTester;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openelisglobal.BaseTestConfig;
+import org.openelisglobal.DbUnitUtil;
 import org.openelisglobal.patient.PatientTestConfig;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
@@ -23,10 +26,26 @@ public class PersonServiceTest {
     @Autowired
     PersonService personService;
 
+    DbUnitUtil dbUnitUtil;
+
     @Before
     public void init() throws Exception {
+        dbUnitUtil = new DbUnitUtil("src/test/resources/dataSetFiles/personDataSet.Xml");
+
+        // Set up the database connection and load dataset using DbUnitUtil
+        IDatabaseTester databaseTester = new PropertiesBasedJdbcDatabaseTester();
+        databaseTester.setDataSet(dbUnitUtil.getDataSet());
+        databaseTester.onSetup();
     }
 
+     @Test
+    public void testingDataDataIsPopulated() {
+    
+        int result =personService.getAllPersons().size() ;
+
+        // Perform assertions on the result
+        Assert.assertEquals(4, result); // Example assertion
+    }
     @Test
     public void createPerson_shouldCreateNewPerson() throws Exception {
         String firstName = "John";

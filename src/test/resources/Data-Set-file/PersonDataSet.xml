@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <person id="1" last_name= "Tom" first_name= "Mulalu" middle_name= "Ian" multiple_unit="" street_address="Lumu" city="Kampala" state="" zip_code="256" country="Uganda" work_phone="12345" home_phone="112233" cell_phone="776655" fax="6654" email="12sd@gmail.com" primary_phone="12345"/> 
+    <person id="2" last_name= "Sanny" first_name= "Bijambiya" middle_name= "Von" multiple_unit="" street_address="Kasige" city="Kabale" state="" zip_code="256" country="Uganda" work_phone="67890" home_phone="445566" cell_phone="332211" fax="9881" email="weds@gmail.com" primary_phone="67890"/>
+    <person id="3" last_name= "Job" first_name= "Asiimwe" middle_name= "Laban" multiple_unit="" street_address="Bulindo" city="" state="Jinja" zip_code="256" country="Uganda" work_phone="09876" home_phone="778899" cell_phone="443377" fax="0055" email="qwee@gmail.com" primary_phone="09876"/>
+    <person id="4" last_name= "Jackie" first_name= "Nakazzi" middle_name= "Pretty" multiple_unit="" street_address="Zanna" city="" state="Masaka" zip_code="256" country="Uganda" work_phone="54321" home_phone="009988" cell_phone="112233" fax="2233" email="23@gmail.com" primary_phone="54321"/>
+
+</dataset>
