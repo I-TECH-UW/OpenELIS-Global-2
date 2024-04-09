@@ -139,6 +139,8 @@ Move files to correct locations:
 
 `openssl pkcs12 -inkey prod/ssl/cs.key -in prod/ssl/cs.crt -export -out prod/ssl/cs.keystore`
 
+`sudo chmod +r prod/ssl/cs.keystore`
+
 `sudo apt install default-jre`
 
 `keytool -import -alias csCert -file prod/ssl/cs.crt -storetype pkcs12 -keystore prod/ssl/cs.truststore`
