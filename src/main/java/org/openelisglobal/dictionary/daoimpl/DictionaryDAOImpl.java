@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -314,7 +315,43 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
                 categoryJoin.get("localAbbreviation"),dictionaryRoot.get("isActive"));
 
         List<Object[]> resultList = entityManager.createQuery(query).getResultList();
+        return getMenuList(resultList);
+    }
 
+    @Override
+    public List<String> fetchDictionaryCategoryDescriptions() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<String> query = cb.createQuery(String.class);
+        Root<DictionaryCategory> dictionaryRoot = query.from(DictionaryCategory.class);
+
+        query.select(dictionaryRoot.get("description"));
+        return entityManager.createQuery(query).getResultList();
+    }
+
+    @Override
+    public DictionaryCategory saveDictionaryCategory(DictionaryCategory category) {
+        try {
+            Session session = entityManager.unwrap(Session.class);
+            session.saveOrUpdate(category);
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+        }
+        return category;
+    }
+
+    @Override
+    public Dictionary saveDictionaryMenu(Dictionary dictionary) {
+        try {
+            Session session = entityManager.unwrap(Session.class);
+            session.saveOrUpdate(dictionary);
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+        }
+        return dictionary;
+    }
+
+
+    private static List<DictionaryMenu> getMenuList(List<Object[]> resultList) {
         List<DictionaryMenu> dictionaryMenuArrayList = new ArrayList<>();
         for (Object[] result : resultList) {
             DictionaryMenu dictionaryMenu = new DictionaryMenu();

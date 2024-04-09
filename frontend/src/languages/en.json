@@ -958,5 +958,6 @@
   "dictionary.category.name":"Category",
   "dictionary.dictEntry":"Dictionary Entry",
   "dictionary.category.localAbbreviation":"Local Abbreviation",
-  "dictionary.category.isActive":"Is Active"
+  "dictionary.category.isActive":"Is Active",
+  "add.new.dictionary.menu": "Add New Dictionary Menu"
 }

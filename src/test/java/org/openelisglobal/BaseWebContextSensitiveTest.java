@@ -20,8 +20,8 @@ import java.io.IOException;
 @WebAppConfiguration
 @TestPropertySource("classpath:common.properties")
 @ActiveProfiles("test")
-@SuppressWarnings("unused")
 public abstract class BaseWebContextSensitiveTest {
+    
     @Autowired
     protected WebApplicationContext webApplicationContext;
 

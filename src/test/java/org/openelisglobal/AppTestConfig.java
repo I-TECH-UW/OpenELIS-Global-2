@@ -1,6 +1,5 @@
 package org.openelisglobal;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openelisglobal.audittrail.dao.AuditTrailService;
 import org.openelisglobal.common.util.Versioning;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
@@ -22,8 +21,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-
-import java.io.IOException;
 
 import static org.mockito.Mockito.mock;
 
