@@ -18,6 +18,7 @@ package org.openelisglobal.common.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.QuestionnaireResponse;
@@ -33,9 +34,9 @@ import org.openelisglobal.observationhistory.valueholder.ObservationHistory.Valu
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.program.service.ProgramSampleService;
-import org.openelisglobal.program.valueholder.Program;
 import org.openelisglobal.program.valueholder.ProgramSample;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
@@ -248,37 +249,59 @@ public class SampleOrderService {
 
     private void createPersonProviderArtifacts(SampleOrderItem sampleOrder, String currentUserId,
             SampleOrderPersistenceArtifacts artifacts, RequesterService requesterService) {
-        Person providerPerson = requesterService.getPerson();
+        Person providerPerson = null;
+        Provider provider = null;
 
-        if (namesDiffer(providerPerson, sampleOrder)) {
-            providerPerson = null;
+        if (!namesDiffer(requesterService.getPerson(), sampleOrder)) {
+            if (!GenericValidator.isBlankOrNull(sampleOrder.getProviderPersonId())) {
+                provider = SpringContext.getBean(ProviderService.class).getProviderByPerson(
+                        SpringContext.getBean(PersonService.class).get(sampleOrder.getProviderPersonId()));
+                providerPerson = provider.getPerson();
+                providerPerson.setSysUserId(currentUserId);
+
+            }
         }
 
         if (providerPerson == null) {
+            provider = new Provider();
+            provider.setFhirUuid(UUID.randomUUID());
+            provider.setActive(true);
+            provider.setExternalId(sampleOrder.getRequesterSampleID());
+
             providerPerson = new Person();
-            List<SampleRequester> personSampleRequesters = requesterService
-                    .getSampleRequestersByType(RequesterService.Requester.PERSON, true);
-            SampleRequester samplePersonRequester = personSampleRequesters.size() > 0 ? personSampleRequesters.get(0)
-                    : null;
+            providerPerson.setFirstName(sampleOrder.getProviderFirstName());
+            providerPerson.setLastName(sampleOrder.getProviderLastName());
+            providerPerson.setWorkPhone(sampleOrder.getProviderWorkPhone());
+            providerPerson.setFax(sampleOrder.getProviderFax());
+            providerPerson.setEmail(sampleOrder.getProviderEmail());
+        } 
+
+        List<SampleRequester> personSampleRequesters = requesterService
+                .getSampleRequestersByType(RequesterService.Requester.PERSON, true);
+        SampleRequester samplePersonRequester = personSampleRequesters.size() > 0 ? personSampleRequesters.get(0)
+                : null;
+        if (samplePersonRequester != null) {
             samplePersonRequester.setSysUserId(currentUserId);
             artifacts.setSamplePersonRequester(samplePersonRequester);
         }
-
-        providerPerson.setFirstName(sampleOrder.getProviderFirstName());
-        providerPerson.setLastName(sampleOrder.getProviderLastName());
-        providerPerson.setWorkPhone(sampleOrder.getProviderWorkPhone());
-        providerPerson.setFax(sampleOrder.getProviderFax());
-        providerPerson.setEmail(sampleOrder.getProviderEmail());
         providerPerson.setSysUserId(currentUserId);
+        provider.setSysUserId(currentUserId);
 
         artifacts.setProviderPerson(providerPerson);
+        artifacts.setProvider(provider);
     }
 
     private boolean namesDiffer(Person providerPerson, SampleOrderItem sampleOrder) {
-        return providerPerson == null
-                || StringUtil.compareWithNulls(providerPerson.getFirstName(), sampleOrder.getProviderFirstName()) != 0
-                || StringUtil.compareWithNulls(providerPerson.getLastName(), sampleOrder.getProviderLastName()) != 0;
-
+        if (providerPerson == null) {
+            return true;
+        }
+        if (providerPerson.getId().trim().equals(sampleOrder.getProviderPersonId().trim())) {
+            return StringUtil.compareWithNulls(providerPerson.getFirstName(), sampleOrder.getProviderFirstName()) != 0
+                    || StringUtil.compareWithNulls(providerPerson.getLastName(),
+                            sampleOrder.getProviderLastName()) != 0;
+        } else {
+            return false;
+        }
     }
 
     private void createObservationHistoryArtifacts(SampleOrderItem sampleOrder, String currentUserId,
@@ -449,6 +472,7 @@ public class SampleOrderService {
     public class SampleOrderPersistenceArtifacts {
         private Sample sample;
         private Person providerPerson;
+        private Provider provider;
         private Organization providerOrganization;
         private SampleRequester deletableSampleOrganizationRequester;
         private List<ObservationHistory> observations = new ArrayList<>();
@@ -510,5 +534,14 @@ public class SampleOrderService {
         public void setSamplePersonRequester(SampleRequester samplePersonRequester) {
             this.samplePersonRequester = samplePersonRequester;
         }
+
+        public Provider getProvider() {
+            return provider;
+        }
+
+        public void setProvider(Provider provider) {
+            this.provider = provider;
+        }
+
     }
 }

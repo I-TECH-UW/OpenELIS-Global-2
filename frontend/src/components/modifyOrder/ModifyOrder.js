@@ -109,7 +109,8 @@ const ModifyOrder = () => {
   const handleSubmitOrderForm = (e) => {
     e.preventDefault();
     setPage(page + 1);
-    console.debug(JSON.stringify(orderFormValues));
+    orderFormValues.sampleOrderItems.modified = true;
+    console.log(JSON.stringify(orderFormValues));
     postToOpenElisServer(
       "/rest/sample-edit",
       JSON.stringify(orderFormValues),

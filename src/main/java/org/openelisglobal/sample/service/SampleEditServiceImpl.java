@@ -33,7 +33,7 @@ import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.result.action.util.ResultSet;
@@ -44,6 +44,7 @@ import org.openelisglobal.sample.bean.SampleEditItem;
 import org.openelisglobal.sample.form.SampleEditForm;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.samplehuman.valueholder.SampleHuman;
 import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
@@ -82,6 +83,8 @@ public class SampleEditServiceImpl implements SampleEditService {
     private TestSectionService testSectionService;
     @Autowired
     private PersonService personService;
+    @Autowired
+    private ProviderService providerService;
     @Autowired
     private SampleRequesterService sampleRequesterService;
     @Autowired
@@ -141,9 +144,18 @@ public class SampleEditServiceImpl implements SampleEditService {
             sampleChanged = true;
             updatedSample = orderArtifacts.getSample();
         }
-
-        Person referringPerson = orderArtifacts.getProviderPerson();
         Patient patient = sampleService.getPatient(updatedSample);
+        persistProviderData(orderArtifacts);
+        SampleHuman sampleHuman = new SampleHuman();
+        sampleHuman.setSampleId(updatedSample.getId());
+        SampleHuman existingSampleHuman = sampleHumanService.getDataBySample(sampleHuman);
+        existingSampleHuman.setSysUserId(sysUserId);
+        existingSampleHuman.setSampleId(updatedSample.getId());
+        existingSampleHuman.setPatientId(patient.getId());
+        if (orderArtifacts.getProvider() != null) {
+            existingSampleHuman.setProviderId(orderArtifacts.getProvider().getId());
+        }
+        sampleHumanService.update(existingSampleHuman);
 
         for (SampleItem sampleItem : updateSampleItemList) {
             sampleItemService.update(sampleItem);
@@ -225,13 +237,6 @@ public class SampleEditServiceImpl implements SampleEditService {
             }
         }
 
-        if (referringPerson != null) {
-            if (referringPerson.getId() == null) {
-                personService.insert(referringPerson);
-            } else {
-                personService.update(referringPerson);
-            }
-        }
 
         for (ObservationHistory observation : orderArtifacts.getObservations()) {
             observationService.save(observation);
@@ -480,5 +485,15 @@ public class SampleEditServiceImpl implements SampleEditService {
         }
 
         return false;
+    }
+
+    private void persistProviderData(SampleOrderService.SampleOrderPersistenceArtifacts orderArtifacts) {
+        if (orderArtifacts.getProviderPerson() != null && orderArtifacts.getProvider() != null) {
+
+            personService.save(orderArtifacts.getProviderPerson());
+            orderArtifacts.getProvider().setPerson(orderArtifacts.getProviderPerson());
+
+            providerService.save(orderArtifacts.getProvider());
+        }
     }
 }
