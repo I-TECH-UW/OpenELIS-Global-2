@@ -9,6 +9,9 @@ import ReferredOut from "./ReferredOut";
 import ReportByDate from "../common/ReportByDate";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
+import ActivityReportByPanel from "./ ActivityReportByPanel";
+import ActivityReportByTest from "./ActivityReportByTest";
+import ActivityReportByTestSection from "./ActivityReportByTestSection";
 
 const RoutineIndex = () => {
   const intl = useIntl();
@@ -109,6 +112,18 @@ const RoutineIndex = () => {
                 report={"auditTrail"}
                 id={"reports.auditTrail"}
               />
+            )}
+
+            {type === "indicator" && report === "activityReportByPanel" && (
+                <ActivityReportByPanel />
+            )}
+
+            {type === "indicator" && report === "activityReportByTest" && (
+                <ActivityReportByTest />
+            )}
+
+            {type === "indicator" && report === "activityReportByTestSection" && (
+                <ActivityReportByTestSection />
             )}
           </>
         )}

@@ -217,3 +217,4 @@ export function encodeDate(dateString) {
     return "";
   }
 }
+

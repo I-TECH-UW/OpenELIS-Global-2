@@ -532,3 +532,12 @@ button {
     width: 14rem;
   }
 }
+
+.inlineDiv {
+  display: flex;
+  justify-content: space-between;
+}
+
+.inputDate {
+  margin-right: 10px;
+}
