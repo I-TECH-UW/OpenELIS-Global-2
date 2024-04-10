@@ -90,6 +90,10 @@ public class SampleOrderService {
         this.readOnly = readOnly;
     }
 
+    public void setSample(Sample sample){
+        this.sample = sample;
+    }
+
     private SampleOrderItem getBaseSampleOrderItem() {
         SampleOrderItem orderItems = new SampleOrderItem();
 
@@ -425,32 +429,32 @@ public class SampleOrderService {
     private void handleExistingOrganizationRequester(SampleOrderItem sampleOrder, String currentUserId,
             SampleOrderPersistenceArtifacts artifacts, SampleRequester orgRequester) {
         if (GenericValidator.isBlankOrNull(sampleOrder.getReferringSiteId())
-                && GenericValidator.isBlankOrNull(sampleOrder.getNewRequesterName())) {
+                && GenericValidator.isBlankOrNull(sampleOrder.getReferringSiteName())) {
             artifacts.setDeletableSampleOrganizationRequester(orgRequester);
             return;
         }
 
         Organization org;
-        if (!GenericValidator.isBlankOrNull(sampleOrder.getNewRequesterName())) {
+        if (!GenericValidator.isBlankOrNull(sampleOrder.getReferringSiteName())) {
             org = new Organization();
             org.setIsActive("Y");
             org.setMlsSentinelLabFlag("N");
-            org.setOrganizationName(sampleOrder.getNewRequesterName());
+            org.setOrganizationName(sampleOrder.getReferringSiteName());
             org.setCode(sampleOrder.getReferringSiteCode());
             org.setSysUserId(currentUserId);
             artifacts.setProviderOrganization(org);
             orgRequester.setSysUserId(currentUserId);
             artifacts.setSampleOrganizationRequester(orgRequester);
         } else {
-            org = orgService.getOrganizationById(String.valueOf(orgRequester.getRequesterId()));
             if (String.valueOf(orgRequester.getRequesterId()).equals(sampleOrder.getReferringSiteId())) {
+                org = orgService.getOrganizationById(String.valueOf(orgRequester.getRequesterId()));
                 if (org == null || sampleOrder.getReferringSiteCode() == null
                         || sampleOrder.getReferringSiteCode().equals(org.getCode())) {
                     return;
                 }
-
                 updateExistingOrganizationCode(sampleOrder, currentUserId, artifacts, org);
             } else {
+                org = orgService.getOrganizationById(String.valueOf(sampleOrder.getReferringSiteId()));
                 orgRequester.setRequesterId(sampleOrder.getReferringSiteId());
                 orgRequester.setSysUserId(currentUserId);
                 artifacts.setSampleOrganizationRequester(orgRequester);
@@ -465,8 +469,8 @@ public class SampleOrderService {
         if (sampleOrder.getReferringSiteCode() != null && !sampleOrder.getReferringSiteCode().equals(org.getCode())) {
             org.setCode(sampleOrder.getReferringSiteCode());
             org.setSysUserId(currentUserId);
-            artifacts.setProviderOrganization(org);
         }
+        artifacts.setProviderOrganization(org);
     }
 
     public class SampleOrderPersistenceArtifacts {

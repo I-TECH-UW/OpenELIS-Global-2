@@ -137,6 +137,7 @@ public class SampleEditServiceImpl implements SampleEditService {
         List<SampleTestCollection> addedSamples = createAddSampleList(form, sampleAddService);
 
         SampleOrderService sampleOrderService = new SampleOrderService(form.getSampleOrderItems());
+        sampleOrderService.setSample(updatedSample);
         SampleOrderService.SampleOrderPersistenceArtifacts orderArtifacts = sampleOrderService
                 .getPersistenceArtifacts(updatedSample, sysUserId);
 
