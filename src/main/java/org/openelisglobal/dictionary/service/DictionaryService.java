@@ -4,9 +4,7 @@ import java.util.List;
 
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
-import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl.DictionaryMenu;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
-import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface DictionaryService extends BaseObjectService<Dictionary, String> {
@@ -46,7 +44,7 @@ public interface DictionaryService extends BaseObjectService<Dictionary, String>
 
     List<Dictionary> getPagesOfSearchedDictionaries(int startingRecNo, String searchString);
 
-    List<String> fetchDictionaryCategoryDescriptions();
+    List<DictionaryDAOImpl.DictionaryDescription> fetchDictionaryCategoryDescriptions();
 
     Dictionary saveDictionaryMenu(Dictionary dictionary);
 }

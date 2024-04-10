@@ -12,7 +12,6 @@ import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.dictionary.dao.DictionaryDAO;
 import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
-import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -191,7 +190,7 @@ public class DictionaryServiceImpl extends AuditableBaseObjectServiceImpl<Dictio
     }
 
     @Override
-    public List<String> fetchDictionaryCategoryDescriptions() {
+    public List<DictionaryDAOImpl.DictionaryDescription> fetchDictionaryCategoryDescriptions() {
         return getBaseObjectDAO().fetchDictionaryCategoryDescriptions();
     }
 

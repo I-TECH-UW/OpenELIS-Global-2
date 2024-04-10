@@ -55,9 +55,10 @@ public class DictionaryDAOImplTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void fetchDictionaryCategoryDescriptions_shouldReturnDictionaryCategoryDescriptions() {
-        List<String> menuList = dao.fetchDictionaryCategoryDescriptions();
+        List<DictionaryDAOImpl.DictionaryDescription> menuList = dao.fetchDictionaryCategoryDescriptions();
 
         assertThat(menuList, notNullValue());
-        assertThat(menuList.get(0),is("VIROLOGY"));
+        assertThat(menuList.get(0).getId(),is("34"));
+        assertThat(menuList.get(0).getDescription(),is("VIROLOGY"));
     }
 }

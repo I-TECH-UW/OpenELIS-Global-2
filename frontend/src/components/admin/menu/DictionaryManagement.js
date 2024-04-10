@@ -1,19 +1,12 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import "../../Style.css";
 import {
   Button,
   Column,
   DataTable,
-  DataTableSkeleton,
-  Dropdown,
-  Form,
   Grid,
-  Heading,
   Modal,
-  MultiSelect,
   Pagination,
-  Search,
-  Section,
   Select,
   SelectItem,
   Table,
@@ -30,15 +23,16 @@ import {
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
-import { getFromOpenElisServer, postToOpenElisServer } from "../../utils/Utils";
-import { NotificationContext } from "../../layout/Layout";
-import { AlertDialog } from "../../common/CustomNotification";
+import { getFromOpenElisServer, postToOpenElisServerFullResponse } from "../../utils/Utils";
+import { ConfigurationContext, NotificationContext } from "../../layout/Layout";
+import { AlertDialog, NotificationKinds } from "../../common/CustomNotification";
 
 function DictionaryManagement() {
   const intl = useIntl();
   const componentMounted = useRef(false);
 
-  const { notificationVisible } = useContext(NotificationContext);
+  const { notificationVisible, setNotificationVisible, addNotification} = useContext(NotificationContext);
+  const { configurationProperties, reloadConfiguration } = useContext(ConfigurationContext);
   const [dictionaryMenuz, setDictionaryMenuz] = useState([]);
 
   const [page, setPage] = useState(1);
@@ -72,6 +66,7 @@ function DictionaryManagement() {
 
   const fetchedDictionaryCategory = (category) => {
     if (componentMounted.current) {
+      console.log("Fetched Dictionary Category Data:", category);
       setCategoryDescription(category);
     }
   };
@@ -95,21 +90,37 @@ function DictionaryManagement() {
     };
   }, []);
 
+  const postData = {
+    id: dictionaryNumber,
+    selectedDictionaryCategoryId: category,
+    dictEntry: dictionaryEntry,
+    localAbbreviation: localAbbreviation,
+    isActive: isActive,
+  };
+
+  async function displayStatus(res) {
+    setNotificationVisible(true);
+    if (res.status == "200") {
+      addNotification({
+        kind: NotificationKinds.success,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "success.add.edited.msg" }),
+      });
+    } else {
+      addNotification({
+        kind: NotificationKinds.error,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.add.edited.msg" }),
+      });
+    }
+    reloadConfiguration();
+  }
+
   const handleSubmitModal = (e) => {
     e.preventDefault();
-
-    const postData = {
-      dictionaryNumber: dictionaryNumber,
-      category: category,
-      dictionaryEntry: dictionaryEntry,
-      localAbbreviation: localAbbreviation,
-      isActive: isActive,
-    };
-    console.log(JSON.stringify(orderFormValues));
-    postToOpenElisServer(
-      "/rest/create-dictionary-menu",
-      JSON.stringify(postData)
-    );
+    console.log(JSON.stringify(postData));
+    postToOpenElisServerFullResponse("/rest/create-dictionary", JSON.stringify(postData),displayStatus);
+    setOpen(false);
   };
 
   return (
@@ -178,29 +189,43 @@ function DictionaryManagement() {
                       </Button>
                       <Modal
                         open={open}
+                        size="sm"
                         onRequestClose={() => setOpen(false)}
                         modalHeading="Add Dictionary"
                         primaryButtonText="Add"
                         secondaryButtonText="Cancel"
+                        onRequestSubmit={handleSubmitModal}
                       >
                         <TextInput
+                          data-modal-primary-focus
                           id="dictNumber"
                           labelText="Dictionary Number"
+                          onChange={(e) => setDictionaryNumber(e.target.value)}
                           style={{
                             marginBottom: "1rem",
                           }}
                         />
-                        <Select id="description" labelText="Category">
+                        <Select
+                          id="description"
+                          labelText="Category"
+                          onChange={(e) => {
+                            console.log("Selected category:", e.target.value);
+                            setCategory(e.target.value);
+                          }}
+                        >
+                          <SelectItem text="" />
                           {categoryDescription.map((description) => (
                             <SelectItem
-                              value={description}
-                              text={description}
+                              key={description.id}
+                              value={description.id}
+                              text={description.description}
                             />
                           ))}
                         </Select>
                         <TextInput
                           id="dictEntry"
                           labelText="Dictionary Entry"
+                          onChange={(e) => setDictionaryEntry(e.target.value)}
                           style={{
                             marginBottom: "1rem",
                           }}
@@ -209,14 +234,15 @@ function DictionaryManagement() {
                           data-modal-primary-focus
                           id="isActive"
                           labelText="Is Active"
+                          onChange={(e) => setIsActive(e.target.value)}
                           style={{
                             marginBottom: "1rem",
                           }}
                         />
                         <TextInput
-                          data-modal-primary-focus
                           id="localAbbrev"
                           labelText="Local Abbreviation"
+                          onChange={(e) => setLocalAbbreviation(e.target.value)}
                           style={{
                             marginBottom: "1rem",
                           }}

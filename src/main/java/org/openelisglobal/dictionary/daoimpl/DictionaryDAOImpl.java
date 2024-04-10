@@ -295,6 +295,12 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         private String isActive;
     }
 
+    @Data
+    public static class DictionaryDescription {
+        private String id;
+        private String description;
+    }
+
     /**
      * <p>This should generate the sql query below: <pre>{@code
      * select category.name, dict_entry, category.local_abbrev, is_active
@@ -309,6 +315,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
         Root<Dictionary> dictionaryRoot = query.from(Dictionary.class);
+
         Join<Dictionary, DictionaryCategory> categoryJoin = dictionaryRoot.join("dictionaryCategory");
 
         query.multiselect(dictionaryRoot.get("id"),categoryJoin.get("categoryName"),dictionaryRoot.get("dictEntry"),
@@ -319,13 +326,15 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
     }
 
     @Override
-    public List<String> fetchDictionaryCategoryDescriptions() {
+    public List<DictionaryDescription> fetchDictionaryCategoryDescriptions() {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<String> query = cb.createQuery(String.class);
-        Root<DictionaryCategory> dictionaryRoot = query.from(DictionaryCategory.class);
+        CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
+        Root<DictionaryCategory> dictionaryCategoryRoot = query.from(DictionaryCategory.class);
 
-        query.select(dictionaryRoot.get("description"));
-        return entityManager.createQuery(query).getResultList();
+        query.multiselect(dictionaryCategoryRoot.get("id"), dictionaryCategoryRoot.get("description"));
+
+        List<Object[]> resultList = entityManager.createQuery(query).getResultList();
+        return getDescriptionList(resultList);
     }
 
     @Override
@@ -363,6 +372,17 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
             dictionaryMenuArrayList.add(dictionaryMenu);
         }
         return dictionaryMenuArrayList;
+    }
+
+    private static List<DictionaryDescription> getDescriptionList(List<Object[]> resultList) {
+        List<DictionaryDescription> dictionaryDescriptions = new ArrayList<>();
+        for (Object[] result : resultList) {
+            DictionaryDescription description = new DictionaryDescription();
+            description.setId((String) result[0]);
+            description.setDescription((String) result[1]);
+            dictionaryDescriptions.add(description);
+        }
+        return dictionaryDescriptions;
     }
 
     @Override

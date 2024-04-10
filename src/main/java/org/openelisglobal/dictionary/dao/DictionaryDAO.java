@@ -133,7 +133,7 @@ public interface DictionaryDAO extends BaseDAO<Dictionary, String> {
 
     Dictionary saveDictionaryMenu(Dictionary dictionary);
 
-    List<String> fetchDictionaryCategoryDescriptions();
+    List<DictionaryDAOImpl.DictionaryDescription> fetchDictionaryCategoryDescriptions();
 
     DictionaryCategory saveDictionaryCategory(DictionaryCategory category);
 }
