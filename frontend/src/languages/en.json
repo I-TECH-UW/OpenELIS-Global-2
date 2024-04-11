@@ -207,6 +207,7 @@
   "sidenav.label.workplan.panel": "By Panel Type",
   "banner.menu.workplan.bench": "By Unit",
   "sidenav.label.workplan.priority": "By Priority",
+  "sidenav.label.workplan.selectReportType": "Select Report Type",
   "sidenav.label.pathology": "Pathology",
   "sidenav.label.immunochem": "Immunohistochemistry",
   "sidenav.label.cytology": "Cytology",

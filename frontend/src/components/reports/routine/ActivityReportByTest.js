@@ -1,10 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Form, FormLabel, Grid, Column, Section, Button, Loading, Card } from "@carbon/react";
+import { Form, FormLabel, Grid, Column, Section, Button, Loading } from "@carbon/react";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import { AlertDialog } from "../../common/CustomNotification";
 import config from "../../../config.json";
 import TestSelectForm from "../../workplan/TestSelectForm";
+import TestSectionSelectForm from "../../workplan/TestSectionSelectForm";
+import PanelSelectForm from "../../workplan/PanelSelectForm";
+
 import "../../Style.css";
 import { getFromOpenElisServer } from "../../utils/Utils";
 import { encodeDate } from "../../utils/Utils";
@@ -14,13 +17,15 @@ const ActivityReportByTest = () => {
   const mounted = useRef(false);
   const [loading, setLoading] = useState(false);
   const [notificationVisible, setNotificationVisible] = useState(false);
+  const [SelectedValue, setSelectedValue] = useState(false);
   const [reportFormValues, setReportFormValues] = useState({
     startDate: null,
     endDate: null
   });
   const [testList, setTestList] = useState([]);
-  const [selectedValue, setSelectedValue] = useState("");
-
+  const [unitList, setUnitList] = useState([]);
+  const [panelList, setPanelList] = useState([]);
+  const [selectedReportType, setSelectedReportType] = useState("byTest");
 
   const handleDatePickerChangeDate = (datePicker, date) => {
     let updatedDate = encodeDate(date);
@@ -43,6 +48,17 @@ const ActivityReportByTest = () => {
     setReportFormValues(obj);
   };
 
+  const handleReportTypeChange = (event) => {
+    setSelectedReportType(event.target.value);
+  };
+
+
+  const handleSelectedValue = (v) => {
+    if (mounted.current) {
+      setSelectedValue(v);
+    }
+  };
+
 
   const handleSubmit = () => {
     setLoading(true);
@@ -52,12 +68,6 @@ const ActivityReportByTest = () => {
     window.open(url, "_blank");
     setLoading(false);
     setNotificationVisible(true);
-  };
-
-  const handleSelectedValue = (v, l) => {
-    if (mounted.current) {
-      setSelectedValue(v);
-    }
   };
 
   useEffect(() => {
@@ -72,6 +82,44 @@ const ActivityReportByTest = () => {
     };
 
     fetchTestList();
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    mounted.current = true;
+    const fetchPanelList = async () => {
+      try {
+        const data = await getFromOpenElisServer("/rest/panels");
+        console.log("Panel list:", data); 
+        setPanelList(data);
+      } catch (error) {
+        throw new Error("Error fetching panel list:", error);
+      }
+    };
+
+    fetchPanelList();
+
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    mounted.current = true;
+    const fetchUnitList = async () => {
+      try {
+        const data = getFromOpenElisServer('/rest/test-sections');
+        console.log(data);
+        setUnitList(data);
+      } catch (error) {
+        throw new Error("Error fetching units list:", error);
+      }
+    };
+
+    fetchUnitList();
+
     return () => {
       mounted.current = false;
     };
@@ -133,9 +181,37 @@ const ActivityReportByTest = () => {
             </Grid>
             <Column lg={6}>
               <Form className="container-form">
-                Test type: <TestSelectForm testList={testList} value={handleSelectedValue}/>
+                <label>
+                  <FormattedMessage id="sidenav.label.workplan.selectReportType" />
+                </label>
+                <select value={selectedReportType} onChange={handleReportTypeChange}>
+                  <option value="byTest">By Test</option>
+                  <option value="byPanel">By Panel</option>
+                  <option value="byUnit">By Unit</option>
+                </select>
               </Form>
             </Column>
+            {selectedReportType === "byTest" && (
+              <Column lg={6}>
+                <Form className="container-form">
+                  Test type: <TestSelectForm testList={testList} value={handleSelectedValue}/>
+                </Form>
+              </Column>
+            )}
+            {selectedReportType === "byPanel" && (
+              <Column lg={6}>
+                <Form className="container-form">
+                  Panel type: <PanelSelectForm panelList={panelList} value={handleSelectedValue}/>
+                </Form>
+              </Column>
+            )}
+            {selectedReportType === "byUnit" && (
+              <Column lg={6}>
+                <Form className="container-form">
+                  Unit type: <TestSectionSelectForm unitList={unitList} value={handleSelectedValue}/>
+                </Form>
+              </Column>
+            )}
             <br /> 
             <Section>
               <br />
@@ -143,12 +219,12 @@ const ActivityReportByTest = () => {
                 <FormattedMessage id="label.button.generatePrintableVersion" defaultMessage="Generate printable version" />
               </Button>
             </Section>
-       
           </Form>
         </Column>
       </Grid>
     </>
   );
+  
 };
 
 export default ActivityReportByTest;
