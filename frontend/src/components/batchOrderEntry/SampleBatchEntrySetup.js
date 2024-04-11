@@ -21,13 +21,18 @@ import { NotificationContext } from "../layout/Layout";
 import { AlertDialog } from "../common/CustomNotification";
 import AutoComplete from "../common/AutoComplete";
 import "../Style.css";
-import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
+import {
+  getFromOpenElisServer,
+  postToOpenElisServerFullResponse,
+} from "../utils/Utils";
 import PageBreadCrumb from "../common/PageBreadCrumb";
+import SampleBatchEntry from "./SampleBatchEntry";
 
 const SampleBatchEntrySetup = () => {
   const [orderFormValues, setOrderFormValues] = useState(
     BatchOrderEntryFormValues,
   );
+  const [status, setStatus] = useState("");
   const { configurationProperties } = useContext(ConfigurationContext);
   const { notificationVisible } = useContext(NotificationContext);
   const intl = useIntl();
@@ -41,6 +46,9 @@ const SampleBatchEntrySetup = () => {
   const [selectedForm, setSelectedForm] = useState("");
   const [innitialized, setInnitialized] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showSampleComponent, setShowSampleComponent] = useState(false);
+
+  const [postRequestMade, setPostRequestMade] = useState(false);
 
   let breadcrumbs = [{ label: "home.label", link: "/" }];
 
@@ -48,7 +56,7 @@ const SampleBatchEntrySetup = () => {
     setFacilityChecked(!facilityChecked);
     setOrderFormValues({
       ...orderFormValues,
-      facilityID: !facilityChecked,
+      facilityIDCheck: !facilityChecked,
     });
   }
 
@@ -72,15 +80,21 @@ const SampleBatchEntrySetup = () => {
   function handleRequesterDept(e) {
     setOrderFormValues({
       ...orderFormValues,
-      referringSiteDepartmentId: e.target.value,
+      sampleOrderItems: {
+        ...orderFormValues.sampleOrderItems,
+        referringSiteDepartmentId: e.target.value,
+      },
     });
   }
 
   function handleSiteName(e) {
     setOrderFormValues({
       ...orderFormValues,
-      referringSiteName: e.target.value,
-      referringSiteId: "",
+      sampleOrderItems: {
+        ...orderFormValues.sampleOrderItems,
+        referringSiteName: e.target.value,
+        referringSiteId: "",
+      },
     });
   }
 
@@ -97,7 +111,10 @@ const SampleBatchEntrySetup = () => {
         case "receivedDate":
           updatedBatchOrderEntry = {
             ...updatedBatchOrderEntry,
-            receivedDateForDisplay: date,
+            sampleOrderItems: {
+              ...updatedBatchOrderEntry.sampleOrderItems,
+              receivedDateForDisplay: date, 
+            },
           };
           break;
         default:
@@ -106,15 +123,19 @@ const SampleBatchEntrySetup = () => {
       return updatedBatchOrderEntry;
     });
   }
+  
   useEffect(() => {
     if (!innitialized) {
       setOrderFormValues({
         ...orderFormValues,
         currentDate: configurationProperties.currentDateAsText,
-        receivedDateForDisplay: configurationProperties.currentDateAsText,
-        nextVisitDate: configurationProperties.currentDateAsText,
+        sampleOrderItems: {
+          ...orderFormValues.sampleOrderItems,
+          receivedDateForDisplay: configurationProperties.currentDateAsText,
+          receivedTime: configurationProperties.currentTimeAsText,
+
+        },
         currentTime: configurationProperties.currentTimeAsText,
-        ReceptionTime: configurationProperties.currentTimeAsText,
       });
     }
     if (orderFormValues.currentDate != "") {
@@ -134,10 +155,10 @@ const SampleBatchEntrySetup = () => {
   useEffect(() => {
     getFromOpenElisServer(
       "/rest/departments-for-site?refferingSiteId=" +
-        (orderFormValues.referringSiteId || ""),
+        (orderFormValues.sampleOrderItems.referringSiteId || ""),
       loadDepartments,
     );
-  }, [orderFormValues.referringSiteId]);
+  }, [orderFormValues.sampleOrderItems.referringSiteId]);
 
   const getSampleEntryPreform = (response) => {
     if (componentMounted.current) {
@@ -152,8 +173,9 @@ const SampleBatchEntrySetup = () => {
   const updateFormValues = (updatedValues) => {
     setOrderFormValues({
       ...orderFormValues,
-      tests: updatedValues.selectedTests,
+      testSectionList: updatedValues.selectedTests,
       panels: updatedValues.selectedPanels,
+      sampleTypeSelect:updatedValues.sampleId,
     });
   };
 
@@ -201,14 +223,15 @@ const SampleBatchEntrySetup = () => {
   function handleReceptionTime(e) {
     setOrderFormValues({
       ...orderFormValues,
-
-      ReceptionTime: e.target.value,
+      sampleOrderItems: {
+        ...orderFormValues.sampleOrderItems,
+        receivedTime: e.target.value,
+      },
     });
   }
   function handleCurrentTime(e) {
     setOrderFormValues({
       ...orderFormValues,
-
       currentTime: e.target.value,
     });
   }
@@ -216,14 +239,35 @@ const SampleBatchEntrySetup = () => {
   function handleAutoCompleteSiteName(siteId) {
     setOrderFormValues({
       ...orderFormValues,
-      referringSiteId: siteId,
-      referringSiteName: "",
+      sampleOrderItems: {
+        ...orderFormValues.sampleOrderItems,
+        referringSiteId: siteId,
+        referringSiteName: "",
+      },
+      facilityID: siteId,
     });
   }
 
-  function handleSubmitButton1() {
-    console.log(orderFormValues);
-    postToOpenElisServer("/SampleBatchEntry", JSON.stringify(orderFormValues));
+  async function handleSubmitButton1() {
+    try {
+      const body = JSON.stringify(orderFormValues);
+      const response = await postToOpenElisServerFullResponse(
+        "/rest/SampleBatchEntry",
+        body,
+        displayStatus,
+      );
+    } catch (error) {
+      console.error("Error occurred:", error);
+    }
+  }
+
+  async function displayStatus(res) {
+    if (res.status === 200) {
+      setPostRequestMade(true);
+    } else {
+      console.log("Response from server:", res);
+      setStatus("error");
+    }
   }
 
   function handleFormChange(event) {
@@ -233,315 +277,368 @@ const SampleBatchEntrySetup = () => {
 
   return (
     <>
-      {notificationVisible === true ? <AlertDialog /> : ""}
-      {loading && <Loading description="Loading Dasboard..." />}
-      <PageBreadCrumb breadcrumbs={breadcrumbs} />
-      <Grid fullWidth={true}>
-        <Column lg={16} md={8} sm={4}>
-          <Section>
-            <Heading>
-              <FormattedMessage
-                id="order.entry.setup"
-                defaultMessage="Batch Order Entry Setup"
-              />
-            </Heading>
-          </Section>
-        </Column>
-      </Grid>
-      <Grid fullWidth={true}>
-        <Column lg={16} md={8} sm={4}>
-          <div className="orderLegendBody">
-            <h3>
-              <FormattedMessage id="order.title" defaultMessage="Order" />
-            </h3>
-            <Section>
-              <div className="inlineDiv">
-                <CustomDatePicker
-                  id={"order_currentDate"}
-                  labelText={intl.formatMessage({
-                    id: "sample.currentDate",
-                    defaultMessage: "Current Date",
-                  })}
-                  autofillDate={true}
-                  value={
-                    orderFormValues.currentDate
-                      ? orderFormValues.currentDate
-                      : configurationProperties.currentDateAsText
-                  }
-                  className="inputDate"
-                  disallowFutureDate={true}
-                  onChange={(date) =>
-                    handleDatePickerChange("currentDate", date)
-                  }
-                />
+      {postRequestMade ? (
+        <SampleBatchEntry
+          orderFormValues={orderFormValues}
+          setOrderFormValues={setOrderFormValues}
+        />
+      ) : (
+        <>
+          {notificationVisible === true ? <AlertDialog /> : ""}
+          {loading && <Loading description="Loading Dasboard..." />}
+          <PageBreadCrumb breadcrumbs={breadcrumbs} />
+          {!showSampleComponent && (
+            <>
+              <Grid fullWidth={true}>
+                <Column lg={16} md={8} sm={4}>
+                  <Section>
+                    <Heading>
+                      <FormattedMessage
+                        id="order.entry.setup"
+                        defaultMessage="Batch Order Entry Setup"
+                      />
+                    </Heading>
+                  </Section>
+                </Column>
+              </Grid>
+              <Grid fullWidth={true}>
+                <Column lg={16} md={8} sm={4}>
+                  <div className="orderLegendBody">
+                    <h3>
+                      <FormattedMessage
+                        id="order.title"
+                        defaultMessage="Order"
+                      />
+                    </h3>
+                    <Section>
+                      <div className="inlineDiv">
+                        <CustomDatePicker
+                          id={"order_currentDate"}
+                          labelText={intl.formatMessage({
+                            id: "sample.currentDate",
+                            defaultMessage: "Current Date",
+                          })}
+                          autofillDate={true}
+                          value={
+                            orderFormValues.currentDate
+                              ? orderFormValues.currentDate
+                              : configurationProperties.currentDateAsText
+                          }
+                          className="inputDate"
+                          disallowFutureDate={true}
+                          onChange={(date) =>
+                            handleDatePickerChange("currentDate", date)
+                          }
+                        />
+                        <CustomDatePicker
+                          id={"order_receivedDate"}
+                          labelText={intl.formatMessage({
+                            id: "sample.receivedDate",
+                            defaultMessage: "Received Date",
+                          })}
+                          className="inputDate"
+                          autofillDate={true}
+                          value={
+                            orderFormValues.sampleOrderItems.receivedDateForDisplay
+                              ? orderFormValues.sampleOrderItems.receivedDateForDisplay
+                              : configurationProperties.currentDateAsText
+                          }
+                          disallowFutureDate={true}
+                          onChange={(date) =>
+                            handleDatePickerChange("receivedDate", date)
+                          }
+                        />
+                      </div>
+                    </Section>
+                    <Section>
+                      <div className="inlineDiv">
+                        <TimePicker
+                          id="order_CurrentTime"
+                          className="inputTime"
+                          labelText={intl.formatMessage({
+                            id: "order.current.time",
+                            defaultMessage: "Current Time",
+                          })}
+                          onChange={handleCurrentTime}
+                          value={
+                            orderFormValues.currentTime
+                              ? orderFormValues.currentTime
+                              : configurationProperties.currentTimeAsText
+                          }
+                        />
+                        <TimePicker
+                          id="order_ReceptionTime"
+                          className="inputTime"
+                          labelText={intl.formatMessage({
+                            id: "order.reception.time",
+                            defaultMessage: "Reception Time",
+                          })}
+                          onChange={handleReceptionTime}
+                          value={
+                            orderFormValues.sampleOrderItems.receivedTime
+                              ? orderFormValues.sampleOrderItems.receivedTime
+                              : configurationProperties.currentTimeAsText
+                          }
+                        />
+                      </div>
+                    </Section>
+                    <Section>
+                      <Select
+                        className="inputText"
+                        id="form-dropdown"
+                        labelText={<FormattedMessage id="order.form.label" />}
+                        onChange={handleFormChange}
+                        defaultValue=""
+                      >
+                        <SelectItem
+                          value=""
+                          text={intl.formatMessage({ id: "order.form.select" })}
+                        />
+                        <SelectItem
+                          value="routine"
+                          text={intl.formatMessage({
+                            id: "banner.menu.resultvalidation_routine",
+                          })}
+                        />
+                        <SelectItem
+                          value="EID"
+                          text={intl.formatMessage({
+                            id: "project.EIDStudy.name",
+                          })}
+                        />
+                        <SelectItem
+                          value="viralLoad"
+                          text={intl.formatMessage({
+                            id: "banner.menu.resultvalidation.viralload",
+                          })}
+                        />
+                      </Select>
+                    </Section>
+                  </div>
+                  <div>
+                    {selectedForm === "routine" && (
+                      <>
+                        <SampleType updateFormValues={updateFormValues} />
+                      </>
+                    )}{" "}
+                    {selectedForm == "EID" && selectedForm && (
+                      <div className="orderLegendBody">
+                        <h3>
+                          <FormattedMessage id="order.legend.sample" />
+                        </h3>
+                        <Section>
+                          <h3>
+                            <FormattedMessage id="order.legend.specimen.collected" />
+                          </h3>
+                          <Checkbox
+                            labelText={
+                              <FormattedMessage id="order.legend.dryTube" />
+                            }
+                            id="eid_dryTubeTaken"
+                            checked={
+                              orderFormValues._ProjectDataEID.dryTubeTaken
+                            }
+                            onChange={handleCheckboxChange}
+                          />
+                          <Checkbox
+                            labelText={
+                              <FormattedMessage id="order.legend.dryBloodSpot" />
+                            }
+                            id="eid_dbsTaken"
+                            checked={orderFormValues._ProjectDataEID.dbsTaken}
+                            onChange={handleCheckboxChange}
+                          />
+                          <h3>
+                            <FormattedMessage id="order.legend.tests" />
+                          </h3>
+                          <Checkbox
+                            labelText={
+                              <FormattedMessage id="banner.menu.resultvalidation.dnapcr" />
+                            }
+                            id="eid_dnaPCR"
+                            checked={orderFormValues._ProjectDataEID.dnaPCR}
+                            onChange={handleCheckboxChange}
+                          />
+                        </Section>
+                      </div>
+                    )}{" "}
+                    {selectedForm == "viralLoad" && selectedForm && (
+                      <div className="orderLegendBody">
+                        <h3>
+                          <FormattedMessage id="order.legend.sample" />
+                        </h3>
+                        <Section>
+                          <h3>
+                            <FormattedMessage id="order.legend.specimen.collected" />
+                          </h3>
+                          <Checkbox
+                            labelText={
+                              <FormattedMessage id="order.legend.dryTube" />
+                            }
+                            id="vl_dryTubeTaken"
+                            checked={
+                              orderFormValues._ProjectDataVL.dryTubeTaken
+                            }
+                            onChange={handleCheckboxChange}
+                          />
+                          <Checkbox
+                            labelText={
+                              <FormattedMessage id="order.legend.EDTATube" />
+                            }
+                            id="vl_edtaTubeTaken"
+                            checked={
+                              orderFormValues._ProjectDataVL.edtaTubeTaken
+                            }
+                            onChange={handleCheckboxChange}
+                          />
+                          <Checkbox
+                            labelText={
+                              <FormattedMessage id="order.legend.dryBloodSpot" />
+                            }
+                            id="vl_dbsTaken"
+                            checked={orderFormValues._ProjectDataVL.dbsTaken}
+                            onChange={handleCheckboxChange}
+                          />
+                          <h3>
+                            <FormattedMessage id="order.legend.tests" />
+                          </h3>
+                          <Checkbox
+                            labelText={
+                              <FormattedMessage id="order.legend.viralLoadTest" />
+                            }
+                            id="vl_viralLoadTest"
+                            checked={
+                              orderFormValues._ProjectDataVL.viralLoadTest
+                            }
+                            onChange={handleCheckboxChange}
+                          />
+                        </Section>
+                      </div>
+                    )}
+                  </div>
+                  <div className="orderLegendBody">
+                    <h3>
+                      <FormattedMessage id="order.legend.configureBarcode" />
+                    </h3>
+                    <Section>
+                      <Select
+                        className="inputText"
+                        id="method-dropdown"
+                        labelText={
+                          <FormattedMessage id="referral.label.testmethod" />
+                        }
+                        onChange={handleMethodChange}
+                        defaultValue=""
+                      >
+                        <SelectItem
+                          value=""
+                          text={intl.formatMessage({
+                            id: "order.legend.selectMethod",
+                          })}
+                        />
+                        <SelectItem
+                          value="onDemand"
+                          text={intl.formatMessage({
+                            id: "order.legend.onDemand",
+                          })}
+                        />
+                        <SelectItem
+                          value="preDemand"
+                          text={intl.formatMessage({
+                            id: "order.legend.preDemand",
+                          })}
+                        />
+                      </Select>
+                    </Section>
+                    <Section>
+                      <p>
+                        <FormattedMessage id="order.legend.optionalFields" />
+                      </p>
+                      <div className="inlineDiv">
+                        <Checkbox
+                          labelText={
+                            <FormattedMessage id="order.legend.facility" />
+                          }
+                          id="facility-checkbox"
+                          checked={facilityChecked}
+                          onChange={handleFacilityCheckboxChange}
+                        />
+                        <Checkbox
+                          labelText={
+                            <FormattedMessage id="order.legend.patient" />
+                          }
+                          id="patient-checkbox"
+                          checked={patientChecked}
+                          onChange={handlePatientCheckboxChange}
+                        />
+                      </div>
+                    </Section>
+                    <Section>
+                      <div className="inlineDiv">
+                        <AutoComplete
+                          name="siteName"
+                          id="siteName"
+                          className="inputText"
+                          allowFreeText={
+                            !(
+                              configurationProperties.restrictFreeTextRefSiteEntry ===
+                              "true"
+                            )
+                          }
+                          value={
+                            orderFormValues.sampleOrderItems.referringSiteId !=
+                            ""
+                              ? orderFormValues.sampleOrderItems.referringSiteId
+                              : orderFormValues.sampleOrderItems
+                                  .referringSiteName
+                          }
+                          onChange={handleSiteName}
+                          onSelect={handleAutoCompleteSiteName}
+                          label={
+                            <FormattedMessage id="order.legend.siteName" />
+                          }
+                          class="inputText"
+                          style={{ width: "!important 100%" }}
+                          suggestions={siteNames.length > 0 ? siteNames : []}
+                        />
 
-                <CustomDatePicker
-                  id={"order_receivedDate"}
-                  labelText={intl.formatMessage({
-                    id: "sample.receivedDate",
-                    defaultMessage: "Received Date",
-                  })}
-                  className="inputDate"
-                  autofillDate={true}
-                  value={
-                    orderFormValues.receivedDateForDisplay
-                      ? orderFormValues.receivedDateForDisplay
-                      : configurationProperties.currentDateAsText
-                  }
-                  disallowFutureDate={true}
-                  onChange={(date) =>
-                    handleDatePickerChange("receivedDate", date)
-                  }
-                />
-              </div>
-            </Section>
-            <Section>
-              <div className="inlineDiv">
-                <TimePicker
-                  id="order_CurrentTime"
-                  className="inputTime"
-                  labelText={intl.formatMessage({
-                    id: "order.current.time",
-                    defaultMessage: "Current Time",
-                  })}
-                  onChange={handleCurrentTime}
-                  value={
-                    orderFormValues.currentTime
-                      ? orderFormValues.currentTime
-                      : configurationProperties.currentTimeAsText
-                  }
-                />
-                <TimePicker
-                  id="order_ReceptionTime"
-                  className="inputTime"
-                  labelText={intl.formatMessage({
-                    id: "order.reception.time",
-                    defaultMessage: "Reception Time",
-                  })}
-                  onChange={handleReceptionTime}
-                  value={
-                    orderFormValues.ReceptionTime
-                      ? orderFormValues.ReceptionTime
-                      : configurationProperties.currentTimeAsText
-                  }
-                />
-              </div>
-            </Section>
-            <Section>
-              <Select
-                className="inputText"
-                id="form-dropdown"
-                labelText={<FormattedMessage id="order.form.label" />}
-                onChange={handleFormChange}
-                defaultValue=""
-              >
-                <SelectItem
-                  value=""
-                  text={intl.formatMessage({ id: "order.form.select" })}
-                />
-                <SelectItem
-                  value="routine"
-                  text={intl.formatMessage({
-                    id: "banner.menu.resultvalidation_routine",
-                  })}
-                />
-                <SelectItem
-                  value="EID"
-                  text={intl.formatMessage({ id: "project.EIDStudy.name" })}
-                />
-                <SelectItem
-                  value="viralLoad"
-                  text={intl.formatMessage({
-                    id: "banner.menu.resultvalidation.viralload",
-                  })}
-                />
-              </Select>
-            </Section>
-          </div>
-          <div>
-            {selectedForm === "routine" && (
-              <>
-                <SampleType updateFormValues={updateFormValues} />
-              </>
-            )}{" "}
-            {selectedForm == "EID" && selectedForm && (
-              <div className="orderLegendBody">
-                <h3>
-                  <FormattedMessage id="order.legend.sample" />
-                </h3>
-                <Section>
-                  <h3>
-                    <FormattedMessage id="order.legend.specimen.collected" />
-                  </h3>
-                  <Checkbox
-                    labelText={<FormattedMessage id="order.legend.dryTube" />}
-                    id="eid_dryTubeTaken"
-                    checked={orderFormValues._ProjectDataEID.dryTubeTaken}
-                    onChange={handleCheckboxChange}
-                  />
-                  <Checkbox
-                    labelText={
-                      <FormattedMessage id="order.legend.dryBloodSpot" />
-                    }
-                    id="eid_dbsTaken"
-                    checked={orderFormValues._ProjectDataEID.dbsTaken}
-                    onChange={handleCheckboxChange}
-                  />
-                  <h3>
-                    <FormattedMessage id="order.legend.tests" />
-                  </h3>
-                  <Checkbox
-                    labelText={
-                      <FormattedMessage id="banner.menu.resultvalidation.dnapcr" />
-                    }
-                    id="eid_dnaPCR"
-                    checked={orderFormValues._ProjectDataEID.dnaPCR}
-                    onChange={handleCheckboxChange}
-                  />
-                </Section>
-              </div>
-            )}{" "}
-            {selectedForm == "viralLoad" && selectedForm && (
-              <div className="orderLegendBody">
-                <h3>
-                  <FormattedMessage id="order.legend.sample" />
-                </h3>
-                <Section>
-                  <h3>
-                    <FormattedMessage id="order.legend.specimen.collected" />
-                  </h3>
-                  <Checkbox
-                    labelText={<FormattedMessage id="order.legend.dryTube" />}
-                    id="vl_dryTubeTaken"
-                    checked={orderFormValues._ProjectDataVL.dryTubeTaken}
-                    onChange={handleCheckboxChange}
-                  />
-                  <Checkbox
-                    labelText={<FormattedMessage id="order.legend.EDTATube" />}
-                    id="vl_edtaTubeTaken"
-                    checked={orderFormValues._ProjectDataVL.edtaTubeTaken}
-                    onChange={handleCheckboxChange}
-                  />
-                  <Checkbox
-                    labelText={
-                      <FormattedMessage id="order.legend.dryBloodSpot" />
-                    }
-                    id="vl_dbsTaken"
-                    checked={orderFormValues._ProjectDataVL.dbsTaken}
-                    onChange={handleCheckboxChange}
-                  />
-                  <h3>
-                    <FormattedMessage id="order.legend.tests" />
-                  </h3>
-                  <Checkbox
-                    labelText={
-                      <FormattedMessage id="order.legend.viralLoadTest" />
-                    }
-                    id="vl_viralLoadTest"
-                    checked={orderFormValues._ProjectDataVL.viralLoadTest}
-                    onChange={handleCheckboxChange}
-                  />
-                </Section>
-              </div>
-            )}
-          </div>
-          <div className="orderLegendBody">
-            <h3>
-              <FormattedMessage id="order.legend.configureBarcode" />
-            </h3>
-            <Section>
-              <Select
-                className="inputText"
-                id="method-dropdown"
-                labelText={<FormattedMessage id="referral.label.testmethod" />}
-                onChange={handleMethodChange}
-                defaultValue=""
-              >
-                <SelectItem
-                  value=""
-                  text={intl.formatMessage({ id: "order.legend.selectMethod" })}
-                />
-                <SelectItem
-                  value="onDemand"
-                  text={intl.formatMessage({ id: "order.legend.onDemand" })}
-                />
-                <SelectItem
-                  value="preDemand"
-                  text={intl.formatMessage({ id: "order.legend.preDemand" })}
-                />
-              </Select>
-            </Section>
-            <Section>
-              <p>
-                <FormattedMessage id="order.legend.optionalFields" />
-              </p>
-              <div className="inlineDiv">
-                <Checkbox
-                  labelText={<FormattedMessage id="order.legend.facility" />}
-                  id="facility-checkbox"
-                  checked={facilityChecked}
-                  onChange={handleFacilityCheckboxChange}
-                />
-                <Checkbox
-                  labelText={<FormattedMessage id="order.legend.patient" />}
-                  id="patient-checkbox"
-                  checked={patientChecked}
-                  onChange={handlePatientCheckboxChange}
-                />
-              </div>
-            </Section>
-            <Section>
-              <div className="inlineDiv">
-                <AutoComplete
-                  name="siteName"
-                  id="siteName"
-                  className="inputText"
-                  allowFreeText={
-                    !(
-                      configurationProperties.restrictFreeTextRefSiteEntry ===
-                      "true"
-                    )
-                  }
-                  value={
-                    orderFormValues.referringSiteId != ""
-                      ? orderFormValues.referringSiteId
-                      : orderFormValues.referringSiteName
-                  }
-                  onChange={handleSiteName}
-                  onSelect={handleAutoCompleteSiteName}
-                  label={<FormattedMessage id="order.legend.siteName" />}
-                  class="inputText"
-                  style={{ width: "!important 100%" }}
-                  suggestions={siteNames.length > 0 ? siteNames : []}
-                />
+                        <Select
+                          className="inputText"
+                          id="requesterDepartmentId"
+                          name="requesterDepartmentId"
+                          labelText={
+                            <FormattedMessage id="sample.label.dept" />
+                          }
+                          onChange={handleRequesterDept}
+                        >
+                          <SelectItem value="" text="" />
+                          {departments.map((department, index) => (
+                            <SelectItem key={index} text={department.value} />
+                          ))}
+                        </Select>
+                      </div>
+                    </Section>
+                    <Section>
+                      <div className="inlineDiv">
+                        <Button onClick={handleSubmitButton1}>
+                          <FormattedMessage id="next.action.button" />
+                        </Button>
 
-                <Select
-                  className="inputText"
-                  id="requesterDepartmentId"
-                  name="requesterDepartmentId"
-                  labelText={<FormattedMessage id="sample.label.dept" />}
-                  onChange={handleRequesterDept}
-                >
-                  <SelectItem value="" text="" />
-                  {departments.map((department, index) => (
-                    <SelectItem key={index} text={department.value} />
-                  ))}
-                </Select>
-              </div>
-            </Section>
-            <Section>
-              <div className="inlineDiv">
-                <Button onClick={handleSubmitButton1}>
-                  <FormattedMessage id="next.action.button" />
-                </Button>
-                <Button onClick={() => history.push("/")} kind="secondary">
-                  <FormattedMessage id="label.button.cancel" />
-                </Button>
-              </div>
-            </Section>
-          </div>
-        </Column>
-      </Grid>
+                        <Button
+                          onClick={() => history.push("/")}
+                          kind="secondary"
+                        >
+                          <FormattedMessage id="label.button.cancel" />
+                        </Button>
+                      </div>
+                    </Section>
+                  </div>
+                </Column>
+              </Grid>
+            </>
+          )}
+        </>
+      )}
     </>
   );
 };
