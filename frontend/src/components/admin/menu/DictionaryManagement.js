@@ -41,7 +41,6 @@ function DictionaryManagement() {
 
   const [categoryDescription, setCategoryDescription] = useState([]);
 
-  //for posting data
   const [category, setCategory] = useState("");
   const [dictionaryNumber, setDictionaryNumber] = useState("");
   const [dictionaryEntry, setDictionaryEntry] = useState("");
@@ -100,7 +99,7 @@ function DictionaryManagement() {
 
   async function displayStatus(res) {
     setNotificationVisible(true);
-    if (res.status == "200") {
+    if (res.status == "201") {
       addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
