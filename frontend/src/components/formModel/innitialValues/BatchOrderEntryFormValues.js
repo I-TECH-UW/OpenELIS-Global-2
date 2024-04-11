@@ -1,12 +1,12 @@
 const BatchOrderEntryFormValues = {
-  currentDate: "",
-  currentTime: "",
-  receivedDateForDisplay: "",
-  ReceptionTime: "",
-  referringSiteId: "",
-  referringSiteName: "",
+  currentDate: null,
+  currentTime: null,
+  // ReceptionTime: "",
+  // receivedTime:"17:05",
+  // referringSiteId: "",
+  // referringSiteName: "",
 
-  sampleType: "",
+  sampleTypeSelect: "",
   panels: [
     {
       name: "",
@@ -15,13 +15,7 @@ const BatchOrderEntryFormValues = {
       panelOrder: 0,
     },
   ],
-  tests: [
-    {
-      id: "",
-      name: "",
-      userBenchChoice: false,
-    },
-  ],
+  testSectionList: "",
 
   _ProjectDataVL: {
     dryTubeTaken: "",
@@ -36,8 +30,38 @@ const BatchOrderEntryFormValues = {
   },
 
   method: "",
+  facilityIDCheck:false,
   facilityID: "",
-  PatientInfo: ""
+  patientInfoCheck: false,
+  patientProperties: {
+    currentDate: "",
+    patientLastUpdated: "",
+    personLastUpdated: "",
+    patientUpdateStatus: "ADD",
+    patientPK: "",
+    // stnumber: null,
+    subjectNumber: "",
+    nationalId: "",
+    guid: "",
+    lastName: "",
+    firstName: "",
+    aka: null,
+    gender: "",
+    ageYears: null,
+    ageMonths: null,
+    ageDays: null,
+    birthDateForDisplay: "",
+  },
+  sampleOrderItems: {
+    newRequesterName: "",
+    labNo: "",
+    receivedDateForDisplay: null,
+    receivedTime: null,
+    referringSiteId: "",
+    referringSiteDepartmentId: "",
+    referringSiteName: "",
+
+  },
 };
 
 export default BatchOrderEntryFormValues;
