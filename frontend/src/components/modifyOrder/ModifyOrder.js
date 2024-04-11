@@ -77,6 +77,7 @@ const ModifyOrder = () => {
 
   const loadOrderValues = (data) => {
     if (componentMounted.current) {
+      data.sampleOrderItems.referringSiteName=""
       setOrderFormValues(data);
     }
   };
