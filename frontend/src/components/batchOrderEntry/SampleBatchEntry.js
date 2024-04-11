@@ -130,7 +130,7 @@ const SampleBatchEntry = (props) => {
   function post(){
     const body = JSON.stringify(orderFormValues);
     postToOpenElisServerFullResponse(
-      "/rest/SamplePatientEntry",
+      "/rest/SamplePatientEntryBatch",
       body,displayStatus
     );
   }
