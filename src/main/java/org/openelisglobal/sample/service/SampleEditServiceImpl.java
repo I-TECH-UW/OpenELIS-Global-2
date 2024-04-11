@@ -19,6 +19,7 @@ import org.openelisglobal.common.services.SampleOrderService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
+import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.services.registration.ResultUpdateRegister;
 import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
 import org.openelisglobal.common.util.DateUtil;
@@ -30,6 +31,7 @@ import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.service.PersonService;
@@ -258,12 +260,36 @@ public class SampleEditServiceImpl implements SampleEditService {
             }
         }
 
+        if (orderArtifacts.getProviderDepartmentOrganization() != null) {
+            boolean link = true;
+            String orgTypeId = TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID;
+            Organization org = orderArtifacts.getProviderDepartmentOrganization();
+            if (org.getOrganizationTypes() != null) {
+                if (org.getOrganizationTypes().stream().anyMatch(e -> e.getId().equals(orgTypeId))) {
+                    link = false;
+                }
+            }
+            organizationService.save(orderArtifacts.getProviderDepartmentOrganization());
+            if (link) {
+                organizationService.linkOrganizationAndType(orderArtifacts.getProviderDepartmentOrganization(),
+                        orgTypeId);
+            }
+        }
+
         if (orderArtifacts.getSampleOrganizationRequester() != null) {
             if (orderArtifacts.getProviderOrganization() != null) {
                 orderArtifacts.getSampleOrganizationRequester()
                         .setRequesterId(orderArtifacts.getProviderOrganization().getId());
             }
             sampleRequesterService.save(orderArtifacts.getSampleOrganizationRequester());
+        }
+
+        if (orderArtifacts.getSampleOrganizationDepartRequester() != null) {
+            if (orderArtifacts.getProviderDepartmentOrganization() != null) {
+                orderArtifacts.getSampleOrganizationDepartRequester()
+                        .setRequesterId(orderArtifacts.getProviderDepartmentOrganization().getId());
+            }
+            sampleRequesterService.save(orderArtifacts.getSampleOrganizationDepartRequester());
         }
 
         if (orderArtifacts.getDeletableSampleOrganizationRequester() != null) {

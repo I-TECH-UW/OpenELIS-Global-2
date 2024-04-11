@@ -249,6 +249,7 @@ public class SampleOrderService {
         createPersonProviderArtifacts(sampleOrder, currentUserId, artifacts, requesterService);
         createObservationHistoryArtifacts(sampleOrder, currentUserId, artifacts);
         createOrganizationProviderArtifacts(sampleOrder, currentUserId, artifacts, requesterService);
+        createOrganizationDepartProviderArtifacts(sampleOrder, currentUserId, artifacts, requesterService);
     }
 
     private void createPersonProviderArtifacts(SampleOrderItem sampleOrder, String currentUserId,
@@ -390,11 +391,24 @@ public class SampleOrderService {
         }
     }
 
+    private void createOrganizationDepartProviderArtifacts(SampleOrderItem sampleOrder, String currentUserId,
+            SampleOrderPersistenceArtifacts artifacts, RequesterService requesterService) {
+
+        SampleRequester orgDepartRequester = sampleService.getOrganizationSampleRequester(sample,
+                TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID);
+
+        if (orgDepartRequester == null) {
+            handleNoExistingOrganizationDepartRequester(sampleOrder, currentUserId, artifacts);
+        } else {
+            handleExistingOrganizationDepartRequester(sampleOrder, currentUserId, artifacts, orgDepartRequester);
+        }
+    }
+
     private void handleNoExistingOrganizationRequester(SampleOrderItem sampleOrder, String currentUserId,
             SampleOrderPersistenceArtifacts artifacts) {
         SampleRequester orgRequester;
         if (GenericValidator.isBlankOrNull(sampleOrder.getReferringSiteId())
-                && GenericValidator.isBlankOrNull(sampleOrder.getNewRequesterName())) {
+                && GenericValidator.isBlankOrNull(sampleOrder.getReferringSiteName())) {
             return;
         }
 
@@ -407,7 +421,7 @@ public class SampleOrderService {
 
         // Either there is an existing org else a new org
         Organization org;
-        if (GenericValidator.isBlankOrNull(sampleOrder.getNewRequesterName())) {
+        if (GenericValidator.isBlankOrNull(sampleOrder.getReferringSiteName())) {
             org = orgService.getOrganizationById(sampleOrder.getReferringSiteId());
             // all of these are reasons to have nothing to do with the organization
             if (GenericValidator.isBlankOrNull(sampleOrder.getReferringSiteCode()) || org == null
@@ -420,10 +434,29 @@ public class SampleOrderService {
             org.setMlsSentinelLabFlag("N");
         }
 
-        org.setOrganizationName(sampleOrder.getNewRequesterName());
+        org.setOrganizationName(sampleOrder.getReferringSiteName());
         org.setCode(sampleOrder.getReferringSiteCode());
         org.setSysUserId(currentUserId);
         artifacts.setProviderOrganization(org);
+    }
+
+    private void handleNoExistingOrganizationDepartRequester(SampleOrderItem sampleOrder, String currentUserId,
+            SampleOrderPersistenceArtifacts artifacts) {
+
+        if (!GenericValidator.isBlankOrNull(sampleOrder.getReferringSiteDepartmentId())) {
+            Organization org = orgService.getOrganizationById(sampleOrder.getReferringSiteDepartmentId());
+            if (org != null) {
+                org.setSysUserId(currentUserId);
+                artifacts.setProviderDepartmentOrganization(org);
+
+                SampleRequester orgRequester = new SampleRequester();
+                orgRequester.setRequesterId(Long.parseLong(sampleOrder.getReferringSiteDepartmentId()));
+                orgRequester.setSampleId(Long.parseLong(sampleOrder.getSampleId()));
+                orgRequester.setRequesterTypeId(RequesterService.Requester.ORGANIZATION.getId());
+                orgRequester.setSysUserId(currentUserId);
+                artifacts.setSampleOrganizationDepartRequester(orgRequester);
+            }
+        }
     }
 
     private void handleExistingOrganizationRequester(SampleOrderItem sampleOrder, String currentUserId,
@@ -434,7 +467,7 @@ public class SampleOrderService {
             return;
         }
 
-        Organization org;
+        Organization org = null;
         if (!GenericValidator.isBlankOrNull(sampleOrder.getReferringSiteName())) {
             org = new Organization();
             org.setIsActive("Y");
@@ -443,24 +476,51 @@ public class SampleOrderService {
             org.setCode(sampleOrder.getReferringSiteCode());
             org.setSysUserId(currentUserId);
             artifacts.setProviderOrganization(org);
-            orgRequester.setSysUserId(currentUserId);
-            artifacts.setSampleOrganizationRequester(orgRequester);
         } else {
             if (String.valueOf(orgRequester.getRequesterId()).equals(sampleOrder.getReferringSiteId())) {
                 org = orgService.getOrganizationById(String.valueOf(orgRequester.getRequesterId()));
-                if (org == null || sampleOrder.getReferringSiteCode() == null
-                        || sampleOrder.getReferringSiteCode().equals(org.getCode())) {
-                    return;
+                // if (org == null || sampleOrder.getReferringSiteCode() == null
+                //         || sampleOrder.getReferringSiteCode().equals(org.getCode())) {
+                //     return;
+                // }
+                if(org != null){
+                    orgRequester.setRequesterId(orgRequester.getRequesterId());
+                    updateExistingOrganizationCode(sampleOrder, currentUserId, artifacts, org);
                 }
-                updateExistingOrganizationCode(sampleOrder, currentUserId, artifacts, org);
+               
             } else {
                 org = orgService.getOrganizationById(String.valueOf(sampleOrder.getReferringSiteId()));
-                orgRequester.setRequesterId(sampleOrder.getReferringSiteId());
-                orgRequester.setSysUserId(currentUserId);
-                artifacts.setSampleOrganizationRequester(orgRequester);
-
-                updateExistingOrganizationCode(sampleOrder, currentUserId, artifacts, org);
+                if(org != null){
+                    orgRequester.setRequesterId(sampleOrder.getReferringSiteId());
+                    updateExistingOrganizationCode(sampleOrder, currentUserId, artifacts, org);
+                }   
             }
+        }
+        if(org != null){
+            orgRequester.setSysUserId(currentUserId);
+            artifacts.setSampleOrganizationRequester(orgRequester);
+        }
+    }
+
+    private void handleExistingOrganizationDepartRequester(SampleOrderItem sampleOrder, String currentUserId,
+            SampleOrderPersistenceArtifacts artifacts, SampleRequester orgRequester) {
+        if (GenericValidator.isBlankOrNull(sampleOrder.getReferringSiteDepartmentId())) {
+            return;
+        }
+
+        Organization org;
+
+        if (String.valueOf(orgRequester.getRequesterId()).equals(sampleOrder.getReferringSiteDepartmentId())) {
+            org = orgService.getOrganizationById(String.valueOf(orgRequester.getRequesterId()));
+
+        } else {
+            org = orgService.getOrganizationById(String.valueOf(sampleOrder.getReferringSiteDepartmentId()));
+        }
+        if (org != null) {
+            org.setSysUserId(currentUserId);
+            artifacts.setProviderDepartmentOrganization(org);
+            orgRequester.setSysUserId(currentUserId);
+            artifacts.setSampleOrganizationDepartRequester(orgRequester);
         }
     }
 
@@ -478,10 +538,12 @@ public class SampleOrderService {
         private Person providerPerson;
         private Provider provider;
         private Organization providerOrganization;
+        private Organization providerDepartmentOrganization;
         private SampleRequester deletableSampleOrganizationRequester;
         private List<ObservationHistory> observations = new ArrayList<>();
         private SampleRequester sampleOrganizationRequester;
         private SampleRequester samplePersonRequester;
+        private SampleRequester sampleOrganizationDepartRequester;
 
         public Sample getSample() {
             return sample;
@@ -547,5 +609,20 @@ public class SampleOrderService {
             this.provider = provider;
         }
 
+        public Organization getProviderDepartmentOrganization() {
+            return providerDepartmentOrganization;
+        }
+
+        public void setProviderDepartmentOrganization(Organization providerDepartmentOrganization) {
+            this.providerDepartmentOrganization = providerDepartmentOrganization;
+        }
+
+        public SampleRequester getSampleOrganizationDepartRequester() {
+            return sampleOrganizationDepartRequester;
+        }
+
+        public void setSampleOrganizationDepartRequester(SampleRequester sampleOrganizationDepartRequester) {
+            this.sampleOrganizationDepartRequester = sampleOrganizationDepartRequester;
+        }
     }
 }
