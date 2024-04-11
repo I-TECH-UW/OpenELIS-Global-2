@@ -3,14 +3,13 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { Form, FormLabel, Grid, Column, Section, Button, Loading } from "@carbon/react";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import { AlertDialog } from "../../common/CustomNotification";
-import config from "../../../config.json";
 import TestSelectForm from "../../workplan/TestSelectForm";
 import TestSectionSelectForm from "../../workplan/TestSectionSelectForm";
 import PanelSelectForm from "../../workplan/PanelSelectForm";
-
 import "../../Style.css";
 import { getFromOpenElisServer } from "../../utils/Utils";
 import { encodeDate } from "../../utils/Utils";
+import config from "../../../config.json";
 
 const ActivityReportByTest = () => {
   const intl = useIntl();
@@ -52,19 +51,35 @@ const ActivityReportByTest = () => {
     setSelectedReportType(event.target.value);
   };
 
-
   const handleSelectedValue = (v) => {
     if (mounted.current) {
       setSelectedValue(v);
     }
   };
 
-
   const handleSubmit = () => {
     setLoading(true);
-    const baseParams = "RoutineReport?type=indicator&report=activityReportByTest";
+    let reportType = "";
+    let additionalParams = "";
+    switch (selectedReportType) {
+      case "byTest":
+        reportType = "activityReportByTest";
+        additionalParams = "report=activityReportByTest";
+        break;
+      case "byPanel":
+        reportType = "activityReportByPanel";
+        additionalParams = "report=activityReportByPanel";
+        break;
+      case "byUnit":
+        reportType = "activityReportByTestSection";
+        additionalParams = "report=activityReportByTestSection";
+        break;
+      default:
+        break;
+    }
+    const baseParams = `${additionalParams}&type=indicator&report=${reportType}`;
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
-    const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.startDate}&lowerDateRange=${reportFormValues.endDate}`;
+    const url = `${baseUrl}?${baseParams}&lowerDateRange=${reportFormValues.startDate}&upperDateRange=${reportFormValues.endDate}`;
     window.open(url, "_blank");
     setLoading(false);
     setNotificationVisible(true);
@@ -74,7 +89,7 @@ const ActivityReportByTest = () => {
     mounted.current = true;
     const fetchTestList = async () => {
       try {
-        const data = getFromOpenElisServer("/rest/test-list");
+        const data = await getFromOpenElisServer("/rest/test-list");
         setTestList(data);
       } catch (error) {
         throw new Error("Error fetching test list:", error);
@@ -92,7 +107,6 @@ const ActivityReportByTest = () => {
     const fetchPanelList = async () => {
       try {
         const data = await getFromOpenElisServer("/rest/panels");
-        console.log("Panel list:", data); 
         setPanelList(data);
       } catch (error) {
         throw new Error("Error fetching panel list:", error);
@@ -110,8 +124,7 @@ const ActivityReportByTest = () => {
     mounted.current = true;
     const fetchUnitList = async () => {
       try {
-        const data = getFromOpenElisServer('/rest/test-sections');
-        console.log(data);
+        const data = await getFromOpenElisServer('/rest/test-sections');
         setUnitList(data);
       } catch (error) {
         throw new Error("Error fetching units list:", error);
@@ -215,16 +228,16 @@ const ActivityReportByTest = () => {
             <br /> 
             <Section>
               <br />
-              <Button type="button" onClick={handleSubmit}>
+              <Button type="button" onClick={() => handleSubmit("activityReportByTest", "RoutineReport")}>
                 <FormattedMessage id="label.button.generatePrintableVersion" defaultMessage="Generate printable version" />
               </Button>
+          
             </Section>
           </Form>
         </Column>
       </Grid>
     </>
   );
-  
 };
 
 export default ActivityReportByTest;

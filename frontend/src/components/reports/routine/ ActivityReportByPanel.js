@@ -45,9 +45,9 @@ const ActivityReportByPanel = () => {
 
   const handleSubmit = () => {
     setLoading(true);
-    const baseParams = "report=activityReportByPanel&type=indicator";
+    const baseParams = "RoutineReport?type=indicator&report=activityReportByPanel";
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
-    const url = `${baseUrl}?${baseParams}&lowerDateRangeupperDateRange=${reportFormValues.startDate}&upperDateRange=${reportFormValues.endDate}`;
+    const url = `${baseUrl}?${baseParams}&lowerDateRange=${reportFormValues.startDate}&upperDateRange=${reportFormValues.endDate}`;
     window.open(url, '_blank');
     setLoading(false);
     setNotificationVisible(true);
