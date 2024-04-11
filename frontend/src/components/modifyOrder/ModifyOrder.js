@@ -109,7 +109,17 @@ const ModifyOrder = () => {
   const handleSubmitOrderForm = (e) => {
     e.preventDefault();
     setPage(page + 1);
-    console.debug(JSON.stringify(orderFormValues));
+    orderFormValues.sampleOrderItems.modified = true;
+     //remove display Lists rom the form
+    orderFormValues.sampleOrderItems.priorityList = []
+    orderFormValues.sampleOrderItems.programList =[]
+    orderFormValues.sampleOrderItems.referringSiteList=[]
+    orderFormValues.initialSampleConditionList=[]
+    orderFormValues.testSectionList =[]
+    orderFormValues.sampleOrderItems.providersList=[]
+    orderFormValues.sampleOrderItems.paymentOptions=[]
+    orderFormValues.sampleOrderItems.testLocationCodeList=[]
+    console.log(JSON.stringify(orderFormValues));
     postToOpenElisServer(
       "/rest/sample-edit",
       JSON.stringify(orderFormValues),
