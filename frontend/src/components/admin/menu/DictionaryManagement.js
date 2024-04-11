@@ -253,7 +253,7 @@ function DictionaryManagement() {
                     <TableHead>
                       <TableRow>
                         {headers.map((header) => (
-                          <TableHeader
+                          <TableHeader key={header.key}
                             {...getHeaderProps({
                               header,
                               isSortable: header.isSortable,
@@ -266,7 +266,7 @@ function DictionaryManagement() {
                     </TableHead>
                     <TableBody>
                       {rows.map((row, index) => (
-                        <TableRow {...getRowProps({ row })}>
+                        <TableRow key={index} {...getRowProps({ row })}>
                           {row.cells.map((cell) => (
                             <TableCell key={cell.id}>{cell.value}</TableCell>
                           ))}
