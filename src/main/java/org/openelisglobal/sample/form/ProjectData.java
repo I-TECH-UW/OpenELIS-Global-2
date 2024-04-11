@@ -485,13 +485,6 @@ public class ProjectData implements Serializable {
         EIDSites = eIDSites;
     }
 
-    public String getEIDsiteName() {
-        return EIDsiteName;
-    }
-
-    public void setEIDsiteName(String eIDsiteName) {
-        EIDsiteName = eIDsiteName;
-    }
 
     public String getEIDsiteCode() {
         return EIDsiteCode;
@@ -678,11 +671,7 @@ public class ProjectData implements Serializable {
 	public boolean isDbsvlTaken() {
 		return dbsvlTaken;
 	}
-
-	public void setDbsvlTaken(boolean dbsvlTaken) {
-		this.dbsvlTaken = dbsvlTaken;
-	}
-
+    
 	public boolean isPlasmaTaken() {
 		return plasmaTaken;
 	}
