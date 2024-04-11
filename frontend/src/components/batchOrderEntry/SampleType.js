@@ -103,7 +103,7 @@ const SampleType = ({ updateFormValues }) => {
       if (!isTestSelected) {
         const test = sampleTypeTests.tests.find((test) => test.id === testId);
         if (test) {
-          updatedTests.push({ id: test.id, name: test.name });
+          updatedTests.push({ id: test.id, value: test.name });
         }
       }
     });
@@ -120,7 +120,7 @@ const SampleType = ({ updateFormValues }) => {
     const isChecked = e.currentTarget.checked;
     let updatedTests;
     if (isChecked) {
-      updatedTests = [...selectedTests, { id: test.id, name: test.name }];
+      updatedTests = [...selectedTests, { id: test.id, value: test.name }];
     } else {
       updatedTests = selectedTests.filter((item) => item.id !== test.id);
     }
@@ -197,7 +197,7 @@ const SampleType = ({ updateFormValues }) => {
                 <div>
                   {selectedTests.map((test) => (
                     <Tag key={test.id} type="red">
-                      {test.name}
+                      {test.value}
                     </Tag>
                   ))}
                 </div>
