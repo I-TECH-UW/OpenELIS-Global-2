@@ -777,5 +777,5 @@
   "error.report.csv.date": "Veuillez sélectionner le type de date.",
   "header.label.study.vlloadtrends": "Rapport d'exportation des données de charge virale",
   "reports.label.trends": "Tendances",
-  "error.invalid.email" : "Email invalide"
+  "error.invalid.email": "Email invalide"
 }

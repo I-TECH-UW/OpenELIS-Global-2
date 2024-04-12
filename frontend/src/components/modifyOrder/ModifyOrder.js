@@ -77,7 +77,9 @@ const ModifyOrder = () => {
   }, []);
 
   useEffect(() => {
-    ModifyOrderEntryValidationSchema.validate(orderFormValues, { abortEarly: false })
+    ModifyOrderEntryValidationSchema.validate(orderFormValues, {
+      abortEarly: false,
+    })
       .then((validData) => {
         setErrors([]);
         console.debug("Valid Data:", validData);
@@ -90,7 +92,7 @@ const ModifyOrder = () => {
 
   const loadOrderValues = (data) => {
     if (componentMounted.current) {
-      data.sampleOrderItems.referringSiteName=""
+      data.sampleOrderItems.referringSiteName = "";
       setOrderFormValues(data);
     }
   };
@@ -124,15 +126,15 @@ const ModifyOrder = () => {
     e.preventDefault();
     setPage(page + 1);
     orderFormValues.sampleOrderItems.modified = true;
-     //remove display Lists rom the form
-    orderFormValues.sampleOrderItems.priorityList = []
-    orderFormValues.sampleOrderItems.programList =[]
-    orderFormValues.sampleOrderItems.referringSiteList=[]
-    orderFormValues.initialSampleConditionList=[]
-    orderFormValues.testSectionList =[]
-    orderFormValues.sampleOrderItems.providersList=[]
-    orderFormValues.sampleOrderItems.paymentOptions=[]
-    orderFormValues.sampleOrderItems.testLocationCodeList=[]
+    //remove display Lists rom the form
+    orderFormValues.sampleOrderItems.priorityList = [];
+    orderFormValues.sampleOrderItems.programList = [];
+    orderFormValues.sampleOrderItems.referringSiteList = [];
+    orderFormValues.initialSampleConditionList = [];
+    orderFormValues.testSectionList = [];
+    orderFormValues.sampleOrderItems.providersList = [];
+    orderFormValues.sampleOrderItems.paymentOptions = [];
+    orderFormValues.sampleOrderItems.testLocationCodeList = [];
     console.log(JSON.stringify(orderFormValues));
     postToOpenElisServer(
       "/rest/sample-edit",

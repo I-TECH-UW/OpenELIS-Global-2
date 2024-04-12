@@ -48,8 +48,17 @@ function ResultSearchPage() {
 
   return (
     <>
-      <SearchResultForm  setParam={setParam} setSearchBy={setSearchBy} setResults={setResults} />
-      <SearchResults extraParams={param} searchBy={searchBy} results={resultForm} setResultForm={setResultForm} />
+      <SearchResultForm
+        setParam={setParam}
+        setSearchBy={setSearchBy}
+        setResults={setResults}
+      />
+      <SearchResults
+        extraParams={param}
+        searchBy={searchBy}
+        results={resultForm}
+        setResultForm={setResultForm}
+      />
     </>
   );
 }
@@ -180,23 +189,36 @@ export function SearchResultForm(props) {
       true;
     setUrl(searchEndPoint);
     props.setSearchBy?.(searchBy);
-      switch (searchBy.type) {
-        case "unit":
-          props.setParam("&testSectionId=" + values.unitType)
-          break
-        case "patient":
-          props.setParam("&patientId="+patient.patientPK)
-          break
-        case "order":
-          props.setParam("&accessionNumber=" + labNo)
-          break
-        case "date":
-          props.setParam("&selectedTest="+values.testName +"&selectedSampleStatus="+values.sampleStatusType+"&selectedAnalysisStatus="+values.analysisStatus + "&collectionDate="+values.collectionDate+"&recievedDate="+values.recievedDate )
-          break
-        case "range":
-          props.setParam("&accessionNumber=" + labNo +"&upperAccessionNumber="+endLabNo)
-          break
-      }
+    switch (searchBy.type) {
+      case "unit":
+        props.setParam("&testSectionId=" + values.unitType);
+        break;
+      case "patient":
+        props.setParam("&patientId=" + patient.patientPK);
+        break;
+      case "order":
+        props.setParam("&accessionNumber=" + labNo);
+        break;
+      case "date":
+        props.setParam(
+          "&selectedTest=" +
+            values.testName +
+            "&selectedSampleStatus=" +
+            values.sampleStatusType +
+            "&selectedAnalysisStatus=" +
+            values.analysisStatus +
+            "&collectionDate=" +
+            values.collectionDate +
+            "&recievedDate=" +
+            values.recievedDate,
+        );
+        break;
+      case "range":
+        props.setParam(
+          "&accessionNumber=" + labNo + "&upperAccessionNumber=" + endLabNo,
+        );
+        break;
+    }
 
     getFromOpenElisServer(searchEndPoint, setResultsWithId);
   };
@@ -1446,7 +1468,12 @@ export function SearchResults(props) {
         message: createMesssage(resp),
         kind: NotificationKinds.success,
       });
-       window.location.href = "/result?type=" + props.searchBy.type + "&doRange=" + props.searchBy.doRange  +props.extraParams;
+      window.location.href =
+        "/result?type=" +
+        props.searchBy.type +
+        "&doRange=" +
+        props.searchBy.doRange +
+        props.extraParams;
     } else {
       addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
