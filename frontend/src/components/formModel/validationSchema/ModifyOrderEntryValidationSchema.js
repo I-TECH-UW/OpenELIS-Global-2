@@ -1,9 +1,6 @@
 import * as Yup from "yup";
-import CreatePatientValidationSchema from "./CreatePatientValidationShema";
 
-const OrderEntryValidationSchema = Yup.object().shape({
-  sampleXML: Yup.string().required("Sample is required"),
-  patientProperties: CreatePatientValidationSchema,
+const ModifyOrderEntryValidationSchema = Yup.object().shape({
   sampleOrderItems: Yup.object()
     .shape({
       labNo: Yup.string().required("Sample Lab Number is required"),
@@ -23,4 +20,4 @@ const OrderEntryValidationSchema = Yup.object().shape({
     }),
 });
 
-export default OrderEntryValidationSchema;
+export default ModifyOrderEntryValidationSchema;

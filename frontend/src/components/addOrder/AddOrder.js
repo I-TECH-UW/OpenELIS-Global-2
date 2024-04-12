@@ -249,7 +249,7 @@ const AddOrder = (props) => {
         ...orderFormValues.sampleOrderItems,
         referringSiteName: e.target.value,
         referringSiteId: "",
-        referringSiteDepartmentId : ""
+        referringSiteDepartmentId: "",
       },
     });
   }
@@ -274,7 +274,7 @@ const AddOrder = (props) => {
         ...orderFormValues.sampleOrderItems,
         referringSiteId: siteId,
         referringSiteName: "",
-        referringSiteDepartmentId : "",
+        referringSiteDepartmentId: "",
       },
     });
   }
@@ -382,7 +382,7 @@ const AddOrder = (props) => {
         (orderFormValues.sampleOrderItems.referringSiteId || ""),
       loadDepartments,
     );
-  }, [orderFormValues.sampleOrderItems.referringSiteId]);  
+  }, [orderFormValues.sampleOrderItems.referringSiteId]);
 
   function handlePriority(e) {
     setOrderFormValues({
@@ -621,7 +621,9 @@ const AddOrder = (props) => {
                 labelText={intl.formatMessage({ id: "order.department.label" })}
                 onChange={handleRequesterDept}
                 required
-                value={orderFormValues.sampleOrderItems.referringSiteDepartmentId}
+                value={
+                  orderFormValues.sampleOrderItems.referringSiteDepartmentId
+                }
               >
                 <SelectItem value="" text="" />
                 {departments.map((department, index) => (
@@ -783,6 +785,10 @@ const AddOrder = (props) => {
                 onChange={handleRequesterEmail}
                 value={orderFormValues.sampleOrderItems.providerEmail}
                 id="providerEmailId"
+                invalid={error("sampleOrderItems.providerEmail") ? true : false}
+                invalidText={intl.formatMessage({
+                  id: "error.invalid.email",
+                })}
               />
             </Column>
 
