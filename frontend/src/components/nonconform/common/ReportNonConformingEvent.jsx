@@ -181,7 +181,6 @@ export const ReportNonConformingEvent = () => {
       description: nceForm.data.description,
       suspectedCauses: nceForm.data.suspectedCauses,
       proposedAction: nceForm.data.proposedAction,
-      reportDate: nceForm.data.date,
     };
     postToOpenElisServerJsonResponse(
       "/rest/reportnonconformingevent",
@@ -349,7 +348,7 @@ export const ReportNonConformingEvent = () => {
                   </span>
                 </div>
                 <div style={{ marginBottom: "10px", color: "#555" }}>
-                  {nceForm.data.date}
+                  {nceForm.data.reportDate}
                 </div>
               </Column>
               <Column lg={8} style={{ marginBottom: "20px" }}>
