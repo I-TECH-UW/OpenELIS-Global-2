@@ -148,12 +148,8 @@ function SearchPatientForm(props) {
       "patientId",
     );
     if (patientId) {
-      let searchValues = {
-        ...searchFormValues,
-        patientId: patientId,
-      };
-      setSearchFormValues(searchValues);
-      handleSubmit(searchValues);
+      const searchEndPoint = "/rest/patient-details?patientID=" + patientId;
+      getFromOpenElisServer(searchEndPoint, fetchPatientDetails);
     }
   }, []);
   return (
