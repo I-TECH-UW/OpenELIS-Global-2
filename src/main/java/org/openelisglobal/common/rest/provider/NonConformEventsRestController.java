@@ -177,7 +177,7 @@ public class NonConformEventsRestController {
       );
       eventData.put("nceCategories", nceCategoryService.getAllNceCategories());
       eventData.put(
-        "date",
+        "reportDate",
         DateUtil.formatDateAsText(Calendar.getInstance().getTime())
       );
 
