@@ -39,7 +39,7 @@ function ResultSearchPage() {
   });
   const [resultForm, setResultForm] = useState(originalResultForm);
   const [searchBy, setSearchBy] = useState({ type: "", doRange: false , param : "accessionNumber" , paramValue:""});
-  const [param, setParam] = useState({ param : "&accessionNumber="});
+  const [param, setParam] = useState("&accessionNumber=");
 
   const setResults = (resultForm) => {
     setOriginalResultForm(resultForm);
@@ -182,19 +182,19 @@ export function SearchResultForm(props) {
     props.setSearchBy?.(searchBy);
       switch (searchBy.type) {
         case "unit":
-          props.setParam({ param: "&testSectionId=" + values.unitType})
+          props.setParam("&testSectionId=" + values.unitType)
           break
         case "patient":
-          props.setParam({ param: "&patientId="+patient.patientPK})
+          props.setParam("&patientId="+patient.patientPK)
           break
         case "order":
-          props.setParam({ param: "&accessionNumber=" + labNo })
+          props.setParam("&accessionNumber=" + labNo)
           break
         case "date":
-          props.setParam({ param: "&selectedTest="+values.testName +"&selectedSampleStatus="+values.sampleStatusType+"&selectedAnalysisStatus="+values.analysisStatus + "&collectionDate="+values.collectionDate+"&recievedDate="+values.recievedDate })
+          props.setParam("&selectedTest="+values.testName +"&selectedSampleStatus="+values.sampleStatusType+"&selectedAnalysisStatus="+values.analysisStatus + "&collectionDate="+values.collectionDate+"&recievedDate="+values.recievedDate )
           break
         case "range":
-          props.setParam({ param: "&accessionNumber=" + labNo +"&upperAccessionNumber="+endLabNo})
+          props.setParam("&accessionNumber=" + labNo +"&upperAccessionNumber="+endLabNo)
           break
       }
 
@@ -338,6 +338,14 @@ export function SearchResultForm(props) {
     let upperAccessionNumber = new URLSearchParams(window.location.search).get(
       "upperAccessionNumber",
     );
+    if (accessionNumber) {
+      let searchValues = {
+        ...searchFormValues,
+        accessionNumber: accessionNumber,
+      };
+      setSearchFormValues(searchValues);
+      querySearch(searchValues);
+    }
     if (accessionNumber || upperAccessionNumber) {
       let searchValues = {
         ...searchFormValues,
@@ -1438,7 +1446,7 @@ export function SearchResults(props) {
         message: createMesssage(resp),
         kind: NotificationKinds.success,
       });
-       window.location.href = "/result?type=" + props.searchBy.type + "&doRange=" + props.searchBy.doRange  +props.extraParams.param;
+       window.location.href = "/result?type=" + props.searchBy.type + "&doRange=" + props.searchBy.doRange  +props.extraParams;
     } else {
       addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
