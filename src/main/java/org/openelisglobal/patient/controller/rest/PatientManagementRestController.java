@@ -122,40 +122,44 @@ public class PatientManagementRestController extends BaseRestController {
 
     }
 
-//    private void validatePatientInfo(Errors errors, PatientManagementInfo patientInfo) {
-//        if (ConfigurationProperties.getInstance()
-//                .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "false")) {
-//            String newSTNumber = org.apache.commons.validator.GenericValidator.isBlankOrNull(patientInfo.getSTnumber())
-//                    ? null
-//                    : patientInfo.getSTnumber();
-//            String newSubjectNumber = org.apache.commons.validator.GenericValidator
-//                    .isBlankOrNull(patientInfo.getSubjectNumber()) ? null : patientInfo.getSubjectNumber();
-//            String newNationalId = org.apache.commons.validator.GenericValidator
-//                    .isBlankOrNull(patientInfo.getNationalId()) ? null : patientInfo.getNationalId();
-//
-//            List<PatientSearchResults> results = searchService.getSearchResults(null, null, newSTNumber,
-//                    newSubjectNumber, newNationalId, null, null, null, null, null);
-//
-//            if (!results.isEmpty()) {
-//                for (PatientSearchResults result : results) {
-//                    if (!result.getPatientID().equals(patientInfo.getPatientPK())) {
-//                        if (newSTNumber != null && newSTNumber.equals(result.getSTNumber())) {
-//                            errors.reject("error.duplicate.STNumber", "error.duplicate.STNumber");
-//                        }
-//                        if (newSubjectNumber != null && newSubjectNumber.equals(result.getSubjectNumber())) {
-//                            errors.reject("error.duplicate.subjectNumber", "error.duplicate.subjectNumber");
-//                        }
-//                        if (newNationalId != null && newNationalId.equals(result.getNationalId())) {
-//                            errors.reject("error.duplicate.nationalId", "error.duplicate.nationalId");
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        validateBirthdateFormat(patientInfo, errors);
-//
-//    }
+    private void validatePatientInfo(Errors errors, PatientManagementInfo patientInfo) {
+        boolean disallowDuplicateSubjectNumbers = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "false");
+        boolean disallowDuplicateNationalIds = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_NATIONAL_IDS, "false");
+        if (disallowDuplicateSubjectNumbers || disallowDuplicateNationalIds) {
+            String newSTNumber = org.apache.commons.validator.GenericValidator.isBlankOrNull(patientInfo.getSTnumber()) ? null
+                    : patientInfo.getSTnumber();
+            String newSubjectNumber = org.apache.commons.validator.GenericValidator.isBlankOrNull(patientInfo.getSubjectNumber()) ? null
+                    : patientInfo.getSubjectNumber();
+            String newNationalId = org.apache.commons.validator.GenericValidator.isBlankOrNull(patientInfo.getNationalId()) ? null
+                    : patientInfo.getNationalId();
+
+            List<PatientSearchResults> results = searchService.getSearchResults(null, null, newSTNumber, newSubjectNumber,
+                    newNationalId, null, null, null, null, null);
+
+            if (!results.isEmpty()) {
+
+                for (PatientSearchResults result : results) {
+                    if (!result.getPatientID().equals(patientInfo.getPatientPK())) {
+                        if (disallowDuplicateSubjectNumbers && newSTNumber != null
+                                && newSTNumber.equals(result.getSTNumber())) {
+                            errors.reject("error.duplicate.STNumber", null, null);
+                        }
+                        if (disallowDuplicateSubjectNumbers && newSubjectNumber != null
+                                && newSubjectNumber.equals(result.getSubjectNumber())) {
+                            errors.reject("error.duplicate.subjectNumber", null, null);
+                        }
+                        if (disallowDuplicateNationalIds && newNationalId != null
+                                && newNationalId.equals(result.getNationalId())) {
+                            errors.reject("error.duplicate.nationalId", null, null);
+                        }
+                    }
+                }
+            }
+        }
+        validateBirthdateFormat(patientInfo, errors);
+    }
 
     private void validateBirthdateFormat(PatientManagementInfo patientInfo, Errors errors) {
         String birthDate = patientInfo.getBirthDateForDisplay();
@@ -215,44 +219,4 @@ public class PatientManagementRestController extends BaseRestController {
         patientInfo.setPatientIdentities(patientIdentityService.getPatientIdentitiesForPatient(patient.getId()));
         return patient;
     }
-
-    private void validatePatientInfo(Errors errors, PatientManagementInfo patientInfo) {
-        boolean disallowDuplicateSubjectNumbers = ConfigurationProperties.getInstance()
-                .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "false");
-        boolean disallowDuplicateNationalIds = ConfigurationProperties.getInstance()
-                .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_NATIONAL_IDS, "false");
-        if (disallowDuplicateSubjectNumbers || disallowDuplicateNationalIds) {
-            String newSTNumber = org.apache.commons.validator.GenericValidator.isBlankOrNull(patientInfo.getSTnumber()) ? null
-                    : patientInfo.getSTnumber();
-            String newSubjectNumber = org.apache.commons.validator.GenericValidator.isBlankOrNull(patientInfo.getSubjectNumber()) ? null
-                    : patientInfo.getSubjectNumber();
-            String newNationalId = org.apache.commons.validator.GenericValidator.isBlankOrNull(patientInfo.getNationalId()) ? null
-                    : patientInfo.getNationalId();
-
-            List<PatientSearchResults> results = searchService.getSearchResults(null, null, newSTNumber, newSubjectNumber,
-                    newNationalId, null, null, null, null, null);
-
-            if (!results.isEmpty()) {
-
-                for (PatientSearchResults result : results) {
-                    if (!result.getPatientID().equals(patientInfo.getPatientPK())) {
-                        if (disallowDuplicateSubjectNumbers && newSTNumber != null
-                                && newSTNumber.equals(result.getSTNumber())) {
-                            errors.reject("error.duplicate.STNumber", null, null);
-                        }
-                        if (disallowDuplicateSubjectNumbers && newSubjectNumber != null
-                                && newSubjectNumber.equals(result.getSubjectNumber())) {
-                            errors.reject("error.duplicate.subjectNumber", null, null);
-                        }
-                        if (disallowDuplicateNationalIds && newNationalId != null
-                                && newNationalId.equals(result.getNationalId())) {
-                            errors.reject("error.duplicate.nationalId", null, null);
-                        }
-                    }
-                }
-            }
-        }
-        validateBirthdateFormat(patientInfo, errors);
-    }
-
 }
