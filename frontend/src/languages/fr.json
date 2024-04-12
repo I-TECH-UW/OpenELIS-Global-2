@@ -777,5 +777,18 @@
   "error.report.csv.date": "Veuillez sélectionner le type de date.",
   "header.label.study.vlloadtrends": "Rapport d'exportation des données de charge virale",
   "reports.label.trends": "Tendances",
-  "error.invalid.email": "Email invalide"
+  "error.invalid.email": "Email invalide",
+  "nonconform.report": "Rapport d'événement non conforme (ENC)",
+  "nonconform.report.field.date": "Date de rapport",
+  "nonconform.person.reporting.different": "Nom de la personne signalant l'ENC (si différent)",
+  "nonconform.nce.number": "Numéro d'ENC",
+  "nonconform.date.event": "Date de l'événement",
+  "nonconform.label.prescibernamesite": "Nom du prescripteur et site",
+  "nonconform.label.reportingunit": "Unité de rapport",
+  "nonconform.description.nce": "Description de l'ENC",
+  "nonconform.label.suspected.cause.nce": "Cause suspectée de l'ENC",
+  "nonconform.label.proposed.action": "Action proposée",
+  "error.nonconform.report": "Veuillez saisir une valeur",
+  "nonconform.order.save.success": "Enregistrement réussi",
+  "nonconform.order.save.fail": "Échec de l'enregistrement"
 }
