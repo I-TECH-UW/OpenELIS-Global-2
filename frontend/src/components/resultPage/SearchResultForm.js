@@ -38,7 +38,7 @@ function ResultSearchPage() {
     testResult: [],
   });
   const [resultForm, setResultForm] = useState(originalResultForm);
-  const [searchBy, setSearchBy] = useState({ type: "", doRange: false , param : "accessionNumber" , paramValue:""});
+  const [searchBy, setSearchBy] = useState({ type: "", doRange: false });
   const [param, setParam] = useState("&accessionNumber=");
 
   const setResults = (resultForm) => {
