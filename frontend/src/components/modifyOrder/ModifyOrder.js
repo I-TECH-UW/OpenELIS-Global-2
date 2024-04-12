@@ -20,6 +20,7 @@ import OrderSuccessMessage from "../addOrder/OrderSuccessMessage";
 import { FormattedMessage, useIntl } from "react-intl";
 import PatientHeader from "../common/PatientHeader";
 import PageBreadCrumb from "../common/PageBreadCrumb";
+import ModifyOrderEntryValidationSchema from "../formModel/validationSchema/ModifyOrderEntryValidationSchema";
 let breadcrumbs = [
   { label: "home.label", link: "/" },
   { label: "sample.label.search.Order", link: "/SampleEdit" },
@@ -74,6 +75,18 @@ const ModifyOrder = () => {
       componentMounted.current = false;
     };
   }, []);
+
+  useEffect(() => {
+    ModifyOrderEntryValidationSchema.validate(orderFormValues, { abortEarly: false })
+      .then((validData) => {
+        setErrors([]);
+        console.debug("Valid Data:", validData);
+      })
+      .catch((errors) => {
+        setErrors(errors);
+        console.error("Validation Errors:", errors.errors);
+      });
+  }, [orderFormValues]);
 
   const loadOrderValues = (data) => {
     if (componentMounted.current) {
@@ -319,10 +332,13 @@ const ModifyOrder = () => {
                     kind="primary"
                     className="forwardButton"
                     onClick={handleSubmitOrderForm}
+                    disabled={errors?.errors?.length > 0 ? true : false}
                   >
                     <FormattedMessage id="label.button.submit" />
                   </Button>
                 )}
+                {JSON.stringify(errors.inner)}
+                {/* {JSON.stringify(orderFormValues.sampleOrderItems)} */}
               </div>
             </div>
           )}

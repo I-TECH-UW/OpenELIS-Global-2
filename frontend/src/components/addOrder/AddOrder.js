@@ -783,6 +783,12 @@ const AddOrder = (props) => {
                 onChange={handleRequesterEmail}
                 value={orderFormValues.sampleOrderItems.providerEmail}
                 id="providerEmailId"
+                invalid={
+                  error("sampleOrderItems.providerEmail") ? true : false
+                }
+                invalidText={intl.formatMessage({
+                  id: "error.invalid.email",
+                })}
               />
             </Column>
 
