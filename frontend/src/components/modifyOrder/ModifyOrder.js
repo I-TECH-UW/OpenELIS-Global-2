@@ -339,8 +339,6 @@ const ModifyOrder = () => {
                     <FormattedMessage id="label.button.submit" />
                   </Button>
                 )}
-                {JSON.stringify(errors.inner)}
-                {/* {JSON.stringify(orderFormValues.sampleOrderItems)} */}
               </div>
             </div>
           )}
