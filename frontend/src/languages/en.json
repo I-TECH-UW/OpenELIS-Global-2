@@ -833,5 +833,6 @@
   "error.report.csv.study": "Please select study type.",
   "error.report.csv.date": "Please select date type.",
   "header.label.study.vlloadtrends": "Viral Load Data Export Report",
-  "reports.label.trends": "Trends"
+  "reports.label.trends": "Trends",
+  "error.invalid.email": "Invalid Email"
 }

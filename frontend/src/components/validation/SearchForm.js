@@ -120,6 +120,24 @@ const SearchForm = (props) => {
       "&doRange=" +
       doRange;
     setUrl(searchEndPoint);
+    switch (searchBy) {
+      case "routine":
+        props.setParams("?type=" + searchBy + "&testSectionId=" + unitType);
+        break;
+      case "order":
+        props.setParams(
+          "?type=" + searchBy + "&accessionNumber=" + accessionNumber,
+        );
+        break;
+      case "testDate":
+        props.setParams("?type=" + searchBy + "&date=" + date);
+        break;
+      case "range":
+        props.setParams(
+          "?type=" + searchBy + "&accessionNumber=" + accessionNumber,
+        );
+        break;
+    }
     getFromOpenElisServer(searchEndPoint, validationResults);
   };
 
