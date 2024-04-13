@@ -132,9 +132,7 @@ const SampleType = ({ updateFormValues }) => {
 
     updateFormValues({
       selectedTests: updatedTests,
-      selectedPanels: updatedPanels,
       sampleId: selectedType.value,
-
     });
   };
 
