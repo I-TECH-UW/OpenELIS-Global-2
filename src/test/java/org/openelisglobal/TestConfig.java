@@ -16,6 +16,33 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * <p>
+ * This class configures various components such as message converters and component scanning.
+ * It enables Spring Web MVC and sets up JSON message converters using Jackson.
+ * </p>
+ *
+ * <p>
+ * The component scanning is set to include packages related to dictionary REST controllers,
+ * services, DAO implementations, audit trail DAO implementations, reference tables services,
+ * DAO implementations, and history services.
+ * </p>
+ *
+ * <p>
+ * The JSON message converter is configured to handle {@code MediaType.APPLICATION_JSON} and
+ * set to include non-null values only.
+ * </p>
+ *
+ * <p>
+ * The class implements {@link WebMvcConfigurer} to override message converter configuration.
+ * </p>
+ *
+ * @author OpenElisGlobal
+ * @see Configuration
+ * @see ComponentScan
+ * @see EnableWebMvc
+ * @see WebMvcConfigurer
+ */
 @Configuration
 @ComponentScan(basePackages = {
         "org.openelisglobal.dictionary.rest.controller",
@@ -25,10 +52,15 @@ import java.util.List;
         "org.openelisglobal.referencetables.service",
         "org.openelisglobal.referencetables.daoimpl",
         "org.openelisglobal.history.service",
-
 })
 @EnableWebMvc
 public class TestConfig implements WebMvcConfigurer {
+
+    /**
+     * Provides a JSON message converter configured with Jackson settings.
+     *
+     * @return MappingJackson2HttpMessageConverter configured for JSON serialization
+     */
     @Bean
     public MappingJackson2HttpMessageConverter jsonConverter() {
         List<MediaType> supportedMediaTypes = new ArrayList<>();
@@ -42,11 +74,16 @@ public class TestConfig implements WebMvcConfigurer {
         return jsonConverter;
     }
 
+    /**
+     * Overrides the default message converters to include {@code StringHttpMessageConverter}
+     * and the custom JSON converter.
+     *
+     * @param converters List of default message converters
+     */
     @Override
-    public void configureMessageConverters(@NonNull List<HttpMessageConverter<?>>  converters) {
+    public void configureMessageConverters(@NonNull List<HttpMessageConverter<?>> converters) {
         WebMvcConfigurer.super.configureMessageConverters(converters);
         converters.add(new StringHttpMessageConverter());
         converters.add(jsonConverter());
     }
 }
-
