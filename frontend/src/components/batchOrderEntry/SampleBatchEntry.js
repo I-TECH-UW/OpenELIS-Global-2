@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import { ConfigurationContext } from "../layout/Layout";
+import { ConfigurationContext, NotificationContext } from "../layout/Layout";
 import {
   Button,
   Grid,
@@ -14,9 +14,10 @@ import {
   Accordion,
   AccordionItem,
   Row,
+  FlexGrid,
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { AlertDialog } from "../common/CustomNotification";
+import { AlertDialog , NotificationKinds } from "../common/CustomNotification";
 import "../Style.css";
 import PageBreadCrumb from "../common/PageBreadCrumb";
 import {
@@ -29,7 +30,9 @@ import OrderEntryValidationSchema from "../formModel/validationSchema/OrderEntry
 
 const SampleBatchEntry = (props) => {
   const { orderFormValues, setOrderFormValues } = props;
-  const [notificationVisible, setNotificationVisible] = useState(false);
+  // const [notificationVisible, setNotificationVisible] = useState(false);
+  const { notificationVisible, setNotificationVisible, addNotification } =
+  useContext(NotificationContext);
   const { configurationProperties } = useContext(ConfigurationContext);
   const intl = useIntl();
   const componentMounted = useRef(false);
@@ -97,8 +100,17 @@ const SampleBatchEntry = (props) => {
         labNo: rawVal ? rawVal : e?.target?.value,
       },
     });
-    setNotificationVisible(false);
+    // setNotificationVisible(false);
   }
+
+  const showAlertMessage = (msg, kind) => {
+    setNotificationVisible(true);
+    addNotification({
+      kind: kind,
+      title: intl.formatMessage({ id: "notification.title" }),
+      message: msg,
+    });
+  };
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
@@ -114,7 +126,9 @@ const SampleBatchEntry = (props) => {
           labNo: res.body,
         },
       });
-      setGeneratedLabNos((prevLabNos) => [...prevLabNos, res.body]);
+      if (orderFormValues.method === "On Demand") {
+        setGeneratedLabNos((prevLabNos) => [...prevLabNos, res.body]);
+      }
       setNotificationVisible(false);
     }
   }
@@ -128,12 +142,22 @@ const SampleBatchEntry = (props) => {
     );
   }
   useEffect(() => {
-    if (componentMounted.current && labNoGenerated && !buttonDisabled) {
+    if (
+      componentMounted.current &&
+      labNoGenerated &&
+      (orderFormValues.method === "On Demand" ? !buttonDisabled : true)
+    ) {
       post();
+    
+
     } else {
       componentMounted.current = true;
     }
-  }, [orderFormValues.sampleOrderItems.labNo]);
+  }, [
+    orderFormValues.sampleOrderItems.labNo,
+    orderFormValues.method,
+    buttonDisabled,
+  ]);
 
   const handleLabNoGeneration = (e) => {
     if (e) {
@@ -145,11 +169,20 @@ const SampleBatchEntry = (props) => {
     );
   };
 
-  const printLabelSets = () => {
-    const labNo = orderFormValues.sampleOrderItems.labNo;
-    const url = `/LabelMakerServlet?labNo=${labNo}`;
-    setSource(url);
-    setRenderBarcode(true);
+  const printLabelSets = (res) => {
+    if(res.status){
+      showAlertMessage(
+        <FormattedMessage id="save.order.success.msg" />,
+        NotificationKinds.success,
+      );
+     
+    }
+    if (orderFormValues.method === "On Demand") {
+      const labNo = orderFormValues.sampleOrderItems.labNo;
+      const url = `/LabelMakerServlet?labNo=${labNo}`;
+      setSource(url);
+      setRenderBarcode(true);
+    }
   };
 
   const elementError = (path) => {
@@ -165,7 +198,9 @@ const SampleBatchEntry = (props) => {
 
   return (
     <>
-      {notificationVisible === true ? <AlertDialog /> : ""}
+      {notificationVisible && (
+        <AlertDialog  />
+      )}
       {loading && <Loading description="Loading Dasboard..." />}
       <PageBreadCrumb breadcrumbs={breadcrumbs} />
       {!showSampleComponent && (
@@ -267,77 +302,145 @@ const SampleBatchEntry = (props) => {
                   error={elementError}
                 />
               )}
-              <div className="orderLegendBody">
-                <h3>
-                  <FormattedMessage id="order.generate.barcode" />
-                </h3>
-                <br />
-                <div className="formInlineDiv">
-                  <div className="inputText">
-                    <CustomLabNumberInput
-                      name="labNo"
-                      placeholder={intl.formatMessage({
-                        id: "input.placeholder.labNo",
-                      })}
-                      value={orderFormValues.sampleOrderItems.labNo}
-                      onChange={handleLabNo}
-                      onKeyPress={handleKeyPress}
-                      labelText={
-                        <>
-                          <FormattedMessage id="sample.label.labnumber" />{" "}
-                          <span className="requiredlabel">*</span>
-                        </>
-                      }
-                      id="labNo"
-                    />
-                    <Link
-                      href="#"
-                      onClick={(e) => {
-                        handleLabNoGeneration(e);
-                        setButtonDisabled(false);
-                        setGenerateSaveButtonDisabled(true);
-                      }}
-                      disabled={generateSaveButtonDisabled}
-                    >
-                      <p>
-                        <FormattedMessage id="order.generate.barcode" />
-                      </p>
-                    </Link>
+              {orderFormValues.method === "On Demand" && (
+                <div className="orderLegendBody">
+                  <h3>
+                    <FormattedMessage id="order.generate.barcode" />
+                  </h3>
+                  <br />
+                  <div className="formInlineDiv">
+                    <div className="inputText">
+                      <CustomLabNumberInput
+                        name="labNo"
+                        placeholder={intl.formatMessage({
+                          id: "input.placeholder.labNo",
+                        })}
+                        value={orderFormValues.sampleOrderItems.labNo}
+                        onChange={handleLabNo}
+                        onKeyPress={handleKeyPress}
+                        labelText={
+                          <>
+                            <FormattedMessage id="sample.label.labnumber" />{" "}
+                            <span className="requiredlabel">*</span>
+                          </>
+                        }
+                        id="labNo"
+                      />
+                      <Link
+                        href="#"
+                        onClick={(e) => {
+                          handleLabNoGeneration(e);
+                          setButtonDisabled(false);
+                          setGenerateSaveButtonDisabled(true);
+                        }}
+                        disabled={generateSaveButtonDisabled}
+                      >
+                        <p>
+                          <FormattedMessage id="order.generate.barcode" />
+                        </p>
+                      </Link>
+                    </div>
                   </div>
+                  <br />
+                  <Section>
+                    <Accordion>
+                      <AccordionItem
+                        title={intl.formatMessage({
+                          id: "order.generate.barcode.history",
+                        })}
+                      >
+                        {generatedLabNos.map((labNo, index) => (
+                          <h6 key={index}> {labNo}</h6>
+                        ))}
+                      </AccordionItem>
+                    </Accordion>
+                  </Section>
+                  <br />
+                  <Button
+                    onClick={() => {
+                      setButtonDisabled(true);
+                      setGenerateSaveButtonDisabled(false);
+                      setOrderFormValues({
+                        ...orderFormValues,
+                        sampleOrderItems: {
+                          ...orderFormValues.sampleOrderItems,
+                          labNo: "",
+                        },
+                      });
+                    }}
+                    disabled={buttonDisabled}
+                  >
+                    <FormattedMessage id="nextLabel.action.button" />
+                  </Button>
                 </div>
-                <br />
-                <section>
-                  <Accordion>
-                    <AccordionItem
-                      title={intl.formatMessage({
-                        id: "order.generate.barcode.history",
-                      })}
-                    >
-                      {generatedLabNos.map((labNo, index) => (
-                        <h6 key={index}> {labNo}</h6>
-                      ))}
-                    </AccordionItem>
-                  </Accordion>
-                </section>
-                <br />
-                <Button
-                  onClick={() => {
-                    setButtonDisabled(true);
-                    setGenerateSaveButtonDisabled(false);
-                    setOrderFormValues({
-                      ...orderFormValues,
-                      sampleOrderItems: {
-                        ...orderFormValues.sampleOrderItems,
-                        labNo: "",
-                      },
-                    });
-                  }}
-                  disabled={buttonDisabled}
-                >
-                  <FormattedMessage id="nextLabel.action.button" />
-                </Button>
-              </div>
-              {renderBarcode && (
+              )}
+              {orderFormValues.method === "Pre-Printed" && (
+                <div className="orderLegendBody">
+                  <h3>
+                    <FormattedMessage id="accession.entry" />
+                  </h3>
+                        <div className="inputText">
+                          <CustomLabNumberInput
+                            name="labNo"
+                            placeholder={intl.formatMessage({
+                              id: "input.placeholder.labNo",
+                            })}
+                            value={orderFormValues.sampleOrderItems.labNo}
+                            onChange={handleLabNo}
+                            onKeyPress={handleKeyPress}
+                            labelText={
+                              <>
+                                <FormattedMessage id="sample.label.labnumber" />{" "}
+                                <span className="requiredlabel">*</span>
+                              </>
+                            }
+                            id="labNo"
+                          />
+                          <div>
+                            <FormattedMessage id="label.order.scan.text" />{" "}
+                            <Link
+                              href="#"
+                              onClick={(e) => handleLabNoGeneration(e)}
+                            >
+                              <FormattedMessage id="sample.label.labnumber.generate" />
+                            </Link>
+                        
+                        </div>
+               
+                        </div>
+                 <br />
+                  <Section>
+                    <Accordion>
+                      <AccordionItem
+                        title={intl.formatMessage({
+                          id: "order.generate.barcode.history",
+                        })}
+                      >
+                        {generatedLabNos.map((labNo, index) => (
+                          <h6 key={index}> {labNo}</h6>
+                        ))}
+                      </AccordionItem>
+                    </Accordion>
+                  </Section>
+                  <br/>
+                  <Section>
+                        <Button
+                          onClick={() => {
+                            setLabNoGenerated(true);
+                            setGenerateSaveButtonDisabled(false);
+                            setGeneratedLabNos((prevLabNos) => [
+                              ...prevLabNos,
+                              orderFormValues.sampleOrderItems.labNo,
+                            ]);
+                          }}
+                          disabled={generateSaveButtonDisabled}
+                        >
+                          <FormattedMessage id="column.name.save" />
+                        </Button></Section>
+                </div>
+              )}
+
+              {orderFormValues.method === "On Demand" && renderBarcode && (
                 <div className="orderLegendBody">
                   <Grid>
                     <Column lg={16} md={8} sm={4}>

@@ -29,7 +29,6 @@ import PageBreadCrumb from "../common/PageBreadCrumb";
 import SampleBatchEntry from "./SampleBatchEntry";
 
 const SampleBatchEntrySetup = () => {
-
   const [orderFormValues, setOrderFormValues] = useState(
     BatchOrderEntryFormValues,
   );
@@ -327,7 +326,7 @@ const SampleBatchEntrySetup = () => {
                     </h3>
                     <Section>
                       <div className="inlineDiv">
-                      <CustomDatePicker
+                        <CustomDatePicker
                           id={"order_currentDate"}
                           labelText={intl.formatMessage({
                             id: "sample.currentDate",
@@ -344,7 +343,7 @@ const SampleBatchEntrySetup = () => {
                             handleDatePickerChange("currentDate", date)
                           }
                         />
-                         <CustomDatePicker
+                        <CustomDatePicker
                           id={"order_receivedDate"}
                           labelText={intl.formatMessage({
                             id: "sample.receivedDate",
@@ -362,12 +361,12 @@ const SampleBatchEntrySetup = () => {
                           onChange={(date) =>
                             handleDatePickerChange("receivedDate", date)
                           }
-                        />            
+                        />
                       </div>
                     </Section>
                     <Section>
                       <div className="inlineDiv">
-                      <TimePicker
+                        <TimePicker
                           id="order_CurrentTime"
                           labelText={intl.formatMessage({
                             id: "order.current.time",
@@ -380,7 +379,7 @@ const SampleBatchEntrySetup = () => {
                               : configurationProperties.currentTimeAsText
                           }
                         />
-                      <TimePicker
+                        <TimePicker
                           id="order_ReceptionTime"
                           labelText={intl.formatMessage({
                             id: "order.reception.time",
@@ -392,7 +391,7 @@ const SampleBatchEntrySetup = () => {
                               ? orderFormValues.sampleOrderItems.receivedTime
                               : configurationProperties.currentTimeAsText
                           }
-                        />                       
+                        />
                       </div>
                     </Section>
                     <Section>
@@ -555,13 +554,13 @@ const SampleBatchEntrySetup = () => {
                           })}
                         />
                         <SelectItem
-                          value="onDemand"
+                          value="On Demand"
                           text={intl.formatMessage({
                             id: "order.legend.onDemand",
                           })}
                         />
                         <SelectItem
-                          value="preDemand"
+                          value="Pre-Printed"
                           text={intl.formatMessage({
                             id: "order.legend.preDemand",
                           })}
@@ -583,7 +582,10 @@ const SampleBatchEntrySetup = () => {
                         />
                         <Checkbox
                           labelText={
-                            <FormattedMessage id="order.legend.patient1" defaultMessage={"Patient Info"} />
+                            <FormattedMessage
+                              id="order.legend.patient1"
+                              defaultMessage={"Patient Info"}
+                            />
                           }
                           id="patient-checkbox"
                           checked={patientChecked}
@@ -641,8 +643,9 @@ const SampleBatchEntrySetup = () => {
                         <Button
                           onClick={handleSubmitButton1}
                           disabled={
-                            !orderFormValues.testSectionList &&
-                            !orderFormValues.panels.id
+                            (!orderFormValues.testSectionList &&
+                              !orderFormValues.panels.id) ||
+                            !orderFormValues.method
                           }
                         >
                           <FormattedMessage id="next.action.button" />
