@@ -21,7 +21,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -286,7 +290,9 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
      * `Dictionary` entity.
      * </p>
      */
-    @Data
+    @Setter
+    @Getter
+    @NoArgsConstructor
     public static class DictionaryMenu {
         private String id;
         private String categoryName;
@@ -295,7 +301,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         private String isActive;
     }
 
-    @Data
+    @Setter
+    @Getter
     public static class DictionaryDescription {
         private String id;
         private String description;
@@ -350,6 +357,10 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 
     @Override
     public Dictionary saveDictionaryMenu(Dictionary dictionary) {
+        if (dictionary == null) {
+            return null;
+        }
+
         try {
             Session session = entityManager.unwrap(Session.class);
             session.saveOrUpdate(dictionary);

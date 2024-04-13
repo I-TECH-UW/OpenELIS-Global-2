@@ -15,8 +15,10 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
+
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {BaseTestConfig.class, AppTestConfig.class})
+@ContextConfiguration(classes = {BaseTestConfig.class, TestConfig.class})
 @WebAppConfiguration
 @TestPropertySource("classpath:common.properties")
 @ActiveProfiles("test")
@@ -28,7 +30,8 @@ public abstract class BaseWebContextSensitiveTest {
     protected MockMvc mockMvc;
 
     protected void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
+                .alwaysExpect(forwardedUrl(null)).build();
     }
     protected String mapToJson(Object obj) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
