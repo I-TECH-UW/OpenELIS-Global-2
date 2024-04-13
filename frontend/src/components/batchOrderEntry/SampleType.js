@@ -29,6 +29,7 @@ const SampleType = ({ updateFormValues }) => {
   const [filteredTests, setFilteredTests] = useState([]);
   const [filteredPanels, setFilteredPanels] = useState([]);
   const [isSampleSelected, setIsSampleSelected] = useState(false);
+  const[selectedType, setSelectedType] = useState();
 
   const handleTestSearchChange = (e) => {
     const term = e.target.value.toLowerCase();
@@ -64,8 +65,13 @@ const SampleType = ({ updateFormValues }) => {
     setSelectedTests([]);
     setSelectedPanels([]);
     setIsSampleSelected(!!value);
-    updateFormValues({ sampleId: value });
+    const selectedId = value;
+    setSelectedType(sampleTypes.find(type => type.id === selectedId));
+   
+
   };
+
+ 
 
   useEffect(() => {
     getFromOpenElisServer("/rest/user-sample-types", fetchSamplesTypes);
@@ -111,8 +117,10 @@ const SampleType = ({ updateFormValues }) => {
     setSelectedTests(updatedTests);
 
     updateFormValues({
+      
       selectedTests: updatedTests,
       selectedPanels: updatedPanels,
+      sampleId: selectedType.value,
     });
   };
 
@@ -126,7 +134,12 @@ const SampleType = ({ updateFormValues }) => {
     }
     setSelectedTests(updatedTests);
 
-    updateFormValues({ selectedTests: updatedTests, selectedPanels });
+    updateFormValues({
+      selectedTests: updatedTests,
+      selectedPanels: updatedPanels,
+      sampleId: selectedType.value,
+
+    });
   };
 
   return (
@@ -149,6 +162,7 @@ const SampleType = ({ updateFormValues }) => {
                 <SelectItem
                   text={intl.formatMessage({ id: "sample.select.type" })}
                   value=""
+
                 />
               )}
               {sampleTypes?.map((sampleType, i) => (
@@ -156,6 +170,7 @@ const SampleType = ({ updateFormValues }) => {
                   text={sampleType.value}
                   value={sampleType.id}
                   key={i}
+
                 />
               ))}
             </Select>
