@@ -1,17 +1,12 @@
 const BatchOrderEntryFormValues = {
   currentDate: null,
   currentTime: null,
-  // ReceptionTime: "",
-  // receivedTime:"17:05",
-  // referringSiteId: "",
-  // referringSiteName: "",
-
   sampleTypeSelect: "",
   panels: [
     {
       name: "",
       testMaps: "",
-      panelId: "1",
+      panelId: "",
       panelOrder: 0,
     },
   ],
@@ -39,7 +34,6 @@ const BatchOrderEntryFormValues = {
     personLastUpdated: "",
     patientUpdateStatus: "ADD",
     patientPK: "",
-    // stnumber: null,
     subjectNumber: "",
     nationalId: "",
     guid: "",

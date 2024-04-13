@@ -15,8 +15,8 @@ import { sampleTypeTestsStructure } from "../data/SampleEntryTestsForTypeProvide
 import "../Style.css";
 
 const SampleType = ({ updateFormValues }) => {
-  const intl = useIntl();
 
+  const intl = useIntl();
   const [sampleTypes, setSampleTypes] = useState([]);
   const [selectedSampleTypeId, setSelectedSampleTypeId] = useState(null);
   const [sampleTypeTests, setSampleTypeTests] = useState(
@@ -71,8 +71,6 @@ const SampleType = ({ updateFormValues }) => {
 
   };
 
- 
-
   useEffect(() => {
     getFromOpenElisServer("/rest/user-sample-types", fetchSamplesTypes);
   }, []);
@@ -115,9 +113,7 @@ const SampleType = ({ updateFormValues }) => {
     });
 
     setSelectedTests(updatedTests);
-
     updateFormValues({
-      
       selectedTests: updatedTests,
       selectedPanels: updatedPanels,
       sampleId: selectedType.value,

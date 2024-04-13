@@ -1,11 +1,7 @@
 package org.openelisglobal.samplebatchentry.controller.rest;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.StringTokenizer;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -50,7 +46,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.openelisglobal.samplebatchentry.form.SampleBatchEntryForm;
 

@@ -1,20 +1,14 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import CustomDatePicker from "../common/CustomDatePicker";
 import { ConfigurationContext } from "../layout/Layout";
 import {
-  Select,
-  SelectItem,
-  Checkbox,
   Button,
   Grid,
   Column,
   Section,
-  TimePicker,
   Loading,
   Heading,
   TextInput,
-  FluidForm,
   Tag,
   Link,
   Accordion,
@@ -22,11 +16,7 @@ import {
   Row,
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
-import SampleType from "./SampleType";
-import BatchOrderEntryFormValues from "../formModel/innitialValues/BatchOrderEntryFormValues";
-import { NotificationContext } from "../layout/Layout";
 import { AlertDialog } from "../common/CustomNotification";
-import AutoComplete from "../common/AutoComplete";
 import "../Style.css";
 import PageBreadCrumb from "../common/PageBreadCrumb";
 import {
@@ -35,20 +25,12 @@ import {
 } from "../utils/Utils";
 import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import PatientInfo from "../addOrder/PatientInfo";
-import { Field } from "formik";
 import OrderEntryValidationSchema from "../formModel/validationSchema/OrderEntryValidationSchema";
 
 const SampleBatchEntry = (props) => {
-  // const [orderFormValues, setOrderFormValues] = useState(
-  //   BatchOrderEntryFormValues,
-  // );
   const { orderFormValues, setOrderFormValues } = props;
-  console.log(orderFormValues.sampleTypeSelect + "ye samplebatchentry wla");
-
   const [notificationVisible, setNotificationVisible] = useState(false);
-  const [status, setStatus] = useState("");
   const { configurationProperties } = useContext(ConfigurationContext);
-  // const { notificationVisible } = useContext(NotificationContext);
   const intl = useIntl();
   const componentMounted = useRef(false);
   const history = useHistory();
@@ -57,14 +39,12 @@ const SampleBatchEntry = (props) => {
   const [loading, setLoading] = useState(false);
   const [showSampleComponent, setShowSampleComponent] = useState(false);
   const [generatedLabNos, setGeneratedLabNos] = useState([]);
-  //barcode
   const [renderBarcode, setRenderBarcode] = useState(false);
   const [source, setSource] = useState("about:blank");
   const [errors, setErrors] = useState([]);
   const [generateSaveButtonDisabled, setGenerateSaveButtonDisabled] =
     useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(true);
-
   const [labNoGenerated, setLabNoGenerated] = useState(false);
 
   let breadcrumbs = [{ label: "home.label", link: "/" }];
@@ -109,9 +89,6 @@ const SampleBatchEntry = (props) => {
     setDepartments(data);
   };
 
-  //something begins
-
-
   function handleLabNo(e, rawVal) {
     setOrderFormValues({
       ...orderFormValues,
@@ -139,8 +116,6 @@ const SampleBatchEntry = (props) => {
       });
       setGeneratedLabNos((prevLabNos) => [...prevLabNos, res.body]);
       setNotificationVisible(false);
-      // Move the post function call here
-      // printLabelSets(res.body);
     }
   }
 
@@ -211,13 +186,12 @@ const SampleBatchEntry = (props) => {
             <Column lg={16} md={8} sm={4}>
               <div className="orderLegendBody">
                 <h3>
-                  {/* <FormattedMessage id="order.title" defaultMessage="Order" /> */}
-                  Common Fields
+                  <FormattedMessage id="order.legend.commonFields" />
                 </h3>
                 <Section>
                   <div className="inlineDiv">
                     <TextInput
-                      labelText="Current Date"
+                      labelText={<FormattedMessage id="sample.currentDate" />}
                       value={orderFormValues.currentDate}
                       readOnly
                       id="current-date"
@@ -225,7 +199,7 @@ const SampleBatchEntry = (props) => {
                     />
 
                     <TextInput
-                      labelText="Current Time"
+                      labelText={<FormattedMessage id="order.current.time" />}
                       value={orderFormValues.currentTime}
                       readOnly
                       id="current-time"
@@ -233,11 +207,10 @@ const SampleBatchEntry = (props) => {
                     />
                   </div>
                 </Section>
-
                 <Section>
                   <div className="inlineDiv">
                     <TextInput
-                      labelText="Recieved Date"
+                      labelText={<FormattedMessage id="sample.receivedDate" />}
                       value={
                         orderFormValues.sampleOrderItems.receivedDateForDisplay
                       }
@@ -247,7 +220,7 @@ const SampleBatchEntry = (props) => {
                     />
 
                     <TextInput
-                      labelText="Recieved Time"
+                      labelText={<FormattedMessage id="order.recieved.time" />}
                       value={orderFormValues.sampleOrderItems.receivedTime}
                       readOnly
                       id="recieved-time"
@@ -256,16 +229,21 @@ const SampleBatchEntry = (props) => {
                   </div>
                 </Section>
                 <Section>
-              {orderFormValues.sampleTypeSelect && (
-
+                  {orderFormValues.sampleTypeSelect && (
+                    <div className="inlineDiv">
+                      <h4 className="sampleBatchTag">
+                        {" "}
+                        <FormattedMessage id="sample.type" />
+                      </h4>
+                      <Tag key="1" type="cyan" size="lg">
+                        {orderFormValues.sampleTypeSelect}
+                      </Tag>
+                    </div>
+                  )}
                   <div className="inlineDiv">
-                    <h4 style={{ marginRight: "20px" }}>Sample Type</h4>
-                    <Tag key="1" type="cyan" size="lg">
-                      {orderFormValues.sampleTypeSelect}
-                    </Tag>
-                  </div>)}
-                  <div className="inlineDiv">
-                    <h4 style={{ marginRight: "20px" }}>Test Name</h4>
+                    <h4 className="sampleBatchTag">
+                      <FormattedMessage id="eorder.test.name" />
+                    </h4>
                     {orderFormValues.testSectionList.map((test) => (
                       <Tag key={test.id} type="cyan">
                         {test.value}
@@ -273,14 +251,16 @@ const SampleBatchEntry = (props) => {
                     ))}
                   </div>
                   <div className="inlineDiv">
-                    <h4 style={{ marginRight: "20px" }}>Facility Id</h4>
+                    <h4 className="sampleBatchTag">
+                      <FormattedMessage id="order.legend.facility" />
+                    </h4>
                     <Tag key="1" type="cyan" size="lg">
                       {orderFormValues.sampleOrderItems.referringSiteName}
                     </Tag>
                   </div>
                 </Section>
               </div>
-              {orderFormValues.patientInfoCheck && (
+              {orderFormValues.PatientInfoCheck && (
                 <PatientInfo
                   orderFormValues={orderFormValues}
                   setOrderFormValues={setOrderFormValues}
@@ -288,85 +268,75 @@ const SampleBatchEntry = (props) => {
                 />
               )}
               <div className="orderLegendBody">
-                <h3>Generate Barcode and Save</h3>
+                <h3>
+                  <FormattedMessage id="order.generate.barcode" />
+                </h3>
                 <br />
-                
-                 
-                    <div className="formInlineDiv">
-                  
-                      <div className="inputText">
-                        <CustomLabNumberInput
-                          name="labNo"
-                          placeholder={intl.formatMessage({
-                            id: "input.placeholder.labNo",
-                          })}
-                          value={orderFormValues.sampleOrderItems.labNo}
-                          // onMouseLeave={handleLabNoValidation}
-                          onChange={handleLabNo}
-                          onKeyPress={handleKeyPress}
-                          labelText={
-                            <>
-                              <FormattedMessage id="sample.label.labnumber" />{" "}
-                              <span className="requiredlabel">*</span>
-                            </>
-                          }
-                          id="labNo"
-                        />
-                        <div>
-                          {/* <FormattedMessage id="label.order.scan.text" />{" "} */}
-                          <Link
-                            href="#"
-                            onClick={(e) => {
-                              handleLabNoGeneration(e);
-                              setButtonDisabled(false);
-                              setGenerateSaveButtonDisabled(true);
-                            }}
-                            disabled={generateSaveButtonDisabled}
-                          >
-                            <p>Generate and save</p>
-                          </Link>
-
-                          {/* </div> */}
-                        </div>
-                      </div>
-                     
-                    </div>
-          
-             
-                 
+                <div className="formInlineDiv">
+                  <div className="inputText">
+                    <CustomLabNumberInput
+                      name="labNo"
+                      placeholder={intl.formatMessage({
+                        id: "input.placeholder.labNo",
+                      })}
+                      value={orderFormValues.sampleOrderItems.labNo}
+                      onChange={handleLabNo}
+                      onKeyPress={handleKeyPress}
+                      labelText={
+                        <>
+                          <FormattedMessage id="sample.label.labnumber" />{" "}
+                          <span className="requiredlabel">*</span>
+                        </>
+                      }
+                      id="labNo"
+                    />
+                    <Link
+                      href="#"
+                      onClick={(e) => {
+                        handleLabNoGeneration(e);
+                        setButtonDisabled(false);
+                        setGenerateSaveButtonDisabled(true);
+                      }}
+                      disabled={generateSaveButtonDisabled}
+                    >
+                      <p>
+                        <FormattedMessage id="order.generate.barcode" />
+                      </p>
+                    </Link>
+                  </div>
+                </div>
                 <br />
                 <section>
                   <Accordion>
-                    <AccordionItem title="Previously used Accession Numbers">
+                    <AccordionItem
+                      title={intl.formatMessage({
+                        id: "order.generate.barcode.history",
+                      })}
+                    >
                       {generatedLabNos.map((labNo, index) => (
                         <h6 key={index}> {labNo}</h6>
                       ))}
                     </AccordionItem>
                   </Accordion>
                 </section>
-                <br/>
+                <br />
                 <Button
-                      onClick={() => {
-                        setButtonDisabled(true);
-                        setGenerateSaveButtonDisabled(false);
-                        setOrderFormValues({
-                          ...orderFormValues,
-                          sampleOrderItems: {
-                            ...orderFormValues.sampleOrderItems,
-                            labNo: "",
-                          },
-                        });
-                      }}
-                      disabled={buttonDisabled}
-                    >
-                      {/* <FormattedMessage id="next.action.button" /> */}
-                      Next Label
-                    </Button>
+                  onClick={() => {
+                    setButtonDisabled(true);
+                    setGenerateSaveButtonDisabled(false);
+                    setOrderFormValues({
+                      ...orderFormValues,
+                      sampleOrderItems: {
+                        ...orderFormValues.sampleOrderItems,
+                        labNo: "",
+                      },
+                    });
+                  }}
+                  disabled={buttonDisabled}
+                >
+                  <FormattedMessage id="nextLabel.action.button" />
+                </Button>
               </div>
-
-              {/* </div> */}
-              {/* </div> */}
-
               {renderBarcode && (
                 <div className="orderLegendBody">
                   <Grid>
@@ -379,13 +349,11 @@ const SampleBatchEntry = (props) => {
                   <iframe src={source} width="100%" height="500px" />
                 </div>
               )}
-<Grid>
-              <Button
-                          onClick={() => history.push("/")}
-                        
-                        >Finish
-                          {/* <FormattedMessage id="label.button.cancel" /> */}
-                        </Button></Grid>
+              <Grid>
+                <Button onClick={() => history.push("/")}>
+                  <FormattedMessage id="label.button.finish" />
+                </Button>
+              </Grid>
             </Column>
           </Grid>
         </>

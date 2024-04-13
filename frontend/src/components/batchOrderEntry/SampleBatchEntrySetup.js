@@ -29,10 +29,10 @@ import PageBreadCrumb from "../common/PageBreadCrumb";
 import SampleBatchEntry from "./SampleBatchEntry";
 
 const SampleBatchEntrySetup = () => {
+
   const [orderFormValues, setOrderFormValues] = useState(
     BatchOrderEntryFormValues,
   );
-
   const [status, setStatus] = useState("");
   const { configurationProperties } = useContext(ConfigurationContext);
   const { notificationVisible } = useContext(NotificationContext);
@@ -48,7 +48,6 @@ const SampleBatchEntrySetup = () => {
   const [innitialized, setInnitialized] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showSampleComponent, setShowSampleComponent] = useState(false);
-
   const [postRequestMade, setPostRequestMade] = useState(false);
 
   let breadcrumbs = [{ label: "home.label", link: "/" }];
@@ -340,7 +339,6 @@ const SampleBatchEntrySetup = () => {
                               ? orderFormValues.currentDate
                               : configurationProperties.currentDateAsText
                           }
-                          // className="inputDate"
                           disallowFutureDate={true}
                           onChange={(date) =>
                             handleDatePickerChange("currentDate", date)
@@ -352,7 +350,6 @@ const SampleBatchEntrySetup = () => {
                             id: "sample.receivedDate",
                             defaultMessage: "Received Date",
                           })}
-                          // className="inputDate"
                           autofillDate={true}
                           value={
                             orderFormValues.sampleOrderItems
@@ -365,17 +362,13 @@ const SampleBatchEntrySetup = () => {
                           onChange={(date) =>
                             handleDatePickerChange("receivedDate", date)
                           }
-                        />
-                     
-                   
-                       
+                        />            
                       </div>
                     </Section>
                     <Section>
                       <div className="inlineDiv">
                       <TimePicker
                           id="order_CurrentTime"
-                          // className="inputTime"
                           labelText={intl.formatMessage({
                             id: "order.current.time",
                             defaultMessage: "Current Time",
@@ -389,7 +382,6 @@ const SampleBatchEntrySetup = () => {
                         />
                       <TimePicker
                           id="order_ReceptionTime"
-                          // className="inputTime"
                           labelText={intl.formatMessage({
                             id: "order.reception.time",
                             defaultMessage: "Reception Time",
@@ -400,10 +392,7 @@ const SampleBatchEntrySetup = () => {
                               ? orderFormValues.sampleOrderItems.receivedTime
                               : configurationProperties.currentTimeAsText
                           }
-                        />
-                     
-
-                       
+                        />                       
                       </div>
                     </Section>
                     <Section>
