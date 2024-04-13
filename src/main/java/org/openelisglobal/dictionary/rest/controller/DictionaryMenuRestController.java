@@ -29,28 +29,19 @@ public class DictionaryMenuRestController extends BaseRestController {
     @Autowired
     private DictionaryService dictionaryService;
 
-    @RequestMapping(value = "/rest/get-dictionary-menu",
-            produces = MediaType.APPLICATION_JSON_VALUE,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            method = RequestMethod.GET)
+    @RequestMapping(value = "/rest/get-dictionary-menu", produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
     @ResponseBody
     public List<DictionaryDAOImpl.DictionaryMenu> showDictionaryMenu() {
         return dictionaryService.showDictionaryMenu();
     }
 
-    @RequestMapping(value = "/rest/dictionary-categories/descriptions",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE,
-            method = RequestMethod.GET)
+    @RequestMapping(value = "/rest/dictionary-categories/descriptions", produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
     @ResponseBody
     public List<DictionaryDAOImpl.DictionaryDescription> fetchDictionaryCategoryDescriptions() {
         return dictionaryService.fetchDictionaryCategoryDescriptions();
     }
 
-    @RequestMapping(value = "/rest/create-dictionary" ,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE,
-            method = RequestMethod.POST)
+    @RequestMapping(value = "/rest/create-dictionary", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createDictionaryEntry(@RequestBody Dictionary dictionary) {
     try {
         dictionaryService.saveDictionaryMenu(dictionary);

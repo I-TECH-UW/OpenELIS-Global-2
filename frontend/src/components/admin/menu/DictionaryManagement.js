@@ -288,7 +288,7 @@ function DictionaryManagement() {
                             <TableCell key={cell.id}>{cell.value}</TableCell>
                           ))}
                           <TableCell className="cds--table-column-x">
-                            <OverflowMenu size="sm" flipped>
+                            <OverflowMenu ariaLabel="modify menu" size="sm" flipped>
                               <OverflowMenuItem itemText="Edit" />
                               <OverflowMenuItem itemText="Delete" />
                             </OverflowMenu>
