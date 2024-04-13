@@ -32,6 +32,7 @@ const SampleBatchEntrySetup = () => {
   const [orderFormValues, setOrderFormValues] = useState(
     BatchOrderEntryFormValues,
   );
+
   const [status, setStatus] = useState("");
   const { configurationProperties } = useContext(ConfigurationContext);
   const { notificationVisible } = useContext(NotificationContext);
@@ -64,7 +65,7 @@ const SampleBatchEntrySetup = () => {
     setPatientChecked(!patientChecked);
     setOrderFormValues({
       ...orderFormValues,
-      PatientInfo: !patientChecked,
+      PatientInfoCheck: !patientChecked,
     });
   }
 
@@ -90,12 +91,14 @@ const SampleBatchEntrySetup = () => {
   function handleSiteName(e) {
     setOrderFormValues({
       ...orderFormValues,
+      facilityIDCheck: true,
       sampleOrderItems: {
         ...orderFormValues.sampleOrderItems,
         referringSiteName: e.target.value,
         referringSiteId: "",
       },
     });
+    setFacilityChecked(true);
   }
 
   function handleDatePickerChange(datePicker, date) {
@@ -113,7 +116,7 @@ const SampleBatchEntrySetup = () => {
             ...updatedBatchOrderEntry,
             sampleOrderItems: {
               ...updatedBatchOrderEntry.sampleOrderItems,
-              receivedDateForDisplay: date, 
+              receivedDateForDisplay: date,
             },
           };
           break;
@@ -123,7 +126,7 @@ const SampleBatchEntrySetup = () => {
       return updatedBatchOrderEntry;
     });
   }
-  
+
   useEffect(() => {
     if (!innitialized) {
       setOrderFormValues({
@@ -133,7 +136,6 @@ const SampleBatchEntrySetup = () => {
           ...orderFormValues.sampleOrderItems,
           receivedDateForDisplay: configurationProperties.currentDateAsText,
           receivedTime: configurationProperties.currentTimeAsText,
-
         },
         currentTime: configurationProperties.currentTimeAsText,
       });
@@ -175,7 +177,7 @@ const SampleBatchEntrySetup = () => {
       ...orderFormValues,
       testSectionList: updatedValues.selectedTests,
       panels: updatedValues.selectedPanels,
-      sampleTypeSelect:updatedValues.sampleId,
+      sampleTypeSelect: updatedValues.sampleId,
     });
   };
 
@@ -183,6 +185,21 @@ const SampleBatchEntrySetup = () => {
     const { id, checked } = event.target;
 
     let updatedOrderFormValues = { ...orderFormValues };
+
+    switch (selectedForm) {
+      case "EID":
+        updatedOrderFormValues.testSectionList = checked
+          ? [{ value: "DNA PCR", id: "eid_dnaPCR" }]
+          : [];
+        break;
+      case "viralLoad":
+        updatedOrderFormValues.testSectionList = checked
+          ? [{ id: "vl_viralLoadTest", value: "Viral Load Test" }]
+          : [];
+        break;
+      default:
+        break;
+    }
 
     if (selectedForm === "EID") {
       switch (id) {
@@ -242,7 +259,6 @@ const SampleBatchEntrySetup = () => {
       sampleOrderItems: {
         ...orderFormValues.sampleOrderItems,
         referringSiteId: siteId,
-        referringSiteName: "",
       },
       facilityID: siteId,
     });
@@ -312,7 +328,7 @@ const SampleBatchEntrySetup = () => {
                     </h3>
                     <Section>
                       <div className="inlineDiv">
-                        <CustomDatePicker
+                      <CustomDatePicker
                           id={"order_currentDate"}
                           labelText={intl.formatMessage({
                             id: "sample.currentDate",
@@ -324,23 +340,25 @@ const SampleBatchEntrySetup = () => {
                               ? orderFormValues.currentDate
                               : configurationProperties.currentDateAsText
                           }
-                          className="inputDate"
+                          // className="inputDate"
                           disallowFutureDate={true}
                           onChange={(date) =>
                             handleDatePickerChange("currentDate", date)
                           }
                         />
-                        <CustomDatePicker
+                         <CustomDatePicker
                           id={"order_receivedDate"}
                           labelText={intl.formatMessage({
                             id: "sample.receivedDate",
                             defaultMessage: "Received Date",
                           })}
-                          className="inputDate"
+                          // className="inputDate"
                           autofillDate={true}
                           value={
-                            orderFormValues.sampleOrderItems.receivedDateForDisplay
-                              ? orderFormValues.sampleOrderItems.receivedDateForDisplay
+                            orderFormValues.sampleOrderItems
+                              .receivedDateForDisplay
+                              ? orderFormValues.sampleOrderItems
+                                  .receivedDateForDisplay
                               : configurationProperties.currentDateAsText
                           }
                           disallowFutureDate={true}
@@ -348,13 +366,16 @@ const SampleBatchEntrySetup = () => {
                             handleDatePickerChange("receivedDate", date)
                           }
                         />
+                     
+                   
+                       
                       </div>
                     </Section>
                     <Section>
                       <div className="inlineDiv">
-                        <TimePicker
+                      <TimePicker
                           id="order_CurrentTime"
-                          className="inputTime"
+                          // className="inputTime"
                           labelText={intl.formatMessage({
                             id: "order.current.time",
                             defaultMessage: "Current Time",
@@ -366,9 +387,9 @@ const SampleBatchEntrySetup = () => {
                               : configurationProperties.currentTimeAsText
                           }
                         />
-                        <TimePicker
+                      <TimePicker
                           id="order_ReceptionTime"
-                          className="inputTime"
+                          // className="inputTime"
                           labelText={intl.formatMessage({
                             id: "order.reception.time",
                             defaultMessage: "Reception Time",
@@ -380,13 +401,21 @@ const SampleBatchEntrySetup = () => {
                               : configurationProperties.currentTimeAsText
                           }
                         />
+                     
+
+                       
                       </div>
                     </Section>
                     <Section>
                       <Select
                         className="inputText"
                         id="form-dropdown"
-                        labelText={<FormattedMessage id="order.form.label" />}
+                        labelText={
+                          <>
+                            <FormattedMessage id="order.form.label" />
+                            <span className="requiredlabel">*</span>
+                          </>
+                        }
                         onChange={handleFormChange}
                         defaultValue=""
                       >
@@ -565,7 +594,7 @@ const SampleBatchEntrySetup = () => {
                         />
                         <Checkbox
                           labelText={
-                            <FormattedMessage id="order.legend.patient" />
+                            <FormattedMessage id="order.legend.patient1" defaultMessage={"Patient Info"} />
                           }
                           id="patient-checkbox"
                           checked={patientChecked}
@@ -620,7 +649,13 @@ const SampleBatchEntrySetup = () => {
                     </Section>
                     <Section>
                       <div className="inlineDiv">
-                        <Button onClick={handleSubmitButton1}>
+                        <Button
+                          onClick={handleSubmitButton1}
+                          disabled={
+                            !orderFormValues.testSectionList &&
+                            !orderFormValues.panels.id
+                          }
+                        >
                           <FormattedMessage id="next.action.button" />
                         </Button>
 
