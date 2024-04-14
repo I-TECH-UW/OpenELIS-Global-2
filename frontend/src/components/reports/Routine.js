@@ -103,8 +103,9 @@ export const RoutineReportsMenu = {
         
         {
 			
-        link: "/Report?type=patient&report=retroCINonconformityNotification",
-          label: (<FormattedMessage id="sideNav.label.noncomformitynotification" />
+        link: "/Report?type=patient&report=NonconformityNotification",
+        label: (
+			<FormattedMessage id="sideNav.label.nonconformitynotification" />
           
           ),
           
