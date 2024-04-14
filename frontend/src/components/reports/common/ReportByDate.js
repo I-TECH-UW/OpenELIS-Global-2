@@ -194,7 +194,7 @@ const ReportByDate = (props) => {
                   />
                 </div>
               </Column>
-              <Column lg={7}>
+              <Column lg={10} md={8} sm={4}>
                 {list && list.length > 0 && (
                   <Select
                     id="type"
