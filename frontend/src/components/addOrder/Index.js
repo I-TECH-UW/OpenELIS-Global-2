@@ -1,14 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Button,
-  ProgressIndicator,
-  ProgressStep,
-  Stack,
-  Breadcrumb,
-  BreadcrumbItem,
-  Grid,
-  Column,
-} from "@carbon/react";
+import { Button, ProgressIndicator, ProgressStep, Stack } from "@carbon/react";
 import PatientInfo from "./PatientInfo";
 import AddSample from "./AddSample";
 import AddOrder from "./AddOrder";
@@ -22,6 +13,8 @@ import OrderSuccessMessage from "./OrderSuccessMessage";
 import { FormattedMessage, useIntl } from "react-intl";
 import OrderEntryValidationSchema from "../formModel/validationSchema/OrderEntryValidationSchema";
 import config from "../../config.json";
+import PageBreadCrumb from "../common/PageBreadCrumb";
+let breadcrumbs = [{ label: "home.label", link: "/" }];
 
 export let sampleObject = {
   index: 0,
@@ -572,7 +565,16 @@ const Index = () => {
     if ("questionnaire" in orderFormValues.sampleOrderItems) {
       delete orderFormValues.sampleOrderItems.questionnaire;
     }
-    console.debug(JSON.stringify(orderFormValues));
+    //remove display Lists rom the form
+    orderFormValues.sampleOrderItems.priorityList = [];
+    orderFormValues.sampleOrderItems.programList = [];
+    orderFormValues.sampleOrderItems.referringSiteList = [];
+    orderFormValues.initialSampleConditionList = [];
+    orderFormValues.testSectionList = [];
+    orderFormValues.sampleOrderItems.providersList = [];
+    orderFormValues.sampleOrderItems.paymentOptions = [];
+    orderFormValues.sampleOrderItems.testLocationCodeList = [];
+    console.log(JSON.stringify(orderFormValues));
     postToOpenElisServer(
       "/rest/SamplePatientEntry",
       JSON.stringify(orderFormValues),
@@ -699,15 +701,7 @@ const Index = () => {
 
   return (
     <>
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Breadcrumb>
-            <BreadcrumbItem href="/">
-              {intl.formatMessage({ id: "home.label" })}
-            </BreadcrumbItem>
-          </Breadcrumb>
-        </Column>
-      </Grid>
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Stack gap={10}>
         <div className="pageContent">
           {notificationVisible === true ? <AlertDialog /> : ""}
@@ -766,6 +760,7 @@ const Index = () => {
                 setOrderFormValues={setOrderFormValues}
                 samples={samples}
                 error={elementError}
+                isModifyOrder={false}
               />
             )}
 

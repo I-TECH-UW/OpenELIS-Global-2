@@ -1,4 +1,11 @@
-import { ReducerAction, ReducerState, ReducerActionType, TreeParents, TreeNode, LowestNode } from './filter-types';
+import {
+  ReducerAction,
+  ReducerState,
+  ReducerActionType,
+  TreeParents,
+  TreeNode,
+  LowestNode,
+} from "./filter-types";
 
 export const getName = (prefix, name) => {
   return prefix ? `${prefix}-${name}` : name;
@@ -66,7 +73,7 @@ function reducer(state: ReducerState, action: ReducerAction): ReducerState {
           leaves: newLeaves,
           tests: newTests,
           lowestParents: newLP,
-        } = computeParents('', tree);
+        } = computeParents("", tree);
         parents = { ...parents, ...newParents };
         leaves = [...leaves, ...newLeaves];
         tests = [...tests, ...newTests];
@@ -74,7 +81,8 @@ function reducer(state: ReducerState, action: ReducerAction): ReducerState {
       });
       const flatTests = Object.fromEntries(tests);
       return {
-        checkboxes: Object.fromEntries(leaves?.map((leaf) => [leaf, false])) || {},
+        checkboxes:
+          Object.fromEntries(leaves?.map((leaf) => [leaf, false])) || {},
         parents: parents,
         roots: action.trees,
         tests: flatTests,
@@ -100,7 +108,9 @@ function reducer(state: ReducerState, action: ReducerAction): ReducerState {
     case ReducerActionType.RESET_TREE:
       return {
         ...state,
-        checkboxes: Object.fromEntries(Object.keys(state?.checkboxes)?.map((leaf) => [leaf, false])),
+        checkboxes: Object.fromEntries(
+          Object.keys(state?.checkboxes)?.map((leaf) => [leaf, false]),
+        ),
       };
     default:
       return state;

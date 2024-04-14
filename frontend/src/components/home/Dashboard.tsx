@@ -4,6 +4,7 @@ import {
   ClickableTile,
   Loading,
   Grid,
+  Button,
   Column,
   DataTable,
   TableContainer,
@@ -15,15 +16,23 @@ import {
   TableCell,
   Pagination,
   Link,
+  Tab,
+  Tabs,
+  TabList,
+  Tag,
 } from "@carbon/react";
 import "./Dashboard.css";
 import { Minimize, Maximize } from "@carbon/react/icons";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import {
   getFromOpenElisServer,
   convertAlphaNumLabNumForDisplay,
 } from "../utils/Utils.js";
 import { FormattedMessage, useIntl } from "react-intl";
+import UserSessionDetailsContext from "../../UserSessionDetailsContext";
+import { NotificationContext } from "../layout/Layout";
+import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
+
 interface DashBoardProps {}
 
 interface Tile {
@@ -45,6 +54,16 @@ type MetricType =
   | "AVERAGE_TURN_AROUND_TIME"
   | "DELAYED_TURN_AROUND"
   | "ORDERS_FOR_USER";
+
+interface UserSessionDetails {
+  userSessionDetails: any;
+}
+
+interface Notification {
+  notificationVisible: any;
+  setNotificationVisible: any;
+  addNotification: any;
+}
 
 const HomeDashBoard: React.FC<DashBoardProps> = () => {
   const intl = useIntl();
@@ -69,11 +88,28 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
   });
 
   const [data, setData] = useState([]);
+  const [testSections, setTestSections] = useState([]);
+  const [selectedTestSection, setSelectedTestSection] = useState("all");
   const [loading, setLoading] = useState(true);
   const componentMounted = useRef(true);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [selectedTile, setSelectedTile] = useState<Tile>(null);
+  const [nextPage, setNextPage] = useState(null);
+  const [previousPage, setPreviousPage] = useState(null);
+  const [pagination, setPagination] = useState(false);
+  const [url, setUrl] = useState("");
+  const { userSessionDetails } = useContext(
+    UserSessionDetailsContext,
+  ) as UserSessionDetails;
+  const { notificationVisible, setNotificationVisible, addNotification } =
+    useContext(NotificationContext) as Notification;
+
+  useEffect(() => {
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
+  }, []);
 
   useEffect(() => {
     getFromOpenElisServer("/rest/home-dashboard/metrics", loadCount);
@@ -86,6 +122,9 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   useEffect(() => {
     if (selectedTile != null) {
+      setNextPage(null);
+      setPreviousPage(null);
+      setPagination(false);
       setLoading(true);
       if (selectedTile.type == "AVERAGE_TURN_AROUND_TIME") {
         getFromOpenElisServer(
@@ -114,6 +153,39 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     };
   }, [selectedTile]);
 
+  useEffect(() => {
+    getFromOpenElisServer(
+      "/rest/displayList/TEST_SECTION_ACTIVE",
+      (fetchedTestSections) => {
+        fetchTestSections(fetchedTestSections);
+      },
+    );
+    return () => {
+      componentMounted.current = false;
+    };
+  }, []);
+
+  const fetchTestSections = (res) => {
+    setTestSections(res);
+    setSelectedTestSection("all");
+  };
+
+  const loadNextResultsPage = () => {
+    setLoading(true);
+    getFromOpenElisServer(
+      "/rest/home-dashboard/" + selectedTile.type + "?page=" + nextPage,
+      loadData,
+    );
+  };
+
+  const loadPreviousResultsPage = () => {
+    setLoading(true);
+    getFromOpenElisServer(
+      "/rest/home-dashboard/" + selectedTile.type + "?page=" + previousPage,
+      loadData,
+    );
+  };
+
   const loadCount = (data) => {
     if (componentMounted.current) {
       setCounts(data);
@@ -121,12 +193,33 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     }
   };
 
-  const loadData = (data) => {
-    if (data && data.length > 0) {
-      setData(data);
+  const loadData = (res) => {
+    // If the response object is not null and has displayItems array with length greater than 0 then set it as data.
+    if (res && res.displayItems && res.displayItems.length > 0) {
+      setData(res.displayItems);
     } else {
       setData([]);
     }
+
+    // Sets next and previous page numbers based on the total pages and current page number.
+    if (res && res.paging) {
+      const { totalPages, currentPage } = res.paging;
+      if (totalPages > 1) {
+        setPagination(true);
+        if (parseInt(currentPage) < parseInt(totalPages)) {
+          setNextPage(parseInt(currentPage) + 1);
+        } else {
+          setNextPage(null);
+        }
+
+        if (parseInt(currentPage) > 1) {
+          setPreviousPage(parseInt(currentPage) - 1);
+        } else {
+          setPreviousPage(null);
+        }
+      }
+    }
+
     setLoading(false);
   };
 
@@ -227,6 +320,17 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     },
   ];
 
+  const tilesWithTabs = [
+    "ORDERS_IN_PROGRESS",
+    "ORDERS_READY_FOR_VALIDATION",
+    "ORDERS_COMPLETED_TODAY",
+    "ORDERS_REJECTED_TODAY",
+    "UN_PRINTED_RESULTS",
+    "DELAYED_TURN_AROUND",
+    "ORDERS_FOR_USER",
+    "ORDERS_PATIALLY_COMPLETED_TODAY",
+  ];
+
   const handleMinimizeClick = () => {
     console.log("Icon clicked!");
     if (selectedTile.type == "ORDERS_FOR_USER") {
@@ -241,12 +345,22 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
       setSelectedTile(tile);
     } else {
       setSelectedTile(null);
+      setSelectedTestSection("all");
     }
   };
 
   const handleMaximizeClick = (tile) => {
     console.log("Icon clicked!");
-    setSelectedTile(tile);
+    if (userSessionDetails.roles.length > 0) {
+      setSelectedTile(tile);
+    } else {
+      setNotificationVisible(true);
+      addNotification({
+        kind: NotificationKinds.warning,
+        title: intl.formatMessage({ id: "accessDenied.title" }),
+        message: intl.formatMessage({ id: "accessDenied.message" }),
+      });
+    }
   };
 
   const viewUserOrders = (row) => {
@@ -356,8 +470,9 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
   return (
     <>
       {loading && <Loading description="Loading Dasboard..." />}
+      {notificationVisible === true ? <AlertDialog /> : ""}
       {selectedTile == null ? (
-        <div className="dashboard-container">
+        <div className="home-dashboard-container">
           {tileList.map((tile, index) => (
             <ClickableTile key={index} className="dashboard-tile">
               <h3 className="tile-title">{tile.title}</h3>
@@ -395,7 +510,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
             <div className="gridBoundary">
               {selectedTile.type == "AVERAGE_TURN_AROUND_TIME" ? (
                 <>
-                  <div className="dashboard-container">
+                  <div className="home-dashboard-container">
                     {averageTimeTileList.map((tile, index) => (
                       <Tile key={index} className="dashboard-tile">
                         <h3 className="tile-title">{tile.title}</h3>
@@ -408,8 +523,65 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
               ) : (
                 <Grid>
                   <Column lg={16} md={8} sm={4}>
+                    {pagination && (
+                      <Grid>
+                        <Column lg={11} />
+                        <Column lg={2}>
+                          <Button
+                            id="loadpreviousresults"
+                            onClick={loadPreviousResultsPage}
+                            disabled={previousPage != null ? false : true}
+                          >
+                            <FormattedMessage id="button.label.loadprevious" />
+                          </Button>
+                        </Column>
+                        <Column lg={2}>
+                          <Button
+                            id="loadnextresults"
+                            onClick={loadNextResultsPage}
+                            disabled={nextPage != null ? false : true}
+                          >
+                            <FormattedMessage id="button.label.loadnext" />
+                          </Button>
+                        </Column>
+                      </Grid>
+                    )}
+                    {tilesWithTabs.includes(selectedTile.type) && (
+                      <Grid>
+                        <Column lg={16} md={8} sm={4}>
+                          <Tabs>
+                            <TabList aria-label="List of tabs" contained>
+                              <Tab
+                                onClick={() => setSelectedTestSection("all")}
+                              >
+                                <FormattedMessage id="all.label" />
+                              </Tab>
+                              {testSections?.map((item, id) => {
+                                return (
+                                  <Tab
+                                    key={id}
+                                    onClick={() =>
+                                      setSelectedTestSection(item.id)
+                                    }
+                                  >
+                                    {item.value}
+                                  </Tab>
+                                );
+                              })}
+                            </TabList>
+                          </Tabs>
+                        </Column>
+                      </Grid>
+                    )}
                     <DataTable
-                      rows={data.slice((page - 1) * pageSize, page * pageSize)}
+                      rows={data
+                        .filter((item) =>
+                          tilesWithTabs.includes(selectedTile.type) &&
+                          selectedTestSection != "all"
+                            ? item.testSection === selectedTestSection
+                            : true,
+                        )
+                        .slice((page - 1) * pageSize, page * pageSize)}
                       headers={
                         selectedTile.type != "ORDERS_ENTERED_BY_USER_TODAY"
                           ? orderHeaders
@@ -460,7 +632,14 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                       page={page}
                       pageSize={pageSize}
                       pageSizes={[10, 20, 30, 50, 100]}
-                      totalItems={data.length}
+                      totalItems={
+                        data.filter((item) =>
+                          tilesWithTabs.includes(selectedTile.type) &&
+                          selectedTestSection != "all"
+                            ? item.testSection === selectedTestSection
+                            : true,
+                        ).length
+                      }
                       forwardText={intl.formatMessage({
                         id: "pagination.forward",
                       })}

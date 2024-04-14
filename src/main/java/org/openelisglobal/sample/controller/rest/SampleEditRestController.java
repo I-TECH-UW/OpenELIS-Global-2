@@ -182,7 +182,7 @@ public class SampleEditRestController extends BaseSampleEntryController {
         PatientSearch patientSearch = new PatientSearch();
         patientSearch.setLoadFromServerWithPatient(true);
         patientSearch.setSelectedPatientActionButtonText(MessageUtil.getMessage("label.patient.search.select"));
-        form.setPatientSearch(patientSearch);
+        //form.setPatientSearch(patientSearch);
         form.setWarning(true);
 
         addFlashMsgsToRequest(request);

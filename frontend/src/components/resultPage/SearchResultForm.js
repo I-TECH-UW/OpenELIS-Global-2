@@ -38,6 +38,8 @@ function ResultSearchPage() {
     testResult: [],
   });
   const [resultForm, setResultForm] = useState(originalResultForm);
+  const [searchBy, setSearchBy] = useState({ type: "", doRange: false });
+  const [param, setParam] = useState("&accessionNumber=");
 
   const setResults = (resultForm) => {
     setOriginalResultForm(resultForm);
@@ -46,8 +48,17 @@ function ResultSearchPage() {
 
   return (
     <>
-      <SearchResultForm setResults={setResults} />
-      <SearchResults results={resultForm} setResultForm={setResultForm} />
+      <SearchResultForm
+        setParam={setParam}
+        setSearchBy={setSearchBy}
+        setResults={setResults}
+      />
+      <SearchResults
+        extraParams={param}
+        searchBy={searchBy}
+        results={resultForm}
+        setResultForm={setResultForm}
+      />
     </>
   );
 }
@@ -177,6 +188,37 @@ export function SearchResultForm(props) {
       "&finished=" +
       true;
     setUrl(searchEndPoint);
+    props.setSearchBy?.(searchBy);
+    switch (searchBy.type) {
+      case "unit":
+        props.setParam("&testSectionId=" + values.unitType);
+        break;
+      case "patient":
+        props.setParam("&patientId=" + patient.patientPK);
+        break;
+      case "order":
+        props.setParam("&accessionNumber=" + labNo);
+        break;
+      case "date":
+        props.setParam(
+          "&selectedTest=" +
+            values.testName +
+            "&selectedSampleStatus=" +
+            values.sampleStatusType +
+            "&selectedAnalysisStatus=" +
+            values.analysisStatus +
+            "&collectionDate=" +
+            values.collectionDate +
+            "&recievedDate=" +
+            values.recievedDate,
+        );
+        break;
+      case "range":
+        props.setParam(
+          "&accessionNumber=" + labNo + "&upperAccessionNumber=" + endLabNo,
+        );
+        break;
+    }
 
     getFromOpenElisServer(searchEndPoint, setResultsWithId);
   };
@@ -284,10 +326,27 @@ export function SearchResultForm(props) {
       querySearch(values);
     }
 
-    let displayFormType = new URLSearchParams(window.location.search).get(
-      "type",
-    );
-    let doRange = new URLSearchParams(window.location.search).get("doRange");
+    var displayFormType = "";
+    var doRange = "";
+    if (window.location.pathname == "/result") {
+      displayFormType = new URLSearchParams(window.location.search).get("type");
+      doRange = new URLSearchParams(window.location.search).get("doRange");
+    } else if (window.location.pathname == "/LogbookResults") {
+      displayFormType = "unit";
+      doRange = "false";
+    } else if (window.location.pathname == "/PatientResults") {
+      displayFormType = "patient";
+      doRange = "false";
+    } else if (window.location.pathname == "/AccessionResults") {
+      displayFormType = "order";
+      doRange = "false";
+    } else if (window.location.pathname == "/StatusResults") {
+      displayFormType = "date";
+      doRange = "false";
+    } else if (window.location.pathname == "/RangeResults") {
+      displayFormType = "range";
+      doRange = "true";
+    }
     setSearchBy({
       type: displayFormType,
       doRange: doRange,
@@ -298,10 +357,22 @@ export function SearchResultForm(props) {
     let accessionNumber = new URLSearchParams(window.location.search).get(
       "accessionNumber",
     );
+    let upperAccessionNumber = new URLSearchParams(window.location.search).get(
+      "upperAccessionNumber",
+    );
     if (accessionNumber) {
       let searchValues = {
         ...searchFormValues,
         accessionNumber: accessionNumber,
+      };
+      setSearchFormValues(searchValues);
+      querySearch(searchValues);
+    }
+    if (accessionNumber || upperAccessionNumber) {
+      let searchValues = {
+        ...searchFormValues,
+        accessionNumber: accessionNumber,
+        endLabNo: upperAccessionNumber,
       };
       setSearchFormValues(searchValues);
       querySearch(searchValues);
@@ -372,14 +443,14 @@ export function SearchResultForm(props) {
           >
             <Stack gap={2}>
               <Grid>
-                <Column lg={16}>
+                <Column lg={16} md={8} sm={4}>
                   <h4>
                     <FormattedMessage id="label.button.search" />
                   </h4>
                 </Column>
                 {searchBy.type === "order" && (
                   <>
-                    <Column lg={6}>
+                    <Column lg={6} md={4} sm={4}>
                       <Field name="accessionNumber">
                         {({ field }) => (
                           <CustomLabNumberInput
@@ -403,7 +474,7 @@ export function SearchResultForm(props) {
 
                 {searchBy.type === "range" && (
                   <>
-                    <Column lg={6}>
+                    <Column lg={6} sm={4}>
                       <Field name="startLabNo">
                         {({ field }) => (
                           <TextInput
@@ -418,13 +489,14 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={6}>
+                    <Column lg={6} sm={4}>
                       <Field name="endLabNo">
                         {({ field }) => (
                           <TextInput
                             placeholder={"Enter LabNo"}
                             name={field.name}
                             id={field.name}
+                            defaultValue={values["endLabNo"]}
                             labelText={
                               <FormattedMessage id="search.label.toaccession" />
                             }
@@ -438,7 +510,7 @@ export function SearchResultForm(props) {
 
                 {searchBy.type === "date" && (
                   <>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="collectionDate">
                         {({ field, form }) => (
                           <DatePicker
@@ -464,7 +536,7 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="recievedDate">
                         {({ field, form }) => (
                           <DatePicker
@@ -490,7 +562,7 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="testName">
                         {({ field }) => (
                           <Select
@@ -519,7 +591,7 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="analysisStatus">
                         {({ field }) => (
                           <Select
@@ -550,7 +622,7 @@ export function SearchResultForm(props) {
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3}>
+                    <Column lg={3} md={4} sm={4}>
                       <Field name="sampleStatusType">
                         {({ field }) => (
                           <Select
@@ -586,7 +658,7 @@ export function SearchResultForm(props) {
                 )}
 
                 {searchBy.type !== "patient" && searchBy.type !== "unit" && (
-                  <Column lg={16}>
+                  <Column lg={16} md={8} sm={4}>
                     <Button
                       style={{ marginTop: "16px" }}
                       type="submit"
@@ -610,7 +682,7 @@ export function SearchResultForm(props) {
       {searchBy.type === "unit" && (
         <>
           <Grid>
-            <Column lg={6}>
+            <Column lg={6} md={4} sm={4}>
               <Select
                 labelText={intl.formatMessage({ id: "search.label.testunit" })}
                 name="unitType"
@@ -1018,13 +1090,13 @@ export function SearchResults(props) {
                     borderColor: validation.isCritical
                       ? "orange"
                       : validation.isInvalid
-                      ? "red"
-                      : "",
+                        ? "red"
+                        : "",
                     background: validation.outsideValid
                       ? "#ffa0a0"
                       : validation.outsideNormal
-                      ? "#ffffa0"
-                      : "var(--cds-field)",
+                        ? "#ffffa0"
+                        : "var(--cds-field)",
                   };
 
                   setValidationState(newValidationState);
@@ -1396,6 +1468,12 @@ export function SearchResults(props) {
         message: createMesssage(resp),
         kind: NotificationKinds.success,
       });
+      window.location.href =
+        "/result?type=" +
+        props.searchBy.type +
+        "&doRange=" +
+        props.searchBy.doRange +
+        props.extraParams;
     } else {
       addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
@@ -1408,13 +1486,13 @@ export function SearchResults(props) {
 
   const createMesssage = (resp) => {
     var message = "";
-    if (resp.reflex.length > 0) {
+    if (resp.reflex?.length > 0) {
       message +=
         intl.formatMessage({ id: "reflexTests" }) +
         ": " +
         resp.reflex.join(", ");
     }
-    if (resp.calculated.length > 0) {
+    if (resp.calculated?.length > 0) {
       message +=
         intl.formatMessage({ id: "calculatedTests" }) +
         ": " +
@@ -1443,7 +1521,7 @@ export function SearchResults(props) {
         {props.results?.testResult?.length > 0 && (
           <Grid style={{ marginTop: "20px" }} className="gridBoundary">
             <Column lg={3} />
-            <Column lg={7}>
+            <Column lg={7} sm={4}>
               <picture>
                 <img
                   src={config.serverBaseUrl + "/images/nonconforming.gif"}
@@ -1527,7 +1605,12 @@ export function SearchResults(props) {
                 }
               />
 
-              <Button type="button" id="submit" onClick={handleSave}>
+              <Button
+                type="button"
+                id="submit"
+                onClick={handleSave}
+                style={{ marginTop: "16px" }}
+              >
                 <FormattedMessage id="label.button.save" />
               </Button>
             </Form>

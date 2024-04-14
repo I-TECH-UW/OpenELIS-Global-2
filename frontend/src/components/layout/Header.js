@@ -161,15 +161,15 @@ function OEHeader(props) {
             <SideNavMenuItem className="reduced-padding-nav-menu-item">
               <span style={{ display: "flex", width: "100%" }}>
                 {!menuItem.menu.actionURL &&
-                  hasActiveChildMenu(menuItem) &&
+                  !hasActiveChildMenu(menuItem) &&
                   console.warn("menu entry has no action url and no child")}
-                {hasActiveChildMenu(menuItem) &&
+                {!hasActiveChildMenu(menuItem) &&
                   renderSingleNavButton(menuItem, index, level, path)}
                 {!menuItem.menu.actionURL &&
-                  !hasActiveChildMenu(menuItem) &&
+                  hasActiveChildMenu(menuItem) &&
                   renderSingleDropdownButton(menuItem, index, level, path)}
                 {menuItem.menu.actionURL &&
-                  !hasActiveChildMenu(menuItem) &&
+                  hasActiveChildMenu(menuItem) &&
                   renderDualNavDropdownButton(menuItem, index, level, path)}
               </span>
             </SideNavMenuItem>
@@ -197,10 +197,13 @@ function OEHeader(props) {
   };
 
   const hasActiveChildMenu = (menuItem) => {
+    if (menuItem.menu.elementId === "menu_reports_routine") {
+      console.log("reports");
+    }
     return (
-      menuItem.childMenus.length < 1 &&
+      menuItem.childMenus.length >= 1 &&
       menuItem.childMenus.some((element) => {
-        return element.isActive;
+        return element.menu.isActive;
       })
     );
   };
@@ -332,7 +335,7 @@ function OEHeader(props) {
                     isCollapsible={true}
                   />
                 )}
-                <HeaderName href="/" prefix="">
+                <HeaderName href="/" prefix="" style={{ padding: "0px" }}>
                   <span id="header-logo">{logo()}</span>
                   <div className="banner">
                     <h5>{configurationProperties?.BANNER_TEXT}</h5>
@@ -381,7 +384,10 @@ function OEHeader(props) {
                     {userSessionDetails.authenticated && (
                       <>
                         <li className="userDetails">
-                          <UserAvatarFilledAlt size={18} />{" "}
+                          <UserAvatarFilledAlt
+                            size={18}
+                            style={{ marginRight: "4px" }}
+                          />
                           {userSessionDetails.firstName}{" "}
                           {userSessionDetails.lastName}
                         </li>
@@ -389,7 +395,10 @@ function OEHeader(props) {
                           className="userDetails clickableUserDetails"
                           onClick={logout}
                         >
-                          <Logout id="sign-out" />
+                          <Logout
+                            id="sign-out"
+                            style={{ marginRight: "3px" }}
+                          />
                           <FormattedMessage id="header.label.logout" />
                         </li>
                       </>

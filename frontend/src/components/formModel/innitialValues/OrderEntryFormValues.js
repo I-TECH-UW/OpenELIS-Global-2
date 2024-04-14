@@ -109,7 +109,7 @@ export const SampleOrderFormValues = {
     priorityList: [],
     priority: "ROUTINE",
     programId: "",
-    additionalQuestions: {},
+    additionalQuestions: null,
   },
   initialSampleConditionList: [],
   sampleNatureList: null,

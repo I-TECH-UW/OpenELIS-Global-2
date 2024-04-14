@@ -14,8 +14,6 @@ import {
   FileUploader,
   Tag,
   Section,
-  Breadcrumb,
-  BreadcrumbItem,
   Stack,
   Loading,
   InlineLoading,
@@ -37,6 +35,15 @@ import { FormattedMessage, useIntl } from "react-intl";
 import PatientHeader from "../common/PatientHeader";
 import QuestionnaireResponse from "../common/QuestionnaireResponse";
 import "./../pathology/PathologyDashboard.css";
+import PageBreadCrumb from "../common/PageBreadCrumb";
+
+let breadcrumbs = [
+  { label: "home.label", link: "/" },
+  {
+    label: "immunohistochemistry.label.dashboard",
+    link: "/ImmunohistochemistryDashboard",
+  },
+];
 
 function ImmunohistochemistryCaseView() {
   const componentMounted = useRef(false);
@@ -784,23 +791,10 @@ function ImmunohistochemistryCaseView() {
 
   return (
     <>
-      <Grid fullWidth={true}>
-        <Column lg={16}>
-          <Breadcrumb>
-            <BreadcrumbItem href="/">
-              {intl.formatMessage({ id: "home.label" })}
-            </BreadcrumbItem>
-            <BreadcrumbItem href="/ImmunohistochemistryDashboard">
-              {intl.formatMessage({
-                id: "immunohistochemistry.label.dashboard",
-              })}
-            </BreadcrumbItem>
-          </Breadcrumb>
-        </Column>
-      </Grid>
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
 
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>
@@ -811,7 +805,7 @@ function ImmunohistochemistryCaseView() {
         </Column>
       </Grid>
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <PatientHeader
@@ -896,7 +890,7 @@ function ImmunohistochemistryCaseView() {
               })}
             </Select>
           </Column>
-          <Column lg={4} md={1} sm={2}>
+          <Column lg={4} md={2} sm={2}>
             <Select
               id="assignedTechnician"
               name="assignedTechnician"
@@ -1029,7 +1023,7 @@ function ImmunohistochemistryCaseView() {
                         </IconButton>
                       </Column>
 
-                      <Column lg={3} md={1} sm={2}>
+                      <Column lg={3} md={2} sm={2}>
                         <FileUploader
                           style={{ marginTop: "-20px" }}
                           buttonLabel={
@@ -1066,7 +1060,7 @@ function ImmunohistochemistryCaseView() {
                           }}
                         />
                       </Column>
-                      <Column lg={4}>
+                      <Column lg={4} md={2} sm={2}>
                         <h6>
                           {
                             reportTypes.filter(
@@ -1079,7 +1073,7 @@ function ImmunohistochemistryCaseView() {
                       {immunohistochemistrySampleInfo.reports[index].image && (
                         <>
                           {!reportParams[index]?.submited && (
-                            <Column lg={2} md={1} sm={2}>
+                            <Column lg={2} md={2} sm={2}>
                               <Button
                                 onClick={() => {
                                   var win = window.open();
@@ -1155,7 +1149,7 @@ function ImmunohistochemistryCaseView() {
                           <FormattedMessage id="button.label.genarateReport" />
                         </Button>
                       </Column>
-                      <Column lg={2}>
+                      <Column lg={2} md={2} sm={2}>
                         <Toggle
                           toggled={reportParams[index]?.toggled}
                           disabled={reportParams[index]?.submited}
@@ -1382,22 +1376,22 @@ function ImmunohistochemistryCaseView() {
                             ),
                           )}
                       </Column>
-                      <Column lg={2} md={8} sm={4}>
+                      <Column lg={2} md={4} sm={2}>
                         <h6>
                           {" "}
                           <FormattedMessage id="pathology.label.grossexam" /> :
                         </h6>
                       </Column>
-                      <Column lg={14} md={8} sm={4}>
+                      <Column lg={14} md={4} sm={2}>
                         <Tag>{immunohistochemistrySampleInfo.grossExam} </Tag>
                       </Column>
-                      <Column lg={2} md={8} sm={4}>
+                      <Column lg={2} md={4} sm={2}>
                         <h6>
                           {" "}
                           <FormattedMessage id="pathology.label.microexam" /> :
                         </h6>
                       </Column>
-                      <Column lg={14} md={8} sm={4}>
+                      <Column lg={14} md={4} sm={2}>
                         <Tag>
                           {immunohistochemistrySampleInfo.microscopyExam}{" "}
                         </Tag>
@@ -1418,14 +1412,14 @@ function ImmunohistochemistryCaseView() {
                             ),
                           )}
                       </Column>
-                      <Column lg={2} md={8} sm={4}>
+                      <Column lg={2} md={4} sm={2}>
                         <h6>
                           {" "}
                           <FormattedMessage id="pathology.label.textconclusion" />{" "}
                           :
                         </h6>
                       </Column>
-                      <Column lg={14} md={8} sm={4}>
+                      <Column lg={14} md={4} sm={2}>
                         <Tag>
                           {immunohistochemistrySampleInfo.conclusionText}
                         </Tag>

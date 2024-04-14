@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Column, Grid, Select, SelectItem } from "@carbon/react";
-import { FormattedMessage, injectIntl } from "react-intl";
+import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../Style.css";
 import { getFromOpenElisServer } from "../utils/Utils";
 
@@ -20,20 +20,26 @@ function PanelSelectForm(props) {
     }
   };
 
+  const intl = useIntl();
+
   useEffect(() => {
     mounted.current = true;
     let priorityId = new URLSearchParams(window.location.search).get(
-      "priority"
+      "priority",
     );
     priorityId = priorityId ? priorityId : "";
     getFromOpenElisServer("/rest/priorities", (fetchedPriorities) => {
-      let priority= fetchedPriorities.find(priority => priority.id === priorityId);
-      let priorityLabel = priority ? priority.value : "";
+      let priority = fetchedPriorities.find(
+        (priority) => priority.id === priorityId,
+      );
+      let priorityLabel = priority
+        ? priority.value
+        : intl.formatMessage({ id: "input.placeholder.selectPriority" });
       setDefaultPriorityId(priorityId);
       setDefaultPriorityLabel(priorityLabel);
       props.value(priorityId, priorityLabel);
       getTests(fetchedPriorities);
-    })
+    });
     return () => {
       mounted.current = false;
     };
@@ -42,7 +48,7 @@ function PanelSelectForm(props) {
   return (
     <>
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column sm={4} md={8} lg={16}>
           <Select
             defaultValue="placeholder-item"
             id="select-1"
@@ -55,10 +61,12 @@ function PanelSelectForm(props) {
           >
             <SelectItem text={defaultPriorityLabel} value={defaultPriorityId} />
             {tests
-              .filter(item => item.id !== defaultPriorityId)
+              .filter((item) => item.id !== defaultPriorityId)
               .map((item, idx) => {
-                return <SelectItem key={idx} text={item.value} value={item.id} />;
-            })}
+                return (
+                  <SelectItem key={idx} text={item.value} value={item.id} />
+                );
+              })}
           </Select>
         </Column>
       </Grid>
