@@ -209,7 +209,7 @@ const ReportByDate = (props) => {
                       })
                     }
                   >
-                    <SelectItem key={"emptyselect"} value={""} text={""} />
+                    <SelectItem key={"emptyselect"} value={""} text="Select Test Type" />
                     {list.map((statusOption) => (
                       <SelectItem
                         key={statusOption.id}
