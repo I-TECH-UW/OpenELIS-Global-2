@@ -39,7 +39,7 @@ const StudyIndex = () => {
     patient_retroCInonConformityByLabno: "header.label.intialFollowup",
     patient_retroCIFollowupRequiredByLocation:
       "reports.followupRequired.byLocation",
-    patient_nonConformityNotification: "header.label.NonconformityNotification",
+    patient_retroCInonConformityNotification: "header.label.NonconformityNotification",
     patient_patientARVInitial1: "header.label.ARV",
     patient_patientARVInitial2: "header.label.ARV",
     patient_patientARVFollowup1: "header.label.followup",
@@ -210,7 +210,7 @@ const StudyIndex = () => {
               />
             )}
             
-             {type === "patient" && report === "NonconformityNotification" && (
+             {type === "patient" && report === "retoCINonconformityNotification" && (
               <NonconformityNotification
                 report="NonconformityNotification"
                 id="header.label.nonconformitynotification"
