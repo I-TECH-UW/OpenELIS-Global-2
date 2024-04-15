@@ -37,6 +37,7 @@ import RoutineIndex from "./components/reports/routine/Index.js";
 import StudyIndex from "./components/reports/study/index.js";
 import PrintBarcode from "./components/printBarcode/Index";
 import NonConformIndex from "./components/nonconform/index";
+import SampleBatchEntrySetup from "./components/batchOrderEntry/SampleBatchEntrySetup.js";
 
 export default function App() {
   let i18nConfig = {
@@ -68,7 +69,7 @@ export default function App() {
           console.debug(JSON.stringify(jsonResp));
           if (jsonResp.authenticated) {
             localStorage.setItem("CSRF", jsonResp.csrf);
-          }
+          } 
           if (
             !Object.keys(jsonResp).every(
               (key) => jsonResp[key] === userSessionDetails[key],
@@ -289,6 +290,13 @@ export default function App() {
                   component={() => <NonConformIndex />}
                   role="Reception"
                 />
+                <SecureRoute
+                  path="/SampleBatchEntrySetup"
+                  exact
+                  component={() => <SampleBatchEntrySetup />}
+                  role="Reception"
+                />
+
                 <SecureRoute
                   path="/ElectronicOrders"
                   exact
