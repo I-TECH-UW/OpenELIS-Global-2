@@ -224,6 +224,10 @@ button {
   width: 100%;
 }
 
+.sampleBatchTag {
+  margin-right: 20px;
+}
+
 /* .resultValue {
  
   margin-left: 5%;
