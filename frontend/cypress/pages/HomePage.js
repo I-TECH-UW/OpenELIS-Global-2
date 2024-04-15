@@ -2,6 +2,7 @@ import LoginPage from "./LoginPage";
 import PatientEntryPage from "./PatientEntryPage";
 import OrderEntityPage from "./OrderEntityPage";
 import ModifyOrderPage from "./ModifyOrderPage";
+import WorkPlan from "./WorkPlan";
 
 class HomePage {
   constructor() {}
