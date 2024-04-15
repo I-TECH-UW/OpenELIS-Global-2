@@ -158,7 +158,7 @@ const ReportByDateCSV = (props) => {
       {notificationVisible && <AlertDialog />}
       {loading && <Loading />}
       <Grid fullWidth={true}>
-        <Column lg={10} md={10} sm={8}>
+        <Column lg={10} md={6} sm={4}>
           <Form>
             <Grid fullWidth={true}>
               <Column lg={16} md={8} sm={4}>
@@ -193,8 +193,7 @@ const ReportByDateCSV = (props) => {
                   />
                 </div>
               </Column>
-              <Column lg={6} md={8} sm={4}>
-                <div className="inlineDiv" style={{ gap: "30px" }}>
+              <Column lg={8} md={6} sm={4}>
                   <Select
                     id="studyType"
                     labelText={intl.formatMessage({
@@ -244,7 +243,6 @@ const ReportByDateCSV = (props) => {
                   ) : (
                     <div></div>
                   )}
-                </div>
               </Column>
             </Grid>
             <br />
