@@ -78,6 +78,13 @@ const RoutineIndex = () => {
               />
             )}
 
+            {type === "indicator" &&
+              (report === "activityReportByTest" ||
+                report === "activityReportByPanel" ||
+                report === "activityReportByTestSection") && (
+                <ReportByDate report={report} />
+              )}
+
             {type === "indicator" && report === "statisticsReport" && (
               <StatisticsReport />
             )}

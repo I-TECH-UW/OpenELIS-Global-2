@@ -790,5 +790,9 @@
   "nonconform.label.proposed.action": "Action proposée",
   "error.nonconform.report": "Veuillez saisir une valeur",
   "nonconform.order.save.success": "Enregistrement réussi",
-  "nonconform.order.save.fail": "Échec de l'enregistrement"
+  "nonconform.order.save.fail": "Échec de l'enregistrement",
+ "activityReportByTest": "Rapport d'activité par test",
+  "activityReportByPanel": "Rapport d'activité par panel",
+  "activityReportByTestSection": "Rapport d'activité par section de test"
+
 }
