@@ -40,8 +40,7 @@ import PrintBarcode from "./components/printBarcode/Index";
 import NonConformIndex from "./components/nonconform/index";
 import SampleBatchEntrySetup from "./components/batchOrderEntry/SampleBatchEntrySetup.js";
 import AuditTrailReportIndex from "./components/reports/auditTrailReport/Index.js";
-import DictionaryManagement from "./components/admin/masterListsPage/Dictionary/DictionaryManagement.js";
-import MasterListsPage from "./components/admin/masterListsPage/index.js";
+import DictionaryManagement from "./components/admin/menu/DictionaryManagement.js"
 
 export default function App() {
   let i18nConfig = {
