@@ -24,9 +24,9 @@ import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerResponder;
 public interface AnalyzerImporterPlugin extends APlugin {
     public boolean isTargetAnalyzer(List<String> lines);
 
-    public boolean isAnalyzerResult(List<String> lines);
-
     public AnalyzerLineInserter getAnalyzerLineInserter();
+
+    default boolean isAnalyzerResult(List<String> lines) { return true;};
 
     default AnalyzerResponder getAnalyzerResponder() {
         return null;
