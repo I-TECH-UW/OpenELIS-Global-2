@@ -82,13 +82,13 @@ Create a CA (adapted from instuctions [here](https://scriptcrunch.com/create-ca-
 
 `mkdir openssl && cd openssl`
 
-`openssl genrsa -out ca.key 4096 -aes256`
+`openssl genrsa -aes256 -out ca.key 4096`
 
 `openssl req -x509 -new -nodes -key ca.key -sha256 -days 3652 -out ca.crt`
 
 Create a signed key/cert:
 
-`openssl genrsa -out server.key 2048 -aes256`
+`openssl genrsa -aes256 -out server.key 2048`
 
 Replace the arguments in < > before running the next command
 
@@ -129,12 +129,20 @@ EOF
 
 Move files to correct locations:
 
-`cp openssl/server.crt prod/ssl/cs_frontent.crt`
+`cp openssl/server.crt prod/ssl/cs_frontend.crt`
+
 `cp openssl/server.crt prod/ssl/cs.crt`
+
 `cp openssl/server.key prod/ssl/cs_frontend.key` 
+
 `cp openssl/server.key prod/ssl/cs.key` 
 
 `openssl pkcs12 -inkey prod/ssl/cs.key -in prod/ssl/cs.crt -export -out prod/ssl/cs.keystore`
+
+`sudo chmod +r prod/ssl/cs.keystore`
+
+`sudo apt install default-jre`
+
 `keytool -import -alias csCert -file prod/ssl/cs.crt -storetype pkcs12 -keystore prod/ssl/cs.truststore`
 
 Ensure the key is encrypted with the same password as the keystore
