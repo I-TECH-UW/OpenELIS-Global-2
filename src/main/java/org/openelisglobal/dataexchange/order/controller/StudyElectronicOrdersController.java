@@ -319,7 +319,7 @@ public class StudyElectronicOrdersController extends BaseController {
   		  	  String startDate = request.getParameter("startDate");
   		  	  String endDate = request.getParameter("endDate");
   		  	  String statusId = request.getParameter("statusId");
-  		  	  searchParameters = "?searchType=" + Encode.forUriComponent(searchType) + "&startDate=" + Encode.forUriComponent(startDate) 
+  		  	  String searchParameters = "?searchType=" + Encode.forUriComponent(searchType) + "&startDate=" + Encode.forUriComponent(startDate) 
                 + "&endDate=" + Encode.forUriComponent(endDate) + "&statusId=" + Encode.forUriComponent(statusId);
             return "redirect:/StudyElectronicOrders" + searchParameters;
         } else {
