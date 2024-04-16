@@ -92,7 +92,7 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
     @NotNull(groups = { LogbookResults.class })
     private Boolean displayTestSections = true;
 
-    private Boolean searchByRange;
+    private Boolean searchByRange = false;
     private boolean searchFinished;
 
     public LogbookResultsForm() {

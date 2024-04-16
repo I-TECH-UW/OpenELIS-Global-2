@@ -129,6 +129,15 @@ public class DictionaryServiceImpl extends AuditableBaseObjectServiceImpl<Dictio
         properties.put("isActive", IActionConstants.YES);
         return getMatch(properties).orElse(null);
     }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Dictionary getDictionaryByDictEntry(String dictEntry) {
+    	Map<String, Object> properties = new HashMap<>();
+    	properties.put("dictEntry", dictEntry);
+    	properties.put("isActive", IActionConstants.YES);
+    	return getMatch(properties).orElse(null);
+    }
 
     @Override
     @Transactional(readOnly = true)

@@ -49,6 +49,8 @@ public interface OrganizationService extends BaseObjectService<Organization, Str
     void deactivateOrganizations(List<Organization> organizations);
 
     Organization getOrganizationByName(Organization organization, boolean ignoreCase);
+    
+    Organization getOrganizationByShortName(String shortName, boolean ignoreCase);
 
     List<Organization> getActiveOrganizations();
 

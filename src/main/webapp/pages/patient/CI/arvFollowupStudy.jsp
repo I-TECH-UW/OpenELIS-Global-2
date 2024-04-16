@@ -495,7 +495,7 @@ farv = new ArvFollowupProjectChecker();
 			<spring:message code="patient.project.onGoingARVTreatmentINNs" />
 		</td>
 	</tr>
-	<c:forEach var="ongoingARVTreatment" varStatus="iter" items="${formobservations.priorARVTreatmentINNsList}" >
+	<c:forEach var="ongoingARVTreatment" varStatus="iter" items="${form.observations.priorARVTreatmentINNsList}" >
 		<tr style="display:none" id='farv.priorARVTreatmentINNRow${iter.index}'><%-- SUI 21 --%>
 			<td></td>
 			<td class="bulletItem">${iter.index + 1})</td>

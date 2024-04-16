@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.address.service.AddressPartService;
 import org.openelisglobal.address.service.PersonAddressService;
@@ -388,7 +389,8 @@ public abstract class PatientReport extends Report {
         currentSiteInfo += "|" + (referringDepartmentOrg == null ? "" : referringDepartmentOrg.getOrganizationName());
 
         //Person person = sampleService.getPersonRequester(currentSample);
-        Person person = sampleHumanService.getProviderForSample(currentSample).getPerson();
+        Person person = (ObjectUtils.isNotEmpty(sampleHumanService.getProviderForSample(currentSample)))?
+        		sampleHumanService.getProviderForSample(currentSample).getPerson():null;
         
         if (person != null) {
             PersonService personService = SpringContext.getBean(PersonService.class);

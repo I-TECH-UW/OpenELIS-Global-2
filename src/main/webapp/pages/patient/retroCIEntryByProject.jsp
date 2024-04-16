@@ -219,7 +219,7 @@ function adjustFieldsForRequestType() {
 	case "verify":
 		break;		
 	case "readwrite":
-		projectChecker.setFieldsForEdit( canEditPatientSubjectNos, canEditAccessionNo );    		
+		// projectChecker.setFieldsForEdit( canEditPatientSubjectNos, canEditAccessionNo );    		
 		setSaveButton();
 		break;
 	case "readonly":
