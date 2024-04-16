@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Form,
   FormLabel,
@@ -64,10 +64,10 @@ const ReportByDate = (props) => {
     }
 
     if (
-     ( props.report === "activityReportByTest" ||
-      props.report === "activityReportByPanel" ||
-      props.report === "activityReportByTestSection") &&
-        !reportFormValues.value
+      (props.report === "activityReportByTest" ||
+        props.report === "activityReportByPanel" ||
+        props.report === "activityReportByTestSection") &&
+      !reportFormValues.value
     ) {
       setReportFormValues({
         ...reportFormValues,
@@ -126,7 +126,7 @@ const ReportByDate = (props) => {
       }
     };
 
-    console.log("props", props)
+    console.log("props", props);
     if (
       props.report === "activityReportByTest" ||
       props.report === "activityReportByPanel" ||
@@ -209,7 +209,11 @@ const ReportByDate = (props) => {
                       })
                     }
                   >
-                    <SelectItem key={"emptyselect"} value={""} text="Select Test Type" />
+                    <SelectItem
+                      key={"emptyselect"}
+                      value={""}
+                      text="Select Test Type"
+                    />
                     {list.map((statusOption) => (
                       <SelectItem
                         key={statusOption.id}

@@ -12,6 +12,7 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.SampleOrderService;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.validator.BaseErrors;
@@ -177,6 +178,9 @@ public class SampleBatchEntryRestController extends BaseController {
                 .isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
 
         String receivedDateForDisplay = sampleOrder.getReceivedDateForDisplay();
+        if(org.apache.commons.validator.GenericValidator.isBlankOrNull(receivedDateForDisplay)){
+           receivedDateForDisplay = DateUtil.getCurrentDateAsText();
+        } 
 
         if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(sampleOrder.getReceivedTime())) {
             receivedDateForDisplay += " " + sampleOrder.getReceivedTime();
