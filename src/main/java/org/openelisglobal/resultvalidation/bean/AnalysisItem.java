@@ -39,7 +39,9 @@ public class AnalysisItem implements Serializable{
 
     @ValidAccessionNumber(groups = { ResultValidationForm.ResultValidation.class })
     private String accessionNumber;
+    private String patientName;
 
+    private String patientInfo;
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String result;
 
@@ -78,6 +80,7 @@ public class AnalysisItem implements Serializable{
     private String resultId;
     private double lowerCritical;
     private double higherCritical;
+    private  String normalRange;
 
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String resultType;
@@ -152,6 +155,10 @@ public class AnalysisItem implements Serializable{
     private boolean displayResultAsLog = false;
 
     private boolean showAcceptReject = true;
+
+    private List<IdValuePair> methods;
+    private List<IdValuePair> referralOrganizations;
+    private List<IdValuePair> referralReasons;
 
     private List<IdValuePair> dictionaryResults;
 
@@ -239,6 +246,13 @@ public class AnalysisItem implements Serializable{
         return result;
     }
 
+    public String getNormalRange() {
+        return normalRange;
+    }
+
+    public void setNormalRange(String normalRange) {
+        this.normalRange = normalRange;
+    }
     public void setReceivedDate(String receivedDate) {
         this.receivedDate = receivedDate;
     }
@@ -544,6 +558,29 @@ public class AnalysisItem implements Serializable{
         return dictionaryResults;
     }
 
+    public List<IdValuePair> getMethods() {
+        return methods;
+    }
+
+    public void setMethods(List<IdValuePair> methods) {
+        this.methods = methods;
+    }
+
+    public List<IdValuePair> getReferralOrganizations() {
+        return referralOrganizations;
+    }
+
+    public void setReferralOrganizations(List<IdValuePair> referralOrganizations) {
+        this.referralOrganizations = referralOrganizations;
+    }
+
+    public List<IdValuePair> getReferralReasons() {
+        return referralReasons;
+    }
+
+    public void setReferralReasons(List<IdValuePair> referralReasons) {
+        this.referralReasons = referralReasons;
+    }
     public void setAnalysisId(String analysisId) {
         this.analysisId = analysisId;
     }
@@ -767,4 +804,20 @@ public class AnalysisItem implements Serializable{
 	public void setGenscreenAnalysisId(String genscreenAnalysisId) {
 		this.genscreenAnalysisId = genscreenAnalysisId;
 	}
+  
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
+    }
+
+    public String getPatientInfo() {
+        return patientInfo;
+    }
+
+    public void setPatientInfo(String patientInfo) {
+        this.patientInfo = patientInfo;
+    }
 }

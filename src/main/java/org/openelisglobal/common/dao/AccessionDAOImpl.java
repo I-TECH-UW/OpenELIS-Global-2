@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import org.openelisglobal.common.log.LogEvent;
 
 import org.hibernate.HibernateException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -36,6 +37,7 @@ public class AccessionDAOImpl implements AccessionDAO {
         } catch (NoResultException e) {
             return 0;
         } catch (HibernateException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(
                     "Error in " + this.getClass().getSimpleName() + " " + "getNextNumberIncrement", e);
         }
@@ -53,6 +55,7 @@ public class AccessionDAOImpl implements AccessionDAO {
 
             return ((BigInteger) query.getSingleResult()).longValue() + 1;
         } catch (HibernateException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(
                     "Error in " + this.getClass().getSimpleName() + " " + "getNextNumberNoIncrement", e);
         }
@@ -64,6 +67,7 @@ public class AccessionDAOImpl implements AccessionDAO {
             entityManager.persist(info);
             return entityManager.find(AccessionNumberInfo.class, info.getAccessionIdentity());
         } catch (HibernateException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "save", e);
         }
     }
@@ -73,6 +77,7 @@ public class AccessionDAOImpl implements AccessionDAO {
         try {
             return entityManager.find(AccessionNumberInfo.class, accessionIdentity);
         } catch (HibernateException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "get", e);
         }
     }
@@ -82,6 +87,7 @@ public class AccessionDAOImpl implements AccessionDAO {
         try {
             return entityManager.find(AccessionNumberInfo.class, accessionIdentity) != null;
         } catch (HibernateException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "exists", e);
         }
     }

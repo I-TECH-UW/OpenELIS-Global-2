@@ -59,7 +59,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestReflex getData()", e);
         }
     }
@@ -76,7 +76,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestReflex getAllTestReflexs()", e);
         }
 
@@ -102,7 +102,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestReflex getPageOfTestReflexs()", e);
         }
 
@@ -131,7 +131,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestReflex getTestReflexesByTestResult(TestResult testResult)", e);
         }
     }
@@ -161,7 +161,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestReflex getTestReflexesByTestResult(TestResult testResult)", e);
         }
     }
@@ -195,7 +195,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestReflex getTestReflexesByTestResult(TestResult testResult)", e);
         }
     }
@@ -220,7 +220,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
 
                 return list;
             } catch (RuntimeException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException(
                         "Error in TestReflex getTestReflexByTestResultAnalyteTest(String testResultId, String analyteId, String testId)",
                         e);
@@ -235,7 +235,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             tr = entityManager.unwrap(Session.class).get(TestReflex.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestReflex readTestReflex()", e);
         }
         return tr;
@@ -259,20 +259,27 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             // duplicates
             String sql = "from TestReflex t where t.test.localizedTestName = :localizedTestNameId and "
                     + "trim(lower(t.testAnalyte.analyte.analyteName)) = :analyteName and "
-                    + "t.testResult.id = :resultId and " + "t.addedTest.localizedTestName = :addedTestNameId or "
-                    + "trim(lower(t.actionScriptlet.scriptletName)) = :scriptletName  ) and " + " t.id != :testId";
+                    + "t.testResult.id = :resultId and " + "t.addedTest.localizedTestName = :addedTestNameId "
+                    + "and t.id != :testId";
+             
+            if (testReflex.getActionScriptlet() != null) {
+                sql = sql + "or trim(lower(t.actionScriptlet.scriptletName)) = :scriptletName ";
+            }
+
             Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
-            query.setParameter("localizedTestName",
+            query.setParameter("localizedTestNameId",
                     Integer.parseInt(testReflex.getTest().getLocalizedTestName().getId()));
             query.setParameter("analyteName",
                     testReflex.getTestAnalyte().getAnalyte().getAnalyteName().toLowerCase().trim());
             query.setParameter("resultId", Integer.parseInt(testReflex.getTestResult().getId()));
             query.setParameter("addedTestNameId", testReflex.getAddedTest() == null ? -1
                     : Integer.parseInt(testReflex.getAddedTest().getLocalizedTestName().getId()));
-            query.setParameter("scriptletName", testReflex.getActionScriptlet() == null ? null
-                    : testReflex.getActionScriptlet().getScriptletName().toLowerCase().trim());
 
             String testReflexId = StringUtil.isNullorNill(testReflex.getId()) ? "0" : testReflex.getId();
+
+            if (testReflex.getActionScriptlet() != null) {
+                query.setParameter("scriptletName", testReflex.getActionScriptlet().getScriptletName().toLowerCase().trim());
+            }
 
             query.setParameter("testId", Integer.parseInt(testReflexId));
 
@@ -285,7 +292,7 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             }
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateTestReflexExists()", e);
         }
     }
@@ -341,6 +348,53 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
         }
 
         return null;
+    }
+
+    @Override
+    public List<TestReflex> getTestReflexsByAnalyteAndTest(String analyteId, String testId) throws LIMSRuntimeException {
+        if (!GenericValidator.isBlankOrNull(analyteId) && !GenericValidator.isBlankOrNull(testId)) {
+            try {
+                List<TestReflex> list = null;
+                
+                String sql = "from TestReflex t where t.testAnalyte.analyte.id = :analyteId and t.test.id = :testId";
+                Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
+                query.setParameter("analyteId", Integer.parseInt(analyteId));
+                query.setParameter("testId", Integer.parseInt(testId));
+                
+                list = query.list();
+                
+                return list;
+            }
+            catch (RuntimeException e) {
+                LogEvent.logError(e);
+                throw new LIMSRuntimeException(
+                        "Error in TestReflex getTestReflexByTestResultAnalyteTest(String testResultId, String analyteId, String testId)",
+                        e);
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<TestReflex> getTestReflexsByTestAnalyteId(String testAnalyteId) throws LIMSRuntimeException {
+        if (!GenericValidator.isBlankOrNull(testAnalyteId)) {
+            try {
+                List<TestReflex> list = null;
+                
+                String sql = "from TestReflex t where t.testAnalyte.id = :testAnalyteId";
+                Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
+                query.setParameter("testAnalyteId", Integer.parseInt(testAnalyteId));      
+                list = query.list();        
+                return list;
+            }
+            catch (RuntimeException e) {
+                LogEvent.logError(e);
+                throw new LIMSRuntimeException(
+                        "Error in getTestReflexsByTestAnalyteId(String testAnalyteId)",
+                        e);
+            }
+        }
+        return new ArrayList<>();
     }
 
 }

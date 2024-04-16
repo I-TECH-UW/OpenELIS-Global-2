@@ -7,7 +7,7 @@ import java.util.Map;
 import org.hibernate.Hibernate;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.method.dao.MethodDAO;
 // import org.openelisglobal.method.valueholder.Method;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class RenameMethodServiceImpl extends BaseObjectServiceImpl<RenameMethod, String>
+public class RenameMethodServiceImpl extends AuditableBaseObjectServiceImpl<RenameMethod, String>
         implements RenameMethodService {
     @Autowired
     protected RenameMethodDAO baseObjectDAO;

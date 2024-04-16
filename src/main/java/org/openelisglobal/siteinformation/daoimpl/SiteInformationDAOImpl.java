@@ -54,7 +54,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
                 siteInformation.setId(null);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SiteInformation getData()", e);
         }
     }
@@ -69,7 +69,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
             Query<SiteInformation> query = entityManager.unwrap(Session.class).createQuery(sql, SiteInformation.class);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SiteInformation getAllSiteInformation()", e);
         }
 
@@ -105,7 +105,7 @@ public class SiteInformationDAOImpl extends BaseDAOImpl<SiteInformation, String>
         try {
             recoveredSiteInformation = entityManager.unwrap(Session.class).get(SiteInformation.class, idString);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SiteInformation readSiteInformation()", e);
         }
 

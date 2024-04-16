@@ -56,7 +56,8 @@ Hapi-fhir-jpaserver is used alongside OpenELIS to provide FHIR support. Older ve
 
 1.  Create files to submit to the updated FHIR store to trigger a reindex of the various data types from BLOBs to regular column data. Resource types that are commonly used, leading to the bulk of the BLOBs are: `Task`, `Patient`, `ServiceRequest`, `DiagnosticReport`, `Observation`, `Specimen`, `Practitioner`, `Organization`, `Location`, `QuestionnaireResponse`
 
-    `
+
+```
 {
   "resourceType": "Parameters",
   "parameter": [ {
@@ -67,9 +68,9 @@ Hapi-fhir-jpaserver is used alongside OpenELIS to provide FHIR support. Older ve
     "valueString": "ALL_VERSIONS"
   } ]
 }
-    `
+```
 
-1.  Send each optimize request as a POST request to the FHIR server (detailed instructions for making POST requests to the FHIR server can be found [here](directFHIRCommunication.md))
+1.  Send each optimize request as a POST request to the FHIR server
 
     1.  `sudo curl -X POST -H "Content-Type: application/json" -d '@task-optimize.json' --cert /etc/openelis-global/cert.pem --key /etc/openelis-global/key.pem  -k 'https://localhost:8444/fhir/$reindex'`
 

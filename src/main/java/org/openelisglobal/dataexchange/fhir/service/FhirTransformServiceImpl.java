@@ -441,7 +441,15 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
 			orderEntryObjects.sampleEntryObjectsList.add(fhirSampleEntryObjects);
 		}
-        // TODO create encounter?
+
+    if (updateData.getProgramQuestionnaireResponse() != null) {
+        updateData.getProgramQuestionnaireResponse()
+                .setId(updateData.getProgramSample().getQuestionnaireResponseUuid().toString());
+        this.addToOperations(fhirOperations, tempIdGenerator, updateData.getProgramQuestionnaireResponse());
+    }
+
+    // TODO location?
+    // TODO create encounter?
 
 		Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
 
@@ -460,9 +468,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 	}
 
 	private void updateReferringServiceRequestWithSampleInfo(Sample sample, ServiceRequest serviceRequest) {
-		if (!serviceRequest.hasRequisition()) {
-			serviceRequest.setRequisition(
-					this.createIdentifier(fhirConfig.getOeFhirSystem() + "/samp_labNo", sample.getAccessionNumber()));
+		if(!serviceRequest.hasRequisition()){
+           serviceRequest.setRequisition(
+		    this.createIdentifier(fhirConfig.getOeFhirSystem() + "/samp_labNo", sample.getAccessionNumber()));
 		}
 	}
 
@@ -972,10 +980,10 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 				} else {
 					updateReferringServiceRequestWithSampleInfo(sample, referingServiceRequest.get());
 					referingServiceRequestMap.put(referingServiceRequest.get().getIdElement().getIdPart(),
-							referingServiceRequest.get());
+					    referingServiceRequest.get());
 					this.addToOperations(fhirOperations, tempIdGenerator, referingServiceRequest.get());
 				}
-
+				
 			}
 			this.addToOperations(fhirOperations, tempIdGenerator, task);
 		}
@@ -1058,59 +1066,61 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 		observation.setId(result.getFhirUuidAsString());
 		observation.addIdentifier(
 				this.createIdentifier(fhirConfig.getOeFhirSystem() + "/result_uuid", result.getFhirUuidAsString()));
-		// TODO make sure these align with each other.
-		// we may need to add detection for when result is changed and add those status
-		// to list
-		if (result.getAnalysis().getStatusId().equals(statusService.getStatusID(AnalysisStatus.Finalized))) {
-			observation.setStatus(ObservationStatus.FINAL);
-		} else if (result.getAnalysis().getStatusId().equals(statusService.getStatusID(AnalysisStatus.NotStarted))) {
-			LogEvent.logError(this.getClass().getName(), "transformResultToObservation",
-					"recording result for analysis that is not started.");
-			observation.setStatus(ObservationStatus.UNKNOWN);
-		} 
-    else if(result.getAnalysis().getStatusId().equals(statusService.getStatusID(AnalysisStatus.BiologistRejected))) {
-			observation.setStatus(ObservationStatus.CANCELLED);
-		}
-		else if(result.getAnalysis().getStatusId().equals(statusService.getStatusID(AnalysisStatus.BiologistRejected))) {
-			observation.setStatus(ObservationStatus.CANCELLED);
-		}
-		else {
-			observation.setStatus(ObservationStatus.PRELIMINARY);
-		}
 
-		if (!GenericValidator.isBlankOrNull(result.getValue())) {
-			if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())
-					&& !"0".equals(result.getValue())) {
-				Dictionary dictionary = dictionaryService.getDataForId(result.getValue());
-				observation.setValue(new CodeableConcept(
-						new Coding(fhirConfig.getOeFhirSystem() + "/dictionary_entry", dictionary.getDictEntry(),
-								dictionary.getLocalizedDictionaryName() == null ? dictionary.getDictEntry()
-										: dictionary.getLocalizedDictionaryName().getEnglish())));
-			} else if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())
-					&& !"0".equals(result.getValue())) {
-				Dictionary dictionary = dictionaryService.getDataForId(result.getValue());
-				observation.setValue(new CodeableConcept(
-						new Coding(fhirConfig.getOeFhirSystem() + "/dictionary_entry", dictionary.getDictEntry(),
-								dictionary.getLocalizedDictionaryName() == null ? dictionary.getDictEntry()
-										: dictionary.getLocalizedDictionaryName().getEnglish())));
-			} else if (TypeOfTestResultServiceImpl.ResultType.isNumeric(result.getResultType())) {
+        // TODO make sure these align with each other.
+        // we may need to add detection for when result is changed and add those status
+        // to list
+        if (result.getAnalysis().getStatusId().equals(statusService.getStatusID(AnalysisStatus.Finalized))) {
+            observation.setStatus(ObservationStatus.FINAL);
+        } else if (result.getAnalysis().getStatusId().equals(statusService.getStatusID(AnalysisStatus.NotStarted))) {
+            LogEvent.logError(this.getClass().getSimpleName(), "transformResultToObservation",
+                    "recording result for analysis that is not started.");
+            observation.setStatus(ObservationStatus.UNKNOWN);
+        } else {
+            observation.setStatus(ObservationStatus.PRELIMINARY);
+        }
+
+        if (!GenericValidator.isBlankOrNull(result.getValue())) {
+            // in case of Viral load test
+			if (result.getAnalysis().getTest().getName().equalsIgnoreCase("Viral Load")) {
 				Quantity quantity = new Quantity();
-				quantity.setValue(new BigDecimal(result.getValue(true)));
+				long finalResult = result.getVLValueAsNumber();
+				quantity.setValue(finalResult);
 				quantity.setUnit(resultService.getUOM(result));
 				observation.setValue(quantity);
-			} else if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(result.getResultType())) {
-				observation.setValue(new StringType(result.getValue()));
-			}
-		}
-		observation.setCode(transformTestToCodeableConcept(test.getId()));
-		observation.addBasedOn(this.createReferenceFor(ResourceType.ServiceRequest, analysis.getFhirUuidAsString()));
-		observation.setSpecimen(this.createReferenceFor(ResourceType.Specimen, sampleItem.getFhirUuidAsString()));
-		observation.setSubject(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
-		observation.setIssued(result.getOriginalLastupdated());// update to get Released Date instead of commpleted date
-		//observation.setEffective(new DateTimeType(result.getLastupdated()));
-		observation.setEffective(new DateTimeType(analysis.getReleasedDate()));
-		return observation;
-	}
+			} else if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())
+                    && !"0".equals(result.getValue())) {
+                Dictionary dictionary = dictionaryService.getDataForId(result.getValue());
+                observation.setValue(new CodeableConcept(
+                        new Coding(fhirConfig.getOeFhirSystem() + "/dictionary_entry", dictionary.getDictEntry(),
+                                dictionary.getLocalizedDictionaryName() == null ? dictionary.getDictEntry()
+                                        : dictionary.getLocalizedDictionaryName().getEnglish())));
+            } else if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())
+                    && !"0".equals(result.getValue())) {
+                Dictionary dictionary = dictionaryService.getDataForId(result.getValue());
+                observation.setValue(new CodeableConcept(
+                        new Coding(fhirConfig.getOeFhirSystem() + "/dictionary_entry", dictionary.getDictEntry(),
+                                dictionary.getLocalizedDictionaryName() == null ? dictionary.getDictEntry()
+                                        : dictionary.getLocalizedDictionaryName().getEnglish())));
+            } else if (TypeOfTestResultServiceImpl.ResultType.isNumeric(result.getResultType())) {
+                Quantity quantity = new Quantity();
+                quantity.setValue(new BigDecimal(result.getValue(true)));
+                quantity.setUnit(resultService.getUOM(result));
+                observation.setValue(quantity);
+            } else if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(result.getResultType())) {
+                observation.setValue(new StringType(result.getValue()));
+            }
+        }
+        observation.setCode(transformTestToCodeableConcept(test.getId()));
+        observation.addBasedOn(this.createReferenceFor(ResourceType.ServiceRequest, analysis.getFhirUuidAsString()));
+        observation.setSpecimen(this.createReferenceFor(ResourceType.Specimen, sampleItem.getFhirUuidAsString()));
+        observation.setSubject(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
+        // observation.setIssued(result.getOriginalLastupdated());
+        observation.setIssued(analysis.getReleasedDate());//update to get Released Date instead of commpleted date        observation.setEffective(new DateTimeType(result.getLastupdated()));
+        observation.setEffective(new DateTimeType(analysis.getReleasedDate()));
+// observation.setIssued(new Date());
+        return observation;
+    }
 
 	@Override
 	public Practitioner transformNameToPractitioner(String practitionerName) {

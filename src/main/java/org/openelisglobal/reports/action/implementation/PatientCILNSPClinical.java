@@ -189,7 +189,7 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
         }
         for (int i = 0; i < referralResults.size(); i++) {
             if (referralResults.get(i).getResult() == null) {
-                sampleCompleteMap.put(sampleService.getAccessionNumber(currentSample), Boolean.FALSE);
+                sampleCompleteMap.put(convertToAlphaNumericDisplay(currentSample), Boolean.FALSE);
             } else {
 
                 i = lastUsedReportReferralResultValue(referralResults, i);
@@ -221,7 +221,7 @@ public class PatientCILNSPClinical extends PatientReport implements IReportCreat
                 }
 
                 if (GenericValidator.isBlankOrNull(reportReferralResultValue)) {
-                    sampleCompleteMap.put(sampleService.getAccessionNumber(currentSample), Boolean.FALSE);
+                    sampleCompleteMap.put(convertToAlphaNumericDisplay(currentSample), Boolean.FALSE);
                     data.setAnalysisStatus(MessageUtil.getMessage("report.test.status.inProgress"));
                 } else {
                     data.setResult(reportReferralResultValue);

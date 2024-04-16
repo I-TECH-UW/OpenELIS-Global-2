@@ -365,7 +365,7 @@ public class DBOrderPersister implements IOrderPersister {
             eOrder.setPatient(patient);
             eOrderService.insert(eOrder);
         } catch (RuntimeException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
             throw e;
         }
     }
@@ -388,7 +388,7 @@ public class DBOrderPersister implements IOrderPersister {
                 try {
                     eOrderService.update(eOrder);
                 } catch (RuntimeException e) {
-                    LogEvent.logErrorStack(e);
+                    LogEvent.logError(e);
                 }
 
             }

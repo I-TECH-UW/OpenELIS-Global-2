@@ -17,6 +17,7 @@
 package org.openelisglobal.testcodes.valueholder;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class TestSchemaPK implements Serializable {
 
@@ -43,5 +44,21 @@ public class TestSchemaPK implements Serializable {
 
     public String toString() {
         return testId + codeTypeId;
+    }
+
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        TestSchemaPK that = (TestSchemaPK) o;
+
+        return Objects.equals(this.testId, that.testId)
+                && Objects.equals(this.codeTypeId, that.codeTypeId);
+    }
+
+    public int hashCode() {
+        return Objects.hash(testId, codeTypeId);
     }
 }

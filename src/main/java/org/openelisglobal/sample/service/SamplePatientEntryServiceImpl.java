@@ -15,11 +15,11 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.TableIdService;
-import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.SystemConfiguration;
@@ -43,6 +43,11 @@ import org.openelisglobal.organization.valueholder.OrganizationType;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.person.service.PersonService;
+import org.openelisglobal.program.service.ImmunohistochemistrySampleService;
+import org.openelisglobal.program.service.PathologySampleService;
+import org.openelisglobal.program.service.ProgramSampleService;
+import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySample;
+import org.openelisglobal.program.valueholder.pathology.PathologySample;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.SampleRequester;
@@ -100,6 +105,12 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     private TestNotificationConfigService testNotificationConfigService;
     @Autowired
     private AnalysisNotificationConfigService analysisNotificationConfigService;
+    @Autowired
+    private PathologySampleService pathologySampleService;
+    @Autowired
+    private ImmunohistochemistrySampleService immunohistochemistrySampleService;
+    @Autowired
+    private ProgramSampleService programSampleService;
 
     @Transactional
     @Override
@@ -203,9 +214,21 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
             field.setSample(updateData.getSample());
             sampleService.saveSampleAdditionalField(field);
         }
-        // if (!GenericValidator.isBlankOrNull(projectId)) {
-        // persistSampleProject();
-        // }
+
+        if (updateData.getProgramSample() != null) {
+            if(updateData.getProgramQuestionnaireResponse() != null){
+              updateData.getProgramSample().setQuestionnaireResponseUuid(UUID.randomUUID());
+            }
+            updateData.getProgramSample().setSample(updateData.getSample());
+
+            if (updateData.getProgramSample() instanceof PathologySample) {
+                pathologySampleService.save((PathologySample) updateData.getProgramSample());
+            } else if (updateData.getProgramSample() instanceof ImmunohistochemistrySample) {
+                immunohistochemistrySampleService.save((ImmunohistochemistrySample) updateData.getProgramSample());
+            } else {
+                programSampleService.save(updateData.getProgramSample());
+            }
+        }
 
         for (SampleTestCollection sampleTestCollection : updateData.getSampleItemsTests()) {
             if (GenericValidator.isBlankOrNull(sampleTestCollection.item.getFhirUuidAsString())) {

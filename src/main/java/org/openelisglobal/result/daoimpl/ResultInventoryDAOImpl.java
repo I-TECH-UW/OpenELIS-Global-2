@@ -51,7 +51,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
 
             resultInventories = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ResultInventory getAllResultInventorys()", e);
         }
 
@@ -70,7 +70,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
                 resultInventory.setId(null);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ResultInventory getData()", e);
         }
     }
@@ -90,7 +90,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
             return resultInventories;
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ResultInventory getResultInventoryByResult()", e);
         }
     }
@@ -100,7 +100,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
         try {
             data = entityManager.unwrap(Session.class).get(ResultInventory.class, idString);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ResultInventory readResultInventory()", e);
         }
 
@@ -115,7 +115,7 @@ public class ResultInventoryDAOImpl extends BaseDAOImpl<ResultInventory, String>
                     resultInventory.getId());
             return re;
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ResultInventory getResultInventoryById()", e);
         }
     }

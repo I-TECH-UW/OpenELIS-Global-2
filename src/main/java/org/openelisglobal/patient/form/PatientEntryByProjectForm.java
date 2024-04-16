@@ -65,8 +65,8 @@ public class PatientEntryByProjectForm extends BaseForm implements IAccessionerF
 	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
 	private String upidCode = "";
 
-	@ValidAccessionNumber(format = AccessionFormat.PROGRAM)
-	private String labNo = "";
+    @ValidAccessionNumber(format = AccessionFormat.PROGRAMNUM)
+    private String labNo = "";
 
 	@Pattern(regexp = ValidationHelper.ID_REGEX)
 	private String centerName = "";

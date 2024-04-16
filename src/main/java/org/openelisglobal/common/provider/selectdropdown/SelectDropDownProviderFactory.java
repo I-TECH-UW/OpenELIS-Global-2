@@ -66,8 +66,8 @@ public class SelectDropDownProviderFactory {
             object = classDefinition.newInstance();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
-            throw new LIMSRuntimeException("Unable to create an object for " + className, e, true);
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Unable to create an object for " + className, e);
         }
         return object;
     }
@@ -95,15 +95,15 @@ public class SelectDropDownProviderFactory {
                 validationProviderClassMap.load(propertyStream);
             } catch (IOException e) {
                 // bugzilla 2154
-                LogEvent.logError(e.toString(), e);
-                throw new LIMSRuntimeException("Unable to load validation provider class mappings.", e, true);
+                LogEvent.logError(e);
+                throw new LIMSRuntimeException("Unable to load validation provider class mappings.", e);
             } finally {
                 if (null != propertyStream) {
                     try {
                         propertyStream.close();
                     } catch (IOException e) {
                         // bugzilla 2154
-                        LogEvent.logError(e.toString(), e);
+                        LogEvent.logError(e);
                     }
                 }
             }
@@ -111,7 +111,7 @@ public class SelectDropDownProviderFactory {
 
         String mapping = validationProviderClassMap.getProperty(validationProvidername);
         if (mapping == null) {
-            LogEvent.logError(this.getClass().getName(), "getSelectDropdownProviderClassName", validationProvidername);
+            LogEvent.logError(this.getClass().getSimpleName(), "getSelectDropdownProviderClassName", validationProvidername);
             throw new LIMSRuntimeException(
                     "getSelectDropDownProviderClassName - Unable to find mapping for " + validationProvidername);
         }

@@ -48,6 +48,7 @@ public abstract class Label {
     protected ArrayList<LabelField> aboveFields;
     protected ArrayList<LabelField> belowFields;
     private String code;
+    private String codeLabel;
 
     // information stored in/for database
     private BarcodeLabelInfo labelInfo;
@@ -210,6 +211,14 @@ public abstract class Label {
         this.code = code;
     }
 
+    public String getCodeLabel() {
+        return codeLabel == null ? code : codeLabel;
+    }
+
+    public void setCodeLabel(String codeLabel) {
+        this.codeLabel = codeLabel;
+    }
+
     /**
      * Get number of labels to attempt to print
      *
@@ -302,7 +311,7 @@ public abstract class Label {
                 labelInfo = new BarcodeLabelInfo(code);
             }
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
     }
 

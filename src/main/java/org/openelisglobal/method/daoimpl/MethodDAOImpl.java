@@ -55,7 +55,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Method getMethods(String filter)", e);
         }
         return list;
@@ -122,7 +122,7 @@ public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements Method
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateMethodExists()", e);
         }
     }

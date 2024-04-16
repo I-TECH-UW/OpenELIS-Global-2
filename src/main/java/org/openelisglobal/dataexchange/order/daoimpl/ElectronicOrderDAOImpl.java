@@ -403,4 +403,31 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
         return null;
     }
 
+    @Override
+    public int getCountOfAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate, String statusId) {
+        String hql = "SELECT COUNT(*) From ElectronicOrder eo WHERE 1 = 1 ";
+        if (startDate != null) {
+            hql += "AND eo.orderTimestamp BETWEEN :startDate AND :endDate ";
+        }
+        if (!GenericValidator.isBlankOrNull(statusId)) {
+            hql += "AND eo.statusId = :statusId ";
+        }
+
+        try {
+            Query<Long> query = entityManager.unwrap(Session.class).createQuery(hql, Long.class);
+            if (startDate != null) {
+                query.setParameter("startDate", startDate);
+                query.setParameter("endDate", endDate);
+            }
+            if (!GenericValidator.isBlankOrNull(statusId)) {
+                query.setParameter("statusId", Integer.parseInt(statusId));
+            }
+            Long count  = query.uniqueResult();
+            count.intValue();
+        } catch (HibernateException e) {
+            handleException(e, "getCountOfAllElectronicOrdersByDateAndStatus");
+        }
+        return 0;
+    }
+
 }

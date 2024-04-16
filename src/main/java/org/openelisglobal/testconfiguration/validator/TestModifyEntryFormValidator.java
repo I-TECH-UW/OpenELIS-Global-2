@@ -130,6 +130,14 @@ public class TestModifyEntryFormValidator implements Validator {
                                 "JsonWad", "result limit [" + i + "] highCritical", errors, false, 255,
                                 ValidationHelper.FLOAT_REGEX); 
 
+                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("highCriticalRangeLow")),
+                                "JsonWad", "result limit [" + i + "] highCriticalRangeLow", errors, false, 255,
+                                ValidationHelper.FLOAT_REGEX);
+
+                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("highCriticalRangeHigh")),
+                                "JsonWad", "result limit [" + i + "] highCriticalRangeHigh", errors, false, 255,
+                                ValidationHelper.FLOAT_REGEX);        
+
                         if ((Boolean) resultLimit.get("gender")) {
                             ValidationHelper.validateField(
                                     StringUtil.nullSafeToString(resultLimit.get("lowNormalFemale")), "JsonWad",
@@ -149,7 +157,7 @@ public class TestModifyEntryFormValidator implements Validator {
         } catch (
 
         ParseException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             errors.rejectValue("jsonWad", "error.field.format.json", "expected JSON but got something else");
         }
     }

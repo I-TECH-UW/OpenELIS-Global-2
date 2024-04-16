@@ -59,8 +59,8 @@ public class ReportController extends BaseController {
     @Autowired
     private ServletContext context;
 
-    private static String reportPath = null;
-    private static String imagesPath = null;
+    private String reportPath = null;
+    private String imagesPath = null;
 
     @ModelAttribute("form")
     public BaseForm form() {
@@ -130,8 +130,7 @@ public class ReportController extends BaseController {
                 servletOutputStream.flush();
                 servletOutputStream.close();
             } catch (IOException | SQLException | JRException | DocumentException | ParseException e) {
-                LogEvent.logErrorStack(e);
-                LogEvent.logDebug(e);
+                LogEvent.logError(e);
             }
         }
 
@@ -173,7 +172,7 @@ public class ReportController extends BaseController {
             try {
                 reportPath = URLDecoder.decode(reportPath, "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                LogEvent.logDebug(e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException(e);
             }
         }
@@ -186,7 +185,7 @@ public class ReportController extends BaseController {
             try {
                 imagesPath = URLDecoder.decode(imagesPath, "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                LogEvent.logDebug(e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException(e);
             }
         }

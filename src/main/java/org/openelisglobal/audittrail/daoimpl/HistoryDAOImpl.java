@@ -42,7 +42,7 @@ public class HistoryDAOImpl extends BaseDAOImpl<History, String> implements Hist
             query.setParameter("tableId", Integer.parseInt(tableId));
             list = query.list();
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in AuditTrail getHistoryByRefIdAndRefTableId()", e);
         }
         return list;

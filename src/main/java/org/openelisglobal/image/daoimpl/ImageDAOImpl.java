@@ -44,7 +44,7 @@ public class ImageDAOImpl extends BaseDAOImpl<Image, String> implements ImageDAO
             query.setParameter("imageDescription", imageDescription);
             return query.uniqueResult();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Image getImageByDescription()", e);
         }
     }

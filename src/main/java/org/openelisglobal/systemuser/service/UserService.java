@@ -39,5 +39,7 @@ public interface UserService {
     List<TestResultItem> filterResultsByLabUnitRoles(String SystemUserId, List<TestResultItem> results,
             String roleName);
 
-	List<IdValuePair> getUserSampleTypes(String systemUserId, String roleName, String testSectionName);
+    List<IdValuePair> getUserPrograms(String systemUserId, String userRole);    
+         
+    List<IdValuePair> getUserSampleTypes(String systemUserId, String roleName, String testSectionName);
 }

@@ -54,7 +54,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
                 resultSignature.setId(null);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ResultSignature getData()", e);
         }
     }
@@ -74,7 +74,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
             return resultSignatures;
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ResultSignature getResultSignatureResult()", e);
         }
     }
@@ -84,7 +84,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
         try {
             data = entityManager.unwrap(Session.class).get(ResultSignature.class, idString);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ResultSignature readResultSignature()", e);
         }
 
@@ -99,7 +99,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
                     resultSignature.getId());
             return re;
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ResultSignature getResultSignatureById()", e);
         }
     }

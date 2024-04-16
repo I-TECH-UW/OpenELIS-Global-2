@@ -127,12 +127,12 @@ public class PatientSearchLocalAndExternalWorker extends PatientSearchWorker {
                 if (externalSearchResult == 200) {
                     externalResults = externalSearch.getSearchResults();
                 } else {
-                    LogEvent.logWarn(this.getClass().getName(), "createSearchResultXML",
+                    LogEvent.logError(this.getClass().getSimpleName(), "createSearchResultXML",
                             "could not get external search results from " + externalSearch.getConnectionString()
                                     + " - failed response");
                 }
             } catch (InterruptedException | ExecutionException | TimeoutException | IllegalStateException e) {
-                LogEvent.logErrorStack(e);
+                LogEvent.logError(e);
             }
 
             findNewPatients(localResults, externalResults, newPatientsFromExternalSearch);

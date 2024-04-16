@@ -44,6 +44,8 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
+import org.openelisglobal.common.provider.validation.AlphanumAccessionValidator;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.IStatusService;
@@ -104,7 +106,7 @@ public abstract class PatientReport extends Report {
     private static String ADDRESS_DEPT_ID;
     private static String ADDRESS_COMMUNE_ID;
     protected String currentContactInfo = "";
-    protected String currentSiteInfo = ""; 
+    protected String currentSiteInfo = "";
 
     protected SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
     protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
@@ -185,6 +187,18 @@ public abstract class PatientReport extends Report {
         return true;
     }
 
+    protected String convertToAlphaNumericDisplay(Sample currentSample) {
+        String displayAccesionNumber = "";
+        if (AccessionFormat.ALPHANUM.toString()
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            displayAccesionNumber = AlphanumAccessionValidator
+                    .convertAlphaNumLabNumForDisplay(sampleService.getAccessionNumber(currentSample).split("-")[0]);
+        } else {
+            displayAccesionNumber = sampleService.getAccessionNumber(currentSample).split("-")[0];
+        }
+        return displayAccesionNumber;
+    }
+
     public void setRequestParameters(ReportForm form) {
         form.setReportName(getReportNameForParameterPage());
 
@@ -259,7 +273,7 @@ public abstract class PatientReport extends Report {
             for (Sample sample : reportSampleList) {
                 currentSample = sample;
                 handledOrders.add(sample.getId());
-                sampleCompleteMap.put(sample.getAccessionNumber(), Boolean.TRUE);
+                sampleCompleteMap.put(convertToAlphaNumericDisplay(sample), Boolean.TRUE);
                 findCompletionDate();
                 findPatientFromSample();
                 findContactInfo();
@@ -276,12 +290,12 @@ public abstract class PatientReport extends Report {
         if (!updatedAnalysis.isEmpty()) {
             try {
                 analysisService.updateAllNoAuditTrail(updatedAnalysis);
-//				for (Analysis analysis : updatedAnalysis) {
-//					analysisService.update(analysis, true);
-//				}
+                // for (Analysis analysis : updatedAnalysis) {
+                // analysisService.update(analysis, true);
+                // }
 
             } catch (LIMSRuntimeException e) {
-                LogEvent.logErrorStack(e);
+                LogEvent.logError(e);
             }
         }
     }
@@ -365,7 +379,7 @@ public abstract class PatientReport extends Report {
         currentSiteInfo = "";
         currentProvider = null;
 
-//        sampleService.getOrganizationRequester(currentSample);
+        // sampleService.getOrganizationRequester(currentSample);
         Organization referringOrg = sampleService.getOrganizationRequester(currentSample,
                 TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
         Organization referringDepartmentOrg = sampleService.getOrganizationRequester(currentSample,
@@ -570,7 +584,7 @@ public abstract class PatientReport extends Report {
                         AnalysisStatus.TechnicalRejected)
                         && ConfigurationProperties.getInstance().isPropertyValueEqual(
                                 ConfigurationProperties.Property.VALIDATE_REJECTED_TESTS, "false"))) {
-            sampleCompleteMap.put(sampleService.getAccessionNumber(currentSample), Boolean.FALSE);
+            sampleCompleteMap.put(convertToAlphaNumericDisplay(currentSample), Boolean.FALSE);
             setEmptyResult(data);
         } else {
             if (resultList.isEmpty()) {
@@ -601,7 +615,7 @@ public abstract class PatientReport extends Report {
     private void setCorrectedStatus(Result result, ClinicalPatientData data) {
         if (currentAnalysis.isCorrectedSincePatientReport() && !GenericValidator.isBlankOrNull(result.getValue())) {
             data.setCorrectedResult(true);data.setContactInfo(currentContactInfo);
-            sampleCorrectedMap.put(sampleService.getAccessionNumber(currentSample), true);
+            sampleCorrectedMap.put(convertToAlphaNumericDisplay(currentSample), true);
             currentAnalysis.setCorrectedSincePatientReport(false);
             updatedAnalysis.add(currentAnalysis);
         }
@@ -619,7 +633,7 @@ public abstract class PatientReport extends Report {
             try {
                 resultValue += " (" + formatTwoDecimals(Math.log10(Double.parseDouble(resultValue))) + ")log ";
             } catch (IllegalFormatException e) {
-                LogEvent.logDebug(this.getClass().getName(), "getAugmentedResult", e.getMessage());
+                LogEvent.logDebug(this.getClass().getSimpleName(), "getAugmentedResult", e.getMessage());
                 // no-op
             }
         }
@@ -674,7 +688,7 @@ public abstract class PatientReport extends Report {
                 }
             }
         } catch (NumberFormatException e) {
-            LogEvent.logInfo(this.getClass().getName(), "getResultFlag", e.getMessage());
+            LogEvent.logInfo(this.getClass().getSimpleName(), "getResultFlag", e.getMessage());
             // no-op
         }
 
@@ -858,8 +872,10 @@ public abstract class PatientReport extends Report {
      * If you have a string that you wish to add a suffix like units of measure, use
      * this.
      *
-     * @param base something
-     * @param plus something to add, if the above is not null or blank.
+     * @param base
+     *            something
+     * @param plus
+     *            something to add, if the above is not null or blank.
      * @return the two args put together, or the original if it was blank to begin
      *         with.
      */
@@ -934,8 +950,24 @@ public abstract class PatientReport extends Report {
             data.setCollectionDateTime(DateUtil.convertTimestampToStringDateAndConfiguredHourTime(
                     currentAnalysis.getSampleItem().getCollectionDate()));
         }
-
-        data.setAccessionNumber(sampleService.getAccessionNumber(currentSample) + "-" + sortOrder);
+        if (AccessionFormat.ALPHANUM.toString()
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            if (doAnalysis) {
+                data.setSampleId(
+                        AlphanumAccessionValidator
+                                .convertAlphaNumLabNumForDisplay(sampleService.getAccessionNumber(currentSample))
+                                + "-" + data.getSampleSortOrder());
+            }
+            data.setAccessionNumber(
+                    AlphanumAccessionValidator
+                            .convertAlphaNumLabNumForDisplay(sampleService.getAccessionNumber(currentSample))
+                            + "-" + data.getSampleSortOrder());
+        } else {
+            if (doAnalysis) {
+                data.setSampleId(sampleService.getAccessionNumber(currentSample) + "-" + data.getSampleSortOrder());
+            }
+            data.setAccessionNumber(sampleService.getAccessionNumber(currentSample) + "-" + data.getSampleSortOrder());
+        }
 
         if (doAnalysis) {
             reportResultAndConclusion(data);
@@ -990,8 +1022,10 @@ public abstract class PatientReport extends Report {
      * starting at the given index. It uses multiresult form the list when the
      * results are for the same test.
      *
-     * @param referralResultsForReferral The referral
-     * @param i                          starting index.
+     * @param referralResultsForReferral
+     *            The referral
+     * @param i
+     *            starting index.
      * @return last index actually used. If you start with 2 and this routine uses
      *         just item #2, then return result is 2, but if there are two results
      *         for the same test (e.g. a multi-select result) and those are in item
@@ -1018,7 +1052,8 @@ public abstract class PatientReport extends Report {
      * Derive the appropriate displayable string results, either dictionary result
      * or direct value.
      *
-     * @param result The result
+     * @param result
+     *            The result
      * @return a reportable result string.
      */
     private String findDisplayableReportResult(Result result) {

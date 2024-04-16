@@ -215,7 +215,6 @@ public class ReportImplementationFactory {
             } else if (report.equals("ForCIDashboard")) {
                 return new ForCIDashboard();
             }
-
             else if (report.equals("CISampleRoutineExport")) {
                 return new ExportRoutineByDate();
             } else if (report.equals("referredOut")) {
@@ -286,6 +285,17 @@ public class ReportImplementationFactory {
                 return new StatisticsReport();
             } else if (report.equals("sampleRejectionReport")) {
                 return new CSVSampleRejectionReport();
+            }else if (report.equals("PatientPathologyReport")){
+               return new PatientPathologyReport();
+            }
+            else if(report.equals("PatientCytologyReport")){
+               return new PatientCytologyReport();
+            }else if(report.equals("PatientImmunoChemistryReport")){
+               return new PatientImmunoChemistryReport();
+            }else if(report.equals("DualInSituHybridizationReport")){
+                return new DualInSituHybridizationReport();
+            }else if(report.equals("BreastCancerHormoneReceptorReport")){
+                return new BreastCancerHormoneReceptorReport();
             }
         }
 

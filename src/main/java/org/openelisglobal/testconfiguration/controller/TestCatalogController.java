@@ -118,7 +118,7 @@ public class TestCatalogController extends BaseController {
                     catalog.setSignificantDigits(
                             testService.getPossibleTestResults(test).get(0).getSignificantDigits());
                 } else {
-                    LogEvent.logWarn(TestCatalogController.class.getName(), "createTestList",
+                    LogEvent.logWarn(this.getClass().getSimpleName(), "createTestList",
                             "test that doesn't have an active test result found. Possibly issue with data in database");
                     catalog.setSignificantDigits("0");
                 }

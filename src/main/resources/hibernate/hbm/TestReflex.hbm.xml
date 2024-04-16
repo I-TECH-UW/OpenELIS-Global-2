@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 	<class
 		name="org.openelisglobal.testreflex.valueholder.TestReflex"
@@ -16,7 +15,6 @@
 		</id>
 		<version name="lastupdated" column="LASTUPDATED"
 			type="timestamp" access="field" />
-
 		<many-to-one name="test"
 			class="org.openelisglobal.test.valueholder.Test" fetch="select">
 			<column name="TEST_ID" precision="10" scale="0" />
@@ -48,13 +46,28 @@
 			type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
 			<column name="sibling_reflex" precision="10" />
 		</property>
+		<property name="nonDictionaryValue" type="java.lang.String">
+			<column name="NON_DICTIONARY_VALUE" length="50" />
+		</property>
+		<property name="relation" column="RELATION">
+			<type name="org.hibernate.type.EnumType">
+				<param name="enumClass">org.openelisglobal.testreflex.action.bean.ReflexRuleOptions$NumericRelationOptions</param>
+				<param name="useNamed">true</param>
+			</type>
+		</property>
+		<property name="internalNote" type="java.lang.String">
+			<column name="internal_note" length="50" />
+		</property>
+		<property name="externalNote" type="java.lang.String">
+			<column name="external_note" length="50" />
+		</property>
 	</class>
-<!-- 	<query name="testreflex.getNext"> -->
-<!-- 		from TestReflex tr order by tr.test.testName, -->
-<!-- 		tr.testAnalyte.analyte.analyteName -->
-<!-- 	</query> -->
-<!-- 	<query name="testreflex.getPrevious"> -->
-<!-- 		from TestReflex tr order by tr.test.testName desc, -->
-<!-- 		tr.testAnalyte.analyte.analyteName desc -->
-<!-- 	</query> -->
+	<!-- 	<query name="testreflex.getNext"> -->
+	<!-- 		from TestReflex tr order by tr.test.testName, -->
+	<!-- 		tr.testAnalyte.analyte.analyteName -->
+	<!-- 	</query> -->
+	<!-- 	<query name="testreflex.getPrevious"> -->
+	<!-- 		from TestReflex tr order by tr.test.testName desc, -->
+	<!-- 		tr.testAnalyte.analyte.analyteName desc -->
+	<!-- 	</query> -->
 </hibernate-mapping>

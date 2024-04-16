@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.observationhistory.dao.ObservationHistoryDAO;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @DependsOn({ "springContext" })
-public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<ObservationHistory, String>
+public class ObservationHistoryServiceImpl extends AuditableBaseObjectServiceImpl<ObservationHistory, String>
         implements ObservationHistoryService {
 
     public enum ObservationType {

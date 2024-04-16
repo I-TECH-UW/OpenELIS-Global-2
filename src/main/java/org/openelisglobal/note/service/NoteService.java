@@ -46,4 +46,6 @@ public interface NoteService extends BaseObjectService<Note, String> {
 
     boolean duplicateNoteExists(Note note);
 
+    List<Note> getTestNotesInDateRangeByType(Date lowDate, Date highDate, NoteType noteType);
+
 }

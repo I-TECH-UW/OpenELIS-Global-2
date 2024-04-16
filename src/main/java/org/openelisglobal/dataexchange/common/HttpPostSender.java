@@ -16,18 +16,25 @@
  */
 package org.openelisglobal.dataexchange.common;
 
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.validator.GenericValidator;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.openelisglobal.common.log.LogEvent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class HttpPostSender extends HttpSender {
+
+    @Autowired
+    private CloseableHttpClient httpClient;
 
     @Override
     public boolean sendMessage() {
@@ -42,23 +49,16 @@ public class HttpPostSender extends HttpSender {
             return false;
         }
 
-        HttpClient httpclient = new HttpClient();
-        setTimeout(httpclient);
-
-        PostMethod httpPost = new PostMethod(url);
-
-        RequestEntity requestEntity = null;
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(new StringEntity(message, ContentType.TEXT_PLAIN));
         try {
-            requestEntity = new StringRequestEntity(message, "text/plain", "UTF-8");
-        } catch (UnsupportedEncodingException e1) {
+            CloseableHttpResponse response = httpClient.execute(httpPost);
+            returnStatus =  response.getStatusLine().getStatusCode();
+            return returnStatus == HttpStatus.SC_OK;
+        } catch (IOException e1) {
             LogEvent.logError(e1);
         }
-
-        httpPost.setRequestEntity(requestEntity);
-
-        sendByHttp(httpclient, httpPost);
-
-        return returnStatus == HttpStatus.SC_OK;
+        return false;
     }
 
 }

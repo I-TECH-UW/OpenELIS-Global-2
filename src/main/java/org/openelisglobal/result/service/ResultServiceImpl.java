@@ -13,7 +13,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -31,8 +31,6 @@ import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
 import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
-import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
-import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
@@ -41,21 +39,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @DependsOn({ "springContext" })
-public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> implements ResultService {
+public class ResultServiceImpl extends AuditableBaseObjectServiceImpl<Result, String> implements ResultService {
 
     private static String TABLE_REFERENCE_ID;
 
-    @Autowired
     private static ResultDAO baseObjectDAO = SpringContext.getBean(ResultDAO.class);
-
-    @Autowired
     private static DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
-    @Autowired
     private static ResultSignatureService signatureService = SpringContext.getBean(ResultSignatureService.class);
     @Autowired
     private ReferenceTablesService referenceTablesService = SpringContext.getBean(ReferenceTablesService.class);
-    @Autowired
-    private TypeOfSampleTestService typeOfSampleTestService = SpringContext.getBean(TypeOfSampleTestService.class);
     @Autowired
     private TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
     @Autowired
@@ -115,18 +107,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 
     @Transactional(readOnly = true)
     public String getSampleType(Result result) {
-        Test test = result.getAnalysis() != null ? result.getAnalysis().getTest() : null;
-        if (test == null) {
-            return "";
-        }
-
-        TypeOfSampleTest sampleTestType = typeOfSampleTestService.getTypeOfSampleTestForTest(test.getId());
-
-        if (sampleTestType != null) {
-            return typeOfSampleService.getNameForTypeOfSampleId(sampleTestType.getTypeOfSampleId());
-        }
-
-        return "";
+        return result.getAnalysis() != null ? typeOfSampleService.getNameForTypeOfSampleId(result.getAnalysis().getSampleItem().getTypeOfSampleId()) : "";
     }
 
     @Override

@@ -136,7 +136,7 @@ public class PatientManagementController extends BaseController {
                 fhirTransformService.transformPersistPatient(patientInfo);
             } catch (LIMSRuntimeException e) {
 
-                if (e.getException() instanceof StaleObjectStateException) {
+                if (e.getCause() instanceof StaleObjectStateException) {
                     result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
                 } else {
                     LogEvent.logDebug(e);

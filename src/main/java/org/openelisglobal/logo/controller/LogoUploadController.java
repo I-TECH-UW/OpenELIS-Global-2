@@ -84,7 +84,7 @@ public class LogoUploadController {
 
         boolean deleteSuccess = previewFile.delete();
         if (!deleteSuccess) {
-            LogEvent.logError(this.getClass().getName(), "removeImage", "could not delete preview file");
+            LogEvent.logError(this.getClass().getSimpleName(), "removeImage", "could not delete preview file");
         }
 
         SiteInformation logoInformation = siteInformationService.getSiteInformationByName(logoName);
@@ -101,7 +101,7 @@ public class LogoUploadController {
             try {
                 logoUploadService.removeImage(image, logoInformation);
             } catch (LIMSRuntimeException e) {
-                LogEvent.logErrorStack(e);
+                LogEvent.logError(e);
             }
 
         }
@@ -170,7 +170,7 @@ public class LogoUploadController {
         try {
             logoUploadService.saveImage(image, newImage, imageId, logoInformation);
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
     }
 
@@ -180,7 +180,7 @@ public class LogoUploadController {
             filePath = file.getCanonicalPath();
             return filePath.startsWith((new File(imageService.getFullPreviewPath()).getCanonicalPath()));
         } catch (IOException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
             return false;
         }
     }

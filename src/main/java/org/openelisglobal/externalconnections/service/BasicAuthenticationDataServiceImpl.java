@@ -2,14 +2,14 @@ package org.openelisglobal.externalconnections.service;
 
 import java.util.Optional;
 
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.externalconnections.dao.BasicAuthenticationDataDAO;
 import org.openelisglobal.externalconnections.valueholder.BasicAuthenticationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BasicAuthenticationDataServiceImpl extends BaseObjectServiceImpl<BasicAuthenticationData, Integer>
+public class BasicAuthenticationDataServiceImpl extends AuditableBaseObjectServiceImpl<BasicAuthenticationData, Integer>
         implements BasicAuthenticationDataService {
 
     @Autowired

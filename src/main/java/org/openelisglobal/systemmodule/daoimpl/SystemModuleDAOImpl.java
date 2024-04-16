@@ -55,7 +55,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemModule getData()", e);
         }
     }
@@ -69,7 +69,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             Query<SystemModule> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemModule getAllSystemModules()", e);
         }
 
@@ -91,7 +91,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemModule getPageOfSystemModules()", e);
         }
 
@@ -103,7 +103,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
         try {
             sysModule = entityManager.unwrap(Session.class).get(SystemModule.class, idString);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemModule readSystemModule(idString)", e);
         }
 
@@ -152,7 +152,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 
             return list.size() > 0;
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateSystemModuleExists()", e);
         }
     }

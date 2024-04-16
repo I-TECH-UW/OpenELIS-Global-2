@@ -31,7 +31,7 @@ public class CertificateAuthenticationDataDAOImpl extends BaseDAOImpl<Certificat
             data = query.uniqueResult();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in CertificateAuthenticationDataDAOImpl getByExternalConnection()",
                     e);
         }

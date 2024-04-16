@@ -70,9 +70,9 @@
                connectionTimeout="20000"
                redirectPort="8443" />
                
-    <Connector port="8443" minProcessors="5" maxProcessors="75"
+    <Connector port="8443" minSpareThreads="5" maxThreads="75"
                enableLookups="true" disableUploadTimeout="true"
-               acceptCount="100" debug="0" scheme="https" secure="true"
+               acceptCount="100" scheme="https" secure="true"
                clientAuth="want" sslProtocol="TLS" SSLEnabled="true" 
                keystoreFile="/run/secrets/keystore"
                keystorePass="testtest"

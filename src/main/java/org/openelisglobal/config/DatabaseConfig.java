@@ -26,7 +26,7 @@ public class DatabaseConfig {
     public DataSource dataSource() {
         JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
         dsLookup.setResourceRef(true);
-        LogEvent.logDebug(this.getClass().getName(), "dataSource()", "creating datasource...");
+        LogEvent.logDebug(this.getClass().getSimpleName(), "dataSource()", "creating datasource...");
 
         DataSource dataSource = dsLookup.getDataSource("jdbc/LimsDS");
         return dataSource;
@@ -59,7 +59,7 @@ public class DatabaseConfig {
         @Override
         @Retryable(maxAttempts = 10, backoff = @Backoff(multiplier = 2.3, maxDelay = 30000))
         public Connection getConnection() throws SQLException {
-            LogEvent.logDebug(this.getClass().getName(), "getConnection()", "attempting connection to the database...");
+            LogEvent.logDebug(this.getClass().getSimpleName(), "getConnection()", "attempting connection to the database...");
             return delegate.getConnection();
         }
 

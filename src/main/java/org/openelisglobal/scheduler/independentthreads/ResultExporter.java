@@ -135,7 +135,7 @@ public class ResultExporter {
                     reportExternalExportService.delete(report);
 
                 } catch (LIMSRuntimeException e) {
-                    LogEvent.logErrorStack(e);
+                    LogEvent.logError(e);
                     throw e;
                 }
 

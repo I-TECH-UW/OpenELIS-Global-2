@@ -73,7 +73,7 @@ public class OrderResponseWorker {
             }
         }
 
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown",
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown",
         // hl7Message.encode());
     }
 

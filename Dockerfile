@@ -63,6 +63,7 @@ COPY --from=build /build/target/OpenELIS-Global.war /usr/local/tomcat/webapps/Op
 #    org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=false
 #    org.apache.coyote.USE_CUSTOM_STATUS_MSG_IN_HEADER=false
 ADD install/tomcat-resources/catalina.properties /usr/local/tomcat/conf/catalina.properties
+ADD install/tomcat-resources/logging.properties /usr/local/tomcat/conf/logging.properties
 
 #replace ServerInfo.properties with a less informative one
 RUN mkdir -p /usr/local/tomcat/lib/org/apache/catalina/util

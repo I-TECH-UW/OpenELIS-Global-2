@@ -40,10 +40,23 @@ public class MenuUtil {
      * The intent of this method is to allow menu items to be added outside of the
      * database. Typically plugins
      *
-     * @param menu The menu item to be added
+     * @param menu
+     *            The menu item to be added
      */
     public static void addMenu(Menu menu) {
+        menu.setIsActive(true);
         insertedMenus.add(menu);
+    }
+
+
+    // Update Menu items added outside the database
+    public static void updateMenu(Menu menu) {
+        insertedMenus.forEach(insertedMenu -> {
+            if (insertedMenu.getElementId().equals(menu.getElementId())) {
+                insertedMenu.setActionURL(menu.getActionURL());
+                insertedMenu.setIsActive(menu.getIsActive());
+            }
+        });
     }
 
     public static void forceRebuild() {
@@ -59,7 +72,7 @@ public class MenuUtil {
     }
 
     private static void createTree() {
-        List<Menu> menuList = menuService.getAllActiveMenus();
+        List<Menu> menuList = menuService.getAll();
 
         Map<String, Menu> idToMenuMap = new HashMap<>();
 
@@ -129,59 +142,60 @@ public class MenuUtil {
         int topLevelCount = 0;
         for (MenuItem menuItem : menuTree) {
             Menu menu = menuItem.getMenu();
+            if (menu.getIsActive() && !menu.isHideInOldUI()) {
+                if (topLevel) {
+                    if (topLevelCount == 0) {
+                        html.append("\t<li id=\"nav-first\" >\n");
+                    } else if (topLevelCount == menuTree.size() - 1) {
+                        html.append("\t<li id=\"nav-last\" >\n");
+                    } else {
+                        html.append("\t<li>\n");
+                    }
 
-            if (topLevel) {
-                if (topLevelCount == 0) {
-                    html.append("\t<li id=\"nav-first\" >\n");
-                } else if (topLevelCount == menuTree.size() - 1) {
-                    html.append("\t<li id=\"nav-last\" >\n");
+                    topLevelCount++;
                 } else {
                     html.append("\t<li>\n");
                 }
 
-                topLevelCount++;
-            } else {
-                html.append("\t<li>\n");
+                html.append("\t\t<a ");
+                html.append("id=\"");
+                html.append(menu.getElementId());
+                html.append("\" ");
+
+                // tooltips disabled as they were unnecessary and distracting in the menu
+                // if (!GenericValidator.isBlankOrNull(menu.getLocalizedTooltip())) {
+                // html.append(" title=\"");
+                // html.append(getTooltip(menu, locale));
+                // html.append("\" ");
+                // }
+
+                if (menu.isOpenInNewWindow()) {
+                    html.append(" target=\"_blank\" ");
+                }
+
+                if (GenericValidator.isBlankOrNull(menu.getActionURL())
+                        && GenericValidator.isBlankOrNull(menu.getClickAction())) {
+                    html.append(" class=\"no-link\" >");
+                } else {
+                    html.append(" href=\"");
+                    String url = menu.getActionURL().startsWith("/")
+                            ? menu.getActionURL().substring(1, menu.getActionURL().length())
+                            : menu.getActionURL();
+                    html.append(url);
+                    html.append("\" >");
+                }
+
+                html.append(getLabel(menu, locale));
+                html.append("</a>\n");
+
+                if (!menuItem.getChildMenus().isEmpty()) {
+                    html.append("<ul>\n");
+                    addChildMenuItems(html, menuItem.getChildMenus(), false);
+                    html.append("</ul>\n");
+                }
+
+                html.append("\t</li>\n");
             }
-
-            html.append("\t\t<a ");
-            html.append("id=\"");
-            html.append(menu.getElementId());
-            html.append("\" ");
-
-            // tooltips disabled as they were unnecessary and distracting in the menu
-//            if (!GenericValidator.isBlankOrNull(menu.getLocalizedTooltip())) {
-//                html.append(" title=\"");
-//                html.append(getTooltip(menu, locale));
-//                html.append("\" ");
-//            }
-
-            if (menu.isOpenInNewWindow()) {
-                html.append(" target=\"_blank\" ");
-            }
-
-            if (GenericValidator.isBlankOrNull(menu.getActionURL())
-                    && GenericValidator.isBlankOrNull(menu.getClickAction())) {
-                html.append(" class=\"no-link\" >");
-            } else {
-                html.append(" href=\"");
-                String url = menu.getActionURL().startsWith("/")
-                        ? menu.getActionURL().substring(1, menu.getActionURL().length())
-                        : menu.getActionURL();
-                html.append(url);
-                html.append("\" >");
-            }
-
-            html.append(getLabel(menu, locale));
-            html.append("</a>\n");
-
-            if (!menuItem.getChildMenus().isEmpty()) {
-                html.append("<ul>\n");
-                addChildMenuItems(html, menuItem.getChildMenus(), false);
-                html.append("</ul>\n");
-            }
-
-            html.append("\t</li>\n");
         }
 
     }

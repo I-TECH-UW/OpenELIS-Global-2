@@ -144,10 +144,10 @@ public class ReferralSetServiceImpl implements ReferralSetService {
                 try {
                     fhirReferralService.referAnalysisesToOrganization(referralSet.getReferral());
                 } catch (TestNotFullyConfiguredException e) {
-                    LogEvent.logError(this.getClass().getName(), "updateRefreralSets",
+                    LogEvent.logError(this.getClass().getSimpleName(), "updateRefreralSets",
                             "unable to automatically refer a test that does not have a loinc code set");
                 } catch (FhirLocalPersistingException e) {
-                    LogEvent.logError(this.getClass().getName(), "updateRefreralSets",
+                    LogEvent.logError(this.getClass().getSimpleName(), "updateRefreralSets",
                             "had a problem saving the referral locally in fhir");
                 }
             }

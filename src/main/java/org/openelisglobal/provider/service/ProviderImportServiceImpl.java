@@ -22,6 +22,7 @@ import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingExcepti
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.person.service.PersonService;
+import org.openelisglobal.provider.valueholder.Provider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -82,13 +83,17 @@ public class ProviderImportServiceImpl implements ProviderImportService {
                     org.hl7.fhir.r4.model.Practitioner fhirPractitioner = (org.hl7.fhir.r4.model.Practitioner) entry
                             .getResource();
                     try {
-                        providerService.insertOrUpdateProviderByFhirUuid(
-                                fhirTransformService.transformToProvider(fhirPractitioner));
-                        remoteFhirProviders.put(fhirPractitioner.getIdElement().getIdPart(), fhirPractitioner);
+                        Provider provider = fhirTransformService.transformToProvider(fhirPractitioner);
+                        if (providerService.getProviderByFhirId(provider.getFhirUuid()) == null
+                                || !providerService.getProviderByFhirId(provider.getFhirUuid()).isDesynchronized()) {
+                            providerService.insertOrUpdateProviderByFhirUuid(
+                                    fhirTransformService.transformToProvider(fhirPractitioner));
+                            remoteFhirProviders.put(fhirPractitioner.getIdElement().getIdPart(), fhirPractitioner);
+                        }
 
                     } catch (RuntimeException e) {
                         LogEvent.logError(e);
-                        LogEvent.logDebug(this.getClass().getName(), "importProvidersFromBundle",
+                        LogEvent.logError(this.getClass().getSimpleName(), "importProvidersFromBundle",
                                 fhirContext.newJsonParser().encodeResourceToString(fhirPractitioner));
                     }
                 }
