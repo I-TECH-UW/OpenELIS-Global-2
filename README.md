@@ -14,6 +14,7 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
 #### Running docker compose with docker images built directly from the source code
     docker-compose -f build.docker-compose.yml up -d --build
 
+
 #### Running docker compose With locally compiled/built Artifacts (ie the War file and React code) For Developers
 1. Fork the [OpenELIS-Global Repository](https://github.com/I-TECH-UW/OpenELIS-Global-2.git) and clone the forked repo. The `username` below is the `username` of your Github profile.
 
@@ -36,6 +37,7 @@ You can find more information on how to set up OpenELIS at our [docs page](http:
         docker-compose -f dev.docker-compose.yml up -d    
 
     Note : For Reflecting Local changes in the Running Containers ;
+
  * Any Changes to the [Front-end](./frontend/) React Source Code  will be directly Hot Reloaded in the UI
  * For changes to the [Back-end](./src/) Java Source code  
    - Run the maven build again  to re-build the War file

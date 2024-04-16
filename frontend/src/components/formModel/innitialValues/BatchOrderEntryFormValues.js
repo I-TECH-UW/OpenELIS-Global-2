@@ -1,6 +1,6 @@
 const BatchOrderEntryFormValues = {
-  currentDate: null,
-  currentTime: null,
+  currentDate: "",
+  currentTime: "",
   sampleTypeSelect: "",
   panels: [
     {
@@ -10,24 +10,25 @@ const BatchOrderEntryFormValues = {
       panelOrder: 0,
     },
   ],
-  testSectionList: "",
-
+  testSectionList: [],
+  tests: [],
   _ProjectDataVL: {
     dryTubeTaken: "",
     edtaTubeTaken: "",
     dbsTaken: "",
-    viralLoadTest: ""
+    viralLoadTest: "",
   },
   _ProjectDataEID: {
     dryTubeTaken: "",
     dbsTaken: "",
-    dnaPCR: ""
+    dnaPCR: "",
   },
 
   method: "",
-  facilityIDCheck:false,
+  facilityIDCheck: false,
   facilityID: "",
   patientInfoCheck: false,
+  sampleXML: "",
   patientProperties: {
     currentDate: "",
     patientLastUpdated: "",
@@ -54,7 +55,7 @@ const BatchOrderEntryFormValues = {
     referringSiteId: "",
     referringSiteDepartmentId: "",
     referringSiteName: "",
-
+    referringSiteDepartmentName: "",
   },
 };
 

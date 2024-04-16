@@ -196,6 +196,8 @@ abstract public class CSVColumnBuilder {
                 projectTag = "VLS";
             } else if (project.getNameKey().contains("Recency")) {
                 projectTag = "RTRI";
+            } else if (project.getNameKey().contains("HPV")) {
+                projectTag = "HPV";
             } else  {
                 // otherwise we use the letters from the Sample ID prefix, which
                 // at some locations for some projects is undefined.
@@ -323,7 +325,7 @@ abstract public class CSVColumnBuilder {
         return result;
     }
 
-    private String prepareColumnName(String columnName) {
+    protected String prepareColumnName(String columnName) {
         // trim and escape the column name so it is more safe from sql injection
         if (!columnName.matches("(?i)[a-zàâçéèêëîïôûùüÿñæœ0-9_ ()%/\\[\\]+\\-]+")) {
             LogEvent.logWarn(this.getClass().getSimpleName(), "prepareColumnName",
@@ -568,7 +570,7 @@ abstract public class CSVColumnBuilder {
      * @param lowDatePostgres
      * @param highDatePostgres
      */
-    protected void appendResultCrosstab(Date lowDate, Date highDate) {
+    protected void appendResultCrosstab(Date lowDate, Date highDate, String byDate) {
         // A list of analytes which should not show up in the regular results,
         // because they are not the primary results, but, for example, is a
         // conclusion.
@@ -580,8 +582,8 @@ abstract public class CSVColumnBuilder {
         // Begin cross tab / pivot table
         query.append(" crosstab( " + "\n 'SELECT si.id, t.description, r.value "
                 + "\n FROM clinlims.result AS r, clinlims.analysis AS a, clinlims.sample_item AS si, clinlims.sample AS s, clinlims.test AS t, clinlims.test_result AS tr "
-                + "\n WHERE " + "\n s.id = si.samp_id" + " AND s.collection_date >= date(''"
-                + formatDateForDatabaseSql(lowDate) + "'')  AND s.collection_date <= date(''"
+                + "\n WHERE " + "\n s.id = si.samp_id" + " AND "+ byDate +" >= date(''"
+                + formatDateForDatabaseSql(lowDate) + "'')  AND "+ byDate +" <= date(''"
                 + formatDateForDatabaseSql(highDate) + " '') " + "\n AND s.id = si.samp_id "
                 + "\n AND si.id = a.sampitem_id "
                 // sql injection safe as user cannot overwrite validStatusId in database
@@ -625,7 +627,7 @@ abstract public class CSVColumnBuilder {
      * sb.toString(); }
      */
 
-    protected void appendObservationHistoryCrosstab(Date lowDate, Date highDate) {
+    protected void appendObservationHistoryCrosstab( Date lowDate, Date highDate, String byDate) {
         SQLConstant listName = SQLConstant.DEMO;
         appendCrosstabPreamble(listName);
         query.append( // any Observation History items

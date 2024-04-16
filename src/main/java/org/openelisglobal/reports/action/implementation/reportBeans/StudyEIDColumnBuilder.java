@@ -22,6 +22,7 @@ import static org.openelisglobal.reports.action.implementation.reportBeans.CSVCo
 import static org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.NONE;
 import static org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.TEST_RESULT;
 
+import org.jfree.ui.DateCellRenderer;
 import org.openelisglobal.reports.action.implementation.Report.DateRange;
 import org.openelisglobal.reports.form.ReportForm.DateType;
 import org.openelisglobal.spring.util.SpringContext;
@@ -88,6 +89,20 @@ public class StudyEIDColumnBuilder extends CIStudyColumnBuilder {
      *         for the particular project.
      */
     public void makeSQL_original() {// without analysis completed date ......
+        // Switch date column according to selected DateType: PK
+        String dateColumn = "s.entered_date ";
+        switch (dateType) {
+        case ORDER_DATE:
+            dateColumn = "s.entered_date ";
+            break;
+        case RESULT_DATE:
+            dateColumn = "a.released_date ";
+            break;
+        case PRINT_DATE:
+            dateColumn = "dt.report_generation_time ";
+        default:
+            break;
+        }
         query = new StringBuilder();
         query.append(SELECT_SAMPLE_PATIENT_ORGANIZATION);
         // all crosstab generated tables need to be listed in the SELECT column list and
@@ -99,13 +114,13 @@ public class StudyEIDColumnBuilder extends CIStudyColumnBuilder {
         query.append(FROM_SAMPLE_PATIENT_ORGANIZATION);
 
         // all observation history from expressions
-        appendObservationHistoryCrosstab(dateRange.getLowDate(), dateRange.getHighDate());
-        appendResultCrosstab(dateRange.getLowDate(), dateRange.getHighDate());
+        appendObservationHistoryCrosstab(dateRange.getLowDate(), dateRange.getHighDate(),dateColumn);
+        appendResultCrosstab(dateRange.getLowDate(), dateRange.getHighDate(),dateColumn);
 
         // and finally the join that puts these all together. Each cross table should be
         // listed here otherwise it's not in the result and you'll get a full join
         query.append(buildWhereSamplePatienOrgSQL(postgresDateFormat.format(dateRange.getLowDate()),
-                postgresDateFormat.format(dateRange.getHighDate()))
+                postgresDateFormat.format(dateRange.getHighDate()), dateColumn)
                 // insert joining of any other crosstab here.
                 // insert joining of any other crosstab here.
                 + "\n AND s.id = demo.samp_id " + "\n AND s.id = result.samp_id " + "\n ORDER BY s.accession_number ");
@@ -158,7 +173,7 @@ public class StudyEIDColumnBuilder extends CIStudyColumnBuilder {
          */
 
         // all observation history values
-        appendObservationHistoryCrosstab(dateRange.getLowDate(), dateRange.getHighDate());
+        appendObservationHistoryCrosstab(dateRange.getLowDate(), dateRange.getHighDate(),dateColumn);
         // current ARV treatments
         // appendRepeatingObservation("currentARVTreatmentINNs", 4, lowDatePostgres,
         // highDatePostgres);

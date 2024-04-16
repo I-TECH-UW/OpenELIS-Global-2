@@ -69,7 +69,7 @@ export default function App() {
           console.debug(JSON.stringify(jsonResp));
           if (jsonResp.authenticated) {
             localStorage.setItem("CSRF", jsonResp.csrf);
-          } 
+          }
           if (
             !Object.keys(jsonResp).every(
               (key) => jsonResp[key] === userSessionDetails[key],

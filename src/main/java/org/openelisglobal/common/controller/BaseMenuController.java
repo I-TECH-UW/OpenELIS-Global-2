@@ -68,7 +68,6 @@ public abstract class BaseMenuController<T> extends BaseController {
     }
 
     protected List<T> doNextPage(AdminOptionMenuForm<T> form, HttpServletRequest request) {
-        System.out.println(request.getContextPath());
         int startingRecNo = getCurrentStartingRecNo(request);
 
         LogEvent.logTrace("BaseMenuAction", "performAction()", "current start " + startingRecNo);

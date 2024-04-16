@@ -136,11 +136,11 @@ public class ReportImplementationFactory {
                 return new ExportStudyProjectByDate();
             } else if (report.equals("TBOrderExport")) {
                 return new ExportTBOrdersByDate();
+            } else if (report.equals("TBOrderReport")) {
+               return new TBOrderReport();
             } else if (report.equals("Trends")) {
                 return new ExportTrendsByDate();
-            }
-
-            else if (report.equals("covidResultsReport")) {
+            } else if (report.equals("covidResultsReport")) {
                 return new CovidResultsReport();
             } else if (report.equals("statisticsReport")) {
                 return new StatisticsReport();
