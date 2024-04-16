@@ -300,7 +300,7 @@
   "patient.label.name": "Nom",
   "patient.label.sex": "Sexe",
   "patient.label.age": "Âge",
-  "patient.label.nopatientid": "Identifiant du Patient N'existe Pas",
+  "patient.label.nopatientid": "Aucune information sur le patient disponible",
   "sample.label.orderdate": "Date de Commande",
   "sample.label.labnumber": "Numéro de Laboratoire",
   "sample.label.labnumber.generate": "Générer",
