@@ -789,7 +789,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         if (FWD_SUCCESS_INSERT.equals(forward)) {
             return "redirect:/PatientResults";
         } else if (FWD_SUCCESS.equals(forward)) {
-            return "patientResultDefinition;
+            return "patientResultDefinition";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {
             return "patientResultDefinition";
         } else if (FWD_FAIL_INSERT.equals(forward)) {
