@@ -445,25 +445,32 @@ const AddOrder = (props) => {
     <>
       <Stack gap={10}>
         <div className="orderLegendBody">
-          <h3>
-            <FormattedMessage id="order.title" />
-          </h3>
-          {configurationProperties.ACCEPT_EXTERNAL_ORDERS === "true" && (
-            <input
-              type="hidden"
-              name="externalOrderNumber"
-              id="externalOrderNumber"
-              value={orderFormValues.sampleOrderItems.externalOrderNumber}
-            />
-          )}
-          {isModifyOrder && (
-            <h5>
-              {" "}
-              <FormattedMessage id="sample.label.labnumber" />:{" "}
-              {orderFormValues.accessionNumber}
-            </h5>
-          )}
           <Grid>
+            <Column lg={16} sm={4}>
+              <h3>
+                <FormattedMessage id="order.title" />
+              </h3>
+            </Column>
+            {configurationProperties.ACCEPT_EXTERNAL_ORDERS === "true" && (
+              <Column lg={16} sm={4}>
+                <input
+                  type="hidden"
+                  name="externalOrderNumber"
+                  id="externalOrderNumber"
+                  value={orderFormValues.sampleOrderItems.externalOrderNumber}
+                />
+              </Column>
+            )}
+            {isModifyOrder && (
+              <Column lg={16} sm={4}>
+                <h5>
+                  {" "}
+                  <FormattedMessage id="sample.label.labnumber" />:{" "}
+                  {orderFormValues.accessionNumber}
+                </h5>
+              </Column>
+            )}
+
             <Column lg={8} sm={4}>
               <div>
                 <CustomLabNumberInput

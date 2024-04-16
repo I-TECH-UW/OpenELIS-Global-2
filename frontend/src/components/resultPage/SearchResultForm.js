@@ -158,9 +158,8 @@ export function SearchResultForm(props) {
       values.accessionNumber !== ""
         ? values.accessionNumber
         : values.startLabNo;
-    let labNo =
-      accessionNumber !== undefined ? accessionNumber.split("-")[0] : "";
-    const endLabNo = values.endLabNo !== undefined ? values.endLabNo : "";
+    let labNo = accessionNumber ? accessionNumber.split("-")[0] : "";
+    const endLabNo = values.endLabNo ? values.endLabNo : "";
     values.unitType = values.unitType ? values.unitType : "";
 
     let searchEndPoint =
@@ -1077,7 +1076,7 @@ export function SearchResults(props) {
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
                 labelText=""
-                // type="number"
+                //type="number"
                 style={validationState[row.id]?.style}
                 onChange={(e) => {
                   let value = e.target.value;
@@ -1150,14 +1149,14 @@ export function SearchResults(props) {
               <>
                 {
                   row.dictionaryResults.find(
-                    (result) => result.id == row.resultValue,
+                    (result) => result.id == row.shadowResultValue,
                   )?.value
                 }
               </>
             );
 
           default:
-            return row.resultValue;
+            return row.shadowResultValue;
         }
       default:
         return;
@@ -1368,11 +1367,16 @@ export function SearchResults(props) {
     }
 
     if (!isNaN(row.significantDigits)) {
+      const valueStr = actualValue.toString();
+      if (valueStr.includes(".")) {
+        const decimalPlaces = valueStr.split(".")[1].length;
+        if (decimalPlaces > row.significantDigits) {
+          actualValue = parseFloat(actualValue).toFixed(row.significantDigits);
+        }
+      }
       validation = {
         ...validation,
-        newValue:
-          greaterThanOrLessThan +
-          Math.round(actualValue, row.significantDigits),
+        newValue: greaterThanOrLessThan + actualValue,
       };
     }
 

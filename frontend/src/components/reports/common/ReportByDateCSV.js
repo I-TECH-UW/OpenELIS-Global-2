@@ -146,52 +146,60 @@ const ReportByDateCSV = (props) => {
 
   return (
     <>
-      <FormLabel>
-        <Section>
-          <Section>
-            <h1>
-              <FormattedMessage id={props.id} />
-            </h1>
-          </Section>
-        </Section>
-      </FormLabel>
+      <Grid>
+        <Column lg={8}>
+          <FormLabel>
+            <Section>
+              <Section>
+                <h1>
+                  <FormattedMessage id={props.id} />
+                </h1>
+              </Section>
+            </Section>
+          </FormLabel>
+        </Column>
+      </Grid>
       {notificationVisible && <AlertDialog />}
       {loading && <Loading />}
       <Grid fullWidth={true}>
-        <Column lg={10} md={6} sm={4}>
+        <Column lg={16} md={6} sm={4}>
           <Form>
             <Grid fullWidth={true}>
-              <Column lg={16} md={8} sm={4}>
-                <div className="inlineDiv">
-                  <CustomDatePicker
-                    key="startDate"
-                    id={"startDate"}
-                    labelText={intl.formatMessage({
-                      id: "eorder.date.start",
-                      defaultMessage: "Start Date",
-                    })}
-                    disallowFutureDate={true}
-                    autofillDate={true}
-                    value={reportFormValues.startDate}
-                    onChange={(date) =>
-                      handleDatePickerChangeDate("startDate", date)
-                    }
-                  />
-                  <CustomDatePicker
-                    key="endDate"
-                    id={"endDate"}
-                    labelText={intl.formatMessage({
-                      id: "eorder.date.end",
-                      defaultMessage: "End Date",
-                    })}
-                    disallowFutureDate={true}
-                    autofillDate={true}
-                    value={reportFormValues.endDate}
-                    onChange={(date) =>
-                      handleDatePickerChangeDate("endDate", date)
-                    }
-                  />
-                </div>
+              <Column lg={4} md={8} sm={4}>
+                <CustomDatePicker
+                  key="startDate"
+                  id={"startDate"}
+                  labelText={intl.formatMessage({
+                    id: "eorder.date.start",
+                    defaultMessage: "Start Date",
+                  })}
+                  disallowFutureDate={true}
+                  autofillDate={true}
+                  value={reportFormValues.startDate}
+                  onChange={(date) =>
+                    handleDatePickerChangeDate("startDate", date)
+                  }
+                />
+              </Column>
+              <Column lg={4} md={8} sm={4}>
+                <CustomDatePicker
+                  key="endDate"
+                  id={"endDate"}
+                  labelText={intl.formatMessage({
+                    id: "eorder.date.end",
+                    defaultMessage: "End Date",
+                  })}
+                  disallowFutureDate={true}
+                  autofillDate={true}
+                  value={reportFormValues.endDate}
+                  onChange={(date) =>
+                    handleDatePickerChangeDate("endDate", date)
+                  }
+                />
+              </Column>
+              <Column lg={16}>
+                {" "}
+                <br />
               </Column>
               <Column lg={8} md={6} sm={4}>
                 <Select
@@ -217,6 +225,12 @@ const ReportByDateCSV = (props) => {
                     />
                   ))}
                 </Select>
+              </Column>
+              <Column lg={16}>
+                {" "}
+                <br />
+              </Column>
+              <Column lg={8}>
                 {props.report === "CIStudyExport" ? (
                   <Select
                     id="dateType"

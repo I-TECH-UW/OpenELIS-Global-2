@@ -267,14 +267,17 @@ const ModifyOrder = () => {
                   onChange={(e) => handleTabClickHandler(e)}
                 >
                   <ProgressStep
+                    disabled={orderFormValues.sampleOrderItems.labNo == ""}
                     label={intl.formatMessage({
                       id: "order.step.program.selection",
                     })}
                   />
                   <ProgressStep
+                    disabled={orderFormValues.sampleOrderItems.labNo == ""}
                     label={intl.formatMessage({ id: "sample.add.action" })}
                   />
                   <ProgressStep
+                    disabled={orderFormValues.sampleOrderItems.labNo == ""}
                     label={intl.formatMessage({ id: "order.label.add" })}
                   />
                 </ProgressIndicator>

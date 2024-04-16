@@ -11,7 +11,7 @@ module.exports = defineConfig({
         "cypress/e2e/patientEntry.cy.js",
         "cypress/e2e/orderEntity.cy.js",
         "cypress/e2e/workplan.cy.js",
-        "cypress/e2e/modifyOrder.cy.js"  
+        "cypress/e2e/modifyOrder.cy.js",
       ];
       return config;
     },
