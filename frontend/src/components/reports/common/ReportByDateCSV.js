@@ -194,55 +194,55 @@ const ReportByDateCSV = (props) => {
                 </div>
               </Column>
               <Column lg={8} md={6} sm={4}>
+                <Select
+                  id="studyType"
+                  labelText={intl.formatMessage({
+                    id: "report.select.studttype",
+                  })}
+                  value={reportFormValues.studyType}
+                  onChange={(e) => {
+                    setReportFormValues({
+                      ...reportFormValues,
+                      studyType: e.target.value,
+                    });
+                  }}
+                >
+                  <SelectItem value="" text="Select Study Type" />
+
+                  {statusOptions.map((statusOption) => (
+                    <SelectItem
+                      key={statusOption.id}
+                      value={statusOption.id}
+                      text={statusOption.value}
+                    />
+                  ))}
+                </Select>
+                {props.report === "CIStudyExport" ? (
                   <Select
-                    id="studyType"
+                    id="dateType"
                     labelText={intl.formatMessage({
-                      id: "report.select.studttype",
+                      id: "report.label.site.dateType",
                     })}
-                    value={reportFormValues.studyType}
+                    value={reportFormValues.dateType}
                     onChange={(e) => {
                       setReportFormValues({
                         ...reportFormValues,
-                        studyType: e.target.value,
+                        dateType: e.target.value,
                       });
                     }}
                   >
-                    <SelectItem value="" text="Select Study Type" />
-
-                    {statusOptions.map((statusOption) => (
+                    <SelectItem value="" text="Select Date Type" />
+                    {dateOptions.map((dateOption) => (
                       <SelectItem
-                        key={statusOption.id}
-                        value={statusOption.id}
-                        text={statusOption.value}
+                        key={dateOption.value}
+                        value={dateOption.value}
+                        text={dateOption.text}
                       />
                     ))}
                   </Select>
-                  {props.report === "CIStudyExport" ? (
-                    <Select
-                      id="dateType"
-                      labelText={intl.formatMessage({
-                        id: "report.label.site.dateType",
-                      })}
-                      value={reportFormValues.dateType}
-                      onChange={(e) => {
-                        setReportFormValues({
-                          ...reportFormValues,
-                          dateType: e.target.value,
-                        });
-                      }}
-                    >
-                      <SelectItem value="" text="Select Date Type" />
-                      {dateOptions.map((dateOption) => (
-                        <SelectItem
-                          key={dateOption.value}
-                          value={dateOption.value}
-                          text={dateOption.text}
-                        />
-                      ))}
-                    </Select>
-                  ) : (
-                    <div></div>
-                  )}
+                ) : (
+                  <div></div>
+                )}
               </Column>
             </Grid>
             <br />
