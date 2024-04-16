@@ -376,97 +376,96 @@ function SearchPatientForm(props) {
           </Grid>
         )}
       </Column>
-      <div>
-        <Column lg={16}>
-          <DataTable
-            rows={patientSearchResults}
-            headers={patientSearchHeaderData}
-            isSortable
-          >
-            {({ rows, headers, getHeaderProps, getTableProps }) => (
-              <TableContainer title="Patient Results">
-                <Table {...getTableProps()}>
-                  <TableHead>
-                    <TableRow>
-                      <TableHeader></TableHeader>
-                      {headers.map((header) => (
-                        <TableHeader
-                          key={header.key}
-                          {...getHeaderProps({ header })}
-                        >
-                          {header.header}
-                        </TableHeader>
+
+      <Column lg={16}>
+        <DataTable
+          rows={patientSearchResults}
+          headers={patientSearchHeaderData}
+          isSortable
+        >
+          {({ rows, headers, getHeaderProps, getTableProps }) => (
+            <TableContainer title="Patient Results">
+              <Table {...getTableProps()}>
+                <TableHead>
+                  <TableRow>
+                    <TableHeader></TableHeader>
+                    {headers.map((header) => (
+                      <TableHeader
+                        key={header.key}
+                        {...getHeaderProps({ header })}
+                      >
+                        {header.header}
+                      </TableHeader>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <>
+                    {rows
+                      .slice((page - 1) * pageSize)
+                      .slice(0, pageSize)
+                      .map((row) => (
+                        <TableRow key={row.id}>
+                          <TableCell>
+                            {" "}
+                            <RadioButton
+                              name="radio-group"
+                              onClick={patientSelected}
+                              labelText=""
+                              id={row.id}
+                            />
+                          </TableCell>
+                          {row.cells.map((cell) => (
+                            <TableCell key={cell.id}>{cell.value}</TableCell>
+                          ))}
+                        </TableRow>
                       ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <>
-                      {rows
-                        .slice((page - 1) * pageSize)
-                        .slice(0, pageSize)
-                        .map((row) => (
-                          <TableRow key={row.id}>
-                            <TableCell>
-                              {" "}
-                              <RadioButton
-                                name="radio-group"
-                                onClick={patientSelected}
-                                labelText=""
-                                id={row.id}
-                              />
-                            </TableCell>
-                            {row.cells.map((cell) => (
-                              <TableCell key={cell.id}>{cell.value}</TableCell>
-                            ))}
-                          </TableRow>
-                        ))}
-                    </>
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            )}
-          </DataTable>
-          <Pagination
-            onChange={handlePageChange}
-            page={page}
-            pageSize={pageSize}
-            pageSizes={[5, 10, 20, 30]}
-            totalItems={patientSearchResults.length}
-            forwardText={intl.formatMessage({ id: "pagination.forward" })}
-            backwardText={intl.formatMessage({ id: "pagination.backward" })}
-            itemRangeText={(min, max, total) =>
-              intl.formatMessage(
-                { id: "pagination.item-range" },
-                { min: min, max: max, total: total },
-              )
-            }
-            itemsPerPageText={intl.formatMessage({
-              id: "pagination.items-per-page",
-            })}
-            itemText={(min, max) =>
-              intl.formatMessage(
-                { id: "pagination.item" },
-                { min: min, max: max },
-              )
-            }
-            pageNumberText={intl.formatMessage({
-              id: "pagination.page-number",
-            })}
-            pageRangeText={(_current, total) =>
-              intl.formatMessage(
-                { id: "pagination.page-range" },
-                { total: total },
-              )
-            }
-            pageText={(page, pagesUnknown) =>
-              intl.formatMessage(
-                { id: "pagination.page" },
-                { page: pagesUnknown ? "" : page },
-              )
-            }
-          />
-        </Column>
-      </div>
+                  </>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </DataTable>
+        <Pagination
+          onChange={handlePageChange}
+          page={page}
+          pageSize={pageSize}
+          pageSizes={[5, 10, 20, 30]}
+          totalItems={patientSearchResults.length}
+          forwardText={intl.formatMessage({ id: "pagination.forward" })}
+          backwardText={intl.formatMessage({ id: "pagination.backward" })}
+          itemRangeText={(min, max, total) =>
+            intl.formatMessage(
+              { id: "pagination.item-range" },
+              { min: min, max: max, total: total },
+            )
+          }
+          itemsPerPageText={intl.formatMessage({
+            id: "pagination.items-per-page",
+          })}
+          itemText={(min, max) =>
+            intl.formatMessage(
+              { id: "pagination.item" },
+              { min: min, max: max },
+            )
+          }
+          pageNumberText={intl.formatMessage({
+            id: "pagination.page-number",
+          })}
+          pageRangeText={(_current, total) =>
+            intl.formatMessage(
+              { id: "pagination.page-range" },
+              { total: total },
+            )
+          }
+          pageText={(page, pagesUnknown) =>
+            intl.formatMessage(
+              { id: "pagination.page" },
+              { page: pagesUnknown ? "" : page },
+            )
+          }
+        />
+      </Column>
     </>
   );
 }

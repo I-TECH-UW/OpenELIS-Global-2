@@ -569,7 +569,7 @@ function CreatePatientForm(props) {
                 {" "}
                 <br></br>
               </Column>
-              <Column lg={2}>
+              <Column lg={4}>
                 <Field name="birthDateForDisplay">
                   {({ field }) => (
                     <DatePicker

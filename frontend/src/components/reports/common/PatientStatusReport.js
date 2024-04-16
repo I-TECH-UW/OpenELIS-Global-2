@@ -228,7 +228,9 @@ function PatientStatusReport(props) {
                 </Grid>
                 <Accordion>
                   <AccordionItem
-                    title={intl.formatMessage({ id: "report.labe.byLabNumber" })}
+                    title={intl.formatMessage({
+                      id: "report.labe.byLabNumber",
+                    })}
                   >
                     <Grid>
                       <Column lg={16}>
