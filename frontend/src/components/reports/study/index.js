@@ -15,6 +15,7 @@ import PatientStatusReport from "../common/PatientStatusReport";
 import ReportByID from "../common/ReportByID";
 import ReportByDate from "../common/ReportByDate";
 import ReportByLabNo from "../common/ReportByLabNo";
+import NonConformityNotification from "./NonConformityNotification";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
 import ReportByDateCSV from "../common/ReportByDateCSV";
@@ -36,6 +37,8 @@ const StudyIndex = () => {
     patient_retroCInonConformityBySectionReason:
       "reports.nonConformity.bySectionReason.title",
     patient_retroCINonConformityByLabno: "header.label.intialFollowup",
+    patient_retroCInonConformityNotification:
+      "reports.nonConformity.notification.report",
     patient_retroCIFollowupRequiredByLocation:
       "reports.followupRequired.byLocation",
     patient_patientARVInitial1: "header.label.ARV",
@@ -223,7 +226,13 @@ const StudyIndex = () => {
                 id="header.label.intialFollowup"
               />
             )}
-
+            {type === "patient" &&
+              report === "retroCInonConformityNotification" && (
+                <NonConformityNotification
+                  report="retroCInonConformityNotification"
+                  id="reports.nonConformity.notification.report"
+                />
+              )}
             {type === "patient" &&
               report === "retroCIFollowupRequiredByLocation" && (
                 <ReportByDate
