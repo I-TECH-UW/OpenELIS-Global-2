@@ -108,6 +108,15 @@ public class StudyElectronicOrdersController extends BaseController {
   			@ModelAttribute("form") @Valid ElectronicOrderViewForm form, BindingResult result) {
   		try {
         ServiceRequest serviceRequest = null;
+			
+            String externalOrderNumber = request.getParameter("externalOrderId");
+  			    String qaEventId = request.getParameter("qaEventId");
+    			  String qaAuthorizer = request.getParameter("qaAuthorizer");
+    			  String qaNote = request.getParameter("qaNote");
+  		  	  String searchType = request.getParameter("searchType");
+  		  	  String startDate = request.getParameter("startDate");
+  		  	  String endDate = request.getParameter("endDate");
+  		  	  String statusId = request.getParameter("statusId");
   
   			if (StringUtils.isNotBlank(externalOrderNumber)) {
   				ElectronicOrder eOrder = null;
