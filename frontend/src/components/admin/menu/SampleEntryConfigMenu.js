@@ -46,9 +46,14 @@ function SampleEntryConfigMenu() {
   const componentMounted = useRef(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
+  const [modifyButton, setModifyButton] = useState(true);
   const [selectedRowId, setSelectedRowId] = useState(null);
-  const [startingRecNo, setStartingRecNo] = useState("");
-  // const [menuItem, setMenuItem] = useState({ menu: {}, childMenus: [] });
+  const [startingRecNo, setStartingRecNo] = useState(1);
+  const [sampleEntryConfigMenuList, setSampleEntryConfigMenuList] = useState(
+    [],
+  );
+  const [orderEntryConfigurationList, setOrderEntryConfigurationList] =
+    useState([]);
 
   // async function displayStatus(res) {
   //   setNotificationVisible(true);
@@ -94,64 +99,33 @@ function SampleEntryConfigMenu() {
     setPageSize(pageSize);
   };
 
-  // const handleMenuItems = (res) => {
-  //   if (res) {
-  //     setMenuItem(res);
-  //   }
-  // };
+  const handleMenuItems = (res) => {
+    if (res) {
+      setSampleEntryConfigMenuList(res);
+    }
+  };
 
   useEffect(() => {
     componentMounted.current = true;
-    // getFromOpenElisServer("/rest/menu/menu_patient", handleMenuItems);
-    // return () => {
-    //   componentMounted.current = false;
-    // };
+    getFromOpenElisServer("/rest/SampleEntryConfigMenu", handleMenuItems);
+    return () => {
+      componentMounted.current = false;
+    };
   }, []);
 
-  const orderEntryConfigurationList = [
-    {
-      id: "1",
-      startingRecNo: "01",
-      name: "name01",
-      description: "descrption01",
-      value: "true",
-    },
-    {
-      id: "2",
-      startingRecNo: "02",
-      name: "name02",
-      description: "descrption02",
-      value: "true",
-    },
-    {
-      id: "3",
-      startingRecNo: "03",
-      name: "name03",
-      description: "descrption03",
-      value: "true",
-    },
-    {
-      id: "4",
-      startingRecNo: "04",
-      name: "name04",
-      description: "descrption01",
-      value: "true",
-    },
-    {
-      id: "5",
-      startingRecNo: "05",
-      name: "name05",
-      description: "descrption02",
-      value: "true",
-    },
-    {
-      id: "6",
-      startingRecNo: "06",
-      name: "name06",
-      description: "descrption03",
-      value: "true",
-    },
-  ];
+  useEffect(() => {
+    if (sampleEntryConfigMenuList && sampleEntryConfigMenuList.menuList) {
+      const newConfigList = sampleEntryConfigMenuList.menuList.map((item) => ({
+        id: item.id,
+        startingRecNo: startingRecNo,
+        name: item.name,
+        description: item.description,
+        value: item.value,
+        valueType: item.valueType,
+      }));
+      setOrderEntryConfigurationList(newConfigList);
+    }
+  }, [sampleEntryConfigMenuList]);
 
   const renderCell = (cell, row) => {
     if (cell.info.header === "select") {
@@ -164,10 +138,11 @@ function SampleEntryConfigMenu() {
           name="selectRowRadio"
           ariaLabel="selectRow"
           onSelect={() => {
-            setSelectedRowId(row.id),
-              setStartingRecNo(
-                orderEntryConfigurationList[row.id - 1].startingRecNo,
-              );
+            setModifyButton(false);
+            setSelectedRowId(row.id);
+            // setStartingRecNo(
+            //   orderEntryConfigurationList[row.id - 1].startingRecNo,
+            // );
           }}
         />
       );
@@ -192,7 +167,7 @@ function SampleEntryConfigMenu() {
             <Section>
               <Form onSubmit={handleModify}>
                 <div style={{ margin: "1rem", display: "flex", gap: "1rem" }}>
-                  <Button type="submit">
+                  <Button disabled={modifyButton} type="submit">
                     <FormattedMessage id="admin.page.configuration.sampleEntryConfigMenu.button.modify" />
                   </Button>
                   <Button kind="tertiary" disabled={true} type="submit">
