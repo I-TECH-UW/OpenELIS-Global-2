@@ -800,5 +800,9 @@
   "error.invalid.email": "Email invalide",
   "activityReportByTest": "Activity report By test",
   "activityReportByPanel": "Activity report By Panel",
-  "activityReportByTestSection": "Activity report By Test Section"
+  "activityReportByTestSection": "Activity report By Test Section" ,
+  "report.labe.byPatient" : "Rapport par Patient",
+  "report.labe.byLabNumber" : "Rapport par Numéro de Laboratoire",
+  "report.labe.site" : "Rapport par Site",
+  "report.labe.date" : "Rapport par Date"
 }
