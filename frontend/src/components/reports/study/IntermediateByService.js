@@ -87,14 +87,18 @@ const IntermediateByService = (props) => {
   return (
     <>
       <Form onSubmit={handleSubmit}>
-        <Section>
-          <h3>
-            <FormattedMessage id={props.id} />
-          </h3>
-        </Section>
+        <Grid>
+          <Column lg={16}>
+            <Section>
+              <h3>
+                <FormattedMessage id={props.id} />
+              </h3>
+            </Section>
+          </Column>
+        </Grid>
         <br />
         <Grid fullWidth={true}>
-          <Column lg={3} md={2} sm={1}>
+          <Column lg={4} md={2} sm={1}>
             <CustomDatePicker
               key="startDate"
               id={"startDate"}
@@ -105,11 +109,10 @@ const IntermediateByService = (props) => {
               disallowFutureDate={true}
               autofillDate={true}
               value={reportFormValues.startDate}
-              className="inputDate"
               onChange={(date) => handleDatePickerChangeDate("startDate", date)}
             />
           </Column>
-          <Column lg={3} md={2} sm={1}>
+          <Column lg={4} md={2} sm={1}>
             <CustomDatePicker
               key="endDate"
               id={"endDate"}
@@ -118,7 +121,6 @@ const IntermediateByService = (props) => {
                 defaultMessage: "End Date",
               })}
               disallowFutureDate={true}
-              className="inputDate"
               autofillDate={true}
               value={reportFormValues.endDate}
               onChange={(date) => handleDatePickerChangeDate("endDate", date)}

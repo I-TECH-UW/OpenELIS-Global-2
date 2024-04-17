@@ -120,7 +120,7 @@ const ReferredOut = () => {
                   </h5>
                 </Section>
               </Column>
-              <Column lg={8} md={8} sm={4}>
+              <Column lg={4} md={8} sm={4}>
                 <CustomDatePicker
                   id={"startDate"}
                   labelText={intl.formatMessage({
@@ -134,7 +134,7 @@ const ReferredOut = () => {
                   }
                 />
               </Column>
-              <Column lg={8} md={8} sm={4}>
+              <Column lg={4} md={8} sm={4}>
                 <CustomDatePicker
                   id={"endDate"}
                   labelText={intl.formatMessage({
