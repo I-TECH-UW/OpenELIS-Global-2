@@ -19,6 +19,7 @@ import NonConformityNotification from "./NonConformityNotification";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
 import ReportByDateCSV from "../common/ReportByDateCSV";
+import IntermediateByService from "./IntermediateByService";
 
 const StudyIndex = () => {
   const intl = useIntl();
@@ -51,6 +52,7 @@ const StudyIndex = () => {
     patient_patientVL1: "banner.menu.resultvalidation.viralload",
     patient_patientIndeterminate1: "project.IndeterminateStudy.name",
     patient_patientIndeterminate2: "project.IndeterminateStudy.name",
+    patient_patientIndeterminateByLocation: "project.IndeterminateStudy.name",
     patient_patientSpecialReport: "header.label.specialRequest",
     study_auditTrail: "reports.auditTrail",
     patient_CIStudyExport: "reports.label.cistudyexport",
@@ -185,6 +187,14 @@ const StudyIndex = () => {
                 id="project.IndeterminateStudy.name"
               />
             )}
+
+            {type === "patient" &&
+              report === "patientIndeterminateByLocation" && (
+                <IntermediateByService
+                  report="patientIndeterminateByLocation"
+                  id="project.IndeterminateStudy.name"
+                />
+              )}
 
             {type === "patient" && report === "patientSpecialReport" && (
               <ReportByLabNo

@@ -12,6 +12,7 @@ const NonConformityNotification = (props) => {
   const componentMounted = useRef(false);
   const [accessionNumber, setAccessionNumber] = useState("");
   const [siteNames, setSiteNames] = useState([]);
+  const [selectedSiteId, setSelectedSiteId] = useState("");
   const [selectedSiteName, setSelectedSiteName] = useState("");
 
   function handleSiteName(e) {
@@ -19,9 +20,7 @@ const NonConformityNotification = (props) => {
   }
 
   function handleAutoCompleteSiteName(siteId) {
-    setSelectedSiteName(
-      siteNames.find((site) => site.id === siteId)?.value || "",
-    );
+    setSelectedSiteId(siteId);
   }
 
   const getSiteList = (response) => {
@@ -43,7 +42,7 @@ const NonConformityNotification = (props) => {
 
     const baseParams = `report=${props.report}&type=patient`;
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
-    const url = `${baseUrl}?${baseParams}&accessionDirect=${accessionNumber}&selectList.selection=${selectedSiteName}`;
+    const url = `${baseUrl}?${baseParams}&accessionDirect=${accessionNumber}&selectList.selection=${selectedSiteId}`;
 
     window.open(url);
   };
@@ -51,11 +50,15 @@ const NonConformityNotification = (props) => {
   return (
     <>
       <Form onSubmit={handleSubmit}>
-        <Section>
-          <h3>
-            <FormattedMessage id={props.id} />
-          </h3>
-        </Section>
+        <Grid>
+          <Column lg={16}>
+            <Section>
+              <h3>
+                <FormattedMessage id={props.id} />
+              </h3>
+            </Section>
+          </Column>
+        </Grid>
         <br />
         <Grid fullWidth={true}>
           <Column lg={16} md={8} sm={4}>

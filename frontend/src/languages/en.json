@@ -324,7 +324,7 @@
   "patient.label.name": "Name",
   "patient.label.sex": "Sex",
   "patient.label.age": "Age",
-  "patient.label.nopatientid": "Patient Id Doest Exist",
+  "patient.label.nopatientid": "No Patient Information Available",
   "sample.label.orderdate": "Oder Date",
   "sample.label.labnumber": "Lab Number",
   "sample.label.labnumber.generate": "Generate",
@@ -881,5 +881,9 @@
   "nonconform.order.save.fail" : "Save failed",
   "activityReportByTest": "Activity report By test",
   "activityReportByPanel": "Activity report By Panel",
-  "activityReportByTestSection": "Activity report By Test Section"
+  "activityReportByTestSection": "Activity report By Test Section",
+  "report.labe.byPatient": "Report By Patient",
+  "report.labe.byLabNumber": "Report By Lab Number",
+  "report.labe.site": "Report By Site",
+  "report.labe.date": "Report By Date"
 }
