@@ -121,77 +121,60 @@ public ResponseEntity<?> getNCESampleSearch(
 }
 
 
-  @GetMapping(
-    value = "/rest/reportnonconformingevent",
-    produces = MediaType.APPLICATION_JSON_VALUE
-  )
-  public ResponseEntity<?> getReportNonConformingEvent(
-    @RequestParam Map<String, String> params,
-    HttpServletRequest request
-  ) {
-    try {
-      Map<String, Object> eventData = new HashMap<>();
-      eventData.put("labOrderNumber", params.get("labOrderNumber"));
-      eventData.put("specimenId", params.get("specimenId"));
-      eventData.put("currentUserId", params.get("currentUserId"));
-      eventData.put("categories", nceCategoryService.getAllNceCategories());
+   @GetMapping(value = "/rest/reportnonconformingevent", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getReportNonConformingEvent(
+            @RequestParam Map<String, String> params,
+            HttpServletRequest request
+    ) {
+        try {
+            NonConformingEventDetails eventData = new NonConformingEventDetails();
+            eventData.setLabOrderNumber(params.get("labOrderNumber"));
+            eventData.setSpecimenId(params.get("specimenId"));
+            eventData.setCurrentUserId(params.get("currentUserId"));
+            eventData.setCategories(nceCategoryService.getAllNceCategories());
 
-      SystemUser systemUser = systemUserService.getUserById(
-        getSysUserId(request)
-      );
-      eventData.put(
-        "name",
-        systemUser.getFirstName() + " " + systemUser.getLastName()
-      );
+            SystemUser systemUser = systemUserService.getUserById(getSysUserId(request));
+            eventData.setName(systemUser.getFirstName() + " " + systemUser.getLastName());
 
-      String ncenumber = String.valueOf(System.currentTimeMillis());
-      NcEvent event = nonConformingEventWorker.create(
-        params.get("labOrderNumber"),
-        Arrays.asList(params.get("specimenId").split(",")),
-        systemUser.getId(),
-        ncenumber
-      );
+            String ncenumber = String.valueOf(System.currentTimeMillis());
+            NcEvent event = nonConformingEventWorker.create(
+                    params.get("labOrderNumber"),
+                    Arrays.asList(params.get("specimenId").split(",")),
+                    systemUser.getId(),
+                    ncenumber
+            );
 
-      eventData.put("nceNumber", event.getNceNumber());
-      eventData.put("id", event.getId());
+            eventData.setNceNumber(event.getNceNumber());
+            eventData.setId(event.getId());
 
-      Sample sample = getSampleForLabNumber(params.get("labOrderNumber"));
-      if (sample != null) {
-        List<SampleItem> sampleItems = new ArrayList<>();
-        String[] sampleItemIdArray = params.get("specimenId").split(",");
-        for (String s : sampleItemIdArray) {
-          SampleItem si = sampleItemService.getData(s);
-          sampleItems.add(si);
+            Sample sample = getSampleForLabNumber(params.get("labOrderNumber"));
+            if (sample != null) {
+                List<SampleItem> sampleItems = new ArrayList<>();
+                String[] sampleItemIdArray = params.get("specimenId").split(",");
+                for (String s : sampleItemIdArray) {
+                    SampleItem si = sampleItemService.getData(s);
+                    sampleItems.add(si);
+                }
+                eventData.setSpecimens(sampleItems);
+            }
+
+            eventData.setCurrentUserId(getSysUserId(request));
+
+            eventData.setReportUnits(DisplayListService.getInstance()
+                    .getList(DisplayListService.ListType.TEST_SECTION_ACTIVE));
+
+            requesterService.setSampleId(sample == null ? null : sample.getId());
+            eventData.setSite(requesterService.getReferringSiteName());
+            eventData.setPrescriberName(requesterService.getRequesterLastFirstName());
+            eventData.setNceCategories(nceCategoryService.getAllNceCategories());
+            eventData.setReportDate(DateUtil.formatDateAsText(Calendar.getInstance().getTime()));
+
+            return ResponseEntity.ok(eventData);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while processing the request.");
         }
-        eventData.put("specimens", sampleItems);
-      }
-
-      eventData.put("currentUserId", getSysUserId(request));
-
-      eventData.put(
-        "reportUnits",
-        DisplayListService.getInstance()
-          .getList(DisplayListService.ListType.TEST_SECTION_ACTIVE)
-      );
-      requesterService.setSampleId(sample == null ? null : sample.getId());
-      eventData.put("site", requesterService.getReferringSiteName());
-      eventData.put(
-        "prescriberName",
-        requesterService.getRequesterLastFirstName()
-      );
-      eventData.put("nceCategories", nceCategoryService.getAllNceCategories());
-      eventData.put(
-        "reportDate",
-        DateUtil.formatDateAsText(Calendar.getInstance().getTime())
-      );
-
-      return ResponseEntity.ok(eventData);
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-        "An error occurred while processing the request."
-      );
     }
-  }
 
   @PostMapping(
     value = "/rest/reportnonconformingevent",

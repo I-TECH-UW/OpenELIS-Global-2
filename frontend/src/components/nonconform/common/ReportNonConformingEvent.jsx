@@ -82,8 +82,8 @@ export const ReportNonConformingEvent = () => {
       getFromOpenElisServer(
         `/rest/nonconformevents?${reportFormValues.type}=${reportFormValues.value}`,
         (data) => {
-          if (data.results) {
-            setLData(data.results);
+          if (data) {
+            setLData(data);
           } else {
             setReportFormValues({
               ...reportFormValues,
