@@ -39,14 +39,13 @@ class ModifyOrderPage {
     return cy.get(".orderEntrySuccessMsg > :nth-child(3) > .cds--btn").click();
   }
   clickSearchPatientButton() {
-    return cy.get(':nth-child(13) > .cds--btn').click({ force: true });
+    return cy.get(":nth-child(13) > .cds--btn").click({ force: true });
   }
-  
 
   clickRespectivePatient() {
     return cy
       .get(
-        ":nth-child(1) > :nth-child(1) > .cds--radio-button-wrapper > .cds--radio-button__label > .cds--radio-button__appearance",
+        "tbody > :nth-child(1) > :nth-child(1) > .cds--radio-button-wrapper > .cds--radio-button__label > .cds--radio-button__appearance",
       )
       .click();
   }
