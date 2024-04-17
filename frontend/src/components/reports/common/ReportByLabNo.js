@@ -20,7 +20,7 @@ function ReportByLabNo(props) {
     e.preventDefault();
 
     const baseParams = `report=${props.report}&type=patient`;
-    const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
+    const baseUrl = `${config.serverBaseUrl}/ApiReportPrint`;
     const url = `${baseUrl}?${baseParams}&accessionDirect=${values.from}&highAccessionDirect=${values.to}`;
 
     window.open(url, "_blank");
