@@ -109,7 +109,7 @@ export const RoutineReportsMenu = {
         {
           link:
             config.serverBaseUrl +
-            "/ReportPrint?type=indicator&report=validationBacklog",
+            "/ApiReportPrint?type=indicator&report=validationBacklog",
           label: <FormattedMessage id="sideNav.label.delayedvalidation" />,
           icon: IbmWatsonNaturalLanguageUnderstanding,
         },

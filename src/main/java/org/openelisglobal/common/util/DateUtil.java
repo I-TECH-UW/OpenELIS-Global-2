@@ -405,7 +405,7 @@ public class DateUtil {
     }
 
     public static String getCurrentAgeForDate(Timestamp birthDate, Timestamp endDate) {
-        if (birthDate != null) {
+        if (birthDate != null && endDate != null) {
             Period period = Period.between(birthDate.toLocalDateTime().toLocalDate(),
                     endDate.toLocalDateTime().toLocalDate());
             return String.valueOf(period.getYears());
@@ -422,6 +422,9 @@ public class DateUtil {
     }
 
     public static int getDaysInPastForDate(Date date) {
+        if(date == null){
+          return 0;
+        }
         long age = new Date().getTime() - date.getTime();
         return (int) Math.floor(age / DAY_IN_MILLSEC);
 

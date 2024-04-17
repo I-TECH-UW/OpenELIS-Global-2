@@ -78,7 +78,7 @@ const IntermediateByService = (props) => {
       return;
     }
     const baseParams = `report=${props.report}&type=patient`;
-    const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
+    const baseUrl = `${config.serverBaseUrl}/ApiReportPrint`;
     const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.endDate}&lowerDateRange=${reportFormValues.startDate}&locationCode=${selectedSiteName}`;
 
     window.open(url);
