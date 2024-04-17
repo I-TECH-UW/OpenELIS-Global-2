@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
+import org.openelisglobal.common.rest.bean.NceSampleInfo;
+import org.openelisglobal.common.rest.bean.NceSampleItemInfo;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.RequesterService;
 import org.openelisglobal.common.util.DateUtil;
@@ -61,61 +63,63 @@ public class NonConformEventsRestController {
     this.requesterService = requesterService;
   }
 
+  
   @GetMapping(
     value = "/rest/nonconformevents",
     produces = MediaType.APPLICATION_JSON_VALUE
-  )
-  public ResponseEntity<?> getNCESampleSearch(
+)
+public ResponseEntity<?> getNCESampleSearch(
     @RequestParam(required = false) String lastName,
     @RequestParam(required = false) String firstName,
     @RequestParam(required = false) String STNumber,
     @RequestParam(required = false) String labNumber
-  ) {
+) {
     try {
-      List<Sample> searchResults;
-      if (labNumber != null) {
-        Sample sample = sampleService.getSampleByAccessionNumber(labNumber);
-        searchResults = sample != null ? List.of(sample) : List.of();
-      } else {
-        List<PatientSearchResults> results =
-          searchResultsService.getSearchResults(
-            lastName,
-            firstName,
-            STNumber,
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
-          );
-        searchResults = results
-          .stream()
-          .flatMap(
-            patientSearchResults ->
-              sampleService
-                .getSamplesForPatient(patientSearchResults.getPatientID())
-                .stream()
-          )
-          .collect(Collectors.toList());
-      }
-
-      if (searchResults.isEmpty()) {
-        return ResponseEntity.notFound().build();
-      } else {
-        List<Map<String, Object>> temp = new ArrayList<>();
-        for (Sample sample : searchResults) {
-          temp.add(addSample(sample));
+        List<Sample> searchResults;
+        if (labNumber != null) {
+            Sample sample = sampleService.getSampleByAccessionNumber(labNumber);
+            searchResults = sample != null ? List.of(sample) : List.of();
+        } else {
+            List<PatientSearchResults> results =
+                    searchResultsService.getSearchResults(
+                            lastName,
+                            firstName,
+                            STNumber,
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            ""
+                    );
+            searchResults = results
+                    .stream()
+                    .flatMap(
+                            patientSearchResults ->
+                                    sampleService
+                                            .getSamplesForPatient(patientSearchResults.getPatientID())
+                                            .stream()
+                    )
+                    .collect(Collectors.toList());
         }
-        return ResponseEntity.ok().body(Map.of("results", temp));
-      }
+
+        if (searchResults.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            List<NceSampleInfo> temp = new ArrayList<>();
+            for (Sample sample : searchResults) {
+                temp.add(addSample(sample));
+            }
+            return ResponseEntity.ok().body(temp);
+        }
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-        "An error occurred while processing the request."
-      );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                "An error occurred while processing the request."
+        );
     }
-  }
+}
+
 
   @GetMapping(
     value = "/rest/reportnonconformingevent",
@@ -210,25 +214,25 @@ public class NonConformEventsRestController {
     }
   }
 
-  private Map<String, Object> addSample(Sample sample) {
-    Map<String, Object> sampleMap = new HashMap<>();
-    sampleMap.put("id", sample.getId());
-    List<Map<String, Object>> sampleItemsList = new ArrayList<>();
-    List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(
-      sample.getId()
-    );
-    sampleMap.put("labOrderNumber", sample.getAccessionNumber());
+  private NceSampleInfo addSample(Sample sample) {
+    NceSampleInfo sampleInfo = new NceSampleInfo();
+    sampleInfo.setId(sample.getId());
+    sampleInfo.setLabOrderNumber(sample.getAccessionNumber());
+
+    List<NceSampleItemInfo> sampleItemsList = new ArrayList<>();
+    List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(sample.getId());
 
     for (SampleItem sampleItem : sampleItems) {
-      Map<String, Object> sampleItemMap = new HashMap<>();
-      sampleItemMap.put("id", sampleItem.getId());
-      sampleItemMap.put("number", sampleItem.getSortOrder());
-      sampleItemMap.put("type", sampleItem.getTypeOfSample().getDescription());
-      sampleItemsList.add(sampleItemMap);
+        NceSampleItemInfo sampleItemInfo = new NceSampleItemInfo();
+        sampleItemInfo.setId(sampleItem.getId());
+        sampleItemInfo.setNumber(sampleItem.getSortOrder());
+        sampleItemInfo.setType(sampleItem.getTypeOfSample().getDescription());
+        sampleItemsList.add(sampleItemInfo);
     }
-    sampleMap.put("sampleItems", sampleItemsList);
-    return sampleMap;
-  }
+
+    sampleInfo.setSampleItems(sampleItemsList);
+    return sampleInfo;
+}
 
   protected String getSysUserId(HttpServletRequest request) {
     UserSessionData usd = (UserSessionData) request
