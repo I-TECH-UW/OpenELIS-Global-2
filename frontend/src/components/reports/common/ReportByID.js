@@ -43,7 +43,7 @@ function ReportByID(props) {
       <br />
       <Form>
         <Grid>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <Section>
               <Section>
                 <h3>

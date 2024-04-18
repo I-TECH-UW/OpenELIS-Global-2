@@ -139,7 +139,7 @@ const ReportByDate = (props) => {
   return (
     <>
       <Grid fullWidth={true}>
-        <Column lg={8}>
+        <Column lg={8} md={8} sm={4}>
           <FormLabel>
             <Section>
               <Section>
