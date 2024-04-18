@@ -678,7 +678,7 @@
   "accessDenied.okButton": "D'ACCORD",
   "notAuthenticated": "Non authentifié",
   "stillThere.title": "Toujours là?",
-  "stillThere.message": "la session utilisateur est sur le point d'expirer",
+  "stillThere.message": "la session utilisateur est sur le point d'expirer. Cliquez pour rester connecté",
   "reflexTests": "Tests de réflexes",
   "calculatedTests": "Calculated Tests",
   "patient.natioanalid": "Carte d'identité",
