@@ -221,6 +221,10 @@ const PrePrint = () => {
               id="orderLabelsPerSet"
             />
           </Column>
+          <Column lg={16} md={8} sm={4}>
+            {" "}
+            <br></br>
+          </Column>
           <Column lg={8} md={8} sm={4}>
             <NumberInput
               min={1}
@@ -277,7 +281,7 @@ const PrePrint = () => {
               <FormattedMessage id="label.button.sample" />
             </h4>
           </Column>
-          <Column lg={16} md={8} sm={4}>
+          <Column lg={8} md={4} sm={4}>
             <Select
               id="selectSampleType"
               labelText="Sample Type"
