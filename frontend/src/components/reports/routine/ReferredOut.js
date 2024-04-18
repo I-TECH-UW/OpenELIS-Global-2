@@ -82,7 +82,7 @@ const ReferredOut = () => {
   const handlePrinting = () => {
     setLoading(true);
     const baseParams = "report=referredOut&type=patient";
-    const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
+    const baseUrl = `${config.serverBaseUrl}/ApiReportPrint`;
     const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.endDate}&lowerDateRange=${reportFormValues.startDate}&locationCode=${selectedLocationCode}`;
 
     const check = window.open(url, "_blank");
@@ -120,7 +120,7 @@ const ReferredOut = () => {
                   </h5>
                 </Section>
               </Column>
-              <Column lg={8} md={8} sm={4}>
+              <Column lg={4} md={8} sm={4}>
                 <CustomDatePicker
                   id={"startDate"}
                   labelText={intl.formatMessage({
@@ -134,7 +134,7 @@ const ReferredOut = () => {
                   }
                 />
               </Column>
-              <Column lg={8} md={8} sm={4}>
+              <Column lg={4} md={8} sm={4}>
                 <CustomDatePicker
                   id={"endDate"}
                   labelText={intl.formatMessage({
