@@ -76,7 +76,8 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
             @ModelAttribute("form") @Valid PatientEntryByProjectForm form, BindingResult result,
             RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        formValidator.validate(form, result);
+
+    	formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);
             return findForward(FWD_FAIL_INSERT, form);
@@ -140,8 +141,7 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
         } else if (FWD_FAIL.equals(forward)) {
             return "homePageDefinition";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            String redirectURL = "/PatientEntryByProject?type="
-                    + Encode.forUriComponent(request.getParameter("type"));
+            String redirectURL = "/PatientEntryByProject?type=" + Encode.forUriComponent(request.getParameter("type"));
             return "redirect:" + redirectURL;
         } else if (FWD_FAIL_INSERT.equals(forward)) {
             return "patientEntryByProjectDefinition";

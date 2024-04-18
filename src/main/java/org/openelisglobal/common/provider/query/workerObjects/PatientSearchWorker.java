@@ -35,7 +35,8 @@ abstract public class PatientSearchWorker {
     protected PatientIdentityService patientIdentityService = SpringContext.getBean(PatientIdentityService.class);
 
     abstract public String createSearchResultXML(String lastName, String firstName, String STNumber,
-            String subjectNumber, String nationalID, String patientID, String guid, String dateOfBirth, String gender, StringBuilder xml);
+            String subjectNumber, String nationalID, String patientID, String guid, String dateOfBirth, String gender,
+            StringBuilder xml);
 
     public void appendSearchResultRow(PatientSearchResults searchResults, StringBuilder xml) {
 

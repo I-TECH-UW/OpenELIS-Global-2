@@ -106,6 +106,8 @@ public interface TestService extends BaseObjectService<Test, String> {
     Test getTestByLocalizedName(String testName, Locale locale);
 
     List<Test> getActiveTestsByName(String testName) throws LIMSRuntimeException;
+    
+    List<Test> getActiveTestsByPanel(String panelName);
 
     Test getActiveTestByLocalizedName(String testName, Locale locale) throws LIMSRuntimeException;
 
@@ -116,6 +118,12 @@ public interface TestService extends BaseObjectService<Test, String> {
     Test getTestByName(String testName);
 
     List<Test> getActiveTestByName(String testName);
+    
+    List<Test> getTbTestByMethod(String method);
+    
+    List<Test> getTbTest();
+    
+    List<Panel> getTbPanelsByMethod(String method);
 
     Optional<Test> getActiveTestByLoincCodeAndSampleType(String loincCode, String sampleTypeId);
 

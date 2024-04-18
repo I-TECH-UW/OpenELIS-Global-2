@@ -1,7 +1,7 @@
 package org.openelisglobal.reportconfiguration.valueholder;
 
 /**
- *  The Category of the report.
+ * The Category of the report.
  */
 public class ReportCategory {
     // ID of the Category

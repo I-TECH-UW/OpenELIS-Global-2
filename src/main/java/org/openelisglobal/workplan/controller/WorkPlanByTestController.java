@@ -14,7 +14,6 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
-import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -68,8 +67,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 
     @RequestMapping(value = "/WorkPlanByTest", method = RequestMethod.GET)
     public ModelAndView showWorkPlanByPanel(HttpServletRequest request,
-            @ModelAttribute("form") @Validated(PrintWorkplan.class) WorkplanForm oldForm,
-            BindingResult result)
+            @ModelAttribute("form") @Validated(PrintWorkplan.class) WorkplanForm oldForm, BindingResult result)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         WorkplanForm form = new WorkplanForm();
 
@@ -89,11 +87,13 @@ public class WorkPlanByTestController extends BaseWorkplanController {
             if (testType.equals("NFS")) {
                 testName = "NFS";
                 workplanTests = getWorkplanForNFSTest(testType);
-                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,Constants.ROLE_RESULTS);
+                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests,
+                        Constants.ROLE_RESULTS);
             } else {
                 testName = getTestName(testType);
                 workplanTests = getWorkplanByTest(testType);
-                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests ,Constants.ROLE_RESULTS);
+                filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests,
+                        Constants.ROLE_RESULTS);
             }
             ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility();
             resultsLoadUtility.sortByAccessionAndSequence(filteredTests);
@@ -121,7 +121,8 @@ public class WorkPlanByTestController extends BaseWorkplanController {
     }
 
     private List<IdValuePair> getTestDropdownList(HttpServletRequest request) {
-        List<IdValuePair> testList = userService.getAllDisplayUserTestsByLabUnit(getSysUserId(request) , Constants.ROLE_RESULTS);
+        List<IdValuePair> testList = userService.getAllDisplayUserTestsByLabUnit(getSysUserId(request),
+                Constants.ROLE_RESULTS);
 
         if (HAS_NFS_PANEL) {
             testList = adjustNFSTests(testList);

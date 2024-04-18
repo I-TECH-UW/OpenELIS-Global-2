@@ -18,12 +18,13 @@
 package org.openelisglobal.test.beanItems;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.Pattern;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
@@ -85,20 +86,20 @@ public class TestResultItem implements ResultItem, Serializable {
      * N.B. test method is the type of test it is (HIV etc). analysisMethod is the
      * way the analysis is done automatic or manual
      */
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class,
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { LogbookResultsForm.LogbookResults.class,
             LogbookResultsForm.LogbookResults.class })
     private String testMethod;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String analysisMethod;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { WorkplanForm.PrintWorkplan.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { WorkplanForm.PrintWorkplan.class })
     private String testName;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResultsForm.LogbookResults.class })
     private String testId;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String testKit1InventoryId;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResultsForm.LogbookResults.class })
@@ -109,12 +110,16 @@ public class TestResultItem implements ResultItem, Serializable {
     private double upperAbnormalRange;
     private double lowerAbnormalRange;
     private String normalRange = "";
+    private double lowerCritical;
+    private double higherCritical;
+    
+    
 
     private int significantDigits = -1;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String shadowResultValue;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String resultValue;
     private String remarks;
 
@@ -123,14 +128,14 @@ public class TestResultItem implements ResultItem, Serializable {
     private boolean reportable;
     private String patientName;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { WorkplanForm.PrintWorkplan.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { WorkplanForm.PrintWorkplan.class })
     private String patientInfo;
     private String nationalId;
     private String unitsOfMeasure = "";
 
 //	private String testSortNumber;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String resultType;
     private ResultDisplayType resultDisplayType = ResultDisplayType.TEXT;
     private boolean isModified = false;
@@ -151,7 +156,7 @@ public class TestResultItem implements ResultItem, Serializable {
     private List<IdValuePair> dictionaryResults;
     private String remove = NO;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String note;
     private String pastNotes;
     private boolean valid = true;
@@ -174,7 +179,7 @@ public class TestResultItem implements ResultItem, Serializable {
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResultsForm.LogbookResults.class })
     private String referralReasonId = "";
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String multiSelectResultValues;
     private String initialSampleCondition;
     private String sampleType;
@@ -187,23 +192,23 @@ public class TestResultItem implements ResultItem, Serializable {
     private boolean displayResultAsLog = false;
     private String qualifiedDictionaryId = null;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String qualifiedResultValue = "";
     private String qualifiedResultId;
     private boolean hasQualifiedResult = false;
     private String nextVisitDate;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String forceTechApproval;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String reflexJSONResult;
     private boolean rejected = false;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResultsForm.LogbookResults.class })
     private String rejectReasonId;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { LogbookResultsForm.LogbookResults.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { LogbookResultsForm.LogbookResults.class })
     private String considerRejectReason;
 
     private boolean refer;
@@ -410,6 +415,22 @@ public class TestResultItem implements ResultItem, Serializable {
         this.lowerAbnormalRange = lowerAbnormalRange;
     }
 
+    public double getLowerCritical() {
+        return lowerCritical;
+    }
+
+    public void setLowerCritical(double lowerCritical) {
+        this.lowerCritical = lowerCritical;
+    }
+
+    public double getHigherCritical() {
+        return higherCritical;
+    }
+
+    public void setHigherCritical(double higherCritical) {
+        this.higherCritical = higherCritical;
+    }
+
     public String getReportable() {
         return reportable ? "Y" : "N";
     }
@@ -502,6 +523,16 @@ public class TestResultItem implements ResultItem, Serializable {
     public void setResultValue(String results) {
         resultValue = results;
         setShadowResultValue(results);
+    }
+    
+    public String getResultValueLog() {
+    	try {
+    		DecimalFormat df = new DecimalFormat("###.##");
+    		double val = Double.parseDouble(this.resultValue);
+    		return df.format(Math.log10(val));
+    	}catch(Exception e) {
+    		return "--";
+    	}
     }
 
     public String getShadowResultValue() {

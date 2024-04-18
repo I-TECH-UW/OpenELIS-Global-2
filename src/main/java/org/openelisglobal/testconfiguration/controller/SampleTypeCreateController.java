@@ -82,7 +82,7 @@ public class SampleTypeCreateController extends BaseController {
 
     @RequestMapping(value = "/SampleTypeCreate", method = RequestMethod.POST)
     public ModelAndView postSampleTypeCreate(HttpServletRequest request,
-            @ModelAttribute("form") @Valid SampleTypeCreateForm form, BindingResult result)  {
+            @ModelAttribute("form") @Valid SampleTypeCreateForm form, BindingResult result) {
         if (result.hasErrors()) {
             saveErrors(result);
             setupDisplayItems(form);

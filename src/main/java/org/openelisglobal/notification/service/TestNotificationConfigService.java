@@ -13,7 +13,8 @@ public interface TestNotificationConfigService extends BaseObjectService<TestNot
     TestNotificationConfig saveTestNotificationConfigActiveStatuses(TestNotificationConfig targetTestNotificationConfig,
             String sysUserId);
 
-    void saveTestNotificationConfigsActiveStatuses(List<TestNotificationConfig> targetTestNotificationConfigs, String sysUserId);
+    void saveTestNotificationConfigsActiveStatuses(List<TestNotificationConfig> targetTestNotificationConfigs,
+            String sysUserId);
 
     void removeEmptyPayloadTemplates(TestNotificationConfig testNotificationConfig, String sysUserId);
 

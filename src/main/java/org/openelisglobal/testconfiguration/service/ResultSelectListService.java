@@ -16,5 +16,5 @@ public interface ResultSelectListService {
 
     Map<String, List<IdValuePair>> getTestSelectDictionary();
 
-    boolean renameOption(ResultSelectListRenameForm form,  String currentUserId);
+    boolean renameOption(ResultSelectListRenameForm form, String currentUserId);
 }

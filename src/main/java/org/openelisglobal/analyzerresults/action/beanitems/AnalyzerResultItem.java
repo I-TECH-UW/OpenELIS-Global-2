@@ -22,10 +22,10 @@ import java.util.List;
 
 import javax.validation.constraints.Pattern;
 
-import org.hibernate.validator.constraints.SafeHtml;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.result.form.AnalyzerResultsForm;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.validation.annotations.ValidDate;
 
 public class AnalyzerResultItem implements Serializable {
@@ -40,10 +40,10 @@ public class AnalyzerResultItem implements Serializable {
     // TODO move all accession number to the same format so they can be validated
     // properly
 //    @ValidAccessionNumber(groups = { AnalyzerResultsForm.AnalyzerResuts.class })
-    @Pattern(regexp = "^[0-9a-zA-Z -]*$", groups = { AnalyzerResultsForm.AnalyzerResuts.class })
+    @Pattern(regexp = "^[0-9a-zA-Z -:]*$", groups = { AnalyzerResultsForm.AnalyzerResuts.class })
     private String accessionNumber;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
     private String result;
 
     private boolean isControl = false;
@@ -58,7 +58,7 @@ public class AnalyzerResultItem implements Serializable {
 
     private String errorMessage;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
     private String note;
     private String statusId;
     private String sampleId;
@@ -79,13 +79,13 @@ public class AnalyzerResultItem implements Serializable {
 
     private boolean readOnly = false;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
     private String testResultType = "N";
     private boolean userChoiceReflex;
     private boolean userChoicePending;
     private String siblingReflexKey;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { AnalyzerResultsForm.AnalyzerResuts.class })
     private String reflexSelectionId;
     private String selectionOneText = "";
     private String selectionOneValue = "";

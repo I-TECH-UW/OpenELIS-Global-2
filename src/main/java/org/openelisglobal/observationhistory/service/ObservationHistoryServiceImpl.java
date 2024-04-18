@@ -28,7 +28,11 @@ public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<Observa
         INITIAL_SAMPLE_CONDITION("initialSampleCondition"), PAYMENT_STATUS("paymentStatus"),
         REQUEST_DATE("requestDate"), NEXT_VISIT_DATE("nextVisitDate"), REFERRING_SITE("referringSite"),
         REFERRERS_PATIENT_ID("referrersPatientId"), BILLING_REFERENCE_NUMBER("billingRefNumber"),
-        TEST_LOCATION_CODE("testLocationCode"), TEST_LOCATION_CODE_OTHER("testLocationCodeOther"), PROGRAM("program");
+        TEST_LOCATION_CODE("testLocationCode"), TEST_LOCATION_CODE_OTHER("testLocationCodeOther"), PROGRAM("program"),
+        HIV_STATUS("hivStatus"),VL_PREGNANCY("vlPregnancy"),VL_SUCKLE("vlSuckle"),
+        TB_ORDER_REASON("TbOrderReason"),TB_DIAGNOSTIC_REASON("TbDiagnosticReason"),TB_FOLLOWUP_REASON("TbFollowupReason"),
+        TB_FOLLOWUP_PERIOD_LINE1("TbFollowupReasonPeriodLine1"),TB_FOLLOWUP_PERIOD_LINE2("TbFollowupReasonPeriodLine2"),TB_ANALYSIS_METHOD("TbAnalysisMethod"),
+        TB_SAMPLE_ASPECT("TbSampleAspects");
 
         private String dbName;
 

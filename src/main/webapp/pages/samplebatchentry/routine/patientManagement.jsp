@@ -11,7 +11,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
 <script type="text/javascript" src="scripts/ajaxCalls.js?"></script>
 <script type="text/javascript" src="scripts/utilities.js?" ></script>
@@ -731,8 +730,8 @@ function  /*void*/ getDetailedPatientInfo() {
 	<form:hidden path="patientProperties.patientLastUpdated" id="patientLastUpdated" />
 	<form:hidden path="patientProperties.personLastUpdated" id="personLastUpdated"/>
 
-<%-- 	<tiles:insertAttribute name="patientSearch" /> --%>
-	<tiles:insertAttribute name="patientEnhancedSearch" />
+<%-- 	<jsp:include page="${patientSearchFragment}"/> --%>
+	<jsp:include page="${patientEnhancedSearchFragment}"/>
 
 	<form:hidden path="patientProperties.patientUpdateStatus" id="processingStatus" value="ADD" />
 	<form:hidden path="patientProperties.patientPK" id="patientPK_ID" />

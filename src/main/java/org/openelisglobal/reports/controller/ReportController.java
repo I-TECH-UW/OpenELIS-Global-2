@@ -53,8 +53,8 @@ public class ReportController extends BaseController {
             "highAccessionDirect", "patientNumberDirect", "patientUpperNumberDirect", "lowerDateRange",
             "upperDateRange", "locationCode", "projectCode", "datePeriod", "lowerMonth", "lowerYear", "upperMonth",
             "upperYear", "selectList.selection", "experimentId", "reportName", "selPatient", "analysisIds",
-            "referringSiteId", "referringSiteDepartmentId", "onlyResults", "dateType",
-            "labSections" , "priority" ,"receptionTime" };
+            "referringSiteId", "referringSiteDepartmentId", "onlyResults", "dateType", "labSections", "priority",
+            "receptionTime", "vlStudyType" };
 
     @Autowired
     private ServletContext context;

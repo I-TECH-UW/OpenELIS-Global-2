@@ -72,9 +72,9 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
     private List<IdValuePair> referralOrganizations;
 
     // for display
-     private List<IdValuePair> methods;
+    private List<IdValuePair> methods;
 
-     // for display
+    // for display
     private List<IdValuePair> methodsByName;
 
     @NotNull(groups = { LogbookResults.class })
@@ -83,14 +83,13 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResults.class })
     private String methodId;
 
-
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResults.class })
     private String testSectionId;
 
     @NotNull(groups = { LogbookResults.class })
     private Boolean displayTestSections = true;
 
-    private Boolean searchByRange;
+    private Boolean searchByRange = false;
     private boolean searchFinished;
 
     public LogbookResultsForm() {

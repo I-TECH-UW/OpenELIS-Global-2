@@ -22,7 +22,7 @@ public class AccessionNumberConstraintValidator implements ConstraintValidator<V
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (org.apache.commons.validator.GenericValidator.isBlankOrNull(value)) {
+    	if (org.apache.commons.validator.GenericValidator.isBlankOrNull(value)) {
             return true;
         }
         if (value.contains(".") && validateAccessionNumberConstraint.searchValue()) {
@@ -37,12 +37,12 @@ public class AccessionNumberConstraintValidator implements ConstraintValidator<V
             return !AccessionNumberUtil.containsBlackListCharacters(value);
         }
         if (AccessionFormat.ALPHANUM_DASH.equals(validateAccessionNumberConstraint.format())) {
-            return value.matches("^[a-zA-Z0-9-]*$");
+            return value.matches("^[a-zA-Z0-9-*]*$");
         }
         try {
             return ValidationResults.SUCCESS
                     .equals(AccessionNumberUtil.getAccessionNumberValidator(validateAccessionNumberConstraint.format())
-                    .validFormat(value, validateAccessionNumberConstraint.dateValidate()));
+                            .validFormat(value, validateAccessionNumberConstraint.dateValidate()));
         } catch (IllegalArgumentException e) {
             LogEvent.logError(e);
             return false;

@@ -51,10 +51,12 @@ public class TestAutocompleteProvider extends BaseAutocompleteProvider {
     public List processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "I am in AutocompleteTestServlet "
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "I am in
+        // AutocompleteTestServlet "
         // + request.getParameter("testName"));
         String testName = request.getParameter("testName");
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "AutocompleteTestServlet testName " + testName);
+        // LogEvent.logInfo(this.getClass().getName(), "method unkown",
+        // "AutocompleteTestServlet testName " + testName);
         // bugzilla 2291
         List list = testService.getTests(testName, false);
         return list;

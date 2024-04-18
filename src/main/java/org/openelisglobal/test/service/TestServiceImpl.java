@@ -694,6 +694,11 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
     public List<Test> getActiveTestByName(String testName) {
         return getBaseObjectDAO().getActiveTestsByName(testName);
     }
+    
+    @Override
+    public List<Test> getActiveTestsByPanel(String panelName) {
+    	return getBaseObjectDAO().getActiveTestsByPanelName(panelName);
+    }
 
     @Override
     @Transactional
@@ -720,5 +725,20 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
         deactivateAllTests();
         activateTests(testNames);
     }
+
+	@Override
+	public List<Test> getTbTestByMethod(String method) {
+		return getBaseObjectDAO().getTbTestByMethod(method);
+	}
+	
+	@Override
+	public List<Test> getTbTest() {
+		return getBaseObjectDAO().getTbTest();
+	}
+	
+	@Override
+	public List<Panel> getTbPanelsByMethod(String method) {
+		return getBaseObjectDAO().getTbPanelsByMethod(method);
+	}
 
 }

@@ -620,7 +620,7 @@ public class DateUtil {
         if (!GenericValidator.isBlankOrNull(date) && !GenericValidator.isBlankOrNull(time)) {
             date = date + " " + time;
         } else if (!GenericValidator.isBlankOrNull(date) && GenericValidator.isBlankOrNull(time)) {
-            date = date + " 00:00";
+            date = date + " 09:00";
         } else {
             return null;
         }
@@ -714,7 +714,7 @@ public class DateUtil {
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, 11); // 11 = december
         cal.set(Calendar.DAY_OF_MONTH, 31); // new years eve
-        return  cal.getTime();
+        return cal.getTime();
     }
 
     public static java.sql.Date convertDateTimeToSqlDate(Date date) throws LIMSRuntimeException {

@@ -12,18 +12,8 @@ import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 
 public class FhirReferralSearchForm extends BaseForm {
-    
-    private static final String[] ALLOWED_FIELDS = new String[] { 
-            "serialVersionUID", "externalAccessionNumber", "patientID", "patientLastName", "patientFirstName", "dateOfBirth", "gender"   };
-
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.setAllowedFields(ALLOWED_FIELDS);
-    }
 
     private static final long serialVersionUID = 3245627796529364543L;
 

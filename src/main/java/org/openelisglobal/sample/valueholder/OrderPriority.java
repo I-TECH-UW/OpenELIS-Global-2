@@ -16,9 +16,5 @@
 package org.openelisglobal.sample.valueholder;
 
 public enum OrderPriority {
-    ROUTINE,
-    ASAP,
-    STAT,
-    TIMED,
-    FUTURE_STAT
+    ROUTINE, ASAP, STAT, TIMED, FUTURE_STAT
 }

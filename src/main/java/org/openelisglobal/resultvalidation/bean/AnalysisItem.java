@@ -15,20 +15,23 @@
 */
 package org.openelisglobal.resultvalidation.bean;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
 import javax.validation.constraints.Pattern;
 
-import org.hibernate.validator.constraints.SafeHtml;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.resultvalidation.form.ResultValidationForm;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 
-public class AnalysisItem {
+public class AnalysisItem implements Serializable{
 
-    private String id;
+    private static final long serialVersionUID = 1L;
+
+	private String id;
 
     private String units;
 
@@ -37,7 +40,7 @@ public class AnalysisItem {
     @ValidAccessionNumber(groups = { ResultValidationForm.ResultValidation.class })
     private String accessionNumber;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ResultValidationForm.ResultValidation.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String result;
 
     private String receivedDate;
@@ -54,7 +57,7 @@ public class AnalysisItem {
 
     private String errorMessage;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ResultValidationForm.ResultValidation.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String note;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ResultValidationForm.ResultValidation.class })
@@ -73,8 +76,10 @@ public class AnalysisItem {
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ResultValidationForm.ResultValidation.class })
     private String resultId;
+    private double lowerCritical;
+    private double higherCritical;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ResultValidationForm.ResultValidation.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String resultType;
 
     private String completeDate;
@@ -92,15 +97,19 @@ public class AnalysisItem {
     private String integralResult;
 
     private String integralAnalysisId;
+    
+    private String genscreenResult;
+    
+    private String genscreenAnalysisId;
 
     private String murexResult;
 
     private String murexAnalysisId;
 
     private String vironostikaResult;
-
+ 
     private String vironostikaAnalysisId;
-
+    
     private String genieIIResult;
 
     private String genieIIAnalysisId;
@@ -148,7 +157,7 @@ public class AnalysisItem {
 
     private boolean isMultipleResultForSample = false;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ResultValidationForm.ResultValidation.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String multiSelectResultValues = "{}";
 
     private boolean readOnly = false;
@@ -163,7 +172,7 @@ public class AnalysisItem {
 
     private String qualifiedDictionaryId;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ResultValidationForm.ResultValidation.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String qualifiedResultValue = "";
 
     private String qualifiedResultId;
@@ -176,8 +185,8 @@ public class AnalysisItem {
 
     private boolean valid = true;
 
-    private boolean isNormal;
-
+    private boolean isNormal; 
+    
     public String getRejectReasonId() {
         return rejectReasonId;
     }
@@ -726,4 +735,36 @@ public class AnalysisItem {
     public void setNormal(boolean isNormal) {
         this.isNormal = isNormal;
     }
+
+    public double getLowerCritical() {
+        return lowerCritical;
+    }
+
+    public void setLowerCritical(double lowerCritical) {
+        this.lowerCritical = lowerCritical;
+    }
+
+    public double getHigherCritical() {
+        return higherCritical;
+    }
+
+    public void setHigherCritical(double higherCritical) {
+        this.higherCritical = higherCritical;
+    }
+
+	public String getGenscreenResult() {
+		return genscreenResult;
+	}
+
+	public void setGenscreenResult(String genscreenResult) {
+		this.genscreenResult = genscreenResult;
+	}
+
+	public String getGenscreenAnalysisId() {
+		return genscreenAnalysisId;
+	}
+
+	public void setGenscreenAnalysisId(String genscreenAnalysisId) {
+		this.genscreenAnalysisId = genscreenAnalysisId;
+	}
 }

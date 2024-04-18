@@ -5,15 +5,13 @@
                  org.openelisglobal.common.formfields.FormFields,
                  org.openelisglobal.common.formfields.FormFields.Field,
                  org.openelisglobal.common.util.Versioning,
-                 org.openelisglobal.internationalization.MessageUtil,
-		 		 org.owasp.encoder.Encode" %>
+                 org.owasp.encoder.Encode,
+                 org.openelisglobal.internationalization.MessageUtil" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
 <%
 	boolean restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextRefSiteEntry, "true");
@@ -150,13 +148,13 @@ jQuery(document).ready(function () {
 	<c:if test="${form.patientInfoCheck}">
 		<tr>
 			<td>
-				<tiles:insertAttribute name="patientInfo" />
+				<jsp:include page="${patientInfoFragment}"/>
 			</td>
 		</tr>
 	</c:if>
 	<tr>
 		<td>
-			<tiles:insertAttribute name="entryMethod" />
+			<jsp:include page="${entryMethodFragment}"/>
 		</td>
 	</tr>
 </table>

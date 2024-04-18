@@ -24,8 +24,7 @@ public class AsyncExternalSender implements IAsyncExternalSender {
 
     @Override
     @Async
-    public void sendMessage(IExternalSender sender, ITransmissionResponseHandler responseHandler,
-            String msg) {
+    public void sendMessage(IExternalSender sender, ITransmissionResponseHandler responseHandler, String msg) {
         sender.sendMessage();
         if (responseHandler != null) {
             responseHandler.handleResponse(sender.getSendResponse(), sender.getErrors(), msg);

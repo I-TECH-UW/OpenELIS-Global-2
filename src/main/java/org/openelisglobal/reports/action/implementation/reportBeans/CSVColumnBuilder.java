@@ -40,6 +40,7 @@ import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
@@ -193,7 +194,11 @@ abstract public class CSVColumnBuilder {
                 projectTag = "ARVB";
             } else if (project.getNameKey().contains("VLS")) {
                 projectTag = "VLS";
-            } else {
+            } else if (project.getNameKey().contains("Recency")) {
+                projectTag = "RTRI";
+            } else if (project.getNameKey().contains("HPV")) {
+                projectTag = "HPV";
+            } else  {
                 // otherwise we use the letters from the Sample ID prefix, which
                 // at some locations for some projects is undefined.
                 String code = project.getProgramCode();
@@ -214,8 +219,7 @@ abstract public class CSVColumnBuilder {
      * @since Feb 1, 2011
      */
     public enum Strategy {
-        ANALYSIS_STATUS,
-        DICT, // dictionary localized value
+        ANALYSIS_STATUS, DICT, // dictionary localized value
         DICT_PLUS, // dictionary localized value or a string constant
         DICT_RAW, // dictionary localized value, no attempts at trimming to show just code number.
         DATE, // date (i.e. 01/01/2013)
@@ -245,6 +249,7 @@ abstract public class CSVColumnBuilder {
 //				ResultSet.CONCUR_READ_ONLY);
 //		resultSet = stmt.executeQuery();
         Session session = SpringContext.getBean(SessionFactory.class).getCurrentSession();
+        session.beginTransaction();
         resultSet = session.doReturningWork(new ReturningWork<ResultSet>() {
 
             @Override
@@ -320,7 +325,7 @@ abstract public class CSVColumnBuilder {
         return result;
     }
 
-    private String prepareColumnName(String columnName) {
+    protected String prepareColumnName(String columnName) {
         // trim and escape the column name so it is more safe from sql injection
         if (!columnName.matches("(?i)[a-zàâçéèêëîïôûùüÿñæœ0-9_ ()%/\\[\\]+\\-]+")) {
             LogEvent.logWarn(this.getClass().getName(), "prepareColumnName",
@@ -402,12 +407,14 @@ abstract public class CSVColumnBuilder {
             case AGE_MONTHS:
             case AGE_WEEKS:
                 return isBlankOrNull(value) ? "" : translateAge(strategy, value);
-            case GENDER:
-                return isBlankOrNull(value) ? "" : ResourceTranslator.GenderTranslator.getInstance().translate(value);
+            // PK: Query result already return M/F so no need to translate
+            // case GENDER:
+            // return isBlankOrNull(value) ? "" :
+            // ResourceTranslator.GenderTranslator.getInstance().translate(value);
             case DROP_ZERO:
                 return ("0".equals(value) || value == null) ? "" : value;
             case TEST_RESULT:
-                return isBlankOrNull(value) ? "" : translateTestResult(csvName, value);
+                return isBlankOrNull(value) ? "" : translateTestResult(this.csvName, value);
             case GEND_CD4:
                 return isBlankOrNull(value) ? "" : translateGendResult(getGendCD4CountAnalyteId(), value);
             case LOG:
@@ -427,6 +434,30 @@ abstract public class CSVColumnBuilder {
                 case NonConforming_depricated:
                     return "N"; // Non-conforming, Non-conformes
                 }
+			case ANALYSIS_STATUS:
+				AnalysisStatus analysisStatus = StatusService.getInstance().getAnalysisStatusForID(value);
+				if (analysisStatus == null)
+					return "?";
+				switch (analysisStatus) {
+				case SampleRejected:
+					return "Reject"; // rejété, entr�e
+				case NotStarted:
+					return "Not_Started"; // entered, entr�e
+				case Canceled:
+					return "Canceled"; // commenced, commenc�
+				case TechnicalAcceptance:
+					return "Validation_Technique"; // Finished, Finale
+				case TechnicalRejected:
+					return "Rejet - Technique"; // Non-conforming, Non-conformes
+				case BiologistRejected:
+					return "Rejet - Biologie"; // entered, entr�e
+				case NonConforming_depricated:
+					return "Non Conforme"; // commenced, commenc�
+				case Finalized:
+					return "Validation_Biologique"; // Finished, Finale
+				
+				
+				}
             case PROJECT:
                 return translateProjectId(value);
             case DEBUG:
@@ -484,7 +515,10 @@ abstract public class CSVColumnBuilder {
          * @throws SQLException
          */
         public String translateTestResult(String testName, String value) throws SQLException {
-            TestResult testResult = testResultsByTestName.get(testName);
+            TestResult testResult = testResultsByTestName.get(testName); 
+            if(testName.equalsIgnoreCase("DNA PCR")) { //need fix: testName is different from map key
+            	return ResourceTranslator.DictionaryTranslator.getInstance().translateRaw(value);
+            }
             // if it is not in the table then its just a value in the result
             // that was NOT selected from a list, thus no translation
             if (testResult == null) {
@@ -526,7 +560,7 @@ abstract public class CSVColumnBuilder {
     abstract public void makeSQL();
 
     protected void defineAllObservationHistoryTypes() {
-        allObHistoryTypes = ohtService.getAllOrdered("type_name", false);
+        allObHistoryTypes = ohtService.getAllOrdered("typeName", false);
     }
 
     /**
@@ -536,7 +570,7 @@ abstract public class CSVColumnBuilder {
      * @param lowDatePostgres
      * @param highDatePostgres
      */
-    protected void appendResultCrosstab(Date lowDate, Date highDate) {
+    protected void appendResultCrosstab(Date lowDate, Date highDate, String byDate) {
         // A list of analytes which should not show up in the regular results,
         // because they are not the primary results, but, for example, is a
         // conclusion.
@@ -548,8 +582,8 @@ abstract public class CSVColumnBuilder {
         // Begin cross tab / pivot table
         query.append(" crosstab( " + "\n 'SELECT si.id, t.description, r.value "
                 + "\n FROM clinlims.result AS r, clinlims.analysis AS a, clinlims.sample_item AS si, clinlims.sample AS s, clinlims.test AS t, clinlims.test_result AS tr "
-                + "\n WHERE " + "\n s.id = si.samp_id" + " AND s.collection_date >= date(''"
-                + formatDateForDatabaseSql(lowDate) + "'')  AND s.collection_date <= date(''"
+                + "\n WHERE " + "\n s.id = si.samp_id" + " AND "+ byDate +" >= date(''"
+                + formatDateForDatabaseSql(lowDate) + "'')  AND "+ byDate +" <= date(''"
                 + formatDateForDatabaseSql(highDate) + " '') " + "\n AND s.id = si.samp_id "
                 + "\n AND si.id = a.sampitem_id "
                 // sql injection safe as user cannot overwrite validStatusId in database
@@ -571,12 +605,8 @@ abstract public class CSVColumnBuilder {
                 + "\"si_id\" numeric(10) ");
         for (Test col : allTests) {
             String testName = TestServiceImpl.getLocalizedTestNameWithType(col);
-            if (!"CD4".equals(testName)) { // CD4 is listed as a test name but
-                                           // it isn't clear it should be line
-                                           // 446 may also have to be changed
                 // sql injection safe as it is escaped for
-                query.append("\n, " + prepareColumnName(testName) + " varchar(200) ");
-            }
+            query.append("\n, " + prepareColumnName(testName) + " varchar(200) ");
         }
         query.append(" ) \n");
         // left join all sample Items from the right sample range to the results table.
@@ -597,7 +627,7 @@ abstract public class CSVColumnBuilder {
      * sb.toString(); }
      */
 
-    protected void appendObservationHistoryCrosstab(Date lowDate, Date highDate) {
+    protected void appendObservationHistoryCrosstab( Date lowDate, Date highDate, String byDate) {
         SQLConstant listName = SQLConstant.DEMO;
         appendCrosstabPreamble(listName);
         query.append( // any Observation History items
@@ -671,9 +701,7 @@ abstract public class CSVColumnBuilder {
     protected void addAllResultsColumns() {
         for (Test test : allTests) {
             String testTag = TestServiceImpl.getLocalizedTestNameWithType(test);
-            if (!"CD4".equals(testTag)) {
-                add(testTag, TestServiceImpl.getLocalizedTestNameWithType(test), TEST_RESULT);
-            }
+            add(testTag, TestServiceImpl.getLocalizedTestNameWithType(test), TEST_RESULT);
         }
     }
 

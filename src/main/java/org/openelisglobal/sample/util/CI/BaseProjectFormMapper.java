@@ -263,6 +263,7 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
         addHistory(histories, "priorVLLab", od.getPriorVLLab(), ValueType.LITERAL);
         addHistory(histories, "priorVLValue", od.getPriorVLValue(), ValueType.LITERAL);
         addHistory(histories, "priorVLDate", od.getPriorVLDate(), ValueType.LITERAL);
+        addHistory(histories, "hpvSamplingMethod", od.getHpvSamplingMethod(), ValueType.DICTIONARY);
 
         return histories;
     }
@@ -448,7 +449,8 @@ public abstract class BaseProjectFormMapper implements IProjectFormMapper {
     @Override
     public String getOrganizationId() {
         if (patientForm) {
-            if (getProjectForm().equals(ProjectForm.VL)) {
+            if (getProjectForm().equals(ProjectForm.VL) || getProjectForm().equals(ProjectForm.RECENCY_TESTING) 
+            		|| getProjectForm().equals(ProjectForm.HPV_TESTING)) {
                 return getSampleCenterCode();
             } else {
                 return form.getCenterCode().toString();

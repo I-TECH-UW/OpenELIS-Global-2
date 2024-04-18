@@ -27,6 +27,7 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.test.valueholder.Test;
@@ -153,7 +154,8 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
 
     List<Analysis> getAnalysisStartedOrCompletedInDateRange(Date lowDate, Date highDate) throws LIMSRuntimeException;
 
-    List<Analysis> getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(Date lowDate, Date highDate ,String testId, List<Integer> testSectionIds) throws LIMSRuntimeException;
+    List<Analysis> getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(Date lowDate, Date highDate, String testId,
+            List<Integer> testSectionIds) throws LIMSRuntimeException;
 
     List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
             List<Integer> sampleStatusList) throws LIMSRuntimeException;
@@ -215,5 +217,10 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
             List<Integer> sampleStatusList, String accessionNumber);
 
     List<Analysis> getAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
+            LocalDate upperDate);
+
+    List<Analysis> getAnalysesByPriorityAndStatusId(OrderPriority priority, List<Integer> analysisStatusIds);
+
+    List<Analysis> getStudyAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
             LocalDate upperDate);
 }

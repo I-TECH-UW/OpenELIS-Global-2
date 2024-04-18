@@ -10,6 +10,7 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.test.valueholder.Test;
@@ -34,7 +35,8 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     List<Analysis> getAnalysisStartedOrCompletedInDateRange(Date lowDate, Date highDate);
 
-    List<Analysis> getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(Date lowDate, Date highDate ,String testId ,List<Integer> testScectionIds);
+    List<Analysis> getAnalysisByTestIdAndTestSectionIdsAndStartedInDateRange(Date lowDate, Date highDate, String testId,
+            List<Integer> testScectionIds);
 
     List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> analysisStatusList,
             List<Integer> sampleStatusList);
@@ -87,6 +89,8 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
     List<Analysis> getAnalysisEnteredAfterDate(Timestamp latestCollectionDate);
 
     List<Analysis> getAnalysesBySampleIdAndStatusId(String id, Set<Integer> analysisStatusIds);
+
+    List<Analysis> getAnalysesByPriorityAndStatusId(OrderPriority priority, List<Integer> analysisStatusIds);
 
     List<Analysis> getAnalysisStartedOn(Date collectionDate);
 
@@ -168,7 +172,6 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     List<Analysis> get(List<String> value);
 
-
     List<Analysis> getAllAnalysisByTestsAndStatusAndCompletedDateRange(List<Integer> nfsTestIdList,
             List<Integer> analysisStatusList, List<Integer> sampleStatusList, Date lowDate, Date highDate);
 
@@ -186,7 +189,6 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     int getCountAnalysisByTestSectionAndStatus(String sectionId, List<Integer> statusList);
 
-
     int getCountAnalysisByStatusFromAccession(List<Integer> analysisStatusList, List<Integer> sampleStatusList,
             String accessionNumber);
 
@@ -194,5 +196,8 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
             List<Integer> sampleStatusList, String accessionNumber);
 
     List<Analysis> getAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
+            LocalDate upperDate);
+
+    List<Analysis> getStudyAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
             LocalDate upperDate);
 }

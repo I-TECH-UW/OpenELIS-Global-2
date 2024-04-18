@@ -30,14 +30,21 @@ import static org.openelisglobal.reports.action.implementation.reportBeans.CSVCo
 //import org.openelisglobal.common.services.TestService;
 //import org.openelisglobal.observationhistorytype.valueholder.ObservationHistoryType;
 import org.openelisglobal.reports.action.implementation.Report.DateRange;
+import org.openelisglobal.reports.form.ReportForm.DateType;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 
 public class StudyVLColumnBuilder extends CIStudyColumnBuilder {
+    private DateType dateType;
 
     public StudyVLColumnBuilder(DateRange dateRange, String projectStr) {
         super(dateRange, projectStr);
+    }
+
+    public StudyVLColumnBuilder(DateRange dateRange, String projectStr, DateType dateType) {
+        super(dateRange, projectStr);
+        this.dateType = dateType;
     }
 
     // @Override
@@ -95,9 +102,22 @@ public class StudyVLColumnBuilder extends CIStudyColumnBuilder {
      *         for the particular project.
      */
 
-
     @Override
     public void makeSQL() {
+        // Switch date column according to selected DateType: PK
+        String dateColumn = "s.entered_date ";
+        switch (dateType) {
+        case ORDER_DATE:
+            dateColumn = "s.entered_date ";
+            break;
+        case RESULT_DATE:
+            dateColumn = "a.released_date ";
+            break;
+        case PRINT_DATE:
+            dateColumn = "dt.report_generation_time ";
+        default:
+            break;
+        }
         // String validStatusId =
         // StatusService.getInstance().getStatusID(StatusService.AnalysisStatus.Finalized);
         // String validStatusId2 =
@@ -111,16 +131,16 @@ public class StudyVLColumnBuilder extends CIStudyColumnBuilder {
         // all crosstab generated tables need to be listed in the following list and in
         // the WHERE clause at the bottom
         query.append(
-                "\n, a.started_date,a.completed_date,a.released_date,a.printed_date, a.status_id as analysis_status_id, r.value as \"Viral Load\",a.type_of_sample_name, demo.*, currentARVTreatmentINNs.*, dt.name as report_name, dt.report_generation_time, dt.lastupdated as report_lastupdated ");
+                "\n, a.started_date,a.completed_date,a.released_date,a.printed_date, a.status_id as analysis_status_id, r.value as \"Viral Load\",a.type_of_sample_name, demo.*, currentARVTreatmentINNs.*, dt.name as report_name, first_dt.report_generation_time, dt.lastupdated as report_lastupdated ");
 
         query.append(FROM_SAMPLE_PATIENT_ORGANIZATION);
 
         // --------------------------
         // all observation history values
-        appendObservationHistoryCrosstab(dateRange.getLowDate(), dateRange.getHighDate());
+        appendObservationHistoryCrosstab(dateRange.getLowDate(), dateRange.getHighDate(), dateColumn);
         // current ARV treatments
         appendRepeatingObservation(SQLConstant.CURRENT_ARV_TREATMENT_INNS, 4, dateRange.getLowDate(),
-                dateRange.getHighDate());
+                dateRange.getHighDate(), dateColumn);
         // result
         // appendResultCrosstab(dateRange.getLowDate(), dateRange.getHighDate() );
         query.append(",  clinlims.analysis as a \n");
@@ -129,9 +149,12 @@ public class StudyVLColumnBuilder extends CIStudyColumnBuilder {
         query.append(" LEFT JOIN  clinlims.result as r on r.analysis_id = a.id \n"
                 + " LEFT JOIN  clinlims.sample_item as si on si.id = a.sampitem_id \n"
                 + " LEFT JOIN  clinlims.sample as s on s.id = si.samp_id \n"
-                + " LEFT JOIN  (select max(id)as id, row_id \n" + "       from clinlims.document_track \n"
-                + "           group by (row_id ) \n" + "           order by row_id DESC) as dtr on dtr.row_id=s.id \n"
-                + " LEFT JOIN clinlims.document_track as dt on dtr.id=dt.id \n");
+                + " LEFT JOIN  (select max(id)as id, row_id  from clinlims.document_track \n"
+                + "           group by (row_id )  order by row_id DESC) as dtr on dtr.row_id=s.id \n"
+                + " LEFT JOIN clinlims.document_track as dt on dtr.id=dt.id \n"
+		        + " LEFT JOIN  (select min(id)as id, row_id from clinlims.document_track \n"
+		        + " group by (row_id ) order by row_id ASC) as first_dtr on first_dtr.row_id=s.id \n"
+		        + " LEFT JOIN clinlims.document_track as first_dt on first_dtr.id=first_dt.id \n");
 
         // and finally the join that puts these all together. Each cross table should be
         // listed here otherwise it's not in the result and you'll get a full join
@@ -139,7 +162,7 @@ public class StudyVLColumnBuilder extends CIStudyColumnBuilder {
                 + "\n AND s.id = si.samp_id" + "\n AND s.id=sh.samp_id" + "\n AND sh.patient_id=pat.id"
                 + "\n AND pat.person_id = per.id" + "\n AND s.id=so.samp_id" + "\n AND so.org_id=o.id"
                 + "\n AND s.id = sp.samp_id" + "\n AND s.id=demo.s_id" + "\n AND s.id = currentARVTreatmentINNs.samp_id"
-                + "\n AND s.entered_date >= date('" + lowDatePostgres + "')" + "\n AND s.entered_date <= date('"
+                + "\n AND " + dateColumn + " >= date('" + lowDatePostgres + "')" + "\n AND " + dateColumn + " <= date('"
                 + highDatePostgres + "')"
 
 //--------------

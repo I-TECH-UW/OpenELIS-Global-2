@@ -587,6 +587,12 @@ public class SampleServiceImpl extends BaseObjectServiceImpl<Sample, String> imp
     }
 
     @Override
+    public List<Sample> getStudySamplesForSiteBetweenOrderDates(String referringSiteId, LocalDate lowerDate,
+            LocalDate upperDate) {
+        return sampleDAO.getStudySamplesForSiteBetweenOrderDates(referringSiteId, lowerDate, upperDate);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<Sample> getSamplesByPriority(OrderPriority priority) {
         return sampleDAO.getSamplesByPriority(priority);

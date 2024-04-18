@@ -25,19 +25,26 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
+import org.openelisglobal.reports.action.implementation.reportBeans.ARVFollowupColumnBuilder;
+import org.openelisglobal.reports.action.implementation.reportBeans.ARVInitialColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.CIColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder;
+import org.openelisglobal.reports.action.implementation.reportBeans.HPVColumnBuilder;
+import org.openelisglobal.reports.action.implementation.reportBeans.HPVColumnBuilder;
+import org.openelisglobal.reports.action.implementation.reportBeans.RTNColumnBuilder;
+import org.openelisglobal.reports.action.implementation.reportBeans.RTRIColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.StudyEIDColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.StudyVLColumnBuilder;
 import org.openelisglobal.reports.form.ReportForm;
+import org.openelisglobal.reports.form.ReportForm.DateType;
 import org.openelisglobal.spring.util.SpringContext;
-
 
 /**
  * @author Paul A. Hill (pahill@uw.edu)
@@ -46,6 +53,7 @@ import org.openelisglobal.spring.util.SpringContext;
 public class ExportStudyProjectByDate extends CSVSampleExportReport implements IReportParameterSetter, IReportCreator {
     private String projectStr;
     private Project project;
+    private DateType dateType;
 
     // @Override
     @Override
@@ -59,13 +67,12 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
         form.setUseLowerDateRange(Boolean.TRUE);
         form.setUseUpperDateRange(Boolean.TRUE);
         form.setUseProjectCode(Boolean.TRUE);
+        form.setUseExportDateType(Boolean.TRUE);
         form.setProjectCodeList(getProjectList());
     }
 
-
     protected String getReportNameForParameterPage() {
-        return MessageUtil.getMessage("reports.label.project.export") + " "
-                + MessageUtil.getContextualMessage("sample.EnteredDate");
+        return MessageUtil.getMessage("reports.label.project.export.dateType");
     }
 
     @Override
@@ -83,6 +90,7 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
         highDateStr = form.getUpperDateRange();
         projectStr = form.getProjectCode();
         dateRange = new DateRange(lowDateStr, highDateStr);
+        dateType = form.getDateType();
 
         createReportParameters();
 
@@ -132,8 +140,7 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
     }
 
     @Override
-    protected void writeResultsToBuffer(ByteArrayOutputStream buffer)
-            throws IOException, SQLException, ParseException {
+    protected void writeResultsToBuffer(ByteArrayOutputStream buffer) throws IOException, SQLException, ParseException {
 
         String currentAccessionNumber = null;
         String[] splitBase = null;
@@ -180,10 +187,22 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
 
     private CSVColumnBuilder getColumnBuilder(String projectId) {
         String projectTag = CIColumnBuilder.translateProjectId(projectId);
-        if (projectTag.equalsIgnoreCase("DBS")) {
-            return new StudyEIDColumnBuilder(dateRange, projectStr);
+        if (projectTag.equals("ARVB")) {
+            return new ARVInitialColumnBuilder(dateRange, projectStr);
+        } else if (projectTag.equals("ARVS")) {
+            return new ARVFollowupColumnBuilder(dateRange, projectStr);
+        } else if (projectTag.equalsIgnoreCase("DBS")) {
+            return new StudyEIDColumnBuilder(dateRange, projectStr, dateType);
         } else if (projectTag.equalsIgnoreCase("VLS")) {
-            return new StudyVLColumnBuilder(dateRange, projectStr);
+            return new StudyVLColumnBuilder(dateRange, projectStr, dateType);
+        }else if (projectTag.equalsIgnoreCase("RTN")) {
+            return new RTNColumnBuilder(dateRange, projectStr);
+        } else if (projectTag.equalsIgnoreCase("IND")) {
+            return new RTNColumnBuilder(dateRange, projectStr);
+        }else if (projectTag.equalsIgnoreCase("RTRI")) {
+            return new RTRIColumnBuilder(dateRange, projectStr, dateType);
+        }else if (projectTag.equalsIgnoreCase("HPV")) {
+            return new HPVColumnBuilder(dateRange, projectStr, dateType);
         }
         throw new IllegalArgumentException();
     }
@@ -194,10 +213,22 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
     protected List<Project> getProjectList() {
         List<Project> projects = new ArrayList<>();
         Project project = new Project();
+        project.setProjectName("Antiretroviral Study");
+        projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
+        project.setProjectName("Antiretroviral Followup Study");
+        projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
+        project.setProjectName("Routine HIV Testing");
         project.setProjectName("Early Infant Diagnosis for HIV Study");
         projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
         project.setProjectName("Viral Load Results");
         projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
+        project.setProjectName("Indeterminate Results");
+        projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
+        project.setProjectName("Recency Testing");
+        projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
+        project.setProjectName("HPV Testing");
+        projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
+        projects.removeIf(Objects::isNull);
         return projects;
     }
 

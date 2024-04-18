@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -177,12 +178,10 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
         List<TestTrailer> list;
         try {
             String sql = "from TestTrailer";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<TestTrailer> query = entityManager.unwrap(Session.class).createQuery(sql, TestTrailer.class);
             // query.setMaxResults(10);
             // query.setFirstResult(3);
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -202,13 +201,11 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 
             // bugzilla 1399
             String sql = "from TestTrailer t order by t.testTrailerName";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<TestTrailer> query = entityManager.unwrap(Session.class).createQuery(sql, TestTrailer.class);
             query.setFirstResult(startingRecNo - 1);
             query.setMaxResults(endingRecNo - 1);
 
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -222,8 +219,6 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
         TestTrailer tr = null;
         try {
             tr = entityManager.unwrap(Session.class).get(TestTrailer.class, idString);
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -238,12 +233,10 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
     public TestTrailer getTestTrailerByName(TestTrailer testTrailer) throws LIMSRuntimeException {
         try {
             String sql = "from TestTrailer t where t.testTrailerName = :param";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<TestTrailer> query = entityManager.unwrap(Session.class).createQuery(sql, TestTrailer.class);
             query.setParameter("param", testTrailer.getTestTrailerName());
 
             List<TestTrailer> list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
             TestTrailer t = null;
             if (list.size() > 0) {
                 t = list.get(0);
@@ -265,12 +258,10 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
         List<TestTrailer> list;
         try {
             String sql = "from TestTrailer t where upper(t.testTrailerName) like upper(:param) order by upper(t.testTrailerName)";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<TestTrailer> query = entityManager.unwrap(Session.class).createQuery(sql, TestTrailer.class);
             query.setParameter("param", filter + "%");
 
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             // bugzilla 2154
             LogEvent.logError(e.toString(), e);
@@ -291,12 +282,12 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
     public boolean duplicateTestTrailerExists(TestTrailer testTrailer) throws LIMSRuntimeException {
         try {
 
-            List<TestTrailer> list = new ArrayList();
+            List<TestTrailer> list = new ArrayList<>();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
             String sql = "from TestTrailer t where trim(lower(t.testTrailerName)) = :param and t.id != :param2";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<TestTrailer> query = entityManager.unwrap(Session.class).createQuery(sql, TestTrailer.class);
             query.setParameter("param", testTrailer.getTestTrailerName().toLowerCase().trim());
 
             // initialize with 0 (for new records where no id has been generated
@@ -308,9 +299,6 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
             query.setParameter("param2", testTrailerId);
 
             list = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
-
             if (list.size() > 0) {
                 return true;
             } else {

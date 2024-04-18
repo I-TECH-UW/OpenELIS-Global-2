@@ -5,14 +5,13 @@
 		    org.openelisglobal.common.util.DateUtil,
 			org.openelisglobal.internationalization.MessageUtil,
 			org.openelisglobal.common.util.Versioning,
+			org.openelisglobal.reports.form.ReportForm.DateType,
 			org.owasp.encoder.Encode" %>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
-
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
 <%-- Creates updated UI. Removing for current release 
@@ -244,11 +243,11 @@ function setSaveButton() {
   		<h3><spring:message code="report.enter.patient.headline"/></h3>
   		<spring:message code="report.enter.patient.headline.description"/>
  	
-	<tiles:insertAttribute name="patientEnhancedSearch" />
+	<jsp:include page="${patientEnhancedSearchFragment}"/>
   </c:if>
   <c:if test="${form.useSiteSearch}">
   		<h3><spring:message code="report.enter.site.headline"/></h3>
-		<tiles:insertAttribute name="siteSearch" />
+		<jsp:include page="${siteSearchFragment}"/>
   </c:if>
   <c:if test="${form.usePatientNumberDirect}">
   
@@ -290,6 +289,27 @@ function setSaveButton() {
    	<div>
 	  <spring:message code="report.select.project"/>
 	  <form:select path="projectCode" cssClass="text" >
+		<option value=""></option><form:options  items="${form.projectCodeList}" itemLabel="localizedName" itemValue="id" />
+	  </form:select>
+	</div>
+  	</c:if>
+	<c:if test="${form.useExportDateType}">
+	<div>
+  		<spring:message code="report.label.site.dateType"/>
+	    <form:select path="dateType" 
+	    		 id="dateTypeId" 
+	             >
+	    	<option value="<%= DateType.ORDER_DATE.toString() %>"><%= MessageUtil.getContextualMessage( DateType.ORDER_DATE.getMessageKey() ) %></option>
+	    	<option value="<%= DateType.RESULT_DATE.toString() %>"><%= MessageUtil.getContextualMessage( DateType.RESULT_DATE.getMessageKey() ) %></option>
+	    	<option value="<%= DateType.PRINT_DATE.toString() %>"><%= MessageUtil.getContextualMessage( DateType.PRINT_DATE.getMessageKey() ) %></option>
+	    </form:select>
+	</div>
+  </c:if>
+  
+  <c:if test="${form.useDashboard}">
+   	<div>
+	  <spring:message code="report.select.project"/>
+	  <form:select path="vlStudyType" cssClass="text" >
 		<option value=""></option><form:options  items="${form.projectCodeList}" itemLabel="localizedName" itemValue="id" />
 	  </form:select>
 	</div>

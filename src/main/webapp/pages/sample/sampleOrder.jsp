@@ -16,7 +16,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
 <c:set var="formName" value="${form.formName}" />
 
@@ -35,6 +34,7 @@
     boolean restrictNewReferringSiteEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextRefSiteEntry, "true");
     boolean restrictNewProviderEntries = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.restrictFreeTextProviderEntry, "true");
 	boolean useSiteDepartment = FormFields.getInstance().useField(Field.SITE_DEPARTMENT );
+    pageContext.setAttribute("restrictNewReferringSiteEntries", restrictNewReferringSiteEntries);
 %>
 
 <script type="text/javascript" src="scripts/additional_utilities.js"></script>
@@ -178,6 +178,11 @@
 
         setCorrectSave();
     }
+    
+    function newProvider(){
+    	jQuery("#providerPersonId").val("");
+    	jQuery('#providerPersonId').next('input').val('');
+    }
 
 </script>
 
@@ -185,7 +190,6 @@
 <%-- This define may not be needed, look at usages (not in any other jsp or js page may be radio buttons for ci LNSP--%>
 <c:set var="sampleOrderItem" value="${sampleOrderItems}"/>
 
-<form:hidden path="sampleOrderItems.newRequesterName" id="newRequesterName" />
 <form:hidden path="sampleOrderItems.modified" id="orderModified"/>
 <form:hidden path="sampleOrderItems.sampleId" id="sampleId"/>
 
@@ -332,7 +336,7 @@
         <% } %>
     </td>
     <td colspan="3" >
-    	<c:if test="${form.sampleOrderItems.readOnly == false}" >
+    	<c:if test="${restrictNewReferringSiteEntries}" >
     	
     		<spring:message code="error.site.invalid" var="invalidSite"/>
     	    <spring:message code="sample.entry.project.siteMaxMsg" var="siteMaxMessage"/>
@@ -342,14 +346,15 @@
                      capitalize="true"
                      invalidlabid='${invalidSite}'
                      maxrepmsg='${siteMaxMessage}'
+                     disabled="<%=!restrictNewReferringSiteEntries%>"
        				 clearNonMatching="<%=restrictNewReferringSiteEntries%>"
                       >
             <option ></option>
             <form:options items="${form.sampleOrderItems.referringSiteList}" itemValue="id" itemLabel="value"/>
             </form:select>
     	</c:if>
-    	<c:if test="${form.sampleOrderItems.readOnly}" >
-            <form:input path="sampleOrderItems.referringSiteName"  style="width:300px" />
+    	<c:if test="${not restrictNewReferringSiteEntries}" >
+            <form:input id="requesterName" path="sampleOrderItems.referringSiteName"  style="width:300px" onchange="setOrderModified();makeDirty()"/>
     	</c:if>
     </td>
 </tr>
@@ -367,6 +372,7 @@
 	    		<form:select path="sampleOrderItems.referringSiteDepartmentId" 
 	    				 id="requesterDepartmentId" 
 	                     onchange="setOrderModified();setCorrectSave();"
+                         disabled="<%=!restrictNewReferringSiteEntries%>"
 	                     onkeyup="capitalizeValue( this.value );" >
 	            <option value="0" ></option>
 	            <form:options items="${form.sampleOrderItems.referringSiteDepartmentList}" itemValue="id" itemLabel="value"/>
@@ -419,7 +425,7 @@
 <tr class="provider-info-row">
     <td>
         <%= MessageUtil.getContextualMessage( "sample.entry.provider" ) %>:
-        <% if( FormFields.getInstance().useField( Field.SampleEntryReferralSiteNameRequired ) ){%>
+        <% if( FormFields.getInstance().useField( Field.SampleEntryRequesterPersonRequired ) && restrictNewProviderEntries ){%>
         <span class="requiredlabel">*</span>
         <% } %>
     </td>
@@ -427,11 +433,10 @@
     	<form:select id="providerPersonId" path="sampleOrderItems.providerPersonId" 
                      capitalize="false"
                      invalidlabid='${invalidProvider}'
-       				 clearNonMatching="false"
+       				 clearNonMatching="true"
                      maxrepmsg='maximum reached'
-                     disabled = '${!restrictNewProviderEntries}'
                       >
-    		<option></option>
+    		<option value=""></option>
     		<form:options items="${form.sampleOrderItems.providersList}" itemValue="id" itemLabel="value" />
     	</form:select>
     </td> 
@@ -440,12 +445,16 @@
 <tr class="provider-info-row provider-extra-info-row">
 <td>
         <%= MessageUtil.getContextualMessage( "sample.entry.provider.name" ) %>:
+        <% if( FormFields.getInstance().useField( Field.SampleEntryRequesterPersonRequired ) && !restrictNewProviderEntries ){%>
+        <span class="requiredlabel">*</span>
+        <% } %>
     </td>
 <td>
         <form:input path="sampleOrderItems.providerLastName"
                    id="providerLastNameID"
                    onchange="setOrderModified();setCorrectSave();"
                    size="30"
+                   onkeyup="newProvider();"
                   disabled="<%=restrictNewProviderEntries%>"/>
     </td> 
 
@@ -453,12 +462,16 @@
 <tr class="provider-info-row provider-extra-info-row">
     <td>
         <spring:message code="sample.entry.provider.firstName"/>:
+        <% if( FormFields.getInstance().useField( Field.SampleEntryRequesterPersonRequired ) && !restrictNewProviderEntries ){%>
+        <span class="requiredlabel">*</span>
+        <% } %>
 	</td>
     <td>
         <form:input path="sampleOrderItems.providerFirstName"
                    id="providerFirstNameID" 
                    onchange="setOrderModified();"
                    size="30"
+                   onkeyup="newProvider();"
                   disabled="<%=restrictNewProviderEntries%>"/>
     </td>
 </tr>
@@ -472,6 +485,7 @@
                   size="30"
                   disabled="<%=restrictNewProviderEntries%>"
                   maxlength="30"
+                   onkeyup="newProvider();"
                   cssClass="text"
                   onchange="setOrderModified();validatePhoneNumber(this)"/> 
     </td>
@@ -486,6 +500,7 @@
         <form:input path="sampleOrderItems.providerFax"
                   id="providerFaxID"
                   size="20"
+                   onkeyup="newProvider();"
                   disabled="<%=restrictNewProviderEntries%>"
                   cssClass="text"
                   onchange="setOrderModified();makeDirty()"/> 
@@ -501,6 +516,7 @@
         <form:input path="sampleOrderItems.providerEmail"
                   id="providerEmailID"
                   size="20"
+                   onkeyup="newProvider();"
                   disabled="<%=restrictNewProviderEntries%>"
                   cssClass="text"
                   onchange="setOrderModified();makeDirty()"/> 
@@ -680,18 +696,20 @@
         var dropdown = jQuery("select#requesterId");
         autoCompleteWidth = dropdown.width() + 66 + 'px';
         // Actually executes autocomplete
-        if (typeof dropdown.combobox === 'function') {
-	        dropdown.combobox()
-        }
+        <% if(restrictNewReferringSiteEntries ){%>
+            if (typeof dropdown.combobox === 'function') {
+                dropdown.combobox()
+            }
+         <% } %>
         var providerDropdown = jQuery("select#providerPersonId");
         autoCompleteWidth = providerDropdown.width() + 66 + 'px';
         // Actually executes autocomplete
        
-        <% if(restrictNewProviderEntries ){%>
+<%--         <% if(restrictNewProviderEntries ){%> --%>
             if (typeof providerDropdown.combobox === 'function') {
                 providerDropdown.combobox();
             }
-        <% } %>
+<%--         <% } %> --%>
 
         autocompleteResultCallBack = function (selectId, value) {
         	if (selectId === 'requesterId') {

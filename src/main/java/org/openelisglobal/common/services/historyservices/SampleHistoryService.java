@@ -73,7 +73,8 @@ public class SampleHistoryService extends AbstractHistoryService {
         String statusId = item.getStatusId();
         if (statusId != null) {
             identifier = item.getTypeOfSample().getDescription();
-            newValueMap.put(STATUS_ATTRIBUTE, SpringContext.getBean(IStatusService.class).getStatusNameFromId(statusId));
+            newValueMap.put(STATUS_ATTRIBUTE,
+                    SpringContext.getBean(IStatusService.class).getStatusNameFromId(statusId));
             changeMap.put(STATUS_ATTRIBUTE, "");
         }
     }

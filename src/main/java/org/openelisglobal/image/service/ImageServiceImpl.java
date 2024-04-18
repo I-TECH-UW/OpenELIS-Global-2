@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.image.dao.ImageDAO;
 import org.openelisglobal.image.valueholder.Image;
@@ -72,8 +73,13 @@ public class ImageServiceImpl extends BaseObjectServiceImpl<Image, String> imple
                 || GenericValidator.isBlankOrNull(logoInformation.getValue().trim())) {
             return Optional.empty();
         }
-        Image image = get(logoInformation.getValue());
-        return Optional.ofNullable(image);
+        try {
+	        Image image = get(logoInformation.getValue());
+	        return Optional.ofNullable(image);
+        } catch (Exception e) {
+        	LogEvent.logErrorStack(e);
+			return Optional.empty();
+		}
 
     }
 

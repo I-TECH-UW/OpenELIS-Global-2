@@ -17,8 +17,8 @@
 package org.openelisglobal.testcodes.daoimpl;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.testcodes.dao.OrgHL7SchemaDAO;
@@ -41,10 +41,10 @@ public class OrgHL7SchemaDAOImpl extends BaseDAOImpl<OrganizationHL7Schema, Orga
         String sql = "from OrganizationHL7Schema hs where hs.compoundId.organizationId = :id";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setString("id", orgId);
-            OrganizationHL7Schema hs = (OrganizationHL7Schema) query.uniqueResult();
-            // closeSession(); // CSL remove old
+            Query<OrganizationHL7Schema> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    OrganizationHL7Schema.class);
+            query.setParameter("id", orgId);
+            OrganizationHL7Schema hs = query.uniqueResult();
             return hs;
         } catch (HibernateException e) {
             handleException(e, "getOrganizationHL7SchemaByOrgId");

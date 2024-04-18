@@ -183,7 +183,7 @@ public class TestCatalogController extends BaseController {
     }
 
     private String getDictionaryValue(TestResult testResult) {
-
+    	
         if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
             Dictionary dictionary = dictionaryService.getDataForId(testResult.getValue());
             String displayValue = dictionary.getLocalizedName();
@@ -222,7 +222,9 @@ public class TestCatalogController extends BaseController {
             bean.setValidRange(SpringContext.getBean(ResultLimitService.class).getDisplayValidRange(limit,
                     significantDigits, "-"));
             bean.setReportingRange(SpringContext.getBean(ResultLimitService.class).getDisplayReportingRange(limit,
-                    significantDigits, "-"));       
+                    significantDigits, "-"));
+            bean.setCriticalRange(SpringContext.getBean(ResultLimitService.class).getDisplayCriticalRange(limit,
+                    significantDigits, "-"));        
             bean.setGender(limit.getGender());
             bean.setAgeRange(SpringContext.getBean(ResultLimitService.class).getDisplayAgeRange(limit, "-"));
             limitBeans.add(bean);

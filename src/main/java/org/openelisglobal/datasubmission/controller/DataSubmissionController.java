@@ -38,8 +38,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class DataSubmissionController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "dataSubUrl.value", "month", "year",
-            "indicators*.sendIndicator", "indicators*.dataValue.value",
-            "indicators*.resources*.columnValues*.value" };
+            "indicators*.sendIndicator", "indicators*.dataValue.value", "indicators*.resources*.columnValues*.value" };
 
     @Autowired
     DataSubmissionFormValidator formValidator;
@@ -68,7 +67,7 @@ public class DataSubmissionController extends BaseController {
                 ? DateUtil.getCurrentYear()
                 : Integer.parseInt(request.getParameter("year"));
 
-        if (month < 0 ) {
+        if (month < 0) {
             month = DateUtil.getCurrentMonth() + 1;
         }
         if (year < 0) {

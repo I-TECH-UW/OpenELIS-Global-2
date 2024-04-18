@@ -25,11 +25,12 @@ import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
 import org.openelisglobal.testresult.valueholder.TestResult;
+import org.springframework.beans.factory.annotation.Value;
 
 public class Result extends EnumValueItemImpl {
 
     private static final long serialVersionUID = 1L;
-
+    
     private String id;
     private UUID fhirUuid;
     private ValueHolderInterface analysis;
@@ -44,6 +45,8 @@ public class Result extends EnumValueItemImpl {
     private int significantDigits;
     private ValueHolder parentResult;
     private int grouping;
+    @Value("${viralload.limit.low:49}")
+    private Integer virralloadLowLimit;
 
     private Event resultEvent;
 
@@ -111,11 +114,30 @@ public class Result extends EnumValueItemImpl {
 
     public String getValue(Boolean getActualNumericValue) {
         if (getActualNumericValue) {
-            if (this.resultType.equals("N")) {   
+            if ((this.resultType.equals("N"))
+                    && this.value != null) {
                 return StringUtil.getActualNumericValue(value);
             }
         }
         return value;
+    }
+    
+    public long getVLValueAsNumber() {
+		long finalResult = 0;
+		String workingResult = value.split("\\(")[0].trim();
+		if (workingResult.toLowerCase().contains("log7") || workingResult.contains(">")) {
+			finalResult = 10000000;
+		} else if (workingResult.toUpperCase().contains("LL") || workingResult.contains("<")) {
+			finalResult = virralloadLowLimit;
+		} else {
+			try {
+				finalResult = Long.parseLong(workingResult.replaceAll("[^0-9]", ""));
+			} catch (Exception e) {
+				finalResult = -1;
+			}
+		}
+		
+		return finalResult;
     }
 
     public void setValue(String value) {
@@ -191,4 +213,13 @@ public class Result extends EnumValueItemImpl {
     public String getFhirUuidAsString() {
         return fhirUuid == null ? "" : fhirUuid.toString();
     }
+
+	public Integer getVirralloadLowLimit() {
+		return virralloadLowLimit;
+	}
+
+	public void setVirralloadLowLimit(Integer virralloadLowLimit) {
+		this.virralloadLowLimit = virralloadLowLimit;
+	}
+	
 }

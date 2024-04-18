@@ -25,7 +25,8 @@ public class TestNotificationConfigDAOImpl extends BaseDAOImpl<TestNotificationC
         TestNotificationConfig data;
         try {
             String sql = "From TestNotificationConfig as tnc where tnc.test.id = :testId";
-            Query<TestNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<TestNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TestNotificationConfig.class);
             query.setParameter("testId", Integer.parseInt(testId));
             data = query.uniqueResult();
         } catch (RuntimeException e) {
@@ -42,7 +43,8 @@ public class TestNotificationConfigDAOImpl extends BaseDAOImpl<TestNotificationC
         List<TestNotificationConfig> data;
         try {
             String sql = "From TestNotificationConfig as tnc where tnc.test.id IN (:testIds)";
-            Query<TestNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<TestNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TestNotificationConfig.class);
             query.setParameterList("testIds",
                     testIds.stream().map(i -> Integer.parseInt(i)).collect(Collectors.toList()));
             data = query.getResultList();
@@ -60,7 +62,8 @@ public class TestNotificationConfigDAOImpl extends BaseDAOImpl<TestNotificationC
         TestNotificationConfig data;
         try {
             String sql = "SELECT tnc From TestNotificationConfig as tnc join tnc.options as tnco where tnco.id = :configOptionId";
-            Query<TestNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<TestNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TestNotificationConfig.class);
             query.setParameter("configOptionId", configOptionId);
             data = query.uniqueResult();
         } catch (RuntimeException e) {

@@ -373,7 +373,7 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
                 LogEvent.logWarn(this.getClass().getName(), "setDate", 
                     "Could not parse date received from infohighway search");
             }
-        }
+        } 
     }
 
     private SOAPMessage createSOAPRequest(String soapAction) throws Exception {

@@ -20,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -28,6 +30,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class TestNotificationConfigMenuController extends BaseMenuController<TestNotificationConfig> {
+
+    private static final String[] ALLOWED_FIELDS = new String[] { "menuList*.id", "menuList*.test.id",
+            "menuList*.providerSMS.active", "menuList*.providerEmail.active", "menuList*.patientEmail.active",
+            "menuList*.patientSMS.active", "menuList*.defaultPayloadTemplate.id" };
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @Autowired
     private TestService testService;
@@ -50,8 +61,7 @@ public class TestNotificationConfigMenuController extends BaseMenuController<Tes
 
     @PostMapping("/TestNotificationConfigMenu")
     public ModelAndView updateNotificationConfig(HttpServletRequest request,
-            @ModelAttribute("form") @Valid TestNotificationConfigMenuForm form,
-            BindingResult result,
+            @ModelAttribute("form") @Valid TestNotificationConfigMenuForm form, BindingResult result,
             RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (result.hasErrors()) {
@@ -59,7 +69,8 @@ public class TestNotificationConfigMenuController extends BaseMenuController<Tes
             return displayNotificationConfig();
         }
         try {
-            testNotificationConfigService.saveTestNotificationConfigsActiveStatuses(form.getMenuList(), this.getSysUserId(request));
+            testNotificationConfigService.saveTestNotificationConfigsActiveStatuses(form.getMenuList(),
+                    this.getSysUserId(request));
         } catch (RuntimeException e) {
             LogEvent.logError(e);
             LogEvent.logError("could not save result notification configs", e);
@@ -97,7 +108,7 @@ public class TestNotificationConfigMenuController extends BaseMenuController<Tes
     @Override
     protected String findLocalForward(String forward) {
         if (FWD_SUCCESS.equals(forward)) {
-            return "haitiMasterListsPageDefinition";
+            return "testNotificationMasterListsPageDefinition";
         } else if (FWD_FAIL.equals(forward)) {
             return "redirect:/MasterListsPage";
         } else if (FWD_SUCCESS_INSERT.equals(forward)) {

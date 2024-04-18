@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class MethodCreateServiceImpl implements MethodCreateService{
+public class MethodCreateServiceImpl implements MethodCreateService {
 
     @Autowired
     private MethodService methodService;
@@ -39,5 +39,5 @@ public class MethodCreateServiceImpl implements MethodCreateService{
         roleModuleService.insert(resultResultModule);
         roleModuleService.insert(validationValidationModule);
     }
-    
+
 }

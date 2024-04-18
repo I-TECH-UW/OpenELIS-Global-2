@@ -154,7 +154,8 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
                 boolean finished = false;
                 boolean inProgress = false;
                 for (Analysis panelAnalysis : panelIdToAnalysisMap.get(panelId)) {
-                    if (SpringContext.getBean(IStatusService.class).matches(panelAnalysis.getStatusId(), AnalysisStatus.Canceled)) {
+                    if (SpringContext.getBean(IStatusService.class).matches(panelAnalysis.getStatusId(),
+                            AnalysisStatus.Canceled)) {
                         canceled = true;
                         break;
                     } else if (SpringContext.getBean(IStatusService.class).matches(panelAnalysis.getStatusId(),
@@ -179,7 +180,8 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 
                     String status;
                     if (inProgress || (notStarted && finished)) {
-                        status = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
+                        status = SpringContext.getBean(IStatusService.class)
+                                .getStatusID(AnalysisStatus.TechnicalAcceptance);
                     } else if (notStarted) {
                         status = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted);
                     } else {
@@ -242,11 +244,13 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
             }
 
             if (testBucket != null) {
-                if (SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.NotStarted)) {
+                if (SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
+                        AnalysisStatus.NotStarted)) {
                     testBucket.notStartedCount++;
                 } else if (inProgress(analysis)) {
                     testBucket.inProgressCount++;
-                } else if (SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Finalized)) {
+                } else if (SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
+                        AnalysisStatus.Finalized)) {
                     testBucket.finishedCount++;
                 }
             }
@@ -286,9 +290,12 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
     }
 
     private boolean inProgress(Analysis analysis) {
-        return SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.TechnicalAcceptance)
-                || SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.TechnicalRejected)
-                || SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.BiologistRejected);
+        return SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
+                AnalysisStatus.TechnicalAcceptance)
+                || SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
+                        AnalysisStatus.TechnicalRejected)
+                || SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
+                        AnalysisStatus.BiologistRejected);
     }
 
     private void mergeLists() {

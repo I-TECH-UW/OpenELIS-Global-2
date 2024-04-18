@@ -137,7 +137,6 @@ public class SchedulerConfig implements SchedulingConfigurer {
 
         reloadableScheduler.scheduleJob(job, trigger);
 
-
         String[] cronParts = cronScheduler.getCronStatement().split(" ");
 
         try {

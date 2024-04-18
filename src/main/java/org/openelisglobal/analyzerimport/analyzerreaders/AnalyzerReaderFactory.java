@@ -28,6 +28,9 @@ public class AnalyzerReaderFactory {
         if (name.endsWith(".xls")) {
             return new AnalyzerXLSLineReader();
         }
+        if (name.equals("astm")) {
+            return new ASTMAnalyzerReader();
+        }
         return new AnalyzerLineReader();
     }
 }

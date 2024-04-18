@@ -80,11 +80,12 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.notesRequiredForModifyResults,
                 Property.notesRequiredForModifyResults.getName(), "false");
         setDBPropertyMappingAndDefault(Property.resultTechnicianName, Property.resultTechnicianName.getName(), "false");
+        setDBPropertyMappingAndDefault(Property.customCriticalMessage, Property.customCriticalMessage.getName(), "");
         setDBPropertyMappingAndDefault(Property.allowResultRejection, Property.allowResultRejection.getName(), "false");
         setDBPropertyMappingAndDefault(Property.restrictFreeTextRefSiteEntry,
                 Property.restrictFreeTextRefSiteEntry.getName(), "false");
         setDBPropertyMappingAndDefault(Property.restrictFreeTextMethodEntry,
-                Property.restrictFreeTextMethodEntry.getName(), "false");          
+                Property.restrictFreeTextMethodEntry.getName(), "false");
         setDBPropertyMappingAndDefault(Property.restrictFreeTextProviderEntry,
                 Property.restrictFreeTextProviderEntry.getName(), "false");
         setDBPropertyMappingAndDefault(Property.autoFillTechNameBox, Property.autoFillTechNameBox.getName(), "false");
@@ -110,7 +111,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.TRACK_PATIENT_PAYMENT, Property.TRACK_PATIENT_PAYMENT.getName(),
                 "false");
         setDBPropertyMappingAndDefault(Property.ACCESSION_NUMBER_VALIDATE, Property.ACCESSION_NUMBER_VALIDATE.getName(),
-                "true");
+                "false");
         setDBPropertyMappingAndDefault(Property.ALERT_FOR_INVALID_RESULTS, Property.ALERT_FOR_INVALID_RESULTS.getName(),
                 "false");
         setDBPropertyMappingAndDefault(Property.DEFAULT_DATE_LOCALE, Property.DEFAULT_DATE_LOCALE.getName(), "fr-FR");

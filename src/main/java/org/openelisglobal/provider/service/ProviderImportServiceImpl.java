@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.transaction.Transactional;
-
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.r4.model.Bundle;
@@ -53,8 +51,7 @@ public class ProviderImportServiceImpl implements ProviderImportService {
     private PersonService personService;
 
     @Override
-	@Transactional
-	@Async
+    @Async
     @Scheduled(initialDelay = 1000, fixedRate = 60 * 60 * 1000)
     public void importPractitionerList() throws FhirLocalPersistingException, FhirGeneralException, IOException {
         if (!GenericValidator.isBlankOrNull(providerFhirStore)) {
@@ -84,10 +81,11 @@ public class ProviderImportServiceImpl implements ProviderImportService {
                 if (entry.hasResource() && entry.getResource().getResourceType().equals(ResourceType.Practitioner)) {
                     org.hl7.fhir.r4.model.Practitioner fhirPractitioner = (org.hl7.fhir.r4.model.Practitioner) entry
                             .getResource();
-                    remoteFhirProviders.put(fhirPractitioner.getIdElement().getIdPart(), fhirPractitioner);
                     try {
                         providerService.insertOrUpdateProviderByFhirUuid(
                                 fhirTransformService.transformToProvider(fhirPractitioner));
+                        remoteFhirProviders.put(fhirPractitioner.getIdElement().getIdPart(), fhirPractitioner);
+
                     } catch (RuntimeException e) {
                         LogEvent.logError(e);
                         LogEvent.logDebug(this.getClass().getName(), "importProvidersFromBundle",

@@ -350,7 +350,7 @@ public class SamplePatientUpdateData {
             providerPerson = new Person();
             provider = new Provider();
             provider.setFhirUuid(UUID.randomUUID());
-
+            provider.setActive(true);
             providerPerson.setFirstName(sampleOrder.getProviderFirstName());
             providerPerson.setLastName(sampleOrder.getProviderLastName());
             providerPerson.setWorkPhone(sampleOrder.getProviderWorkPhone());
@@ -420,8 +420,7 @@ public class SamplePatientUpdateData {
         String orgId = orderItem.getReferringSiteDepartmentId();
 
         if (!GenericValidator.isBlankOrNull(orgId)) {
-            requester = createSiteRequester(orgId,
-                    TableIdService.getInstance().ORGANIZATION_REQUESTER_TYPE_ID);
+            requester = createSiteRequester(orgId, TableIdService.getInstance().ORGANIZATION_REQUESTER_TYPE_ID);
         }
 
         return requester;
@@ -429,7 +428,9 @@ public class SamplePatientUpdateData {
 
     private SampleRequester initSampleRequester(SampleOrderItem orderItem) {
         SampleRequester requester = null;
-
+        if (!GenericValidator.isBlankOrNull(orderItem.getReferringSiteName())) {
+            orderItem.setNewRequesterName(orderItem.getReferringSiteName());
+        }
         String orgId = orderItem.getReferringSiteId();
 
         if (!GenericValidator.isBlankOrNull(orgId)) {
@@ -614,5 +615,5 @@ public class SamplePatientUpdateData {
 
     public void setPriority(OrderPriority priority) {
         this.priority = priority;
-    } 
+    }
 }

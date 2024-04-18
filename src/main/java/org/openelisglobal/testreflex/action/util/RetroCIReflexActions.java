@@ -173,8 +173,9 @@ public class RetroCIReflexActions extends ReflexAction {
 
         if (CD4Result != null && GBResult != null && LymphResult != null) {
             try {
-                double result = Double.parseDouble(CD4Result.getValue(true)) * Double.parseDouble(GBResult.getValue(true))
-                        * Double.parseDouble(LymphResult.getValue(true)) * 0.1;
+                double result = Double.parseDouble(CD4Result.getValue(true))
+                        * Double.parseDouble(GBResult.getValue(true)) * Double.parseDouble(LymphResult.getValue(true))
+                        * 0.1;
                 result = Math.rint(result);
 
                 calculatedResult = resultService.getResultForAnalyteInAnalysisSet(ANALYTE_CD4_CT_GENERATED.getId(),

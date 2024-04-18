@@ -100,12 +100,9 @@ public class Report extends BaseObject<String> {
             return false;
         }
         Report report = (Report) o;
-        return id == report.id &&
-                Objects.equals(category, report.category) &&
-                Objects.equals(sortOrder, report.sortOrder) &&
-                Objects.equals(isVisible, report.isVisible) &&
-                Objects.equals(menuElementId, report.menuElementId) &&
-                Objects.equals(displayKey, report.displayKey);
+        return id == report.id && Objects.equals(category, report.category)
+                && Objects.equals(sortOrder, report.sortOrder) && Objects.equals(isVisible, report.isVisible)
+                && Objects.equals(menuElementId, report.menuElementId) && Objects.equals(displayKey, report.displayKey);
     }
 
     @Override

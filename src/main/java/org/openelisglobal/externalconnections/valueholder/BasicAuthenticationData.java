@@ -16,7 +16,6 @@ public class BasicAuthenticationData extends ExternalConnectionAuthenticationDat
 
     private static final long serialVersionUID = -3749126139570042912L;
 
-
     @Column
     private String username;
 

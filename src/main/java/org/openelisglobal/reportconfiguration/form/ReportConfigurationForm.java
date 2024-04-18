@@ -20,7 +20,6 @@ public class ReportConfigurationForm extends BaseForm implements Serializable {
 
     private String idOrder;
 
-
     private MultipartFile reportTemplateFile;
 
     /*
@@ -30,7 +29,6 @@ public class ReportConfigurationForm extends BaseForm implements Serializable {
 
     private String menuDisplayKey;
     private String menuActionUrl;
-
 
     public ReportConfigurationForm() {
         this.currentReport = new Report();

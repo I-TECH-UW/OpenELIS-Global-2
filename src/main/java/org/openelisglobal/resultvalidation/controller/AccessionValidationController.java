@@ -6,12 +6,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.inventory.action.InventoryUtility;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.resultvalidation.action.util.ResultValidationPaging;
@@ -59,9 +59,9 @@ public class AccessionValidationController extends BaseController {
     }
 
     @RequestMapping(value = "/AccessionValidation", method = RequestMethod.GET)
-    public ModelAndView showAccessionValidation(HttpServletRequest request)
+    public ModelAndView showAccessionValidation(HttpServletRequest request,AccessionValidationForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        AccessionValidationForm form = new AccessionValidationForm();
+        //AccessionValidationForm form = new AccessionValidationForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
         form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
@@ -186,8 +186,7 @@ public class AccessionValidationController extends BaseController {
         if (sample == null) {
             // ActionError error = new ActionError("sample.edit.sample.notFound",
             // accessionNumber, null, null);
-            errors.reject("sample.edit.sample.notFound", new String[] {},
-                    "sample.edit.sample.notFound");
+            errors.reject("sample.edit.sample.notFound", new String[] {}, "sample.edit.sample.notFound");
         }
 
         return errors;

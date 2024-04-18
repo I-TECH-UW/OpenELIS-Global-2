@@ -2,7 +2,7 @@ package org.openelisglobal.analyzerimport.form;
 
 import java.util.List;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.analyzerimport.action.beans.NamedAnalyzerTestMapping;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
 
@@ -15,7 +15,7 @@ public class AnalyzerTestNameMenuForm extends AdminOptionMenuForm<NamedAnalyzerT
     // for display
     private List<NamedAnalyzerTestMapping> menuList;
 
-    private List<@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE) String> selectedIDs;
+    private List<@SafeHtml(level = SafeHtml.SafeListLevel.NONE) String> selectedIDs;
 
     public AnalyzerTestNameMenuForm() {
         setFormName("analyzerTestNameMenuForm");

@@ -12,8 +12,6 @@
 
 <%@ taglib prefix="ajax" uri="/tags/ajaxtags" %>
 
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
-
 <c:set var="formName" value="${form.formName}"/>
 <c:set var="localDBOnly" value='<%=Boolean.toString(ConfigurationProperties.getInstance().getPropertyValueLowerCase(Property.UseExternalPatientInfo).equals("false"))%>'/>
 <c:set var="patientSearch" value="${form.patientSearch}"/>
@@ -305,7 +303,6 @@ function enableSearchButton(eventCode){
 }
 
 function handleSelectedPatient(){
-	console.log("patientSearch:HandleSelectedPatient: ");
     var accessionNumber = "";
     if(jQuery("#searchCriteria").val() == 5){//lab number
         accessionNumber = jQuery("#searchValue").val();

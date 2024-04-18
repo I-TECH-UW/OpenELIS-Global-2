@@ -19,6 +19,7 @@ import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.dao.UserModuleService;
 import org.openelisglobal.login.valueholder.UserSessionData;
+import org.openelisglobal.view.PageBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
@@ -40,6 +41,8 @@ public abstract class BaseController implements IActionConstants {
 
     @Autowired
     protected UserModuleService userModuleService;
+    @Autowired
+    protected PageBuilderService pageBuilderService;
 
     protected abstract String findLocalForward(String forward);
 
@@ -188,7 +191,10 @@ public abstract class BaseController implements IActionConstants {
     protected String getSysUserId(HttpServletRequest request) {
         UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
         if (usd == null) {
-            return null;
+            usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);
+            if (usd == null) {
+                return null;
+            }
         }
         return String.valueOf(usd.getSystemUserId());
     }
@@ -220,6 +226,7 @@ public abstract class BaseController implements IActionConstants {
             return "redirect:Home";
         }
         String forwardView = findLocalForward(forward);
+
         if (GenericValidator.isBlankOrNull(forwardView)) {
             forwardView = "PageNotFound";
         }
@@ -234,7 +241,7 @@ public abstract class BaseController implements IActionConstants {
         } else {
             setPageTitles(request, form);
             // insert global forwards here
-            return new ModelAndView(realForward, "form", form);
+            return new ModelAndView(pageBuilderService.setupJSPPage(realForward, request), "form", form);
         }
     }
 
@@ -324,7 +331,6 @@ public abstract class BaseController implements IActionConstants {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends BaseForm> T resetSessionFormToType(BaseForm form, Class<T> classType) {
         try {
             T newForm = classType.newInstance();

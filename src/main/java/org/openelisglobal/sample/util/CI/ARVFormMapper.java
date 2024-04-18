@@ -43,14 +43,16 @@ public class ARVFormMapper extends BaseProjectFormMapper implements IProjectForm
 
         if (projectData.getSerologyHIVTest()) {
             CollectionUtils.addIgnoreNull(testList, createTest("Vironostika", true));
-            CollectionUtils.addIgnoreNull(testList, createTest("Murex", true));
-            CollectionUtils.addIgnoreNull(testList, createTest("Integral", true));
+            //CollectionUtils.addIgnoreNull(testList, createTest("Murex", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Murex Combinaison", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Genscreen", true));
+            //CollectionUtils.addIgnoreNull(testList, createTest("Innolia", true));
         }
         if (projectData.getCreatinineTest()) {
-            CollectionUtils.addIgnoreNull(testList, createTest("Cr\u0065atinin\u0065mie", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Créatininémie", true));
         }
         if (projectData.getGlycemiaTest()) {
-            CollectionUtils.addIgnoreNull(testList, createTest("Glyc\u0065mie", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Glycémie", true));
         }
 
         if (projectData.getTransaminaseTest()) {
@@ -87,12 +89,22 @@ public class ARVFormMapper extends BaseProjectFormMapper implements IProjectForm
         }
 
         if (projectData.getGenotypingTest()) {
-            CollectionUtils.addIgnoreNull(testList, createTest("G\u0065notypage", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Génotypage", true));
         }
 
         return testList;
     }
 
+
+    public List<Test> getPSCTests(IProjectForm form) {
+        List<Test> testList = new ArrayList<>();
+        if (projectData.getViralLoadTest()) {
+            CollectionUtils.addIgnoreNull(testList, createTest("Viral Load", true));
+        }
+        return testList;
+    }
+
+    
     @Override
     public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
         ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
@@ -117,6 +129,12 @@ public class ARVFormMapper extends BaseProjectFormMapper implements IProjectForm
         if (projectData.getdbsvlTaken()) {
             sItemTests.add(new TypeOfSampleTests(getTypeOfSample("DBS"), getEDTATubeTests(form)));
         }
+        
+        // Check for PSC Tests for Viral Load
+        if (projectData.isPscvlTaken()) {
+            sItemTests.add(new TypeOfSampleTests(getTypeOfSample("PSC"), getPSCTests(form)));
+        }
+
 
         return sItemTests;
     }

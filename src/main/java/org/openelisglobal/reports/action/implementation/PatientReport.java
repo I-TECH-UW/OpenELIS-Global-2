@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.address.service.AddressPartService;
 import org.openelisglobal.address.service.PersonAddressService;
@@ -87,6 +88,7 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFieldName;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.sampleorganization.service.SampleOrganizationService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.service.TestService;
@@ -120,6 +122,7 @@ public abstract class PatientReport extends Report {
     protected PersonAddressService addressService = SpringContext.getBean(PersonAddressService.class);
     protected AddressPartService addressPartService = SpringContext.getBean(AddressPartService.class);
     protected OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
+    protected SampleOrganizationService sampleOrganizationService = SpringContext.getBean(SampleOrganizationService.class);
     protected UserService userService =  SpringContext.getBean(UserService.class);;
     private List<String> handledOrders;
     private List<Analysis> updatedAnalysis = new ArrayList<>();
@@ -239,8 +242,8 @@ public abstract class PatientReport extends Report {
             if (!GenericValidator.isBlankOrNull(form.getUpperDateRange())
                     && !GenericValidator.isBlankOrNull(form.getLowerDateRange())) {
                 reportSampleList = findReportSamplesForSite(form.getReferringSiteId(),
-                        form.getReferringSiteDepartmentId(),
-                        form.isOnlyResults(), form.getDateType(), form.getLowerDateRange(), form.getUpperDateRange());
+                        form.getReferringSiteDepartmentId(), form.isOnlyResults(), form.getDateType(),
+                        form.getLowerDateRange(), form.getUpperDateRange());
             }
 
         }
@@ -371,7 +374,10 @@ public abstract class PatientReport extends Report {
         currentSiteInfo += referringOrg == null ? "" : referringOrg.getOrganizationName();
         currentSiteInfo += "|" + (referringDepartmentOrg == null ? "" : referringDepartmentOrg.getOrganizationName());
 
-        Person person = sampleService.getPersonRequester(currentSample);
+        //Person person = sampleService.getPersonRequester(currentSample);
+        Person person = (ObjectUtils.isNotEmpty(sampleHumanService.getProviderForSample(currentSample)))?
+        		sampleHumanService.getProviderForSample(currentSample).getPerson():null;
+        
         if (person != null) {
             PersonService personService = SpringContext.getBean(PersonService.class);
             currentContactInfo = personService.getLastFirstName(person);
@@ -594,7 +600,7 @@ public abstract class PatientReport extends Report {
 
     private void setCorrectedStatus(Result result, ClinicalPatientData data) {
         if (currentAnalysis.isCorrectedSincePatientReport() && !GenericValidator.isBlankOrNull(result.getValue())) {
-            data.setCorrectedResult(true);
+            data.setCorrectedResult(true);data.setContactInfo(currentContactInfo);
             sampleCorrectedMap.put(sampleService.getAccessionNumber(currentSample), true);
             currentAnalysis.setCorrectedSincePatientReport(false);
             updatedAnalysis.add(currentAnalysis);
@@ -603,9 +609,7 @@ public abstract class PatientReport extends Report {
 
     private void setNormalRange(ClinicalPatientData data, Test test, Result result) {
         String uom = getUnitOfMeasure(test);
-        if (!result.getResultType().equalsIgnoreCase("D")) {
-            data.setTestRefRange(addIfNotEmpty(getRange(result), appendUOMToRange() ? uom : null));
-        }
+        data.setTestRefRange(addIfNotEmpty(getRange(result), appendUOMToRange() ? uom : null));
         data.setUom(uom);
     }
 
@@ -943,6 +947,23 @@ public abstract class PatientReport extends Report {
             data.setContactTracingIndexRecordNumber(
                     sampleService.getSampleAdditionalFieldForSample(sampleService.getId(currentSample),
                             AdditionalFieldName.CONTACT_TRACING_INDEX_RECORD_NUMBER).getFieldValue());
+        }
+        String testSection = analysisService.getTestSection(currentAnalysis).getDescription();
+        if(testSection.equals("Tuberculose")) {
+        	data.setTbOrderReason(observationHistoryService.getValueForSample(ObservationType.TB_ORDER_REASON,
+                sampleService.getId(currentSample)));
+        	data.setTbDiagnosticReason(observationHistoryService.getValueForSample(ObservationType.TB_DIAGNOSTIC_REASON,
+                    sampleService.getId(currentSample)));
+        	data.setTbFollowupReason(observationHistoryService.getValueForSample(ObservationType.TB_FOLLOWUP_REASON,
+        			sampleService.getId(currentSample)));
+        	data.setTbAnalysisMethod(observationHistoryService.getValueForSample(ObservationType.TB_ANALYSIS_METHOD,
+        			sampleService.getId(currentSample)));
+        	data.setTbSampleAspect(observationHistoryService.getValueForSample(ObservationType.TB_SAMPLE_ASPECT,
+        			sampleService.getId(currentSample)));
+        	data.setTbFollowupPeriodLine1(observationHistoryService.getValueForSample(ObservationType.TB_FOLLOWUP_PERIOD_LINE1,
+        			sampleService.getId(currentSample)));
+        	data.setTbFollowupPeriodLine2(observationHistoryService.getValueForSample(ObservationType.TB_FOLLOWUP_PERIOD_LINE2,
+        			sampleService.getId(currentSample)));
         }
 
         return data;

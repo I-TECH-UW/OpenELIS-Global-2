@@ -16,7 +16,9 @@ import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.login.service.LoginUserService;
@@ -24,15 +26,13 @@ import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.systemuser.form.UnifiedSystemUserMenuForm;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.service.UnifiedSystemUserService;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.systemuser.valueholder.UnifiedSystemUser;
 import org.openelisglobal.userrole.service.UserRoleService;
 import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
 import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 import org.openelisglobal.userrole.valueholder.UserRole;
-import org.openelisglobal.common.services.DisplayListService.ListType;
-import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.systemuser.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -66,7 +66,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    @RequestMapping(value = {"/UnifiedSystemUserMenu", "/SearchUnifiedSystemUserMenu"} ,method = RequestMethod.GET)
+    @RequestMapping(value = { "/UnifiedSystemUserMenu", "/SearchUnifiedSystemUserMenu" }, method = RequestMethod.GET)
     public ModelAndView showUnifiedSystemUserMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         String forward = FWD_SUCCESS;
@@ -100,9 +100,10 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
         systemUsers = systemUserService.getPage(startingRecNo);
 
         if (YES.equals(request.getParameter("search"))) {
-            systemUsers = systemUserService.getPagesOfSearchedUsers(startingRecNo,request.getParameter("searchString"));
+            systemUsers = systemUserService.getPagesOfSearchedUsers(startingRecNo,
+                    request.getParameter("searchString"));
             request.setAttribute(MENU_TOTAL_RECORDS,
-                String.valueOf(systemUserService.getTotalSearchedUserCount(request.getParameter("searchString"))));
+                    String.valueOf(systemUserService.getTotalSearchedUserCount(request.getParameter("searchString"))));
             request.setAttribute(SEARCHED_STRING, request.getParameter("searchString"));
         } else {
             systemUsers = systemUserService.getOrderedPage("loginName", false, startingRecNo);
@@ -114,12 +115,13 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
             request.setAttribute(PAGE_SIZE, getPageSize());
             if (request.getParameter("filter").contains("isActive")) {
                 request.setAttribute(IActionConstants.FILTER_CHECK_ACTIVE, "true");
-                unifiedUsers = unifiedUsers.stream().filter(user -> user.getActive().equals("Y")).collect(Collectors.toList());
-            }      
+                unifiedUsers = unifiedUsers.stream().filter(user -> user.getActive().equals("Y"))
+                        .collect(Collectors.toList());
+            }
             if (request.getParameter("filter").contains("isAdmin")) {
                 request.setAttribute(IActionConstants.FILTER_CHECK_ADMIN, "true");
                 unifiedUsers = filterUnifiedUsersByAdmin(unifiedUsers);
-            } 
+            }
         }
         if (StringUtils.isNotEmpty(request.getParameter("roleFilter"))) {
             request.setAttribute(IActionConstants.FILTER_ROLE, request.getParameter("roleFilter").toString());
@@ -127,7 +129,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
         }
 
         request.setAttribute("menuDefinition", "UnifiedSystemUserMenuDefinition");
-        
+
         request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
 
         int numOfRecs = 0;
@@ -150,14 +152,14 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
     private List<UnifiedSystemUser> filterUnifiedUsersByAdmin(List<UnifiedSystemUser> users) {
         List<UnifiedSystemUser> unifiedUsers = new ArrayList<>();
         List<LoginUser> loginUsers = loginService.getAll();
-        HashMap<String, LoginUser> loginMap = createLoginMap(loginUsers ,true);
+        HashMap<String, LoginUser> loginMap = createLoginMap(loginUsers, true);
 
         for (UnifiedSystemUser user : users) {
-            if(loginMap.containsKey(user.getLoginName())){
+            if (loginMap.containsKey(user.getLoginName())) {
                 unifiedUsers.add(user);
             }
         }
-        return unifiedUsers  ;
+        return unifiedUsers;
     }
 
     private List<UnifiedSystemUser> filterUnifiedUsersByLabUnitRole(List<UnifiedSystemUser> users, String labUnit) {
@@ -188,7 +190,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
 
         List<LoginUser> loginUsers = loginService.getAll();
 
-        HashMap<String, LoginUser> loginMap = createLoginMap(loginUsers ,false);
+        HashMap<String, LoginUser> loginMap = createLoginMap(loginUsers, false);
 
         for (SystemUser user : systemUsers) {
             UnifiedSystemUser unifiedUser = createUnifiedSystemUser(loginMap, user);
@@ -219,7 +221,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
         return unifiedUser;
     }
 
-    private HashMap<String, LoginUser> createLoginMap(List<LoginUser> loginUsers ,Boolean filter) {
+    private HashMap<String, LoginUser> createLoginMap(List<LoginUser> loginUsers, Boolean filter) {
         HashMap<String, LoginUser> loginMap = new HashMap<>();
 
         for (LoginUser login : loginUsers) {
@@ -311,7 +313,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
     @Override
     protected String findLocalForward(String forward) {
         if (FWD_SUCCESS.equals(forward)) {
-            return "haitiMasterListsPageDefinition";
+            return "userMasterListsPageDefinition";
         } else if (FWD_FAIL.equals(forward)) {
             return "redirect:/MasterListsPage";
         } else if (FWD_SUCCESS_DELETE.equals(forward)) {

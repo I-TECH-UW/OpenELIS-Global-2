@@ -21,7 +21,6 @@ public interface FhirPersistanceService {
 
     Bundle updateFhirResourceInFhirStore(Resource resource) throws FhirLocalPersistingException;
 
-
     Bundle createUpdateFhirResourcesInFhirStore(FhirOperations fhirOperations) throws FhirLocalPersistingException;
 
     Bundle createUpdateFhirResourcesInFhirStore(List<FhirOperations> fhirOperationsList)
@@ -37,10 +36,11 @@ public interface FhirPersistanceService {
 
     Optional<Specimen> getSpecimenBySampleItemUuid(String uuid);
 
-
     Optional<DiagnosticReport> getDiagnosticReportByAnalysisUuid(String uuid);
 
     Optional<Task> getTaskBasedOnServiceRequest(String referringId);
+
+    Optional<ServiceRequest> getServiceRequestByReferingId(String referringId);
 
     Optional<Task> getTaskBasedOnTask(String taskId);
 

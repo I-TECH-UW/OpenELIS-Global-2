@@ -212,7 +212,8 @@ public class BatchTestReassignmentController extends BaseController {
     }
 
     private String getStatusName(String statusId) {
-        StatusService.AnalysisStatus status = SpringContext.getBean(IStatusService.class).getAnalysisStatusForID(statusId);
+        StatusService.AnalysisStatus status = SpringContext.getBean(IStatusService.class)
+                .getAnalysisStatusForID(statusId);
         String name = getStatusName(status);
         return name == null ? SpringContext.getBean(IStatusService.class).getStatusName(status) : name;
     }

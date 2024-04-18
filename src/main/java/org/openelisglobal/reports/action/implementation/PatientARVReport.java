@@ -121,7 +121,8 @@ public abstract class PatientARVReport extends RetroCIPatientReport {
 
             }
 
-            if (!analysis.getStatusId().equals(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled))) {
+            if (!analysis.getStatusId()
+                    .equals(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Canceled))) {
                 String testName = TestServiceImpl.getUserLocalizedTestName(analysis.getTest());
                 List<Result> resultList = resultService.getResultsByAnalysis(analysis);
                 String resultValue = null;
@@ -161,7 +162,9 @@ public abstract class PatientARVReport extends RetroCIPatientReport {
                 }
             }
 
-            if (mayBeDuplicate && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Finalized)
+            if (mayBeDuplicate
+                    && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
+                            AnalysisStatus.Finalized)
                     && lastReport != null && lastReport.before(analysis.getLastupdated())) {
                 mayBeDuplicate = false;
             }
@@ -239,7 +242,7 @@ public abstract class PatientARVReport extends RetroCIPatientReport {
                 }
             }
 
-        } else if (testName.equals("Murex") || testName.equals("Intgral")) { // Serology must have one of these but not
+        } else if (testName.equals("Murex") ||testName.equals("Murex Combinaison") || testName.equals("Genscreen")) { // Serology must have one of these but not
                                                                              // necessarily both
             data.setShowSerologie(Boolean.TRUE);
             if (GenericValidator.isBlankOrNull(data.getVih())) {

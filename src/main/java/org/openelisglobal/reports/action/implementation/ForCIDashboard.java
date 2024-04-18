@@ -85,13 +85,13 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
         super.initializeReport();
         errorFound = false;
 
-        indicStr = form.getProjectCode();
+        indicStr = form.getVlStudyType();
 
         lowDateStr = form.getLowerDateRange();
         highDateStr = form.getUpperDateRange();
-        projectStr = form.getProjectCode();
+        projectStr = form.getVlStudyType();
         dateRange = new DateRange(lowDateStr, highDateStr);
-        String[] splitline = form.getProjectCode().split(":");
+        String[] splitline = form.getVlStudyType().split(":");
 
         projectStr = splitline[0];
         // indicLabel = splitline[1];

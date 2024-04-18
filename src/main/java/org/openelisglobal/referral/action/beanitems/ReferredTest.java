@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.validation.constraints.Pattern;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.referral.form.ReferredOutTestsForm;
@@ -36,16 +36,16 @@ public class ReferredTest implements IReferralResultTest {
     // the shadow is to track if the test has been changed by the user
     private String referredTestIdShadow;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String referredResult = "";
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String referredDictionaryResult;
 
     // for display
     private List<IdValuePair> dictionaryResults = new ArrayList<>();
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String referredResultType = "";
 
     @ValidDate(groups = { ReferredOutTestsForm.ReferredOut.class })
@@ -56,10 +56,10 @@ public class ReferredTest implements IReferralResultTest {
 
     private boolean remove = false;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String referredMultiDictionaryResult;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
     private String multiSelectResultValues = "{}";
 
     @Override

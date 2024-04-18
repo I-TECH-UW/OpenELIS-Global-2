@@ -80,17 +80,16 @@ public class SampleEditController extends BaseController {
             "sampleOrderItems.referringPatientNumber", "sampleOrderItems.referringSiteId",
             "sampleOrderItems.referringSiteName", "sampleOrderItems.referringSiteCode",
             "sampleOrderItems.referringSiteDepartmentId", "sampleOrderItems.referringSiteDepartmentName",
-            "sampleOrderItems.program", "sampleOrderItems.providerId", "sampleOrderItems.facilityAddressStreet",
+            "sampleOrderItems.program", "sampleOrderItems.providerId","sampleOrderItems.providerLastName", 
+            "sampleOrderItems.providerFirstName", "sampleOrderItems.facilityAddressStreet",
             "sampleOrderItems.facilityAddressCommune", "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax",
             "sampleOrderItems.paymentOptionSelection", "sampleOrderItems.billingReferenceNumber",
-            "sampleOrderItems.testLocationCode", "sampleOrderItems.otherLocationCode",
-            "sampleOrderItems.priority",
+            "sampleOrderItems.testLocationCode", "sampleOrderItems.otherLocationCode", "sampleOrderItems.priority",
             //
             "accessionNumber", "newAccessionNumber", "isEditable", "maxAccessionNumber",
             "existingTests*.sampleItemChanged", "existingTests*.sampleItemId", "existingTests*.analysisId",
             "existingTests*.collectionDate", "existingTests*.collectionTime", "existingTests*.removeSample",
             "existingTests*.canceled", "possibleTests*.testId", "possibleTests*.sampleItemId", "possibleTests*.add" };
-
 
     @Autowired
     SampleEditFormValidator formValidator;
@@ -208,7 +207,7 @@ public class SampleEditController extends BaseController {
         if (FormFields.getInstance().useField(FormFields.Field.SampleNature)) {
             form.setSampleNatureList(DisplayListService.getInstance().getList(ListType.SAMPLE_NATURE));
         }
-
+        form.setRejectReasonList(DisplayListService.getInstance().getList(ListType.REJECTION_REASONS));
         form.setCurrentDate(DateUtil.getCurrentDateAsText());
         PatientSearch patientSearch = new PatientSearch();
         patientSearch.setLoadFromServerWithPatient(true);

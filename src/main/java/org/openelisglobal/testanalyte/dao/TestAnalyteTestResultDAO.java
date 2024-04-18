@@ -74,12 +74,10 @@ public interface TestAnalyteTestResultDAO {
      * @throws LIMSRuntimeException
      */
 
-
     /**
      * @param id
      * @return
      * @throws LIMSRuntimeException
      */
-
 
 }

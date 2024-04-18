@@ -115,7 +115,9 @@ public abstract class PatientEIDReport extends RetroCIPatientReport {
                     data.setHiv_status(invalidValue);
                 }
             }
-            if (mayBeDuplicate && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(), AnalysisStatus.Finalized)
+            if (mayBeDuplicate
+                    && SpringContext.getBean(IStatusService.class).matches(analysis.getStatusId(),
+                            AnalysisStatus.Finalized)
                     && lastReport != null && lastReport.before(analysis.getLastupdated())) {
                 mayBeDuplicate = false;
             }

@@ -19,16 +19,18 @@ package org.openelisglobal.patient.valueholder;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
 import org.apache.commons.httpclient.NameValuePair;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dictionary.ObservationHistoryList;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.resultvalidation.form.ResultValidationForm;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
@@ -52,7 +54,7 @@ public class ObservationData implements Serializable {
      * General tag which identifies which set of questions have been answered to
      * enter/accession this person and sample into the system.
      */
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String projectFormName;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX)
@@ -61,9 +63,9 @@ public class ObservationData implements Serializable {
     private String maritalStatus;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String nationality;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String nationalityOther;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String legalResidence;
     @ValidName(nameType = NameType.FULL_NAME)
     private String nameOfDoctor;
@@ -92,14 +94,14 @@ public class ObservationData implements Serializable {
     private String anyPriorDiseases;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String priorDiseases; // drop down value yes, no
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String priorDiseasesValue; // actual string containing other Diseases which is answer to "please specify"
 
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String anyCurrentDiseases;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String currentDiseases;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String currentDiseasesValue; // actual string containing other Diseases which is answer to "please specify"
 
     private List<NameValuePair> priorDiseasesList;
@@ -108,9 +110,12 @@ public class ObservationData implements Serializable {
     private List<NameValuePair> rtnPriorDiseasesList;
     private List<NameValuePair> rtnCurrentDiseasesList;
 
-    private List<@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE) String> priorARVTreatmentINNs = Arrays.asList(new String[] { null, null, null, null });
-    private List<@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE) String> futureARVTreatmentINNs = Arrays.asList(new String[] { null, null, null, null });
-    private List<@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE) String> currentARVTreatmentINNs = Arrays.asList(new String[] { null, null, null, null });
+    private List<@SafeHtml(level = SafeHtml.SafeListLevel.NONE) String> priorARVTreatmentINNs = Arrays
+            .asList(new String[] { null, null, null, null });
+    private List<@SafeHtml(level = SafeHtml.SafeListLevel.NONE) String> futureARVTreatmentINNs = Arrays
+            .asList(new String[] { null, null, null, null });
+    private List<@SafeHtml(level = SafeHtml.SafeListLevel.NONE) String> currentARVTreatmentINNs = Arrays
+            .asList(new String[] { null, null, null, null });
     // private List<String> initialSampleConditionINNs= Arrays.asList(new String[]
     // {null, null, null, null});
 
@@ -123,22 +128,22 @@ public class ObservationData implements Serializable {
     private String cotrimoxazoleTreatment;
     @Pattern(regexp = "^[0-9]*$")
     private String patientWeight;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String karnofskyScore;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String cd4Count;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String cd4Percent;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String initcd4Count;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String initcd4Percent;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String demandcd4Count;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String demandcd4Percent;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String priorCd4Date;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String antiTbTreatment;
@@ -172,19 +177,19 @@ public class ObservationData implements Serializable {
     private String whichPCR;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String reasonForSecondPCRTest;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String indFirstTestName;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String indSecondTestName;
     @ValidDate
     private String indFirstTestDate;
     @ValidDate
     private String indSecondTestDate;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String indFirstTestResult;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String indSecondTestResult;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String indSiteFinalResult;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String reasonForRequest;
@@ -194,7 +199,7 @@ public class ObservationData implements Serializable {
     private String arvTreatmentInitDate;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String vlReasonForRequest;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String vlOtherReasonForRequest;
     @ValidDate
     private String initcd4Date;
@@ -206,9 +211,9 @@ public class ObservationData implements Serializable {
     private String vlPregnancy;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String vlSuckle;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String priorVLLab;
-    @Pattern(regexp = "^[0-9]*$")
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String priorVLValue;
     @ValidDate
     private String priorVLDate;
@@ -218,7 +223,7 @@ public class ObservationData implements Serializable {
     private String eidInfantPTME;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String eidTypeOfClinic;
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String eidTypeOfClinicOther;
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String eidHowChildFed;
@@ -240,6 +245,9 @@ public class ObservationData implements Serializable {
 
     @ValidName(nameType = NameType.FULL_NAME)
     private String nameOfSampler;
+    
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
+    private String hpvSamplingMethod;
 
     /**
      * Yes/No
@@ -253,12 +261,12 @@ public class ObservationData implements Serializable {
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String secondaryTreatment;
 
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String clinicVisits;
     /**
      * Reason for test submital
      */
-    @SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String reason;
 
     @Pattern(regexp = ValidationHelper.ID_REGEX)
@@ -1389,7 +1397,7 @@ public class ObservationData implements Serializable {
         if (priorDiseasesList == null) {
             priorDiseasesList = makeDiseaseList("P", ObservationHistoryList.ARV_DISEASES.getList());
         }
-        return priorDiseasesList;
+        return new ArrayList<>(new HashSet<>(priorDiseasesList));
     }
 
     private List<NameValuePair> makeDiseaseList(String prefix, List<Dictionary> dictionaryList) {
@@ -1408,7 +1416,7 @@ public class ObservationData implements Serializable {
         if (currentDiseasesList == null) {
             currentDiseasesList = makeDiseaseList("C", ObservationHistoryList.ARV_DISEASES_SHORT.getList());
         }
-        return currentDiseasesList;
+        return new ArrayList<>(new HashSet<>(currentDiseasesList)); //remove duplicates entry
     }
 
     public NameValuePair getCurrentDiseases(int index) {
@@ -1419,13 +1427,21 @@ public class ObservationData implements Serializable {
         if (rtnPriorDiseasesList == null) {
             rtnPriorDiseasesList = makeDiseaseList("", ObservationHistoryList.RTN_DISEASES.getList());
         }
-        return rtnPriorDiseasesList;
+        return new ArrayList<>(new HashSet<>(rtnPriorDiseasesList));
     }
 
     public List<NameValuePair> getRtnCurrentDiseasesList() {
         if (rtnCurrentDiseasesList == null) {
             rtnCurrentDiseasesList = makeDiseaseList("", ObservationHistoryList.RTN_EXAM_DISEASES.getList());
         }
-        return rtnCurrentDiseasesList;
+        return new ArrayList<>(new HashSet<>(rtnCurrentDiseasesList));
     }
+
+	public String getHpvSamplingMethod() {
+		return hpvSamplingMethod;
+	}
+
+	public void setHpvSamplingMethod(String hpvSamplingMethod) {
+		this.hpvSamplingMethod = hpvSamplingMethod;
+	}
 }

@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 @Component("basicAuthFilter")
 public class BasicAuthFilter extends BasicAuthenticationFilter {
 
-
     @Autowired
     private LoginUserService loginService;
     @Autowired
@@ -58,6 +57,7 @@ public class BasicAuthFilter extends BasicAuthenticationFilter {
         usd.setElisUserName(su.getNameForDisplay());
         usd.setAdmin(loginService.isUserAdmin(loginInfo));
         request.setAttribute(IActionConstants.USER_SESSION_DATA, usd);
+        request.getSession().setAttribute(IActionConstants.USER_SESSION_DATA, usd);
 
         // get permitted actions map (available modules for the current user)
         if (SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {

@@ -21,8 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -46,10 +46,9 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
         List<InventoryReceipt> inventoryReceipts;
         try {
             String sql = "from InventoryReceipt";
-            org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<InventoryReceipt> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    InventoryReceipt.class);
             inventoryReceipts = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryReceipt getAllInventoryReceipts()", e);
@@ -57,80 +56,6 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
 
         return inventoryReceipts;
     }
-//
-//	@Override
-//	public void deleteData(List<InventoryReceipt> inventoryReceipts) throws LIMSRuntimeException {
-//		try {
-//
-//			for (InventoryReceipt data : inventoryReceipts) {
-//
-//				InventoryReceipt oldData = getInventoryReceiptById(data.getId());
-//				InventoryReceipt newData = new InventoryReceipt();
-//
-//				String sysUserId = data.getSysUserId();
-//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-//				String tableName = "INVENTORY_RECEIPT";
-//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//			}
-//
-//			for (InventoryReceipt data : inventoryReceipts) {
-//
-//				data = getInventoryReceiptById(data.getId());
-//				entityManager.unwrap(Session.class).delete(data);
-//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			}
-//		} catch (RuntimeException e) {
-//			LogEvent.logError("InventoryReceiptDAOImpl", "deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in InventoryReceipt deleteData()", e);
-//		}
-//	}
-
-//	@Override
-//	public boolean insertData(InventoryReceipt inventoryReceipt) throws LIMSRuntimeException {
-//		try {
-//			String id = (String) entityManager.unwrap(Session.class).save(inventoryReceipt);
-//			inventoryReceipt.setId(id);
-//
-//			String sysUserId = inventoryReceipt.getSysUserId();
-//			String tableName = "INVENTORY_RECEIPT";
-//			auditDAO.saveNewHistory(inventoryReceipt, sysUserId, tableName);
-//
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//
-//		} catch (RuntimeException e) {
-//			LogEvent.logError("InventoryReceiptDAOImpl", "insertData()", e.toString());
-//			throw new LIMSRuntimeException("Error in InventoryReceipt insertData()", e);
-//		}
-//
-//		return true;
-//	}
-
-//	@Override
-//	public void updateData(InventoryReceipt inventoryReceipt) throws LIMSRuntimeException {
-//		InventoryReceipt oldData = getInventoryReceiptById(inventoryReceipt.getId());
-//		InventoryReceipt newData = inventoryReceipt;
-//
-//		// add to audit trail
-//		try {
-//
-//			String sysUserId = inventoryReceipt.getSysUserId();
-//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-//			String tableName = "INVENTORY_RECEIPT";
-//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//
-//			entityManager.unwrap(Session.class).merge(inventoryReceipt);
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			// entityManager.unwrap(Session.class).evict // CSL remove old(inventoryReceipt);
-//			// entityManager.unwrap(Session.class).refresh // CSL remove
-//			// old(inventoryReceipt);
-//		} catch (RuntimeException e) {
-//			LogEvent.logError("InventoryReceiptDAOImpl", "updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in InventoryReceipt updateData()", e);
-//		}
-//	}
 
     @Override
     @Transactional(readOnly = true)
@@ -138,8 +63,6 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
         try {
             InventoryReceipt tmpInventoryReceipt = entityManager.unwrap(Session.class).get(InventoryReceipt.class,
                     inventoryReceipt.getId());
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
             if (tmpInventoryReceipt != null) {
                 PropertyUtils.copyProperties(inventoryReceipt, tmpInventoryReceipt);
             } else {
@@ -157,8 +80,6 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
         InventoryReceipt data = null;
         try {
             data = entityManager.unwrap(Session.class).get(InventoryReceipt.class, idString);
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
             LogEvent.logError(e.toString(), e);
             throw new LIMSRuntimeException("Error in InventoryReceipt readInventoryReceipt()", e);
@@ -176,11 +97,9 @@ public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, Strin
             List<InventoryReceipt> inventoryReceipts;
 
             String sql = "from InventoryReceipt where invitem_id = :id";
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
-            query.setInteger("id", Integer.parseInt(id));
+            Query<InventoryReceipt> query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            query.setParameter("id", Integer.parseInt(id));
             inventoryReceipts = query.list();
-            // entityManager.unwrap(Session.class).flush(); // CSL remove old
-            // entityManager.unwrap(Session.class).clear(); // CSL remove old
 
             if (inventoryReceipts != null && inventoryReceipts.size() > 0) {
                 inventory = inventoryReceipts.get(0);

@@ -65,9 +65,10 @@ public class SampleBatchEntryController extends BaseController {
             //
             "sampleOrderItems.labNo",
             //
-            "sampleOrderItems.newRequesterName", "sampleOrderItems.referringSiteId", "sampleOrderItems.referringSiteDepartmentId" ,
-            "form.sampleOrderItems.referringSiteName", "patientProperties.patientUpdateStatus", "currentDate",
-            "currentTime", "sampleOrderItems.receivedDateForDisplay", "sampleOrderItems.receivedTime", "sampleXML",
+            "sampleOrderItems.newRequesterName", "sampleOrderItems.referringSiteId",
+            "sampleOrderItems.referringSiteDepartmentId", "form.sampleOrderItems.referringSiteName",
+            "patientProperties.patientUpdateStatus", "currentDate", "currentTime",
+            "sampleOrderItems.receivedDateForDisplay", "sampleOrderItems.receivedTime", "sampleXML",
             "sampleOrderItems.referringSiteId", "sampleOrderItems.referringSiteId",
             //
             "method", "facilityIDCheck", "facilityID", "patientInfoCheck" };
@@ -151,7 +152,8 @@ public class SampleBatchEntryController extends BaseController {
         }
         String departmentName = "";
         if (!StringUtil.isNullorNill(form.getSampleOrderItems().getReferringSiteDepartmentId())) {
-            Organization organization = organizationService.get(form.getSampleOrderItems().getReferringSiteDepartmentId());
+            Organization organization = organizationService
+                    .get(form.getSampleOrderItems().getReferringSiteDepartmentId());
             departmentName = organization.getOrganizationName();
         }
         request.setAttribute("facilityName", facilityName);

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -44,7 +45,7 @@ public enum ObservationHistoryList {
     SIMPLIFIED_NATIONALITIES("Simplified Nationality"), YES_NO_UNKNOWN("Yes No Unknown"), YES_NO_NA("Yes No NA"),
     YES_NO("Yes No"), YES_NO_UNKNOWN_NA(YES_NO_NA, "Unknown", true),
     YES_NO_UNKNOWN_NA_NOTSPEC(YES_NO_UNKNOWN_NA, "NotSpeced", true), AIDS_STAGES("AIDS Stages"),
-    HIV_STATUSES("HIVResult"),HIV_TYPES("HIV Status"),
+    HIV_STATUSES("HIVResult"), HIV_TYPES("HIV Status"),
 
     ARV_DISEASES("ARV Disease", false), ARV_DISEASES_SHORT(ARV_DISEASES, "DiarrheaC", false), /*
                                                                                                * same as ARV_DISEASES
@@ -64,6 +65,7 @@ public enum ObservationHistoryList {
     SPECIAL_REQUEST_REASONS("Special Request Reason"),
 
     REC_STATUS("REC_STATUS"),
+    HPV_SAMPLING_METHOD("HPV Sampling Method"),
 
     ;
 
@@ -81,7 +83,9 @@ public enum ObservationHistoryList {
 
     private static List<Dictionary> copyListAndAddEntry(List<Dictionary> oldList, Dictionary entryToAdd) {
         List<Dictionary> newList = new ArrayList<>(oldList);
-        newList.add(entryToAdd);
+        if(ObjectUtils.isNotEmpty(entryToAdd)) {
+        	newList.add(entryToAdd);
+        }
         return newList;
     }
 
@@ -92,7 +96,9 @@ public enum ObservationHistoryList {
     public static final Map<String, ObservationHistoryList> MAP = new HashMap<>();
     static {
         for (ObservationHistoryList ds : ObservationHistoryList.values()) {
-            MAP.put(ds.name(), ds);
+        	if(ObjectUtils.isNotEmpty(ds)) {
+        		MAP.put(ds.name(), ds);
+        	}
         }
     }
 

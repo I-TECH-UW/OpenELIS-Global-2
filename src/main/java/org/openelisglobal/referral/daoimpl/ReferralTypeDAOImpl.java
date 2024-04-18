@@ -17,8 +17,8 @@
 package org.openelisglobal.referral.daoimpl;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.referral.dao.ReferralTypeDAO;
@@ -42,10 +42,9 @@ public class ReferralTypeDAOImpl extends BaseDAOImpl<ReferralType, String> imple
         String sql = "From ReferralType rt where rt.name = :name";
 
         try {
-            Query query = entityManager.unwrap(Session.class).createQuery(sql);
+            Query<ReferralType> query = entityManager.unwrap(Session.class).createQuery(sql, ReferralType.class);
             query.setParameter("name", name);
-            ReferralType referralType = (ReferralType) query.uniqueResult();
-            // closeSession(); // CSL remove old
+            ReferralType referralType = query.uniqueResult();
             return referralType;
         } catch (HibernateException e) {
             handleException(e, "getReferralTypeByName");

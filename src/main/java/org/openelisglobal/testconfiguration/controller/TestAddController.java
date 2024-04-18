@@ -130,7 +130,7 @@ public class TestAddController extends BaseController {
 
         String currentUserId = getSysUserId(request);
         String jsonString = (form.getJsonWad());
-
+       
         JSONParser parser = new JSONParser();
 
         JSONObject obj = null;
@@ -168,14 +168,12 @@ public class TestAddController extends BaseController {
     private Errors validateLoinc(String loincCode, Errors errors) {
         List<Test> tests = testService.getTestsByLoincCode(loincCode);
         for (Test test : tests) {
-            if(test.getLoinc().equals(loincCode)){
-                errors.reject("entry.invalid.loinc.number.used",
-                "entry.invalid.loinc.number.used");
+            if (test.getLoinc().equals(loincCode)) {
+                errors.reject("entry.invalid.loinc.number.used", "entry.invalid.loinc.number.used");
             }
         }
         return errors;
     }
-
 
     private Localization createNameLocalization(TestAddParams testAddParams) {
         return LocalizationServiceImpl.createNewLocalization(testAddParams.testNameEnglish,
@@ -192,6 +190,8 @@ public class TestAddController extends BaseController {
         Double highValid = null;
         Double lowReportingRange = null;
         Double highReportingRange = null;
+        Double lowCritical = null;
+        Double highCritical = null;
         String significantDigits = testAddParams.significantDigits;
         boolean numericResults = TypeOfTestResultServiceImpl.ResultType.isNumericById(testAddParams.resultTypeId);
         boolean dictionaryResults = TypeOfTestResultServiceImpl.ResultType
@@ -208,6 +208,8 @@ public class TestAddController extends BaseController {
             highValid = StringUtil.doubleWithInfinity(testAddParams.highValid);
             lowReportingRange = StringUtil.doubleWithInfinity(testAddParams.lowReportingRange);
             highReportingRange = StringUtil.doubleWithInfinity(testAddParams.highReportingRange);
+            lowCritical = StringUtil.doubleWithInfinity(testAddParams.lowCritical);
+            highCritical = StringUtil.doubleWithInfinity(testAddParams.highCritical);
         }
         // The number of test sets depend on the number of sampleTypes
         for (int i = 0; i < testAddParams.sampleList.size(); i++) {
@@ -255,7 +257,8 @@ public class TestAddController extends BaseController {
             createPanelItems(testSet.panelItems, testAddParams);
             createTestResults(testSet.testResults, significantDigits, testAddParams);
             if (numericResults) {
-                testSet.resultLimits = createResultLimits(lowValid, highValid, lowReportingRange, highReportingRange, testAddParams);
+                testSet.resultLimits = createResultLimits(lowValid, highValid, lowReportingRange, highReportingRange,
+                        testAddParams, highCritical, lowCritical);
             } else if (dictionaryResults) {
                 testSet.resultLimits = createDictionaryResultLimit(testAddParams);
             }
@@ -278,7 +281,8 @@ public class TestAddController extends BaseController {
         return resultLimits;
     }
 
-    private ArrayList<ResultLimit> createResultLimits(Double lowValid, Double highValid,Double lowReportingRange,Double highReportingRange, TestAddParams testAddParams) {
+    private ArrayList<ResultLimit> createResultLimits(Double lowValid, Double highValid, Double lowReportingRange,
+            Double highReportingRange, TestAddParams testAddParams,Double highCritical,Double lowCritical) {
         ArrayList<ResultLimit> resultLimits = new ArrayList<>();
         for (ResultLimitParams params : testAddParams.limits) {
             ResultLimit limit = new ResultLimit();
@@ -290,10 +294,12 @@ public class TestAddController extends BaseController {
             limit.setHighNormal(StringUtil.doubleWithInfinity(params.highNormalLimit));
             limit.setLowValid(lowValid);
             limit.setHighValid(highValid);
-            if(lowReportingRange != null && highReportingRange != null ){
-            limit.setLowReportingRange(lowReportingRange);
-            limit.setHighReportingRange(highReportingRange);
-            }
+            if (lowCritical != null && highCritical != null) {
+                limit.setLowReportingRange(lowReportingRange);
+                limit.setHighReportingRange(highReportingRange);
+                limit.setLowCritical(lowCritical);
+                limit.setHighCritical(highCritical);
+             }
             resultLimits.add(limit);
         }
 
@@ -361,6 +367,8 @@ public class TestAddController extends BaseController {
                 testAddParams.highValid = (String) obj.get("highValid");
                 testAddParams.lowReportingRange = (String) obj.get("lowReportingRange");
                 testAddParams.highReportingRange = (String) obj.get("highReportingRange");
+                testAddParams.lowCritical = (String) obj.get("lowCritical");
+                testAddParams.highCritical = (String) obj.get("highCritical");
                 testAddParams.significantDigits = (String) obj.get("significantDigits");
                 extractLimits(obj, parser, testAddParams);
             } else if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVarientById(testAddParams.resultTypeId)) {
@@ -396,6 +404,8 @@ public class TestAddController extends BaseController {
             params.displayRange = (String) (((JSONObject) limitArray.get(i)).get("reportingRange"));
             params.lowNormalLimit = (String) (((JSONObject) limitArray.get(i)).get("lowNormal"));
             params.highNormalLimit = (String) (((JSONObject) limitArray.get(i)).get("highNormal"));
+            params.lowCritical = (String) (((JSONObject) limitArray.get(i)).get("lowCritical"));
+            params.highCritical = (String) (((JSONObject) limitArray.get(i)).get("highCritical"));            
             params.lowAge = lowAge;
             params.highAge = highAge;
             testAddParams.limits.add(params);
@@ -558,6 +568,8 @@ public class TestAddController extends BaseController {
         String highValid;
         String lowReportingRange;
         String highReportingRange;
+        String lowCritical;
+        String highCritical;
         public String significantDigits;
         String dictionaryReferenceId;
         ArrayList<ResultLimitParams> limits = new ArrayList<>();
@@ -586,6 +598,8 @@ public class TestAddController extends BaseController {
         String lowNormalLimit;
         String highNormalLimit;
         String displayRange;
+        String lowCritical;
+        String highCritical;
     }
 
     public class DictionaryParams {

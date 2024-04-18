@@ -19,7 +19,8 @@ import org.openelisglobal.validation.annotations.ValidDate;
 public class ReportForm extends BaseForm {
 
     public enum DateType {
-        RESULT_DATE("report.label.datetype.resultdate"), ORDER_DATE("report.label.datetype.orderdate");
+        RESULT_DATE("report.label.datetype.resultdate"), ORDER_DATE("report.label.datetype.orderdate"),
+        PRINT_DATE("report.label.datetype.printdate");
 
         String messageKey;
 
@@ -34,8 +35,7 @@ public class ReportForm extends BaseForm {
     }
 
     public enum ReceptionTime {
-        NORMAL_WORK_HOURS,
-        OUT_OF_NORMAL_WORK_HOURS;
+        NORMAL_WORK_HOURS, OUT_OF_NORMAL_WORK_HOURS;
     }
 
     private boolean noRequestSpecifications = false;
@@ -87,8 +87,12 @@ public class ReportForm extends BaseForm {
 
     private boolean useDashboard = false;
 
+    private boolean useExportDateType = false;
+
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String projectCode = "";
+
+    private String vlStudyType = "";
 
     private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> analysisIds;
 
@@ -130,10 +134,18 @@ public class ReportForm extends BaseForm {
     private String selPatient;
 
     private boolean useSiteSearch;
+    
+    private boolean useArvOrganizationSearch;
 
     private String referringSiteId;
 
     private List<IdValuePair> referringSiteList;
+    
+    private List<Organization> arvOrganizationList;
+    
+    private String arvSiteId;
+
+    private List<IdValuePair> arvSiteList;
 
     private String referringSiteDepartmentId;
 
@@ -145,7 +157,7 @@ public class ReportForm extends BaseForm {
 
     private List<OrderPriority> priority;
 
-    private List<ReceptionTime> receptionTime ;
+    private List<ReceptionTime> receptionTime;
 
     private List<String> labSections;
 
@@ -360,12 +372,28 @@ public class ReportForm extends BaseForm {
         this.useDashboard = useDashboard;
     }
 
+    public boolean getUseExportDateType() {
+        return useExportDateType;
+    }
+
+    public void setUseExportDateType(boolean useExportDateType) {
+        this.useExportDateType = useExportDateType;
+    }
+
     public String getProjectCode() {
         return projectCode;
     }
 
     public void setProjectCode(String projectCode) {
         this.projectCode = projectCode;
+    }
+
+    public String getVlStudyType() {
+        return vlStudyType;
+    }
+
+    public void setVlStudyType(String vlStudyType) {
+        this.vlStudyType = vlStudyType;
     }
 
     public boolean getUsePredefinedDateRanges() {
@@ -599,4 +627,36 @@ public class ReportForm extends BaseForm {
     public void setReceptionTime(List<ReceptionTime> receptionTime) {
         this.receptionTime = receptionTime;
     }
+
+	public String getArvSiteId() {
+		return arvSiteId;
+	}
+
+	public void setArvSiteId(String arvSiteId) {
+		this.arvSiteId = arvSiteId;
+	}
+
+	public List<IdValuePair> getArvSiteList() {
+		return arvSiteList;
+	}
+
+	public void setArvSiteList(List<IdValuePair> arvSiteList) {
+		this.arvSiteList = arvSiteList;
+	}
+
+	public boolean isUseArvOrganizationSearch() {
+		return useArvOrganizationSearch;
+	}
+
+	public void setUseArvOrganizationSearch(boolean useArvOrganizationSearch) {
+		this.useArvOrganizationSearch = useArvOrganizationSearch;
+	}
+
+	public List<Organization> getArvOrganizationList() {
+		return arvOrganizationList;
+	}
+
+	public void setArvOrganizationList(List<Organization> arvOrganizationList) {
+		this.arvOrganizationList = arvOrganizationList;
+	}
 }

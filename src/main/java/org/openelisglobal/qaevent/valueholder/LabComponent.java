@@ -36,12 +36,12 @@ public class LabComponent extends BaseObject<String> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         LabComponent that = (LabComponent) o;
-        return id == that.id &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(lastmodified, that.lastmodified);
+        return id == that.id && Objects.equals(name, that.name) && Objects.equals(lastmodified, that.lastmodified);
     }
 
     @Override

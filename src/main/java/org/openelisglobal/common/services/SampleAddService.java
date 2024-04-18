@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -71,7 +72,6 @@ public class SampleAddService {
     private static ObservationHistoryTypeService ohtService = SpringContext
             .getBean(ObservationHistoryTypeService.class);
 
-
     private static String getObservationHistoryTypeId(String name) {
         ObservationHistoryType oht;
         oht = ohtService.getByName(name);
@@ -112,9 +112,16 @@ public class SampleAddService {
                 Map<String, String> testIdToSampleTypeMap = getTestIdToSelectionMap(
                         sampleItem.attributeValue("testSampleTypeMap"));
 
-                String collectionDate = sampleItem.attributeValue("date").trim();
-                String collectionTime = sampleItem.attributeValue("time").trim();
+                String collectionDate = sampleItem.attributeValue("date") == null ? null
+                        : sampleItem.attributeValue("date").trim();
+                String collectionTime = sampleItem.attributeValue("time") == null ? null
+                        : sampleItem.attributeValue("time").trim();
                 String collectionDateTime = null;
+                String rejectedValue = sampleItem.attributeValue("rejected") == null ? null
+                        : sampleItem.attributeValue("rejected").trim();
+                boolean rejected = StringUtils.isNotBlank(rejectedValue) ? Boolean.parseBoolean(rejectedValue) : false;
+                String rejectReasonId = sampleItem.attributeValue("rejectReasonId") == null ? null
+                        : sampleItem.attributeValue("rejectReasonId").trim();
 
                 if (!GenericValidator.isBlankOrNull(collectionDate)
                         && !GenericValidator.isBlankOrNull(collectionTime)) {
@@ -139,8 +146,15 @@ public class SampleAddService {
                 item.setSample(sample);
                 item.setTypeOfSample(typeOfSampleService.getTypeOfSampleById(sampleItem.attributeValue("sampleID")));
                 item.setSortOrder(Integer.toString(sampleItemIdIndex));
-                item.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
+                if (rejected) {
+                    item.setStatusId(
+                            SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.SampleRejected));
+                } else {
+                    item.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.Entered));
+                }
                 item.setCollector(sampleItem.attributeValue("collector"));
+                item.setRejected(rejected);
+                item.setRejectReasonId(rejectReasonId);
 
                 if (!GenericValidator.isBlankOrNull(collectionDateTime)) {
                     item.setCollectionDate(DateUtil.convertStringDateToTimestamp(collectionDateTime));

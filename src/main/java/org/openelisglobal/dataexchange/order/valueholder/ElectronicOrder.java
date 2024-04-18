@@ -29,10 +29,8 @@ import org.openelisglobal.sample.valueholder.OrderPriority;
 public class ElectronicOrder extends BaseObject<String> {
 
     public enum SortOrder {
-        STATUS_ID("statusId", "eorder.status"),
-        LAST_UPDATED_ASC("lastupdatedasc", "eorder.lastupdatedasc"),
-        LAST_UPDATED_DESC("lastupdateddesc", "eorder.lastupdateddesc"),
-        EXTERNAL_ID("externalId", "eorder.externalid");
+        STATUS_ID("statusId", "eorder.status"), LAST_UPDATED_ASC("lastupdatedasc", "eorder.lastupdatedasc"),
+        LAST_UPDATED_DESC("lastupdateddesc", "eorder.lastupdateddesc"), EXTERNAL_ID("externalId", "eorder.externalid");
 
         private String value;
         private String displayKey;
@@ -71,6 +69,9 @@ public class ElectronicOrder extends BaseObject<String> {
     private String data;
     private ElectronicOrderType type;
     private OrderPriority priority;
+    private String qaAuthorizer;
+    private String rejectReasonId;
+    private String rejectComment;
 
     public ElectronicOrder() {
         patient = new ValueHolder();
@@ -149,4 +150,29 @@ public class ElectronicOrder extends BaseObject<String> {
     public void setPriority(OrderPriority priority) {
         this.priority = priority;
     }
+
+	public String getRejectReasonId() {
+		return rejectReasonId;
+	}
+
+	public void setRejectReasonId(String rejectReasonId) {
+		this.rejectReasonId = rejectReasonId;
+	}
+
+	public String getRejectComment() {
+		return rejectComment;
+	}
+
+	public void setRejectComment(String rejectComment) {
+		this.rejectComment = rejectComment;
+	}
+
+	public String getQaAuthorizer() {
+		return qaAuthorizer;
+	}
+
+	public void setQaAuthorizer(String qaAuthorizer) {
+		this.qaAuthorizer = qaAuthorizer;
+	}
+    
 }

@@ -1,8 +1,8 @@
 package org.openelisglobal.systemuser.service;
 
 import java.util.List;
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
 
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.util.IdValuePair;
@@ -17,15 +17,16 @@ public interface UserService {
     void updateLoginUser(LoginUser loginUser, boolean loginUserNew, SystemUser systemUser, boolean systemUserNew,
             List<String> selectedRoles, String loggedOnUserId);
 
-    void saveUserLabUnitRoles(SystemUser systemUser, Map<String , Set<String>> selectedLabUnitRolesMap ,String loggedOnUserId);   
-    
+    void saveUserLabUnitRoles(SystemUser systemUser, Map<String, Set<String>> selectedLabUnitRolesMap,
+            String loggedOnUserId);
+
     UserLabUnitRoles getUserLabUnitRoles(String systemUserId);
 
     List<UserLabUnitRoles> getAllUserLabUnitRoles();
 
-    List<IdValuePair> getUserTestSections(String systemUserId ,String userRole);
+    List<IdValuePair> getUserTestSections(String systemUserId, String userRole);
 
-    List<IdValuePair> getUserSampleTypes(String systemUserId ,String userRole);
+    List<IdValuePair> getUserSampleTypes(String systemUserId, String userRole);
 
     List<IdValuePair> getAllDisplayUserTestsByLabUnit(String SystemUserId, String roleName);
 
@@ -35,5 +36,8 @@ public interface UserService {
     List<Analysis> filterAnalysesByLabUnitRoles(String SystemUserId, List<Analysis> results,
             String roleName);
 
-    List<TestResultItem> filterResultsByLabUnitRoles(String SystemUserId, List<TestResultItem> results ,String roleName);
+    List<TestResultItem> filterResultsByLabUnitRoles(String SystemUserId, List<TestResultItem> results,
+            String roleName);
+
+	List<IdValuePair> getUserSampleTypes(String systemUserId, String roleName, String testSectionName);
 }
