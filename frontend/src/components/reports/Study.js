@@ -122,13 +122,13 @@ export const RoutineReportsMenu = {
         {
           link:
             config.serverBaseUrl +
-            "/ReportPrint?type=indicator&report=indicatorSectionPerformance",
+            "/ApiReportPrint?type=indicator&report=indicatorSectionPerformance",
           label: <FormattedMessage id="sideNav.label.sectionperformance" />,
         },
         {
           link:
             config.serverBaseUrl +
-            "/ReportPrint?type=indicator&report=validationBacklog",
+            "/ApiReportPrint?type=indicator&report=validationBacklog",
           label: <FormattedMessage id="sideNav.label.delayedvalidation" />,
         },
       ],
