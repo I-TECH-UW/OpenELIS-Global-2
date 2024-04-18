@@ -85,12 +85,12 @@ const PatientInfo = (props) => {
       <Stack gap={10}>
         <div className="orderLegendBody">
           <Grid>
-            <Column lg={16}>
+            <Column lg={16} md={8} sm={4}>
               <h3>
                 <FormattedMessage id="banner.menu.patient" />
               </h3>
             </Column>
-            <Column lg={3}>
+            <Column lg={4} md={4} sm={2}>
               <Button
                 kind={searchPatientTab.kind}
                 onClick={handleSearchPatientTab}
@@ -98,17 +98,17 @@ const PatientInfo = (props) => {
                 <FormattedMessage id="search.patient.label" />
               </Button>
             </Column>
-            <Column lg={3}>
+            <Column lg={4} md={4} sm={2}>
               <Button kind={newPatientTab.kind} onClick={handleNewPatientTab}>
                 <FormattedMessage id="new.patient.label" />
               </Button>
             </Column>
-            <Column lg={16}>
+            <Column lg={16} md={8} sm={4}>
               {searchPatientTab.active && (
                 <SearchPatientForm getSelectedPatient={getSelectedPatient} />
               )}
             </Column>
-            <Column lg={16}>
+            <Column lg={16} md={8} sm={4}>
               {newPatientTab.active && (
                 <CreatePatientForm
                   showActionsButton={false}

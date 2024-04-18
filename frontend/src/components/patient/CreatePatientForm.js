@@ -362,7 +362,7 @@ function CreatePatientForm(props) {
               />
             )}
             <Grid>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 <FormLabel>
                   <Section>
                     <Section>
@@ -375,11 +375,11 @@ function CreatePatientForm(props) {
                   </Section>
                 </FormLabel>
               </Column>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 {" "}
                 <br></br>
               </Column>
-              <Column lg={8}>
+              <Column lg={8} md={4} sm={4}>
                 <Field
                   name="subjectNumber"
                   validate={() => {
@@ -409,7 +409,7 @@ function CreatePatientForm(props) {
                   )}
                 </Field>
               </Column>
-              <Column lg={8}>
+              <Column lg={8} md={4} sm={4}>
                 <Field
                   name="nationalId"
                   validate={() => {
@@ -463,11 +463,11 @@ function CreatePatientForm(props) {
                   <ErrorMessage name="nationalId"></ErrorMessage>
                 </div>
               </Column>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 {" "}
                 <br></br>
               </Column>
-              <Column lg={8}>
+              <Column lg={8} md={4} sm={4}>
                 <Field name="lastName">
                   {({ field }) => (
                     <TextInput
@@ -486,7 +486,7 @@ function CreatePatientForm(props) {
                   )}
                 </Field>
               </Column>
-              <Column lg={8}>
+              <Column lg={8} md={4} sm={4}>
                 <Field name="firstName">
                   {({ field }) => (
                     <TextInput
@@ -505,11 +505,11 @@ function CreatePatientForm(props) {
                   )}
                 </Field>
               </Column>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 {" "}
                 <br></br>
               </Column>
-              <Column lg={8}>
+              <Column lg={8} md={4} sm={4}>
                 <Field name="primaryPhone">
                   {({ field }) => (
                     <TextInput
@@ -532,7 +532,7 @@ function CreatePatientForm(props) {
                   )}
                 </Field>
               </Column>
-              <Column lg={8}>
+              <Column lg={8} md={4} sm={4}>
                 <Field name="gender">
                   {({ field }) => (
                     <RadioButtonGroup
@@ -565,11 +565,11 @@ function CreatePatientForm(props) {
                   <ErrorMessage name="gender"></ErrorMessage>
                 </div>
               </Column>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 {" "}
                 <br></br>
               </Column>
-              <Column lg={4}>
+              <Column lg={8} md={4} sm={4}>
                 <Field name="birthDateForDisplay">
                   {({ field }) => (
                     <DatePicker
@@ -604,7 +604,7 @@ function CreatePatientForm(props) {
                   )}
                 </Field>
               </Column>
-              <Column lg={2}>
+              <Column lg={2} md={2} sm={2}>
                 <TextInput
                   value={dateOfBirthFormatter.years || ""}
                   name="years"
@@ -619,7 +619,7 @@ function CreatePatientForm(props) {
                   })}
                 />
               </Column>
-              <Column lg={2}>
+              <Column lg={2} md={2} sm={2}>
                 <TextInput
                   value={dateOfBirthFormatter.months || ""}
                   name="months"
@@ -632,7 +632,7 @@ function CreatePatientForm(props) {
                   })}
                 />
               </Column>
-              <Column lg={2}>
+              <Column lg={2} md={2} sm={2}>
                 <TextInput
                   value={dateOfBirthFormatter.days || ""}
                   name="days"
@@ -648,11 +648,11 @@ function CreatePatientForm(props) {
                   <ErrorMessage name="birthDateForDisplay"></ErrorMessage>
                 </div>
               </Column>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 {" "}
                 <br></br>
               </Column>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 <Accordion>
                   <AccordionItem
                     title={intl.formatMessage({
@@ -660,11 +660,11 @@ function CreatePatientForm(props) {
                     })}
                   >
                     <Grid>
-                      <Column lg={16}>
+                      <Column lg={16} md={8} sm={4}>
                         {" "}
                         <br></br>
                       </Column>
-                      <Column lg={8}>
+                      <Column lg={8} md={4} sm={4}>
                         <Field name="patientContact.person.lastName">
                           {({ field }) => (
                             <TextInput
@@ -683,7 +683,7 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
-                      <Column lg={8}>
+                      <Column lg={8} md={4} sm={4}>
                         <Field name="patientContact.person.firstName">
                           {({ field }) => (
                             <TextInput
@@ -702,11 +702,11 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
-                      <Column lg={16}>
+                      <Column lg={16} md={8} sm={4}>
                         {" "}
                         <br></br>
                       </Column>
-                      <Column lg={8}>
+                      <Column lg={8} md={4} sm={4}>
                         <Field name="patientContact.person.email">
                           {({ field }) => (
                             <TextInput
@@ -727,7 +727,7 @@ function CreatePatientForm(props) {
                         </div>
                         <div className="error"></div>
                       </Column>
-                      <Column lg={8}>
+                      <Column lg={8} md={4} sm={4}>
                         <Field name="patientContact.person.primaryPhone">
                           {({ field }) => (
                             <TextInput
@@ -755,7 +755,7 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
-                      <Column lg={16}>
+                      <Column lg={16} md={8} sm={4}>
                         {" "}
                         <br></br>
                       </Column>
@@ -767,11 +767,11 @@ function CreatePatientForm(props) {
                     })}
                   >
                     <Grid>
-                      <Column lg={16}>
+                      <Column lg={16} md={8} sm={4}>
                         {" "}
                         <br></br>
                       </Column>
-                      <Column lg={8}>
+                      <Column lg={8} md={4} sm={4}>
                         <Field name="city">
                           {({ field }) => (
                             <TextInput
@@ -788,7 +788,7 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
-                      <Column lg={4}>
+                      <Column lg={8} md={4} sm={4}>
                         <Field name="streetAddress">
                           {({ field }) => (
                             <TextInput
@@ -805,7 +805,11 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
-                      <Column lg={4}>
+                      <Column lg={16} md={8} sm={4}>
+                        {" "}
+                        <br></br>
+                      </Column>
+                      <Column lg={8} md={4} sm={4}>
                         <Field name="commune">
                           {({ field }) => (
                             <TextInput
@@ -822,11 +826,7 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
-                      <Column lg={16}>
-                        {" "}
-                        <br></br>
-                      </Column>
-                      <Column lg={8}>
+                      <Column lg={8} md={4} sm={4}>
                         <Field name="healthRegion">
                           {({ field }) => (
                             <Select
@@ -853,7 +853,11 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
-                      <Column lg={8}>
+                      <Column lg={16} md={8} sm={4}>
+                        {" "}
+                        <br></br>
+                      </Column>
+                      <Column lg={8} md={4} sm={4}>
                         <Field name="healthDistrict">
                           {({ field }) => (
                             <Select
@@ -880,11 +884,7 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
-                      <Column lg={16}>
-                        {" "}
-                        <br></br>
-                      </Column>
-                      <Column lg={8}>
+                      <Column lg={8} md={4} sm={4}>
                         <Field name="education">
                           {({ field }) => (
                             <Select
@@ -911,7 +911,11 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
-                      <Column lg={8}>
+                      <Column lg={16} md={8} sm={4}>
+                        {" "}
+                        <br></br>
+                      </Column>
+                      <Column lg={8} md={4} sm={4}>
                         <Field name="maritialStatus">
                           {({ field }) => (
                             <Select
@@ -938,11 +942,7 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
-                      <Column lg={16}>
-                        {" "}
-                        <br></br>
-                      </Column>
-                      <Column lg={8}>
+                      <Column lg={8} md={4} sm={4}>
                         <Field name="nationality">
                           {({ field }) => (
                             <Select
@@ -969,7 +969,11 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
-                      <Column lg={8}>
+                      <Column lg={16} md={8} sm={4}>
+                        {" "}
+                        <br></br>
+                      </Column>
+                      <Column lg={8} md={4} sm={4}>
                         <Field name="otherNationality">
                           {({ field }) => (
                             <TextInput
@@ -990,18 +994,18 @@ function CreatePatientForm(props) {
                   </AccordionItem>
                 </Accordion>
               </Column>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 {" "}
                 <br></br>
               </Column>
               {props.showActionsButton && (
                 <>
-                  <Column lg={4}>
+                  <Column lg={4} md={4} sm={4}>
                     <Button type="submit" id="submit">
                       <FormattedMessage id="label.button.save" />
                     </Button>
                   </Column>
-                  <Column lg={4}>
+                  <Column lg={4} md={4} sm={4}>
                     <Button
                       id="clear"
                       kind="danger"
