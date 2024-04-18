@@ -804,5 +804,9 @@
   "report.labe.byPatient": "Rapport par Patient",
   "report.labe.byLabNumber": "Rapport par Numéro de Laboratoire",
   "report.labe.site": "Rapport par Site",
-  "report.labe.date": "Rapport par Date"
+  "report.labe.date": "Rapport par Date",
+  "label.barcode.labelsets": "Nombre d'ensembles d'étiquettes",
+  "label.barcode.orderlabel": "Nombre d'étiquettes de commande par ensemble",
+  "label.barcode.specimenlabel": "Nombre d'étiquettes d'échantillon par ensemble",
+  "label.barcode.totallabel": "Nombre total d'étiquettes à imprimer"
 }
