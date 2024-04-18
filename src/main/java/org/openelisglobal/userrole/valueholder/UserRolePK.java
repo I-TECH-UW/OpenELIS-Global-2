@@ -18,6 +18,7 @@
 package org.openelisglobal.userrole.valueholder;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /*
  * System_user_role has a primary key and this is it
@@ -47,5 +48,21 @@ public class UserRolePK implements Serializable {
 
     public String toString() {
         return systemUserId + roleId;
+    }
+
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        UserRolePK that = (UserRolePK) o;
+
+        return Objects.equals(this.systemUserId, that.systemUserId)
+                && Objects.equals(this.roleId, that.roleId);
+    }
+
+    public int hashCode() {
+        return Objects.hash(systemUserId, roleId);
     }
 }

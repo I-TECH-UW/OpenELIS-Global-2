@@ -51,7 +51,7 @@ public class PagingUtility<E> {
     public E getPage(int page, HttpSession session) {
         if (page > 0) {
             List<E> pagedResults = (List<E>) session.getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
-
+            totalPages = pagedResults.size();
             if (pagedResults != null && pagedResults.size() >= page) {
                 return pagedResults.get(page - 1);
             }

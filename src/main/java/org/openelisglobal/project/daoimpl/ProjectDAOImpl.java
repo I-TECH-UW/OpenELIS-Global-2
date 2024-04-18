@@ -64,7 +64,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Project getData()", e);
         }
     }
@@ -79,7 +79,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Project getAllProjects()", e);
         }
 
@@ -104,7 +104,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Project getPageOfProjects()", e);
         }
 
@@ -117,7 +117,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             pro = entityManager.unwrap(Session.class).get(Project.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Project readProject()", e);
         }
 
@@ -162,7 +162,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Project getProjectByName()", e);
         }
     }
@@ -187,7 +187,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Project getProjects(String filter)", e);
         }
     }
@@ -233,7 +233,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateProjectExists()", e);
         }
     }
@@ -261,7 +261,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Project getProjectByLocalAbbreviation()", e);
         }
     }

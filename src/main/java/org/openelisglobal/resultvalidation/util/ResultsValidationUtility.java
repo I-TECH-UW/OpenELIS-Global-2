@@ -300,7 +300,7 @@ public class ResultsValidationUtility {
                                     ? dictionary.getDictEntry()
                                     : dictionary.getLocalAbbreviation();
                         } catch (RuntimeException e) {
-                            LogEvent.logInfo(this.getClass().getName(), "getGroupedTestsForAnalysisList",
+                            LogEvent.logInfo(this.getClass().getSimpleName(), "getGroupedTestsForAnalysisList",
                                     e.getMessage());
                             // no-op
                         }
@@ -343,7 +343,7 @@ public class ResultsValidationUtility {
                                     ? dictionary.getDictEntry()
                                     : dictionary.getLocalAbbreviation();
                         } catch (RuntimeException e) {
-                            LogEvent.logInfo(this.getClass().getName(), "getGroupedTestsForAnalysisList",
+                            LogEvent.logInfo(this.getClass().getSimpleName(), "getGroupedTestsForAnalysisList",
                                     e.getMessage());
                             // no-op
                         }
@@ -464,6 +464,9 @@ public class ResultsValidationUtility {
         resultLimit.getLowCritical() == Double.NEGATIVE_INFINITY ? 0 : resultLimit.getLowCritical());
              testItem.setHigherCritical(
                 resultLimit.getHighCritical() == Double.POSITIVE_INFINITY ? 0 : resultLimit.getHighCritical());
+
+           testItem.setNormalRange(SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(
+                    resultLimit, testResults.isEmpty() ? "0" : testResults.get(0).getSignificantDigits(), " - "));
         }
     }
 
@@ -605,6 +608,8 @@ public class ResultsValidationUtility {
                 currentMultiSelectAnalysisItem.setQualifiedResultValue(testResultItem.getQualifiedResultValue());
                 currentMultiSelectAnalysisItem.setQualifiedDictionaryId(testResultItem.getQualifiedDictionaryId());
                 currentMultiSelectAnalysisItem.setHasQualifiedResult(true);
+                currentMultiSelectAnalysisItem.setNormalRange(testResultItem.getNormalRange());
+                currentMultiSelectAnalysisItem.setPatientName(testResultItem.getPatientName());
             }
         }
 
@@ -649,7 +654,9 @@ public class ResultsValidationUtility {
         analysisResultItem.setLowerCritical(
                         testResultItem.getLowerCritical() == Double.NEGATIVE_INFINITY ? 0 : testResultItem.getLowerCritical());
         analysisResultItem.setHigherCritical(
-                        testResultItem.getHigherCritical() == Double.POSITIVE_INFINITY ? 0 : testResultItem.getHigherCritical());               
+                        testResultItem.getHigherCritical() == Double.POSITIVE_INFINITY ? 0 : testResultItem.getHigherCritical());
+        analysisResultItem.setNormalRange(testResultItem.getNormalRange());
+        analysisResultItem.setPatientName(testResultItem.getPatientName());
         analysisResultItem.setTestName(testName);
         analysisResultItem.setUnits(testUnits);
         analysisResultItem.setAnalysisId(testResultItem.getAnalysis().getId());

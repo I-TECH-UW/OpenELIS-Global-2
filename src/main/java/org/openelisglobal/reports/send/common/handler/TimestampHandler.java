@@ -74,7 +74,7 @@ public class TimestampHandler extends GeneralizedFieldHandler {
 
         } catch (ParseException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new IllegalArgumentException(e);
         }
         return date;

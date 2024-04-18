@@ -140,7 +140,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
     }
 
     private Test createTestFromFHIR(ServiceRequest serviceRequest) throws HL7Exception {
-        LogEvent.logDebug(this.getClass().getName(), "createTestFromFHIR", "start");
+        LogEvent.logDebug(this.getClass().getSimpleName(), "createTestFromFHIR", "start");
 
         String loincCode = "";
         String system = "";
@@ -150,16 +150,21 @@ public class TaskInterpreterImpl implements TaskInterpreter {
             system = serviceRequest.getCode().getCoding().get(i).getSystemElement().toString();
             if (system.equalsIgnoreCase("UriType[http://loinc.org]")) {
                 loincCode = serviceRequest.getCode().getCoding().get(i).getCodeElement().toString();
+                if (!GenericValidator.isBlankOrNull(loincCode)) {
+                    tests = testService.getTestsByLoincCode(loincCode);
+                    if (tests.size() != 0) {
+                        return tests.get(0);
+                    }
+                } else {
 
-                tests = testService.getTestsByLoincCode(loincCode);
-                if (tests.size() != 0) {
-                    return tests.get(0);
+                    LogEvent.logWarn(this.getClass().getSimpleName(), "createTestFromFHIR",
+                            "loinc code is missing a value in SR: " + serviceRequest.getIdElement().getIdPart());
                 }
             }
             i++;
         }
 
-        LogEvent.logError(this.getClass().getName(), "createTestFromFHIR",
+        LogEvent.logError(this.getClass().getSimpleName(), "createTestFromFHIR",
                 "no test found for SR: " + serviceRequest.getIdElement().getIdPart());
         return null;
     }
@@ -259,16 +264,17 @@ public class TaskInterpreterImpl implements TaskInterpreter {
             if (ContactPoint.ContactPointSystem.SMS.equals(contactTelecom.getSystem())) {
                 messagePatient.setContactPhone(contactTelecom.getValue());
             }
-//            if (ContactPoint.ContactPointSystem.PHONE.equals(contactTelecom.getSystem())) {
-//                messagePatient.setContactPhone(contactTelecom.getValue());
-//            }
+            // if (ContactPoint.ContactPointSystem.PHONE.equals(contactTelecom.getSystem()))
+            // {
+            // messagePatient.setContactPhone(contactTelecom.getValue());
+            // }
         }
 
         return messagePatient;
     }
 
     private List<InterpreterResults> buildResultList(boolean exceptionThrown) {
-        LogEvent.logDebug(this.getClass().getName(), "buildResultList", "buildResultList: " + exceptionThrown);
+        LogEvent.logDebug(this.getClass().getSimpleName(), "buildResultList", "buildResultList: " + exceptionThrown);
         results = new ArrayList<>();
 
         if (exceptionThrown) {
@@ -290,8 +296,11 @@ public class TaskInterpreterImpl implements TaskInterpreter {
                  * results.add(InterpreterResults.MISSING_PATIENT_GUID); }
                  */
 
-//These are being commented out until we get confirmation on the desired policy.  Either the request should be rejected or the user should be required to
-// fill the missing information in at the time of sample entry.  Commenting these out supports the latter
+                // These are being commented out until we get confirmation on the desired
+                // policy. Either the request should be rejected or the user should be required
+                // to
+                // fill the missing information in at the time of sample entry. Commenting these
+                // out supports the latter
                 if (GenericValidator.isBlankOrNull(getMessagePatient().getGender())) {
                     results.add(InterpreterResults.MISSING_PATIENT_GENDER);
                 }
@@ -310,19 +319,20 @@ public class TaskInterpreterImpl implements TaskInterpreter {
                     results.add(InterpreterResults.UNSUPPORTED_TESTS);
                 }
 
-//                try {
-//                    OML_O21_OBSERVATION_REQUEST orderRequest = orderMessage.getORDERAll().get(0)
-//                            .getOBSERVATION_REQUEST();
-//                    checkOBR(orderRequest.getOBR());
-//                    List<OML_O21_ORDER_PRIOR> priorOrders = orderRequest.getPRIOR_RESULT().getORDER_PRIORAll();
-//                    for (OML_O21_ORDER_PRIOR priorOrder : priorOrders) {
-//                        checkOBR(priorOrder.getOBR());
-//                    }
-//
-//                } catch (HL7Exception e) {
-//                    LogEvent.logDebug(e);
-//                    results.add(InterpreterResults.INTERPRET_ERROR);
-//                }
+                // try {
+                // OML_O21_OBSERVATION_REQUEST orderRequest = orderMessage.getORDERAll().get(0)
+                // .getOBSERVATION_REQUEST();
+                // checkOBR(orderRequest.getOBR());
+                // List<OML_O21_ORDER_PRIOR> priorOrders =
+                // orderRequest.getPRIOR_RESULT().getORDER_PRIORAll();
+                // for (OML_O21_ORDER_PRIOR priorOrder : priorOrders) {
+                // checkOBR(priorOrder.getOBR());
+                // }
+                //
+                // } catch (HL7Exception e) {
+                // LogEvent.logDebug(e);
+                // results.add(InterpreterResults.INTERPRET_ERROR);
+                // }
             }
         }
 
@@ -414,20 +424,20 @@ public class TaskInterpreterImpl implements TaskInterpreter {
 
     private void getOrderPriorityFromIncomingOrder(ServiceRequestPriority serviceRequestPriority) {
         switch (serviceRequestPriority) {
-        case ROUTINE: {
-            priority = OrderPriority.ROUTINE;
-            break;
-        }
-        case ASAP: {
-            priority = OrderPriority.ASAP;
-            break;
-        }
-        case STAT: {
-            priority = OrderPriority.STAT;
-            break;
-        }
-        default:
-            priority = OrderPriority.ROUTINE;
+            case ROUTINE: {
+                priority = OrderPriority.ROUTINE;
+                break;
+            }
+            case ASAP: {
+                priority = OrderPriority.ASAP;
+                break;
+            }
+            case STAT: {
+                priority = OrderPriority.STAT;
+                break;
+            }
+            default:
+                priority = OrderPriority.ROUTINE;
         }
     }
 

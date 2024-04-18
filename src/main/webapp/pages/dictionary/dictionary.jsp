@@ -73,7 +73,7 @@ function validateForm(form) {
         <%--bugzilla 1847--%>
 		<tr>
 						<td class="label">
-							<spring:message code="dictionary.localAbbreviation"/>:
+							<spring:message code="dictionary.localAbbreviation"/>:<span class="requiredlabel">*</span>
 						</td>	
 						<td> 
 						    <form:input path="localAbbreviation" size="10" onblur="this.value=this.value.toUpperCase()" />

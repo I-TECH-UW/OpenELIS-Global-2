@@ -78,6 +78,7 @@ public class Analysis extends BaseObject<String> implements NoteObject {
     private ValueHolderInterface parentResult;
     private ValueHolderInterface panel;
     private Boolean triggeredReflex = false;
+    private Boolean resultCalculated = false;
     private String statusId;
     private String assignedSortedTestTreeDisplayValue;
     private boolean referredOut = false;
@@ -424,6 +425,14 @@ public class Analysis extends BaseObject<String> implements NoteObject {
 
     public Boolean getTriggeredReflex() {
         return triggeredReflex;
+    }
+
+    public Boolean getResultCalculated() {
+        return resultCalculated;
+    }
+
+    public void setResultCalculated(Boolean resultCalculated) {
+        this.resultCalculated = resultCalculated;
     }
 
     public void setStatusId(String statusId) {

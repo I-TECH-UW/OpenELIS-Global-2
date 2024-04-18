@@ -106,159 +106,167 @@ import org.springframework.stereotype.Service;
 @Scope("prototype")
 public class ResultsLoadUtility {
 
-	private static final boolean SORT_FORWARD = true;
+    private static final boolean SORT_FORWARD = true;
 
-	public static final String TESTKIT = "TestKit";
+    public static final String TESTKIT = "TestKit";
 
-	private static final String NO_PATIENT_NAME = " ";
-	private static final String NO_PATIENT_INFO = " ";
+    private static final String NO_PATIENT_NAME = " ";
+    private static final String NO_PATIENT_INFO = " ";
 
-	private List<Sample> samples;
-	private String currentDate = "";
-	private Sample currSample;
+    private List<Sample> samples;
+    private String currentDate = "";
+    private Sample currSample;
 
-	private Set<Integer> excludedAnalysisStatus = new HashSet<>();
-	private List<Integer> analysisStatusList = new ArrayList<>();
-	private List<Integer> sampleStatusList = new ArrayList<>();
+    private Set<Integer> excludedAnalysisStatus = new HashSet<>();
+    private List<Integer> analysisStatusList = new ArrayList<>();
+    private List<Integer> sampleStatusList = new ArrayList<>();
 
-	private List<InventoryKitItem> activeKits;
+    private List<InventoryKitItem> activeKits;
 
-	private Patient currentPatient;
+    private Patient currentPatient;
 
-	@Autowired
-	private PatientService patientService;
-	@Autowired
-	private ResultService resultService;
-	@Autowired
-	private DictionaryService dictionaryService;
-	@Autowired
-	private LocalizationService localizationService;
-	@Autowired
-	private ResultSignatureService resultSignatureService;
-	@Autowired
-	private ResultInventoryService resultInventoryService;
-	@Autowired
-	private ObservationHistoryService observationHistoryService;
-	@Autowired
-	private AnalysisService analysisService;
-	@Autowired
-	private ReferralService referralService;
-	@Autowired
-	private AnalyteService analyteService;
-	@Autowired
-	private SystemUserService systemUserService;
-	@Autowired
-	private SampleHumanService sampleHumanService;
-	@Autowired
-	private TestService testService;
-	@Autowired
-	private SampleItemService sampleItemService;
-	@Autowired
-	private SampleQaEventService sampleQaEventService;
+    @Autowired
+    private PatientService patientService;
+    @Autowired
+    private ResultService resultService;
+    @Autowired
+    private DictionaryService dictionaryService;
+    @Autowired
+    private LocalizationService localizationService;
+    @Autowired
+    private ResultSignatureService resultSignatureService;
+    @Autowired
+    private ResultInventoryService resultInventoryService;
+    @Autowired
+    private ObservationHistoryService observationHistoryService;
+    @Autowired
+    private AnalysisService analysisService;
+    @Autowired
+    private ReferralService referralService;
+    @Autowired
+    private AnalyteService analyteService;
+    @Autowired
+    private SystemUserService systemUserService;
+    @Autowired
+    private SampleHumanService sampleHumanService;
+    @Autowired
+    private TestService testService;
+    @Autowired
+    private SampleItemService sampleItemService;
+    @Autowired
+    private SampleQaEventService sampleQaEventService;
 
-	private final StatusRules statusRules = new StatusRules();
+    private final StatusRules statusRules = new StatusRules();
 
-	private boolean inventoryNeeded = false;
+    private boolean inventoryNeeded = false;
 
-	private String ANALYTE_CONCLUSION_ID;
-	private String ANALYTE_CD4_CNT_CONCLUSION_ID;
-	private static final String NUMERIC_RESULT_TYPE = "N";
-	private static boolean depersonalize = FormFields.getInstance().useField(Field.DepersonalizedResults);
-	private boolean useTechSignature = ConfigurationProperties.getInstance()
-			.isPropertyValueEqual(Property.resultTechnicianName, "true");
-	private static boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
-	private static boolean useInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
-	private boolean useCurrentUserAsTechDefault = ConfigurationProperties.getInstance()
-			.isPropertyValueEqual(Property.autoFillTechNameUser, "true");
-	private String currentUserName = "";
-	private int reflexGroup = 1;
-	private boolean lockCurrentResults = false;
+    private String ANALYTE_CONCLUSION_ID;
+    private String ANALYTE_CD4_CNT_CONCLUSION_ID;
+    private static final String NUMERIC_RESULT_TYPE = "N";
+    private static boolean depersonalize = FormFields.getInstance().useField(Field.DepersonalizedResults);
+    private boolean useTechSignature = ConfigurationProperties.getInstance()
+            .isPropertyValueEqual(Property.resultTechnicianName, "true");
+    private static boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
+    private static boolean useInitialSampleCondition = FormFields.getInstance().useField(Field.InitialSampleCondition);
+    private boolean useCurrentUserAsTechDefault = ConfigurationProperties.getInstance()
+            .isPropertyValueEqual(Property.autoFillTechNameUser, "true");
+    private String currentUserName = "";
+    private int reflexGroup = 1;
+    private boolean lockCurrentResults = false;
 
-	@PostConstruct
-	public void initializeGlobalVariables() {
-		Analyte analyte = new Analyte();
-		analyte.setAnalyteName("Conclusion");
-		analyte = analyteService.getAnalyteByName(analyte, false);
-		ANALYTE_CONCLUSION_ID = analyte == null ? "" : analyte.getId();
-		analyte = new Analyte();
-		analyte.setAnalyteName("generated CD4 Count");
-		analyte = analyteService.getAnalyteByName(analyte, false);
-		ANALYTE_CD4_CNT_CONCLUSION_ID = analyte == null ? "" : analyte.getId();
-	}
+    @PostConstruct
+    public void initializeGlobalVariables() {
+        Analyte analyte = new Analyte();
+        analyte.setAnalyteName("Conclusion");
+        analyte = analyteService.getAnalyteByName(analyte, false);
+        ANALYTE_CONCLUSION_ID = analyte == null ? "" : analyte.getId();
+        analyte = new Analyte();
+        analyte.setAnalyteName("generated CD4 Count");
+        analyte = analyteService.getAnalyteByName(analyte, false);
+        ANALYTE_CD4_CNT_CONCLUSION_ID = analyte == null ? "" : analyte.getId();
+    }
 
-	public void setSysUser(String currentUserId) {
-		if (useCurrentUserAsTechDefault) {
-			SystemUser systemUser = new SystemUser();
-			systemUser.setId(currentUserId);
-			systemUserService.getData(systemUser);
+    public void setSysUser(String currentUserId) {
+        if (useCurrentUserAsTechDefault) {
+            SystemUser systemUser = new SystemUser();
+            systemUser.setId(currentUserId);
+            systemUserService.getData(systemUser);
 
-			if (systemUser.getId() != null) {
-				currentUserName = systemUser.getFirstName() + " " + systemUser.getLastName();
-			}
-		}
-	}
+            if (systemUser.getId() != null) {
+                currentUserName = systemUser.getFirstName() + " " + systemUser.getLastName();
+            }
+        }
+    }
 
-	/*
-	 * N.B. The patient info is used to determine the limits for the results, not
-	 * for including patient information
-	 */
-	public List<TestResultItem> getGroupedTestsForSample(Sample sample, Patient patient) {
+    /*
+     * N.B. The patient info is used to determine the limits for the results, not
+     * for including patient information
+     */
+    public List<TestResultItem> getGroupedTestsForSample(Sample sample) {
+        return getGroupedTestsForSample(sample, sampleHumanService.getPatientForSample(sample));
+    }
 
-		reflexGroup = 1;
-		activeKits = null;
-		samples = new ArrayList<>();
+    /*
+     * N.B. The patient info is used to determine the limits for the results, not
+     * for including patient information
+     */
+    public List<TestResultItem> getGroupedTestsForSample(Sample sample, Patient patient) {
 
-		if (sample != null) {
-			samples.add(sample);
-		}
+        reflexGroup = 1;
+        activeKits = null;
+        samples = new ArrayList<>();
 
-		currentPatient = patient;
-		PersonService personService = SpringContext.getBean(PersonService.class);
-		personService.getData(patient.getPerson());
+        if (sample != null) {
+            samples.add(sample);
+        }
 
-		return getGroupedTestsForSamples();
-	}
+        currentPatient = patient;
+        PersonService personService = SpringContext.getBean(PersonService.class);
+        personService.getData(patient.getPerson());
 
-	public List<TestResultItem> getGroupedTestsForPatient(Patient patient) {
-		reflexGroup = 1;
-		activeKits = null;
-		inventoryNeeded = false;
+        return getGroupedTestsForSamples();
+    }
 
-		currentPatient = patient;
-		PersonService personService = SpringContext.getBean(PersonService.class);
-		personService.getData(patient.getPerson());
+    public List<TestResultItem> getGroupedTestsForPatient(Patient patient) {
+        reflexGroup = 1;
+        activeKits = null;
+        inventoryNeeded = false;
 
-		samples = sampleHumanService.getSamplesForPatient(patient.getId());
+        currentPatient = patient;
+        PersonService personService = SpringContext.getBean(PersonService.class);
+        personService.getData(patient.getPerson());
 
-		return getGroupedTestsForSamples();
-	}
+        samples = sampleHumanService.getSamplesForPatient(patient.getId());
 
-	public void addIdentifingPatientInfo(Patient patient, PatientInfoForm form) {
+        return getGroupedTestsForSamples();
+    }
 
-		if (patient == null) {
-			return;
-		}
+    public void addIdentifingPatientInfo(Patient patient, PatientInfoForm form) {
 
-		PatientIdentityTypeMap identityMap = PatientIdentityTypeMap.getInstance();
-		List<PatientIdentity> identityList = PatientUtil.getIdentityListForPatient(patient);
+        if (patient == null) {
+            return;
+        }
 
-		if (!depersonalize) {
-			form.setFirstName(patient.getPerson().getFirstName());
-			form.setLastName(patient.getPerson().getLastName());
-			form.setDob(patient.getBirthDateForDisplay());
-			form.setGender(patient.getGender());
-		}
+        PatientIdentityTypeMap identityMap = PatientIdentityTypeMap.getInstance();
+        List<PatientIdentity> identityList = PatientUtil.getIdentityListForPatient(patient);
 
-		form.setSt(identityMap.getIdentityValue(identityList, "ST"));
-		form.setNationalId(GenericValidator.isBlankOrNull(patient.getNationalId()) ? patient.getExternalId()
-				: patient.getNationalId());
-		form.setSubjectNumber(patientService.getSubjectNumber(patient));
-	}
+        if (!depersonalize) {
+            form.setFirstName(patient.getPerson().getFirstName());
+            form.setLastName(patient.getPerson().getLastName());
+            form.setDob(patient.getBirthDateForDisplay());
+            form.setGender(patient.getGender());
+        }
 
-	public List<TestResultItem> getUnfinishedTestResultItemsInTestSection(String testSectionId) {
+        form.setSt(identityMap.getIdentityValue(identityList, "ST"));
+        form.setNationalId(GenericValidator.isBlankOrNull(patient.getNationalId()) ? patient.getExternalId()
+                : patient.getNationalId());
+        form.setSubjectNumber(patientService.getSubjectNumber(patient));
+    }
 
-		List<Analysis> fullAnalysisList = analysisService.getAllAnalysisByTestSectionAndStatus(testSectionId,
-				analysisStatusList, sampleStatusList);
+    public List<TestResultItem> getUnfinishedTestResultItemsInTestSection(String testSectionId) {
+
+      List<Analysis> fullAnalysisList = analysisService.getAllAnalysisByTestSectionAndStatus(testSectionId,
+          analysisStatusList, sampleStatusList);
 //      request.setAttribute("analysisesSize", fullAnalysisList.size());
 //        List<Analysis> analysisList = analysisService.getPageAnalysisByTestSectionAndStatus(testSectionId,
 //                analysisStatusList, sampleStatusList);
@@ -930,12 +938,12 @@ public class ResultsLoadUtility {
 
 				valid = value >= resultLimit.getLowValid() && value <= resultLimit.getHighValid();
 
-			} catch (NumberFormatException e) {
-				LogEvent.logInfo(this.getClass().getName(), "getIsValid", e.getMessage());
-				// no-op
-			}
-		}
 
+            } catch (NumberFormatException e) {
+                LogEvent.logInfo(this.getClass().getSimpleName(), "getIsValid", e.getMessage());
+                // no-op
+            }
+        }
 		return valid;
 	}
 
@@ -947,12 +955,11 @@ public class ResultsLoadUtility {
 				double value = Double.valueOf(resultValue);
 
 				normal = value >= resultLimit.getLowNormal() && value <= resultLimit.getHighNormal();
-
-			} catch (NumberFormatException e) {
-				LogEvent.logInfo(this.getClass().getName(), "getIsNormal", e.getMessage());
-				// no-op
-			}
-		}
+      } catch (NumberFormatException e) {
+                LogEvent.logInfo(this.getClass().getSimpleName(), "getIsNormal", e.getMessage());
+                // no-op
+      }
+   }
 
 		return normal;
 	}
@@ -982,66 +989,74 @@ public class ResultsLoadUtility {
 		return inventoryNeeded;
 	}
 
-	public void addExcludedAnalysisStatus(AnalysisStatus status) {
-		excludedAnalysisStatus.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(status)));
-	}
+    public void addExcludedAnalysisStatus(AnalysisStatus status) {
+        excludedAnalysisStatus.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(status)));
+    }
 
-	public void addIncludedSampleStatus(OrderStatus status) {
-		sampleStatusList.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(status)));
-	}
+    public void addIncludedSampleStatus(OrderStatus status) {
+        sampleStatusList.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(status)));
+    }
 
-	public void addIncludedAnalysisStatus(AnalysisStatus status) {
-		analysisStatusList.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(status)));
-	}
+    public void addIncludedAnalysisStatus(AnalysisStatus status) {
+        analysisStatusList.add(Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(status)));
+    }
 
-	private List<InventoryKitItem> getActiveKits() {
-		if (activeKits == null) {
-			InventoryUtility inventoryUtil = SpringContext.getBean(InventoryUtility.class);
-			activeKits = inventoryUtil.getExistingActiveInventory();
-		}
+    private List<InventoryKitItem> getActiveKits() {
+        if (activeKits == null) {
+            InventoryUtility inventoryUtil = SpringContext.getBean(InventoryUtility.class);
+            activeKits = inventoryUtil.getExistingActiveInventory();
+        }
 
-		return activeKits;
-	}
+        return activeKits;
+    }
 
-	public void setLockCurrentResults(boolean lockCurrentResults) {
-		this.lockCurrentResults = lockCurrentResults;
-	}
+    public void setLockCurrentResults(boolean lockCurrentResults) {
+        this.lockCurrentResults = lockCurrentResults;
+    }
 
-	public boolean isLockCurrentResults() {
-		return lockCurrentResults;
-	}
+    public boolean isLockCurrentResults() {
+        return lockCurrentResults;
+    }
 
-	private boolean getQaEventByTestSection(Analysis analysis) {
+    private boolean getQaEventByTestSection(Analysis analysis) {
 
-		if (analysis.getTestSection() != null && analysis.getSampleItem().getSample() != null) {
-			Sample sample = analysis.getSampleItem().getSample();
-			List<SampleQaEvent> sampleQaEventsList = getSampleQaEvents(sample);
-			for (SampleQaEvent event : sampleQaEventsList) {
-				QAService qa = new QAService(event);
-				if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
-						&& qa.getObservationValue(QAObservationType.SECTION)
-								.equals(analysis.getTestSection().getNameKey())) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+        if (analysis.getTestSection() != null && analysis.getSampleItem().getSample() != null) {
+            Sample sample = analysis.getSampleItem().getSample();
+            List<SampleQaEvent> sampleQaEventsList = getSampleQaEvents(sample);
+            for (SampleQaEvent event : sampleQaEventsList) {
+                QAService qa = new QAService(event);
+                if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
+                        && qa.getObservationValue(QAObservationType.SECTION)
+                                .equals(analysis.getTestSection().getNameKey())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-	public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
-		return sampleQaEventService.getSampleQaEventsBySample(sample);
-	}
+    public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
+        return sampleQaEventService.getSampleQaEventsBySample(sample);
+    }
 
-	public List<TestResultItem> getUnfinishedTestResultItemsByAccession(String accessionNumber) {
-		List<Analysis> analysisList = analysisService.getPageAnalysisByStatusFromAccession(analysisStatusList,
-				sampleStatusList, accessionNumber);
+    public List<TestResultItem> getUnfinishedTestResultItemsByAccession(String accessionNumber) {
+        List<Analysis> analysisList = analysisService.getPageAnalysisByStatusFromAccession(analysisStatusList,
+                sampleStatusList, accessionNumber);
 
-		return getGroupedTestsForAnalysisList(analysisList, SORT_FORWARD);
-	}
+        return getGroupedTestsForAnalysisList(analysisList, SORT_FORWARD);
+    }
+    
+    public List<TestResultItem> getUnfinishedTestResultItemsByAccession(String accessionNumber,String upperRangeAccessionNumber, boolean doRange, boolean finished) {
+        List<Analysis> analysisList = analysisService.getPageAnalysisByStatusFromAccession(analysisStatusList,
+                sampleStatusList, accessionNumber,upperRangeAccessionNumber, doRange, finished);
 
-	public int getTotalCountAnalysisByAccessionAndStatus(String accessionNumber) {
-		return analysisService.getCountAnalysisByStatusFromAccession(analysisStatusList, sampleStatusList,
-				accessionNumber);
-	}
+        return getGroupedTestsForAnalysisList(analysisList, SORT_FORWARD);
+    }
+
+
+    public int getTotalCountAnalysisByAccessionAndStatus(String accessionNumber) {
+        return analysisService.getCountAnalysisByStatusFromAccession(analysisStatusList, sampleStatusList,
+                accessionNumber);
+    }
 
 }

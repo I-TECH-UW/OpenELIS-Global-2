@@ -9,7 +9,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.log.LogEvent;
@@ -22,8 +22,7 @@ import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.organization.util.OrganizationTypeList;
 import org.openelisglobal.patient.form.PatientEntryByProjectForm;
 import org.openelisglobal.patient.saving.IAccessioner;
-import org.openelisglobal.patient.saving.RequestType;
-import org.openelisglobal.patient.util.PatientUtil;
+import org.openelisglobal.patient.saving.RequestType; 
 import org.openelisglobal.patient.valueholder.ObservationData;
 import org.openelisglobal.sample.form.ProjectData;
 import org.springframework.validation.Errors;
@@ -77,21 +76,21 @@ public abstract class BasePatientEntryByProject extends BaseController {
         allowedFields.addAll(Arrays.asList(BASE_ALLOWED_FIELDS));
 
         ObservationData observationData = new ObservationData();
-        List<NameValuePair> priorDiseasesList = observationData.getPriorDiseasesList();
-        for (NameValuePair priorDisease : priorDiseasesList) {
-            allowedFields.add("observations." + priorDisease.getName());
+        List<Pair<String, String>> priorDiseasesList = observationData.getPriorDiseasesList();
+        for (Pair<String, String> priorDisease : priorDiseasesList) {
+            allowedFields.add("observations." + priorDisease.getKey());
         }
-        List<NameValuePair> currentDiseasesList = observationData.getCurrentDiseasesList();
-        for (NameValuePair currentDisease : currentDiseasesList) {
-            allowedFields.add("observations." + currentDisease.getName());
+        List<Pair<String, String>> currentDiseasesList = observationData.getCurrentDiseasesList();
+        for (Pair<String, String> currentDisease : currentDiseasesList) {
+            allowedFields.add("observations." + currentDisease.getKey());
         }
-        List<NameValuePair> priorRTNDiseasesList = observationData.getRtnPriorDiseasesList();
-        for (NameValuePair priorDisease : priorRTNDiseasesList) {
-            allowedFields.add("observations." + priorDisease.getName());
+        List<Pair<String, String>> priorRTNDiseasesList = observationData.getRtnPriorDiseasesList();
+        for (Pair<String, String> priorDisease : priorRTNDiseasesList) {
+            allowedFields.add("observations." + priorDisease.getKey());
         }
-        List<NameValuePair> currentRTNDiseasesList = observationData.getRtnCurrentDiseasesList();
-        for (NameValuePair currentDisease : currentRTNDiseasesList) {
-            allowedFields.add("observations." + currentDisease.getName());
+        List<Pair<String, String>> currentRTNDiseasesList = observationData.getRtnCurrentDiseasesList();
+        for (Pair<String, String> currentDisease : currentRTNDiseasesList) {
+            allowedFields.add("observations." + currentDisease.getKey());
         }
         return allowedFields;
 
@@ -113,7 +112,7 @@ public abstract class BasePatientEntryByProject extends BaseController {
             } catch (IllegalArgumentException e) {
                 LogEvent.logWarn("BasePatientEntryByProject", "getRequestType",
                         "request type '" + requestTypeStr + "' invalid");
-                LogEvent.logDebug(e);
+                LogEvent.logWarn(e);
                 return RequestType.UNKNOWN;
             }
         }
@@ -175,7 +174,7 @@ public abstract class BasePatientEntryByProject extends BaseController {
      * global message.
      */
     protected void logAndAddMessage(HttpServletRequest request, String methodName, String messageKey) {
-        LogEvent.logError(this.getClass().getName(), methodName, "Unable to enter patient into system");
+        LogEvent.logError(this.getClass().getSimpleName(), methodName, "Unable to enter patient into system");
         Errors errors = new BaseErrors();
         errors.reject(messageKey, messageKey);
         saveErrors(errors);

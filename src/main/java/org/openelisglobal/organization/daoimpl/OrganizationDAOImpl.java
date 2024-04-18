@@ -60,7 +60,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Organization getData()", e);
         }
     }
@@ -75,7 +75,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Organization getAllOrganizations()", e);
         }
 
@@ -99,7 +99,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Organization getPageOfOrganizations()", e);
         }
 
@@ -135,7 +135,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in OrganizationDAOImpl getPageOfSearchedOrganizations()", e);
         }
 
@@ -149,7 +149,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             org = entityManager.unwrap(Session.class).get(Organization.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Organization readOrganization()", e);
         }
 
@@ -169,7 +169,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Organization getOrganizations(String filter)", e);
         }
 
@@ -206,7 +206,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Organization getActiveOrganizationByName()", e);
         }
     }
@@ -225,7 +225,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Organization getActiveOrganizations()", e);
         }
     }
@@ -259,7 +259,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Organization getOrganizationByName()", e);
         }
     }
@@ -328,7 +328,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Organization getOrganizationByLocalAbbreviation()", e);
         }
     }
@@ -350,20 +350,24 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             if (organization.getIsActive().equalsIgnoreCase(IActionConstants.YES)) {
                 // not case sensitive hemolysis and Hemolysis are considered
                 // duplicates
-                String sql = "from Organization o where ((trim(lower(o.organizationLocalAbbreviation))) = :orgAbrv and o.isActive='Y' and o.id != :orgId)";
+                String sql = "from Organization o where ((trim(lower(o.organizationName))) = :organizationName and ((:parentOrgId is null and o.organization is null) or o.organization.id = :parentOrgId) and o.isActive='Y' and o.id != :orgId)";
                 Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
                 // initialize with 0 (for new records where no id has been generated yet
                 String orgId = "0";
                 if (!StringUtil.isNullorNill(organization.getId())) {
                     orgId = organization.getId();
                 }
+                if (organization.getOrganization() != null && !StringUtil.isNullorNill(organization.getOrganization().getId())) {
+                    query.setParameter("parentOrgId", Integer.parseInt(organization.getId()));
+                } else {
+                    // workaround so hiberate knows null is of type int...
+                    query.setParameter("parentOrgId", 1);
+                    query.setParameter("parentOrgId", null);
+                }
+
 
                 query.setParameter("orgId", Integer.parseInt(orgId));
-                String organizationLocalAbbrev = "0";
-                if (!StringUtil.isNullorNill(organization.getOrganizationLocalAbbreviation())) {
-                    organizationLocalAbbrev = organization.getOrganizationLocalAbbreviation();
-                }
-                query.setParameter("orgAbrv", organizationLocalAbbrev);
+                query.setParameter("organizationName", organization.getOrganizationName());
 
                 list = query.list();
             }
@@ -376,7 +380,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateOrganizationExists()", e);
         }
     }
@@ -414,7 +418,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             }
 
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in OrganizationDAOImpl getTotalSearchedOrganizations()", e);
         }
 
@@ -442,7 +446,7 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             List<Organization> orgs = query.list();
             return orgs;
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in OrganizationType getOrganizationTypeByName()", e);
         }
     }

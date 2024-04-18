@@ -79,164 +79,165 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class AccessionValidationRangeController extends BaseResultValidationController {
-	@Autowired
-	private UserService userService;
-	@Autowired
-	private RoleService roleService;
 
-	private static final String[] ALLOWED_FIELDS = new String[] { "testSectionId", "paging.currentPage", "testSection",
-			"testName", "resultList*.accessionNumber", "resultList*.analysisId", "resultList*.testId",
-			"resultList*.sampleId", "resultList*.resultType", "resultList*.sampleGroupingNumber", "resultList*.noteId",
-			"resultList*.resultId", "resultList*.hasQualifiedResult", "resultList*.sampleIsAccepted",
-			"resultList*.sampleIsRejected", "resultList*.result", "resultList*.qualifiedResultValue",
-			"resultList*.multiSelectResultValues", "resultList*.isAccepted", "resultList*.isRejected",
-			"resultList*.note" };
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private RoleService roleService;
 
-	// autowiring not needed, using constructor injection
-	private AnalysisService analysisService;
-	private TestResultService testResultService;
-	private SampleHumanService sampleHumanService;
-	private DocumentTrackService documentTrackService;
-	private TestSectionService testSectionService;
-	private SystemUserService systemUserService;
-	private ResultValidationService resultValidationService;
-	private NoteService noteService;
+    private static final String[] ALLOWED_FIELDS = new String[] { "testSectionId", "paging.currentPage", "testSection",
+            "testName", "resultList*.accessionNumber", "resultList*.analysisId", "resultList*.testId",
+            "resultList*.sampleId", "resultList*.resultType", "resultList*.sampleGroupingNumber", "resultList*.noteId",
+            "resultList*.resultId", "resultList*.hasQualifiedResult", "resultList*.sampleIsAccepted",
+            "resultList*.sampleIsRejected", "resultList*.result", "resultList*.qualifiedResultValue",
+            "resultList*.multiSelectResultValues", "resultList*.isAccepted", "resultList*.isRejected",
+            "resultList*.note" };
 
-	private final String RESULT_SUBJECT = "Result Note";
-	private final String RESULT_TABLE_ID;
-	private final String RESULT_REPORT_ID;
+    // autowiring not needed, using constructor injection
+    private AnalysisService analysisService;
+    private TestResultService testResultService;
+    private SampleHumanService sampleHumanService;
+    private DocumentTrackService documentTrackService;
+    private TestSectionService testSectionService;
+    private SystemUserService systemUserService;
+    private ResultValidationService resultValidationService;
+    private NoteService noteService;
 
-	public AccessionValidationRangeController(AnalysisService analysisService, TestResultService testResultService,
-			SampleHumanService sampleHumanService, DocumentTrackService documentTrackService,
-			TestSectionService testSectionService, SystemUserService systemUserService,
-			ReferenceTablesService referenceTablesService, DocumentTypeService documentTypeService,
-			ResultValidationService resultValidationService, NoteService noteService) {
+    private final String RESULT_SUBJECT = "Result Note";
+    private final String RESULT_TABLE_ID;
+    private final String RESULT_REPORT_ID;
 
-		this.analysisService = analysisService;
-		this.testResultService = testResultService;
-		this.sampleHumanService = sampleHumanService;
-		this.documentTrackService = documentTrackService;
-		this.testSectionService = testSectionService;
-		this.systemUserService = systemUserService;
-		this.resultValidationService = resultValidationService;
-		this.noteService = noteService;
+    public AccessionValidationRangeController(AnalysisService analysisService, TestResultService testResultService,
+            SampleHumanService sampleHumanService, DocumentTrackService documentTrackService,
+            TestSectionService testSectionService, SystemUserService systemUserService,
+            ReferenceTablesService referenceTablesService, DocumentTypeService documentTypeService,
+            ResultValidationService resultValidationService, NoteService noteService) {
 
-		RESULT_TABLE_ID = referenceTablesService.getReferenceTableByName("RESULT").getId();
-		RESULT_REPORT_ID = documentTypeService.getDocumentTypeByName("resultExport").getId();
-	}
+        this.analysisService = analysisService;
+        this.testResultService = testResultService;
+        this.sampleHumanService = sampleHumanService;
+        this.documentTrackService = documentTrackService;
+        this.testSectionService = testSectionService;
+        this.systemUserService = systemUserService;
+        this.resultValidationService = resultValidationService;
+        this.noteService = noteService;
 
-	@InitBinder
-	public void initBinder(WebDataBinder binder) {
-		binder.setAllowedFields(ALLOWED_FIELDS);
-	}
+        RESULT_TABLE_ID = referenceTablesService.getReferenceTableByName("RESULT").getId();
+        RESULT_REPORT_ID = documentTypeService.getDocumentTypeByName("resultExport").getId();
+    }
 
-	@RequestMapping(value = { "/AccessionValidationRange", "/ResultValidationByTestDate" }, method = RequestMethod.GET)
-	public ModelAndView showAccessionValidationRange(HttpServletRequest request,
-			@ModelAttribute("form") @Validated(ResultValidationForm.ResultValidation.class) ResultValidationForm oldForm)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
-		ResultValidationForm newForm = new ResultValidationForm();
-		if (request.getParameter("accessionNumber") != null) {
-			newForm.setAccessionNumber(request.getParameter("accessionNumber"));
-		} else if (request.getParameter("date") != null) {
-			newForm.setTestDate(request.getParameter("date"));
-		}
-		newForm.setTestSectionId(oldForm.getTestSectionId());
-		newForm.setTestSection(oldForm.getTestSection());
-		return getResultValidation(request, newForm);
-	}
+    @RequestMapping(value = { "/AccessionValidationRange", "/ResultValidationByTestDate" }, method = RequestMethod.GET)
+    public ModelAndView showAccessionValidationRange(HttpServletRequest request,
+            @ModelAttribute("form") @Validated(ResultValidationForm.ResultValidation.class) ResultValidationForm oldForm)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-	private ModelAndView getResultValidation(HttpServletRequest request, ResultValidationForm form)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        ResultValidationForm newForm = new ResultValidationForm();
+        if (request.getParameter("accessionNumber") != null) {
+            newForm.setAccessionNumber(request.getParameter("accessionNumber"));
+        } else if (request.getParameter("date") != null) {
+            newForm.setTestDate(request.getParameter("date"));
+        }
+        newForm.setTestSectionId(oldForm.getTestSectionId());
+        newForm.setTestSection(oldForm.getTestSection());
+        return getResultValidation(request, newForm);
+    }
 
-		request.getSession().setAttribute(SAVE_DISABLED, "true");
+    private ModelAndView getResultValidation(HttpServletRequest request, ResultValidationForm form)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-		ResultValidationPaging paging = new ResultValidationPaging();
-		String newPage = request.getParameter("page");
+        request.getSession().setAttribute(SAVE_DISABLED, "true");
 
-		TestSection ts = null;
-		form.setSearchFinished(false);
+        ResultValidationPaging paging = new ResultValidationPaging();
+        String newPage = request.getParameter("page");
 
-		if (GenericValidator.isBlankOrNull(newPage)) {
+        TestSection ts = null;
+        form.setSearchFinished(false);
 
-			// load testSections for drop down
-			String resultsRoleId = roleService.getRoleByName(Constants.ROLE_VALIDATION).getId();
-			List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request), resultsRoleId);
-			form.setTestSections(testSections);
-			form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
+        if (GenericValidator.isBlankOrNull(newPage)) {
 
-			if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
-				ts = testSectionService.get(form.getTestSectionId());
-			}
+            // load testSections for drop down
+            String resultsRoleId = roleService.getRoleByName(Constants.ROLE_VALIDATION).getId();
+            List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request), resultsRoleId);
+            form.setTestSections(testSections);
+            form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
 
-			List<AnalysisItem> resultList;
-			List<AnalysisItem> filteredresultList = new ArrayList<>();
-			ResultsValidationUtility resultsValidationUtility = SpringContext.getBean(ResultsValidationUtility.class);
-			if (request.getRequestURI().contains("AccessionValidationRange")) {
-				setRequestType(ts == null ? MessageUtil.getMessage("validation.range.title") : ts.getLocalizedName());
-			} else if (request.getRequestURI().contains("ResultValidationByTestDate")) {
-				setRequestType(ts == null ? MessageUtil.getMessage("validation.date.title") : ts.getLocalizedName());
-			}
-			if (!(GenericValidator.isBlankOrNull(form.getTestSectionId())
-					&& GenericValidator.isBlankOrNull(form.getAccessionNumber())
-					&& GenericValidator.isBlankOrNull(form.getTestDate()))) {
+            if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
+                ts = testSectionService.get(form.getTestSectionId());
+            }
 
-				resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
-						form.getTestSectionId(), form.getAccessionNumber(), form.getTestDate());
-				filteredresultList = userService.filterAnalysisResultsByLabUnitRoles(getSysUserId(request), resultList,
-						Constants.ROLE_VALIDATION);
-				request.setAttribute("pageSize", filteredresultList.size());
-				form.setSearchFinished(true);
-			} else {
-				resultList = new ArrayList<>();
-			}
-			paging.setDatabaseResults(request, form, filteredresultList);
-		} else {
-			paging.page(request, form, Integer.parseInt(newPage));
-		}
+            List<AnalysisItem> resultList;
+            List<AnalysisItem> filteredresultList = new ArrayList<>();
+            ResultsValidationUtility resultsValidationUtility = SpringContext.getBean(ResultsValidationUtility.class);
+            if (request.getRequestURI().contains("AccessionValidationRange")) {
+                setRequestType(ts == null ? MessageUtil.getMessage("validation.range.title") : ts.getLocalizedName());
+            } else if (request.getRequestURI().contains("ResultValidationByTestDate")) {
+                setRequestType(ts == null ? MessageUtil.getMessage("validation.date.title") : ts.getLocalizedName());
+            }
+            if (!(GenericValidator.isBlankOrNull(form.getTestSectionId())
+                    && GenericValidator.isBlankOrNull(form.getAccessionNumber())
+                    && GenericValidator.isBlankOrNull(form.getTestDate()))) {
 
-		addFlashMsgsToRequest(request);
-		return findForward(FWD_SUCCESS, form);
-	}
+                resultList = resultsValidationUtility.getResultValidationList(getValidationStatus(),
+                        form.getTestSectionId(), form.getAccessionNumber(), form.getTestDate());
+                filteredresultList = userService.filterAnalysisResultsByLabUnitRoles(getSysUserId(request), resultList,
+                        Constants.ROLE_VALIDATION);
+                request.setAttribute("pageSize", filteredresultList.size());
+                form.setSearchFinished(true);
+            } else {
+                resultList = new ArrayList<>();
+            }
+            paging.setDatabaseResults(request, form, filteredresultList);
+        } else {
+            paging.page(request, form, Integer.parseInt(newPage));
+        }
 
-	public List<Integer> getValidationStatus() {
-		List<Integer> validationStatus = new ArrayList<>();
-		validationStatus.add(Integer
-				.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
-		if (ConfigurationProperties.getInstance()
-				.isPropertyValueEqual(ConfigurationProperties.Property.VALIDATE_REJECTED_TESTS, "true")) {
-			validationStatus.add(Integer.parseInt(
-					SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
-		}
+        addFlashMsgsToRequest(request);
+        return findForward(FWD_SUCCESS, form);
+    }
 
-		return validationStatus;
-	}
+    public List<Integer> getValidationStatus() {
+        List<Integer> validationStatus = new ArrayList<>();
+        validationStatus.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
+        if (ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(ConfigurationProperties.Property.VALIDATE_REJECTED_TESTS, "true")) {
+            validationStatus.add(Integer.parseInt(
+                    SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
+        }
 
-	@RequestMapping(value = "/AccessionValidationRange", method = RequestMethod.POST)
-	public ModelAndView showAccessionValidationRangeSave(HttpServletRequest request,
-			@ModelAttribute("form") @Validated(ResultValidationForm.ResultValidation.class) ResultValidationForm form,
-			BindingResult result, RedirectAttributes redirectAttributes)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		if ("true".equals(request.getParameter("pageResults"))) {
-			return getResultValidation(request, form);
-		}
-		form.setSearchFinished(false);
+        return validationStatus;
+    }
 
-		if (result.hasErrors()) {
-			saveErrors(result);
-			return findForward(FWD_FAIL_INSERT, form);
-		}
-		String forward = FWD_SUCCESS_INSERT;
-		List<IResultUpdate> updaters = ValidationUpdateRegister.getRegisteredUpdaters();
-		boolean areListeners = !updaters.isEmpty();
+    @RequestMapping(value = "/AccessionValidationRange", method = RequestMethod.POST)
+    public ModelAndView showAccessionValidationRangeSave(HttpServletRequest request,
+            @ModelAttribute("form") @Validated(ResultValidationForm.ResultValidation.class) ResultValidationForm form,
+            BindingResult result, RedirectAttributes redirectAttributes)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        if ("true".equals(request.getParameter("pageResults"))) {
+            return getResultValidation(request, form);
+        }
+        form.setSearchFinished(false);
 
-		request.getSession().setAttribute(SAVE_DISABLED, "true");
+        if (result.hasErrors()) {
+            saveErrors(result);
+            return findForward(FWD_FAIL_INSERT, form);
+        }
+        String forward = FWD_SUCCESS_INSERT;
+        List<IResultUpdate> updaters = ValidationUpdateRegister.getRegisteredUpdaters();
+        boolean areListeners = !updaters.isEmpty();
 
-		List<Result> checkPagedResults = (List<Result>) request.getSession()
-				.getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
-		List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
-		if (checkResults.size() == 0) {
-			LogEvent.logDebug(this.getClass().getName(), "ResultValidation()", "Attempted save of stale page.");
+        request.getSession().setAttribute(SAVE_DISABLED, "true");
+
+        List<Result> checkPagedResults = (List<Result>) request.getSession()
+                .getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
+        List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
+        if (checkResults.size() == 0) {
+            LogEvent.logDebug(this.getClass().getSimpleName(), "ResultValidation()", "Attempted save of stale page.");
 //            Errors errors = new BaseErrors();
 //            errors.reject("alert.error", "An error occured while saving");
 //            saveErrors(errors);
@@ -281,12 +282,13 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
 				resultSaveService, areListeners);
 //        }
 
-		try {
-			resultValidationService.persistdata(deletableList, analysisUpdateList, resultUpdateList, resultItemList,
-					sampleUpdateList, noteUpdateList, resultSaveService, updaters, getSysUserId(request));
-		} catch (LIMSRuntimeException e) {
-			LogEvent.logErrorStack(e);
-		}
+
+        try {
+            resultValidationService.persistdata(deletableList, analysisUpdateList, resultUpdateList, resultItemList,
+                    sampleUpdateList, noteUpdateList, resultSaveService, updaters, getSysUserId(request));
+        } catch (LIMSRuntimeException e) {
+            LogEvent.logError(e);
+        }
 
 		for (IResultUpdate updater : updaters) {
 

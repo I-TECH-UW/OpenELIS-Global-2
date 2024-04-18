@@ -17,6 +17,7 @@
 package org.openelisglobal.testcodes.valueholder;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class OrganizationSchemaPK implements Serializable {
 
@@ -43,5 +44,21 @@ public class OrganizationSchemaPK implements Serializable {
 
     public String toString() {
         return organizationId + encodingTypeId;
+    }
+
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        OrganizationSchemaPK that = (OrganizationSchemaPK) o;
+
+        return Objects.equals(this.organizationId, that.organizationId)
+                && Objects.equals(this.encodingTypeId, that.encodingTypeId);
+    }
+
+    public int hashCode() {
+        return Objects.hash(organizationId, encodingTypeId);
     }
 }

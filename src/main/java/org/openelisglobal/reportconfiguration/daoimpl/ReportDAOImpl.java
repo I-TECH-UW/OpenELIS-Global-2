@@ -33,7 +33,7 @@ public class ReportDAOImpl extends BaseDAOImpl<Report, String> implements Report
             return -1;
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ReportDAOImpl getMaxSortOrder()", e);
         }
     }

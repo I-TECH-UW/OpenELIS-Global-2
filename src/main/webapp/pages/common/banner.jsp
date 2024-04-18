@@ -58,6 +58,13 @@ function getCsrfToken() {
 	}
 }
 
+jQuery(document).ready(function() {
+	let homeMenuLink = document.getElementById("menu_home");
+	if (homeMenuLink !==null){
+		homeMenuLink.href = window.location.origin
+	}
+});
+
 </script>
 
 <%-- New additions below by mark47 --%>

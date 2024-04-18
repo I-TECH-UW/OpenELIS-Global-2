@@ -14,7 +14,7 @@ import org.openelisglobal.address.valueholder.AddressPart;
 import org.openelisglobal.address.valueholder.PersonAddress;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
@@ -41,7 +41,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> implements PatientService {
+public class PatientServiceImpl extends AuditableBaseObjectServiceImpl<Patient, String> implements PatientService {
 
     public final static String ADDRESS_STREET = "Street";
     public final static String ADDRESS_STATE = "State";
@@ -799,7 +799,7 @@ public class PatientServiceImpl extends BaseObjectServiceImpl<Patient, String> i
         try {
             typeName = patientInfo.getPatientType();
         } catch (RuntimeException e) {
-            LogEvent.logInfo(this.getClass().getName(), "persistPatientType", "ignoring exception");
+            LogEvent.logInfo(this.getClass().getSimpleName(), "persistPatientType", "ignoring exception");
         }
 
         if (!GenericValidator.isBlankOrNull(typeName) && !"0".equals(typeName)) {

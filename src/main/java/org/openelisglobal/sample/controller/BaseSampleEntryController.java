@@ -146,7 +146,7 @@ public abstract class BaseSampleEntryController extends BaseController {
      * global message.
      */
     protected void logAndAddMessage(HttpServletRequest request, String methodName, String messageKey) {
-        LogEvent.logError(this.getClass().getName(), methodName, "Unable to enter sample into system");
+        LogEvent.logError(this.getClass().getSimpleName(), methodName, "Unable to enter sample into system");
         Errors errors = new BaseErrors();
         errors.reject(messageKey, messageKey);
         addErrors(request, errors);

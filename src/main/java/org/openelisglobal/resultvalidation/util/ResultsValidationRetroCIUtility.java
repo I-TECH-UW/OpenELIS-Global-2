@@ -85,409 +85,408 @@ import org.springframework.web.context.WebApplicationContext;
 @Service
 @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ResultsValidationRetroCIUtility {
-
-	// private static String VIRAL_LOAD_ID = "";
-	private static String ANALYTE_CD4_CT_GENERATED_ID;
-
-	private static String CONCLUSION_ID;
-
-	@Autowired
-	private DictionaryService dictionaryService;
-	@Autowired
-	private AnalysisService analysisService;
-	@Autowired
-	private TestSectionService testSectionService;
-	@Autowired
-	private ResultService resultService;
-	@Autowired
-	private TestResultService testResultService;
-	@Autowired
-	private TestService testService;
-	@Autowired
-	private SampleService sampleService;
-	@Autowired
-	private ObservationHistoryService observationHistoryService;
-	@Autowired
-	private SampleQaEventService sampleQaEventService;
-	@Autowired
-	private ObservationHistoryTypeService ohTypeService;
-	@Autowired
-	private AnalyteService analyteService;
-
-	private static String SAMPLE_STATUS_OBSERVATION_HISTORY_TYPE_ID;
-	private static String CD4_COUNT_SORT_NUMBER;
-
-	private ResultsLoadUtility resultsLoadUtility = SpringContext.getBean(ResultsLoadUtility.class);
-	private static List<Integer> notValidStatus = new ArrayList<>();
-	private Map<String, String> testIdToUnits = new HashMap<>();
-	private Map<String, Boolean> accessionToValidMap;
-	private String totalTestName = "";
-
-	StopWatch sw;
-
-	@PostConstruct
-	private void initializeGlobalVariables() {
-		notValidStatus.add(
-				Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
-		notValidStatus.add(Integer
-				.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
-		Analyte analyte = new Analyte();
-		analyte.setAnalyteName("Conclusion");
-		analyte = analyteService.getAnalyteByName(analyte, false);
-		CONCLUSION_ID = analyte.getId();
-		analyte = new Analyte();
-		analyte.setAnalyteName("generated CD4 Count");
-		analyte = analyteService.getAnalyteByName(analyte, false);
-		ANALYTE_CD4_CT_GENERATED_ID = analyte == null ? "" : analyte.getId();
-
-		Test test = testService.getTestByLocalizedName("CD4 absolute count", Locale.ENGLISH);
-		if (test != null) {
-			CD4_COUNT_SORT_NUMBER = test.getSortOrder();
-		}
-
-		ObservationHistoryType oht = ohTypeService.getByName("SampleRecordStatus");
-		if (oht != null) {
-			SAMPLE_STATUS_OBSERVATION_HISTORY_TYPE_ID = oht.getId();
-		}
-	}
-
-	public List<AnalysisItem> getResultValidationList(String testSectionName, String testName,
-			List<Integer> statusList) {
-		accessionToValidMap = new HashMap<>();
-		sw = new StopWatch();
-		sw.disable(true);
-
-		List<ResultValidationItem> testList = new ArrayList<>();
-		List<AnalysisItem> resultList = new ArrayList<>();
-
-		if (!(GenericValidator.isBlankOrNull(testSectionName) || testSectionName.equals("0"))) {
-			sw.start("Result Validation " + testSectionName);
-			String testSectionId;
-
-			// unique serology department format for RetroCI
-			if (testSectionName.equals("Serology")) {
-				testSectionId = getTestSectionId(testSectionName);
-				testList = getUnValidatedElisaResultItemsInTestSection(testSectionId);
-
-				Collections.sort(testList, new Comparator<ResultValidationItem>() {
-					@Override
-					public int compare(ResultValidationItem o1, ResultValidationItem o2) {
-						return o1.getAccessionNumber().compareTo(o2.getAccessionNumber());
-					}
-
-				});
-				resultList = testResultListToELISAAnalysisList(testList, statusList);
-
-				// default department format
-			} else {
-
-				// unique virology department format
-				if ((!GenericValidator.isBlankOrNull(testName) && testSectionName.equals("Virology"))) {
-					if (testName.equals("Genotyping")) {
-						testName = "Génotypage";
-					}
-
-					testList.addAll(getUnValidatedTestResultItemsByTest(testName, statusList));
-
-				} else {
-					testSectionId = getTestSectionId(testSectionName);
-					testList = getUnValidatedTestResultItemsInTestSection(testSectionId, statusList);
-					// Immunology and Hematology are together
-					// Not sure if this is the correct way to judge this business rule
-					if (ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(
-							Property.configurationName, "CI_GENERAL") && testSectionName.equals("Immunology")) {
-						sw.setMark("Immuno time");
-						// add Hematology tests to list
-						totalTestName = MessageUtil.getMessage("test.validation.total.percent");
-						List<ResultValidationItem> hematologyResults = getUnValidatedTestResultItemsInTestSection(
-								getTestSectionId("Hematology"), statusList);
-						addPrecentageResultsTotal(hematologyResults);
-						testList.addAll(hematologyResults);
-						sw.setMark("Hemo time");
-					}
-				}
-
-				resultList = testResultListToAnalysisItemList(testList);
-				sw.setMark("conversion done for " + resultList.size());
-			}
-
-			sortByAccessionNumberAndOrder(resultList);
-			sw.setMark("sorting done");
-			setGroupingNumbers(resultList);
-			sw.setMark("Grouping done");
-		}
-
-		sw.setMark("end");
-		sw.report();
-
-		return resultList;
-
-	}
-
-	private void addPrecentageResultsTotal(List<ResultValidationItem> hematologyResults) {
-		Map<String, ResultValidationItem> accessionToTotalMap = new HashMap<>();
-
-		for (ResultValidationItem resultItem : hematologyResults) {
-			if (isItemToBeTotaled(resultItem)) {
-				ResultValidationItem totalItem = accessionToTotalMap.get(resultItem.getAccessionNumber());
-
-				if (totalItem == null) {
-					totalItem = createTotalItem(resultItem);
-					accessionToTotalMap.put(resultItem.getAccessionNumber(), totalItem);
-				}
-
-				totalItem.getResult().setValue(totalValues(totalItem, resultItem));
-				totalItem.setTestSortNumber(greaterSortNumber(totalItem, resultItem));
-			}
-		}
-
-		roundTotalItemValue(accessionToTotalMap);
-
-		hematologyResults.addAll(accessionToTotalMap.values());
-	}
-
-	private String greaterSortNumber(ResultValidationItem totalItem, ResultValidationItem resultItem) {
-		return String.valueOf(Math.max(Integer.parseInt(totalItem.getTestSortNumber()),
-				Integer.parseInt(resultItem.getTestSortNumber())));
-	}
-
-	private boolean isItemToBeTotaled(ResultValidationItem resultItem) {
-		String name = resultItem.getTestName();
-		// This is totally un-wholesome it is to specific to RetroCI
-		if (name.equals("Lymph %")) {
-			Result result = resultService.getResultById(resultItem.getResultId());
-
-			return result == null || result.getAnalyte() == null
-					|| !ANALYTE_CD4_CT_GENERATED_ID.equals(result.getAnalyte().getId());
-		} else {
-			return name.equals("Neut %") || name.equals("Mono %") || name.equals("Eo %") || name.equals("Baso %");
-		}
-	}
-
-	private ResultValidationItem createTotalItem(ResultValidationItem resultItem) {
-		ResultValidationItem item = new ResultValidationItem();
-
-		item.setTestName(totalTestName);
-		item.setUnitsOfMeasure("%");
-		item.setAccessionNumber(resultItem.getAccessionNumber());
-		item.setResult(new Result());
-		item.getResult().setValue("0");
-		item.setResultType(TypeOfTestResultServiceImpl.ResultType.NUMERIC.getCharacterValue());
-		item.setTestSortNumber("0");
-		return item;
-	}
-
-	private String totalValues(ResultValidationItem totalItem, ResultValidationItem additionalItem) {
-		try {
-			return String.valueOf(Double.parseDouble(totalItem.getResult().getValue())
-					+ Double.parseDouble(additionalItem.getResult().getValue()));
-		} catch (NumberFormatException e) {
-			return totalItem.getResult().getValue();
-		}
-	}
-
-	private void roundTotalItemValue(Map<String, ResultValidationItem> accessionToTotalMap) {
-		for (ResultValidationItem totalItem : accessionToTotalMap.values()) {
-			String total = totalItem.getResult().getValue();
-
-			if (total.startsWith("99.9999")) {
-				totalItem.getResult().setValue("100.0");
-			} else {
-				int separatorIndex = total.indexOf('.');
-
-				if (separatorIndex > 0) {
-					totalItem.getResult().setValue(total.substring(0, separatorIndex + 2));
-				}
-			}
-		}
-	}
-
-	private void sortByAccessionNumberAndOrder(List<AnalysisItem> resultItemList) {
-		Collections.sort(resultItemList, new Comparator<AnalysisItem>() {
-			@Override
-			public int compare(AnalysisItem a, AnalysisItem b) {
-				int accessionComp = a.getAccessionNumber().compareTo(b.getAccessionNumber());
-				return ((accessionComp == 0)
-						? Integer.parseInt(a.getTestSortNumber()) - Integer.parseInt(b.getTestSortNumber())
-						: accessionComp);
-			}
-		});
-
-	}
-
-	private void setGroupingNumbers(List<AnalysisItem> resultList) {
-		String currentAccessionNumber = null;
-		AnalysisItem headItem = null;
-		int groupingCount = 1;
-
-		for (AnalysisItem analysisResultItem : resultList) {
-			if (!analysisResultItem.getAccessionNumber().equals(currentAccessionNumber)) {
-				currentAccessionNumber = analysisResultItem.getAccessionNumber();
-				headItem = analysisResultItem;
-				groupingCount++;
-			} else {
-				if (headItem == null) {
-					throw new IllegalStateException("headItem should not be able to be null here");
-				}
-				headItem.setMultipleResultForSample(true);
-				analysisResultItem.setMultipleResultForSample(true);
-			}
-
-			analysisResultItem.setSampleGroupingNumber(groupingCount);
-		}
-	}
-
-	public List<ResultValidationItem> getUnValidatedElisaResultItemsInTestSection(String id) {
-
-		List<Analysis> analysisList = new ArrayList<>();
-
-		List<Test> tests = resultsLoadUtility.getTestsInSection(id);
-
-		for (Test test : tests) {
-			List<Analysis> analysisTestList = analysisService.getAllAnalysisByTestAndExcludedStatus(test.getId(),
-					notValidStatus);
-			analysisList.addAll(analysisTestList);
-		}
-
-		return getGroupedTestsForAnalysisList(analysisList, false);
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<ResultValidationItem> getUnValidatedTestResultItemsInTestSection(String sectionId,
-			List<Integer> statusList) {
-
-		List<Analysis> analysisList = analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList,
-				false);
-		sw.setMark("analysis returned " + analysisList.size());
-		return getGroupedTestsForAnalysisList(analysisList, !StatusRules.useRecordStatusForValidation());
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<ResultValidationItem> getUnValidatedTestResultItemsByTest(String testName, List<Integer> statusList) {
-
-		List<Analysis> analysisList = analysisService.getAllAnalysisByTestAndStatus(getTestId(testName), statusList);
-
-		return getGroupedTestsForAnalysisList(analysisList, false);
-	}
-
-	/*
-	 * N.B. The ignoreRecordStatus is an abomination and should be removed. It is a
-	 * quick and dirty fix for workplan and validation using the same code but
-	 * having different rules
-	 */
-	public List<ResultValidationItem> getGroupedTestsForAnalysisList(Collection<Analysis> filteredAnalysisList,
-			boolean ignoreRecordStatus) throws LIMSRuntimeException {
-
-		List<ResultValidationItem> selectedTestList = new ArrayList<>();
-		Dictionary dictionary;
-
-		for (Analysis analysis : filteredAnalysisList) {
-
-			if (ignoreRecordStatus || sampleReadyForValidation(analysis.getSampleItem().getSample())) {
-				List<ResultValidationItem> testResultItemList = getResultItemFromAnalysis(analysis);
-				// NB. The resultValue is filled in during getResultItemFromAnalysis as a side
-				// effect of setResult
-				for (ResultValidationItem validationItem : testResultItemList) {
-					if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(validationItem.getResultType())) {
-						dictionary = new Dictionary();
-						String resultValue = null;
-						try {
-							dictionary.setId(validationItem.getResultValue());
-							dictionaryService.getData(dictionary);
-							resultValue = GenericValidator.isBlankOrNull(dictionary.getLocalAbbreviation())
-									? dictionary.getDictEntry()
-									: dictionary.getLocalAbbreviation();
-						} catch (RuntimeException e) {
-							LogEvent.logInfo(this.getClass().getName(), "getGroupedTestsForAnalysisList",
-									e.getMessage());
-							// no-op
-						}
-
-						validationItem.setResultValue(resultValue);
-
-					}
-
-					validationItem.setAnalysis(analysis);
-					validationItem.setNonconforming(QAService.isAnalysisParentNonConforming(analysis) || StatusService
-							.getInstance().matches(analysis.getStatusId(), AnalysisStatus.TechnicalRejected));
-					if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
-						validationItem.setNonconforming(getQaEventByTestSection(analysis));
-					}
-
-					selectedTestList.add(validationItem);
-				}
-			}
-		}
-
-		return selectedTestList;
-	}
-
-	private boolean sampleReadyForValidation(Sample sample) {
-
-		Boolean valid = accessionToValidMap.get(sample.getAccessionNumber());
-
-		if (valid == null) {
-			valid = getSampleRecordStatus(sample) != RecordStatus.NotRegistered;
-			accessionToValidMap.put(sample.getAccessionNumber(), valid);
-		}
-
-		return valid;
-	}
-
-	public List<ResultValidationItem> getResultItemFromAnalysis(Analysis analysis) throws LIMSRuntimeException {
-		List<ResultValidationItem> testResultList = new ArrayList<>();
-
-		List<Result> resultList = resultService.getResultsByAnalysis(analysis);
-		NoteType[] noteTypes = { NoteType.EXTERNAL, NoteType.INTERNAL, NoteType.REJECTION_REASON,
-				NoteType.NON_CONFORMITY };
-		NoteService noteService = SpringContext.getBean(NoteService.class);
-		String notes = noteService.getNotesAsString(analysis, true, true, "<br/>", noteTypes, false);
-
-		if (resultList == null) {
-			return testResultList;
-		}
-
-		// For historical reasons we add a null member to the collection if it
-		// is empty
-		// this should be refactored.
-		// The result list are results associated with the analysis, if there is
-		// none we want
-		// to present the user with a blank one
-		if (resultList.isEmpty()) {
-			resultList.add(null);
-		}
-
-		ResultValidationItem parentItem = null;
-		for (Result result : resultList) {
-			if (parentItem != null && result.getParentResult() != null
-					&& parentItem.getResultId().equals(result.getParentResult().getId())) {
-				parentItem.setQualifiedResultValue(result.getValue());
-				parentItem.setHasQualifiedResult(true);
-				parentItem.setQualificationResultId(result.getId());
-				continue;
-			}
-
-			ResultValidationItem resultItem = createTestResultItem(analysis, analysis.getTest(),
-					analysis.getSampleItem().getSortOrder(), result,
-					analysis.getSampleItem().getSample().getAccessionNumber(), notes);
-
-			notes = null;// we only want it once
-			if (resultItem.getQualifiedDictionaryId() != null) {
-				parentItem = resultItem;
-			}
-
-			testResultList.add(resultItem);
-		}
-
-		return testResultList;
-	}
-
-	private ResultValidationItem createTestResultItem(Analysis analysis, Test test, String sequenceNumber,
-			Result result, String accessionNumber, String notes) {
-
-		List<TestResult> testResults = getPossibleResultsForTest(test);
-
-		String displayTestName = TestServiceImpl.getLocalizedTestNameWithType(test);
+    // private static String VIRAL_LOAD_ID = "";
+    private static String ANALYTE_CD4_CT_GENERATED_ID;
+
+    private static String CONCLUSION_ID;
+
+    @Autowired
+    private DictionaryService dictionaryService;
+    @Autowired
+    private AnalysisService analysisService;
+    @Autowired
+    private TestSectionService testSectionService;
+    @Autowired
+    private ResultService resultService;
+    @Autowired
+    private TestResultService testResultService;
+    @Autowired
+    private TestService testService;
+    @Autowired
+    private SampleService sampleService;
+    @Autowired
+    private ObservationHistoryService observationHistoryService;
+    @Autowired
+    private SampleQaEventService sampleQaEventService;
+    @Autowired
+    private ObservationHistoryTypeService ohTypeService;
+    @Autowired
+    private AnalyteService analyteService;
+
+    private static String SAMPLE_STATUS_OBSERVATION_HISTORY_TYPE_ID;
+    private static String CD4_COUNT_SORT_NUMBER;
+
+    private ResultsLoadUtility resultsLoadUtility = SpringContext.getBean(ResultsLoadUtility.class);
+    private static List<Integer> notValidStatus = new ArrayList<>();
+    private Map<String, String> testIdToUnits = new HashMap<>();
+    private Map<String, Boolean> accessionToValidMap;
+    private String totalTestName = "";
+
+    StopWatch sw;
+
+    @PostConstruct
+    private void initializeGlobalVariables() {
+        notValidStatus.add(
+                Integer.parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
+        notValidStatus.add(Integer
+                .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
+        Analyte analyte = new Analyte();
+        analyte.setAnalyteName("Conclusion");
+        analyte = analyteService.getAnalyteByName(analyte, false);
+        CONCLUSION_ID = analyte.getId();
+        analyte = new Analyte();
+        analyte.setAnalyteName("generated CD4 Count");
+        analyte = analyteService.getAnalyteByName(analyte, false);
+        ANALYTE_CD4_CT_GENERATED_ID = analyte == null ? "" : analyte.getId();
+
+        Test test = testService.getTestByLocalizedName("CD4 absolute count", Locale.ENGLISH);
+        if (test != null) {
+            CD4_COUNT_SORT_NUMBER = test.getSortOrder();
+        }
+
+        ObservationHistoryType oht = ohTypeService.getByName("SampleRecordStatus");
+        if (oht != null) {
+            SAMPLE_STATUS_OBSERVATION_HISTORY_TYPE_ID = oht.getId();
+        }
+    }
+
+    public List<AnalysisItem> getResultValidationList(String testSectionName, String testName,
+            List<Integer> statusList) {
+        accessionToValidMap = new HashMap<>();
+        sw = new StopWatch();
+        sw.disable(true);
+
+        List<ResultValidationItem> testList = new ArrayList<>();
+        List<AnalysisItem> resultList = new ArrayList<>();
+
+        if (!(GenericValidator.isBlankOrNull(testSectionName) || testSectionName.equals("0"))) {
+            sw.start("Result Validation " + testSectionName);
+            String testSectionId;
+
+            // unique serology department format for RetroCI
+            if (testSectionName.equals("Serology")) {
+                testSectionId = getTestSectionId(testSectionName);
+                testList = getUnValidatedElisaResultItemsInTestSection(testSectionId);
+
+                Collections.sort(testList, new Comparator<ResultValidationItem>() {
+                    @Override
+                    public int compare(ResultValidationItem o1, ResultValidationItem o2) {
+                        return o1.getAccessionNumber().compareTo(o2.getAccessionNumber());
+                    }
+
+                });
+                resultList = testResultListToELISAAnalysisList(testList, statusList);
+
+                // default department format
+            } else {
+
+                // unique virology department format
+                if ((!GenericValidator.isBlankOrNull(testName) && testSectionName.equals("Virology"))) {
+                    if (testName.equals("Genotyping")) {
+                        testName = "Génotypage";
+                    }
+
+                    testList.addAll(getUnValidatedTestResultItemsByTest(testName, statusList));
+
+                } else {
+                    testSectionId = getTestSectionId(testSectionName);
+                    testList = getUnValidatedTestResultItemsInTestSection(testSectionId, statusList);
+                    // Immunology and Hematology are together
+                    // Not sure if this is the correct way to judge this business rule
+                    if (ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName,
+                            "CI_GENERAL") && testSectionName.equals("Immunology")) {
+                        sw.setMark("Immuno time");
+                        // add Hematology tests to list
+                        totalTestName = MessageUtil.getMessage("test.validation.total.percent");
+                        List<ResultValidationItem> hematologyResults = getUnValidatedTestResultItemsInTestSection(
+                                getTestSectionId("Hematology"), statusList);
+                        addPrecentageResultsTotal(hematologyResults);
+                        testList.addAll(hematologyResults);
+                        sw.setMark("Hemo time");
+                    }
+                }
+
+                resultList = testResultListToAnalysisItemList(testList);
+                sw.setMark("conversion done for " + resultList.size());
+            }
+
+            sortByAccessionNumberAndOrder(resultList);
+            sw.setMark("sorting done");
+            setGroupingNumbers(resultList);
+            sw.setMark("Grouping done");
+        }
+
+        sw.setMark("end");
+        sw.report();
+
+        return resultList;
+
+    }
+
+    private void addPrecentageResultsTotal(List<ResultValidationItem> hematologyResults) {
+        Map<String, ResultValidationItem> accessionToTotalMap = new HashMap<>();
+
+        for (ResultValidationItem resultItem : hematologyResults) {
+            if (isItemToBeTotaled(resultItem)) {
+                ResultValidationItem totalItem = accessionToTotalMap.get(resultItem.getAccessionNumber());
+
+                if (totalItem == null) {
+                    totalItem = createTotalItem(resultItem);
+                    accessionToTotalMap.put(resultItem.getAccessionNumber(), totalItem);
+                }
+
+                totalItem.getResult().setValue(totalValues(totalItem, resultItem));
+                totalItem.setTestSortNumber(greaterSortNumber(totalItem, resultItem));
+            }
+        }
+
+        roundTotalItemValue(accessionToTotalMap);
+
+        hematologyResults.addAll(accessionToTotalMap.values());
+    }
+
+    private String greaterSortNumber(ResultValidationItem totalItem, ResultValidationItem resultItem) {
+        return String.valueOf(Math.max(Integer.parseInt(totalItem.getTestSortNumber()),
+                Integer.parseInt(resultItem.getTestSortNumber())));
+    }
+
+    private boolean isItemToBeTotaled(ResultValidationItem resultItem) {
+        String name = resultItem.getTestName();
+        // This is totally un-wholesome it is to specific to RetroCI
+        if (name.equals("Lymph %")) {
+            Result result = resultService.getResultById(resultItem.getResultId());
+
+            return result == null || result.getAnalyte() == null
+                    || !ANALYTE_CD4_CT_GENERATED_ID.equals(result.getAnalyte().getId());
+        } else {
+            return name.equals("Neut %") || name.equals("Mono %") || name.equals("Eo %") || name.equals("Baso %");
+        }
+    }
+
+    private ResultValidationItem createTotalItem(ResultValidationItem resultItem) {
+        ResultValidationItem item = new ResultValidationItem();
+
+        item.setTestName(totalTestName);
+        item.setUnitsOfMeasure("%");
+        item.setAccessionNumber(resultItem.getAccessionNumber());
+        item.setResult(new Result());
+        item.getResult().setValue("0");
+        item.setResultType(TypeOfTestResultServiceImpl.ResultType.NUMERIC.getCharacterValue());
+        item.setTestSortNumber("0");
+        return item;
+    }
+
+    private String totalValues(ResultValidationItem totalItem, ResultValidationItem additionalItem) {
+        try {
+            return String.valueOf(Double.parseDouble(totalItem.getResult().getValue())
+                    + Double.parseDouble(additionalItem.getResult().getValue()));
+        } catch (NumberFormatException e) {
+            return totalItem.getResult().getValue();
+        }
+    }
+
+    private void roundTotalItemValue(Map<String, ResultValidationItem> accessionToTotalMap) {
+        for (ResultValidationItem totalItem : accessionToTotalMap.values()) {
+            String total = totalItem.getResult().getValue();
+
+            if (total.startsWith("99.9999")) {
+                totalItem.getResult().setValue("100.0");
+            } else {
+                int separatorIndex = total.indexOf('.');
+
+                if (separatorIndex > 0) {
+                    totalItem.getResult().setValue(total.substring(0, separatorIndex + 2));
+                }
+            }
+        }
+    }
+
+    private void sortByAccessionNumberAndOrder(List<AnalysisItem> resultItemList) {
+        Collections.sort(resultItemList, new Comparator<AnalysisItem>() {
+            @Override
+            public int compare(AnalysisItem a, AnalysisItem b) {
+                int accessionComp = a.getAccessionNumber().compareTo(b.getAccessionNumber());
+                return ((accessionComp == 0)
+                        ? Integer.parseInt(a.getTestSortNumber()) - Integer.parseInt(b.getTestSortNumber())
+                        : accessionComp);
+            }
+        });
+
+    }
+
+    private void setGroupingNumbers(List<AnalysisItem> resultList) {
+        String currentAccessionNumber = null;
+        AnalysisItem headItem = null;
+        int groupingCount = 1;
+
+        for (AnalysisItem analysisResultItem : resultList) {
+            if (!analysisResultItem.getAccessionNumber().equals(currentAccessionNumber)) {
+                currentAccessionNumber = analysisResultItem.getAccessionNumber();
+                headItem = analysisResultItem;
+                groupingCount++;
+            } else {
+                if (headItem == null) {
+                    throw new IllegalStateException("headItem should not be able to be null here");
+                }
+                headItem.setMultipleResultForSample(true);
+                analysisResultItem.setMultipleResultForSample(true);
+            }
+
+            analysisResultItem.setSampleGroupingNumber(groupingCount);
+        }
+    }
+
+    public List<ResultValidationItem> getUnValidatedElisaResultItemsInTestSection(String id) {
+
+        List<Analysis> analysisList = new ArrayList<>();
+
+        List<Test> tests = resultsLoadUtility.getTestsInSection(id);
+
+        for (Test test : tests) {
+            List<Analysis> analysisTestList = analysisService.getAllAnalysisByTestAndExcludedStatus(test.getId(),
+                    notValidStatus);
+            analysisList.addAll(analysisTestList);
+        }
+
+        return getGroupedTestsForAnalysisList(analysisList, false);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<ResultValidationItem> getUnValidatedTestResultItemsInTestSection(String sectionId,
+            List<Integer> statusList) {
+
+        List<Analysis> analysisList = analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList,
+                false);
+        sw.setMark("analysis returned " + analysisList.size());
+        return getGroupedTestsForAnalysisList(analysisList, !StatusRules.useRecordStatusForValidation());
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<ResultValidationItem> getUnValidatedTestResultItemsByTest(String testName, List<Integer> statusList) {
+
+        List<Analysis> analysisList = analysisService.getAllAnalysisByTestAndStatus(getTestId(testName), statusList);
+
+        return getGroupedTestsForAnalysisList(analysisList, false);
+    }
+
+    /*
+     * N.B. The ignoreRecordStatus is an abomination and should be removed. It is a
+     * quick and dirty fix for workplan and validation using the same code but
+     * having different rules
+     */
+    public List<ResultValidationItem> getGroupedTestsForAnalysisList(Collection<Analysis> filteredAnalysisList,
+            boolean ignoreRecordStatus) throws LIMSRuntimeException {
+
+        List<ResultValidationItem> selectedTestList = new ArrayList<>();
+        Dictionary dictionary;
+
+        for (Analysis analysis : filteredAnalysisList) {
+
+            if (ignoreRecordStatus || sampleReadyForValidation(analysis.getSampleItem().getSample())) {
+                List<ResultValidationItem> testResultItemList = getResultItemFromAnalysis(analysis);
+                // NB. The resultValue is filled in during getResultItemFromAnalysis as a side
+                // effect of setResult
+                for (ResultValidationItem validationItem : testResultItemList) {
+                    if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(validationItem.getResultType())) {
+                        dictionary = new Dictionary();
+                        String resultValue = null;
+                        try {
+                            dictionary.setId(validationItem.getResultValue());
+                            dictionaryService.getData(dictionary);
+                            resultValue = GenericValidator.isBlankOrNull(dictionary.getLocalAbbreviation())
+                                    ? dictionary.getDictEntry()
+                                    : dictionary.getLocalAbbreviation();
+                        } catch (RuntimeException e) {
+                            LogEvent.logInfo(this.getClass().getSimpleName(), "getGroupedTestsForAnalysisList",
+                                    e.getMessage());
+                            // no-op
+                        }
+
+                        validationItem.setResultValue(resultValue);
+
+                    }
+
+                    validationItem.setAnalysis(analysis);
+                    validationItem.setNonconforming(QAService.isAnalysisParentNonConforming(analysis) || StatusService
+                            .getInstance().matches(analysis.getStatusId(), AnalysisStatus.TechnicalRejected));
+                    if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
+                        validationItem.setNonconforming(getQaEventByTestSection(analysis));
+                    }
+
+                    selectedTestList.add(validationItem);
+                }
+            }
+        }
+
+        return selectedTestList;
+    }
+
+    private boolean sampleReadyForValidation(Sample sample) {
+
+        Boolean valid = accessionToValidMap.get(sample.getAccessionNumber());
+
+        if (valid == null) {
+            valid = getSampleRecordStatus(sample) != RecordStatus.NotRegistered;
+            accessionToValidMap.put(sample.getAccessionNumber(), valid);
+        }
+
+        return valid;
+    }
+
+    public List<ResultValidationItem> getResultItemFromAnalysis(Analysis analysis) throws LIMSRuntimeException {
+        List<ResultValidationItem> testResultList = new ArrayList<>();
+
+        List<Result> resultList = resultService.getResultsByAnalysis(analysis);
+        NoteType[] noteTypes = { NoteType.EXTERNAL, NoteType.INTERNAL, NoteType.REJECTION_REASON,
+                NoteType.NON_CONFORMITY };
+        NoteService noteService = SpringContext.getBean(NoteService.class);
+        String notes = noteService.getNotesAsString(analysis, true, true, "<br/>", noteTypes, false);
+
+        if (resultList == null) {
+            return testResultList;
+        }
+
+        // For historical reasons we add a null member to the collection if it
+        // is empty
+        // this should be refactored.
+        // The result list are results associated with the analysis, if there is
+        // none we want
+        // to present the user with a blank one
+        if (resultList.isEmpty()) {
+            resultList.add(null);
+        }
+
+        ResultValidationItem parentItem = null;
+        for (Result result : resultList) {
+            if (parentItem != null && result.getParentResult() != null
+                    && parentItem.getResultId().equals(result.getParentResult().getId())) {
+                parentItem.setQualifiedResultValue(result.getValue());
+                parentItem.setHasQualifiedResult(true);
+                parentItem.setQualificationResultId(result.getId());
+                continue;
+            }
+
+            ResultValidationItem resultItem = createTestResultItem(analysis, analysis.getTest(),
+                    analysis.getSampleItem().getSortOrder(), result,
+                    analysis.getSampleItem().getSample().getAccessionNumber(), notes);
+
+            notes = null;// we only want it once
+            if (resultItem.getQualifiedDictionaryId() != null) {
+                parentItem = resultItem;
+            }
+
+            testResultList.add(resultItem);
+        }
+
+        return testResultList;
+    }
+
+    private ResultValidationItem createTestResultItem(Analysis analysis, Test test, String sequenceNumber,
+            Result result, String accessionNumber, String notes) {
+
+        List<TestResult> testResults = getPossibleResultsForTest(test);
+
+        String displayTestName = TestServiceImpl.getLocalizedTestNameWithType(test);
 //		displayTestName = augmentTestNameWithRange(displayTestName, result);
 
 		ResultValidationItem testItem = new ResultValidationItem();

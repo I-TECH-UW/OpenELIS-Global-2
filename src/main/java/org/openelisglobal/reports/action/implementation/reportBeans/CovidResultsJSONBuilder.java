@@ -52,7 +52,7 @@ public class CovidResultsJSONBuilder extends CovidResultsBuilderImpl {
             try {
                 resultJSON.append(LOCATOR_FORM_PROPERTY_NAME, new JSONObject(task.get().getDescription()));
             } catch (JSONException e) {
-                LogEvent.logError(this.getClass().getName(), "getResultJSON",
+                LogEvent.logError(this.getClass().getSimpleName(), "getResultJSON",
                         "could not make json from task description");
                 LogEvent.logError(e);
             }

@@ -62,7 +62,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Result getData()", e);
         }
     }
@@ -95,7 +95,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Result getResultByAnalysisAndAnalyte()", e);
         }
     }
@@ -113,7 +113,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             List<Result> results = query.list();
             return results;
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Result getResultByAnalysis()", e);
         }
     }
@@ -148,7 +148,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             }
 
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Result getResultByTestResult()", e);
         }
     }
@@ -163,7 +163,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             results = query.list();
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Result getAllResults()", e);
         }
 
@@ -186,7 +186,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             results = query.list();
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Result getPageOfResults()", e);
         }
 
@@ -199,7 +199,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             data = entityManager.unwrap(Session.class).get(Result.class, idString);
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Result readResult()", e);
         }
 
@@ -238,7 +238,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             return results;
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Result getReportableResultsByAnalysis()", e);
         }
     }

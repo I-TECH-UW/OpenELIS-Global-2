@@ -20,7 +20,9 @@ import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidTime;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SampleBatchEntryForm extends SamplePatientEntryForm {
 
     public interface SampleBatchEntrySetup {

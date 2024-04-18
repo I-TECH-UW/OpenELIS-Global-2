@@ -27,7 +27,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class BarcodeConfigurationController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "heightOrderLabels", "heightSpecimenLabels",
-            "widthOrderLabels", "widthSpecimenLabels", "collectionDateCheck", "collectedByCheck", "testsCheck",
+            "heightBlockLabels", "heightSlideLabels", "widthOrderLabels", "widthSpecimenLabels", "widthBlockLabels",
+            "widthSlideLabels", "collectionDateCheck", "collectedByCheck", "testsCheck",
             "patientSexCheck", "numMaxOrderLabels", "numMaxSpecimenLabels", "numDefaultOrderLabels",
             "numDefaultSpecimenLabels", "prePrintDontUseAltAccession", "prePrintAltAccessionPrefix" };
 
@@ -73,11 +74,21 @@ public class BarcodeConfigurationController extends BaseController {
                 .getPropertyValue(Property.SPECIMEN_BARCODE_HEIGHT);
         String widthSpecimenLabels = ConfigurationProperties.getInstance()
                 .getPropertyValue(Property.SPECIMEN_BARCODE_WIDTH);
+        String heightSlideLabels = ConfigurationProperties.getInstance()
+                .getPropertyValue(Property.SLIDE_BARCODE_HEIGHT);
+        String widthSlideLabels = ConfigurationProperties.getInstance().getPropertyValue(Property.SLIDE_BARCODE_WIDTH);
+        String heightBlockLabels = ConfigurationProperties.getInstance()
+                .getPropertyValue(Property.BLOCK_BARCODE_HEIGHT);
+        String widthBlockLabels = ConfigurationProperties.getInstance().getPropertyValue(Property.BLOCK_BARCODE_WIDTH);
         // set the dimension values
         form.setHeightOrderLabels(Float.parseFloat(heightOrderLabels));
         form.setWidthOrderLabels(Float.parseFloat(widthOrderLabels));
         form.setHeightSpecimenLabels(Float.parseFloat(heightSpecimenLabels));
         form.setWidthSpecimenLabels(Float.parseFloat(widthSpecimenLabels));
+        form.setHeightSlideLabels(Float.parseFloat(heightSlideLabels));
+        form.setWidthSlideLabels(Float.parseFloat(widthSlideLabels));
+        form.setHeightBlockLabels(Float.parseFloat(heightBlockLabels));
+        form.setWidthBlockLabels(Float.parseFloat(widthBlockLabels));
 
         // get the maximum print values
         String numMaxOrderLabels = ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_ORDER_PRINTED);

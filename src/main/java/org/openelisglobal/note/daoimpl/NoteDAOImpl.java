@@ -71,7 +71,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
             return list;
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Note getAllNotesByRefIdRefTable()", e);
         }
     }
@@ -100,7 +100,7 @@ public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
             return list.size() > 0;
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateNoteExists()", e);
         }
     }

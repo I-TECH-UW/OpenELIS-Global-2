@@ -138,7 +138,7 @@ public class VLReportData {
         return accession_number;
     }
 
-    public void setAccession_number(String accessionNumber) {
+    public void setAccessionNumber(String accessionNumber) {
         accession_number = accessionNumber;
     }
 

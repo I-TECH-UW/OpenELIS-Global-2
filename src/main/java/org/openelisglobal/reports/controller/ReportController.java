@@ -59,8 +59,8 @@ public class ReportController extends BaseController {
     @Autowired
     private ServletContext context;
 
-    private static String reportPath = null;
-    private static String imagesPath = null;
+    private String reportPath = null;
+    private String imagesPath = null;
 
     @ModelAttribute("form")
     public BaseForm form() {
@@ -99,6 +99,31 @@ public class ReportController extends BaseController {
         }
 
         LogEvent.logTrace("ReportController", "Log GET ", request.getParameter("report"));
+         printReport(request ,response ,form);
+
+        // signal to remove from from session
+        status.setComplete();
+        return null;
+    }
+
+    @RequestMapping(value = "/ApiReportPrint", method = RequestMethod.GET)
+    public ModelAndView showApiReportPrint(HttpServletRequest request, HttpServletResponse response,
+            @ModelAttribute("apiForm") @Valid ReportForm form, BindingResult result, SessionStatus status)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            return findForward(FWD_FAIL, form);
+        }
+
+        LogEvent.logTrace("ReportController", "Log GET ", request.getParameter("report"));
+        printReport(request ,response ,form);
+
+        // signal to remove from from session
+        status.setComplete();
+        return null;
+    }
+
+    private void printReport(HttpServletRequest request ,HttpServletResponse response ,ReportForm form){
         IReportCreator reportCreator = ReportImplementationFactory.getReportCreator(request.getParameter("report"));
 
         if (reportCreator != null) {
@@ -130,8 +155,7 @@ public class ReportController extends BaseController {
                 servletOutputStream.flush();
                 servletOutputStream.close();
             } catch (IOException | SQLException | JRException | DocumentException | ParseException e) {
-                LogEvent.logErrorStack(e);
-                LogEvent.logDebug(e);
+                LogEvent.logError(e);
             }
         }
 
@@ -139,9 +163,6 @@ public class ReportController extends BaseController {
             trackReports(reportCreator, request.getParameter("report"), ReportType.PATIENT);
         }
 
-        // signal to remove from from session
-        status.setComplete();
-        return null;
     }
 
     private void trackReports(IReportCreator reportCreator, String reportName, ReportType type) {
@@ -173,7 +194,7 @@ public class ReportController extends BaseController {
             try {
                 reportPath = URLDecoder.decode(reportPath, "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                LogEvent.logDebug(e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException(e);
             }
         }
@@ -186,7 +207,7 @@ public class ReportController extends BaseController {
             try {
                 imagesPath = URLDecoder.decode(imagesPath, "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                LogEvent.logDebug(e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException(e);
             }
         }

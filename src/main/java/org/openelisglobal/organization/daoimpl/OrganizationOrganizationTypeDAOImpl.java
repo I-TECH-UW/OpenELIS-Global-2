@@ -49,7 +49,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
             query.setParameter("id", Integer.parseInt(id));
             query.executeUpdate();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in OrganizationOrganizationType deleteAllLinksForOrganization()", e);
         }
     }
@@ -66,7 +66,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
             query.executeUpdate();
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in OrganizationOrganizationType linkOrganizationAndType()", e);
         }
     }
@@ -83,7 +83,7 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
             orgIdList = query.list();
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in OrganizationOrganizationType getOrganizationForType()", e);
         }
         return orgIdList;
@@ -107,7 +107,6 @@ public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganiza
     }
 
     private void handleException(Exception e, String string) {
-        LogEvent.logErrorStack(e);
-
+        LogEvent.logError(e);
     }
 }

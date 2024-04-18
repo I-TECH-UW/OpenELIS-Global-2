@@ -8,6 +8,7 @@ RUN groupadd tomcat; \
     useradd -M -s /bin/bash -u 8443 tomcat_admin; \
     usermod -a -G tomcat,tomcat-ssl-cert tomcat_admin; \
     chown -R tomcat_admin:tomcat /opt/bitnami/tomcat; \
+    chown -R tomcat_admin:tomcat /target; \
     chmod g-w,o-rwx /opt/bitnami/tomcat; \
     chmod g-w,o-rwx /opt/bitnami/tomcat/conf; \
     chmod o-rwx /opt/bitnami/tomcat/logs; \

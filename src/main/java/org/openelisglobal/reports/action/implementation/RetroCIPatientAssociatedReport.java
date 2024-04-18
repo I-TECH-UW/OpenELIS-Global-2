@@ -55,7 +55,7 @@ public class RetroCIPatientAssociatedReport extends CollectionReport implements 
 
             for (Sample sample : samples) {
                 List<ObservationHistory> projects = ohService.getAll(patient, sample, formNameId);
-                LogEvent.logInfo(this.getClass().getName(), "method unkown", "\n" + sample.getAccessionNumber());
+                LogEvent.logInfo(this.getClass().getSimpleName(), "generateReports", sample.getAccessionNumber());
                 if (!projects.isEmpty()) {
                     form.setAccessionDirect(sample.getAccessionNumber());
 

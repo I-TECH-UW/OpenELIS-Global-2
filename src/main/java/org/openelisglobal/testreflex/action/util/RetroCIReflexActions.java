@@ -193,7 +193,7 @@ public class RetroCIReflexActions extends ReflexAction {
                 calculatedResult.setValue(String.valueOf(result));
 
             } catch (NumberFormatException e) {
-                LogEvent.logInfo(this.getClass().getName(), "getCD4CalculationResult", e.getMessage());
+                LogEvent.logInfo(this.getClass().getSimpleName(), "getCD4CalculationResult", e.getMessage());
                 // no op final result should be null. Handles the case of "XXXX"
             }
         }

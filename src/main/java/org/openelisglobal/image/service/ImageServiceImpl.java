@@ -8,7 +8,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.image.dao.ImageDAO;
 import org.openelisglobal.image.valueholder.Image;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ImageServiceImpl extends BaseObjectServiceImpl<Image, String> implements ImageService {
+public class ImageServiceImpl extends AuditableBaseObjectServiceImpl<Image, String> implements ImageService {
     @Autowired
     protected ImageDAO baseObjectDAO;
     @Autowired
@@ -77,7 +77,7 @@ public class ImageServiceImpl extends BaseObjectServiceImpl<Image, String> imple
 	        Image image = get(logoInformation.getValue());
 	        return Optional.ofNullable(image);
         } catch (Exception e) {
-        	LogEvent.logErrorStack(e);
+        	LogEvent.logError(e);
 			return Optional.empty();
 		}
 

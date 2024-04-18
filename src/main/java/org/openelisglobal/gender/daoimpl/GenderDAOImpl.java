@@ -78,7 +78,7 @@ public class GenderDAOImpl extends BaseDAOImpl<Gender, Integer> implements Gende
             return list.size() > 0;
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateGenderExists()", e);
         }
     }

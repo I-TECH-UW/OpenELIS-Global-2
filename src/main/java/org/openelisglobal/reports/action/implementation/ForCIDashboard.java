@@ -170,7 +170,7 @@ public class ForCIDashboard extends CSVSampleExportReport implements IReportPara
     private boolean writeAble(String result) {
 
         String workingResult = result.split("\\(")[0].trim();
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "result=" +
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "result=" +
         // result + " / workingResult= " +
         // workingResult);
         String[] splitLine = indicStr.split(":");

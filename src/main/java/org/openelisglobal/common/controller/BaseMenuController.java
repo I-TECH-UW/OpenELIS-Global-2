@@ -49,7 +49,7 @@ public abstract class BaseMenuController<T> extends BaseController {
                 menuList = doNone(form, request);
             }
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             forward = FWD_FAIL;
         }
 
@@ -70,10 +70,10 @@ public abstract class BaseMenuController<T> extends BaseController {
     protected List<T> doNextPage(AdminOptionMenuForm<T> form, HttpServletRequest request) {
         int startingRecNo = getCurrentStartingRecNo(request);
 
-        LogEvent.logDebug("BaseMenuAction", "performAction()", "current start " + startingRecNo);
+        LogEvent.logTrace("BaseMenuAction", "performAction()", "current start " + startingRecNo);
         int nextStartingRecNo = startingRecNo + getPageSize();
 
-        LogEvent.logDebug("BaseMenuAction", "performAction()", "next start " + nextStartingRecNo);
+        LogEvent.logTrace("BaseMenuAction", "performAction()", "next start " + nextStartingRecNo);
         String stringNextStartingRecNo = String.valueOf(nextStartingRecNo);
         request.setAttribute("startingRecNo", stringNextStartingRecNo);
 

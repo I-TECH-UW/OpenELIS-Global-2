@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.provider.validation.AlphanumAccessionValidator;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
@@ -127,7 +129,11 @@ public abstract class ActivityReport extends Report implements IReportCreator {
         item.setTechnician(resultService.getSignature(result));
 
         // item.setAccessionNumber(sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH));
-        item.setAccessionNumber(sampleService.getAccessionNumber(sample));
+        if (AccessionFormat.ALPHANUM.toString().equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            item.setAccessionNumber(AlphanumAccessionValidator.convertAlphaNumLabNumForDisplay(sampleService.getAccessionNumber(sample)));
+        }else {
+            item.setAccessionNumber(sampleService.getAccessionNumber(sample));
+        }
 
         item.setReceivedDate(sampleService.getReceivedDateWithTwoYearDisplay(sample));
         Timestamp start = sample.getReceivedTimestamp();

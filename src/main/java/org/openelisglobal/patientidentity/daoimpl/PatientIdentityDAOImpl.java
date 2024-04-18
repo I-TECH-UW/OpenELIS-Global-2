@@ -36,7 +36,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
 
             identities = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PatientIdentityDAOImpl getPatientIdentitiesForPatient()", e);
         }
 
@@ -51,7 +51,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PatientIdentity getCurrentPatientIdentity()", e);
         }
 
@@ -86,7 +86,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
         try {
             patientIdentity = entityManager.unwrap(Session.class).get(PatientIdentity.class, idString);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PatientIdentity readPatientIdentity()", e);
         }
 
@@ -111,7 +111,7 @@ public class PatientIdentityDAOImpl extends BaseDAOImpl<PatientIdentity, String>
             List<PatientIdentity> identities = query.list();
             return identities;
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PatientIdentity getPatientIdentitiesByValueAndType()", e);
         }
     }

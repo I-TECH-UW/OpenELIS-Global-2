@@ -33,6 +33,17 @@
             jQuery('input[name="save"]').removeAttr('disabled');
         }
     }
+
+      var imageName = '${form.paramName}';
+       fetch('./dbImage/siteInformation/' + imageName)
+                .then(response => response.json())
+                .then(data => {
+                    var imageElement = document.getElementById("imagePreview");
+                    imageElement.src = data.value;
+                })
+                .catch(error => {
+                    console.log('Error fetching image data:', error);
+        });
 </script>
 
 

@@ -32,7 +32,7 @@ public class NCEventDAOImpl extends BaseDAOImpl<NcEvent, String> implements NCEv
             query.setParameter("labOrderNumber", labOrderId);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in NceCategory getAllNceCategory()", e);
         }
         return list;

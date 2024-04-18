@@ -147,7 +147,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
                 patientType.setId(null);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PatientType getData()", e);
         }
     }
@@ -165,7 +165,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in patientType getAllPatientTypes()", e);
         }
 
@@ -189,7 +189,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in getPageOfPatientType()", e);
         }
 
@@ -203,7 +203,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PatientType readPatientType()", e);
         }
 
@@ -224,7 +224,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
             // entityManager.unwrap(Session.class).flush(); // CSL remove old
             // entityManager.unwrap(Session.class).clear(); // CSL remove old
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in patientType getPatientTypes(String filter)", e);
         }
 
@@ -250,7 +250,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
             return patientTypes;
 
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PatientType getPatientTypeByName()", e);
         }
     }
@@ -292,7 +292,7 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
             }
 
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicatePatientTypeExists()", e);
         }
     }

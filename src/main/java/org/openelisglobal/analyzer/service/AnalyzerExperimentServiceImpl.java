@@ -22,12 +22,12 @@ import org.openelisglobal.analyzer.valueholder.AnalyzerExperiment;
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AnalyzerExperimentServiceImpl extends BaseObjectServiceImpl<AnalyzerExperiment, Integer>
+public class AnalyzerExperimentServiceImpl extends AuditableBaseObjectServiceImpl<AnalyzerExperiment, Integer>
         implements AnalyzerExperimentService {
 
     @Autowired

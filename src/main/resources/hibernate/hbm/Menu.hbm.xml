@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
 	<class name="org.openelisglobal.menu.valueholder.Menu"
@@ -35,5 +35,6 @@
 		<property name="openInNewWindow" column="new_window"
 			type="boolean" />
 		<property name="isActive" column="is_active" type="boolean" />
+		<property name="hideInOldUI" column="hide_in_old_ui" type="boolean" />
 	</class>
 </hibernate-mapping>

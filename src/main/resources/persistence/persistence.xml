@@ -28,7 +28,7 @@
 		
 		<class>org.ozeki.sms.valueholder.OzekiMessageOut</class>
 		<properties>
-			<property name="hibernate.ejb.cfgfile"
+			<property name="hibernate.cfg_xml_file"
 				value="classpath:hibernate/hibernate.cfg.xml" />
 		</properties>
 

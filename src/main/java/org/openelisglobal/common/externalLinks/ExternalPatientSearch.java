@@ -43,6 +43,7 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.params.CoreConnectionPNames;
 import org.dom4j.DocumentException;
 import org.openelisglobal.common.log.LogEvent;
@@ -177,7 +178,7 @@ public class ExternalPatientSearch implements IExternalPatientSearch {
     // protected for unit testing called from synchronized block
     protected void doSearch() {
 
-        CloseableHttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
         setTimeout(httpclient);
 
         HttpGet httpget = new HttpGet(connectionString);
@@ -187,6 +188,7 @@ public class ExternalPatientSearch implements IExternalPatientSearch {
         CloseableHttpResponse getResponse = null;
         try {
             // Ignore hostname mismatches and allow trust of self-signed certs
+            // TODO shouldn't let a self signed cert through
             SSLSocketFactory sslsf = new SSLSocketFactory(new TrustSelfSignedStrategy(),
                     SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
             Scheme https = new Scheme("https", 443, sslsf);
@@ -199,34 +201,34 @@ public class ExternalPatientSearch implements IExternalPatientSearch {
             setResults(IOUtils.toString(getResponse.getEntity().getContent(), "UTF-8"));
         } catch (SocketTimeoutException e) {
             errors.add("Response from patient information server took too long.");
-            LogEvent.logError(e.toString(), e);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Tinny time out"
+            LogEvent.logError(e);
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "Tinny time out"
             // + e);
         } catch (ConnectException e) {
             errors.add("Unable to connect to patient information form service. Service may not be running");
-            LogEvent.logError(e.toString(), e);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "you no talks? "
+            LogEvent.logError(e);
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "you no talks? "
             // + e);
         } catch (IOException e) {
             errors.add("IO error trying to read input stream.");
-            LogEvent.logError(e.toString(), e);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "all else failed
+            LogEvent.logError(e);
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "all else failed
             // " + e);
         } catch (KeyManagementException e) {
             errors.add("Key management error trying to connect to external search service.");
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
         } catch (UnrecoverableKeyException e) {
             errors.add("Unrecoverable key error trying to connect to external search service.");
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
         } catch (NoSuchAlgorithmException e) {
             errors.add("No such encyrption algorithm error trying to connect to external search service.");
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
         } catch (KeyStoreException e) {
             errors.add("Keystore error trying to connect to external search service.");
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
         } catch (RuntimeException e) {
             errors.add("Runtime error trying to retrieve patient information.");
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             httpget.abort();
             throw e;
         } finally {

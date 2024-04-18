@@ -107,7 +107,7 @@ public class DateUtil {
             try {
                 returnDate = new java.sql.Date(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -122,7 +122,7 @@ public class DateUtil {
             try {
                 returnDate = new java.sql.Date(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -138,7 +138,7 @@ public class DateUtil {
             try {
                 returnTimestamp = new Timestamp(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -154,7 +154,7 @@ public class DateUtil {
             try {
                 returnTimestamp = new Timestamp(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -171,7 +171,7 @@ public class DateUtil {
             try {
                 returnTimestamp = new Timestamp(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -189,7 +189,7 @@ public class DateUtil {
             try {
                 returnTimestamp = new Timestamp(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
@@ -217,7 +217,7 @@ public class DateUtil {
             try {
                 returnDate = format.format(date);
             } catch (RuntimeException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error converting date", e);
             }
         }
@@ -250,7 +250,7 @@ public class DateUtil {
             returnDate = format.format(date);
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error converting date", e);
         }
 
@@ -281,7 +281,7 @@ public class DateUtil {
 
                 returnTime = hours + ":" + minutes;
             } catch (RuntimeException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error converting date", e);
             }
         }
@@ -293,7 +293,7 @@ public class DateUtil {
     // since midnight.
     public static synchronized int decodeTime(String s) throws LIMSException {
         SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Passed in this
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "Passed in this
         // time " +s);
         TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
         f.setTimeZone(utcTimeZone);
@@ -328,7 +328,7 @@ public class DateUtil {
                 tsToReturn = new Timestamp(date.getTime());
             } catch (ParseException e) {
                 // bugzilla 2154
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error converting date", e);
             }
         }
@@ -405,7 +405,7 @@ public class DateUtil {
     }
 
     public static String getCurrentAgeForDate(Timestamp birthDate, Timestamp endDate) {
-        if (birthDate != null) {
+        if (birthDate != null && endDate != null) {
             Period period = Period.between(birthDate.toLocalDateTime().toLocalDate(),
                     endDate.toLocalDateTime().toLocalDate());
             return String.valueOf(period.getYears());
@@ -422,6 +422,9 @@ public class DateUtil {
     }
 
     public static int getDaysInPastForDate(Date date) {
+        if(date == null){
+          return 0;
+        }
         long age = new Date().getTime() - date.getTime();
         return (int) Math.floor(age / DAY_IN_MILLSEC);
 

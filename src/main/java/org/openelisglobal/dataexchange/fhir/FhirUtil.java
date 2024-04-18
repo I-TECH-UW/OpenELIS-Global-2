@@ -63,6 +63,13 @@ public class FhirUtil implements FhirClientFetcher {
         return fhirClient;
     }
 
+    public IGenericClient getFhirClient(String fhirStorePath, String username, String password) {
+        IGenericClient fhirClient = fhirContext.newRestfulGenericClient(fhirStorePath);
+        BasicAuthInterceptor authInterceptor = new BasicAuthInterceptor(username, password);
+        fhirClient.registerInterceptor(authInterceptor);
+        return fhirClient;
+    }
+
     public String getAccessToken(String authUrl, String authUserName, String authPassowrd) throws IOException {
         HttpPost httpPost = new HttpPost(authUrl);
 

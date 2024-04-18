@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.validator.GenericValidator;
 import org.jasypt.util.text.TextEncryptor;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.util.ConfigurationSideEffects;
 import org.openelisglobal.siteinformation.dao.SiteInformationDAO;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class SiteInformationServiceImpl extends BaseObjectServiceImpl<SiteInformation, String>
+public class SiteInformationServiceImpl extends AuditableBaseObjectServiceImpl<SiteInformation, String>
         implements SiteInformationService {
 
     // this approach of getting the entity manager is not recommended in the service
@@ -413,5 +414,18 @@ public class SiteInformationServiceImpl extends BaseObjectServiceImpl<SiteInform
             siteInformation.setValue(encryptor.encrypt(siteInformation.getValue()));
         }
     }
+
+    @Override
+    @Transactional
+    public List<SiteInformation> updateSiteInformationByName(Map<String, String> map) {
+        List<SiteInformation> updatedSiteInfomration = new ArrayList<>();
+        for (Entry<String, String> entry : map.entrySet()) {
+            SiteInformation si = getSiteInformationByName(entry.getKey());
+            si.setValue(entry.getValue());
+            updatedSiteInfomration.add(siteInformationDAO.update(si));
+        }
+        return updatedSiteInfomration;
+    }
+
 
 }
