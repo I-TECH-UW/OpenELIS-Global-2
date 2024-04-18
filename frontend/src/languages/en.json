@@ -737,7 +737,7 @@
   "accessDenied.okButton": "OK",
   "notAuthenticated": "Not Authenticated",
   "stillThere.title": "Still There?",
-  "stillThere.message": "user session is about to time out",
+  "stillThere.message": "User session is about to time out. Click anywhere to stay logged in.",
   "reflexTests": "Reflex Tests",
   "calculatedTests": "Calculated Tests",
   "header.formname": "FormName",
