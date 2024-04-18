@@ -885,5 +885,9 @@
   "report.labe.byPatient": "Report By Patient",
   "report.labe.byLabNumber": "Report By Lab Number",
   "report.labe.site": "Report By Site",
-  "report.labe.date": "Report By Date"
+  "report.labe.date": "Report By Date",
+  "label.barcode.labelsets": "Number of label sets",
+  "label.barcode.orderlabel": "Number of order labels per set",
+  "label.barcode.specimenlabel": "Number of specimen labels per set",
+  "label.barcode.totallabel": "Total Labels to Print"
 }
