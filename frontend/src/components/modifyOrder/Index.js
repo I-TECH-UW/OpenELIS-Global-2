@@ -15,7 +15,7 @@ const Index = () => {
       {notificationVisible === true ? <AlertDialog /> : ""}
       <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
-        <Column lg={12}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>
