@@ -6,9 +6,9 @@ permissions:
 
 on:
   push:
-    branches: [develop_3x]
+    branches: [develop]
   pull_request:
-    branches: [develop_3x]
+    branches: [develop]
 
 jobs:
   auto-label:
