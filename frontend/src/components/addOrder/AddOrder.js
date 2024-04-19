@@ -446,13 +446,13 @@ const AddOrder = (props) => {
       <Stack gap={10}>
         <div className="orderLegendBody">
           <Grid>
-            <Column lg={16} sm={4}>
+            <Column lg={16} md={8} sm={4}>
               <h3>
                 <FormattedMessage id="order.title" />
               </h3>
             </Column>
             {configurationProperties.ACCEPT_EXTERNAL_ORDERS === "true" && (
-              <Column lg={16} sm={4}>
+              <Column lg={16} md={8} sm={4}>
                 <input
                   type="hidden"
                   name="externalOrderNumber"
@@ -462,7 +462,7 @@ const AddOrder = (props) => {
               </Column>
             )}
             {isModifyOrder && (
-              <Column lg={16} sm={4}>
+              <Column lg={16} md={8} sm={4}>
                 <h5>
                   {" "}
                   <FormattedMessage id="sample.label.labnumber" />:{" "}
@@ -471,7 +471,7 @@ const AddOrder = (props) => {
               </Column>
             )}
 
-            <Column lg={8} sm={4}>
+            <Column lg={8} md={4} sm={4}>
               <div>
                 <CustomLabNumberInput
                   name="labNo"
@@ -504,7 +504,7 @@ const AddOrder = (props) => {
                 </div>
               </div>
             </Column>
-            <Column lg={8} sm={4}>
+            <Column lg={8} md={4} sm={4}>
               <Select
                 id="priorityId"
                 name="priority"
@@ -524,11 +524,11 @@ const AddOrder = (props) => {
                 })}
               </Select>
             </Column>
-            <Column lg={16} sm={3}>
+            <Column lg={16} md={8} sm={3}>
               {" "}
               &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
             </Column>
-            <Column lg={8} sm={4}>
+            <Column lg={8} md={4} sm={4}>
               <CustomDatePicker
                 id={"order_requestDate"}
                 labelText={intl.formatMessage({ id: "sample.requestDate" })}
@@ -542,7 +542,7 @@ const AddOrder = (props) => {
                 onChange={(date) => handleDatePickerChange("requestDate", date)}
               />
             </Column>
-            <Column lg={8} sm={4}>
+            <Column lg={8} md={4} sm={4}>
               <CustomDatePicker
                 id={"order_receivedDate"}
                 labelText={intl.formatMessage({ id: "sample.receivedDate" })}
@@ -558,11 +558,11 @@ const AddOrder = (props) => {
                 }
               />
             </Column>
-            <Column lg={16} sm={3}>
+            <Column lg={16} md={8} sm={3}>
               {" "}
               &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
             </Column>
-            <Column lg={8} sm={4}>
+            <Column lg={8} md={4} sm={4}>
               <TimePicker
                 id="order_receivedTime"
                 labelText={intl.formatMessage({ id: "order.reception.time" })}
@@ -574,7 +574,7 @@ const AddOrder = (props) => {
                 }
               />
             </Column>
-            <Column lg={8} sm={4}>
+            <Column lg={8} md={4} sm={4}>
               <CustomDatePicker
                 id={"order_nextVisitDate"}
                 labelText={intl.formatMessage({
@@ -588,11 +588,11 @@ const AddOrder = (props) => {
                 }
               />
             </Column>
-            <Column lg={16} sm={3}>
+            <Column lg={16} md={8} sm={3}>
               {" "}
               &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
             </Column>
-            <Column lg={8} sm={4}>
+            <Column lg={8} md={4} sm={4}>
               <AutoComplete
                 name="siteName"
                 id="siteName"
@@ -621,7 +621,7 @@ const AddOrder = (props) => {
               />
               {/* )} */}
             </Column>
-            <Column lg={8} sm={4}>
+            <Column lg={8} md={4} sm={4}>
               <Select
                 id="requesterDepartmentId"
                 name="requesterDepartmentId"
@@ -642,11 +642,11 @@ const AddOrder = (props) => {
                 ))}
               </Select>
             </Column>
-            <Column lg={16} sm={3}>
+            <Column lg={16} md={8} sm={3}>
               {" "}
               &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
             </Column>
-            <Column lg={8} sm={4}>
+            <Column lg={8} md={4} sm={4}>
               <AutoComplete
                 name="requesterId"
                 id="requesterId"
@@ -672,14 +672,14 @@ const AddOrder = (props) => {
                 required
               />
             </Column>
-            <Column lg={8} sm={4}>
+            {/* <Column lg={8} md={4} sm={4}>
               {" "}
-            </Column>
-            <Column lg={16} sm={3}>
+            </Column> */}
+            {/* <Column lg={16} md={4} sm={3}>
               {" "}
               &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
-            </Column>
-            <Column lg={8} sm={4}>
+            </Column> */}
+            <Column lg={8} md={4} sm={4}>
               <TextInput
                 name="requesterFirstName"
                 placeholder={intl.formatMessage({
@@ -705,7 +705,7 @@ const AddOrder = (props) => {
               />
             </Column>
 
-            <Column lg={8} sm={4}>
+            <Column lg={8} md={4} sm={4}>
               <TextInput
                 name="requesterLastName"
                 placeholder={intl.formatMessage({
@@ -730,7 +730,7 @@ const AddOrder = (props) => {
                 invalidText={error("sampleOrderItems.providerLastName")}
               />
             </Column>
-            <Column lg={16} sm={3}>
+            <Column lg={16} md={8} sm={3}>
               {" "}
               &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
             </Column>
@@ -754,7 +754,7 @@ const AddOrder = (props) => {
               />
             </Column>
 
-            <Column lg={8} sm={4}>
+            <Column lg={8} md={4} sm={4}>
               <TextInput
                 name="providerFax"
                 placeholder={intl.formatMessage({
@@ -772,11 +772,11 @@ const AddOrder = (props) => {
                 id="providerFaxId"
               />
             </Column>
-            <Column lg={16} sm={3}>
+            <Column lg={16} md={8} sm={3}>
               {" "}
               &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
             </Column>
-            <Column lg={8} sm={4}>
+            <Column lg={8} md={4} sm={4}>
               <TextInput
                 name="providerEmail"
                 placeholder={intl.formatMessage({
@@ -799,7 +799,7 @@ const AddOrder = (props) => {
               />
             </Column>
 
-            <Column lg={8} sm={4}>
+            <Column lg={8} md={4} sm={4}>
               <Select
                 id="paymentOptionSelectionId"
                 name="paymentOptionSelections"
@@ -823,11 +823,11 @@ const AddOrder = (props) => {
                   })}
               </Select>
             </Column>
-            <Column lg={16} sm={3}>
+            <Column lg={16} md={8} sm={3}>
               {" "}
               &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
             </Column>
-            <Column lg={8} sm={4}>
+            <Column lg={8} md={4} sm={4}>
               <Select
                 id="testLocationCodeId"
                 name="testLocationCode"
@@ -850,7 +850,7 @@ const AddOrder = (props) => {
                 })}
               </Select>
             </Column>
-            <Column lg={8} sm={4}>
+            <Column lg={8} md={4} sm={4}>
               <TextInput
                 name="testLocationCodeOther"
                 labelText={intl.formatMessage({ id: "order.if.other.label" })}
@@ -860,11 +860,11 @@ const AddOrder = (props) => {
                 id="testLocationCodeOtherId"
               />
             </Column>
-            <Column lg={16} sm={3}>
+            <Column lg={16} md={8} sm={3}>
               {" "}
               &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
             </Column>
-            <Column lg={8} sm={4}>
+            <Column lg={8} md={4} sm={4}>
               <Checkbox
                 labelText={
                   <FormattedMessage id="order.remember.site.and.requester.label" />

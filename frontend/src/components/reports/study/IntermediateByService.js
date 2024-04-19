@@ -98,7 +98,7 @@ const IntermediateByService = (props) => {
         </Grid>
         <br />
         <Grid fullWidth={true}>
-          <Column lg={4} md={2} sm={1}>
+          <Column lg={4} md={4} sm={4}>
             <CustomDatePicker
               key="startDate"
               id={"startDate"}
@@ -112,7 +112,7 @@ const IntermediateByService = (props) => {
               onChange={(date) => handleDatePickerChangeDate("startDate", date)}
             />
           </Column>
-          <Column lg={4} md={2} sm={1}>
+          <Column lg={4} md={4} sm={4}>
             <CustomDatePicker
               key="endDate"
               id={"endDate"}

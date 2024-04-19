@@ -147,7 +147,7 @@ const ReportByDateCSV = (props) => {
   return (
     <>
       <Grid>
-        <Column lg={8}>
+        <Column lg={16} md={8} sm={4}>
           <FormLabel>
             <Section>
               <Section>
@@ -165,7 +165,7 @@ const ReportByDateCSV = (props) => {
         <Column lg={16} md={6} sm={4}>
           <Form>
             <Grid fullWidth={true}>
-              <Column lg={4} md={8} sm={4}>
+              <Column lg={4} md={4} sm={4}>
                 <CustomDatePicker
                   key="startDate"
                   id={"startDate"}
@@ -181,7 +181,7 @@ const ReportByDateCSV = (props) => {
                   }
                 />
               </Column>
-              <Column lg={4} md={8} sm={4}>
+              <Column lg={4} md={4} sm={4}>
                 <CustomDatePicker
                   key="endDate"
                   id={"endDate"}
@@ -201,7 +201,7 @@ const ReportByDateCSV = (props) => {
                 {" "}
                 <br />
               </Column>
-              <Column lg={8} md={6} sm={4}>
+              <Column lg={8} md={4} sm={4}>
                 <Select
                   id="studyType"
                   labelText={intl.formatMessage({
@@ -230,7 +230,7 @@ const ReportByDateCSV = (props) => {
                 {" "}
                 <br />
               </Column>
-              <Column lg={8}>
+              <Column lg={8} md={4} sm={4}>
                 {props.report === "CIStudyExport" ? (
                   <Select
                     id="dateType"

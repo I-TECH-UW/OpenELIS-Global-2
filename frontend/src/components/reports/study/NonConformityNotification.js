@@ -51,7 +51,7 @@ const NonConformityNotification = (props) => {
     <>
       <Form onSubmit={handleSubmit}>
         <Grid>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <Section>
               <h3>
                 <FormattedMessage id={props.id} />

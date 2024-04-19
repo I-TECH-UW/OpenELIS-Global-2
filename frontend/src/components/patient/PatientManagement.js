@@ -41,7 +41,7 @@ function PatientManagement() {
     <>
       <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>
@@ -54,7 +54,7 @@ function PatientManagement() {
       <br></br>
       <div className="orderLegendBody">
         <Grid>
-          <Column lg={2}>
+          <Column lg={4} md={3} sm={2}>
             <Button
               kind={searchPatientTab.kind}
               onClick={handleSearchPatientTab}
@@ -65,7 +65,7 @@ function PatientManagement() {
               />
             </Button>
           </Column>
-          <Column lg={2}>
+          <Column lg={4} md={3} sm={2}>
             <Button kind={newPatientTab.kind} onClick={handleNewPatientTab}>
               <FormattedMessage
                 id="new.patient.label"
