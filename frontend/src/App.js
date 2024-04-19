@@ -37,6 +37,7 @@ import RoutineIndex from "./components/reports/routine/Index.js";
 import StudyIndex from "./components/reports/study/index.js";
 import ReportIndex from "./components/reports/Index.js";
 import PrintBarcode from "./components/printBarcode/Index";
+import NonConformIndex from "./components/nonconform/index";
 import SampleBatchEntrySetup from "./components/batchOrderEntry/SampleBatchEntrySetup.js";
 import AuditTrailReportIndex from "./components/reports/auditTrailReport/Index.js";
 
@@ -283,6 +284,12 @@ export default function App() {
                   path="/SampleEdit"
                   exact
                   component={() => <FindOrder />}
+                  role="Reception"
+                /> 
+                <SecureRoute
+                  path="/NonconformingEvent"
+                  exact
+                  component={() => <NonConformIndex />}
                   role="Reception"
                 />
                 <SecureRoute
