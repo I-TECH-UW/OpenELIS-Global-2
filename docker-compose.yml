@@ -34,7 +34,7 @@ services:
             
     oe.openelis.org:
         container_name: openelisglobal-webapp 
-        image: itechuw/openelis-global-2:main     
+        image: itechuw/openelis-global-2:master     
         depends_on:
             - database
             - certs
