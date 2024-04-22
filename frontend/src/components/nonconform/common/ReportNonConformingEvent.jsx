@@ -16,6 +16,8 @@ import {
   TextInput,
   Table,
   RadioButton,
+  UnorderedList,
+  ListItem,
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -53,7 +55,7 @@ export const ReportNonConformingEvent = () => {
     initialReportFormValues,
   );
   const [ldata, setLData] = useState(null);
-  const [selected, setSelected] = useState(initialSelected);
+  const [selectedSample, setSelectedSample] = useState(initialSelected);
 
   const [nceForm, setnceForm] = useState(initialNCEForm);
 
@@ -137,9 +139,9 @@ export const ReportNonConformingEvent = () => {
   ];
 
   useEffect(() => {
-    if (selected.labOrderNumber && selected.specimenId) {
+    if (selectedSample.labOrderNumber && selectedSample.specimenId) {
       getFromOpenElisServer(
-        `/rest/reportnonconformingevent?labOrderNumber=${selected.labOrderNumber}&specimenId=${selected.specimenId}`,
+        `/rest/reportnonconformingevent?labOrderNumber=${selectedSample.labOrderNumber}&specimenId=${selectedSample.specimenId}`,
         (data) => {
           console.log("data from server for selected", data);
           setLData(undefined);
@@ -151,7 +153,7 @@ export const ReportNonConformingEvent = () => {
         },
       );
     }
-  }, [selected]);
+  }, [selectedSample]);
 
   const handleNCEFormSubmit = () => {
     console.log("nceForm.data", nceForm.data);
@@ -189,7 +191,7 @@ export const ReportNonConformingEvent = () => {
         setNotificationVisible(true);
         setReportFormValues(initialReportFormValues);
         setLData(null);
-        setSelected(initialSelected);
+        setSelectedSample(initialSelected);
         setnceForm(initialNCEForm);
 
         if (data.success) {
@@ -212,54 +214,63 @@ export const ReportNonConformingEvent = () => {
   };
 
   return (
-    <div>
+    <>
       {notificationVisible === true ? <AlertDialog /> : ""}
-      <h2>
-        <FormattedMessage id={`nonconform.report`} />
-      </h2>
       <Grid fullWidth={true}>
-        <Column lg={10} md={10} sm={8}>
+        <Column lg={16}>
+          <h2>
+            <FormattedMessage id={`nonconform.report`} />
+          </h2>
+        </Column>
+        <Column lg={16} md={10} sm={8}>
           <Form>
             <Grid fullWidth={true}>
-              <Column style={{ marginTop: "50px" }} lg={6} md={8} sm={4}>
-                <div className="inlineDiv">
-                  <Select
-                    id="type"
-                    labelText={intl.formatMessage({
-                      id: "label.form.searchby",
-                    })}
-                    value={reportFormValues.type}
-                    onChange={(e) => {
-                      setReportFormValues({
-                        ...reportFormValues,
-                        type: e.target.value,
-                      });
-                    }}
-                  >
-                    <SelectItem key={"emptyselect"} value={""} text={""} />
-                    {selectOptions.map((statusOption) => (
-                      <SelectItem
-                        key={statusOption.value}
-                        value={statusOption.value}
-                        text={statusOption.text}
-                      />
-                    ))}
-                  </Select>
-                  <TextInput
-                    labelText={intl.formatMessage({
-                      id: "testcalculation.label.textValue",
-                    })}
-                    value={reportFormValues.value}
-                    onChange={(e) => {
-                      setReportFormValues({
-                        ...reportFormValues,
-                        value: e.target.value,
-                      });
-                    }}
-                    id={`field.name`}
-                    className="inputText"
-                  />
-                </div>
+              <Column lg={4}>
+                <Select
+                  id="type"
+                  labelText={intl.formatMessage({
+                    id: "label.form.searchby",
+                  })}
+                  value={reportFormValues.type}
+                  onChange={(e) => {
+                    setReportFormValues({
+                      ...reportFormValues,
+                      type: e.target.value,
+                    });
+                  }}
+                >
+                  <SelectItem key={"emptyselect"} value={""} text={""} />
+                  {selectOptions.map((statusOption) => (
+                    <SelectItem
+                      key={statusOption.value}
+                      value={statusOption.value}
+                      text={statusOption.text}
+                    />
+                  ))}
+                </Select>
+              </Column>
+              <Column lg={4}>
+                <TextInput
+                  labelText={intl.formatMessage({
+                    id: "testcalculation.label.textValue",
+                  })}
+                  value={reportFormValues.value}
+                  onChange={(e) => {
+                    setReportFormValues({
+                      ...reportFormValues,
+                      value: e.target.value,
+                    });
+                  }}
+                  id={`field.name`}
+                />
+              </Column>
+              <Column lg={16}>
+                <br></br>
+              </Column>
+              <Column lg={16}>
+                <Button type="button" onClick={handleSubmit}>
+                  <FormattedMessage id="label.button.search" />
+                </Button>
               </Column>
             </Grid>
             <br />
@@ -270,289 +281,271 @@ export const ReportNonConformingEvent = () => {
                   {reportFormValues.error}
                 </div>
               )}
-
-              <Button type="button" onClick={handleSubmit}>
-                <FormattedMessage id="label.button.submit" />
-              </Button>
             </Section>
           </Form>
         </Column>
+        <Column lg={16}>
+          <br></br>
+        </Column>
       </Grid>
       {ldata && ldata.length > 0 && (
-        <Table style={{ marginTop: "1em" }}>
-          <TableHead>
-            <TableRow>
-              <TableHeader key="checkbox" />
-              {headers.map((header) => (
-                <TableHeader id={header.key} key={header.key}>
-                  {header.value}
-                </TableHeader>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {ldata.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell key={`${row.id}-checkbox`}>
-                  <RadioButton
-                    name="radio-group"
-                    onClick={() => {
-                      console.log("row", row);
-                      console.log("row.id", row.id);
-                      setSelected({
-                        specimenId: row.id,
-                        selected: true,
-                        labOrderNumber: row.labOrderNumber,
-                      });
-                      console.log(selected);
-                    }}
-                    labelText=""
-                    id={row.id}
-                  />
-                </TableCell>
-                {headers.map((header) => (
-                  <TableCell key={header.key}>
-                    {header.key === "type"
-                      ? row.sampleItems.map((item) => item.type).join(",")
-                      : row[header.key]}
-                  </TableCell>
+        <Grid>
+          <Column lg={16}>
+            <Table style={{ marginTop: "1em" }}>
+              <TableHead>
+                <TableRow>
+                  <TableHeader key="checkbox" />
+                  {headers.map((header) => (
+                    <TableHeader id={header.key} key={header.key}>
+                      {header.value}
+                    </TableHeader>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {ldata.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell key={`${row.id}-checkbox`}>
+                      <RadioButton
+                        name="radio-group"
+                        onClick={() => {
+                          console.log("row", row);
+                          console.log("row.id", row.id);
+                          setSelectedSample({
+                            specimenId: row.sampleItems
+                              .map((item) => item.id)
+                              .join(","),
+                            selected: true,
+                            labOrderNumber: row.labOrderNumber,
+                          });
+                          console.log(selectedSample);
+                        }}
+                        labelText=""
+                        id={row.id}
+                      />
+                    </TableCell>
+                    {headers.map((header) => (
+                      <TableCell key={header.key}>
+                        <UnorderedList>
+                          {header.key === "type"
+                            ? row.sampleItems.map((item) => (
+                                <ListItem
+                                  key={item.id}
+                                  style={{ listStyleType: "disc" }}
+                                >
+                                  {item.type +
+                                    " (" +
+                                    row.labOrderNumber +
+                                    "-" +
+                                    item.number +
+                                    ")"}
+                                </ListItem>
+                              ))
+                            : row[header.key]}
+                        </UnorderedList>
+                      </TableCell>
+                    ))}
+                  </TableRow>
                 ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+              </TableBody>
+            </Table>
+          </Column>
+        </Grid>
       )}
       {nceForm.show && nceForm.data && (
-        <div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              margin: "20px",
-            }}
-          >
-            <Grid
-              fullWidth={true}
-              style={{
-                padding: "2px",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-                boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+        <Grid fullWidth={true}>
+          <Column lg={3}>
+            <div style={{ marginBottom: "10px" }}>
+              <span style={{ color: "#3366B3", fontWeight: "bold" }}>
+                <b>
+                  <FormattedMessage id="nonconform.report.field.date" />
+                </b>
+              </span>
+            </div>
+            <div style={{ marginBottom: "10px", color: "#555" }}>
+              {nceForm.data.reportDate}
+            </div>
+          </Column>
+          <Column lg={3} style={{ marginBottom: "20px" }}>
+            <div style={{ marginBottom: "10px" }}>
+              <span style={{ color: "#3366B3", fontWeight: "bold" }}>
+                <FormattedMessage id="patient.label.name" />
+              </span>
+            </div>
+            <div style={{ marginBottom: "10px" }}>{nceForm.data.name}</div>
+          </Column>
+          <Column lg={3} style={{ marginBottom: "20px" }}>
+            <div style={{ marginBottom: "10px" }}>
+              <span style={{ color: "#3366B3", fontWeight: "bold" }}>
+                <FormattedMessage id="nonconform.nce.number" />
+              </span>
+            </div>
+            <div style={{ marginBottom: "10px" }}>{nceForm.data.nceNumber}</div>
+          </Column>
+
+          <Column lg={3} style={{ marginBottom: "20px" }}>
+            <div style={{ marginBottom: "10px" }}>
+              <span style={{ color: "#3366B3", fontWeight: "bold" }}>
+                <FormattedMessage id="sample.label.labnumber" />
+              </span>
+            </div>
+            <div style={{ marginBottom: "10px" }}>
+              {nceForm.data.labOrderNumber}
+            </div>
+          </Column>
+          <Column lg={4} style={{ marginBottom: "20px" }}>
+            <div style={{ marginBottom: "10px" }}>
+              <span style={{ color: "#3366B3", fontWeight: "bold" }}>
+                <FormattedMessage id="nonconform.label.prescibernamesite" />
+              </span>
+            </div>
+            <div style={{ marginBottom: "10px" }}>
+              {`${nceForm.data.prescriberName} | ${nceForm.data.site}`}
+            </div>
+          </Column>
+          <Column lg={16}>
+            <br></br>
+          </Column>
+          <Column lg={8}>
+            <TextInput
+              labelText={
+                <FormattedMessage id="nonconform.person.reporting.different" />
+              }
+              value={nceForm.data.reporterName}
+              onChange={(e) => {
+                setnceForm({
+                  ...nceForm,
+                  data: {
+                    ...nceForm.data,
+                    reporterName: e.target.value,
+                  },
+                });
+              }}
+              id={`field.name`}
+            />
+          </Column>
+
+          <Column lg={8}>
+            <CustomDatePicker
+              key="startDate"
+              id={"startDate"}
+              labelText={<FormattedMessage id="nonconform.date.event" />}
+              disallowFutureDate={true}
+              autofillDate={true}
+              value={nceForm.data.dateOfEvent}
+              onChange={(date) =>
+                setnceForm({
+                  ...nceForm,
+                  data: {
+                    ...nceForm.data,
+                    dateOfEvent: date,
+                  },
+                })
+              }
+            />
+          </Column>
+          <Column lg={16}>
+            <br></br>
+          </Column>
+          <Column lg={8}>
+            <Select
+              labelText={
+                <FormattedMessage id="nonconform.label.reportingunit" />
+              }
+              id="reportUnits"
+              value={nceForm.data.reportingUnit}
+              onChange={(e) => {
+                setnceForm({
+                  ...nceForm,
+                  data: {
+                    ...nceForm.data,
+                    reportingUnit: e.target.value,
+                  },
+                });
               }}
             >
-              <Column lg={16} style={{ marginBottom: "20px" }}></Column>
-              <Column lg={8} style={{ marginBottom: "20px" }}>
-                <div style={{ marginBottom: "10px" }}>
-                  <span style={{ color: "#3366B3", fontWeight: "bold" }}>
-                    <FormattedMessage id="nonconform.report.field.date" />
-                  </span>
-                </div>
-                <div style={{ marginBottom: "10px", color: "#555" }}>
-                  {nceForm.data.reportDate}
-                </div>
-              </Column>
-              <Column lg={8} style={{ marginBottom: "20px" }}>
-                <div style={{ marginBottom: "10px" }}>
-                  <span style={{ color: "#3366B3", fontWeight: "bold" }}>
-                    <FormattedMessage id="patient.label.name" />
-                  </span>
-                </div>
-                <div style={{ marginBottom: "10px" }}>{nceForm.data.name}</div>
-              </Column>
-              <Column lg={8} style={{ marginBottom: "20px" }}>
-                <div style={{ marginBottom: "10px" }}>
-                  <span style={{ color: "#3366B3", fontWeight: "bold" }}>
-                    <FormattedMessage id="nonconform.person.reporting.different" />
-                  </span>
-                </div>
-                <div style={{ marginBottom: "10px" }}>
-                  <TextInput
-                    value={nceForm.data.reporterName}
-                    onChange={(e) => {
-                      setnceForm({
-                        ...nceForm,
-                        data: {
-                          ...nceForm.data,
-                          reporterName: e.target.value,
-                        },
-                      });
-                    }}
-                    id={`field.name`}
-                    className="inputText"
-                  />
-                </div>
-              </Column>
-              <Column lg={8} style={{ marginBottom: "20px" }}>
-                <div style={{ marginBottom: "10px" }}>
-                  <span style={{ color: "#3366B3", fontWeight: "bold" }}>
-                    <FormattedMessage id="nonconform.nce.number" />
-                  </span>
-                </div>
-                <div style={{ marginBottom: "10px" }}>
-                  {nceForm.data.nceNumber}
-                </div>
-              </Column>
-              <Column lg={8} style={{ marginBottom: "20px" }}>
-                <div style={{ marginBottom: "10px" }}>
-                  <span style={{ color: "#3366B3", fontWeight: "bold" }}>
-                    <FormattedMessage id="nonconform.date.event" />
-                  </span>
-                </div>
-                <div style={{ marginBottom: "10px" }}>
-                  <CustomDatePicker
-                    key="startDate"
-                    id={"startDate"}
-                    disallowFutureDate={true}
-                    autofillDate={true}
-                    value={nceForm.data.dateOfEvent}
-                    className="inputDate"
-                    onChange={(date) =>
-                      setnceForm({
-                        ...nceForm,
-                        data: {
-                          ...nceForm.data,
-                          dateOfEvent: date,
-                        },
-                      })
-                    }
-                  />
-                </div>
-              </Column>
-
-              <Column lg={8} style={{ marginBottom: "20px" }}>
-                <div style={{ marginBottom: "10px" }}>
-                  <span style={{ color: "#3366B3", fontWeight: "bold" }}>
-                    <FormattedMessage id="sample.label.labnumber" />
-                  </span>
-                </div>
-                <div style={{ marginBottom: "10px" }}>
-                  {nceForm.data.labOrderNumber}
-                </div>
-              </Column>
-
-              <Column lg={8} style={{ marginBottom: "20px" }}>
-                <div style={{ marginBottom: "10px" }}>
-                  <span style={{ color: "#3366B3", fontWeight: "bold" }}>
-                    <FormattedMessage id="nonconform.label.prescibernamesite" />
-                  </span>
-                </div>
-                <div style={{ marginBottom: "10px" }}>
-                  {`${nceForm.data.prescriberName}-${nceForm.data.site}`}
-                </div>
-              </Column>
-              <Column lg={8} style={{ marginBottom: "20px" }}>
-                <div style={{ marginBottom: "10px" }}>
-                  <span style={{ color: "#3366B3", fontWeight: "bold" }}>
-                    <FormattedMessage id="nonconform.label.reportingunit" />
-                  </span>
-                </div>
-                <div style={{ marginBottom: "10px" }}>
-                  <Select
-                    id="reportUnits"
-                    value={nceForm.data.reportingUnit}
-                    onChange={(e) => {
-                      setnceForm({
-                        ...nceForm,
-                        data: {
-                          ...nceForm.data,
-                          reportingUnit: e.target.value,
-                        },
-                      });
-                    }}
-                  >
-                    <SelectItem key={"emptyselect"} value={""} text={""} />
-                    {nceForm.data.reportUnits.map((option) => (
-                      <SelectItem
-                        key={option.value}
-                        value={option.id}
-                        text={option.value}
-                      />
-                    ))}
-                  </Select>
-                </div>
-              </Column>
-              <Column lg={8} style={{ marginBottom: "20px" }}>
-                <div style={{ marginBottom: "10px" }}>
-                  <span style={{ color: "#3366B3", fontWeight: "bold" }}>
-                    <FormattedMessage id="nonconform.description.nce" />
-                  </span>
-                </div>
-                <div style={{ marginBottom: "10px" }}>
-                  <TextArea
-                    value={nceForm.data.description}
-                    onChange={(e) => {
-                      setnceForm({
-                        ...nceForm,
-                        data: {
-                          ...nceForm.data,
-                          description: e.target.value,
-                        },
-                      });
-                    }}
-                    rows={2}
-                    id="text-area-1"
-                  />
-                </div>
-              </Column>
-              <Column lg={8} style={{ marginBottom: "20px" }}>
-                <div style={{ marginBottom: "10px" }}>
-                  <span style={{ color: "#3366B3", fontWeight: "bold" }}>
-                    <FormattedMessage id="nonconform.label.suspected.cause.nce" />
-                  </span>
-                </div>
-                <div style={{ marginBottom: "10px" }}>
-                  <TextArea
-                    value={nceForm.data.suspectedCauses}
-                    onChange={(e) => {
-                      setnceForm({
-                        ...nceForm,
-                        data: {
-                          ...nceForm.data,
-                          suspectedCauses: e.target.value,
-                        },
-                      });
-                    }}
-                    rows={2}
-                    id="text-area-1"
-                  />
-                </div>
-              </Column>
-              <Column lg={8} style={{ marginBottom: "20px" }}>
-                <div style={{ marginBottom: "10px" }}>
-                  <span style={{ color: "#3366B3", fontWeight: "bold" }}>
-                    <FormattedMessage id="nonconform.label.proposed.action" />
-                  </span>
-                </div>
-                <div style={{ marginBottom: "10px" }}>
-                  <TextArea
-                    value={nceForm.data.proposedAction}
-                    onChange={(e) => {
-                      setnceForm({
-                        ...nceForm,
-                        data: {
-                          ...nceForm.data,
-                          proposedAction: e.target.value,
-                        },
-                      });
-                    }}
-                    rows={2}
-                    id="text-area-1"
-                  />
-                </div>
-                {!!nceForm.error && (
-                  <div style={{ color: "#c62828", margin: 4 }}>
-                    {nceForm.error}
-                  </div>
-                )}
-                <Button type="button" onClick={() => handleNCEFormSubmit()}>
-                  <FormattedMessage id="label.button.submit" />
-                </Button>
-              </Column>
-            </Grid>
-          </div>
-        </div>
+              <SelectItem key={"emptyselect"} value={""} text={""} />
+              {nceForm.data.reportUnits.map((option) => (
+                <SelectItem
+                  key={option.value}
+                  value={option.id}
+                  text={option.value}
+                />
+              ))}
+            </Select>
+          </Column>
+          <Column lg={8}>
+            <TextArea
+              labelText={<FormattedMessage id="nonconform.description.nce" />}
+              value={nceForm.data.description}
+              onChange={(e) => {
+                setnceForm({
+                  ...nceForm,
+                  data: {
+                    ...nceForm.data,
+                    description: e.target.value,
+                  },
+                });
+              }}
+              rows={2}
+              id="text-area-1"
+            />
+          </Column>
+          <Column lg={16}>
+            <br></br>
+          </Column>
+          <Column lg={8}>
+            <TextArea
+              labelText={
+                <FormattedMessage id="nonconform.label.suspected.cause.nce" />
+              }
+              value={nceForm.data.suspectedCauses}
+              onChange={(e) => {
+                setnceForm({
+                  ...nceForm,
+                  data: {
+                    ...nceForm.data,
+                    suspectedCauses: e.target.value,
+                  },
+                });
+              }}
+              rows={2}
+              id="text-area-1"
+            />
+          </Column>
+          <Column lg={8}>
+            <TextArea
+              labelText={
+                <FormattedMessage id="nonconform.label.proposed.action" />
+              }
+              value={nceForm.data.proposedAction}
+              onChange={(e) => {
+                setnceForm({
+                  ...nceForm,
+                  data: {
+                    ...nceForm.data,
+                    proposedAction: e.target.value,
+                  },
+                });
+              }}
+              rows={2}
+              id="text-area-1"
+            />
+          </Column>
+          <Column lg={16}>
+            <br></br>
+          </Column>
+          <Column lg={16}>
+            {!!nceForm.error && (
+              <div style={{ color: "#c62828", margin: 4 }}>{nceForm.error}</div>
+            )}
+            <Button type="button" onClick={() => handleNCEFormSubmit()}>
+              <FormattedMessage id="label.button.submit" />
+            </Button>
+          </Column>
+        </Grid>
       )}
-    </div>
+    </>
   );
 };
 
