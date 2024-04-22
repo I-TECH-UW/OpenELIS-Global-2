@@ -183,11 +183,11 @@ function SearchPatientForm(props) {
                   <input type="hidden" name={field.name} id={field.name} />
                 )}
               </Field>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 {" "}
                 <br />{" "}
               </Column>
-              <Column lg={8}>
+              <Column lg={8} md={4} sm={4}>
                 <Field name="patientId">
                   {({ field }) => (
                     <TextInput
@@ -205,7 +205,7 @@ function SearchPatientForm(props) {
                   )}
                 </Field>
               </Column>
-              <Column lg={8}>
+              <Column lg={8} md={4} sm={4}>
                 <Field name="labNumber">
                   {({ field }) => (
                     <CustomLabNumberInput
@@ -226,11 +226,11 @@ function SearchPatientForm(props) {
                   )}
                 </Field>
               </Column>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 {" "}
                 <br />{" "}
               </Column>
-              <Column lg={8}>
+              <Column lg={8} md={4} sm={4}>
                 <Field name="lastName">
                   {({ field }) => (
                     <TextInput
@@ -247,7 +247,7 @@ function SearchPatientForm(props) {
                   )}
                 </Field>
               </Column>
-              <Column lg={8}>
+              <Column lg={8} md={4} sm={4}>
                 <Field name="firstName">
                   {({ field }) => (
                     <TextInput
@@ -264,11 +264,11 @@ function SearchPatientForm(props) {
                   )}
                 </Field>
               </Column>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 {" "}
                 <br />{" "}
               </Column>
-              <Column lg={8}>
+              <Column lg={8} md={4} sm={4}>
                 <Field name="dateOfBirth">
                   {({ field }) => (
                     <DatePicker
@@ -292,7 +292,7 @@ function SearchPatientForm(props) {
                   )}
                 </Field>
               </Column>
-              <Column lg={8}>
+              <Column lg={8} md={4} sm={4}>
                 <Field name="gender">
                   {({ field }) => (
                     <RadioButtonGroup
@@ -324,11 +324,11 @@ function SearchPatientForm(props) {
                   )}
                 </Field>
               </Column>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 {" "}
                 <br />{" "}
               </Column>
-              <Column lg={2}>
+              <Column lg={4} md={4} sm={2}>
                 <Button kind="tertiary">
                   <FormattedMessage
                     id="label.button.externalsearch"
@@ -336,7 +336,7 @@ function SearchPatientForm(props) {
                   />
                 </Button>
               </Column>
-              <Column lg={8}>
+              <Column lg={4} md={4} sm={2}>
                 <Button type="submit">
                   <FormattedMessage id="label.button.search" />
                 </Button>

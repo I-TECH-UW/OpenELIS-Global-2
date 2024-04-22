@@ -373,7 +373,7 @@ const SampleBatchEntrySetup = () => {
                 <Column lg={16} > */}
               <div className="orderLegendBody">
                 <Grid>
-                  <Column lg={16}>
+                  <Column lg={16} md={8} sm={4}>
                     <h3>
                       <FormattedMessage
                         id="order.title"
@@ -382,7 +382,7 @@ const SampleBatchEntrySetup = () => {
                     </h3>
                   </Column>
 
-                  <Column lg={4}>
+                  <Column lg={4} md={6} sm={4}>
                     <CustomDatePicker
                       id={"order_currentDate"}
                       labelText={intl.formatMessage({
@@ -401,7 +401,7 @@ const SampleBatchEntrySetup = () => {
                       }
                     />
                   </Column>
-                  <Column lg={4}>
+                  <Column lg={4} md={6} sm={4}>
                     <TimePicker
                       id="order_CurrentTime"
                       labelText={intl.formatMessage({
@@ -417,7 +417,7 @@ const SampleBatchEntrySetup = () => {
                     />
                   </Column>
                   <Column lg={8}></Column>
-                  <Column lg={4}>
+                  <Column lg={4} md={6} sm={4}>
                     <CustomDatePicker
                       id={"order_receivedDate"}
                       labelText={intl.formatMessage({
@@ -437,7 +437,7 @@ const SampleBatchEntrySetup = () => {
                       }
                     />
                   </Column>
-                  <Column lg={4}>
+                  <Column lg={4} md={6} sm={4}>
                     <TimePicker
                       id="order_ReceptionTime"
                       labelText={intl.formatMessage({
@@ -453,7 +453,7 @@ const SampleBatchEntrySetup = () => {
                     />
                   </Column>
                   <Column lg={8}></Column>
-                  <Column lg={10}>
+                  <Column lg={10} md={6} sm={4}>
                     <Select
                       id="form-dropdown"
                       labelText={
@@ -613,12 +613,12 @@ const SampleBatchEntrySetup = () => {
               </div>
               <div className="orderLegendBody">
                 <Grid>
-                  <Column lg={16}>
+                  <Column lg={16} md={8} sm={4}>
                     <h3>
                       <FormattedMessage id="order.legend.configureBarcode" />
                     </h3>
                   </Column>
-                  <Column lg={8}>
+                  <Column lg={8} md={4} sm={4}>
                     <Select
                       className="inputText"
                       id="method-dropdown"
@@ -649,12 +649,12 @@ const SampleBatchEntrySetup = () => {
                     </Select>
                   </Column>
                   <Column lg={8}></Column>
-                  <Column lg={16}>
+                  <Column lg={16} md={8} sm={4}>
                     <p>
                       <FormattedMessage id="order.legend.optionalFields" />
                     </p>
                   </Column>
-                  <Column lg={4}>
+                  <Column lg={4} md={3} sm={2}>
                     <Checkbox
                       labelText={
                         <FormattedMessage id="order.legend.facility" />
@@ -664,7 +664,7 @@ const SampleBatchEntrySetup = () => {
                       onChange={handleFacilityCheckboxChange}
                     />
                   </Column>
-                  <Column lg={4}>
+                  <Column lg={4} md={3} sm={2}>
                     <Checkbox
                       labelText={
                         <FormattedMessage
@@ -678,7 +678,7 @@ const SampleBatchEntrySetup = () => {
                     />
                   </Column>
                   <Column lg={8}></Column>
-                  <Column lg={4}>
+                  <Column lg={4} md={4} sm={4}>
                     <AutoComplete
                       name="siteName"
                       id="siteName"
@@ -700,7 +700,7 @@ const SampleBatchEntrySetup = () => {
                       suggestions={siteNames.length > 0 ? siteNames : []}
                     />
                   </Column>
-                  <Column lg={4}>
+                  <Column lg={4} md={4} sm={4}>
                     <Select
                       id="requesterDepartmentId"
                       name="requesterDepartmentId"
@@ -718,11 +718,11 @@ const SampleBatchEntrySetup = () => {
                     </Select>
                   </Column>
                   <Column lg={8}> </Column>
-                  <Column lg={16}>
+                  <Column lg={16} md={8} sm={4}>
                     {" "}
                     <br />
                   </Column>
-                  <Column lg={4}>
+                  <Column lg={4} md={2} sm={2}>
                     <Button
                       onClick={handleSubmitButton1}
                       disabled={
@@ -733,7 +733,7 @@ const SampleBatchEntrySetup = () => {
                       <FormattedMessage id="next.action.button" />
                     </Button>
                   </Column>
-                  <Column lg={4}>
+                  <Column lg={4} md={2} sm={2}>
                     <Button onClick={() => history.push("/")} kind="secondary">
                       <FormattedMessage id="label.button.cancel" />
                     </Button>

@@ -69,7 +69,7 @@ function SearchOrder() {
       </div>
       <div className="orderLegendBody">
         <Grid>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <h4>
               {" "}
               <FormattedMessage id="sample.label.search.patient" />
