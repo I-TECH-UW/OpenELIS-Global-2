@@ -285,9 +285,9 @@ export default function App() {
                   exact
                   component={() => <FindOrder />}
                   role="Reception"
-                /> 
+                />
                 <SecureRoute
-                  path="/NonconformingEvent"
+                  path="/ReportNonConformingEvent"
                   exact
                   component={() => <NonConformIndex />}
                   role="Reception"
