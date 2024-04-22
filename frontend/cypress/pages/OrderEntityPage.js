@@ -22,11 +22,11 @@ class OrderEntityPage {
   }
   checkPanelCheckBoxField() {
     cy.get(
-      ".testPanels .cds--checkbox-wrapper:nth-child(4) .cds--checkbox",
+      ".testPanels .cds--checkbox-wrapper:nth-child(5) .cds--checkbox",
     ).check({ force: true });
   }
   generateLabOrderNumber() {
-    cy.getElement(":nth-child(3) > .cds--link").click();
+    cy.getElement(":nth-child(2) > .cds--link").click();
   }
 
   enterSiteName(siteName) {

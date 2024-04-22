@@ -37,6 +37,7 @@ public class ControllerSetup extends ResponseEntityExceptionHandler {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
+    	binder.setAutoGrowCollectionLimit(2048);
         StringTrimmerEditor stringTrimmer = new StringTrimmerEditor(false);
         binder.registerCustomEditor(String.class, stringTrimmer);
         binder.registerCustomEditor(URI.class, new URIEditor(false));

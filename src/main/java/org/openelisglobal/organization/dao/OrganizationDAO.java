@@ -82,6 +82,8 @@ public interface OrganizationDAO extends BaseDAO<Organization, String> {
     boolean duplicateOrganizationExists(Organization organization) throws LIMSRuntimeException;
 
     Organization getOrganizationByName(Organization organization, boolean ignoreCase);
+    
+    Organization getOrganizationByShortName(String shortName, boolean ignoreCase);
 
     List<Organization> getActiveOrganizations() throws LIMSRuntimeException;
 

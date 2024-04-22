@@ -38,6 +38,8 @@ function ResultSearchPage() {
     testResult: [],
   });
   const [resultForm, setResultForm] = useState(originalResultForm);
+  const [searchBy, setSearchBy] = useState({ type: "", doRange: false });
+  const [param, setParam] = useState("&accessionNumber=");
 
   const setResults = (resultForm) => {
     setOriginalResultForm(resultForm);
@@ -46,8 +48,17 @@ function ResultSearchPage() {
 
   return (
     <>
-      <SearchResultForm setResults={setResults} />
-      <SearchResults results={resultForm} setResultForm={setResultForm} />
+      <SearchResultForm
+        setParam={setParam}
+        setSearchBy={setSearchBy}
+        setResults={setResults}
+      />
+      <SearchResults
+        extraParams={param}
+        searchBy={searchBy}
+        results={resultForm}
+        setResultForm={setResultForm}
+      />
     </>
   );
 }
@@ -147,9 +158,8 @@ export function SearchResultForm(props) {
       values.accessionNumber !== ""
         ? values.accessionNumber
         : values.startLabNo;
-    let labNo =
-      accessionNumber !== undefined ? accessionNumber.split("-")[0] : "";
-    const endLabNo = values.endLabNo !== undefined ? values.endLabNo : "";
+    let labNo = accessionNumber ? accessionNumber.split("-")[0] : "";
+    const endLabNo = values.endLabNo ? values.endLabNo : "";
     values.unitType = values.unitType ? values.unitType : "";
 
     let searchEndPoint =
@@ -177,6 +187,37 @@ export function SearchResultForm(props) {
       "&finished=" +
       true;
     setUrl(searchEndPoint);
+    props.setSearchBy?.(searchBy);
+    switch (searchBy.type) {
+      case "unit":
+        props.setParam("&testSectionId=" + values.unitType);
+        break;
+      case "patient":
+        props.setParam("&patientId=" + patient.patientPK);
+        break;
+      case "order":
+        props.setParam("&accessionNumber=" + labNo);
+        break;
+      case "date":
+        props.setParam(
+          "&selectedTest=" +
+            values.testName +
+            "&selectedSampleStatus=" +
+            values.sampleStatusType +
+            "&selectedAnalysisStatus=" +
+            values.analysisStatus +
+            "&collectionDate=" +
+            values.collectionDate +
+            "&recievedDate=" +
+            values.recievedDate,
+        );
+        break;
+      case "range":
+        props.setParam(
+          "&accessionNumber=" + labNo + "&upperAccessionNumber=" + endLabNo,
+        );
+        break;
+    }
 
     getFromOpenElisServer(searchEndPoint, setResultsWithId);
   };
@@ -315,10 +356,22 @@ export function SearchResultForm(props) {
     let accessionNumber = new URLSearchParams(window.location.search).get(
       "accessionNumber",
     );
+    let upperAccessionNumber = new URLSearchParams(window.location.search).get(
+      "upperAccessionNumber",
+    );
     if (accessionNumber) {
       let searchValues = {
         ...searchFormValues,
         accessionNumber: accessionNumber,
+      };
+      setSearchFormValues(searchValues);
+      querySearch(searchValues);
+    }
+    if (accessionNumber || upperAccessionNumber) {
+      let searchValues = {
+        ...searchFormValues,
+        accessionNumber: accessionNumber,
+        endLabNo: upperAccessionNumber,
       };
       setSearchFormValues(searchValues);
       querySearch(searchValues);
@@ -442,6 +495,7 @@ export function SearchResultForm(props) {
                             placeholder={"Enter LabNo"}
                             name={field.name}
                             id={field.name}
+                            defaultValue={values["endLabNo"]}
                             labelText={
                               <FormattedMessage id="search.label.toaccession" />
                             }
@@ -1022,7 +1076,7 @@ export function SearchResults(props) {
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
                 labelText=""
-                // type="number"
+                //type="number"
                 style={validationState[row.id]?.style}
                 onChange={(e) => {
                   let value = e.target.value;
@@ -1095,14 +1149,14 @@ export function SearchResults(props) {
               <>
                 {
                   row.dictionaryResults.find(
-                    (result) => result.id == row.resultValue,
+                    (result) => result.id == row.shadowResultValue,
                   )?.value
                 }
               </>
             );
 
           default:
-            return row.resultValue;
+            return row.shadowResultValue;
         }
       default:
         return;
@@ -1313,11 +1367,16 @@ export function SearchResults(props) {
     }
 
     if (!isNaN(row.significantDigits)) {
+      const valueStr = actualValue.toString();
+      if (valueStr.includes(".")) {
+        const decimalPlaces = valueStr.split(".")[1].length;
+        if (decimalPlaces > row.significantDigits) {
+          actualValue = parseFloat(actualValue).toFixed(row.significantDigits);
+        }
+      }
       validation = {
         ...validation,
-        newValue:
-          greaterThanOrLessThan +
-          Math.round(actualValue, row.significantDigits),
+        newValue: greaterThanOrLessThan + actualValue,
       };
     }
 
@@ -1413,6 +1472,12 @@ export function SearchResults(props) {
         message: createMesssage(resp),
         kind: NotificationKinds.success,
       });
+      window.location.href =
+        "/result?type=" +
+        props.searchBy.type +
+        "&doRange=" +
+        props.searchBy.doRange +
+        props.extraParams;
     } else {
       addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
@@ -1425,13 +1490,13 @@ export function SearchResults(props) {
 
   const createMesssage = (resp) => {
     var message = "";
-    if (resp.reflex.length > 0) {
+    if (resp.reflex?.length > 0) {
       message +=
         intl.formatMessage({ id: "reflexTests" }) +
         ": " +
         resp.reflex.join(", ");
     }
-    if (resp.calculated.length > 0) {
+    if (resp.calculated?.length > 0) {
       message +=
         intl.formatMessage({ id: "calculatedTests" }) +
         ": " +

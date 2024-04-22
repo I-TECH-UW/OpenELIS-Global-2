@@ -17,7 +17,7 @@ describe("Patient Search", function () {
   it("Add|Modify Patient page should appear with search field", function () {
     patientPage
       .getPatientEntryPageTitle()
-      .should("contain.text", "Add/Modify Patient");
+      .should("contain.text", "Add Or Modify Patient");
   });
 
   it("User should be able to navigate to create Patient tab", function () {

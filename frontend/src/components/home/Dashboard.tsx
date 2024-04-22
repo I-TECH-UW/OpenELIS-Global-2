@@ -19,16 +19,20 @@ import {
   Tab,
   Tabs,
   TabList,
-  Tag
+  Tag,
 } from "@carbon/react";
 import "./Dashboard.css";
 import { Minimize, Maximize } from "@carbon/react/icons";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import {
   getFromOpenElisServer,
   convertAlphaNumLabNumForDisplay,
 } from "../utils/Utils.js";
 import { FormattedMessage, useIntl } from "react-intl";
+import UserSessionDetailsContext from "../../UserSessionDetailsContext";
+import { NotificationContext } from "../layout/Layout";
+import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
+
 interface DashBoardProps {}
 
 interface Tile {
@@ -50,6 +54,16 @@ type MetricType =
   | "AVERAGE_TURN_AROUND_TIME"
   | "DELAYED_TURN_AROUND"
   | "ORDERS_FOR_USER";
+
+interface UserSessionDetails {
+  userSessionDetails: any;
+}
+
+interface Notification {
+  notificationVisible: any;
+  setNotificationVisible: any;
+  addNotification: any;
+}
 
 const HomeDashBoard: React.FC<DashBoardProps> = () => {
   const intl = useIntl();
@@ -75,7 +89,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   const [data, setData] = useState([]);
   const [testSections, setTestSections] = useState([]);
-  const [selectedTestSection, setSelectedTestSection] = useState("");
+  const [selectedTestSection, setSelectedTestSection] = useState("all");
   const [loading, setLoading] = useState(true);
   const componentMounted = useRef(true);
   const [page, setPage] = useState(1);
@@ -85,6 +99,11 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
   const [previousPage, setPreviousPage] = useState(null);
   const [pagination, setPagination] = useState(false);
   const [url, setUrl] = useState("");
+  const { userSessionDetails } = useContext(
+    UserSessionDetailsContext,
+  ) as UserSessionDetails;
+  const { notificationVisible, setNotificationVisible, addNotification } =
+    useContext(NotificationContext) as Notification;
 
   useEffect(() => {
     setNextPage(null);
@@ -135,9 +154,12 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
   }, [selectedTile]);
 
   useEffect(() => {
-    getFromOpenElisServer("/rest/user-test-sections", (fetchedTestSections) => {
-      fetchTestSections(fetchedTestSections);
-    });
+    getFromOpenElisServer(
+      "/rest/displayList/TEST_SECTION_ACTIVE",
+      (fetchedTestSections) => {
+        fetchTestSections(fetchedTestSections);
+      },
+    );
     return () => {
       componentMounted.current = false;
     };
@@ -145,17 +167,23 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   const fetchTestSections = (res) => {
     setTestSections(res);
-    setSelectedTestSection(res[0]?.id);
+    setSelectedTestSection("all");
   };
 
   const loadNextResultsPage = () => {
     setLoading(true);
-    getFromOpenElisServer("/rest/home-dashboard/" + selectedTile.type + "?page=" + nextPage, loadData);
+    getFromOpenElisServer(
+      "/rest/home-dashboard/" + selectedTile.type + "?page=" + nextPage,
+      loadData,
+    );
   };
 
   const loadPreviousResultsPage = () => {
     setLoading(true);
-    getFromOpenElisServer("/rest/home-dashboard/" + selectedTile.type + "?page=" + previousPage, loadData);
+    getFromOpenElisServer(
+      "/rest/home-dashboard/" + selectedTile.type + "?page=" + previousPage,
+      loadData,
+    );
   };
 
   const loadCount = (data) => {
@@ -300,7 +328,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     "UN_PRINTED_RESULTS",
     "DELAYED_TURN_AROUND",
     "ORDERS_FOR_USER",
-    "ORDERS_PATIALLY_COMPLETED_TODAY"
+    "ORDERS_PATIALLY_COMPLETED_TODAY",
   ];
 
   const handleMinimizeClick = () => {
@@ -317,13 +345,22 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
       setSelectedTile(tile);
     } else {
       setSelectedTile(null);
-      setSelectedTestSection(testSections[0]?.id);
+      setSelectedTestSection("all");
     }
   };
 
   const handleMaximizeClick = (tile) => {
     console.log("Icon clicked!");
-    setSelectedTile(tile);
+    if (userSessionDetails.roles.length > 0) {
+      setSelectedTile(tile);
+    } else {
+      setNotificationVisible(true);
+      addNotification({
+        kind: NotificationKinds.warning,
+        title: intl.formatMessage({ id: "accessDenied.title" }),
+        message: intl.formatMessage({ id: "accessDenied.message" }),
+      });
+    }
   };
 
   const viewUserOrders = (row) => {
@@ -433,6 +470,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
   return (
     <>
       {loading && <Loading description="Loading Dasboard..." />}
+      {notificationVisible === true ? <AlertDialog /> : ""}
       {selectedTile == null ? (
         <div className="home-dashboard-container">
           {tileList.map((tile, index) => (
@@ -510,34 +548,38 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                     )}
                     {tilesWithTabs.includes(selectedTile.type) && (
                       <Grid>
-                      <Column lg={16} md={8} sm={4}>
-                      {testSections.length > 0 ?( 
-                      <Tabs>
-                        <TabList aria-label="List of tabs" contained>
-                          {testSections?.map((item, idx) => {
-                            return (
+                        <Column lg={16} md={8} sm={4}>
+                          <Tabs>
+                            <TabList aria-label="List of tabs" contained>
                               <Tab
-                                key={idx}
-                                onClick={() =>
-                                  setSelectedTestSection(item.id)
-                                }
+                                onClick={() => setSelectedTestSection("all")}
                               >
-                                {item.value}
+                                <FormattedMessage id="all.label" />
                               </Tab>
-                            );
-                          })}
-                        </TabList>
-                      </Tabs>
-                      ): (<Tag type="red"><FormattedMessage id="label.user.notestsection" /></Tag>)}     
-                      </Column>
-                    </Grid>
+                              {testSections?.map((item, id) => {
+                                return (
+                                  <Tab
+                                    key={id}
+                                    onClick={() =>
+                                      setSelectedTestSection(item.id)
+                                    }
+                                  >
+                                    {item.value}
+                                  </Tab>
+                                );
+                              })}
+                            </TabList>
+                          </Tabs>
+                        </Column>
+                      </Grid>
                     )}
                     <DataTable
                       rows={data
                         .filter((item) =>
-                          tilesWithTabs.includes(selectedTile.type)
+                          tilesWithTabs.includes(selectedTile.type) &&
+                          selectedTestSection != "all"
                             ? item.testSection === selectedTestSection
-                            : true
+                            : true,
                         )
                         .slice((page - 1) * pageSize, page * pageSize)}
                       headers={
@@ -590,11 +632,14 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                       page={page}
                       pageSize={pageSize}
                       pageSizes={[10, 20, 30, 50, 100]}
-                      totalItems={data.filter((item) =>
-                        tilesWithTabs.includes(selectedTile.type)
-                          ? item.testSection === selectedTestSection
-                          : true
-                      ).length}
+                      totalItems={
+                        data.filter((item) =>
+                          tilesWithTabs.includes(selectedTile.type) &&
+                          selectedTestSection != "all"
+                            ? item.testSection === selectedTestSection
+                            : true,
+                        ).length
+                      }
                       forwardText={intl.formatMessage({
                         id: "pagination.forward",
                       })}

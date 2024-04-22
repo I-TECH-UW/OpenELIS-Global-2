@@ -115,7 +115,7 @@ public class RTRIColumnBuilder extends CIStudyColumnBuilder {
 
 		// --------------------------
 		// all observation history values
-		appendObservationHistoryCrosstab(dateRange.getLowDate(), dateRange.getHighDate());
+		appendObservationHistoryCrosstab(dateRange.getLowDate(), dateRange.getHighDate(), dateColumn);
 
 		// result
 		// appendResultCrosstab(dateRange.getLowDate(), dateRange.getHighDate() );

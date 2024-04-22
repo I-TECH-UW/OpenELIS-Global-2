@@ -96,7 +96,7 @@
 				<textElement>
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{receptiondate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{receptiondate}.substring(0,10)]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" mode="Transparent" x="282" y="1" width="92" height="18" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="af0eb502-72e4-4760-8b54-7f702186bd1f"/>

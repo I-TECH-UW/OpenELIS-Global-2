@@ -13,24 +13,24 @@ class LoginPage {
   }
 
   getUsernameElement() {
-    return cy.getElement(`.inputText .cds--text-input--md`);
+    return cy.getElement("#loginName");
   }
 
   getPasswordElement() {
-    return cy.getElement(`input#password`);
+    return cy.getElement("#password");
   }
 
   enterUsername(value) {
     const field = this.getUsernameElement();
-    field.clear();
-    field.type(value);
+    field.should("be.visible").clear();
+    this.getUsernameElement().type(value);
     return this;
   }
 
   enterPassword(value) {
     const field = this.getPasswordElement();
-    field.clear();
-    field.type(value);
+    field.should("be.visible").clear();
+    this.getPasswordElement().type(value);
     return this;
   }
 
