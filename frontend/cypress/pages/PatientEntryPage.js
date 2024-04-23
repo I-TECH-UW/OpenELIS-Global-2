@@ -24,7 +24,7 @@ class PatientEntryPage {
   }
 
   clickNewPatientTab() {
-    cy.get(".tabsLayout [type='button']:nth-of-type(2)").click();
+    cy.get(":nth-child(1) > :nth-child(2) > .cds--btn").click();
   }
 
   enterPatientInfo(

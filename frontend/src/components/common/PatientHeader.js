@@ -26,13 +26,13 @@ const PatientHeader = (props) => {
   const patternUrl = GeoPattern.generate(id).toDataUri();
   return (
     <Grid fullWidth={true}>
-      <Column lg={16}>
+      <Column lg={16} md={8} sm={4}>
         <Section>
           <Section>
             {id ? (
               <div className={className}>
                 <Grid>
-                  <Column lg={4}>
+                  <Column lg={4} md={2} sm={2}>
                     <div
                       className={
                         referringFacility ? "patientAvatar2" : "patientAvatar"
@@ -55,7 +55,7 @@ const PatientHeader = (props) => {
                       />
                     </div>
                   </Column>
-                  <Column lg={10}>
+                  <Column lg={10} md={5} sm={2}>
                     <div className="patient-name">
                       {patientName ? patientName : lastName + " " + firstName}
                     </div>
@@ -136,14 +136,32 @@ const PatientHeader = (props) => {
               </div>
             ) : (
               <div className={className}>
-                <div className="patient-name">
-                  {" "}
-                  {isOrderPage ? (
-                    <FormattedMessage id="sample.label.noorder" />
-                  ) : (
-                    <FormattedMessage id="patient.label.nopatientid" />
-                  )}
-                </div>
+                <Grid>
+                  <Column lg={4} md={2} sm={2}>
+                    <Avatar
+                      alt={"Patient avatar"}
+                      color="rgba(0,0,0,0)"
+                      name={"!"}
+                      src={""}
+                      size={referringFacility ? "150" : "120"}
+                      textSizeRatio={2}
+                      style={{
+                        backgroundImage: `url(${patternUrl})`,
+                        backgroundRepeat: "round",
+                      }}
+                    />
+                  </Column>
+                  <Column lg={8}>
+                    <div className="patient-name">
+                      {" "}
+                      {isOrderPage ? (
+                        <FormattedMessage id="patient.label.nopatientid" />
+                      ) : (
+                        <FormattedMessage id="patient.label.nopatientid" />
+                      )}
+                    </div>
+                  </Column>
+                </Grid>
               </div>
             )}
           </Section>

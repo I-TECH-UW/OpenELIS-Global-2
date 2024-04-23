@@ -263,7 +263,7 @@ function PathologyCaseView() {
       <PageBreadCrumb breadcrumbs={breadcrumbs} />
 
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>
@@ -274,7 +274,7 @@ function PathologyCaseView() {
         </Column>
       </Grid>
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <PatientHeader
@@ -347,8 +347,7 @@ function PathologyCaseView() {
             })}
           </Select>
         </Column>
-        <Column lg={2} md={1} sm={2}></Column>
-        <Column lg={2} md={1} sm={2}>
+        <Column lg={4} md={2} sm={2}>
           <Select
             id="assignedTechnician"
             name="assignedTechnician"
@@ -371,7 +370,7 @@ function PathologyCaseView() {
             })}
           </Select>
         </Column>
-        <Column lg={2} md={4} sm={2} />
+
         <Column lg={4} md={2} sm={2}>
           <Select
             id="assignedPathologist"
@@ -414,7 +413,7 @@ function PathologyCaseView() {
               pathologySampleInfo.reports.map((report, index) => {
                 return (
                   <>
-                    <Column lg={2} md={8} sm={4}>
+                    <Column lg={2} md={4} sm={4}>
                       <IconButton
                         label={intl.formatMessage({
                           id: "label.button.remove.report",
@@ -431,8 +430,7 @@ function PathologyCaseView() {
                         <FormattedMessage id="immunohistochemistry.label.report" />
                       </IconButton>
                     </Column>
-
-                    <Column lg={3} md={1} sm={2}>
+                    <Column lg={2} md={4} sm={4}>
                       <FileUploader
                         style={{ marginTop: "-20px" }}
                         buttonLabel={
@@ -889,9 +887,9 @@ function PathologyCaseView() {
         <Column lg={16} md={8} sm={4}></Column>
         {hasRole(userSessionDetails, "Pathologist") && (
           <>
-            <Column lg={16} md={4} sm={2}>
+            <Column lg={16} md={8} sm={4}>
               <Grid fullWidth={true} className="gridBoundary">
-                <Column lg={4} md={4} sm={2}>
+                <Column lg={4} md={8} sm={4}>
                   {initialMount && (
                     <FilterableMultiSelect
                       id="techniques"
@@ -911,7 +909,7 @@ function PathologyCaseView() {
                     />
                   )}
                 </Column>
-                <Column lg={12} md={4} sm={2}>
+                <Column lg={16} md={8} sm={4}>
                   {pathologySampleInfo.techniques &&
                     pathologySampleInfo.techniques.map((technique, index) => (
                       <Tag
@@ -929,9 +927,9 @@ function PathologyCaseView() {
                 </Column>
               </Grid>
             </Column>
-            <Column lg={16} md={4} sm={2}>
+            <Column lg={16} md={8} sm={4}>
               <Grid fullWidth={true} className="gridBoundary">
-                <Column lg={4} md={4} sm={2}>
+                <Column lg={4} md={8} sm={4}>
                   {initialMount && (
                     <FilterableMultiSelect
                       id="requests"
@@ -971,7 +969,7 @@ function PathologyCaseView() {
                           {request.value}
                         </Tag>
                       </Column>
-                      <Column lg={2} md={4} sm={2}>
+                      <Column lg={2} md={8} sm={4}>
                         <Select
                           id={"requeststatus" + index}
                           name="requeststatus"
@@ -1008,7 +1006,7 @@ function PathologyCaseView() {
                   ))}
               </Grid>
             </Column>
-            <Column lg={16} md={4} sm={2}>
+            <Column lg={16} md={8} sm={4}>
               <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={16} md={8} sm={4}>
                   <TextArea
@@ -1040,9 +1038,9 @@ function PathologyCaseView() {
                 </Column>
               </Grid>
             </Column>
-            <Column lg={16} md={4} sm={2}>
+            <Column lg={16} md={8} sm={4}>
               <Grid fullWidth={true} className="gridBoundary">
-                <Column lg={4} md={4} sm={2}>
+                <Column lg={4} md={8} sm={4}>
                   {initialMount && (
                     <FilterableMultiSelect
                       id="conclusion"
@@ -1062,7 +1060,7 @@ function PathologyCaseView() {
                     />
                   )}
                 </Column>
-                <Column lg={12} md={4} sm={2}>
+                <Column lg={12} md={8} sm={4}>
                   {pathologySampleInfo.conclusions &&
                     pathologySampleInfo.conclusions.map((conclusion, index) => (
                       <Tag
@@ -1080,8 +1078,7 @@ function PathologyCaseView() {
                 </Column>
               </Grid>
             </Column>
-
-            <Column lg={16} md={4} sm={2}>
+            <Column lg={16} md={8} sm={4}>
               <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={16} md={8} sm={4}>
                   <TextArea
@@ -1101,9 +1098,9 @@ function PathologyCaseView() {
             </Column>
           </>
         )}
-        <Column lg={16} md={4} sm={2}>
+        <Column lg={16} md={8} sm={4}>
           <Grid fullWidth={true} className="gridBoundary">
-            <Column lg={4}>
+            <Column lg={4} md={4} sm={2}>
               <Checkbox
                 labelText={intl.formatMessage({ id: "pathology.label.refer" })}
                 id="referToImmunoHistoChemistry"
@@ -1118,7 +1115,7 @@ function PathologyCaseView() {
             </Column>
             {pathologySampleInfo.referToImmunoHistoChemistry && (
               <>
-                <Column lg={4}>
+                <Column lg={4} md={4} sm={2}>
                   <FilterableMultiSelect
                     id="ihctests"
                     titleText={
@@ -1162,7 +1159,7 @@ function PathologyCaseView() {
         </Column>
         {pathologySampleInfo.assignedPathologistId &&
           pathologySampleInfo.assignedTechnicianId && (
-            <Column lg={16}>
+            <Column lg={16} md={8} sm={4}>
               <Checkbox
                 labelText={intl.formatMessage({
                   id: "pathology.label.release",

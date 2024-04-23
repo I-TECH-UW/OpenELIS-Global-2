@@ -55,9 +55,13 @@ import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.services.StatusSet;
+import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
+import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl;
 import org.openelisglobal.note.valueholder.Note;
@@ -68,6 +72,7 @@ import org.openelisglobal.observationhistorytype.service.ObservationHistoryTypeS
 import org.openelisglobal.observationhistorytype.valueholder.ObservationHistoryType;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.saving.form.IAccessionerForm;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.util.PatientUtil;
@@ -81,6 +86,8 @@ import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.referencetables.service.ReferenceTablesService;
+import org.openelisglobal.referral.action.beanitems.ReferralItem;
+import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
 import org.openelisglobal.sample.form.ProjectData;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.util.CI.BaseProjectFormMapper;
@@ -144,6 +151,8 @@ import org.springframework.validation.Errors;
  */
 
 public abstract class Accessioner implements IAccessioner {
+    @Autowired
+    private FhirTransformService fhirTransformService;
 
     /**
      * a set of possible analysis status that means an analysis is done
@@ -352,6 +361,14 @@ public abstract class Accessioner implements IAccessioner {
             persistRecordStatus();
             deleteOldPatient();
             populateAndPersistUnderInvestigationNote();
+          //update fhir resources
+            SamplePatientUpdateData updateData = new SamplePatientUpdateData(sysUserId);
+            updateData.setSample(sample);
+            updateData.setAccessionNumber(accessionNumber);
+            updateData.setProvider(null);
+            updateData.setSampleItemsTests(null);
+            PatientManagementInfo patientInfo = new PatientManagementInfo();
+            patientInfo.setPatientPK(patientInDB.getId());
             return IActionConstants.FWD_SUCCESS_INSERT;
         } catch (IllegalAccessException e) {
             logAndAddMessage("save()", "errors.InsertException", e);

@@ -19,6 +19,7 @@ package org.openelisglobal.patient.valueholder;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -244,6 +245,9 @@ public class ObservationData implements Serializable {
 
     @ValidName(nameType = NameType.FULL_NAME)
     private String nameOfSampler;
+    
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
+    private String hpvSamplingMethod;
 
     /**
      * Yes/No
@@ -1393,7 +1397,7 @@ public class ObservationData implements Serializable {
         if (priorDiseasesList == null) {
             priorDiseasesList = makeDiseaseList("P", ObservationHistoryList.ARV_DISEASES.getList());
         }
-        return priorDiseasesList;
+        return new ArrayList<>(new HashSet<>(priorDiseasesList));
     }
 
     private List<Pair<String, String>> makeDiseaseList(String prefix, List<Dictionary> dictionaryList) {
@@ -1412,7 +1416,7 @@ public class ObservationData implements Serializable {
         if (currentDiseasesList == null) {
             currentDiseasesList = makeDiseaseList("C", ObservationHistoryList.ARV_DISEASES_SHORT.getList());
         }
-        return currentDiseasesList;
+        return new ArrayList<>(new HashSet<>(currentDiseasesList)); //remove duplicates entry
     }
 
     public Pair<String, String> getCurrentDiseases(int index) {
@@ -1423,13 +1427,21 @@ public class ObservationData implements Serializable {
         if (rtnPriorDiseasesList == null) {
             rtnPriorDiseasesList = makeDiseaseList("", ObservationHistoryList.RTN_DISEASES.getList());
         }
-        return rtnPriorDiseasesList;
+        return new ArrayList<>(new HashSet<>(rtnPriorDiseasesList));
     }
 
     public List<Pair<String, String>> getRtnCurrentDiseasesList() {
         if (rtnCurrentDiseasesList == null) {
             rtnCurrentDiseasesList = makeDiseaseList("", ObservationHistoryList.RTN_EXAM_DISEASES.getList());
         }
-        return rtnCurrentDiseasesList;
+        return new ArrayList<>(new HashSet<>(rtnCurrentDiseasesList));
     }
+
+	public String getHpvSamplingMethod() {
+		return hpvSamplingMethod;
+	}
+
+	public void setHpvSamplingMethod(String hpvSamplingMethod) {
+		this.hpvSamplingMethod = hpvSamplingMethod;
+	}
 }

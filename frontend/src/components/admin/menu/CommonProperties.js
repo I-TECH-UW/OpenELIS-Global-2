@@ -32,7 +32,12 @@ export const CommonProperties = () => {
         setError(err);
         setLoading(false); // Set loading to false in case of error
       } else {
-        setCommonProperties(fetchedProperties);
+        const sortedKeys = Object.keys(fetchedProperties).sort();
+        let sortedProperties = {};
+        sortedKeys.forEach((key) => {
+          sortedProperties[key] = fetchedProperties[key];
+        });
+        setCommonProperties(sortedProperties);
         setLoading(false); // Set loading to false after data is fetched
       }
     });
@@ -57,11 +62,11 @@ export const CommonProperties = () => {
 
   return (
     <>
-      <div style={{ marginLeft: "12em", marginRight: "8em" }}>
+      <div style={{ marginLeft: "3em", marginRight: "1em" }}>
         {notificationVisible === true ? <AlertDialog /> : ""}
         <PageBreadCrumb breadcrumbs={[{ label: "home.label", link: "/" }]} />
         <Grid fullWidth={true}>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <Section>
               <Section>
                 <Heading>
@@ -77,7 +82,7 @@ export const CommonProperties = () => {
         {loading && <Loading />} {error && <p>Error: {error}</p>}{" "}
         <div className="orderLegendBody">
           <Grid fullWidth={true}>
-            <Column lg={8}>
+            <Column lg={8} md={8} sm={4}>
               {commonProperties && (
                 <>
                   {Object.keys(commonProperties)
@@ -113,7 +118,7 @@ export const CommonProperties = () => {
               )}
             </Column>
 
-            <Column lg={8}>
+            <Column lg={8} md={8} sm={4}>
               {commonProperties && (
                 <>
                   {Object.keys(commonProperties)
@@ -147,7 +152,7 @@ export const CommonProperties = () => {
             </Column>
           </Grid>
 
-          <div style={{ marginLeft: "3em" }} className="inlineDiv">
+          <div style={{ marginLeft: "2em" }} className="inlineDiv">
             <Button type="submit" onClick={handleSubmit}>
               <FormattedMessage
                 id="label.button.update"

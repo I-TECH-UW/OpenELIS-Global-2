@@ -263,6 +263,40 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             throw new LIMSRuntimeException("Error in Organization getOrganizationByName()", e);
         }
     }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Organization getOrganizationByShortName(String shortName, boolean ignoreCase)
+    		throws LIMSRuntimeException {
+    	String sql = null;
+    	try {
+    		if (ignoreCase) {
+    			sql = "from Organization o where trim(lower(o.shortName)) = :param";
+    		} else {
+    			sql = "from Organization o where o.shortName = :param";
+    		}
+    		
+    		Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
+    		if (ignoreCase) {
+    			query.setParameter("param", shortName.trim().toLowerCase());
+    		} else {
+    			query.setParameter("param", shortName);
+    		}
+    		
+    		List<Organization> list = query.list();
+    		Organization org = null;
+    		if (list.size() > 0) {
+    			org = list.get(0);
+    		}
+    		
+    		return org;
+    		
+    	} catch (RuntimeException e) {
+    		// bugzilla 2154
+    		LogEvent.logError(e.toString(), e);
+    		throw new LIMSRuntimeException("Error in Organization getOrganizationByShortName()", e);
+    	}
+    }
 
     // bugzilla 2069
     @Override

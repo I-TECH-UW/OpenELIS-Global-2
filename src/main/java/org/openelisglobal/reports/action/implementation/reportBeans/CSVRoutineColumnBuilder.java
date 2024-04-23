@@ -548,7 +548,7 @@ abstract public class CSVRoutineColumnBuilder {
                 + formatDateForDatabaseSql(lowDate) + "'')  AND s.entered_date <= date(''"
                 + formatDateForDatabaseSql(highDate) + " '') " + "\n "
                 // sql injection safe as user cannot overwrite validStatusId in database
-                + ((validStatusId == null) ? "" : " AND a.status_id = " + validStatusId)
+                ///+ ((validStatusId == null) ? "" : " AND a.status_id = " + validStatusId)
                 // + (( excludeAnalytes == null)?"":
                 // " AND r.analyte_id NOT IN ( " + excludeAnalytes) + ")"
                 // + " AND a.test_id = t.id "

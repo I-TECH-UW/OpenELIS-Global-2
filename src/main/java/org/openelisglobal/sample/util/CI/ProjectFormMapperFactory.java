@@ -31,6 +31,7 @@ public class ProjectFormMapperFactory {
 	private static final String IND = "Indeterminate_Id";
 	private static final String SPE = "Special_Request_Id";
 	private static final String RT = "Recency_Id";
+	private static final String HPV = "HPV_Id";
 
 	public IProjectFormMapper getProjectInitializer(String projectFormId, IProjectForm form)
 			throws LIMSRuntimeException {
@@ -47,7 +48,10 @@ public class ProjectFormMapperFactory {
 			return new SPEFormMapper(projectFormId, form);
 		} else if (projectFormId.equals(RT)) {
 			return new RecencyFormMapper(projectFormId, form);
+		}else if (projectFormId.equals(HPV)) {
+			return new HPVFormMapper(projectFormId, form);
 		}
+
 
 		throw new LIMSRuntimeException(
 				"ProjectFormMapperFactory: Unable to find project initializer for " + projectFormId);

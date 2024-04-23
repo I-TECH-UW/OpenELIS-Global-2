@@ -137,10 +137,10 @@ public class StudyVLColumnBuilder extends CIStudyColumnBuilder {
 
         // --------------------------
         // all observation history values
-        appendObservationHistoryCrosstab(dateRange.getLowDate(), dateRange.getHighDate());
+        appendObservationHistoryCrosstab(dateRange.getLowDate(), dateRange.getHighDate(), dateColumn);
         // current ARV treatments
         appendRepeatingObservation(SQLConstant.CURRENT_ARV_TREATMENT_INNS, 4, dateRange.getLowDate(),
-                dateRange.getHighDate());
+                dateRange.getHighDate(), dateColumn);
         // result
         // appendResultCrosstab(dateRange.getLowDate(), dateRange.getHighDate() );
         query.append(",  clinlims.analysis as a \n");

@@ -9,6 +9,8 @@ public interface DictionaryService extends BaseObjectService<Dictionary, String>
     void getData(Dictionary dictionary);
 
     Dictionary getDictionaryByLocalAbbrev(Dictionary dictionary);
+    
+    public Dictionary getDictionaryByDictEntry(String dictEntry);
 
     Dictionary getDictionaryById(String dictionaryId);
 

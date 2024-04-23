@@ -565,7 +565,16 @@ const Index = () => {
     if ("questionnaire" in orderFormValues.sampleOrderItems) {
       delete orderFormValues.sampleOrderItems.questionnaire;
     }
-    console.debug(JSON.stringify(orderFormValues));
+    //remove display Lists rom the form
+    orderFormValues.sampleOrderItems.priorityList = [];
+    orderFormValues.sampleOrderItems.programList = [];
+    orderFormValues.sampleOrderItems.referringSiteList = [];
+    orderFormValues.initialSampleConditionList = [];
+    orderFormValues.testSectionList = [];
+    orderFormValues.sampleOrderItems.providersList = [];
+    orderFormValues.sampleOrderItems.paymentOptions = [];
+    orderFormValues.sampleOrderItems.testLocationCodeList = [];
+    console.log(JSON.stringify(orderFormValues));
     postToOpenElisServer(
       "/rest/SamplePatientEntry",
       JSON.stringify(orderFormValues),
@@ -751,6 +760,7 @@ const Index = () => {
                 setOrderFormValues={setOrderFormValues}
                 samples={samples}
                 error={elementError}
+                isModifyOrder={false}
               />
             )}
 

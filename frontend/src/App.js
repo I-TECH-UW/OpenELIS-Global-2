@@ -22,8 +22,8 @@ import Workplan from "./components/workplan/Workplan";
 import AddOrder from "./components/addOrder/Index";
 import FindOrder from "./components/modifyOrder/Index";
 import ModifyOrder from "./components/modifyOrder/ModifyOrder";
-import RoutineReports from "./components/Reports/Routine";
-import StudyReports from "./components/Reports/Study";
+import RoutineReports from "./components/reports/Routine";
+import StudyReports from "./components/reports/Study";
 import StudyValidation from "./components/validation/Index";
 import PathologyDashboard from "./components/pathology/PathologyDashboard";
 import CytologyDashboard from "./components/cytology/CytologyDashBoard";
@@ -33,9 +33,13 @@ import ImmunohistochemistryDashboard from "./components/immunohistochemistry/Imm
 import ImmunohistochemistryCaseView from "./components/immunohistochemistry/ImmunohistochemistryCaseView";
 import RoutedResultsViewer from "./components/patient/resultsViewer/results-viewer.tsx";
 import EOrderPage from "./components/eOrder/Index";
-import RoutineIndex from "./components/Reports/routine/Index.js";
-import StudyIndex from "./components/Reports/study/index.js";
+import RoutineIndex from "./components/reports/routine/Index.js";
+import StudyIndex from "./components/reports/study/index.js";
+import ReportIndex from "./components/reports/Index.js";
 import PrintBarcode from "./components/printBarcode/Index";
+import NonConformIndex from "./components/nonconform/index";
+import SampleBatchEntrySetup from "./components/batchOrderEntry/SampleBatchEntrySetup.js";
+import AuditTrailReportIndex from "./components/reports/auditTrailReport/Index.js";
 
 export default function App() {
   let i18nConfig = {
@@ -281,7 +285,20 @@ export default function App() {
                   exact
                   component={() => <FindOrder />}
                   role="Reception"
+                /> 
+                <SecureRoute
+                  path="/NonconformingEvent"
+                  exact
+                  component={() => <NonConformIndex />}
+                  role="Reception"
                 />
+                <SecureRoute
+                  path="/SampleBatchEntrySetup"
+                  exact
+                  component={() => <SampleBatchEntrySetup />}
+                  role="Reception"
+                />
+
                 <SecureRoute
                   path="/ElectronicOrders"
                   exact
@@ -394,6 +411,18 @@ export default function App() {
                   path="/StudyReport"
                   exact
                   component={() => <StudyIndex />}
+                  role="Reports"
+                />
+                <SecureRoute
+                  path="/Report"
+                  exact
+                  component={() => <ReportIndex />}
+                  role="Reports"
+                />
+                <SecureRoute
+                  path="/AuditTrailReport"
+                  exact
+                  component={() => <AuditTrailReportIndex />}
                   role="Reports"
                 />
                 <SecureRoute
