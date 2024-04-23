@@ -289,7 +289,17 @@ export default function App() {
                 <SecureRoute
                   path="/ReportNonConformingEvent"
                   exact
-                  component={() => <NonConformIndex />}
+                  component={() => (
+                    <NonConformIndex form="ReportNonConformingEvent" />
+                  )}
+                  role="Reception"
+                />
+                <SecureRoute
+                  path="/ViewNonConformingEvent"
+                  exact
+                  component={() => (
+                    <NonConformIndex form="ViewNonConformingEvent" />
+                  )}
                   role="Reception"
                 />
                 <SecureRoute
