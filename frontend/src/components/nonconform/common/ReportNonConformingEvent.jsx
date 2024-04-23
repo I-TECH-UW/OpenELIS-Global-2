@@ -217,15 +217,15 @@ export const ReportNonConformingEvent = () => {
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       <Grid fullWidth={true}>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <h2>
             <FormattedMessage id={`nonconform.report`} />
           </h2>
         </Column>
-        <Column lg={16} md={10} sm={8}>
+        <Column lg={16} md={8} sm={4}>
           <Form>
             <Grid fullWidth={true}>
-              <Column lg={4}>
+              <Column lg={4} md={4} sm={2}>
                 <Select
                   id="type"
                   labelText={intl.formatMessage({
@@ -249,7 +249,7 @@ export const ReportNonConformingEvent = () => {
                   ))}
                 </Select>
               </Column>
-              <Column lg={4}>
+              <Column lg={4} md={4} sm={2}>
                 <TextInput
                   labelText={intl.formatMessage({
                     id: "testcalculation.label.textValue",
@@ -264,10 +264,10 @@ export const ReportNonConformingEvent = () => {
                   id={`field.name`}
                 />
               </Column>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 <br></br>
               </Column>
-              <Column lg={16}>
+              <Column lg={16} md={8} sm={4}>
                 <Button type="button" onClick={handleSubmit}>
                   <FormattedMessage id="label.button.search" />
                 </Button>
@@ -284,13 +284,13 @@ export const ReportNonConformingEvent = () => {
             </Section>
           </Form>
         </Column>
-        <Column lg={16}>
+        <Column lg={16} md={8} sm={4}>
           <br></br>
         </Column>
       </Grid>
       {ldata && ldata.length > 0 && (
         <Grid>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <Table style={{ marginTop: "1em" }}>
               <TableHead>
                 <TableRow>
@@ -354,7 +354,7 @@ export const ReportNonConformingEvent = () => {
       )}
       {nceForm.show && nceForm.data && (
         <Grid fullWidth={true}>
-          <Column lg={3}>
+          <Column lg={3} md={3} sm={3}>
             <div style={{ marginBottom: "10px" }}>
               <span style={{ color: "#3366B3", fontWeight: "bold" }}>
                 <b>
@@ -366,7 +366,7 @@ export const ReportNonConformingEvent = () => {
               {nceForm.data.reportDate}
             </div>
           </Column>
-          <Column lg={3} style={{ marginBottom: "20px" }}>
+          <Column lg={3} md={3} sm={3} style={{ marginBottom: "20px" }}>
             <div style={{ marginBottom: "10px" }}>
               <span style={{ color: "#3366B3", fontWeight: "bold" }}>
                 <FormattedMessage id="patient.label.name" />
@@ -374,7 +374,7 @@ export const ReportNonConformingEvent = () => {
             </div>
             <div style={{ marginBottom: "10px" }}>{nceForm.data.name}</div>
           </Column>
-          <Column lg={3} style={{ marginBottom: "20px" }}>
+          <Column lg={3} md={3} sm={3} style={{ marginBottom: "20px" }}>
             <div style={{ marginBottom: "10px" }}>
               <span style={{ color: "#3366B3", fontWeight: "bold" }}>
                 <FormattedMessage id="nonconform.nce.number" />
@@ -383,7 +383,7 @@ export const ReportNonConformingEvent = () => {
             <div style={{ marginBottom: "10px" }}>{nceForm.data.nceNumber}</div>
           </Column>
 
-          <Column lg={3} style={{ marginBottom: "20px" }}>
+          <Column lg={3} md={3} sm={3} style={{ marginBottom: "20px" }}>
             <div style={{ marginBottom: "10px" }}>
               <span style={{ color: "#3366B3", fontWeight: "bold" }}>
                 <FormattedMessage id="sample.label.labnumber" />
@@ -393,7 +393,7 @@ export const ReportNonConformingEvent = () => {
               {nceForm.data.labOrderNumber}
             </div>
           </Column>
-          <Column lg={4} style={{ marginBottom: "20px" }}>
+          <Column lg={4} md={3} sm={3} style={{ marginBottom: "20px" }}>
             <div style={{ marginBottom: "10px" }}>
               <span style={{ color: "#3366B3", fontWeight: "bold" }}>
                 <FormattedMessage id="nonconform.label.prescibernamesite" />
@@ -403,10 +403,10 @@ export const ReportNonConformingEvent = () => {
               {`${nceForm.data.prescriberName} | ${nceForm.data.site}`}
             </div>
           </Column>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <br></br>
           </Column>
-          <Column lg={8}>
+          <Column lg={8} md={4} sm={4}>
             <TextInput
               labelText={
                 <FormattedMessage id="nonconform.person.reporting.different" />
@@ -425,7 +425,7 @@ export const ReportNonConformingEvent = () => {
             />
           </Column>
 
-          <Column lg={8}>
+          <Column lg={8} md={4} sm={4}>
             <CustomDatePicker
               key="startDate"
               id={"startDate"}
@@ -444,10 +444,10 @@ export const ReportNonConformingEvent = () => {
               }
             />
           </Column>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <br></br>
           </Column>
-          <Column lg={8}>
+          <Column lg={8} md={4} sm={4}>
             <Select
               labelText={
                 <FormattedMessage id="nonconform.label.reportingunit" />
@@ -474,7 +474,7 @@ export const ReportNonConformingEvent = () => {
               ))}
             </Select>
           </Column>
-          <Column lg={8}>
+          <Column lg={8} md={4} sm={4}>
             <TextArea
               labelText={<FormattedMessage id="nonconform.description.nce" />}
               value={nceForm.data.description}
@@ -491,10 +491,10 @@ export const ReportNonConformingEvent = () => {
               id="text-area-1"
             />
           </Column>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <br></br>
           </Column>
-          <Column lg={8}>
+          <Column lg={8} md={4} sm={4}>
             <TextArea
               labelText={
                 <FormattedMessage id="nonconform.label.suspected.cause.nce" />
@@ -513,7 +513,7 @@ export const ReportNonConformingEvent = () => {
               id="text-area-1"
             />
           </Column>
-          <Column lg={8}>
+          <Column lg={8} md={4} sm={4}>
             <TextArea
               labelText={
                 <FormattedMessage id="nonconform.label.proposed.action" />
@@ -532,10 +532,10 @@ export const ReportNonConformingEvent = () => {
               id="text-area-1"
             />
           </Column>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <br></br>
           </Column>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             {!!nceForm.error && (
               <div style={{ color: "#c62828", margin: 4 }}>{nceForm.error}</div>
             )}
