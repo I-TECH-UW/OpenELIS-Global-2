@@ -116,9 +116,6 @@ export const ViewNonConformingEvent = () => {
       setNceTypes(
         data.nceTypes.filter((obj) => {
           let bol = Number(obj.categoryId) === Number(formData.nceCategory);
-
-  
-
           return bol;
         }),
       );
@@ -420,6 +417,49 @@ export const ViewNonConformingEvent = () => {
 
           <Column lg={16}>
             <br></br>
+          </Column>
+
+          <Column lg={8}>
+            <Select
+              labelText={<FormattedMessage id="nonconform.view.severe.consequences" />}
+              id="severity"
+              value={formData.severity}
+              onChange={(e) => {
+                setFormData({
+                  ...formData,
+                  severity: e.target.value,
+                });
+              }}
+            >
+              {data.severityConsequenceList.map((option) => (
+                <SelectItem
+                  key={option.id}
+                  value={option.id}
+                  text={option.value}
+                />
+              ))}
+            </Select>
+          </Column>
+          <Column lg={8}>
+            <Select
+              labelText={<FormattedMessage id="nonconform.view.nce.likely.occur" />}
+              id="likelyToRecur"
+              value={formData.likelyToRecur}
+              onChange={(e) => {
+                setFormData({
+                  ...formData,
+                  likelyToRecur: e.target.value,
+                });
+              }}
+            >
+              {data.severityRecurs.map((option) => (
+                <SelectItem
+                  key={option.id}
+                  value={option.id}
+                  text={option.value}
+                />
+              ))}
+            </Select>
           </Column>
 
           <Column lg={16}>
