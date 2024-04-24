@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.qaevent.service.NCEventService;
 import org.openelisglobal.qaevent.service.NceCategoryService;
 import org.openelisglobal.qaevent.service.NceSpecimenService;
@@ -13,13 +14,15 @@ import org.openelisglobal.qaevent.service.NceTypeService;
 import org.openelisglobal.qaevent.valueholder.NcEvent;
 import org.openelisglobal.qaevent.valueholder.NceSpecimen;
 import org.openelisglobal.sampleitem.service.SampleItemService;
-import org.openelisglobal.sampleitem.valueholder.SampleItem;  
+import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.systemuser.service.SystemUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class ViewNonConformEventsRestController {
@@ -39,6 +42,12 @@ public class ViewNonConformEventsRestController {
   @Autowired
   private SampleItemService sampleItemService;
 
+  @Autowired
+  private SystemUserService systemUserService;
+
+  private static final String USER_SESSION_DATA = "userSessionData";
+
+
   @GetMapping(
     value = "/rest/viewNonConformEvents",
     produces = MediaType.APPLICATION_JSON_VALUE
@@ -46,7 +55,8 @@ public class ViewNonConformEventsRestController {
   public ResponseEntity<?> getNceNumber(
     @RequestParam(required = false) String labNumber,
     @RequestParam(required = false) String nceNumber,
-    @RequestParam(required = false) String status
+    @RequestParam(required = false) String status,
+    HttpServletRequest request
   ) {
     Map<String, Object> searchParameters = new HashMap<>();
     searchParameters.put("status", status);
@@ -102,6 +112,8 @@ public class ViewNonConformEventsRestController {
 
     res.put("repoUnit", event.getReportingUnitId());
 
+    res.put("currentUserId",systemUserService.getUserById(getSysUserId(request)));
+
     List<NceSpecimen> specimenList = nceSpecimenService.getAllMatching(
       "nceId",
       event.getId()
@@ -122,5 +134,19 @@ public class ViewNonConformEventsRestController {
     res.put("dateOfEvent", DateUtil.formatDateAsText(event.getDateOfEvent()));
 
     return ResponseEntity.ok().body(res);
+  }
+
+
+  protected String getSysUserId(HttpServletRequest request) {
+    UserSessionData usd = (UserSessionData) request
+      .getSession()
+      .getAttribute(USER_SESSION_DATA);
+    if (usd == null) {
+      usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);
+      if (usd == null) {
+        return null;
+      }
+    }
+    return String.valueOf(usd.getSystemUserId());
   }
 }

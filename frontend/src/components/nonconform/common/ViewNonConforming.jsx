@@ -57,8 +57,13 @@ export const ViewNonConformingEvent = () => {
   const [formData, setFormData] = useState({
     nceCategory: undefined,
     nceType: undefined,
-    severity: undefined,
-    likelyToRecur: undefined,
+    consequences: undefined,
+    recurrence: undefined,
+    severityScore: 0,
+    correctiveAction: undefined,
+    controlAction: undefined,
+    comments: undefined,
+    labComponent: undefined,
   });
 
   const [nceTypes, setNceTypes] = useState([]);
@@ -67,6 +72,25 @@ export const ViewNonConformingEvent = () => {
     useContext(NotificationContext);
 
   const intl = useIntl();
+
+  useEffect(() => {
+    let a = parseInt(formData.consequences ?? 0);
+    let b = parseInt(formData.recurrence ?? 0);
+
+    let c = a * b;
+
+    if (
+      typeof a === "number" &&
+      typeof b === "number" &&
+      typeof c === "number"
+    ) {
+      console.log("c value", c);
+      setFormData({
+        ...formData,
+        severityScore: c,
+      });
+    }
+  }, [formData.consequences, formData.recurrence]);
 
   const handleSubmit = () => {
     if (reportFormValues.type === undefined || reportFormValues.value === "") {
@@ -120,38 +144,26 @@ export const ViewNonConformingEvent = () => {
         }),
       );
     }
-
   }, [formData.nceCategory]);
 
   const handleNCEFormSubmit = () => {
-    console.log("nceForm.data", nceForm.data);
-
-    if (!nceForm.data.dateOfEvent) {
-      setnceForm({
-        ...nceForm,
-        error: intl.formatMessage({
-          id: "error.nonconform.report.data.found",
-          defaultMessage: "Please select a date",
-        }),
-      });
-      return;
-    }
+    console.log("data", formData);
 
     let body = {
-      currentUserId: parseInt(nceForm.data.currentUserId),
-      id: parseInt(nceForm.data.id),
-      reportDate: nceForm.data.reportDate,
-      name: nceForm.data.name,
-      reporterName: nceForm.data.reporterName,
-      dateOfEvent: nceForm.data.dateOfEvent,
-      labOrderNumber: nceForm.data.labOrderNumber,
-      prescriberName: nceForm.data.prescriberName,
-      site: nceForm.data.site,
-      reportingUnit: nceForm.data.reportingUnit,
-      description: nceForm.data.description,
-      suspectedCauses: nceForm.data.suspectedCauses,
-      proposedAction: nceForm.data.proposedAction,
+      id: formData.res.id,
+      laboratoryComponent: formData.labComponent,
+      nceCategory: formData.nceCategory,
+      nceType: formData.nceType,
+      consequences: formData.consequences,
+      recurrence: formData.recurrence,
+      severityScore: formData.severityScore,
+      correctiveAction: formData.correctiveAction,
+      controlAction: formData.controlAction,
+      comments : formData.comments,
+      currentUserId : data.currentUserId??""
     };
+
+   
     postToOpenElisServerJsonResponse(
       "/rest/reportnonconformingevent",
       JSON.stringify(body),
@@ -400,8 +412,6 @@ export const ViewNonConformingEvent = () => {
                   ...formData,
                   nceType: e.target.value,
                 });
-
-               
               }}
             >
               <SelectItem key={"emptyselect"} value={""} text={""} />
@@ -421,13 +431,15 @@ export const ViewNonConformingEvent = () => {
 
           <Column lg={8}>
             <Select
-              labelText={<FormattedMessage id="nonconform.view.severe.consequences" />}
-              id="severity"
-              value={formData.severity}
+              labelText={
+                <FormattedMessage id="nonconform.view.severe.consequences" />
+              }
+              id="consequences"
+              value={formData.consequences}
               onChange={(e) => {
                 setFormData({
                   ...formData,
-                  severity: e.target.value,
+                  consequences: e.target.value,
                 });
               }}
             >
@@ -442,13 +454,15 @@ export const ViewNonConformingEvent = () => {
           </Column>
           <Column lg={8}>
             <Select
-              labelText={<FormattedMessage id="nonconform.view.nce.likely.occur" />}
-              id="likelyToRecur"
-              value={formData.likelyToRecur}
+              labelText={
+                <FormattedMessage id="nonconform.view.nce.likely.occur" />
+              }
+              id="recurrence"
+              value={formData.recurrence}
               onChange={(e) => {
                 setFormData({
                   ...formData,
-                  likelyToRecur: e.target.value,
+                  recurrence: e.target.value,
                 });
               }}
             >
@@ -465,6 +479,103 @@ export const ViewNonConformingEvent = () => {
           <Column lg={16}>
             <br></br>
           </Column>
+
+          <Column lg={16} style={{ marginBottom: "20px", textAlign: "center" }}>
+            <div style={{ marginBottom: "10px" }}>
+              <span style={{ color: "#3366B3", fontWeight: "bold" }}>
+                <FormattedMessage id="nonconform.severity.score" />
+              </span>
+            </div>
+            <div style={{ marginBottom: "10px" }}>{formData.severityScore}</div>
+          </Column>
+
+          <Column lg={16}>
+            <br></br>
+          </Column>
+
+          <Column lg={8}>
+            <Select
+              labelText={
+                <FormattedMessage id="nonconform.view.lab.component" />
+              }
+              id="labComponent"
+              value={formData.labComponent}
+              onChange={(e) => {
+                setFormData({
+                  ...formData,
+                  labComponent: e.target.value,
+                });
+              }}
+            >
+              <SelectItem value="" text="" />
+              {data.labComponentList.map((option) => (
+                <SelectItem
+                  key={option.id}
+                  value={option.id}
+                  text={option.value}
+                />
+              ))}
+            </Select>
+          </Column>
+
+          <Column lg={8} md={4} sm={4}>
+            <TextArea
+              labelText={
+                <FormattedMessage id="nonconform.view.corrective.action.description" />
+              }
+              value={formData.correctiveAction}
+              onChange={(e) => {
+                setFormData({
+                  ...formData,
+                  correctiveAction: e.target.value,
+                });
+              }}
+              invalid={formData.correctiveAction?.length > 200}
+              invalidText={<FormattedMessage id="text.length.max" />}
+              rows={2}
+              id="text-area-10"
+            />
+          </Column>
+
+          <Column lg={8} md={4} sm={4}>
+            <TextArea
+              labelText={
+                <FormattedMessage id="nonconform.view.preventive.description" />
+              }
+              value={formData.controlAction}
+              onChange={(e) => {
+                setFormData({
+                  ...formData,
+                  controlAction: e.target.value,
+                });
+              }}
+              rows={2}
+              id="text-area-3"
+              invalid={formData.controlAction?.length > 200}
+              invalidText={<FormattedMessage id="text.length.max" />}
+            />
+          </Column>
+
+          <Column lg={8} md={4} sm={4}>
+            <TextArea
+              labelText={<FormattedMessage id="nonconform.view.comments" />}
+              value={formData.comments}
+              onChange={(e) => {
+                setFormData({
+                  ...formData,
+                  comments: e.target.value,
+                });
+              }}
+              rows={2}
+              id="text-area-2"
+              invalid={formData.comments?.length > 200}
+              invalidText={<FormattedMessage id="text.length.max" />}
+            />
+          </Column>
+          <Column lg={16}>
+            <br></br>
+          </Column>
+
           <Column lg={16}>
             {false && (
               <div style={{ color: "#c62828", margin: 4 }}>{nceForm.error}</div>
