@@ -123,36 +123,33 @@ function OrderEntryConfigMenu() {
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
-
-      <PageBreadCrumb breadcrumbs={breadcrumbs} />
-      <Grid>
-        <Column lg={16} md={8} sm={4}>
-          <Section>
-            <Heading>
-              <FormattedMessage id="admin.orderEntryConfigMenu" />
-            </Heading>
-          </Section>
-        </Column>
-      </Grid>
-      <br />
       <div className="adminPageContent">
-        <Column lg={16} md={8} sm={4}>
-          <Section>
-            <Form onSubmit={handleModify}>
-              <Column lg={16} md={8} sm={4}>
-                <Button disabled={modifyButton} type="submit">
-                  <FormattedMessage id="admin.page.configuration.sampleEntryConfigMenu.button.modify" />
-                </Button>{" "}
-                <Button kind="tertiary" disabled={true} type="submit">
-                  <FormattedMessage id="admin.page.configuration.sampleEntryConfigMenu.button.deactivate" />
-                </Button>{" "}
-                <Button kind="tertiary" disabled={true} type="submit">
-                  <FormattedMessage id="admin.page.configuration.sampleEntryConfigMenu.button.add" />
-                </Button>
-              </Column>
-            </Form>
-          </Section>
-        </Column>
+        <PageBreadCrumb breadcrumbs={breadcrumbs} />
+        <Grid>
+          <Column lg={16} md={8} sm={4}>
+            <Section>
+              <Heading>
+                <FormattedMessage id="admin.orderEntryConfigMenu" />
+              </Heading>
+            </Section>
+            <br />
+            <Section>
+              <Form onSubmit={handleModify}>
+                <Column lg={16} md={8} sm={4}>
+                  <Button disabled={modifyButton} type="submit">
+                    <FormattedMessage id="admin.page.configuration.sampleEntryConfigMenu.button.modify" />
+                  </Button>{" "}
+                  <Button kind="tertiary" disabled={true} type="submit">
+                    <FormattedMessage id="admin.page.configuration.sampleEntryConfigMenu.button.deactivate" />
+                  </Button>{" "}
+                  <Button kind="tertiary" disabled={true} type="submit">
+                    <FormattedMessage id="admin.page.configuration.sampleEntryConfigMenu.button.add" />
+                  </Button>
+                </Column>
+              </Form>
+            </Section>
+          </Column>
+        </Grid>
         <div className="orderLegendBody">
           <Grid fullWidth={true} className="gridBoundary">
             <Column lg={16} md={8} sm={4}>

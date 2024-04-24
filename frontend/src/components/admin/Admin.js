@@ -143,12 +143,8 @@ function Admin() {
       <PathRoute path="#configurationManagement">
         <OrderEntryConfigMenu />
       </PathRoute>
-      <PathRoute path="#mainMenuManagement">
-        <OrderEntryConfigMenu />
-      </PathRoute>
-      <PathRoute path="#otherAdminPagesManagement">
-        <OrderEntryConfigMenu />
-      </PathRoute>
+      <PathRoute path="#mainMenuManagement"></PathRoute>
+      <PathRoute path="#otherAdminPagesManagement"></PathRoute>
     </>
   );
 }
