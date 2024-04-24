@@ -11,7 +11,7 @@ import {
   NonConformityMenuManagement,
   PatientMenuManagement,
   StudyMenuManagement,
-  SampleEntryConfigMenu,
+  OrderEntryConfigMenu,
 } from "./menu";
 import {
   Microscope,
@@ -141,13 +141,13 @@ function Admin() {
         <CommonProperties />
       </PathRoute>
       <PathRoute path="#configurationManagement">
-        <SampleEntryConfigMenu />
+        <OrderEntryConfigMenu />
       </PathRoute>
       <PathRoute path="#mainMenuManagement">
-        <SampleEntryConfigMenu />
+        <OrderEntryConfigMenu />
       </PathRoute>
       <PathRoute path="#otherAdminPagesManagement">
-        <SampleEntryConfigMenu />
+        <OrderEntryConfigMenu />
       </PathRoute>
     </>
   );

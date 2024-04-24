@@ -874,7 +874,10 @@
   "admin.page.configuration.sampleEntryConfigMenu.description":"Description",
   "admin.page.configuration.sampleEntryConfigMenu.select":"Select",
   "admin.page.configuration.sampleEntryConfigMenu.value":"Value",
+  "admin.page.configuration.sampleEntryConfigMenu.editRecord":"Edit Record",
   "admin.page.configuration.sampleEntryConfigMenu.button.modify":"Modify",
   "admin.page.configuration.sampleEntryConfigMenu.button.deactivate":"Deactivate",
-  "admin.page.configuration.sampleEntryConfigMenu.button.add":"Add"
+  "admin.page.configuration.sampleEntryConfigMenu.button.add":"Add",
+  "admin.page.configuration.sampleEntryConfigMenu.button.save":"Save",
+  "admin.page.configuration.sampleEntryConfigMenu.button.exit":"Exit"
 }
