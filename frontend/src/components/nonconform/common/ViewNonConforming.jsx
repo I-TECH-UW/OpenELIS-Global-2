@@ -112,6 +112,7 @@ export const ViewNonConformingEvent = () => {
       getFromOpenElisServer(
         `/rest/viewNonConformEvents?${reportFormValues.type}=${reportFormValues.value}&nceNumber=&status=Pending`,
         (data) => {
+          setReportFormValues(initialReportFormValues)
           if (!data.res) {
             setReportFormValues({
               ...reportFormValues,
