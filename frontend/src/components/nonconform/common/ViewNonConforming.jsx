@@ -112,11 +112,12 @@ export const ViewNonConformingEvent = () => {
       getFromOpenElisServer(
         `/rest/viewNonConformEvents?${reportFormValues.type}=${reportFormValues.value}&nceNumber=&status=Pending`,
         (data) => {
-
           if (!data.res) {
             setReportFormValues({
               ...reportFormValues,
-              error: `no.data.found`,
+              error: intl.formatMessage({
+                id: "no.data.found",
+              }),
             });
           } else {
             setData(data);
@@ -147,7 +148,6 @@ export const ViewNonConformingEvent = () => {
   }, [formData.nceCategory]);
 
   const handleNCEFormSubmit = () => {
-
     let body = {
       id: data.res[0].id,
       laboratoryComponent: formData.labComponent,

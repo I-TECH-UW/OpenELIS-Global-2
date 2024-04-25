@@ -831,5 +831,22 @@
   "label.barcode.labelsets": "Nombre d'ensembles d'étiquettes",
   "label.barcode.orderlabel": "Nombre d'étiquettes de commande par ensemble",
   "label.barcode.specimenlabel": "Nombre d'étiquettes d'échantillon par ensemble",
-  "label.barcode.totallabel": "Nombre total d'étiquettes à imprimer"
+  "label.barcode.totallabel": "Nombre total d'étiquettes à imprimer",
+  "nonconform.view.reporting.person": "Personne Responsable du Rapport",
+  "nonconform.view.specimen": "Spécimen(s)",
+  "nonconform.view.lab.component": "Composant de Laboratoire",
+  "nonconform.view.event.description": "Description de l'Événement",
+  "nonconform.view.nce.type": "Type d'ÉCN",
+  "nonconform.view.nce.category": "Catégorie d'ÉCN",
+  "nonconform.view.nce.severity": "Gravité",
+  "nonconform.view.severe.consequences": "Quelle est la gravité des conséquences ou de l'impact de l'ÉCN ?",
+  "nonconform.view.nce.likely.occur": "Quelle est la probabilité que l'ÉCN se reproduise ?",
+  "nonconform.view.corrective.action.description": "Description de l'action corrective à entreprendre",
+  "nonconform.view.preventive.description": "Le cas échéant, description de l'action préventive ou de contrôle concomitante",
+  "nonconform.view.comments": "Commentaires",
+  "nonconform.view.event.date": "Date de l'Événement",
+  "nonconform.view.report": "Voir le Nouvel Événement Non Conforme",
+  "no.data.found": "Aucune donnée trouvée",
+  "nonconform.severity.score": "Score de Gravité",
+  "text.length.max": "La longueur du texte ne doit pas dépasser 200"
 }
