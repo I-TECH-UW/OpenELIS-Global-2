@@ -47,6 +47,18 @@ const selectOptions = [
   },
 ];
 
+const initialFormData = {
+  nceCategory: undefined,
+  nceType: undefined,
+  consequences: undefined,
+  recurrence: undefined,
+  severityScore: 0,
+  correctiveAction: undefined,
+  controlAction: undefined,
+  comments: undefined,
+  labComponent: undefined,
+};
+
 export const ViewNonConformingEvent = () => {
   const [reportFormValues, setReportFormValues] = useState(
     initialReportFormValues,
@@ -54,18 +66,7 @@ export const ViewNonConformingEvent = () => {
 
   const [data, setData] = useState(null);
 
-  const [formData, setFormData] = useState({
-    nceCategory: undefined,
-    nceType: undefined,
-    consequences: undefined,
-    recurrence: undefined,
-    severityScore: 0,
-    correctiveAction: undefined,
-    controlAction: undefined,
-    comments: undefined,
-    labComponent: undefined,
-  });
-
+  const [formData, setFormData] = useState(initialFormData);
   const [nceTypes, setNceTypes] = useState([]);
 
   const { notificationVisible, setNotificationVisible, addNotification } =
@@ -84,7 +85,6 @@ export const ViewNonConformingEvent = () => {
       typeof b === "number" &&
       typeof c === "number"
     ) {
-      console.log("c value", c);
       setFormData({
         ...formData,
         severityScore: c,
@@ -112,7 +112,7 @@ export const ViewNonConformingEvent = () => {
       getFromOpenElisServer(
         `/rest/viewNonConformEvents?${reportFormValues.type}=${reportFormValues.value}&nceNumber=&status=Pending`,
         (data) => {
-          console.log("viewNonData", data);
+
           if (!data.res) {
             setReportFormValues({
               ...reportFormValues,
@@ -147,10 +147,9 @@ export const ViewNonConformingEvent = () => {
   }, [formData.nceCategory]);
 
   const handleNCEFormSubmit = () => {
-    console.log("data", formData);
 
     let body = {
-      id: formData.res.id,
+      id: data.res[0].id,
       laboratoryComponent: formData.labComponent,
       nceCategory: formData.nceCategory,
       nceType: formData.nceType,
@@ -159,20 +158,27 @@ export const ViewNonConformingEvent = () => {
       severityScore: formData.severityScore,
       correctiveAction: formData.correctiveAction,
       controlAction: formData.controlAction,
-      comments : formData.comments,
-      currentUserId : data.currentUserId??""
+      comments: formData.comments,
+      currentUserId: data.currentUserId.id ?? "",
+      reporterName: data.res[0].nameOfReporter ?? "",
+      site: data.res[0].site,
+      nceNumber: data.res[0].nceNumber,
+      reportDate: data.reportDate,
+      dateOfEvent: data.dateOfEvent,
+      name: data.res[0].name,
+      reportingUnit: data.res[0].reportingUnitId,
+      prescriberName: data.res[0].prescriberName,
+      description: data.res[0].description,
+      suspectedCauses: data.res[0].suspectedCauses,
     };
 
-   
     postToOpenElisServerJsonResponse(
-      "/rest/reportnonconformingevent",
+      "/rest/viewNonConformEvents",
       JSON.stringify(body),
       (data) => {
         setNotificationVisible(true);
         setReportFormValues(initialReportFormValues);
-        setLData(null);
-        setSelectedSample(initialSelected);
-        setnceForm(initialNCEForm);
+        setData(null);
 
         if (data.success) {
           addNotification({
