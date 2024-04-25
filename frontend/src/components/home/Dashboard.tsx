@@ -28,7 +28,7 @@ import {
   getFromOpenElisServer,
   convertAlphaNumLabNumForDisplay,
 } from "../utils/Utils.js";
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedMessage, useIntl } from 'react-intl';
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
@@ -431,24 +431,26 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   const orderHeaders = [
     {
+
+  
       key: "priority",
-      header: "Priority",
+      header: <FormattedMessage id="priority" />,
     },
     {
       key: "orderDate",
-      header: "Order Date",
+      header:<FormattedMessage id="orderDate" />,
     },
     {
       key: "patientId",
-      header: "Patient Id",
+      header:<FormattedMessage id="patientId" />,
     },
     {
       key: "labNumber",
-      header: "Lab Number",
+      header:<FormattedMessage id="labNumber" />,
     },
     {
       key: "testName",
-      header: "Test Name",
+      header:<FormattedMessage id="testName" />,
     },
   ];
 

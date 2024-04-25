@@ -95,7 +95,6 @@
   "patient.subject.number": "Unique Health ID number",
   "sample.entry.nextVisit.date": "Date of next visit",
   "sample.entry.project.testName": "Test Name",
-  "sample.receivedDate": "Received Date",
   "label.total.tests": "Total tests",
   "result.nonconforming.item": "Sample or order is nonconforming OR test has been rejected",
   "sample.entry.project.patient.and.testName": "Name/Code of patient {br} Test Name",
@@ -889,5 +888,11 @@
   "label.barcode.labelsets": "Number of label sets",
   "label.barcode.orderlabel": "Number of order labels per set",
   "label.barcode.specimenlabel": "Number of specimen labels per set",
-  "label.barcode.totallabel": "Total Labels to Print"
+  "label.barcode.totallabel": "Total Labels to Print",
+  "priority": "Priority",
+  "orderDate": "Order Date",
+  "patientId": "Patient Id",
+  "labNumber": "Lab Number",
+  "testName": "Test Name"
+  
 }

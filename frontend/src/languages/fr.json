@@ -101,7 +101,6 @@
   "referrer.label": "Référent",
   "sample.entry.nextVisit.date": "Date de rendez vous",
   "sample.entry.project.testName": "Nom du Test",
-  "sample.receivedDate": "Date de réception",
   "sample.requestDate": "Date de la demande",
   "select.program": "Programme",
   "provider.email": "E-mail",
@@ -821,5 +820,12 @@
   "label.barcode.labelsets": "Nombre d'ensembles d'étiquettes",
   "label.barcode.orderlabel": "Nombre d'étiquettes de commande par ensemble",
   "label.barcode.specimenlabel": "Nombre d'étiquettes d'échantillon par ensemble",
-  "label.barcode.totallabel": "Nombre total d'étiquettes à imprimer"
+  "label.barcode.totallabel": "Nombre total d'étiquettes à imprimer",
+  "priority": "Priorité",
+  "orderDate": "Date de commande",
+  "patientId": "Identifiant du patient",
+  "labNumber": "Numéro de laboratoire",
+  "testName": "Nom du test"
+  
+  
 }
