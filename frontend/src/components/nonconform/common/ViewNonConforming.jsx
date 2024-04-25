@@ -584,7 +584,7 @@ export const ViewNonConformingEvent = () => {
 
           <Column lg={16}>
             {false && (
-              <div style={{ color: "#c62828", margin: 4 }}>{nceForm.error}</div>
+              <div style={{ color: "#c62828", margin: 4 }}>{formData.error}</div>
             )}
             <Button type="button" onClick={() => handleNCEFormSubmit()}>
               <FormattedMessage id="label.button.submit" />
