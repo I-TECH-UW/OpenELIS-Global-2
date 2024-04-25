@@ -47,6 +47,21 @@ const selectOptions = [
   },
 ];
 
+const headers = [
+  {
+    key: "date",
+    value: "Date",
+  },
+  {
+    key: "nceNumber",
+    value: "NCE Number",
+  },
+  {
+    key: "specimen",
+    value: "Lab Section/Unit",
+  },
+];
+
 const initialFormData = {
   nceCategory: undefined,
   nceType: undefined,
@@ -68,6 +83,8 @@ export const ViewNonConformingEvent = () => {
 
   const [formData, setFormData] = useState(initialFormData);
   const [nceTypes, setNceTypes] = useState([]);
+  const [tData, setTData] = useState(null);
+  const [selected, setSelected] = useState(null);
 
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
@@ -107,12 +124,14 @@ export const ViewNonConformingEvent = () => {
       ...reportFormValues,
       error: undefined,
     });
+    let other =
+      reportFormValues.type == "labNumber" ? "nceNumber" : "labNumber";
 
     try {
       getFromOpenElisServer(
-        `/rest/viewNonConformEvents?${reportFormValues.type}=${reportFormValues.value}&nceNumber=&status=Pending`,
+        `/rest/viewNonConformEvents?${reportFormValues.type}=${reportFormValues.value}&${other}=&status=Pending`,
         (data) => {
-          setReportFormValues(initialReportFormValues)
+          setReportFormValues(initialReportFormValues);
           if (!data.res) {
             setReportFormValues({
               ...reportFormValues,
@@ -121,8 +140,13 @@ export const ViewNonConformingEvent = () => {
               }),
             });
           } else {
-            setData(data);
-            setNceTypes(data.nceTypes);
+            if (data.res.length < 2) {
+              setData(data);
+              setNceTypes(data.nceTypes);
+            } else {
+              setTData(data);
+              setData(null);
+            }
           }
         },
       );
@@ -200,6 +224,17 @@ export const ViewNonConformingEvent = () => {
     );
   };
 
+  useEffect(() => {
+    if (selected) {
+      setData({
+        ...tData,
+        res: tData.res.filter((obj) => obj.id === selected),
+      });
+      setSelected(null);
+      setTData(null);
+    }
+  }, [selected]);
+
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
@@ -275,6 +310,58 @@ export const ViewNonConformingEvent = () => {
           <br></br>
         </Column>
       </Grid>
+
+      {tData && (
+        <div>
+          <Grid>
+            <Column lg={16} md={8} sm={4}>
+              <Table style={{ marginTop: "1em" }}>
+                <TableHead>
+                  <TableRow>
+                    <TableHeader key="checkbox" />
+                    {headers.map((header) => (
+                      <TableHeader id={header.key} key={header.key}>
+                        {header.value}
+                      </TableHeader>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {tData.res.map((row) => (
+                    <TableRow key={row.id}>
+                      <TableCell key={`${row.id}-checkbox`}>
+                        <RadioButton
+                          name="radio-group"
+                          onClick={() => {
+                            setSelected(row.id);
+                            console.log(row.id);
+                          }}
+                          labelText=""
+                          id={row.id}
+                        />
+                      </TableCell>
+
+                      <TableCell key={row.key + "date"}>
+                        {new Date(row.reportDate).toDateString()}
+                      </TableCell>
+
+                      <TableCell key={row.key + "1"}>{row.nceNumber}</TableCell>
+
+                      <TableCell key={row.key + "2"}>
+                        {
+                          tData.reportingUnits.find(
+                            (obj) => parseInt(obj.id) === row.reportingUnitId,
+                          ).value
+                        }
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Column>
+          </Grid>
+        </div>
+      )}
 
       {data && (
         <Grid fullWidth={true}>
@@ -585,7 +672,9 @@ export const ViewNonConformingEvent = () => {
 
           <Column lg={16}>
             {false && (
-              <div style={{ color: "#c62828", margin: 4 }}>{formData.error}</div>
+              <div style={{ color: "#c62828", margin: 4 }}>
+                {formData.error}
+              </div>
             )}
             <Button type="button" onClick={() => handleNCEFormSubmit()}>
               <FormattedMessage id="label.button.submit" />

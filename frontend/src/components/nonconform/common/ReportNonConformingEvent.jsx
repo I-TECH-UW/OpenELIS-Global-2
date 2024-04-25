@@ -84,7 +84,7 @@ export const ReportNonConformingEvent = () => {
       getFromOpenElisServer(
         `/rest/nonconformevents?${reportFormValues.type}=${reportFormValues.value}`,
         (data) => {
-          setReportFormValues(initialReportFormValues)
+          setReportFormValues(initialReportFormValues);
           if (data) {
             setLData(data);
           } else {
@@ -310,8 +310,6 @@ export const ReportNonConformingEvent = () => {
                       <RadioButton
                         name="radio-group"
                         onClick={() => {
-                          console.log("row", row);
-                          console.log("row.id", row.id);
                           setSelectedSample({
                             specimenId: row.sampleItems
                               .map((item) => item.id)
