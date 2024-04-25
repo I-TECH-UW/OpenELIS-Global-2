@@ -5,7 +5,7 @@ const NonConformIndex = () => {
   return (
     <div>
       <br />
-      <PageBreadCrumb breadcrumbs={[{ label: "home.label", link: "/" }]} /> 
+      <PageBreadCrumb breadcrumbs={[{ label: "home.label", link: "/" }]} />
       <div className="orderLegendBody">
         <ReportNonConformingEvent />
       </div>
