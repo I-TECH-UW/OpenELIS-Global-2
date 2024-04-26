@@ -6,7 +6,7 @@ module.exports = defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
       // implement node event listeners here
-      config.specPattern = [
+      config.testFiles = [
         "cypress/e2e/login.cy.js",
         "cypress/e2e/patientEntry.cy.js",
         "cypress/e2e/orderEntity.cy.js",

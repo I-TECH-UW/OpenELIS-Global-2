@@ -434,7 +434,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   
       key: "priority",
-      header: <FormattedMessage id="priority" />,
+      header: <FormattedMessage id="prrity" />,
     },
     {
       key: "orderDate",
