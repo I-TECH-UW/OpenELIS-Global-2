@@ -18,6 +18,7 @@ import {
   RadioButton,
   UnorderedList,
   ListItem,
+  Checkbox,
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
@@ -30,6 +31,7 @@ import {
   postToOpenElisServerJsonResponse,
 } from "../../utils/Utils";
 import CustomDatePicker from "../../common/CustomDatePicker";
+import { sampleObject } from "../../addOrder/Index";
 
 const initialReportFormValues = {
   type: undefined,
@@ -56,9 +58,8 @@ export const ReportNonConformingEvent = () => {
   );
   const [ldata, setLData] = useState(null);
   const [selectedSample, setSelectedSample] = useState(initialSelected);
-
   const [nceForm, setnceForm] = useState(initialNCEForm);
-
+  const [orderSampleMap, setOrderSampleMap] = useState({});
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
@@ -140,6 +141,7 @@ export const ReportNonConformingEvent = () => {
   ];
 
   useEffect(() => {
+    console.log(JSON.stringify(selectedSample));
     if (selectedSample.labOrderNumber && selectedSample.specimenId) {
       getFromOpenElisServer(
         `/rest/reportnonconformingevent?labOrderNumber=${selectedSample.labOrderNumber}&specimenId=${selectedSample.specimenId}`,
@@ -306,39 +308,57 @@ export const ReportNonConformingEvent = () => {
               <TableBody>
                 {ldata.map((row) => (
                   <TableRow key={row.id}>
-                    <TableCell key={`${row.id}-checkbox`}>
-                      <RadioButton
-                        name="radio-group"
-                        onClick={() => {
-                          setSelectedSample({
-                            specimenId: row.sampleItems
-                              .map((item) => item.id)
-                              .join(","),
-                            selected: true,
-                            labOrderNumber: row.labOrderNumber,
-                          });
-                          console.log(selectedSample);
-                        }}
-                        labelText=""
-                        id={row.id}
-                      />
-                    </TableCell>
+                    <TableCell key={`${row.id}-checkbox`}></TableCell>
                     {headers.map((header) => (
                       <TableCell key={header.key}>
                         <UnorderedList>
                           {header.key === "type"
                             ? row.sampleItems.map((item) => (
-                                <ListItem
+                                <Checkbox
+                                  id={row.labOrderNumber + "-" + item.number}
                                   key={item.id}
-                                  style={{ listStyleType: "disc" }}
-                                >
-                                  {item.type +
+                                  labelText={
+                                    item.type +
                                     " (" +
                                     row.labOrderNumber +
                                     "-" +
                                     item.number +
-                                    ")"}
-                                </ListItem>
+                                    ")"
+                                  }
+                                  checked={
+                                    orderSampleMap[row.labOrderNumber]
+                                      ? orderSampleMap[
+                                          row.labOrderNumber
+                                        ].indexOf(item.id) !== -1
+                                      : false
+                                  }
+                                  onChange={(e) => {
+                                    let orderSample = { ...orderSampleMap };
+                                    if (e.target.checked) {
+                                      if (row.labOrderNumber in orderSample) {
+                                        orderSample[row.labOrderNumber].push(
+                                          item.id,
+                                        );
+                                      } else {
+                                        orderSample = {
+                                          [row.labOrderNumber]: [item.id],
+                                        };
+                                      }
+                                    } else {
+                                      if (row.labOrderNumber in orderSample) {
+                                        var index = orderSample[
+                                          row.labOrderNumber
+                                        ].indexOf(item.id);
+                                        if (index !== -1) {
+                                          orderSample[
+                                            row.labOrderNumber
+                                          ].splice(index, 1);
+                                        }
+                                      }
+                                    }
+                                    setOrderSampleMap(orderSample);
+                                  }}
+                                />
                               ))
                             : row[header.key]}
                         </UnorderedList>
@@ -348,6 +368,23 @@ export const ReportNonConformingEvent = () => {
                 ))}
               </TableBody>
             </Table>
+          </Column>
+          <Column lg={16}>
+            <Button
+              type="button"
+              onClick={() => {
+                const labNo = Object.keys(orderSampleMap)[0];
+                if (labNo) {
+                  setSelectedSample({
+                    specimenId: orderSampleMap[labNo].join(","),
+                    selected: true,
+                    labOrderNumber: labNo,
+                  });
+                }
+              }}
+            >
+              <FormattedMessage id="nonconform.goToNceForm" />
+            </Button>
           </Column>
         </Grid>
       )}
