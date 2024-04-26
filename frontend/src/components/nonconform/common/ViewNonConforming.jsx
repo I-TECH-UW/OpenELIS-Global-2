@@ -131,18 +131,21 @@ export const ViewNonConformingEvent = () => {
       getFromOpenElisServer(
         `/rest/viewNonConformEvents?${reportFormValues.type}=${reportFormValues.value}&${other}=&status=Pending`,
         (data) => {
-          setReportFormValues(initialReportFormValues);
-          if (!data.res) {
+          //setReportFormValues(initialReportFormValues);
+          if (!data.results) {
             setReportFormValues({
               ...reportFormValues,
               error: intl.formatMessage({
                 id: "no.data.found",
               }),
             });
+            setData(null);
+            setTData(null);
           } else {
-            if (data.res.length < 2) {
+            if (data.results.length < 2) {
               setData(data);
               setNceTypes(data.nceTypes);
+              setTData(null);
             } else {
               setTData(data);
               setData(null);
@@ -158,6 +161,7 @@ export const ViewNonConformingEvent = () => {
           defaultMessage: "No data found",
         }),
       });
+      setData(null);
     }
   };
 
@@ -174,7 +178,7 @@ export const ViewNonConformingEvent = () => {
 
   const handleNCEFormSubmit = () => {
     let body = {
-      id: data.res[0].id,
+      id: data.results[0].id,
       laboratoryComponent: formData.labComponent,
       nceCategory: formData.nceCategory,
       nceType: formData.nceType,
@@ -185,16 +189,16 @@ export const ViewNonConformingEvent = () => {
       controlAction: formData.controlAction,
       comments: formData.comments,
       currentUserId: data.currentUserId.id ?? "",
-      reporterName: data.res[0].nameOfReporter ?? "",
-      site: data.res[0].site,
-      nceNumber: data.res[0].nceNumber,
+      reporterName: data.results[0].nameOfReporter ?? "",
+      site: data.results[0].site,
+      nceNumber: data.results[0].nceNumber,
       reportDate: data.reportDate,
       dateOfEvent: data.dateOfEvent,
-      name: data.res[0].name,
-      reportingUnit: data.res[0].reportingUnitId,
-      prescriberName: data.res[0].prescriberName,
-      description: data.res[0].description,
-      suspectedCauses: data.res[0].suspectedCauses,
+      name: data.results[0].name,
+      reportingUnit: data.results[0].reportingUnitId,
+      prescriberName: data.results[0].prescriberName,
+      description: data.results[0].description,
+      suspectedCauses: data.results[0].suspectedCauses,
     };
 
     postToOpenElisServerJsonResponse(
@@ -202,7 +206,7 @@ export const ViewNonConformingEvent = () => {
       JSON.stringify(body),
       (data) => {
         setNotificationVisible(true);
-        setReportFormValues(initialReportFormValues);
+        //setReportFormValues(initialReportFormValues);
         setData(null);
 
         if (data.success) {
@@ -226,12 +230,34 @@ export const ViewNonConformingEvent = () => {
 
   useEffect(() => {
     if (selected) {
-      setData({
-        ...tData,
-        res: tData.res.filter((obj) => obj.id === selected),
-      });
-      setSelected(null);
-      setTData(null);
+      try {
+        getFromOpenElisServer(
+          `/rest/viewNonConformEvents?nceNumber=${selected}&labNumber=&status=Pending`,
+          (data) => {
+            // setReportFormValues(initialReportFormValues);
+            if (!data.results) {
+              setReportFormValues({
+                ...reportFormValues,
+                error: intl.formatMessage({
+                  id: "no.data.found",
+                }),
+              });
+            } else {
+              setData(data);
+              setNceTypes(data.nceTypes);
+              setTData(null);
+            }
+          },
+        );
+      } catch (error) {
+        setReportFormValues({
+          ...reportFormValues,
+          error: intl.formatMessage({
+            id: "error.nonconform.report.data.found",
+            defaultMessage: "No data found",
+          }),
+        });
+      }
     }
   }, [selected]);
 
@@ -247,7 +273,7 @@ export const ViewNonConformingEvent = () => {
         <Column lg={16} md={10} sm={8}>
           <Form>
             <Grid fullWidth={true}>
-              <Column lg={4}>
+              <Column lg={4} md={8}>
                 <Select
                   id="type"
                   labelText={intl.formatMessage({
@@ -327,14 +353,14 @@ export const ViewNonConformingEvent = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {tData.res.map((row) => (
-                    <TableRow key={row.id}>
-                      <TableCell key={`${row.id}-checkbox`}>
+                  {tData.results.map((row) => (
+                    <TableRow key={row.nceNumber}>
+                      <TableCell key={`${row}-checkbox`}>
                         <RadioButton
                           name="radio-group"
                           onClick={() => {
-                            setSelected(row.id);
-                            console.log(row.id);
+                            setSelected(row.nceNumber);
+                            console.log(row);
                           }}
                           labelText=""
                           id={row.id}
@@ -374,7 +400,7 @@ export const ViewNonConformingEvent = () => {
               </span>
             </div>
             <div style={{ marginBottom: "10px", color: "#555" }}>
-              {data.res[0].nceNumber}
+              {data.results[0].nceNumber}
             </div>
           </Column>
           <Column lg={3} style={{ marginBottom: "20px" }}>
@@ -393,7 +419,7 @@ export const ViewNonConformingEvent = () => {
               </span>
             </div>
             <div style={{ marginBottom: "10px" }}>
-              {data.res[0].nameOfReporter}
+              {data.results[0].nameOfReporter}
             </div>
           </Column>
 
@@ -417,6 +443,7 @@ export const ViewNonConformingEvent = () => {
               {data.specimen[0].typeOfSample.description}
             </div>
           </Column>
+          <Column lg={1}></Column>
           <Column lg={3} style={{ marginBottom: "20px" }}>
             <div style={{ marginBottom: "10px" }}>
               <span style={{ color: "#3366B3", fontWeight: "bold" }}>
@@ -424,7 +451,7 @@ export const ViewNonConformingEvent = () => {
               </span>
             </div>
             <div style={{ marginBottom: "10px" }}>
-              {data.res[0].labOrderNumber}
+              {data.results[0].labOrderNumber}
             </div>
           </Column>
           <Column lg={3} style={{ marginBottom: "20px" }}>
@@ -435,7 +462,7 @@ export const ViewNonConformingEvent = () => {
             </div>
             <div
               style={{ marginBottom: "10px" }}
-            >{`${data.res[0].prescriberName}-${data.res[0].site}`}</div>
+            >{`${data.results[0].prescriberName}-${data.results[0].site}`}</div>
           </Column>
           <Column lg={3} style={{ marginBottom: "20px" }}>
             <div style={{ marginBottom: "10px" }}>
@@ -444,7 +471,7 @@ export const ViewNonConformingEvent = () => {
               </span>
             </div>
             <div style={{ marginBottom: "10px" }}>
-              {data.res[0].description ?? ""}
+              {data.results[0].description ?? ""}
             </div>
           </Column>
           <Column lg={3} style={{ marginBottom: "20px" }}>
@@ -454,7 +481,7 @@ export const ViewNonConformingEvent = () => {
               </span>
             </div>
             <div style={{ marginBottom: "10px" }}>
-              {data.res[0].suspectedCauses ?? ""}
+              {data.results[0].suspectedCauses ?? ""}
             </div>
           </Column>
           <Column lg={3} style={{ marginBottom: "20px" }}>
@@ -464,12 +491,29 @@ export const ViewNonConformingEvent = () => {
               </span>
             </div>
             <div style={{ marginBottom: "10px" }}>
-              {data.res[0].proposedAction ?? ""}
+              {data.results[0].proposedAction ?? ""}
             </div>
           </Column>
-          <Column lg={16}>
-            <br></br>
+          <Column lg={1}></Column>
+          <Column lg={3} style={{ marginBottom: "20px" }}>
+            <div style={{ marginBottom: "10px" }}>
+              <span style={{ color: "#3366B3", fontWeight: "bold" }}>
+                <FormattedMessage id="nonconform.severity.score" />
+              </span>
+            </div>
+            <div style={{ marginBottom: "10px" }}>{formData.severityScore}</div>
           </Column>
+          <pre>
+            <p>
+              {" "}
+              <FormattedMessage id="nonconform.label.lowseverity" />{" "}
+            </p>
+            <p>
+              {" "}
+              <FormattedMessage id="nonconform.label.highseverity" />
+            </p>
+          </pre>
+          <Column lg={13}></Column>
 
           <Column lg={16}>
             <br></br>
@@ -487,7 +531,7 @@ export const ViewNonConformingEvent = () => {
               }}
             >
               <SelectItem key={"emptyselect"} value={""} text={""} />
-              {data.nceCat.map((option) => (
+              {data?.nceCategories?.map((option) => (
                 <SelectItem
                   key={option.id}
                   value={option.id}
@@ -573,20 +617,6 @@ export const ViewNonConformingEvent = () => {
           <Column lg={16}>
             <br></br>
           </Column>
-
-          <Column lg={16} style={{ marginBottom: "20px", textAlign: "center" }}>
-            <div style={{ marginBottom: "10px" }}>
-              <span style={{ color: "#3366B3", fontWeight: "bold" }}>
-                <FormattedMessage id="nonconform.severity.score" />
-              </span>
-            </div>
-            <div style={{ marginBottom: "10px" }}>{formData.severityScore}</div>
-          </Column>
-
-          <Column lg={16}>
-            <br></br>
-          </Column>
-
           <Column lg={8}>
             <Select
               labelText={
