@@ -1,4 +1,4 @@
-package org.openelisglobal.common.rest.provider;
+package org.openelisglobal.qaevent.controller.rest;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,6 +11,7 @@ import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.RequesterService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.login.valueholder.UserSessionData;
+import org.openelisglobal.qaevent.bean.NonConformingEventDetails;
 import org.openelisglobal.qaevent.form.NonConformingEventForm;
 import org.openelisglobal.qaevent.service.NceCategoryService;
 import org.openelisglobal.qaevent.valueholder.NcEvent;
@@ -33,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class NonConformEventsRestController {
+public class ReportNonConformEventsRestController {
 
   private final SampleService sampleService;
   private final SampleItemService sampleItemService;
@@ -47,7 +48,7 @@ public class NonConformEventsRestController {
   @Autowired
   private SystemUserService systemUserService;
 
-  public NonConformEventsRestController(
+  public ReportNonConformEventsRestController(
     SampleService sampleService,
     SampleItemService sampleItemService,
     SearchResultsService searchResultsService,
