@@ -889,5 +889,22 @@
   "label.barcode.labelsets": "Number of label sets",
   "label.barcode.orderlabel": "Number of order labels per set",
   "label.barcode.specimenlabel": "Number of specimen labels per set",
-  "label.barcode.totallabel": "Total Labels to Print"
+  "label.barcode.totallabel": "Total Labels to Print",
+  "nonconform.view.reporting.person": "Reporting Person",
+  "nonconform.view.specimen": "Specimen(s)",
+  "nonconform.view.lab.component": "Laboratory Component",
+  "nonconform.view.event.description": "Description of Event",
+  "nonconform.view.nce.type": "NCE Type",
+  "nonconform.view.nce.category": "NCE Category",
+  "nonconform.view.nce.severity": "Severity",
+  "nonconform.view.severe.consequences": "How severe are the consequences or impact of the NCE?",
+  "nonconform.view.nce.likely.occur": "How likely is the NCE to recur?",
+  "nonconform.view.corrective.action.description": "Description of corrective action to take",
+  "nonconform.view.preventive.description": "If applicable, description of preventive or concurrent control action",
+  "nonconform.view.comments": "Comments",
+  "nonconform.view.event.date": "Date of Event",
+  "nonconform.view.report": "View New Non Conform Event",
+  "no.data.found": "No Data Found",
+  "nonconform.severity.score": "Severity Score",
+  "text.length.max": "Text length Should not be greater than 200"
 }
