@@ -1,4 +1,4 @@
-package org.openelisglobal.common.rest.provider;
+package org.openelisglobal.qaevent.controller.rest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -139,7 +139,7 @@ public class ViewNonConformEventsRestController {
     @RequestBody NonConformingEventForm form
   ) {
     try {
-      boolean updated = nonConformingEventWorker.update(form);
+      boolean updated = nonConformingEventWorker.updateFollowUp(form);
       if (updated) {
         return ResponseEntity.ok().body(Map.of("success", true));
       } else {
