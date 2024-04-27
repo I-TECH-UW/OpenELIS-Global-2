@@ -18,7 +18,7 @@ import java.io.IOException;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {BaseTestConfig.class, TestConfig.class})
+@ContextConfiguration(classes = {BaseTestConfig.class, AppTestConfig.class})
 @WebAppConfiguration
 @TestPropertySource("classpath:common.properties")
 @ActiveProfiles("test")

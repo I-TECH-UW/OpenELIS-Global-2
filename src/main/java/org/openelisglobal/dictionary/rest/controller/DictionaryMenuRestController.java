@@ -18,6 +18,7 @@ import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.menu.service.AdminMenuItemService;
+import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,9 +51,6 @@ public class DictionaryMenuRestController extends BaseRestController {
 
     @Autowired
     private DictionaryService dictionaryService;
-
-    @Autowired
-    private AdminMenuItemService adminMenuItemService;
 
     @RequestMapping(value = "/rest/get-dictionary-menu", produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
     @ResponseBody
@@ -136,7 +134,7 @@ public class DictionaryMenuRestController extends BaseRestController {
         }
 
         form.setMenuList(menuList);
-        form.setAdminMenuItems(adminMenuItemService.getActiveItemsSorted());
+        form.setAdminMenuItems(SpringContext.getBean(AdminMenuItemService.class).getActiveItemsSorted());
         request.setAttribute(DEACTIVATE_DISABLED, getDeactivateDisabled());
         request.setAttribute(ADD_DISABLED, getAddDisabled());
         request.setAttribute(EDIT_DISABLED, getEditDisabled());
@@ -144,18 +142,6 @@ public class DictionaryMenuRestController extends BaseRestController {
         List<String> selectedIDs = new ArrayList<>();
         form.setSelectedIDs(selectedIDs);
         return forward;
-    }
-
-    private String getEditDisabled() {
-        return "false";
-    }
-
-    private String getAddDisabled() {
-        return "false";
-    }
-
-    private String getDeactivateDisabled() {
-        return "false";
     }
 
     List<Dictionary> doNextPage(DictionaryMenuForm form, HttpServletRequest request) {
@@ -238,16 +224,19 @@ public class DictionaryMenuRestController extends BaseRestController {
         request.setAttribute("menuDefinition", "DictionaryMenuDefinition");
         request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(total));
         request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
+
         int numOfRecs = 0;
         if (dictionaries.size() > SystemConfiguration.getInstance().getDefaultPageSize()) {
             numOfRecs = SystemConfiguration.getInstance().getDefaultPageSize();
         } else {
             numOfRecs = dictionaries.size();
         }
+
         numOfRecs--;
         int endingRecNo = startingRecNo + numOfRecs;
         request.setAttribute(MENU_TO_RECORD, String.valueOf(endingRecNo));
         request.setAttribute(MENU_SEARCH_BY_TABLE_COLUMN, "dictionary.dictEntry");
+
         if (YES.equals(request.getParameter("search"))) {
             request.setAttribute(IN_MENU_SELECT_LIST_HEADER_SEARCH, "true");
         }
@@ -357,6 +346,18 @@ public class DictionaryMenuRestController extends BaseRestController {
         } else {
             return "PageNotFound";
         }
+    }
+
+    private String getEditDisabled() {
+        return "false";
+    }
+
+    private String getAddDisabled() {
+        return "false";
+    }
+
+    private String getDeactivateDisabled() {
+        return "false";
     }
 
     private String getPageTitleKey(HttpServletRequest request, DictionaryMenuForm form) {

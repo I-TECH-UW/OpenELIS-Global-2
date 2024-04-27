@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.form.BaseForm;
-import org.openelisglobal.dictionary.rest.controller.DictionaryMenuRestController;
 import org.openelisglobal.login.valueholder.UserSessionData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
