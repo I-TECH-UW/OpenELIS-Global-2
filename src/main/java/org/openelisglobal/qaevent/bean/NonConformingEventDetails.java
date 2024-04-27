@@ -1,4 +1,4 @@
-package org.openelisglobal.common.rest.provider;
+package org.openelisglobal.qaevent.bean;
 
 import java.util.List;
 
