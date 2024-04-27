@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.dictionary.form.DictionaryMenuForm;
 import org.openelisglobal.login.valueholder.UserSessionData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class BaseRestController implements IActionConstants {
         return String.valueOf(usd.getSystemUserId());
     }
 
-    protected ResponseEntity<String> convertFormToJsonAndAddToResponse(BaseForm form) {
+    protected ResponseEntity<String> convertFormToJsonAndAddToResponse(DictionaryMenuForm form) {
         MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
         ObjectMapper objectMapper = jsonConverter.getObjectMapper();
         try {

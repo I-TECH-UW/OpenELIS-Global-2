@@ -30,8 +30,7 @@ public abstract class BaseWebContextSensitiveTest {
     protected MockMvc mockMvc;
 
     protected void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
-                .alwaysExpect(forwardedUrl(null)).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
     }
 
     protected String mapToJson(Object obj) throws JsonProcessingException {

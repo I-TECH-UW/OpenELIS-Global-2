@@ -37,14 +37,32 @@ import java.util.List;
 import static org.mockito.Mockito.mock;
 
 @Configuration
-@ComponentScan(basePackages = { "org.openelisglobal.spring", "org.openelisglobal.patient",
-        "org.openelisglobal.patientidentity", "org.openelisglobal.gender", "org.openelisglobal.patientidentitytype",
-        "org.openelisglobal.patienttype", "org.openelisglobal.address", "org.openelisglobal.dictionary",
-        "org.openelisglobal.person" }, excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.*.controller.*"),
+@ComponentScan(basePackages = {
+        "org.openelisglobal.spring",
+        "org.openelisglobal.patient",
+        "org.openelisglobal.patientidentity",
+        "org.openelisglobal.gender",
+        "org.openelisglobal.patientidentitytype",
+        "org.openelisglobal.patienttype",
+        "org.openelisglobal.address",
+        "org.openelisglobal.dictionary",
+        "org.openelisglobal.person",
+        "org.openelisglobal.dictionary.rest.controller",
+        "org.openelisglobal.dictionary.service",
+        "org.openelisglobal.dictionary.daoimpl",
+        "org.openelisglobal.audittrail.daoimpl",
+        "org.openelisglobal.referencetables.service",
+        "org.openelisglobal.referencetables.daoimpl",
+        "org.openelisglobal.history.service",
+        "org.openelisglobal.menu.service",
+        "org.openelisglobal.menu.daoimpl",
+}, excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.patient.controller.*"),
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.dictionary.controller.*"),
         @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.config.*"),
         @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.fhir.*"),
-        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.*.fhir.*") })
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.*.fhir.*")
+})
 @EnableWebMvc
 public class AppTestConfig implements WebMvcConfigurer {
 

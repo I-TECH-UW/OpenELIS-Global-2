@@ -52,7 +52,7 @@ public class DictionaryMenuRestController extends BaseRestController {
     @Autowired
     private DictionaryService dictionaryService;
 
-    @RequestMapping(value = "/rest/get-dictionary-menu", produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
+    @RequestMapping(value = "/rest/dictionary-menu", produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> showDictionaryMenu(HttpServletRequest request) throws  IOException {
         DictionaryMenuForm form = new DictionaryMenuForm();

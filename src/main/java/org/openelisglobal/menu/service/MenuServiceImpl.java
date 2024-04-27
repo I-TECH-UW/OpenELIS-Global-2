@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuServiceImpl extends AuditableBaseObjectServiceImpl<Menu, String> implements MenuService {
+
     @Autowired
     protected MenuDAO baseObjectDAO;
 

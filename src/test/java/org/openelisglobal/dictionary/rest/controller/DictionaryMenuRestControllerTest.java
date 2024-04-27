@@ -5,11 +5,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
 import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
+import org.openelisglobal.dictionary.form.DictionaryMenuForm;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
@@ -34,14 +36,15 @@ public class DictionaryMenuRestControllerTest extends BaseWebContextSensitiveTes
     @Test
     public void getDictionaryMenuList_shouldReturnDictionaryMenu() throws Exception {
         MvcResult mvcResult = super.mockMvc.perform(
-                get("/rest/get-dictionary-menu")
+                get("/rest/dictionary-menu")
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+                .contentType(MediaType.APPLICATION_JSON_VALUE)).andDo(print())
+                .andReturn();
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(200, status);
         String content = mvcResult.getResponse().getContentAsString();
-        List<DictionaryDAOImpl.DictionaryMenu> menuList = Arrays.asList(super.mapFromJson(content, DictionaryDAOImpl.DictionaryMenu[].class));
+        List<DictionaryMenuForm> menuList = Arrays.asList(super.mapFromJson(content, DictionaryMenuForm[].class));
         assertThat(menuList, notNullValue());
     }
 
