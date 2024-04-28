@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Grid,
   Column,
@@ -11,16 +11,22 @@ import {
   Loading,
   Dropdown,
 } from "@carbon/react";
-import { getFromOpenElisServer, postToOpenElisServer } from "../../../utils/Utils.js";
+import {
+  getFromOpenElisServer,
+  postToOpenElisServer,
+} from "../../../utils/Utils.js";
 import {
   AlertDialog,
   NotificationKinds,
 } from "../../../common/CustomNotification.js";
 import config from "../../../../config.json";
+import { NotificationContext } from "../../../layout/Layout.js";
+
 import { FormattedMessage, useIntl } from "react-intl";
-import PageBreadCrumb from "../../../common/PageBreadCrumb.js";
 
 const GenericConfigEdit = ({ menuType, ID }) => {
+  const intl = useIntl();
+
   const [FormEntryConfig, setFormEntryConfig] = useState(null);
   const [radioValue, setRadioValue] = useState("");
   const [textInputEnglishValue, setTextInputEnglishValue] = useState("");
@@ -28,7 +34,8 @@ const GenericConfigEdit = ({ menuType, ID }) => {
   const [textInputValue, setTextInputValue] = useState("");
   const [selectedDictionaryValue, setSelectedDictionaryValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+  const { notificationVisible, setNotificationVisible, addNotification } =
+    useContext(NotificationContext);
   useEffect(() => {
     setIsLoading(true);
     getFromOpenElisServer(`/rest/${menuType}?ID=${ID}`, handleMenuItems);
@@ -37,8 +44,8 @@ const GenericConfigEdit = ({ menuType, ID }) => {
   const handleMenuItems = (res) => {
     setFormEntryConfig(res);
     if (res.localization) {
-      setTextInputEnglishValue(res.localization.localeValues.en); 
-    setTextInputFrenchValue(res.localization.localeValues.fr); 
+      setTextInputEnglishValue(res.localization.localeValues.en);
+      setTextInputFrenchValue(res.localization.localeValues.fr);
     }
     if (res.valueType === "boolean") {
       setRadioValue(res.value);
@@ -58,11 +65,9 @@ const GenericConfigEdit = ({ menuType, ID }) => {
   };
 
   const handleRadioChange = (value) => {
-    console.log("radioValue hai ye", value);
     setRadioValue(value);
     updateFormEntryConfig({ value });
   };
-  
 
   const handleInputChange = (event) => {
     const newValue = event.target.value;
@@ -74,30 +79,29 @@ const GenericConfigEdit = ({ menuType, ID }) => {
     const newValue = event.target.value;
     setTextInputEnglishValue(newValue);
     updateFormEntryConfig({
-      localization: { 
-        ...FormEntryConfig.localization, 
+      localization: {
+        ...FormEntryConfig.localization,
         localeValues: {
           ...FormEntryConfig.localization.localeValues,
-          en: newValue
-        } 
+          en: newValue,
+        },
       },
     });
   };
-  
+
   const handleInputFrenchChange = (event) => {
     const newValue = event.target.value;
     setTextInputFrenchValue(newValue);
     updateFormEntryConfig({
-      localization: { 
-        ...FormEntryConfig.localization, 
+      localization: {
+        ...FormEntryConfig.localization,
         localeValues: {
           ...FormEntryConfig.localization.localeValues,
-          fr: newValue
-        } 
+          fr: newValue,
+        },
       },
     });
   };
-  
 
   const handleDictionaryChange = (event) => {
     const newValue = event.selectedItem;
@@ -105,14 +109,40 @@ const GenericConfigEdit = ({ menuType, ID }) => {
     updateFormEntryConfig({ value: newValue });
   };
 
+  //testing
+  const showAlertMessage = (msg, kind) => {
+    setNotificationVisible(true);
+    addNotification({
+      kind: kind,
+      title: intl.formatMessage({ id: "notification.title" }),
+      message: msg,
+    });
+  };
   const handleSubmitButton = () => {
     const body = JSON.stringify(FormEntryConfig);
-    postToOpenElisServer(`/rest/${menuType}?ID=${ID}`, body);
+    postToOpenElisServer(`/rest/${menuType}?ID=${ID}`, body, handleSubmit);
+  };
+
+  const handleSubmit = (status) => {
+    if (status === 200) {
+      showAlertMessage(
+        <FormattedMessage id="save.order.success.msg" />,
+        NotificationKinds.success,
+      );
+      setNotificationVisible(true);
+
+    } else {
+      showAlertMessage(
+        <FormattedMessage id="server.error.msg" />,
+        NotificationKinds.error,
+      );
+    }
   };
 
   return (
     <div className="adminPageContent">
       {isLoading && <Loading description="Loading..." />}
+      {notificationVisible === true ? <AlertDialog /> : ""}
       {FormEntryConfig && (
         <>
           <Grid>
@@ -222,7 +252,9 @@ const GenericConfigEdit = ({ menuType, ID }) => {
               <br />
               <Grid fullWidth={true}>
                 <Column lg={2}>
-                  <Button onClick={handleSubmitButton} disabled={isLoading}>Save</Button>
+                  <Button onClick={handleSubmitButton} disabled={isLoading}>
+                    Save
+                  </Button>
                 </Column>
                 <Column lg={2}>
                   <Button onClick={() => window.location.reload()}>Exit</Button>
