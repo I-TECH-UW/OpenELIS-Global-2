@@ -172,7 +172,7 @@ const GenericConfigEdit = ({ menuType, ID }) => {
               <Grid fullWidth={true}>
                 <Column lg={3}>
                   <h4>
-                    <FormattedMessage id="description.label" />
+                    <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.description" />
                   </h4>
                 </Column>
                 <Column lg={7}>{FormEntryConfig.description}</Column>
