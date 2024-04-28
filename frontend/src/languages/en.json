@@ -889,5 +889,21 @@
   "label.barcode.labelsets": "Number of label sets",
   "label.barcode.orderlabel": "Number of order labels per set",
   "label.barcode.specimenlabel": "Number of specimen labels per set",
-  "label.barcode.totallabel": "Total Labels to Print"
+  "label.barcode.totallabel": "Total Labels to Print",
+  "label.barcode.totallabel": "Total Labels to Print",
+  "admin.react": "Admin Configurations",
+  "admin.orderEntryConfigMenu": "Order Entry Configuration",
+  "sidenav.label.admin.menu.admin.configurationManagment": "Configuration Management",
+  "sidenav.label.admin.menu.admin.mainMenuManagement": "Menu Management",
+  "sidenav.label.admin.menu.admin.otherAdminPagesManagement": "Other Admin Pages Management",
+  "admin.page.configuration.sampleEntryConfigMenu.name": "Name",
+  "admin.page.configuration.sampleEntryConfigMenu.description": "Description",
+  "admin.page.configuration.sampleEntryConfigMenu.select": "Select",
+  "admin.page.configuration.sampleEntryConfigMenu.value": "Value",
+  "admin.page.configuration.sampleEntryConfigMenu.editRecord": "Edit Record",
+  "admin.page.configuration.sampleEntryConfigMenu.button.modify": "Modify",
+  "admin.page.configuration.sampleEntryConfigMenu.button.deactivate": "Deactivate",
+  "admin.page.configuration.sampleEntryConfigMenu.button.add": "Add",
+  "admin.page.configuration.sampleEntryConfigMenu.button.save": "Save",
+  "admin.page.configuration.sampleEntryConfigMenu.button.exit": "Exit"
 }

@@ -10,7 +10,7 @@ import {
   BillingMenuManagement,
   NonConformityMenuManagement,
   PatientMenuManagement,
-  StudyMenuManagement,
+  StudyMenuManagement,  
 } from "./menu";
 import {
   Microscope,
@@ -18,7 +18,7 @@ import {
   TableOfContents,
   ChartBubble,
   Catalog,
-  Settings,
+  Settings,  CloudSatelliteConfig,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -30,6 +30,7 @@ import {
   SideNavMenuItem,
 } from "@carbon/react";
 import { CommonProperties } from "./menu/CommonProperties";
+import ConfigMenuDisplay from "./formEntry/common/ConfigMenuDisplay";
 
 function Admin() {
   const intl = useIntl();
@@ -84,6 +85,19 @@ function Admin() {
               defaultMessage={"Common Properties"}
             />
           </SideNavLink>
+          <SideNavMenu
+            title={intl.formatMessage({ id: "admin.react" })}
+            renderIcon={CloudSatelliteConfig}
+          >
+            <SideNavMenuItem href="#configurationManagement"> <FormattedMessage id="sidenav.label.admin.menu.admin.configurationManagment" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#mainMenuManagement">
+              <FormattedMessage id="sidenav.label.admin.menu.admin.mainMenuManagement" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#otherAdminPagesManagement">
+              <FormattedMessage id="sidenav.label.admin.menu.admin.otherAdminPagesManagement" />
+            </SideNavMenuItem>
+          </SideNavMenu>
           <SideNavLink
             renderIcon={Catalog}
             target="_blank"
@@ -124,6 +138,14 @@ function Admin() {
       <PathRoute path="#commonproperties">
         <CommonProperties />
       </PathRoute>
+      <PathRoute path="#configurationManagement">
+        <ConfigMenuDisplay menuType="SampleEntryConfigMenu" menu="abc"/>
+      </PathRoute>
+      <PathRoute path="#abc">
+        <ConfigMenuDisplay menuType="SiteInformationMenu" menu="configurationManagement"/>
+      </PathRoute>
+      <PathRoute path="#mainMenuManagement"></PathRoute>
+      <PathRoute path="#otherAdminPagesManagement"></PathRoute>
     </>
   );
 }
