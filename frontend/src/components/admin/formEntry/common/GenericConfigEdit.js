@@ -36,6 +36,7 @@ const GenericConfigEdit = ({ menuType, ID }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
+
   useEffect(() => {
     setIsLoading(true);
     getFromOpenElisServer(`/rest/${menuType}?ID=${ID}`, handleMenuItems);
@@ -109,7 +110,6 @@ const GenericConfigEdit = ({ menuType, ID }) => {
     updateFormEntryConfig({ value: newValue });
   };
 
-  //testing
   const showAlertMessage = (msg, kind) => {
     setNotificationVisible(true);
     addNotification({
@@ -118,6 +118,7 @@ const GenericConfigEdit = ({ menuType, ID }) => {
       message: msg,
     });
   };
+
   const handleSubmitButton = () => {
     const body = JSON.stringify(FormEntryConfig);
     postToOpenElisServer(`/rest/${menuType}?ID=${ID}`, body, handleSubmit);
@@ -126,14 +127,12 @@ const GenericConfigEdit = ({ menuType, ID }) => {
   const handleSubmit = (status) => {
     if (status === 200) {
       showAlertMessage(
-        <FormattedMessage id="save.order.success.msg" />,
+        intl.formatMessage({ id: "save.config.success.msg" }),
         NotificationKinds.success,
       );
-      setNotificationVisible(true);
-
     } else {
       showAlertMessage(
-        <FormattedMessage id="server.error.msg" />,
+        intl.formatMessage({ id: "server.error.msg" }),
         NotificationKinds.error,
       );
     }
@@ -141,14 +140,20 @@ const GenericConfigEdit = ({ menuType, ID }) => {
 
   return (
     <div className="adminPageContent">
-      {isLoading && <Loading description="Loading..." />}
+      {isLoading && (
+        <Loading
+          description={intl.formatMessage({ id: "loading.description" })}
+        />
+      )}
       {notificationVisible === true ? <AlertDialog /> : ""}
       {FormEntryConfig && (
         <>
           <Grid>
             <Column lg={16} md={8} sm={4}>
               <Section>
-                <Heading>Edit Record</Heading>
+                <Heading>
+                  <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.editRecord" />
+                </Heading>
               </Section>
               <br />
             </Column>
@@ -157,14 +162,18 @@ const GenericConfigEdit = ({ menuType, ID }) => {
             <div className="gridBoundary">
               <Grid fullWidth={true}>
                 <Column lg={3}>
-                  <h4>Name:</h4>
+                  <h4>
+                    <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.name" />
+                  </h4>
                 </Column>
                 <Column lg={3}>{FormEntryConfig.paramName}</Column>
               </Grid>
               <br />
               <Grid fullWidth={true}>
                 <Column lg={3}>
-                  <h4>Description:</h4>
+                  <h4>
+                    <FormattedMessage id="description.label" />
+                  </h4>
                 </Column>
                 <Column lg={7}>{FormEntryConfig.description}</Column>
               </Grid>
@@ -172,7 +181,9 @@ const GenericConfigEdit = ({ menuType, ID }) => {
               {FormEntryConfig.valueType === "boolean" && (
                 <Grid fullWidth={true}>
                   <Column lg={3}>
-                    <h4>Value:</h4>
+                    <h4>
+                      <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.value" />
+                    </h4>
                   </Column>
                   <Column lg={5}>
                     <RadioButtonGroup
@@ -180,9 +191,13 @@ const GenericConfigEdit = ({ menuType, ID }) => {
                       valueSelected={radioValue}
                       onChange={handleRadioChange}
                     >
-                      <RadioButton labelText="True" value="true" id="radio-1" />
                       <RadioButton
-                        labelText="False"
+                        labelText={intl.formatMessage({ id: "true.label" })}
+                        value="true"
+                        id="radio-1"
+                      />
+                      <RadioButton
+                        labelText={intl.formatMessage({ id: "false.label" })}
                         value="false"
                         id="radio-2"
                       />
@@ -194,7 +209,9 @@ const GenericConfigEdit = ({ menuType, ID }) => {
                 <>
                   <Grid fullWidth={true}>
                     <Column lg={3}>
-                      <h4>Value:</h4>
+                      <h4>
+                        <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.value" />
+                      </h4>
                     </Column>
                     <Column lg={3}>
                       <Dropdown
@@ -211,7 +228,9 @@ const GenericConfigEdit = ({ menuType, ID }) => {
                 <>
                   <Grid fullWidth={true}>
                     <Column lg={3}>
-                      <h4>Value:</h4>
+                      <h4>
+                        <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.value" />
+                      </h4>
                     </Column>
                     {!FormEntryConfig.tag && (
                       <Column lg={3}>
@@ -230,7 +249,7 @@ const GenericConfigEdit = ({ menuType, ID }) => {
                         <Column lg={3}>
                           <TextInput
                             id="myInputEnglish"
-                            labelText="English"
+                            labelText={<FormattedMessage id="english.label" />}
                             value={textInputEnglishValue}
                             onChange={handleInputEnglishChange}
                           />
@@ -238,7 +257,7 @@ const GenericConfigEdit = ({ menuType, ID }) => {
                         <Column lg={3}>
                           <TextInput
                             id="myInputFrench"
-                            labelText="French"
+                            labelText={<FormattedMessage id="french.label" />}
                             value={textInputFrenchValue}
                             onChange={handleInputFrenchChange}
                           />
@@ -253,11 +272,13 @@ const GenericConfigEdit = ({ menuType, ID }) => {
               <Grid fullWidth={true}>
                 <Column lg={2}>
                   <Button onClick={handleSubmitButton} disabled={isLoading}>
-                    Save
+                    <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.save" />
                   </Button>
                 </Column>
                 <Column lg={2}>
-                  <Button onClick={() => window.location.reload()}>Exit</Button>
+                  <Button onClick={() => window.location.reload()}>
+                    <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.exit" />
+                  </Button>
                 </Column>
               </Grid>
             </div>

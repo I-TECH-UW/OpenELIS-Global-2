@@ -135,7 +135,7 @@ function ConfigMenuDisplay(props) {
               <Column lg={16} md={8} sm={4}>
                 <Section>
                   <Heading>
-                    <FormattedMessage id="admin.orderEntryConfigMenu" />
+                    <FormattedMessage id="admin.formEntryConfig" />
                   </Heading>
                 </Section>
                 <br />
@@ -143,13 +143,13 @@ function ConfigMenuDisplay(props) {
                   <Form onSubmit={handleModify}>
                     <Column lg={16} md={8} sm={4}>
                       <Button disabled={modifyButton} type="submit">
-                        <FormattedMessage id="admin.page.configuration.sampleEntryConfigMenu.button.modify" />
+                        <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.modify" />
                       </Button>{" "}
                       <Button kind="tertiary" disabled={true} type="submit">
-                        <FormattedMessage id="admin.page.configuration.sampleEntryConfigMenu.button.deactivate" />
+                        <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
                       </Button>{" "}
                       <Button kind="tertiary" disabled={true} type="submit">
-                        <FormattedMessage id="admin.page.configuration.sampleEntryConfigMenu.button.add" />
+                        <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.add" />
                       </Button>
                     </Column>
                   </Form>
@@ -168,26 +168,26 @@ function ConfigMenuDisplay(props) {
                       {
                         key: "select",
                         header: intl.formatMessage({
-                          id: "admin.page.configuration.sampleEntryConfigMenu.select",
+                          id: "admin.page.configuration.formEntryConfigMenu.select",
                         }),
                       },
                       {
                         key: "name",
                         header: intl.formatMessage({
-                          id: "admin.page.configuration.sampleEntryConfigMenu.name",
+                          id: "admin.page.configuration.formEntryConfigMenu.name",
                         }),
                       },
 
                       {
                         key: "description",
                         header: intl.formatMessage({
-                          id: "admin.page.configuration.sampleEntryConfigMenu.description",
+                          id: "admin.page.configuration.formEntryConfigMenu.description",
                         }),
                       },
                       {
                         key: "value",
                         header: intl.formatMessage({
-                          id: "admin.page.configuration.sampleEntryConfigMenu.value",
+                          id: "admin.page.configuration.formEntryConfigMenu.value",
                         }),
                       },
                     ]}

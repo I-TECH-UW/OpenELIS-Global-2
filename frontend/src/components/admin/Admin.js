@@ -10,7 +10,7 @@ import {
   BillingMenuManagement,
   NonConformityMenuManagement,
   PatientMenuManagement,
-  StudyMenuManagement,  
+  StudyMenuManagement,
 } from "./menu";
 import {
   Microscope,
@@ -18,7 +18,8 @@ import {
   TableOfContents,
   ChartBubble,
   Catalog,
-  Settings,  CloudSatelliteConfig,
+  Settings,
+  ListDropdown,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -79,25 +80,37 @@ function Admin() {
               <FormattedMessage id="sidenav.label.admin.menu.study" />
             </SideNavMenuItem>
           </SideNavMenu>
+
+          <SideNavMenu
+            title={intl.formatMessage({ id: "admin.formEntryConfig" })}
+            renderIcon={ListDropdown}
+          >
+            <SideNavMenuItem href="#WorkPlanConfigurationMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.Workplanconfig" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#SiteInformationMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.siteInfoconfig" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#ResultConfigurationMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.resultConfig" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#PatientConfigurationMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.patientconfig" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#SampleEntryConfigurationMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.sampleEntryconfig" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#ValidationConfigurationMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.validationconfig" />
+            </SideNavMenuItem>
+          </SideNavMenu>
+
           <SideNavLink href="#commonproperties" renderIcon={Settings}>
             <FormattedMessage
               id="sidenav.label.admin.commonproperties"
               defaultMessage={"Common Properties"}
             />
           </SideNavLink>
-          <SideNavMenu
-            title={intl.formatMessage({ id: "admin.react" })}
-            renderIcon={CloudSatelliteConfig}
-          >
-            <SideNavMenuItem href="#configurationManagement"> <FormattedMessage id="sidenav.label.admin.menu.admin.configurationManagment" />
-            </SideNavMenuItem>
-            <SideNavMenuItem href="#mainMenuManagement">
-              <FormattedMessage id="sidenav.label.admin.menu.admin.mainMenuManagement" />
-            </SideNavMenuItem>
-            <SideNavMenuItem href="#otherAdminPagesManagement">
-              <FormattedMessage id="sidenav.label.admin.menu.admin.otherAdminPagesManagement" />
-            </SideNavMenuItem>
-          </SideNavMenu>
           <SideNavLink
             renderIcon={Catalog}
             target="_blank"
@@ -138,14 +151,25 @@ function Admin() {
       <PathRoute path="#commonproperties">
         <CommonProperties />
       </PathRoute>
-      <PathRoute path="#configurationManagement">
-        <ConfigMenuDisplay menuType="SampleEntryConfigMenu" menu="abc"/>
+
+      <PathRoute path="#ValidationConfigurationMenu">
+        <ConfigMenuDisplay menuType="ValidationConfigurationMenu" />
       </PathRoute>
-      <PathRoute path="#abc">
-        <ConfigMenuDisplay menuType="SiteInformationMenu" menu="configurationManagement"/>
+      <PathRoute path="#SampleEntryConfigurationMenu">
+        <ConfigMenuDisplay menuType="SampleEntryConfigMenu" />
       </PathRoute>
-      <PathRoute path="#mainMenuManagement"></PathRoute>
-      <PathRoute path="#otherAdminPagesManagement"></PathRoute>
+      <PathRoute path="#WorkPlanConfigurationMenu">
+        <ConfigMenuDisplay menuType="WorkplanConfigurationMenu" />
+      </PathRoute>
+      <PathRoute path="#SiteInformationMenu">
+        <ConfigMenuDisplay menuType="SiteInformationMenu" />
+      </PathRoute>
+      <PathRoute path="#ResultConfigurationMenu">
+        <ConfigMenuDisplay menuType="ResultConfigurationMenu" />
+      </PathRoute>
+      <PathRoute path="#PatientConfigurationMenu">
+        <ConfigMenuDisplay menuType="PatientConfigurationMenu" />
+      </PathRoute>
     </>
   );
 }
