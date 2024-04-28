@@ -1,11 +1,11 @@
 package org.openelisglobal.dictionary.rest.controller;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,15 +37,20 @@ public class DictionaryMenuRestControllerTest extends BaseWebContextSensitiveTes
     public void getDictionaryMenuList_shouldReturnDictionaryMenu() throws Exception {
         MvcResult mvcResult = super.mockMvc.perform(
                 get("/rest/dictionary-menu")
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)).andDo(print())
-                .andReturn();
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)).andReturn();
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(200, status);
         String content = mvcResult.getResponse().getContentAsString();
+        System.out.println("content during test: " + content);
+
         List<DictionaryMenuForm> menuList = Arrays.asList(super.mapFromJson(content, DictionaryMenuForm[].class));
-        assertThat(menuList, notNullValue());
+        assertThat(menuList.get(0).getMenuList().get(0).getId(), is("1"));
+        assertThat(menuList.get(0).getMenuList().get(0).getIsActive(), is("Y"));
+        assertThat(menuList.get(0).getMenuList().get(0).getDictEntry(), is("INFLUENZA VIRUS A RNA DETECTED"));
+        assertThat(menuList.get(0).getMenuList().get(0).getSortOrder(), is(100));
+        assertThat(menuList.get(0).getMenuList().get(0).getDictionaryCategory().getCategoryName(), is("CG"));
     }
 
     @Test
@@ -67,10 +72,11 @@ public class DictionaryMenuRestControllerTest extends BaseWebContextSensitiveTes
         Dictionary dictionary = createDictionaryObject();
         String toJson = super.mapToJson(dictionary);
 
-        MvcResult mvcResult = super.mockMvc.perform(post("/rest/create-dictionary")
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(toJson)).andReturn();
+        MvcResult mvcResult = super.mockMvc.perform(
+                post("/rest/create-dictionary")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(toJson)).andReturn();
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(201, status);

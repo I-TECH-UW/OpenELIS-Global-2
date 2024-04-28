@@ -1,9 +1,13 @@
 package org.openelisglobal;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -15,14 +19,14 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {BaseTestConfig.class, AppTestConfig.class})
 @WebAppConfiguration
 @TestPropertySource("classpath:common.properties")
 @ActiveProfiles("test")
 public abstract class BaseWebContextSensitiveTest {
+
+    private final Logger log = LoggerFactory.getLogger(BaseWebContextSensitiveTest.class);
     
     @Autowired
     protected WebApplicationContext webApplicationContext;
@@ -34,12 +38,16 @@ public abstract class BaseWebContextSensitiveTest {
     }
 
     protected String mapToJson(Object obj) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
+        MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
+        ObjectMapper objectMapper = jsonConverter.getObjectMapper();
         return objectMapper.writeValueAsString(obj);
     }
 
     public <T> T mapFromJson(String json, Class<T> clazz) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
+        MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
+        ObjectMapper objectMapper = jsonConverter.getObjectMapper();
+        objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+        log.debug("form to be mapped to json" + json);
         return objectMapper.readValue(json, clazz);
     }
 }

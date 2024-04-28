@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.log.LogEvent;
@@ -20,9 +22,11 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.menu.service.AdminMenuItemService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -106,6 +110,20 @@ public class DictionaryMenuRestController extends BaseRestController {
 
             List<String> warnings = (List<String>) inputFlashMap.get(Constants.REQUEST_WARNINGS);
             request.setAttribute(Constants.SUCCESS_MSG, warnings);
+        }
+    }
+
+    private ResponseEntity<String> convertFormToJsonAndAddToResponse(DictionaryMenuForm form) {
+        MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
+        ObjectMapper objectMapper = jsonConverter.getObjectMapper();
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            String json = objectMapper.writeValueAsString(form);
+            return new ResponseEntity<>(json, headers, HttpStatus.OK);
+        } catch (JsonProcessingException e) {
+            log.error("Error converting form to JSON: " + e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error converting form to JSON");
         }
     }
 
@@ -262,40 +280,6 @@ public class DictionaryMenuRestController extends BaseRestController {
         }
         return startingRecNo;
     }
-
-//    protected ResponseEntity<String> findForwardResponseEntity(String forward, DictionaryMenuForm form) {
-//        String realForward = findForwardResponseEntity(forward);
-//        if (realForward.startsWith("redirect:")) {
-//            return ResponseEntity.status(HttpStatus.FOUND).body(realForward);
-//        } else {
-//            String viewName = pageBuilderService.setupJSPPage(realForward, request);
-//            Model model = new ExtendedModelMap();
-//            model.addAttribute("form", form);
-////            try {
-////                viewResolver.render(viewName, model, request, response);
-////                return ResponseEntity.ok(getResponseData());
-////            } catch (Exception e) {
-////                log.error("Error rendering view: " + e.getMessage(), e);
-////                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error rendering view");
-////            }
-//        }
-//        return null;
-//    }
-
-//    protected String findForwardResponseEntity(String forward) {
-//        if (LOGIN_PAGE.equals(forward)) {
-//            return "redirect:LoginPage";
-//        }
-//        if (HOME_PAGE.equals(forward)) {
-//            return "redirect:Home";
-//        }
-//        String forwardView = findLocalForward(forward);
-//
-//        if (GenericValidator.isBlankOrNull(forwardView)) {
-//            forwardView = "PageNotFound";
-//        }
-//        return forwardView;
-//    }
 
     protected void setPageTitles(HttpServletRequest request, DictionaryMenuForm form) {
         String pageSubtitle = null;
