@@ -675,10 +675,10 @@ const AddOrder = (props) => {
             {/* <Column lg={8} md={4} sm={4}>
               {" "}
             </Column> */}
-            {/* <Column lg={16} md={4} sm={3}>
+            <Column lg={16} md={4} sm={3}>
               {" "}
               &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
-            </Column> */}
+            </Column>
             <Column lg={8} md={4} sm={4}>
               <TextInput
                 name="requesterFirstName"

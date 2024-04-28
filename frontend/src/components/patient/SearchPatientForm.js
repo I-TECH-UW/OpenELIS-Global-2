@@ -329,16 +329,16 @@ function SearchPatientForm(props) {
                 <br />{" "}
               </Column>
               <Column lg={4} md={4} sm={2}>
-                <Button kind="tertiary">
+                <Button type="submit">
+                  <FormattedMessage id="label.button.search" />
+                </Button>
+              </Column>
+              <Column lg={4} md={4} sm={2}>
+                <Button kind="tertiary" disabled={true}>
                   <FormattedMessage
                     id="label.button.externalsearch"
                     defaultMessage="External Search"
                   />
-                </Button>
-              </Column>
-              <Column lg={4} md={4} sm={2}>
-                <Button type="submit">
-                  <FormattedMessage id="label.button.search" />
                 </Button>
               </Column>
             </Grid>

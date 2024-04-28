@@ -107,7 +107,7 @@ ST = <State>
 L = <City>
 O = <Organization>
 OU = <Organization Unit>
-CN = <Consolidated Server CA>
+CN = CS Cert
 
 [ req_ext ]
 subjectAltName = @alt_names
@@ -123,15 +123,18 @@ EOF
 
 `openssl req -new -key server.key -out server.csr -config csr.conf`
 
-`openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 1826 -extfile csr.conf`
+`openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 1826 -extensions req_ext -extfile csr.conf`
+
+`cat server.crt ca.crt > server-chain.crt`
 
 `cd ..`
 
 Move files to correct locations:
 
-`cp openssl/server.crt prod/ssl/cs_frontend.crt`
 
-`cp openssl/server.crt prod/ssl/cs.crt`
+`cp openssl/server-chain.crt prod/ssl/cs_frontend.crt`
+
+`cp openssl/server-chain.crt prod/ssl/cs.crt`
 
 `cp openssl/server.key prod/ssl/cs_frontend.key` 
 
@@ -157,7 +160,6 @@ Choose one or the other
 
 
 ### Quick Config Container(s):
-
 
 
 * Run ./configure.sh

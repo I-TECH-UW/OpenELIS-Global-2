@@ -34,8 +34,6 @@ const ActivityReport = ({ report }) => {
   });
   const [list, setList] = useState([]);
 
-  
-
   const handleDatePickerChangeDate = (datePicker, date) => {
     let updatedDate = encodeDate(date);
     let obj = null;
@@ -106,7 +104,6 @@ const ActivityReport = ({ report }) => {
       default:
         break;
     }
-
   }, [report]);
 
   return (
@@ -162,16 +159,11 @@ const ActivityReport = ({ report }) => {
                   />
                 </div>
               </Column>
-              <div className="inlineDiv" >hihih</div>
-             <Row>
-
-
-             </Row>
-              <Column log={15} >
-
-                 {
-                list && list.length > 0 && (
-                   <Select
+              <div className="inlineDiv">hihih</div>
+              <Row></Row>
+              <Column log={15}>
+                {list && list.length > 0 && (
+                  <Select
                     id="type"
                     labelText={intl.formatMessage({
                       id: "label.form.searchby",
@@ -193,10 +185,8 @@ const ActivityReport = ({ report }) => {
                       />
                     ))}
                   </Select>
-                )
-              }
+                )}
               </Column>
-             
             </Grid>
 
             <br />
