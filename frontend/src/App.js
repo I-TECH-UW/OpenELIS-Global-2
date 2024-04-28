@@ -228,12 +228,6 @@ export default function App() {
                   role="Global Administrator"
                 />
                 <SecureRoute
-                  path="/DictionaryMenu"
-                  exact
-                  component={() => <DictionaryManagement />}
-                  role="Global Administrator"
-                />
-                <SecureRoute
                   path="/PathologyDashboard"
                   exact
                   component={() => <PathologyDashboard />}

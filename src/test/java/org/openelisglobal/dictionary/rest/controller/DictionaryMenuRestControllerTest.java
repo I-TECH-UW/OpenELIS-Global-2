@@ -43,7 +43,6 @@ public class DictionaryMenuRestControllerTest extends BaseWebContextSensitiveTes
         int status = mvcResult.getResponse().getStatus();
         assertEquals(200, status);
         String content = mvcResult.getResponse().getContentAsString();
-        System.out.println("content during test: " + content);
 
         List<DictionaryMenuForm> menuList = Arrays.asList(super.mapFromJson(content, DictionaryMenuForm[].class));
         assertThat(menuList.get(0).getMenuList().get(0).getId(), is("1"));

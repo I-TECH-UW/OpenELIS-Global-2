@@ -83,7 +83,7 @@ function DictionaryManagement() {
 
   useEffect(() => {
     componentMounted.current = true;
-    getFromOpenElisServer("/rest/get-dictionary-menu", fetchedDictionaryMenu);
+    getFromOpenElisServer("/rest/dictionary-menu", fetchedDictionaryMenu);
     return () => {
       componentMounted.current = false;
     };
@@ -160,7 +160,7 @@ function DictionaryManagement() {
         </Column>
       </Grid>
 
-      <div className="orderLegendBody">
+      <div className="adminPageContent">
         <Grid fullWidth={true} className="gridBoundary">
           <Column lg={16} md={8} sm={4}>
             <Button onClick={() => setOpen(true)} kind="tertiary">
