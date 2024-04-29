@@ -8,6 +8,7 @@ import java.util.Map;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openelisglobal.common.constants.Constants;
+import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.rest.BaseRestController;
@@ -27,7 +28,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,9 +41,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @RestController
 @SuppressWarnings("unused")
@@ -53,8 +60,15 @@ public class DictionaryMenuRestController extends BaseRestController {
     @Autowired
     protected HttpServletRequest request;
 
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIDs*" };
+
     @Autowired
-    private DictionaryService dictionaryService;
+    DictionaryService dictionaryService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
     @RequestMapping(value = "/rest/dictionary-menu", produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
     @ResponseBody
@@ -89,6 +103,47 @@ public class DictionaryMenuRestController extends BaseRestController {
             return new ResponseEntity<>("Dictionary created successfully", HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Error creating dictionary: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "/rest/delete-dictionary", method = RequestMethod.POST)
+    public ResponseEntity<String> showDeleteDictionary(HttpServletRequest request, @ModelAttribute("form") @Valid DictionaryMenuForm form, BindingResult result,
+                                             RedirectAttributes redirectAttributes) throws IOException {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            String jsonErrors = errorsToJson(result);
+            return new ResponseEntity<>(jsonErrors, HttpStatus.BAD_REQUEST);
+        }
+
+        List<String> selectedIDs = form.getSelectedIDs();
+        List<Dictionary> dictionaries = new ArrayList<>();
+        for (String selectedID : selectedIDs) {
+            Dictionary dictionary = new Dictionary();
+            dictionary.setId(selectedID);
+            dictionary.setSysUserId(getSysUserId(request));
+            dictionaries.add(dictionary);
+        }
+
+        try {
+            dictionaryService.deleteAll(dictionaries);
+        } catch (LIMSRuntimeException e) {
+            LogEvent.logError(e);
+            if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
+                result.reject("errors.OptimisticLockException");
+            } else {
+                result.reject("errors.DeleteException");
+            }
+            return new ResponseEntity<>("Not able to delete dictionary",HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("Dictionary deleted successfully",HttpStatus.OK);
+    }
+
+    private void saveErrors(Errors errors) {
+        Errors previousErrors = (Errors) request.getAttribute(Constants.REQUEST_ERRORS);
+        if (previousErrors == null) {
+            request.setAttribute(Constants.REQUEST_ERRORS, errors);
+        } else if (previousErrors.hasErrors() && previousErrors.getObjectName().equals(errors.getObjectName())) {
+            previousErrors.addAllErrors(errors);
         }
     }
 
@@ -242,13 +297,7 @@ public class DictionaryMenuRestController extends BaseRestController {
         request.setAttribute("menuDefinition", "DictionaryMenuDefinition");
         request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(total));
         request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
-
-        int numOfRecs = 0;
-        if (dictionaries.size() > SystemConfiguration.getInstance().getDefaultPageSize()) {
-            numOfRecs = SystemConfiguration.getInstance().getDefaultPageSize();
-        } else {
-            numOfRecs = dictionaries.size();
-        }
+        int numOfRecs = Math.min(dictionaries.size(), SystemConfiguration.getInstance().getDefaultPageSize());
 
         numOfRecs--;
         int endingRecNo = startingRecNo + numOfRecs;

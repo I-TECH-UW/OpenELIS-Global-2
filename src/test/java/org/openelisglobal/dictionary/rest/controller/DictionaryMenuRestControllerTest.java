@@ -43,7 +43,6 @@ public class DictionaryMenuRestControllerTest extends BaseWebContextSensitiveTes
         int status = mvcResult.getResponse().getStatus();
         assertEquals(200, status);
         String content = mvcResult.getResponse().getContentAsString();
-
         List<DictionaryMenuForm> menuList = Arrays.asList(super.mapFromJson(content, DictionaryMenuForm[].class));
         assertThat(menuList.get(0).getMenuList().get(0).getId(), is("1"));
         assertThat(menuList.get(0).getMenuList().get(0).getIsActive(), is("Y"));
@@ -81,6 +80,29 @@ public class DictionaryMenuRestControllerTest extends BaseWebContextSensitiveTes
         assertEquals(201, status);
         String content = mvcResult.getResponse().getContentAsString();
         assertEquals(content, "Dictionary created successfully");
+    }
+
+    @Test
+    public void showDeleteDictionary_shouldSuccessfullyDeleteDictionary() throws Exception {
+        MvcResult getMenu = super.mockMvc.perform(get("/rest/dictionary-menu").accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+
+        int status = getMenu.getResponse().getStatus();
+        assertEquals(200, status);
+        String content = getMenu.getResponse().getContentAsString();
+        List<DictionaryMenuForm> menuList = Arrays.asList(super.mapFromJson(content, DictionaryMenuForm[].class));
+        String idToBeDeleted = menuList.get(0).getMenuList().get(10).getId();
+
+        // deleting the selected ID
+        MvcResult mvcResult = super.mockMvc.perform(
+                post("/rest/delete-dictionary")
+                .param("selectedIDs",idToBeDeleted))
+                .andReturn();
+
+        status = mvcResult.getResponse().getStatus();
+        assertEquals(200, status);
+        content = mvcResult.getResponse().getContentAsString();
+        assertEquals(content, "Dictionary deleted successfully");
     }
 
     private Dictionary createDictionaryObject() {
