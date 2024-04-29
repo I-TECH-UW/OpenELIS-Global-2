@@ -135,7 +135,7 @@ function ConfigMenuDisplay(props) {
               <Column lg={16} md={8} sm={4}>
                 <Section>
                   <Heading>
-                    <FormattedMessage id="admin.formEntryConfig" />
+                    <FormattedMessage id={props.id} />
                   </Heading>
                 </Section>
                 <br />

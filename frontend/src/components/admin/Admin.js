@@ -153,22 +153,40 @@ function Admin() {
       </PathRoute>
 
       <PathRoute path="#ValidationConfigurationMenu">
-        <ConfigMenuDisplay menuType="ValidationConfigurationMenu" />
+        <ConfigMenuDisplay
+          menuType="ValidationConfigurationMenu"
+          id="sidenav.label.admin.formEntry.validationconfig"
+        />
       </PathRoute>
       <PathRoute path="#SampleEntryConfigurationMenu">
-        <ConfigMenuDisplay menuType="SampleEntryConfigMenu" />
+        <ConfigMenuDisplay
+          menuType="SampleEntryConfigMenu"
+          id="sidenav.label.admin.formEntry.sampleEntryconfig"
+        />
       </PathRoute>
       <PathRoute path="#WorkPlanConfigurationMenu">
-        <ConfigMenuDisplay menuType="WorkplanConfigurationMenu" />
+        <ConfigMenuDisplay
+          menuType="WorkplanConfigurationMenu"
+          id="sidenav.label.admin.formEntry.Workplanconfig"
+        />
       </PathRoute>
       <PathRoute path="#SiteInformationMenu">
-        <ConfigMenuDisplay menuType="SiteInformationMenu" />
+        <ConfigMenuDisplay
+          menuType="SiteInformationMenu"
+          id="sidenav.label.admin.formEntry.siteInfoconfig"
+        />
       </PathRoute>
       <PathRoute path="#ResultConfigurationMenu">
-        <ConfigMenuDisplay menuType="ResultConfigurationMenu" />
+        <ConfigMenuDisplay
+          menuType="ResultConfigurationMenu"
+          id="sidenav.label.admin.formEntry.resultConfig"
+        />
       </PathRoute>
       <PathRoute path="#PatientConfigurationMenu">
-        <ConfigMenuDisplay menuType="PatientConfigurationMenu" />
+        <ConfigMenuDisplay
+          menuType="PatientConfigurationMenu"
+          id="sidenav.label.admin.formEntry.patientconfig"
+        />
       </PathRoute>
     </>
   );
