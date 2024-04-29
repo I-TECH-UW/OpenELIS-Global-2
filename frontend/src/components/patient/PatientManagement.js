@@ -73,20 +73,25 @@ function PatientManagement() {
               />
             </Button>
           </Column>
-        </Grid>
-        {searchPatientTab.active && (
-          <SearchPatientForm
-            getSelectedPatient={getSelectedPatient}
-          ></SearchPatientForm>
-        )}
 
-        <br></br>
-        {newPatientTab.active && (
-          <CreatePatientForm
-            showActionsButton={true}
-            selectedPatient={selectedPatient}
-          ></CreatePatientForm>
-        )}
+          {searchPatientTab.active && (
+            <Column lg={16} md={8} sm={4}>
+              <SearchPatientForm
+                getSelectedPatient={getSelectedPatient}
+              ></SearchPatientForm>
+            </Column>
+          )}
+
+          <br></br>
+          {newPatientTab.active && (
+            <Column lg={16} md={8} sm={4}>
+              <CreatePatientForm
+                showActionsButton={true}
+                selectedPatient={selectedPatient}
+              ></CreatePatientForm>
+            </Column>
+          )}
+        </Grid>
       </div>
     </>
   );
