@@ -899,5 +899,19 @@
   "provider.providerFirstName": "Prénom du Fournisseur",
   "provider.isActive": "Est Actif",
   "provider.telephone": "Téléphone",
-  "provider.fax": "Fax"
+  "provider.fax": "Fax",
+  "barcodeconfiguration.browse.title": "Configuration du code-barres",
+  "siteInfo.section.number": "Nombre d'étiquettes de code-barres",
+  "siteInfo.title.default.barcode": "Étiquettes de code-barres par défaut",
+  "siteInfo.title.max.barcode": "Nombre maximum d'étiquettes de code-barres",
+  "siteInfo.section.elements": "Éléments de l'étiquette de code-barres",
+  "siteInfo.section.altAccession": "Numéro d'accès au code-barres pré-imprimé",
+  "siteInfo.section.size": "Dimensions de l'étiquette de code-barres",
+  "siteInfo.description.default.barcode": "Indiquez le nombre par défaut d'étiquettes de code-barres qui doivent être imprimées avec chaque commande et spécimen.",
+  "siteInfo.description.max.barcode": "Indiquez le nombre maximum d'étiquettes de code-barres pouvant être imprimées pour chaque commande ou spécimen. Une fois le maximum atteint, un utilisateur ne pourra plus imprimer d'étiquettes supplémentaires.",
+  "siteInfo.description.elements": "Cochez la case à côté des éléments optionnels qui doivent apparaître sur les étiquettes de code-barres de commande et d'échantillon.",
+  "labno.alt.prefix.use": "Utilisez le même format de numéro d'accès et le même pool de numéros disponibles que la génération de commande.",
+  "labno.alt.prefix.instruction": "Préfixe pour les étiquettes de code-barres pré-imprimées (4 caractères) :",
+  "labno.alt.prefix.note": "REMARQUE : Si ce préfixe a déjà été utilisé, la numérotation continuera à partir du dernier numéro généré.",
+  "siteInfo.description.dimensions": "Indiquez les dimensions auxquelles les étiquettes de code-barres doivent se conformer lors de l'impression."
 }
