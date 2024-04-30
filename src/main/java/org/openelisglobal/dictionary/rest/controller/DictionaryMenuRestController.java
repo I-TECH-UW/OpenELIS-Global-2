@@ -95,7 +95,7 @@ public class DictionaryMenuRestController extends BaseRestController {
         return dictionaryService.fetchDictionaryCategoryDescriptions();
     }
 
-    @RequestMapping(value = "/rest/create-dictionary", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/rest/dictionary", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createDictionaryEntry(@RequestBody Dictionary dictionary) {
         try {
             dictionaryService.saveDictionaryMenu(dictionary);
