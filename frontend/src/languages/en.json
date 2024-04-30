@@ -668,6 +668,8 @@
   "banner.menu.results.taqman48dbsanalyzer": "Virologie: Cobas TaqMan48 DNA PCR",
   "banner.menu.results.CobasIntegra400": "Biochemistry: Cobas Integra 400+",
   "banner.menu.results.cobasc111analyzer": "Biochemistry: Cobas C111",
+  "banner.menu.results.SysmexXPanalyzer": "SysmexXP Analyzer",
+  "banner.menu.results.SysmexXNLanalyzer": "SysmexXNL Analyzer",
   "reports.followupRequired.byLocation": "Follow-up Required",
   "button.label.loadnext": "Load Next Bundle",
   "button.label.loadprevious": "Load Previous Bundle",
