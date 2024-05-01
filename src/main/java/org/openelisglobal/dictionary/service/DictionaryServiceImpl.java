@@ -182,17 +182,6 @@ public class DictionaryServiceImpl extends AuditableBaseObjectServiceImpl<Dictio
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Dictionary> searchByDictEntry(String dictEntry) {
-        return getBaseObjectDAO().searchByDictEntry(dictEntry);
-    }
-
-    @Override
-    public List<DictionaryDAOImpl.DictionaryMenu> showDictionaryMenu() {
-        return getBaseObjectDAO().showDictionaryMenu();
-    }
-
-    @Override
     public List<DictionaryDAOImpl.DictionaryDescription> fetchDictionaryCategoryDescriptions() {
         return getBaseObjectDAO().fetchDictionaryCategoryDescriptions();
     }

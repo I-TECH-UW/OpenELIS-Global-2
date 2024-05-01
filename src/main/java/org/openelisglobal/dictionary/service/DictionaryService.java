@@ -34,11 +34,6 @@ public interface DictionaryService extends BaseObjectService<Dictionary, String>
 
     List<Dictionary> getDictionaryEntrysByCategoryNameLocalizedSort(String dictionaryCategoryName);
 
-    @Transactional(readOnly = true)
-    List<Dictionary> searchByDictEntry(String dictEntry);
-
-    List<DictionaryDAOImpl.DictionaryMenu> showDictionaryMenu();
-
     Dictionary getDataForId(String dictId);
 
     void update(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired);

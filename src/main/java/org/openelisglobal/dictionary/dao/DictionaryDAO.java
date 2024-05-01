@@ -127,10 +127,6 @@ public interface DictionaryDAO extends BaseDAO<Dictionary, String> {
 
     public boolean isDictionaryFrozen(Dictionary dictionary);
 
-    List<DictionaryDAOImpl.DictionaryMenu> showDictionaryMenu();
-
-    List<Dictionary> searchByDictEntry(String dictEntry);
-
     Dictionary saveDictionaryMenu(Dictionary dictionary);
 
     List<DictionaryDAOImpl.DictionaryDescription> fetchDictionaryCategoryDescriptions();

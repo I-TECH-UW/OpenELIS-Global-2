@@ -21,10 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
@@ -48,8 +45,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 /**
@@ -282,54 +277,11 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         return null;
     }
 
-    /**
-     * <p>
-     * This class represents a response object containing information about a dictionary
-     * for menu display purposes. It is a Data Transfer Object (DTO) meant to be used for
-     * data serialization and avoids exposing the full structure of the underlying
-     * `Dictionary` entity.
-     * </p>
-     */
-    @Setter
-    @Getter
-    @NoArgsConstructor
-    public static class DictionaryMenu {
-        private String id;
-        private String categoryName;
-        private String dictEntry;
-        private String localAbbreviation;
-        private String isActive;
-    }
-
     @Setter
     @Getter
     public static class DictionaryDescription {
         private String id;
         private String description;
-    }
-
-    /**
-     * <p>This should generate the sql query below: <pre>{@code
-     * select category.name, dict_entry, category.local_abbrev, is_active
-     * from dictionary
-     * inner join dictionary_category category
-     * ON dictionary.dictionary_category_id = category.id;
-     * }</pre>
-     * </p>
-     */
-    @Override
-    public List<DictionaryMenu> showDictionaryMenu() {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
-        Root<Dictionary> dictionaryRoot = query.from(Dictionary.class);
-
-        Join<Dictionary, DictionaryCategory> categoryJoin = dictionaryRoot.join("dictionaryCategory");
-
-        query.multiselect(dictionaryRoot.get("id"),categoryJoin.get("categoryName"),dictionaryRoot.get("dictEntry"),
-                categoryJoin.get("localAbbreviation"),dictionaryRoot.get("isActive"));
-
-        List<Object[]> resultList = entityManager.createQuery(query).getResultList();
-        return getMenuList(resultList);
     }
 
     @Override
@@ -346,6 +298,10 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 
     @Override
     public DictionaryCategory saveDictionaryCategory(DictionaryCategory category) {
+        if (category == null) {
+            return null;
+        }
+
         try {
             Session session = entityManager.unwrap(Session.class);
             session.saveOrUpdate(category);
@@ -370,21 +326,6 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         return dictionary;
     }
 
-
-    private static List<DictionaryMenu> getMenuList(List<Object[]> resultList) {
-        List<DictionaryMenu> dictionaryMenuArrayList = new ArrayList<>();
-        for (Object[] result : resultList) {
-            DictionaryMenu dictionaryMenu = new DictionaryMenu();
-            dictionaryMenu.setId((String) result[0]);
-            dictionaryMenu.setCategoryName((String) result[1]);
-            dictionaryMenu.setDictEntry((String) result[2]);
-            dictionaryMenu.setLocalAbbreviation((String) result[3]);
-            dictionaryMenu.setIsActive((String) result[4]);
-            dictionaryMenuArrayList.add(dictionaryMenu);
-        }
-        return dictionaryMenuArrayList;
-    }
-
     private static List<DictionaryDescription> getDescriptionList(List<Object[]> resultList) {
         List<DictionaryDescription> dictionaryDescriptions = new ArrayList<>();
         for (Object[] result : resultList) {
@@ -395,17 +336,4 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         }
         return dictionaryDescriptions;
     }
-
-    @Override
-    public List<Dictionary> searchByDictEntry(String dictEntry) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Dictionary> cq = cb.createQuery(Dictionary.class);
-        Root<Dictionary> root = cq.from(Dictionary.class);
-
-        Predicate searchPredicate = cb.like(root.get("dictEntry"), "%" + dictEntry + "%");
-        cq.where(searchPredicate);
-
-        return entityManager.createQuery(cq).getResultList();
-    }
-
 }
