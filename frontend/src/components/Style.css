@@ -135,6 +135,7 @@ button {
   margin-bottom: 3%;
   margin-left: 1%;
 }
+
 .section {
   border: 0.5px solid green;
   border-radius: 3px;
@@ -439,6 +440,11 @@ button {
   width: 100%;
   border-collapse: collapse;
   margin-top: 16px;
+}
+
+.padding-x{
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
 .my-custom-table th,

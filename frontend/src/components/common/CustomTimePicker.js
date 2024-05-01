@@ -22,6 +22,7 @@ const CustomTimePicker = (props) => {
         value={currentTime == null ? "" : currentTime}
         onChange={(e) => handleTimePicker(e)}
         labelText={props.labelText == null ? "" : props.labelText}
+        className={props.className}
       />
     </>
   );

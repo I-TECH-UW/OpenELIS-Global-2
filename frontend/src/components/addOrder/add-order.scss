@@ -119,11 +119,28 @@
 }
 
 .cds--date-picker__input {
-  width: 33rem !important;
+  width: 100% !important;
+}
+
+.cds--time-picker{
+  width: 100%;
 }
 
 .cds--time-picker__input-field {
-  width: 31.875rem !important;
+  width: 100% !important;
+}
+
+.remove-margin{
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.cds--time-picker{
+  display: block !important;
+}
+
+.collection-time-margin{
+  margin-right: 5px;
 }
 
 .requestTestReferral {
