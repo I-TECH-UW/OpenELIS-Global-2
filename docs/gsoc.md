@@ -5,12 +5,12 @@
 
 If you are new to **OpenELIS**, we recommend starting with our [Installation](install.md) and [Developer](dev_setup.md) Instructions
 
-||Page Outline |
-|--|--|
-  |1|[GSoC 2024 Program Administrators](#gsoc-2024-program-administrators)|
-  |2| [Selected Projects for GSoC 2024](#selected-projects-for-gsoc-2024)|
-  |3 |[Program Timeline](#program-timeline)|
-  |4 |[Guidelines](#guidelines)|
+|   | Page Outline                                                          |
+|---|-----------------------------------------------------------------------|
+  | 1 | [GSoC 2024 Program Administrators](#gsoc-2024-program-administrators) |
+  | 2 | [Selected Projects for GSoC 2024](#selected-projects-for-gsoc-2024)   |
+  | 3 | [Program Timeline](#program-timeline)                                 |
+  | 4 | [Guidelines](#guidelines)                                             |
 
 
 ## GSoC 2024 Program Administrators
@@ -19,12 +19,12 @@ If you are new to **OpenELIS**, we recommend starting with our [Installation](in
 1. Herbert Yiga
 
 ## Selected Projects for GSoC 2024
-  |Project Name|Project Rating|Project Description|Required Skills |Selected Contributor | Mentors|
-  |--|--|--|--|--|--|
-  |Improve Responsiveness for OpenELIS3| Medium |Making OE3 Resposnsive|React , Typescript , Javascript| `TBD`| Mutesasira Moses|
-  |Improve OpenELIS Search Operations|Medium| Integrate a Search Engine library for OpenELIS Search |Java , Spring |`TBD`| `TBD`|
-  |Improve Integration Tests Coverage | Medium| Improve Integration Tests Coverage for the backend Service layer |Java , Spring ,J-Unit|`TBD`| `TBD`|
-  |Improve E2E Tests Coverage|  Medium| Improve end to end ui Tests Coverage for the new React Frontend |react , cypress |`TBD`| `TBD`|
+  | Project Name                         | Project Rating | Project Description                                              | Required Skills                 | Selected Contributor | Mentors          |
+  |--------------------------------------|----------------|------------------------------------------------------------------|---------------------------------|----------------------|------------------|
+  | Improve Responsiveness for OpenELIS3 | Medium         | Making OE3 Resposnsive                                           | React , Typescript , Javascript | `TBD`                | Mutesasira Moses |
+  | Improve OpenELIS Search Operations   | Medium         | Integrate a Search Engine library for OpenELIS Search            | Java , Spring                   | `TBD`                | `TBD`            |
+  | Improve Integration Tests Coverage   | Medium         | Improve Integration Tests Coverage for the backend Service layer | Java , Spring ,J-Unit           | `TBD`                | `TBD`            |
+  | Improve E2E Tests Coverage           | Medium         | Improve end to end ui Tests Coverage for the new React Frontend  | react , cypress                 | `TBD`                | `TBD`            |
 
 ## Program Timeline
 | Date | Status | Activity                                                                                                        |
@@ -35,9 +35,9 @@ If you are new to **OpenELIS**, we recommend starting with our [Installation](in
 |      | ✅      | List of accepted mentoring organizations announced                                                              |
 |      | ✅      | March 19: Potential GSoC contributors discuss application ideas with mentoring organizations                    |
 |      | ✅      | GSoC contributor application period begins                                                                      |
-|      | ✅⌛     | GSoC contributor application deadline                                                                           |
-|      | ⌛      | GSoC contributor proposal rankings due from Org Admins                                                          |
-|      | ⌛      | Accepted GSoC contributor projects announced                                                                    |
+|      | ✅      | GSoC contributor application deadline                                                                           |
+|      | ✅      | GSoC contributor proposal rankings due from Org Admins                                                          |
+|      | ✅      | Accepted GSoC contributor projects announced                                                                    |
 |      | ⌛      | Community Bonding Period. Students get to know mentors, read documentation, prepare for work on their projects  |
 |      | ⌛      | Coding officially begins                                                                                        |
 |      | ⌛      | Coding Period for Medium project                                                                                |
