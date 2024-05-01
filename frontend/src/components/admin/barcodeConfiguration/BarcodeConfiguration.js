@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect, useRef } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import {
   Form,
+  TextInput,
   Heading,
   Toggle,
   Button,
@@ -10,17 +11,10 @@ import {
   Column,
   Section,
   Checkbox,
-  DataTable,
-  Table,
-  TableHead,
-  TableRow,
-  TableBody,
-  TableHeader,
   TableCell,
   TableSelectRow,
-  TableSelectAll,
-  TableContainer,
-  Pagination,
+  UnorderedList,
+  ListItem,
 } from "@carbon/react";
 import {
   getFromOpenElisServer,
@@ -37,7 +31,7 @@ import { Formik } from "formik";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
-  { label: "Admin Managment", link: "/MasterListsPage" },
+  { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
 ];
 function BarcodeConfiguration() {
   const { notificationVisible, setNotificationVisible, addNotification } =
@@ -130,9 +124,11 @@ function BarcodeConfiguration() {
         <br />
         <Column lg={16} md={8} sm={4}>
           <Section>
-            <Heading>
-              <FormattedMessage id="barcodeconfiguration.browse.title" />
-            </Heading>
+            <Section>
+              <Heading>
+                <FormattedMessage id="barcodeconfiguration.browse.title" />
+              </Heading>
+            </Section>
           </Section>
         </Column>
         <br />
@@ -161,64 +157,364 @@ function BarcodeConfiguration() {
                 // onChange={handleChange}
                 // onBlur={handleBlur}
                 >
+                  <Section>
+                    <h4>
+                      <FormattedMessage id="siteInfo.section.number" />
+                    </h4>
+                  </Section>
+                  <hr />
+                  <h5>
+                    <FormattedMessage id="siteInfo.title.default.barcode" />
+                  </h5>
+                  <br />
+                  <FormattedMessage id="siteInfo.description.default.barcode" />
+                  <br />
+                  <br />
                   <Grid fullWidth={true}>
-                    <Column lg={16} md={8} sm={4}>
-                      <Section>
-                        <h4>
-                          <FormattedMessage id="siteInfo.section.number" />
-                        </h4>
-                      </Section>
-                      <hr />
-                      <h5>
-                        <FormattedMessage id="siteInfo.title.default.barcode" />
-                      </h5>
-                      <br />
-                      <FormattedMessage id="siteInfo.description.default.barcode" />
-                      <br />
-                      <hr />
-                      <h5>
-                        <FormattedMessage id="siteInfo.title.max.barcode" />
-                      </h5>
-                      <br />
-                      <FormattedMessage id="siteInfo.description.max.barcode" />
-                      <hr />
-                      <Section>
-                        <h4>
-                          <FormattedMessage id="siteInfo.section.elements" />
-                        </h4>
-                        <br />
-                        <FormattedMessage id="siteInfo.description.elements" />
-
-                        <br />
-                      </Section>
-                      <hr />
-                      <Section>
-                        <h4>
-                          <FormattedMessage id="siteInfo.section.altAccession" />
-                        </h4>
-                        <div>
-                          Checkbox{" "}
-                          <FormattedMessage id="labno.alt.prefix.use" />
-                          <br />
-                          <br />
-                          <FormattedMessage id="labno.alt.prefix.instruction" />
-                          Input
-                          <br />
-                          <br />
-                          <FormattedMessage id="labno.alt.prefix.note" />
-                          <br />
-                        </div>
-                      </Section>
-                      <hr />
-                      <Section>
-                        <h4>
-                          <FormattedMessage id="siteInfo.section.size" />
-                        </h4>
-                        <br />
-                        <FormattedMessage id="siteInfo.description.dimensions" />
-                      </Section>
+                    <Column lg={8} md={8} sm={4}>
+                      <TextInput
+                        name="order"
+                        className="defalut"
+                        type="text"
+                        // id={index + "order"}
+                        labelText={
+                          <FormattedMessage id="siteInfo.title.default.barcode.order" />
+                        }
+                        // value={rule.ruleName}
+                        // onChange={(e) => handleRuleFieldChange(e, index)}
+                      />
+                    </Column>
+                    <Column lg={8} md={8} sm={4}>
+                      <TextInput
+                        name="specimen"
+                        className="defalut"
+                        type="text"
+                        // id={index + "order"}
+                        labelText={
+                          <FormattedMessage id="siteInfo.title.default.barcode.specimen" />
+                        }
+                        // value={rule.ruleName}
+                        // onChange={(e) => handleRuleFieldChange(e, index)}
+                      />
                     </Column>
                   </Grid>
+                  <br />
+                  <h5>
+                    <FormattedMessage id="siteInfo.title.max.barcode" />
+                  </h5>
+                  <br />
+                  <FormattedMessage id="siteInfo.description.max.barcode" />
+                  <br />
+                  <br />
+                  <Grid fullWidth={true}>
+                    <Column lg={8} md={8} sm={4}>
+                      <TextInput
+                        name="order"
+                        className="defalut"
+                        type="text"
+                        // id={index + "order"}
+                        labelText={
+                          <FormattedMessage id="siteInfo.title.default.barcode.order" />
+                        }
+                        // value={rule.ruleName}
+                        // onChange={(e) => handleRuleFieldChange(e, index)}
+                      />
+                    </Column>
+                    <Column lg={8} md={8} sm={4}>
+                      <TextInput
+                        name="specimen"
+                        className="defalut"
+                        type="text"
+                        // id={index + "order"}
+                        labelText={
+                          <FormattedMessage id="siteInfo.title.default.barcode.specimen" />
+                        }
+                        // value={rule.ruleName}
+                        // onChange={(e) => handleRuleFieldChange(e, index)}
+                      />
+                    </Column>
+                  </Grid>
+                  <hr />
+                  <Section>
+                    <h4>
+                      <FormattedMessage id="siteInfo.section.elements" />
+                    </h4>
+                    <br />
+                    <FormattedMessage id="siteInfo.description.elements" />
+                    <br />
+                    <br />
+                    <Grid fullWidth={true}>
+                      <Column lg={16} md={8} sm={4}>
+                        <h4>
+                          <FormattedMessage id="siteInfo.elements.mandatory" />
+                        </h4>
+                        <br />
+                        <Grid fullWidth={true}>
+                          <Column lg={8} md={8} sm={4}>
+                            <div>
+                              <FormattedMessage id="siteInfo.title.default.barcode.order" />
+                              <br />
+                              <br />
+                              <UnorderedList nested={true}>
+                                <ListItem>
+                                  <FormattedMessage id="barcode.label.info.labnumber" />
+                                </ListItem>
+                                <ListItem>
+                                  <FormattedMessage id="barcode.label.info.patientdobfull" />
+                                </ListItem>
+                                <ListItem>
+                                  <FormattedMessage id="barcode.label.info.patientid" />
+                                </ListItem>
+                                <ListItem>
+                                  <FormattedMessage id="barcode.label.info.patientname" />
+                                </ListItem>
+                                <ListItem>
+                                  <FormattedMessage id="datasubmission.siteid" />
+                                </ListItem>
+                              </UnorderedList>
+                            </div>
+                          </Column>
+                          <Column lg={8} md={8} sm={4}>
+                            <div>
+                              <FormattedMessage id="siteInfo.title.default.barcode.specimen" />
+                              <br />
+                              <br />
+                              <UnorderedList nested={true}>
+                                <ListItem>
+                                  <FormattedMessage id="barcode.label.info.labnumber" />
+                                </ListItem>
+                                <ListItem>
+                                  <FormattedMessage id="barcode.label.info.patientdobfull" />
+                                </ListItem>
+                                <ListItem>
+                                  <FormattedMessage id="barcode.label.info.patientid" />
+                                </ListItem>
+                                <ListItem>
+                                  <FormattedMessage id="barcode.label.info.patientname" />
+                                </ListItem>
+                              </UnorderedList>
+                            </div>
+                          </Column>
+                        </Grid>
+                      </Column>
+                    </Grid>
+                    <br />
+                    <Grid fullWidth={true}>
+                      <Column lg={16} md={8} sm={4}>
+                        <h4>
+                          <FormattedMessage id="siteInfo.elements.optional" />
+                        </h4>
+                        <br />
+                        <Grid fullWidth={true}>
+                          <Column lg={8} md={8} sm={4}>
+                            <div>
+                              <FormattedMessage id="siteInfo.title.default.barcode.order" />
+                              <br />
+                              <br />
+                              <FormattedMessage id="siteInfo.title.default.barcode.order.none" />
+                            </div>
+                          </Column>
+                          <Column lg={8} md={8} sm={4}>
+                            <div>
+                              <FormattedMessage id="siteInfo.title.default.barcode.specimen" />
+                              <br />
+                              <Checkbox
+                                id="checkBox0"
+                                labelText={
+                                  <FormattedMessage id="barcode.label.info.collectiondatetime" />
+                                }
+                              />
+                              <Checkbox
+                                id="checkBox1"
+                                labelText={
+                                  <FormattedMessage id="barcode.label.info.collectedBy" />
+                                }
+                              />
+                              <Checkbox
+                                id="checkBox2"
+                                labelText={
+                                  <FormattedMessage id="barcode.label.info.tests" />
+                                }
+                              />
+                              <Checkbox
+                                id="checkBox3"
+                                labelText={
+                                  <FormattedMessage id="barcode.label.info.patientsexfull" />
+                                }
+                              />
+                            </div>
+                          </Column>
+                        </Grid>
+                      </Column>
+                    </Grid>
+                  </Section>
+                  <hr />
+                  <Section>
+                    <h4>
+                      <FormattedMessage id="siteInfo.section.altAccession" />
+                    </h4>
+                    <br />
+                    <Checkbox
+                      id="checkBox"
+                      labelText={<FormattedMessage id="labno.alt.prefix.use" />}
+                    />
+                    <br />
+                    <Grid fullWidth={true}>
+                      <Column lg={8} md={4} sm={4}>
+                        <FormattedMessage id="labno.alt.prefix.instruction" />
+                      </Column>
+                      <Column lg={8} md={4} sm={4}>
+                        <TextInput
+                          name="prefix"
+                          className="defalut"
+                          type="text"
+                          // id={index + "order"}
+                          labelText=""
+                          // value={rule.ruleName}
+                          // onChange={(e) => handleRuleFieldChange(e, index)}
+                        />
+                      </Column>
+                    </Grid>
+                    <br />
+                    <FormattedMessage id="labno.alt.prefix.note" />
+                    <br />
+                  </Section>
+                  <hr />
+                  <Section>
+                    <h4>
+                      <FormattedMessage id="siteInfo.section.size" />
+                    </h4>
+                    <br />
+                    <FormattedMessage id="siteInfo.description.dimensions" />
+                    <br />
+                    <br />
+                    <Grid fullWidth={true}>
+                      <Column lg={8} md={4} sm={2}>
+                        <FormattedMessage id="siteInfo.title.default.barcode.order" />
+                        <br />
+                        <br />
+                        <TextInput
+                          name="prefix"
+                          className="defalut"
+                          type="text"
+                          // id={index + "order"}
+                          labelText={
+                            <FormattedMessage id="siteInfo.title.default.barcode.height" />
+                          }
+                          helperText="Enter values in: mm"
+                          // value={rule.ruleName}
+                          // onChange={(e) => handleRuleFieldChange(e, index)}
+                        />
+                        <br />
+                        <TextInput
+                          name="prefix"
+                          className="defalut"
+                          type="text"
+                          // id={index + "order"}
+                          labelText={
+                            <FormattedMessage id="siteInfo.title.default.barcode.width" />
+                          }
+                          helperText="Enter values in: mm"
+                          // value={rule.ruleName}
+                          // onChange={(e) => handleRuleFieldChange(e, index)}
+                        />
+                      </Column>
+                      <Column lg={8} md={4} sm={2}>
+                        <FormattedMessage id="siteInfo.title.default.barcode.specimen" />
+                        <br />
+                        <br />
+                        <TextInput
+                          name="prefix"
+                          className="defalut"
+                          type="text"
+                          // id={index + "order"}
+                          labelText={
+                            <FormattedMessage id="siteInfo.title.default.barcode.height" />
+                          }
+                          helperText="Enter values in: mm"
+                          // value={rule.ruleName}
+                          // onChange={(e) => handleRuleFieldChange(e, index)}
+                        />
+                        <br />
+                        <TextInput
+                          name="prefix"
+                          className="defalut"
+                          type="text"
+                          // id={index + "order"}
+                          labelText={
+                            <FormattedMessage id="siteInfo.title.default.barcode.width" />
+                          }
+                          helperText="Enter values in: mm"
+                          // value={rule.ruleName}
+                          // onChange={(e) => handleRuleFieldChange(e, index)}
+                        />
+                      </Column>
+                    </Grid>
+                    <br />
+                    <Grid fullWidth={true}>
+                      <Column lg={8} md={4} sm={2}>
+                        <FormattedMessage id="siteInfo.title.default.barcode.block" />
+                        <br />
+                        <br />
+                        <TextInput
+                          name="prefix"
+                          className="defalut"
+                          type="text"
+                          // id={index + "order"}
+                          labelText={
+                            <FormattedMessage id="siteInfo.title.default.barcode.height" />
+                          }
+                          helperText="Enter values in: mm"
+                          // value={rule.ruleName}
+                          // onChange={(e) => handleRuleFieldChange(e, index)}
+                        />
+                        <br />
+                        <TextInput
+                          name="prefix"
+                          className="defalut"
+                          type="text"
+                          // id={index + "order"}
+                          labelText={
+                            <FormattedMessage id="siteInfo.title.default.barcode.width" />
+                          }
+                          helperText="Enter values in: mm"
+                          // value={rule.ruleName}
+                          // onChange={(e) => handleRuleFieldChange(e, index)}
+                        />
+                      </Column>
+                      <Column lg={8} md={4} sm={2}>
+                        <FormattedMessage id="siteInfo.title.default.barcode.slide" />
+                        <br />
+                        <br />
+                        <TextInput
+                          name="prefix"
+                          className="defalut"
+                          type="text"
+                          // id={index + "order"}
+                          labelText={
+                            <FormattedMessage id="siteInfo.title.default.barcode.height" />
+                          }
+                          helperText="Enter values in: mm"
+                          // value={rule.ruleName}
+                          // onChange={(e) => handleRuleFieldChange(e, index)}
+                        />
+                        <br />
+                        <TextInput
+                          name="prefix"
+                          className="defalut"
+                          type="text"
+                          // id={index + "order"}
+                          labelText={
+                            <FormattedMessage id="siteInfo.title.default.barcode.width" />
+                          }
+                          helperText="Enter values in: mm"
+                          // value={rule.ruleName}
+                          // onChange={(e) => handleRuleFieldChange(e, index)}
+                        />
+                      </Column>
+                    </Grid>
+                  </Section>
+                  <hr />
                 </Form>
               )}
             </Formik>
