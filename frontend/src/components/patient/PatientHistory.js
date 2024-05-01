@@ -51,7 +51,11 @@ const PatientHistory = () => {
       <br></br>
 
       <div className="orderLegendBody">
-        <SearchPatientForm getSelectedPatient={getSelectedPatient} />
+        <Grid fullWidth={true}>
+          <Column lg={16}>
+            <SearchPatientForm getSelectedPatient={getSelectedPatient} />
+          </Column>
+        </Grid>
       </div>
     </>
   );

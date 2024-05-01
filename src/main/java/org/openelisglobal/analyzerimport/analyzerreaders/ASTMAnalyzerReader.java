@@ -34,8 +34,12 @@ import com.ibm.icu.text.CharsetDetector;
 public class ASTMAnalyzerReader extends AnalyzerReader {
 
     private List<String> lines;
+    private AnalyzerImporterPlugin plugin;
     private AnalyzerLineInserter inserter;
+    private AnalyzerResponder responder;
     private String error;
+    private boolean hasResponse = false;
+    private String responseBody;
 
     @Override
     public boolean readStream(InputStream stream) {
@@ -65,7 +69,7 @@ public class ASTMAnalyzerReader extends AnalyzerReader {
         }
 
         if (!lines.isEmpty()) {
-            setInserter();
+            setInserterResponder();
             if (inserter == null) {
                 error = "Unable to understand which analyzer sent the message";
                 return false;
@@ -78,33 +82,62 @@ public class ASTMAnalyzerReader extends AnalyzerReader {
 
     }
 
-    private void setInserter() {
+    public boolean processData(String currentUserId) {
+        // it is assumed that all requests are either requests for information
+        // or analyzer results to be entered
+        if (plugin.isAnalyzerResult(lines)) {
+            return insertAnalyzerData(currentUserId);
+        } else {
+            responseBody = buildResponseForQuery();
+            hasResponse = true;
+            return true;
+        }
+    }
+
+    public boolean hasResponse() {
+        return hasResponse;
+    }
+
+    public String getResponse() {
+        return responseBody;
+    }
+
+    private void setInserterResponder() {
         for (AnalyzerImporterPlugin plugin : SpringContext.getBean(PluginAnalyzerService.class).getAnalyzerPlugins()) {
             if (plugin.isTargetAnalyzer(lines)) {
+                this.plugin = plugin;
                 inserter = plugin.getAnalyzerLineInserter();
+                responder = plugin.getAnalyzerResponder();
                 return;
             }
         }
     }
 
-    public void insertTestLines(List<String> testLines) {
-        lines = testLines;
+    private String buildResponseForQuery() {
+        if (responder == null) {
+            error = "Unable to understand which analyzer sent the query or plugin doesn't support responding";
+            LogEvent.logError(this.getClass().getSimpleName(), "buildResponseForQuery", error);
+            return "";
+        } else {
+            LogEvent.logDebug(this.getClass().getSimpleName(), "buildResponseForQuery", "building response");
+            return responder.buildResponse(lines);
+        } 
     }
 
     @Override
     public boolean insertAnalyzerData(String systemUserId) {
         if (inserter == null) {
             error = "Unable to understand which analyzer sent the file";
+            LogEvent.logError(this.getClass().getSimpleName(), "buildResponseForQuery", error);
             return false;
         } else {
             boolean success = inserter.insert(lines, systemUserId);
             if (!success) {
                 error = inserter.getError();
+                LogEvent.logError(this.getClass().getSimpleName(), "buildResponseForQuery", error);
             }
-
             return success;
         }
-
     }
 
     @Override

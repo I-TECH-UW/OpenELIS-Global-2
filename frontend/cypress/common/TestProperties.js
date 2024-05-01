@@ -1,7 +1,7 @@
 class TestProperties {
   DEFAULT_USERNAME = "admin";
   DEFAULT_PASSWORD = "adminADMIN!";
-TEST_SERVER_URL = "https://localhost/";
+  TEST_SERVER_URL = "https://localhost/";
 
   constructor() {}
 

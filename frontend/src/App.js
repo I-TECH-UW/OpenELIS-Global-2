@@ -35,7 +35,11 @@ import RoutedResultsViewer from "./components/patient/resultsViewer/results-view
 import EOrderPage from "./components/eOrder/Index";
 import RoutineIndex from "./components/reports/routine/Index.js";
 import StudyIndex from "./components/reports/study/index.js";
+import ReportIndex from "./components/reports/Index.js";
 import PrintBarcode from "./components/printBarcode/Index";
+import NonConformIndex from "./components/nonconform/index";
+import SampleBatchEntrySetup from "./components/batchOrderEntry/SampleBatchEntrySetup.js";
+import AuditTrailReportIndex from "./components/reports/auditTrailReport/Index.js";
 
 export default function App() {
   let i18nConfig = {
@@ -283,6 +287,29 @@ export default function App() {
                   role="Reception"
                 />
                 <SecureRoute
+                  path="/ReportNonConformingEvent"
+                  exact
+                  component={() => (
+                    <NonConformIndex form="ReportNonConformingEvent" />
+                  )}
+                  role="Reception"
+                />
+                <SecureRoute
+                  path="/ViewNonConformingEvent"
+                  exact
+                  component={() => (
+                    <NonConformIndex form="ViewNonConformingEvent" />
+                  )}
+                  role="Reception"
+                />
+                <SecureRoute
+                  path="/SampleBatchEntrySetup"
+                  exact
+                  component={() => <SampleBatchEntrySetup />}
+                  role="Reception"
+                />
+
+                <SecureRoute
                   path="/ElectronicOrders"
                   exact
                   component={() => <EOrderPage />}
@@ -394,6 +421,18 @@ export default function App() {
                   path="/StudyReport"
                   exact
                   component={() => <StudyIndex />}
+                  role="Reports"
+                />
+                <SecureRoute
+                  path="/Report"
+                  exact
+                  component={() => <ReportIndex />}
+                  role="Reports"
+                />
+                <SecureRoute
+                  path="/AuditTrailReport"
+                  exact
+                  component={() => <AuditTrailReportIndex />}
                   role="Reports"
                 />
                 <SecureRoute

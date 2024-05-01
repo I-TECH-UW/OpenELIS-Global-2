@@ -125,6 +125,7 @@ const Validation = (props) => {
     if (status == 200) {
       message = intl.formatMessage({ id: "validation.save.success" });
       kind = NotificationKinds.success;
+      window.location.href = "/validation" + props.params;
     }
     addNotification({
       kind: kind,

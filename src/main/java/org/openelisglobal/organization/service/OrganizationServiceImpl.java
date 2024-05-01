@@ -46,6 +46,12 @@ public class OrganizationServiceImpl extends AuditableBaseObjectServiceImpl<Orga
     public Organization getOrganizationByName(Organization organization, boolean ignoreCase) {
         return baseObjectDAO.getOrganizationByName(organization, ignoreCase);
     }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Organization getOrganizationByShortName(String shortName, boolean ignoreCase) {
+    	return baseObjectDAO.getOrganizationByShortName(shortName, ignoreCase);
+    }
 
     @Override
     @Transactional(readOnly = true)

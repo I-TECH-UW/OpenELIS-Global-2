@@ -31,6 +31,7 @@ import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.role.service.RoleService;
@@ -53,6 +54,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.openelisglobal.reports.action.implementation.ExportTrendsByDate;
+import org.openelisglobal.project.service.ProjectService;
+import org.openelisglobal.project.valueholder.Project;
 
 @Controller
 @RequestMapping(value = "/rest/")
@@ -104,6 +108,38 @@ public class DisplayListController extends BaseRestController{
 
 	protected static List<Integer> statusList;
 	protected static List<String> nfsTestIdList;
+
+	// Manually create an instance of ExportTrendsByDate
+    private ExportTrendsByDate exportTrendsByDate = new ExportTrendsByDate();
+
+	@Autowired
+    private ProjectService projectService; // Inject the ProjectService
+
+    @GetMapping(value = "projects", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<IdValuePair> getProjects() {
+        List<Project> projectList = projectService.getAllProjects(); // Assuming a method in ProjectService to fetch all projects
+        List<IdValuePair> projects = new ArrayList<>();
+
+        // Convert Project objects to IdValuePair and add to the list
+        for (Project project : projectList) {
+            projects.add(new IdValuePair(project.getId(), project.getProjectName()));
+        }
+
+        return projects;
+    }
+
+  	@GetMapping(value = "trendsprojects", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<IdValuePair> getTempProjects() {
+        // Use the manually created instance of ExportTrendsByDate
+        List<Project> projects = exportTrendsByDate.getProjectList();
+        List<IdValuePair> projectList = new ArrayList<>();
+        projects.forEach(project -> {
+            projectList.add(new IdValuePair(project.getId(), project.getProjectName()));
+        });
+        return projectList;  
+    }
 
 	@PostConstruct
 	private void initialize() {
@@ -360,7 +396,7 @@ public class DisplayListController extends BaseRestController{
 	@GetMapping(value = "test-sections", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	private List<IdValuePair> createTestSectionsList() {
-		return DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS);
+		return DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE);
 	}
 
 	@GetMapping(value = "user-test-sections", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -7,9 +7,9 @@ name: Publish 3.X Dev FrontEnd Docker image
 
 on:
   push:
-    branches: [ 'develop_3x']
+    branches: [ develop]
   pull_request:
-    branches: [develop_3x]  
+    branches: [develop]  
   workflow_dispatch:
 
 
