@@ -114,12 +114,6 @@ function Admin() {
           <SideNavLink renderIcon={ChartBubble} href="#program">
             <FormattedMessage id="sidenav.label.admin.program" />
           </SideNavLink>
-          <SideNavLink href="#labNumber" renderIcon={CharacterWholeNumber}>
-            <FormattedMessage id="sidenav.label.admin.labNumber" />
-          </SideNavLink>
-          <SideNavLink renderIcon={ChartBubble} href="#program">
-            <FormattedMessage id="sidenav.label.admin.program" />
-          </SideNavLink>
           <SideNavLink href="#commonproperties" renderIcon={Settings}>
             <FormattedMessage
               id="sidenav.label.admin.commonproperties"

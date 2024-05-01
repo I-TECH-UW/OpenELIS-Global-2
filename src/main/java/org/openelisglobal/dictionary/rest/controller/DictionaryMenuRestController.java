@@ -174,7 +174,7 @@ public class DictionaryMenuRestController extends BaseRestController {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            String json = objectMapper.writeValueAsString(form);
+            String json = objectMapper.writeValueAsString(form.getMenuList());
             return new ResponseEntity<>(json, headers, HttpStatus.OK);
         } catch (JsonProcessingException e) {
             log.error("Error converting form to JSON: " + e.getMessage(), e);

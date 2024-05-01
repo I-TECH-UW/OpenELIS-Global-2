@@ -38,11 +38,7 @@ function DictionaryManagement() {
   const intl = useIntl();
   const componentMounted = useRef(false);
 
-  const {
-    notificationVisible,
-    setNotificationVisible,
-    addNotification,
-  } = useContext(NotificationContext);
+  const { notificationVisible, setNotificationVisible, addNotification,} = useContext(NotificationContext);
   const { reloadConfiguration } = useContext(ConfigurationContext);
   const [dictionaryMenuz, setDictionaryMenuz] = useState([]);
 
@@ -70,6 +66,7 @@ function DictionaryManagement() {
 
   const fetchedDictionaryMenu = (dictionaryMenus) => {
     if (componentMounted.current) {
+      console.log("wierd json received: " + dictionaryMenus)
       setDictionaryMenuz(dictionaryMenus);
     }
   };
@@ -93,7 +90,7 @@ function DictionaryManagement() {
     componentMounted.current = true;
     getFromOpenElisServer(
       "/rest/dictionary-categories/descriptions",
-      fetchedDictionaryCategory
+      fetchedDictionaryCategory,
     );
     return () => {
       componentMounted.current = false;
@@ -130,9 +127,9 @@ function DictionaryManagement() {
     e.preventDefault();
     console.log(JSON.stringify(postData));
     postToOpenElisServerFullResponse(
-      "/rest/create-dictionary",
+      "/rest/dictionary",
       JSON.stringify(postData),
-      displayStatus
+      displayStatus,
     );
     setOpen(false);
   };
@@ -230,7 +227,7 @@ function DictionaryManagement() {
             <DataTable
               rows={dictionaryMenuz.slice(
                 (page - 1) * pageSize,
-                page * pageSize
+                page * pageSize,
               )}
               headers={[
                 {
@@ -288,7 +285,11 @@ function DictionaryManagement() {
                             <TableCell key={cell.id}>{cell.value}</TableCell>
                           ))}
                           <TableCell className="cds--table-column-x">
-                            <OverflowMenu ariaLabel="modify menu" size="sm" flipped>
+                            <OverflowMenu
+                              ariaLabel="modifymenu"
+                              size="sm"
+                              flipped
+                            >
                               <OverflowMenuItem itemText="Edit" />
                               <OverflowMenuItem itemText="Delete" />
                             </OverflowMenu>
@@ -311,7 +312,7 @@ function DictionaryManagement() {
               itemRangeText={(min, max, total) =>
                 intl.formatMessage(
                   { id: "pagination.item-range" },
-                  { min: min, max: max, total: total }
+                  { min: min, max: max, total: total },
                 )
               }
               itemsPerPageText={intl.formatMessage({
@@ -320,7 +321,7 @@ function DictionaryManagement() {
               itemText={(min, max) =>
                 intl.formatMessage(
                   { id: "pagination.item" },
-                  { min: min, max: max }
+                  { min: min, max: max },
                 )
               }
               pageNumberText={intl.formatMessage({
@@ -329,13 +330,13 @@ function DictionaryManagement() {
               pageRangeText={(_current, total) =>
                 intl.formatMessage(
                   { id: "pagination.page-range" },
-                  { total: total }
+                  { total: total },
                 )
               }
               pageText={(page, pagesUnknown) =>
                 intl.formatMessage(
                   { id: "pagination.page" },
-                  { page: pagesUnknown ? "" : page }
+                  { page: pagesUnknown ? "" : page },
                 )
               }
             />

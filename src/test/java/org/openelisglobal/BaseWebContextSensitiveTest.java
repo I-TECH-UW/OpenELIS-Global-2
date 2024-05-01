@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.ActiveProfiles;
@@ -26,8 +24,6 @@ import java.io.IOException;
 @ActiveProfiles("test")
 public abstract class BaseWebContextSensitiveTest {
 
-    private final Logger log = LoggerFactory.getLogger(BaseWebContextSensitiveTest.class);
-    
     @Autowired
     protected WebApplicationContext webApplicationContext;
 
@@ -47,7 +43,6 @@ public abstract class BaseWebContextSensitiveTest {
         MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
         ObjectMapper objectMapper = jsonConverter.getObjectMapper();
         objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
-        log.debug("form to be mapped to json" + json);
         return objectMapper.readValue(json, clazz);
     }
 }
