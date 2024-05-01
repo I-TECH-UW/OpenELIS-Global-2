@@ -61,7 +61,6 @@ const EditSample = (props) => {
   const formatTestsObject = (tests) => {
     return tests.map((test) => {
       test.id = test.testId;
-      test.collectionTime = "";
       if (!test.accessionNumber) {
         test.accessionNumber = "";
       }
@@ -70,6 +69,9 @@ const EditSample = (props) => {
       }
       if (!test.collectionDate) {
         test.collectionDate = "";
+      }
+      if (!test.collectionTime) {
+        test.collectionTime = "";
       }
       return test;
     });

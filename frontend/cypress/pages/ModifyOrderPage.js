@@ -39,7 +39,7 @@ class ModifyOrderPage {
     return cy.get(".orderEntrySuccessMsg > :nth-child(3) > .cds--btn").click();
   }
   clickSearchPatientButton() {
-    return cy.get(":nth-child(13) > .cds--btn").click({ force: true });
+    return cy.get(":nth-child(12) > .cds--btn").click({ force: true });
   }
 
   clickRespectivePatient() {

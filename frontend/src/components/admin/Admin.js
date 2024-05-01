@@ -19,6 +19,7 @@ import {
   ChartBubble,
   Catalog,
   Settings,
+  ListDropdown,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -30,6 +31,7 @@ import {
   SideNavMenuItem,
 } from "@carbon/react";
 import { CommonProperties } from "./menu/CommonProperties";
+import ConfigMenuDisplay from "./formEntry/common/ConfigMenuDisplay";
 
 function Admin() {
   const intl = useIntl();
@@ -78,6 +80,31 @@ function Admin() {
               <FormattedMessage id="sidenav.label.admin.menu.study" />
             </SideNavMenuItem>
           </SideNavMenu>
+
+          <SideNavMenu
+            title={intl.formatMessage({ id: "admin.formEntryConfig" })}
+            renderIcon={ListDropdown}
+          >
+            <SideNavMenuItem href="#WorkPlanConfigurationMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.Workplanconfig" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#SiteInformationMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.siteInfoconfig" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#ResultConfigurationMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.resultConfig" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#PatientConfigurationMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.patientconfig" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#SampleEntryConfigurationMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.sampleEntryconfig" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#ValidationConfigurationMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.validationconfig" />
+            </SideNavMenuItem>
+          </SideNavMenu>
+
           <SideNavLink href="#commonproperties" renderIcon={Settings}>
             <FormattedMessage
               id="sidenav.label.admin.commonproperties"
@@ -123,6 +150,43 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#commonproperties">
         <CommonProperties />
+      </PathRoute>
+
+      <PathRoute path="#ValidationConfigurationMenu">
+        <ConfigMenuDisplay
+          menuType="ValidationConfigurationMenu"
+          id="sidenav.label.admin.formEntry.validationconfig"
+        />
+      </PathRoute>
+      <PathRoute path="#SampleEntryConfigurationMenu">
+        <ConfigMenuDisplay
+          menuType="SampleEntryConfigMenu"
+          id="sidenav.label.admin.formEntry.sampleEntryconfig"
+        />
+      </PathRoute>
+      <PathRoute path="#WorkPlanConfigurationMenu">
+        <ConfigMenuDisplay
+          menuType="WorkplanConfigurationMenu"
+          id="sidenav.label.admin.formEntry.Workplanconfig"
+        />
+      </PathRoute>
+      <PathRoute path="#SiteInformationMenu">
+        <ConfigMenuDisplay
+          menuType="SiteInformationMenu"
+          id="sidenav.label.admin.formEntry.siteInfoconfig"
+        />
+      </PathRoute>
+      <PathRoute path="#ResultConfigurationMenu">
+        <ConfigMenuDisplay
+          menuType="ResultConfigurationMenu"
+          id="sidenav.label.admin.formEntry.resultConfig"
+        />
+      </PathRoute>
+      <PathRoute path="#PatientConfigurationMenu">
+        <ConfigMenuDisplay
+          menuType="PatientConfigurationMenu"
+          id="sidenav.label.admin.formEntry.patientconfig"
+        />
       </PathRoute>
     </>
   );

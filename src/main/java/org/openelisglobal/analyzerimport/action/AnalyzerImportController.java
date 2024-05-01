@@ -93,12 +93,12 @@ public class AnalyzerImportController implements IActionConstants {
     }
 
     @PostMapping("/analyzer/astm")
-    public void doPost(@RequestBody String message, HttpServletRequest request, HttpServletResponse response)
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         ASTMAnalyzerReader reader = null;
         boolean read = false;
-        InputStream stream = new ByteArrayInputStream(message.getBytes());
+        InputStream stream = request.getInputStream();
 
         reader = (ASTMAnalyzerReader) AnalyzerReaderFactory.getReaderFor("astm");
 
