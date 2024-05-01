@@ -54,17 +54,17 @@ If you are new to **OpenELIS Global**, we recommend starting with our [Installat
 |               | ⌛        | Final date for mentors to submit evaluations for GSoC contributor projects with extended deadlines              |
 | Date          | Status   | Activity                                                                                                        |
 | ------        | -------- | ----------                                                                                                      |
-| 20/Nov/2023   | ✅        | GSoC 2024 Anounced                                                                                              |
+| 20/Nov/2023   | ✅        | GSoC 2024 Announced                                                                                             |
 | 22/Jan/2024   | ✅        | Mentoring organizations can begin submitting applications to Google                                             |
 | 06/Feb/2024   | ✅        | Mentoring organization application deadline                                                                     |
-| 21/Feb/20204  | ⌛        | List of accepted mentoring organizations announced                                                              |
-| 22/Feb/20204  | ⌛        | Potential GSoC contributors discuss application ideas with mentoring organizations                              |
-| 18/Mar/2024   | ⌛        | GSoC contributor application period begins                                                                      |
-| 02/Apr/2024   | ⌛        | GSoC contributor application deadline                                                                           |
-| 24/April/2024 | ⌛        | GSoC contributor proposal rankings due from Org Admins                                                          |
-| 29/Apr/2024   | ⌛        | Slot Allocation Deadline                                                                                        |
-| 30/Apr/2024   | ⌛        | Projects Announced to Orgs                                                                                      |
-| 01/May/2024   | ⌛        | Accepted GSoC contributor projects announced                                                                    |
+| 21/Feb/20204  | ✅        | List of accepted mentoring organizations announced                                                              |
+| 22/Feb/20204  | ✅        | Potential GSoC contributors discuss application ideas with mentoring organizations                              |
+| 18/Mar/2024   | ✅        | GSoC contributor application period begins                                                                      |
+| 02/Apr/2024   | ✅        | GSoC contributor application deadline                                                                           |
+| 24/April/2024 | ✅        | GSoC contributor proposal rankings due from Org Admins                                                          |
+| 29/Apr/2024   | ✅        | Slot Allocation Deadline                                                                                        |
+| 30/Apr/2024   | ✅        | Projects Announced to Orgs                                                                                      |
+| 01/May/2024   | ✅        | Accepted GSoC contributor projects announced                                                                    |
 | 01/May/2024   | ⌛        | Community Bonding Period. Students get to know mentors, read documentation, prepare for work on their projects  |
 | 27/May/2024   | ⌛        | Coding officially begins                                                                                        |
 | 08/Jul/2024   | ⌛        | Mentors and GSoC contributors can begin submitting midterm evaluations                                          |
