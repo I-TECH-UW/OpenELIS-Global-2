@@ -93,17 +93,14 @@ function DictionaryManagement() {
   useEffect(() => {
     if (dictionaryMenuz && dictionaryMenuz.menuList) {
       const list = dictionaryMenuz.menuList.map((item) => {
-        const { id, isActive, dictEntry, dictionaryCategory } = item;
-        const {
-          localAbbreviation: categoryLocalAbbreviation,
-          categoryName: categoryName,
-        } = dictionaryCategory;
+        const { id, isActive, dictEntry, dictionaryCategory, localAbbreviation} = item;
+        const {categoryName: categoryName } = dictionaryCategory;
         return {
           id,
           isActive,
           dictEntry,
           categoryName,
-          categoryLocalAbbreviation,
+          localAbbreviation,
         };
       });
       setMenuList(list);
