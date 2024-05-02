@@ -22,12 +22,12 @@ If you are new to **OpenELIS Global**, we recommend starting with our [Installat
 ## Selected Projects for GSoC 2024
   |Project Name|Project Size|Project Description|Expected Out Come |Required Skills |Selected Contributor | Mentors|
   |--|--|--|--|--|--|--|
-  |Improve Responsiveness for OpenELIS 3x| 350 hours |The new OpenELIS React Front end needs to display correctly on different screen sizes ie Large(Desktop) and medium (Tablet) . The objective of this project is to improve the responsiveness of OpenELIS 3x, ensuring a seamless user experience across various devices and screen sizes | Improved 3x UI Responsivenes across different devices |React , Typescript , Javascript, Carbon Design System| `TBD`| Gita Cliff|
-  |Enhanced Search Functionality for OpenELIS|350 hours| This project aims to enhance the search capabilities within the OpenELIS system, providing users with a more effiecient way for retrieving vital information efficiently . We would need to Integrate a Search Engine library For indexing key coulmns and providing a faster way to Search Results |Enhanced and Efficient Search Functionality |Java , Spring |`TBD`| Mutesasira Moses|
-  |Improve Integration Tests Coverage | 350 hours| The current Service Layer Integration tests only cover a few components .This project aims to Improve Integration Tests Coverage for the critical components with in the application .Integration tests play a pivotal role in validating the interactions between various modules and ensuring the seamless functioning of the entire system | Atleast 70 % Test coverage for the Service Layer |Java , Spring ,J-Unit|`TBD`| Reagan Makoba|
-  |Improve E2E Tests Coverage|  350 hours| The Current E2E tests have a very low test coverage and are not very stable. This project is dedicated to improve the End-to-End (E2E) testing coverage for the New React front end and ensuring robust validation of the entire application workflow . E2E tests play a critical role in verifying the seamless interaction between various components, ensuring that the application functions as expected from the user's perspective | Atleast 70% Test Coverage for the new UI |react , cypress |`TBD`| Namanya Abert|
-  |Rewite Admin Page components from JSP to React|  350 hours| Most of the current Admin page Functionalities are still on the old JSP UI. This project aims at re-writing key admin components from JSP  to React including User management , Organization Management and Provider Management | Admin Functionalities migrated to the new React UI |react , TypescripT, java , Spring , REST |`TBD`| Casey Iiams-Hauser|
-  |Add Support for User UI Notifications |  175 hours| This projects aims at adding support for User Notifications in the new Front End ie when critical Orders and Results are made. This will require creating a generic Notification framework that can support adding any kind of System Notifications whenever needed | A Generic Notification Framework for Displaying user Notifications |react , Typescript, java , Spring , REST |`TBD`| Caleb Steele-Lane|
+  | [Enhanced Search Functionality for OpenELIS](https://summerofcode.withgoogle.com/organizations/openelis-global/projects/details/vhkjzlFu)| 350 hours | This project aims to enhance the search capabilities within the OpenELIS system, providing users with a more effiecient way for retrieving vital information efficiently . We would need to Integrate a Search Engine library For indexing key coulmns and providing a faster way to Search Results |Enhanced and Efficient Search Functionality |Java , Spring | Rahul Pamnani | Mutesasira Moses |
+  |[Improve E2E Tests Coverage](https://summerofcode.withgoogle.com/organizations/openelis-global/projects/details/KDXjqUsx) |  350 hours | The Current E2E tests have a very low test coverage and are not very stable. This project is dedicated to improve the End-to-End (E2E) testing coverage for the New React front end and ensuring robust validation of the entire application workflow . E2E tests play a critical role in verifying the seamless interaction between various components, ensuring that the application functions as expected from the user's perspective | Atleast 70% Test Coverage for the new UI |react , cypress |Manish Rabindra Kumar Jha| Namanya Abert |
+  |[Rewite Admin Page components from JSP to React](https://summerofcode.withgoogle.com/organizations/openelis-global/projects/details/66IXZZXq) |  350 hours | Most of the current Admin page Functionalities are still on the old JSP UI. This project aims at re-writing key admin components from JSP  to React including User management , Organization Management and Provider Management | Admin Functionalities migrated to the new React UI |react , TypescripT, java , Spring , REST |Aditya Deshlahre| Gita Cliff |
+  |[Add Support for User UI Notifications](https://summerofcode.withgoogle.com/organizations/openelis-global/projects/details/g7zlNzjA) |  350 hours | This projects aims at adding support for User Notifications in the new Front End ie when critical Orders and Results are made. This will require creating a generic Notification framework that can support adding any kind of System Notifications whenever needed | A Generic Notification Framework for Displaying user Notifications |react , Typescript, java , Spring , REST |Vivek Rama Krishna Kona| Casey Iiams-Hauser |
+  |[Integrating OpenElis with a FHIR-based Open Client Registry](https://summerofcode.withgoogle.com/organizations/openelis-global/projects/details/kyZvDB9m) |  350 hours | This integration aims to connect OpenELIS, a laboratory information system, with a FHIR-Based Open Client Registry which will allow users to search for patients within their local OpenELIS system, If the patient isn't found locally, search the client registry | Intgrating a FHIR based Client Registry with in OpenELIS  |react , Typescript, java , Spring , REST |Muhereza Herman | Reagn Makoba |
+
 
 ## Program Timeline
 | Date | Status | Activity |
@@ -35,15 +35,15 @@ If you are new to **OpenELIS Global**, we recommend starting with our [Installat
 | 20/Nov/2023    | ✅      | GSoC 2024 Anounced |
 | 22/Jan/2024    | ✅      | Mentoring organizations can begin submitting applications to Google |
 | 06/Feb/2024   | ✅       | Mentoring organization application deadline |
-| 21/Feb/20204  | ⌛      | List of accepted mentoring organizations announced |
-| 22/Feb/20204  | ⌛      | Potential GSoC contributors discuss application ideas with mentoring organizations |
-| 18/Mar/2024    | ⌛      | GSoC contributor application period begins |
-| 02/Apr/2024     | ⌛      | GSoC contributor application deadline |
-| 24/April/2024  | ⌛      | GSoC contributor proposal rankings due from Org Admins |
-| 29/Apr/2024    | ⌛      | Slot Allocation Deadline|
-| 30/Apr/2024    | ⌛      | Projects Announced to Orgs|
-| 01/May/2024     | ⌛      |Accepted GSoC contributor projects announced|
-| 01/May/2024    | ⌛      | Community Bonding Period. Students get to know mentors, read documentation, prepare for work on their projects |
+| 21/Feb/20204  | ✅       | List of accepted mentoring organizations announced |
+| 22/Feb/20204  | ✅       | Potential GSoC contributors discuss application ideas with mentoring organizations |
+| 18/Mar/2024    | ✅       | GSoC contributor application period begins |
+| 02/Apr/2024     | ✅       | GSoC contributor application deadline |
+| 24/April/2024  | ✅       | GSoC contributor proposal rankings due from Org Admins |
+| 29/Apr/2024    | ✅       | Slot Allocation Deadline|
+| 30/Apr/2024    | ✅       | Projects Announced to Orgs|
+| 01/May/2024     | ✅       |Accepted GSoC contributor projects announced|
+| 01/May/2024    | ✅      | Community Bonding Period. Students get to know mentors, read documentation, prepare for work on their projects |
 | 27/May/2024     | ⌛      | Coding officially begins |
 | 08/Jul/2024    | ⌛      | Mentors and GSoC contributors can begin submitting midterm evaluations |
 | 12/July/2024    | ⌛      | Midterm evaluation deadline (standard coding period) |
