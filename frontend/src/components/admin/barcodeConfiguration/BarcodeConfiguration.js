@@ -732,7 +732,20 @@ function BarcodeConfiguration() {
         <Section>
           <Form onSubmit={handleModify}>
             <Column lg={16} md={8} sm={4}>
-              <Button disabled={saveButton} type="submit">
+              <Button
+                disabled={saveButton}
+                onClick={() => {
+                  setNotificationVisible(true);
+                  addNotification({
+                    kind: NotificationKinds.success,
+                    title: intl.formatMessage({
+                      id: "notification.title",
+                    }),
+                    message: "BarCode Configurations has been saved.",
+                  });
+                }}
+                type="submit"
+              >
                 <FormattedMessage id="label.button.save" />
               </Button>{" "}
               <Button

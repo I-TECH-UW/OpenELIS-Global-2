@@ -988,6 +988,7 @@
   "provider.telephone": "Telephone",
   "provider.fax": "Fax",
   "barcodeconfiguration.browse.title": "Barcode Configuration",
+  "sidenav.label.admin.barcodeconfiguration": "Barcode Configuration",
   "siteInfo.section.number": "Number Bar Code Label",
   "siteInfo.title.default.barcode": "Default Bar Code Labels",
   "siteInfo.title.max.barcode": "Maximum Bar Code Labels",

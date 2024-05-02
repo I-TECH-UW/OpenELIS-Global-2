@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -153,7 +154,7 @@ public class BarcodeConfigurationRestController extends BaseController {
 
     @PostMapping(value = "/BarcodeConfiguration")
     public Object barcodeConfigurationSave(HttpServletRequest request,
-            @ModelAttribute("form") @Valid BarcodeConfigurationForm form, BindingResult result,
+            @RequestBody @Valid BarcodeConfigurationForm form, BindingResult result,
             RedirectAttributes redirectAttributes) {
         if (!form.getPrePrintDontUseAltAccession()
                 && GenericValidator.isBlankOrNull(form.getPrePrintAltAccessionPrefix())) {
