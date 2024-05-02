@@ -41,7 +41,6 @@ function Admin() {
       <SideNav
         aria-label="Side navigation"
         defaultExpanded={true}
-        isRail={true}
       >
         <SideNavItems className="adminSideNav">
           <SideNavMenu

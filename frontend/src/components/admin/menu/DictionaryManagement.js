@@ -4,6 +4,7 @@ import {
   Button,
   Column,
   DataTable,
+  Form,
   Grid,
   Heading,
   Modal,
@@ -38,12 +39,17 @@ function DictionaryManagement() {
   const intl = useIntl();
   const componentMounted = useRef(false);
 
-  const { notificationVisible, setNotificationVisible, addNotification,} = useContext(NotificationContext);
+  const {
+    notificationVisible,
+    setNotificationVisible,
+    addNotification,
+  } = useContext(NotificationContext);
   const { reloadConfiguration } = useContext(ConfigurationContext);
   const [dictionaryMenuz, setDictionaryMenuz] = useState([]);
+  const [menuList, setMenuList] = useState([]);
 
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(6);
   const [open, setOpen] = useState(false);
 
   const [categoryDescription, setCategoryDescription] = useState([]);
@@ -64,16 +70,14 @@ function DictionaryManagement() {
     }
   };
 
-  const fetchedDictionaryMenu = (dictionaryMenus) => {
+  const fetchedDictionaryMenu = (res) => {
     if (componentMounted.current) {
-      console.log("wierd json received: " + dictionaryMenus)
-      setDictionaryMenuz(dictionaryMenus);
+      setDictionaryMenuz(res);
     }
   };
 
   const fetchedDictionaryCategory = (category) => {
     if (componentMounted.current) {
-      console.log("Fetched Dictionary Category Data:", category);
       setCategoryDescription(category);
     }
   };
@@ -87,10 +91,30 @@ function DictionaryManagement() {
   }, []);
 
   useEffect(() => {
+    if (dictionaryMenuz && dictionaryMenuz.menuList) {
+      const list = dictionaryMenuz.menuList.map((item) => {
+        const { id, isActive, dictEntry, dictionaryCategory } = item;
+        const {
+          localAbbreviation: categoryLocalAbbreviation,
+          categoryName: categoryName,
+        } = dictionaryCategory;
+        return {
+          id,
+          isActive,
+          dictEntry,
+          categoryName,
+          categoryLocalAbbreviation,
+        };
+      });
+      setMenuList(list);
+    }
+  }, [dictionaryMenuz]);
+
+  useEffect(() => {
     componentMounted.current = true;
     getFromOpenElisServer(
       "/rest/dictionary-categories/descriptions",
-      fetchedDictionaryCategory,
+      fetchedDictionaryCategory
     );
     return () => {
       componentMounted.current = false;
@@ -129,106 +153,114 @@ function DictionaryManagement() {
     postToOpenElisServerFullResponse(
       "/rest/dictionary",
       JSON.stringify(postData),
-      displayStatus,
+      displayStatus
     );
     setOpen(false);
   };
 
   return (
-    <>
+    <div className="adminPageContent">
       {notificationVisible === true ? <AlertDialog /> : ""}
       <PageBreadCrumb
         breadcrumbs={[
           { label: "home.label", link: "/" },
-          { label: "master.lists.page", link: "/MasterListsPage" },
           { label: "dictionary.label.modify", link: "/DictionaryManagement" },
         ]}
       />
-
       <Grid fullWidth={true}>
         <Column lg={16}>
           <Section>
-            <Section>
-              <Heading>
-                <FormattedMessage id="dictionary.label.modify" />
-              </Heading>
-            </Section>
+            <Heading>
+              <FormattedMessage id="dictionary.label.modify" />
+            </Heading>
+          </Section>
+          <br />
+          <Section>
+            <Form>
+              <Column lg={16} md={8} sm={4}>
+                <Button onClick={() => setOpen(true)}>
+                  {intl.formatMessage({
+                    id:
+                      "admin.page.configuration.formEntryConfigMenu.button.add",
+                  })}
+                </Button>{" "}
+                <Modal
+                  open={open}
+                  size="sm"
+                  onRequestClose={() => setOpen(false)}
+                  modalHeading="Add Dictionary"
+                  primaryButtonText="Add"
+                  secondaryButtonText="Cancel"
+                  onRequestSubmit={handleSubmitModal}
+                >
+                  <TextInput
+                    data-modal-primary-focus
+                    id="dictNumber"
+                    labelText="Dictionary Number"
+                    onChange={(e) => setDictionaryNumber(e.target.value)}
+                    style={{
+                      marginBottom: "1rem",
+                    }}
+                  />
+                  <Select
+                    id="description"
+                    labelText="Category"
+                    onChange={(e) => {
+                      console.log("Selected category:", e.target.value);
+                      setCategory(e.target.value);
+                    }}
+                  >
+                    <SelectItem text="" />
+                    {categoryDescription.map((description) => (
+                      <SelectItem
+                        key={description.id}
+                        value={description.id}
+                        text={description.description}
+                      />
+                    ))}
+                  </Select>
+                  <TextInput
+                    id="dictEntry"
+                    labelText="Dictionary Entry"
+                    onChange={(e) => setDictionaryEntry(e.target.value)}
+                    style={{
+                      marginBottom: "1rem",
+                    }}
+                  />
+                  <TextInput
+                    data-modal-primary-focus
+                    id="isActive"
+                    labelText="Is Active"
+                    onChange={(e) => setIsActive(e.target.value)}
+                    style={{
+                      marginBottom: "1rem",
+                    }}
+                  />
+                  <TextInput
+                    id="localAbbrev"
+                    labelText="Local Abbreviation"
+                    onChange={(e) => setLocalAbbreviation(e.target.value)}
+                    style={{
+                      marginBottom: "1rem",
+                    }}
+                  />
+                </Modal>
+                <Button disabled={true} type="submit">
+                  <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.modify" />
+                </Button>{" "}
+                <Button kind="tertiary" disabled={true} type="submit">
+                  <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
+                </Button>
+              </Column>
+            </Form>
           </Section>
         </Column>
       </Grid>
-
-      <div className="adminPageContent">
+      <div className="orderLegendBody">
         <Grid fullWidth={true} className="gridBoundary">
           <Column lg={16} md={8} sm={4}>
-            <Button onClick={() => setOpen(true)} kind="tertiary">
-              {intl.formatMessage({ id: "add.new.dictionary.menu" })}
-            </Button>
-            <Modal
-              open={open}
-              size="sm"
-              onRequestClose={() => setOpen(false)}
-              modalHeading="Add Dictionary"
-              primaryButtonText="Add"
-              secondaryButtonText="Cancel"
-              onRequestSubmit={handleSubmitModal}
-            >
-              <TextInput
-                data-modal-primary-focus
-                id="dictNumber"
-                labelText="Dictionary Number"
-                onChange={(e) => setDictionaryNumber(e.target.value)}
-                style={{
-                  marginBottom: "1rem",
-                }}
-              />
-              <Select
-                id="description"
-                labelText="Category"
-                onChange={(e) => {
-                  console.log("Selected category:", e.target.value);
-                  setCategory(e.target.value);
-                }}
-              >
-                <SelectItem text="" />
-                {categoryDescription.map((description) => (
-                  <SelectItem
-                    key={description.id}
-                    value={description.id}
-                    text={description.description}
-                  />
-                ))}
-              </Select>
-              <TextInput
-                id="dictEntry"
-                labelText="Dictionary Entry"
-                onChange={(e) => setDictionaryEntry(e.target.value)}
-                style={{
-                  marginBottom: "1rem",
-                }}
-              />
-              <TextInput
-                data-modal-primary-focus
-                id="isActive"
-                labelText="Is Active"
-                onChange={(e) => setIsActive(e.target.value)}
-                style={{
-                  marginBottom: "1rem",
-                }}
-              />
-              <TextInput
-                id="localAbbrev"
-                labelText="Local Abbreviation"
-                onChange={(e) => setLocalAbbreviation(e.target.value)}
-                style={{
-                  marginBottom: "1rem",
-                }}
-              />
-            </Modal>
             <DataTable
-              rows={dictionaryMenuz.slice(
-                (page - 1) * pageSize,
-                page * pageSize,
-              )}
+              rows={menuList.slice((page - 1) * pageSize, page * pageSize)}
               headers={[
                 {
                   key: "categoryName",
@@ -284,16 +316,7 @@ function DictionaryManagement() {
                           {row.cells.map((cell) => (
                             <TableCell key={cell.id}>{cell.value}</TableCell>
                           ))}
-                          <TableCell className="cds--table-column-x">
-                            <OverflowMenu
-                              ariaLabel="modifymenu"
-                              size="sm"
-                              flipped
-                            >
-                              <OverflowMenuItem itemText="Edit" />
-                              <OverflowMenuItem itemText="Delete" />
-                            </OverflowMenu>
-                          </TableCell>
+                          <TableCell className="cds--table-column-x"></TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -305,14 +328,14 @@ function DictionaryManagement() {
               onChange={handlePageChange}
               page={page}
               pageSize={pageSize}
-              pageSizes={[10, 20, 30]}
-              totalItems={dictionaryMenuz.length}
+              pageSizes={[6, 8, 10, 12]}
+              totalItems={menuList.length}
               forwardText={intl.formatMessage({ id: "pagination.forward" })}
               backwardText={intl.formatMessage({ id: "pagination.backward" })}
               itemRangeText={(min, max, total) =>
                 intl.formatMessage(
                   { id: "pagination.item-range" },
-                  { min: min, max: max, total: total },
+                  { min: min, max: max, total: total }
                 )
               }
               itemsPerPageText={intl.formatMessage({
@@ -321,7 +344,7 @@ function DictionaryManagement() {
               itemText={(min, max) =>
                 intl.formatMessage(
                   { id: "pagination.item" },
-                  { min: min, max: max },
+                  { min: min, max: max }
                 )
               }
               pageNumberText={intl.formatMessage({
@@ -330,20 +353,20 @@ function DictionaryManagement() {
               pageRangeText={(_current, total) =>
                 intl.formatMessage(
                   { id: "pagination.page-range" },
-                  { total: total },
+                  { total: total }
                 )
               }
               pageText={(page, pagesUnknown) =>
                 intl.formatMessage(
                   { id: "pagination.page" },
-                  { page: pagesUnknown ? "" : page },
+                  { page: pagesUnknown ? "" : page }
                 )
               }
             />
           </Column>
         </Grid>
       </div>
-    </>
+    </div>
   );
 }
 
