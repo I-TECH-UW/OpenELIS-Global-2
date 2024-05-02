@@ -918,6 +918,7 @@
   "barcode.label.info.collectedBy": "Collecté Par",
   "barcode.label.info.tests": "Tests",
   "barcode.label.info.patientsexfull": "Sexe du Patient",
+  "barcode.label.helper.text": "Saisissez les valeurs en : mm",
   "datasubmission.siteid": "ID du Site",
   "barcodeconfiguration.browse.title": "Configuration du code-barres",
   "siteInfo.section.number": "Nombre d'étiquettes de code-barres",

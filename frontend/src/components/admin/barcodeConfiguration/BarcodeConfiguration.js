@@ -4,30 +4,27 @@ import {
   Form,
   TextInput,
   Heading,
-  Toggle,
   Button,
   Loading,
   Grid,
   Column,
   Section,
   Checkbox,
-  TableCell,
-  TableSelectRow,
   UnorderedList,
   ListItem,
 } from "@carbon/react";
 import {
   getFromOpenElisServer,
-  postToOpenElisServerFullResponse,
+  postToOpenElisServerJsonResponse,
 } from "../../utils/Utils.js";
 import { NotificationContext } from "../../layout/Layout.js";
 import {
   AlertDialog,
   NotificationKinds,
 } from "../../common/CustomNotification.js";
-import config from "../../../config.json";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
-import { Formik } from "formik";
+import { Field, Formik } from "formik";
+import BarcodeConfigurationFormValues from "../../formModel/innitialValues/BarcodeConfigurationFormValues.js";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -39,82 +36,161 @@ function BarcodeConfiguration() {
 
   const intl = useIntl();
 
+  const [barcodeFromValues, setBarcodeFormValues] = useState(
+    BarcodeConfigurationFormValues,
+  );
+
   const componentMounted = useRef(false);
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
-  const [modifyButton, setModifyButton] = useState(true);
-  const [selectedRowId, setSelectedRowId] = useState(null);
-  const [startingRecNo, setStartingRecNo] = useState(1);
-  const [formEntryConfigMenuList, setformEntryConfigMenuList] = useState([]);
-  const [orderEntryConfigurationList, setOrderEntryConfigurationList] =
-    useState([]);
+  const [saveButton, setSaveButton] = useState(true);
+  const [responseData, setResponseData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [prePrintDontUseAltAccession, setPrePrintDontUseAltAccession] =
+    useState(barcodeFromValues.prePrintDontUseAltAccession);
 
-  const [ConfigEdit, setConfigEdit] = useState(false);
-
-  function handleModify(event) {
-    event.preventDefault();
-    setConfigEdit(true);
-  }
-
-  const handlePageChange = ({ page, pageSize }) => {
-    setPage(page);
-    setPageSize(pageSize);
-  };
-
-  const handleMenuItems = (res) => {
-    if (res) {
-      setformEntryConfigMenuList(res);
+  const handlePreFormValues = (res) => {
+    if (!res) {
+      setLoading(true);
+    } else {
+      setBarcodeFormValues(res);
+      setLoading(false);
     }
   };
 
+  function handleDefaultOrderLablesValue(e) {
+    setBarcodeFormValues({
+      ...barcodeFromValues,
+      numDefaultOrderLabels: parseFloat(e.target.value),
+    });
+    setSaveButton(false);
+  }
+
+  function handleDefaultSpecimenLablesValue(e) {
+    setBarcodeFormValues({
+      ...barcodeFromValues,
+      numDefaultSpecimenLabels: parseFloat(e.target.value),
+    });
+    setSaveButton(false);
+  }
+
+  function handleMaxOrderLablesValue(e) {
+    setBarcodeFormValues({
+      ...barcodeFromValues,
+      numMaxOrderLabels: parseFloat(e.target.value),
+    });
+    setSaveButton(false);
+  }
+
+  function handleMaxSpecimenLablesValue(e) {
+    setBarcodeFormValues({
+      ...barcodeFromValues,
+      numMaxSpecimenLabels: parseFloat(e.target.value),
+    });
+    setSaveButton(false);
+  }
+
+  function handleHeightOrderLabelsValue(e) {
+    setBarcodeFormValues({
+      ...barcodeFromValues,
+      heightOrderLabels: parseFloat(e.target.value),
+    });
+    setSaveButton(false);
+  }
+
+  function handleWidthOrderLabelsValue(e) {
+    setBarcodeFormValues({
+      ...barcodeFromValues,
+      widthOrderLabels: parseFloat(e.target.value),
+    });
+    setSaveButton(false);
+  }
+
+  function handleHeightSpecimenLablesValue(e) {
+    setBarcodeFormValues({
+      ...barcodeFromValues,
+      heightSpecimenLabels: parseFloat(e.target.value),
+    });
+    setSaveButton(false);
+  }
+
+  function handleWidthSpecimenLablesValue(e) {
+    setBarcodeFormValues({
+      ...barcodeFromValues,
+      widthSpecimenLabels: parseFloat(e.target.value),
+    });
+    setSaveButton(false);
+  }
+
+  function handleHeightBlockLablesValue(e) {
+    setBarcodeFormValues({
+      ...barcodeFromValues,
+      heightBlockLabels: parseFloat(e.target.value),
+    });
+    setSaveButton(false);
+  }
+
+  function handleWidthBlockLablesValue(e) {
+    setBarcodeFormValues({
+      ...barcodeFromValues,
+      widthBlockLabels: parseFloat(e.target.value),
+    });
+    setSaveButton(false);
+  }
+
+  function handleHeightSlideLablesValue(e) {
+    setBarcodeFormValues({
+      ...barcodeFromValues,
+      heightSlideLabels: parseFloat(e.target.value),
+    });
+    setSaveButton(false);
+  }
+
+  function handleWidthSlideLablesValue(e) {
+    setSaveButton(false);
+    setBarcodeFormValues({
+      ...barcodeFromValues,
+      widthSlideLabels: parseFloat(e.target.value),
+    });
+  }
+
+  function handleSitePrefixPrePrintedValue(e) {
+    setBarcodeFormValues({
+      ...barcodeFromValues,
+      prePrintAltAccessionPrefix: e.target.value,
+    });
+    setSaveButton(false);
+  }
+
   useEffect(() => {
     componentMounted.current = true;
-    getFromOpenElisServer(`/rest/BarcodeConfiguration`, handleMenuItems);
+    getFromOpenElisServer(`/rest/BarcodeConfiguration`, handlePreFormValues);
     return () => {
       componentMounted.current = false;
     };
   }, []);
 
-  useEffect(() => {
-    if (formEntryConfigMenuList && formEntryConfigMenuList.menuList) {
-      const newConfigList = formEntryConfigMenuList.menuList.map((item) => {
-        let value = item.value;
-        if (item.valueType === "text" && item.tag === "localization") {
-          value =
-            item.localization.localesAndValuesOfLocalesWithValues || value;
-        }
-        return {
-          id: item.id,
-          startingRecNo: startingRecNo,
-          name: item.name,
-          description: item.description,
-          value: value,
-          valueType: item.valueType,
-        };
-      });
-      setOrderEntryConfigurationList(newConfigList);
-    }
-  }, [formEntryConfigMenuList]);
+  function submitPost(e) {
+    postToOpenElisServerJsonResponse(
+      `/rest/BarcodeConfiguration`,
+      JSON.stringify(e),
+      (data) => {
+        setResponseData(data);
+      },
+    );
+    setLoading(false);
+  }
 
-  const renderCell = (cell, row) => {
-    if (cell.info.header === "select") {
-      return (
-        <TableSelectRow
-          radio
-          key={cell.id}
-          id={cell.id}
-          checked={selectedRowId === row.id}
-          name="selectRowRadio"
-          ariaLabel="selectRow"
-          onSelect={() => {
-            setModifyButton(false);
-            setSelectedRowId(row.id);
-          }}
-        />
-      );
-    }
-    return <TableCell key={cell.id}>{cell.value}</TableCell>;
-  };
+  function handleModify(event) {
+    event.preventDefault();
+    setLoading(true);
+    submitPost(barcodeFromValues);
+  }
+
+  if (loading)
+    return (
+      <>
+        <Loading />
+      </>
+    );
 
   return (
     <>
@@ -135,26 +211,26 @@ function BarcodeConfiguration() {
         <Grid fullWidth={true} className="gridBoundary">
           <Column lg={16} md={8} sm={4}>
             <Formik
-            // initialValues={reportFormValues}
-            // enableReinitialize={true}
-            // // validationSchema={}
-            // onSubmit
-            // onChange
+              initialValues={barcodeFromValues}
+              enableReinitialize={true}
+              // // validationSchema={}
+              // validateOnChange={false}
+              // validateOnBlur={true}
+              // onSubmit
+              // onChange
             >
-              {(
-                {
-                  // values,
-                  // errors,
-                  // touched,
-                  // setFieldValue,
-                  // handleChange,
-                  // handleBlur,
-                  // handleSubmit,
-                },
-              ) => (
+              {({
+                values,
+                errors,
+                touched,
+                // setFieldValue,
+                // handleChange,
+                // handleBlur,
+                // handleSubmit,
+              }) => (
                 <Form
                 // onSubmit={handleSubmit}
-                // onChange={handleChange}
+                // onChange={setSaveButton(false)}
                 // onBlur={handleBlur}
                 >
                   <Section>
@@ -172,30 +248,40 @@ function BarcodeConfiguration() {
                   <br />
                   <Grid fullWidth={true}>
                     <Column lg={8} md={8} sm={4}>
-                      <TextInput
-                        name="order"
-                        className="defalut"
-                        type="text"
-                        // id={index + "order"}
-                        labelText={
-                          <FormattedMessage id="siteInfo.title.default.barcode.order" />
-                        }
-                        // value={rule.ruleName}
-                        // onChange={(e) => handleRuleFieldChange(e, index)}
-                      />
+                      <Field name="order">
+                        {({ field }) => (
+                          <TextInput
+                            id={field.name}
+                            className="defalut"
+                            type="number"
+                            labelText={
+                              <FormattedMessage id="siteInfo.title.default.barcode.order" />
+                            }
+                            invalid={errors.order && touched.order}
+                            invalidText={errors.order}
+                            value={values.numDefaultOrderLabels}
+                            onChange={(e) => handleDefaultOrderLablesValue(e)}
+                          />
+                        )}
+                      </Field>
                     </Column>
                     <Column lg={8} md={8} sm={4}>
-                      <TextInput
-                        name="specimen"
-                        className="defalut"
-                        type="text"
-                        // id={index + "order"}
-                        labelText={
-                          <FormattedMessage id="siteInfo.title.default.barcode.specimen" />
-                        }
-                        // value={rule.ruleName}
-                        // onChange={(e) => handleRuleFieldChange(e, index)}
-                      />
+                      <Field name="specimen">
+                        {({ field }) => (
+                          <TextInput
+                            id={field.name}
+                            className="defalut"
+                            type="number"
+                            labelText={
+                              <FormattedMessage id="siteInfo.title.default.barcode.specimen" />
+                            }
+                            value={values.numDefaultSpecimenLabels}
+                            onChange={(e) =>
+                              handleDefaultSpecimenLablesValue(e)
+                            }
+                          />
+                        )}
+                      </Field>
                     </Column>
                   </Grid>
                   <br />
@@ -208,30 +294,36 @@ function BarcodeConfiguration() {
                   <br />
                   <Grid fullWidth={true}>
                     <Column lg={8} md={8} sm={4}>
-                      <TextInput
-                        name="order"
-                        className="defalut"
-                        type="text"
-                        // id={index + "order"}
-                        labelText={
-                          <FormattedMessage id="siteInfo.title.default.barcode.order" />
-                        }
-                        // value={rule.ruleName}
-                        // onChange={(e) => handleRuleFieldChange(e, index)}
-                      />
+                      <Field name="maxOrder">
+                        {({ field }) => (
+                          <TextInput
+                            id={field.name}
+                            className="defalut"
+                            type="number"
+                            labelText={
+                              <FormattedMessage id="siteInfo.title.default.barcode.order" />
+                            }
+                            value={values.numMaxOrderLabels}
+                            onChange={(e) => handleMaxOrderLablesValue(e)}
+                          />
+                        )}
+                      </Field>
                     </Column>
                     <Column lg={8} md={8} sm={4}>
-                      <TextInput
-                        name="specimen"
-                        className="defalut"
-                        type="text"
-                        // id={index + "order"}
-                        labelText={
-                          <FormattedMessage id="siteInfo.title.default.barcode.specimen" />
-                        }
-                        // value={rule.ruleName}
-                        // onChange={(e) => handleRuleFieldChange(e, index)}
-                      />
+                      <Field name="maxSpecimen">
+                        {({ field }) => (
+                          <TextInput
+                            id={field.name}
+                            className="defalut"
+                            type="number"
+                            labelText={
+                              <FormattedMessage id="siteInfo.title.default.barcode.specimen" />
+                            }
+                            value={values.numMaxSpecimenLabels}
+                            onChange={(e) => handleMaxSpecimenLablesValue(e)}
+                          />
+                        )}
+                      </Field>
                     </Column>
                   </Grid>
                   <hr />
@@ -319,25 +411,61 @@ function BarcodeConfiguration() {
                               <FormattedMessage id="siteInfo.title.default.barcode.specimen" />
                               <br />
                               <Checkbox
-                                id="checkBox0"
+                                id="collectionDateCheck"
+                                checked={values.collectionDateCheck}
+                                onChange={(e) => {
+                                  const isChecked = e.target.checked;
+                                  setBarcodeFormValues({
+                                    ...barcodeFromValues,
+                                    collectionDateCheck: isChecked,
+                                  });
+                                  setSaveButton(false);
+                                }}
                                 labelText={
                                   <FormattedMessage id="barcode.label.info.collectiondatetime" />
                                 }
                               />
                               <Checkbox
-                                id="checkBox1"
+                                id="collectedBy"
+                                checked={values.collectedByCheck}
+                                onChange={(e) => {
+                                  const isChecked = e.target.checked;
+                                  setBarcodeFormValues({
+                                    ...barcodeFromValues,
+                                    collectedByCheck: isChecked,
+                                  });
+                                  setSaveButton(false);
+                                }}
                                 labelText={
                                   <FormattedMessage id="barcode.label.info.collectedBy" />
                                 }
                               />
                               <Checkbox
-                                id="checkBox2"
+                                id="tests"
+                                checked={values.testsCheck}
+                                onChange={(e) => {
+                                  const isChecked = e.target.checked;
+                                  setBarcodeFormValues({
+                                    ...barcodeFromValues,
+                                    testsCheck: isChecked,
+                                  });
+                                  setSaveButton(false);
+                                }}
                                 labelText={
                                   <FormattedMessage id="barcode.label.info.tests" />
                                 }
                               />
                               <Checkbox
-                                id="checkBox3"
+                                id="patientsexfull"
+                                checked={values.patientSexCheck}
+                                onChange={(e) => {
+                                  const isChecked = e.target.checked;
+                                  setBarcodeFormValues({
+                                    ...barcodeFromValues,
+                                    patientSexCheck: isChecked,
+                                  });
+                                  setSaveButton(false);
+                                }}
                                 labelText={
                                   <FormattedMessage id="barcode.label.info.patientsexfull" />
                                 }
@@ -356,6 +484,16 @@ function BarcodeConfiguration() {
                     <br />
                     <Checkbox
                       id="checkBox"
+                      checked={prePrintDontUseAltAccession}
+                      onChange={(e) => {
+                        const isChecked = e.target.checked;
+                        setPrePrintDontUseAltAccession(isChecked);
+                        setBarcodeFormValues({
+                          ...barcodeFromValues,
+                          prePrintDontUseAltAccession: isChecked,
+                        });
+                        setSaveButton(false);
+                      }}
                       labelText={<FormattedMessage id="labno.alt.prefix.use" />}
                     />
                     <br />
@@ -364,15 +502,39 @@ function BarcodeConfiguration() {
                         <FormattedMessage id="labno.alt.prefix.instruction" />
                       </Column>
                       <Column lg={8} md={4} sm={4}>
-                        <TextInput
-                          name="prefix"
-                          className="defalut"
-                          type="text"
-                          // id={index + "order"}
-                          labelText=""
-                          // value={rule.ruleName}
-                          // onChange={(e) => handleRuleFieldChange(e, index)}
-                        />
+                        <Field name="sitePrefix">
+                          {({ field }) => (
+                            <TextInput
+                              // name="lable-prefix"
+                              className="defalut"
+                              type="text"
+                              id={field.name}
+                              labelText=""
+                              size="md"
+                              disabled={prePrintDontUseAltAccession}
+                              value={values.prePrintAltAccessionPrefix}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                if (
+                                  /^[a-zA-Z0-9]*$/.test(value) &&
+                                  value.length <= 4
+                                ) {
+                                  handleSitePrefixPrePrintedValue(e);
+                                } else {
+                                  setNotificationVisible(true);
+                                  addNotification({
+                                    kind: NotificationKinds.error,
+                                    title: intl.formatMessage({
+                                      id: "notification.title",
+                                    }),
+                                    message:
+                                      "Input should be alphanumeric and have a maximum length of 4 characters.",
+                                  });
+                                }
+                              }}
+                            />
+                          )}
+                        </Field>
                       </Column>
                     </Grid>
                     <br />
@@ -393,61 +555,87 @@ function BarcodeConfiguration() {
                         <FormattedMessage id="siteInfo.title.default.barcode.order" />
                         <br />
                         <br />
-                        <TextInput
-                          name="prefix"
-                          className="defalut"
-                          type="text"
-                          // id={index + "order"}
-                          labelText={
-                            <FormattedMessage id="siteInfo.title.default.barcode.height" />
-                          }
-                          helperText="Enter values in: mm"
-                          // value={rule.ruleName}
-                          // onChange={(e) => handleRuleFieldChange(e, index)}
-                        />
+                        <Field name="height-order">
+                          {({ field }) => (
+                            <TextInput
+                              id={field.name}
+                              className="defalut"
+                              type="number"
+                              labelText={
+                                <FormattedMessage id="siteInfo.title.default.barcode.height" />
+                              }
+                              helperText={
+                                <FormattedMessage id="barcode.label.helper.text" />
+                              }
+                              value={values.heightOrderLabels}
+                              onChange={(e) => handleHeightOrderLabelsValue(e)}
+                            />
+                          )}
+                        </Field>
+
                         <br />
-                        <TextInput
-                          name="prefix"
-                          className="defalut"
-                          type="text"
-                          // id={index + "order"}
-                          labelText={
-                            <FormattedMessage id="siteInfo.title.default.barcode.width" />
-                          }
-                          helperText="Enter values in: mm"
-                          // value={rule.ruleName}
-                          // onChange={(e) => handleRuleFieldChange(e, index)}
-                        />
+                        <Field name="width-order">
+                          {({ field }) => (
+                            <TextInput
+                              id={field.name}
+                              className="defalut"
+                              type="number"
+                              labelText={
+                                <FormattedMessage id="siteInfo.title.default.barcode.width" />
+                              }
+                              helperText={
+                                <FormattedMessage id="barcode.label.helper.text" />
+                              }
+                              value={values.widthOrderLabels}
+                              onChange={(e) => handleWidthOrderLabelsValue(e)}
+                            />
+                          )}
+                        </Field>
                       </Column>
                       <Column lg={8} md={4} sm={2}>
                         <FormattedMessage id="siteInfo.title.default.barcode.specimen" />
                         <br />
                         <br />
-                        <TextInput
-                          name="prefix"
-                          className="defalut"
-                          type="text"
-                          // id={index + "order"}
-                          labelText={
-                            <FormattedMessage id="siteInfo.title.default.barcode.height" />
-                          }
-                          helperText="Enter values in: mm"
-                          // value={rule.ruleName}
-                          // onChange={(e) => handleRuleFieldChange(e, index)}
-                        />
+                        <Field name="height-specimen">
+                          {({ field }) => (
+                            <TextInput
+                              id={field.name}
+                              className="defalut"
+                              type="number"
+                              labelText={
+                                <FormattedMessage id="siteInfo.title.default.barcode.height" />
+                              }
+                              helperText={
+                                <FormattedMessage id="barcode.label.helper.text" />
+                              }
+                              value={values.heightSpecimenLabels}
+                              onChange={(e) =>
+                                handleHeightSpecimenLablesValue(e)
+                              }
+                            />
+                          )}
+                        </Field>
+
                         <br />
-                        <TextInput
-                          name="prefix"
-                          className="defalut"
-                          type="text"
-                          // id={index + "order"}
-                          labelText={
-                            <FormattedMessage id="siteInfo.title.default.barcode.width" />
-                          }
-                          helperText="Enter values in: mm"
-                          // value={rule.ruleName}
-                          // onChange={(e) => handleRuleFieldChange(e, index)}
-                        />
+                        <Field name="width-specimen">
+                          {({ field }) => (
+                            <TextInput
+                              id={field.name}
+                              className="defalut"
+                              type="number"
+                              labelText={
+                                <FormattedMessage id="siteInfo.title.default.barcode.width" />
+                              }
+                              helperText={
+                                <FormattedMessage id="barcode.label.helper.text" />
+                              }
+                              value={values.widthSpecimenLabels}
+                              onChange={(e) =>
+                                handleWidthSpecimenLablesValue(e)
+                              }
+                            />
+                          )}
+                        </Field>
                       </Column>
                     </Grid>
                     <br />
@@ -456,61 +644,82 @@ function BarcodeConfiguration() {
                         <FormattedMessage id="siteInfo.title.default.barcode.block" />
                         <br />
                         <br />
-                        <TextInput
-                          name="prefix"
-                          className="defalut"
-                          type="text"
-                          // id={index + "order"}
-                          labelText={
-                            <FormattedMessage id="siteInfo.title.default.barcode.height" />
-                          }
-                          helperText="Enter values in: mm"
-                          // value={rule.ruleName}
-                          // onChange={(e) => handleRuleFieldChange(e, index)}
-                        />
+                        <Field name="height-block">
+                          {({ field }) => (
+                            <TextInput
+                              id={field.name}
+                              className="defalut"
+                              type="number"
+                              labelText={
+                                <FormattedMessage id="siteInfo.title.default.barcode.height" />
+                              }
+                              helperText={
+                                <FormattedMessage id="barcode.label.helper.text" />
+                              }
+                              value={values.heightBlockLabels}
+                              onChange={(e) => handleHeightBlockLablesValue(e)}
+                            />
+                          )}
+                        </Field>
                         <br />
-                        <TextInput
-                          name="prefix"
-                          className="defalut"
-                          type="text"
-                          // id={index + "order"}
-                          labelText={
-                            <FormattedMessage id="siteInfo.title.default.barcode.width" />
-                          }
-                          helperText="Enter values in: mm"
-                          // value={rule.ruleName}
-                          // onChange={(e) => handleRuleFieldChange(e, index)}
-                        />
+                        <Field name="width-block">
+                          {({ field }) => (
+                            <TextInput
+                              id={field.name}
+                              className="defalut"
+                              type="number"
+                              labelText={
+                                <FormattedMessage id="siteInfo.title.default.barcode.width" />
+                              }
+                              helperText={
+                                <FormattedMessage id="barcode.label.helper.text" />
+                              }
+                              value={values.widthBlockLabels}
+                              onChange={(e) => handleWidthBlockLablesValue(e)}
+                            />
+                          )}
+                        </Field>
                       </Column>
                       <Column lg={8} md={4} sm={2}>
                         <FormattedMessage id="siteInfo.title.default.barcode.slide" />
                         <br />
                         <br />
-                        <TextInput
-                          name="prefix"
-                          className="defalut"
-                          type="text"
-                          // id={index + "order"}
-                          labelText={
-                            <FormattedMessage id="siteInfo.title.default.barcode.height" />
-                          }
-                          helperText="Enter values in: mm"
-                          // value={rule.ruleName}
-                          // onChange={(e) => handleRuleFieldChange(e, index)}
-                        />
+                        <Field name="height-slide">
+                          {({ field }) => (
+                            <TextInput
+                              id={field.name}
+                              className="defalut"
+                              type="number"
+                              labelText={
+                                <FormattedMessage id="siteInfo.title.default.barcode.height" />
+                              }
+                              helperText={
+                                <FormattedMessage id="barcode.label.helper.text" />
+                              }
+                              value={values.heightSlideLabels}
+                              onChange={(e) => handleHeightSlideLablesValue(e)}
+                            />
+                          )}
+                        </Field>
+
                         <br />
-                        <TextInput
-                          name="prefix"
-                          className="defalut"
-                          type="text"
-                          // id={index + "order"}
-                          labelText={
-                            <FormattedMessage id="siteInfo.title.default.barcode.width" />
-                          }
-                          helperText="Enter values in: mm"
-                          // value={rule.ruleName}
-                          // onChange={(e) => handleRuleFieldChange(e, index)}
-                        />
+                        <Field name="width-slide">
+                          {({ field }) => (
+                            <TextInput
+                              id={field.name}
+                              className="defalut"
+                              type="number"
+                              labelText={
+                                <FormattedMessage id="siteInfo.title.default.barcode.width" />
+                              }
+                              helperText={
+                                <FormattedMessage id="barcode.label.helper.text" />
+                              }
+                              value={values.widthSlideLabels}
+                              onChange={(e) => handleWidthSlideLablesValue(e)}
+                            />
+                          )}
+                        </Field>
                       </Column>
                     </Grid>
                   </Section>
@@ -523,13 +732,13 @@ function BarcodeConfiguration() {
         <Section>
           <Form onSubmit={handleModify}>
             <Column lg={16} md={8} sm={4}>
-              <Button disabled={modifyButton} type="submit">
+              <Button disabled={saveButton} type="submit">
                 <FormattedMessage id="label.button.save" />
               </Button>{" "}
               <Button
                 onClick={() => window.location.reload()}
                 kind="tertiary"
-                type="submit"
+                type="button"
               >
                 <FormattedMessage id="label.button.cancel" />
               </Button>

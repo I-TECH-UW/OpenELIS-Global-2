@@ -1009,6 +1009,7 @@
   "barcode.label.info.collectedBy": "Collected By",
   "barcode.label.info.tests": "Tests",
   "barcode.label.info.patientsexfull": "Patient Sex",
+  "barcode.label.helper.text": "Enter values in: mm",
   "datasubmission.siteid": "Site Id",
   "siteInfo.section.elements": "Bar Code Label Elements",
   "siteInfo.section.altAccession": "Preprinted Bar Code Accession number",
