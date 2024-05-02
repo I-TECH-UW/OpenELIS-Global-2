@@ -28,6 +28,8 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -56,6 +58,13 @@ import static org.mockito.Mockito.mock;
         "org.openelisglobal.history.service",
         "org.openelisglobal.menu.service",
         "org.openelisglobal.menu.daoimpl",
+        "org.openelisglobal.login.daoimpl",
+        "org.openelisglobal.systemusermodule.service",
+        "org.openelisglobal.rolemodule.service",
+        "org.openelisglobal.systemusermodule.daoimpl",
+        "org.openelisglobal.systemusermodule.service",
+        "org.openelisglobal.login.service",
+        "org.openelisglobal.view",
 }, excludeFilters = {
         @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.patient.controller.*"),
         @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.dictionary.controller.*"),
@@ -143,6 +152,12 @@ public class AppTestConfig implements WebMvcConfigurer {
     @Profile("test")
     public SiteInformationService siteInformationService() {
         return mock(SiteInformationService.class);
+    }
+
+    @Bean
+    @Profile("test")
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
