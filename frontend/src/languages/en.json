@@ -96,7 +96,6 @@
   "sample.entry.nextVisit.date": "Date of next visit",
   "sample.entry.project.testName": "Test Name",
   "sample.receivedDate": "Received Date",
-  "label.total.tests": "Total tests",
   "result.nonconforming.item": "Sample or order is nonconforming OR test has been rejected",
   "sample.entry.project.patient.and.testName": "Name/Code of patient {br} Test Name",
   "label.button.remove": "Remove",
