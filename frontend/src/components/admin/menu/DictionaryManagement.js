@@ -8,8 +8,6 @@ import {
   Grid,
   Heading,
   Modal,
-  OverflowMenu,
-  OverflowMenuItem,
   Pagination,
   Section,
   Select,
@@ -46,10 +44,10 @@ function DictionaryManagement() {
   } = useContext(NotificationContext);
   const { reloadConfiguration } = useContext(ConfigurationContext);
   const [dictionaryMenuz, setDictionaryMenuz] = useState([]);
-  const [menuList, setMenuList] = useState([]);
+  const [dictionaryMenuList, setDictionaryMenuList] = useState([]);
 
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(6);
+  const [pageSize, setPageSize] = useState(7);
   const [open, setOpen] = useState(false);
 
   const [categoryDescription, setCategoryDescription] = useState([]);
@@ -90,20 +88,25 @@ function DictionaryManagement() {
     };
   }, []);
 
+
   useEffect(() => {
     if (dictionaryMenuz && dictionaryMenuz.menuList) {
-      const list = dictionaryMenuz.menuList.map((item) => {
-        const { id, isActive, dictEntry, dictionaryCategory, localAbbreviation} = item;
-        const {categoryName: categoryName } = dictionaryCategory;
+      const newConfigList = dictionaryMenuz.menuList.map((item) => {
+        let value = item.value;
+        if (item.valueType === "text" && item.tag === "localization") {
+          value =
+            item.localization.localesAndValuesOfLocalesWithValues || value;
+        }
         return {
-          id,
-          isActive,
-          dictEntry,
-          categoryName,
-          localAbbreviation,
+          id: item.id,
+          isActive: item.isActive,
+          dictEntry: item.dictEntry,
+          localAbbreviation:localAbbreviation,
+          categoryName: item.dictionaryCategory ? item.dictionaryCategory.categoryName : "not available",
+          value: value,
         };
       });
-      setMenuList(list);
+      setDictionaryMenuList(newConfigList);
     }
   }, [dictionaryMenuz]);
 
@@ -257,7 +260,7 @@ function DictionaryManagement() {
         <Grid fullWidth={true} className="gridBoundary">
           <Column lg={16} md={8} sm={4}>
             <DataTable
-              rows={menuList.slice((page - 1) * pageSize, page * pageSize)}
+              rows={dictionaryMenuList.slice((page - 1) * pageSize, page * pageSize)}
               headers={[
                 {
                   key: "categoryName",
@@ -325,8 +328,8 @@ function DictionaryManagement() {
               onChange={handlePageChange}
               page={page}
               pageSize={pageSize}
-              pageSizes={[6, 8, 10, 12]}
-              totalItems={menuList.length}
+              pageSizes={[7, 10, 20, 30, 40, 50]}
+              totalItems={dictionaryMenuList.length}
               forwardText={intl.formatMessage({ id: "pagination.forward" })}
               backwardText={intl.formatMessage({ id: "pagination.backward" })}
               itemRangeText={(min, max, total) =>
