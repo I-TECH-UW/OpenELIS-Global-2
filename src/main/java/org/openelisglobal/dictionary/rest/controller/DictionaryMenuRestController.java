@@ -121,9 +121,7 @@ public class DictionaryMenuRestController extends BaseMenuController<Dictionary>
     @Override
     protected List<Dictionary> createMenuList(AdminOptionMenuForm<Dictionary> form, HttpServletRequest request) {
         List<Dictionary> dictionaries;
-        String stringStartingRecNo = (String) request.getAttribute("startingRecNo");
-
-        int startingRecNo = Integer.parseInt(stringStartingRecNo);
+        int startingRecNo = Integer.parseInt((String) request.getAttribute("startingRecNo"));
         int total;
         if (YES.equals(request.getParameter("search"))) {
             dictionaries = dictionaryService.getPagesOfSearchedDictionaries(startingRecNo,
@@ -138,11 +136,16 @@ public class DictionaryMenuRestController extends BaseMenuController<Dictionary>
         request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(total));
         request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
 
-        int numOfRecs = Math.min(dictionaries.size(), SystemConfiguration.getInstance().getDefaultPageSize());
+        int numOfRecs = 0;
+        if (dictionaries.size() > SystemConfiguration.getInstance().getDefaultPageSize()) {
+            numOfRecs = SystemConfiguration.getInstance().getDefaultPageSize();
+        } else {
+            numOfRecs = dictionaries.size();
+        }
         numOfRecs--;
         int endingRecNo = startingRecNo + numOfRecs;
-
         request.setAttribute(MENU_TO_RECORD, String.valueOf(endingRecNo));
+
         request.setAttribute(MENU_SEARCH_BY_TABLE_COLUMN, "dictionary.dictEntry");
 
         if (YES.equals(request.getParameter("search"))) {

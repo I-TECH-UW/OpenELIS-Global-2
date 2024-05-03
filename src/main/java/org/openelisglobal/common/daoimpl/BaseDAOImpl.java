@@ -406,7 +406,9 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
 
             TypedQuery<T> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(startingRecNo - 1);
-            typedQuery.setMaxResults(DEFAULT_PAGE_SIZE + 1);
+            //TODO: removed in order to allow all dictionarymenu records to be fetched.
+            // i don't know if this causes misfunctions somewhere else
+//            typedQuery.setMaxResults(DEFAULT_PAGE_SIZE + 1);
             return typedQuery.getResultList();
 
             // Map<String, String> aliases = new HashMap<>();
