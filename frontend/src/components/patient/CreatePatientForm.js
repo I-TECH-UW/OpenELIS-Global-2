@@ -57,9 +57,17 @@ function CreatePatientForm(props) {
   const [nationalId, setNationalId] = useState(
     props.selectedPatient.nationalId,
   );
+  const [subjectNo, setSubjectNo] = useState(
+    props.selectedPatient.subjectNumber,
+  );
   const handleNationalIdChange = (event) => {
     const newValue = event.target.value;
     setNationalId(newValue);
+  };
+
+  const handleSubjectNoChange = (event) => {
+    const newValue = event.target.value;
+    setSubjectNo(newValue);
   };
   const handleDatePickerChange = (values, ...e) => {
     var patient = values;
@@ -244,8 +252,8 @@ function CreatePatientForm(props) {
   const accessionNumberValidationResponse = (res, numberType, numberValue) => {
     let error;
     if (
-      res.status === false &&
-      props.selectedPatient.nationalId !== nationalId
+      res.status === false &&(props.selectedPatient.nationalId !== nationalId || props.selectedPatient.subjectNumber !== subjectNo)
+      
     ) {
       setNotificationVisible(true);
       addNotification({
@@ -382,13 +390,6 @@ function CreatePatientForm(props) {
               <Column lg={8} md={4} sm={4}>
                 <Field
                   name="subjectNumber"
-                  validate={() => {
-                    return handleSubjectNoValidation(
-                      "subjectNumber",
-                      "subjectNumberID",
-                      values.subjectNumber,
-                    );
-                  }}
                 >
                   {({ field }) => (
                     <>
@@ -401,6 +402,14 @@ function CreatePatientForm(props) {
                         id={field.name}
                         invalid={errors.subjectNumber && touched.subjectNumber}
                         invalidText={errors.subjectNumber}
+                        onMouseOut={() => {
+                          handleSubjectNoValidation(
+                            "subjectNumber",
+                            "subjectNumberID",
+                             values.subjectNumber,
+                          );
+                        }}
+                        onChange={handleSubjectNoChange}
                         placeholder={intl.formatMessage({
                           id: "patient.information.healthid",
                         })}
@@ -412,13 +421,6 @@ function CreatePatientForm(props) {
               <Column lg={8} md={4} sm={4}>
                 <Field
                   name="nationalId"
-                  validate={() => {
-                    return handleSubjectNoValidation(
-                      "nationalId",
-                      "nationalID",
-                      values.nationalId,
-                    );
-                  }}
                 >
                   {({ field }) => (
                     <TextInput
