@@ -97,6 +97,9 @@ function Admin() {
             <SideNavMenuItem href="#PatientConfigurationMenu">
               <FormattedMessage id="sidenav.label.admin.formEntry.patientconfig" />
             </SideNavMenuItem>
+            <SideNavMenuItem href="#PrintedReportsConfigurationMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.PrintedReportsconfig" />
+            </SideNavMenuItem>
             <SideNavMenuItem href="#SampleEntryConfigurationMenu">
               <FormattedMessage id="sidenav.label.admin.formEntry.sampleEntryconfig" />
             </SideNavMenuItem>
@@ -186,6 +189,12 @@ function Admin() {
         <ConfigMenuDisplay
           menuType="PatientConfigurationMenu"
           id="sidenav.label.admin.formEntry.patientconfig"
+        />
+      </PathRoute>
+      <PathRoute path="#PrintedReportsConfigurationMenu">
+        <ConfigMenuDisplay
+          menuType="PrintedReportsConfigurationMen"
+          id="sidenav.label.admin.formEntry.PrintedReportsconfig"
         />
       </PathRoute>
     </>
