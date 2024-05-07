@@ -138,8 +138,7 @@ public abstract class BaseMenuController<T> extends BaseController {
         if (getPageSize() > 0 && samePageList.size() > getPageSize()) {
             request.setAttribute(NEXT_DISABLED, "false");
             // chop off last record (this was only to indicate that there are more records
-            //TODO: sets samePageList to 20 records only, trynna figure out why?
-//            samePageList = samePageList.subList(0, getPageSize());
+            samePageList = samePageList.subList(0, getPageSize());
         } else {
             request.setAttribute(NEXT_DISABLED, "true");
         }

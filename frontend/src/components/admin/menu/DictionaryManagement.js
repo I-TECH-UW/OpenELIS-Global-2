@@ -113,7 +113,7 @@ function DictionaryManagement() {
   useEffect(() => {
     componentMounted.current = true;
     getFromOpenElisServer(
-      "/rest/dictionary-categories/descriptions",
+      "/rest/dictionary-categories",
       fetchedDictionaryCategory
     );
     return () => {

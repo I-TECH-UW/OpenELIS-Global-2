@@ -126,10 +126,4 @@ public interface DictionaryDAO extends BaseDAO<Dictionary, String> {
     public boolean duplicateDictionaryExists(Dictionary dictionary);
 
     public boolean isDictionaryFrozen(Dictionary dictionary);
-
-    Dictionary saveDictionaryMenu(Dictionary dictionary);
-
-    List<DictionaryDAOImpl.DictionaryDescription> fetchDictionaryCategoryDescriptions();
-
-    DictionaryCategory saveDictionaryCategory(DictionaryCategory category);
 }

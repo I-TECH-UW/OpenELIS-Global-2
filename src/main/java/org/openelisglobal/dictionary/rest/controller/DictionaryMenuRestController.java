@@ -18,6 +18,8 @@ import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
 import org.openelisglobal.dictionary.form.DictionaryMenuForm;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.dictionarycategory.service.DictionaryCategoryService;
+import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -43,6 +45,9 @@ public class DictionaryMenuRestController extends BaseMenuController<Dictionary>
     @Autowired
     DictionaryService dictionaryService;
 
+    @Autowired
+    private DictionaryCategoryService dictionaryCategoryService;
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setAllowedFields(ALLOWED_FIELDS);
@@ -66,15 +71,15 @@ public class DictionaryMenuRestController extends BaseMenuController<Dictionary>
         }
     }
 
-    @RequestMapping(value = "/dictionary-categories/descriptions", produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
-    public List<DictionaryDAOImpl.DictionaryDescription> fetchDictionaryCategoryDescriptions() {
-        return dictionaryService.fetchDictionaryCategoryDescriptions();
+    @RequestMapping(value = "/dictionary-categories", produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
+    public List<DictionaryCategory> fetchDictionaryCategories() {
+        return dictionaryCategoryService.getAll();
     }
 
     @RequestMapping(value = "/dictionary", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createDictionaryEntry(@RequestBody Dictionary dictionary) {
         try {
-            dictionaryService.saveDictionaryMenu(dictionary);
+            dictionaryService.save(dictionary);
             return new ResponseEntity<>("Dictionary created successfully", HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Error creating dictionary: " + e.getMessage(), HttpStatus.BAD_REQUEST);

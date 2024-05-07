@@ -182,22 +182,6 @@ public class DictionaryServiceImpl extends AuditableBaseObjectServiceImpl<Dictio
     }
 
     @Override
-    public List<DictionaryDAOImpl.DictionaryDescription> fetchDictionaryCategoryDescriptions() {
-        return getBaseObjectDAO().fetchDictionaryCategoryDescriptions();
-    }
-
-    @Override
-    public Dictionary saveDictionaryMenu(Dictionary entry) {
-        getBaseObjectDAO().saveDictionaryMenu(entry);
-        return entry;
-    }
-
-    @Override
-    public DictionaryCategory saveDictionaryCategory(DictionaryCategory category) {
-        return getBaseObjectDAO().saveDictionaryCategory(category);
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public Dictionary getDataForId(String dictId) {
         return getBaseObjectDAO().getDataForId(dictId);
