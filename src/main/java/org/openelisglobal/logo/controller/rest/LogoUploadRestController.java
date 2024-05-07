@@ -66,7 +66,7 @@ public class LogoUploadRestController {
     }
 
     @PostMapping
-    protected ResponseEntity<Void> doPost(HttpServletRequest request, @ModelAttribute("form") LogoUploadForm form)
+    protected ResponseEntity<Void> doPost(HttpServletRequest request, @ModelAttribute("logoUploadform") LogoUploadForm form)
             throws ServletException, IOException {
         String whichLogo = form.getLogoName();
         boolean removeImage = "true".equals(request.getParameter("removeImage"));

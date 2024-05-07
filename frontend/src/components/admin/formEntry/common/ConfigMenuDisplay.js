@@ -44,7 +44,7 @@ function ConfigMenuDisplay(props) {
 
   const componentMounted = useRef(false);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(30);
   const [modifyButton, setModifyButton] = useState(true);
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [startingRecNo, setStartingRecNo] = useState(1);
@@ -285,7 +285,7 @@ function ConfigMenuDisplay(props) {
                     onChange={handlePageChange}
                     page={page}
                     pageSize={pageSize}
-                    pageSizes={[5, 10, 15, 20, 25, 30]}
+                    pageSizes={[5, 20, 30 ,50]}
                     totalItems={orderEntryConfigurationList.length}
                     forwardText={intl.formatMessage({
                       id: "pagination.forward",
