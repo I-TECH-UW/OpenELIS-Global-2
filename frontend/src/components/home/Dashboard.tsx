@@ -432,23 +432,23 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
   const orderHeaders = [
     {
       key: "priority",
-      header: "Priority",
+      header: <FormattedMessage id="eorder.priority" />,
     },
     {
       key: "orderDate",
-      header: "Order Date",
+      header:<FormattedMessage id="sample.label.orderdate" />,
     },
     {
       key: "patientId",
-      header: "Patient Id",
+      header: <FormattedMessage id="patient.id" />,
     },
     {
       key: "labNumber",
-      header: "Lab Number",
+      header:<FormattedMessage id="eorder.labNumber" />,
     },
     {
       key: "testName",
-      header: "Test Name",
+      header:<FormattedMessage id="eorder.test.name" />,
     },
   ];
 
