@@ -91,6 +91,9 @@ function Admin() {
             <SideNavMenuItem href="#PatientConfigurationMenu">
               <FormattedMessage id="sidenav.label.admin.formEntry.patientconfig" />
             </SideNavMenuItem>
+            <SideNavMenuItem href="#PrintedReportsConfigurationMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.PrintedReportsconfig" />
+            </SideNavMenuItem>
             <SideNavMenuItem href="#SampleEntryConfigurationMenu">
               <FormattedMessage id="sidenav.label.admin.formEntry.sampleEntryconfig" />
             </SideNavMenuItem>
@@ -191,6 +194,12 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#DictionaryMenu">
         <DictionaryManagement />
+      </PathRoute>
+      <PathRoute path="#PrintedReportsConfigurationMenu">
+        <ConfigMenuDisplay
+          menuType="PrintedReportsConfigurationMenu"
+          id="sidenav.label.admin.formEntry.PrintedReportsconfig"
+        />
       </PathRoute>
     </>
   );
