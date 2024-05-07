@@ -157,6 +157,7 @@ function ConfigMenuDisplay(props) {
       );
     } else if (
       cell.info.header === "value" &&
+      typeof cell.value === "string" &&
       cell.value.startsWith("data:image")
     ) {
       return (

@@ -193,7 +193,7 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#PrintedReportsConfigurationMenu">
         <ConfigMenuDisplay
-          menuType="PrintedReportsConfigurationMen"
+          menuType="PrintedReportsConfigurationMenu"
           id="sidenav.label.admin.formEntry.PrintedReportsconfig"
         />
       </PathRoute>

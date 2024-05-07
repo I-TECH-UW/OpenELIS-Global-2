@@ -10,10 +10,14 @@ import {
   Button,
   Loading,
   Dropdown,
+  FileUploader,
+  Checkbox,
 } from "@carbon/react";
 import {
   getFromOpenElisServer,
   postToOpenElisServer,
+  postToOpenElisServerFormData,
+  postToOpenElisServerFullResponse,
 } from "../../../utils/Utils.js";
 import {
   AlertDialog,
@@ -34,6 +38,11 @@ const GenericConfigEdit = ({ menuType, ID }) => {
   const [textInputValue, setTextInputValue] = useState("");
   const [selectedDictionaryValue, setSelectedDictionaryValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [removeImage, setRemoveImage] = useState(false);
+
+  const [img, setImg] = useState(null);
+  const [file, setFile] = useState(null);
+
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
@@ -53,6 +62,14 @@ const GenericConfigEdit = ({ menuType, ID }) => {
     }
     if (res.valueType === "dictionary") {
       setSelectedDictionaryValue(res.value);
+    }
+    if (res.valueType === "logoUpload") {
+      getFromOpenElisServer(
+        `/dbImage/siteInformation/${res.paramName}`,
+        (res) => {
+          setImg(res.value);
+        },
+      );
     }
     setTextInputValue(res.value);
     setIsLoading(false);
@@ -120,8 +137,37 @@ const GenericConfigEdit = ({ menuType, ID }) => {
   };
 
   const handleSubmitButton = () => {
-    const body = JSON.stringify(FormEntryConfig);
-    postToOpenElisServer(`/rest/${menuType}?ID=${ID}`, body, handleSubmit);
+    if (FormEntryConfig.valueType === "logoUpload") {
+      const formData = new FormData();
+      if (!removeImage) {
+        formData.append("logoFile", file);
+      }
+      formData.append("logoName", FormEntryConfig.paramName);
+      formData.append("removeImage", removeImage ? "true" : "false");
+
+      postToOpenElisServerFormData(`/rest/logoUpload`, formData, handleSubmit);
+    } else {
+      const body = JSON.stringify(FormEntryConfig);
+      postToOpenElisServer(`/rest/${menuType}?ID=${ID}`, body, handleSubmit);
+    }
+  };
+
+  const handleFileUpload = (event) => {
+    const files = event.target.files;
+    console.log("Number of files:", files.length);
+
+    const file = files[0];
+    setFile(file);
+
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      const base64String = reader.result;
+      console.log(base64String);
+      setImg(base64String);
+    };
+
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = (status) => {
@@ -219,6 +265,59 @@ const GenericConfigEdit = ({ menuType, ID }) => {
                         items={FormEntryConfig.dictionaryValues}
                         selectedItem={selectedDictionaryValue}
                         onChange={handleDictionaryChange}
+                      />
+                    </Column>
+                  </Grid>
+                </>
+              )}
+              {FormEntryConfig.valueType === "logoUpload" && (
+                <>
+                  <Grid fullWidth={true}>
+                    <Column lg={3}>
+                      <h4>
+                        <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.value" />
+                      </h4>
+                    </Column>
+                    <Column lg={3}>
+                      {!removeImage && (
+                        <FileUploader
+                          buttonLabel="Choose file"
+                          buttonKind="primary"
+                          size="sm"
+                          filenameStatus="edit"
+                          accept={[".jpg", ".png", ".gif"]}
+                          multiple={false}
+                          disabled={false}
+                          iconDescription="Delete file"
+                          onChange={handleFileUpload}
+                        />
+                      )}
+                    </Column>
+                  </Grid>
+                  <br />
+                  {img ? (
+                    <Grid>
+                      <Column lg={3}>
+                        <img
+                          src={img}
+                          alt="Logo"
+                          style={{ maxWidth: "100px" }}
+                        />
+                      </Column>
+                    </Grid>
+                  ) : null}
+
+                  <br />
+                  <Grid>
+                    <Column lg={3}>
+                      <Checkbox
+                        labelText={`Remove Image`}
+                        id="checkbox-label-1"
+                        checked={removeImage}
+                        onChange={() => {
+                          setRemoveImage(!removeImage);
+                          setImg(null);
+                        }}
                       />
                     </Column>
                   </Grid>

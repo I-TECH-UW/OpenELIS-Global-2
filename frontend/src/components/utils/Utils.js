@@ -84,6 +84,30 @@ export const postToOpenElisServerFullResponse = (
     });
 };
 
+export const postToOpenElisServerFormData = (
+  endPoint,
+  formData,
+  callback,
+  extraParams,
+) => {
+  fetch(
+    config.serverBaseUrl + endPoint,
+
+    {
+      credentials: "include",
+      method: "POST",
+      headers: {
+        "X-CSRF-Token": localStorage.getItem("CSRF"),
+      },
+      body: formData,
+    },
+  )
+    .then((response) => callback(response, extraParams))
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
 export const postToOpenElisServerJsonResponse = (
   endPoint,
   payLoad,
