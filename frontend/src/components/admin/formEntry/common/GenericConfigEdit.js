@@ -154,7 +154,6 @@ const GenericConfigEdit = ({ menuType, ID }) => {
 
   const handleFileUpload = (event) => {
     const files = event.target.files;
-    console.log("Number of files:", files.length);
 
     const file = files[0];
     setFile(file);
@@ -163,7 +162,6 @@ const GenericConfigEdit = ({ menuType, ID }) => {
 
     reader.onloadend = () => {
       const base64String = reader.result;
-      console.log(base64String);
       setImg(base64String);
     };
 
@@ -171,6 +169,7 @@ const GenericConfigEdit = ({ menuType, ID }) => {
   };
 
   const handleSubmit = (status) => {
+    console.log(status + "ye hai statussssssssss");
     if (status === 200) {
       showAlertMessage(
         intl.formatMessage({ id: "save.config.success.msg" }),

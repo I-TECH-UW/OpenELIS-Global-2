@@ -102,7 +102,10 @@ export const postToOpenElisServerFormData = (
       body: formData,
     },
   )
-    .then((response) => callback(response, extraParams))
+    .then((response) => response.status)
+    .then((status) => {
+      callback(status, extraParams);
+    })
     .catch((error) => {
       console.error(error);
     });

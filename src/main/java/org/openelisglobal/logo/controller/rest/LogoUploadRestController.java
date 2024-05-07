@@ -35,6 +35,7 @@ import org.openelisglobal.logo.form.LogoUploadForm;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.WebDataBinder;
@@ -65,7 +66,7 @@ public class LogoUploadRestController {
     }
 
     @PostMapping
-    protected void doPost(HttpServletRequest request, @ModelAttribute("form") LogoUploadForm form)
+    protected ResponseEntity<Void> doPost(HttpServletRequest request, @ModelAttribute("form") LogoUploadForm form)
             throws ServletException, IOException {
         String whichLogo = form.getLogoName();
         boolean removeImage = "true".equals(request.getParameter("removeImage"));
@@ -75,7 +76,7 @@ public class LogoUploadRestController {
         } else {
             updateImage(form.getLogoFile(), whichLogo);
         }
-
+        return ResponseEntity.ok().build();
     }
 
     private void removeImage(String logoName) {
