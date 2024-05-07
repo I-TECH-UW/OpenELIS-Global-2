@@ -1,4 +1,4 @@
-package org.openelisglobal.patient;
+package org.openelisglobal.integrationTests.patient;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openelisglobal.BaseTestConfig;
+import org.openelisglobal.config.TestConfig;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.service.PersonService;
@@ -22,7 +23,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { BaseTestConfig.class, PatientTestConfig.class })
+@ContextConfiguration(classes = { BaseTestConfig.class, TestConfig.class })
 @TestPropertySource("classpath:common.properties")
 @ActiveProfiles("test")
 public class PatientServiceTest {
