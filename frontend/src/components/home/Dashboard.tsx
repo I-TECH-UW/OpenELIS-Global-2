@@ -436,7 +436,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     },
     {
       key: "orderDate",
-      header:<FormattedMessage id="sample.label.orderdate" />,
+      header: <FormattedMessage id="sample.label.orderdate" />,
     },
     {
       key: "patientId",
@@ -444,11 +444,11 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
     },
     {
       key: "labNumber",
-      header:<FormattedMessage id="eorder.labNumber" />,
+      header: <FormattedMessage id="eorder.labNumber" />,
     },
     {
       key: "testName",
-      header:<FormattedMessage id="eorder.test.name" />,
+      header: <FormattedMessage id="eorder.test.name" />,
     },
   ];
 

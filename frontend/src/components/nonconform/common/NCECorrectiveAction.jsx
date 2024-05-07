@@ -1,271 +1,65 @@
-import React, { useState, useEffect, useContext } from "react";
 import {
   Button,
   Column,
   Form,
   Grid,
-  Section,
   Select,
   SelectItem,
-  TableCell,
+  TextInput,
+  Section,
+  Table,
   TableHead,
-  TableHeader,
   TableRow,
   TableBody,
-  TextArea,
-  TextInput,
-  Table,
   RadioButton,
+  TableHeader,
+  TableCell
 } from "@carbon/react";
+import { AlertDialog } from "../../common/CustomNotification";
+import { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import {
-  NotificationKinds,
-  AlertDialog,
-} from "../../common/CustomNotification";
-import { NotificationContext } from "../../layout/Layout";
-import {
-  getFromOpenElisServer,
-  postToOpenElisServerJsonResponse,
-} from "../../utils/Utils";
+import { initialReportFormValues, selectOptions } from "./ViewNonConforming";
+import { getFromOpenElisServer } from "../../utils/Utils";
+import { headers } from "./ViewNonConforming";
 
-export const initialReportFormValues = {
-  type: undefined,
-  value: "",
-  error: undefined,
-};
-
-export const selectOptions = [
-  {
-    value: "nceNumber",
-    text: "NCE Number",
-  },
-  {
-    text: "Lab Number",
-    value: "labNumber",
-  },
-];
-
-export const headers = [
-  {
-    key: "date",
-    value: "Date",
-  },
-  {
-    key: "nceNumber",
-    value: "NCE Number",
-  },
-  {
-    key: "specimen",
-    value: "Lab Section/Unit",
-  },
-];
-
-const initialFormData = {
-  nceCategory: undefined,
-  nceType: undefined,
-  consequences: undefined,
-  recurrence: undefined,
-  severityScore: 0,
-  correctiveAction: undefined,
-  controlAction: undefined,
-  comments: undefined,
-  labComponent: undefined,
-};
-
-export const ViewNonConformingEvent = () => {
+export const NCECorrectiveAction = () => {
   const [reportFormValues, setReportFormValues] = useState(
     initialReportFormValues,
   );
 
-  const [data, setData] = useState(null);
+  const [notificationVisible, setNotificationVisible] = useState(false);
 
-  const [formData, setFormData] = useState(initialFormData);
-  const [nceTypes, setNceTypes] = useState([]);
-  const [tData, setTData] = useState(null);
-  const [selected, setSelected] = useState(null);
-
-  const { notificationVisible, setNotificationVisible, addNotification } =
-    useContext(NotificationContext);
+  const [tData,setTData] = useState(null);
 
   const intl = useIntl();
 
-  useEffect(() => {
-    let a = parseInt(formData.consequences ?? 0);
-    let b = parseInt(formData.recurrence ?? 0);
+  const handleSubmit = () => 
+    {
 
-    let c = a * b;
+      let other = reportFormValues.type==="labNumber" ? "nceNumber" : "labNumber";
 
-    if (
-      typeof a === "number" &&
-      typeof b === "number" &&
-      typeof c === "number"
-    ) {
-      setFormData({
-        ...formData,
-        severityScore: c,
-      });
-    }
-  }, [formData.consequences, formData.recurrence]);
+    getFromOpenElisServer(`/rest/nonconformingcorrectiveaction?status=CAPA&${reportFormValues.type}=${reportFormValues.value}&uppressExternalSearch=false&${other}=undefined`,data=>{
 
-  const handleSubmit = () => {
-    if (reportFormValues.type === undefined || reportFormValues.value === "") {
-      setReportFormValues({
-        ...reportFormValues,
-        error: intl.formatMessage({
-          id: "error.nonconform.report",
-        }),
-      });
-      return;
-    }
-
-    setReportFormValues({
-      ...reportFormValues,
-      error: undefined,
-    });
-    let other =
-      reportFormValues.type == "labNumber" ? "nceNumber" : "labNumber";
-
-    try {
-      getFromOpenElisServer(
-        `/rest/viewNonConformEvents?${reportFormValues.type}=${reportFormValues.value}&${other}=&status=Pending`,
-        (data) => {
-          //setReportFormValues(initialReportFormValues);
-          if (!data.results) {
-            setReportFormValues({
-              ...reportFormValues,
-              error: intl.formatMessage({
-                id: "no.data.found",
-              }),
-            });
-            setData(null);
-            setTData(null);
-          } else {
-            if (data.results.length < 2) {
-              setData(data);
-              setNceTypes(data.nceTypes);
-              setTData(null);
-            } else {
-              setTData(data);
-              setData(null);
-            }
-          }
-        },
-      );
-    } catch (error) {
-      setReportFormValues({
-        ...reportFormValues,
-        error: intl.formatMessage({
-          id: "error.nonconform.report.data.found",
-          defaultMessage: "No data found",
-        }),
-      });
-      setData(null);
-    }
-  };
-
-  useEffect(() => {
-    if (data) {
-      setNceTypes(
-        data.nceTypes.filter((obj) => {
-          let bol = Number(obj.categoryId) === Number(formData.nceCategory);
-          return bol;
-        }),
-      );
-    }
-  }, [formData.nceCategory]);
-
-  const handleNCEFormSubmit = () => {
-    let body = {
-      id: data.results[0].id,
-      laboratoryComponent: formData.labComponent,
-      nceCategory: formData.nceCategory,
-      nceType: formData.nceType,
-      consequences: formData.consequences,
-      recurrence: formData.recurrence,
-      severityScore: formData.severityScore,
-      correctiveAction: formData.correctiveAction,
-      controlAction: formData.controlAction,
-      comments: formData.comments,
-      currentUserId: data.currentUserId.id ?? "",
-      reporterName: data.results[0].nameOfReporter ?? "",
-      site: data.results[0].site,
-      nceNumber: data.results[0].nceNumber,
-      reportDate: data.reportDate,
-      dateOfEvent: data.dateOfEvent,
-      name: data.results[0].name,
-      reportingUnit: data.results[0].reportingUnitId,
-      prescriberName: data.results[0].prescriberName,
-      description: data.results[0].description,
-      suspectedCauses: data.results[0].suspectedCauses,
-    };
-
-    postToOpenElisServerJsonResponse(
-      "/rest/viewNonConformEvents",
-      JSON.stringify(body),
-      (data) => {
-        setNotificationVisible(true);
-        //setReportFormValues(initialReportFormValues);
-        setData(null);
-
-        if (data.success) {
-          addNotification({
-            kind: NotificationKinds.success,
-            title: intl.formatMessage({ id: "notification.title" }),
-            message: intl.formatMessage({
-              id: "nonconform.order.save.success",
-            }),
-          });
-        } else {
-          addNotification({
-            kind: NotificationKinds.error,
-            title: intl.formatMessage({ id: "notification.title" }),
-            message: intl.formatMessage({ id: "nonconform.order.save.fail" }),
-          });
-        }
-      },
-    );
-  };
-
-  useEffect(() => {
-    if (selected) {
-      try {
-        getFromOpenElisServer(
-          `/rest/viewNonConformEvents?nceNumber=${selected}&labNumber=&status=Pending`,
-          (data) => {
-            // setReportFormValues(initialReportFormValues);
-            if (!data.results) {
-              setReportFormValues({
-                ...reportFormValues,
-                error: intl.formatMessage({
-                  id: "no.data.found",
-                }),
-              });
-            } else {
-              setData(data);
-              setNceTypes(data.nceTypes);
-              setTData(null);
-            }
-          },
-        );
-      } catch (error) {
-        setReportFormValues({
-          ...reportFormValues,
-          error: intl.formatMessage({
-            id: "error.nonconform.report.data.found",
-            defaultMessage: "No data found",
-          }),
-        });
+      if (data.nceEventsSearchResults.length > 1){
+        setTData(data);
       }
-    }
-  }, [selected]);
+    
+    })
+  };
+
+  const handleSubmit2 = () => {
+    getFromOpenElisServer("/rest/NCECorrectiveAction?nceNumber=1714007832348",data=>{
+      console.log("data from nce server");
+    })
+  }
 
   return (
-    <>
+    <div>
       {notificationVisible === true ? <AlertDialog /> : ""}
       <Grid fullWidth={true}>
         <Column lg={16}>
           <h2>
-            <FormattedMessage id={`nonconform.view.report`} />
+            <FormattedMessage id={`nonconform.corrective.title`} />
           </h2>
         </Column>
         <Column lg={16} md={10} sm={8}>
@@ -318,6 +112,10 @@ export const ViewNonConformingEvent = () => {
                   <FormattedMessage id="label.button.search" />
                 </Button>
               </Column>
+                  <br />
+                
+
+              
             </Grid>
             <br />
             <Section>
@@ -333,12 +131,12 @@ export const ViewNonConformingEvent = () => {
         <Column lg={16}>
           <br></br>
         </Column>
-      </Grid>
-
-      {tData && (
-        <div>
+         <Column lg={16}>
+       {
+        tData && (
+            <div>
           <Grid>
-            <Column lg={16} md={8} sm={4}>
+            <Column lg={16} md={16} sm={16}>
               <Table style={{ marginTop: "1em" }}>
                 <TableHead>
                   <TableRow>
@@ -351,7 +149,7 @@ export const ViewNonConformingEvent = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {tData.results.map((row) => (
+                  {tData.nceEventsSearchResults.map((row) => (
                     <TableRow key={row.nceNumber}>
                       <TableCell key={`${row}-checkbox`}>
                         <RadioButton
@@ -385,9 +183,11 @@ export const ViewNonConformingEvent = () => {
             </Column>
           </Grid>
         </div>
-      )}
+        )
+       }
 
-      {data && (
+
+       {data && (
         <Grid fullWidth={true}>
           <Column lg={3}>
             <div style={{ marginBottom: "10px" }}>
@@ -710,6 +510,8 @@ export const ViewNonConformingEvent = () => {
           </Column>
         </Grid>
       )}
-    </>
+       </Column>
+      </Grid>
+    </div>
   );
 };

@@ -933,5 +933,6 @@
   "nonconform.view.report": "View New Non Conform Event",
   "no.data.found": "No Data Found",
   "nonconform.severity.score": "Severity Score",
-  "text.length.max": "Text length Should not be greater than 200"
+  "text.length.max": "Text length Should not be greater than 200",
+  "nonconform.corrective.title": "Nonconforming Events Corrective Action"
 }

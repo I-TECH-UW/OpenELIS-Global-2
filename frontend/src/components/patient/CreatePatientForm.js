@@ -252,8 +252,9 @@ function CreatePatientForm(props) {
   const accessionNumberValidationResponse = (res, numberType, numberValue) => {
     let error;
     if (
-      res.status === false &&(props.selectedPatient.nationalId !== nationalId || props.selectedPatient.subjectNumber !== subjectNo)
-      
+      res.status === false &&
+      (props.selectedPatient.nationalId !== nationalId ||
+        props.selectedPatient.subjectNumber !== subjectNo)
     ) {
       setNotificationVisible(true);
       addNotification({
@@ -388,9 +389,7 @@ function CreatePatientForm(props) {
                 <br></br>
               </Column>
               <Column lg={8} md={4} sm={4}>
-                <Field
-                  name="subjectNumber"
-                >
+                <Field name="subjectNumber">
                   {({ field }) => (
                     <>
                       <TextInput
@@ -406,7 +405,7 @@ function CreatePatientForm(props) {
                           handleSubjectNoValidation(
                             "subjectNumber",
                             "subjectNumberID",
-                             values.subjectNumber,
+                            values.subjectNumber,
                           );
                         }}
                         onChange={handleSubjectNoChange}
@@ -419,9 +418,7 @@ function CreatePatientForm(props) {
                 </Field>
               </Column>
               <Column lg={8} md={4} sm={4}>
-                <Field
-                  name="nationalId"
-                >
+                <Field name="nationalId">
                   {({ field }) => (
                     <TextInput
                       value={values.nationalId || ""}
