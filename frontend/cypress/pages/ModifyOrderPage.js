@@ -7,7 +7,7 @@ class ModifyOrderPage {
 
   enterAccessionNo(accessionNo) {
     cy.enterText(
-      ".inlineDiv > .cds--form-item > .cds--text-input__field-outer-wrapper > .cds--text-input__field-wrapper > #labNumber",
+      ":nth-child(2) > .cds--form-item > .cds--text-input__field-outer-wrapper > .cds--text-input__field-wrapper > #labNumber",
       accessionNo,
     );
   }
