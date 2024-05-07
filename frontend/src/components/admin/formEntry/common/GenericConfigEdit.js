@@ -169,7 +169,6 @@ const GenericConfigEdit = ({ menuType, ID }) => {
   };
 
   const handleSubmit = (status) => {
-    console.log(status + "ye hai statussssssssss");
     if (status === 200) {
       showAlertMessage(
         intl.formatMessage({ id: "save.config.success.msg" }),
