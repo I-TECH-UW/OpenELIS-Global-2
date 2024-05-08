@@ -1,4 +1,4 @@
-package org.openelisglobal.dictionary.rest.controller;
+package org.openelisglobal.dictionary.controller.rest;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
