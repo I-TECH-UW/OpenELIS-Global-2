@@ -49,7 +49,7 @@ import static org.mockito.Mockito.mock;
         "org.openelisglobal.address",
         "org.openelisglobal.dictionary",
         "org.openelisglobal.person",
-        "org.openelisglobal.dictionary.rest.controller",
+        "org.openelisglobal.dictionary.controller.rest",
         "org.openelisglobal.dictionary.service",
         "org.openelisglobal.dictionarycategory.service",
         "org.openelisglobal.dictionary.daoimpl",
@@ -69,7 +69,7 @@ import static org.mockito.Mockito.mock;
         "org.openelisglobal.view",
 }, excludeFilters = {
         @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.patient.controller.*"),
-        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.dictionary.controller.*"),
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.dictionary.controller.*.java"),
         @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.config.*"),
         @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.fhir.*"),
         @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.*.fhir.*")

@@ -197,6 +197,7 @@ function DictionaryManagement() {
                     data-modal-primary-focus
                     id="dictNumber"
                     labelText="Dictionary Number"
+                    disabled
                     onChange={(e) => setDictionaryNumber(e.target.value)}
                     style={{
                       marginBottom: "1rem",
