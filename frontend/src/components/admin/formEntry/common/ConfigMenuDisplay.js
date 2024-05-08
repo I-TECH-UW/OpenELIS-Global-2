@@ -285,7 +285,7 @@ function ConfigMenuDisplay(props) {
                     onChange={handlePageChange}
                     page={page}
                     pageSize={pageSize}
-                    pageSizes={[5, 20, 30 ,50]}
+                    pageSizes={[5, 20, 30, 50]}
                     totalItems={orderEntryConfigurationList.length}
                     forwardText={intl.formatMessage({
                       id: "pagination.forward",
