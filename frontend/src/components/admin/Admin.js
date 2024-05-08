@@ -11,6 +11,7 @@ import {
   NonConformityMenuManagement,
   PatientMenuManagement,
   StudyMenuManagement,
+  DictionaryManagement,
 } from "./menu";
 import {
   Microscope,
@@ -40,7 +41,6 @@ function Admin() {
       <SideNav
         aria-label="Side navigation"
         defaultExpanded={true}
-        isRail={true}
       >
         <SideNavItems className="adminSideNav">
           <SideNavMenu
@@ -113,6 +113,9 @@ function Admin() {
               id="sidenav.label.admin.commonproperties"
               defaultMessage={"Common Properties"}
             />
+          </SideNavLink>
+          <SideNavLink href="#DictionaryMenu" renderIcon={CharacterWholeNumber}>
+            <FormattedMessage id="dictionary.label.modify" />
           </SideNavLink>
           <SideNavLink
             renderIcon={Catalog}
@@ -196,6 +199,9 @@ function Admin() {
           menuType="PrintedReportsConfigurationMenu"
           id="sidenav.label.admin.formEntry.PrintedReportsconfig"
         />
+      </PathRoute>
+      <PathRoute path="#DictionaryMenu">
+        <DictionaryManagement />
       </PathRoute>
     </>
   );
