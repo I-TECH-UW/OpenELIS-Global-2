@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Column,
@@ -12,15 +13,25 @@ import {
   TableRow,
   TableBody,
   RadioButton,
+  TextArea,
   TableHeader,
   TableCell,
 } from "@carbon/react";
 import { AlertDialog } from "../../common/CustomNotification";
-import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { initialReportFormValues, selectOptions } from "./ViewNonConforming";
 import { getFromOpenElisServer } from "../../utils/Utils";
-import { headers } from "./ViewNonConforming";
+import CustomDatePicker from "../../common/CustomDatePicker";
+
+const initialFormData = {
+  "correctiveAction-log-0": null,
+  "responsiblePerson-0": null,
+  "dateActionCompleted-0": null,
+  "turnAroundTime-0": null,
+  dateCompleted: null,
+  "action-type-0": null,
+  discussionDate: "",
+};
 
 export const NCECorrectiveAction = () => {
   const [reportFormValues, setReportFormValues] = useState(
@@ -30,10 +41,26 @@ export const NCECorrectiveAction = () => {
   const [notificationVisible, setNotificationVisible] = useState(false);
   const [selected, setSelected] = useState(null);
 
+  const [tdiscussionDate, setTDiscussionDate] = useState(null);
+
   const [tData, setTData] = useState(null);
   const [data, setData] = useState(null);
+  const [formData, setFormData] = useState(initialFormData);
 
   const intl = useIntl();
+
+  useEffect(() => {
+    if (selected) {
+      try {
+        getFromOpenElisServer(
+          `/rest/NCECorrectiveAction?nceNumber=${selected}`,
+          (data) => {
+            setData(data);
+          },
+        );
+      } catch (error) {}
+    }
+  }, [selected]);
 
   const handleSubmit = () => {
     let other =
@@ -53,24 +80,36 @@ export const NCECorrectiveAction = () => {
     }
   };
 
-  useEffect(() => {
-    if (selected) {
-      try {
-        getFromOpenElisServer(
-          `/rest/NCECorrectiveAction?nceNumber=${selected}`,
-          (data) => {
-            setData(data);
-          },
-        );
-      } catch (error) {}
-    }
-  }, [selected]);
-
   const handleNCEFormSubmit = () => {};
+
+  const handleCorrectiveActionChange = (e) => {
+    setFormData({
+      ...formData,
+      "correctiveAction-log-0": e.target.value,
+    });
+  };
+
+  const handleResponsiblePersonChange = (e) => {
+    setFormData({
+      ...formData,
+      "responsiblePerson-0": e.target.value,
+    });
+  };
+
+  const handleDiscussionDateChange = (date) => {
+    setTDiscussionDate(date);
+  };
+
+  const handleAddDiscussionDate = () => {
+    setFormData({
+      ...formData,
+      discussionDate: formData.discussionDate + tdiscussionDate,
+    });
+  };
 
   return (
     <div>
-      {notificationVisible === true ? <AlertDialog /> : ""}
+      {notificationVisible && <AlertDialog />}
       <Grid fullWidth={true}>
         <Column lg={16}>
           <h2>
@@ -87,12 +126,12 @@ export const NCECorrectiveAction = () => {
                     id: "label.form.searchby",
                   })}
                   value={reportFormValues.type}
-                  onChange={(e) => {
+                  onChange={(e) =>
                     setReportFormValues({
                       ...reportFormValues,
                       type: e.target.value,
-                    });
-                  }}
+                    })
+                  }
                 >
                   <SelectItem key={"emptyselect"} value={""} text={""} />
                   {selectOptions.map((statusOption) => (
@@ -110,26 +149,24 @@ export const NCECorrectiveAction = () => {
                     id: "testcalculation.label.textValue",
                   })}
                   value={reportFormValues.value}
-                  onChange={(e) => {
+                  onChange={(e) =>
                     setReportFormValues({
                       ...reportFormValues,
                       value: e.target.value,
-                    });
-                  }}
+                    })
+                  }
                   id={`field.name`}
                 />
               </Column>
               <Column lg={16}>
-                <br></br>
+                <br />
               </Column>
               <Column lg={16}>
                 <Button type="button" onClick={handleSubmit}>
                   <FormattedMessage id="label.button.search" />
                 </Button>
               </Column>
-              <br />
             </Grid>
-            <br />
             <Section>
               <br />
               {!!reportFormValues.error && (
@@ -141,7 +178,7 @@ export const NCECorrectiveAction = () => {
           </Form>
         </Column>
         <Column lg={16}>
-          <br></br>
+          <br />
         </Column>
         <Column lg={16}>
           {tData && (
@@ -165,23 +202,17 @@ export const NCECorrectiveAction = () => {
                           <TableCell key={`${row}-checkbox`}>
                             <RadioButton
                               name="radio-group"
-                              onClick={() => {
-                                setSelected(row.nceNumber);
-                                console.log(row);
-                              }}
+                              onClick={() => setSelected(row.nceNumber)}
                               labelText=""
                               id={row.id}
                             />
                           </TableCell>
-
                           <TableCell key={row.key + "date"}>
                             {new Date(row.reportDate).toDateString()}
                           </TableCell>
-
                           <TableCell key={row.key + "1"}>
                             {row.nceNumber}
                           </TableCell>
-
                           <TableCell key={row.key + "2"}>
                             {
                               tData.reportingUnits.find(
@@ -341,22 +372,20 @@ export const NCECorrectiveAction = () => {
                   </span>
                 </div>
                 <div style={{ marginBottom: "10px" }}>
-                  {data.nceCategories.find(
-                    (obj) => obj.id === data.nceCategory,
-                  ).name ?? ""}
+                  {data.nceCategories.find((obj) => obj.id === data.nceCategory)
+                    .name ?? ""}
                 </div>
               </Column>
 
-               <Column lg={3} style={{ marginBottom: "20px" }}>
+              <Column lg={3} style={{ marginBottom: "20px" }}>
                 <div style={{ marginBottom: "10px" }}>
                   <span style={{ color: "#3366B3", fontWeight: "bold" }}>
                     <FormattedMessage id="nonconform.view.nce.type" />
                   </span>
                 </div>
                 <div style={{ marginBottom: "10px" }}>
-                  {data.nceTypes.find(
-                    (obj) => obj.id === data.nceType,
-                  ).name ?? ""}
+                  {data.nceTypes.find((obj) => obj.id === data.nceType).name ??
+                    ""}
                 </div>
               </Column>
 
@@ -364,52 +393,88 @@ export const NCECorrectiveAction = () => {
                 <br></br>
               </Column>
 
-              {/* <Column lg={8} md={4} sm={4}>
+              <Column lg={8}>
                 <TextArea
                   labelText={
-                    <FormattedMessage id="nonconform.view.preventive.description" />
+                    <FormattedMessage id="banner.menu.nonconformity.correctiveActions" />
                   }
-                  value={formData.controlAction}
-                  onChange={(e) => {
-                    setFormData({
-                      ...formData,
-                      controlAction: e.target.value,
-                    });
-                  }}
+                  value={formData[`correctiveAction-log-0`]}
+                  onChange={handleCorrectiveActionChange}
                   rows={2}
                   id="text-area-3"
-                  invalid={formData.controlAction?.length > 200}
-                  invalidText={<FormattedMessage id="text.length.max" />}
                 />
-              </Column> */}
-
-              {/* <Column lg={8} md={4} sm={4}>
+              </Column>
+              <Column lg={8}>
                 <TextArea
-                  labelText={<FormattedMessage id="nonconform.view.comments" />}
-                  value={formData.comments}
+                  labelText={
+                    <FormattedMessage id="nonconform.person.responsible" />
+                  }
+                  value={formData[`responsiblePerson-0`]}
+                  onChange={handleResponsiblePersonChange}
+                  rows={2}
+                  id="text-area-4"
+                />
+              </Column>
+              <Column lg={8}>
+                <CustomDatePicker
+                  key="tdiscussionDate"
+                  id={"tdiscussionDate"}
+                  labelText={
+                    <FormattedMessage id="nonconform.date.discussion.nce" />
+                  }
+                  autofillDate={true}
+                  value={tdiscussionDate}
+                  onChange={handleDiscussionDateChange}
+                />
+                <button
+                  disabled={!!tdiscussionDate}
+                  onClick={handleAddDiscussionDate}
+                  style={{ margin: "5px" }}
+                >
+                  <FormattedMessage id="nonconform.add.new.date" />
+                </button>
+              </Column>
+
+              <Column lg={8} >
+                <CustomDatePicker
+                  key="dateCompleted-0"
+                  id={"dateCompleted-0"}
+                  labelText={
+                    <FormattedMessage id="nonconform.nce.resolution.dateCompleted" />
+                  }
+                  autofillDate={true}
+                  value={formData[`dateCompleted`]}
                   onChange={(e) => {
                     setFormData({
                       ...formData,
-                      comments: e.target.value,
+                      dateCompleted: e,
                     });
                   }}
-                  rows={2}
-                  id="text-area-2"
-                  invalid={formData.comments?.length > 200}
-                  invalidText={<FormattedMessage id="text.length.max" />}
                 />
-              </Column> */}
-              <Column lg={16}>
-                <br></br>
+
+                
               </Column>
 
+              <Column>
+              <CustomDatePicker
+                  key="dateActionCompleted-0"
+                  id={"dateActionCompleted-0"}
+                  labelText={
+                    <FormattedMessage id="nonconform.date.completed" />
+                  }
+                  autofillDate={true}
+                  value={formData[`dateActionCompleted-0`]}
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      "dateActionCompleted-0": e,
+                    });
+                  }}
+                /></Column>
+
               <Column lg={16}>
-                {/* {false && (
-                  <div style={{ color: "#c62828", margin: 4 }}>
-                    {formData.error}
-                  </div>
-                )} */}
-                <Button type="button" onClick={() => handleNCEFormSubmit()}>
+                <br />
+                <Button type="button" onClick={handleNCEFormSubmit}>
                   <FormattedMessage id="label.button.submit" />
                 </Button>
               </Column>

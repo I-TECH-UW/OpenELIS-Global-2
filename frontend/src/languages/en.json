@@ -938,5 +938,10 @@
   "nonconform.corrective.title": "Nonconforming Events Corrective Action",
   "nonconform.field.date": "NCE Date",
   "nonconform.field.reporting.data": "Reporting Date",
-  "nonconform.lab.componenet.nce": "Laboratory Component where NCE took place"
+  "nonconform.lab.componenet.nce": "Laboratory Component where NCE took place",
+  "nonconform.person.responsible": "Person responsible",
+  "nonconform.date.discussion.nce": "Date of discussion with NCE Staff",
+  "nonconform.add.new.date": "Add new date",
+  "nonconform.date.completed": "Date Completed",
+  "nonconform.nce.resolution.dateCompleted": "NCE Resolution Date completed"
 }
