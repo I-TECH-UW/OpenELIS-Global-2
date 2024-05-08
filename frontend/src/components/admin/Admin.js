@@ -122,6 +122,13 @@ function Admin() {
               defaultMessage={"Common Properties"}
             />
           </SideNavLink>
+          <SideNavLink
+            renderIcon={Catalog}
+            target="_blank"
+            href={config.serverBaseUrl + "/MasterListsPage"}
+          >
+            <FormattedMessage id="admin.legacy" />
+          </SideNavLink>
         </SideNavItems>
       </SideNav>
 

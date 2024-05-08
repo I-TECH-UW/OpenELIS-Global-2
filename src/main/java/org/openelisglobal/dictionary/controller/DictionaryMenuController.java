@@ -30,7 +30,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@SuppressWarnings("unused")
 public class DictionaryMenuController extends BaseMenuController<Dictionary> {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "selectedIDs*" };
