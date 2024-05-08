@@ -11,6 +11,7 @@ import {
   NonConformityMenuManagement,
   PatientMenuManagement,
   StudyMenuManagement,
+  DictionaryManagement,
 } from "./menu";
 import {
   Microscope,
@@ -32,7 +33,6 @@ import {
 } from "@carbon/react";
 import { CommonProperties } from "./menu/CommonProperties";
 import ConfigMenuDisplay from "./formEntry/common/ConfigMenuDisplay";
-import DictionaryManagement from "./menu/DictionaryManagement";
 
 function Admin() {
   const intl = useIntl();
@@ -54,6 +54,12 @@ function Admin() {
               <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
             </SideNavMenuItem>
           </SideNavMenu>
+          <SideNavLink href="#labNumber" renderIcon={CharacterWholeNumber}>
+            <FormattedMessage id="sidenav.label.admin.labNumber" />
+          </SideNavLink>
+          <SideNavLink renderIcon={ChartBubble} href="#program">
+            <FormattedMessage id="sidenav.label.admin.program" />
+          </SideNavLink>
           <SideNavMenu
             title={intl.formatMessage({ id: "sidenav.label.admin.menu" })}
             renderIcon={TableOfContents}
@@ -102,25 +108,14 @@ function Admin() {
             </SideNavMenuItem>
           </SideNavMenu>
 
-          <SideNavMenu
-            renderIcon={Microscope}
-            title={intl.formatMessage({ id: "master.lists.page" })}
-          >
-            <SideNavMenuItem href="#DictionaryMenu">
-              <FormattedMessage id="dictionary.label.modify" />
-            </SideNavMenuItem>
-          </SideNavMenu>
-          <SideNavLink href="#labNumber" renderIcon={CharacterWholeNumber}>
-            <FormattedMessage id="sidenav.label.admin.labNumber" />
-          </SideNavLink>
-          <SideNavLink renderIcon={ChartBubble} href="#program">
-            <FormattedMessage id="sidenav.label.admin.program" />
-          </SideNavLink>
           <SideNavLink href="#commonproperties" renderIcon={Settings}>
             <FormattedMessage
               id="sidenav.label.admin.commonproperties"
               defaultMessage={"Common Properties"}
             />
+          </SideNavLink>
+          <SideNavLink href="#DictionaryMenu" renderIcon={CharacterWholeNumber}>
+            <FormattedMessage id="dictionary.label.modify" />
           </SideNavLink>
           <SideNavLink
             renderIcon={Catalog}
@@ -199,14 +194,14 @@ function Admin() {
           id="sidenav.label.admin.formEntry.patientconfig"
         />
       </PathRoute>
-      <PathRoute path="#DictionaryMenu">
-        <DictionaryManagement />
-      </PathRoute>
       <PathRoute path="#PrintedReportsConfigurationMenu">
         <ConfigMenuDisplay
           menuType="PrintedReportsConfigurationMenu"
           id="sidenav.label.admin.formEntry.PrintedReportsconfig"
         />
+      </PathRoute>
+      <PathRoute path="#DictionaryMenu">
+        <DictionaryManagement />
       </PathRoute>
     </>
   );
