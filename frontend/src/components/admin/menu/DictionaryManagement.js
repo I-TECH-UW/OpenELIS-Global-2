@@ -162,7 +162,7 @@ function DictionaryManagement() {
       <PageBreadCrumb
         breadcrumbs={[
           { label: "home.label", link: "/" },
-          { label: "dictionary.label.modify", link: "/DictionaryManagement" },
+          { label: "dictionary.label.modify", link: "MasterListsPage#DictionaryMenu" },
         ]}
       />
       <Grid fullWidth={true}>
