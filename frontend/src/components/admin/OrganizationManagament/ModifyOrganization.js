@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import {
   Form,
   Heading,
@@ -39,7 +40,7 @@ let breadcrumbs = [
   // { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
 ];
 
-function ModifyOrganization({ id }) {
+function ModifyOrganization() {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
@@ -49,15 +50,56 @@ function ModifyOrganization({ id }) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
+  const [orgSelectedTypeOfActivity, setOrgSelectedTypeOfActivity] = useState(
+    [],
+  );
+  const [orgInfo, setOrgInfo] = useState(null);
+  const [orgInfoPost, setOrgInfoPost] = useState(null); // post data need to get checked
   const [saveButton, setSaveButton] = useState(true);
   const [typeOfActivity, setTypeOfActivity] = useState(null);
   const [typeOfActivityShow, setTypeOfActivityShow] = useState([]);
+
+  const id = new URLSearchParams(useLocation().search).get("ID");
+
+  if (!id) {
+    setTimeout(() => {
+      window.location.assign("/MasterListsPage");
+    }, 1000);
+
+    return (
+      <>
+        <Loading />
+      </>
+    );
+  }
 
   const handlePageChange = ({ page, pageSize }) => {
     setPage(page);
     setPageSize(pageSize);
     setSelectedRowIds([]);
   };
+
+  function submitUpdatedOrgInfo() {
+    setLoading(true);
+    postToOpenElisServerFullResponse(
+      `/rest/Organization?ID=${id}&startingRecNo=1`,
+      orgInfoPost,
+      setLoading(false),
+      addNotification({
+        title: intl.formatMessage({
+          id: "notification.title",
+        }),
+        message: intl.formatMessage({
+          id: "notification.organization.post.success",
+        }),
+        kind: NotificationKinds.success,
+      }),
+      setNotificationVisible(true),
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000),
+    );
+  }
 
   useEffect(() => {
     if (typeOfActivity) {
@@ -74,6 +116,26 @@ function ModifyOrganization({ id }) {
         newOrganizationsManagementList,
       );
       setTypeOfActivityShow(newOrganizationsManagementListArray);
+
+      const organizationsManagementIdInfo = {
+        id: typeOfActivity.id,
+        organizationName: typeOfActivity.organizationName || "",
+        shortName: typeOfActivity.shortName || "",
+        isActive: typeOfActivity.isActive || "",
+        internetAddress: typeOfActivity.internetAddress || "",
+      };
+      setOrgInfo(organizationsManagementIdInfo);
+
+      const organizationSelectedTypeOfActivity =
+        typeOfActivity.selectedTypes.map((item) => {
+          return {
+            id: item,
+          };
+        });
+      const organizationSelectedTypeOfActivityListArray = Object.values(
+        organizationSelectedTypeOfActivity,
+      );
+      setOrgSelectedTypeOfActivity(organizationSelectedTypeOfActivityListArray);
     }
   }, [typeOfActivity]);
 
@@ -141,7 +203,7 @@ function ModifyOrganization({ id }) {
           <Column lg={16} md={8} sm={4}>
             <Section>
               <Heading>
-                <FormattedMessage id="organization.add.title" />
+                <FormattedMessage id="organization.edit.title" />
               </Heading>
             </Section>
           </Column>
@@ -163,20 +225,22 @@ function ModifyOrganization({ id }) {
                     </>
                   </Column>
                   <Column lg={8} md={4} sm={4}>
-                    <TextInput
-                      id="org-name"
-                      className="defalut"
-                      type="text"
-                      labelText=""
-                      placeholder={intl.formatMessage({
-                        id: "organization.add.placeholder",
-                      })}
-                      required
-                      // invalid={errors.order && touched.order}
-                      // invalidText={errors.order}
-                      // value={values.numDefaultOrderLabels}
-                      // onChange={(e) => handleDefaultOrderLablesValue(e)}
-                    />
+                    {orgInfo && (
+                      <TextInput
+                        id="org-name"
+                        className="defalut"
+                        type="text"
+                        labelText=""
+                        placeholder={intl.formatMessage({
+                          id: "organization.add.placeholder",
+                        })}
+                        required
+                        // invalid={errors.order && touched.order}
+                        // invalidText={errors.order}
+                        value={orgInfo.organizationName}
+                        // onChange={(e) => handleDefaultOrderLablesValue(e)}
+                      />
+                    )}
                   </Column>
                 </Grid>
                 <Grid fullWidth={true}>
@@ -186,19 +250,21 @@ function ModifyOrganization({ id }) {
                     </>
                   </Column>
                   <Column lg={8} md={4} sm={4}>
-                    <TextInput
-                      id="org-prefix"
-                      className="defalut"
-                      type="text"
-                      labelText=""
-                      placeholder={intl.formatMessage({
-                        id: "organization.add.placeholder",
-                      })}
-                      // invalid={errors.order && touched.order}
-                      // invalidText={errors.order}
-                      // value={values.numDefaultOrderLabels}
-                      // onChange={(e) => handleDefaultOrderLablesValue(e)}
-                    />
+                    {orgInfo && (
+                      <TextInput
+                        id="org-prefix"
+                        className="defalut"
+                        type="text"
+                        labelText=""
+                        placeholder={intl.formatMessage({
+                          id: "organization.add.placeholder",
+                        })}
+                        // invalid={errors.order && touched.order}
+                        // invalidText={errors.order}
+                        value={orgInfo.shortName}
+                        // onChange={(e) => handleDefaultOrderLablesValue(e)}
+                      />
+                    )}
                   </Column>
                 </Grid>
                 <Grid fullWidth={true}>
@@ -209,20 +275,22 @@ function ModifyOrganization({ id }) {
                     </>
                   </Column>
                   <Column lg={8} md={4} sm={4}>
-                    <TextInput
-                      id="is-active"
-                      className="defalut"
-                      type="text"
-                      labelText=""
-                      placeholder={intl.formatMessage({
-                        id: "organization.add.placeholder.active",
-                      })}
-                      required
-                      // invalid={errors.order && touched.order}
-                      // invalidText={errors.order}
-                      // value={values.numDefaultOrderLabels}
-                      // onChange={(e) => handleDefaultOrderLablesValue(e)}
-                    />
+                    {orgInfo && (
+                      <TextInput
+                        id="is-active"
+                        className="defalut"
+                        type="text"
+                        labelText=""
+                        placeholder={intl.formatMessage({
+                          id: "organization.add.placeholder.active",
+                        })}
+                        required
+                        // invalid={errors.order && touched.order}
+                        // invalidText={errors.order}
+                        value={orgInfo.isActive}
+                        // onChange={(e) => handleDefaultOrderLablesValue(e)}
+                      />
+                    )}
                   </Column>
                 </Grid>
                 <Grid fullWidth={true}>
@@ -231,21 +299,22 @@ function ModifyOrganization({ id }) {
                       <FormattedMessage id="organization.internetaddress" /> :
                     </>
                   </Column>
-
                   <Column lg={8} md={4} sm={4}>
-                    <TextInput
-                      id="internet-address"
-                      className="defalut"
-                      type="text"
-                      labelText=""
-                      placeholder={intl.formatMessage({
-                        id: "organization.add.placeholder",
-                      })}
-                      // invalid={errors.order && touched.order}
-                      // invalidText={errors.order}
-                      // value={values.numDefaultOrderLabels}
-                      // onChange={(e) => handleDefaultOrderLablesValue(e)}
-                    />
+                    {orgInfo && (
+                      <TextInput
+                        id="internet-address"
+                        className="defalut"
+                        type="text"
+                        labelText=""
+                        placeholder={intl.formatMessage({
+                          id: "organization.add.placeholder",
+                        })}
+                        // invalid={errors.order && touched.order}
+                        // invalidText={errors.order}
+                        value={orgInfo.internetAddress}
+                        // onChange={(e) => handleDefaultOrderLablesValue(e)}
+                      />
+                    )}
                   </Column>
                 </Grid>
               </Form>
@@ -443,7 +512,7 @@ function ModifyOrganization({ id }) {
           <br />
           <Grid fullWidth={true}>
             <Column lg={16} md={8} sm={4}>
-              <Button onClick={saveButton} type="submit">
+              <Button onClick={submitUpdatedOrgInfo} type="button">
                 Save
               </Button>{" "}
               <Button
@@ -465,9 +534,41 @@ function ModifyOrganization({ id }) {
         >
           fetchData
         </button>
+        <button
+          onClick={() => {
+            console.log(typeOfActivityShow);
+          }}
+        >
+          settedData
+        </button>
+        <button
+          onClick={() => {
+            console.log(orgInfo);
+          }}
+        >
+          orgInfo
+        </button>
+        <button
+          onClick={() => {
+            console.log(orgSelectedTypeOfActivity);
+          }}
+        >
+          orgSelectedTOA
+        </button>
+        <button
+          onClick={() => {
+            console.log(selectedRowIds);
+          }}
+        >
+          selectedRowIds
+        </button>
       </div>
     </>
   );
 }
 
 export default injectIntl(ModifyOrganization);
+
+// fetch and set fix
+// values need to be marked [de constrution of selected row ids]
+// post data to be setted

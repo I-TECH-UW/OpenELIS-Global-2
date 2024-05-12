@@ -50,6 +50,7 @@ function AddOrganization() {
   const [pageSize, setPageSize] = useState(5);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [saveButton, setSaveButton] = useState(true);
+  const [newOrganizationsData, setNewOrganizationsData] = useState(null);
   const [typeOfActivity, setTypeOfActivity] = useState(null);
   const [typeOfActivityShow, setTypeOfActivityShow] = useState([]);
 
@@ -97,6 +98,29 @@ function AddOrganization() {
       setLoading(false);
     };
   }, []);
+
+  function newOrganizationsSavePost(event) {
+    event.preventDefault();
+    setLoading(true);
+    postToOpenElisServerFullResponse(
+      `/rest/Organization?ID=0&startingRecNo=1`,
+      newOrganizationsData, // need to check against the form of restController [mentor]
+      setLoading(false),
+      addNotification({
+        title: intl.formatMessage({
+          id: "notification.title",
+        }),
+        message: intl.formatMessage({
+          id: "notification.organization.post.save.success",
+        }),
+        kind: NotificationKinds.success,
+      }),
+      setNotificationVisible(true),
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000),
+    );
+  }
 
   const renderCell = (cell, row) => {
     if (cell.info.header === "select") {
@@ -443,7 +467,11 @@ function AddOrganization() {
           <br />
           <Grid fullWidth={true}>
             <Column lg={16} md={8} sm={4}>
-              <Button onClick={saveButton} type="submit">
+              <Button
+                onClick={newOrganizationsSavePost}
+                disabled={saveButton}
+                type="submit"
+              >
                 Save
               </Button>{" "}
               <Button
@@ -457,8 +485,20 @@ function AddOrganization() {
           </Grid>
         </div>
       </div>
+      <div>
+        <button
+          onClick={() => {
+            console.error(selectedRowIds);
+          }}
+        >
+          sdf
+        </button>
+      </div>
     </>
   );
 }
 
 export default injectIntl(AddOrganization);
+
+// post request need to fix
+// save button fix needed

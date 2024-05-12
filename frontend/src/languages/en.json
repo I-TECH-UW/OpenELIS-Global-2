@@ -1028,6 +1028,8 @@
   "organization.main.title": "Organization Management",
   "organization.add.title": "Add Organization",
   "organization.edit.title": "Edit Organization",
+  "notification.organization.post.success": "Organization Information Updated Succesfully.",
+  "notification.organization.post.save.success": "Organization Information Added Succesfully.",
   "organization.select": "Select",
   "organization.type.CI": "Type of Activity",
   "organization.type.CI.select": "Type of Activity : Select",

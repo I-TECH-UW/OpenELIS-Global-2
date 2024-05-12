@@ -79,10 +79,10 @@ function OrganizationManagament() {
       searchedOrganizationManagamentListShow || organizationsManagmentListShow, // need to check against the form of restController [mentor]
       setLoading(false),
       addNotification({
-        title: props.intl.formatMessage({
+        title: intl.formatMessage({
           id: "notification.title",
         }),
-        message: props.intl.formatMessage({
+        message: intl.formatMessage({
           id: "notification.login.syntax.error",
         }),
         kind: NotificationKinds.error,
@@ -296,19 +296,35 @@ function OrganizationManagament() {
             </Section>
             <br />
             <Section>
-              <Form onSubmit={deleteDeactivateOrganizationManagament}>
-                <Column lg={16} md={8} sm={4}>
-                  <Button disabled={modifyButton} type="submit">
-                    <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.modify" />
-                  </Button>{" "}
-                  <Button disabled={deactivateButton} type="submit">
-                    <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
-                  </Button>{" "}
-                  <Button type="submit">
-                    <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.add" />
-                  </Button>
-                </Column>
-              </Form>
+              <Column lg={16} md={8} sm={4}>
+                <Button
+                  onClick={() => {
+                    if (selectedRowIds.length === 1) {
+                      const url = `/ModifyOrganization?ID=${selectedRowIds[0]}`;
+                      window.location.href = url;
+                    }
+                  }}
+                  disabled={modifyButton}
+                  type="button"
+                >
+                  <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.modify" />
+                </Button>{" "}
+                <Button
+                  onClick={deleteDeactivateOrganizationManagament}
+                  disabled={deactivateButton}
+                  type="button"
+                >
+                  <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
+                </Button>{" "}
+                <Button
+                  onClick={() => {
+                    window.location.href = "/AddOrganization";
+                  }}
+                  type="button"
+                >
+                  <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.add" />
+                </Button>
+              </Column>
             </Section>
           </Column>
         </Grid>
@@ -796,8 +812,6 @@ function OrganizationManagament() {
           selectedRowIds
         </button>
       </div>
-      <AddOrganization />
-      <ModifyOrganization id={1455} />
     </>
   );
 }
