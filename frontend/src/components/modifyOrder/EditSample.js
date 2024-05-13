@@ -19,14 +19,15 @@ import {
 } from "@carbon/react";
 import { Add } from "@carbon/react/icons";
 import { getFromOpenElisServer } from "../utils/Utils";
-import EditSampleType from "./EditSampleType";
+import SampleType from "../addOrder/SampleType";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   OrderCurrentTestsHeaders,
   OrderPossibleTestsHeaders,
 } from "../data/orderCurrentTestsHeaders";
 const EditSample = (props) => {
-  const { samples, setSamples, orderFormValues, setOrderFormValues } = props;
+  const { samples, setSamples, orderFormValues, setOrderFormValues, error } =
+    props;
 
   const componentMounted = useRef(false);
 
@@ -60,7 +61,6 @@ const EditSample = (props) => {
   const formatTestsObject = (tests) => {
     return tests.map((test) => {
       test.id = test.testId;
-      test.collectionTime = "";
       if (!test.accessionNumber) {
         test.accessionNumber = "";
       }
@@ -69,6 +69,9 @@ const EditSample = (props) => {
       }
       if (!test.collectionDate) {
         test.collectionDate = "";
+      }
+      if (!test.collectionTime) {
+        test.collectionTime = "";
       }
       return test;
     });
@@ -356,7 +359,39 @@ const EditSample = (props) => {
             pageSize={pageSize}
             pageSizes={[5, 10, 20, 30]}
             totalItems={orderFormValues.existingTests.length}
-          ></Pagination>
+            forwardText={intl.formatMessage({ id: "pagination.forward" })}
+            backwardText={intl.formatMessage({ id: "pagination.backward" })}
+            itemRangeText={(min, max, total) =>
+              intl.formatMessage(
+                { id: "pagination.item-range" },
+                { min: min, max: max, total: total },
+              )
+            }
+            itemsPerPageText={intl.formatMessage({
+              id: "pagination.items-per-page",
+            })}
+            itemText={(min, max) =>
+              intl.formatMessage(
+                { id: "pagination.item" },
+                { min: min, max: max },
+              )
+            }
+            pageNumberText={intl.formatMessage({
+              id: "pagination.page-number",
+            })}
+            pageRangeText={(_current, total) =>
+              intl.formatMessage(
+                { id: "pagination.page-range" },
+                { total: total },
+              )
+            }
+            pageText={(page, pagesUnknown) =>
+              intl.formatMessage(
+                { id: "pagination.page" },
+                { page: pagesUnknown ? "" : page },
+              )
+            }
+          />
         </Column>
       </div>
       <div className="orderLegendBody">
@@ -405,7 +440,39 @@ const EditSample = (props) => {
             pageSize={pageSize2}
             pageSizes={[5, 10, 20, 30]}
             totalItems={orderFormValues.possibleTests.length}
-          ></Pagination>
+            forwardText={intl.formatMessage({ id: "pagination.forward" })}
+            backwardText={intl.formatMessage({ id: "pagination.backward" })}
+            itemRangeText={(min, max, total) =>
+              intl.formatMessage(
+                { id: "pagination.item-range" },
+                { min: min, max: max, total: total },
+              )
+            }
+            itemsPerPageText={intl.formatMessage({
+              id: "pagination.items-per-page",
+            })}
+            itemText={(min, max) =>
+              intl.formatMessage(
+                { id: "pagination.item" },
+                { min: min, max: max },
+              )
+            }
+            pageNumberText={intl.formatMessage({
+              id: "pagination.page-number",
+            })}
+            pageRangeText={(_current, total) =>
+              intl.formatMessage(
+                { id: "pagination.page-range" },
+                { total: total },
+              )
+            }
+            pageText={(page, pagesUnknown) =>
+              intl.formatMessage(
+                { id: "pagination.page" },
+                { page: pagesUnknown ? "" : page },
+              )
+            }
+          />
         </Column>
       </div>
       <Stack gap={10}>
@@ -422,12 +489,18 @@ const EditSample = (props) => {
                 <Link href="#" onClick={(e) => handleRemoveSample(e, sample)}>
                   {<FormattedMessage id="sample.remove.action" />}
                 </Link>
-                <EditSampleType
+                <SampleType
                   index={i}
                   rejectSampleReasons={rejectSampleReasons}
                   removeSample={removeSample}
                   sample={sample}
+                  setSample={(newSample) => {
+                    let newSamples = [...samples];
+                    newSamples[i] = newSample;
+                    setSamples(newSamples);
+                  }}
                   sampleTypeObject={sampleTypeObject}
+                  error={error}
                 />
               </div>
             );

@@ -22,8 +22,8 @@ import Workplan from "./components/workplan/Workplan";
 import AddOrder from "./components/addOrder/Index";
 import FindOrder from "./components/modifyOrder/Index";
 import ModifyOrder from "./components/modifyOrder/ModifyOrder";
-import RoutineReports from "./components/Reports/Routine";
-import StudyReports from "./components/Reports/Study";
+import RoutineReports from "./components/reports/Routine";
+import StudyReports from "./components/reports/Study";
 import StudyValidation from "./components/validation/Index";
 import PathologyDashboard from "./components/pathology/PathologyDashboard";
 import CytologyDashboard from "./components/cytology/CytologyDashBoard";
@@ -33,6 +33,13 @@ import ImmunohistochemistryDashboard from "./components/immunohistochemistry/Imm
 import ImmunohistochemistryCaseView from "./components/immunohistochemistry/ImmunohistochemistryCaseView";
 import RoutedResultsViewer from "./components/patient/resultsViewer/results-viewer.tsx";
 import EOrderPage from "./components/eOrder/Index";
+import RoutineIndex from "./components/reports/routine/Index.js";
+import StudyIndex from "./components/reports/study/index.js";
+import ReportIndex from "./components/reports/Index.js";
+import PrintBarcode from "./components/printBarcode/Index";
+import NonConformIndex from "./components/nonconform/index";
+import SampleBatchEntrySetup from "./components/batchOrderEntry/SampleBatchEntrySetup.js";
+import AuditTrailReportIndex from "./components/reports/auditTrailReport/Index.js";
 
 export default function App() {
   let i18nConfig = {
@@ -156,7 +163,7 @@ export default function App() {
     setLocale(lang);
   };
 
-  const changeLanguageBackend = (lang) => {
+  const changeLanguageBackend = async (lang) => {
     if (userSessionDetails.authenticated) {
       getFromOpenElisServer("/Home?lang=" + lang, () => {});
     } else {
@@ -216,7 +223,7 @@ export default function App() {
                 <SecureRoute
                   path="/MasterListsPage"
                   exact
-                  component={() => <>{(window.location.href = "/admin")}</>}
+                  component={() => <Admin />}
                   role="Global Administrator"
                 />
                 <SecureRoute
@@ -280,9 +287,38 @@ export default function App() {
                   role="Reception"
                 />
                 <SecureRoute
+                  path="/ReportNonConformingEvent"
+                  exact
+                  component={() => (
+                    <NonConformIndex form="ReportNonConformingEvent" />
+                  )}
+                  role="Reception"
+                />
+                <SecureRoute
+                  path="/ViewNonConformingEvent"
+                  exact
+                  component={() => (
+                    <NonConformIndex form="ViewNonConformingEvent" />
+                  )}
+                  role="Reception"
+                />
+                <SecureRoute
+                  path="/SampleBatchEntrySetup"
+                  exact
+                  component={() => <SampleBatchEntrySetup />}
+                  role="Reception"
+                />
+
+                <SecureRoute
                   path="/ElectronicOrders"
                   exact
                   component={() => <EOrderPage />}
+                  role="Reception"
+                />
+                <SecureRoute
+                  path="/PrintBarcode"
+                  exact
+                  component={() => <PrintBarcode />}
                   role="Reception"
                 />
                 <SecureRoute
@@ -336,66 +372,31 @@ export default function App() {
                 <SecureRoute
                   path="/LogbookResults"
                   exact
-                  component={() => (
-                    <>
-                      {
-                        (window.location.href =
-                          "/result?type=unit&doRange=false")
-                      }
-                    </>
-                  )}
+                  component={() => <ResultSearch />}
                   role="Results"
                 />
                 <SecureRoute
                   path="/PatientResults"
                   exact
-                  component={() => (
-                    <>
-                      {
-                        (window.location.href =
-                          "/result?type=patient&doRange=false")
-                      }
-                    </>
-                  )}
+                  component={() => <ResultSearch />}
                   role="Results"
                 />
                 <SecureRoute
                   path="/AccessionResults"
                   exact
-                  component={() => (
-                    <>
-                      {
-                        (window.location.href =
-                          "/result?type=order&doRange=false")
-                      }
-                    </>
-                  )}
+                  component={() => <ResultSearch />}
                   role="Results"
                 />
                 <SecureRoute
                   path="/StatusResults"
                   exact
-                  component={() => (
-                    <>
-                      {
-                        (window.location.href =
-                          "result?type=date&doRange=false")
-                      }
-                    </>
-                  )}
+                  component={() => <ResultSearch />}
                   role="Results"
                 />
                 <SecureRoute
                   path="/RangeResults"
                   exact
-                  component={() => (
-                    <>
-                      {
-                        (window.location.href =
-                          "/result?type=range&doRange=true")
-                      }
-                    </>
-                  )}
+                  component={() => <ResultSearch />}
                   role="Results"
                 />
                 <SecureRoute
@@ -405,9 +406,33 @@ export default function App() {
                   role="Reports"
                 />
                 <SecureRoute
+                  path="/RoutineReport"
+                  exact
+                  component={() => <RoutineIndex />}
+                  role="Reports"
+                />
+                <SecureRoute
                   path="/StudyReports"
                   exact
                   component={() => <StudyReports />}
+                  role="Reports"
+                />
+                <SecureRoute
+                  path="/StudyReport"
+                  exact
+                  component={() => <StudyIndex />}
+                  role="Reports"
+                />
+                <SecureRoute
+                  path="/Report"
+                  exact
+                  component={() => <ReportIndex />}
+                  role="Reports"
+                />
+                <SecureRoute
+                  path="/AuditTrailReport"
+                  exact
+                  component={() => <AuditTrailReportIndex />}
                   role="Reports"
                 />
                 <SecureRoute
@@ -419,33 +444,25 @@ export default function App() {
                 <SecureRoute
                   path="/ResultValidation"
                   exact
-                  component={() => (
-                    <>{(window.location.href = "/validation?type=routine")}</>
-                  )}
+                  component={() => <StudyValidation />}
                   role="Validation"
                 />
                 <SecureRoute
                   path="/AccessionValidation"
                   exact
-                  component={() => (
-                    <>{(window.location.href = "/validation?type=order")}</>
-                  )}
+                  component={() => <StudyValidation />}
                   role="Validation"
                 />
                 <SecureRoute
                   path="/AccessionValidationRange"
                   exact
-                  component={() => (
-                    <>{(window.location.href = "/validation?type=range")}</>
-                  )}
+                  component={() => <StudyValidation />}
                   role="Validation"
                 />
                 <SecureRoute
                   path="/ResultValidationByTestDate"
                   exact
-                  component={() => (
-                    <>{(window.location.href = "/validation?type=testDate")}</>
-                  )}
+                  component={() => <StudyValidation />}
                   role="Validation"
                 />
                 <Route path="*" component={() => <RedirectOldUI />} />

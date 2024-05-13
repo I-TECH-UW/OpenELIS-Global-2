@@ -84,6 +84,33 @@ export const postToOpenElisServerFullResponse = (
     });
 };
 
+export const postToOpenElisServerFormData = (
+  endPoint,
+  formData,
+  callback,
+  extraParams,
+) => {
+  fetch(
+    config.serverBaseUrl + endPoint,
+
+    {
+      credentials: "include",
+      method: "POST",
+      headers: {
+        "X-CSRF-Token": localStorage.getItem("CSRF"),
+      },
+      body: formData,
+    },
+  )
+    .then((response) => response.status)
+    .then((status) => {
+      callback(status, extraParams);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
 export const postToOpenElisServerJsonResponse = (
   endPoint,
   payLoad,
@@ -209,3 +236,11 @@ export const convertAlphaNumLabNumForDisplay = (labNumber) => {
   }
   return labNumberForDisplay.toUpperCase();
 };
+
+export function encodeDate(dateString) {
+  if (typeof dateString === "string" && dateString.trim() !== "") {
+    return dateString.split("/").map(encodeURIComponent).join("%2F");
+  } else {
+    return "";
+  }
+}

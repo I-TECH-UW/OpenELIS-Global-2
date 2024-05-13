@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuServiceImpl extends AuditableBaseObjectServiceImpl<Menu, String> implements MenuService {
+
     @Autowired
     protected MenuDAO baseObjectDAO;
 
@@ -68,9 +69,15 @@ public class MenuServiceImpl extends AuditableBaseObjectServiceImpl<Menu, String
         } else {
             oldMenu = get(menu.getId());
         }
-        oldMenu.setActionURL(menu.getActionURL());
-        oldMenu.setIsActive(menu.getIsActive());
-        menuItem.setMenu(oldMenu);
+
+        //Update menu item if it was added outside the database
+        if(oldMenu == null){
+            MenuUtil.updateMenu(menu);
+        }else{
+            oldMenu.setActionURL(menu.getActionURL());
+            oldMenu.setIsActive(menu.getIsActive());
+            menuItem.setMenu(oldMenu);
+        }
         
         List<MenuItem> oldChildren = menuItem.getChildMenus();
         menuItem.setChildMenus(new ArrayList<>());

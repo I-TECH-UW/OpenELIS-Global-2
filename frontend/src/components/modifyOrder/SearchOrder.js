@@ -40,12 +40,12 @@ function SearchOrder() {
       <div className="orderLegendBody">
         <Form onSubmit={handleSearch}>
           <Grid>
-            <Column lg={16}>
+            <Column lg={16} md={8} sm={4}>
               <h4>
                 <FormattedMessage id="sample.label.search.labnumber" />
               </h4>
             </Column>
-            <Column lg={4}>
+            <Column lg={16} md={8} sm={4}>
               <CustomLabNumberInput
                 placeholder={"Enter Lab No"}
                 id="labNumber"
@@ -57,6 +57,9 @@ function SearchOrder() {
                 labelText={<FormattedMessage id="search.label.accession" />}
               />
             </Column>
+            <Column lg={16}>
+              <br></br>
+            </Column>
             <Column lg={2}>
               <Button type="submit">
                 <FormattedMessage id="label.button.submit" />
@@ -67,13 +70,13 @@ function SearchOrder() {
       </div>
       <div className="orderLegendBody">
         <Grid>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <h4>
               {" "}
               <FormattedMessage id="sample.label.search.patient" />
             </h4>
           </Column>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <SearchPatientForm
               getSelectedPatient={getSelectedPatient}
             ></SearchPatientForm>

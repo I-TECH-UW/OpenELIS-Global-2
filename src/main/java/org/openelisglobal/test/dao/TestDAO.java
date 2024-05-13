@@ -116,6 +116,8 @@ public interface TestDAO extends BaseDAO<Test, String> {
 
     List<Test> getActiveTestsByName(String testName) throws LIMSRuntimeException;
     
+    List<Test> getActiveTestsByPanelName(String panelName) throws LIMSRuntimeException;
+    
     List<Test> getTbTestByMethod(String method) throws LIMSRuntimeException;
     
     List<Test> getTbTest() throws LIMSRuntimeException;
