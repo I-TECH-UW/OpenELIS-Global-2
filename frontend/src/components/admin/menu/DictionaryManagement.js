@@ -19,6 +19,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableSelectRow,
   TextInput,
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -54,6 +55,10 @@ function DictionaryManagement() {
   const [dictionaryEntry, setDictionaryEntry] = useState("");
   const [localAbbreviation, setLocalAbbreviation] = useState("");
   const [isActive, setIsActive] = useState("");
+
+  const [selectedRowId, setSelectedRowId] = useState(null);
+  const [modifyButton, setModifyButton] = useState(true);
+  const [editMode, setEditMode] = useState(true);
 
   const handlePageChange = (pageInfo) => {
     if (page != pageInfo.page) {
@@ -97,7 +102,7 @@ function DictionaryManagement() {
           id: item.id,
           isActive: item.isActive,
           dictEntry: item.dictEntry,
-          localAbbreviation: localAbbreviation,
+          localAbbreviation:  localAbbreviation,
           categoryName: item.dictionaryCategory
             ? item.dictionaryCategory.categoryName
             : "not available",
@@ -156,13 +161,66 @@ function DictionaryManagement() {
     setOpen(false);
   };
 
+  const renderCell = (cell, row) => {
+    if (cell.info.header === "select") {
+      return (
+        <TableSelectRow
+          radio
+          key={cell.id}
+          id={cell.id}
+          checked={selectedRowId === row.id}
+          name="selectRowRadio"
+          ariaLabel="selectRow"
+          onSelect={() => {
+            setModifyButton(false);
+            setSelectedRowId(row.id);
+          }}
+        />
+      );
+    } else if (
+      cell.info.header === "value" &&
+      typeof cell.value === "string" &&
+      cell.value.startsWith("data:image")
+    ) {
+      return (
+        <TableCell key={cell.id}>
+          <img
+            src={cell.value}
+            alt="Config Image"
+            style={{ maxWidth: "50px" }}
+          />
+        </TableCell>
+      );
+    }
+    console.log("printing the cell id" + cell.value);
+    return <TableCell key={cell.id}>{cell.value}</TableCell>;
+  };
+
+  const handleOnClickOnModification = event => {
+    event.preventDefault();
+    setOpen(true);
+    setEditMode(false);
+  }
+
+  const handleEditModalSubmission = e => {
+    e.preventDefault();
+    console.log(JSON.stringify(postData));
+
+    postToOpenElisServerFullResponse(
+      "/rest/dictionary",
+      JSON.stringify(postData),
+      displayStatus
+    );
+    setOpen(false);
+  }
+
   return (
     <div className="adminPageContent">
       {notificationVisible === true ? <AlertDialog /> : ""}
       <PageBreadCrumb
         breadcrumbs={[
           { label: "home.label", link: "/" },
-          { label: "dictionary.label.modify", link: "MasterListsPage#DictionaryMenu" },
+          { label: "dictionary.label.modify", link: "/DictionaryMenu" },
         ]}
       />
       <Grid fullWidth={true}>
@@ -181,19 +239,23 @@ function DictionaryManagement() {
                     id: "admin.page.configuration.formEntryConfigMenu.button.add",
                   })}
                 </Button>{" "}
+                <Button disabled={modifyButton} onClick={handleOnClickOnModification} type="submit">
+                  <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.modify" />
+                </Button>{" "}
                 <Modal
                   open={open}
                   size="sm"
                   onRequestClose={() => setOpen(false)}
-                  modalHeading="Add Dictionary"
-                  primaryButtonText="Add"
+                  modalHeading={editMode ? "Add Dictionary" : "Edit Dictionary"}
+                  primaryButtonText={editMode ? "Add" : "Update"}
                   secondaryButtonText="Cancel"
-                  onRequestSubmit={handleSubmitModal}
+                  onRequestSubmit={editMode ? handleSubmitModal : handleEditModalSubmission}
                 >
                   <TextInput
                     data-modal-primary-focus
                     id="dictNumber"
                     labelText="Dictionary Number"
+                    value={dictionaryNumber}
                     disabled
                     onChange={(e) => setDictionaryNumber(e.target.value)}
                     style={{
@@ -220,6 +282,7 @@ function DictionaryManagement() {
                   <TextInput
                     id="dictEntry"
                     labelText="Dictionary Entry"
+                    value={dictionaryEntry}
                     onChange={(e) => setDictionaryEntry(e.target.value)}
                     style={{
                       marginBottom: "1rem",
@@ -229,6 +292,7 @@ function DictionaryManagement() {
                     data-modal-primary-focus
                     id="isActive"
                     labelText="Is Active"
+                    value={isActive}
                     onChange={(e) => setIsActive(e.target.value)}
                     style={{
                       marginBottom: "1rem",
@@ -237,15 +301,13 @@ function DictionaryManagement() {
                   <TextInput
                     id="localAbbrev"
                     labelText="Local Abbreviation"
+                    value={localAbbreviation}
                     onChange={(e) => setLocalAbbreviation(e.target.value)}
                     style={{
                       marginBottom: "1rem",
                     }}
                   />
                 </Modal>
-                <Button disabled={true} type="submit">
-                  <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.modify" />
-                </Button>{" "}
                 <Button kind="tertiary" disabled={true} type="submit">
                   <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
                 </Button>
@@ -263,6 +325,12 @@ function DictionaryManagement() {
                 page * pageSize,
               )}
               headers={[
+                {
+                  key: "select",
+                  header: intl.formatMessage({
+                    id: "admin.page.configuration.formEntryConfigMenu.select",
+                  }),
+                },
                 {
                   key: "categoryName",
                   header: intl.formatMessage({
@@ -312,14 +380,18 @@ function DictionaryManagement() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {rows.map((row, index) => (
-                        <TableRow key={index} {...getRowProps({ row })}>
-                          {row.cells.map((cell) => (
-                            <TableCell key={cell.id}>{cell.value}</TableCell>
-                          ))}
-                          <TableCell className="cds--table-column-x"></TableCell>
-                        </TableRow>
-                      ))}
+                        {rows.map((row) => (
+                          <TableRow
+                            key={row.id}
+                            onClick={() => {
+                              setSelectedRowId(row.id);
+                            }}
+                          >
+                            {row.cells.map((cell) =>
+                              renderCell(cell, row),
+                            )}
+                          </TableRow>
+                        ))}
                     </TableBody>
                   </Table>
                 </TableContainer>
