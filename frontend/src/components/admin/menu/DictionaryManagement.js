@@ -60,6 +60,14 @@ function DictionaryManagement() {
   const [modifyButton, setModifyButton] = useState(true);
   const [editMode, setEditMode] = useState(true);
 
+  const [dictionaryItem, setDictionaryItem] = useState({
+    id: null,
+    dictEntry: "",
+    category: "",
+    isActive: "",
+    localAbbreviation: "",
+  });
+
   const handlePageChange = (pageInfo) => {
     if (page != pageInfo.page) {
       setPage(pageInfo.page);
@@ -174,6 +182,7 @@ function DictionaryManagement() {
           onSelect={() => {
             setModifyButton(false);
             setSelectedRowId(row.id);
+            console.log("row id " + row.id);
           }}
         />
       );
@@ -192,27 +201,63 @@ function DictionaryManagement() {
         </TableCell>
       );
     }
-    console.log("printing the cell id" + cell.value);
     return <TableCell key={cell.id}>{cell.value}</TableCell>;
   };
 
-  const handleOnClickOnModification = event => {
+  const handleDictionaryMenuItems = (res) => {
+    if (componentMounted.current) {
+      setDictionaryItem({
+        id: res.id,
+        dictEntry: res.dictEntry,
+        category: res.category,
+        isActive: res.isActive,
+        localAbbreviation: res.localAbbreviation,
+      });
+    }
+  };
+
+  const handleOnClickOnModification = async (event) => {
     event.preventDefault();
-    setOpen(true);
-    setEditMode(false);
-  }
+    if (selectedRowId) {
+      const fetchedDictionaryItem = getFromOpenElisServer(`/rest/Dictionary?ID=${selectedRowId}`,handleDictionaryMenuItems);
+      setDictionaryItem(fetchedDictionaryItem);
+      setOpen(true);
+      setEditMode(false);
+    }
+  };
 
-  const handleEditModalSubmission = e => {
+  const handleEditModalSubmission = async (e) => {
     e.preventDefault();
-    console.log(JSON.stringify(postData));
+    if (dictionaryItem) {
+      postData.id = dictionaryItem.id;
+      postData.selectedDictionaryCategoryId = category;
+      postData.dictEntry = dictionaryEntry;
+      postData.localAbbreviation = localAbbreviation;
+      postData.isActive = isActive;
 
-    postToOpenElisServerFullResponse(
-      "/rest/dictionary",
-      JSON.stringify(postData),
-      displayStatus
-    );
-    setOpen(false);
-  }
+      const res = postToOpenElisServerFullResponse(
+        `/rest/dictionary`,
+        JSON.stringify(postData),
+        displayStatus
+      );
+
+      if (res.status === "200") {
+        addNotification({
+          kind: NotificationKinds.success,
+          title: intl.formatMessage({ id: "notification.title" }),
+          message: intl.formatMessage({ id: "success.add.edited.msg" }),
+        });
+      } else {
+        addNotification({
+          kind: NotificationKinds.error,
+          title: intl.formatMessage({ id: "notification.title" }),
+          message: intl.formatMessage({ id: "error.add.edited.msg" }),
+        });
+      }
+      reloadConfiguration();
+      setOpen(false);
+    }
+  };
 
   return (
     <div className="adminPageContent">
@@ -251,62 +296,61 @@ function DictionaryManagement() {
                   secondaryButtonText="Cancel"
                   onRequestSubmit={editMode ? handleSubmitModal : handleEditModalSubmission}
                 >
-                  <TextInput
-                    data-modal-primary-focus
-                    id="dictNumber"
-                    labelText="Dictionary Number"
-                    value={dictionaryNumber}
-                    disabled
-                    onChange={(e) => setDictionaryNumber(e.target.value)}
-                    style={{
-                      marginBottom: "1rem",
-                    }}
-                  />
-                  <Select
-                    id="description"
-                    labelText="Category"
-                    onChange={(e) => {
-                      console.log("Selected category:", e.target.value);
-                      setCategory(e.target.value);
-                    }}
-                  >
-                    <SelectItem text="" />
-                    {categoryDescription.map((description) => (
-                      <SelectItem
-                        key={description.id}
-                        value={description.id}
-                        text={description.description}
-                      />
-                    ))}
-                  </Select>
-                  <TextInput
-                    id="dictEntry"
-                    labelText="Dictionary Entry"
-                    value={dictionaryEntry}
-                    onChange={(e) => setDictionaryEntry(e.target.value)}
-                    style={{
-                      marginBottom: "1rem",
-                    }}
-                  />
-                  <TextInput
-                    data-modal-primary-focus
-                    id="isActive"
-                    labelText="Is Active"
-                    value={isActive}
-                    onChange={(e) => setIsActive(e.target.value)}
-                    style={{
-                      marginBottom: "1rem",
-                    }}
-                  />
-                  <TextInput
-                    id="localAbbrev"
-                    labelText="Local Abbreviation"
-                    value={localAbbreviation}
-                    onChange={(e) => setLocalAbbreviation(e.target.value)}
-                    style={{
-                      marginBottom: "1rem",
-                    }}
-                  />
+                    <TextInput
+                      data-modal-primary-focus
+                      id="dictNumber"
+                      labelText="Dictionary Number"
+                      value={dictionaryItem?.id}
+                      disabled
+                      onChange={(e) => setDictionaryNumber(e.target.value)}
+                      style={{
+                        marginBottom: "1rem",
+                      }}
+                    />
+                    <Select
+                      id="description"
+                      labelText="Category"
+                      onChange={(e) => {
+                        setCategory(e.target.value);
+                      }}
+                    >
+                      <SelectItem text="" />
+                      {categoryDescription.map((description) => (
+                        <SelectItem
+                          key={description.id}
+                          value={description.id}
+                          text={description.description}
+                        />
+                      ))}
+                    </Select>
+                    <TextInput
+                      id="dictEntry"
+                      labelText="Dictionary Entry"
+                      value={dictionaryItem?.dictEntry}
+                      onChange={(e) => setDictionaryEntry(e.target.value)}
+                      style={{
+                        marginBottom: "1rem",
+                      }}
+                    />
+                    <TextInput
+                      data-modal-primary-focus
+                      id="isActive"
+                      labelText="Is Active"
+                      value={dictionaryItem?.isActive}
+                      onChange={(e) => setIsActive(e.target.value)}
+                      style={{
+                        marginBottom: "1rem",
+                      }}
+                    />
+                    <TextInput
+                      id="localAbbrev"
+                      labelText="Local Abbreviation"
+                      value={dictionaryItem?.localAbbreviation}
+                      onChange={(e) => setLocalAbbreviation(e.target.value)}
+                      style={{
+                        marginBottom: "1rem",
+                      }}
+                    />
                 </Modal>
                 <Button kind="tertiary" disabled={true} type="submit">
                   <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
@@ -380,18 +424,18 @@ function DictionaryManagement() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map((row) => (
-                          <TableRow
-                            key={row.id}
-                            onClick={() => {
-                              setSelectedRowId(row.id);
-                            }}
-                          >
-                            {row.cells.map((cell) =>
-                              renderCell(cell, row),
-                            )}
-                          </TableRow>
-                        ))}
+                      {rows.map((row) => (
+                        <TableRow
+                          key={row.id}
+                          onClick={() => {
+                            setSelectedRowId(row.id);
+                          }}
+                        >
+                          {row.cells.map((cell) =>
+                            renderCell(cell, row),
+                          )}
+                        </TableRow>
+                      ))}
                     </TableBody>
                   </Table>
                 </TableContainer>
