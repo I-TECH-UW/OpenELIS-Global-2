@@ -100,7 +100,7 @@ function DictionaryManagement() {
 
   useEffect(() => {
     if (dictionaryMenuz && dictionaryMenuz.menuList) {
-      const newConfigList = dictionaryMenuz.menuList.map((item) => {
+      const newMenuList = dictionaryMenuz.menuList.map((item) => {
         let value = item.value;
         if (item.valueType === "text" && item.tag === "localization") {
           value =
@@ -117,7 +117,7 @@ function DictionaryManagement() {
           value: value,
         };
       });
-      setDictionaryMenuList(newConfigList);
+      setDictionaryMenuList(newMenuList);
     }
   }, [dictionaryMenuz]);
 
@@ -206,10 +206,11 @@ function DictionaryManagement() {
 
   const handleDictionaryMenuItems = (res) => {
     if (componentMounted.current) {
+      console.log("res: " + res.dictionaryCategory.description);
       setDictionaryItem({
         id: res.id,
+        category: res.dictionaryCategory.description,
         dictEntry: res.dictEntry,
-        category: res.category,
         isActive: res.isActive,
         localAbbreviation: res.localAbbreviation,
       });
@@ -219,8 +220,7 @@ function DictionaryManagement() {
   const handleOnClickOnModification = async (event) => {
     event.preventDefault();
     if (selectedRowId) {
-      const fetchedDictionaryItem = getFromOpenElisServer(`/rest/Dictionary?ID=${selectedRowId}`,handleDictionaryMenuItems);
-      setDictionaryItem(fetchedDictionaryItem);
+      getFromOpenElisServer(`/rest/Dictionary?ID=${selectedRowId}`, handleDictionaryMenuItems);
       setOpen(true);
       setEditMode(false);
     }
@@ -230,10 +230,10 @@ function DictionaryManagement() {
     e.preventDefault();
     if (dictionaryItem) {
       postData.id = dictionaryItem.id;
-      postData.selectedDictionaryCategoryId = category;
-      postData.dictEntry = dictionaryEntry;
-      postData.localAbbreviation = localAbbreviation;
-      postData.isActive = isActive;
+      postData.selectedDictionaryCategoryId = dictionaryItem.category.description;
+      postData.dictEntry = dictionaryItem.dictEntry;
+      postData.localAbbreviation = dictionaryItem.localAbbreviation;
+      postData.isActive = dictionaryItem.isActive;
 
       const res = postToOpenElisServerFullResponse(
         `/rest/dictionary`,
@@ -307,10 +307,15 @@ function DictionaryManagement() {
                         marginBottom: "1rem",
                       }}
                     />
+                    <p>testing testing</p>
+                    <p>{dictionaryItem.category}</p>
                     <Select
                       id="description"
                       labelText="Category"
                       onChange={(e) => {
+                        if (editMode) {
+                          setCategory(dictionaryItem.category);
+                        }
                         setCategory(e.target.value);
                       }}
                     >
