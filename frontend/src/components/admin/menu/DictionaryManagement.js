@@ -37,11 +37,8 @@ function DictionaryManagement() {
   const intl = useIntl();
   const componentMounted = useRef(false);
 
-  const {
-    notificationVisible,
-    setNotificationVisible,
-    addNotification,
-  } = useContext(NotificationContext);
+  const { notificationVisible, setNotificationVisible, addNotification } =
+    useContext(NotificationContext);
   const { reloadConfiguration } = useContext(ConfigurationContext);
   const [dictionaryMenuz, setDictionaryMenuz] = useState([]);
   const [dictionaryMenuList, setDictionaryMenuList] = useState([]);
@@ -88,7 +85,6 @@ function DictionaryManagement() {
     };
   }, []);
 
-
   useEffect(() => {
     if (dictionaryMenuz && dictionaryMenuz.menuList) {
       const newConfigList = dictionaryMenuz.menuList.map((item) => {
@@ -101,8 +97,10 @@ function DictionaryManagement() {
           id: item.id,
           isActive: item.isActive,
           dictEntry: item.dictEntry,
-          localAbbreviation:localAbbreviation,
-          categoryName: item.dictionaryCategory ? item.dictionaryCategory.categoryName : "not available",
+          localAbbreviation: localAbbreviation,
+          categoryName: item.dictionaryCategory
+            ? item.dictionaryCategory.categoryName
+            : "not available",
           value: value,
         };
       });
@@ -114,7 +112,7 @@ function DictionaryManagement() {
     componentMounted.current = true;
     getFromOpenElisServer(
       "/rest/dictionary-categories",
-      fetchedDictionaryCategory
+      fetchedDictionaryCategory,
     );
     return () => {
       componentMounted.current = false;
@@ -153,7 +151,7 @@ function DictionaryManagement() {
     postToOpenElisServerFullResponse(
       "/rest/dictionary",
       JSON.stringify(postData),
-      displayStatus
+      displayStatus,
     );
     setOpen(false);
   };
@@ -180,8 +178,7 @@ function DictionaryManagement() {
               <Column lg={16} md={8} sm={4}>
                 <Button onClick={() => setOpen(true)}>
                   {intl.formatMessage({
-                    id:
-                      "admin.page.configuration.formEntryConfigMenu.button.add",
+                    id: "admin.page.configuration.formEntryConfigMenu.button.add",
                   })}
                 </Button>{" "}
                 <Modal
@@ -261,7 +258,10 @@ function DictionaryManagement() {
         <Grid fullWidth={true} className="gridBoundary">
           <Column lg={16} md={8} sm={4}>
             <DataTable
-              rows={dictionaryMenuList.slice((page - 1) * pageSize, page * pageSize)}
+              rows={dictionaryMenuList.slice(
+                (page - 1) * pageSize,
+                page * pageSize,
+              )}
               headers={[
                 {
                   key: "categoryName",
@@ -336,7 +336,7 @@ function DictionaryManagement() {
               itemRangeText={(min, max, total) =>
                 intl.formatMessage(
                   { id: "pagination.item-range" },
-                  { min: min, max: max, total: total }
+                  { min: min, max: max, total: total },
                 )
               }
               itemsPerPageText={intl.formatMessage({
@@ -345,7 +345,7 @@ function DictionaryManagement() {
               itemText={(min, max) =>
                 intl.formatMessage(
                   { id: "pagination.item" },
-                  { min: min, max: max }
+                  { min: min, max: max },
                 )
               }
               pageNumberText={intl.formatMessage({
@@ -354,13 +354,13 @@ function DictionaryManagement() {
               pageRangeText={(_current, total) =>
                 intl.formatMessage(
                   { id: "pagination.page-range" },
-                  { total: total }
+                  { total: total },
                 )
               }
               pageText={(page, pagesUnknown) =>
                 intl.formatMessage(
                   { id: "pagination.page" },
-                  { page: pagesUnknown ? "" : page }
+                  { page: pagesUnknown ? "" : page },
                 )
               }
             />
