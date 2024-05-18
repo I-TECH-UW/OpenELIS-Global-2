@@ -73,7 +73,9 @@ export const NCECorrectiveAction = () => {
             setData(data);
           },
         );
-      } catch (error) {}
+      } catch (error) {
+        console.log("Error fetching data", error)
+      }
     }
   }, [selected]);
 
