@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Button,
   Column,
@@ -18,16 +18,22 @@ import {
   Checkbox,
   TableCell,
 } from "@carbon/react";
-import { AlertDialog } from "../../common/CustomNotification";
+
 import { FormattedMessage, useIntl } from "react-intl";
 import { initialReportFormValues, selectOptions } from "./ViewNonConforming";
 import {
   getDifferenceInDays,
   getFromOpenElisServer,
   postToOpenElisServer,
+  postToOpenElisServerJsonResponse,
 } from "../../utils/Utils";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import { headers } from "./ViewNonConforming";
+import {
+  NotificationKinds,
+  AlertDialog,
+} from "../../common/CustomNotification";
+import { NotificationContext } from "../../layout/Layout";
 
 const initialFormData = {
   dateCompleted: null,
@@ -45,13 +51,16 @@ export const NCECorrectiveAction = () => {
   const [reportFormValues, setReportFormValues] = useState(
     initialReportFormValues,
   );
-  const [notificationVisible, setNotificationVisible] = useState(false);
+
   const [selected, setSelected] = useState(null);
   const [tdiscussionDate, setTDiscussionDate] = useState(null);
   const [tData, setTData] = useState(null);
   const [data, setData] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
   const [submit, setSubmit] = useState(null);
+
+  const { notificationVisible, setNotificationVisible, addNotification } =
+    useContext(NotificationContext);
 
   const intl = useIntl();
 
@@ -61,7 +70,7 @@ export const NCECorrectiveAction = () => {
         getFromOpenElisServer(
           `/rest/NCECorrectiveAction?nceNumber=${selected}`,
           (data) => {
-            if(!data.cancelAction) {
+            if (!data.cancelAction) {
               return;
             }
             setTData(null);
@@ -74,7 +83,7 @@ export const NCECorrectiveAction = () => {
           },
         );
       } catch (error) {
-        console.log("Error fetching data", error)
+        console.log("Error fetching data", error);
       }
     }
   }, [selected]);
@@ -124,11 +133,30 @@ export const NCECorrectiveAction = () => {
       discussionDate: formData[`discussionDate`] ?? "",
     };
 
-    postToOpenElisServer(
+    postToOpenElisServerJsonResponse(
       "/rest/NCECorrectiveAction",
       JSON.stringify(body),
       (df) => {
-        console.log("response from server", df);
+        setNotificationVisible(true);
+        setData(null);
+        setFormData(initialFormData);
+        setSubmit(null);
+    
+        if (df.success) {
+          addNotification({
+            kind: NotificationKinds.success,
+            title: intl.formatMessage({ id: "notification.title" }),
+            message: intl.formatMessage({
+              id: "nonconform.order.save.success",
+            }),
+          });
+        } else {
+          addNotification({
+            kind: NotificationKinds.error,
+            title: intl.formatMessage({ id: "notification.title" }),
+            message: intl.formatMessage({ id: "nonconform.order.save.fail" }),
+          }); 
+        }
       },
     );
   };

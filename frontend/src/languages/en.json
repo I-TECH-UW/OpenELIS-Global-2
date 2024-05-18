@@ -970,5 +970,9 @@
   "dictionary.dictEntry": "Dictionary Entry",
   "dictionary.category.localAbbreviation": "Local Abbreviation",
   "dictionary.category.isActive": "Is Active",
-  "add.new.dictionary.menu": "Add New Dictionary Menu"
+  "add.new.dictionary.menu": "Add New Dictionary Menu",
+  "nonconform.nce.resolution.description": "Were the corrective actions and preventive/concurrentcontrols effective in solving the nonconforming event and preventing it from recurring?",
+  "nonconform.nce.preventive.action": "preventive action",
+  "nonconform.nce.concurrent.control.action": "concurrent control action",
+  "nonconform.nce.turnaround.time": "Turnaround Time"
 }

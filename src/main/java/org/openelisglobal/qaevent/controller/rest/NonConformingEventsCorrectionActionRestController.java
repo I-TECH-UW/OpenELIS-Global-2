@@ -15,7 +15,6 @@ import org.openelisglobal.qaevent.service.NCEventService;
 import org.openelisglobal.qaevent.valueholder.NcEvent;
 import org.openelisglobal.qaevent.worker.NonConformingEventWorker;
 import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.test.service.TestSectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -97,13 +96,13 @@ public class NonConformingEventsCorrectionActionRestController {
 
     boolean updated = nonConformingEventWorker.updateCorrectiveAction(form);
 
-    if (updated) {
-      return ResponseEntity.ok().body("success");
-    } else {
-      return ResponseEntity.ok().body("failed to update");
-    }
+     if (updated) {
+        return ResponseEntity.ok().body(Map.of("success", true));
+      } else {
+        return ResponseEntity.ok().body(Map.of("success", false));
+      }
+    
   }
-
   protected String getSysUserId(HttpServletRequest request) {
     UserSessionData usd = (UserSessionData) request
       .getSession()

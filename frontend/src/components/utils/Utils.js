@@ -267,14 +267,12 @@ export function getDifferenceInDays(date1, date2) {
   const firstDate = parseDate(correctDate(date1));
   const secondDate = parseDate(correctDate(date2));
 
-
   // Calculate the difference in time (milliseconds)
   const timeDifference = secondDate - firstDate;
 
   // Convert the time difference from milliseconds to days
   const millisecondsPerDay = 1000 * 60 * 60 * 24;
   const dayDifference = timeDifference / millisecondsPerDay;
-
 
   // Return the rounded difference in days
   return dayDifference;
