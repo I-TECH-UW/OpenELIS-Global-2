@@ -1,4 +1,4 @@
-package org.openelisglobal.dictionary.controller;
+package org.openelisglobal.dictionary.controller.rest;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -14,36 +14,47 @@ import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
 import org.openelisglobal.dictionary.form.DictionaryMenuForm;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.dictionarycategory.service.DictionaryCategoryService;
+import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@Controller
-public class DictionaryMenuController extends BaseMenuController<Dictionary> {
+@RestController
+@RequestMapping("/rest")
+@SuppressWarnings("unused")
+public class DictionaryMenuRestController extends BaseMenuController<Dictionary> {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "selectedIDs*" };
 
     @Autowired
     DictionaryService dictionaryService;
 
+    @Autowired
+    private DictionaryCategoryService dictionaryCategoryService;
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    @RequestMapping(value = { "/DictionaryMenu", "/SearchDictionaryMenu" }, method = RequestMethod.GET)
-    public ModelAndView showDictionaryMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
+    @RequestMapping(value = "/dictionary-menu", produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
+    public ResponseEntity<?> showDictionaryMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         DictionaryMenuForm form = new DictionaryMenuForm();
 
@@ -52,80 +63,36 @@ public class DictionaryMenuController extends BaseMenuController<Dictionary> {
             Errors errors = new BaseErrors();
             errors.reject("error.generic");
             redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, errors);
-            return findForward(forward, form);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
         } else {
             request.setAttribute("menuDefinition", "DictionaryMenuDefinition");
             addFlashMsgsToRequest(request);
-            return findForward(forward, form);
+            return ResponseEntity.ok(form);
         }
     }
 
-    @Override
-    protected List<Dictionary> createMenuList(AdminOptionMenuForm<Dictionary> form, HttpServletRequest request) {
-
-        List<Dictionary> dictionaries;
-
-        String stringStartingRecNo = (String) request.getAttribute("startingRecNo");
-        int startingRecNo = Integer.parseInt(stringStartingRecNo);
-        // bugzilla 1413
-        int total;
-        if (YES.equals(request.getParameter("search"))) {
-            dictionaries = dictionaryService.getPagesOfSearchedDictionaries(startingRecNo,
-                    request.getParameter("searchString"));
-            total = dictionaryService.getCountSearchedDictionaries(request.getParameter("searchString"));
-        } else {
-            dictionaries = dictionaryService.getPage(startingRecNo);
-            total = dictionaryService.getCount();
-            // end of bugzilla 1413
-        }
-
-        request.setAttribute("menuDefinition", "DictionaryMenuDefinition");
-
-        // bugzilla 1411 set pagination variables
-        // bugzilla 1413 set pagination variables for searched results
-        request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(total));
-        request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
-        int numOfRecs = 0;
-        if (dictionaries.size() > SystemConfiguration.getInstance().getDefaultPageSize()) {
-            numOfRecs = SystemConfiguration.getInstance().getDefaultPageSize();
-        } else {
-            numOfRecs = dictionaries.size();
-        }
-        numOfRecs--;
-        int endingRecNo = startingRecNo + numOfRecs;
-        request.setAttribute(MENU_TO_RECORD, String.valueOf(endingRecNo));
-        // end bugzilla 1411
-
-        // bugzilla 1413
-        request.setAttribute(MENU_SEARCH_BY_TABLE_COLUMN, "dictionary.dictEntry");
-        // bugzilla 1413 set up a seraching mode so the next and previous action will
-        // know
-        // what to do
-
-        if (YES.equals(request.getParameter("search"))) {
-            request.setAttribute(IN_MENU_SELECT_LIST_HEADER_SEARCH, "true");
-        }
-
-        return dictionaries;
+    @RequestMapping(value = "/dictionary-categories", produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
+    public List<DictionaryCategory> fetchDictionaryCategories() {
+        return dictionaryCategoryService.getAll();
     }
 
-    @Override
-    protected int getPageSize() {
-        return SystemConfiguration.getInstance().getDefaultPageSize();
+    @RequestMapping(value = "/dictionary", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> createDictionaryEntry(@RequestBody Dictionary dictionary) {
+        try {
+            dictionaryService.save(dictionary);
+            return new ResponseEntity<>("Dictionary created successfully", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error creating dictionary: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @Override
-    protected String getDeactivateDisabled() {
-        return "false";
-    }
-
-    @RequestMapping(value = "/DeleteDictionary", method = RequestMethod.POST)
-    public ModelAndView showDeleteDictionary(HttpServletRequest request,
-                @ModelAttribute("form") @Valid DictionaryMenuForm form, BindingResult result,
-                RedirectAttributes redirectAttributes) {
+    @RequestMapping(value = "/delete-dictionary", method = RequestMethod.POST)
+    public ResponseEntity<?> showDeleteDictionary(HttpServletRequest request,
+                                             @ModelAttribute("form") @Valid DictionaryMenuForm form, BindingResult result,
+                                             RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             saveErrors(result);
-            return findForward(FWD_FAIL_INSERT, form);
+            return ResponseEntity.badRequest().body(result.getAllErrors());
         }
 
         List<String> selectedIDs = form.getSelectedIDs();
@@ -141,7 +108,6 @@ public class DictionaryMenuController extends BaseMenuController<Dictionary> {
         try {
             dictionaryService.deleteAll(dictionaries);
         } catch (LIMSRuntimeException e) {
-            // bugzilla 2154
             LogEvent.logError(e);
             if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
                 result.reject("errors.OptimisticLockException");
@@ -149,12 +115,53 @@ public class DictionaryMenuController extends BaseMenuController<Dictionary> {
                 result.reject("errors.DeleteException");
             }
             redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
-            return findForward(FWD_FAIL_DELETE, form);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result.getAllErrors());
 
         }
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-        return findForward(FWD_SUCCESS_DELETE, form);
+        return new ResponseEntity<>("Dictionary Menu deleted successfully",HttpStatus.OK);
+    }
+
+    @Override
+    protected List<Dictionary> createMenuList(AdminOptionMenuForm<Dictionary> form, HttpServletRequest request) {
+        List<Dictionary> dictionaries;
+        int startingRecNo = Integer.parseInt((String) request.getAttribute("startingRecNo"));
+        int total;
+        if (YES.equals(request.getParameter("search"))) {
+            dictionaries = dictionaryService.getPagesOfSearchedDictionaries(startingRecNo,
+                    request.getParameter("searchString"));
+            total = dictionaryService.getCountSearchedDictionaries(request.getParameter("searchString"));
+        } else {
+            dictionaries = dictionaryService.getPage(startingRecNo);
+            total = dictionaryService.getCount();
+        }
+
+        request.setAttribute("menuDefinition", "DictionaryMenuDefinition");
+        request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(total));
+        request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
+
+        int numOfRecs = 0;
+        if (dictionaries.size() > SystemConfiguration.getInstance().getDefaultPageSize()) {
+            numOfRecs = SystemConfiguration.getInstance().getDefaultPageSize();
+        } else {
+            numOfRecs = dictionaries.size();
+        }
+        numOfRecs--;
+        int endingRecNo = startingRecNo + numOfRecs;
+        request.setAttribute(MENU_TO_RECORD, String.valueOf(endingRecNo));
+
+        request.setAttribute(MENU_SEARCH_BY_TABLE_COLUMN, "dictionary.dictEntry");
+
+        if (YES.equals(request.getParameter("search"))) {
+            request.setAttribute(IN_MENU_SELECT_LIST_HEADER_SEARCH, "true");
+        }
+        return dictionaries;
+    }
+
+    @Override
+    protected String getDeactivateDisabled() {
+        return "false";
     }
 
     @Override
@@ -181,5 +188,4 @@ public class DictionaryMenuController extends BaseMenuController<Dictionary> {
     protected String getPageSubtitleKey() {
         return "dictionary.browse.title";
     }
-
 }
