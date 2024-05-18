@@ -15,37 +15,43 @@ import {
   RadioButton,
   TextArea,
   TableHeader,
+  Checkbox,
   TableCell,
 } from "@carbon/react";
 import { AlertDialog } from "../../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
 import { initialReportFormValues, selectOptions } from "./ViewNonConforming";
-import { getFromOpenElisServer } from "../../utils/Utils";
+import {
+  getDifferenceInDays,
+  getFromOpenElisServer,
+  postToOpenElisServer,
+} from "../../utils/Utils";
 import CustomDatePicker from "../../common/CustomDatePicker";
+import { headers } from "./ViewNonConforming";
 
 const initialFormData = {
-  "correctiveAction-log-0": null,
-  "responsiblePerson-0": null,
-  "dateActionCompleted-0": null,
-  "turnAroundTime-0": null,
   dateCompleted: null,
-  "action-type-0": null,
-  discussionDate: "",
+  discussionDate: null,
+  actionLog: {
+    correctiveAction: null,
+    actionType: null,
+    personResponsible: undefined,
+    dateCompleted: undefined,
+    turnAroundTime: undefined,
+  },
 };
 
 export const NCECorrectiveAction = () => {
   const [reportFormValues, setReportFormValues] = useState(
     initialReportFormValues,
   );
-
   const [notificationVisible, setNotificationVisible] = useState(false);
   const [selected, setSelected] = useState(null);
-
   const [tdiscussionDate, setTDiscussionDate] = useState(null);
-
   const [tData, setTData] = useState(null);
   const [data, setData] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
+  const [submit, setSubmit] = useState(null);
 
   const intl = useIntl();
 
@@ -55,6 +61,15 @@ export const NCECorrectiveAction = () => {
         getFromOpenElisServer(
           `/rest/NCECorrectiveAction?nceNumber=${selected}`,
           (data) => {
+            if(!data.cancelAction) {
+              return;
+            }
+            setTData(null);
+            setFormData({
+              ...formData,
+              discussionDate: data.discussionDate,
+            });
+
             setData(data);
           },
         );
@@ -69,30 +84,60 @@ export const NCECorrectiveAction = () => {
     if (reportFormValues.type === "labNumber") {
       getFromOpenElisServer(
         `/rest/nonconformingcorrectiveaction?status=CAPA&${reportFormValues.type}=${reportFormValues.value}&uppressExternalSearch=false&${other}=undefined`,
-        (data) => {
-          if (data.nceEventsSearchResults.length > 1) {
-            setTData(data);
+        (responseData) => {
+          if (responseData.nceEventsSearchResults.length > 1) {
+            setSelected(null);
+            setData(null);
+            setTData(responseData);
+          } else if (responseData?.nceEventsSearchResults?.length === 1) {
+            setSelected(responseData.nceEventsSearchResults[0].nceNumber);
+          } else {
+            // Handle case when no data is found
           }
         },
       );
     } else {
+      // Set selected directly if the search type is not 'labNumber'
       setSelected(reportFormValues.value);
     }
   };
 
-  const handleNCEFormSubmit = () => {};
+  const handleNCEFormSubmit = () => {
+    if (!submit) {
+      return;
+    }
+
+    let turnAroundTime = formData[`dateCompleted`]
+      ? getDifferenceInDays(data.reportDate, formData[`dateCompleted`])
+      : 0;
+
+    formData.actionLog.turnAroundTime = turnAroundTime;
+
+    // correctiveAction
+    let body = {
+      id: data.id,
+      actionLog: [...data["actionLog"], formData["actionLog"]],
+
+      dateCompleted: formData[`dateCompleted`] ?? "",
+      discussionDate: formData[`discussionDate`] ?? "",
+    };
+
+    postToOpenElisServer(
+      "/rest/NCECorrectiveAction",
+      JSON.stringify(body),
+      (df) => {
+        console.log("response from server", df);
+      },
+    );
+  };
 
   const handleCorrectiveActionChange = (e) => {
     setFormData({
-      ...formData,
-      "correctiveAction-log-0": e.target.value,
-    });
-  };
-
-  const handleResponsiblePersonChange = (e) => {
-    setFormData({
-      ...formData,
-      "responsiblePerson-0": e.target.value,
+      ...data,
+      actionLog: {
+        ...formData.actionLog,
+        correctiveAction: e.target.value,
+      },
     });
   };
 
@@ -101,9 +146,56 @@ export const NCECorrectiveAction = () => {
   };
 
   const handleAddDiscussionDate = () => {
+    if (tdiscussionDate) {
+      if (data.discussionDate) {
+        setFormData({
+          ...formData,
+          discussionDate: data.discussionDate + "," + tdiscussionDate,
+        });
+      } else {
+        setFormData({
+          ...formData,
+          discussionDate: tdiscussionDate,
+        });
+      }
+
+      setTDiscussionDate(null);
+    }
+  };
+
+  const handlePersonResponsibleChange = (e) => {
     setFormData({
       ...formData,
-      discussionDate: formData.discussionDate + tdiscussionDate,
+      actionLog: {
+        ...formData.actionLog,
+        personResponsible: e.target.value,
+      },
+    });
+  };
+
+  const handleActionTypeChange = (value) => {
+    setFormData((prevFormData) => {
+      const actionTypes = prevFormData.actionLog.actionType
+        ? prevFormData.actionLog.actionType.split(",").filter((type) => type) // Filter out empty strings
+        : [];
+
+      if (actionTypes.includes(value)) {
+        return {
+          ...prevFormData,
+          actionLog: {
+            ...prevFormData.actionLog,
+            actionType: actionTypes.filter((type) => type !== value).join(","),
+          },
+        };
+      } else {
+        return {
+          ...prevFormData,
+          actionLog: {
+            ...prevFormData.actionLog,
+            actionType: [...actionTypes, value].join(","),
+          },
+        };
+      }
     });
   };
 
@@ -158,6 +250,7 @@ export const NCECorrectiveAction = () => {
                   id={`field.name`}
                 />
               </Column>
+
               <Column lg={16}>
                 <br />
               </Column>
@@ -389,33 +482,34 @@ export const NCECorrectiveAction = () => {
                 </div>
               </Column>
 
-              <Column lg={16}>
-                <br></br>
-              </Column>
+              <Column
+                lg={10}
+                style={{
+                  marginTop: "20px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    margin: "1px",
+                  }}
+                >
+                  {formData?.discussionDate?.split(",").map((d, index) => {
+                    return (
+                      <p
+                        key={index}
+                        style={{ fontSize: "12px", marginBottom: "5px" }}
+                      >
+                        {index > 0 && ","} {d.trim()}
+                      </p>
+                    );
+                  })}
+                </div>
 
-              <Column lg={8}>
-                <TextArea
-                  labelText={
-                    <FormattedMessage id="banner.menu.nonconformity.correctiveActions" />
-                  }
-                  value={formData[`correctiveAction-log-0`]}
-                  onChange={handleCorrectiveActionChange}
-                  rows={2}
-                  id="text-area-3"
-                />
-              </Column>
-              <Column lg={8}>
-                <TextArea
-                  labelText={
-                    <FormattedMessage id="nonconform.person.responsible" />
-                  }
-                  value={formData[`responsiblePerson-0`]}
-                  onChange={handleResponsiblePersonChange}
-                  rows={2}
-                  id="text-area-4"
-                />
-              </Column>
-              <Column lg={8}>
                 <CustomDatePicker
                   key="tdiscussionDate"
                   id={"tdiscussionDate"}
@@ -425,17 +519,141 @@ export const NCECorrectiveAction = () => {
                   autofillDate={true}
                   value={tdiscussionDate}
                   onChange={handleDiscussionDateChange}
+                  style={{ marginBottom: "5px" }}
                 />
                 <button
-                  disabled={!!tdiscussionDate}
+                  disabled={!tdiscussionDate}
                   onClick={handleAddDiscussionDate}
-                  style={{ margin: "5px" }}
+                  style={{ margin: "5px 0" }}
                 >
                   <FormattedMessage id="nonconform.add.new.date" />
                 </button>
               </Column>
 
-              <Column lg={8} >
+              <Column lg={8}>
+                <TextArea
+                  labelText={
+                    <FormattedMessage id="banner.menu.nonconformity.correctiveActions" />
+                  }
+                  value={formData.actionLog[`correctiveAction`] ?? ""}
+                  onChange={handleCorrectiveActionChange}
+                  rows={4}
+                  id="text-area-3"
+                />
+              </Column>
+
+              <Column lg={8}>
+                <TextArea
+                  labelText={
+                    <FormattedMessage id="nonconform.person.responsible" />
+                  }
+                  value={formData.actionLog[`personResponsible`] ?? ""}
+                  onChange={handlePersonResponsibleChange}
+                  rows={4}
+                  id="text-area-3"
+                />
+              </Column>
+
+              <Column
+                lg={8}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                }}
+              >
+                {formData[`dateCompleted`] && (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      margin: "10px",
+                    }}
+                  >
+                    <div style={{ marginRight: "10px" }}>
+                      <span style={{ color: "#3366B3", fontWeight: "bold" }}>
+                        <FormattedMessage id="nonconform.nce.turnaround.time" />
+                      </span>
+                    </div>
+                    <div>
+                      {getDifferenceInDays(
+                        data.reportDate,
+                        formData[`dateCompleted`],
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <CustomDatePicker
+                  key="dateCompleted"
+                  id={"dateCompleted"}
+                  labelText={
+                    <FormattedMessage id="nonconform.date.completed" />
+                  }
+                  autofillDate={true}
+                  value={formData[`dateCompleted`] ?? undefined}
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      dateCompleted: e,
+                    });
+                  }}
+                  style={{ marginTop: "5px" }}
+                />
+              </Column>
+
+              <Column lg={8}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <Checkbox
+                    checked={formData.actionLog.actionType
+                      ?.split(",")
+                      .includes("1")}
+                    labelText={
+                      <FormattedMessage id="banner.menu.nonconformity.correctiveActions" />
+                    }
+                    onClick={() => handleActionTypeChange("1")}
+                    id="correctiveAction"
+                  />
+
+                  <Checkbox
+                    labelText={
+                      <FormattedMessage id="nonconform.nce.preventive.action" />
+                    }
+                    onClick={() => handleActionTypeChange("2")}
+                    checked={formData.actionLog.actionType
+                      ?.split(",")
+                      .includes("2")}
+                    id="preventiveAction"
+                  />
+
+                  <Checkbox
+                    labelText={
+                      <FormattedMessage id="nonconform.nce.concurrent.control.action" />
+                    }
+                    onClick={() => handleActionTypeChange("3")}
+                    checked={formData.actionLog.actionType
+                      ?.split(",")
+                      .includes("3")}
+                    id="concurrent Control Action"
+                  />
+                </div>
+              </Column>
+
+              <Column
+                lg={8}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                }}
+              >
                 <CustomDatePicker
                   key="dateCompleted-0"
                   id={"dateCompleted-0"}
@@ -443,38 +661,71 @@ export const NCECorrectiveAction = () => {
                     <FormattedMessage id="nonconform.nce.resolution.dateCompleted" />
                   }
                   autofillDate={true}
-                  value={formData[`dateCompleted`]}
+                  value={data[`dateCompleted`] ?? undefined}
                   onChange={(e) => {
-                    setFormData({
-                      ...formData,
+                    setData({
+                      ...data,
                       dateCompleted: e,
                     });
                   }}
+                  style={{ marginBottom: "5px" }}
                 />
-
-                
               </Column>
 
-              <Column>
-              <CustomDatePicker
-                  key="dateActionCompleted-0"
-                  id={"dateActionCompleted-0"}
-                  labelText={
-                    <FormattedMessage id="nonconform.date.completed" />
-                  }
-                  autofillDate={true}
-                  value={formData[`dateActionCompleted-0`]}
-                  onChange={(e) => {
-                    setFormData({
-                      ...formData,
-                      "dateActionCompleted-0": e,
-                    });
-                  }}
-                /></Column>
+              <Column
+                lg={14}
+                style={{
+                  marginTop: "50px",
+                }}
+              >
+                <div style={{ marginBottom: "10px" }}>
+                  <span style={{ color: "#3366B3", fontWeight: "bold" }}>
+                    <FormattedMessage id="nonconform.nce.resolution.description" />
+                  </span>
 
-              <Column lg={16}>
-                <br />
-                <Button type="button" onClick={handleNCEFormSubmit}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "flex-start",
+                      marginTop: "10px",
+                    }}
+                  >
+                    <RadioButton
+                      checked={submit === true}
+                      labelText={<FormattedMessage id="yes.option" />}
+                      id={`yes.option`}
+                      onChange={() => setSubmit(true)}
+                    ></RadioButton>
+                    <RadioButton
+                      labelText={<FormattedMessage id="no.option" />}
+                      id={`no.option`}
+                      checked={submit === false}
+                      onChange={() => setSubmit(false)}
+                    ></RadioButton>
+                  </div>
+                </div>
+              </Column>
+
+              <Column
+                lg={16}
+                style={{
+                  marginTop: "20px",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
+              >
+                {!!reportFormValues.error && (
+                  <div style={{ color: "#c62828", margin: 4 }}>
+                    {reportFormValues.error}
+                  </div>
+                )}
+
+                <Button
+                  type="button"
+                  disabled={!submit}
+                  onClick={handleNCEFormSubmit}
+                >
                   <FormattedMessage id="label.button.submit" />
                 </Button>
               </Column>
