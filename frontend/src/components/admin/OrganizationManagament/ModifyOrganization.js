@@ -24,7 +24,7 @@ import {
 } from "@carbon/react";
 import {
   getFromOpenElisServer,
-  postToOpenElisServerFullResponse,
+  postToOpenElisServerJsonResponse,
 } from "../../utils/Utils.js";
 import { NotificationContext } from "../../layout/Layout.js";
 import {
@@ -48,13 +48,13 @@ function ModifyOrganization() {
   const intl = useIntl();
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(20);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [orgSelectedTypeOfActivity, setOrgSelectedTypeOfActivity] = useState(
     [],
   );
   const [orgInfo, setOrgInfo] = useState(null);
-  const [orgInfoPost, setOrgInfoPost] = useState(null); // post data need to get checked
+  const [orgInfoPost, setOrgInfoPost] = useState(null);
   const [saveButton, setSaveButton] = useState(true);
   const [typeOfActivity, setTypeOfActivity] = useState(null);
   const [typeOfActivityShow, setTypeOfActivityShow] = useState([]);
@@ -73,33 +73,92 @@ function ModifyOrganization() {
     );
   }
 
-  const handlePageChange = ({ page, pageSize }) => {
-    setPage(page);
-    setPageSize(pageSize);
-    setSelectedRowIds([]);
-  };
+  // const handlePageChange = ({ page, pageSize }) => {
+  //   setPage(page);
+  //   setPageSize(pageSize);
+  //   setSelectedRowIds([]);
+  // };
+
+  function handleOrgNameChange(e) {
+    setSaveButton(false);
+    setOrgInfoPost((prevOrgInfoPost) => ({
+      ...prevOrgInfoPost,
+      organizationName: e.target.value,
+    }));
+    setOrgInfo((prevOrgInfo) => ({
+      ...prevOrgInfo,
+      organizationName: e.target.value,
+    }));
+  }
+
+  function handleOrgPrefixChange(e) {
+    setSaveButton(false);
+    setOrgInfoPost((prevOrgInfoPost) => ({
+      ...prevOrgInfoPost,
+      shortName: e.target.value,
+    }));
+    setOrgInfo((prevOrgInfo) => ({
+      ...prevOrgInfo,
+      shortName: e.target.value,
+    }));
+  }
+
+  function handleIsActiveChange(e) {
+    setSaveButton(false);
+    setOrgInfoPost((prevOrgInfoPost) => ({
+      ...prevOrgInfoPost,
+      isActive: e.target.value,
+    }));
+    setOrgInfo((prevOrgInfo) => ({
+      ...prevOrgInfo,
+      isActive: e.target.value,
+    }));
+  }
+
+  function handleInternetAddressChange(e) {
+    setSaveButton(false);
+    setOrgInfoPost((prevOrgInfoPost) => ({
+      ...prevOrgInfoPost,
+      internetAddress: e.target.value,
+    }));
+    setOrgInfo((prevOrgInfo) => ({
+      ...prevOrgInfo,
+      internetAddress: e.target.value,
+    }));
+  }
 
   function submitUpdatedOrgInfo() {
     setLoading(true);
-    postToOpenElisServerFullResponse(
+    postToOpenElisServerJsonResponse(
       `/rest/Organization?ID=${id}&startingRecNo=1`,
-      orgInfoPost,
-      setLoading(false),
-      addNotification({
-        title: intl.formatMessage({
-          id: "notification.title",
-        }),
-        message: intl.formatMessage({
-          id: "notification.organization.post.success",
-        }),
-        kind: NotificationKinds.success,
-      }),
-      setNotificationVisible(true),
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000),
+      JSON.stringify(orgInfoPost),
+      submitUpdatedOrgInfoCallback(),
     );
   }
+
+  function submitUpdatedOrgInfoCallback() {
+    setLoading(false);
+    setNotificationVisible(true);
+    addNotification({
+      title: intl.formatMessage({
+        id: "notification.title",
+      }),
+      message: intl.formatMessage({
+        id: "notification.organization.post.success",
+      }),
+      kind: NotificationKinds.success,
+    });
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 2000);
+  }
+
+  useEffect(() => {
+    setOrgInfoPost((prevOrgInfoPost) => ({
+      ...prevOrgInfoPost,
+      selectedTypes: selectedRowIds,
+    }));
+  }, [selectedRowIds, orgSelectedTypeOfActivity, orgInfo]);
 
   useEffect(() => {
     if (typeOfActivity) {
@@ -123,8 +182,19 @@ function ModifyOrganization() {
         shortName: typeOfActivity.shortName || "",
         isActive: typeOfActivity.isActive || "",
         internetAddress: typeOfActivity.internetAddress || "",
+        selectedTypes: typeOfActivity.selectedTypes || [],
+      };
+
+      const organizationsManagementIdInfoPost = {
+        id: typeOfActivity.id,
+        organizationName: typeOfActivity.organizationName || "",
+        shortName: typeOfActivity.shortName || "",
+        isActive: typeOfActivity.isActive || "",
+        internetAddress: typeOfActivity.internetAddress || "",
       };
       setOrgInfo(organizationsManagementIdInfo);
+      setOrgInfoPost(organizationsManagementIdInfoPost);
+      setSelectedRowIds(typeOfActivity.selectedTypes);
 
       const organizationSelectedTypeOfActivity =
         typeOfActivity.selectedTypes.map((item) => {
@@ -238,7 +308,7 @@ function ModifyOrganization() {
                         // invalid={errors.order && touched.order}
                         // invalidText={errors.order}
                         value={orgInfo.organizationName}
-                        // onChange={(e) => handleDefaultOrderLablesValue(e)}
+                        onChange={(e) => handleOrgNameChange(e)}
                       />
                     )}
                   </Column>
@@ -262,7 +332,7 @@ function ModifyOrganization() {
                         // invalid={errors.order && touched.order}
                         // invalidText={errors.order}
                         value={orgInfo.shortName}
-                        // onChange={(e) => handleDefaultOrderLablesValue(e)}
+                        onChange={(e) => handleOrgPrefixChange(e)}
                       />
                     )}
                   </Column>
@@ -288,7 +358,7 @@ function ModifyOrganization() {
                         // invalid={errors.order && touched.order}
                         // invalidText={errors.order}
                         value={orgInfo.isActive}
-                        // onChange={(e) => handleDefaultOrderLablesValue(e)}
+                        onChange={(e) => handleIsActiveChange(e)}
                       />
                     )}
                   </Column>
@@ -312,7 +382,7 @@ function ModifyOrganization() {
                         // invalid={errors.order && touched.order}
                         // invalidText={errors.order}
                         value={orgInfo.internetAddress}
-                        // onChange={(e) => handleDefaultOrderLablesValue(e)}
+                        onChange={(e) => handleInternetAddressChange(e)}
                       />
                     )}
                   </Column>
@@ -340,6 +410,7 @@ function ModifyOrganization() {
           <br />
           <Grid fullWidth={true} className="gridBoundary">
             <Column lg={16} md={8} sm={4}>
+              <br />
               <DataTable
                 rows={typeOfActivityShow.slice(
                   // need a change
@@ -464,7 +535,7 @@ function ModifyOrganization() {
                   </TableContainer>
                 )}
               </DataTable>
-              <Pagination
+              {/* <Pagination
                 onChange={handlePageChange}
                 page={page}
                 pageSize={pageSize}
@@ -506,13 +577,18 @@ function ModifyOrganization() {
                     { page: pagesUnknown ? "" : page },
                   )
                 }
-              />
+              /> */}
+              <br />
             </Column>
           </Grid>
           <br />
           <Grid fullWidth={true}>
             <Column lg={16} md={8} sm={4}>
-              <Button onClick={submitUpdatedOrgInfo} type="button">
+              <Button
+                disabled={saveButton}
+                onClick={submitUpdatedOrgInfo}
+                type="button"
+              >
                 Save
               </Button>{" "}
               <Button
@@ -562,13 +638,16 @@ function ModifyOrganization() {
         >
           selectedRowIds
         </button>
+        <button
+          onClick={() => {
+            console.log(orgInfoPost);
+          }}
+        >
+          orgInfoPost
+        </button>
       </div>
     </>
   );
 }
 
 export default injectIntl(ModifyOrganization);
-
-// fetch and set fix
-// values need to be marked [de constrution of selected row ids]
-// post data to be setted

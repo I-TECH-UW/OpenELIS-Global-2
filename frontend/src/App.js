@@ -40,6 +40,8 @@ import PrintBarcode from "./components/printBarcode/Index";
 import NonConformIndex from "./components/nonconform/index";
 import SampleBatchEntrySetup from "./components/batchOrderEntry/SampleBatchEntrySetup.js";
 import AuditTrailReportIndex from "./components/reports/auditTrailReport/Index.js";
+import AddOrganization from "./components/admin/OrganizationManagament/AddOrganization.js";
+import ModifyOrganization from "./components/admin/OrganizationManagament/ModifyOrganization.js";
 
 export default function App() {
   let i18nConfig = {
@@ -224,6 +226,18 @@ export default function App() {
                   path="/MasterListsPage"
                   exact
                   component={() => <Admin />}
+                  role="Global Administrator"
+                />
+                <SecureRoute
+                  path="/AddOrganization"
+                  exact
+                  component={() => <AddOrganization />}
+                  role="Global Administrator"
+                />
+                <SecureRoute
+                  path="/ModifyOrganization"
+                  exact
+                  component={() => <ModifyOrganization />}
                   role="Global Administrator"
                 />
                 <SecureRoute

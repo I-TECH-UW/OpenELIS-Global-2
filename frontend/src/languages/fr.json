@@ -940,6 +940,7 @@
   "organization.edit.title": "Modifier l'organisation",
   "notification.organization.post.success": "Informations sur l'organisation mises à jour avec succès.",
   "notification.organization.post.save.success": "Informations sur l'organisation ajoutées avec succès.",
+  "notification.organization.post.delete.success": "Organisation désactivée avec succès.",
   "organization.select": "Sélectionner",
   "organization.type.CI": "Type d'activité",
   "organization.type.CI.select": "Type d'activité : Sélectionner",

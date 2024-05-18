@@ -49,7 +49,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.support.SessionStatus;
@@ -58,7 +57,6 @@ import org.springframework.web.bind.support.SessionStatus;
 
 @RestController
 @RequestMapping("/rest")
-@SessionAttributes("form")
 public class OrganizationRestController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "id", "parentOrgName",
@@ -77,10 +75,10 @@ public class OrganizationRestController extends BaseController {
     @Autowired
     private DictionaryService dictionaryService;
 
-    @ModelAttribute("form")
-    public OrganizationForm form() {
-        return new OrganizationForm();
-    }
+    // @ModelAttribute("form")
+    // public OrganizationForm form() {
+    //     return new OrganizationForm();
+    // }
 
     // private static boolean useZip =
     // FormFields.getInstance().useField(FormFields.Field.ZipCode);
@@ -137,9 +135,11 @@ public class OrganizationRestController extends BaseController {
     }
 
     @GetMapping(value = { "/Organization", "/NextPreviousOrganization" })
-    public ResponseEntity<Object> showOrganization(@ModelAttribute("form") BaseForm oldForm)
+    public ResponseEntity<Object> showOrganization( HttpServletRequest request )
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        OrganizationForm newForm = resetSessionFormToType(oldForm, OrganizationForm.class);
+
+            OrganizationForm newForm = new OrganizationForm();
+        // OrganizationForm newForm = resetSessionFormToType(oldForm, OrganizationForm.class);
 
         newForm.setCancelAction("CancelOrganization");
 
@@ -175,14 +175,14 @@ public class OrganizationRestController extends BaseController {
 
             // return new ModelAndView("redirect:/Organization?ID=" + Encode.forUriComponent(newId) + "&startingRecNo="
             //         + Encode.forUriComponent(start));
-            return ResponseEntity.ok().header("Location", "/Organization?ID=" + Encode.forUriComponent(newId) + "&startingRecNo="
+            return ResponseEntity.status(HttpStatus.FOUND).header("Location", "/Organization?ID=" + Encode.forUriComponent(newId) + "&startingRecNo="
                     + Encode.forUriComponent(start)).build();
         } else if (FWD_PREVIOUS.equals(request.getParameter("direction"))) {
             organization = organizationService.getPrevious(id);
             String newId = organization.getId();
             // return new ModelAndView("redirect:/Organization?ID=" + Encode.forUriComponent(newId) + "&startingRecNo="
             //         + Encode.forUriComponent(start));
-            return ResponseEntity.ok().header("Location", "/Organization?ID=" + Encode.forUriComponent(newId) + "&startingRecNo="
+            return ResponseEntity.status(HttpStatus.FOUND).header("Location", "/Organization?ID=" + Encode.forUriComponent(newId) + "&startingRecNo="
                     + Encode.forUriComponent(start)).build();
         }
 
@@ -289,6 +289,12 @@ public class OrganizationRestController extends BaseController {
         }
     }
 
+    // private void setCityStateZipList(OrganizationForm form)
+    //         throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    //     List<CityStateZip> cityStateZipList = cityStateZipService.getAll();
+    //     form.setCityStateZipList(cityStateZipList);
+    // }
+
     private List<OrganizationType> getOrganizationTypeList() {
 
         List<OrganizationType> orgTypeList = organizationTypeService.getAll();
@@ -332,6 +338,9 @@ public class OrganizationRestController extends BaseController {
         } else {
             organization = organizationService.get(form.getId());
             // request.setAttribute("key", "organization.edit.title");
+            if (organization == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found.");
+        }
         }
         List<String> selectedOrgTypes = form.getSelectedTypes();
 
@@ -366,23 +375,23 @@ public class OrganizationRestController extends BaseController {
             LogEvent.logError(e);
             if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
                 result.reject("errors.OptimisticLockException");
-            } else {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Another transaction has updated the organization. Please refresh and try again.");
+            } else if
                 // bugzilla 1482
-                if (e.getCause() instanceof LIMSDuplicateRecordException) {
+                 (e.getCause() instanceof LIMSDuplicateRecordException) {
                     String messageKey = "organization.organization";
                     String msg = MessageUtil.getMessage(messageKey);
-                    result.reject("errors.DuplicateRecord.activeonly", new String[] { msg },
-                            "errors.DuplicateRecord.activeonly");
+                    result.reject("errors.DuplicateRecord.activeonly", new String[] { msg },"errors.DuplicateRecord.activeonly");
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("Duplicate record error.");
                 } else {
-                    result.reject("errors.UpdateException");
-                }
+                result.reject("errors.UpdateException");
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save or update organization. Error: " + e.getMessage());
             }
-            saveErrors(result);
+            // saveErrors(result);
             // request.setAttribute(PREVIOUS_DISABLED, "true");
             // request.setAttribute(NEXT_DISABLED, "true");
             // return findForward(FWD_FAIL_INSERT, form);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save or update organization. Error: " + e.getMessage());
+            // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save or update organization. Error: " + e.getMessage());
             
         }
         // finally {

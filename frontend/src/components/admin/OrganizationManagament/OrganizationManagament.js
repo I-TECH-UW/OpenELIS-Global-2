@@ -22,7 +22,10 @@ import {
 } from "@carbon/react";
 import {
   getFromOpenElisServer,
+  postToOpenElisServer,
+  postToOpenElisServerFormData,
   postToOpenElisServerFullResponse,
+  postToOpenElisServerJsonResponse,
 } from "../../utils/Utils.js";
 import { NotificationContext } from "../../layout/Layout.js";
 import {
@@ -51,6 +54,7 @@ function OrganizationManagament() {
   const [deactivateButton, setDeactivateButton] = useState(true);
   const [modifyButton, setModifyButton] = useState(true);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
+  const [selectedRowIdsPost, setSelectedRowIdsPost] = useState();
   const [isEveryRowIsChecked, setIsEveryRowIsChecked] = useState(false);
   const [rowsIsPartiallyChecked, setRowsIsPartiallyChecked] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -74,24 +78,36 @@ function OrganizationManagament() {
   function deleteDeactivateOrganizationManagament(event) {
     event.preventDefault();
     setLoading(true);
-    postToOpenElisServerFullResponse(
+    postToOpenElisServerJsonResponse(
       `/rest/DeleteOrganization?ID=${selectedRowIds.join(",")}&startingRecNo=1`,
-      searchedOrganizationManagamentListShow || organizationsManagmentListShow, // need to check against the form of restController [mentor]
-      setLoading(false),
-      addNotification({
-        title: intl.formatMessage({
-          id: "notification.title",
-        }),
-        message: intl.formatMessage({
-          id: "notification.login.syntax.error",
-        }),
-        kind: NotificationKinds.error,
-      }),
-      setNotificationVisible(true),
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000),
+      JSON.stringify(selectedRowIdsPost),
+      deleteDeactivateOrganizationManagamentCallback(),
     );
+  }
+
+  useEffect(() => {
+    const selectedIDsObject = {
+      selectedIDs: selectedRowIds,
+    };
+
+    setSelectedRowIdsPost(selectedIDsObject);
+  }, [selectedRowIds, organizationsManagmentListShow]);
+
+  function deleteDeactivateOrganizationManagamentCallback() {
+    setLoading(false);
+    setNotificationVisible(true);
+    addNotification({
+      title: intl.formatMessage({
+        id: "notification.title",
+      }),
+      message: intl.formatMessage({
+        id: "notification.organization.post.delete.success",
+      }),
+      kind: NotificationKinds.success,
+    });
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 2000);
   }
 
   const handlePageChange = ({ page, pageSize }) => {
@@ -357,6 +373,7 @@ function OrganizationManagament() {
             <>
               <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={16} md={8} sm={4}>
+                  <br />
                   <DataTable
                     rows={searchedOrganizationManagamentListShow.slice(
                       (page - 1) * pageSize,
@@ -570,6 +587,7 @@ function OrganizationManagament() {
                       )
                     }
                   />
+                  <br />
                 </Column>
               </Grid>
             </>
@@ -810,6 +828,13 @@ function OrganizationManagament() {
           }}
         >
           selectedRowIds
+        </button>
+        <button
+          onClick={() => {
+            console.error(selectedRowIdsPost);
+          }}
+        >
+          selectedRowIdsPost
         </button>
       </div>
     </>

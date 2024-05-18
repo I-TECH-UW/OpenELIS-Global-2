@@ -24,6 +24,7 @@ import {
 import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
+  postToOpenElisServerJsonResponse,
 } from "../../utils/Utils.js";
 import { NotificationContext } from "../../layout/Layout.js";
 import {
@@ -47,18 +48,57 @@ function AddOrganization() {
   const intl = useIntl();
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(20);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [saveButton, setSaveButton] = useState(true);
   const [newOrganizationsData, setNewOrganizationsData] = useState(null);
   const [typeOfActivity, setTypeOfActivity] = useState(null);
   const [typeOfActivityShow, setTypeOfActivityShow] = useState([]);
 
-  const handlePageChange = ({ page, pageSize }) => {
-    setPage(page);
-    setPageSize(pageSize);
-    setSelectedRowIds([]);
-  };
+  // const handlePageChange = ({ page, pageSize }) => {
+  //   setPage(page);
+  //   setPageSize(pageSize);
+  //   setSelectedRowIds([]);
+  // };
+
+  function handleOrgNameChange(e) {
+    setSaveButton(false);
+    setNewOrganizationsData((alreadyOrgInfoToPost) => ({
+      ...alreadyOrgInfoToPost,
+      organizationName: e.target.value,
+    }));
+  }
+
+  function handleOrgPrefixChange(e) {
+    setSaveButton(false);
+    setNewOrganizationsData((alreadyOrgInfoToPost) => ({
+      ...alreadyOrgInfoToPost,
+      shortName: e.target.value,
+    }));
+  }
+
+  function handleIsActiveChange(e) {
+    setSaveButton(false);
+    setNewOrganizationsData((alreadyOrgInfoToPost) => ({
+      ...alreadyOrgInfoToPost,
+      isActive: e.target.value,
+    }));
+  }
+
+  function handleInternetAddressChange(e) {
+    setSaveButton(false);
+    setNewOrganizationsData((alreadyOrgInfoToPost) => ({
+      ...alreadyOrgInfoToPost,
+      internetAddress: e.target.value,
+    }));
+  }
+
+  useEffect(() => {
+    setNewOrganizationsData((alreadyOrgInfoToPost) => ({
+      ...alreadyOrgInfoToPost,
+      selectedTypes: selectedRowIds,
+    }));
+  }, [selectedRowIds, typeOfActivity, typeOfActivityShow]);
 
   useEffect(() => {
     if (typeOfActivity) {
@@ -75,6 +115,15 @@ function AddOrganization() {
         newOrganizationsManagementList,
       );
       setTypeOfActivityShow(newOrganizationsManagementListArray);
+
+      const newOrganizationsManagementDataPost = {
+        id: typeOfActivity.id,
+        organizationName: typeOfActivity.organizationName || "",
+        shortName: typeOfActivity.shortName || "",
+        isActive: typeOfActivity.isActive || "",
+        internetAddress: typeOfActivity.internetAddress || "",
+      };
+      setNewOrganizationsData(newOrganizationsManagementDataPost);
     }
   }, [typeOfActivity]);
 
@@ -102,24 +151,28 @@ function AddOrganization() {
   function newOrganizationsSavePost(event) {
     event.preventDefault();
     setLoading(true);
-    postToOpenElisServerFullResponse(
+    postToOpenElisServerJsonResponse(
       `/rest/Organization?ID=0&startingRecNo=1`,
-      newOrganizationsData, // need to check against the form of restController [mentor]
-      setLoading(false),
-      addNotification({
-        title: intl.formatMessage({
-          id: "notification.title",
-        }),
-        message: intl.formatMessage({
-          id: "notification.organization.post.save.success",
-        }),
-        kind: NotificationKinds.success,
-      }),
-      setNotificationVisible(true),
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000),
+      JSON.stringify(newOrganizationsData),
+      newOrganizationsSavePostCallback(),
     );
+  }
+
+  function newOrganizationsSavePostCallback() {
+    setLoading(false);
+    setNotificationVisible(true);
+    addNotification({
+      title: intl.formatMessage({
+        id: "notification.title",
+      }),
+      message: intl.formatMessage({
+        id: "notification.organization.post.save.success",
+      }),
+      kind: NotificationKinds.success,
+    });
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 2000);
   }
 
   const renderCell = (cell, row) => {
@@ -196,10 +249,7 @@ function AddOrganization() {
                         id: "organization.add.placeholder",
                       })}
                       required
-                      // invalid={errors.order && touched.order}
-                      // invalidText={errors.order}
-                      // value={values.numDefaultOrderLabels}
-                      // onChange={(e) => handleDefaultOrderLablesValue(e)}
+                      onChange={(e) => handleOrgNameChange(e)}
                     />
                   </Column>
                 </Grid>
@@ -218,10 +268,7 @@ function AddOrganization() {
                       placeholder={intl.formatMessage({
                         id: "organization.add.placeholder",
                       })}
-                      // invalid={errors.order && touched.order}
-                      // invalidText={errors.order}
-                      // value={values.numDefaultOrderLabels}
-                      // onChange={(e) => handleDefaultOrderLablesValue(e)}
+                      onChange={(e) => handleOrgPrefixChange(e)}
                     />
                   </Column>
                 </Grid>
@@ -242,10 +289,7 @@ function AddOrganization() {
                         id: "organization.add.placeholder.active",
                       })}
                       required
-                      // invalid={errors.order && touched.order}
-                      // invalidText={errors.order}
-                      // value={values.numDefaultOrderLabels}
-                      // onChange={(e) => handleDefaultOrderLablesValue(e)}
+                      onChange={(e) => handleIsActiveChange(e)}
                     />
                   </Column>
                 </Grid>
@@ -265,10 +309,7 @@ function AddOrganization() {
                       placeholder={intl.formatMessage({
                         id: "organization.add.placeholder",
                       })}
-                      // invalid={errors.order && touched.order}
-                      // invalidText={errors.order}
-                      // value={values.numDefaultOrderLabels}
-                      // onChange={(e) => handleDefaultOrderLablesValue(e)}
+                      onChange={(e) => handleInternetAddressChange(e)}
                     />
                   </Column>
                 </Grid>
@@ -295,6 +336,7 @@ function AddOrganization() {
           <br />
           <Grid fullWidth={true} className="gridBoundary">
             <Column lg={16} md={8} sm={4}>
+              <br />
               <DataTable
                 rows={typeOfActivityShow.slice(
                   // need a change
@@ -419,7 +461,7 @@ function AddOrganization() {
                   </TableContainer>
                 )}
               </DataTable>
-              <Pagination
+              {/* <Pagination
                 onChange={handlePageChange}
                 page={page}
                 pageSize={pageSize}
@@ -461,7 +503,8 @@ function AddOrganization() {
                     { page: pagesUnknown ? "" : page },
                   )
                 }
-              />
+              /> */}
+              <br />
             </Column>
           </Grid>
           <br />
@@ -493,12 +536,16 @@ function AddOrganization() {
         >
           sdf
         </button>
+        <button
+          onClick={() => {
+            console.error(newOrganizationsData);
+          }}
+        >
+          postData
+        </button>
       </div>
     </>
   );
 }
 
 export default injectIntl(AddOrganization);
-
-// post request need to fix
-// save button fix needed
