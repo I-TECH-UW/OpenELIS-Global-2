@@ -141,7 +141,7 @@ export const NCECorrectiveAction = () => {
         setData(null);
         setFormData(initialFormData);
         setSubmit(null);
-    
+
         if (df.success) {
           addNotification({
             kind: NotificationKinds.success,
@@ -155,7 +155,7 @@ export const NCECorrectiveAction = () => {
             kind: NotificationKinds.error,
             title: intl.formatMessage({ id: "notification.title" }),
             message: intl.formatMessage({ id: "nonconform.order.save.fail" }),
-          }); 
+          });
         }
       },
     );

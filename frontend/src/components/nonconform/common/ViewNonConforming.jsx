@@ -427,7 +427,10 @@ export const ViewNonConformingEvent = () => {
               </span>
             </div>
             <div style={{ marginBottom: "10px" }}>
-              {data.reportingUnits.find((obj) => obj.id == data.reportingUnit).value}
+              {
+                data.reportingUnits.find((obj) => obj.id == data.reportingUnit)
+                  .value
+              }
             </div>
           </Column>
           <Column lg={3} style={{ marginBottom: "20px" }}>
