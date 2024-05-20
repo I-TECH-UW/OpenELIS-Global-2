@@ -824,7 +824,7 @@ export function SearchResults(props) {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "12rem",
+      width: "8rem",
     };
 
     if (configurationProperties.allowResultRejection == "true") {
@@ -869,8 +869,11 @@ export function SearchResults(props) {
       id: "testName",
       name: intl.formatMessage({ id: "column.name.testName" }),
       selector: (row) => row.testName,
+      cell: (row, index, column, id) => {
+        return renderCell(row, index, column, id);
+      },
       sortable: true,
-      width: "8rem",
+      width: "15rem",
     },
     {
       id: "normalRange",
@@ -893,7 +896,7 @@ export function SearchResults(props) {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "10rem",
+      width: "12rem",
     },
     {
       id: "currentResult",
@@ -901,7 +904,7 @@ export function SearchResults(props) {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "8rem",
+      width: "10rem",
     },
     {
       id: "notes",
@@ -909,12 +912,16 @@ export function SearchResults(props) {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "7rem",
+      width: "12rem",
     },
   ];
 
   const renderCell = (row, index, column, id) => {
     let formatLabNum = configurationProperties.AccessionFormat === "ALPHANUM";
+    const fullTestName = row.testName;
+    const splitIndex = fullTestName.lastIndexOf("(");
+    const testName = fullTestName.substring(0, splitIndex);
+    const sampleType = fullTestName.substring(splitIndex);
 
     console.debug("renderCell: index: " + index + ", id: " + id);
     switch (column.id) {
@@ -970,6 +977,15 @@ export function SearchResults(props) {
             )}
           </>
         );
+      case "testName":
+        return (
+          <div className="sampleInfo">
+            <br></br>
+            {testName}
+            <br></br>
+            {sampleType}
+          </div>
+        );
 
       case "accept":
         return (
@@ -990,43 +1006,38 @@ export function SearchResults(props) {
 
       case "reject":
         return (
-          <>
-            <Grid>
-              <Column lg={16}>
-                <Field name="reject">
-                  {() => (
-                    <Checkbox
-                      id={"testResult" + row.id + ".rejected"}
-                      name={"testResult[" + row.id + "].rejected"}
-                      labelText=""
-                      onChange={(e) => handleRejectCheckBoxChange(e, row.id)}
-                    />
-                  )}
-                </Field>
-              </Column>
-              {rejectedItems[row.id] == true && (
-                <Column lg={16}>
-                  <Select
-                    id={"rejectReasonId" + row.id}
-                    name={"testResult[" + row.id + "].rejectReasonId"}
-                    //noLabel={true}
-                    labelText={"Reason"}
-                    onChange={(e) => handleChange(e, row.id)}
-                  >
-                    {/* {...updateShadowResult(e, this, param.rowId)} */}
-                    <SelectItem text="" value="" />
-                    {rejectReasons.map((reason, reason_index) => (
-                      <SelectItem
-                        text={reason.value}
-                        value={reason.id}
-                        key={reason_index}
-                      />
-                    ))}
-                  </Select>
-                </Column>
+          <div>
+            <Field name="reject">
+              {() => (
+                <Checkbox
+                  id={"testResult" + row.id + ".rejected"}
+                  name={"testResult[" + row.id + "].rejected"}
+                  labelText=""
+                  onChange={(e) => handleRejectCheckBoxChange(e, row.id)}
+                />
               )}
-            </Grid>
-          </>
+            </Field>
+            <br></br>
+            {rejectedItems[row.id] == true && (
+              <Select
+                id={"rejectReasonId" + row.id}
+                name={"testResult[" + row.id + "].rejectReasonId"}
+                //noLabel={true}
+                labelText={"Reason"}
+                onChange={(e) => handleChange(e, row.id)}
+              >
+                {/* {...updateShadowResult(e, this, param.rowId)} */}
+                <SelectItem text="" value="" />
+                {rejectReasons.map((reason, reason_index) => (
+                  <SelectItem
+                    text={reason.value}
+                    value={reason.id}
+                    key={reason_index}
+                  />
+                ))}
+              </Select>
+            )}
+          </div>
         );
 
       case "notes":
@@ -1123,7 +1134,7 @@ export function SearchResults(props) {
               <TextArea
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
-                style={{ width: "10px", height: "20px" }}
+                rows={1}
                 labelText=""
                 onChange={(e) => handleChange(e, row.id)}
               />
@@ -1134,7 +1145,7 @@ export function SearchResults(props) {
               <TextArea
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
-                style={{ width: "10px", height: "20px" }}
+                rows={1}
                 labelText=""
                 onChange={(e) => handleChange(e, row.id)}
               />
