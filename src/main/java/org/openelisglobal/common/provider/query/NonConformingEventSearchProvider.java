@@ -66,6 +66,10 @@ public class NonConformingEventSearchProvider extends BaseQueryProvider {
             XMLUtil.appendKeyValue("unit", reportingUnit, xml);
             XMLUtil.appendKeyValue("color", nce.getColorCode(), xml);
             xml.append("</nce>");
+//            xml.append("<nce><date>").append(nce.getDateOfEvent()).append("</date><ncenumber>");
+//            xml.append(nce.getNceNumber()).append("</ncenumber>").append("<unit>").append(reportingUnit)
+//                    .append("</unit>");
+//            xml.append("<color>").append(nce.getColorCode()).append("</color></nce>");
         }
     }
 
