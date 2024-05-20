@@ -29,7 +29,7 @@ public class CorrectiveActionController extends BaseController {
             "reportingUnit", "description", "suspectedCauses", "proposedAction", "laboratoryComponent", "nceCategory",
             "nceType", "consequences", "recurrence", "severityScore", "colorCode", "correctiveAction", "controlAction",
             "comments", "discussionDate", "actionLogStr", "effective" };
-
+    
     @Autowired
     private NonConformingEventWorker nonConformingEventWorker;
 
