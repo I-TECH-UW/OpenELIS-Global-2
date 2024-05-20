@@ -882,9 +882,13 @@
   "nonconform.date.discussion.nce": "Date de Discussion avec le Personnel ENC",
   "nonconform.add.new.date": "Ajouter une Nouvelle Date",
   "nonconform.date.completed": "Date d'Achèvement",
-  "nonconform.nce.resolution.dateCompleted": "Date d'Achèvement de la Résolution ENC",
+  "nonconform.nce.resolution": "Résolution ENC",
   "nonconform.nce.resolution.description": "Les actions correctives et les contrôles préventifs/concurrents étaient-ils efficaces pour résoudre l'événement non conforme et empêcher sa récurrence?",
   "nonconform.nce.preventive.action": "action préventive",
   "nonconform.nce.concurrent.control.action": "action de contrôle concurrent",
-  "nonconform.nce.turnaround.time": "Délai d'Exécution"
+  "nonconform.nce.turnaround.time": "Délai d'Exécution",
+  "nonconform.corrective.action": "Action corrective planifiée ou recommandée :",
+  "nonconform.corrective.control": "Action préventive corrective planifiée ou recommandée ou contrôles simultanés :",
+  "nonconform.corrective.comment": "Commentaires",
+  "nonconform.corrective.actionType": "Type d'action"
 }
