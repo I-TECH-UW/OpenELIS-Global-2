@@ -1093,8 +1093,11 @@ export function SearchResults(props) {
                 labelText=""
                 //type="number"
                 style={validationState[row.id]?.style}
-                onChange={(e) => {
+                onMouseOut={(e) => {
                   let value = e.target.value;
+                  if(value == null || value == ""){
+                     return
+                  }
                   let newValidationState = { ...validationState };
                   let validation = (newValidationState[row.id] =
                     validateNumericResults(value, row));
@@ -1114,7 +1117,7 @@ export function SearchResults(props) {
                   };
 
                   setValidationState(newValidationState);
-                  handleChange(e, row.id);
+
                   if (
                     validation.isInvalid &&
                     configurationProperties.ALERT_FOR_INVALID_RESULTS
@@ -1125,6 +1128,9 @@ export function SearchResults(props) {
                       }),
                     );
                   }
+                }}
+                onChange={(e) => {
+                  handleChange(e, row.id);
                 }}
               />
             );

@@ -318,6 +318,7 @@ public class DisplayListController extends BaseRestController{
 		configs.put(Property.AccessionFormat.toString(), ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat));
 		configs.put(Property.USE_ALPHANUM_ACCESSION_PREFIX.toString(), ConfigurationProperties.getInstance().getPropertyValue(Property.USE_ALPHANUM_ACCESSION_PREFIX));
 		configs.put(Property.ALERT_FOR_INVALID_RESULTS.toString(), ConfigurationProperties.getInstance().getPropertyValue(Property.ALERT_FOR_INVALID_RESULTS));
+		configs.put(Property.DEFAULT_DATE_LOCALE.toString() ,ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_DATE_LOCALE) );
 
 		return configs;
 	}
