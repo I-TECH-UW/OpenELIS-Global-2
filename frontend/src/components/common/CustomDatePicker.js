@@ -25,7 +25,9 @@ const CustomDatePicker = (props) => {
   }, [currentDate]);
 
   useEffect(() => {
-    setCurrentDate(props.value);
+    if(props.updateStateValue){
+      setCurrentDate(props.value);
+    }
   }, [props.value]);
 
   return (

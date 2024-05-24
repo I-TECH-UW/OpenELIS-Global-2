@@ -590,6 +590,7 @@ function CreatePatientForm(props) {
                       invalidText={errors.birthDateForDisplay}
                       name={field.name}
                       disallowFutureDate={true}
+                      updateStateValue={true}
                     />
                   )}
                 </Field>
