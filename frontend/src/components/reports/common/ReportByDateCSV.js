@@ -104,7 +104,7 @@ const ReportByDateCSV = (props) => {
     setLoading(true);
 
     const baseParams = `report=${props.report}&type=patient`;
-    const baseUrl = `${config.serverBaseUrl}/ApiReportPrint`;
+    const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
     const additionalParams =
       props.report === "CIStudyExport"
         ? `projectCode=${reportFormValues.studyType}&dateType=${reportFormValues.dateType}`

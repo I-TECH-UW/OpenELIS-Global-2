@@ -8,8 +8,6 @@ import {
   Button,
   Grid,
   Column,
-  DatePicker,
-  DatePickerInput,
   RadioButton,
   RadioButtonGroup,
   DataTable,
@@ -29,6 +27,7 @@ import { Formik, Field } from "formik";
 import SearchPatientFormValues from "../formModel/innitialValues/SearchPatientFormValues";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
+import CustomDatePicker from "../common/CustomDatePicker";
 
 function SearchPatientForm(props) {
   const { notificationVisible, setNotificationVisible, addNotification } =
@@ -121,8 +120,8 @@ function SearchPatientForm(props) {
     props.getSelectedPatient(patientDetails);
   };
 
-  const handleDatePickerChange = (...e) => {
-    setDob(e[1]);
+  const handleDatePickerChange = (date) => {
+    setDob(date);
   };
 
   const patientSelected = (e) => {
@@ -271,24 +270,18 @@ function SearchPatientForm(props) {
               <Column lg={8} md={4} sm={4}>
                 <Field name="dateOfBirth">
                   {({ field }) => (
-                    <DatePicker
-                      onChange={handleDatePickerChange}
+                    <CustomDatePicker
+                      id={"date-picker-default-id"}
+                      labelText={intl.formatMessage({
+                        id: "patient.dob",
+                        defaultMessage: "Date of Birth",
+                      })}
+                      autofillDate={true}
+                      value={values.birthDateForDisplay || ""}
+                      onChange={(date) => handleDatePickerChange(date)}
                       name={field.name}
-                      dateFormat="d/m/Y"
-                      datePickerType="single"
-                      light={true}
-                    >
-                      <DatePickerInput
-                        id="date-picker-default-id"
-                        placeholder="dd/mm/yyyy"
-                        labelText={intl.formatMessage({
-                          id: "patient.dob",
-                          defaultMessage: "Date of Birth",
-                        })}
-                        type="text"
-                        name={field.name}
-                      />
-                    </DatePicker>
+                      disallowFutureDate={true}
+                    />
                   )}
                 </Field>
               </Column>
