@@ -177,10 +177,6 @@ function CreatePatientForm(props) {
     setHealthDistricts(res);
   }
 
-  // useEffect(() => {
-  //    getDOBByYearMonthsDays();
-  // }, [dateOfBirthFormatter]);
-
   useEffect(() => {
     if (props.selectedPatient.patientPK) {
       if (props.selectedPatient.healthRegion != null) {
