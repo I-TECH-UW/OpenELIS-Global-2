@@ -1255,7 +1255,6 @@ export function SearchResults(props) {
             labelText={intl.formatMessage({
               id: "referral.label.sentdate",
             })}
-            value={values[field.name]}
             onChange={(date) => handleDatePickerChange(date, data.id)}
             name={"testResult[" + data.id + "].sentDate_"}
           />
