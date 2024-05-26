@@ -110,7 +110,7 @@ function DictionaryManagement() {
           id: item.id,
           isActive: item.isActive,
           dictEntry: item.dictEntry,
-          localAbbreviation:  localAbbreviation,
+          localAbbreviation: localAbbreviation,
           categoryName: item.dictionaryCategory
             ? item.dictionaryCategory.categoryName
             : "not available",
@@ -220,7 +220,10 @@ function DictionaryManagement() {
   const handleOnClickOnModification = async (event) => {
     event.preventDefault();
     if (selectedRowId) {
-      getFromOpenElisServer(`/rest/Dictionary?ID=${selectedRowId}`, handleDictionaryMenuItems);
+      getFromOpenElisServer(
+        `/rest/Dictionary?ID=${selectedRowId}`,
+        handleDictionaryMenuItems,
+      );
       setOpen(true);
       setEditMode(false);
     }
@@ -230,7 +233,8 @@ function DictionaryManagement() {
     e.preventDefault();
     if (dictionaryItem) {
       postData.id = dictionaryItem.id;
-      postData.selectedDictionaryCategoryId = dictionaryItem.category.description;
+      postData.selectedDictionaryCategoryId =
+        dictionaryItem.category.description;
       postData.dictEntry = dictionaryItem.dictEntry;
       postData.localAbbreviation = dictionaryItem.localAbbreviation;
       postData.isActive = dictionaryItem.isActive;
@@ -238,7 +242,7 @@ function DictionaryManagement() {
       const res = postToOpenElisServerFullResponse(
         `/rest/dictionary`,
         JSON.stringify(postData),
-        displayStatus
+        displayStatus,
       );
 
       if (res.status === "200") {
@@ -284,7 +288,11 @@ function DictionaryManagement() {
                     id: "admin.page.configuration.formEntryConfigMenu.button.add",
                   })}
                 </Button>{" "}
-                <Button disabled={modifyButton} onClick={handleOnClickOnModification} type="submit">
+                <Button
+                  disabled={modifyButton}
+                  onClick={handleOnClickOnModification}
+                  type="submit"
+                >
                   <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.modify" />
                 </Button>{" "}
                 <Modal
@@ -294,68 +302,70 @@ function DictionaryManagement() {
                   modalHeading={editMode ? "Add Dictionary" : "Edit Dictionary"}
                   primaryButtonText={editMode ? "Add" : "Update"}
                   secondaryButtonText="Cancel"
-                  onRequestSubmit={editMode ? handleSubmitModal : handleEditModalSubmission}
+                  onRequestSubmit={
+                    editMode ? handleSubmitModal : handleEditModalSubmission
+                  }
                 >
-                    <TextInput
-                      data-modal-primary-focus
-                      id="dictNumber"
-                      labelText="Dictionary Number"
-                      value={dictionaryItem?.id}
-                      disabled
-                      onChange={(e) => setDictionaryNumber(e.target.value)}
-                      style={{
-                        marginBottom: "1rem",
-                      }}
-                    />
-                    <p>testing testing</p>
-                    <p>{dictionaryItem.category}</p>
-                    <Select
-                      id="description"
-                      labelText="Category"
-                      onChange={(e) => {
-                        if (editMode) {
-                          setCategory(dictionaryItem.category);
-                        }
-                        setCategory(e.target.value);
-                      }}
-                    >
-                      <SelectItem text="" />
-                      {categoryDescription.map((description) => (
-                        <SelectItem
-                          key={description.id}
-                          value={description.id}
-                          text={description.description}
-                        />
-                      ))}
-                    </Select>
-                    <TextInput
-                      id="dictEntry"
-                      labelText="Dictionary Entry"
-                      value={dictionaryItem?.dictEntry}
-                      onChange={(e) => setDictionaryEntry(e.target.value)}
-                      style={{
-                        marginBottom: "1rem",
-                      }}
-                    />
-                    <TextInput
-                      data-modal-primary-focus
-                      id="isActive"
-                      labelText="Is Active"
-                      value={dictionaryItem?.isActive}
-                      onChange={(e) => setIsActive(e.target.value)}
-                      style={{
-                        marginBottom: "1rem",
-                      }}
-                    />
-                    <TextInput
-                      id="localAbbrev"
-                      labelText="Local Abbreviation"
-                      value={dictionaryItem?.localAbbreviation}
-                      onChange={(e) => setLocalAbbreviation(e.target.value)}
-                      style={{
-                        marginBottom: "1rem",
-                      }}
-                    />
+                  <TextInput
+                    data-modal-primary-focus
+                    id="dictNumber"
+                    labelText="Dictionary Number"
+                    value={dictionaryItem?.id}
+                    disabled
+                    onChange={(e) => setDictionaryNumber(e.target.value)}
+                    style={{
+                      marginBottom: "1rem",
+                    }}
+                  />
+                  <p>testing testing</p>
+                  <p>{dictionaryItem.category}</p>
+                  <Select
+                    id="description"
+                    labelText="Category"
+                    onChange={(e) => {
+                      if (editMode) {
+                        setCategory(dictionaryItem.category);
+                      }
+                      setCategory(e.target.value);
+                    }}
+                  >
+                    <SelectItem text="" />
+                    {categoryDescription.map((description) => (
+                      <SelectItem
+                        key={description.id}
+                        value={description.id}
+                        text={description.description}
+                      />
+                    ))}
+                  </Select>
+                  <TextInput
+                    id="dictEntry"
+                    labelText="Dictionary Entry"
+                    value={dictionaryItem?.dictEntry}
+                    onChange={(e) => setDictionaryEntry(e.target.value)}
+                    style={{
+                      marginBottom: "1rem",
+                    }}
+                  />
+                  <TextInput
+                    data-modal-primary-focus
+                    id="isActive"
+                    labelText="Is Active"
+                    value={dictionaryItem?.isActive}
+                    onChange={(e) => setIsActive(e.target.value)}
+                    style={{
+                      marginBottom: "1rem",
+                    }}
+                  />
+                  <TextInput
+                    id="localAbbrev"
+                    labelText="Local Abbreviation"
+                    value={dictionaryItem?.localAbbreviation}
+                    onChange={(e) => setLocalAbbreviation(e.target.value)}
+                    style={{
+                      marginBottom: "1rem",
+                    }}
+                  />
                 </Modal>
                 <Button kind="tertiary" disabled={true} type="submit">
                   <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
@@ -436,9 +446,7 @@ function DictionaryManagement() {
                             setSelectedRowId(row.id);
                           }}
                         >
-                          {row.cells.map((cell) =>
-                            renderCell(cell, row),
-                          )}
+                          {row.cells.map((cell) => renderCell(cell, row))}
                         </TableRow>
                       ))}
                     </TableBody>
