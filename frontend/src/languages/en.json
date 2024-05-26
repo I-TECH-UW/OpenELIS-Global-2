@@ -4,6 +4,7 @@
   "label.button.finish": "Finish",
   "label.button.changepassword": "Change Password",
   "label.button.save": "Save",
+  "label.button.exit": "Exit",
   "label.button.search": "Search",
   "label.button.range": "Range",
   "label.button.clear": "Clear",
@@ -1068,5 +1069,11 @@
   "notify.message": "Message",
   "notify.error": "User and Message are required",
   "notification.slideover.empty.header": "You're all caught up",
-  "notification.sliderover.empty.message": "You don't have any notifications at this time."
+  "notification.sliderover.empty.message": "You don't have any notifications at this time.",
+  "notification.slideover.button.reload": "Reload",
+  "notification.slideover.button.subscribe": "Subscribe on this Device",
+  "notification.slideover.button.markallasread": "Mark all as Read",
+  "notification.slideover.button.hideread": "Hide read",
+  "notification.slideover.button.showread": "Show read",
+  "notification.slideover.button.markasread": "Mark as Read"
 }
