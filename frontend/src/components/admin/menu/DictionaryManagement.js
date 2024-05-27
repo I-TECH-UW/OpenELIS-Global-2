@@ -58,7 +58,6 @@ function DictionaryManagement() {
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [modifyButton, setModifyButton] = useState(true);
   const [editMode, setEditMode] = useState(true);
-
   const [dictionaryItem, setDictionaryItem] = useState({
     id: null,
     dictEntry: "",
@@ -66,6 +65,17 @@ function DictionaryManagement() {
     isActive: "",
     localAbbreviation: "",
   });
+
+  const yesOrNo = [
+    {
+      id: "Y",
+      value: "Y",
+    },
+    {
+      id: "N",
+      value: "N",
+    },
+  ];
 
   const handlePageChange = (pageInfo) => {
     if (page != pageInfo.page) {
@@ -109,7 +119,7 @@ function DictionaryManagement() {
           id: item.id,
           isActive: item.isActive,
           dictEntry: item.dictEntry,
-          localAbbreviation: localAbbreviation,
+          localAbbreviation: item.localAbbreviation,
           categoryName: item.dictionaryCategory
             ? item.dictionaryCategory.categoryName
             : "not available",
@@ -133,15 +143,15 @@ function DictionaryManagement() {
 
   const postData = {
     id: dictionaryNumber,
-    selectedDictionaryCategoryId: category,
+    selectedDictionaryCategoryId: category.id,
     dictEntry: dictionaryEntry,
     localAbbreviation: localAbbreviation,
-    isActive: isActive,
+    isActive: isActive.id,
   };
 
   async function displayStatus(res) {
     setNotificationVisible(true);
-    if (res.status == "201") {
+    if (res.status == "201" || res.status == "200") {
       addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
@@ -168,11 +178,33 @@ function DictionaryManagement() {
     setOpen(false);
   };
 
+  const handleEditModalSubmission = async (e) => {
+    e.preventDefault();
+    if (dictionaryItem) {
+      postData.id = dictionaryItem.id;
+      postData.selectedDictionaryCategoryId =
+        dictionaryItem.category.description;
+      postData.dictEntry = dictionaryItem.dictEntry;
+      postData.localAbbreviation = dictionaryItem.localAbbreviation;
+      postData.isActive = dictionaryItem.isActive;
+
+      console.log(JSON.stringify(postData));
+
+      postToOpenElisServerFullResponse(
+        `/rest/Dictionary`,
+        JSON.stringify(postData),
+        displayStatus,
+      );
+
+      reloadConfiguration();
+      setOpen(false);
+    }
+  };
+
   const renderCell = (cell, row) => {
     if (cell.info.header === "select") {
       return (
         <TableSelectRow
-          radio
           key={cell.id}
           id={cell.id}
           checked={selectedRowId === row.id}
@@ -213,6 +245,13 @@ function DictionaryManagement() {
         isActive: res.isActive,
         localAbbreviation: res.localAbbreviation,
       });
+
+      // Prefill modal inputs
+      setDictionaryNumber(res.id);
+      setCategory(res.dictionaryCategory);
+      setDictionaryEntry(res.dictEntry);
+      setIsActive(yesOrNo.find((item) => item.id === res.isActive));
+      setLocalAbbreviation(res.localAbbreviation);
     }
   };
 
@@ -228,47 +267,13 @@ function DictionaryManagement() {
     }
   };
 
-  const handleEditModalSubmission = async (e) => {
-    e.preventDefault();
-    if (dictionaryItem) {
-      postData.id = dictionaryItem.id;
-      postData.selectedDictionaryCategoryId =
-        dictionaryItem.category.description;
-      postData.dictEntry = dictionaryItem.dictEntry;
-      postData.localAbbreviation = dictionaryItem.localAbbreviation;
-      postData.isActive = dictionaryItem.isActive;
-
-      const res = postToOpenElisServerFullResponse(
-        `/rest/dictionary`,
-        JSON.stringify(postData),
-        displayStatus,
-      );
-
-      if (res.status === "200") {
-        addNotification({
-          kind: NotificationKinds.success,
-          title: intl.formatMessage({ id: "notification.title" }),
-          message: intl.formatMessage({ id: "success.add.edited.msg" }),
-        });
-      } else {
-        addNotification({
-          kind: NotificationKinds.error,
-          title: intl.formatMessage({ id: "notification.title" }),
-          message: intl.formatMessage({ id: "error.add.edited.msg" }),
-        });
-      }
-      reloadConfiguration();
-      setOpen(false);
-    }
-  };
-
   return (
     <div className="adminPageContent">
       {notificationVisible === true ? <AlertDialog /> : ""}
       <PageBreadCrumb
         breadcrumbs={[
           { label: "home.label", link: "/" },
-          { label: "dictionary.label.modify", link: "/DictionaryMenu" },
+          { label: "dictionary.label.modify", link: "/DictionaryManagement" },
         ]}
       />
       <Grid fullWidth={true}>
@@ -289,8 +294,8 @@ function DictionaryManagement() {
                 </Button>{" "}
                 <Button
                   disabled={modifyButton}
-                  onClick={handleOnClickOnModification}
                   type="submit"
+                  onClick={handleOnClickOnModification}
                 >
                   <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.modify" />
                 </Button>{" "}
@@ -309,20 +314,27 @@ function DictionaryManagement() {
                     data-modal-primary-focus
                     id="dictNumber"
                     labelText="Dictionary Number"
-                    value={dictionaryItem?.id}
                     disabled
                     onChange={(e) => setDictionaryNumber(e.target.value)}
                     style={{
                       marginBottom: "1rem",
                     }}
                   />
-                  <p>testing testing</p>
-                  <p>{dictionaryItem.category}</p>
                   <Dropdown
                     id="description"
+                    type="default"
                     items={categoryDescription}
                     titleText="Dictionary Category"
                     itemToString={(item) => (item ? item.description : "")}
+                    onChange={({ selectedItem }) => {
+                      setCategory(selectedItem);
+                      console.log("Selected category:", selectedItem.id);
+                    }}
+                    selectedItem={category}
+                    size="md"
+                    style={{
+                      marginBottom: "1rem",
+                    }}
                   />
                   <TextInput
                     id="dictEntry"
@@ -333,12 +345,18 @@ function DictionaryManagement() {
                       marginBottom: "1rem",
                     }}
                   />
-                  <TextInput
-                    data-modal-primary-focus
+                  <Dropdown
                     id="isActive"
-                    labelText="Is Active"
-                    value={dictionaryItem?.isActive}
-                    onChange={(e) => setIsActive(e.target.value)}
+                    type="default"
+                    items={yesOrNo}
+                    titleText="Is Active"
+                    itemToString={(item) => (item ? item.id : "")}
+                    onChange={({ selectedItem }) => {
+                      setIsActive(selectedItem);
+                      console.log("Selected item:", selectedItem.id);
+                    }}
+                    selectedItem={isActive}
+                    size="md"
                     style={{
                       marginBottom: "1rem",
                     }}
@@ -407,7 +425,6 @@ function DictionaryManagement() {
                 getHeaderProps,
                 getTableProps,
                 getRowProps,
-                onInputChange,
               }) => (
                 <TableContainer title="" description="">
                   <Table {...getTableProps()}>
