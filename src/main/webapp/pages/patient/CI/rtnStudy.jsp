@@ -429,7 +429,7 @@ rtn = new RtnProjectChecker();
 			<spring:message code="patient.project.underInvestigationComment" />
 		</td>
 		<td colspan="3">
-			<form:input path="ProjectData.underInvestigationNote" maxlength="1000"
+			<form:input path="projectData.underInvestigationNote" maxlength="1000"
 				size="80" onchange="makeDirty();"
 				id="rtn.underInvestigationComment" />
 				<div id="rtn.underInvestigationCommentMessage" class="blank"></div>

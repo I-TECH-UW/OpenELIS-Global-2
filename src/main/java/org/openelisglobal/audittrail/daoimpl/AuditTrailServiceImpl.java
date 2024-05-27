@@ -43,6 +43,7 @@ public class AuditTrailServiceImpl implements AuditTrailService {
 
     @Autowired
     private ReferenceTablesService referenceTablesService;
+
     @Autowired
     private HistoryService historyService;
 

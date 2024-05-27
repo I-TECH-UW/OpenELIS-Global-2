@@ -25,6 +25,8 @@ public class SampleTbEntryForm extends BaseForm {
 
 	private Boolean rememberSiteAndRequester;
 	
+	private String labnoForSearch;
+	
 	private String sysUserId;
 
     @ValidDate(relative = DateRelation.TODAY)
@@ -602,7 +604,13 @@ public class SampleTbEntryForm extends BaseForm {
 	public void setSelectedMethodToRemove(String selectedMethodToRemove) {
 		this.selectedMethodToRemove = selectedMethodToRemove;
 	}
-	
-	
-	    
+
+	public String getLabnoForSearch() {
+		return labnoForSearch;
+	}
+
+	public void setLabnoForSearch(String labnoForSearch) {
+		this.labnoForSearch = labnoForSearch;
+	}
+	  
 }

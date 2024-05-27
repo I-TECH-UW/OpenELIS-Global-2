@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import { Form, Grid, Column, Section, Button, Loading } from "@carbon/react";
-import CustomLabNumberInput from "../../../common/CustomLabNumberInput";
-import { AlertDialog } from "../../../common/CustomNotification";
-import config from "../../../../config.json";
+import CustomLabNumberInput from "../../common/CustomLabNumberInput";
+import { AlertDialog } from "../../common/CustomNotification";
+import config from "../../../config.json";
 
 function ReportByID(props) {
   const intl = useIntl();
@@ -42,18 +42,22 @@ function ReportByID(props) {
     <>
       <br />
       <Form>
-        <Section>
-          <Section>
-            <h3>
-              <FormattedMessage id={props.id} />
-            </h3>
-          </Section>
-        </Section>
+        <Grid>
+          <Column lg={16} md={8} sm={4}>
+            <Section>
+              <Section>
+                <h3>
+                  <FormattedMessage id={props.id} />
+                </h3>
+              </Section>
+            </Section>
+          </Column>
+        </Grid>
         <br />
         {notificationVisible && <AlertDialog />}
         {loading && <Loading />}
         <Grid fullWidth={true}>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <Section>
               <FormattedMessage id="label.report.byNationalId" />
             </Section>
@@ -61,14 +65,13 @@ function ReportByID(props) {
         </Grid>
         <br />
         <Grid fullWidth={true}>
-          <Column lg={6}>
+          <Column lg={6} md={4} sm={4}>
             <CustomLabNumberInput
               id="nationalID"
               labelText={intl.formatMessage({
                 id: "nationalID.title",
                 defaultMessage: "National ID",
               })}
-              className="inputText"
               value={nationalId}
               onChange={handleInputChange} // Use the new handler here
               invalid={errors.nationalId}

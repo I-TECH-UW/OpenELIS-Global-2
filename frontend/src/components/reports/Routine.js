@@ -56,21 +56,15 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=indicator&report=activityReportByTest",
+          link: "/RoutineReport?type=indicator&report=activityReportByTest",
           label: <FormattedMessage id="sideNav.label.bytesttype" />,
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=indicator&report=activityReportByPanel",
+          link: "/RoutineReport?type=indicator&report=activityReportByPanel",
           label: <FormattedMessage id="sideNav.label.bypaneltype" />,
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=indicator&report=activityReportByTestSection",
+          link: "/RoutineReport?type=indicator&report=activityReportByTestSection",
           label: <FormattedMessage id="sideNav.label.byunit" />,
         },
       ],
@@ -147,9 +141,9 @@ export const RoutineReportsMenu = {
 const Routine = () => {
   return (
     <>
-    <div style={{marginLeft: '1%'}}>
-      <PageBreadCrumb breadcrumbs={breadcrumbs} />
-     </div>  
+      <div style={{ marginLeft: "1%" }}>
+        <PageBreadCrumb breadcrumbs={breadcrumbs} />
+      </div>
       <GlobalSideBar sideNav={RoutineReportsMenu} />
     </>
   );

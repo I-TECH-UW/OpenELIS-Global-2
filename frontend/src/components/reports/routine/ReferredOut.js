@@ -15,8 +15,8 @@ import "../../Style.css";
 import { getFromOpenElisServer } from "../../utils/Utils";
 import { AlertDialog } from "../../common/CustomNotification";
 import CustomDatePicker from "../../common/CustomDatePicker";
-import PageBreadCrumb from "../../common/PageBreadCrumb";
 import config from "../../../config.json";
+import { encodeDate } from "../../utils/Utils";
 
 const ReferredOut = () => {
   const intl = useIntl();
@@ -57,14 +57,6 @@ const ReferredOut = () => {
       link: "/RoutineReport?type=patient&report=referredOut",
     },
   ];
-
-  function encodeDate(dateString) {
-    if (typeof dateString === "string" && dateString.trim() !== "") {
-      return dateString.split("/").map(encodeURIComponent).join("%2F");
-    } else {
-      return "";
-    }
-  }
 
   const handleDatePickerChangeDate = (datePicker, date) => {
     let updatedDate = encodeDate(date);
@@ -123,71 +115,70 @@ const ReferredOut = () => {
               <Column lg={16} md={8} sm={4}>
                 <Section>
                   <br />
-                  <br />
                   <h5>
                     <FormattedMessage id="select.datarange.label" />
                   </h5>
                 </Section>
-                <div className="inlineDiv">
-                  <CustomDatePicker
-                    id={"startDate"}
-                    labelText={intl.formatMessage({
-                      id: "select.start.date.referredTests",
-                      defaultMessage: "Start Date",
-                    })}
-                    autofillDate={true}
-                    value={reportFormValues.startDate}
-                    className="inputDate"
-                    onChange={(date) =>
-                      handleDatePickerChangeDate("startDate", date)
-                    }
-                  />
-                  <CustomDatePicker
-                    id={"endDate"}
-                    labelText={intl.formatMessage({
-                      id: "select.end.date.referredTests",
-                      defaultMessage: "End Date",
-                    })}
-                    className="inputDate"
-                    autofillDate={true}
-                    value={reportFormValues.endDate}
-                    onChange={(date) =>
-                      handleDatePickerChangeDate("endDate", date)
-                    }
-                  />
-                </div>
+              </Column>
+              <Column lg={4} md={8} sm={4}>
+                <CustomDatePicker
+                  id={"startDate"}
+                  labelText={intl.formatMessage({
+                    id: "select.start.date.referredTests",
+                    defaultMessage: "Start Date",
+                  })}
+                  autofillDate={true}
+                  value={reportFormValues.startDate}
+                  onChange={(date) =>
+                    handleDatePickerChangeDate("startDate", date)
+                  }
+                />
+              </Column>
+              <Column lg={4} md={8} sm={4}>
+                <CustomDatePicker
+                  id={"endDate"}
+                  labelText={intl.formatMessage({
+                    id: "select.end.date.referredTests",
+                    defaultMessage: "End Date",
+                  })}
+                  className="inputDate"
+                  autofillDate={true}
+                  value={reportFormValues.endDate}
+                  onChange={(date) =>
+                    handleDatePickerChangeDate("endDate", date)
+                  }
+                />
               </Column>
             </Grid>
             <Grid fullWidth={true}>
-              <Column lg={10} md={8} sm={4}>
+              <Column lg={16} md={8} sm={4}>
                 <Section>
-                  <br />
                   <br />
                   <h5>
                     <FormattedMessage id="select.referral.centre.is.required" />
                   </h5>
                 </Section>
+              </Column>
+              <Column lg={10} md={8} sm={4}>
                 {locationCodes.length > 0 && (
-                  <div className="inputText">
-                    <Select
-                      id="locationcode"
-                      value={selectedLocationCode}
-                      onChange={handleSelectionChange}
-                      labelText={intl.formatMessage({
-                        id: "select.referral.centre",
-                        defaultMessage: "Laboratory",
-                      })}
-                    >
-                      <SelectItem value="" text="" />
-                      {locationCodes.map((locationcode) => (
-                        <SelectItem
-                          key={locationcode.id}
-                          value={locationcode.id}
-                          text={locationcode.value}
-                        />
-                      ))}
-                    </Select>
-                  </div>
+                  <Select
+                    id="locationcode"
+                    value={selectedLocationCode}
+                    onChange={handleSelectionChange}
+                    labelText={intl.formatMessage({
+                      id: "select.referral.centre",
+                      defaultMessage: "Laboratory",
+                    })}
+                  >
+                    <SelectItem value="" text="" />
+                    {locationCodes.map((locationcode) => (
+                      <SelectItem
+                        key={locationcode.id}
+                        value={locationcode.id}
+                        text={locationcode.value}
+                      />
+                    ))}
+                  </Select>
                 )}
               </Column>
             </Grid>

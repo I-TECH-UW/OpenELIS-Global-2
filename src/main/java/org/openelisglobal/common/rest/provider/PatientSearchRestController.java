@@ -51,15 +51,16 @@ public class PatientSearchRestController {
     @GetMapping(value = "patient-search-results", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public PatientSearchResultsForm getPatientResults(HttpServletRequest request,
-                                                      @RequestParam(required = false) String lastName,
-                                                      @RequestParam(required = false) String firstName,
-                                                      @RequestParam(required = false) String STNumber,
-                                                      @RequestParam(required = false) String subjectNumber,
-                                                      @RequestParam(required = false) String nationalID,
-                                                      @RequestParam(required = false) String guid,
-                                                      @RequestParam(required = false) String labNumber,
-                                                      @RequestParam(required = false) String dateOfBirth,
-                                                      @RequestParam(required = false) String gender) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String STNumber,
+            @RequestParam(required = false) String subjectNumber,
+            @RequestParam(required = false) String nationalID,
+            @RequestParam(required = false) String guid,
+            @RequestParam(required = false) String labNumber,
+            @RequestParam(required = false) String dateOfBirth,
+            @RequestParam(required = false) String gender)
+            throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         PatientSearchResultsPaging paging = new PatientSearchResultsPaging();
         PatientSearchResultsForm form = new PatientSearchResultsForm();
 
@@ -79,7 +80,8 @@ public class PatientSearchRestController {
             } else {
                 if (GenericValidator.isBlankOrNull(lastName) && GenericValidator.isBlankOrNull(firstName)
                         && GenericValidator.isBlankOrNull(STNumber) && GenericValidator.isBlankOrNull(subjectNumber)
-                        && GenericValidator.isBlankOrNull(nationalID) && GenericValidator.isBlankOrNull(guid) && GenericValidator.isBlankOrNull(dateOfBirth)
+                        && GenericValidator.isBlankOrNull(nationalID) && GenericValidator.isBlankOrNull(guid)
+                        && GenericValidator.isBlankOrNull(dateOfBirth)
                         && GenericValidator.isBlankOrNull(gender)) {
                     form.setPatientSearchResults(results);
                     return form;
@@ -121,7 +123,7 @@ public class PatientSearchRestController {
                 patientService.getGUID(patient),
                 referringSitePatientId != null ? referringSitePatientId
                         : observationHistoryService.getMostRecentValueForPatient(
-                        ObservationType.REFERRERS_PATIENT_ID, patientService.getPatientId(patient)));
+                                ObservationType.REFERRERS_PATIENT_ID, patientService.getPatientId(patient)));
     }
 
     private List<PatientSearchResults> getObservationsByReferringPatientId(String referringId) {

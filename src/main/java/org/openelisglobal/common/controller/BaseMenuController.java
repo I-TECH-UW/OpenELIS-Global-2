@@ -68,7 +68,6 @@ public abstract class BaseMenuController<T> extends BaseController {
     }
 
     protected List<T> doNextPage(AdminOptionMenuForm<T> form, HttpServletRequest request) {
-        System.out.println(request.getContextPath());
         int startingRecNo = getCurrentStartingRecNo(request);
 
         LogEvent.logTrace("BaseMenuAction", "performAction()", "current start " + startingRecNo);
@@ -124,9 +123,7 @@ public abstract class BaseMenuController<T> extends BaseController {
 
     protected List<T> doNone(AdminOptionMenuForm<T> form, HttpServletRequest request) {
 
-        int startingRecNo = getCurrentStartingRecNo(request);
-
-        int nextStartingRecNo = startingRecNo;
+        int nextStartingRecNo = getCurrentStartingRecNo(request);
         String stringNextStartingRecNo = String.valueOf(nextStartingRecNo);
         request.setAttribute("startingRecNo", stringNextStartingRecNo);
 
@@ -140,8 +137,7 @@ public abstract class BaseMenuController<T> extends BaseController {
 
         if (getPageSize() > 0 && samePageList.size() > getPageSize()) {
             request.setAttribute(NEXT_DISABLED, "false");
-            // chop off last record (this was only to indicate that there are
-            // more records
+            // chop off last record (this was only to indicate that there are more records
             samePageList = samePageList.subList(0, getPageSize());
         } else {
             request.setAttribute(NEXT_DISABLED, "true");

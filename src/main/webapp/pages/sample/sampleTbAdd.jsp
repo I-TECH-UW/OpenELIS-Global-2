@@ -299,6 +299,29 @@ function /*void*/setSaveButton() {
 	<br />
 	<form:hidden path="modified" id="orderModified"/>
     <form:hidden path="sampleId" id="sampleId"/>
+    
+    <!--  -->
+    <div id=orderSearchSection>
+		<input type="button" name="showHide" value='-'
+			onclick="showHideSection(this, 'orderSearch');" id="orderSearchId">
+		<%=MessageUtil.getContextualMessage("sample.entry.search.label") %>
+		<table id="orderSearchshowHide" style="display:none">
+			<tr>
+				<td style="width: 35%"><%=MessageUtil.getContextualMessage("quick.entry.accession.number")%>:</td>
+				<td style="width: 65%"><form:input path="labnoForSearch"
+						maxlength='<%=Integer.toString(AccessionNumberUtil.getMaxAccessionLength())%>'
+						onchange="" cssClass="text" id="searchByLabNo" />
+					<input type="button" name="searchButton" class="patientSearch" value="<%= MessageUtil.getMessage("label.patient.search")%>"
+           			id="searchButton" onclick="searchOrder()">
+				</td>
+			</tr>
+		</table>
+	</div>
+    
+    <hr style="width: 100%; height: 1px" />
+	<br />
+    
+   
 	<div id=orderEntrySection>
 		<input type="button" name="showHide" value='-'
 			onclick="showHideSection(this, 'orderDisplay');" id="orderSectionId">
@@ -618,6 +641,7 @@ function /*void*/setSaveButton() {
 		
 		showPanelAndTests($('tbDiagnosticMethods'));
 		
+		hideSection(document.getElementById('orderSearchId') ,'orderSearch');
 		
 		setSaveButton();
 	}

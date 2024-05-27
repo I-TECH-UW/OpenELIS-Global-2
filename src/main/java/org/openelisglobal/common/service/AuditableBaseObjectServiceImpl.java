@@ -1,8 +1,6 @@
 package org.openelisglobal.common.service;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +8,6 @@ import org.apache.commons.validator.GenericValidator;
 import org.hibernate.ObjectNotFoundException;
 import org.openelisglobal.audittrail.dao.AuditTrailService;
 import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +16,7 @@ public abstract class AuditableBaseObjectServiceImpl<T extends BaseObject<PK>, P
 
 
     @Autowired
-    protected AuditTrailService auditTrailDAO;
+    protected AuditTrailService auditTrailService;
 
     protected boolean auditTrailLog = false;
 
@@ -32,7 +29,7 @@ public abstract class AuditableBaseObjectServiceImpl<T extends BaseObject<PK>, P
     public PK insert(T baseObject) {
         PK id = super.insert(baseObject);
         if (auditTrailLog) {
-            auditTrailDAO.saveNewHistory(baseObject, baseObject.getSysUserId(), getBaseObjectDAO().getTableName());
+            auditTrailService.saveNewHistory(baseObject, baseObject.getSysUserId(), getBaseObjectDAO().getTableName());
         }
         return id;
     }
@@ -81,7 +78,7 @@ public abstract class AuditableBaseObjectServiceImpl<T extends BaseObject<PK>, P
             T oldObject = getBaseObjectDAO().get(baseObject.getId())
                     .orElseThrow(() -> new ObjectNotFoundException(baseObject.getId(), classType.getName()));
             getBaseObjectDAO().evict(oldObject);
-            auditTrailDAO.saveHistory(baseObject, oldObject, baseObject.getSysUserId(), auditTrailType,
+            auditTrailService.saveHistory(baseObject, oldObject, baseObject.getSysUserId(), auditTrailType,
                     getBaseObjectDAO().getTableName());
         }
         return super.update(baseObject);
@@ -107,7 +104,7 @@ public abstract class AuditableBaseObjectServiceImpl<T extends BaseObject<PK>, P
     @Transactional
     public void delete(T baseObject) {
         if (auditTrailLog) {
-            auditTrailDAO.saveHistory(null, baseObject, baseObject.getSysUserId(), IActionConstants.AUDIT_TRAIL_DELETE,
+            auditTrailService.saveHistory(null, baseObject, baseObject.getSysUserId(), IActionConstants.AUDIT_TRAIL_DELETE,
                     getBaseObjectDAO().getTableName());
         }
         // this is so we can make sure entity is managed before it is deleted as calling
