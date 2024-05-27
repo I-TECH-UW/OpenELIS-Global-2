@@ -175,6 +175,16 @@
 			<artifactId>hibernate-c3p0</artifactId>
 			<version>${hibernate.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate.search</groupId>
+			<artifactId>hibernate-search-mapper-orm</artifactId>
+			<version>6.1.8.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.search</groupId>
+			<artifactId>hibernate-search-backend-lucene</artifactId>
+			<version>6.1.8.Final</version>
+		</dependency>
 		<!-- JAVAX DEPENDENCIES -->
 		<dependency>
 			<groupId>javax.annotation</groupId>
