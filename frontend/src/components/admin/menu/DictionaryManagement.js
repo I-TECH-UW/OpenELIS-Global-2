@@ -4,14 +4,13 @@ import {
   Button,
   Column,
   DataTable,
+  Dropdown,
   Form,
   Grid,
   Heading,
   Modal,
   Pagination,
   Section,
-  Select,
-  SelectItem,
   Table,
   TableBody,
   TableCell,
@@ -319,25 +318,12 @@ function DictionaryManagement() {
                   />
                   <p>testing testing</p>
                   <p>{dictionaryItem.category}</p>
-                  <Select
+                  <Dropdown
                     id="description"
-                    labelText="Category"
-                    onChange={(e) => {
-                      if (editMode) {
-                        setCategory(dictionaryItem.category);
-                      }
-                      setCategory(e.target.value);
-                    }}
-                  >
-                    <SelectItem text="" />
-                    {categoryDescription.map((description) => (
-                      <SelectItem
-                        key={description.id}
-                        value={description.id}
-                        text={description.description}
-                      />
-                    ))}
-                  </Select>
+                    items={categoryDescription}
+                    titleText="Dictionary Category"
+                    itemToString={(item) => (item ? item.description : "")}
+                  />
                   <TextInput
                     id="dictEntry"
                     labelText="Dictionary Entry"
