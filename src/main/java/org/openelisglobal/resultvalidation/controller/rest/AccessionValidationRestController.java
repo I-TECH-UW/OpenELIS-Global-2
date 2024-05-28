@@ -572,9 +572,13 @@ public class AccessionValidationRestController extends BaseResultValidationContr
         ResultSaveService resultSaveService = new ResultSaveService(analysis, getSysUserId(request));
         List<Result> results = resultSaveService.createResultsFromTestResultItem(bean, deletableList);
         if (analysisService.patientReportHasBeenDone(analysis) && resultSaveService.isUpdatedResult()) {
-            analysis.setCorrectedSincePatientReport(true);
-            noteUpdateList.add(noteService.createSavableNote(analysis, NoteType.EXTERNAL,
-                    MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
+            Note note = noteService.createSavableNote(analysis, NoteType.EXTERNAL,
+                    MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request));
+            if (!noteService.duplicateNoteExists(note)) {
+                analysis.setCorrectedSincePatientReport(true);
+                noteUpdateList.add(noteService.createSavableNote(analysis, NoteType.EXTERNAL,
+                        MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
+            }
         }
         return results;
     }
