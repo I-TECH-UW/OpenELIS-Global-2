@@ -37,6 +37,8 @@ abstract public class PatientSearchWorker {
     abstract public String createSearchResultXML(String lastName, String firstName, String STNumber,
             String subjectNumber, String nationalID, String patientID, String guid, String dateOfBirth, String gender,
             StringBuilder xml);
+    abstract public List<PatientSearchResults> getPatientSearchResults(String lastName, String firstName, String STNumber,
+            String subjectNumber, String nationalID, String patientID, String guid, String dateOfBirth, String gender);        
 
     public void appendSearchResultRow(PatientSearchResults searchResults, StringBuilder xml) {
 
