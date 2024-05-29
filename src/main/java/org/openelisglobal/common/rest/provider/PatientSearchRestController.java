@@ -3,11 +3,16 @@ package org.openelisglobal.common.rest.provider;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.provider.query.PatientSearchResultsForm;
+import org.openelisglobal.common.provider.query.workerObjects.PatientSearchLocalAndExternalWorker;
+import org.openelisglobal.common.provider.query.workerObjects.PatientSearchLocalWorker;
+import org.openelisglobal.common.provider.query.workerObjects.PatientSearchWorker;
+import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.common.rest.util.PatientSearchResultsPaging;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
-import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.service.PersonService;
@@ -33,7 +38,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping(value = "/rest/")
-public class PatientSearchRestController {
+public class PatientSearchRestController extends BaseRestController{
 
     @Autowired
     SampleService sampleService;
@@ -59,7 +64,8 @@ public class PatientSearchRestController {
             @RequestParam(required = false) String guid,
             @RequestParam(required = false) String labNumber,
             @RequestParam(required = false) String dateOfBirth,
-            @RequestParam(required = false) String gender)
+            @RequestParam(required = false) String gender ,
+            @RequestParam(required = false) String suppressExternalSearch)
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         PatientSearchResultsPaging paging = new PatientSearchResultsPaging();
         PatientSearchResultsForm form = new PatientSearchResultsForm();
@@ -78,21 +84,15 @@ public class PatientSearchRestController {
                     results.add(searchResult);
                 }
             } else {
-                if (GenericValidator.isBlankOrNull(lastName) && GenericValidator.isBlankOrNull(firstName)
-                        && GenericValidator.isBlankOrNull(STNumber) && GenericValidator.isBlankOrNull(subjectNumber)
-                        && GenericValidator.isBlankOrNull(nationalID) && GenericValidator.isBlankOrNull(guid)
-                        && GenericValidator.isBlankOrNull(dateOfBirth)
-                        && GenericValidator.isBlankOrNull(gender)) {
+                PatientSearchWorker worker = getAppropriateWorker(request, "true".equals(suppressExternalSearch));
+                if (worker != null) {
+                    results = worker.getPatientSearchResults(lastName, firstName, STNumber, subjectNumber, nationalID,
+                            null, guid, dateOfBirth, gender);
+                } else {
                     form.setPatientSearchResults(results);
                     return form;
                 }
-                results = searchResultsService.getSearchResults(lastName, firstName, STNumber,
-                        subjectNumber, nationalID, nationalID, null, guid, dateOfBirth, gender);
-                if (!GenericValidator.isBlankOrNull(nationalID)) {
-                    List<PatientSearchResults> observationResults = getObservationsByReferringPatientId(nationalID);
-                    results.addAll(observationResults);
-                }
-                sortPatients(results);
+                
             }
             paging.setDatabaseResults(request, form, results);
         } else {
@@ -126,56 +126,14 @@ public class PatientSearchRestController {
                                 ObservationType.REFERRERS_PATIENT_ID, patientService.getPatientId(patient)));
     }
 
-    private List<PatientSearchResults> getObservationsByReferringPatientId(String referringId) {
-        List<PatientSearchResults> resultList = new ArrayList<>();
-        List<ObservationHistory> observationList = observationHistoryService
-                .getObservationsByTypeAndValue(ObservationType.REFERRERS_PATIENT_ID, referringId);
+    private PatientSearchWorker getAppropriateWorker(HttpServletRequest request, boolean suppressExternalSearch) {
 
-        if (observationList != null) {
-            for (ObservationHistory observation : observationList) {
-                Patient patient = patientService.getData(observation.getPatientId());
-                if (patient != null) {
-                    PatientSearchResults searchResult = getSearchResultsForPatient(patient, referringId);
-                    searchResult.setDataSourceName(MessageUtil.getMessage("patient.local.source"));
-                    resultList.add(searchResult);
-                }
-
-            }
+        if (ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.UseExternalPatientInfo,
+                "false") || suppressExternalSearch) {
+            return new PatientSearchLocalWorker();
+        } else {
+            return new PatientSearchLocalAndExternalWorker(getSysUserId(request));
         }
-
-        return resultList;
-    }
-
-    private void sortPatients(List<PatientSearchResults> foundList) {
-        Collections.sort(foundList, new FoundListComparator());
-    }
-
-    class FoundListComparator implements Comparator<PatientSearchResults> {
-
-        @Override
-        public int compare(PatientSearchResults o1, PatientSearchResults o2) {
-            if (o1.getLastName() == null) {
-                return o2.getLastName() == null ? 0 : 1;
-            } else if (o2.getLastName() == null) {
-                return -1;
-            }
-
-            int lastNameResults = o1.getLastName().compareToIgnoreCase(o2.getLastName());
-
-            if (lastNameResults == 0) {
-                if (GenericValidator.isBlankOrNull(o1.getFirstName())
-                        && GenericValidator.isBlankOrNull(o2.getFirstName())) {
-                    return 0;
-                }
-
-                String oneName = (o1.getFirstName() == null) ? " " : o1.getFirstName();
-                String twoName = (o2.getFirstName() == null) ? " " : o2.getFirstName();
-                return oneName.compareToIgnoreCase(twoName);
-            } else {
-                return lastNameResults;
-            }
-        }
-
     }
 
 }

@@ -69,7 +69,9 @@ function SearchPatientForm(props) {
       "&dateOfBirth=" +
       values.dateOfBirth +
       "&gender=" +
-      values.gender;
+      values.gender +
+      "&suppressExternalSearch="+
+      values.suppressExternalSearch;
     getFromOpenElisServer(searchEndPoint, fetchPatientResults);
     setUrl(searchEndPoint);
   };
@@ -321,13 +323,13 @@ function SearchPatientForm(props) {
                 {" "}
                 <br />{" "}
               </Column>
-              <Column lg={4} md={4} sm={2}>
-                <Button type="submit">
+              <Column lg={4} md={4} sm={2} >
+                <Button  id="local_search" kind="tertiary" type="submit" >
                   <FormattedMessage id="label.button.search" />
                 </Button>
               </Column>
               <Column lg={4} md={4} sm={2}>
-                <Button kind="tertiary" disabled={true}>
+                <Button id="external_search" type="submit" kind="tertiary" onClick={() => setFieldValue('suppressExternalSearch', false)}>
                   <FormattedMessage
                     id="label.button.externalsearch"
                     defaultMessage="External Search"
