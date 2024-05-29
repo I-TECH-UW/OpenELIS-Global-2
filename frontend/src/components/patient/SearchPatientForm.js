@@ -324,7 +324,7 @@ function SearchPatientForm(props) {
                 <br />{" "}
               </Column>
               <Column lg={4} md={4} sm={2} >
-                <Button  id="local_search" kind="tertiary" type="submit" >
+                <Button  id="local_search" kind="tertiary" type="submit" onClick={() => setFieldValue('suppressExternalSearch', true)}>
                   <FormattedMessage id="label.button.search" />
                 </Button>
               </Column>
