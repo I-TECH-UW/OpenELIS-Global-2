@@ -174,7 +174,7 @@ const GenericConfigEdit = ({ menuType, ID }) => {
         intl.formatMessage({ id: "save.config.success.msg" }),
         NotificationKinds.success,
       );
-      window.location.reload()
+      window.location.reload();
     } else {
       showAlertMessage(
         intl.formatMessage({ id: "server.error.msg" }),
@@ -322,7 +322,8 @@ const GenericConfigEdit = ({ menuType, ID }) => {
                   </Grid>
                 </>
               )}
-              {(FormEntryConfig.valueType === "text" || FormEntryConfig.valueType === "freeText") && (
+              {(FormEntryConfig.valueType === "text" ||
+                FormEntryConfig.valueType === "freeText") && (
                 <>
                   <Grid fullWidth={true}>
                     <Column lg={3}>

@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -726,5 +727,32 @@ public class DateUtil {
             returnDate = new java.sql.Date(date.getTime());
         }
         return returnDate;
+    }
+
+    public static String formatStringDate(String dateStr, String outputFormat) {
+        // Define the input date formats
+        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        LocalDate date = null;
+
+        // Attempt to parse with the first format
+        try {
+            date = LocalDate.parse(dateStr, formatter1);
+        } catch (DateTimeParseException e) {
+            // Attempt to parse with the second format
+            try {
+                date = LocalDate.parse(dateStr, formatter2);
+            } catch (DateTimeParseException ex) {
+                // Handle invalid date format
+                return "Invalid date format: " + dateStr;
+            }
+        }
+
+        // Define the output date format
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outputFormat);
+
+        // Format the parsed date to the desired output format
+        return date.format(outputFormatter);
     }
 }
