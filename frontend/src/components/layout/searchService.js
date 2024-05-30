@@ -22,14 +22,12 @@ const filterMenuItems = (menuItems, query) => {
 
   const lowerCaseQuery = query.toLowerCase();
 
-  const filteredItems = flattenMenuItems(menuItems).filter((item) => {
+  return flattenMenuItems(menuItems).filter((item) => {
     return (
       item.menu.displayKey.toLowerCase().includes(lowerCaseQuery) ||
       item.menu.toolTipKey.toLowerCase().includes(lowerCaseQuery)
     );
   });
-
-  return filteredItems;
 };
 
 const GlobalSearch = () => {
@@ -54,21 +52,20 @@ const GlobalSearch = () => {
 
   return (
     <div style={{ position: "relative", right: 20, top: 40 }}>
-      <div style={{ width:300  }}>
+      <div style={{ width: 300 }}>
         <TextInput
           id="global-search-input"
-          labelText="Search"
-          placeholder="Search..."
+          labelText={<FormattedMessage id="advanced.search" />}
+          
           value={searchQuery}
           onChange={handleSearchChange}
-          
         />
       </div>
       <div
         style={{
           display: searchQuery ? "block" : "none",
           position: "absolute",
-          top: "50px",
+          top: "70px",
           right: "0",
           zIndex: 2,
           backgroundColor: "blue",
@@ -78,7 +75,6 @@ const GlobalSearch = () => {
           padding: "10px",
           maxHeight: "300px",
           overflowY: "auto",
-          
         }}
       >
         {filteredMenuItems.map((item) => (
@@ -116,7 +112,7 @@ const GlobalSearch = () => {
                       backgroundColor: "#f9f9f9",
                     }}
                   >
-                      <FormattedMessage id={child.menu.displayKey} />
+                    <FormattedMessage id={child.menu.displayKey} />
                   </div>
                 ))}
               </div>
