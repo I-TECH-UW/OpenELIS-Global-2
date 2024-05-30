@@ -16,7 +16,6 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
 ADD ./pom.xml /build/pom.xml
 ADD ./tools /build/tools
 ADD ./src /build/src
-ADD ./install /build/install
 ADD ./dev /build/dev
 
 WORKDIR /build
@@ -28,10 +27,11 @@ WORKDIR /build
 ADD https://api.github.com/repos/I-TECH-UW/dataexport/git/refs/heads/master version.json 
 RUN git clone https://github.com/I-TECH-UW/dataexport.git /build/dataexport
 
-
 # OE Default Password
 ARG DEFAULT_PW="adminADMIN!"
+ADD ./install/createDefaultPassword.sh /build/install/createDefaultPassword.sh
 RUN ./install/createDefaultPassword.sh -c -p ${DEFAULT_PW}
+
 ##
 # Build DataExport
 #
