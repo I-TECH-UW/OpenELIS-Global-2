@@ -7,17 +7,15 @@ name: Publish 3.X Dev FrontEnd Docker image
 
 on:
   push:
-    branches: [ develop]
+    branches: [develop]
   pull_request:
-    branches: [develop]  
+    branches: [develop]
   workflow_dispatch:
-
 
 env:
   REGISTRY: docker.io
   IMAGE_NAME: ${{ github.repository }}-frontend-dev
-  DOCKER_NAME: ${{ vars.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}-frontend-dev
-
+  DOCKER_NAME: ${{ vars.DOCKERHUB_USERNAME }}/openelis-global-2-frontend-dev
 
 jobs:
   build-and-push-image:
@@ -60,8 +58,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{github.repository}}:latest
-          cache-to: type=inline
+          cache-from: type=registry,ref=${{ env.DOCKER_NAME }}:buildcache-dev
+          cache-to: type=registry,ref=${{ env.DOCKER_NAME }}:buildcache-dev,mode=max
 
       - name: Build Docker image
         if: github.event_name == 'pull_request'
@@ -69,4 +67,3 @@ jobs:
         with:
           context: ./frontend
           push: false
-          
