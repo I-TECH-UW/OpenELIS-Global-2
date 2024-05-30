@@ -13,6 +13,7 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import "../Style.css";
 import { Select, SelectItem } from "@carbon/react";
 import config from "../../config.json";
+import GlobalSearch from "./searchService";
 import {
   Search,
   Notification,
@@ -47,7 +48,7 @@ function OEHeader(props) {
   const userSwitchRef = createRef();
   const headerPanelRef = createRef();
   const scrollRef = useRef(window.scrollY);
-
+const [searcher,setSearcher] =useState(false)
   const intl = useIntl();
 
   const [switchCollapsed, setSwitchCollapsed] = useState(true);
@@ -61,6 +62,11 @@ function OEHeader(props) {
   useLayoutEffect(() => {
     window.scrollTo(0, scrollRef.current);
   }, []);
+
+const handleSearch = (e)=>{
+  e.preventDefault()
+  setSearcher(!searcher)
+}
 
   useEffect(() => {
     getFromOpenElisServer("/rest/menu", (res) => {
@@ -350,11 +356,13 @@ function OEHeader(props) {
                     <>
                       <HeaderGlobalAction
                         aria-label="Search"
-                        onClick={() => {
-                          /*TODO add search functionality*/
-                        }}
+                        
+                        onClick={handleSearch}
                       >
-                        <Search size={20} />
+                        <Search size={20} 
+                        
+                        />
+                        {searcher && <GlobalSearch/>}
                       </HeaderGlobalAction>
                       <HeaderGlobalAction
                         aria-label="Notifications"
