@@ -11,8 +11,6 @@ import {
   TextInput,
   SelectItem,
   Select,
-  DatePicker,
-  DatePickerInput,
   Loading,
   Grid,
 } from "@carbon/react";
@@ -24,6 +22,7 @@ import { getFromOpenElisServer } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
 import { NotificationKinds } from "../common/CustomNotification";
 import { format } from "date-fns";
+import CustomDatePicker from "../common/CustomDatePicker";
 
 const SearchForm = (props) => {
   const { setNotificationVisible, addNotification } =
@@ -164,10 +163,8 @@ const SearchForm = (props) => {
     handleSubmit(values);
   };
 
-  function handleDatePickerChange(e) {
-    let date = new Date(e[0]);
-    const formatDate = format(new Date(date), "dd/MM/yyyy");
-    setTestDate(formatDate);
+  function handleDatePickerChange(date) {
+    setTestDate(date);
   }
 
   useEffect(() => {
@@ -306,26 +303,15 @@ const SearchForm = (props) => {
                     <Column lg={6} md={8} sm={4}>
                       <Field name="date">
                         {({ field }) => (
-                          <DatePicker
-                            name={field.name}
+                          <CustomDatePicker
                             id={field.id}
-                            dateFormat="d/m/Y"
-                            datePickerType="single"
+                            labelText={intl.formatMessage({
+                              id: "search.label.testdate",
+                            })}
                             value={testDate}
-                            onChange={(e) => {
-                              handleDatePickerChange(e);
-                            }}
-                          >
-                            <DatePickerInput
-                              name={field.name}
-                              id={field.id}
-                              placeholder="dd/mm/yyyy"
-                              type="text"
-                              labelText={
-                                <FormattedMessage id="search.label.testdate" />
-                              }
-                            />
-                          </DatePicker>
+                            onChange={(date) => handleDatePickerChange(date)}
+                            name={field.name}
+                          />
                         )}
                       </Field>
                     </Column>

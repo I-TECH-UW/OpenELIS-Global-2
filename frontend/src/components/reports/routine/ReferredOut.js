@@ -82,7 +82,7 @@ const ReferredOut = () => {
   const handlePrinting = () => {
     setLoading(true);
     const baseParams = "report=referredOut&type=patient";
-    const baseUrl = `${config.serverBaseUrl}/ApiReportPrint`;
+    const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
     const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.endDate}&lowerDateRange=${reportFormValues.startDate}&locationCode=${selectedLocationCode}`;
 
     const check = window.open(url, "_blank");
