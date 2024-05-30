@@ -89,6 +89,7 @@ DOCKER_DB_HOST_PORT = "5432"
 
 #Behaviour variables
 DOCKER_DB = False 
+ASTM_PROXY = False
 LOCAL_DB = True
 PRINT_TO_CONSOLE = True
 MODE = "update-install"
@@ -288,6 +289,10 @@ def create_docker_compose_file():
         DB_HOST_FOR_DOCKER_SERVICES = get_docker_host_ip() #get docker host loopback
     
     for line in template_file:
+        #set docker db attributes
+        if ASTM_PROXY:
+            if line.find("#astm") >= 0:
+                line = line.replace("#astm", "")
         #set docker db attributes
         if DOCKER_DB:
             if line.find("#db") >= 0:
@@ -903,6 +908,7 @@ def read_setup_properties_file():
     global DB_DATA_DIR, DB_ENVIRONMENT_DIR, DB_INIT_DIR, DOCKER_DB, DOCKER_DB_BACKUPS_DIR, DOCKER_DB_HOST_PORT
     global DB_HOST, DB_PORT
     global LOCAL_DB
+    global ASTM_PROXY
     
     config = configparser.ConfigParser() 
     config.read(OE_ETC_DIR + SETUP_CONFIG_FILE_NAME)
@@ -932,6 +938,9 @@ def read_setup_properties_file():
         LOCAL_DB = True
     else:
         LOCAL_DB = False
+
+    additional_services_info = "ADDITIONAL_SERVICES"
+    ASTM_PROXY = is_true_string(config.get(additional_services_info,'activate_astm',fallback='False'))
     
     
 def write_setup_properties_file():

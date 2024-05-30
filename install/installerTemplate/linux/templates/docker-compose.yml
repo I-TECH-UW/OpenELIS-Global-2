@@ -151,6 +151,7 @@ services:
 #astm      server.ssl.keyStorePassword: [% keystore_password %] 
 #astm      server.ssl.keyStoreType: PKCS12
 #astm      TZ: [% timezone %]
+#astm      LOGGING_LEVEL_ORG_ITECH: DEBUG
 #astm      JAVA_OPTS: "-Djavax.net.ssl.trustStore=/run/secrets/truststore 
 #astm            -Djavax.net.ssl.trustStorePassword=[% truststore_password %] 
 #astm            -Djavax.net.ssl.trustStoreType=pkcs12 
