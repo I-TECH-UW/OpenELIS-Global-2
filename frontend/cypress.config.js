@@ -15,7 +15,7 @@ module.exports = defineConfig({
       ];
       return config;
     },
-    baseUrl: "https://testing.openelis-global.org",
+    baseUrl: "https://localhost",
     testIsolation: false,
     env: {
       STARTUP_WAIT_MILLISECONDS: 300000,
