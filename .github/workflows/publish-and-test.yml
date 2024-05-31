@@ -178,4 +178,6 @@ jobs:
         with:
           browser: chrome
           working-directory: frontend
-          env: CYPRESS_STARTUP_WAIT_MILLISECONDS=600000
+        env:
+          CYPRESS_STARTUP_WAIT_MILLISECONDS: 600000
+          CYPRESS_VIDEO: false
