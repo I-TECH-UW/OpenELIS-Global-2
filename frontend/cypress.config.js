@@ -18,7 +18,7 @@ module.exports = defineConfig({
     baseUrl: "https://testing.openelis-global.org",
     testIsolation: false,
     env: {
-      STARTUP_WAIT_MILLISECONDS: 600000,
+      STARTUP_WAIT_MILLISECONDS: 300000,
     },
   },
 });
