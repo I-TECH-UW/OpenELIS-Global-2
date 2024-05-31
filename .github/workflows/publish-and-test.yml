@@ -173,7 +173,7 @@ jobs:
       - name: Run OpenELS image
         run: docker-compose -f test.docker-compose.yml up -d
 
-      - name: Sleep for 2 minutes
+      - name: Sleep to allow OpenELIS startup time
         run: sleep 2m
         shell: bash
 
@@ -213,5 +213,5 @@ jobs:
         working-directory: frontend
 
       - name: Run Frontend Qa Workflow
-        run: npx cypress run –headed
+        run: npx cypress run –headless
         working-directory: frontend
