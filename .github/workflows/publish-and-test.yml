@@ -173,45 +173,8 @@ jobs:
       - name: Run OpenELS image
         run: docker-compose -f test.docker-compose.yml up -d
 
-      - name: Sleep to allow OpenELIS startup time
-        run: sleep 2m
-        shell: bash
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
         with:
-          node-version: 14.x
-          cache: "npm"
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Cache npm dependencies
-        id: cache-npm
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-node-modules
-        with:
-          # npm cache files are stored in `~/.npm` on Linux/macOS
-          path: "**/node_modules"
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
-        name: List the state of node modules
-        continue-on-error: true
-        run: npm list
-        working-directory: frontend
-
-      - name: Install dependencies
-        run: npm install
-        working-directory: frontend
-
-      - name: Install React scripts
-        run: npm install react-scripts@5.0.1 -g
-        working-directory: frontend
-
-      - name: Run Frontend Qa Workflow
-        run: npx cypress run –headless
-        working-directory: frontend
+          browser: chrome
+          working-directory: frontend
