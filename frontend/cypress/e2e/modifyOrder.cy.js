@@ -18,10 +18,11 @@ describe("Modify Order search by accession Number", function () {
   });
 
   it("User searches with accession number", () => {
-    cy.fixture("Order").then((order) => {
+    cy.wait(1000);
+    cy.fixture("EnteredOrder").then((order) => {
       modifyOrderPage.enterAccessionNo(order.labNo);
+      modifyOrderPage.clickSubmitButton();
     });
-    modifyOrderPage.clickSubmitButton();
   });
 
   it("should check for program selection button and go to next page ", function () {

@@ -6,10 +6,7 @@ class ModifyOrderPage {
   }
 
   enterAccessionNo(accessionNo) {
-    cy.enterText(
-      ":nth-child(2) > .cds--form-item > .cds--text-input__field-outer-wrapper > .cds--text-input__field-wrapper > #labNumber",
-      accessionNo,
-    );
+    cy.enterText("#labNumber", accessionNo);
   }
 
   clickSubmitButton() {
