@@ -355,7 +355,7 @@ const handleSearch = (e)=>{
                   {userSessionDetails.authenticated && (
                     <>
                       <HeaderGlobalAction
-                        aria-label={ <FormattedMessage id="advanced.search" /> }
+                      aria-label={intl.formatMessage({ id: "advanced.search" })} 
                         
                         onClick={handleSearch}
                       >
