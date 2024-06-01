@@ -89,7 +89,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.DOCKER_NAME }}
+          images: ${{ env.DOCKER_NAME }}-frontend
 
       - name: Build and push Docker image
         if: github.event_name == 'push'
@@ -141,7 +141,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.DOCKER_NAME }}
+          images: ${{ env.DOCKER_NAME }}-frontend-dev
 
       - name: Build and push Docker image
         if: github.event_name == 'push'
@@ -176,8 +176,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          browser: chrome
           working-directory: frontend
         env:
-          CYPRESS_STARTUP_WAIT_MILLISECONDS: 600000
+          CYPRESS_STARTUP_WAIT_MILLISECONDS: 300000
           CYPRESS_VIDEO: false
