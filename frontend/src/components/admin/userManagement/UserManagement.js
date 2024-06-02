@@ -56,6 +56,9 @@ function UserManagement() {
   const [deactivateButton, setDeactivateButton] = useState(true);
   const [modifyButton, setModifyButton] = useState(true);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
+  const [selectedRowCombinedUserID, setSelectedRowCombinedUserID] = useState(
+    [],
+  );
   const [selectedRowIdsPost, setSelectedRowIdsPost] = useState();
   const [isEveryRowIsChecked, setIsEveryRowIsChecked] = useState(false);
   const [rowsIsPartiallyChecked, setRowsIsPartiallyChecked] = useState(false);
@@ -112,6 +115,7 @@ function UserManagement() {
     setPage(page);
     setPageSize(pageSize);
     setSelectedRowIds([]);
+    setSelectedRowCombinedUserID([]);
   };
 
   const handleMenuItems = (res) => {
@@ -152,6 +156,7 @@ function UserManagement() {
       const newUserManagementList = userManagementList.menuList.map((item) => {
         return {
           id: item.systemUserId,
+          combinedUserID: item.combinedUserID,
           firstName: item.firstName || "",
           lastName: item.lastName || "",
           loginName: item.loginName || "",
@@ -173,6 +178,7 @@ function UserManagement() {
         (item) => {
           return {
             id: item.systemUserId,
+            combinedUserID: item.combinedUserID,
             firstName: item.firstName || "",
             lastName: item.lastName || "",
             loginName: item.loginName || "",
@@ -247,8 +253,17 @@ function UserManagement() {
             setDeactivateButton(false);
             if (selectedRowIds.includes(row.id)) {
               setSelectedRowIds(selectedRowIds.filter((id) => id !== row.id));
+              setSelectedRowCombinedUserID((prevIds) =>
+                prevIds.filter(
+                  (selectedId) => selectedId !== row.combinedUserID,
+                ),
+              );
             } else {
               setSelectedRowIds([...selectedRowIds, row.id]);
+              setSelectedRowCombinedUserID((prevIds) => [
+                ...prevIds,
+                row.combinedUserID,
+              ]);
             }
           }}
         />
@@ -322,7 +337,7 @@ function UserManagement() {
                 <Button
                   // UnifiedSystemUser?ID=0&startingRecNo=1&roleFilter=
                   onClick={() => {
-                    window.location.href = "/AddOrganization";
+                    window.location.href = "/AddUser";
                   }}
                   type="button"
                 >
@@ -367,6 +382,7 @@ function UserManagement() {
                 <SelectItem value="option-2" text="Option 2" />
                 <SelectItem value="option-3" text="Option 3" />
               </Select>
+              <br />
               <FormattedMessage id="menu.label.filter.role" />
             </Column>
             <Column lg={8} md={8} sm={4}>
@@ -540,6 +556,7 @@ function UserManagement() {
                                   key={row.id}
                                   onClick={() => {
                                     const id = row.id;
+                                    const CombinedUserID = row.combinedUserID;
                                     const isSelected =
                                       selectedRowIds.includes(id);
                                     if (isSelected) {
@@ -548,10 +565,20 @@ function UserManagement() {
                                           (selectedId) => selectedId !== id,
                                         ),
                                       );
+                                      setSelectedRowCombinedUserID(
+                                        selectedRowCombinedUserID.filter(
+                                          (selectedId) =>
+                                            selectedId !== CombinedUserID,
+                                        ),
+                                      );
                                     } else {
                                       setSelectedRowIds([
                                         ...selectedRowIds,
                                         id,
+                                      ]);
+                                      setSelectedRowCombinedUserID([
+                                        ...selectedRowCombinedUserID,
+                                        CombinedUserID,
                                       ]);
                                     }
                                   }}
@@ -764,6 +791,7 @@ function UserManagement() {
                                   key={row.id}
                                   onClick={() => {
                                     const id = row.id;
+                                    const CombinedUserID = row.combinedUserID;
                                     const isSelected =
                                       selectedRowIds.includes(id);
                                     if (isSelected) {
@@ -772,10 +800,20 @@ function UserManagement() {
                                           (selectedId) => selectedId !== id,
                                         ),
                                       );
+                                      setSelectedRowCombinedUserID(
+                                        selectedRowCombinedUserID.filter(
+                                          (selectedId) =>
+                                            selectedId !== CombinedUserID,
+                                        ),
+                                      );
                                     } else {
                                       setSelectedRowIds([
                                         ...selectedRowIds,
                                         id,
+                                      ]);
+                                      setSelectedRowCombinedUserID([
+                                        ...selectedRowCombinedUserID,
+                                        CombinedUserID,
                                       ]);
                                     }
                                   }}
@@ -857,6 +895,13 @@ function UserManagement() {
         </button>
         <button
           onClick={() => {
+            console.error(selectedRowCombinedUserID);
+          }}
+        >
+          selectedRowIdCustomeIds
+        </button>
+        <button
+          onClick={() => {
             console.error(selectedRowIdsPost);
           }}
         >
@@ -871,3 +916,5 @@ export default injectIntl(UserManagement);
 
 // combinedUserID need to handle at modify [ new array on select and give him ]
 // addUser and Modify page
+// main app need to handel there route
+// route should send configuration with ID and perfect route

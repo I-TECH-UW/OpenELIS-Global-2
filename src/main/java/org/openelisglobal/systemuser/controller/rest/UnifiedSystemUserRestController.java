@@ -63,6 +63,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.openelisglobal.systemuser.form.UnifiedSystemUserForm;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -133,7 +135,7 @@ public class UnifiedSystemUserRestController extends BaseController {
     }
 
     @GetMapping(value = "/UnifiedSystemUser")
-    public String showUnifiedSystemUser(HttpServletRequest request,
+    public ResponseEntity<UnifiedSystemUserForm> showUnifiedSystemUser(HttpServletRequest request,
             @RequestParam(name = "ID", defaultValue = "") String id)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         UnifiedSystemUserForm form = new UnifiedSystemUserForm();
@@ -160,7 +162,7 @@ public class UnifiedSystemUserRestController extends BaseController {
         form.setSystemUsers(getDisplaySystemUsersJsonArray());
         addFlashMsgsToRequest(request);
         // return findForward(FWD_SUCCESS, form);
-        return FWD_SUCCESS;
+        return ResponseEntity.ok(form);
     }
 
     private void setupRoles(UnifiedSystemUserForm form, HttpServletRequest request, boolean doFiltering) {
