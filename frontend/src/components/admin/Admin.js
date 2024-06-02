@@ -28,6 +28,7 @@ import {
   BootVolumeAlt,
   Report,
   Bullhorn,
+  User,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -47,8 +48,7 @@ import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModif
 import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName.js";
 import PluginList from "./pluginFile/PluginFile.js";
 import ResultReportingConfiguration from "./ResultReportingConfiguration/ResultReportingConfiguration.js";
-import NotificationTestPage from "../notifications/NotificationTestPage.jsx";
-
+import PushNotificationPage from "../notifications/PushNotificationPage.jsx";
 function Admin() {
   const intl = useIntl();
   const [isSmallScreen, setIsSmallScreen] = useState(false);
@@ -109,6 +109,9 @@ function Admin() {
           </SideNavLink>
           <SideNavLink renderIcon={Report} href="#resultReportingConfiguration">
             <FormattedMessage id="resultreporting.browse.title" />
+          </SideNavLink>
+          <SideNavLink renderIcon={User} href="#userManagement">
+            <FormattedMessage id="unifiedSystemUser.browser.title" />
           </SideNavLink>
           <SideNavMenu
             title={intl.formatMessage({ id: "sidenav.label.admin.menu" })}
@@ -212,6 +215,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#resultReportingConfiguration">
         <ResultReportingConfiguration />
+      </PathRoute>
+      <PathRoute path="#userManagement">
+        <UserManagement />
       </PathRoute>
       <PathRoute path="#globalMenuManagement">
         <GlobalMenuManagement />
