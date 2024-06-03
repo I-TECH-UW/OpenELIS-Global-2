@@ -12,6 +12,8 @@ import {
   Pagination,
   Section,
   Table,
+  TableBatchAction,
+  TableBatchActions,
   TableBody,
   TableCell,
   TableContainer,
@@ -19,6 +21,11 @@ import {
   TableHeader,
   TableRow,
   TableSelectRow,
+  TableToolbar,
+  TableToolbarAction,
+  TableToolbarContent,
+  TableToolbarMenu,
+  TableToolbarSearch,
   TextInput,
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -32,6 +39,7 @@ import {
   AlertDialog,
   NotificationKinds,
 } from "../../common/CustomNotification";
+import { ArrowLeft, ArrowRight, NextOutline, PreviousOutline } from "@carbon/icons-react";
 
 function DictionaryManagement() {
   const intl = useIntl();
@@ -44,7 +52,7 @@ function DictionaryManagement() {
   const [dictionaryMenuList, setDictionaryMenuList] = useState([]);
 
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(7);
+  const [pageSize, setPageSize] = useState(10);
   const [open, setOpen] = useState(false);
 
   const [categoryDescription, setCategoryDescription] = useState([]);
@@ -285,8 +293,19 @@ function DictionaryManagement() {
           </Section>
           <br />
           <Section>
-            <Form>
-              <Column lg={16} md={8} sm={4}>
+            <Form
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Column
+                lg={16}
+                md={8}
+                sm={4}
+                style={{ display: "flex", gap: "10px" }}
+              >
                 <Button onClick={() => setOpen(true)}>
                   {intl.formatMessage({
                     id: "admin.page.configuration.formEntryConfigMenu.button.add",
@@ -339,7 +358,7 @@ function DictionaryManagement() {
                   <TextInput
                     id="dictEntry"
                     labelText="Dictionary Entry"
-                    value={dictionaryItem.dictEntry}
+                    value={dictionaryEntry}
                     onChange={(e) => setDictionaryEntry(e.target.value)}
                     style={{
                       marginBottom: "1rem",
@@ -364,7 +383,7 @@ function DictionaryManagement() {
                   <TextInput
                     id="localAbbrev"
                     labelText="Local Abbreviation"
-                    value={dictionaryItem.localAbbreviation}
+                    value={localAbbreviation}
                     onChange={(e) => setLocalAbbreviation(e.target.value)}
                     style={{
                       marginBottom: "1rem",
@@ -375,6 +394,23 @@ function DictionaryManagement() {
                   <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
                 </Button>
               </Column>
+              <Column
+                lg={16}
+                md={8}
+                sm={4}
+                style={{ display: "flex", gap: "10px" }}
+              >
+                <Button
+                  hasIconOnly
+                  renderIcon={ArrowLeft}
+                  iconDescription="Previous Page"
+                />
+                <Button
+                  hasIconOnly
+                  renderIcon={ArrowRight}
+                  iconDescription="Next Page"
+                />
+              </Column>
             </Form>
           </Section>
         </Column>
@@ -383,6 +419,7 @@ function DictionaryManagement() {
         <Grid fullWidth={true} className="gridBoundary">
           <Column lg={16} md={8} sm={4}>
             <DataTable
+              size="sm"
               rows={dictionaryMenuList.slice(
                 (page - 1) * pageSize,
                 page * pageSize,
@@ -424,47 +461,101 @@ function DictionaryManagement() {
                 headers,
                 getHeaderProps,
                 getTableProps,
-                getRowProps,
-              }) => (
-                <TableContainer title="" description="">
-                  <Table {...getTableProps()}>
-                    <TableHead>
-                      <TableRow>
-                        {headers.map((header) => (
-                          <TableHeader
-                            key={header.key}
-                            {...getHeaderProps({ header })}
-                          >
-                            {header.header}
-                          </TableHeader>
-                        ))}
-                        <TableHeader />
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {rows.map((row) => (
-                        <TableRow
-                          key={row.id}
-                          onClick={() => {
-                            setSelectedRowId(row.id);
-                          }}
+                getToolbarProps,
+                getBatchActionProps,
+                onInputChange,
+                selectRow,
+              }) => {
+                const batchActionProps = {
+                  ...getBatchActionProps({
+                    onSelectAll: () => {
+                      rows.map((row) => {
+                        if (!row.isSelected) {
+                          selectRow(row.id);
+                        }
+                      });
+                    },
+                  }),
+                };
+
+                return (
+                  <TableContainer title="" description="">
+                    <TableToolbar {...getToolbarProps()}>
+                      <TableToolbarContent
+                        aria-hidden={batchActionProps.shouldShowBatchActions}
+                      >
+                        <TableToolbarSearch
+                          tabIndex={
+                            batchActionProps.shouldShowBatchActions ? -1 : 0
+                          }
+                          onChange={onInputChange}
+                        />
+                        <TableToolbarMenu
+                          tabIndex={
+                            batchActionProps.shouldShowBatchActions ? -1 : 0
+                          }
                         >
-                          {row.cells.map((cell) => renderCell(cell, row))}
+                          <TableToolbarAction onClick={() => alert("Alert 1")}>
+                            Action 1
+                          </TableToolbarAction>
+                          <TableToolbarAction onClick={() => alert("Alert 2")}>
+                            Action 2
+                          </TableToolbarAction>
+                          <TableToolbarAction onClick={() => alert("Alert 3")}>
+                            Action 3
+                          </TableToolbarAction>
+                        </TableToolbarMenu>
+                        <Button
+                          tabIndex={
+                            batchActionProps.shouldShowBatchActions ? -1 : 0
+                          }
+                          // onClick={action("Add new row")}
+                          kind="primary"
+                        >
+                          Add new
+                        </Button>
+                      </TableToolbarContent>
+                    </TableToolbar>
+                    <Table {...getTableProps()}>
+                      <TableHead>
+                        <TableRow>
+                          {headers.map((header) => (
+                            <TableHeader
+                              key={header.key}
+                              {...getHeaderProps({ header })}
+                            >
+                              {header.header}
+                            </TableHeader>
+                          ))}
+                          <TableHeader />
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              )}
+                      </TableHead>
+                      <TableBody>
+                        {rows.map((row) => (
+                          <TableRow
+                            key={row.id}
+                            onClick={() => {
+                              setSelectedRowId(row.id);
+                            }}
+                          >
+                            {row.cells.map((cell) => renderCell(cell, row))}
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                );
+              }}
             </DataTable>
             <Pagination
               onChange={handlePageChange}
               page={page}
               pageSize={pageSize}
-              pageSizes={[7, 10, 20, 30, 40, 50]}
+              pageSizes={[10, 20, 30, 40, 50]}
               totalItems={dictionaryMenuList.length}
               forwardText={intl.formatMessage({ id: "pagination.forward" })}
               backwardText={intl.formatMessage({ id: "pagination.backward" })}
+              size="sm"
               itemRangeText={(min, max, total) =>
                 intl.formatMessage(
                   { id: "pagination.item-range" },
