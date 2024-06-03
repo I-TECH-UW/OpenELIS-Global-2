@@ -39,7 +39,7 @@ import {
   AlertDialog,
   NotificationKinds,
 } from "../../common/CustomNotification";
-import { ArrowLeft, ArrowRight, NextOutline, PreviousOutline } from "@carbon/icons-react";
+import { ArrowLeft, ArrowRight } from "@carbon/icons-react";
 
 function DictionaryManagement() {
   const intl = useIntl();
@@ -73,6 +73,25 @@ function DictionaryManagement() {
     isActive: "",
     localAbbreviation: "",
   });
+
+  const [paging] = useState(1);
+  const { startingRecNo, setStartingRecNo } = useState(2);
+
+  useEffect(() => {
+    componentMounted.current = true;
+    getFromOpenElisServer(
+      `/rest/dictionary-menu?paging=${paging}&&startingRecNo=${startingRecNo}`,
+      fetchedDictionaryMenu,
+    );
+    return () => {
+      componentMounted.current = false;
+    };
+  }, [paging, startingRecNo]);
+
+  const handleNextPage = () => {
+    // setPaging((prevPage) => prevPage + prevPage);
+    setStartingRecNo((no) => no + 20);
+  };
 
   const yesOrNo = [
     {
@@ -408,6 +427,7 @@ function DictionaryManagement() {
                 <Button
                   hasIconOnly
                   renderIcon={ArrowRight}
+                  onClick={handleNextPage}
                   iconDescription="Next Page"
                 />
               </Column>
