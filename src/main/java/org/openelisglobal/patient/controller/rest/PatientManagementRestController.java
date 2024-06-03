@@ -15,6 +15,7 @@ import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationExceptio
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
+import org.openelisglobal.patient.eventlistener.PatientCreationEvent;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.validator.ValidatePatientInfo;
 import org.openelisglobal.patient.valueholder.Patient;
@@ -24,6 +25,7 @@ import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.openelisglobal.search.service.SearchResultsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
@@ -46,6 +48,8 @@ public class PatientManagementRestController extends BaseRestController {
     PatientService patientService;
     @Autowired
     FhirTransformService fhirTransformService;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @PostMapping(value = "patient-management", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -62,17 +66,21 @@ public class PatientManagementRestController extends BaseRestController {
         Patient patient = new Patient();
 
         if (patientInfo.getPatientUpdateStatus() != PatientUpdateStatus.NO_ACTION) {
-            preparePatientData(bindingResult, request, patientInfo, patient);
-            if (bindingResult.hasErrors()) {
+            preparePatientData(bindingResult ,request, patientInfo, patient);
+            if(bindingResult.hasErrors()){
                 try {
                     throw new BindException(bindingResult);
-                } catch (BindException e) {
+                }
+                catch (BindException e) {
                     LogEvent.logError(e);
                 }
             }
             try {
                 patientService.persistPatientData(patientInfo, patient, getSysUserId(request));
                 fhirTransformService.transformPersistPatient(patientInfo);
+                if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD) {
+                    eventPublisher.publishEvent(new PatientCreationEvent(this, patientInfo));
+                }
             } catch (LIMSRuntimeException e) {
 
                 if (e.getCause() instanceof StaleObjectStateException) {
