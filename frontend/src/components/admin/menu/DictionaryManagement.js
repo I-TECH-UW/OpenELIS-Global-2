@@ -191,7 +191,7 @@ function DictionaryManagement() {
       console.log(JSON.stringify(postData));
 
       postToOpenElisServerFullResponse(
-        `/rest/Dictionary`,
+        `/rest/Dictionary?ID=${selectedRowId}`,
         JSON.stringify(postData),
         displayStatus,
       );
@@ -339,7 +339,7 @@ function DictionaryManagement() {
                   <TextInput
                     id="dictEntry"
                     labelText="Dictionary Entry"
-                    value={dictionaryItem?.dictEntry}
+                    value={dictionaryItem.dictEntry}
                     onChange={(e) => setDictionaryEntry(e.target.value)}
                     style={{
                       marginBottom: "1rem",
@@ -364,7 +364,7 @@ function DictionaryManagement() {
                   <TextInput
                     id="localAbbrev"
                     labelText="Local Abbreviation"
-                    value={dictionaryItem?.localAbbreviation}
+                    value={dictionaryItem.localAbbreviation}
                     onChange={(e) => setLocalAbbreviation(e.target.value)}
                     style={{
                       marginBottom: "1rem",
