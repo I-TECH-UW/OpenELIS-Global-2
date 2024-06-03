@@ -18,6 +18,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.itech.fhir.dataexport.core.service.FhirClientFetcher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -43,9 +44,19 @@ public class FhirUtil implements FhirClientFetcher {
         return fhirClient;
     }
 
-    public IGenericClient getLocalFhirClient() {
-        IGenericClient fhirClient = fhirContext.newRestfulGenericClient(fhirConfig.getLocalFhirStorePath());
+    @Bean(name = "clientRegistryFhirClient")
+    public IGenericClient getCRFhirClient() throws Exception {
+        IGenericClient fhirClient = fhirContext.newRestfulGenericClient(fhirConfig.getClientRegistryServerUrl());
+        if (!fhirConfig.getClientRegistryUserName().isEmpty()) {
+            BasicAuthInterceptor authInterceptor = new BasicAuthInterceptor(fhirConfig.getClientRegistryUserName(),
+                    fhirConfig.getClientRegistryPassword());
+            fhirClient.registerInterceptor(authInterceptor);
+        }
         return fhirClient;
+    }
+
+    public IGenericClient getLocalFhirClient() {
+        return fhirContext.newRestfulGenericClient(fhirConfig.getLocalFhirStorePath());
     }
 
     public IParser getFhirParser() {

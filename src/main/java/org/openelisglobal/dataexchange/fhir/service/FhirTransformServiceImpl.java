@@ -1,6 +1,9 @@
 package org.openelisglobal.dataexchange.fhir.service;
 
 import ca.uhn.fhir.model.api.TemporalPrecisionEnum;
+import ca.uhn.fhir.parser.DataFormatException;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.client.exceptions.FhirClientConnectionException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -84,6 +87,7 @@ import org.openelisglobal.observationhistory.valueholder.ObservationHistory.Valu
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.organization.valueholder.OrganizationType;
+import org.openelisglobal.patient.action.IPatientUpdate;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
@@ -109,6 +113,7 @@ import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
@@ -159,6 +164,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     private AddressPartService addressPartService;
     @Autowired
     private OrganizationService organizationService;
+    @Autowired
+    @Qualifier("clientRegistryFhirClient")
+    private IGenericClient crClient;
 
     private String ADDRESS_PART_VILLAGE_ID;
     private String ADDRESS_PART_COMMUNE_ID;
@@ -377,6 +385,17 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         FhirOperations fhirOperations = new FhirOperations();
         org.hl7.fhir.r4.model.Patient patient = transformToFhirPatient(patientInfo.getPatientPK());
         this.addToOperations(fhirOperations, tempIdGenerator, patient);
+
+        try {
+            if (patientInfo.getPatientUpdateStatus() == IPatientUpdate.PatientUpdateStatus.UPDATE) {
+                crClient.update().resource(patient).execute();
+            } else {
+                crClient.create().resource(patient).execute();
+            }
+        } catch (FhirClientConnectionException e) {
+            handleException(e, patientInfo.getPatientUpdateStatus());
+        }
+
         Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
     }
 
@@ -1389,5 +1408,16 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         addTelecomToPerson(practitioner.getTelecom(), provider.getPerson());
 
         return provider;
+    }
+
+    private void handleException(FhirClientConnectionException e, IPatientUpdate.PatientUpdateStatus status)
+            throws FhirClientConnectionException {
+        Throwable cause = e.getCause();
+        if (cause instanceof DataFormatException) {
+            LogEvent.logWarn(e.getMessage(), status.name().toLowerCase(),
+                    "Client Registry responds with unsupported data format!");
+        } else {
+            throw e;
+        }
     }
 }
