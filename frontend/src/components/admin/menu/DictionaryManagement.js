@@ -490,30 +490,6 @@ function DictionaryManagement() {
                           }
                           onChange={onInputChange}
                         />
-                        <TableToolbarMenu
-                          tabIndex={
-                            batchActionProps.shouldShowBatchActions ? -1 : 0
-                          }
-                        >
-                          <TableToolbarAction onClick={() => alert("Alert 1")}>
-                            Action 1
-                          </TableToolbarAction>
-                          <TableToolbarAction onClick={() => alert("Alert 2")}>
-                            Action 2
-                          </TableToolbarAction>
-                          <TableToolbarAction onClick={() => alert("Alert 3")}>
-                            Action 3
-                          </TableToolbarAction>
-                        </TableToolbarMenu>
-                        <Button
-                          tabIndex={
-                            batchActionProps.shouldShowBatchActions ? -1 : 0
-                          }
-                          // onClick={action("Add new row")}
-                          kind="primary"
-                        >
-                          Add new
-                        </Button>
                       </TableToolbarContent>
                     </TableToolbar>
                     <Table {...getTableProps()}>
