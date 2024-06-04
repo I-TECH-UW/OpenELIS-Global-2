@@ -22,7 +22,7 @@ class OrderEntityPage {
   }
   checkPanelCheckBoxField() {
     cy.get(
-      ".testPanels .cds--checkbox-wrapper:nth-child(5) .cds--che  ckbox",
+      ".testPanels .cds--checkbox-wrapper:nth-child(5) .cds--checkbox",
     ).check({ force: true });
   }
   generateLabOrderNumber() {
