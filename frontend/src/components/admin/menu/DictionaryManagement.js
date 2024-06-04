@@ -28,6 +28,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import {
   getFromOpenElisServer,
+  postToOpenElisServer,
   postToOpenElisServerFullResponse,
 } from "../../utils/Utils";
 import { ConfigurationContext, NotificationContext } from "../../layout/Layout";
@@ -220,7 +221,7 @@ function DictionaryManagement() {
       console.log(JSON.stringify(postData));
 
       postToOpenElisServerFullResponse(
-        `/rest/Dictionary?ID=${selectedRowId}`,
+        `/rest/dictionary`,
         JSON.stringify(postData),
         displayStatus,
       );
@@ -293,6 +294,39 @@ function DictionaryManagement() {
       );
       setOpen(true);
       setEditMode(false);
+    }
+  };
+
+  const handleDeactivation = async (event) => {
+    event.preventDefault();
+    const list = [...dictionaryMenuList];
+    list.splice(selectedRowId, 1);
+    setDictionaryMenuList(list);
+    if (selectedRowId) {
+      postToOpenElisServer(
+        `/rest/delete-dictionary?selectedIDs=${selectedRowId}`,
+        {},
+        handleDelete,
+      );
+    }
+  };
+
+  const handleDelete = (status) => {
+    setNotificationVisible(true);
+    if (status == "200") {
+      addNotification({
+        kind: NotificationKinds.success,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({
+          id: "dictionary.menu.deactivate.success",
+        }),
+      });
+    } else {
+      addNotification({
+        kind: NotificationKinds.error,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "dictionary.menu.deactivate.fail" }),
+      });
     }
   };
 
@@ -411,7 +445,12 @@ function DictionaryManagement() {
                     }}
                   />
                 </Modal>
-                <Button kind="tertiary" disabled={true} type="submit">
+                <Button
+                  kind="tertiary"
+                  disabled={modifyButton}
+                  onClick={handleDeactivation}
+                  type="submit"
+                >
                   <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
                 </Button>
               </Column>
