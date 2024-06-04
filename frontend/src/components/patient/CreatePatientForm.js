@@ -179,7 +179,7 @@ function CreatePatientForm(props) {
     );
   };
 
-  function fethchHealthDistrictsCallback(res) {
+  function fetchHealthDistrictsCallback(res) {
     setHealthDistricts(res);
   }
 
@@ -189,7 +189,7 @@ function CreatePatientForm(props) {
         getFromOpenElisServer(
           "/rest/health-districts-for-region?regionId=" +
             props.selectedPatient.healthRegion,
-          fethchHealthDistrictsCallback,
+          fetchHealthDistrictsCallback,
         );
       } else {
         //nextState.healthDistricts = [];
