@@ -237,6 +237,7 @@ function DictionaryManagement() {
         <TableSelectRow
           key={cell.id}
           id={cell.id}
+          radio={true}
           checked={selectedRowId === row.id}
           name="selectRowRadio"
           ariaLabel="selectRow"
@@ -361,7 +362,7 @@ function DictionaryManagement() {
                 sm={4}
                 style={{ display: "flex", gap: "10px" }}
               >
-                <Button onClick={() => setOpen(true)}>
+                <Button disabled={!editMode} onClick={() => setOpen(true)}>
                   {intl.formatMessage({
                     id: "admin.page.configuration.formEntryConfigMenu.button.add",
                   })}
@@ -446,7 +447,6 @@ function DictionaryManagement() {
                   />
                 </Modal>
                 <Button
-                  kind="tertiary"
                   disabled={modifyButton}
                   onClick={handleDeactivation}
                   type="submit"
