@@ -54,7 +54,7 @@ class PatientEntryPage {
   }
 
   clickSearchPatientButton() {
-    cy.getElement(".cds--form .cds--btn.cds--btn--primary").click();
+    cy.getElement("#local_search").click();
   }
 
   getLastName() {
