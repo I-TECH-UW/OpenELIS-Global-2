@@ -74,8 +74,8 @@ function DictionaryManagement() {
     localAbbreviation: "",
   });
 
-  const [paging] = useState(1);
-  const { startingRecNo, setStartingRecNo } = useState(2);
+  const [paging, setPaging] = useState(2);
+  const [startingRecNo, setStartingRecNo] = useState(1);
 
   useEffect(() => {
     componentMounted.current = true;
