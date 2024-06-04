@@ -12,8 +12,6 @@ import {
   Pagination,
   Section,
   Table,
-  TableBatchAction,
-  TableBatchActions,
   TableBody,
   TableCell,
   TableContainer,
@@ -22,9 +20,7 @@ import {
   TableRow,
   TableSelectRow,
   TableToolbar,
-  TableToolbarAction,
   TableToolbarContent,
-  TableToolbarMenu,
   TableToolbarSearch,
   TextInput,
 } from "@carbon/react";
@@ -79,6 +75,9 @@ function DictionaryManagement() {
 
   useEffect(() => {
     componentMounted.current = true;
+    console.log(
+      `/rest/dictionary-menu?paging=${paging}&&startingRecNo=${startingRecNo}`,
+    );
     getFromOpenElisServer(
       `/rest/dictionary-menu?paging=${paging}&&startingRecNo=${startingRecNo}`,
       fetchedDictionaryMenu,
@@ -89,8 +88,11 @@ function DictionaryManagement() {
   }, [paging, startingRecNo]);
 
   const handleNextPage = () => {
-    // setPaging((prevPage) => prevPage + prevPage);
     setStartingRecNo((no) => no + 20);
+  };
+
+  const handlePreviousPage = () => {
+    setStartingRecNo((no) => Math.max(no - 20, 1));
   };
 
   const yesOrNo = [
@@ -421,6 +423,8 @@ function DictionaryManagement() {
               >
                 <Button
                   hasIconOnly
+                  disabled={startingRecNo === 1}
+                  onClick={handlePreviousPage}
                   renderIcon={ArrowLeft}
                   iconDescription="Previous Page"
                 />
