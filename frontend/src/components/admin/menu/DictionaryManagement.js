@@ -590,7 +590,7 @@ function DictionaryManagement() {
               onChange={handlePageChange}
               page={page}
               pageSize={pageSize}
-              pageSizes={[10, 20, 30, 40, 50]}
+              pageSizes={[10, 20]}
               totalItems={dictionaryMenuList.length}
               forwardText={intl.formatMessage({ id: "pagination.forward" })}
               backwardText={intl.formatMessage({ id: "pagination.backward" })}
