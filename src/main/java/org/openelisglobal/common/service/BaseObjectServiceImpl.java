@@ -222,7 +222,7 @@ public abstract class BaseObjectServiceImpl<T extends BaseObject<PK>, PK extends
     public T update(T baseObject) {
         if (baseObject.getLastupdated() == null) {
             // this is done so detached objects that are being updated don't do an insert operation
-            // when their version value is null (hiberante behaviour)
+            // when their version value is null (hibernate behaviour)
             LogEvent.logWarn(this.getClass().getSimpleName(), "update", "running update on an object with a missing version field can result in unintended inserts instead of updates");
             LogEvent.logWarn(this.getClass().getSimpleName(), "update", "setting lastUpdated to now for object: " + baseObject.getClass().getSimpleName() + " with id: " + baseObject.getId());
             baseObject.setLastupdated(Timestamp.from(Instant.now()));

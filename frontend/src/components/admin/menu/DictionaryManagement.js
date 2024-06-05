@@ -59,17 +59,11 @@ function DictionaryManagement() {
   const [dictionaryEntry, setDictionaryEntry] = useState("");
   const [localAbbreviation, setLocalAbbreviation] = useState("");
   const [isActive, setIsActive] = useState("");
+  const [lastupdated, setLastUpdated]  = useState("");
 
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [modifyButton, setModifyButton] = useState(true);
   const [editMode, setEditMode] = useState(true);
-  const [dictionaryItem, setDictionaryItem] = useState({
-    id: null,
-    dictEntry: "",
-    category: "",
-    isActive: "",
-    localAbbreviation: "",
-  });
 
   const [paging, setPaging] = useState(2);
   const [startingRecNo, setStartingRecNo] = useState(1);
@@ -153,6 +147,7 @@ function DictionaryManagement() {
           categoryName: item.dictionaryCategory
             ? item.dictionaryCategory.categoryName
             : "not available",
+          lastupdated: item.lastupdated,
           value: value,
         };
       });
@@ -177,6 +172,15 @@ function DictionaryManagement() {
     dictEntry: dictionaryEntry,
     localAbbreviation: localAbbreviation,
     isActive: isActive.id,
+  };
+
+  const updateData = {
+    id: dictionaryNumber,
+    selectedDictionaryCategoryId: category.id,
+    dictEntry: dictionaryEntry,
+    localAbbreviation: localAbbreviation,
+    isActive: isActive.id,
+    lastupdated: lastupdated,
   };
 
   async function displayStatus(res) {
@@ -208,27 +212,15 @@ function DictionaryManagement() {
     setOpen(false);
   };
 
-  const handleEditModalSubmission = async (e) => {
+  const handleUpdateModal = (e) => {
     e.preventDefault();
-    if (dictionaryItem) {
-      postData.id = dictionaryItem.id;
-      postData.selectedDictionaryCategoryId =
-        dictionaryItem.category.description;
-      postData.dictEntry = dictionaryItem.dictEntry;
-      postData.localAbbreviation = dictionaryItem.localAbbreviation;
-      postData.isActive = dictionaryItem.isActive;
-
-      console.log(JSON.stringify(postData));
-
-      postToOpenElisServerFullResponse(
-        `/rest/dictionary`,
-        JSON.stringify(postData),
-        displayStatus,
-      );
-
-      reloadConfiguration();
-      setOpen(false);
-    }
+    setLastUpdated(lastupdated);
+    postToOpenElisServerFullResponse(
+      `/rest/Dictionary?ID=${selectedRowId}`,
+      JSON.stringify(updateData),
+      displayStatus,
+    );
+    setOpen(false);
   };
 
   const renderCell = (cell, row) => {
@@ -269,15 +261,6 @@ function DictionaryManagement() {
   const handleDictionaryMenuItems = (res) => {
     if (componentMounted.current) {
       console.log("res: " + res.dictionaryCategory.description);
-      setDictionaryItem({
-        id: res.id,
-        category: res.dictionaryCategory.description,
-        dictEntry: res.dictEntry,
-        isActive: res.isActive,
-        localAbbreviation: res.localAbbreviation,
-      });
-
-      // Prefill modal inputs
       setDictionaryNumber(res.id);
       setCategory(res.dictionaryCategory);
       setDictionaryEntry(res.dictEntry);
@@ -310,6 +293,7 @@ function DictionaryManagement() {
         handleDelete,
       );
     }
+    reloadConfiguration();
   };
 
   const handleDelete = (status) => {
@@ -382,7 +366,7 @@ function DictionaryManagement() {
                   primaryButtonText={editMode ? "Add" : "Update"}
                   secondaryButtonText="Cancel"
                   onRequestSubmit={
-                    editMode ? handleSubmitModal : handleEditModalSubmission
+                    editMode ? handleSubmitModal : handleUpdateModal
                   }
                 >
                   <TextInput
