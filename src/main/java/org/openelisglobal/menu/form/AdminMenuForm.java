@@ -9,6 +9,10 @@ public class AdminMenuForm extends BaseForm {
 
     private List<AdminMenuItem> adminMenuItems;
 
+    private String totalRecordCount = "";
+    private String fromRecordCount = "1";
+    private String toRecordCount = "20";
+
     public List<AdminMenuItem> getAdminMenuItems() {
         return adminMenuItems;
     }
@@ -16,4 +20,32 @@ public class AdminMenuForm extends BaseForm {
     public void setAdminMenuItems(List<AdminMenuItem> adminMenuItems) {
         this.adminMenuItems = adminMenuItems;
     }
+
+    public String getTotalRecordCount() {
+        return totalRecordCount;
+    }
+
+    public void setTotalRecordCount(String totalRecordCount) {
+        this.totalRecordCount = totalRecordCount;
+    }
+
+    public String getFromRecordCount() {
+        return fromRecordCount;
+    }
+
+    public void setFromRecordCount(String fromRecordCount) {
+        this.fromRecordCount = fromRecordCount;
+    }
+
+    public String getToRecordCount() {
+        return toRecordCount;
+    }
+
+    public void setToRecordCount(String toRecordCount) {
+        this.toRecordCount = toRecordCount;
+    }
+
+    
 }
+
+  
