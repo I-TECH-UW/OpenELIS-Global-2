@@ -590,11 +590,9 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
       <Grid>
         <Column lg={16}>
           <Section>
-            <Section>
-              <Heading>
-                <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
-              </Heading>
-            </Section>
+            <Heading>
+              <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
+            </Heading>
           </Section>
         </Column>
       </Grid>

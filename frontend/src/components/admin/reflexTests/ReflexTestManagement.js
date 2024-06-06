@@ -15,11 +15,9 @@ function ReflexTestManagement() {
         <Grid>
           <Column lg={16}>
             <Section>
-              <Section>
-                <Heading>
-                  <FormattedMessage id="sidenav.label.admin.testmgt.reflex" />
-                </Heading>
-              </Section>
+              <Heading>
+                <FormattedMessage id="sidenav.label.admin.testmgt.reflex" />
+              </Heading>
             </Section>
           </Column>
         </Grid>
