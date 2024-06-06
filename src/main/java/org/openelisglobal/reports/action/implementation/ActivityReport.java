@@ -157,8 +157,8 @@ public abstract class ActivityReport extends Report implements IReportCreator {
         item.setPatientId(patient.getStringId() == null ? "" : patient.getStringId());
 
         List<String> values = new ArrayList<>();
-        values.add(
-                patientService.getLastName(patient) == null ? "" : patientService.getLastName(patient).toUpperCase());
+        //values.add(
+               // patientService.getLastName(patient) == null ? "" : patientService.getLastName(patient).toUpperCase());
         values.add(patientService.getNationalId(patient));
 
         String referringPatientId = SpringContext.getBean(ObservationHistoryService.class)
@@ -168,7 +168,7 @@ public abstract class ActivityReport extends Report implements IReportCreator {
         String name = StringUtil.buildDelimitedStringFromList(values, " / ", true);
 
         if (useTestName) {
-            item.setPatientOrTestName(resultService.getReportingTestName(result));
+            item.setPatientOrTestName(resultService.getReportingTestName(result) != null ?resultService.getReportingTestName(result) : "");
             item.setNonPrintingPatient(name);
         } else {
             item.setPatientOrTestName(name);

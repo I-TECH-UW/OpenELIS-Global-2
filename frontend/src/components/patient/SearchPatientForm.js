@@ -8,8 +8,6 @@ import {
   Button,
   Grid,
   Column,
-  DatePicker,
-  DatePickerInput,
   RadioButton,
   RadioButtonGroup,
   DataTable,
@@ -29,10 +27,13 @@ import { Formik, Field } from "formik";
 import SearchPatientFormValues from "../formModel/innitialValues/SearchPatientFormValues";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
+import CustomDatePicker from "../common/CustomDatePicker";
+import { ConfigurationContext } from "../layout/Layout";
 
 function SearchPatientForm(props) {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
 
   const intl = useIntl();
 
@@ -70,7 +71,9 @@ function SearchPatientForm(props) {
       "&dateOfBirth=" +
       values.dateOfBirth +
       "&gender=" +
-      values.gender;
+      values.gender +
+      "&suppressExternalSearch=" +
+      values.suppressExternalSearch;
     getFromOpenElisServer(searchEndPoint, fetchPatientResults);
     setUrl(searchEndPoint);
   };
@@ -121,8 +124,8 @@ function SearchPatientForm(props) {
     props.getSelectedPatient(patientDetails);
   };
 
-  const handleDatePickerChange = (...e) => {
-    setDob(e[1]);
+  const handleDatePickerChange = (date) => {
+    setDob(date);
   };
 
   const patientSelected = (e) => {
@@ -271,24 +274,18 @@ function SearchPatientForm(props) {
               <Column lg={8} md={4} sm={4}>
                 <Field name="dateOfBirth">
                   {({ field }) => (
-                    <DatePicker
-                      onChange={handleDatePickerChange}
+                    <CustomDatePicker
+                      id={"date-picker-default-id"}
+                      labelText={intl.formatMessage({
+                        id: "patient.dob",
+                        defaultMessage: "Date of Birth",
+                      })}
+                      autofillDate={true}
+                      value={values.birthDateForDisplay || ""}
+                      onChange={(date) => handleDatePickerChange(date)}
                       name={field.name}
-                      dateFormat="d/m/Y"
-                      datePickerType="single"
-                      light={true}
-                    >
-                      <DatePickerInput
-                        id="date-picker-default-id"
-                        placeholder="dd/mm/yyyy"
-                        labelText={intl.formatMessage({
-                          id: "patient.dob",
-                          defaultMessage: "Date of Birth",
-                        })}
-                        type="text"
-                        name={field.name}
-                      />
-                    </DatePicker>
+                      disallowFutureDate={true}
+                    />
                   )}
                 </Field>
               </Column>
@@ -329,12 +326,25 @@ function SearchPatientForm(props) {
                 <br />{" "}
               </Column>
               <Column lg={4} md={4} sm={2}>
-                <Button type="submit">
+                <Button
+                  id="local_search"
+                  kind="tertiary"
+                  type="submit"
+                  onClick={() => setFieldValue("suppressExternalSearch", true)}
+                >
                   <FormattedMessage id="label.button.search" />
                 </Button>
               </Column>
               <Column lg={4} md={4} sm={2}>
-                <Button kind="tertiary" disabled={true}>
+                <Button
+                  id="external_search"
+                  type="submit"
+                  disabled={
+                    configurationProperties.UseExternalPatientInfo === "false"
+                  }
+                  kind="tertiary"
+                  onClick={() => setFieldValue("suppressExternalSearch", false)}
+                >
                   <FormattedMessage
                     id="label.button.externalsearch"
                     defaultMessage="External Search"

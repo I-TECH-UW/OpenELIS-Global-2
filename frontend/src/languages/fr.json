@@ -462,7 +462,7 @@
   "dashboard.rejected.orders": "Commandes rejetées",
   "dashboard.rejected.orders.subtitle": "Rejeté par le laboratoire aujourd'hui",
   "dashboard.unprints.results.label": "Résultats non imprimés",
-  "dashboard.unprints.results.subtitle.label": "Résultats non publiés aujourd'hui",
+  "dashboard.unprints.results.subtitle.label": "Résultats non imprimés aujourd'hui",
   "label.electronic.orders": "Commandes électroniques",
   "patient.dob": "Date de naissance",
   "patient.male": "Mâle",

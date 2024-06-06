@@ -14,8 +14,6 @@ import {
   Button,
   Grid,
   Column,
-  DatePicker,
-  DatePickerInput,
   Stack,
   Pagination,
   Select,
@@ -32,6 +30,7 @@ import { NotificationContext } from "../layout/Layout";
 import SearchPatientForm from "../patient/SearchPatientForm";
 import { ConfigurationContext } from "../layout/Layout";
 import config from "../../config.json";
+import CustomDatePicker from "../common/CustomDatePicker";
 
 function ResultSearchPage() {
   const [originalResultForm, setOriginalResultForm] = useState({
@@ -185,7 +184,7 @@ export function SearchResultForm(props) {
       "&doRange=" +
       searchBy.doRange +
       "&finished=" +
-      true;
+      false;
     setUrl(searchEndPoint);
     props.setSearchBy?.(searchBy);
     switch (searchBy.type) {
@@ -512,52 +511,34 @@ export function SearchResultForm(props) {
                     <Column lg={3} md={4} sm={4}>
                       <Field name="collectionDate">
                         {({ field, form }) => (
-                          <DatePicker
+                          <CustomDatePicker
                             id={field.name}
-                            name={field.name}
-                            datePickerType="single"
-                            dateFormat="d/m/Y"
+                            labelText={intl.formatMessage({
+                              id: "search.label.collectiondate",
+                            })}
                             value={values[field.name]}
                             onChange={(date) =>
-                              form.setFieldValue(
-                                field.name,
-                                new Date(date).toLocaleDateString("fr-FR"),
-                              )
+                              form.setFieldValue(field.name, date)
                             }
-                          >
-                            <DatePickerInput
-                              labelText={
-                                <FormattedMessage id="search.label.collectiondate" />
-                              }
-                              placeholder="dd/mm/yyyy"
-                            />
-                          </DatePicker>
+                            name={field.name}
+                          />
                         )}
                       </Field>
                     </Column>
                     <Column lg={3} md={4} sm={4}>
                       <Field name="recievedDate">
                         {({ field, form }) => (
-                          <DatePicker
+                          <CustomDatePicker
                             id={field.name}
-                            name={field.name}
-                            datePickerType="single"
-                            dateFormat="d/m/Y"
+                            labelText={intl.formatMessage({
+                              id: "search.label.recieveddate",
+                            })}
                             value={values[field.name]}
                             onChange={(date) =>
-                              form.setFieldValue(
-                                field.name,
-                                new Date(date).toLocaleDateString("fr-FR"),
-                              )
+                              form.setFieldValue(field.name, date)
                             }
-                          >
-                            <DatePickerInput
-                              labelText={
-                                <FormattedMessage id="search.label.recieveddate" />
-                              }
-                              placeholder="dd/mm/yyyy"
-                            />
-                          </DatePicker>
+                            name={field.name}
+                          />
                         )}
                       </Field>
                     </Column>
@@ -1093,8 +1074,11 @@ export function SearchResults(props) {
                 labelText=""
                 //type="number"
                 style={validationState[row.id]?.style}
-                onChange={(e) => {
+                onMouseOut={(e) => {
                   let value = e.target.value;
+                  if (value == null || value == "") {
+                    return;
+                  }
                   let newValidationState = { ...validationState };
                   let validation = (newValidationState[row.id] =
                     validateNumericResults(value, row));
@@ -1114,7 +1098,7 @@ export function SearchResults(props) {
                   };
 
                   setValidationState(newValidationState);
-                  handleChange(e, row.id);
+
                   if (
                     validation.isInvalid &&
                     configurationProperties.ALERT_FOR_INVALID_RESULTS
@@ -1125,6 +1109,9 @@ export function SearchResults(props) {
                       }),
                     );
                   }
+                }}
+                onChange={(e) => {
+                  handleChange(e, row.id);
                 }}
               />
             );
@@ -1263,18 +1250,14 @@ export function SearchResults(props) {
           </Select>
         </Column>
         <Column lg={2}>
-          <DatePicker
-            datePickerType="single"
+          <CustomDatePicker
             id={"sentDate_" + data.id}
-            name={"testResult[" + data.id + "].sentDate_"}
+            labelText={intl.formatMessage({
+              id: "referral.label.sentdate",
+            })}
             onChange={(date) => handleDatePickerChange(date, data.id)}
-          >
-            <DatePickerInput
-              placeholder="mm/dd/yyyy"
-              labelText={intl.formatMessage({ id: "referral.label.sentdate" })}
-              id="date-picker-single"
-            />
-          </DatePicker>
+            name={"testResult[" + data.id + "].sentDate_"}
+          />
         </Column>
       </Grid>
     </>
@@ -1439,10 +1422,9 @@ export function SearchResults(props) {
 
   const handleDatePickerChange = (date, rowId) => {
     console.debug("handleDatePickerChange:" + date);
-    const d = new Date(date).toLocaleDateString("fr-FR");
     var form = props.results;
     var jp = require("jsonpath");
-    jp.value(form, "testResult[" + rowId + "].sentDate_", d);
+    jp.value(form, "testResult[" + rowId + "].sentDate_", date);
     var isModified = "testResult[" + rowId + "].isModified";
     jp.value(form, isModified, "true");
   };
