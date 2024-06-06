@@ -47,7 +47,7 @@ public class BarcodeConfigurationRestController extends BaseController {
     }
 
     @GetMapping(value = "/BarcodeConfiguration")
-    public Object showBarcodeConfiguration(HttpServletRequest request)
+    public BarcodeConfigurationForm showBarcodeConfiguration(HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         String forward = FWD_SUCCESS;
         BarcodeConfigurationForm form = new BarcodeConfigurationForm();
