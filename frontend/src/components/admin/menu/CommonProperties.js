@@ -62,7 +62,7 @@ export const CommonProperties = () => {
 
   return (
     <>
-      <div style={{ marginLeft: "3em", marginRight: "1em" }}>
+      <div className="adminPageContent">
         {notificationVisible === true ? <AlertDialog /> : ""}
         <PageBreadCrumb breadcrumbs={[{ label: "home.label", link: "/" }]} />
         <Grid fullWidth={true}>

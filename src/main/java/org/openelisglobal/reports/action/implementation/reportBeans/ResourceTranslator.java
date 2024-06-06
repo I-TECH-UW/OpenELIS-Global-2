@@ -28,6 +28,7 @@ import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.gender.service.GenderService;
 import org.openelisglobal.gender.valueholder.Gender;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.common.log.LogEvent;
 
 /**
  * RetroCI wants CSV export to list the numeric values that are prefixed on the
@@ -98,7 +99,12 @@ public class ResourceTranslator<T extends BaseObject<PK>, PK extends Serializabl
         }
         T t = map.get(id);
         if (t == null) {
-            return NOT_FOUND_TAG + " " + id + " not found in " + this.getClass().getSimpleName() + " " + NOT_FOUND_TAG;
+            // return NOT_FOUND_TAG + " " + id + " not found in " +
+            // this.getClass().getSimpleName() + " " + NOT_FOUND_TAG;
+            LogEvent.logWarn(this.getClass().getSimpleName(), "translateRaw",
+                    NOT_FOUND_TAG + " " + id + " not found in " + this.getClass().getSimpleName() + " "
+                            + NOT_FOUND_TAG);
+            return id;
         }
         String resource = t.getLocalizedName();
         return resource;
