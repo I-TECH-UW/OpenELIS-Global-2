@@ -184,7 +184,7 @@ export function SearchResultForm(props) {
       "&doRange=" +
       searchBy.doRange +
       "&finished=" +
-      true;
+      false;
     setUrl(searchEndPoint);
     props.setSearchBy?.(searchBy);
     switch (searchBy.type) {
