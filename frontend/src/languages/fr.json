@@ -890,5 +890,14 @@
   "nonconform.corrective.action": "Action corrective planifiée ou recommandée :",
   "nonconform.corrective.control": "Action préventive corrective planifiée ou recommandée ou contrôles simultanés :",
   "nonconform.corrective.comment": "Commentaires",
-  "nonconform.corrective.actionType": "Type d'action"
+  "nonconform.corrective.actionType": "Type d'action",
+  "provider.browse.title": "Gestion des Fournisseurs",
+  "provider.select": "Sélectionner un Fournisseur",
+  "provider.search": "Rechercher un Fournisseur",
+  "provider.search.placeholder": "Rechercher par Nom de Fournisseur...",
+  "provider.providerLastName": "Nom de Famille du Fournisseur",
+  "provider.providerFirstName": "Prénom du Fournisseur",
+  "provider.isActive": "Est Actif",
+  "provider.telephone": "Téléphone",
+  "provider.fax": "Fax"
 }

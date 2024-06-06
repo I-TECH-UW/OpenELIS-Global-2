@@ -62,20 +62,18 @@ export const CommonProperties = () => {
 
   return (
     <>
-      <div style={{ marginLeft: "3em", marginRight: "1em" }}>
+      <div className="adminPageContent">
         {notificationVisible === true ? <AlertDialog /> : ""}
         <PageBreadCrumb breadcrumbs={[{ label: "home.label", link: "/" }]} />
         <Grid fullWidth={true}>
           <Column lg={16} md={8} sm={4}>
             <Section>
-              <Section>
-                <Heading>
-                  <FormattedMessage
-                    id="ewfggwgewgewgweg"
-                    defaultMessage="Common Properties"
-                  />
-                </Heading>
-              </Section>
+              <Heading>
+                <FormattedMessage
+                  id="ewfggwgewgewgweg"
+                  defaultMessage="Common Properties"
+                />
+              </Heading>
             </Section>
           </Column>
         </Grid>

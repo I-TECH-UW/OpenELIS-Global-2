@@ -977,5 +977,14 @@
   "nonconform.nce.resolution.description": "Were the corrective actions and preventive/concurrentcontrols effective in solving the nonconforming event and preventing it from recurring?",
   "nonconform.nce.preventive.action": "preventive action",
   "nonconform.nce.concurrent.control.action": "concurrent control action",
-  "nonconform.nce.turnaround.time": "Turnaround Time"
+  "nonconform.nce.turnaround.time": "Turnaround Time",
+  "provider.browse.title": "Provider Management",
+  "provider.select": "Select Provider",
+  "provider.search": "Search Provider",
+  "provider.search.placeholder": "Search Provider Name...",
+  "provider.providerLastName": "Provider Lastname",
+  "provider.providerFirstName": "Provider Firstname",
+  "provider.isActive": "Is Active",
+  "provider.telephone": "Telephone",
+  "provider.fax": "Fax"
 }
