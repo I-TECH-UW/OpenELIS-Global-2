@@ -8,6 +8,7 @@ import {
   Form,
   Grid,
   Heading,
+  Link,
   Modal,
   Pagination,
   Section,
@@ -59,7 +60,11 @@ function DictionaryManagement() {
   const [dictionaryEntry, setDictionaryEntry] = useState("");
   const [localAbbreviation, setLocalAbbreviation] = useState("");
   const [isActive, setIsActive] = useState("");
-  const [lastupdated, setLastUpdated]  = useState("");
+  const [lastupdated, setLastUpdated] = useState("");
+
+  const [fromRecordCount, setFromRecordCount] = useState("");
+  const [toRecordCount, setToRecordCount] = useState("");
+  const [totalRecordCount, setTotalRecordCount] = useState("");
 
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [modifyButton, setModifyButton] = useState(true);
@@ -70,11 +75,8 @@ function DictionaryManagement() {
 
   useEffect(() => {
     componentMounted.current = true;
-    console.log(
-      `/rest/dictionary-menu?paging=${paging}&&startingRecNo=${startingRecNo}`,
-    );
     getFromOpenElisServer(
-      `/rest/dictionary-menu?paging=${paging}&&startingRecNo=${startingRecNo}`,
+      `/rest/dictionary-menu?paging=${paging}&startingRecNo=${startingRecNo}`,
       fetchedDictionaryMenu,
     );
     return () => {
@@ -83,11 +85,13 @@ function DictionaryManagement() {
   }, [paging, startingRecNo]);
 
   const handleNextPage = () => {
-    setStartingRecNo((no) => no + 20);
+    setPaging((pager) => Math.max(pager, 2));
+    setStartingRecNo(toRecordCount);
   };
 
   const handlePreviousPage = () => {
-    setStartingRecNo((no) => Math.max(no - 20, 1));
+    setPaging((pager) => Math.max(pager - 1, 1));
+    setStartingRecNo(Math.max(toRecordCount, 1));
   };
 
   const yesOrNo = [
@@ -132,26 +136,38 @@ function DictionaryManagement() {
   }, []);
 
   useEffect(() => {
-    if (dictionaryMenuz && dictionaryMenuz.menuList) {
-      const newMenuList = dictionaryMenuz.menuList.map((item) => {
-        let value = item.value;
-        if (item.valueType === "text" && item.tag === "localization") {
-          value =
-            item.localization.localesAndValuesOfLocalesWithValues || value;
-        }
-        return {
-          id: item.id,
-          isActive: item.isActive,
-          dictEntry: item.dictEntry,
-          localAbbreviation: item.localAbbreviation,
-          categoryName: item.dictionaryCategory
-            ? item.dictionaryCategory.categoryName
-            : "not available",
-          lastupdated: item.lastupdated,
-          value: value,
-        };
-      });
-      setDictionaryMenuList(newMenuList);
+    if (dictionaryMenuz) {
+      if (
+        dictionaryMenuz.toRecordCount !== undefined &&
+        dictionaryMenuz.fromRecordCount !== undefined &&
+        dictionaryMenuz.totalRecordCount !== undefined
+      ) {
+        setToRecordCount(dictionaryMenuz.fromRecordCount);
+        setFromRecordCount(dictionaryMenuz.toRecordCount);
+        setTotalRecordCount(dictionaryMenuz.totalRecordCount);
+      }
+
+      if (dictionaryMenuz.menuList) {
+        const newMenuList = dictionaryMenuz.menuList.map((item) => {
+          let value = item.value;
+          if (item.valueType === "text" && item.tag === "localization") {
+            value =
+              item.localization?.localesAndValuesOfLocalesWithValues || value;
+          }
+          return {
+            id: item.id,
+            isActive: item.isActive,
+            dictEntry: item.dictEntry,
+            localAbbreviation: item.localAbbreviation,
+            categoryName: item.dictionaryCategory
+              ? item.dictionaryCategory.categoryName
+              : "not available",
+            lastupdated: item.lastupdated,
+            value: value,
+          };
+        });
+        setDictionaryMenuList(newMenuList);
+      }
     }
   }, [dictionaryMenuz]);
 
@@ -203,7 +219,6 @@ function DictionaryManagement() {
 
   const handleSubmitModal = (e) => {
     e.preventDefault();
-    console.log(JSON.stringify(postData));
     postToOpenElisServerFullResponse(
       "/rest/dictionary",
       JSON.stringify(postData),
@@ -236,7 +251,6 @@ function DictionaryManagement() {
           onSelect={() => {
             setModifyButton(false);
             setSelectedRowId(row.id);
-            console.log("row id " + row.id);
           }}
         />
       );
@@ -260,7 +274,6 @@ function DictionaryManagement() {
 
   const handleDictionaryMenuItems = (res) => {
     if (componentMounted.current) {
-      console.log("res: " + res.dictionaryCategory.description);
       setDictionaryNumber(res.id);
       setCategory(res.dictionaryCategory);
       setDictionaryEntry(res.dictEntry);
@@ -387,7 +400,6 @@ function DictionaryManagement() {
                     itemToString={(item) => (item ? item.description : "")}
                     onChange={({ selectedItem }) => {
                       setCategory(selectedItem);
-                      console.log("Selected category:", selectedItem.id);
                     }}
                     selectedItem={category}
                     size="md"
@@ -412,7 +424,6 @@ function DictionaryManagement() {
                     itemToString={(item) => (item ? item.id : "")}
                     onChange={({ selectedItem }) => {
                       setIsActive(selectedItem);
-                      console.log("Selected item:", selectedItem.id);
                     }}
                     selectedItem={isActive}
                     size="md"
@@ -442,21 +453,33 @@ function DictionaryManagement() {
                 lg={16}
                 md={8}
                 sm={4}
-                style={{ display: "flex", gap: "10px" }}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
               >
-                <Button
-                  hasIconOnly
-                  disabled={startingRecNo === 1}
-                  onClick={handlePreviousPage}
-                  renderIcon={ArrowLeft}
-                  iconDescription="Previous Page"
-                />
-                <Button
-                  hasIconOnly
-                  renderIcon={ArrowRight}
-                  onClick={handleNextPage}
-                  iconDescription="Next Page"
-                />
+                <Link>
+                  Showing {toRecordCount} - {fromRecordCount} of{" "}
+                  {totalRecordCount}
+                </Link>
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <Button
+                    hasIconOnly
+                    disabled={
+                      (paging === 1 && startingRecNo <= 21) ||
+                      startingRecNo <= 1
+                    }
+                    onClick={handlePreviousPage}
+                    renderIcon={ArrowLeft}
+                  />
+                  <Button
+                    hasIconOnly
+                    renderIcon={ArrowRight}
+                    onClick={handleNextPage}
+                  />
+                </div>
               </Column>
             </Form>
           </Section>
