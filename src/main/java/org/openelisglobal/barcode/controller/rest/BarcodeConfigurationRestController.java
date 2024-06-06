@@ -13,13 +13,10 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,26 +47,19 @@ public class BarcodeConfigurationRestController extends BaseController {
     }
 
     @GetMapping(value = "/BarcodeConfiguration")
-    // public Object showBarcodeConfiguration(HttpServletRequest request)
-    //         throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    //     String forward = FWD_SUCCESS;
-    //     BarcodeConfigurationForm form = new BarcodeConfigurationForm();
-
-    //     addFlashMsgsToRequest(request);
-    //     form.setCancelAction("MasterListsPage");
-
-    //     setFields(form);
-
-    //     request.getSession().setAttribute(SAVE_DISABLED, "false");
-
-    //     // return findForward(forward, form);
-    //     return form;
-    // }
-
-    public BarcodeConfigurationForm showBarcodeConfiguration() {
+    public Object showBarcodeConfiguration(HttpServletRequest request)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        String forward = FWD_SUCCESS;
         BarcodeConfigurationForm form = new BarcodeConfigurationForm();
+
+        addFlashMsgsToRequest(request);
         form.setCancelAction("MasterListsPage");
+
         setFields(form);
+
+        request.getSession().setAttribute(SAVE_DISABLED, "false");
+
+        // return findForward(forward, form);
         return form;
     }
 
