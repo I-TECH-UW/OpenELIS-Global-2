@@ -987,6 +987,8 @@
   "provider.isActive": "Is Active",
   "provider.telephone": "Telephone",
   "provider.fax": "Fax",
+  "dictionary.menu.deactivate.success": "Dictionary Menu deactivated successfully",
+  "dictionary.menu.deactivate.fail": "Dictionary Menu Deactivation Failed",
   "barcodeconfiguration.browse.title": "Barcode Configuration",
   "sidenav.label.admin.barcodeconfiguration": "Barcode Configuration",
   "siteInfo.section.number": "Number Bar Code Label",
