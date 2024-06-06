@@ -61,100 +61,105 @@ export const CommonProperties = () => {
   };
 
   return (
-    <div className="adminPageContent">
-      {notificationVisible === true ? <AlertDialog /> : ""}
-      <PageBreadCrumb breadcrumbs={[{ label: "home.label", link: "/" }]} />
-      <Grid fullWidth={true}>
-        <Column lg={16} md={8} sm={4}>
-          <Section>
-            <Heading>
-              <FormattedMessage
-                id="ewfggwgewgewgweg"
-                defaultMessage="Common Properties"
-              />
-            </Heading>
-          </Section>
-        </Column>
-      </Grid>
-      {loading && <Loading />} {error && <p>Error: {error}</p>}{" "}
-      <div className="orderLegendBody">
+    <>
+      <div className="adminPageContent">
+        {notificationVisible === true ? <AlertDialog /> : ""}
+        <PageBreadCrumb breadcrumbs={[{ label: "home.label", link: "/" }]} />
         <Grid fullWidth={true}>
-          <Column lg={8} md={8} sm={4}>
-            {commonProperties && (
-              <>
-                {Object.keys(commonProperties)
-                  .slice(0, Math.ceil(Object.keys(commonProperties).length / 2))
-                  .map((key) => {
-                    // Remove the prefix "org.openelisglobal" using regex
-                    let shortKey = key.replace(/^org\.openelisglobal\./, "");
-
-                    return (
-                      <div
-                        key={key}
-                        className="inlineDiv"
-                        style={{ gap: "20px" }}
-                      >
-                        <TextInput
-                          id={key + "-input"}
-                          labelText={shortKey} // Use the modified key without the prefix
-                          value={commonProperties[key]}
-                          onChange={(e) => {
-                            setCommonProperties({
-                              ...commonProperties,
-                              [key]: e.target.value,
-                            });
-                          }}
-                        />
-                      </div>
-                    );
-                  })}
-              </>
-            )}
-          </Column>
-
-          <Column lg={8} md={8} sm={4}>
-            {commonProperties && (
-              <>
-                {Object.keys(commonProperties)
-                  .slice(Math.ceil(Object.keys(commonProperties).length / 2))
-                  .map((key) => {
-                    // Remove the prefix "org.openelisglobal" using regex
-                    let shortKey = key.replace(/^org\.openelisglobal\./, "");
-
-                    return (
-                      <div
-                        key={key}
-                        className="inlineDiv"
-                        style={{ gap: "20px" }}
-                      >
-                        <TextInput
-                          id={key + "-input"}
-                          labelText={shortKey} // Use the modified key without the prefix
-                          value={commonProperties[key]}
-                          onChange={(e) => {
-                            setCommonProperties({
-                              ...commonProperties,
-                              [key]: e.target.value,
-                            });
-                          }}
-                        />
-                      </div>
-                    );
-                  })}
-              </>
-            )}
+          <Column lg={16} md={8} sm={4}>
+            <Section>
+              <Heading>
+                <FormattedMessage
+                  id="ewfggwgewgewgweg"
+                  defaultMessage="Common Properties"
+                />
+              </Heading>
+            </Section>
           </Column>
         </Grid>
+        {loading && <Loading />} {error && <p>Error: {error}</p>}{" "}
+        <div className="orderLegendBody">
+          <Grid fullWidth={true}>
+            <Column lg={8} md={8} sm={4}>
+              {commonProperties && (
+                <>
+                  {Object.keys(commonProperties)
+                    .slice(
+                      0,
+                      Math.ceil(Object.keys(commonProperties).length / 2),
+                    )
+                    .map((key) => {
+                      // Remove the prefix "org.openelisglobal" using regex
+                      let shortKey = key.replace(/^org\.openelisglobal\./, "");
 
-        <div style={{ marginLeft: "2em" }} className="inlineDiv">
-          <Button type="submit" onClick={handleSubmit}>
-            <FormattedMessage
-              id="label.button.update"
-              defaultMessage="Update"
-            />
-          </Button>
+                      return (
+                        <div
+                          key={key}
+                          className="inlineDiv"
+                          style={{ gap: "20px" }}
+                        >
+                          <TextInput
+                            id={key + "-input"}
+                            labelText={shortKey} // Use the modified key without the prefix
+                            value={commonProperties[key]}
+                            onChange={(e) => {
+                              setCommonProperties({
+                                ...commonProperties,
+                                [key]: e.target.value,
+                              });
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                </>
+              )}
+            </Column>
+
+            <Column lg={8} md={8} sm={4}>
+              {commonProperties && (
+                <>
+                  {Object.keys(commonProperties)
+                    .slice(Math.ceil(Object.keys(commonProperties).length / 2))
+                    .map((key) => {
+                      // Remove the prefix "org.openelisglobal" using regex
+                      let shortKey = key.replace(/^org\.openelisglobal\./, "");
+
+                      return (
+                        <div
+                          key={key}
+                          className="inlineDiv"
+                          style={{ gap: "20px" }}
+                        >
+                          <TextInput
+                            id={key + "-input"}
+                            labelText={shortKey} // Use the modified key without the prefix
+                            value={commonProperties[key]}
+                            onChange={(e) => {
+                              setCommonProperties({
+                                ...commonProperties,
+                                [key]: e.target.value,
+                              });
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                </>
+              )}
+            </Column>
+          </Grid>
+
+          <div style={{ marginLeft: "2em" }} className="inlineDiv">
+            <Button type="submit" onClick={handleSubmit}>
+              <FormattedMessage
+                id="label.button.update"
+                defaultMessage="Update"
+              />
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };

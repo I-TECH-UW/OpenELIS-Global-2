@@ -168,7 +168,6 @@ function LabNumberManagement() {
             </Section>
           </Column>
         </Grid>
-        <div children="orderLegendBody">
         <Form onSubmit={handleSubmit}>
           <Grid>
             <Column lg={8}>
@@ -242,7 +241,6 @@ function LabNumberManagement() {
             </Column>
           </Grid>
         </Form>
-      </div>
       </div>
     </>
   );
