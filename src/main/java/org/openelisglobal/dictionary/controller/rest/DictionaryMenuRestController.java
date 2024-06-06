@@ -150,6 +150,9 @@ public class DictionaryMenuRestController extends BaseMenuController<Dictionary>
         numOfRecs--;
         int endingRecNo = startingRecNo + numOfRecs;
         request.setAttribute(MENU_TO_RECORD, String.valueOf(endingRecNo));
+        form.setToRecordCount(String.valueOf(endingRecNo));
+        form.setFromRecordCount(String.valueOf(startingRecNo));
+        form.setTotalRecordCount(String.valueOf(total));
 
         request.setAttribute(MENU_SEARCH_BY_TABLE_COLUMN, "dictionary.dictEntry");
 
