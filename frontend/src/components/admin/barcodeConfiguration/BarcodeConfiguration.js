@@ -197,16 +197,15 @@ function BarcodeConfiguration() {
       {notificationVisible === true ? <AlertDialog /> : ""}
       <div className="adminPageContent">
         <PageBreadCrumb breadcrumbs={breadcrumbs} />
-        <br />
-        <Column lg={16} md={8} sm={4}>
-          <Section>
+        <Grid fullWidth={true}>
+          <Column lg={16}>
             <Section>
               <Heading>
                 <FormattedMessage id="barcodeconfiguration.browse.title" />
               </Heading>
             </Section>
-          </Section>
-        </Column>
+          </Column>
+        </Grid>
         <br />
         <div className="orderLegendBody">
           <Grid fullWidth={true} className="gridBoundary">
