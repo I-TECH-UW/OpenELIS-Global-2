@@ -28,10 +28,12 @@ import SearchPatientFormValues from "../formModel/innitialValues/SearchPatientFo
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import CustomDatePicker from "../common/CustomDatePicker";
+import { ConfigurationContext } from "../layout/Layout";
 
 function SearchPatientForm(props) {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
 
   const intl = useIntl();
 
@@ -70,7 +72,7 @@ function SearchPatientForm(props) {
       values.dateOfBirth +
       "&gender=" +
       values.gender +
-      "&suppressExternalSearch="+
+      "&suppressExternalSearch=" +
       values.suppressExternalSearch;
     getFromOpenElisServer(searchEndPoint, fetchPatientResults);
     setUrl(searchEndPoint);
@@ -323,13 +325,26 @@ function SearchPatientForm(props) {
                 {" "}
                 <br />{" "}
               </Column>
-              <Column lg={4} md={4} sm={2} >
-                <Button  id="local_search" kind="tertiary" type="submit" onClick={() => setFieldValue('suppressExternalSearch', true)}>
+              <Column lg={4} md={4} sm={2}>
+                <Button
+                  id="local_search"
+                  kind="tertiary"
+                  type="submit"
+                  onClick={() => setFieldValue("suppressExternalSearch", true)}
+                >
                   <FormattedMessage id="label.button.search" />
                 </Button>
               </Column>
               <Column lg={4} md={4} sm={2}>
-                <Button id="external_search" type="submit" kind="tertiary" onClick={() => setFieldValue('suppressExternalSearch', false)}>
+                <Button
+                  id="external_search"
+                  type="submit"
+                  disabled={
+                    configurationProperties.UseExternalPatientInfo === "false"
+                  }
+                  kind="tertiary"
+                  onClick={() => setFieldValue("suppressExternalSearch", false)}
+                >
                   <FormattedMessage
                     id="label.button.externalsearch"
                     defaultMessage="External Search"

@@ -8,7 +8,13 @@ import {
 } from "../utils/Utils";
 import { nationalityList } from "../data/countries";
 import format from "date-fns/format";
-import { differenceInYears, differenceInMonths, differenceInDays, addYears, addMonths } from 'date-fns';
+import {
+  differenceInYears,
+  differenceInMonths,
+  differenceInDays,
+  addYears,
+  addMonths,
+} from "date-fns";
 
 import {
   Heading,
@@ -96,13 +102,16 @@ function CreatePatientForm(props) {
       mm = parseInt(selectedDate[0]);
       dd = parseInt(selectedDate[1]);
     }
-    let formatDate = mm +"/" + dd + "/" + yy
-   
+    let formatDate = mm + "/" + dd + "/" + yy;
+
     const birthDate = new Date(formatDate);
     const now = new Date();
     const years = differenceInYears(now, birthDate);
     const months = differenceInMonths(now, addYears(birthDate, years));
-    const days = differenceInDays(now, addMonths(addYears(birthDate, years), months));
+    const days = differenceInDays(
+      now,
+      addMonths(addYears(birthDate, years), months),
+    );
 
     setDateOfBirthFormatter({
       ...dateOfBirthFormatter,
@@ -116,9 +125,7 @@ function CreatePatientForm(props) {
     const currentDate = new Date();
     const pastDate = new Date();
 
-    pastDate.setFullYear(
-      currentDate.getFullYear() - dobFormatter.years,
-    );
+    pastDate.setFullYear(currentDate.getFullYear() - dobFormatter.years);
     pastDate.setMonth(currentDate.getMonth() - dobFormatter.months);
     pastDate.setDate(currentDate.getDate() - dobFormatter.days);
     const dob = format(
@@ -139,8 +146,8 @@ function CreatePatientForm(props) {
     let dobFormatter = {
       ...dateOfBirthFormatter,
       years: years,
-    }
-    getDOBByYearMonthsDays(dobFormatter)
+    };
+    getDOBByYearMonthsDays(dobFormatter);
   }
 
   function handleMonthsChange(e, values) {
@@ -149,8 +156,8 @@ function CreatePatientForm(props) {
     let dobFormatter = {
       ...dateOfBirthFormatter,
       months: months,
-    }
-    getDOBByYearMonthsDays(dobFormatter)
+    };
+    getDOBByYearMonthsDays(dobFormatter);
   }
 
   function handleDaysChange(e, values) {
@@ -159,8 +166,8 @@ function CreatePatientForm(props) {
     let dobFormatter = {
       ...dateOfBirthFormatter,
       days: days,
-    }
-    getDOBByYearMonthsDays(dobFormatter)
+    };
+    getDOBByYearMonthsDays(dobFormatter);
   }
   const handleRegionSelection = (e, values) => {
     var patient = values;
@@ -318,7 +325,7 @@ function CreatePatientForm(props) {
           years: "",
           months: "",
           days: "",
-        })
+        });
       },
     );
   };
@@ -852,7 +859,7 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
-                     
+
                       <Column lg={8} md={4} sm={4}>
                         <Field name="healthDistrict">
                           {({ field }) => (
@@ -1012,7 +1019,7 @@ function CreatePatientForm(props) {
                           years: "",
                           months: "",
                           days: "",
-                        })
+                        });
                       }}
                     >
                       <FormattedMessage id="label.button.clear" />

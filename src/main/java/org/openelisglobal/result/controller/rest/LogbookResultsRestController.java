@@ -86,6 +86,7 @@ import org.openelisglobal.resultlimits.valueholder.ResultLimit;
 import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.statusofsample.util.StatusRules;
 import org.openelisglobal.systemuser.service.UserService;
@@ -93,6 +94,7 @@ import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
+import org.openelisglobal.userrole.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -109,12 +111,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Controller
 @RequestMapping(value = "/rest/")
 public class LogbookResultsRestController extends LogbookResultsBaseController {
+
+    private  String RESULT_EDIT_ROLE_ID;
 
     private final String[] ALLOWED_FIELDS = new String[] { "accessionNumber", "collectionDate", "recievedDate",
             "selectedTest", "selectedAnalysisStatus", "selectedSampleStatus", "testSectionId", "methodId", "type",
@@ -163,12 +165,15 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
     private SampleService sampleService;
     @Autowired
     PatientService patientService;
-
     @Autowired
     SearchResultsService searchService;
-
     @Autowired
     SampleItemService sampleItemService;
+    @Autowired
+    private UserRoleService userRoleService;
+    @Autowired
+    private SampleHumanService sampleHumanService;
+
 
     private final String RESULT_SUBJECT = "Result Note";
     private final String REFERRAL_CONFORMATION_ID;
@@ -244,6 +249,8 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
 
         if (GenericValidator.isBlankOrNull(requestedPage)) {
             requestedPage = "1";
+            resultsLoadUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
+            resultsLoadUtility.addExcludedAnalysisStatus(AnalysisStatus.SampleRejected);
             new StatusRules().setAllowableStatusForLoadingResults(resultsLoadUtility);
 
             if (!GenericValidator.isBlankOrNull(form.getTestSectionId())) {
@@ -293,19 +300,36 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
                     !GenericValidator.isBlankOrNull(patientPK)
             ) {
                 tests.clear();
-                tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(labNumber,upperRangeAccessionNumber, doRange, finished);
+                if(doRange){
+                    tests = resultsLoadUtility.getUnfinishedTestResultItemsByAccession(labNumber,upperRangeAccessionNumber, doRange, finished);
+                }else{
+                    resultsLoadUtility.setLockCurrentResults(modifyResultsRoleBased() && userNotInRole(request));
+                    Sample sample = sampleService.getSampleByAccessionNumber(labNumber);
+                    if(sample != null){
+                        if (!GenericValidator.isBlankOrNull(sample.getId())) {
+                             patient = getPatient(sample);
+                            
+                            tests = resultsLoadUtility.getGroupedTestsForSample(sample, patient);
+                        }
 
+                    }
+
+                }
+                
                 // if no test try patientID
                 if(tests.isEmpty()) {
-                    ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
-                    resultsUtility.setSysUser(getSysUserId(request));
+                    String statusRules = ConfigurationProperties.getInstance()
+                    .getPropertyValueUpperCase(Property.StatusRules);
+                    if (statusRules.equals(STATUS_RULES_RETROCI)) {
+                        resultsLoadUtility.addExcludedAnalysisStatus(AnalysisStatus.TechnicalRejected);
+                    } 
 
                     if(StringUtils.isBlank(patientPK)){
                         return (form);
                     }
                     patient = patientService.get(patientPK);
 
-                    tests = resultsUtility.getGroupedTestsForPatient(patient);
+                    tests = resultsLoadUtility.getGroupedTestsForPatient(patient);
                     patientName = patientService.getLastFirstName(patient);
                     patientInfo = patient.getNationalId() + ", " + patient.getGender() + ", "
                             + patient.getBirthDateForDisplay();
@@ -787,6 +811,23 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
             sig.setSysUserId(getSysUserId(request));
         }
         return sig;
+    }
+
+    private boolean modifyResultsRoleBased() {
+        return "true"
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.roleRequiredForModifyResults));
+    }
+
+    private boolean userNotInRole(HttpServletRequest request) {
+        if (userModuleService.isUserAdmin(request)) {
+            return false;
+        }
+        List<String> roleIds = userRoleService.getRoleIdsForUser(getSysUserId(request));
+        return !roleIds.contains(RESULT_EDIT_ROLE_ID);
+    }
+
+    private Patient getPatient(Sample sample) {
+        return sampleHumanService.getPatientForSample(sample);
     }
 
     private String findLogBookForward(String forward) {

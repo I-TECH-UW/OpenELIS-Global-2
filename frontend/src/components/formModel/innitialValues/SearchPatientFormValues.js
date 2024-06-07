@@ -6,7 +6,7 @@ const SearchPatientFormValues = {
   dateOfBirth: "",
   guid: "",
   gender: "",
-  suppressExternalSearch: true
+  suppressExternalSearch: true,
 };
 
 export default SearchPatientFormValues;
