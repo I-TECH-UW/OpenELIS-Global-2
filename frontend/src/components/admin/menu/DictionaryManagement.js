@@ -117,7 +117,31 @@ function DictionaryManagement() {
 
   const fetchedDictionaryMenu = (res) => {
     if (componentMounted.current) {
-      setDictionaryMenuz(res);
+      if (res) {
+        if (
+          res.toRecordCount !== undefined &&
+          res.fromRecordCount !== undefined &&
+          res.totalRecordCount !== undefined
+        ) {
+          setToRecordCount(res.fromRecordCount);
+          setFromRecordCount(res.toRecordCount);
+          setTotalRecordCount(res.totalRecordCount);
+        }
+        if (res.menuList) {
+          const menuList = res.menuList.map((item) => ({
+            id: item.id,
+            dictEntry: item.dictEntry,
+            localAbbreviation: item.localAbbreviation,
+            isActive: item.isActive,
+            categoryName: item.dictionaryCategory
+              ? item.dictionaryCategory.categoryName
+              : "not available",
+            lastupdated: item.lastupdated,
+          }));
+          console.log("new menu list: " + JSON.stringify(menuList));
+          setDictionaryMenuList(menuList);
+        }
+      }
     }
   };
 
@@ -136,42 +160,6 @@ function DictionaryManagement() {
   }, []);
 
   useEffect(() => {
-    if (dictionaryMenuz) {
-      if (
-        dictionaryMenuz.toRecordCount !== undefined &&
-        dictionaryMenuz.fromRecordCount !== undefined &&
-        dictionaryMenuz.totalRecordCount !== undefined
-      ) {
-        setToRecordCount(dictionaryMenuz.fromRecordCount);
-        setFromRecordCount(dictionaryMenuz.toRecordCount);
-        setTotalRecordCount(dictionaryMenuz.totalRecordCount);
-      }
-
-      if (dictionaryMenuz.menuList) {
-        const newMenuList = dictionaryMenuz.menuList.map((item) => {
-          let value = item.value;
-          if (item.valueType === "text" && item.tag === "localization") {
-            value =
-              item.localization?.localesAndValuesOfLocalesWithValues || value;
-          }
-          return {
-            id: item.id,
-            isActive: item.isActive,
-            dictEntry: item.dictEntry,
-            localAbbreviation: item.localAbbreviation,
-            categoryName: item.dictionaryCategory
-              ? item.dictionaryCategory.categoryName
-              : "not available",
-            lastupdated: item.lastupdated,
-            value: value,
-          };
-        });
-        setDictionaryMenuList(newMenuList);
-      }
-    }
-  }, [dictionaryMenuz]);
-
-  useEffect(() => {
     componentMounted.current = true;
     getFromOpenElisServer(
       "/rest/dictionary-categories",
@@ -188,15 +176,6 @@ function DictionaryManagement() {
     dictEntry: dictionaryEntry,
     localAbbreviation: localAbbreviation,
     isActive: isActive.id,
-  };
-
-  const updateData = {
-    id: dictionaryNumber,
-    selectedDictionaryCategoryId: category.id,
-    dictEntry: dictionaryEntry,
-    localAbbreviation: localAbbreviation,
-    isActive: isActive.id,
-    lastupdated: lastupdated,
   };
 
   async function displayStatus(res) {
@@ -229,10 +208,31 @@ function DictionaryManagement() {
 
   const handleUpdateModal = (e) => {
     e.preventDefault();
-    setLastUpdated(lastupdated);
+
+    const updateData = {
+      id: dictionaryNumber,
+      selectedDictionaryCategoryId: category.id,
+      dictEntry: dictionaryEntry,
+      localAbbreviation: localAbbreviation,
+      isActive: isActive.id,
+      lastupdated: lastupdated,
+    };
+
+    console.log("Updating with data: " + JSON.stringify(updateData));
+
+    console.log("Updating with data:", {
+      dictionaryNumber,
+      category,
+      dictionaryEntry,
+      localAbbreviation,
+      isActive,
+      lastupdated,
+    });
+
     postToOpenElisServerFullResponse(
-      `/rest/Dictionary?ID=${selectedRowId}`,
+      `/rest/Dictionary?ID=${selectedRowId}&startingRecNo=${startingRecNo}`,
       JSON.stringify(updateData),
+      console.log("postdata:" + JSON.stringify(updateData)),
       displayStatus,
     );
     setOpen(false);
@@ -279,6 +279,7 @@ function DictionaryManagement() {
       setDictionaryEntry(res.dictEntry);
       setIsActive(yesOrNo.find((item) => item.id === res.isActive));
       setLocalAbbreviation(res.localAbbreviation);
+      setLastUpdated(res.lastupdated);
     }
   };
 
@@ -286,9 +287,23 @@ function DictionaryManagement() {
     event.preventDefault();
     if (selectedRowId) {
       getFromOpenElisServer(
-        `/rest/Dictionary?ID=${selectedRowId}`,
+        `/rest/Dictionary?ID=${selectedRowId}&startingRecNo=${startingRecNo}`,
         handleDictionaryMenuItems,
       );
+
+      const selectedItem = dictionaryMenuList.find(
+        (item) => item.id === selectedRowId,
+      );
+      if (selectedItem) {
+        setDictionaryNumber(selectedItem.id);
+        setCategory(selectedItem.categoryName);
+        setDictionaryEntry(selectedItem.dictEntry);
+        setLocalAbbreviation(selectedItem.localAbbreviation);
+        setIsActive(yesOrNo.find((item) => item.id === selectedItem.isActive));
+        setLastUpdated(selectedItem.lastupdated); // Set the lastupdated state
+        setOpen(true);
+        setEditMode(false);
+      }
       setOpen(true);
       setEditMode(false);
     }
@@ -394,6 +409,7 @@ function DictionaryManagement() {
                   />
                   <Dropdown
                     id="description"
+                    label=""
                     type="default"
                     items={categoryDescription}
                     titleText="Dictionary Category"
@@ -419,6 +435,7 @@ function DictionaryManagement() {
                   <Dropdown
                     id="isActive"
                     type="default"
+                    label=""
                     items={yesOrNo}
                     titleText="Is Active"
                     itemToString={(item) => (item ? item.id : "")}
