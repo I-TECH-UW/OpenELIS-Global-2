@@ -22,6 +22,7 @@ import {
   Settings,
   ListDropdown,
   CicsSystemGroup,
+  QrCode,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -36,6 +37,7 @@ import { CommonProperties } from "./menu/CommonProperties";
 import ConfigMenuDisplay from "./formEntry/common/ConfigMenuDisplay";
 
 import ProviderMenu from "./ProviderMenu/ProviderMenu";
+import BarcodeConfiguration from "./barcodeConfiguration/BarcodeConfiguration";
 
 function Admin() {
   const intl = useIntl();
@@ -62,6 +64,9 @@ function Admin() {
           </SideNavLink>
           <SideNavLink renderIcon={CicsSystemGroup} href="#providerMenu">
             <FormattedMessage id="provider.browse.title" />
+          </SideNavLink>
+          <SideNavLink renderIcon={QrCode} href="#barcodeConfiguration">
+            <FormattedMessage id="sidenav.label.admin.barcodeconfiguration" />
           </SideNavLink>
           <SideNavMenu
             title={intl.formatMessage({ id: "sidenav.label.admin.menu" })}
@@ -144,6 +149,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#providerMenu">
         <ProviderMenu />
+      </PathRoute>
+      <PathRoute path="#barcodeConfiguration">
+        <BarcodeConfiguration />
       </PathRoute>
       <PathRoute path="#globalMenuManagement">
         <GlobalMenuManagement />
