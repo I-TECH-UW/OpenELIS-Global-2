@@ -172,7 +172,7 @@ function DictionaryManagement() {
 
   const postData = {
     id: dictionaryNumber,
-    selectedDictionaryCategoryId: category.id,
+    selectedDictionaryCategoryId: category?.id,
     dictEntry: dictionaryEntry,
     localAbbreviation: localAbbreviation,
     isActive: isActive.id,
@@ -272,6 +272,26 @@ function DictionaryManagement() {
     return <TableCell key={cell.id}>{cell.value}</TableCell>;
   };
 
+  // const handleDictionaryMenuItems = (res) => {
+  //   if (componentMounted.current) {
+  //     const selectedItem = dictionaryMenuList.find(
+  //       (item) => item.id === selectedRowId,
+  //     );
+
+  //     console.log("contents of selected item: " + JSON.stringify(selectedItem));
+  //     if (selectedItem) {
+  //       setDictionaryNumber(selectedItem.id);
+  //       setCategory(selectedItem.category);
+  //       setDictionaryEntry(selectedItem.dictEntry);
+  //       setLocalAbbreviation(selectedItem.localAbbreviation);
+  //       setIsActive(yesOrNo.find((item) => item.id === selectedItem.isActive));
+  //       setLastUpdated(selectedItem.lastupdated);
+  //       setOpen(true);
+  //       setEditMode(false);
+  //     }
+  //   }
+  // };
+
   const handleDictionaryMenuItems = (res) => {
     if (componentMounted.current) {
       setDictionaryNumber(res.id);
@@ -279,31 +299,36 @@ function DictionaryManagement() {
       setDictionaryEntry(res.dictEntry);
       setIsActive(yesOrNo.find((item) => item.id === res.isActive));
       setLocalAbbreviation(res.localAbbreviation);
-      setLastUpdated(res.lastupdated);
     }
   };
 
   const handleOnClickOnModification = async (event) => {
     event.preventDefault();
     if (selectedRowId) {
+      const selectedItem = dictionaryMenuList.find(
+        (item) => item.id === selectedRowId,
+      );
+
+      console.log("contents of selected item: " + JSON.stringify(selectedItem));
+      if (selectedItem) {
+        setDictionaryNumber(selectedItem.id);
+        setCategory(selectedItem.category);
+        setDictionaryEntry(selectedItem.dictEntry);
+        setLocalAbbreviation(selectedItem.localAbbreviation);
+        setIsActive(yesOrNo.find((item) => item.id === selectedItem.isActive));
+        setLastUpdated(selectedItem.lastupdated);
+        console.log(
+          "lastupdated for selected item: " +
+            JSON.stringify(selectedItem.lastupdated),
+        );
+        setOpen(true);
+        setEditMode(false);
+      }
+
       getFromOpenElisServer(
         `/rest/Dictionary?ID=${selectedRowId}&startingRecNo=${startingRecNo}`,
         handleDictionaryMenuItems,
       );
-
-      const selectedItem = dictionaryMenuList.find(
-        (item) => item.id === selectedRowId,
-      );
-      if (selectedItem) {
-        setDictionaryNumber(selectedItem.id);
-        setCategory(selectedItem.categoryName);
-        setDictionaryEntry(selectedItem.dictEntry);
-        setLocalAbbreviation(selectedItem.localAbbreviation);
-        setIsActive(yesOrNo.find((item) => item.id === selectedItem.isActive));
-        setLastUpdated(selectedItem.lastupdated); // Set the lastupdated state
-        setOpen(true);
-        setEditMode(false);
-      }
       setOpen(true);
       setEditMode(false);
     }
@@ -484,6 +509,7 @@ function DictionaryManagement() {
                 <div style={{ display: "flex", gap: "10px" }}>
                   <Button
                     hasIconOnly
+                    iconDescription="previous"
                     disabled={
                       (paging === 1 && startingRecNo <= 21) ||
                       startingRecNo <= 1
@@ -493,6 +519,7 @@ function DictionaryManagement() {
                   />
                   <Button
                     hasIconOnly
+                    iconDescription="next"
                     renderIcon={ArrowRight}
                     onClick={handleNextPage}
                   />
