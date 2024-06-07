@@ -24,6 +24,9 @@ import {
 } from "@carbon/react";
 import {
   getFromOpenElisServer,
+  postToOpenElisServer,
+  postToOpenElisServerFormData,
+  postToOpenElisServerFullResponse,
   postToOpenElisServerJsonResponse,
 } from "../../utils/Utils.js";
 import { NotificationContext } from "../../layout/Layout.js";
@@ -37,7 +40,7 @@ import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
-  // { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
 ];
 
 function ModifyOrganization() {
@@ -148,9 +151,9 @@ function ModifyOrganization() {
       }),
       kind: NotificationKinds.success,
     });
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 2000);
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
   }
 
   useEffect(() => {
@@ -166,8 +169,8 @@ function ModifyOrganization() {
         (item) => {
           return {
             id: item.id,
-            name: item.name || "",
-            description: item.description || "",
+            name: item.name,
+            description: item.description,
           };
         },
       );
@@ -178,19 +181,33 @@ function ModifyOrganization() {
 
       const organizationsManagementIdInfo = {
         id: typeOfActivity.id,
-        organizationName: typeOfActivity.organizationName || "",
-        shortName: typeOfActivity.shortName || "",
-        isActive: typeOfActivity.isActive || "",
-        internetAddress: typeOfActivity.internetAddress || "",
-        selectedTypes: typeOfActivity.selectedTypes || [],
+        organizationName: typeOfActivity.organizationName,
+        shortName: typeOfActivity.shortName,
+        isActive: typeOfActivity.isActive,
+        internetAddress: typeOfActivity.internetAddress,
+        selectedTypes: typeOfActivity.selectedTypes,
       };
 
       const organizationsManagementIdInfoPost = {
+        departmentList: typeOfActivity.departmentList,
+        orgTypes: typeOfActivity.orgTypes,
         id: typeOfActivity.id,
-        organizationName: typeOfActivity.organizationName || "",
-        shortName: typeOfActivity.shortName || "",
-        isActive: typeOfActivity.isActive || "",
-        internetAddress: typeOfActivity.internetAddress || "",
+        organizationName: typeOfActivity.organizationName,
+        shortName: typeOfActivity.shortName,
+        isActive: typeOfActivity.isActive,
+        lastupdated: typeOfActivity.lastupdated,
+        commune: typeOfActivity.commune,
+        village: typeOfActivity.village,
+        department: typeOfActivity.department,
+        formName: typeOfActivity.formName,
+        formMethod: typeOfActivity.formMethod,
+        cancelAction: typeOfActivity.cancelAction,
+        submitOnCancel: typeOfActivity.submitOnCancel,
+        cancelMethod: typeOfActivity.cancelMethod,
+        mlsSentinelLabFlag: typeOfActivity.mlsSentinelLabFlag,
+        parentOrgName: typeOfActivity.parentOrgName,
+        state: typeOfActivity.state,
+        internetAddress: typeOfActivity.internetAddress,
       };
       setOrgInfo(organizationsManagementIdInfo);
       setOrgInfoPost(organizationsManagementIdInfoPost);

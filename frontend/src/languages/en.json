@@ -1047,5 +1047,9 @@
   "organization.streetAddress": "Street Address",
   "organization.internetaddress": "Internet Address",
   "organization.city": "City",
-  "organization.clia.number": "CLIA Number"
+  "organization.clia.number": "CLIA Number",
+  "organization.previous": "Previous Page",
+  "organization.next": "Next Page",
+  "showing": "Showing",
+  "of": "of"
 }

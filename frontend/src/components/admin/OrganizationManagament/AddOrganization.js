@@ -37,7 +37,7 @@ import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
-  // { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
 ];
 
 function AddOrganization() {
@@ -170,9 +170,9 @@ function AddOrganization() {
       }),
       kind: NotificationKinds.success,
     });
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 2000);
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
   }
 
   const renderCell = (cell, row) => {

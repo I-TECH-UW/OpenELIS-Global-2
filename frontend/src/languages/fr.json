@@ -957,5 +957,9 @@
   "organization.streetAddress": "Adresse",
   "organization.internetaddress": "Adresse Internet",
   "organization.city": "Ville",
-  "organization.clia.number": "Numéro de CLIA"
+  "organization.clia.number": "Numéro de CLIA",
+  "organization.previous": "Page précédente",
+  "organization.next": "Page suivante",
+  "showing": "Affichage",
+  "of": "de"
 }

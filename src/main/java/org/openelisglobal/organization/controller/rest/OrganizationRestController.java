@@ -1,4 +1,4 @@
-package org.openelisglobal.organization.controller;
+package org.openelisglobal.organization.controller.rest;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
@@ -19,7 +21,6 @@ import org.openelisglobal.citystatezip.service.CityStateZipService;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
@@ -36,7 +37,6 @@ import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.organization.valueholder.OrganizationType;
 import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.http.HttpStatus;
@@ -46,14 +46,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.support.SessionStatus;
-// import org.springframework.web.servlet.ModelAndView;
-// import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RestController
 @RequestMapping("/rest")
@@ -64,6 +59,9 @@ public class OrganizationRestController extends BaseController {
             "streetAddress", "city", "department", "commune", "village", "state", "zipCode", "internetAddress",
             "mlsSentinelLabFlag", "cliaNum", "mlsLabFlag", "selectedTypes*" };
 
+    @JsonIgnore
+    private String fhirUuidAsString;
+    
     @Autowired
     private OrganizationService organizationService;
     @Autowired

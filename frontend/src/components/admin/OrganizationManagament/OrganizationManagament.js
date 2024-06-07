@@ -34,12 +34,11 @@ import {
 } from "../../common/CustomNotification.js";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
-import AddOrganization from "./AddOrganization.js";
-import ModifyOrganization from "./ModifyOrganization.js";
+import { ArrowLeft, ArrowRight } from "@carbon/icons-react";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
-  // { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
 ];
 
 function OrganizationManagament() {
@@ -50,17 +49,21 @@ function OrganizationManagament() {
 
   const componentMounted = useRef(false);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [deactivateButton, setDeactivateButton] = useState(true);
   const [modifyButton, setModifyButton] = useState(true);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
-  const [selectedRowIdsPost, setSelectedRowIdsPost] = useState();
+  const [selectedRowIdsPost, setSelectedRowIdsPost] = useState([]);
   const [isEveryRowIsChecked, setIsEveryRowIsChecked] = useState(false);
   const [rowsIsPartiallyChecked, setRowsIsPartiallyChecked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
   const [panelSearchTerm, setPanelSearchTerm] = useState("");
-  const [startingRecNo, setStartingRecNo] = useState(21);
+  const [pagination, setPagination] = useState(null);
+  const [totalRecordCount, setTotalRecordCount] = useState("");
+  const [startingRecNo, setStartingRecNo] = useState(20);
+  const [fromRecordCount, setFromRecordCount] = useState("");
+  const [toRecordCount, setToRecordCount] = useState("");
   const [paging, setPaging] = useState(1);
   const [
     searchedOrganizationManagamentList,
@@ -78,12 +81,22 @@ function OrganizationManagament() {
   function deleteDeactivateOrganizationManagament(event) {
     event.preventDefault();
     setLoading(true);
-    postToOpenElisServerJsonResponse(
+    postToOpenElisServer(
       `/rest/DeleteOrganization?ID=${selectedRowIds.join(",")}&startingRecNo=1`,
       JSON.stringify(selectedRowIdsPost),
       deleteDeactivateOrganizationManagamentCallback(),
     );
   }
+
+  const handleNextPage = () => {
+    setPaging((pager) => Math.max(pager, 2));
+    setStartingRecNo(fromRecordCount);
+  };
+
+  const handlePreviousPage = () => {
+    setPaging((pager) => Math.max(pager - 1, 1));
+    setStartingRecNo(Math.max(fromRecordCount, 1));
+  };
 
   useEffect(() => {
     const selectedIDsObject = {
@@ -105,9 +118,9 @@ function OrganizationManagament() {
       }),
       kind: NotificationKinds.success,
     });
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 2000);
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
   }
 
   const handlePageChange = ({ page, pageSize }) => {
@@ -135,7 +148,7 @@ function OrganizationManagament() {
       componentMounted.current = false;
       setLoading(false);
     };
-  }, []);
+  }, [paging, startingRecNo]);
 
   const handleSearchedProviderMenuList = (res) => {
     if (!res) {
@@ -147,13 +160,25 @@ function OrganizationManagament() {
 
   useEffect(() => {
     getFromOpenElisServer(
-      `/rest/SearchOrganizationMenu?search=Y&startingRecNo=1&searchString=${panelSearchTerm}`,
+      `/rest/SearchOrganizationMenu?search=Y&startingRecNo=${startingRecNo}&searchString=${panelSearchTerm}`,
       handleSearchedProviderMenuList,
     );
   }, [panelSearchTerm]);
 
   useEffect(() => {
     if (organizationsManagmentList) {
+      const pagination = {
+        totalRecordCount:
+          organizationsManagmentList.modelMap.form.totalRecordCount,
+        fromRecordCount:
+          organizationsManagmentList.modelMap.form.fromRecordCount,
+        toRecordCount: organizationsManagmentList.modelMap.form.toRecordCount,
+      };
+      setPagination(pagination);
+      setFromRecordCount(pagination.fromRecordCount);
+      setToRecordCount(pagination.toRecordCount);
+      setTotalRecordCount(pagination.totalRecordCount);
+
       const newOrganizationsManagementList =
         organizationsManagmentList.modelMap.form.menuList.map((item) => {
           return {
@@ -303,44 +328,70 @@ function OrganizationManagament() {
       {notificationVisible === true ? <AlertDialog /> : ""}
       <div className="adminPageContent">
         <PageBreadCrumb breadcrumbs={breadcrumbs} />
-        <Grid>
+        <Grid fullWidth={true}>
           <Column lg={16} md={8} sm={4}>
             <Section>
               <Heading>
                 <FormattedMessage id="organization.main.title" />
               </Heading>
             </Section>
+          </Column>
+        </Grid>
+        <br />
+        <Grid fullWidth={true}>
+          <Column lg={16} md={8} sm={4}>
+            <Section>
+              <Button
+                onClick={() => {
+                  if (selectedRowIds.length === 1) {
+                    const url = `/ModifyOrganization?ID=${selectedRowIds[0]}`;
+                    window.location.href = url;
+                  }
+                }}
+                disabled={modifyButton}
+                type="button"
+              >
+                <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.modify" />
+              </Button>{" "}
+              <Button
+                onClick={deleteDeactivateOrganizationManagament}
+                disabled={deactivateButton}
+                type="button"
+              >
+                <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
+              </Button>{" "}
+              <Button
+                onClick={() => {
+                  window.location.href = "/AddOrganization";
+                }}
+                type="button"
+              >
+                <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.add" />
+              </Button>
+            </Section>
             <br />
             <Section>
-              <Column lg={16} md={8} sm={4}>
-                <Button
-                  onClick={() => {
-                    if (selectedRowIds.length === 1) {
-                      const url = `/ModifyOrganization?ID=${selectedRowIds[0]}`;
-                      window.location.href = url;
-                    }
-                  }}
-                  disabled={modifyButton}
-                  type="button"
-                >
-                  <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.modify" />
-                </Button>{" "}
-                <Button
-                  onClick={deleteDeactivateOrganizationManagament}
-                  disabled={deactivateButton}
-                  type="button"
-                >
-                  <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
-                </Button>{" "}
-                <Button
-                  onClick={() => {
-                    window.location.href = "/AddOrganization";
-                  }}
-                  type="button"
-                >
-                  <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.add" />
-                </Button>
-              </Column>
+              <h4>
+                <FormattedMessage id="showing" /> {fromRecordCount} -{" "}
+                {toRecordCount} <FormattedMessage id="of" /> {totalRecordCount}{" "}
+              </h4>
+              <Button
+                hasIconOnly={true}
+                disabled={paging === 1 && startingRecNo <= 21}
+                onClick={handlePreviousPage}
+                renderIcon={ArrowLeft}
+                iconDescription={intl.formatMessage({
+                  id: "organization.previous",
+                })}
+              />{" "}
+              <Button
+                hasIconOnly={true}
+                renderIcon={ArrowRight}
+                onClick={handleNextPage}
+                iconDescription={intl.formatMessage({
+                  id: "organization.next",
+                })}
+              />
             </Section>
           </Column>
         </Grid>
@@ -548,7 +599,7 @@ function OrganizationManagament() {
                     onChange={handlePageChange}
                     page={page}
                     pageSize={pageSize}
-                    pageSizes={[5, 10, 15, 20]}
+                    pageSizes={[10, 20]}
                     totalItems={searchedOrganizationManagamentListShow.length}
                     forwardText={intl.formatMessage({
                       id: "pagination.forward",
@@ -769,7 +820,7 @@ function OrganizationManagament() {
                     onChange={handlePageChange}
                     page={page}
                     pageSize={pageSize}
-                    pageSizes={[5, 10, 15, 20]}
+                    pageSizes={[10, 20]}
                     totalItems={organizationsManagmentListShow.length}
                     forwardText={intl.formatMessage({
                       id: "pagination.forward",
@@ -835,6 +886,13 @@ function OrganizationManagament() {
           }}
         >
           selectedRowIdsPost
+        </button>
+        <button
+          onClick={() => {
+            console.error(pagination);
+          }}
+        >
+          pagination
         </button>
       </div>
     </>
