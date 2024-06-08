@@ -1,4 +1,4 @@
-package org.openelisglobal.systemuser.controller;
+package org.openelisglobal.systemuser.controller.rest;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
@@ -34,19 +33,14 @@ import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
 import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 import org.openelisglobal.userrole.valueholder.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-// import org.springframework.web.servlet.ModelAndView;
-// import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RestController
 @RequestMapping("/rest")
@@ -159,6 +153,10 @@ public class UnifiedSystemUserMenuRestController extends BaseMenuController<Unif
             request.setAttribute(IN_MENU_SELECT_LIST_HEADER_SEARCH, "true");
         }
 
+        form.setToRecordCount(String.valueOf(endingRecNo));
+        form.setFromRecordCount(String.valueOf(startingRecNo));
+        form.setTotalRecordCount(String.valueOf(String.valueOf(systemUserService.getCount())));
+        
         return unifiedUsers;
     }
 
