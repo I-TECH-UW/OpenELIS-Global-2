@@ -8,8 +8,9 @@ before("login", () => {
   loginPage = new LoginPage();
   loginPage.visit();
 });
+
 describe("Patient Search", function () {
-  it("User Visits Home Page and goes to Add Add|Modify Patient Page", () => {
+  it("User Visits Home Page and goes to Add|Modify Patient Page", () => {
     homePage = loginPage.goToHomePage();
     patientPage = homePage.goToPatientEntry();
   });
@@ -18,6 +19,10 @@ describe("Patient Search", function () {
     patientPage
       .getPatientEntryPageTitle()
       .should("contain.text", "Add Or Modify Patient");
+  });
+
+  it("External search button should be deactivated", function () {
+    patientPage.getExternalSearchButton();
   });
 
   it("User should be able to navigate to create Patient tab", function () {
@@ -36,6 +41,7 @@ describe("Patient Search", function () {
       );
     });
   });
+
   it("User should click save new patient information button", function () {
     patientPage.clickSavePatientButton();
     cy.wait(1000);
@@ -55,18 +61,48 @@ describe("Patient Search", function () {
     cy.wait(200).reload();
   });
 
+  it("Should search Patient By FirstName", function () {
+    cy.wait(1000);
+    cy.fixture("Patient").then((patient) => {
+      patientPage.searchPatientByField(
+        patientPage.firstNameSelector,
+        patient.firstName,
+      );
+      patientPage.validatePatientSearchTableForField(
+        "firstName",
+        patient.firstName,
+      );
+    });
+    cy.wait(200).reload();
+  });
+
+  it("Should search Patient By LastName", function () {
+    cy.wait(1000);
+    cy.fixture("Patient").then((patient) => {
+      patientPage.searchPatientByField(
+        patientPage.lastNameSelector,
+        patient.lastName,
+      );
+      patientPage.validatePatientSearchTableForField(
+        "lastName",
+        patient.lastName,
+      );
+    });
+    cy.wait(200).reload();
+  });
+
   it("Should search Patient By First and LastName", function () {
     cy.wait(1000);
     cy.fixture("Patient").then((patient) => {
-      patientPage.searchPatientByFirstAndLastName(
+      patientPage.searchPatientByField(
+        patientPage.firstNameSelector,
         patient.firstName,
+      );
+      patientPage.searchPatientByField(
+        patientPage.lastNameSelector,
         patient.lastName,
       );
-      patientPage.getFirstName().should("have.value", patient.firstName);
-      patientPage.getLastName().should("have.value", patient.lastName);
-
       patientPage.getLastName().should("not.have.value", patient.inValidName);
-
       patientPage.clickSearchPatientButton();
       patientPage.validatePatientSearchTable(
         patient.firstName,
@@ -79,12 +115,22 @@ describe("Patient Search", function () {
   it("should search patient By PatientId", function () {
     cy.wait(1000);
     cy.fixture("Patient").then((patient) => {
-      patientPage.searchPatientByPatientId(patient.nationalId);
-      patientPage.clickSearchPatientButton();
+      patientPage.searchPatientByField(
+        patientPage.patientIdSelector,
+        patient.nationalId,
+      );
       patientPage.validatePatientSearchTable(
         patient.firstName,
         patient.inValidName,
       );
     });
   });
+  it("Should search patient By Date of Birth", function () {
+    cy.wait(1000);
+    cy.fixture("Patient").then((patient) => {
+      patientPage.searchPatientByField(patientPage.dateOfBirth, patient.DOB);
+      patientPage.validatePatientSearchTableForField("dob", patient.DOB);
+    });
+    cy.wait(200).reload();
+  }); 
 });

@@ -48,11 +48,17 @@ class PatientEntryPage {
   }
 
   getMaleGenderRadioButton() {
-    return cy.getElement(':nth-child(2) > .cds--radio-button__label > .cds--radio-button__appearance');
+    return cy.getElement(
+      ":nth-child(2) > .cds--radio-button__label > .cds--radio-button__appearance",
+    );
   }
 
   clickSearchPatientButton() {
     cy.getElement("#local_search").click();
+  }
+
+  getExternalSearchButton() {
+    cy.get("#external_search").should("be.disabled");
   }
 
   getLastName() {
@@ -67,19 +73,33 @@ class PatientEntryPage {
     return cy.getElement(this.savePatientBtn);
   }
 
-  searchPatientByFirstAndLastName(firstName, lastName) {
-    cy.enterText(this.firstNameSelector, firstName);
-    cy.enterText(this.lastNameSelector, lastName);
-  }
-
-  searchPatientByPatientId(PID) {
-    cy.enterText(this.patientIdSelector, PID);
+  searchPatientByField(fieldSelector, value) {
+    cy.enterText(fieldSelector, value);
+    cy.getElement(fieldSelector).should("have.value", value);
+    this.clickSearchPatientButton();
   }
 
   getPatientSearchResultsTable() {
     return cy.getElement(
       ".cds--data-table.cds--data-table--lg.cds--data-table--sort > tbody",
     );
+  }
+
+  validatePatientSearchTableForField(fieldName, fieldValue) {
+    const fieldMap = {
+      firstName: 3,
+      lastName: 2,
+      dob: 5 ,
+    };
+    this.getPatientSearchResultsTable()
+      .find("tr")
+      .last()
+      .find(`td:nth-child(${fieldMap[fieldName]})`)
+      .invoke("text")
+      .then((cellText) => {
+        const trimmedText = cellText.trim();
+        expect(trimmedText).to.contain(fieldValue);
+      });
   }
 
   validatePatientSearchTable(actualName, inValidName) {
