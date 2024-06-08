@@ -536,32 +536,8 @@ button {
     width: 14rem;
   }
 }
-.searchB:hover{
+.patientHeader{
   
-  border: 2px solid #ddd;
-  border-radius: 10px;
-  box-shadow: #ebe7e7;
-  width: 400px;
-  padding: 3px;
-
- 
-}
-.button{
-  
-    margin-left: "10px";
-    background: "none";
-    border: "none";
-    cursor: "pointer";
-    color: "inherit";
-  
-}
-.button:hover {
-  background: #072655;
-}
-.tag{
-  cursor: "pointer";
-  width: 200px;
-                      display: "flex";
-                      gap: 0px;
-                      position: "relative";
+padding: 10px;
+margin-bottom: 1rem;
 }

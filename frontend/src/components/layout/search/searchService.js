@@ -6,12 +6,12 @@ export const fetchMenuData = (callback) => {
 };
 
 export const flattenMenuItems = (menuItems) => {
-  return menuItems.reduce((acc, item) => {
-    acc.push(item);
+  return menuItems.reduce((menuItem, item) => {
+  menuItem.push(item);
     if (item.childMenus && item.childMenus.length > 0) {
-      acc = acc.concat(flattenMenuItems(item.childMenus));
+      menuItem = menuItem.concat(flattenMenuItems(item.childMenus));
     }
-    return acc;
+    return menuItem;
   }, []);
 };
 
@@ -85,6 +85,30 @@ export const fetchPatientData = (query, callback) => {
     isMounted = false;
   };
 };
+export const handleSearchByLabNo = (accessionNumber, callback) => {
+  const endpoint = `/rest/sample-edit?accessionNumber=${accessionNumber}`;
+  let isMounted = true;
 
+  getFromOpenElisServer(endpoint, (response) => {
+    if (isMounted) {
+      if (response) {
+        callback([response]); // Wrap the response in an array for consistency
+      } else {
+        callback([]);
+      }
+    }
+  });
 
+  return () => {
+    isMounted = false;
+  };
+};
+
+export const openPatientResults = (patientId) => {
+  if (patientId) {
+    window.location.href = `/ModifyOrder?patientId=${patientId}`;
+  }
+};
+
+ 
  

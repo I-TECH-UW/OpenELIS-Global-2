@@ -355,7 +355,7 @@ function OEHeader(props) {
                     <>
                     {searchBar && <SearchBar />}
                       <HeaderGlobalAction
-                        aria-label="Search"
+                        aria-label={intl.formatMessage({ id: "label.button.search" })}
                         onClick={handleSearch}
                         
                       >
