@@ -54,7 +54,7 @@ class PatientEntryPage {
   }
 
   clickSearchPatientButton() {
-    cy.getElement("#local_search").click();
+    cy.getElement("#local_search").click({ force: true });
   }
 
   getExternalSearchButton() {

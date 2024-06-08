@@ -17,7 +17,7 @@ describe("Failing or Succeeding to Login", function () {
 
   it("Attempts to login with only a username", function () {
     cy.fixture("Users").then((users) => {
-      let user = users[2];
+      let user = users[3];
       login.enterUsername(user.username);
       login.signIn();
     });
@@ -25,7 +25,7 @@ describe("Failing or Succeeding to Login", function () {
 
   it("Attempts to login with only a password", function () {
     cy.fixture("Users").then((users) => {
-      let user = users[2];
+      let user = users[3];
       login.enterPassword(user.password);
       login.signIn();
     });

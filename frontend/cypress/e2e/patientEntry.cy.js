@@ -48,6 +48,15 @@ describe("Patient Search", function () {
     cy.get("div[role='status']").should("be.visible");
     cy.wait(200).reload();
   });
+  it("Should search patient By Date of Birth", function () {
+    cy.wait(1000);
+    cy.fixture("Patient").then((patient) => {
+      patientPage.searchPatientByField(patientPage.dateOfBirth, patient.DOB);
+      patientPage.validatePatientSearchTableForField("dob", patient.DOB);
+    });
+    cy.wait(200).reload();
+  });
+
 
   it("Should be able to search patients By gender", function () {
     cy.wait(1000);
@@ -125,12 +134,5 @@ describe("Patient Search", function () {
       );
     });
   });
-  it("Should search patient By Date of Birth", function () {
-    cy.wait(1000);
-    cy.fixture("Patient").then((patient) => {
-      patientPage.searchPatientByField(patientPage.dateOfBirth, patient.DOB);
-      patientPage.validatePatientSearchTableForField("dob", patient.DOB);
-    });
-    cy.wait(200).reload();
-  }); 
+ 
 });

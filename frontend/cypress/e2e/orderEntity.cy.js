@@ -11,7 +11,7 @@ before("login", () => {
 });
 
 describe("Order Entity", function () {
-  it("User Visits Home Page and goes to Order entity Page ", function () {
+  it("User Visits Home Page and goes to Order entity Page", function () {
     homePage = loginPage.goToHomePage();
     orderEntityPage = homePage.goToOrderPage();
   });
@@ -20,8 +20,12 @@ describe("Order Entity", function () {
     patientEntryPage = orderEntityPage.getPatientPage();
     cy.wait(1000);
     cy.fixture("Patient").then((patient) => {
-      patientEntryPage.searchPatientByFirstAndLastName(
+      patientEntryPage.searchPatientByField(
+        patientEntryPage.firstNameSelector,
         patient.firstName,
+      );
+      patientEntryPage.searchPatientByField(
+        patientEntryPage.lastNameSelector,
         patient.lastName,
       );
       patientEntryPage.clickSearchPatientButton();
@@ -81,6 +85,7 @@ describe("Order Entity", function () {
       );
     });
   });
+
   it("should click submit order button", function () {
     orderEntityPage.clickSubmitOrderButton();
   });
