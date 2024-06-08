@@ -38,10 +38,11 @@ import {
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 import CustomCheckBox from "../../common/CustomCheckBox.js";
+import { ArrowLeft, ArrowRight } from "@carbon/icons-react";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
-  // { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
 ];
 
 function UserManagement() {
@@ -66,9 +67,13 @@ function UserManagement() {
   const [isSearching, setIsSearching] = useState(false);
   const [panelSearchTerm, setPanelSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState(null);
+  const [pagination, setPagination] = useState(null);
   const [filter, setFilter] = useState([]);
   const [startingRecNo, setStartingRecNo] = useState(21);
+  const [totalRecordCount, setTotalRecordCount] = useState("");
   const [paging, setPaging] = useState(1);
+  const [fromRecordCount, setFromRecordCount] = useState("");
+  const [toRecordCount, setToRecordCount] = useState("");
   const [searchedUserManagementList, setSearchedUserManagementList] =
     useState();
   const [searchedUserManagementListShow, setSearchedUserManagementListShow] =
@@ -85,6 +90,16 @@ function UserManagement() {
       deleteDeactivateUserManagementCallback(),
     );
   }
+
+  const handleNextPage = () => {
+    setPaging((pager) => Math.max(pager, 2));
+    setStartingRecNo(fromRecordCount);
+  };
+
+  const handlePreviousPage = () => {
+    setPaging((pager) => Math.max(pager - 1, 1));
+    setStartingRecNo(Math.max(fromRecordCount, 1));
+  };
 
   useEffect(() => {
     const selectedIDsObject = {
@@ -106,9 +121,9 @@ function UserManagement() {
       }),
       kind: NotificationKinds.success,
     });
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 2000);
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
   }
 
   const handlePageChange = ({ page, pageSize }) => {
@@ -153,6 +168,16 @@ function UserManagement() {
 
   useEffect(() => {
     if (userManagementList) {
+      const pagination = {
+        totalRecordCount: userManagementList.totalRecordCount,
+        fromRecordCount: userManagementList.fromRecordCount,
+        toRecordCount: userManagementList.toRecordCount,
+      };
+      setPagination(pagination);
+      setFromRecordCount(pagination.fromRecordCount);
+      setToRecordCount(pagination.toRecordCount);
+      setTotalRecordCount(pagination.totalRecordCount);
+
       const newUserManagementList = userManagementList.menuList.map((item) => {
         return {
           id: item.systemUserId,
@@ -344,6 +369,30 @@ function UserManagement() {
                   <FormattedMessage id="unifiedSystemUser.browser.button.add" />
                 </Button>
               </Column>
+            </Section>
+            <br />
+            <Section>
+              <h4>
+                <FormattedMessage id="showing" /> {fromRecordCount} -{" "}
+                {toRecordCount} <FormattedMessage id="of" /> {totalRecordCount}{" "}
+              </h4>
+              <Button
+                hasIconOnly={true}
+                disabled={paging === 1 && startingRecNo <= 21}
+                onClick={handlePreviousPage}
+                renderIcon={ArrowLeft}
+                iconDescription={intl.formatMessage({
+                  id: "organization.previous",
+                })}
+              />{" "}
+              <Button
+                hasIconOnly={true}
+                renderIcon={ArrowRight}
+                onClick={handleNextPage}
+                iconDescription={intl.formatMessage({
+                  id: "organization.next",
+                })}
+              />
             </Section>
           </Column>
         </Grid>
