@@ -26,7 +26,7 @@ import { getFromOpenElisServer } from "../../utils/Utils";
 
 const breadcrumbs = [
   { label: "home.label", link: "/" },
-  // { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
 ];
 
 function UserAddEdit() {
