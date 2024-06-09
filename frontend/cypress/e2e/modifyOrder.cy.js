@@ -12,7 +12,7 @@ before("login", () => {
 });
 
 describe("Modify Order search by accession Number", function () {
-  it("User Visits Home Page and goes to Modify Order Page ", function () {
+  it("User Visits Home Page and goes to Modify Order Page", function () {
     homePage = loginPage.goToHomePage();
     modifyOrderPage = homePage.goToModifyOrderPage();
   });
@@ -24,7 +24,7 @@ describe("Modify Order search by accession Number", function () {
     modifyOrderPage.clickSubmitButton();
   });
 
-  it("should check for program selection button and go to next page ", function () {
+  it("should check for program selection button and go to next page", function () {
     modifyOrderPage.checkProgramButton();
     modifyOrderPage.clickNextButton();
   });
@@ -51,8 +51,8 @@ describe("Modify Order search by accession Number", function () {
   });
 });
 
-describe("Modify Order search by patient ", function () {
-  it("User Visits Home Page and goes to Modify Order Page ", function () {
+describe("Modify Order search by patient", function () {
+  it("User Visits Home Page and goes to Modify Order Page", function () {
     homePage = loginPage.goToHomePage();
     modifyOrderPage = homePage.goToModifyOrderPage();
   });
@@ -60,20 +60,21 @@ describe("Modify Order search by patient ", function () {
   it("Should search Patient By First and LastName", function () {
     cy.wait(1000);
     cy.fixture("Patient").then((patient) => {
-      patientPage.searchPatientByFirstAndLastName(
+      patientPage.searchPatientByField(
+        patientPage.firstNameSelector,
         patient.firstName,
+      );
+      patientPage.searchPatientByField(
+        patientPage.lastNameSelector,
         patient.lastName,
       );
-      patientPage.getFirstName().should("have.value", patient.firstName);
-      patientPage.getLastName().should("have.value", patient.lastName);
-
-      patientPage.getLastName().should("not.have.value", patient.inValidName);
-
-      modifyOrderPage.clickSearchPatientButton();
+      patientPage.clickSearchPatientButton();
       patientPage.validatePatientSearchTable(
         patient.firstName,
         patient.inValidName,
       );
+      patientPage.getFirstName().should("have.value", patient.firstName);
+      patientPage.getLastName().should("have.value", patient.lastName);
     });
     cy.wait(200).reload();
   });
@@ -93,7 +94,10 @@ describe("Modify Order search by patient ", function () {
   it("should search patient By PatientId", function () {
     cy.wait(1000);
     cy.fixture("Patient").then((patient) => {
-      patientPage.searchPatientByPatientId(patient.nationalId);
+      patientPage.searchPatientByField(
+        patientPage.patientIdSelector,
+        patient.nationalId,
+      );
       modifyOrderPage.clickSearchPatientButton();
       patientPage.validatePatientSearchTable(
         patient.firstName,
@@ -102,11 +106,20 @@ describe("Modify Order search by patient ", function () {
     });
   });
 
-  it("Should be able to search by respective patient ", function () {
+  it("Should search Patient By DOB", function () {
+    cy.wait(1000);
+    cy.fixture("Patient").then((patient) => {
+      patientPage.searchPatientByField(patientPage.dateOfBirth, patient.DOB);
+      modifyOrderPage.clickSearchPatientButton();
+    });
+  });
+
+  it("Should be able to search by respective patient", function () {
     cy.wait(1000);
     modifyOrderPage.clickRespectivePatient();
   });
-  it("should check for program selection button and go to next page ", function () {
+
+  it("should check for program selection button and go to next page", function () {
     cy.wait(1000);
     modifyOrderPage.checkProgramButton();
     modifyOrderPage.clickNextButton();
