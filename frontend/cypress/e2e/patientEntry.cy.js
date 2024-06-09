@@ -57,7 +57,6 @@ describe("Patient Search", function () {
     cy.wait(200).reload();
   });
 
-
   it("Should be able to search patients By gender", function () {
     cy.wait(1000);
     patientPage.getMaleGenderRadioButton().should("be.visible");
@@ -134,5 +133,4 @@ describe("Patient Search", function () {
       );
     });
   });
- 
 });
