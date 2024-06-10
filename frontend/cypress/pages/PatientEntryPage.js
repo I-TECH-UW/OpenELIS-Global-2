@@ -48,7 +48,9 @@ class PatientEntryPage {
   }
 
   getMaleGenderRadioButton() {
-    return cy.getElement(':nth-child(2) > .cds--radio-button__label > .cds--radio-button__appearance');
+    return cy.getElement(
+      ":nth-child(2) > .cds--radio-button__label > .cds--radio-button__appearance",
+    );
   }
 
   clickSearchPatientButton() {

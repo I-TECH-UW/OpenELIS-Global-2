@@ -61,7 +61,7 @@ function DictionaryManagement() {
   const [localAbbreviation, setLocalAbbreviation] = useState("");
   const [isActive, setIsActive] = useState("");
 
-  const [fromRecordCount, setFromRecordCount] = useState("");
+  const [fromRecordCount, setFromRecordCount] = useState("1");
   const [toRecordCount, setToRecordCount] = useState("");
   const [totalRecordCount, setTotalRecordCount] = useState("");
 
@@ -69,7 +69,7 @@ function DictionaryManagement() {
   const [modifyButton, setModifyButton] = useState(true);
   const [editMode, setEditMode] = useState(true);
 
-  const [paging, setPaging] = useState(2);
+  const [paging, setPaging] = useState(null);
   const [startingRecNo, setStartingRecNo] = useState(1);
 
   useEffect(() => {
@@ -85,12 +85,12 @@ function DictionaryManagement() {
 
   const handleNextPage = () => {
     setPaging((pager) => Math.max(pager, 2));
-    setStartingRecNo(toRecordCount);
+    setStartingRecNo(fromRecordCount);
   };
 
   const handlePreviousPage = () => {
     setPaging((pager) => Math.max(pager - 1, 1));
-    setStartingRecNo(Math.max(toRecordCount, 1));
+    setStartingRecNo(Math.max(fromRecordCount, 1));
   };
 
   const yesOrNo = [
@@ -122,8 +122,8 @@ function DictionaryManagement() {
           res.fromRecordCount !== undefined &&
           res.totalRecordCount !== undefined
         ) {
-          setToRecordCount(res.fromRecordCount);
-          setFromRecordCount(res.toRecordCount);
+          setToRecordCount(res.toRecordCount);
+          setFromRecordCount(res.fromRecordCount);
           setTotalRecordCount(res.totalRecordCount);
         }
         if (res.menuList) {
@@ -480,23 +480,23 @@ function DictionaryManagement() {
                 }}
               >
                 <Link>
-                  Showing {toRecordCount} - {fromRecordCount} of{" "}
+                  Showing {fromRecordCount} - {toRecordCount} of{" "}
                   {totalRecordCount}
                 </Link>
                 <div style={{ display: "flex", gap: "10px" }}>
                   <Button
                     hasIconOnly
                     iconDescription="previous"
-                    disabled={
-                      (paging === 1 && startingRecNo <= 21) ||
-                      startingRecNo <= 1
-                    }
+                    disabled={parseInt(fromRecordCount) <= 1}
                     onClick={handlePreviousPage}
                     renderIcon={ArrowLeft}
                   />
                   <Button
                     hasIconOnly
                     iconDescription="next"
+                    disabled={
+                      parseInt(toRecordCount) >= parseInt(totalRecordCount)
+                    }
                     renderIcon={ArrowRight}
                     onClick={handleNextPage}
                   />
