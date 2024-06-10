@@ -24,6 +24,7 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.localization.service.LocalizationService;
@@ -321,6 +322,7 @@ public class DisplayListController extends BaseRestController{
 		configs.put(Property.DEFAULT_DATE_LOCALE.toString() ,ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_DATE_LOCALE) );
 		configs.put(Property.UseExternalPatientInfo
 				.toString(), ConfigurationProperties.getInstance().getPropertyValue(Property.UseExternalPatientInfo));
+		configs.put("DEFAULT_PAGE_SIZE", String.valueOf(SystemConfiguration.getInstance().getDefaultPageSize()));	
 		return configs;
 	}
 
