@@ -76,7 +76,10 @@ function CreatePatientForm(props) {
     setSubjectNo(newValue);
   };
   const handleDatePickerChange = (values, date) => {
-    var patient = values;
+    var patient = { ...values };
+    if ('date-picker-default-id' in patient) {
+      delete patient['date-picker-default-id'];
+  }
     patient.birthDateForDisplay = date;
     setPatientDetails(patient);
     if (patient.birthDateForDisplay) {
