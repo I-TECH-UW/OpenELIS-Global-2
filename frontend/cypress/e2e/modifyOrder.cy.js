@@ -90,7 +90,15 @@ describe("Modify Order search by patient", function () {
     });
     cy.wait(200).reload();
   });
+  it("Should search Patient By DOB", function () {
+    cy.wait(1000);
+    cy.fixture("Patient").then((patient) => {
+      patientPage.searchPatientByField(patientPage.dateOfBirth, patient.DOB);
+      modifyOrderPage.clickSearchPatientButton();
+    });
+    cy.wait(200).reload();
 
+  });
   it("should search patient By PatientId", function () {
     cy.wait(1000);
     cy.fixture("Patient").then((patient) => {
@@ -103,14 +111,6 @@ describe("Modify Order search by patient", function () {
         patient.firstName,
         patient.inValidName,
       );
-    });
-  });
-
-  it("Should search Patient By DOB", function () {
-    cy.wait(1000);
-    cy.fixture("Patient").then((patient) => {
-      patientPage.searchPatientByField(patientPage.dateOfBirth, patient.DOB);
-      modifyOrderPage.clickSearchPatientButton();
     });
   });
 
