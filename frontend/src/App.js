@@ -302,6 +302,15 @@ export default function App() {
                   )}
                   role="Reception"
                 />
+
+                <SecureRoute
+                  path="/NCECorrectiveAction"
+                  exact
+                  component={() => (
+                    <NonConformIndex form="NCECorrectiveAction" />
+                  )}
+                />
+
                 <SecureRoute
                   path="/SampleBatchEntrySetup"
                   exact
@@ -339,6 +348,7 @@ export default function App() {
                   component={() => <RoutedResultsViewer />}
                   role="Reception"
                 />
+
                 <SecureRoute
                   path="/WorkPlanByTestSection"
                   exact

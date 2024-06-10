@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-import org.openelisglobal.common.rest.bean.ViewNonConformEventsResponse;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.login.valueholder.UserSessionData;
@@ -19,7 +18,6 @@ import org.openelisglobal.qaevent.valueholder.NceSpecimen;
 import org.openelisglobal.qaevent.worker.NonConformingEventWorker;
 import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
-import org.openelisglobal.systemuser.service.SystemUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,9 +45,6 @@ public class ViewNonConformEventsRestController {
 
   @Autowired
   private SampleItemService sampleItemService;
-
-  @Autowired
-  private SystemUserService systemUserService;
 
   private static final String USER_SESSION_DATA = "userSessionData";
 
@@ -87,16 +82,16 @@ public class ViewNonConformEventsRestController {
 
     NcEvent event = ncEventService.getMatch("nceNumber", newNceNumber).get();
 
-    ViewNonConformEventsResponse response = new ViewNonConformEventsResponse();
+    NonConformingEventForm response = new NonConformingEventForm();
 
-    response.setResults(searchResults);
+    response.setnceEventsSearchResults(searchResults);
     response.setNceCategories(nceCategoryService.getAllNceCategories());
     response.setNceTypes(nceTypeService.getAllNceTypes());
     response.setLabComponentList(
       DisplayListService.getInstance()
         .getList(DisplayListService.ListType.LABORATORY_COMPONENT)
     );
-    response.setSeverityConsequenceList(
+    response.setSeverityConsequencesList(
       DisplayListService.getInstance()
         .getList(DisplayListService.ListType.SEVERITY_CONSEQUENCES_LIST)
     );
@@ -104,13 +99,13 @@ public class ViewNonConformEventsRestController {
       DisplayListService.getInstance()
         .getList(DisplayListService.ListType.TEST_SECTION_ACTIVE)
     );
-    response.setSeverityRecurs(
+    response.setSeverityRecurrenceList(
       DisplayListService.getInstance()
         .getList(DisplayListService.ListType.SEVERITY_RECURRENCE_LIST)
     );
-    response.setRepoUnit(event.getReportingUnitId());
+    response.setReportingUnit(event.getReportingUnitId());
     response.setCurrentUserId(
-      systemUserService.getUserById(getSysUserId(request))
+      (getSysUserId(request))
     );
 
     List<NceSpecimen> specimenList = nceSpecimenService.getAllMatching(
@@ -124,7 +119,7 @@ public class ViewNonConformEventsRestController {
       );
       sampleItems.add(si);
     }
-    response.setSpecimen(sampleItems);
+    response.setSpecimens(sampleItems);
     response.setReportDate(DateUtil.formatDateAsText(event.getReportDate()));
     response.setDateOfEvent(DateUtil.formatDateAsText(event.getDateOfEvent()));
 

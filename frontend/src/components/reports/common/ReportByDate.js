@@ -96,7 +96,7 @@ const ReportByDate = (props) => {
     } else {
       baseParams = `report=${props.report}&type=patient`;
     }
-    const baseUrl = `${config.serverBaseUrl}/ApiReportPrint`;
+    const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
     const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.endDate}&lowerDateRange=${reportFormValues.startDate}`;
 
     window.open(url, "_blank");

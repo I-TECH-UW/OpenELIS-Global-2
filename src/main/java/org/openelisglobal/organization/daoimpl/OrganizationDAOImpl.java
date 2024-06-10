@@ -358,14 +358,14 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
                     orgId = organization.getId();
                 }
                 if (organization.getOrganization() != null && !StringUtil.isNullorNill(organization.getOrganization().getId())) {
-                    query.setParameter("parentOrgId", Integer.parseInt(organization.getId()));
+                    query.setParameter("parentOrgId", Integer.parseInt(organization.getOrganization().getId()));
                 } else {
                     // workaround so hiberate knows null is of type int...
                     query.setParameter("parentOrgId", 1);
                     query.setParameter("parentOrgId", null);
                 }
 
-
+                LogEvent.logDebug(this.getClass().getSimpleName(), "duplicateOrganizationExists", "org id is " + orgId);
                 query.setParameter("orgId", Integer.parseInt(orgId));
                 query.setParameter("organizationName", organization.getOrganizationName());
 

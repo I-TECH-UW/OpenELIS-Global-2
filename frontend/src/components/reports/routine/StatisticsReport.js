@@ -69,7 +69,7 @@ const StatisticsReport = () => {
     const yearParam = `upperYear=${encodeURIComponent(selectedYear.value)}`;
 
     // Constructing the base URL
-    const baseUrl = `${config.serverBaseUrl}/ApiReportPrint`;
+    const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
 
     // Constructing the query string
     const queryParams = `${baseParams}&${labUnitsParams}&${prioritiesParams}&${timeFramesParams}&${yearParam}`;

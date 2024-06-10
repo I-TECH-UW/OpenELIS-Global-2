@@ -19,5 +19,4 @@ public class BaseRestController implements IActionConstants {
         }
         return String.valueOf(usd.getSystemUserId());
     }
-    
 }

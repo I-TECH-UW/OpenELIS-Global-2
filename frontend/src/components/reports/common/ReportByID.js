@@ -22,7 +22,7 @@ function ReportByID(props) {
 
     console.log("National ID:", nationalId);
     const baseParams = `report=${props.report}&type=patient`;
-    const baseUrl = `${config.serverBaseUrl}/ApiReportPrint`;
+    const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
     const url = `${baseUrl}?${baseParams}&patientNumberDirect=${nationalId}`;
     window.open(url, "_blank");
 

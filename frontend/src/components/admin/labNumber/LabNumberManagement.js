@@ -162,11 +162,9 @@ function LabNumberManagement() {
         <Grid>
           <Column lg={16}>
             <Section>
-              <Section>
-                <Heading>
-                  <FormattedMessage id="configure.labNumber.title" />
-                </Heading>
-              </Section>
+              <Heading>
+                <FormattedMessage id="configure.labNumber.title" />
+              </Heading>
             </Section>
           </Column>
         </Grid>

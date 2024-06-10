@@ -488,7 +488,7 @@ export const ReportNonConformingEvent = () => {
               labelText={
                 <FormattedMessage id="nonconform.label.reportingunit" />
               }
-              id="reportUnits"
+              id="reportingUnits"
               value={nceForm.data.reportingUnit}
               onChange={(e) => {
                 setnceForm({
@@ -501,7 +501,7 @@ export const ReportNonConformingEvent = () => {
               }}
             >
               <SelectItem key={"emptyselect"} value={""} text={""} />
-              {nceForm.data.reportUnits.map((option) => (
+              {nceForm.data.reportingUnits.map((option) => (
                 <SelectItem
                   key={option.value}
                   value={option.id}
