@@ -180,6 +180,9 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
     @Transactional(readOnly = true)
     public List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<Integer> statusIdList,
             boolean sortedByDateAndAccession) throws LIMSRuntimeException {
+         if(testSectionId == null){
+           return new ArrayList<>();
+         }       
         try {
             String sql = "from Analysis a where a.testSection.id = :testSectionId and a.statusId IN (:statusIdList) order by a.id";
 

@@ -15,11 +15,11 @@ class LoginPage {
   }
 
   getUsernameElement() {
-    return cy.getElement(`.inputText .cds--text-input--md`);
+    return cy.getElement("#loginName");
   }
 
   getPasswordElement() {
-    return cy.getElement(`input#password`);
+    return cy.getElement("#password");
   }
 
   enterUsername(value) {

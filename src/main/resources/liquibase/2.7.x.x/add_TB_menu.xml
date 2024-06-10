@@ -258,4 +258,18 @@
 		</insert>
 	</changeSet>
 	
+	<changeSet author="CIV developer Group" id="23110301" context="ci_TB">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="menu" schemaName="clinlims" />
+			<sqlCheck  expectedResult="1">SELECT count(*) FROM clinlims.menu WHERE element_id = 'menu_tb_order_report'</sqlCheck> 
+		</preConditions>
+		<update tableName="menu" schemaName="clinlims">
+			<column name="is_active" valueBoolean="false"/>
+			<where>id=:value</where>
+			<whereParams>
+				<param valueComputed="(SELECT id FROM clinlims.menu WHERE element_id = 'menu_tb_order_report' limit 1)"/>
+			</whereParams>
+		</update>
+	</changeSet>
+	
 </databaseChangeLog>

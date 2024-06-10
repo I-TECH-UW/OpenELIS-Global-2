@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useRef } from "react";
 import { FormattedMessage, useIntl, injectIntl } from "react-intl";
 import {
   Checkbox,
@@ -12,11 +12,12 @@ import {
 } from "@carbon/react";
 import { getFromOpenElisServer } from "../utils/Utils";
 import { sampleTypeTestsStructure } from "../data/SampleEntryTestsForTypeProvider";
+import AutoComplete from "../common/AutoComplete";
 import "../Style.css";
 
 const PrePrint = () => {
   const intl = useIntl();
-
+  const componentMounted = useRef(false);
   const [sampleTypes, setSampleTypes] = useState([]);
   const [selectedSampleTypeId, setSelectedSampleTypeId] = useState(null);
 
@@ -33,6 +34,21 @@ const PrePrint = () => {
 
   const [source, setSource] = useState("about:blank");
   const [renderBarcode, setRenderBarcode] = useState(false);
+  const [siteNames, setSiteNames] = useState([]);
+
+  const getSiteList = (response) => {
+    if (componentMounted.current) {
+      setSiteNames(response);
+    }
+  };
+
+  useEffect(() => {
+    componentMounted.current = true;
+    getFromOpenElisServer("/rest/site-names", getSiteList);
+    return () => {
+      componentMounted.current = false;
+    };
+  }, []);
 
   function findTestById(testId) {
     return sampleTypeTests.tests.find((test) => test.id === testId);
@@ -169,7 +185,7 @@ const PrePrint = () => {
     <>
       <div className="orderLegendBody">
         <Grid>
-          <Column lg={8} md={8} sm={4}>
+          <Column lg={16} md={8} sm={4}>
             <h4>
               <FormattedMessage id="barcode.print.preprint" />
             </h4>
@@ -179,48 +195,81 @@ const PrePrint = () => {
               min={1}
               max={100}
               defaultValue={1}
+              value={labelSets}
               onChange={(_, state) => setLabelSets(state.value)}
-              label={"Number of label sets"}
+              label={intl.formatMessage({
+                id: "label.barcode.labelsets",
+              })}
               id="labelSets"
-              className="inputText"
             />
+          </Column>
+          <Column lg={8} md={8} sm={4}></Column>
+          <Column lg={16} md={8} sm={4}>
+            {" "}
+            <br></br>
           </Column>
           <Column lg={8} md={8} sm={4}>
             <NumberInput
               min={1}
               max={100}
               defaultValue={1}
+              value={orderLabelsPerSet}
               onChange={(_, state) => setOrderLabelsPerSet(state.value)}
-              label={"Number of order labels per set"}
+              label={intl.formatMessage({
+                id: "label.barcode.orderlabel",
+              })}
               id="orderLabelsPerSet"
-              className="inputText"
             />
+          </Column>
+          <Column lg={16} md={8} sm={4}>
+            {" "}
+            <br></br>
           </Column>
           <Column lg={8} md={8} sm={4}>
             <NumberInput
               min={1}
               max={100}
               defaultValue={1}
+              value={specimenLabelsPerSet}
               onChange={(_, state) => setSpecimenLabelsPerSet(state.value)}
-              label={"Number of specimen labels per set"}
+              label={intl.formatMessage({
+                id: "label.barcode.specimenlabel",
+              })}
               id="specimenLabelsPerSet"
-              className="inputText"
             />
+          </Column>
+          <Column lg={16} md={8} sm={4}>
+            {" "}
+            <br></br>
           </Column>
           <Column lg={8} md={8} sm={4}>
             <NumberInput
               readOnly
               value={labelSets * (orderLabelsPerSet + specimenLabelsPerSet)}
-              label={"Total Labels to Print"}
+              label={intl.formatMessage({
+                id: "label.barcode.totallabel",
+              })}
               id="totalLabelsToPrint"
-              className="inputText"
             />
           </Column>
+          <Column lg={16} md={8} sm={4}>
+            {" "}
+            <br></br>
+          </Column>
           <Column lg={8} md={8} sm={4}>
-            <TextInput
-              id="facilityId"
-              onChange={(e) => setFacilityId(e.target.value)}
-              labelText={"Facility ID"}
+            <AutoComplete
+              name="siteName"
+              id="siteName"
+              allowFreeText={false}
+              value={facilityId}
+              onSelect={(id) => setFacilityId(id)}
+              label={
+                <>
+                  <FormattedMessage id="order.search.site.name" />{" "}
+                </>
+              }
+              style={{ width: "!important 100%" }}
+              suggestions={siteNames.length > 0 ? siteNames : []}
             />
           </Column>
         </Grid>
@@ -232,10 +281,9 @@ const PrePrint = () => {
               <FormattedMessage id="label.button.sample" />
             </h4>
           </Column>
-          <Column lg={16} md={8} sm={4}>
+          <Column lg={8} md={4} sm={4}>
             <Select
               id="selectSampleType"
-              className="selectSampleType"
               labelText="Sample Type"
               onChange={(e) => {
                 handleFetchSampleTypeTests(e);
@@ -305,15 +353,24 @@ const PrePrint = () => {
               })}
           </Column>
           <Column lg={16} md={8} sm={4}>
+            {" "}
+            <br></br>
+          </Column>
+          <Column lg={16} md={8} sm={4}>
             <FormattedMessage id="barcode.print.preprint.note" />
           </Column>
-          <div className="tabsLayout">
-            <Column lg={8} md={8} sm={4}>
-              <Button disabled={!selectedSampleTypeId} onClick={prePrintLabels}>
-                <FormattedMessage id="barcode.print.preprint.button" />
-              </Button>
-            </Column>
-          </div>
+          <Column lg={16} md={8} sm={4}>
+            {" "}
+            <br></br>
+          </Column>
+          <Column lg={8} md={8} sm={4}>
+            <Button
+              disabled={selectedTests.length == 0}
+              onClick={prePrintLabels}
+            >
+              <FormattedMessage id="barcode.print.preprint.button" />
+            </Button>
+          </Column>
         </Grid>
       </div>
       {renderBarcode && (

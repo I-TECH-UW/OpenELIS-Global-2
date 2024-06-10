@@ -7,7 +7,7 @@ class ModifyOrderPage {
 
   enterAccessionNo(accessionNo) {
     cy.enterText(
-      ".cds--text-input.cds--text-input--md.cds--text__input",
+      ":nth-child(2) > .cds--form-item > .cds--text-input__field-outer-wrapper > .cds--text-input__field-wrapper > #labNumber",
       accessionNo,
     );
   }
@@ -39,14 +39,11 @@ class ModifyOrderPage {
     return cy.get(".orderEntrySuccessMsg > :nth-child(3) > .cds--btn").click();
   }
   clickSearchPatientButton() {
-    return cy.get(".searchActionButtons > .cds--btn--primary").click();
+    return cy.get(":nth-child(12) > .cds--btn").click({ force: true });
   }
 
   clickRespectivePatient() {
-    return cy
-      .get(
-        ":nth-child(1) > :nth-child(1) > .cds--radio-button-wrapper > .cds--radio-button__label > .cds--radio-button__appearance",
-      )
+    return cy.get(':nth-child(2) > :nth-child(1) > .cds--radio-button-wrapper > .cds--radio-button__label > .cds--radio-button__appearance')
       .click();
   }
 }

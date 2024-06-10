@@ -245,6 +245,21 @@ public class TestDAOImpl extends BaseDAOImpl<Test, String> implements TestDAO {
             throw new LIMSRuntimeException("Error in Test getTestByName()", e);
         }
     }
+    @Override
+    @Transactional(readOnly = true)
+    public List<Test> getActiveTestsByPanelName(String panelName) throws LIMSRuntimeException {
+    	String sql = "SELECT t.* from test t JOIN panel_item pi ON t.id = pi.test_id JOIN panel p ON p.id = pi.panel_id WHERE p.name = :panelName and t.is_active='Y'";
+    	try {
+    		Query<Test> query = entityManager.unwrap(Session.class).createNativeQuery(sql, Test.class);
+    		query.setParameter("panelName", panelName);
+    		
+    		return query.list();
+    	} catch (RuntimeException e) {
+    		// bugzilla 2154
+    		LogEvent.logError(e.toString(), e);
+    		throw new LIMSRuntimeException("Error in Test getTestByPanelName()", e);
+    	}
+    }
 
     @Override
     @Transactional(readOnly = true)

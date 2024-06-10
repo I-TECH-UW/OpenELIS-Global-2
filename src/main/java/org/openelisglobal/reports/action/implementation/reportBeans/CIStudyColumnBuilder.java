@@ -76,9 +76,9 @@ public abstract class CIStudyColumnBuilder extends CSVColumnBuilder {
      * @param highDatePostgres
      * @return String starting "WHERE ..." joining patient, sample, organization
      */
-    protected String buildWhereSamplePatienOrgSQL(String lowDatePostgres, String highDatePostgres) {
+    protected String buildWhereSamplePatienOrgSQL(String lowDatePostgres, String highDatePostgres, String byDate) {
         String WHERE_SAMPLE_PATIENT_ORG = " WHERE " + "\n pat.id = sh.patient_id " + "\n AND sh.samp_id = s.id "
-                + "\n AND s.collection_date >= '" + lowDatePostgres + "'" + "\n AND s.collection_date <= '"
+                + "\n AND "+ byDate +" >= '" + lowDatePostgres + "'" + "\n AND "+ byDate +" <= '"
                 + highDatePostgres + "'" + "\n AND s.id = sp.samp_id " + "\n AND pat.person_id = per.id "
                 + "\n AND so.samp_id = s.id "
                 + ((GenericValidator.isBlankOrNull(projectStr)) ? "" : " AND sp.proj_id = " + projectStr)

@@ -9,23 +9,14 @@ import java.util.Date;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.openelisglobal.BaseTestConfig;
+import org.openelisglobal.BaseWebContextSensitiveTest;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { BaseTestConfig.class, PatientTestConfig.class })
-@TestPropertySource("classpath:common.properties")
-@ActiveProfiles("test")
-public class PatientServiceTest {
+public class PatientServiceTest extends BaseWebContextSensitiveTest {
 
 	@Autowired
 	PatientService patientService;

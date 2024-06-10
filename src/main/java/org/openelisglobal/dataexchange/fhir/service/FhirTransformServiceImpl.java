@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.Bundle;
@@ -416,9 +417,11 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 		orderEntryObjects.patient = patient;
 
 		// requester
-		Practitioner requester = transformProviderToPractitioner(updateData.getProvider().getId());
-		this.addToOperations(fhirOperations, tempIdGenerator, requester);
-		orderEntryObjects.requester = requester;
+		if (ObjectUtils.isNotEmpty(updateData.getProvider())) {
+			Practitioner requester = transformProviderToPractitioner(updateData.getProvider().getId());
+			this.addToOperations(fhirOperations, tempIdGenerator, requester);
+			orderEntryObjects.requester = requester;
+		}
 
 		// Specimens and service requests
 		for (SampleTestCollection sampleTest : updateData.getSampleItemsTests()) {
@@ -439,14 +442,14 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 			orderEntryObjects.sampleEntryObjectsList.add(fhirSampleEntryObjects);
 		}
 
-        if (updateData.getProgramQuestionnaireResponse() != null) {
-            updateData.getProgramQuestionnaireResponse()
-                    .setId(updateData.getProgramSample().getQuestionnaireResponseUuid().toString());
-            this.addToOperations(fhirOperations, tempIdGenerator, updateData.getProgramQuestionnaireResponse());
-        }
+    if (updateData.getProgramQuestionnaireResponse() != null) {
+        updateData.getProgramQuestionnaireResponse()
+                .setId(updateData.getProgramSample().getQuestionnaireResponseUuid().toString());
+        this.addToOperations(fhirOperations, tempIdGenerator, updateData.getProgramQuestionnaireResponse());
+    }
 
-        // TODO location?
-        // TODO create encounter?
+    // TODO location?
+    // TODO create encounter?
 
 		Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
 
@@ -531,9 +534,19 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 		}
 		if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Entered))) {
 			task.setStatus(TaskStatus.READY);
-		} else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Started))) {
+		} 
+		else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Started)) 
+				|| sample.getStatusId().equals(statusService.getStatusID(AnalysisStatus.TechnicalAcceptance))) {
 			task.setStatus(TaskStatus.INPROGRESS);
-		} else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Finished))) {
+		}
+		else if (sample.getStatusId().equals(statusService.getStatusID(AnalysisStatus.TechnicalRejected))) {
+			task.setStatus(TaskStatus.FAILED);
+		}
+		else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.NonConforming_depricated))
+				|| sample.getStatusId().equals(statusService.getStatusID(AnalysisStatus.BiologistRejected))) {
+			task.setStatus(TaskStatus.REJECTED);
+		}
+		else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Finished))) {
 			task.setStatus(TaskStatus.COMPLETED);
 		} else {
 			task.setStatus(TaskStatus.NULL);
@@ -959,9 +972,10 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 			if (referingServiceRequest.isPresent()) {
 				if (referingServiceRequestMap.containsKey(referingServiceRequest.get().getIdElement().getIdPart())) {
 					ServiceRequest existingServiceRequest = referingServiceRequestMap
-					        .get(referingServiceRequest.get().getIdElement().getIdPart());
+							.get(referingServiceRequest.get().getIdElement().getIdPart());
 					updateReferringServiceRequestWithSampleInfo(sample, existingServiceRequest);
-					referingServiceRequestMap.put(existingServiceRequest.getIdElement().getIdPart(), existingServiceRequest);
+					referingServiceRequestMap.put(existingServiceRequest.getIdElement().getIdPart(),
+							existingServiceRequest);
 					this.addToOperations(fhirOperations, tempIdGenerator, existingServiceRequest);
 				} else {
 					updateReferringServiceRequestWithSampleInfo(sample, referingServiceRequest.get());
@@ -1103,7 +1117,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         observation.setSubject(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
         // observation.setIssued(result.getOriginalLastupdated());
         observation.setIssued(analysis.getReleasedDate());//update to get Released Date instead of commpleted date        observation.setEffective(new DateTimeType(result.getLastupdated()));
-        // observation.setIssued(new Date());
+        observation.setEffective(new DateTimeType(analysis.getReleasedDate()));
+// observation.setIssued(new Date());
         return observation;
     }
 

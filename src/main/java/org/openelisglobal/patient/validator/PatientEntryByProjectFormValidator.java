@@ -30,6 +30,8 @@ public class PatientEntryByProjectFormValidator implements Validator {
 			validateEIDForm(form, errors);
 		} else if ("Recency_Id".equals(form.getObservations().getProjectFormName())) {
 			validateRecencyForm(form, errors);
+		} else if ("HPV_Id".equals(form.getObservations().getProjectFormName())) {
+			validateHPVForm(form, errors);
 		} else {
 			errors.reject("error.formname.unrecognized", "The provided form name is unrecognized");
 		}
@@ -106,6 +108,19 @@ public class PatientEntryByProjectFormValidator implements Validator {
 
 		ValidationHelper.validateFieldRequired(form.getGender(), "gender", errors);
 
+	}
+	private void validateHPVForm(PatientEntryByProjectForm form, Errors errors) {
+
+		ValidationHelper.validateFieldRequired(form.getReceivedDateForDisplay(), "receivedDateForDisplay", errors);
+		
+		ValidationHelper.validateFieldRequired(form.getInterviewDate(), "interviewDate", errors);
+		
+		ValidationHelper.validateFieldRequired(form.getSiteSubjectNumber(), "siteSubjectNumber", errors);
+		
+		ValidationHelper.validateFieldRequired(form.getLabNo(), "labNo", errors);
+		
+		ValidationHelper.validateFieldRequired(form.getBirthDateForDisplay(), "birthDateForDisplay", errors);
+			
 	}
 
 	private void validateRTNForm(PatientEntryByProjectForm form, Errors errors) {

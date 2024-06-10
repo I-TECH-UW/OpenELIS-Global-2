@@ -62,27 +62,25 @@ export const CommonProperties = () => {
 
   return (
     <>
-      <div style={{ marginLeft: "12em", marginRight: "8em" }}>
+      <div className="adminPageContent">
         {notificationVisible === true ? <AlertDialog /> : ""}
         <PageBreadCrumb breadcrumbs={[{ label: "home.label", link: "/" }]} />
         <Grid fullWidth={true}>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <Section>
-              <Section>
-                <Heading>
-                  <FormattedMessage
-                    id="ewfggwgewgewgweg"
-                    defaultMessage="Common Properties"
-                  />
-                </Heading>
-              </Section>
+              <Heading>
+                <FormattedMessage
+                  id="ewfggwgewgewgweg"
+                  defaultMessage="Common Properties"
+                />
+              </Heading>
             </Section>
           </Column>
         </Grid>
         {loading && <Loading />} {error && <p>Error: {error}</p>}{" "}
         <div className="orderLegendBody">
           <Grid fullWidth={true}>
-            <Column lg={8}>
+            <Column lg={8} md={8} sm={4}>
               {commonProperties && (
                 <>
                   {Object.keys(commonProperties)
@@ -118,7 +116,7 @@ export const CommonProperties = () => {
               )}
             </Column>
 
-            <Column lg={8}>
+            <Column lg={8} md={8} sm={4}>
               {commonProperties && (
                 <>
                   {Object.keys(commonProperties)
@@ -152,7 +150,7 @@ export const CommonProperties = () => {
             </Column>
           </Grid>
 
-          <div style={{ marginLeft: "3em" }} className="inlineDiv">
+          <div style={{ marginLeft: "2em" }} className="inlineDiv">
             <Button type="submit" onClick={handleSubmit}>
               <FormattedMessage
                 id="label.button.update"

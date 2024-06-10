@@ -263,6 +263,40 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
             throw new LIMSRuntimeException("Error in Organization getOrganizationByName()", e);
         }
     }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Organization getOrganizationByShortName(String shortName, boolean ignoreCase)
+    		throws LIMSRuntimeException {
+    	String sql = null;
+    	try {
+    		if (ignoreCase) {
+    			sql = "from Organization o where trim(lower(o.shortName)) = :param";
+    		} else {
+    			sql = "from Organization o where o.shortName = :param";
+    		}
+    		
+    		Query<Organization> query = entityManager.unwrap(Session.class).createQuery(sql, Organization.class);
+    		if (ignoreCase) {
+    			query.setParameter("param", shortName.trim().toLowerCase());
+    		} else {
+    			query.setParameter("param", shortName);
+    		}
+    		
+    		List<Organization> list = query.list();
+    		Organization org = null;
+    		if (list.size() > 0) {
+    			org = list.get(0);
+    		}
+    		
+    		return org;
+    		
+    	} catch (RuntimeException e) {
+    		// bugzilla 2154
+    		LogEvent.logError(e.toString(), e);
+    		throw new LIMSRuntimeException("Error in Organization getOrganizationByShortName()", e);
+    	}
+    }
 
     // bugzilla 2069
     @Override
@@ -324,14 +358,14 @@ public class OrganizationDAOImpl extends BaseDAOImpl<Organization, String> imple
                     orgId = organization.getId();
                 }
                 if (organization.getOrganization() != null && !StringUtil.isNullorNill(organization.getOrganization().getId())) {
-                    query.setParameter("parentOrgId", Integer.parseInt(organization.getId()));
+                    query.setParameter("parentOrgId", Integer.parseInt(organization.getOrganization().getId()));
                 } else {
                     // workaround so hiberate knows null is of type int...
                     query.setParameter("parentOrgId", 1);
                     query.setParameter("parentOrgId", null);
                 }
 
-
+                LogEvent.logDebug(this.getClass().getSimpleName(), "duplicateOrganizationExists", "org id is " + orgId);
                 query.setParameter("orgId", Integer.parseInt(orgId));
                 query.setParameter("organizationName", organization.getOrganizationName());
 

@@ -10,6 +10,80 @@ import ReportByDate from "../common/ReportByDate";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
 
+export const RoutineReports = (props) => {
+  const { type, report } = props;
+
+  return (
+    <>
+      {type === "patient" && report === "patientCILNSP_vreduit" && (
+        <PatientStatusReport
+          report={"patientCILNSP_vreduit"}
+          id={"openreports.patientTestStatus"}
+        />
+      )}
+
+      {type === "patient" && report === "referredOut" && <ReferredOut />}
+
+      {type === "patient" && report === "haitiNonConformityBySectionReason" && (
+        <ReportByDate
+          report={"haitiNonConformityBySectionReason"}
+          id={"openreports.mgt.nonconformity.section"}
+        />
+      )}
+
+      {type === "patient" && report === "haitiNonConformityByDate" && (
+        <ReportByDate
+          report={"haitiNonConformityByDate"}
+          id={"openreports.mgt.nonconformity.date"}
+        />
+      )}
+
+      {type === "patient" && report === "CISampleRoutineExport" && (
+        <ReportByDate
+          report={"CISampleRoutineExport"}
+          id={"sideNav.label.exportcsvfile"}
+        />
+      )}
+
+      {type === "indicator" &&
+        (report === "activityReportByTest" ||
+          report === "activityReportByPanel" ||
+          report === "activityReportByTestSection") && (
+          <ReportByDate report={report} />
+        )}
+
+      {type === "indicator" && report === "statisticsReport" && (
+        <StatisticsReport />
+      )}
+
+      {type === "indicator" && report === "indicatorHaitiLNSPAllTests" && (
+        <ReportByDate
+          report={"indicatorHaitiLNSPAllTests"}
+          id={"openreports.all.test.summary.title"}
+        />
+      )}
+
+      {type === "indicator" && report === "indicatorCDILNSPHIV" && (
+        <ReportByDate
+          report={"indicatorHaitiLNSPAllTests"}
+          id={"openreports.all.test.summary.title"}
+        />
+      )}
+
+      {type === "indicator" && report === "sampleRejectionReport" && (
+        <ReportByDate
+          report={"sampleRejectionReport"}
+          id={"openreports.mgt.rejection"}
+        />
+      )}
+
+      {type === "routine" && report === "auditTrail" && (
+        <AuditTrailReport report={"auditTrail"} id={"reports.auditTrail"} />
+      )}
+    </>
+  );
+};
+
 const RoutineIndex = () => {
   const intl = useIntl();
   const { setNotificationVisible, addNotification, notificationVisible } =
@@ -45,73 +119,7 @@ const RoutineIndex = () => {
       <div className="orderLegendBody">
         {notificationVisible === true && <AlertDialog />}
         {isLoading && <Loading />}
-        {!isLoading && (
-          <>
-            {type === "patient" && report === "patientCILNSP_vreduit" && (
-              <PatientStatusReport
-                report={"patientCILNSP_vreduit"}
-                id={"openreports.patientTestStatus"}
-              />
-            )}
-
-            {type === "patient" && report === "referredOut" && <ReferredOut />}
-
-            {type === "patient" &&
-              report === "haitiNonConformityBySectionReason" && (
-                <ReportByDate
-                  report={"haitiNonConformityBySectionReason"}
-                  id={"openreports.mgt.nonconformity.section"}
-                />
-              )}
-
-            {type === "patient" && report === "haitiNonConformityByDate" && (
-              <ReportByDate
-                report={"haitiNonConformityByDate"}
-                id={"openreports.mgt.nonconformity.date"}
-              />
-            )}
-
-            {type === "patient" && report === "CISampleRoutineExport" && (
-              <ReportByDate
-                report={"CISampleRoutineExport"}
-                id={"sideNav.label.exportcsvfile"}
-              />
-            )}
-
-            {type === "indicator" && report === "statisticsReport" && (
-              <StatisticsReport />
-            )}
-
-            {type === "indicator" &&
-              report === "indicatorHaitiLNSPAllTests" && (
-                <ReportByDate
-                  report={"indicatorHaitiLNSPAllTests"}
-                  id={"openreports.all.test.summary.title"}
-                />
-              )}
-
-            {type === "indicator" && report === "indicatorCDILNSPHIV" && (
-              <ReportByDate
-                report={"indicatorHaitiLNSPAllTests"}
-                id={"openreports.all.test.summary.title"}
-              />
-            )}
-
-            {type === "indicator" && report === "sampleRejectionReport" && (
-              <ReportByDate
-                report={"sampleRejectionReport"}
-                id={"openreports.mgt.rejection"}
-              />
-            )}
-
-            {type === "routine" && report === "auditTrail" && (
-              <AuditTrailReport
-                report={"auditTrail"}
-                id={"reports.auditTrail"}
-              />
-            )}
-          </>
-        )}
+        {!isLoading && <RoutineReports type={type} report={report} />}
       </div>
     </>
   );

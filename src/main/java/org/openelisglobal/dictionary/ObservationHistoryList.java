@@ -65,6 +65,7 @@ public enum ObservationHistoryList {
     SPECIAL_REQUEST_REASONS("Special Request Reason"),
 
     REC_STATUS("REC_STATUS"),
+    HPV_SAMPLING_METHOD("HPV Sampling Method"),
 
     ;
 

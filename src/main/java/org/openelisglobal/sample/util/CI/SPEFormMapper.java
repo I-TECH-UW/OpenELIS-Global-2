@@ -51,14 +51,22 @@ public class SPEFormMapper extends ARVFormMapper implements IProjectFormMapper {
         if (projectData.getSerologyHIVTest()) {
             CollectionUtils.addIgnoreNull(testList, createTest("Vironostika", true));
             CollectionUtils.addIgnoreNull(testList, createTest("Murex", true));
-            CollectionUtils.addIgnoreNull(testList, createTest("Integral", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Murex Combinaison", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Genscreen", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Innolia", true));
         }
 
         if (projectData.getMurexTest()) {
-            CollectionUtils.addIgnoreNull(testList, createTest("Murex", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Murex Combinaison", true));
+        }
+        if (projectData.getInnoliaTest()) {
+        	CollectionUtils.addIgnoreNull(testList, createTest("Innolia", true));
         }
         if (projectData.getIntegralTest()) {
             CollectionUtils.addIgnoreNull(testList, createTest("Integral", true));
+        }
+        if (projectData.getGenscreenTest()) {
+        	CollectionUtils.addIgnoreNull(testList, createTest("Genscreen", true));
         }
         if (projectData.getVironostikaTest()) {
             CollectionUtils.addIgnoreNull(testList, createTest("Vironostika", true));

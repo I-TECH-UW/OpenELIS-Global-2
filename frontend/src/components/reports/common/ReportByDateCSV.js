@@ -146,105 +146,117 @@ const ReportByDateCSV = (props) => {
 
   return (
     <>
-      <FormLabel>
-        <Section>
-          <Section>
-            <h1>
-              <FormattedMessage id={props.id} />
-            </h1>
-          </Section>
-        </Section>
-      </FormLabel>
+      <Grid>
+        <Column lg={16} md={8} sm={4}>
+          <FormLabel>
+            <Section>
+              <Section>
+                <h1>
+                  <FormattedMessage id={props.id} />
+                </h1>
+              </Section>
+            </Section>
+          </FormLabel>
+        </Column>
+      </Grid>
       {notificationVisible && <AlertDialog />}
       {loading && <Loading />}
       <Grid fullWidth={true}>
-        <Column lg={10} md={10} sm={8}>
+        <Column lg={16} md={6} sm={4}>
           <Form>
             <Grid fullWidth={true}>
-              <Column lg={16} md={8} sm={4}>
-                <div className="inlineDiv">
-                  <CustomDatePicker
-                    key="startDate"
-                    id={"startDate"}
-                    labelText={intl.formatMessage({
-                      id: "eorder.date.start",
-                      defaultMessage: "Start Date",
-                    })}
-                    disallowFutureDate={true}
-                    autofillDate={true}
-                    value={reportFormValues.startDate}
-                    onChange={(date) =>
-                      handleDatePickerChangeDate("startDate", date)
-                    }
-                  />
-                  <CustomDatePicker
-                    key="endDate"
-                    id={"endDate"}
-                    labelText={intl.formatMessage({
-                      id: "eorder.date.end",
-                      defaultMessage: "End Date",
-                    })}
-                    disallowFutureDate={true}
-                    autofillDate={true}
-                    value={reportFormValues.endDate}
-                    onChange={(date) =>
-                      handleDatePickerChangeDate("endDate", date)
-                    }
-                  />
-                </div>
+              <Column lg={4} md={4} sm={4}>
+                <CustomDatePicker
+                  key="startDate"
+                  id={"startDate"}
+                  labelText={intl.formatMessage({
+                    id: "eorder.date.start",
+                    defaultMessage: "Start Date",
+                  })}
+                  disallowFutureDate={true}
+                  autofillDate={true}
+                  value={reportFormValues.startDate}
+                  onChange={(date) =>
+                    handleDatePickerChangeDate("startDate", date)
+                  }
+                />
               </Column>
-              <Column lg={6} md={8} sm={4}>
-                <div className="inlineDiv" style={{ gap: "30px" }}>
+              <Column lg={4} md={4} sm={4}>
+                <CustomDatePicker
+                  key="endDate"
+                  id={"endDate"}
+                  labelText={intl.formatMessage({
+                    id: "eorder.date.end",
+                    defaultMessage: "End Date",
+                  })}
+                  disallowFutureDate={true}
+                  autofillDate={true}
+                  value={reportFormValues.endDate}
+                  onChange={(date) =>
+                    handleDatePickerChangeDate("endDate", date)
+                  }
+                />
+              </Column>
+              <Column lg={16}>
+                {" "}
+                <br />
+              </Column>
+              <Column lg={8} md={4} sm={4}>
+                <Select
+                  id="studyType"
+                  labelText={intl.formatMessage({
+                    id: "report.select.studttype",
+                  })}
+                  value={reportFormValues.studyType}
+                  onChange={(e) => {
+                    setReportFormValues({
+                      ...reportFormValues,
+                      studyType: e.target.value,
+                    });
+                  }}
+                >
+                  <SelectItem value="" text="Select Study Type" />
+
+                  {statusOptions.map((statusOption) => (
+                    <SelectItem
+                      key={statusOption.id}
+                      value={statusOption.id}
+                      text={statusOption.value}
+                    />
+                  ))}
+                </Select>
+              </Column>
+              <Column lg={16}>
+                {" "}
+                <br />
+              </Column>
+              <Column lg={8} md={4} sm={4}>
+                {props.report === "CIStudyExport" ? (
                   <Select
-                    id="studyType"
+                    id="dateType"
                     labelText={intl.formatMessage({
-                      id: "report.select.studttype",
+                      id: "report.label.site.dateType",
                     })}
-                    value={reportFormValues.studyType}
+                    value={reportFormValues.dateType}
                     onChange={(e) => {
                       setReportFormValues({
                         ...reportFormValues,
-                        studyType: e.target.value,
+                        dateType: e.target.value,
                       });
                     }}
                   >
-                    <SelectItem value="" text="Select Study Type" />
-
-                    {statusOptions.map((statusOption) => (
+                    <SelectItem value="" text="Select Date Type" />
+                    {dateOptions.map((dateOption) => (
                       <SelectItem
-                        key={statusOption.id}
-                        value={statusOption.id}
-                        text={statusOption.value}
+                        key={dateOption.value}
+                        value={dateOption.value}
+                        text={dateOption.text}
                       />
                     ))}
                   </Select>
-                  {props.report === "CIStudyExport" ? (
-                    <Select
-                      id="dateType"
-                      labelText={intl.formatMessage({
-                        id: "report.label.site.dateType",
-                      })}
-                      value={reportFormValues.dateType}
-                      onChange={(e) => {
-                        setReportFormValues({
-                          ...reportFormValues,
-                          dateType: e.target.value,
-                        });
-                      }}
-                    >
-                      <SelectItem value="" text="Select Date Type" />
-                      {dateOptions.map((dateOption) => (
-                        <SelectItem
-                          key={dateOption.value}
-                          value={dateOption.value}
-                          text={dateOption.text}
-                        />
-                      ))}
-                    </Select>
-                  ) : (
-                    <div></div>
-                  )}
-                </div>
+                ) : (
+                  <div></div>
+                )}
               </Column>
             </Grid>
             <br />

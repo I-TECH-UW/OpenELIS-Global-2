@@ -81,8 +81,8 @@ public class TrendsColumnBuilder extends CIColumnBuilder {
 
         // and finally the join that puts these all together. Each cross table should be
         // listed here otherwise it's not in the result and you'll get a full join
-        query.append(" WHERE " + "\n dt.report_generation_time >= date('" + lowDatePostgres + "')"
-                + "\n AND dt.report_generation_time <= date('" + highDatePostgres + "')"
+        query.append(" WHERE " + "\n a.released_date >= date('" + lowDatePostgres + "')"
+                + "\n AND a.released_date <= date('" + highDatePostgres + "')"
                 + "\n AND dt.name = 'patientVL1'" + "\n AND a.test_id =" + test.getId() + "\n AND dt.row_id=s.id"
                 + "\n AND si.samp_id=s.id" + "\n AND a.sampitem_id = si.id" + "\n AND a.id=r.analysis_id"
                 + "\n AND s.id=sh.samp_id" + "\n AND sh.patient_id=pat.id" + "\n AND pat.person_id = per.id"

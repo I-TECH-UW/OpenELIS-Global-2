@@ -79,6 +79,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class AccessionValidationRangeController extends BaseResultValidationController {
+
     @Autowired
     private UserService userService;
     @Autowired
@@ -240,46 +241,47 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
 //            Errors errors = new BaseErrors();
 //            errors.reject("alert.error", "An error occured while saving");
 //            saveErrors(errors);
-            redirectAttributes.addFlashAttribute(FWD_FAIL_INSERT, true);
-            return findForward(FWD_SUCCESS_INSERT, form);
+			redirectAttributes.addFlashAttribute(FWD_FAIL_INSERT, true);
+			return findForward(FWD_SUCCESS_INSERT, form);
 //            return new ModelAndView("redirect:/ResultValidation?blank=true");
-        }
+		}
 
-        ResultValidationPaging paging = new ResultValidationPaging();
-        paging.updatePagedResults(request, form);
-        List<AnalysisItem> resultItemList = paging.getResults(request);
+		ResultValidationPaging paging = new ResultValidationPaging();
+		paging.updatePagedResults(request, form);
+		List<AnalysisItem> resultItemList = paging.getResults(request);
 
-        String testSectionName = form.getTestSection();
-        String testName = form.getTestName();
-        setRequestType(testSectionName);
-        // ----------------------
-        String url = request.getRequestURL().toString();
+		String testSectionName = form.getTestSection();
+		String testName = form.getTestName();
+		setRequestType(testSectionName);
+		// ----------------------
+		String url = request.getRequestURL().toString();
 
-        Errors errors = validateModifiedItems(resultItemList);
+		Errors errors = validateModifiedItems(resultItemList);
 
-        if (errors.hasErrors()) {
-            saveErrors(errors);
-            return findForward(FWD_VALIDATION_ERROR, form);
-        }
+		if (errors.hasErrors()) {
+			saveErrors(errors);
+			return findForward(FWD_VALIDATION_ERROR, form);
+		}
 
-        createSystemUser();
+		createSystemUser();
 
-        // Update Lists
-        List<Analysis> analysisUpdateList = new ArrayList<>();
-        ArrayList<Sample> sampleUpdateList = new ArrayList<>();
-        ArrayList<Note> noteUpdateList = new ArrayList<>();
-        ArrayList<Result> resultUpdateList = new ArrayList<>();
-        List<Result> deletableList = new ArrayList<>();
+		// Update Lists
+		List<Analysis> analysisUpdateList = new ArrayList<>();
+		ArrayList<Sample> sampleUpdateList = new ArrayList<>();
+		ArrayList<Note> noteUpdateList = new ArrayList<>();
+		ArrayList<Result> resultUpdateList = new ArrayList<>();
+		List<Result> deletableList = new ArrayList<>();
 
-        // wrapper object for holding modifedResultSet and newResultSet
-        IResultSaveService resultSaveService = new ResultValidationSaveService();
+		// wrapper object for holding modifedResultSet and newResultSet
+		IResultSaveService resultSaveService = new ResultValidationSaveService();
 
 //        if (testSectionName.equals("serology")) {
 //            createUpdateElisaList(resultItemList, analysisUpdateList);
 //        } else {
-        createUpdateList(resultItemList, analysisUpdateList, resultUpdateList, noteUpdateList, deletableList,
-                resultSaveService, areListeners);
+		createUpdateList(resultItemList, analysisUpdateList, resultUpdateList, noteUpdateList, deletableList,
+				resultSaveService, areListeners);
 //        }
+
 
         try {
             resultValidationService.persistdata(deletableList, analysisUpdateList, resultUpdateList, resultItemList,
@@ -288,310 +290,314 @@ public class AccessionValidationRangeController extends BaseResultValidationCont
             LogEvent.logError(e);
         }
 
-        for (IResultUpdate updater : updaters) {
+		for (IResultUpdate updater : updaters) {
 
 //            updater.postTransactionalCommitUpdate(resultSaveService);
-        }
+		}
 
-        // route save back to RetroC specific ResultValidationRetroCAction
-        // if
-        // (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName,
-        // "CI RetroCI"))
-        if (url.contains("RetroC")) {
-            forward = "successRetroC";
-        }
+		// route save back to RetroC specific ResultValidationRetroCAction
+		// if
+		// (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName,
+		// "CI RetroCI"))
+		if (url.contains("RetroC")) {
+			forward = "successRetroC";
+		}
 
-        redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-        if (isBlankOrNull(testSectionName)) {
-            return findForward(forward, form);
-        } else {
-            Map<String, String> params = new HashMap<>();
-            params.put("type", testSectionName);
-            params.put("test", testName);
-            params.put("forward", forward);
+		redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+		if (isBlankOrNull(testSectionName)) {
+			return findForward(forward, form);
+		} else {
+			Map<String, String> params = new HashMap<>();
+			params.put("type", testSectionName);
+			params.put("test", testName);
+			params.put("forward", forward);
 
-            return getForwardWithParameters(findForward(forward, form), params);
-        }
-    }
+			return getForwardWithParameters(findForward(forward, form), params);
+		}
+	}
 
-    private Errors validateModifiedItems(List<AnalysisItem> resultItemList) {
-        Errors errors = new BaseErrors();
+	private Errors validateModifiedItems(List<AnalysisItem> resultItemList) {
+		Errors errors = new BaseErrors();
 
-        for (AnalysisItem item : resultItemList) {
-            Errors errorList = new BaseErrors();
-            validateQuantifiableItems(item, errorList);
+		for (AnalysisItem item : resultItemList) {
+			Errors errorList = new BaseErrors();
+			validateQuantifiableItems(item, errorList);
 
-            if (errorList.hasErrors()) {
-                StringBuilder augmentedAccession = new StringBuilder(item.getAccessionNumber());
-                augmentedAccession.append(" : ");
-                augmentedAccession.append(item.getTestName());
-                String errorMsg = "errors.followingAccession";
-                errors.reject(errorMsg, new String[] { augmentedAccession.toString() }, errorMsg);
-                errors.addAllErrors(errorList);
+			if (errorList.hasErrors()) {
+				StringBuilder augmentedAccession = new StringBuilder(item.getAccessionNumber());
+				augmentedAccession.append(" : ");
+				augmentedAccession.append(item.getTestName());
+				String errorMsg = "errors.followingAccession";
+				errors.reject(errorMsg, new String[] { augmentedAccession.toString() }, errorMsg);
+				errors.addAllErrors(errorList);
 
-            }
-        }
+			}
+		}
 
-        return errors;
-    }
+		return errors;
+	}
 
-    public void validateQuantifiableItems(AnalysisItem analysisItem, Errors errorList) {
-        if (analysisItem.isHasQualifiedResult() && isBlankOrNull(analysisItem.getQualifiedResultValue())
-                && analysisItemWillBeUpdated(analysisItem)) {
-            errorList.reject("errors.missing.result.details", new String[] { "Result" },
-                    "errors.missing.result.details");
-        }
-        // verify that qualifiedResultValue has been entered if required
-        if (!isBlankOrNull(analysisItem.getQualifiedDictionaryId())) {
-            String[] qualifiedDictionaryIds = analysisItem.getQualifiedDictionaryId().replace("[", "").replace("]", "")
-                    .split(",");
-            Set<String> qualifiedDictIdsSet = new HashSet<>(Arrays.asList(qualifiedDictionaryIds));
+	public void validateQuantifiableItems(AnalysisItem analysisItem, Errors errorList) {
+		if (analysisItem.isHasQualifiedResult() && isBlankOrNull(analysisItem.getQualifiedResultValue())
+				&& analysisItemWillBeUpdated(analysisItem)) {
+			errorList.reject("errors.missing.result.details", new String[] { "Result" },
+					"errors.missing.result.details");
+		}
+		// verify that qualifiedResultValue has been entered if required
+		if (!isBlankOrNull(analysisItem.getQualifiedDictionaryId())) {
+			String[] qualifiedDictionaryIds = analysisItem.getQualifiedDictionaryId().replace("[", "").replace("]", "")
+					.split(",");
+			Set<String> qualifiedDictIdsSet = new HashSet<>(Arrays.asList(qualifiedDictionaryIds));
 
-            if (qualifiedDictIdsSet.contains(analysisItem.getResult())
-                    && isBlankOrNull(analysisItem.getQualifiedResultValue())) {
-                errorList.reject("errors.missing.result.details", new String[] { "Result" },
-                        "errors.missing.result.details");
+			if (qualifiedDictIdsSet.contains(analysisItem.getResult())
+					&& isBlankOrNull(analysisItem.getQualifiedResultValue())) {
+				errorList.reject("errors.missing.result.details", new String[] { "Result" },
+						"errors.missing.result.details");
 
-            }
+			}
 
-        }
+		}
 
-    }
+	}
 
-    private void createUpdateList(List<AnalysisItem> analysisItems, List<Analysis> analysisUpdateList,
-            List<Result> resultUpdateList, List<Note> noteUpdateList, List<Result> deletableList,
-            IResultSaveService resultValidationSave, boolean areListeners) {
+	private void createUpdateList(List<AnalysisItem> analysisItems, List<Analysis> analysisUpdateList,
+			List<Result> resultUpdateList, List<Note> noteUpdateList, List<Result> deletableList,
+			IResultSaveService resultValidationSave, boolean areListeners) {
 
-        List<String> analysisIdList = new ArrayList<>();
+		List<String> analysisIdList = new ArrayList<>();
 
-        for (AnalysisItem analysisItem : analysisItems) {
-            if (!analysisItem.isReadOnly() && analysisItemWillBeUpdated(analysisItem)) {
+		for (AnalysisItem analysisItem : analysisItems) {
+			if (!analysisItem.isReadOnly() && analysisItemWillBeUpdated(analysisItem)) {
 
-                Analysis analysis = analysisService.get(analysisItem.getAnalysisId());
-                analysis.setSysUserId(getSysUserId(request));
+				Analysis analysis = analysisService.get(analysisItem.getAnalysisId());
+				analysis.setSysUserId(getSysUserId(request));
 
-                if (!analysisIdList.contains(analysis.getId())) {
+				if (!analysisIdList.contains(analysis.getId())) {
 
-                    if (analysisItem.getIsAccepted()) {
-                        analysis.setStatusId(
-                                SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
-                        analysis.setReleasedDate(new java.sql.Date(Calendar.getInstance().getTimeInMillis()));
-                        analysisIdList.add(analysis.getId());
-                        analysisUpdateList.add(analysis);
-                    }
+					if (analysisItem.getIsAccepted()) {
+						analysis.setStatusId(
+								SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
+						analysis.setReleasedDate(new java.sql.Date(Calendar.getInstance().getTimeInMillis()));
+						analysisIdList.add(analysis.getId());
+						analysisUpdateList.add(analysis);
+					}
 
-                    if (analysisItem.getIsRejected()) {
-                        analysis.setStatusId(SpringContext.getBean(IStatusService.class)
-                                .getStatusID(AnalysisStatus.BiologistRejected));
-                        analysisIdList.add(analysis.getId());
-                        analysisUpdateList.add(analysis);
-                    }
-                }
+					if (analysisItem.getIsRejected()) {
+						analysis.setStatusId(SpringContext.getBean(IStatusService.class)
+								.getStatusID(AnalysisStatus.BiologistRejected));
+						analysisIdList.add(analysis.getId());
+						analysisUpdateList.add(analysis);
+					}
+				}
 
-                createNeededNotes(analysisItem, analysis, noteUpdateList);
+				createNeededNotes(analysisItem, analysis, noteUpdateList);
 
-                if (areResults(analysisItem)) {
-                    List<Result> results = createResultFromAnalysisItem(analysisItem, analysis, analysis,
-                            noteUpdateList, deletableList);
-                    for (Result result : results) {
-                        resultUpdateList.add(result);
+				if (areResults(analysisItem)) {
+					List<Result> results = createResultFromAnalysisItem(analysisItem, analysis, analysis,
+							noteUpdateList, deletableList);
+					for (Result result : results) {
+						resultUpdateList.add(result);
 
-                        if (areListeners) {
-                            addResultSets(analysis, result, resultValidationSave);
-                        }
-                    }
-                }
-            }
-        }
-    }
+						if (areListeners) {
+							addResultSets(analysis, result, resultValidationSave);
+						}
+					}
+				}
+			}
+		}
+	}
 
-    private void createNeededNotes(AnalysisItem analysisItem, Analysis analysis, List<Note> noteUpdateList) {
-        if (analysisItem.getIsRejected()) {
-            Note note = noteService.createSavableNote(analysis, NoteType.INTERNAL,
-                    MessageUtil.getMessage("validation.note.retest"), RESULT_SUBJECT, getSysUserId(request));
-            noteUpdateList.add(note);
-        }
+	private void createNeededNotes(AnalysisItem analysisItem, Analysis analysis, List<Note> noteUpdateList) {
+		if (analysisItem.getIsRejected()) {
+			Note note = noteService.createSavableNote(analysis, NoteType.INTERNAL,
+					MessageUtil.getMessage("validation.note.retest"), RESULT_SUBJECT, getSysUserId(request));
+			noteUpdateList.add(note);
+		}
 
-        if (!GenericValidator.isBlankOrNull(analysisItem.getNote())) {
-            NoteType noteType = analysisItem.getIsAccepted() ? NoteType.EXTERNAL : NoteType.INTERNAL;
-            Note note = noteService.createSavableNote(analysis, noteType, analysisItem.getNote(), RESULT_SUBJECT,
-                    getSysUserId(request));
-            noteUpdateList.add(note);
-        }
-    }
+		if (!GenericValidator.isBlankOrNull(analysisItem.getNote())) {
+			NoteType noteType = analysisItem.getIsAccepted() ? NoteType.EXTERNAL : NoteType.INTERNAL;
+			Note note = noteService.createSavableNote(analysis, noteType, analysisItem.getNote(), RESULT_SUBJECT,
+					getSysUserId(request));
+			noteUpdateList.add(note);
+		}
+	}
 
-    private void addResultSets(Analysis analysis, Result result, IResultSaveService resultValidationSave) {
-        Sample sample = analysis.getSampleItem().getSample();
-        Patient patient = sampleHumanService.getPatientForSample(sample);
-        if (finalResultAlreadySent(result)) {
-            result.setResultEvent(Event.CORRECTION);
-            resultValidationSave.getModifiedResults()
-                    .add(new ResultSet(result, null, null, patient, sample, null, false));
-        } else {
-            result.setResultEvent(Event.FINAL_RESULT);
-            resultValidationSave.getNewResults().add(new ResultSet(result, null, null, patient, sample, null, false));
-        }
-    }
+	private void addResultSets(Analysis analysis, Result result, IResultSaveService resultValidationSave) {
+		Sample sample = analysis.getSampleItem().getSample();
+		Patient patient = sampleHumanService.getPatientForSample(sample);
+		if (finalResultAlreadySent(result)) {
+			result.setResultEvent(Event.CORRECTION);
+			resultValidationSave.getModifiedResults()
+					.add(new ResultSet(result, null, null, patient, sample, null, false));
+		} else {
+			result.setResultEvent(Event.FINAL_RESULT);
+			resultValidationSave.getNewResults().add(new ResultSet(result, null, null, patient, sample, null, false));
+		}
+	}
 
-    // TO DO bug falsely triggered when preliminary result is sent, fails, retries
-    // and succeeds
-    private boolean finalResultAlreadySent(Result result) {
-        List<DocumentTrack> documents = documentTrackService.getByTypeRecordAndTable(RESULT_REPORT_ID, RESULT_TABLE_ID,
-                result.getId());
-        return documents.size() > 0;
-    }
+	// TO DO bug falsely triggered when preliminary result is sent, fails, retries
+	// and succeeds
+	private boolean finalResultAlreadySent(Result result) {
+		List<DocumentTrack> documents = documentTrackService.getByTypeRecordAndTable(RESULT_REPORT_ID, RESULT_TABLE_ID,
+				result.getId());
+		return documents.size() > 0;
+	}
 
-    private boolean analysisItemWillBeUpdated(AnalysisItem analysisItem) {
-        return analysisItem.getIsAccepted() || analysisItem.getIsRejected();
-    }
+	private boolean analysisItemWillBeUpdated(AnalysisItem analysisItem) {
+		return analysisItem.getIsAccepted() || analysisItem.getIsRejected();
+	}
 
-    private void createUpdateElisaList(List<AnalysisItem> resultItems, List<Analysis> analysisUpdateList) {
+	private void createUpdateElisaList(List<AnalysisItem> resultItems, List<Analysis> analysisUpdateList) {
 
-        for (AnalysisItem resultItem : resultItems) {
+		for (AnalysisItem resultItem : resultItems) {
 
-            if (resultItem.getIsAccepted()) {
+			if (resultItem.getIsAccepted()) {
 
-                List<Analysis> acceptedAnalysisList = createAnalysisFromElisaAnalysisItem(resultItem);
+				List<Analysis> acceptedAnalysisList = createAnalysisFromElisaAnalysisItem(resultItem);
 
-                for (Analysis analysis : acceptedAnalysisList) {
-                    analysis.setStatusId(
-                            SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
-                    analysisUpdateList.add(analysis);
-                }
-            }
+				for (Analysis analysis : acceptedAnalysisList) {
+					analysis.setStatusId(
+							SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized));
+					analysisUpdateList.add(analysis);
+				}
+			}
 
-            if (resultItem.getIsRejected()) {
-                List<Analysis> rejectedAnalysisList = createAnalysisFromElisaAnalysisItem(resultItem);
+			if (resultItem.getIsRejected()) {
+				List<Analysis> rejectedAnalysisList = createAnalysisFromElisaAnalysisItem(resultItem);
 
-                for (Analysis analysis : rejectedAnalysisList) {
-                    analysis.setStatusId(
-                            SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected));
-                    analysisUpdateList.add(analysis);
-                }
+				for (Analysis analysis : rejectedAnalysisList) {
+					analysis.setStatusId(
+							SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected));
+					analysisUpdateList.add(analysis);
+				}
 
-            }
-        }
-    }
+			}
+		}
+	}
 
-    private List<Analysis> createAnalysisFromElisaAnalysisItem(AnalysisItem analysisItem) {
+	private List<Analysis> createAnalysisFromElisaAnalysisItem(AnalysisItem analysisItem) {
 
-        List<Analysis> analysisList = new ArrayList<>();
+		List<Analysis> analysisList = new ArrayList<>();
 
-        Analysis analysis = new Analysis();
+		Analysis analysis = new Analysis();
 
-        if (!isBlankOrNull(analysisItem.getMurexResult())) {
-            analysis = getAnalysisFromId(analysisItem.getMurexAnalysisId());
-            analysisList.add(analysis);
-        }
-        if (!isBlankOrNull(analysisItem.getBiolineResult())) {
-            analysis = getAnalysisFromId(analysisItem.getBiolineAnalysisId());
-            analysisList.add(analysis);
-        }
-        if (!isBlankOrNull(analysisItem.getIntegralResult())) {
-            analysis = getAnalysisFromId(analysisItem.getIntegralAnalysisId());
-            analysisList.add(analysis);
-        }
-        if (!isBlankOrNull(analysisItem.getVironostikaResult())) {
-            analysis = getAnalysisFromId(analysisItem.getVironostikaAnalysisId());
-            analysisList.add(analysis);
-        }
-        if (!isBlankOrNull(analysisItem.getGenieIIResult())) {
-            analysis = getAnalysisFromId(analysisItem.getGenieIIAnalysisId());
-            analysisList.add(analysis);
-        }
-        if (!isBlankOrNull(analysisItem.getGenieII10Result())) {
-            analysis = getAnalysisFromId(analysisItem.getGenieII10AnalysisId());
-            analysisList.add(analysis);
-        }
-        if (!isBlankOrNull(analysisItem.getGenieII100Result())) {
-            analysis = getAnalysisFromId(analysisItem.getGenieII100AnalysisId());
-            analysisList.add(analysis);
-        }
-        if (!isBlankOrNull(analysisItem.getWesternBlot1Result())) {
-            analysis = getAnalysisFromId(analysisItem.getWesternBlot1AnalysisId());
-            analysisList.add(analysis);
-        }
-        if (!isBlankOrNull(analysisItem.getWesternBlot2Result())) {
-            analysis = getAnalysisFromId(analysisItem.getWesternBlot2AnalysisId());
-            analysisList.add(analysis);
-        }
-        if (!isBlankOrNull(analysisItem.getP24AgResult())) {
-            analysis = getAnalysisFromId(analysisItem.getP24AgAnalysisId());
-            analysisList.add(analysis);
-        }
-        if (!isBlankOrNull(analysisItem.getInnoliaResult())) {
-            analysis = getAnalysisFromId(analysisItem.getInnoliaAnalysisId());
-            analysisList.add(analysis);
-        }
+		if (!isBlankOrNull(analysisItem.getMurexResult())) {
+			analysis = getAnalysisFromId(analysisItem.getMurexAnalysisId());
+			analysisList.add(analysis);
+		}
+		if (!isBlankOrNull(analysisItem.getBiolineResult())) {
+			analysis = getAnalysisFromId(analysisItem.getBiolineAnalysisId());
+			analysisList.add(analysis);
+		}
+		if (!isBlankOrNull(analysisItem.getIntegralResult())) {
+			analysis = getAnalysisFromId(analysisItem.getIntegralAnalysisId());
+			analysisList.add(analysis);
+		}
+		if (!isBlankOrNull(analysisItem.getGenscreenResult())) {
+			analysis = getAnalysisFromId(analysisItem.getGenscreenAnalysisId());
+			analysisList.add(analysis);
+		}
+		if (!isBlankOrNull(analysisItem.getVironostikaResult())) {
+			analysis = getAnalysisFromId(analysisItem.getVironostikaAnalysisId());
+			analysisList.add(analysis);
+		}
+		if (!isBlankOrNull(analysisItem.getGenieIIResult())) {
+			analysis = getAnalysisFromId(analysisItem.getGenieIIAnalysisId());
+			analysisList.add(analysis);
+		}
+		if (!isBlankOrNull(analysisItem.getGenieII10Result())) {
+			analysis = getAnalysisFromId(analysisItem.getGenieII10AnalysisId());
+			analysisList.add(analysis);
+		}
+		if (!isBlankOrNull(analysisItem.getGenieII100Result())) {
+			analysis = getAnalysisFromId(analysisItem.getGenieII100AnalysisId());
+			analysisList.add(analysis);
+		}
+		if (!isBlankOrNull(analysisItem.getWesternBlot1Result())) {
+			analysis = getAnalysisFromId(analysisItem.getWesternBlot1AnalysisId());
+			analysisList.add(analysis);
+		}
+		if (!isBlankOrNull(analysisItem.getWesternBlot2Result())) {
+			analysis = getAnalysisFromId(analysisItem.getWesternBlot2AnalysisId());
+			analysisList.add(analysis);
+		}
+		if (!isBlankOrNull(analysisItem.getP24AgResult())) {
+			analysis = getAnalysisFromId(analysisItem.getP24AgAnalysisId());
+			analysisList.add(analysis);
+		}
+		if (!isBlankOrNull(analysisItem.getInnoliaResult())) {
+			analysis = getAnalysisFromId(analysisItem.getInnoliaAnalysisId());
+			analysisList.add(analysis);
+		}
 
-        analysisList.add(analysis);
+		analysisList.add(analysis);
 
-        return analysisList;
-    }
+		return analysisList;
+	}
 
-    private Analysis getAnalysisFromId(String id) {
-        Analysis analysis = analysisService.get(id);
-        analysis.setSysUserId(getSysUserId(request));
+	private Analysis getAnalysisFromId(String id) {
+		Analysis analysis = analysisService.get(id);
+		analysis.setSysUserId(getSysUserId(request));
 
-        return analysis;
-    }
+		return analysis;
+	}
 
-    private List<Result> createResultFromAnalysisItem(AnalysisItem analysisItem, Analysis analysis, Analysis analysis2,
-            List<Note> noteUpdateList, List<Result> deletableList) {
+	private List<Result> createResultFromAnalysisItem(AnalysisItem analysisItem, Analysis analysis, Analysis analysis2,
+			List<Note> noteUpdateList, List<Result> deletableList) {
 
-        ResultSaveBean bean = ResultSaveBeanAdapter.fromAnalysisItem(analysisItem);
-        ResultSaveService resultSaveService = new ResultSaveService(analysis, getSysUserId(request));
-        List<Result> results = resultSaveService.createResultsFromTestResultItem(bean, deletableList);
-        if (analysisService.patientReportHasBeenDone(analysis) && resultSaveService.isUpdatedResult()) {
-            analysis.setCorrectedSincePatientReport(true);
-            noteUpdateList.add(noteService.createSavableNote(analysis, NoteType.EXTERNAL,
-                    MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
-        }
-        return results;
-    }
+		ResultSaveBean bean = ResultSaveBeanAdapter.fromAnalysisItem(analysisItem);
+		ResultSaveService resultSaveService = new ResultSaveService(analysis, getSysUserId(request));
+		List<Result> results = resultSaveService.createResultsFromTestResultItem(bean, deletableList);
+		if (analysisService.patientReportHasBeenDone(analysis) && resultSaveService.isUpdatedResult()) {
+			analysis.setCorrectedSincePatientReport(true);
+			noteUpdateList.add(noteService.createSavableNote(analysis, NoteType.EXTERNAL,
+					MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
+		}
+		return results;
+	}
 
-    protected TestResult getTestResult(AnalysisItem analysisItem) {
-        TestResult testResult = null;
-        if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(analysisItem.getResultType())) {
-            testResult = testResultService.getTestResultsByTestAndDictonaryResult(analysisItem.getTestId(),
-                    analysisItem.getResult());
-        } else {
-            List<TestResult> testResultList = testResultService.getActiveTestResultsByTest(analysisItem.getTestId());
-            // we are assuming there is only one testResult for a numeric type
-            // result
-            if (!testResultList.isEmpty()) {
-                testResult = testResultList.get(0);
-            }
-        }
-        return testResult;
-    }
+	protected TestResult getTestResult(AnalysisItem analysisItem) {
+		TestResult testResult = null;
+		if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(analysisItem.getResultType())) {
+			testResult = testResultService.getTestResultsByTestAndDictonaryResult(analysisItem.getTestId(),
+					analysisItem.getResult());
+		} else {
+			List<TestResult> testResultList = testResultService.getActiveTestResultsByTest(analysisItem.getTestId());
+			// we are assuming there is only one testResult for a numeric type
+			// result
+			if (!testResultList.isEmpty()) {
+				testResult = testResultList.get(0);
+			}
+		}
+		return testResult;
+	}
 
-    private boolean areResults(AnalysisItem item) {
-        return !(isBlankOrNull(item.getResult())
-                || (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(item.getResultType())
-                        && "0".equals(item.getResult())))
-                || (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(item.getResultType())
-                        && !isBlankOrNull(item.getMultiSelectResultValues()));
-    }
+	private boolean areResults(AnalysisItem item) {
+		return !(isBlankOrNull(item.getResult())
+				|| (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(item.getResultType())
+						&& "0".equals(item.getResult())))
+				|| (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(item.getResultType())
+						&& !isBlankOrNull(item.getMultiSelectResultValues()));
+	}
 
-    private SystemUser createSystemUser() {
-        return systemUserService.get(getSysUserId(request));
-    }
+	private SystemUser createSystemUser() {
+		return systemUserService.get(getSysUserId(request));
+	}
 
-    @Override
-    protected String findLocalForward(String forward) {
-        if (FWD_SUCCESS.equals(forward)) {
-            return "accessionValidationRangeDefinition";
-        } else if (FWD_FAIL.equals(forward)) {
-            return "homePageDefinition";
-        } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/AccessionValidationRange";
-        } else if (FWD_FAIL_INSERT.equals(forward)) {
-            return "homePageDefinition";
-        } else if (FWD_VALIDATION_ERROR.equals(forward)) {
-            return "accessionValidationRangeDefinition";
-        } else {
-            return "PageNotFound";
-        }
-    }
+	@Override
+	protected String findLocalForward(String forward) {
+		if (FWD_SUCCESS.equals(forward)) {
+			return "accessionValidationRangeDefinition";
+		} else if (FWD_FAIL.equals(forward)) {
+			return "homePageDefinition";
+		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
+			return "redirect:/AccessionValidationRange";
+		} else if (FWD_FAIL_INSERT.equals(forward)) {
+			return "homePageDefinition";
+		} else if (FWD_VALIDATION_ERROR.equals(forward)) {
+			return "accessionValidationRangeDefinition";
+		} else {
+			return "PageNotFound";
+		}
+	}
 }

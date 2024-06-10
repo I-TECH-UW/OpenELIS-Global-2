@@ -40,8 +40,8 @@ li.clickableUserDetails:hover {
 }
 
 .adminPageContent {
-  margin-left: 10%;
-  margin-right: 5%;
+  margin-left: 16%;
+  margin-right: 1%;
 }
 
 .pageContent {
@@ -222,6 +222,10 @@ button {
   /* margin-right: 50%; */
   margin-left: 5%;
   width: 100%;
+}
+
+.sampleBatchTag {
+  margin-right: 20px;
 }
 
 /* .resultValue {

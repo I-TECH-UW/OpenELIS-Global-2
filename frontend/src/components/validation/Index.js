@@ -12,6 +12,7 @@ let breadcrumbs = [{ label: "home.label", link: "/" }];
 const Index = () => {
   const { notificationVisible } = useContext(NotificationContext);
   const [results, setResults] = useState({ resultList: [] });
+  const [params, setParams] = useState("");
   return (
     <>
       <PageBreadCrumb breadcrumbs={breadcrumbs} />
@@ -28,8 +29,8 @@ const Index = () => {
       </Grid>
       <div className="orderLegendBody">
         {notificationVisible === true ? <AlertDialog /> : ""}
-        <SearchForm setResults={setResults} />
-        <Validation results={results} />
+        <SearchForm setParams={setParams} setResults={setResults} />
+        <Validation params={params} results={results} />
       </div>
     </>
   );

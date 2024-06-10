@@ -46,18 +46,19 @@ function SearchOrder() {
               </h4>
             </Column>
             <Column lg={16} md={8} sm={4}>
-              <div className="inlineDiv">
-                <CustomLabNumberInput
-                  placeholder={"Enter Lab No"}
-                  id="labNumber"
-                  name="labNumber"
-                  value={accessionNumber}
-                  onChange={(e, rawVal) =>
-                    setAccessionNumber(rawVal ? rawVal : e?.target?.value)
-                  }
-                  labelText={<FormattedMessage id="search.label.accession" />}
-                />
-              </div>
+              <CustomLabNumberInput
+                placeholder={"Enter Lab No"}
+                id="labNumber"
+                name="labNumber"
+                value={accessionNumber}
+                onChange={(e, rawVal) =>
+                  setAccessionNumber(rawVal ? rawVal : e?.target?.value)
+                }
+                labelText={<FormattedMessage id="search.label.accession" />}
+              />
+            </Column>
+            <Column lg={16}>
+              <br></br>
             </Column>
             <Column lg={2}>
               <Button type="submit">
@@ -69,7 +70,7 @@ function SearchOrder() {
       </div>
       <div className="orderLegendBody">
         <Grid>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <h4>
               {" "}
               <FormattedMessage id="sample.label.search.patient" />

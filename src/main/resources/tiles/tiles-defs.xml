@@ -598,6 +598,16 @@
 		<put-attribute name="footerFragment"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
+	
+	<definition name="sampleRejectionDefiniton"
+		extends="baseDefinition">
+		<put-attribute name="preSelectionHeaderFragment"
+			value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="bodyFragment"
+			value="/pages/qaevent/sampleRejection.jsp" />
+		<put-attribute name="footerFragment"
+			value="/pages/common/saveCancelFooterButtons.jsp" />
+	</definition>
 
 	<definition name="reportNonConformingEventDefiniton"
 		extends="baseDefinition">

@@ -14,7 +14,10 @@ import { FormattedMessage, useIntl } from "react-intl";
 import OrderEntryValidationSchema from "../formModel/validationSchema/OrderEntryValidationSchema";
 import config from "../../config.json";
 import PageBreadCrumb from "../common/PageBreadCrumb";
-let breadcrumbs = [{ label: "home.label", link: "/" }];
+let breadcrumbs = [
+  { label: "home.label", link: "/" },
+  { label: "sidenav.label.addorder", link: "/SamplePatientEntry" },
+];
 
 export let sampleObject = {
   index: 0,
@@ -565,6 +568,15 @@ const Index = () => {
     if ("questionnaire" in orderFormValues.sampleOrderItems) {
       delete orderFormValues.sampleOrderItems.questionnaire;
     }
+    //remove display Lists rom the form
+    orderFormValues.sampleOrderItems.priorityList = [];
+    orderFormValues.sampleOrderItems.programList = [];
+    orderFormValues.sampleOrderItems.referringSiteList = [];
+    orderFormValues.initialSampleConditionList = [];
+    orderFormValues.testSectionList = [];
+    orderFormValues.sampleOrderItems.providersList = [];
+    orderFormValues.sampleOrderItems.paymentOptions = [];
+    orderFormValues.sampleOrderItems.testLocationCodeList = [];
     console.log(JSON.stringify(orderFormValues));
     postToOpenElisServer(
       "/rest/SamplePatientEntry",

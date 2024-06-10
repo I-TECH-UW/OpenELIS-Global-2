@@ -17,6 +17,7 @@ import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory.ValueType;
@@ -118,8 +119,8 @@ public class TbSampleServiceImpl implements TbSampleService {
 
 	private List<String> persistObservations(SampleTbEntryForm formData) {
 		List<ObservationHistory> obervations = new ArrayList<ObservationHistory>();
-				
-		//tb order reason
+
+		// tb order reason
 		ObservationHistory orderReason = new ObservationHistory();
 		orderReason.setSampleId(sampleId);
 		orderReason.setPatientId(patientId);
@@ -129,7 +130,7 @@ public class TbSampleServiceImpl implements TbSampleService {
 		orderReason.setValue(formData.getTbOrderReason());
 		orderReason.setObservationHistoryTypeId(getObservationHistoryTypeId("TbOrderReason"));
 		obervations.add(orderReason);
-		//tb diagnostic reason
+		// tb diagnostic reason
 		ObservationHistory diagnosticReason = new ObservationHistory();
 		diagnosticReason.setSampleId(sampleId);
 		diagnosticReason.setPatientId(patientId);
@@ -139,7 +140,7 @@ public class TbSampleServiceImpl implements TbSampleService {
 		diagnosticReason.setValue(formData.getTbDiagnosticReason());
 		diagnosticReason.setObservationHistoryTypeId(getObservationHistoryTypeId("TbDiagnosticReason"));
 		obervations.add(diagnosticReason);
-		//tb followup reason
+		// tb followup reason
 		ObservationHistory tbFollowupReason = new ObservationHistory();
 		tbFollowupReason.setSampleId(sampleId);
 		tbFollowupReason.setPatientId(patientId);
@@ -149,7 +150,7 @@ public class TbSampleServiceImpl implements TbSampleService {
 		tbFollowupReason.setValue(formData.getTbFollowupReason());
 		tbFollowupReason.setObservationHistoryTypeId(getObservationHistoryTypeId("TbFollowupReason"));
 		obervations.add(tbFollowupReason);
-		//tb sample aspect
+		// tb sample aspect
 		ObservationHistory tbAspect = new ObservationHistory();
 		tbAspect.setSampleId(sampleId);
 		tbAspect.setPatientId(patientId);
@@ -159,7 +160,7 @@ public class TbSampleServiceImpl implements TbSampleService {
 		tbAspect.setValue(formData.getTbAspect());
 		tbAspect.setObservationHistoryTypeId(getObservationHistoryTypeId("TbSampleAspects"));
 		obervations.add(tbAspect);
-		//tb follwup period Line 1
+		// tb follwup period Line 1
 		ObservationHistory tbFollowupReasonPeriodLine1 = new ObservationHistory();
 		tbFollowupReasonPeriodLine1.setSampleId(sampleId);
 		tbFollowupReasonPeriodLine1.setPatientId(patientId);
@@ -167,9 +168,10 @@ public class TbSampleServiceImpl implements TbSampleService {
 		tbFollowupReasonPeriodLine1.setSysUserId(formData.getSysUserId());
 		tbFollowupReasonPeriodLine1.setValueType(ValueType.LITERAL);
 		tbFollowupReasonPeriodLine1.setValue(formData.getTbFollowupPeriodLine1());
-		tbFollowupReasonPeriodLine1.setObservationHistoryTypeId(getObservationHistoryTypeId("TbFollowupReasonPeriodLine1"));
+		tbFollowupReasonPeriodLine1
+				.setObservationHistoryTypeId(getObservationHistoryTypeId("TbFollowupReasonPeriodLine1"));
 		obervations.add(tbFollowupReasonPeriodLine1);
-		//tb follwup period Line 2
+		// tb follwup period Line 2
 		ObservationHistory tbFollowupReasonPeriodLine2 = new ObservationHistory();
 		tbFollowupReasonPeriodLine2.setSampleId(sampleId);
 		tbFollowupReasonPeriodLine2.setPatientId(patientId);
@@ -177,9 +179,10 @@ public class TbSampleServiceImpl implements TbSampleService {
 		tbFollowupReasonPeriodLine2.setSysUserId(formData.getSysUserId());
 		tbFollowupReasonPeriodLine2.setValueType(ValueType.LITERAL);
 		tbFollowupReasonPeriodLine2.setValue(formData.getTbFollowupPeriodLine2());
-		tbFollowupReasonPeriodLine2.setObservationHistoryTypeId(getObservationHistoryTypeId("TbFollowupReasonPeriodLine2"));
+		tbFollowupReasonPeriodLine2
+				.setObservationHistoryTypeId(getObservationHistoryTypeId("TbFollowupReasonPeriodLine2"));
 		obervations.add(tbFollowupReasonPeriodLine2);
-		//tb Analysis Method
+		// tb Analysis Method
 		ObservationHistory analysisMethod = new ObservationHistory();
 		analysisMethod.setSampleId(sampleId);
 		analysisMethod.setPatientId(patientId);
@@ -193,9 +196,12 @@ public class TbSampleServiceImpl implements TbSampleService {
 	}
 
 	private Patient persistPatientData(SampleTbEntryForm formData) {
-		Patient patient = new Patient();
-		Patient oldPatient = patientService.getByExternalId(formData.getTbSubjectNumber());
+		Patient oldPatient = null;
+		if (!GenericValidator.isBlankOrNull(formData.getTbSubjectNumber())) {
+			oldPatient = patientService.getByExternalId(formData.getTbSubjectNumber());
+		}
 		if (ObjectUtils.isEmpty(oldPatient)) {
+			Patient patient = new Patient();
 			patient.setPerson(createPersonAndAddress(formData));
 			patient.setExternalId(formData.getTbSubjectNumber());
 			patient.setNationalId(formData.getTbSubjectNumber());
@@ -232,20 +238,20 @@ public class TbSampleServiceImpl implements TbSampleService {
 		createPersonAddresses(formData, personId);
 		return person;
 	}
-	
+
 	// create a new Person
-	private String createPatientIdentity(SampleTbEntryForm formData,String patientId) {
+	private String createPatientIdentity(SampleTbEntryForm formData, String patientId) {
 		String typeID = PatientIdentityTypeMap.getInstance().getIDForType("SUBJECT");
-		PatientIdentity patientIdentity = patientIdentityService.getPatitentIdentityForPatientAndType(patientId, typeID);
-		if(ObjectUtils.isEmpty(patientIdentity)) {
+		PatientIdentity patientIdentity = patientIdentityService.getPatitentIdentityForPatientAndType(patientId,
+				typeID);
+		if (ObjectUtils.isEmpty(patientIdentity)) {
 			patientIdentity = new PatientIdentity();
 			patientIdentity.setPatientId(patientId);
 			patientIdentity.setIdentityData(formData.getTbSubjectNumber());
 			patientIdentity.setLastupdated(DateUtil.getNowAsTimestamp());
 			patientIdentity.setIdentityTypeId(typeID);
 			return patientIdentityService.insert(patientIdentity);
-		}
-		else {
+		} else {
 			return patientIdentity.getId();
 		}
 	}
@@ -404,13 +410,23 @@ public class TbSampleServiceImpl implements TbSampleService {
 		sampleOrganization.setOrganization(organizationService.get(formData.getReferringSiteCode()));
 		return sampleOrganizationService.insert(sampleOrganization);
 	}
-	
-    private String getObservationHistoryTypeId(String name) {
-        ObservationHistoryType oht;
-        oht = observationHistoryTypeService.getByName(name);
-        if (oht != null) {
-            return oht.getId();
-        }
-        return null;
-    }
+
+	private String getObservationHistoryTypeId(String name) {
+		ObservationHistoryType oht;
+		oht = observationHistoryTypeService.getByName(name);
+		if (oht != null) {
+			return oht.getId();
+		}
+		return null;
+	}
+
+	@Override
+	public void getTBFormData(SampleTbEntryForm form) {
+		String labnoForSearch = form.getLabnoForSearch();
+		if (ObjectUtils.isNotEmpty(labnoForSearch)) {
+			Sample searchSample = sampleService.getSampleByAccessionNumber(labnoForSearch);
+
+		}
+
+	}
 }

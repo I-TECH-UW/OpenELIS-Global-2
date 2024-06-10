@@ -476,250 +476,250 @@ public class AnalyzerResultsController extends BaseController {
                         TestReflex sibTestReflex = testReflexService.get(possibleTestReflex.getSiblingReflexId());
 //                        TestResult sibTestResult = testResultService.get(sibTestReflex.getTestResultId());
 
-                        for (Analysis analysis : analysisList) {
-                            List<Result> resultList = resultService.getResultsByAnalysis(analysis);
-                            Test test = analysis.getTest();
+						for (Analysis analysis : analysisList) {
+							List<Result> resultList = resultService.getResultsByAnalysis(analysis);
+							Test test = analysis.getTest();
 
-                            for (Result result : resultList) {
-                                TestResult testResult = testResultService
-                                        .getTestResultsByTestAndDictonaryResult(test.getId(), result.getValue());
-                                if (testResult != null && testResult.getId().equals(sibTestReflex.getTestResultId())) {
-                                    if (possibleTestReflex.getActionScriptlet() != null) {
-                                        selectionOne = possibleTestReflex;
-                                        break;
-                                    } else if (selectionOne == null) {
-                                        selectionOne = possibleTestReflex;
-                                    } else {
-                                        selectionTwo = possibleTestReflex;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        populateAnalyzerResultItemWithReflexes(resultItem, selectionOne, selectionTwo);
-    }
+							for (Result result : resultList) {
+								TestResult testResult = testResultService
+										.getTestResultsByTestAndDictonaryResult(test.getId(), result.getValue());
+								if (testResult != null && testResult.getId().equals(sibTestReflex.getTestResultId())) {
+									if (possibleTestReflex.getActionScriptlet() != null) {
+										selectionOne = possibleTestReflex;
+										break;
+									} else if (selectionOne == null) {
+										selectionOne = possibleTestReflex;
+									} else {
+										selectionTwo = possibleTestReflex;
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		populateAnalyzerResultItemWithReflexes(resultItem, selectionOne, selectionTwo);
+	}
 
-    private void populateAnalyzerResultItemWithReflexes(AnalyzerResultItem resultItem, TestReflex selectionOne,
-            TestReflex selectionTwo) {
-        if (selectionOne != null) {
-            if (selectionTwo == null && !GenericValidator.isBlankOrNull(selectionOne.getActionScriptletId())
-                    && !GenericValidator.isBlankOrNull(selectionOne.getTestId())) {
+	private void populateAnalyzerResultItemWithReflexes(AnalyzerResultItem resultItem, TestReflex selectionOne,
+			TestReflex selectionTwo) {
+		if (selectionOne != null) {
+			if (selectionTwo == null && !GenericValidator.isBlankOrNull(selectionOne.getActionScriptletId())
+					&& !GenericValidator.isBlankOrNull(selectionOne.getTestId())) {
 
-                resultItem.setSelectionOneText(TestReflexUtil.makeReflexTestName(selectionOne));
-                resultItem.setSelectionOneValue(TestReflexUtil.makeReflexTestValue(selectionOne));
-                resultItem.setSelectionTwoText(TestReflexUtil.makeReflexScriptName(selectionTwo));
-                resultItem.setSelectionTwoValue(TestReflexUtil.makeReflexScriptValue(selectionOne));
-            } else if (selectionTwo != null) {
-                if (selectionOne.getTest() != null) {
-                    resultItem.setSelectionOneText(TestReflexUtil.makeReflexTestName(selectionOne));
-                    resultItem.setSelectionOneValue(TestReflexUtil.makeReflexTestValue(selectionOne));
-                } else {
-                    resultItem.setSelectionOneText(TestReflexUtil.makeReflexScriptName(selectionOne));
-                    resultItem.setSelectionOneValue(TestReflexUtil.makeReflexScriptValue(selectionOne));
-                }
+				resultItem.setSelectionOneText(TestReflexUtil.makeReflexTestName(selectionOne));
+				resultItem.setSelectionOneValue(TestReflexUtil.makeReflexTestValue(selectionOne));
+				resultItem.setSelectionTwoText(TestReflexUtil.makeReflexScriptName(selectionTwo));
+				resultItem.setSelectionTwoValue(TestReflexUtil.makeReflexScriptValue(selectionOne));
+			} else if (selectionTwo != null) {
+				if (selectionOne.getTest() != null) {
+					resultItem.setSelectionOneText(TestReflexUtil.makeReflexTestName(selectionOne));
+					resultItem.setSelectionOneValue(TestReflexUtil.makeReflexTestValue(selectionOne));
+				} else {
+					resultItem.setSelectionOneText(TestReflexUtil.makeReflexScriptName(selectionOne));
+					resultItem.setSelectionOneValue(TestReflexUtil.makeReflexScriptValue(selectionOne));
+				}
 
-                if (selectionTwo.getTest() != null) {
-                    resultItem.setSelectionTwoText(TestReflexUtil.makeReflexTestName(selectionTwo));
-                    resultItem.setSelectionTwoValue(TestReflexUtil.makeReflexTestValue(selectionOne));
-                } else {
-                    resultItem.setSelectionTwoText(TestReflexUtil.makeReflexScriptName(selectionTwo));
-                    resultItem.setSelectionTwoValue(TestReflexUtil.makeReflexScriptValue(selectionOne));
-                }
-            }
-        }
-    }
+				if (selectionTwo.getTest() != null) {
+					resultItem.setSelectionTwoText(TestReflexUtil.makeReflexTestName(selectionTwo));
+					resultItem.setSelectionTwoValue(TestReflexUtil.makeReflexTestValue(selectionOne));
+				} else {
+					resultItem.setSelectionTwoText(TestReflexUtil.makeReflexScriptName(selectionTwo));
+					resultItem.setSelectionTwoValue(TestReflexUtil.makeReflexScriptValue(selectionOne));
+				}
+			}
+		}
+	}
 
-    private String getResultForItem(AnalyzerResults result) {
-        if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(result.getResultType())) {
-            return getRoundedToSignificantDigits(result);
-        }
+	private String getResultForItem(AnalyzerResults result) {
+		if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(result.getResultType())) {
+			return getRoundedToSignificantDigits(result);
+		}
 
-        if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(result.getResultType())
-                || GenericValidator.isBlankOrNull(result.getResultType())
-                || GenericValidator.isBlankOrNull(result.getResult())) {
+		if (TypeOfTestResultServiceImpl.ResultType.isTextOnlyVariant(result.getResultType())
+				|| GenericValidator.isBlankOrNull(result.getResultType())
+				|| GenericValidator.isBlankOrNull(result.getResult())) {
 
-            return result.getResult();
-        }
+			return result.getResult();
+		}
 
-        // If it's readonly or the selectlist can not be gotten then we want the result
-        // otherwise we want the id so the correct selection will be choosen
-        if (result.isReadOnly() || result.getTestId() == null || result.getIsControl()) {
-            return dictionaryService.get(result.getResult()).getDictEntry();
-        } else {
-            return result.getResult();
-        }
-    }
+		// If it's readonly or the selectlist can not be gotten then we want the result
+		// otherwise we want the id so the correct selection will be choosen
+		if (result.isReadOnly() || result.getTestId() == null || result.getIsControl()) {
+			return dictionaryService.get(result.getResult()).getDictEntry();
+		} else {
+			return result.getResult();
+		}
+	}
 
-    private String getSignificantDigitsFromAnalyzerResults(AnalyzerResults result) {
+	private String getSignificantDigitsFromAnalyzerResults(AnalyzerResults result) {
 
-        List<TestResult> testResults = testResultService.getActiveTestResultsByTest(result.getTestId());
+		List<TestResult> testResults = testResultService.getActiveTestResultsByTest(result.getTestId());
 
-        if (GenericValidator.isBlankOrNull(result.getResult()) || testResults.isEmpty()) {
-            return result.getResult();
-        }
+		if (GenericValidator.isBlankOrNull(result.getResult()) || testResults.isEmpty()) {
+			return result.getResult();
+		}
 
-        TestResult testResult = testResults.get(0);
+		TestResult testResult = testResults.get(0);
 
-        return testResult.getSignificantDigits();
+		return testResult.getSignificantDigits();
 
-    }
+	}
 
-    private String getRoundedToSignificantDigits(AnalyzerResults result) {
-        if (result.getTestId() != null) {
+	private String getRoundedToSignificantDigits(AnalyzerResults result) {
+		if (result.getTestId() != null) {
 
-            Double results;
-            try {
-                results = Double.valueOf(result.getResult());
-            } catch (NumberFormatException e) {
-                return result.getResult();
-            }
+			Double results;
+			try {
+				results = Double.valueOf(result.getResult());
+			} catch (NumberFormatException e) {
+				return result.getResult();
+			}
 
-            String significantDigitsAsString = getSignificantDigitsFromAnalyzerResults(result);
-            if (GenericValidator.isBlankOrNull(significantDigitsAsString) || "-1".equals(significantDigitsAsString)) {
-                return result.getResult();
-            }
+			String significantDigitsAsString = getSignificantDigitsFromAnalyzerResults(result);
+			if (GenericValidator.isBlankOrNull(significantDigitsAsString) || "-1".equals(significantDigitsAsString)) {
+				return result.getResult();
+			}
 
-            Integer significantDigits;
-            try {
-                significantDigits = Integer.parseInt(significantDigitsAsString);
-            } catch (NumberFormatException e) {
-                return result.getResult();
-            }
+			Integer significantDigits;
+			try {
+				significantDigits = Integer.parseInt(significantDigitsAsString);
+			} catch (NumberFormatException e) {
+				return result.getResult();
+			}
 
-            if (significantDigits == 0) {
-                return String.valueOf(Math.round(results));
-            }
+			if (significantDigits == 0) {
+				return String.valueOf(Math.round(results));
+			}
 
-            double power = Math.pow(10, significantDigits);
-            return String.valueOf(Math.round(results * power) / power);
-        } else {
-            return result.getResult();
-        }
-    }
+			double power = Math.pow(10, significantDigits);
+			return String.valueOf(Math.round(results * power) / power);
+		} else {
+			return result.getResult();
+		}
+	}
 
-    private String getUnits(String units) {
-        if (GenericValidator.isBlankOrNull(units) || "null".equals(units)) {
-            return "";
-        }
-        return units;
-    }
+	private String getUnits(String units) {
+		if (GenericValidator.isBlankOrNull(units) || "null".equals(units)) {
+			return "";
+		}
+		return units;
+	}
 
-    private List<Dictionary> getDictionaryResultList(AnalyzerResults result) {
-        if ("N".equals(result.getResultType()) || "A".equals(result.getResultType())
-                || "R".equals(result.getResultType()) || GenericValidator.isBlankOrNull(result.getResultType())
-                || result.getTestId() == null) {
-            return null;
-        }
+	private List<Dictionary> getDictionaryResultList(AnalyzerResults result) {
+		if ("N".equals(result.getResultType()) || "A".equals(result.getResultType())
+				|| "R".equals(result.getResultType()) || GenericValidator.isBlankOrNull(result.getResultType())
+				|| result.getTestId() == null) {
+			return null;
+		}
 
-        List<Dictionary> dictionaryList = new ArrayList<>();
+		List<Dictionary> dictionaryList = new ArrayList<>();
 
-        List<TestResult> testResults = testResultService.getActiveTestResultsByTest(result.getTestId());
+		List<TestResult> testResults = testResultService.getActiveTestResultsByTest(result.getTestId());
 
-        for (TestResult testResult : testResults) {
-            dictionaryList.add(dictionaryService.get(testResult.getValue()));
-        }
+		for (TestResult testResult : testResults) {
+			dictionaryList.add(dictionaryService.get(testResult.getValue()));
+		}
 
-        return dictionaryList;
-    }
+		return dictionaryList;
+	}
 
-    @Override
-    protected String getActualMessage(String messageKey) {
-        String actualMessage = null;
-        if (messageKey != null) {
-            actualMessage = PluginMenuService.getInstance().getMenuLabel(localizationService.getCurrentLocaleLanguage(),
-                    messageKey);
-        }
-        return actualMessage == null ? getAnalyzerNameFromRequest() : actualMessage;
-    }
+	@Override
+	protected String getActualMessage(String messageKey) {
+		String actualMessage = null;
+		if (messageKey != null) {
+			actualMessage = PluginMenuService.getInstance().getMenuLabel(localizationService.getCurrentLocaleLanguage(),
+					messageKey);
+		}
+		return actualMessage == null ? getAnalyzerNameFromRequest() : actualMessage;
+	}
 
-    protected String getAnalyzerNameFromRequest() {
-        String analyzer = null;
-        String requestType = request.getParameter("type");
-        if (!GenericValidator.isBlankOrNull(requestType)) {
-            analyzer = AnalyzerTestNameCache.getInstance().getDBNameForActionName(requestType);
-        }
-        return analyzer;
-    }
+	protected String getAnalyzerNameFromRequest() {
+		String analyzer = null;
+		String requestType = request.getParameter("type");
+		if (!GenericValidator.isBlankOrNull(requestType)) {
+			analyzer = AnalyzerTestNameCache.getInstance().getDBNameForActionName(requestType);
+		}
+		return analyzer;
+	}
 
-    private boolean getQaEventByTestSection(Analysis analysis) {
-        if (analysis == null) {
-            return false;
-        }
-        if (analysis.getTestSection() != null && analysis.getSampleItem().getSample() != null) {
-            Sample sample = analysis.getSampleItem().getSample();
-            List<SampleQaEvent> sampleQaEventsList = getSampleQaEvents(sample);
-            for (SampleQaEvent event : sampleQaEventsList) {
-                QAService qa = new QAService(event);
-                if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
-                        && qa.getObservationValue(QAObservationType.SECTION)
-                                .equals(analysis.getTestSection().getNameKey())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+	private boolean getQaEventByTestSection(Analysis analysis) {
+		if (analysis == null) {
+			return false;
+		}
+		if (analysis.getTestSection() != null && analysis.getSampleItem().getSample() != null) {
+			Sample sample = analysis.getSampleItem().getSample();
+			List<SampleQaEvent> sampleQaEventsList = getSampleQaEvents(sample);
+			for (SampleQaEvent event : sampleQaEventsList) {
+				QAService qa = new QAService(event);
+				if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
+						&& qa.getObservationValue(QAObservationType.SECTION)
+								.equals(analysis.getTestSection().getNameKey())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
-    public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
-        return sampleQaEventService.getSampleQaEventsBySample(sample);
-    }
+	public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
+		return sampleQaEventService.getSampleQaEventsBySample(sample);
+	}
 
-    @RequestMapping(value = "/AnalyzerResults", method = RequestMethod.POST)
-    public ModelAndView showAnalyzerResultsSave(HttpServletRequest request,
-            @ModelAttribute("form") @Validated({ Paging.class,
-                    AnalyzerResultsForm.AnalyzerResuts.class }) AnalyzerResultsForm form,
-            BindingResult result, RedirectAttributes redirectAttibutes) {
-        if (result.hasErrors()) {
-            saveErrors(result);
-            return findForward(FWD_FAIL_INSERT, form);
-        }
+	@RequestMapping(value = "/AnalyzerResults", method = RequestMethod.POST)
+	public ModelAndView showAnalyzerResultsSave(HttpServletRequest request,
+			@ModelAttribute("form") @Validated({ Paging.class,
+					AnalyzerResultsForm.AnalyzerResuts.class }) AnalyzerResultsForm form,
+			BindingResult result, RedirectAttributes redirectAttibutes) {
+		if (result.hasErrors()) {
+			saveErrors(result);
+			return findForward(FWD_FAIL_INSERT, form);
+		}
 
-        AnalyzerResultsPaging paging = new AnalyzerResultsPaging();
-        paging.updatePagedResults(request, form);
-        List<AnalyzerResultItem> resultItemList = paging.getResults(request);
+		AnalyzerResultsPaging paging = new AnalyzerResultsPaging();
+		paging.updatePagedResults(request, form);
+		List<AnalyzerResultItem> resultItemList = paging.getResults(request);
 
-        List<AnalyzerResultItem> actionableResults = extractActionableResult(resultItemList);
+		List<AnalyzerResultItem> actionableResults = extractActionableResult(resultItemList);
 
-        if (actionableResults.isEmpty()) {
-            return findForward(FWD_SUCCESS_INSERT, form);
-        }
+		if (actionableResults.isEmpty()) {
+			return findForward(FWD_SUCCESS_INSERT, form);
+		}
 
-        validateSavableItems(actionableResults, result);
+		validateSavableItems(actionableResults, result);
 
-        if (result.hasErrors()) {
-            saveErrors(result);
+		if (result.hasErrors()) {
+			saveErrors(result);
 
-            return findForward(FWD_VALIDATION_ERROR, form);
-        }
+			return findForward(FWD_VALIDATION_ERROR, form);
+		}
 
-        List<SampleGrouping> sampleGroupList = new ArrayList<>();
+		List<SampleGrouping> sampleGroupList = new ArrayList<>();
 
-        resultItemList.removeAll(actionableResults);
-        List<AnalyzerResultItem> childlessControls = extractChildlessControls(resultItemList);
-        List<AnalyzerResults> deletableAnalyzerResults = getRemovableAnalyzerResults(actionableResults,
-                childlessControls);
+		resultItemList.removeAll(actionableResults);
+		List<AnalyzerResultItem> childlessControls = extractChildlessControls(resultItemList);
+		List<AnalyzerResults> deletableAnalyzerResults = getRemovableAnalyzerResults(actionableResults,
+				childlessControls);
 
-        createResultsFromItems(actionableResults, sampleGroupList);
+		createResultsFromItems(actionableResults, sampleGroupList);
 
-        try {
-            analyzerResultsService.persistAnalyzerResults(deletableAnalyzerResults, sampleGroupList,
-                    getSysUserId(request));
+		try {
+			analyzerResultsService.persistAnalyzerResults(deletableAnalyzerResults, sampleGroupList,
+					getSysUserId(request));
 
-        } catch (LIMSRuntimeException e) {
-            LogEvent.logError(e.getMessage(), e);
-            String errorMsg = "errors.UpdateException";
-            result.reject(errorMsg);
-            saveErrors(result);
+		} catch (LIMSRuntimeException e) {
+			LogEvent.logError(e.getMessage(), e);
+			String errorMsg = "errors.UpdateException";
+			result.reject(errorMsg);
+			saveErrors(result);
 
-            return findForward(FWD_VALIDATION_ERROR, form);
-        }
+			return findForward(FWD_VALIDATION_ERROR, form);
+		}
 
-        redirectAttibutes.addFlashAttribute(FWD_SUCCESS, true);
-        return findForward(FWD_SUCCESS_INSERT, form);
+		redirectAttibutes.addFlashAttribute(FWD_SUCCESS, true);
+		return findForward(FWD_SUCCESS_INSERT, form);
 //        if (GenericValidator.isBlankOrNull(form.getType())) {
 //            return findForward(FWD_SUCCESS_INSERT, form);
 //        } else {

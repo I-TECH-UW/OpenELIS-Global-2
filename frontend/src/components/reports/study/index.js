@@ -15,9 +15,149 @@ import PatientStatusReport from "../common/PatientStatusReport";
 import ReportByID from "../common/ReportByID";
 import ReportByDate from "../common/ReportByDate";
 import ReportByLabNo from "../common/ReportByLabNo";
+import NonConformityNotification from "./NonConformityNotification";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
 import ReportByDateCSV from "../common/ReportByDateCSV";
+import IntermediateByService from "./IntermediateByService";
+
+export const StudyReports = (props) => {
+  const { type, report } = props;
+
+  return (
+    <>
+      {type === "patient" && report === "patientARVInitial1" && (
+        <ReportByLabNo report="patientARVInitial1" id="header.label.ARV" />
+      )}
+
+      {type === "patient" && report === "patientARVInitial2" && (
+        <ReportByLabNo report="patientARVInitial2" id="header.label.ARV" />
+      )}
+
+      {type === "patient" && report === "CIStudyExport" && (
+        <ReportByDateCSV
+          report="CIStudyExport"
+          id="header.label.study.ciexport"
+        />
+      )}
+
+      {type === "patient" && report === "Trends" && (
+        <ReportByDateCSV report="Trends" id="header.label.study.vlloadtrends" />
+      )}
+
+      {type === "patient" && report === "patientARVFollowup1" && (
+        <ReportByLabNo
+          report="patientARVFollowup1"
+          id="header.label.followup"
+        />
+      )}
+
+      {type === "patient" && report === "patientARVFollowup2" && (
+        <ReportByLabNo
+          report="patientARVFollowup2"
+          id="header.label.followup"
+        />
+      )}
+
+      {type === "patient" && report === "patientARV1" && (
+        <ReportByLabNo report="patientARV1" id="header.label.intialFollowup" />
+      )}
+
+      {type === "patient" && report === "patientEID1" && (
+        <PatientStatusReport report="patientEID1" id="header.label.EID" />
+      )}
+
+      {type === "patient" && report === "patientEID2" && (
+        <ReportByLabNo report="patientEID2" id="header.label.EID" />
+      )}
+
+      {type === "patient" && report === "patientVL1" && (
+        <PatientStatusReport
+          report="patientVL1"
+          id="banner.menu.resultvalidation.viralload"
+        />
+      )}
+
+      {type === "patient" && report === "patientIndeterminate1" && (
+        <ReportByLabNo
+          report="patientIndeterminate1"
+          id="project.IndeterminateStudy.name"
+        />
+      )}
+
+      {type === "patient" && report === "patientIndeterminate2" && (
+        <ReportByLabNo
+          report="patientIndeterminate2"
+          id="project.IndeterminateStudy.name"
+        />
+      )}
+
+      {type === "patient" && report === "patientIndeterminateByLocation" && (
+        <IntermediateByService
+          report="patientIndeterminateByLocation"
+          id="project.IndeterminateStudy.name"
+        />
+      )}
+
+      {type === "patient" && report === "patientSpecialReport" && (
+        <ReportByLabNo
+          report="patientSpecialReport"
+          id="header.label.specialRequest"
+        />
+      )}
+
+      {type === "patient" && report === "patientCollection" && (
+        <ReportByID
+          report="patientCollection"
+          id="patient.report.collection.name"
+        />
+      )}
+      {type === "patient" && report === "patientAssociated" && (
+        <ReportByID
+          report="patientAssociated"
+          id="patient.report.associated.name"
+        />
+      )}
+      {type === "patient" && report === "retroCINonConformityByDate" && (
+        <ReportByDate
+          report="retroCINonConformityByDate"
+          id="header.label.nonconformityByDate"
+        />
+      )}
+
+      {type === "patient" &&
+        report === "retroCInonConformityBySectionReason" && (
+          <ReportByDate
+            report="retroCInonConformityBySectionReason"
+            id="reports.nonConformity.bySectionReason.title"
+          />
+        )}
+
+      {type === "patient" && report === "retroCINonConformityByLabno" && (
+        <ReportByLabNo
+          report="retroCINonConformityByLabno"
+          id="header.label.intialFollowup"
+        />
+      )}
+      {type === "patient" && report === "retroCInonConformityNotification" && (
+        <NonConformityNotification
+          report="retroCInonConformityNotification"
+          id="reports.nonConformity.notification.report"
+        />
+      )}
+      {type === "patient" && report === "retroCIFollowupRequiredByLocation" && (
+        <ReportByDate
+          report="retroCIFollowupRequiredByLocation"
+          id="reports.followupRequired.byLocation"
+        />
+      )}
+
+      {type === "study" && report === "auditTrail" && (
+        <AuditTrailReport report={"auditTrail"} id={"reports.auditTrail"} />
+      )}
+    </>
+  );
+};
 
 const StudyIndex = () => {
   const intl = useIntl();
@@ -36,6 +176,8 @@ const StudyIndex = () => {
     patient_retroCInonConformityBySectionReason:
       "reports.nonConformity.bySectionReason.title",
     patient_retroCINonConformityByLabno: "header.label.intialFollowup",
+    patient_retroCInonConformityNotification:
+      "reports.nonConformity.notification.report",
     patient_retroCIFollowupRequiredByLocation:
       "reports.followupRequired.byLocation",
     patient_patientARVInitial1: "header.label.ARV",
@@ -48,6 +190,7 @@ const StudyIndex = () => {
     patient_patientVL1: "banner.menu.resultvalidation.viralload",
     patient_patientIndeterminate1: "project.IndeterminateStudy.name",
     patient_patientIndeterminate2: "project.IndeterminateStudy.name",
+    patient_patientIndeterminateByLocation: "project.IndeterminateStudy.name",
     patient_patientSpecialReport: "header.label.specialRequest",
     study_auditTrail: "reports.auditTrail",
     patient_CIStudyExport: "reports.label.cistudyexport",
@@ -103,143 +246,7 @@ const StudyIndex = () => {
       <div className="orderLegendBody">
         {notificationVisible === true && <AlertDialog />}
         {isLoading && <Loading />}
-        {!isLoading && (
-          <>
-            {type === "patient" && report === "patientARVInitial1" && (
-              <ReportByLabNo
-                report="patientARVInitial1"
-                id="header.label.ARV"
-              />
-            )}
-
-            {type === "patient" && report === "patientARVInitial2" && (
-              <ReportByLabNo
-                report="patientARVInitial2"
-                id="header.label.ARV"
-              />
-            )}
-
-            {type === "patient" && report === "CIStudyExport" && (
-              <ReportByDateCSV
-                report="CIStudyExport"
-                id="header.label.study.ciexport"
-              />
-            )}
-
-            {type === "patient" && report === "Trends" && (
-              <ReportByDateCSV
-                report="Trends"
-                id="header.label.study.vlloadtrends"
-              />
-            )}
-
-            {type === "patient" && report === "patientARVFollowup1" && (
-              <ReportByLabNo
-                report="patientARVFollowup1"
-                id="header.label.followup"
-              />
-            )}
-
-            {type === "patient" && report === "patientARVFollowup2" && (
-              <ReportByLabNo
-                report="patientARVFollowup2"
-                id="header.label.followup"
-              />
-            )}
-
-            {type === "patient" && report === "patientARV1" && (
-              <ReportByLabNo
-                report="patientARV1"
-                id="header.label.intialFollowup"
-              />
-            )}
-
-            {type === "patient" && report === "patientEID1" && (
-              <PatientStatusReport report="patientEID1" id="header.label.EID" />
-            )}
-
-            {type === "patient" && report === "patientEID2" && (
-              <ReportByLabNo report="patientEID2" id="header.label.EID" />
-            )}
-
-            {type === "patient" && report === "patientVL1" && (
-              <PatientStatusReport
-                report="patientVL1"
-                id="banner.menu.resultvalidation.viralload"
-              />
-            )}
-
-            {type === "patient" && report === "patientIndeterminate1" && (
-              <ReportByLabNo
-                report="patientIndeterminate1"
-                id="project.IndeterminateStudy.name"
-              />
-            )}
-
-            {type === "patient" && report === "patientIndeterminate2" && (
-              <ReportByLabNo
-                report="patientIndeterminate2"
-                id="project.IndeterminateStudy.name"
-              />
-            )}
-
-            {type === "patient" && report === "patientSpecialReport" && (
-              <ReportByLabNo
-                report="patientSpecialReport"
-                id="header.label.specialRequest"
-              />
-            )}
-
-            {type === "patient" && report === "patientCollection" && (
-              <ReportByID
-                report="patientCollection"
-                id="patient.report.collection.name"
-              />
-            )}
-            {type === "patient" && report === "patientAssociated" && (
-              <ReportByID
-                report="patientAssociated"
-                id="patient.report.associated.name"
-              />
-            )}
-            {type === "patient" && report === "retroCINonConformityByDate" && (
-              <ReportByDate
-                report="retroCINonConformityByDate"
-                id="header.label.nonconformityByDate"
-              />
-            )}
-
-            {type === "patient" &&
-              report === "retroCInonConformityBySectionReason" && (
-                <ReportByDate
-                  report="retroCInonConformityBySectionReason"
-                  id="reports.nonConformity.bySectionReason.title"
-                />
-              )}
-
-            {type === "patient" && report === "retroCINonConformityByLabno" && (
-              <ReportByLabNo
-                report="retroCINonConformityByLabno"
-                id="header.label.intialFollowup"
-              />
-            )}
-
-            {type === "patient" &&
-              report === "retroCIFollowupRequiredByLocation" && (
-                <ReportByDate
-                  report="retroCIFollowupRequiredByLocation"
-                  id="reports.followupRequired.byLocation"
-                />
-              )}
-
-            {type === "study" && report === "auditTrail" && (
-              <AuditTrailReport
-                report={"auditTrail"}
-                id={"reports.auditTrail"}
-              />
-            )}
-          </>
-        )}
+        {!isLoading && <StudyReports type={type} report={report} />}
       </div>
     </>
   );

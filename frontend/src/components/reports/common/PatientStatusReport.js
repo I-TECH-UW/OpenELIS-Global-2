@@ -13,6 +13,8 @@ import {
   Button,
   Select,
   SelectItem,
+  Accordion,
+  AccordionItem,
 } from "@carbon/react";
 import CustomLabNumberInput from "../../common/CustomLabNumberInput";
 import config from "../../../config.json";
@@ -165,6 +167,7 @@ function PatientStatusReport(props) {
             </Section>
           </Section>
         </Column>
+        <br></br>
       </Grid>
       <Grid fullWidth={true}>
         <Column lg={16} md={8} sm={4}>
@@ -172,247 +175,281 @@ function PatientStatusReport(props) {
             <h5>
               <FormattedMessage id="report.enter.patient.headline" />
             </h5>
-            <br />
-            <h6>
-              <FormattedMessage id="report.enter.patient.headline.description" />
-            </h6>
           </Section>
         </Column>
         <Column lg={16} md={8} sm={4}>
-          <SearchPatientForm
-            getSelectedPatient={getSelectedPatient}
-          ></SearchPatientForm>
+          <Accordion>
+            <AccordionItem
+              title={intl.formatMessage({ id: "report.labe.byPatient" })}
+            >
+              <FormattedMessage id="report.enter.patient.headline.description" />
+              <SearchPatientForm
+                getSelectedPatient={getSelectedPatient}
+              ></SearchPatientForm>
+            </AccordionItem>
+          </Accordion>
+        </Column>
+        <Column lg={16} md={8} sm={4}>
+          <Formik
+            initialValues={reportFormValues}
+            enableReinitialize={true}
+            // validationSchema={}
+            onSubmit
+            onChange
+          >
+            {({
+              values,
+              //errors,
+              //touched,
+              setFieldValue,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+            }) => (
+              <Form
+                onSubmit={handleSubmit}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              >
+                <Field name="guid">
+                  {({ field }) => (
+                    <input type="hidden" name={field.name} id={field.name} />
+                  )}
+                </Field>
+                <Grid fullWidth={true}>
+                  <Column lg={16} md={8} sm={4}>
+                    <Section>
+                      <br />
+                      <h5>
+                        <FormattedMessage id="report.enter.labNumber.headline" />
+                      </h5>
+                    </Section>
+                  </Column>
+                </Grid>
+                <Accordion>
+                  <AccordionItem
+                    title={intl.formatMessage({
+                      id: "report.labe.byLabNumber",
+                    })}
+                  >
+                    <Grid>
+                      <Column lg={16} md={8} sm={4}>
+                        {" "}
+                        <FormattedMessage id="sample.search.scanner.instructions" />
+                      </Column>
+                      <Column lg={8} md={8} sm={4}>
+                        <Field name="from">
+                          {({ field }) => (
+                            <CustomLabNumberInput
+                              name={field.name}
+                              value={values[field.name]}
+                              labelText={intl.formatMessage({
+                                id: "from.title",
+                                defaultMessage: "From",
+                              })}
+                              id={field.name}
+                              onChange={(e, rawValue) => {
+                                setFieldValue(field.name, rawValue);
+                                handlePatientIdFrom(e);
+                              }}
+                            />
+                          )}
+                        </Field>
+                      </Column>
+                      <Column lg={8} md={8} sm={4}>
+                        <Field name="to">
+                          {({ field }) => (
+                            <CustomLabNumberInput
+                              name={field.name}
+                              value={values[field.name]}
+                              labelText={intl.formatMessage({
+                                id: "to.title",
+                                defaultMessage: "To",
+                              })}
+                              id={field.name}
+                              onChange={(e, rawValue) => {
+                                setFieldValue(field.name, rawValue);
+                                handlePatientIdTo(e);
+                              }}
+                            />
+                          )}
+                        </Field>
+                      </Column>
+                      <Column lg={16} md={8} sm={4}>
+                        <br />
+                        <br />
+                      </Column>
+                    </Grid>
+                  </AccordionItem>
+                </Accordion>
+
+                <br />
+                <Grid fullWidth={true}>
+                  <Column lg={16} md={8} sm={4}>
+                    <h5>
+                      <FormattedMessage id="report.enter.site.headline" />
+                    </h5>
+                  </Column>
+                </Grid>
+                <Accordion>
+                  <AccordionItem
+                    title={intl.formatMessage({ id: "report.labe.site" })}
+                  >
+                    <Grid>
+                      <Column lg={8} md={8} sm={4}>
+                        <AutoComplete
+                          name="siteName"
+                          id="siteName"
+                          allowFreeText={
+                            !(
+                              configurationProperties.restrictFreeTextRefSiteEntry ===
+                              "true"
+                            )
+                          }
+                          value={
+                            reportFormValues.referringSiteId != ""
+                              ? reportFormValues.referringSiteId
+                              : reportFormValues.referringSiteName
+                          }
+                          onChange={handleSiteName}
+                          onSelect={handleAutoCompleteSiteName}
+                          label={
+                            <>
+                              <FormattedMessage id="order.site.name" />
+                            </>
+                          }
+                          style={{ width: "!important 100%" }}
+                          suggestions={siteNames.length > 0 ? siteNames : []}
+                        />
+                      </Column>
+                      <Column lg={8} md={8} sm={4}>
+                        <Select
+                          id="requesterDepartmentId"
+                          name="requesterDepartmentId"
+                          labelText={intl.formatMessage({
+                            id: "order.department.label",
+                            defaultMessage: "ward/dept/unit",
+                          })}
+                          onChange={handleRequesterDept}
+                        >
+                          <SelectItem value="" text="" />
+                          {departments.map((department, index) => (
+                            <SelectItem
+                              key={index}
+                              text={department.value}
+                              value={department.id}
+                            />
+                          ))}
+                        </Select>
+                      </Column>
+                    </Grid>
+                  </AccordionItem>
+                </Accordion>
+                <Grid fullWidth={true}>
+                  <Column lg={16} md={8} sm={4}>
+                    <br />
+                  </Column>
+                  <Column lg={16} md={8} sm={4}>
+                    <h5>
+                      <FormattedMessage id="report.patient.site.description" />
+                    </h5>
+                  </Column>
+                </Grid>
+                <Accordion>
+                  <AccordionItem
+                    title={intl.formatMessage({ id: "report.labe.date" })}
+                  >
+                    <Grid fullWidth={true}>
+                      <Column lg={4} md={8} sm={4}>
+                        <Checkbox
+                          onChange={() => {
+                            if (checkbox === "on") {
+                              setResult("true");
+                              setCheckbox("off");
+                            } else {
+                              setResult("false");
+                              setCheckbox("on");
+                            }
+                          }}
+                          labelText={intl.formatMessage({
+                            id: "report.label.site.onlyResults",
+                            defaultMessage: "Only Reports with results",
+                          })}
+                          id="checkbox-label-1"
+                        />
+                      </Column>
+                      <Column lg={12} md={8} sm={4}></Column>
+                      <Column lg={4} md={8} sm={4}>
+                        <Dropdown
+                          id="dateType"
+                          name="dateType"
+                          titleText="Date Type"
+                          initialSelectedItem={itemList.find(
+                            (item) => item.tag === items,
+                          )}
+                          label="Date Type"
+                          items={itemList}
+                          itemToString={(item) => (item ? item.text : "")}
+                          onChange={(item) => {
+                            setItems(item.selectedItem.tag);
+                          }}
+                        />
+                      </Column>
+                      <Column lg={12} md={8} sm={4}></Column>
+                      <Column lg={4} md={8} sm={4}>
+                        <CustomDatePicker
+                          id={"startDate"}
+                          labelText={intl.formatMessage({
+                            id: "eorder.date.start",
+                            defaultMessage: "Start Date",
+                          })}
+                          autofillDate={true}
+                          value={reportFormValues.startDate}
+                          onChange={(date) =>
+                            handleStartDatePickerChangeDate(date)
+                          }
+                        />
+                      </Column>
+                      <Column lg={4} md={8} sm={4}>
+                        <CustomDatePicker
+                          id={"endDate"}
+                          labelText={intl.formatMessage({
+                            id: "eorder.date.end",
+                            defaultMessage: "End Date",
+                          })}
+                          autofillDate={true}
+                          value={reportFormValues.endDate}
+                          onChange={(date) =>
+                            handleEndDatePickerChangeDate(date)
+                          }
+                        />
+                      </Column>
+                      <Column lg={8} md={8} sm={4}>
+                        {" "}
+                      </Column>
+                      <Column lg={16} md={8} sm={4}>
+                        <br />
+                        <br />
+                      </Column>
+                    </Grid>
+                  </AccordionItem>
+                </Accordion>
+                <Grid>
+                  <Column lg={16} md={8} sm={4}>
+                    <br />
+                    <br />
+                  </Column>
+                  <Column lg={16} md={8} sm={4}>
+                    <Button type="button" onClick={handleReportPrint}>
+                      <FormattedMessage id="label.button.generatePrintableVersion" />
+                    </Button>
+                  </Column>
+                </Grid>
+              </Form>
+            )}
+          </Formik>
         </Column>
       </Grid>
-      <Formik
-        initialValues={reportFormValues}
-        enableReinitialize={true}
-        // validationSchema={}
-        onSubmit
-        onChange
-      >
-        {({
-          values,
-          //errors,
-          //touched,
-          setFieldValue,
-          handleChange,
-          handleBlur,
-          handleSubmit,
-        }) => (
-          <Form
-            onSubmit={handleSubmit}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          >
-            <Field name="guid">
-              {({ field }) => (
-                <input type="hidden" name={field.name} id={field.name} />
-              )}
-            </Field>
-            <Grid fullWidth={true}>
-              <Column lg={16} md={8} sm={4}>
-                <Section>
-                  <br />
-                  <br />
-                  <h5>
-                    <FormattedMessage id="report.enter.labNumber.headline" />
-                  </h5>
-                  <br />
-                  <h6>
-                    <FormattedMessage id="sample.search.scanner.instructions" />
-                    <br />
-                    <FormattedMessage id="sample.search.scanner.instructions.highaccession" />
-                  </h6>
-                </Section>
-              </Column>
-            </Grid>
-            <Grid>
-              <Column lg={8} md={8} sm={4}>
-                <Field name="from">
-                  {({ field }) => (
-                    <CustomLabNumberInput
-                      name={field.name}
-                      value={values[field.name]}
-                      labelText={intl.formatMessage({
-                        id: "from.title",
-                        defaultMessage: "From",
-                      })}
-                      id={field.name}
-                      className="inputText"
-                      onChange={(e, rawValue) => {
-                        setFieldValue(field.name, rawValue);
-                        handlePatientIdFrom(e);
-                      }}
-                    />
-                  )}
-                </Field>
-              </Column>
-              <Column lg={8} md={8} sm={4}>
-                <Field name="to">
-                  {({ field }) => (
-                    <CustomLabNumberInput
-                      name={field.name}
-                      value={values[field.name]}
-                      labelText={intl.formatMessage({
-                        id: "to.title",
-                        defaultMessage: "To",
-                      })}
-                      id={field.name}
-                      className="inputText"
-                      onChange={(e, rawValue) => {
-                        setFieldValue(field.name, rawValue);
-                        handlePatientIdTo(e);
-                      }}
-                    />
-                  )}
-                </Field>
-              </Column>
-            </Grid>
-
-            <br />
-            <Grid fullWidth={true}>
-              <Column lg={16} md={8} sm={4}>
-                <h5>
-                  <FormattedMessage id="report.enter.site.headline" />
-                </h5>
-              </Column>
-            </Grid>
-            <Grid>
-              <Column lg={8} md={8} sm={4}>
-                <AutoComplete
-                  name="siteName"
-                  id="siteName"
-                  allowFreeText={
-                    !(
-                      configurationProperties.restrictFreeTextRefSiteEntry ===
-                      "true"
-                    )
-                  }
-                  value={
-                    reportFormValues.referringSiteId != ""
-                      ? reportFormValues.referringSiteId
-                      : reportFormValues.referringSiteName
-                  }
-                  onChange={handleSiteName}
-                  onSelect={handleAutoCompleteSiteName}
-                  label={
-                    <>
-                      <FormattedMessage id="order.site.name" />
-                    </>
-                  }
-                  class="inputText"
-                  style={{ width: "!important 100%" }}
-                  suggestions={siteNames.length > 0 ? siteNames : []}
-                />
-              </Column>
-              <Column lg={8} md={8} sm={4}>
-                <Select
-                  className="inputText"
-                  id="requesterDepartmentId"
-                  name="requesterDepartmentId"
-                  labelText={intl.formatMessage({
-                    id: "order.department.label",
-                    defaultMessage: "ward/dept/unit",
-                  })}
-                  onChange={handleRequesterDept}
-                >
-                  <SelectItem value="" text="" />
-                  {departments.map((department, index) => (
-                    <SelectItem
-                      key={index}
-                      text={department.value}
-                      value={department.id}
-                    />
-                  ))}
-                </Select>
-              </Column>
-            </Grid>
-            <Grid fullWidth={true}>
-              <Column lg={16} md={8} sm={4}>
-                <h6>
-                  <FormattedMessage id="report.patient.site.description" />
-                </h6>
-              </Column>
-            </Grid>
-            <br />
-            <Grid fullWidth={true}>
-              <Column lg={4} md={8} sm={4}>
-                <Checkbox
-                  onChange={() => {
-                    if (checkbox === "on") {
-                      setResult("true");
-                      setCheckbox("off");
-                    } else {
-                      setResult("false");
-                      setCheckbox("on");
-                    }
-                  }}
-                  labelText={intl.formatMessage({
-                    id: "report.label.site.onlyResults",
-                    defaultMessage: "Only Reports with results",
-                  })}
-                  id="checkbox-label-1"
-                />
-              </Column>
-              <Column lg={12} md={8} sm={4}></Column>
-              <Column lg={4} md={8} sm={4}>
-                <Dropdown
-                  id="dateType"
-                  name="dateType"
-                  titleText="Date Type"
-                  initialSelectedItem={itemList.find(
-                    (item) => item.tag === items,
-                  )}
-                  label="Date Type"
-                  items={itemList}
-                  itemToString={(item) => (item ? item.text : "")}
-                  onChange={(item) => {
-                    setItems(item.selectedItem.tag);
-                  }}
-                />
-              </Column>
-              <Column lg={12} md={8} sm={4}></Column>
-              <Column lg={4} md={8} sm={4}>
-                <CustomDatePicker
-                  id={"startDate"}
-                  labelText={intl.formatMessage({
-                    id: "eorder.date.start",
-                    defaultMessage: "Start Date",
-                  })}
-                  autofillDate={true}
-                  value={reportFormValues.startDate}
-                  className="inputDate"
-                  onChange={(date) => handleStartDatePickerChangeDate(date)}
-                />
-              </Column>
-              <Column lg={4} md={8} sm={4}>
-                <CustomDatePicker
-                  id={"endDate"}
-                  labelText={intl.formatMessage({
-                    id: "eorder.date.end",
-                    defaultMessage: "End Date",
-                  })}
-                  className="inputDate"
-                  autofillDate={true}
-                  value={reportFormValues.endDate}
-                  onChange={(date) => handleEndDatePickerChangeDate(date)}
-                />
-              </Column>
-              <Column lg={8} md={8} sm={4}>
-                {" "}
-              </Column>
-            </Grid>
-            <div className="formInlineDiv">
-              <div className="searchActionButtons">
-                <Button type="button" onClick={handleReportPrint}>
-                  <FormattedMessage id="label.button.generatePrintableVersion" />
-                </Button>
-              </div>
-            </div>
-          </Form>
-        )}
-      </Formik>
     </>
   );
 }

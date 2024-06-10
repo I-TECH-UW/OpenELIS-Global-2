@@ -20,6 +20,7 @@ import OrderSuccessMessage from "../addOrder/OrderSuccessMessage";
 import { FormattedMessage, useIntl } from "react-intl";
 import PatientHeader from "../common/PatientHeader";
 import PageBreadCrumb from "../common/PageBreadCrumb";
+import ModifyOrderEntryValidationSchema from "../formModel/validationSchema/ModifyOrderEntryValidationSchema";
 let breadcrumbs = [
   { label: "home.label", link: "/" },
   { label: "sample.label.search.Order", link: "/SampleEdit" },
@@ -75,8 +76,23 @@ const ModifyOrder = () => {
     };
   }, []);
 
+  useEffect(() => {
+    ModifyOrderEntryValidationSchema.validate(orderFormValues, {
+      abortEarly: false,
+    })
+      .then((validData) => {
+        setErrors([]);
+        console.debug("Valid Data:", validData);
+      })
+      .catch((errors) => {
+        setErrors(errors);
+        console.error("Validation Errors:", errors.errors);
+      });
+  }, [orderFormValues]);
+
   const loadOrderValues = (data) => {
     if (componentMounted.current) {
+      data.sampleOrderItems.referringSiteName = "";
       setOrderFormValues(data);
     }
   };
@@ -109,7 +125,17 @@ const ModifyOrder = () => {
   const handleSubmitOrderForm = (e) => {
     e.preventDefault();
     setPage(page + 1);
-    console.debug(JSON.stringify(orderFormValues));
+    orderFormValues.sampleOrderItems.modified = true;
+    //remove display Lists rom the form
+    orderFormValues.sampleOrderItems.priorityList = [];
+    orderFormValues.sampleOrderItems.programList = [];
+    orderFormValues.sampleOrderItems.referringSiteList = [];
+    orderFormValues.initialSampleConditionList = [];
+    orderFormValues.testSectionList = [];
+    orderFormValues.sampleOrderItems.providersList = [];
+    orderFormValues.sampleOrderItems.paymentOptions = [];
+    orderFormValues.sampleOrderItems.testLocationCodeList = [];
+    console.log(JSON.stringify(orderFormValues));
     postToOpenElisServer(
       "/rest/sample-edit",
       JSON.stringify(orderFormValues),
@@ -241,14 +267,17 @@ const ModifyOrder = () => {
                   onChange={(e) => handleTabClickHandler(e)}
                 >
                   <ProgressStep
+                    disabled={orderFormValues.sampleOrderItems.labNo == ""}
                     label={intl.formatMessage({
                       id: "order.step.program.selection",
                     })}
                   />
                   <ProgressStep
+                    disabled={orderFormValues.sampleOrderItems.labNo == ""}
                     label={intl.formatMessage({ id: "sample.add.action" })}
                   />
                   <ProgressStep
+                    disabled={orderFormValues.sampleOrderItems.labNo == ""}
                     label={intl.formatMessage({ id: "order.label.add" })}
                   />
                 </ProgressIndicator>
@@ -308,6 +337,7 @@ const ModifyOrder = () => {
                     kind="primary"
                     className="forwardButton"
                     onClick={handleSubmitOrderForm}
+                    disabled={errors?.errors?.length > 0 ? true : false}
                   >
                     <FormattedMessage id="label.button.submit" />
                   </Button>

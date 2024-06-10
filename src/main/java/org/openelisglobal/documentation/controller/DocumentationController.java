@@ -18,7 +18,7 @@ public class DocumentationController {
         if (locale.getLanguage().equals("en")) {
             filename = "/documentation/OEGlobal_UserManual_en.pdf";
         } else {
-            filename = "/documentation/CI_Regional_fr.pdf";
+            filename = "/documentation/OEGlobal_UserManual_en.pdf";
         }
         
         return "redirect:" + filename;

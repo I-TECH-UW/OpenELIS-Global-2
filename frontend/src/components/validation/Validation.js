@@ -4,8 +4,6 @@ import {
   Button,
   Checkbox,
   Column,
-  DatePicker,
-  DatePickerInput,
   Form,
   Grid,
   Pagination,
@@ -60,8 +58,11 @@ const Validation = (props) => {
       id: "testName",
       name: intl.formatMessage({ id: "column.name.testName" }),
       selector: (row) => row.testName,
+      cell: (row, index, column, id) => {
+        return renderCell(row, index, column, id);
+      },
       sortable: true,
-      width: "10rem",
+      width: "15rem",
     },
     {
       id: "normalRange",
@@ -100,7 +101,7 @@ const Validation = (props) => {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "10rem",
+      width: "15rem",
     },
     {
       id: "pastNotes",
@@ -108,7 +109,7 @@ const Validation = (props) => {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "16rem",
+      width: "20rem",
     },
   ];
 
@@ -125,6 +126,7 @@ const Validation = (props) => {
     if (status == 200) {
       message = intl.formatMessage({ id: "validation.save.success" });
       kind = NotificationKinds.success;
+      window.location.href = "/validation" + props.params;
     }
     addNotification({
       kind: kind,
@@ -175,6 +177,10 @@ const Validation = (props) => {
 
   const renderCell = (row, index, column, id) => {
     let formatLabNum = configurationProperties.AccessionFormat === "ALPHANUM";
+    const fullTestName = row.testName;
+    const splitIndex = fullTestName.lastIndexOf("(");
+    const testName = fullTestName.substring(0, splitIndex);
+    const sampleType = fullTestName.substring(splitIndex);
     switch (column.id) {
       case "sampleInfo":
         return (
@@ -219,6 +225,15 @@ const Validation = (props) => {
               </picture>
             )}
           </>
+        );
+      case "testName":
+        return (
+          <div className="sampleInfo">
+            <br></br>
+            {testName}
+            <br></br>
+            {sampleType}
+          </div>
         );
 
       case "save":
@@ -265,7 +280,7 @@ const Validation = (props) => {
                 disabled={false}
                 type="text"
                 labelText=""
-                rows={3}
+                rows={2}
                 onChange={(e) => handleChange(e, row.id)}
               ></TextArea>
             </div>

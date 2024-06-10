@@ -694,6 +694,11 @@ public class TestServiceImpl extends AuditableBaseObjectServiceImpl<Test, String
     public List<Test> getActiveTestByName(String testName) {
         return getBaseObjectDAO().getActiveTestsByName(testName);
     }
+    
+    @Override
+    public List<Test> getActiveTestsByPanel(String panelName) {
+    	return getBaseObjectDAO().getActiveTestsByPanelName(panelName);
+    }
 
     @Override
     @Transactional

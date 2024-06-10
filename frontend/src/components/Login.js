@@ -168,7 +168,6 @@ function Login(props) {
                         </Heading>
                       </FormLabel>
                       <TextInput
-                        className="inputText"
                         id="loginName"
                         invalidText={props.intl.formatMessage({
                           id: "login.msg.username.missing",
@@ -184,7 +183,6 @@ function Login(props) {
                         ref={firstInput}
                       />
                       <TextInput.PasswordInput
-                        className="inputText"
                         id="password"
                         invalidText={props.intl.formatMessage({
                           id: "login.msg.password.missing",

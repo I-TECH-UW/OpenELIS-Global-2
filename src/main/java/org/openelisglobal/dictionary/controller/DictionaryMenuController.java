@@ -121,8 +121,8 @@ public class DictionaryMenuController extends BaseMenuController<Dictionary> {
 
     @RequestMapping(value = "/DeleteDictionary", method = RequestMethod.POST)
     public ModelAndView showDeleteDictionary(HttpServletRequest request,
-            @ModelAttribute("form") @Valid DictionaryMenuForm form, BindingResult result,
-            RedirectAttributes redirectAttributes) {
+                @ModelAttribute("form") @Valid DictionaryMenuForm form, BindingResult result,
+                RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             saveErrors(result);
             return findForward(FWD_FAIL_INSERT, form);

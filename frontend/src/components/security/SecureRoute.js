@@ -1,22 +1,22 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { Route } from "react-router-dom";
-import IdleTimer from "react-idle-timer";
+import { useIdleTimer } from "react-idle-timer";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
-import { Loading } from "@carbon/react/";
+import { Loading, Modal } from "@carbon/react/";
 import config from "../../config.json";
-import { useIntl } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 
-const idleTimeout = 1000 * 60 * 15; // milliseconds until idle warning will appear
-const idleWarningTimeout = 1000 * 60 * 1; // milliseconds until logout is automatically processed from idle warning
+const idleTimeout = 1000 * 60 * 30; // milliseconds until idle warning will appear
+const idleWarningTimeout = 1000 * 60; // milliseconds until logout is automatically processed from idle warning
+const idleLogoutTimeout = idleTimeout + idleWarningTimeout;
 
 function SecureRoute(props) {
   const [permissionGranted, setPermissionGranted] = useState(false);
-  const [isIdle, setIsIdle] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [stillThereOpen, setStillThereOpen] = useState(false);
 
-  const idleTimer = useRef();
   const intl = useIntl();
 
   const {
@@ -81,58 +81,55 @@ function SecureRoute(props) {
     return hasRole && hasLabUnitRole;
   };
 
-  const handleOnAction = (event) => {
-    console.debug("no action is defined on the IdleTimer", event);
+  const onIdle = () => {
+    setStillThereOpen(false);
+    console.debug("idleTimer now idle");
+    logout();
   };
 
-  const handleOnActive = (event) => {
-    console.debug("user is active", event);
-    setIsIdle(false);
+  const onActive = () => {
+    setStillThereOpen(false);
+    console.debug("idleTimer now active");
   };
 
-  const handleOnIdle = (event) => {
-    console.debug("user is idle", event);
-    setIsIdle(true);
+  const onPrompt = () => {
+    setStillThereOpen(true);
+    console.debug("idleTimer now prompting");
+  };
 
-    const timer = () =>
-      setTimeout(() => {
-        logout();
-      }, idleWarningTimeout);
-    const timeoutEventID = timer();
+  const { activate } = useIdleTimer({
+    onIdle,
+    onActive,
+    onPrompt,
+    timeout: idleLogoutTimeout,
+    promptBeforeIdle: idleWarningTimeout,
+    crossTab: true,
+    syncTimers: true,
+  });
 
-    const options = {
-      title: intl.formatMessage({ id: "stillThere.title" }),
-      message: intl.formatMessage({ id: "stillThere.message" }),
-      buttons: [
-        {
-          label: intl.formatMessage({ id: "yes.option" }),
-          onClick: () => {
-            clearTimeout(timeoutEventID);
-          },
-        },
-      ],
-    };
-    confirmAlert(options);
+  const handleStillHere = () => {
+    activate();
   };
 
   return (
     <>
+      <Modal
+        open={stillThereOpen}
+        onRequestClose={() => {
+          setStillThereOpen(false);
+          handleStillHere();
+        }}
+        modalHeading={intl.formatMessage({ id: "stillThere.title" })}
+        passiveModal
+      >
+        <FormattedMessage id="stillThere.message" />
+      </Modal>
       {loading && <Loading />}
       {!loading &&
         !userSessionDetails.authenticated &&
         intl.formatMessage({ id: "notAuthenticated" })}
       {!loading && userSessionDetails.authenticated && permissionGranted && (
-        <>
-          <IdleTimer
-            ref={idleTimer}
-            timeout={idleTimeout}
-            onActive={handleOnActive}
-            onIdle={handleOnIdle}
-            onAction={handleOnAction}
-            debounce={250}
-          />
-          {!isIdle && <Route {...props} />}
-        </>
+        <>{!stillThereOpen && <Route {...props} />}</>
       )}
     </>
   );

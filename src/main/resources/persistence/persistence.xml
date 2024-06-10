@@ -30,6 +30,8 @@
 		<properties>
 			<property name="hibernate.cfg_xml_file"
 				value="classpath:hibernate/hibernate.cfg.xml" />
+			<property name="hibernate.search.backend.directory.type" value="local-filesystem" />
+			<property name="hibernate.search.backend.directory.root" value="/var/lib/lucene_index" />
 		</properties>
 
 	</persistence-unit>

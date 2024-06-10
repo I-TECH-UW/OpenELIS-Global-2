@@ -14,8 +14,6 @@ import {
   Button,
   Grid,
   Column,
-  DatePicker,
-  DatePickerInput,
   Stack,
   Pagination,
   Select,
@@ -32,12 +30,15 @@ import { NotificationContext } from "../layout/Layout";
 import SearchPatientForm from "../patient/SearchPatientForm";
 import { ConfigurationContext } from "../layout/Layout";
 import config from "../../config.json";
+import CustomDatePicker from "../common/CustomDatePicker";
 
 function ResultSearchPage() {
   const [originalResultForm, setOriginalResultForm] = useState({
     testResult: [],
   });
   const [resultForm, setResultForm] = useState(originalResultForm);
+  const [searchBy, setSearchBy] = useState({ type: "", doRange: false });
+  const [param, setParam] = useState("&accessionNumber=");
 
   const setResults = (resultForm) => {
     setOriginalResultForm(resultForm);
@@ -46,8 +47,17 @@ function ResultSearchPage() {
 
   return (
     <>
-      <SearchResultForm setResults={setResults} />
-      <SearchResults results={resultForm} setResultForm={setResultForm} />
+      <SearchResultForm
+        setParam={setParam}
+        setSearchBy={setSearchBy}
+        setResults={setResults}
+      />
+      <SearchResults
+        extraParams={param}
+        searchBy={searchBy}
+        results={resultForm}
+        setResultForm={setResultForm}
+      />
     </>
   );
 }
@@ -147,9 +157,8 @@ export function SearchResultForm(props) {
       values.accessionNumber !== ""
         ? values.accessionNumber
         : values.startLabNo;
-    let labNo =
-      accessionNumber !== undefined ? accessionNumber.split("-")[0] : "";
-    const endLabNo = values.endLabNo !== undefined ? values.endLabNo : "";
+    let labNo = accessionNumber ? accessionNumber.split("-")[0] : "";
+    const endLabNo = values.endLabNo ? values.endLabNo : "";
     values.unitType = values.unitType ? values.unitType : "";
 
     let searchEndPoint =
@@ -175,8 +184,39 @@ export function SearchResultForm(props) {
       "&doRange=" +
       searchBy.doRange +
       "&finished=" +
-      true;
+      false;
     setUrl(searchEndPoint);
+    props.setSearchBy?.(searchBy);
+    switch (searchBy.type) {
+      case "unit":
+        props.setParam("&testSectionId=" + values.unitType);
+        break;
+      case "patient":
+        props.setParam("&patientId=" + patient.patientPK);
+        break;
+      case "order":
+        props.setParam("&accessionNumber=" + labNo);
+        break;
+      case "date":
+        props.setParam(
+          "&selectedTest=" +
+            values.testName +
+            "&selectedSampleStatus=" +
+            values.sampleStatusType +
+            "&selectedAnalysisStatus=" +
+            values.analysisStatus +
+            "&collectionDate=" +
+            values.collectionDate +
+            "&recievedDate=" +
+            values.recievedDate,
+        );
+        break;
+      case "range":
+        props.setParam(
+          "&accessionNumber=" + labNo + "&upperAccessionNumber=" + endLabNo,
+        );
+        break;
+    }
 
     getFromOpenElisServer(searchEndPoint, setResultsWithId);
   };
@@ -315,10 +355,22 @@ export function SearchResultForm(props) {
     let accessionNumber = new URLSearchParams(window.location.search).get(
       "accessionNumber",
     );
+    let upperAccessionNumber = new URLSearchParams(window.location.search).get(
+      "upperAccessionNumber",
+    );
     if (accessionNumber) {
       let searchValues = {
         ...searchFormValues,
         accessionNumber: accessionNumber,
+      };
+      setSearchFormValues(searchValues);
+      querySearch(searchValues);
+    }
+    if (accessionNumber || upperAccessionNumber) {
+      let searchValues = {
+        ...searchFormValues,
+        accessionNumber: accessionNumber,
+        endLabNo: upperAccessionNumber,
       };
       setSearchFormValues(searchValues);
       querySearch(searchValues);
@@ -442,6 +494,7 @@ export function SearchResultForm(props) {
                             placeholder={"Enter LabNo"}
                             name={field.name}
                             id={field.name}
+                            defaultValue={values["endLabNo"]}
                             labelText={
                               <FormattedMessage id="search.label.toaccession" />
                             }
@@ -458,52 +511,34 @@ export function SearchResultForm(props) {
                     <Column lg={3} md={4} sm={4}>
                       <Field name="collectionDate">
                         {({ field, form }) => (
-                          <DatePicker
+                          <CustomDatePicker
                             id={field.name}
-                            name={field.name}
-                            datePickerType="single"
-                            dateFormat="d/m/Y"
+                            labelText={intl.formatMessage({
+                              id: "search.label.collectiondate",
+                            })}
                             value={values[field.name]}
                             onChange={(date) =>
-                              form.setFieldValue(
-                                field.name,
-                                new Date(date).toLocaleDateString("fr-FR"),
-                              )
+                              form.setFieldValue(field.name, date)
                             }
-                          >
-                            <DatePickerInput
-                              labelText={
-                                <FormattedMessage id="search.label.collectiondate" />
-                              }
-                              placeholder="dd/mm/yyyy"
-                            />
-                          </DatePicker>
+                            name={field.name}
+                          />
                         )}
                       </Field>
                     </Column>
                     <Column lg={3} md={4} sm={4}>
                       <Field name="recievedDate">
                         {({ field, form }) => (
-                          <DatePicker
+                          <CustomDatePicker
                             id={field.name}
-                            name={field.name}
-                            datePickerType="single"
-                            dateFormat="d/m/Y"
+                            labelText={intl.formatMessage({
+                              id: "search.label.recieveddate",
+                            })}
                             value={values[field.name]}
                             onChange={(date) =>
-                              form.setFieldValue(
-                                field.name,
-                                new Date(date).toLocaleDateString("fr-FR"),
-                              )
+                              form.setFieldValue(field.name, date)
                             }
-                          >
-                            <DatePickerInput
-                              labelText={
-                                <FormattedMessage id="search.label.recieveddate" />
-                              }
-                              placeholder="dd/mm/yyyy"
-                            />
-                          </DatePicker>
+                            name={field.name}
+                          />
                         )}
                       </Field>
                     </Column>
@@ -619,9 +654,13 @@ export function SearchResultForm(props) {
         )}
       </Formik>
       {searchBy.type === "patient" && (
-        <SearchPatientForm
-          getSelectedPatient={getSelectedPatient}
-        ></SearchPatientForm>
+        <Grid>
+          <Column lg={16}>
+            <SearchPatientForm
+              getSelectedPatient={getSelectedPatient}
+            ></SearchPatientForm>
+          </Column>
+        </Grid>
       )}
 
       {searchBy.type === "unit" && (
@@ -766,7 +805,7 @@ export function SearchResults(props) {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "12rem",
+      width: "8rem",
     };
 
     if (configurationProperties.allowResultRejection == "true") {
@@ -811,8 +850,11 @@ export function SearchResults(props) {
       id: "testName",
       name: intl.formatMessage({ id: "column.name.testName" }),
       selector: (row) => row.testName,
+      cell: (row, index, column, id) => {
+        return renderCell(row, index, column, id);
+      },
       sortable: true,
-      width: "8rem",
+      width: "15rem",
     },
     {
       id: "normalRange",
@@ -835,7 +877,7 @@ export function SearchResults(props) {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "10rem",
+      width: "12rem",
     },
     {
       id: "currentResult",
@@ -843,7 +885,7 @@ export function SearchResults(props) {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "8rem",
+      width: "10rem",
     },
     {
       id: "notes",
@@ -851,12 +893,16 @@ export function SearchResults(props) {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "7rem",
+      width: "12rem",
     },
   ];
 
   const renderCell = (row, index, column, id) => {
     let formatLabNum = configurationProperties.AccessionFormat === "ALPHANUM";
+    const fullTestName = row.testName;
+    const splitIndex = fullTestName.lastIndexOf("(");
+    const testName = fullTestName.substring(0, splitIndex);
+    const sampleType = fullTestName.substring(splitIndex);
 
     console.debug("renderCell: index: " + index + ", id: " + id);
     switch (column.id) {
@@ -912,6 +958,15 @@ export function SearchResults(props) {
             )}
           </>
         );
+      case "testName":
+        return (
+          <div className="sampleInfo">
+            <br></br>
+            {testName}
+            <br></br>
+            {sampleType}
+          </div>
+        );
 
       case "accept":
         return (
@@ -932,43 +987,38 @@ export function SearchResults(props) {
 
       case "reject":
         return (
-          <>
-            <Grid>
-              <Column lg={16}>
-                <Field name="reject">
-                  {() => (
-                    <Checkbox
-                      id={"testResult" + row.id + ".rejected"}
-                      name={"testResult[" + row.id + "].rejected"}
-                      labelText=""
-                      onChange={(e) => handleRejectCheckBoxChange(e, row.id)}
-                    />
-                  )}
-                </Field>
-              </Column>
-              {rejectedItems[row.id] == true && (
-                <Column lg={16}>
-                  <Select
-                    id={"rejectReasonId" + row.id}
-                    name={"testResult[" + row.id + "].rejectReasonId"}
-                    //noLabel={true}
-                    labelText={"Reason"}
-                    onChange={(e) => handleChange(e, row.id)}
-                  >
-                    {/* {...updateShadowResult(e, this, param.rowId)} */}
-                    <SelectItem text="" value="" />
-                    {rejectReasons.map((reason, reason_index) => (
-                      <SelectItem
-                        text={reason.value}
-                        value={reason.id}
-                        key={reason_index}
-                      />
-                    ))}
-                  </Select>
-                </Column>
+          <div>
+            <Field name="reject">
+              {() => (
+                <Checkbox
+                  id={"testResult" + row.id + ".rejected"}
+                  name={"testResult[" + row.id + "].rejected"}
+                  labelText=""
+                  onChange={(e) => handleRejectCheckBoxChange(e, row.id)}
+                />
               )}
-            </Grid>
-          </>
+            </Field>
+            <br></br>
+            {rejectedItems[row.id] == true && (
+              <Select
+                id={"rejectReasonId" + row.id}
+                name={"testResult[" + row.id + "].rejectReasonId"}
+                //noLabel={true}
+                labelText={"Reason"}
+                onChange={(e) => handleChange(e, row.id)}
+              >
+                {/* {...updateShadowResult(e, this, param.rowId)} */}
+                <SelectItem text="" value="" />
+                {rejectReasons.map((reason, reason_index) => (
+                  <SelectItem
+                    text={reason.value}
+                    value={reason.id}
+                    key={reason_index}
+                  />
+                ))}
+              </Select>
+            )}
+          </div>
         );
 
       case "notes":
@@ -1022,10 +1072,13 @@ export function SearchResults(props) {
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
                 labelText=""
-                // type="number"
+                //type="number"
                 style={validationState[row.id]?.style}
-                onChange={(e) => {
+                onMouseOut={(e) => {
                   let value = e.target.value;
+                  if (value == null || value == "") {
+                    return;
+                  }
                   let newValidationState = { ...validationState };
                   let validation = (newValidationState[row.id] =
                     validateNumericResults(value, row));
@@ -1045,7 +1098,7 @@ export function SearchResults(props) {
                   };
 
                   setValidationState(newValidationState);
-                  handleChange(e, row.id);
+
                   if (
                     validation.isInvalid &&
                     configurationProperties.ALERT_FOR_INVALID_RESULTS
@@ -1057,6 +1110,9 @@ export function SearchResults(props) {
                     );
                   }
                 }}
+                onChange={(e) => {
+                  handleChange(e, row.id);
+                }}
               />
             );
 
@@ -1065,7 +1121,7 @@ export function SearchResults(props) {
               <TextArea
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
-                style={{ width: "10px", height: "20px" }}
+                rows={1}
                 labelText=""
                 onChange={(e) => handleChange(e, row.id)}
               />
@@ -1076,7 +1132,7 @@ export function SearchResults(props) {
               <TextArea
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
-                style={{ width: "10px", height: "20px" }}
+                rows={1}
                 labelText=""
                 onChange={(e) => handleChange(e, row.id)}
               />
@@ -1095,14 +1151,14 @@ export function SearchResults(props) {
               <>
                 {
                   row.dictionaryResults.find(
-                    (result) => result.id == row.resultValue,
+                    (result) => result.id == row.shadowResultValue,
                   )?.value
                 }
               </>
             );
 
           default:
-            return row.resultValue;
+            return row.shadowResultValue;
         }
       default:
         return;
@@ -1194,18 +1250,14 @@ export function SearchResults(props) {
           </Select>
         </Column>
         <Column lg={2}>
-          <DatePicker
-            datePickerType="single"
+          <CustomDatePicker
             id={"sentDate_" + data.id}
-            name={"testResult[" + data.id + "].sentDate_"}
+            labelText={intl.formatMessage({
+              id: "referral.label.sentdate",
+            })}
             onChange={(date) => handleDatePickerChange(date, data.id)}
-          >
-            <DatePickerInput
-              placeholder="mm/dd/yyyy"
-              labelText={intl.formatMessage({ id: "referral.label.sentdate" })}
-              id="date-picker-single"
-            />
-          </DatePicker>
+            name={"testResult[" + data.id + "].sentDate_"}
+          />
         </Column>
       </Grid>
     </>
@@ -1313,11 +1365,16 @@ export function SearchResults(props) {
     }
 
     if (!isNaN(row.significantDigits)) {
+      const valueStr = actualValue.toString();
+      if (valueStr.includes(".")) {
+        const decimalPlaces = valueStr.split(".")[1].length;
+        if (decimalPlaces > row.significantDigits) {
+          actualValue = parseFloat(actualValue).toFixed(row.significantDigits);
+        }
+      }
       validation = {
         ...validation,
-        newValue:
-          greaterThanOrLessThan +
-          Math.round(actualValue, row.significantDigits),
+        newValue: greaterThanOrLessThan + actualValue,
       };
     }
 
@@ -1365,10 +1422,9 @@ export function SearchResults(props) {
 
   const handleDatePickerChange = (date, rowId) => {
     console.debug("handleDatePickerChange:" + date);
-    const d = new Date(date).toLocaleDateString("fr-FR");
     var form = props.results;
     var jp = require("jsonpath");
-    jp.value(form, "testResult[" + rowId + "].sentDate_", d);
+    jp.value(form, "testResult[" + rowId + "].sentDate_", date);
     var isModified = "testResult[" + rowId + "].isModified";
     jp.value(form, isModified, "true");
   };
@@ -1413,6 +1469,12 @@ export function SearchResults(props) {
         message: createMesssage(resp),
         kind: NotificationKinds.success,
       });
+      window.location.href =
+        "/result?type=" +
+        props.searchBy.type +
+        "&doRange=" +
+        props.searchBy.doRange +
+        props.extraParams;
     } else {
       addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
@@ -1425,13 +1487,13 @@ export function SearchResults(props) {
 
   const createMesssage = (resp) => {
     var message = "";
-    if (resp.reflex.length > 0) {
+    if (resp.reflex?.length > 0) {
       message +=
         intl.formatMessage({ id: "reflexTests" }) +
         ": " +
         resp.reflex.join(", ");
     }
-    if (resp.calculated.length > 0) {
+    if (resp.calculated?.length > 0) {
       message +=
         intl.formatMessage({ id: "calculatedTests" }) +
         ": " +

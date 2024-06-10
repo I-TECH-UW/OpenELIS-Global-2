@@ -170,7 +170,8 @@ eid = new EidProjectChecker();
             <form:input path="siteSubjectNumber"
                 id="eid.siteSubjectNumber"
                 cssClass="text"
-                onchange="eid.checkSiteSubjectNumber(true)"/>
+                onkeyup="addPatientCodeSlashes(this, event);"
+                onchange="eid.checkSiteSubjectNumber(true);validateSiteSubjectNumber(this)"  maxlength="18"/>
             <div id="eid.siteSubjectNumberMessage" class="blank"></div>
         </td>
     </tr>

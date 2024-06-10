@@ -217,7 +217,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
         newForm.setDisplayTestSections(false);
         newForm.setSearchByRange(true);
-        System.out.println("LogbookResultsRestController:call getLogbookResults");
         return getLogbookResults(request, newForm);
     }
 
@@ -319,16 +318,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
         addFlashMsgsToRequest(request);
 
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonForm = "";
-        try {
-            jsonForm = mapper.writeValueAsString(form);
-        } catch (JsonProcessingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        // System.out.println("LogbookResultsRestController:jsonForm:" + jsonForm);
         return findForward(FWD_SUCCESS, form);
     }
 
@@ -354,18 +343,15 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         ObjectMapper mapper = new ObjectMapper();
         String jsonForm = "";
         List<TestResultItem> testResultItemList = form.getTestResult();
-        // gnr
-        for (TestResultItem item : testResultItemList) {
-            try {
-                jsonForm = mapper.writeValueAsString(item);
-            } catch (JsonProcessingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            // System.out.println("LogbookResultsRestController:showLogbookResultsUpdate:jsonForm:"
-            // + jsonForm);
-        }
 
+      	// load testSections for drop down
+        String resultsRoleId = roleService.getRoleByName(Constants.ROLE_RESULTS).getId();
+        List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request), resultsRoleId);
+        form.setTestSections(testSections);
+        form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
+        form.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
+        form.setSearchFinished(true);
+      
         if ("true".equals(request.getParameter("pageResults"))) {
             return getLogbookResults(request, form);
         }
@@ -538,30 +524,30 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     private void handleReferrals(TestResultItem testResultItem, ReferralItem referralItem, List<Result> results,
             Analysis analysis, ResultsUpdateDataSet actionDataSet) {
 //        List<Referral> referrals = new ArrayList<>();
-        Referral referral = new Referral();
-        referral.setFhirUuid(UUID.randomUUID());
-        referral.setStatus(ReferralStatus.SENT);
-        referral.setSysUserId(actionDataSet.getCurrentUserId());
-        referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
-        referral.setRequesterName(testResultItem.getTechnician());
+		Referral referral = new Referral();
+		referral.setFhirUuid(UUID.randomUUID());
+		referral.setStatus(ReferralStatus.SENT);
+		referral.setSysUserId(actionDataSet.getCurrentUserId());
+		referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
+		referral.setRequesterName(testResultItem.getTechnician());
 
-        referral.setRequestDate(new Timestamp(new Date().getTime()));
-        referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
-        referral.setRequesterName(referralItem.getReferrer());
-        referral.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
-        referral.setAnalysis(analysis);
+		referral.setRequestDate(new Timestamp(new Date().getTime()));
+		referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
+		referral.setRequesterName(referralItem.getReferrer());
+		referral.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
+		referral.setAnalysis(analysis);
 
-        referral.setReferralReasonId(referralItem.getReferralReasonId());
+		referral.setReferralReasonId(referralItem.getReferralReasonId());
 
 //            referralService.insert(referral);
 //        referrals.add(referral);
-        ReferralResult referralResult = new ReferralResult();
-        referralResult.setReferralId(referral.getId());
-        referralResult.setSysUserId(actionDataSet.getCurrentUserId());
-        referralResult.setTestId(referralItem.getReferredTestId());
-        if (results.size() == 1) {
-            referralResult.setResult(results.get(0));
-        }
+		ReferralResult referralResult = new ReferralResult();
+		referralResult.setReferralId(referral.getId());
+		referralResult.setSysUserId(actionDataSet.getCurrentUserId());
+		referralResult.setTestId(referralItem.getReferredTestId());
+		if (results.size() == 1) {
+			referralResult.setResult(results.get(0));
+		}
 //            referralResult.setResult(result);
 //            referralResultService.insert(referralResult);
 
@@ -700,8 +686,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     private ResultInventory createTestKitLinkIfNeeded(TestResultItem testResult, String testKitName) {
         ResultInventory testKit = null;
 
-        if ((TestResultItem.ResultDisplayType.SYPHILIS.toString() == testResult.getResultDisplayType()
-                || TestResultItem.ResultDisplayType.HIV.toString() == testResult.getResultDisplayType())
+        if ((TestResultItem.ResultDisplayType.SYPHILIS == testResult.getRawResultDisplayType()
+                || TestResultItem.ResultDisplayType.HIV== testResult.getRawResultDisplayType())
                 && ResultsLoadUtility.TESTKIT.equals(testKitName)) {
 
             testKit = createTestKit(testResult, testKitName, testResult.getTestKitId());
@@ -802,6 +788,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     private String findPatientForward(String forward) {
         if (FWD_SUCCESS_INSERT.equals(forward)) {
             return "redirect:/PatientResults";
+        } else if (FWD_SUCCESS.equals(forward)) {
+            return "patientResultDefinition";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {
             return "patientResultDefinition";
         } else if (FWD_FAIL_INSERT.equals(forward)) {

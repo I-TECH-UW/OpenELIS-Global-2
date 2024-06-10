@@ -144,7 +144,7 @@ public class SearchResultsDAOImp implements SearchResultsDAO {
             subjectNumber = '%' + subjectNumber + '%';
             nationalID = '%' + nationalID + '%';
             externalID = '%' + externalID + '%';
-            patientID = '%' + patientID + '%';
+ //           patientID = '%' + patientID + '%';
 //            guid = '%' + guid + '%';
             dateOfBirth = '%' + dateOfBirth + '%';
 //            gender = '%' + gender + '%';

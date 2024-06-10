@@ -76,9 +76,7 @@ export const RoutineReportsMenu = {
           label: <FormattedMessage id="sideNav.label.intermediatereport2" />,
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=patientIndeterminateByLocation",
+          link: "/StudyReport?type=patient&report=patientIndeterminateByLocation",
           label: <FormattedMessage id="sideNav.label.intermediatebyservice" />,
         },
       ],
@@ -158,9 +156,7 @@ export const RoutineReportsMenu = {
           ),
         },
         {
-          link:
-            config.serverBaseUrl +
-            "/Report?type=patient&report=retroCInonConformityNotification",
+          link: "/StudyReport?type=patient&report=retroCInonConformityNotification",
           label: (
             <FormattedMessage id="sideNav.label.noncomformitynotification" />
           ),

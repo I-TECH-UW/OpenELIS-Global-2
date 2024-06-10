@@ -116,7 +116,6 @@ const AuditTrailReport = ({ id }) => {
                 id: "label.audittrail",
                 defaultMessage: "Lab No",
               })}
-              className="inputText"
               value={labNo}
               onChange={(event) => setLabNo(event.target.value)}
               invalid={

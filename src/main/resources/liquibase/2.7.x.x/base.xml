@@ -25,6 +25,8 @@
 	<include relativeToChangelogFile="true" file="add_tb_observation_type.xml"/>
 	<include relativeToChangelogFile="true" file="activate_result_modifer_role.xml"/>
 	<include relativeToChangelogFile="true" file="add_loinc_code.xml"/>
+	<include relativeToChangelogFile="true" file="add_hpv_testing.xml"/>
 	<include relativeToChangelogFile="true" file="rename_test_for_csv_export.xml"/>
+	<include relativeToChangelogFile="true" file="add_electronic_rejection.xml"/>
 
 </databaseChangeLog>

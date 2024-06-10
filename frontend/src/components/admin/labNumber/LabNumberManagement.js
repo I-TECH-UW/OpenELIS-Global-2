@@ -162,31 +162,34 @@ function LabNumberManagement() {
         <Grid>
           <Column lg={16}>
             <Section>
-              <Section>
-                <Heading>
-                  <FormattedMessage id="configure.labNumber.title" />
-                </Heading>
-              </Section>
+              <Heading>
+                <FormattedMessage id="configure.labNumber.title" />
+              </Heading>
             </Section>
           </Column>
         </Grid>
         <Form onSubmit={handleSubmit}>
-          <div className="inlineDiv">
-            <Select
-              id="lab_number_type"
-              labelText={intl.formatMessage({ id: "labNumber.type" })}
-              name="labNumberType"
-              value={labNumberValues.labNumberType}
-              onChange={handleFieldChange}
-            >
-              <SelectItem value="ALPHANUM" text="Alpha Numeric" />
-              <SelectItem value="SITEYEARNUM" text="Legacy" />
-            </Select>
-          </div>
-          {labNumberValues.labNumberType === "ALPHANUM" && (
-            <>
-              <div className="formInlineDiv">
-                <div className="formInlineDiv">
+          <Grid>
+            <Column lg={8}>
+              <Select
+                id="lab_number_type"
+                labelText={intl.formatMessage({ id: "labNumber.type" })}
+                name="labNumberType"
+                value={labNumberValues.labNumberType}
+                onChange={handleFieldChange}
+              >
+                <SelectItem value="ALPHANUM" text="Alpha Numeric" />
+                <SelectItem value="SITEYEARNUM" text="Legacy" />
+              </Select>
+            </Column>
+            <Column lg={8}></Column>
+            <Column lg={16}>
+              {" "}
+              <br></br>
+            </Column>
+            {labNumberValues.labNumberType === "ALPHANUM" && (
+              <>
+                <Column lg={8}>
                   <TextInput
                     type="text"
                     name="alphanumPrefix"
@@ -198,6 +201,8 @@ function LabNumberManagement() {
                     enableCounter={true}
                     maxCount={5}
                   />
+                </Column>
+                <Column lg={8}>
                   <span className="middleAlignVertical">
                     <Checkbox
                       type="checkbox"
@@ -214,25 +219,27 @@ function LabNumberManagement() {
                       }}
                     />
                   </span>
-                </div>
-                <div></div>
-              </div>
-            </>
-          )}
-          <div className="inlineDiv">
-            <FormattedMessage id="labNumber.format.current" />:{" "}
-            {currentLabNumForDisplay}
-          </div>
-          <div className="inlineDiv">
-            <FormattedMessage id="labNumber.format.new" />:{" "}
-            {sampleLabNumForDisplay}
-          </div>
-          <div className="inlineDiv">
-            <Button type="submit">
-              <FormattedMessage id="label.button.submit" />
-              {isSubmitting && <Loading small={true} />}
-            </Button>
-          </div>
+                </Column>
+              </>
+            )}
+            <br></br>
+            <Column lg={16}>
+              <FormattedMessage id="labNumber.format.current" />:{" "}
+              {currentLabNumForDisplay}
+            </Column>
+            <br></br>
+            <Column lg={16}>
+              <FormattedMessage id="labNumber.format.new" />:{" "}
+              {sampleLabNumForDisplay}
+            </Column>
+            <br></br>
+            <Column lg={16}>
+              <Button type="submit">
+                <FormattedMessage id="label.button.submit" />
+                {isSubmitting && <Loading small={true} />}
+              </Button>
+            </Column>
+          </Grid>
         </Form>
       </div>
     </>

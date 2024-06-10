@@ -17,6 +17,9 @@
 */
 package org.openelisglobal.reports.action.implementation.reportBeans;
 
+import static org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.DATE_TIME;
+import static org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.NONE;
+
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +35,9 @@ import org.openelisglobal.testresult.valueholder.TestResult;
  * @since May 18, 2011
  */
 public class TBColumnBuilder extends RoutineColumnBuilder {
+	
+    protected static final String FROM_SAMPLE_PATIENT_ORGANIZATION = " FROM sample as s, patient as pat, person as per, sample_human as sh, sample_organization so, organization AS o \n ";
+
 
     /**
      * @param dateRange
@@ -47,6 +53,15 @@ public class TBColumnBuilder extends RoutineColumnBuilder {
     @Override
     protected void defineAllReportColumns() {
         defineBasicColumns();
+        add("tborderreason", "ORDER_REASON",Strategy.DICT);
+        add("tbanalysismethod", "ANALYSIS_METHOD",Strategy.DICT);
+        add("tbdiagnosticreason", "DIAGNOSTIC_REASON",Strategy.DICT);
+        add("tbfollowupreason", "FOLLOW_UP_REASON",Strategy.DICT);
+        add("tbfollowupreasonperiodline1", "FOLLOW_UP_REASON_LINE1",Strategy.NONE);
+        add("tbfollowupreasonperiodline2", "FOLLOW_UP_REASON_LINE2",Strategy.NONE);
+        add("tbsampleaspects", "SAMPLE_ASPECT",Strategy.DICT);
+//        add("report_generation_time", "PRINTED_DATE", DATE_TIME);
+//        add("report_lastupdated", "LAST_REPORT_UPDATE", DATE_TIME);
         addAllResultsColumns();
     }
     
@@ -76,18 +91,18 @@ public class TBColumnBuilder extends RoutineColumnBuilder {
 
         // Begin cross tab / pivot table
         query.append(" crosstab( " + "\n 'SELECT si.id, t.description, replace(replace(replace(replace(r.value ,E''\\n'', '' ''), E''\\t'', '' ''), E''\\r'', '' ''),'','',''.'') "
-                + "\n FROM clinlims.result AS r join clinlims.analysis AS a on a.id = r.analysis_id \n "
-                + " join clinlims.sample_item AS si on si.id = a.sampitem_id \n "
-                + " join clinlims.sample AS s on s.id = si.samp_id \n"
-                + " join clinlims.test_result AS tr on r.test_result_id = tr.id \n"
-                + " join clinlims.test AS t on tr.test_id = t.id \n"
-                + " JOIN test_section ts ON t.test_section_id = ts.id \n"
+                + "\n FROM clinlims.analysis AS a join clinlims.test AS t on a.test_id = t.id  \n "
+                + " JOIN test_section ts ON t.test_section_id = ts.id \n "
+                + " join clinlims.test_result AS tr on t.id = tr.test_id  \n"
+                + " join clinlims.sample_item AS si on si.id = a.sampitem_id \n"
+                + " join clinlims.sample AS s on s.id = si.samp_id  \n"
+                + " left join clinlims.result AS r on a.id = r.analysis_id  \n"
                 + " left join sample_projects sp on si.samp_id = sp.samp_id \n"
                 + "\n WHERE sp.id IS NULL AND ts.name = ''TB'' AND s.entered_date >= date(''"
                 + formatDateForDatabaseSql(lowDate) + "'')  AND s.entered_date <= date(''"
                 + formatDateForDatabaseSql(highDate) + " '') " + "\n "
                 // sql injection safe as user cannot overwrite validStatusId in database
-                + ((validStatusId == null) ? "" : " AND a.status_id = " + validStatusId)
+                //+ ((validStatusId == null) ? "" : " AND a.status_id = " + validStatusId)
                 // + (( excludeAnalytes == null)?"":
                 // " AND r.analyte_id NOT IN ( " + excludeAnalytes) + ")"
                 // + " AND a.test_id = t.id "
@@ -112,6 +127,18 @@ public class TBColumnBuilder extends RoutineColumnBuilder {
                 + "\n ORDER BY si.samp_id, si.id " + "\n) AS " + listName + "\n "); // outer re-use the list name to
                                                                                     // name this sparse matrix of
                                                                                     // results.
+    }
+    
+    protected String buildWhereSamplePatienOrgSQL(Date lowDate, Date highDate) {
+        String WHERE_SAMPLE_PATIENT_ORG = " WHERE " + "\n pat.id = sh.patient_id " + "\n AND sh.samp_id = s.id "
+                + "\n AND s.entered_date >= '" + formatDateForDatabaseSql(lowDate) + "'" + "\n AND s.entered_date <= '"
+                + formatDateForDatabaseSql(highDate) + "'" + "\n "
+                + "\n AND so.samp_id= s.id "
+                + "\n AND pat.person_id = per.id " + "\n AND o.id = so.org_id   "
+                // + ((GenericValidator.isBlankOrNull(projectStr))?"": " AND sp.proj_id = " +
+                // projectStr)
+                ;
+        return WHERE_SAMPLE_PATIENT_ORG;
     }
 
     /**
@@ -141,7 +168,6 @@ public class TBColumnBuilder extends RoutineColumnBuilder {
                 + "\n AND s.id = demo.samp_id " + "\n AND s.id = result.samp_id " + "\n ORDER BY s.accession_number ");
         // no don't insert another crosstab or table here, go up before the main WHERE
         // clause
-        System.out.println("query.toString(): "+query.toString());
         return;
     }
 
