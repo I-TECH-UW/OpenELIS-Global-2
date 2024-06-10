@@ -54,7 +54,7 @@ public class PersonServiceTest {
 	}
 
 	@Test
-	public void testInsertAll() throws Exception {
+	public void insertAll_shouldInsertListOfPersons() throws Exception {
 		List<Person> persons = new ArrayList<>();
 		persons.add(createPerson("John", "Doe"));
 		persons.add(createPerson("Jane", "Smith"));
@@ -91,7 +91,7 @@ public class PersonServiceTest {
 	}
 
 	@Test
-	public void testUpdateAll() throws Exception {
+	public void updateAll_shouldUpdateListOfPersons() throws Exception {
 		// Create a list of Person objects
 		List<Person> persons = new ArrayList<>();
 		persons.add(createPerson("John", "Doe"));
@@ -148,7 +148,7 @@ public class PersonServiceTest {
 	}
 
 	@Test
-	public void testDeleteAll() throws Exception {
+	public void deleteAll_shouldDeleteListOfPersons() throws Exception {
 		// Create a list of Person objects
 		List<Person> persons = new ArrayList<>();
 		persons.add(createPerson("John", "Doe"));
@@ -181,7 +181,7 @@ public class PersonServiceTest {
 	}
 
 	@Test
-	public void testGetPersonLastName() throws Exception {
+	public void testGetPersonByLastName_ShouldReturnPersonWithGivenLastName() throws Exception {
 		String firstName = "Juhn";
 		String lastname = "Doe3";
 		Person pat = createPerson(firstName, lastname);
@@ -198,7 +198,7 @@ public class PersonServiceTest {
 	}
 
 	@Test
-	public void testGetPersonById() {
+	public void testGetPersonById_ShouldReturnPersonWithGivenId() {
 		String firstName = "Mark";
 		String lastname = "Dan";
 		Person pat = createPerson(firstName, lastname);
@@ -208,7 +208,7 @@ public class PersonServiceTest {
 	}
 
 	@Test
-	public void testGetPageOfPersons() throws Exception {
+	public void testGetPageOfPersons_ShouldReturnListOfPersonsForPagination() throws Exception {
 		// Prepare test data
 		int startingRecNo = 1; // Starting record number for pagination
 
@@ -233,7 +233,7 @@ public class PersonServiceTest {
 	}
 
 	@Test
-	public void testGetCellPhone() {
+	public void testGetCellPhone_ShouldReturnPersonCellPhone() {
 		String firstName = "John";
 		String lastname = "Doe";
 		String cellPhone = "123-456-789";
@@ -244,7 +244,7 @@ public class PersonServiceTest {
 	}
 
 	@Test
-	public void testGetWorkPhone() {
+	public void testGetWorkPhone_ShouldReturnPersonWorkPhone() {
 		String firstName = "John";
 		String lastname = "Doe";
 		String workPhone = "789-456-1000";
@@ -256,7 +256,7 @@ public class PersonServiceTest {
 	}
 
 	@Test
-	public void testGetEmail() {
+	public void testGetEmail_ShouldReturnPersonEmail() {
 		String firstName = "John";
 		String lastname = "Doe";
 		String email = "test@ex.com";
@@ -267,7 +267,7 @@ public class PersonServiceTest {
 	}
 
 	@Test
-	public void testGetFax() {
+	public void testGetFax_ShouldReturnPersonFax() {
 		String firstName = "John";
 		String lastname = "Doe";
 		String fax = "789";
@@ -278,7 +278,7 @@ public class PersonServiceTest {
 	}
 	
 	@Test
-	public void testGetCity() {
+	public void testGetCity_ShouldReturnPersonCity() {
 	    String firstName = "John";
 	    String lastName = "Doe";
 	    String city = "New York";
@@ -289,7 +289,7 @@ public class PersonServiceTest {
 	}
 
 	@Test
-	public void testGetState() {
+	public void testGetState_ShouldReturnPersonState() {
 	    String firstName = "John";
 	    String lastName = "Doe";
 	    String state = "NY";
@@ -300,7 +300,7 @@ public class PersonServiceTest {
 	}
 
 	@Test
-	public void testGetZipCode() {
+	public void testGetZipCode_ShouldReturnPersonZipCode() {
 	    String firstName = "John";
 	    String lastName = "Doe";
 	    String zipCode = "23456";
@@ -315,7 +315,7 @@ public class PersonServiceTest {
 	}
 
 	@Test
-	public void testGetStreetAddress() {
+	public void testGetStreetAddress_ShouldReturnPersonStreetAddress() {
 	    String firstName = "John";
 	    String lastName = "Doe";
 	    String streetAddress = "123 Main St";
