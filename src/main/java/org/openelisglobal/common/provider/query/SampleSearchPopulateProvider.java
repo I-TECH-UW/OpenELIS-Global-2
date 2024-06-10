@@ -198,10 +198,7 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
      * @return first organization, if any of this sample
      */
     private Organization getOrganizationForSample(Sample sample) {
-        SampleOrganization so = new SampleOrganization();
-        so.setSample(sample);
-        sampleOrganizationService.getDataBySample(so);
-        return so.getOrganization();
+    	return sampleOrganizationService.getDataBySample(sample).getOrganization();
     }
 
     private Sample getSampleForPatientIdAndLoinc(String patientId, String loinc, boolean unvalidatedTestOnly) {

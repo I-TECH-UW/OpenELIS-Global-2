@@ -112,7 +112,7 @@ public class MycologyWorksheetProvider extends BaseReportsProvider {
             servletOutputStream.close();
         } catch (JRException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             // display stack trace in the browser
             StringWriter stringWriter = new StringWriter();
             response.setContentType("text/plain");
@@ -120,7 +120,7 @@ public class MycologyWorksheetProvider extends BaseReportsProvider {
             errors.reject("errors.jasperreport.general");
         } catch (SQLException | NamingException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             errors.reject("errors.jasperreport.general");
         } finally {
             try {
@@ -129,7 +129,7 @@ public class MycologyWorksheetProvider extends BaseReportsProvider {
                 }
             } catch (SQLException e) {
                 // bugzilla 2154
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
             }
         }
 

@@ -118,7 +118,7 @@ public class TestCatalogController extends BaseController {
                     catalog.setSignificantDigits(
                             testService.getPossibleTestResults(test).get(0).getSignificantDigits());
                 } else {
-                    LogEvent.logWarn(TestCatalogController.class.getName(), "createTestList",
+                    LogEvent.logWarn(this.getClass().getSimpleName(), "createTestList",
                             "test that doesn't have an active test result found. Possibly issue with data in database");
                     catalog.setSignificantDigits("0");
                 }
@@ -183,7 +183,7 @@ public class TestCatalogController extends BaseController {
     }
 
     private String getDictionaryValue(TestResult testResult) {
-
+    	
         if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
             Dictionary dictionary = dictionaryService.getDataForId(testResult.getValue());
             String displayValue = dictionary.getLocalizedName();
@@ -223,6 +223,8 @@ public class TestCatalogController extends BaseController {
                     significantDigits, "-"));
             bean.setReportingRange(SpringContext.getBean(ResultLimitService.class).getDisplayReportingRange(limit,
                     significantDigits, "-"));
+            bean.setCriticalRange(SpringContext.getBean(ResultLimitService.class).getDisplayCriticalRange(limit,
+                    significantDigits, "-"));        
             bean.setGender(limit.getGender());
             bean.setAgeRange(SpringContext.getBean(ResultLimitService.class).getDisplayAgeRange(limit, "-"));
             limitBeans.add(bean);

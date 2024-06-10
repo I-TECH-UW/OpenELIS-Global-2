@@ -41,13 +41,11 @@ public interface TypeOfSampleService extends BaseObjectService<TypeOfSample, Str
 
     List<Test> getActiveTestsBySampleTypeIdAndTestUnit(String sampleType, boolean b, List<String> testUnitIds);
 
-    List<Test> getAllActiveTestsByTestUnit(boolean b, List<String> testUnitIds);
-
     TypeOfSample getTransientTypeOfSampleById(String sampleTypeId);
 
     void clearCache();
 
-    TypeOfSample getTypeOfSampleForTest(String testId);
+    List<TypeOfSample> getTypeOfSampleForTest(String testId);
 
     String getTypeOfSampleNameForId(String id);
 

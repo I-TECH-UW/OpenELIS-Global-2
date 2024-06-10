@@ -13,7 +13,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -31,8 +31,6 @@ import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
 import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
-import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
-import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
@@ -41,21 +39,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @DependsOn({ "springContext" })
-public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> implements ResultService {
+public class ResultServiceImpl extends AuditableBaseObjectServiceImpl<Result, String> implements ResultService {
 
     private static String TABLE_REFERENCE_ID;
 
-    @Autowired
     private static ResultDAO baseObjectDAO = SpringContext.getBean(ResultDAO.class);
-
-    @Autowired
     private static DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
-    @Autowired
     private static ResultSignatureService signatureService = SpringContext.getBean(ResultSignatureService.class);
     @Autowired
     private ReferenceTablesService referenceTablesService = SpringContext.getBean(ReferenceTablesService.class);
-    @Autowired
-    private TypeOfSampleTestService typeOfSampleTestService = SpringContext.getBean(TypeOfSampleTestService.class);
     @Autowired
     private TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
     @Autowired
@@ -115,18 +107,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
 
     @Transactional(readOnly = true)
     public String getSampleType(Result result) {
-        Test test = result.getAnalysis() != null ? result.getAnalysis().getTest() : null;
-        if (test == null) {
-            return "";
-        }
-
-        TypeOfSampleTest sampleTestType = typeOfSampleTestService.getTypeOfSampleTestForTest(test.getId());
-
-        if (sampleTestType != null) {
-            return typeOfSampleService.getNameForTypeOfSampleId(sampleTestType.getTypeOfSampleId());
-        }
-
-        return "";
+        return result.getAnalysis() != null ? typeOfSampleService.getNameForTypeOfSampleId(result.getAnalysis().getSampleItem().getTypeOfSampleId()) : "";
     }
 
     @Override
@@ -216,7 +197,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
         if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(getTestType(result))) {
 
             if (!printable) {
-                return result.getValue(printable);
+                return result.getValue();
             }
             String reportResult = "";
             List<Result> resultList = baseObjectDAO.getResultsByAnalysis(result.getAnalysis());
@@ -237,13 +218,13 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
                     }
 
                     for (Result sibResult : dictionaryResults) {
-                        Dictionary dictionary = dictionaryService.getDictionaryById(sibResult.getValue(printable));
+                        Dictionary dictionary = dictionaryService.getDictionaryById(sibResult.getValue());
                         reportResult = (dictionary != null && dictionary.getId() != null)
                                 ? dictionary.getLocalizedName()
                                 : "";
                         if (quantification != null
                                 && quantification.getParentResult().getId().equals(sibResult.getId())) {
-                            reportResult += separator + quantification.getValue(printable);
+                            reportResult += separator + quantification.getValue();
                         }
                     }
                 }
@@ -271,26 +252,26 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
                     } else {
                         buffer.append(separator);
                     }
-                    buffer.append(dictionaryService.getDataForId(multiResult.getValue(printable)).getDictEntry());
+                    buffer.append(dictionaryService.getDataForId(multiResult.getValue()).getDictEntry());
                 }
             }
             return buffer.toString();
         } else if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(getTestType(result))) {
             int significantPlaces = result.getSignificantDigits();
             if (significantPlaces == -1) {
-                return result.getValue(printable) + appendUOM(result, includeUOM);
+                return result.getValue() + appendUOM(result, includeUOM);
             }
             if (significantPlaces == 0) {
-                return result.getValue(printable).split("\\.")[0] + appendUOM(result, includeUOM);
+                return result.getValue().split("\\.")[0] + appendUOM(result, includeUOM);
             }
             StringBuilder value = new StringBuilder();
-            value.append(result.getValue(printable));
+            value.append(result.getValue());
             int startFill = 0;
 
-            if (!result.getValue(printable).contains(".")) {
+            if (!result.getValue().contains(".")) {
                 value.append(".");
             } else {
-                startFill = result.getValue(printable).length() - result.getValue(printable).lastIndexOf(".") - 1;
+                startFill = result.getValue(true).length() - result.getValue(true).lastIndexOf(".") - 1;
             }
 
             for (int i = startFill; i < significantPlaces; i++) {
@@ -300,9 +281,9 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
             return value.toString() + appendUOM(result, includeUOM);
         } else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(result.getResultType())
                 && !GenericValidator.isBlankOrNull(result.getValue())) {
-            return result.getValue(printable).split("\\(")[0].trim();
+            return result.getValue().split("\\(")[0].trim();
         } else {
-            return result.getValue(printable);
+            return result.getValue();
         }
     }
 
@@ -315,7 +296,7 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
         if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(getTestType(result))) {
 
             if (!printable) {
-                return result.getValue(printable);
+                return result.getValue();
             }
             String reportResult = "";
             List<Result> resultList = baseObjectDAO.getResultsByAnalysis(result.getAnalysis());
@@ -336,13 +317,13 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
                     }
 
                     for (Result sibResult : dictionaryResults) {
-                        Dictionary dictionary = dictionaryService.getDictionaryById(sibResult.getValue(printable));
+                        Dictionary dictionary = dictionaryService.getDictionaryById(sibResult.getValue());
                         reportResult = (dictionary != null && dictionary.getId() != null)
                                 ? dictionary.getLocalizedName()
                                 : "";
                         if (quantification != null
                                 && quantification.getParentResult().getId().equals(sibResult.getId())) {
-                            reportResult += separator + quantification.getValue(printable);
+                            reportResult += separator + quantification.getValue();
                         }
                     }
                 }
@@ -363,33 +344,33 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
             List<Result> results = new ResultDAOImpl().getResultsByAnalysis(result.getAnalysis());
 
             for (Result multiResult : results) {
-                if (!GenericValidator.isBlankOrNull(multiResult.getValue(printable))
+                if (!GenericValidator.isBlankOrNull(multiResult.getValue())
                         && TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(multiResult.getResultType())) {
                     if (firstPass) {
                         firstPass = false;
                     } else {
                         buffer.append(separator);
                     }
-                    buffer.append(dictionaryService.getDataForId(multiResult.getValue(printable)).getDictEntry());
+                    buffer.append(dictionaryService.getDataForId(multiResult.getValue()).getDictEntry());
                 }
             }
             return buffer.toString();
         } else if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(getTestType(result))) {
             int significantPlaces = result.getSignificantDigits();
             if (significantPlaces == -1) {
-                return result.getValue(printable) + appendUOM(result, includeUOM);
+                return result.getValue() + appendUOM(result, includeUOM);
             }
             if (significantPlaces == 0) {
-                return result.getValue(printable).split("\\.")[0] + appendUOM(result, includeUOM);
+                return result.getValue().split("\\.")[0] + appendUOM(result, includeUOM);
             }
             StringBuilder value = new StringBuilder();
-            value.append(result.getValue(printable));
+            value.append(result.getValue());
             int startFill = 0;
 
-            if (!result.getValue(printable).contains(".")) {
+            if (!result.getValue().contains(".")) {
                 value.append(".");
             } else {
-                startFill = result.getValue(printable).length() - result.getValue(printable).lastIndexOf(".") - 1;
+                startFill = result.getValue(true).length() - result.getValue(true).lastIndexOf(".") - 1;
             }
 
             for (int i = startFill; i < significantPlaces; i++) {
@@ -399,9 +380,9 @@ public class ResultServiceImpl extends BaseObjectServiceImpl<Result, String> imp
             return value.toString() + appendUOM(result, includeUOM);
         } else if (TypeOfTestResultServiceImpl.ResultType.ALPHA.matches(result.getResultType())
                 && !GenericValidator.isBlankOrNull(result.getValue())) {
-            return result.getValue(printable).split("\\(")[0].trim();
+            return result.getValue().split("\\(")[0].trim();
         } else {
-            return result.getValue(printable);
+            return result.getValue();
         }
     }
 

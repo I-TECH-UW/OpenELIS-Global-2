@@ -19,6 +19,9 @@ import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.referral.action.beanitems.ReferralItem;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.validation.annotations.ValidDate;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 
 public class SamplePatientEntryForm extends BaseForm {
 

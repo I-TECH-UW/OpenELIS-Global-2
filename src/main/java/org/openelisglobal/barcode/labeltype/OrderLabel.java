@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.apache.commons.lang.StringUtils;
 import org.openelisglobal.barcode.LabelField;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
+import org.openelisglobal.common.provider.validation.AlphanumAccessionValidator;
 import org.openelisglobal.common.services.SampleOrderService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -54,13 +56,20 @@ public class OrderLabel extends Label {
         aboveFields.add(siteField);
 
         // adding bar code
+        if (AccessionFormat.ALPHANUM.toString()
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            setCodeLabel(AlphanumAccessionValidator.convertAlphaNumLabNumForDisplay(labNo));
+        }
         setCode(labNo);
     }
 
     /**
-     * @param patient Who to include on order label
-     * @param sample  What to include on order label
-     * @param labNo   Code to include in bar code
+     * @param patient
+     *            Who to include on order label
+     * @param sample
+     *            What to include on order label
+     * @param labNo
+     *            Code to include in bar code
      */
     public OrderLabel(Patient patient, Sample sample, String labNo) {
         // set dimensions
@@ -91,13 +100,18 @@ public class OrderLabel extends Label {
         aboveFields.add(siteField);
 
         // adding bar code
+        if (AccessionFormat.ALPHANUM.toString()
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            setCodeLabel(AlphanumAccessionValidator.convertAlphaNumLabNumForDisplay(labNo));
+        }
         setCode(labNo);
     }
 
     /**
      * Get first available id to identify a patient (Subject Number > National Id)
      *
-     * @param patient Who to find identification for
+     * @param patient
+     *            Who to find identification for
      * @return label field containing patient id
      */
     private LabelField getAvailableIdField(Patient patient) {
@@ -175,7 +189,7 @@ public class OrderLabel extends Label {
         try {
             max = Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_ORDER_PRINTED));
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
         }
         return max;
     }

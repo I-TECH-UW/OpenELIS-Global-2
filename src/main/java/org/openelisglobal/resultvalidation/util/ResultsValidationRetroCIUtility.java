@@ -85,7 +85,6 @@ import org.springframework.web.context.WebApplicationContext;
 @Service
 @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ResultsValidationRetroCIUtility {
-
     // private static String VIRAL_LOAD_ID = "";
     private static String ANALYTE_CD4_CT_GENERATED_ID;
 
@@ -194,7 +193,7 @@ public class ResultsValidationRetroCIUtility {
                     testList = getUnValidatedTestResultItemsInTestSection(testSectionId, statusList);
                     // Immunology and Hematology are together
                     // Not sure if this is the correct way to judge this business rule
-                    if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName,
+                    if (ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.configurationName,
                             "CI_GENERAL") && testSectionName.equals("Immunology")) {
                         sw.setMark("Immuno time");
                         // add Hematology tests to list
@@ -398,7 +397,7 @@ public class ResultsValidationRetroCIUtility {
                                     ? dictionary.getDictEntry()
                                     : dictionary.getLocalAbbreviation();
                         } catch (RuntimeException e) {
-                            LogEvent.logInfo(this.getClass().getName(), "getGroupedTestsForAnalysisList",
+                            LogEvent.logInfo(this.getClass().getSimpleName(), "getGroupedTestsForAnalysisList",
                                     e.getMessage());
                             // no-op
                         }
@@ -490,464 +489,471 @@ public class ResultsValidationRetroCIUtility {
         String displayTestName = TestServiceImpl.getLocalizedTestNameWithType(test);
 //		displayTestName = augmentTestNameWithRange(displayTestName, result);
 
-        ResultValidationItem testItem = new ResultValidationItem();
-
-        testItem.setAccessionNumber(accessionNumber);
-        testItem.setAnalysis(analysis);
-        testItem.setSequenceNumber(sequenceNumber);
-        testItem.setTestName(displayTestName);
-        testItem.setTestId(test.getId());
-        testItem.setAnalysisMethod(analysis.getAnalysisType());
-        testItem.setResult(result);
-        testItem.setDictionaryResults(getAnyDictonaryValues(testResults));
-        testItem.setResultType(getTestResultType(testResults));
-        testItem.setTestSortNumber(test.getSortOrder());
-        testItem.setReflexGroup(analysis.getTriggeredReflex());
-        testItem.setChildReflex(analysis.getTriggeredReflex() && isConclusion(result, analysis));
-        testItem.setQualifiedDictionaryId(getQualifiedDictionaryId(testResults));
-        testItem.setPastNotes(notes);
-
-        return testItem;
-    }
-
-    private String getQualifiedDictionaryId(List<TestResult> testResults) {
-        String qualDictionaryIds = "";
-        for (TestResult testResult : testResults) {
-            if (testResult.getIsQuantifiable()) {
-                if (!"".equals(qualDictionaryIds)) {
-                    qualDictionaryIds += ",";
-                }
-                qualDictionaryIds += testResult.getValue();
-            }
-        }
-        return "".equals(qualDictionaryIds) ? null : "[" + qualDictionaryIds + "]";
-    }
-
-    private String augmentUOMWithRange(String uom, Result result) {
-        if (result == null) {
-            return uom;
-        }
-        ResultService resultResultService = SpringContext.getBean(ResultService.class);
-        String range = resultResultService.getDisplayReferenceRange(result, true);
-        uom = StringUtil.blankIfNull(uom);
-        return GenericValidator.isBlankOrNull(range) ? uom : (uom + " ( " + range + " )");
-    }
-
-    private boolean isConclusion(Result testResult, Analysis analysis) {
-        List<Result> results = resultService.getResultsByAnalysis(analysis);
-        if (results.size() == 1) {
-            return false;
-        }
-
-        Long testResultId = Long.parseLong(testResult.getId());
-        // This based on the fact that the conclusion is always added
-        // after the shared result so if there is a result with a larger id
-        // then this is not a conclusion
-        for (Result result : results) {
-            if (Long.parseLong(result.getId()) > testResultId) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<TestResult> getPossibleResultsForTest(Test test) {
-        return testResultService.getAllActiveTestResultsPerTest(test);
-    }
-
-    private List<IdValuePair> getAnyDictonaryValues(List<TestResult> testResults) {
-        List<IdValuePair> values = null;
-        Dictionary dictionary;
-
-        if (testResults != null && testResults.size() > 0
-                && TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResults.get(0).getTestResultType())) {
-            values = new ArrayList<>();
-            values.add(new IdValuePair("0", ""));
-
-            for (TestResult testResult : testResults) {
-                // Note: result group use to be a criteria but was removed, if
-                // results are not as expected investigate
-                if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
-                    dictionary = dictionaryService.getDataForId(testResult.getValue());
-                    String displayValue = dictionary.getLocalizedName();
-
-                    if ("unknown".equals(displayValue)) {
-                        displayValue = GenericValidator.isBlankOrNull(dictionary.getLocalAbbreviation())
-                                ? dictionary.getDictEntry()
-                                : dictionary.getLocalAbbreviation();
-                    }
-                    values.add(new IdValuePair(testResult.getValue(), displayValue));
-                }
-            }
-        }
-
-        return values;
-    }
-
-    private String getTestResultType(List<TestResult> testResults) {
-        String testResultType = TypeOfTestResultServiceImpl.ResultType.NUMERIC.getCharacterValue();
-
-        if (testResults != null && testResults.size() > 0) {
-            testResultType = testResults.get(0).getTestResultType();
-        }
-
-        return testResultType;
-    }
-
-    public List<AnalysisItem> testResultListToELISAAnalysisList(List<ResultValidationItem> testResultList,
-            List<Integer> statusList) {
-        List<AnalysisItem> analysisItemList = new ArrayList<>();
-        AnalysisItem analysisResultItem = new AnalysisItem();
-        String currentAccessionNumber = "";
-        String currentInvalidAccessionNumber = "";
-        boolean readyForValidation = true;
-
-        for (int i = 0; i < testResultList.size(); i++) {
-
-            ResultValidationItem tResultItem = testResultList.get(i);
-
-            // create new bean
-            if (!tResultItem.getAccessionNumber().equals(currentAccessionNumber)) {
-                if (tResultItem.getAccessionNumber().equals(currentInvalidAccessionNumber)) {
-                    continue;
-                }
-                Sample sample = sampleService.getSampleByAccessionNumber(tResultItem.getAccessionNumber());
-                if (sampleReadyForValidation(sample)) {
-                    if (!GenericValidator.isBlankOrNull(analysisResultItem.getFinalResult()) && readyForValidation) {
-                        analysisItemList.add(analysisResultItem);
-                    }
-                    readyForValidation = true;
-
-                    analysisResultItem = testResultItemToELISAAnalysisItem(tResultItem);
-
-                    currentAccessionNumber = analysisResultItem.getAccessionNumber();
-                    currentInvalidAccessionNumber = "";
-                } else { // record status not valid
-                    currentInvalidAccessionNumber = tResultItem.getAccessionNumber();
-                    continue;
-                }
-                // or just add test result to elisaAlgorithm bean
-            } else {
-                analysisResultItem.setResult(tResultItem.getResultValue());
-                analysisResultItem = addTestResultToELISAAnalysisItem(tResultItem, analysisResultItem);
-            }
-
-            if (!GenericValidator.isBlankOrNull(analysisResultItem.getStatusId())
-                    && !statusList.contains(Integer.parseInt(analysisResultItem.getStatusId()))) {
-                readyForValidation = false;
-            }
-
-            String finalResult = checkIfFinalResult(tResultItem.getAnalysis().getId());
-
-            if (!GenericValidator.isBlankOrNull(finalResult)) {
-                analysisResultItem.setFinalResult(finalResult);
-            }
-
-            // final time through
-            if (i == (testResultList.size() - 1) && readyForValidation
-                    && !GenericValidator.isBlankOrNull(analysisResultItem.getFinalResult())) {
-                analysisItemList.add(analysisResultItem);
-            }
-        }
-
-        return analysisItemList;
-    }
-
-    public String checkIfFinalResult(String analysisId) {
-        String finalResult = null;
-        Analysis analysis = new Analysis();
-        analysis.setId(analysisId);
-
-        List<Result> resultList = resultService.getResultsByAnalysis(analysis);
-        String conclusion = null;
-
-        if (resultList.size() > 1) {
-            for (Result result : resultList) {
-                if (result.getAnalyte() != null && result.getAnalyte().getId().equals(CONCLUSION_ID)) {
-                    conclusion = result.getValue();
-                }
-            }
-
-        }
-
-        if (conclusion != null) {
-            Dictionary dictionary = new Dictionary();
-            dictionary.setId(conclusion);
-            dictionaryService.getData(dictionary);
-            finalResult = (dictionary.getDictEntry());
-        }
-
-        return finalResult;
-
-    }
-
-    public AnalysisItem testResultItemToELISAAnalysisItem(ResultValidationItem testResultItem) {
-        AnalysisItem elisaResultItem = new AnalysisItem();
-
-        elisaResultItem.setAccessionNumber(testResultItem.getAccessionNumber());
-        elisaResultItem.setTestName(testResultItem.getTestName());
-        elisaResultItem.setResult(testResultItem.getResultValue());
-        elisaResultItem.setSampleGroupingNumber(testResultItem.getSampleGroupingNumber());
-        elisaResultItem.setAnalysisId(testResultItem.getAnalysis().getId());
-        elisaResultItem.setStatusId(testResultItem.getAnalysis().getStatusId());
-        elisaResultItem.setNote(testResultItem.getNote());
-        elisaResultItem.setNoteId(testResultItem.getNoteId());
-        elisaResultItem.setResultId(testResultItem.getResultId());
-        elisaResultItem.setNonconforming(testResultItem.isNonconforming());
-
-        // elisaResultItem.setResult(testResultItem.getResult().getValue());
-
-        // set elisa test to result
-        elisaResultItem = setElisaTestResult(testResultItem.getTestName(), elisaResultItem);
-
-        return elisaResultItem;
-
-    }
-
-    public AnalysisItem addTestResultToELISAAnalysisItem(ResultValidationItem testResultItem, AnalysisItem eItem) {
-
-        eItem.setAnalysisId(testResultItem.getAnalysis().getId());
-        eItem.setStatusId(testResultItem.getAnalysis().getStatusId());
-        if (testResultItem.isNonconforming()) {
-            eItem.setNonconforming(true);
-        }
-        // set elisa test to result
-        eItem = setElisaTestResult(testResultItem.getTestName(), eItem);
-
-        return eItem;
-
-    }
-
-    public AnalysisItem setElisaTestResult(String testName, AnalysisItem eItem) {
-        String result = eItem.getResult();
-        String analysisId = eItem.getAnalysisId();
-
-        if (testName.equals("Murex")) {
-            eItem.setMurexResult(result);
-            eItem.setMurexAnalysisId(analysisId);
-        } else if (testName.equals("Integral")) {
-            eItem.setIntegralResult(result);
-            eItem.setIntegralAnalysisId(analysisId);
-        } else if (testName.equals("Vironostika")) {
-            eItem.setVironostikaResult(result);
-            eItem.setVironostikaAnalysisId(analysisId);
-        } else if (testName.equals("Genie II")) {
-            eItem.setGenieIIResult(result);
-            eItem.setGenieIIAnalysisId(analysisId);
-        } else if (testName.equals("Genie II 10")) {
-            eItem.setGenieII10Result(result);
-            eItem.setGenieII10AnalysisId(analysisId);
-        } else if (testName.equals("Genie II 100")) {
-            eItem.setGenieII100Result(result);
-            eItem.setGenieII100AnalysisId(analysisId);
-        } else if (testName.equals("Western Blot 1")) {
-            eItem.setWesternBlot1Result(result);
-            eItem.setWesternBlot1AnalysisId(analysisId);
-        } else if (testName.equals("Western Blot 2")) {
-            eItem.setWesternBlot2Result(result);
-            eItem.setWesternBlot2AnalysisId(analysisId);
-        } else if (testName.equals("p24 Ag")) {
-            eItem.setP24AgResult(result);
-            eItem.setP24AgAnalysisId(analysisId);
-        } else if (testName.equals("Bioline")) {
-            eItem.setBiolineResult(result);
-            eItem.setBiolineAnalysisId(analysisId);
-        } else if (testName.equals("Innolia")) {
-            eItem.setInnoliaResult(result);
-            eItem.setInnoliaAnalysisId(analysisId);
-        }
-
-        return eItem;
-    }
-
-    public List<AnalysisItem> testResultListToAnalysisItemList(List<ResultValidationItem> testResultList) {
-        List<AnalysisItem> analysisResultList = new ArrayList<>();
-
-        /*
-         * The issue with multiselect results is that each selection is one
-         * ResultValidationItem but they all need to be condensed into one AnalysisItem.
-         * There is a many to one mapping. The first multiselect result we have gets
-         * rolled into one AnalysisItem and the rest are skipped but we want to capture
-         * any qualified results
-         */
-        boolean multiResultEntered = false;
-        String currentAccession = null;
-        AnalysisItem currentMultiSelectAnalysisItem = null;
-        for (ResultValidationItem testResultItem : testResultList) {
-            if (!testResultItem.getAccessionNumber().equals(currentAccession)) {
-                currentAccession = testResultItem.getAccessionNumber();
-                currentMultiSelectAnalysisItem = null;
-                multiResultEntered = false;
-            }
-            if (!multiResultEntered) {
-                AnalysisItem convertedItem = testResultItemToAnalysisItem(testResultItem);
-                analysisResultList.add(convertedItem);
-                if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(testResultItem.getResultType())) {
-                    multiResultEntered = true;
-                    currentMultiSelectAnalysisItem = convertedItem;
-                }
-            }
-            if (currentMultiSelectAnalysisItem != null && testResultItem.isHasQualifiedResult()) {
-                currentMultiSelectAnalysisItem.setQualifiedResultValue(testResultItem.getQualifiedResultValue());
-                currentMultiSelectAnalysisItem.setQualifiedDictionaryId(testResultItem.getQualifiedDictionaryId());
-                currentMultiSelectAnalysisItem.setHasQualifiedResult(true);
-            }
-        }
-
-        return analysisResultList;
-    }
-
-    private RecordStatus getSampleRecordStatus(Sample sample) {
-
-        List<ObservationHistory> ohList = observationHistoryService.getAll(null, sample,
-                SAMPLE_STATUS_OBSERVATION_HISTORY_TYPE_ID);
-
-        if (ohList.isEmpty()) {
-            return null;
-        }
-
-        return SpringContext.getBean(IStatusService.class).getRecordStatusForID(ohList.get(0).getValue());
-    }
-
-    public AnalysisItem testResultItemToAnalysisItem(ResultValidationItem testResultItem) {
-        AnalysisItem analysisResultItem = new AnalysisItem();
-        String testUnits = getUnitsByTestId(testResultItem.getTestId());
-        String testName = testResultItem.getTestName();
-        String sortOrder = testResultItem.getTestSortNumber();
-        Result result = testResultItem.getResult();
-
-        if (result != null && result.getAnalyte() != null
-                && ANALYTE_CD4_CT_GENERATED_ID.equals(testResultItem.getResult().getAnalyte().getId())) {
-            testUnits = "";
-            testName = MessageUtil.getMessage("result.conclusion.cd4");
-            analysisResultItem.setShowAcceptReject(false);
-            analysisResultItem.setReadOnly(true);
-            sortOrder = CD4_COUNT_SORT_NUMBER;
-        } else if (testResultItem.getTestName().equals(totalTestName)) {
-            analysisResultItem.setShowAcceptReject(false);
-            analysisResultItem.setReadOnly(true);
-            testUnits = testResultItem.getUnitsOfMeasure();
-            analysisResultItem.setIsHighlighted(!"100.0".equals(testResultItem.getResult().getValue()));
-        }
-
-        testUnits = augmentUOMWithRange(testUnits, testResultItem.getResult());
-
-        analysisResultItem.setAccessionNumber(testResultItem.getAccessionNumber());
-        analysisResultItem.setTestName(testName);
-        analysisResultItem.setUnits(testUnits);
-        if (!(testResultItem.getAnalysis() == null)) {
-            analysisResultItem.setAnalysisId(testResultItem.getAnalysis().getId());
-        }
-        analysisResultItem.setPastNotes(testResultItem.getPastNotes());
-        analysisResultItem.setResultId(testResultItem.getResultId());
-        analysisResultItem.setResultType(testResultItem.getResultType());
-        analysisResultItem.setTestId(testResultItem.getTestId());
-        analysisResultItem.setTestSortNumber(sortOrder);
-        analysisResultItem.setDictionaryResults(testResultItem.getDictionaryResults());
-        analysisResultItem.setDisplayResultAsLog(
-                TestIdentityService.getInstance().isTestNumericViralLoad(testResultItem.getTestId()));
-        if (result != null) {
-            if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(testResultItem.getResultType())
-                    && !(testResultItem.getAnalysis() == null)) {
-                Analysis analysis = testResultItem.getAnalysis();
-                analysisResultItem.setMultiSelectResultValues(analysisService.getJSONMultiSelectResults(analysis));
-            } else {
-                analysisResultItem.setResult(getFormattedResult(testResultItem));
-            }
-
-            if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(testResultItem.getResultType())) {
-                if (result.getMinNormal() == null || result.getMaxNormal() == null) {
-                    analysisResultItem.setSignificantDigits(result.getSignificantDigits());
-                } else {
-                    analysisResultItem.setSignificantDigits(
-                            result.getMinNormal().equals(result.getMaxNormal()) ? -1 : result.getSignificantDigits());
-                }
-            }
-        }
-        analysisResultItem.setReflexGroup(testResultItem.isReflexGroup());
-        analysisResultItem.setChildReflex(testResultItem.isChildReflex());
-        if (!(testResultItem.getAnalysis() == null)) {
-            analysisResultItem
-                    .setNonconforming(testResultItem.isNonconforming() || SpringContext.getBean(IStatusService.class)
-                            .matches(testResultItem.getAnalysis().getStatusId(), AnalysisStatus.TechnicalRejected));
-        }
-        analysisResultItem.setQualifiedDictionaryId(testResultItem.getQualifiedDictionaryId());
-        analysisResultItem.setQualifiedResultValue(testResultItem.getQualifiedResultValue());
-        analysisResultItem.setQualifiedResultId(testResultItem.getQualificationResultId());
-        analysisResultItem.setHasQualifiedResult(testResultItem.isHasQualifiedResult());
-
-        return analysisResultItem;
-
-    }
-
-    private String getFormattedResult(ResultValidationItem testResultItem) {
-        String result = testResultItem.getResult().getValue();
-        if (TestIdentityService.getInstance().isTestNumericViralLoad(testResultItem.getTestId())
-                && !GenericValidator.isBlankOrNull(result)) {
-            return result.split("\\(")[0].trim();
-        } else {
-            ResultService resultResultService = SpringContext.getBean(ResultService.class);
-            return resultResultService.getResultValue(testResultItem.getResult(), false);
-        }
-    }
-
-    public String getUnitsByTestId(String testId) {
-
-        String uomName = null;
-
-        if (testId != null) {
-            uomName = testIdToUnits.get(testId);
-            if (uomName == null) {
-                Test test = new Test();
-                test.setId(testId);
-                test = testService.getTestById(test);
-
-                if (test.getUnitOfMeasure() != null) {
-                    uomName = test.getUnitOfMeasure().getName();
-                    testIdToUnits.put(testId, uomName);
-                } else {
-                    testIdToUnits.put(testId, "");
-                }
-            }
-        }
-        return uomName;
-
-    }
-
-    public String getTestSectionId(String testSectionName) {
-        TestSection testSection = new TestSection();
-        testSection.setTestSectionName(testSectionName);
-        testSection = testSectionService.getTestSectionByName(testSection);
-
-        return testSection.getId();
-    }
-
-    private String getTestId(String testName) {
-        Test test = testService.getTestByLocalizedName(testName, Locale.FRENCH);
-        return test.getId();
-    }
-
-    private boolean getQaEventByTestSection(Analysis analysis) {
-
-        if (analysis.getTestSection() != null && analysis.getSampleItem().getSample() != null) {
-            Sample sample = analysis.getSampleItem().getSample();
-            List<SampleQaEvent> sampleQaEventsList = getSampleQaEvents(sample);
-            for (SampleQaEvent event : sampleQaEventsList) {
-                QAService qa = new QAService(event);
-                if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
-                        && qa.getObservationValue(QAObservationType.SECTION)
-                                .equals(analysis.getTestSection().getNameKey())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
-        return sampleQaEventService.getSampleQaEventsBySample(sample);
-    }
+		ResultValidationItem testItem = new ResultValidationItem();
+
+		testItem.setAccessionNumber(accessionNumber);
+		testItem.setAnalysis(analysis);
+		testItem.setSequenceNumber(sequenceNumber);
+		testItem.setTestName(displayTestName);
+		testItem.setTestId(test.getId());
+		testItem.setAnalysisMethod(analysis.getAnalysisType());
+		testItem.setResult(result);
+		testItem.setDictionaryResults(getAnyDictonaryValues(testResults));
+		testItem.setResultType(getTestResultType(testResults));
+		testItem.setTestSortNumber(test.getSortOrder());
+		testItem.setReflexGroup(analysis.getTriggeredReflex());
+		testItem.setChildReflex(analysis.getTriggeredReflex() && isConclusion(result, analysis));
+		testItem.setQualifiedDictionaryId(getQualifiedDictionaryId(testResults));
+		testItem.setPastNotes(notes);
+
+		return testItem;
+	}
+
+	private String getQualifiedDictionaryId(List<TestResult> testResults) {
+		String qualDictionaryIds = "";
+		for (TestResult testResult : testResults) {
+			if (testResult.getIsQuantifiable()) {
+				if (!"".equals(qualDictionaryIds)) {
+					qualDictionaryIds += ",";
+				}
+				qualDictionaryIds += testResult.getValue();
+			}
+		}
+		return "".equals(qualDictionaryIds) ? null : "[" + qualDictionaryIds + "]";
+	}
+
+	private String augmentUOMWithRange(String uom, Result result) {
+		if (result == null) {
+			return uom;
+		}
+		ResultService resultResultService = SpringContext.getBean(ResultService.class);
+		String range = resultResultService.getDisplayReferenceRange(result, true);
+		uom = StringUtil.blankIfNull(uom);
+		return GenericValidator.isBlankOrNull(range) ? uom : (uom + " ( " + range + " )");
+	}
+
+	private boolean isConclusion(Result testResult, Analysis analysis) {
+		List<Result> results = resultService.getResultsByAnalysis(analysis);
+		if (results.size() == 1) {
+			return false;
+		}
+
+		Long testResultId = Long.parseLong(testResult.getId());
+		// This based on the fact that the conclusion is always added
+		// after the shared result so if there is a result with a larger id
+		// then this is not a conclusion
+		for (Result result : results) {
+			if (Long.parseLong(result.getId()) > testResultId) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<TestResult> getPossibleResultsForTest(Test test) {
+		return testResultService.getAllActiveTestResultsPerTest(test);
+	}
+
+	private List<IdValuePair> getAnyDictonaryValues(List<TestResult> testResults) {
+		List<IdValuePair> values = null;
+		Dictionary dictionary;
+
+		if (testResults != null && testResults.size() > 0
+				&& TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResults.get(0).getTestResultType())) {
+			values = new ArrayList<>();
+			values.add(new IdValuePair("0", ""));
+
+			for (TestResult testResult : testResults) {
+				// Note: result group use to be a criteria but was removed, if
+				// results are not as expected investigate
+				if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
+					dictionary = dictionaryService.getDataForId(testResult.getValue());
+					String displayValue = dictionary.getLocalizedName();
+
+					if ("unknown".equals(displayValue)) {
+						displayValue = GenericValidator.isBlankOrNull(dictionary.getLocalAbbreviation())
+								? dictionary.getDictEntry()
+								: dictionary.getLocalAbbreviation();
+					}
+					values.add(new IdValuePair(testResult.getValue(), displayValue));
+				}
+			}
+		}
+
+		return values;
+	}
+
+	private String getTestResultType(List<TestResult> testResults) {
+		String testResultType = TypeOfTestResultServiceImpl.ResultType.NUMERIC.getCharacterValue();
+
+		if (testResults != null && testResults.size() > 0) {
+			testResultType = testResults.get(0).getTestResultType();
+		}
+
+		return testResultType;
+	}
+
+	public List<AnalysisItem> testResultListToELISAAnalysisList(List<ResultValidationItem> testResultList,
+			List<Integer> statusList) {
+		List<AnalysisItem> analysisItemList = new ArrayList<>();
+		AnalysisItem analysisResultItem = new AnalysisItem();
+		String currentAccessionNumber = "";
+		String currentInvalidAccessionNumber = "";
+		boolean readyForValidation = true;
+
+		for (int i = 0; i < testResultList.size(); i++) {
+
+			ResultValidationItem tResultItem = testResultList.get(i);
+
+			// create new bean
+			if (!tResultItem.getAccessionNumber().equals(currentAccessionNumber)) {
+				if (tResultItem.getAccessionNumber().equals(currentInvalidAccessionNumber)) {
+					continue;
+				}
+				Sample sample = sampleService.getSampleByAccessionNumber(tResultItem.getAccessionNumber());
+				if (sampleReadyForValidation(sample)) {
+					if (!GenericValidator.isBlankOrNull(analysisResultItem.getFinalResult()) && readyForValidation) {
+						analysisItemList.add(analysisResultItem);
+					}
+					readyForValidation = true;
+
+					analysisResultItem = testResultItemToELISAAnalysisItem(tResultItem);
+
+					currentAccessionNumber = analysisResultItem.getAccessionNumber();
+					currentInvalidAccessionNumber = "";
+				} else { // record status not valid
+					currentInvalidAccessionNumber = tResultItem.getAccessionNumber();
+					continue;
+				}
+				// or just add test result to elisaAlgorithm bean
+			} else {
+				analysisResultItem.setResult(tResultItem.getResultValue());
+				analysisResultItem = addTestResultToELISAAnalysisItem(tResultItem, analysisResultItem);
+			}
+
+			if (!GenericValidator.isBlankOrNull(analysisResultItem.getStatusId())
+					&& !statusList.contains(Integer.parseInt(analysisResultItem.getStatusId()))) {
+				readyForValidation = false;
+			}
+
+			String finalResult = checkIfFinalResult(tResultItem.getAnalysis().getId());
+
+			if (!GenericValidator.isBlankOrNull(finalResult)) {
+				analysisResultItem.setFinalResult(finalResult);
+			}
+
+			// final time through
+			if (i == (testResultList.size() - 1) && readyForValidation
+					&& !GenericValidator.isBlankOrNull(analysisResultItem.getFinalResult())) {
+				analysisItemList.add(analysisResultItem);
+			}
+		}
+
+		return analysisItemList;
+	}
+
+	public String checkIfFinalResult(String analysisId) {
+		String finalResult = null;
+		Analysis analysis = new Analysis();
+		analysis.setId(analysisId);
+
+		List<Result> resultList = resultService.getResultsByAnalysis(analysis);
+		String conclusion = null;
+
+		if (resultList.size() > 1) {
+			for (Result result : resultList) {
+				if (result.getAnalyte() != null && result.getAnalyte().getId().equals(CONCLUSION_ID)) {
+					conclusion = result.getValue();
+				}
+			}
+
+		}
+
+		if (conclusion != null) {
+			Dictionary dictionary = new Dictionary();
+			dictionary.setId(conclusion);
+			dictionaryService.getData(dictionary);
+			finalResult = (dictionary.getDictEntry());
+		}
+
+		return finalResult;
+
+	}
+
+	public AnalysisItem testResultItemToELISAAnalysisItem(ResultValidationItem testResultItem) {
+		AnalysisItem elisaResultItem = new AnalysisItem();
+
+		elisaResultItem.setAccessionNumber(testResultItem.getAccessionNumber());
+		elisaResultItem.setTestName(testResultItem.getTestName());
+		elisaResultItem.setResult(testResultItem.getResultValue());
+		elisaResultItem.setSampleGroupingNumber(testResultItem.getSampleGroupingNumber());
+		elisaResultItem.setAnalysisId(testResultItem.getAnalysis().getId());
+		elisaResultItem.setStatusId(testResultItem.getAnalysis().getStatusId());
+		elisaResultItem.setNote(testResultItem.getNote());
+		elisaResultItem.setNoteId(testResultItem.getNoteId());
+		elisaResultItem.setResultId(testResultItem.getResultId());
+		elisaResultItem.setNonconforming(testResultItem.isNonconforming());
+
+		// elisaResultItem.setResult(testResultItem.getResult().getValue());
+
+		// set elisa test to result
+		elisaResultItem = setElisaTestResult(testResultItem.getTestName(), elisaResultItem);
+
+		return elisaResultItem;
+
+	}
+
+	public AnalysisItem addTestResultToELISAAnalysisItem(ResultValidationItem testResultItem, AnalysisItem eItem) {
+
+		eItem.setAnalysisId(testResultItem.getAnalysis().getId());
+		eItem.setStatusId(testResultItem.getAnalysis().getStatusId());
+		if (testResultItem.isNonconforming()) {
+			eItem.setNonconforming(true);
+		}
+		// set elisa test to result
+		eItem = setElisaTestResult(testResultItem.getTestName(), eItem);
+
+		return eItem;
+
+	}
+
+	public AnalysisItem setElisaTestResult(String testName, AnalysisItem eItem) {
+		String result = eItem.getResult();
+		String analysisId = eItem.getAnalysisId();
+
+		if (testName.equals("Murex")) {
+			eItem.setMurexResult(result);
+			eItem.setMurexAnalysisId(analysisId);
+		}
+		if (testName.equals("Murex Combinaison")) {
+			eItem.setMurexResult(result);
+			eItem.setMurexAnalysisId(analysisId);
+		} else if (testName.equals("Integral")) {
+			eItem.setIntegralResult(result);
+			eItem.setIntegralAnalysisId(analysisId);
+		} else if (testName.equals("Genscreen")) {
+			eItem.setGenscreenResult(result);
+			eItem.setGenscreenAnalysisId(analysisId);
+		} else if (testName.equals("Vironostika")) {
+			eItem.setVironostikaResult(result);
+			eItem.setVironostikaAnalysisId(analysisId);
+		} else if (testName.equals("Genie II")) {
+			eItem.setGenieIIResult(result);
+			eItem.setGenieIIAnalysisId(analysisId);
+		} else if (testName.equals("Genie II 10")) {
+			eItem.setGenieII10Result(result);
+			eItem.setGenieII10AnalysisId(analysisId);
+		} else if (testName.equals("Genie II 100")) {
+			eItem.setGenieII100Result(result);
+			eItem.setGenieII100AnalysisId(analysisId);
+		} else if (testName.equals("Western Blot 1")) {
+			eItem.setWesternBlot1Result(result);
+			eItem.setWesternBlot1AnalysisId(analysisId);
+		} else if (testName.equals("Western Blot 2")) {
+			eItem.setWesternBlot2Result(result);
+			eItem.setWesternBlot2AnalysisId(analysisId);
+		} else if (testName.equals("p24 Ag")) {
+			eItem.setP24AgResult(result);
+			eItem.setP24AgAnalysisId(analysisId);
+		} else if (testName.equals("Bioline")) {
+			eItem.setBiolineResult(result);
+			eItem.setBiolineAnalysisId(analysisId);
+		} else if (testName.equals("Innolia")) {
+			eItem.setInnoliaResult(result);
+			eItem.setInnoliaAnalysisId(analysisId);
+		}
+
+		return eItem;
+	}
+
+	public List<AnalysisItem> testResultListToAnalysisItemList(List<ResultValidationItem> testResultList) {
+		List<AnalysisItem> analysisResultList = new ArrayList<>();
+
+		/*
+		 * The issue with multiselect results is that each selection is one
+		 * ResultValidationItem but they all need to be condensed into one AnalysisItem.
+		 * There is a many to one mapping. The first multiselect result we have gets
+		 * rolled into one AnalysisItem and the rest are skipped but we want to capture
+		 * any qualified results
+		 */
+		boolean multiResultEntered = false;
+		String currentAccession = null;
+		AnalysisItem currentMultiSelectAnalysisItem = null;
+		for (ResultValidationItem testResultItem : testResultList) {
+			if (!testResultItem.getAccessionNumber().equals(currentAccession)) {
+				currentAccession = testResultItem.getAccessionNumber();
+				currentMultiSelectAnalysisItem = null;
+				multiResultEntered = false;
+			}
+			if (!multiResultEntered) {
+				AnalysisItem convertedItem = testResultItemToAnalysisItem(testResultItem);
+				analysisResultList.add(convertedItem);
+				if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(testResultItem.getResultType())) {
+					multiResultEntered = true;
+					currentMultiSelectAnalysisItem = convertedItem;
+				}
+			}
+			if (currentMultiSelectAnalysisItem != null && testResultItem.isHasQualifiedResult()) {
+				currentMultiSelectAnalysisItem.setQualifiedResultValue(testResultItem.getQualifiedResultValue());
+				currentMultiSelectAnalysisItem.setQualifiedDictionaryId(testResultItem.getQualifiedDictionaryId());
+				currentMultiSelectAnalysisItem.setHasQualifiedResult(true);
+			}
+		}
+
+		return analysisResultList;
+	}
+
+	private RecordStatus getSampleRecordStatus(Sample sample) {
+
+		List<ObservationHistory> ohList = observationHistoryService.getAll(null, sample,
+				SAMPLE_STATUS_OBSERVATION_HISTORY_TYPE_ID);
+
+		if (ohList.isEmpty()) {
+			return null;
+		}
+
+		return SpringContext.getBean(IStatusService.class).getRecordStatusForID(ohList.get(0).getValue());
+	}
+
+	public AnalysisItem testResultItemToAnalysisItem(ResultValidationItem testResultItem) {
+		AnalysisItem analysisResultItem = new AnalysisItem();
+		String testUnits = getUnitsByTestId(testResultItem.getTestId());
+		String testName = testResultItem.getTestName();
+		String sortOrder = testResultItem.getTestSortNumber();
+		Result result = testResultItem.getResult();
+
+		if (result != null && result.getAnalyte() != null
+				&& ANALYTE_CD4_CT_GENERATED_ID.equals(testResultItem.getResult().getAnalyte().getId())) {
+			testUnits = "";
+			testName = MessageUtil.getMessage("result.conclusion.cd4");
+			analysisResultItem.setShowAcceptReject(false);
+			analysisResultItem.setReadOnly(true);
+			sortOrder = CD4_COUNT_SORT_NUMBER;
+		} else if (testResultItem.getTestName().equals(totalTestName)) {
+			analysisResultItem.setShowAcceptReject(false);
+			analysisResultItem.setReadOnly(true);
+			testUnits = testResultItem.getUnitsOfMeasure();
+			analysisResultItem.setIsHighlighted(!"100.0".equals(testResultItem.getResult().getValue()));
+		}
+
+		testUnits = augmentUOMWithRange(testUnits, testResultItem.getResult());
+
+		analysisResultItem.setAccessionNumber(testResultItem.getAccessionNumber());
+		analysisResultItem.setTestName(testName);
+		analysisResultItem.setUnits(testUnits);
+		if (!(testResultItem.getAnalysis() == null)) {
+			analysisResultItem.setAnalysisId(testResultItem.getAnalysis().getId());
+		}
+		analysisResultItem.setPastNotes(testResultItem.getPastNotes());
+		analysisResultItem.setResultId(testResultItem.getResultId());
+		analysisResultItem.setResultType(testResultItem.getResultType());
+		analysisResultItem.setTestId(testResultItem.getTestId());
+		analysisResultItem.setTestSortNumber(sortOrder);
+		analysisResultItem.setDictionaryResults(testResultItem.getDictionaryResults());
+		analysisResultItem.setDisplayResultAsLog(
+				TestIdentityService.getInstance().isTestNumericViralLoad(testResultItem.getTestId()));
+		if (result != null) {
+			if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(testResultItem.getResultType())
+					&& !(testResultItem.getAnalysis() == null)) {
+				Analysis analysis = testResultItem.getAnalysis();
+				analysisResultItem.setMultiSelectResultValues(analysisService.getJSONMultiSelectResults(analysis));
+			} else {
+				analysisResultItem.setResult(getFormattedResult(testResultItem));
+			}
+
+			if (TypeOfTestResultServiceImpl.ResultType.NUMERIC.matches(testResultItem.getResultType())) {
+				if (result.getMinNormal() == null || result.getMaxNormal() == null) {
+					analysisResultItem.setSignificantDigits(result.getSignificantDigits());
+				} else {
+					analysisResultItem.setSignificantDigits(
+							result.getMinNormal().equals(result.getMaxNormal()) ? -1 : result.getSignificantDigits());
+				}
+			}
+		}
+		analysisResultItem.setReflexGroup(testResultItem.isReflexGroup());
+		analysisResultItem.setChildReflex(testResultItem.isChildReflex());
+		if (!(testResultItem.getAnalysis() == null)) {
+			analysisResultItem
+					.setNonconforming(testResultItem.isNonconforming() || SpringContext.getBean(IStatusService.class)
+							.matches(testResultItem.getAnalysis().getStatusId(), AnalysisStatus.TechnicalRejected));
+		}
+		analysisResultItem.setQualifiedDictionaryId(testResultItem.getQualifiedDictionaryId());
+		analysisResultItem.setQualifiedResultValue(testResultItem.getQualifiedResultValue());
+		analysisResultItem.setQualifiedResultId(testResultItem.getQualificationResultId());
+		analysisResultItem.setHasQualifiedResult(testResultItem.isHasQualifiedResult());
+
+		return analysisResultItem;
+
+	}
+
+	private String getFormattedResult(ResultValidationItem testResultItem) {
+		String result = testResultItem.getResult().getValue();
+		if (TestIdentityService.getInstance().isTestNumericViralLoad(testResultItem.getTestId())
+				&& !GenericValidator.isBlankOrNull(result)) {
+			return result.split("\\(")[0].trim();
+		} else {
+			ResultService resultResultService = SpringContext.getBean(ResultService.class);
+			return resultResultService.getResultValue(testResultItem.getResult(), false);
+		}
+	}
+
+	public String getUnitsByTestId(String testId) {
+
+		String uomName = null;
+
+		if (testId != null) {
+			uomName = testIdToUnits.get(testId);
+			if (uomName == null) {
+				Test test = new Test();
+				test.setId(testId);
+				test = testService.getTestById(test);
+
+				if (test.getUnitOfMeasure() != null) {
+					uomName = test.getUnitOfMeasure().getName();
+					testIdToUnits.put(testId, uomName);
+				} else {
+					testIdToUnits.put(testId, "");
+				}
+			}
+		}
+		return uomName;
+
+	}
+
+	public String getTestSectionId(String testSectionName) {
+		TestSection testSection = new TestSection();
+		testSection.setTestSectionName(testSectionName);
+		testSection = testSectionService.getTestSectionByName(testSection);
+
+		return testSection.getId();
+	}
+
+	private String getTestId(String testName) {
+		Test test = testService.getTestByLocalizedName(testName, Locale.FRENCH);
+		return test.getId();
+	}
+
+	private boolean getQaEventByTestSection(Analysis analysis) {
+
+		if (analysis.getTestSection() != null && analysis.getSampleItem().getSample() != null) {
+			Sample sample = analysis.getSampleItem().getSample();
+			List<SampleQaEvent> sampleQaEventsList = getSampleQaEvents(sample);
+			for (SampleQaEvent event : sampleQaEventsList) {
+				QAService qa = new QAService(event);
+				if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
+						&& qa.getObservationValue(QAObservationType.SECTION)
+								.equals(analysis.getTestSection().getNameKey())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
+		return sampleQaEventService.getSampleQaEventsBySample(sample);
+	}
 
 }

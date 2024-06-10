@@ -122,7 +122,7 @@ public class SchedulerConfig implements SchedulingConfigurer {
         }
 
         String jobName = cronScheduler.getJobName();
-        LogEvent.logInfo(this.getClass().getName(), "method unkown", "Adding cron job: " + jobName);
+        LogEvent.logInfo(this.getClass().getSimpleName(), "addOrRunSchedule", "Adding cron job: " + jobName);
 
         Class<? extends Job> targetJob = scheduleJobMap.get(jobName);
 
@@ -148,7 +148,7 @@ public class SchedulerConfig implements SchedulingConfigurer {
                 runner.runNow(reloadableScheduler, jobName);
             }
         } catch (NumberFormatException e) {
-            LogEvent.logInfo(this.getClass().getName(), "method unkown",
+            LogEvent.logInfo(this.getClass().getSimpleName(), "addOrRunSchedule",
                     "Malformed cron statement." + cronScheduler.getCronStatement());
         }
     }

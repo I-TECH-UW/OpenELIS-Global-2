@@ -43,6 +43,7 @@ public class TestCatalogBean {
     private List<ResultLimitBean> resultLimits;
     private int testSortOrder = Integer.MAX_VALUE;
     private boolean inLabOnly;
+    private boolean antimicrobialResistance;
 
     public String getId() {
         return id;
@@ -218,5 +219,13 @@ public class TestCatalogBean {
 
     public void setInLabOnly(boolean inLabOnly) {
         this.inLabOnly = inLabOnly;
+    }
+
+    public boolean getAntimicrobialResistance() {
+        return antimicrobialResistance;
+    }
+
+    public void setAntimicrobialResistance(boolean antimicrobialResistance) {
+        this.antimicrobialResistance = antimicrobialResistance;
     }
 }

@@ -59,9 +59,9 @@
     -->
 
 
-    <Connector port="8443" minProcessors="5" maxProcessors="75" 
+    <Connector port="8443" minSpareThreads="5" maxThreads="75"
                enableLookups="true" disableUploadTimeout="true"
-               acceptCount="100" debug="0" scheme="https" secure="true"
+               acceptCount="100" scheme="https" secure="true"
                sslProtocol="TLS" SSLEnabled="true" 
                keystoreFile="/etc/openelis-global/keystore" keystoreType="PKCS12" keystorePass="kspass"
                truststoreFile="/etc/openelis-global/truststore" truststoreType="PKCS12" truststorePass="tspass"
@@ -160,6 +160,17 @@
 <!--         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs" -->
 <!--                prefix="localhost_access_log" suffix=".txt" -->
 <!--                pattern="%h %l %u %t &quot;%r&quot; %s %b" /> -->
+
+               <Context docBase="ROOT" path="/api" />
+               <Context docBase="OpenELIS-Global"
+                    path="/api/OpenELIS-Global/" logEffectiveWebXml="true">
+               <Resources cacheMaxSize="102400" />
+               <Resource auth="Container"
+                    driverClassName="org.postgresql.Driver" maxTotal="20" maxIdle="10"
+                    maxWaitMillis="-1" name="jdbc/LimsDS" type="javax.sql.DataSource"
+                    url="${datasource.url}" username="${datasource.username}"
+                    password="${datasource.password}" />
+               </Context>
 
       </Host>
     </Engine>

@@ -8,15 +8,19 @@ import java.util.Map;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.exception.LIMSFrozenRecordException;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.dictionary.dao.DictionaryDAO;
+import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, String> implements DictionaryService {
+public class DictionaryServiceImpl extends AuditableBaseObjectServiceImpl<Dictionary, String> implements DictionaryService {
+
     @Autowired
     protected DictionaryDAO baseObjectDAO;
 
@@ -128,6 +132,15 @@ public class DictionaryServiceImpl extends BaseObjectServiceImpl<Dictionary, Str
         properties.put("localAbbreviation", dictionary.getLocalAbbreviation());
         properties.put("isActive", IActionConstants.YES);
         return getMatch(properties).orElse(null);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Dictionary getDictionaryByDictEntry(String dictEntry) {
+    	Map<String, Object> properties = new HashMap<>();
+    	properties.put("dictEntry", dictEntry);
+    	properties.put("isActive", IActionConstants.YES);
+    	return getMatch(properties).orElse(null);
     }
 
     @Override

@@ -39,6 +39,18 @@ public class BarcodeConfigurationForm extends BaseForm {
     @Range(min = 0, max = 1000)
     private float widthSpecimenLabels;
 
+    @Range(min = 0, max = 1000)
+    private float heightBlockLabels;
+
+    @Range(min = 0, max = 1000)
+    private float widthBlockLabels;
+
+    @Range(min = 0, max = 1000)
+    private float heightSlideLabels;
+
+    @Range(min = 0, max = 1000)
+    private float widthSlideLabels;
+
     private boolean collectionDateCheck;
 
     private boolean collectedByCheck;
@@ -114,6 +126,38 @@ public class BarcodeConfigurationForm extends BaseForm {
 
     public void setWidthSpecimenLabels(float widthSpecimenLabels) {
         this.widthSpecimenLabels = widthSpecimenLabels;
+    }
+
+    public float getHeightBlockLabels() {
+        return heightBlockLabels;
+    }
+
+    public void setHeightBlockLabels(float heightBlockLabels) {
+        this.heightBlockLabels = heightBlockLabels;
+    }
+
+    public float getWidthBlockLabels() {
+        return widthBlockLabels;
+    }
+
+    public void setWidthBlockLabels(float widthBlockLabels) {
+        this.widthBlockLabels = widthBlockLabels;
+    }
+
+    public float getHeightSlideLabels() {
+        return heightSlideLabels;
+    }
+
+    public void setHeightSlideLabels(float heightSlideLabels) {
+        this.heightSlideLabels = heightSlideLabels;
+    }
+
+    public float getWidthSlideLabels() {
+        return widthSlideLabels;
+    }
+
+    public void setWidthSlideLabels(float widthSlideLabels) {
+        this.widthSlideLabels = widthSlideLabels;
     }
 
     public boolean getCollectionDateCheck() {

@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openelisglobal</groupId>
 	<artifactId>openelisglobal</artifactId>
@@ -10,22 +12,24 @@
 	<properties>
 		<maven.java.release>11</maven.java.release>
 		<major.version>2</major.version>
-		<minor.version>7</minor.version>
+		<minor.version>8</minor.version>
 		<state.version>1</state.version> <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-		<fix.version>3</fix.version>
+		<fix.version>34</fix.version> 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<liquibase.propertyFile>${project.basedir}/liquibase/liquibase.properties</liquibase.propertyFile>
 		<castor.version>1.4.1</castor.version>
 		<hapi.version>2.3</hapi.version>
 		<hibernate.version>5.6.12.Final</hibernate.version>
 		<hibernate-validator.version>6.1.7.Final</hibernate-validator.version>
-		<postgresql.version>42.4.3</postgresql.version>
+		<hibernate-search.version>6.1.8.Final</hibernate-search.version>
+		<postgresql.version>42.7.0</postgresql.version>
 		<log4j.version>2.17.1</log4j.version>
-		<springframework.version>5.3.25</springframework.version>
-		<springsecurity.version>5.7.5</springsecurity.version>
+		<springframework.version>5.3.26</springframework.version>
+		<springsecurity.version>5.7.10</springsecurity.version>
 		<testContainersVersion>1.15.3</testContainersVersion>
 	</properties>
 	<dependencies>
+
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
@@ -39,12 +43,12 @@
 		<dependency>
 			<groupId>org.itech</groupId>
 			<artifactId>dataexport-api</artifactId>
-			<version>0.0.0.6</version>
+			<version>0.0.0.8</version>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-structures-r4</artifactId>
-			<version>5.0.2</version>
+			<version>6.6.2</version>
 			<exclusions>
 				<exclusion>
 					<groupId>xpp3</groupId>
@@ -55,7 +59,7 @@
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-client</artifactId>
-			<version>5.0.2</version>
+			<version>6.6.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -66,6 +70,16 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 			<version>2.12.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-hibernate5</artifactId>
+			<version>2.12.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.fasterxml.jackson.datatype</groupId>
+   			<artifactId>jackson-datatype-jdk8</artifactId>
+  	 		<version>2.12.0</version>
 		</dependency>
 		<!-- APACHE ASSORTED DEPENDENCIES -->
 		<dependency>
@@ -97,12 +111,7 @@
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
-			<version>1.4</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-			<version>3.1</version>
+			<version>1.5</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -166,6 +175,16 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-c3p0</artifactId>
 			<version>${hibernate.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.search</groupId>
+			<artifactId>hibernate-search-mapper-orm</artifactId>
+			<version>${hibernate-search.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.search</groupId>
+			<artifactId>hibernate-search-backend-lucene</artifactId>
+			<version>${hibernate-search.version}</version>
 		</dependency>
 		<!-- JAVAX DEPENDENCIES -->
 		<dependency>
@@ -383,7 +402,7 @@
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
-			<version>5.5.13</version>
+			<version>5.5.13.3</version>
 		</dependency>
 		<dependency>
 			<groupId>jakarta.xml.ws</groupId>
@@ -439,7 +458,7 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20190722</version>
+			<version>20230618</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>
@@ -490,7 +509,13 @@
 			<artifactId>opencsv</artifactId>
 			<version>5.7.1</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 	<repositories>
 		<repository>
 			<id>jaspersoft-third-party</id>
@@ -510,8 +535,13 @@
 		</resources>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.3.1</version>
+			</plugin>
+			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.0</version>
+				<version>3.8.1</version>
 				<configuration>
 					<!-- move to release when we compile in java versions >= 9 -->
 					<release>${maven.java.release}</release>
@@ -563,11 +593,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.18.1</version>
-				<configuration>
-					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
-					<forkCount>1</forkCount>
-					<reuseForks>false</reuseForks>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

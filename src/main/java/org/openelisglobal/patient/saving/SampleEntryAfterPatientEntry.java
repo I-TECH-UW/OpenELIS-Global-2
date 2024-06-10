@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Scope("prototype")
-public class SampleEntryAfterPatientEntry extends SampleEntry {
+public class SampleEntryAfterPatientEntry extends SampleEntry implements ISampleEntryAfterPatientEntry{
 
     public SampleEntryAfterPatientEntry(IAccessionerForm form, String sysUserId, HttpServletRequest request) {
         this();

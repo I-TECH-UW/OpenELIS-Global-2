@@ -3,7 +3,7 @@ package org.openelisglobal.sampleproject.service;
 import java.sql.Date;
 import java.util.List;
 
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.sampleproject.dao.SampleProjectDAO;
 import org.openelisglobal.sampleproject.valueholder.SampleProject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class SampleProjectServiceImpl extends BaseObjectServiceImpl<SampleProject, String>
+public class SampleProjectServiceImpl extends AuditableBaseObjectServiceImpl<SampleProject, String>
         implements SampleProjectService {
     @Autowired
     protected SampleProjectDAO baseObjectDAO;

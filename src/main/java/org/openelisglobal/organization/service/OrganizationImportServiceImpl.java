@@ -191,7 +191,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
                 }
             } catch (LIMSRuntimeException e) {
                 LogEvent.logError(e);
-                LogEvent.logError(this.getClass().getName(), "", "error importing an organization with id: "
+                LogEvent.logError(this.getClass().getSimpleName(), "", "error importing an organization with id: "
                         + organizationObjects.organization.getFhirUuidAsString());
             }
 

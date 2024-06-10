@@ -75,8 +75,6 @@ public class TestUsageBacklog {
     }
 
     private void handleBacklog() {
-        LogEvent.logInfo(this.getClass().getName(), "method unkown",
-                "Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
         LogEvent.logInfo("TestUsagebacklog", "handleBacklog",
                 "Gathering triggered: " + DateUtil.getCurrentDateAsText("dd-MM-yyyy hh:mm"));
 
@@ -157,7 +155,7 @@ public class TestUsageBacklog {
             }
 
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
             throw e;
         }
     }

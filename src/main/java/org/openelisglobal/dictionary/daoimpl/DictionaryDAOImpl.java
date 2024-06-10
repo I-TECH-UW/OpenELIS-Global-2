@@ -18,8 +18,11 @@
 package org.openelisglobal.dictionary.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -33,8 +36,16 @@ import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.dictionary.dao.DictionaryDAO;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.PersistenceException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  * @author diane benz
@@ -42,6 +53,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implements DictionaryDAO {
+
+    private static final Logger log = LoggerFactory.getLogger(DictionaryDAOImpl.class);
 
     public DictionaryDAOImpl() {
         super(Dictionary.class);
@@ -59,7 +72,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Dictionary getData()", e);
         }
     }
@@ -109,13 +122,11 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
                 query.setParameter("param2", categoryFilter);
             }
 
-            List<Dictionary> list = query.list();
-
-            return list;
+            return query.list();
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(
                     "Error in Dictionary getDictionaryEntrys(String filter, String categoryFilter)", e);
         }
@@ -158,7 +169,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(
                     "Error in Dictionary getDictionaryEntrysByCategoryAbbreviation(String categoryFilter)", e);
         }
@@ -196,8 +207,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
                 query.setParameter("param2", dictionary.getDictionaryCategory().getCategoryName().toLowerCase().trim());
             }
 
-            // initialize with 0 (for new records where no id has been generated
-            // yet
+            // initialize with 0 (for new records where no id has been generated yet
             String dictId = "0";
             if (!StringUtil.isNullorNill(dictionary.getId())) {
                 dictId = dictionary.getId();
@@ -207,7 +217,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
             return !query.list().isEmpty();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateDictionaryExists()", e);
         }
     }
@@ -218,10 +228,8 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         try {
             String sql = "";
             // TODO: when we add other tables that reference dictionary we need
-            // to check those here
-            // also
-            // check references from other tables depending on dictionary
-            // category local abbrev code
+            //  to check those here also check references from other tables depending on dictionary
+            //  category local abbrev code
             if (dictionary.getDictionaryCategory().getLocalAbbreviation()
                     .equals(SystemConfiguration.getInstance().getQaEventDictionaryCategoryType())) {
                 sql = "from QaEvent q where q.type = :param";
@@ -237,7 +245,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
 
             return !query.list().isEmpty();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in dictionaryIsInUse()", e);
         }
     }
@@ -246,8 +254,7 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
     @Transactional(readOnly = true)
     public Dictionary getDictionaryById(String dictionaryId) throws LIMSRuntimeException {
         try {
-            Dictionary dictionary = entityManager.unwrap(Session.class).get(Dictionary.class, dictionaryId);
-            return dictionary;
+            return entityManager.unwrap(Session.class).get(Dictionary.class, dictionaryId);
         } catch (RuntimeException e) {
             handleException(e, "getDictionaryById");
         }
@@ -262,13 +269,11 @@ public class DictionaryDAOImpl extends BaseDAOImpl<Dictionary, String> implement
         try {
             Query<Dictionary> query = entityManager.unwrap(Session.class).createQuery(sql, Dictionary.class);
             query.setParameter("id", Integer.parseInt(dictionaryId));
-            Dictionary dictionary = query.uniqueResult();
-            return dictionary;
+            return query.uniqueResult();
 
         } catch (HibernateException e) {
             handleException(e, "getDataForId");
         }
         return null;
     }
-
 }

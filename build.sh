@@ -87,15 +87,44 @@ git submodule update --recursive
 cd ${CALL_DIR}
 
 echo "creating docker images"
-#create jpaserver docker image
-#bash ${INSTALL_DIR}/buildProject.sh -dl ${JPA_SERVER_DIR}
-#create dataexport jar so it can be used in OpenELIS
-#bash ${INSTALL_DIR}/buildProject.sh -l ${DATA_EXPORT_DIR}
+
 #create data import docker image
 #bash ${INSTALL_DIR}/buildProject.sh -dl ${CONSOLIDATED_SERVER_DIR}
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/fhir -t hapi-fhir-jpaserver
+SUCCESS=$?
+if [ $SUCCESS != 0 ]
+then
+    echo
+    echo build failed hapi-fhir-jpaserver
+    exit $SUCCESS
+fi
+#create the frontend docker image 
+bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/frontend -t openelisglobal-frontend
+SUCCESS=$?
+if [ $SUCCESS != 0 ]
+then
+    echo
+    echo build failed openelisglobal-frontend
+    exit $SUCCESS
+fi
+#create the frontend docker image 
+bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR}/nginx-proxy -t nginx-proxy
+SUCCESS=$?
+if [ $SUCCESS != 0 ]
+then
+    echo
+    echo build failed nginx-proxy
+    exit $SUCCESS
+fi
 #create the docker image 
 bash ${INSTALL_DIR}/buildProject.sh -dl ${PROJECT_DIR} -t openelisglobal
+SUCCESS=$?
+if [ $SUCCESS != 0 ]
+then
+    echo
+    echo build failed openelisglobal
+    exit $SUCCESS
+fi
 
 createLinuxInstaller() {
 	context=$1
@@ -109,10 +138,9 @@ createLinuxInstaller() {
 	cp Postgres_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/Postgres_DockerImage.tar.gz
 	cp JPAServer_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/JPAServer_DockerImage.tar.gz
 	cp AutoHeal_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/AutoHeal_DockerImage.tar.gz
-#	cp DataImporter_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/DataImporter_DockerImage.tar.gz
-#	cp DataSubscriber_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/DataSubscriber_DockerImage.tar.gz
-#	cp ${PROJECT_DIR}/tools/DBBackup/installerTemplates/${backupFile} ${INSTALLER_CREATION_DIR}/linux/${context}/templates/DatabaseBackup.pl
-#	cp ${PROJECT_DIR}/database/baseDatabase/OpenELIS-Global.sql ${INSTALLER_CREATION_DIR}/linux/${installerName}/database/baseDatabase/databaseInstall.sql
+	cp NGINX_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/NGINX_DockerImage.tar.gz
+	cp ReactFrontend_DockerImage.tar.gz ${INSTALLER_CREATION_DIR}/linux/${installerName}/dockerImage/ReactFrontend_DockerImage.tar.gz
+
 	
 	chmod +x ${INSTALLER_CREATION_DIR}/linux/${installerName}/scripts/*.sh
 	
@@ -135,22 +163,18 @@ then
 	
 	echo "saving docker image as OpenELIS-Global_DockerImage.tar.gz"
 	docker save openelisglobal:latest | gzip > OpenELIS-Global_DockerImage.tar.gz
+	echo "saving React frontend docker image"
+	docker save openelisglobal-frontend:latest | gzip > ReactFrontend_DockerImage.tar.gz
+	echo "saving JPA Server docker image"
+	docker save hapi-fhir-jpaserver:latest | gzip > JPAServer_DockerImage.tar.gz
 	echo "saving Postgres docker image"
 	docker pull postgres:14.4
 	docker save postgres:14.4 | gzip > Postgres_DockerImage.tar.gz
-	echo "saving JPA Server docker image"
-	
-	docker save hapi-fhir-jpaserver:latest | gzip > JPAServer_DockerImage.tar.gz
 	echo "saving Autoheal docker image"
 	docker pull willfarrell/autoheal:1.2.0
 	docker save willfarrell/autoheal:1.2.0 | gzip > AutoHeal_DockerImage.tar.gz
-	
-	
-#	docker save hapi-fhir-jpaserver-starter:latest | gzip > JPAServer_DockerImage.tar.gz
-#	echo "saving Data Importer docker image"
-#	docker save dataimport-webapp:latest | gzip > DataImporter_DockerImage.tar.gz
-#	echo "saving Data Subscriber docker image"
-#	docker save datasubscriber-webapp:latest | gzip > DataSubscriber_DockerImage.tar.gz
+	echo "saving NGINX docker image"
+	docker save nginx-proxy | gzip > NGINX_DockerImage.tar.gz
 	
 	mkdir ${STAGING_DIR}
 	createLinuxInstaller OpenELIS-Global OffSiteBackupLinux.pl 
@@ -160,8 +184,9 @@ then
 	rm Postgres_DockerImage.tar.gz
 	rm JPAServer_DockerImage.tar.gz
 	rm AutoHeal_DockerImage.tar.gz
-#	rm DataSubscriber_DockerImage.tar.gz
-#	rm DataImporter_DockerImage.tar.gz
+	rm NGINX_DockerImage.tar.gz
+	rm ReactFrontend_DockerImage.tar.gz
+
 	rm -r ${STAGING_DIR}
 	
 fi

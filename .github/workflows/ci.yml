@@ -21,37 +21,21 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
             ${{ runner.os }}-maven- 
-    - name: Log in to the Container registry
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}         
-    - name: Checkout dataexport module
-      uses: actions/checkout@v2
-      with:
-        repository: I-TECH-UW/dataexport
-        ref: develop    
-    - name: install dataexport module
-      run: mvn clean install  
     
     - name: Checkout OpenELIS-Global2
       uses: actions/checkout@v2
       with:
         repository: ${{github.repository}} 
+        submodules: recursive
+    - name: Initialize and build submodules
+      run: |
+            cd dataexport
+            mvn clean install  
+            cd ..
+    
     - name: Build OpenELIS-Global2
       run: mvn clean install  
           
     - name: Run OpenELS image 
-      run : docker-compose up -d
-      
-    - name: Sleep for 3 minutes for OpenELIS to start
-      run: sleep 3m
-      shell: bash
-      
-    - name: check containers
-      run : docker ps 
-      
-    - name: Show OpenELIS Logs
-      run : docker-compose logs oe.openelis.org
+      run : docker-compose -f build.docker-compose.yml up -d
       

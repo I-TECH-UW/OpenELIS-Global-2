@@ -65,6 +65,7 @@ public class ARVReportData {
     private String orgname;
     private String doctor;
     private String compleationdate;
+    private String releasedate;
     private String labNo;
     private String pcr;
     private String status;
@@ -543,4 +544,12 @@ public class ARVReportData {
             return note != null ? note.getText() : null;
         }
     }
+
+	public String getReleasedate() {
+		return releasedate;
+	}
+
+	public void setReleasedate(String releasedate) {
+		this.releasedate = releasedate;
+	}
 }

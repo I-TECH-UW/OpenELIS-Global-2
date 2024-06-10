@@ -18,6 +18,7 @@
 package org.openelisglobal.analyzerimport.valueholder;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class AnalyzerTestMappingPK implements Serializable {
 
@@ -40,4 +41,21 @@ public class AnalyzerTestMappingPK implements Serializable {
     public void setAnalyzerTestName(String analyzerTestName) {
         this.analyzerTestName = analyzerTestName;
     }
+
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        AnalyzerTestMappingPK that = (AnalyzerTestMappingPK) o;
+
+        return Objects.equals(this.analyzerId, that.analyzerId)
+                && Objects.equals(this.analyzerTestName, that.analyzerTestName);
+    }
+
+    public int hashCode() {
+        return Objects.hash(analyzerId, analyzerTestName);
+    }
+
 }

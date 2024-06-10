@@ -214,7 +214,6 @@ function mySaveAction() {
 		var rolesTable1 = document.getElementById("rolesTable_1");
 		var selectedLabUnit = rolesTable1.rows[0].cells[1].getElementsByTagName("select")[0];
 		var value = selectedLabUnit.options[selectedLabUnit.selectedIndex].value;
-		console.log(value);
 		if (value == "1=AllLabUnits") {
 			alert("<spring:message code="systemuserrole.select.allLabUnits.warning"/>");
 			document.getElementById("createNewRoles").disabled = true;
@@ -227,7 +226,7 @@ function mySaveAction() {
 
 <script>
 var userRolesData = JSON.parse('${form.userLabRoleData}' != '' ? '${form.userLabRoleData}' : '{}');
-console.log(userRolesData);
+//console.log(userRolesData);
 
 // this dynamically Renders sets of Lab Unit Roles with data if user roles data exists			 
 function renderUserRolesData() {

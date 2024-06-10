@@ -165,7 +165,7 @@ public class AnalyzerTestNameController extends BaseController {
 
         } catch (LIMSRuntimeException e) {
             String errorMsg = null;
-            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
                 errorMsg = "errors.UpdateException";

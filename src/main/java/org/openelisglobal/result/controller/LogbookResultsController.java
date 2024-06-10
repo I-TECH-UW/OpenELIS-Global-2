@@ -50,6 +50,7 @@ import org.openelisglobal.inventory.action.InventoryUtility;
 import org.openelisglobal.inventory.form.InventoryKitItem;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
+import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.referral.action.beanitems.ReferralItem;
@@ -97,6 +98,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Controller
 public class LogbookResultsController extends LogbookResultsBaseController {
 
@@ -108,7 +112,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             "testResult*.referralCanceled", "testResult*.considerRejectReason", "testResult*.hasQualifiedResult",
             "testResult*.shadowResultValue", "testResult*.reflexJSONResult", "testResult*.testDate",
             "testResult*.analysisMethod", "testResult*.testMethod", "testResult*.testKitInventoryId",
-            "testResult*.forceTechApproval", "testResult*.lowerNormalRange", "testResult*.upperNormalRange",
+            "testResult*.forceTechApproval", "testResult*.lowerNormalRange", "testResult*.upperNormalRange","testResult*.lowerCritical","testResult*.higherCritical",
             "testResult*.significantDigits", "testResult*.resultValue", "testResult*.qualifiedResultValue",
             "testResult*.multiSelectResultValues", "testResult*.testMethod", "testResult*.multiSelectResultValues",
             "testResult*.qualifiedResultValue", "testResult*.qualifiedResultValue", "testResult*.shadowReferredOut",
@@ -313,6 +317,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
 
         addFlashMsgsToRequest(request);
+
         return findForward(FWD_SUCCESS, form);
     }
 
@@ -335,6 +340,18 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
         String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonForm = "";
+        List<TestResultItem> testResultItemList = form.getTestResult();
+
+      	// load testSections for drop down
+        String resultsRoleId = roleService.getRoleByName(Constants.ROLE_RESULTS).getId();
+        List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request), resultsRoleId);
+        form.setTestSections(testSections);
+        form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
+        form.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
+        form.setSearchFinished(true);
+      
         if ("true".equals(request.getParameter("pageResults"))) {
             return getLogbookResults(request, form);
         }
@@ -351,7 +368,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 .getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
         List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
         if (checkResults.size() == 0) {
-            LogEvent.logDebug(this.getClass().getName(), "LogbookResults()", "Attempted save of stale page.");
+            LogEvent.logDebug(this.getClass().getSimpleName(), "LogbookResults()", "Attempted save of stale page.");
 
             List<TestResultItem> resultList = form.getTestResult();
             for (TestResultItem item : resultList) {
@@ -401,10 +418,10 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             }
         } catch (LIMSRuntimeException e) {
             String errorMsg;
-            if (e.getException() instanceof StaleObjectStateException) {
+            if (e.getCause() instanceof StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
-                LogEvent.logDebug(e);
+                LogEvent.logError(e);
                 errorMsg = "errors.UpdateException";
             }
 
@@ -418,7 +435,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             try {
                 updater.postTransactionalCommitUpdate(actionDataSet);
             } catch (Exception e) {
-                LogEvent.logError(this.getClass().getName(), "showLogbookResultsUpdate",
+                LogEvent.logError(this.getClass().getSimpleName(), "showLogbookResultsUpdate",
                         "error doing a post transactional commit");
                 LogEvent.logError(e);
             }
@@ -481,10 +498,14 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                     resultSaveService.isUpdatedResult() && analysisService.patientReportHasBeenDone(analysis));
 
             if (analysisService.hasBeenCorrectedSinceLastPatientReport(analysis)) {
-                actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.EXTERNAL,
-                        MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
+                Note note = noteService.createSavableNote(analysis, NoteType.EXTERNAL,
+                        MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request));
+                if (!noteService.duplicateNoteExists(note)) {
+                    actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.EXTERNAL,
+                            MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT, getSysUserId(request)));
+                }
             }
-
+            
             // If there is more than one result then each user selected reflex gets mapped
             // to that result
             for (Result result : results) {
@@ -503,30 +524,30 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     private void handleReferrals(TestResultItem testResultItem, ReferralItem referralItem, List<Result> results,
             Analysis analysis, ResultsUpdateDataSet actionDataSet) {
 //        List<Referral> referrals = new ArrayList<>();
-        Referral referral = new Referral();
-        referral.setFhirUuid(UUID.randomUUID());
-        referral.setStatus(ReferralStatus.SENT);
-        referral.setSysUserId(actionDataSet.getCurrentUserId());
-        referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
-        referral.setRequesterName(testResultItem.getTechnician());
+		Referral referral = new Referral();
+		referral.setFhirUuid(UUID.randomUUID());
+		referral.setStatus(ReferralStatus.SENT);
+		referral.setSysUserId(actionDataSet.getCurrentUserId());
+		referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
+		referral.setRequesterName(testResultItem.getTechnician());
 
-        referral.setRequestDate(new Timestamp(new Date().getTime()));
-        referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
-        referral.setRequesterName(referralItem.getReferrer());
-        referral.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
-        referral.setAnalysis(analysis);
+		referral.setRequestDate(new Timestamp(new Date().getTime()));
+		referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
+		referral.setRequesterName(referralItem.getReferrer());
+		referral.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
+		referral.setAnalysis(analysis);
 
-        referral.setReferralReasonId(referralItem.getReferralReasonId());
+		referral.setReferralReasonId(referralItem.getReferralReasonId());
 
 //            referralService.insert(referral);
 //        referrals.add(referral);
-        ReferralResult referralResult = new ReferralResult();
-        referralResult.setReferralId(referral.getId());
-        referralResult.setSysUserId(actionDataSet.getCurrentUserId());
-        referralResult.setTestId(referralItem.getReferredTestId());
-        if (results.size() == 1) {
-            referralResult.setResult(results.get(0));
-        }
+		ReferralResult referralResult = new ReferralResult();
+		referralResult.setReferralId(referral.getId());
+		referralResult.setSysUserId(actionDataSet.getCurrentUserId());
+		referralResult.setTestId(referralItem.getReferredTestId());
+		if (results.size() == 1) {
+			referralResult.setResult(results.get(0));
+		}
 //            referralResult.setResult(result);
 //            referralResultService.insert(referralResult);
 
@@ -666,7 +687,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         ResultInventory testKit = null;
 
         if ((TestResultItem.ResultDisplayType.SYPHILIS == testResult.getRawResultDisplayType()
-                || TestResultItem.ResultDisplayType.HIV == testResult.getRawResultDisplayType())
+                || TestResultItem.ResultDisplayType.HIV== testResult.getRawResultDisplayType())
                 && ResultsLoadUtility.TESTKIT.equals(testKitName)) {
 
             testKit = createTestKit(testResult, testKitName, testResult.getTestKitId());
@@ -696,7 +717,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         if (testResultItem.getAnalysisMethod() != null) {
             analysis.setAnalysisType(testResultItem.getAnalysisMethod());
         }
-        analysis.setStartedDateForDisplay(testDate);
+       // analysis.setStartedDateForDisplay(testDate);
 
         // This needs to be refactored -- part of the logic is in
         // getStatusForTestResult. RetroCI over rides to whatever was set before
@@ -767,6 +788,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     private String findPatientForward(String forward) {
         if (FWD_SUCCESS_INSERT.equals(forward)) {
             return "redirect:/PatientResults";
+        } else if (FWD_SUCCESS.equals(forward)) {
+            return "patientResultDefinition";
         } else if (FWD_VALIDATION_ERROR.equals(forward)) {
             return "patientResultDefinition";
         } else if (FWD_FAIL_INSERT.equals(forward)) {

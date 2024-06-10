@@ -49,7 +49,7 @@ public class TestResult extends BaseObject<String> {
         this.test = new ValueHolder();
         this.scriptlet = new ValueHolder();
     }
-
+    
     @Override
     public String getId() {
         return this.id;
@@ -140,9 +140,10 @@ public class TestResult extends BaseObject<String> {
         this.value = value;
     }
 
-    public void setTest(ValueHolderInterface test) {
-        this.test = test;
-    }
+    // gnr jackson setter conflict
+//    public void setTest(ValueHolderInterface test) {
+//        this.test = test;
+//    }
 
     public String getScriptletName() {
         return scriptletName;

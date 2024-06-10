@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.Bundle;
@@ -118,72 +119,72 @@ import ca.uhn.fhir.model.api.TemporalPrecisionEnum;
 @Service
 public class FhirTransformServiceImpl implements FhirTransformService {
 
-    @Autowired
-    private FhirConfig fhirConfig;
-    @Autowired
-    private ElectronicOrderService electronicOrderService;
-    @Autowired
-    private PatientService patientService;
-    @Autowired
-    private TypeOfSampleService typeOfSampleService;
-    @Autowired
-    private SampleService sampleService;
-    @Autowired
-    private AnalysisService analysisService;
-    @Autowired
-    private TestService testService;
-    @Autowired
-    private ResultService resultService;
-    @Autowired
-    private SampleHumanService sampleHumanService;
-    @Autowired
-    private FhirPersistanceService fhirPersistanceService;
-    @Autowired
-    private DictionaryService dictionaryService;
-    @Autowired
-    private LocalizationService localizationService;
-    @Autowired
-    private NoteService noteService;
-    @Autowired
-    private SampleItemService sampleItemService;
-    @Autowired
-    private ObservationHistoryService observationHistoryService;
-    @Autowired
-    private IStatusService statusService;
-    @Autowired
-    private ProviderService providerService;
-    @Autowired
-    private ReferralSetService referralSetService;
-    @Autowired
-    private PersonAddressService personAddressService;
-    @Autowired
-    private AddressPartService addressPartService;
+	@Autowired
+	private FhirConfig fhirConfig;
+	@Autowired
+	private ElectronicOrderService electronicOrderService;
+	@Autowired
+	private PatientService patientService;
+	@Autowired
+	private TypeOfSampleService typeOfSampleService;
+	@Autowired
+	private SampleService sampleService;
+	@Autowired
+	private AnalysisService analysisService;
+	@Autowired
+	private TestService testService;
+	@Autowired
+	private ResultService resultService;
+	@Autowired
+	private SampleHumanService sampleHumanService;
+	@Autowired
+	private FhirPersistanceService fhirPersistanceService;
+	@Autowired
+	private DictionaryService dictionaryService;
+	@Autowired
+	private LocalizationService localizationService;
+	@Autowired
+	private NoteService noteService;
+	@Autowired
+	private SampleItemService sampleItemService;
+	@Autowired
+	private ObservationHistoryService observationHistoryService;
+	@Autowired
+	private IStatusService statusService;
+	@Autowired
+	private ProviderService providerService;
+	@Autowired
+	private ReferralSetService referralSetService;
+	@Autowired
+	private PersonAddressService personAddressService;
+	@Autowired
+	private AddressPartService addressPartService;
 
-    private String ADDRESS_PART_VILLAGE_ID;
-    private String ADDRESS_PART_COMMUNE_ID;
-    private String ADDRESS_PART_DEPT_ID;
+	private String ADDRESS_PART_VILLAGE_ID;
+	private String ADDRESS_PART_COMMUNE_ID;
+	private String ADDRESS_PART_DEPT_ID;
 
-    @PostConstruct
-    public void initializeGlobalVariables() {
-        List<AddressPart> partList = addressPartService.getAll();
-        for (AddressPart addressPart : partList) {
-            if ("department".equals(addressPart.getPartName())) {
-                ADDRESS_PART_DEPT_ID = addressPart.getId();
-            } else if ("commune".equals(addressPart.getPartName())) {
-                ADDRESS_PART_COMMUNE_ID = addressPart.getId();
-            } else if ("village".equals(addressPart.getPartName())) {
-                ADDRESS_PART_VILLAGE_ID = addressPart.getId();
-            }
-        }
+	@PostConstruct
+	public void initializeGlobalVariables() {
+		List<AddressPart> partList = addressPartService.getAll();
+		for (AddressPart addressPart : partList) {
+			if ("department".equals(addressPart.getPartName())) {
+				ADDRESS_PART_DEPT_ID = addressPart.getId();
+			} else if ("commune".equals(addressPart.getPartName())) {
+				ADDRESS_PART_COMMUNE_ID = addressPart.getId();
+			} else if ("village".equals(addressPart.getPartName())) {
+				ADDRESS_PART_VILLAGE_ID = addressPart.getId();
+			}
+		}
 
-    }
+	}
 
-    @Transactional
-    @Async
-    @Override
-    public AsyncResult<Bundle> transformPersistPatients(List<String> patientIds) throws FhirLocalPersistingException {
-        FhirOperations fhirOperations = new FhirOperations();
-        CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
+	@Transactional
+	@Async
+	@Override
+	public AsyncResult<Bundle> transformPersistPatients(List<String> patientIds) throws FhirLocalPersistingException {
+		FhirOperations fhirOperations = new FhirOperations();
+		CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
 
         Map<String, org.hl7.fhir.r4.model.Patient> fhirPatients = new HashMap<>();
         for (String patientId : patientIds) {
@@ -193,27 +194,28 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             }
             org.hl7.fhir.r4.model.Patient fhirPatient = this.transformToFhirPatient(patient);
             if (fhirPatients.containsKey(fhirPatient.getIdElement().getIdPart())) {
-                LogEvent.logWarn("", "", "patient collision with id: " + fhirPatient.getIdElement().getIdPart());
+                LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistPatients",
+                        "patient collision with id: " + fhirPatient.getIdElement().getIdPart());
             }
             fhirPatients.put(fhirPatient.getIdElement().getIdPart(), fhirPatient);
 
-        }
+		}
 
-        for (org.hl7.fhir.r4.model.Patient fhirPatient : fhirPatients.values()) {
-            this.addToOperations(fhirOperations, tempIdGenerator, fhirPatient);
-        }
+		for (org.hl7.fhir.r4.model.Patient fhirPatient : fhirPatients.values()) {
+			this.addToOperations(fhirOperations, tempIdGenerator, fhirPatient);
+		}
 
-        Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
-        return new AsyncResult<>(responseBundle);
-    }
+		Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
+		return new AsyncResult<>(responseBundle);
+	}
 
-    @Transactional
-    @Async
-    @Override
-    public AsyncResult<Bundle> transformPersistObjectsUnderSamples(List<String> sampleIds)
-            throws FhirLocalPersistingException {
-        FhirOperations fhirOperations = new FhirOperations();
-        CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
+	@Transactional
+	@Async
+	@Override
+	public AsyncResult<Bundle> transformPersistObjectsUnderSamples(List<String> sampleIds)
+			throws FhirLocalPersistingException {
+		FhirOperations fhirOperations = new FhirOperations();
+		CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
 
         Map<String, Task> tasks = new HashMap<>();
         Map<String, org.hl7.fhir.r4.model.Patient> fhirPatients = new HashMap<>();
@@ -223,7 +225,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         Map<String, Observation> observations = new HashMap<>();
         Map<String, Practitioner> requesters = new HashMap<>();
         for (String sampleId : sampleIds) {
-            LogEvent.logDebug(this.getClass().getName(), "transformPersistObjectsUnderSamples",
+            LogEvent.logDebug(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
                     "transforming sampleId: " + sampleId);
             Sample sample = sampleService.get(sampleId);
             Patient patient = sampleHumanService.getPatientForSample(sample);
@@ -232,129 +234,152 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             List<Analysis> analysises = analysisService.getAnalysesBySampleId(sampleId);
             List<Result> results = resultService.getResultsForSample(sample);
 
-            if (sample.getFhirUuid() == null) {
-                sample.setFhirUuid(UUID.randomUUID());
-            }
-            if (patient.getFhirUuid() == null) {
-                patient.setFhirUuid(UUID.randomUUID());
-            }
-            if (provider.getFhirUuid() == null) {
-                provider.setFhirUuid(UUID.randomUUID());
-            }
-            sampleItems.stream().forEach((e) -> {
-                if (e.getFhirUuid() == null) {
-                    e.setFhirUuid(UUID.randomUUID());
-                }
-            });
+			if (sample != null && sample.getFhirUuid() == null) {
+				sample.setFhirUuid(UUID.randomUUID());
+			}
+			if (patient != null && patient.getFhirUuid() == null) {
+				patient.setFhirUuid(UUID.randomUUID());
+			}
+			if (provider != null && provider.getFhirUuid() == null) {
+				provider.setFhirUuid(UUID.randomUUID());
+			}
+			
+			if (sampleItems != null) {
+				sampleItems.stream().forEach((e) -> {
+					if (e.getFhirUuid() == null) {
+						e.setFhirUuid(UUID.randomUUID());
+					}
+				});
+			}
 
-            analysises.stream().forEach((e) -> {
-                if (e.getFhirUuid() == null) {
-                    e.setFhirUuid(UUID.randomUUID());
-                }
-            });
+			if (analysises != null) {
+				analysises.stream().forEach((e) -> {
+					if (e.getFhirUuid() == null) {
+						e.setFhirUuid(UUID.randomUUID());
+					}
+				});
+			}
 
-            results.stream().forEach((e) -> {
-                if (e.getFhirUuid() == null) {
-                    e.setFhirUuid(UUID.randomUUID());
-                }
-            });
-            Task task = this.transformToTask(sample);
-            if (tasks.containsKey(task.getIdElement().getIdPart())) {
-                LogEvent.logWarn("", "", "task collision with id: " + task.getIdElement().getIdPart());
-            }
-            tasks.put(task.getIdElement().getIdPart(), task);
+			if (results != null) {
+				results.stream().forEach((e) -> {
+					if (e.getFhirUuid() == null) {
+						e.setFhirUuid(UUID.randomUUID());
+					}
+				});
+			}
+			
+			if (sample != null) {
+				Task task = this.transformToTask(sample);
+				if (tasks.containsKey(task.getIdElement().getIdPart())) {
+					LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+							"task collision with id: " + task.getIdElement().getIdPart());
+				}
+				tasks.put(task.getIdElement().getIdPart(), task);
+	
+				Optional<Task> referringTask = getReferringTaskForSample(sample);
+				if (referringTask.isPresent()) {
+					updateReferringTaskWithTaskInfo(referringTask.get(), task);
+					if (tasks.containsKey(referringTask.get().getIdElement().getIdPart())) {
+						LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+								"referring task collision with id: " + referringTask.get().getIdElement().getIdPart());
+					}
+				}
+			}
 
-            Optional<Task> referringTask = getReferringTaskForSample(sample);
-            if (referringTask.isPresent()) {
-                updateReferringTaskWithTaskInfo(referringTask.get(), task);
-                if (tasks.containsKey(referringTask.get().getIdElement().getIdPart())) {
-                    LogEvent.logWarn("", "",
-                            "referring task collision with id: " + referringTask.get().getIdElement().getIdPart());
-                }
-            }
+			if (patient != null) {
+				org.hl7.fhir.r4.model.Patient fhirPatient = this.transformToFhirPatient(patient);
+				if (fhirPatients.containsKey(fhirPatient.getIdElement().getIdPart())) {
+					LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+							"patient collision with id: " + fhirPatient.getIdElement().getIdPart());
+				}
+				fhirPatients.put(fhirPatient.getIdElement().getIdPart(), fhirPatient);
+			}
 
-            org.hl7.fhir.r4.model.Patient fhirPatient = this.transformToFhirPatient(patient);
-            if (fhirPatients.containsKey(fhirPatient.getIdElement().getIdPart())) {
-                LogEvent.logWarn("", "", "patient collision with id: " + fhirPatient.getIdElement().getIdPart());
-            }
-            fhirPatients.put(fhirPatient.getIdElement().getIdPart(), fhirPatient);
+			if (provider != null) {
+				Practitioner requester = transformProviderToPractitioner(provider);
+				if (requesters.containsKey(requester.getIdElement().getIdPart())) {
+					LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+							"practitioner collision with id: " + requester.getIdElement().getIdPart());
+				}
+				requesters.put(requester.getIdElement().getIdPart(), requester);
+			}
 
-            Practitioner requester = transformProviderToPractitioner(provider);
-            if (requesters.containsKey(requester.getIdElement().getIdPart())) {
-                LogEvent.logWarn("", "", "practitioner collision with id: " + fhirPatient.getIdElement().getIdPart());
-            }
-            requesters.put(requester.getIdElement().getIdPart(), requester);
-
-            for (SampleItem sampleItem : sampleItems) {
-                Specimen specimen = this.transformToSpecimen(sampleItem);
-                if (specimens.containsKey(specimen.getIdElement().getIdPart())) {
-                    LogEvent.logWarn("", "", "specimen collision with id: " + specimen.getIdElement().getIdPart());
-                }
-                specimens.put(specimen.getIdElement().getIdPart(), specimen);
-            }
-            for (Analysis analysis : analysises) {
-                ServiceRequest serviceRequest = this.transformToServiceRequest(analysis);
-                if (serviceRequests.containsKey(serviceRequest.getIdElement().getIdPart())) {
-                    LogEvent.logWarn("", "",
-                            "serviceRequest collision with id: " + serviceRequest.getIdElement().getIdPart());
-                }
-                serviceRequests.put(serviceRequest.getIdElement().getIdPart(), serviceRequest);
-                if (statusService.matches(analysis.getStatusId(), AnalysisStatus.Finalized)) {
-                    DiagnosticReport diagnosticReport = this.transformResultToDiagnosticReport(analysis);
-                    if (diagnosticReports.containsKey(analysis.getFhirUuidAsString())) {
-                        LogEvent.logWarn("", "",
-                                "diagnosticReport collision with id: " + diagnosticReport.getIdElement().getIdPart());
-                    }
-                    diagnosticReports.put(analysis.getFhirUuidAsString(), diagnosticReport);
-                }
-            }
-            for (Result result : results) {
-                Observation observation = this.transformResultToObservation(result);
-                if (observations.containsKey(observation.getIdElement().getIdPart())) {
-                    LogEvent.logWarn("", "",
-                            "observation collision with id: " + observation.getIdElement().getIdPart());
-                }
-                observations.put(observation.getIdElement().getIdPart(), observation);
-            }
+			if (sampleItems != null) {
+				for (SampleItem sampleItem : sampleItems) {
+					Specimen specimen = this.transformToSpecimen(sampleItem);
+					if (specimens.containsKey(specimen.getIdElement().getIdPart())) {
+						LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+								"specimen collision with id: " + specimen.getIdElement().getIdPart());
+					}
+					specimens.put(specimen.getIdElement().getIdPart(), specimen);
+				}
+			}
+			if (analysises != null) {
+				for (Analysis analysis : analysises) {
+					ServiceRequest serviceRequest = this.transformToServiceRequest(analysis);
+					if (serviceRequests.containsKey(serviceRequest.getIdElement().getIdPart())) {
+						LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+								"serviceRequest collision with id: " + serviceRequest.getIdElement().getIdPart());
+					}
+					serviceRequests.put(serviceRequest.getIdElement().getIdPart(), serviceRequest);
+					if (statusService.matches(analysis.getStatusId(), AnalysisStatus.Finalized)) {
+						DiagnosticReport diagnosticReport = this.transformResultToDiagnosticReport(analysis);
+						if (diagnosticReports.containsKey(analysis.getFhirUuidAsString())) {
+							LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+									"diagnosticReport collision with id: " + diagnosticReport.getIdElement().getIdPart());
+						}
+						diagnosticReports.put(analysis.getFhirUuidAsString(), diagnosticReport);
+					}
+				}
+			}
+			if (results != null) {
+				for (Result result : results) {
+					Observation observation = this.transformResultToObservation(result);
+					if (observations.containsKey(observation.getIdElement().getIdPart())) {
+						LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+								"observation collision with id: " + observation.getIdElement().getIdPart());
+					}
+					observations.put(observation.getIdElement().getIdPart(), observation);
+				}
+			}
         }
 
-        for (Task task : tasks.values()) {
-            this.addToOperations(fhirOperations, tempIdGenerator, task);
-        }
-        for (org.hl7.fhir.r4.model.Patient fhirPatient : fhirPatients.values()) {
-            this.addToOperations(fhirOperations, tempIdGenerator, fhirPatient);
-        }
-        for (Specimen specimen : specimens.values()) {
-            this.addToOperations(fhirOperations, tempIdGenerator, specimen);
-        }
-        for (ServiceRequest serviceRequest : serviceRequests.values()) {
-            this.addToOperations(fhirOperations, tempIdGenerator, serviceRequest);
-        }
-        for (Observation observation : observations.values()) {
-            this.addToOperations(fhirOperations, tempIdGenerator, observation);
-        }
-        for (DiagnosticReport diagnosticReport : diagnosticReports.values()) {
-            this.addToOperations(fhirOperations, tempIdGenerator, diagnosticReport);
-        }
+		for (Task task : tasks.values()) {
+			this.addToOperations(fhirOperations, tempIdGenerator, task);
+		}
+		for (org.hl7.fhir.r4.model.Patient fhirPatient : fhirPatients.values()) {
+			this.addToOperations(fhirOperations, tempIdGenerator, fhirPatient);
+		}
+		for (Specimen specimen : specimens.values()) {
+			this.addToOperations(fhirOperations, tempIdGenerator, specimen);
+		}
+		for (ServiceRequest serviceRequest : serviceRequests.values()) {
+			this.addToOperations(fhirOperations, tempIdGenerator, serviceRequest);
+		}
+		for (Observation observation : observations.values()) {
+			this.addToOperations(fhirOperations, tempIdGenerator, observation);
+		}
+		for (DiagnosticReport diagnosticReport : diagnosticReports.values()) {
+			this.addToOperations(fhirOperations, tempIdGenerator, diagnosticReport);
+		}
+		for (Practitioner requester : requesters.values()) {
+			this.addToOperations(fhirOperations, tempIdGenerator, requester);
+		}
 
-        for (Practitioner requester : requesters.values()) {
-            this.addToOperations(fhirOperations, tempIdGenerator, requester);
-        }
+		Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
+		return new AsyncResult<>(responseBundle);
+	}
 
-        Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
-        return new AsyncResult<>(responseBundle);
-    }
-
-    @Override
-    @Async
-    @Transactional(readOnly = true)
-    public void transformPersistPatient(PatientManagementInfo patientInfo) throws FhirLocalPersistingException {
-        CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
-        FhirOperations fhirOperations = new FhirOperations();
-        org.hl7.fhir.r4.model.Patient patient = transformToFhirPatient(patientInfo.getPatientPK());
-        this.addToOperations(fhirOperations, tempIdGenerator, patient);
-        Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
-    }
+	@Override
+	@Async
+	@Transactional(readOnly = true)
+	public void transformPersistPatient(PatientManagementInfo patientInfo) throws FhirLocalPersistingException {
+		CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
+		FhirOperations fhirOperations = new FhirOperations();
+		org.hl7.fhir.r4.model.Patient patient = transformToFhirPatient(patientInfo.getPatientPK());
+		this.addToOperations(fhirOperations, tempIdGenerator, patient);
+		Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
+	}
 
     @Override
     @Async
@@ -362,628 +387,685 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     public void transformPersistOrderEntryFhirObjects(SamplePatientUpdateData updateData,
             PatientManagementInfo patientInfo, boolean useReferral, List<ReferralItem> referralItems)
             throws FhirLocalPersistingException {
-        LogEvent.logTrace(this.getClass().getName(), "createFhirFromSamplePatient",
+        LogEvent.logTrace(this.getClass().getSimpleName(), "createFhirFromSamplePatient",
                 "accessionNumber - " + updateData.getAccessionNumber());
         CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
         FhirOperations fhirOperations = new FhirOperations();
 
-        FhirOrderEntryObjects orderEntryObjects = new FhirOrderEntryObjects();
-        // TODO should we create a task per service request that is part of this task so
-        // we can have the ServiceRequest as the focus in those tasks?
-        // task for entering the order
-        Task task = transformToTask(updateData.getSample().getId());
-        this.addToOperations(fhirOperations, tempIdGenerator, task);
+		FhirOrderEntryObjects orderEntryObjects = new FhirOrderEntryObjects();
+		// TODO should we create a task per service request that is part of this task so
+		// we can have the ServiceRequest as the focus in those tasks?
+		// task for entering the order
+		Task task = transformToTask(updateData.getSample().getId());
+		this.addToOperations(fhirOperations, tempIdGenerator, task);
 
-        Optional<Task> referringTask = getReferringTaskForSample(updateData.getSample());
-        if (referringTask.isPresent()) {
-            updateReferringTaskWithTaskInfo(referringTask.get(), task);
-            this.addToOperations(fhirOperations, tempIdGenerator, referringTask.get());
-        }
+		Optional<Task> referringTask = getReferringTaskForSample(updateData.getSample());
+		if (referringTask.isPresent()) {
+			updateReferringTaskWithTaskInfo(referringTask.get(), task);
+			this.addToOperations(fhirOperations, tempIdGenerator, referringTask.get());
+		}
 
-        // patient
-        org.hl7.fhir.r4.model.Patient patient = transformToFhirPatient(patientInfo.getPatientPK());
-        this.addToOperations(fhirOperations, tempIdGenerator, patient);
-        orderEntryObjects.patient = patient;
+		Optional<ServiceRequest> referingServiceRequest = getReferringServiceRequestForSample(updateData.getSample());
+		if (referingServiceRequest.isPresent()) {
+			updateReferringServiceRequestWithSampleInfo(updateData.getSample(), referingServiceRequest.get());
+			this.addToOperations(fhirOperations, tempIdGenerator, referingServiceRequest.get());
+		}
 
-        // requester
-        Practitioner requester = transformProviderToPractitioner(updateData.getProvider().getId());
-        this.addToOperations(fhirOperations, tempIdGenerator, requester);
-        orderEntryObjects.requester = requester;
+		// patient
+		org.hl7.fhir.r4.model.Patient patient = transformToFhirPatient(patientInfo.getPatientPK());
+		this.addToOperations(fhirOperations, tempIdGenerator, patient);
+		orderEntryObjects.patient = patient;
 
-        // Specimens and service requests
-        for (SampleTestCollection sampleTest : updateData.getSampleItemsTests()) {
-            FhirSampleEntryObjects fhirSampleEntryObjects = new FhirSampleEntryObjects();
-            fhirSampleEntryObjects.specimen = transformToFhirSpecimen(sampleTest);
+		// requester
+		if (ObjectUtils.isNotEmpty(updateData.getProvider())) {
+			Practitioner requester = transformProviderToPractitioner(updateData.getProvider().getId());
+			this.addToOperations(fhirOperations, tempIdGenerator, requester);
+			orderEntryObjects.requester = requester;
+		}
 
-            // TODO collector
+		// Specimens and service requests
+		for (SampleTestCollection sampleTest : updateData.getSampleItemsTests()) {
+			FhirSampleEntryObjects fhirSampleEntryObjects = new FhirSampleEntryObjects();
+			fhirSampleEntryObjects.specimen = transformToFhirSpecimen(sampleTest);
+
+			// TODO collector
 //            fhirSampleEntryObjects.collector = transformCollectorToPractitioner(sampleTest.item.getCollector());
-            fhirSampleEntryObjects.serviceRequests = transformToServiceRequests(updateData, sampleTest);
+			fhirSampleEntryObjects.serviceRequests = transformToServiceRequests(updateData, sampleTest);
 
-            this.addToOperations(fhirOperations, tempIdGenerator, fhirSampleEntryObjects.specimen);
+			this.addToOperations(fhirOperations, tempIdGenerator, fhirSampleEntryObjects.specimen);
 //            this.addToOperations(fhirOperations, tempIdGenerator, fhirSampleEntryObjects.collector);
 
-            for (ServiceRequest serviceRequest : fhirSampleEntryObjects.serviceRequests) {
-                this.addToOperations(fhirOperations, tempIdGenerator, serviceRequest);
-            }
+			for (ServiceRequest serviceRequest : fhirSampleEntryObjects.serviceRequests) {
+				this.addToOperations(fhirOperations, tempIdGenerator, serviceRequest);
+			}
 
-            orderEntryObjects.sampleEntryObjectsList.add(fhirSampleEntryObjects);
-        }
+			orderEntryObjects.sampleEntryObjectsList.add(fhirSampleEntryObjects);
+		}
 
-        // TODO location?
-        // TODO create encounter?
-
-        Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
-
-        if (useReferral) {
-            referralSetService.createSaveReferralSetsSamplePatientEntry(referralItems, updateData);
-        }
+    if (updateData.getProgramQuestionnaireResponse() != null) {
+        updateData.getProgramQuestionnaireResponse()
+                .setId(updateData.getProgramSample().getQuestionnaireResponseUuid().toString());
+        this.addToOperations(fhirOperations, tempIdGenerator, updateData.getProgramQuestionnaireResponse());
     }
 
-    private void updateReferringTaskWithTaskInfo(Task referringTask, Task task) {
-        if (TaskStatus.COMPLETED.equals(task.getStatus())) {
-            referringTask.setStatus(TaskStatus.COMPLETED);
-            task.getOutput().forEach(outPut -> {
-                referringTask.addOutput(outPut);
-            });
-        }
-    }
+    // TODO location?
+    // TODO create encounter?
 
-    private Optional<Task> getReferringTaskForSample(Sample sample) {
-        List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(sample.getReferringId());
-        if (eOrders.size() > 0 && ElectronicOrderType.FHIR.equals(eOrders.get(0).getType())) {
-            return fhirPersistanceService.getTaskBasedOnServiceRequest(sample.getReferringId());
-        }
-        return Optional.empty();
-    }
+		Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
 
-    private Practitioner transformProviderToPractitioner(String providerId) {
-        return transformProviderToPractitioner(providerService.get(providerId));
-    }
+		if (useReferral) {
+			referralSetService.createSaveReferralSetsSamplePatientEntry(referralItems, updateData);
+		}
+	}
 
-    @Override
-    public Practitioner transformProviderToPractitioner(Provider provider) {
-        Practitioner practitioner = new Practitioner();
-        practitioner.setId(provider.getFhirUuidAsString());
-        practitioner.addIdentifier(
-                this.createIdentifier(fhirConfig.getOeFhirSystem() + "/provider_uuid", provider.getFhirUuidAsString()));
-        practitioner.addName(new HumanName().setFamily(provider.getPerson().getLastName())
-                .addGiven(provider.getPerson().getFirstName()));
-        practitioner.setTelecom(transformToTelecom(provider.getPerson()));
-        practitioner.setActive(provider.getActive());
+	private void updateReferringTaskWithTaskInfo(Task referringTask, Task task) {
+		if (TaskStatus.COMPLETED.equals(task.getStatus())) {
+			referringTask.setStatus(TaskStatus.COMPLETED);
+			task.getOutput().forEach(outPut -> {
+				referringTask.addOutput(outPut);
+			});
+		}
+	}
 
-        return practitioner;
-    }
+	private void updateReferringServiceRequestWithSampleInfo(Sample sample, ServiceRequest serviceRequest) {
+		if(!serviceRequest.hasRequisition()){
+           serviceRequest.setRequisition(
+		    this.createIdentifier(fhirConfig.getOeFhirSystem() + "/samp_labNo", sample.getAccessionNumber()));
+		}
+	}
 
-    private List<ContactPoint> transformToTelecom(Person person) {
-        List<ContactPoint> contactPoints = new ArrayList<>();
-        contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.PHONE).setValue(person.getPrimaryPhone()));
-        contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.EMAIL).setValue(person.getEmail()));
-        contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.FAX).setValue(person.getFax()));
-        return contactPoints;
-    }
+	private Optional<Task> getReferringTaskForSample(Sample sample) {
+		List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(sample.getReferringId());
+		if (eOrders.size() > 0 && ElectronicOrderType.FHIR.equals(eOrders.get(0).getType())) {
+			return fhirPersistanceService.getTaskBasedOnServiceRequest(sample.getReferringId());
+		}
+		return Optional.empty();
+	}
 
-    private Task transformToTask(String sampleId) {
-        return this.transformToTask(sampleService.get(sampleId));
-    }
+	private Optional<ServiceRequest> getReferringServiceRequestForSample(Sample sample) {
+		List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(sample.getReferringId());
+		if (eOrders.size() > 0 && ElectronicOrderType.FHIR.equals(eOrders.get(0).getType())) {
+			return fhirPersistanceService.getServiceRequestByReferingId(sample.getReferringId());
+		}
+		return Optional.empty();
+	}
 
-    private Task transformToTask(Sample sample) {
-        Task task = new Task();
-        Patient patient = sampleHumanService.getPatientForSample(sample);
-        List<Analysis> analysises = sampleService.getAnalysis(sample);
-        task.setId(sample.getFhirUuidAsString());
-        Optional<Task> referredTask = getReferringTaskForSample(sample);
-        if (referredTask.isPresent()) {
-            task.addPartOf(this.createReferenceFor(referredTask.get()));
-            task.setIntent(TaskIntent.ORDER);
-        } else {
-            task.setIntent(TaskIntent.ORIGINALORDER);
-        }
-        if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Entered))) {
-            task.setStatus(TaskStatus.READY);
-        } else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Started))) {
-            task.setStatus(TaskStatus.INPROGRESS);
-        } else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Finished))) {
-            task.setStatus(TaskStatus.COMPLETED);
-        } else {
-            task.setStatus(TaskStatus.NULL);
-        }
-        task.setAuthoredOn(sample.getEnteredDate());
-        task.setPriority(TaskPriority.ROUTINE);
-        task.addIdentifier(
-                this.createIdentifier(fhirConfig.getOeFhirSystem() + "/order_uuid", sample.getFhirUuidAsString()));
-        task.addIdentifier(this.createIdentifier(fhirConfig.getOeFhirSystem() + "/order_accessionNumber",
-                sample.getAccessionNumber()));
+	private Practitioner transformProviderToPractitioner(String providerId) {
+		return transformProviderToPractitioner(providerService.get(providerId));
+	}
 
-        for (Analysis analysis : analysises) {
-            task.addBasedOn(this.createReferenceFor(ResourceType.ServiceRequest, analysis.getFhirUuidAsString()));
-            if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Finished))) {
-                task.addOutput()//
-                        .setType(new CodeableConcept().addCoding(new Coding().setCode("reference")))//
-                        .setValue(
-                                this.createReferenceFor(ResourceType.DiagnosticReport, analysis.getFhirUuidAsString()));
-            }
+	@Override
+	public Practitioner transformProviderToPractitioner(Provider provider) {
+		Practitioner practitioner = new Practitioner();
+		practitioner.setId(provider.getFhirUuidAsString());
+		practitioner.addIdentifier(
+				this.createIdentifier(fhirConfig.getOeFhirSystem() + "/provider_uuid", provider.getFhirUuidAsString()));
+		practitioner.addName(new HumanName().setFamily(provider.getPerson().getLastName())
+				.addGiven(provider.getPerson().getFirstName()));
+		practitioner.setTelecom(transformToTelecom(provider.getPerson()));
+		practitioner.setActive(provider.getActive());
 
-        }
-        task.setFor(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
+		return practitioner;
+	}
 
-        return task;
-    }
+	private List<ContactPoint> transformToTelecom(Person person) {
+		List<ContactPoint> contactPoints = new ArrayList<>();
+		contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.PHONE).setValue(person.getPrimaryPhone()));
+		contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.EMAIL).setValue(person.getEmail()));
+		contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.FAX).setValue(person.getFax()));
+		return contactPoints;
+	}
 
-    private DateType transformToDateElement(String strDate) throws ParseException {
-        boolean dayAmbiguous = false;
-        boolean monthAmbiguous = false;
-        // TODO look at this logic for detecting ambiguity
-        if (strDate.contains(DateUtil.AMBIGUOUS_DATE_SEGMENT)) {
-            strDate = strDate.replaceFirst(DateUtil.AMBIGUOUS_DATE_SEGMENT, "01");
-            dayAmbiguous = true;
-        }
-        if (strDate.contains(DateUtil.AMBIGUOUS_DATE_SEGMENT)) {
-            strDate = strDate.replaceFirst(DateUtil.AMBIGUOUS_DATE_SEGMENT, "01");
-            monthAmbiguous = true;
-        }
-        Date birthDate = new SimpleDateFormat("dd/MM/yyyy").parse(strDate);
-        DateType dateType = new DateType();
-        if (monthAmbiguous) {
-            dateType.setValue(birthDate, TemporalPrecisionEnum.YEAR);
-        } else if (dayAmbiguous) {
-            dateType.setValue(birthDate, TemporalPrecisionEnum.MONTH);
-        } else {
-            dateType.setValue(birthDate, TemporalPrecisionEnum.DAY);
-        }
-        return dateType;
-    }
+	private Task transformToTask(String sampleId) {
+		return this.transformToTask(sampleService.get(sampleId));
+	}
 
-    @Override
-    public org.hl7.fhir.r4.model.Patient transformToFhirPatient(String patientId) {
-        return transformToFhirPatient(patientService.get(patientId));
-    }
+	private Task transformToTask(Sample sample) {
+		Task task = new Task();
+		Patient patient = sampleHumanService.getPatientForSample(sample);
+		List<Analysis> analysises = sampleService.getAnalysis(sample);
+		task.setId(sample.getFhirUuidAsString());
+		Optional<Task> referredTask = getReferringTaskForSample(sample);
+		if (referredTask.isPresent()) {
+			task.addPartOf(this.createReferenceFor(referredTask.get()));
+			task.setIntent(TaskIntent.ORDER);
+		} else {
+			task.setIntent(TaskIntent.ORIGINALORDER);
+		}
+		if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Entered))) {
+			task.setStatus(TaskStatus.READY);
+		} 
+		else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Started)) 
+				|| sample.getStatusId().equals(statusService.getStatusID(AnalysisStatus.TechnicalAcceptance))) {
+			task.setStatus(TaskStatus.INPROGRESS);
+		}
+		else if (sample.getStatusId().equals(statusService.getStatusID(AnalysisStatus.TechnicalRejected))) {
+			task.setStatus(TaskStatus.FAILED);
+		}
+		else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.NonConforming_depricated))
+				|| sample.getStatusId().equals(statusService.getStatusID(AnalysisStatus.BiologistRejected))) {
+			task.setStatus(TaskStatus.REJECTED);
+		}
+		else if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Finished))) {
+			task.setStatus(TaskStatus.COMPLETED);
+		} else {
+			task.setStatus(TaskStatus.NULL);
+		}
+		task.setAuthoredOn(sample.getEnteredDate());
+		task.setPriority(TaskPriority.ROUTINE);
+		task.addIdentifier(
+				this.createIdentifier(fhirConfig.getOeFhirSystem() + "/order_uuid", sample.getFhirUuidAsString()));
+		task.addIdentifier(this.createIdentifier(fhirConfig.getOeFhirSystem() + "/order_accessionNumber",
+				sample.getAccessionNumber()));
 
-    private org.hl7.fhir.r4.model.Patient transformToFhirPatient(Patient patient) {
-        org.hl7.fhir.r4.model.Patient fhirPatient = new org.hl7.fhir.r4.model.Patient();
-        String subjectNumber = patientService.getSubjectNumber(patient);
-        String nationalId = patientService.getNationalId(patient);
-        String guid = patientService.getGUID(patient);
-        String stNumber = patientService.getSTNumber(patient);
-        String uuid = patient.getFhirUuidAsString();
+		for (Analysis analysis : analysises) {
+			task.addBasedOn(this.createReferenceFor(ResourceType.ServiceRequest, analysis.getFhirUuidAsString()));
+			if (sample.getStatusId().equals(statusService.getStatusID(OrderStatus.Finished))) {
+				task.addOutput()//
+						.setType(new CodeableConcept().addCoding(new Coding().setCode("reference")))//
+						.setValue(
+								this.createReferenceFor(ResourceType.DiagnosticReport, analysis.getFhirUuidAsString()));
+			}
 
-        fhirPatient.setId(uuid);
-        fhirPatient.setIdentifier(createPatientIdentifiers(subjectNumber, nationalId, stNumber, guid, uuid));
+		}
+		task.setFor(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
 
-        HumanName humanName = new HumanName();
-        List<HumanName> humanNameList = new ArrayList<>();
-        humanName.setFamily(patient.getPerson().getLastName());
-        humanName.addGiven(patient.getPerson().getFirstName());
-        humanNameList.add(humanName);
-        fhirPatient.setName(humanNameList);
+		return task;
+	}
 
-        try {
-            if (patient.getBirthDateForDisplay() != null) {
-                fhirPatient.setBirthDateElement(transformToDateElement(patient.getBirthDateForDisplay()));
-            }
-        } catch (ParseException e) {
-            LogEvent.logError("patient date unparseable", e);
-        }
-        if (GenericValidator.isBlankOrNull(patient.getGender())) {
-            fhirPatient.setGender(AdministrativeGender.UNKNOWN);
-        } else if (patient.getGender().equalsIgnoreCase("M")) {
-            fhirPatient.setGender(AdministrativeGender.MALE);
-        } else {
-            fhirPatient.setGender(AdministrativeGender.FEMALE);
-        }
-        fhirPatient.setTelecom(transformToTelecom(patient.getPerson()));
+	private DateType transformToDateElement(String strDate) throws ParseException {
+		boolean dayAmbiguous = false;
+		boolean monthAmbiguous = false;
+		// TODO look at this logic for detecting ambiguity
+		if (strDate.contains(DateUtil.AMBIGUOUS_DATE_SEGMENT)) {
+			strDate = strDate.replaceFirst(DateUtil.AMBIGUOUS_DATE_SEGMENT, "01");
+			dayAmbiguous = true;
+		}
+		if (strDate.contains(DateUtil.AMBIGUOUS_DATE_SEGMENT)) {
+			strDate = strDate.replaceFirst(DateUtil.AMBIGUOUS_DATE_SEGMENT, "01");
+			monthAmbiguous = true;
+		}
+		Date birthDate = new SimpleDateFormat("dd/MM/yyyy").parse(strDate);
+		DateType dateType = new DateType();
+		if (monthAmbiguous) {
+			dateType.setValue(birthDate, TemporalPrecisionEnum.YEAR);
+		} else if (dayAmbiguous) {
+			dateType.setValue(birthDate, TemporalPrecisionEnum.MONTH);
+		} else {
+			dateType.setValue(birthDate, TemporalPrecisionEnum.DAY);
+		}
+		return dateType;
+	}
 
-        fhirPatient.addAddress(transformToAddress(patient.getPerson()));
+	@Override
+	public org.hl7.fhir.r4.model.Patient transformToFhirPatient(String patientId) {
+		return transformToFhirPatient(patientService.get(patientId));
+	}
 
-        return fhirPatient;
-    }
+	private org.hl7.fhir.r4.model.Patient transformToFhirPatient(Patient patient) {
+		org.hl7.fhir.r4.model.Patient fhirPatient = new org.hl7.fhir.r4.model.Patient();
+		String subjectNumber = patientService.getSubjectNumber(patient);
+		String nationalId = patientService.getNationalId(patient);
+		String guid = patientService.getGUID(patient);
+		String stNumber = patientService.getSTNumber(patient);
+		String uuid = patient.getFhirUuidAsString();
 
-    private Address transformToAddress(Person person) {
-        @SuppressWarnings("unused")
-        PersonAddress village = null;
-        PersonAddress commune = null;
-        @SuppressWarnings("unused")
-        PersonAddress dept = null;
-        List<PersonAddress> personAddressList = personAddressService.getAddressPartsByPersonId(person.getId());
+		fhirPatient.setId(uuid);
+		fhirPatient.setIdentifier(createPatientIdentifiers(subjectNumber, nationalId, stNumber, guid, uuid));
 
-        for (PersonAddress address : personAddressList) {
-            if (address.getAddressPartId().equals(ADDRESS_PART_COMMUNE_ID)) {
-                commune = address;
-            } else if (address.getAddressPartId().equals(ADDRESS_PART_VILLAGE_ID)) {
-                village = address;
-            } else if (address.getAddressPartId().equals(ADDRESS_PART_DEPT_ID)) {
-                dept = address;
-            }
-        }
-        Address address = new Address()//
-                .addLine(person.getStreetAddress())//
-                .setCity(person.getCity())//
+		HumanName humanName = new HumanName();
+		List<HumanName> humanNameList = new ArrayList<>();
+		humanName.setFamily(patient.getPerson().getLastName());
+		humanName.addGiven(patient.getPerson().getFirstName());
+		humanNameList.add(humanName);
+		fhirPatient.setName(humanNameList);
+
+		try {
+			if (patient.getBirthDateForDisplay() != null) {
+				fhirPatient.setBirthDateElement(transformToDateElement(patient.getBirthDateForDisplay()));
+			}
+		} catch (ParseException e) {
+			LogEvent.logError("patient date unparseable", e);
+		}
+		if (GenericValidator.isBlankOrNull(patient.getGender())) {
+			fhirPatient.setGender(AdministrativeGender.UNKNOWN);
+		} else if (patient.getGender().equalsIgnoreCase("M")) {
+			fhirPatient.setGender(AdministrativeGender.MALE);
+		} else {
+			fhirPatient.setGender(AdministrativeGender.FEMALE);
+		}
+		fhirPatient.setTelecom(transformToTelecom(patient.getPerson()));
+
+		fhirPatient.addAddress(transformToAddress(patient.getPerson()));
+
+		return fhirPatient;
+	}
+
+	private Address transformToAddress(Person person) {
+		@SuppressWarnings("unused")
+		PersonAddress village = null;
+		PersonAddress commune = null;
+		@SuppressWarnings("unused")
+		PersonAddress dept = null;
+		List<PersonAddress> personAddressList = personAddressService.getAddressPartsByPersonId(person.getId());
+
+		for (PersonAddress address : personAddressList) {
+			if (address.getAddressPartId().equals(ADDRESS_PART_COMMUNE_ID)) {
+				commune = address;
+			} else if (address.getAddressPartId().equals(ADDRESS_PART_VILLAGE_ID)) {
+				village = address;
+			} else if (address.getAddressPartId().equals(ADDRESS_PART_DEPT_ID)) {
+				dept = address;
+			}
+		}
+		Address address = new Address()//
+				.addLine(person.getStreetAddress())//
+				.setCity(person.getCity())//
 //                .setDistrict(value)
-                .setState(person.getState())//
+				.setState(person.getState())//
 //                .setPostalCode(value)
-                .setCountry(person.getCountry())//
-        ;
-        if (commune != null) {
-            address.addLine("commune: " + commune.getValue());
-        }
-        return address;
-    }
+				.setCountry(person.getCountry())//
+		;
+		if (commune != null) {
+			address.addLine("commune: " + commune.getValue());
+		}
+		return address;
+	}
 
-    private List<Identifier> createPatientIdentifiers(String subjectNumber, String nationalId, String stNumber,
-            String guid, String fhirUuid) {
-        List<Identifier> identifierList = new ArrayList<>();
-        if (!GenericValidator.isBlankOrNull(subjectNumber)) {
-            identifierList.add(createIdentifier(fhirConfig.getOeFhirSystem() + "/pat_subjectNumber", subjectNumber));
-        }
-        if (!GenericValidator.isBlankOrNull(nationalId)) {
-            identifierList.add(createIdentifier(fhirConfig.getOeFhirSystem() + "/pat_nationalId", nationalId));
-        }
-        if (!GenericValidator.isBlankOrNull(stNumber)) {
-            identifierList.add(createIdentifier(fhirConfig.getOeFhirSystem() + "/pat_stNumber", stNumber));
-        }
-        if (!GenericValidator.isBlankOrNull(guid)) {
-            identifierList.add(createIdentifier(fhirConfig.getOeFhirSystem() + "/pat_guid", guid));
-        }
-        if (!GenericValidator.isBlankOrNull(fhirUuid)) {
-            identifierList.add(createIdentifier(fhirConfig.getOeFhirSystem() + "/pat_uuid", fhirUuid));
-        }
-        return identifierList;
-    }
+	private List<Identifier> createPatientIdentifiers(String subjectNumber, String nationalId, String stNumber,
+			String guid, String fhirUuid) {
+		List<Identifier> identifierList = new ArrayList<>();
+		if (!GenericValidator.isBlankOrNull(subjectNumber)) {
+			identifierList.add(createIdentifier(fhirConfig.getOeFhirSystem() + "/pat_subjectNumber", subjectNumber));
+		}
+		if (!GenericValidator.isBlankOrNull(nationalId)) {
+			identifierList.add(createIdentifier(fhirConfig.getOeFhirSystem() + "/pat_nationalId", nationalId));
+		}
+		if (!GenericValidator.isBlankOrNull(stNumber)) {
+			identifierList.add(createIdentifier(fhirConfig.getOeFhirSystem() + "/pat_stNumber", stNumber));
+		}
+		if (!GenericValidator.isBlankOrNull(guid)) {
+			identifierList.add(createIdentifier(fhirConfig.getOeFhirSystem() + "/pat_guid", guid));
+		}
+		if (!GenericValidator.isBlankOrNull(fhirUuid)) {
+			identifierList.add(createIdentifier(fhirConfig.getOeFhirSystem() + "/pat_uuid", fhirUuid));
+		}
+		return identifierList;
+	}
 
-    private List<ServiceRequest> transformToServiceRequests(SamplePatientUpdateData updateData,
-            SampleTestCollection sampleTestCollection) {
-        List<ServiceRequest> serviceRequestsForSampleItem = new ArrayList<>();
+	private List<ServiceRequest> transformToServiceRequests(SamplePatientUpdateData updateData,
+			SampleTestCollection sampleTestCollection) {
+		List<ServiceRequest> serviceRequestsForSampleItem = new ArrayList<>();
 
-        for (Analysis analysis : sampleTestCollection.analysises) {
-            serviceRequestsForSampleItem.add(this.transformToServiceRequest(analysis.getId()));
-        }
-        return serviceRequestsForSampleItem;
-    }
+		for (Analysis analysis : sampleTestCollection.analysises) {
+			serviceRequestsForSampleItem.add(this.transformToServiceRequest(analysis.getId()));
+		}
+		return serviceRequestsForSampleItem;
+	}
 
-    private ServiceRequest transformToServiceRequest(String anlaysisId) {
-        return transformToServiceRequest(analysisService.get(anlaysisId));
-    }
+	private ServiceRequest transformToServiceRequest(String anlaysisId) {
+		return transformToServiceRequest(analysisService.get(anlaysisId));
+	}
 
-    private ServiceRequest transformToServiceRequest(Analysis analysis) {
-        Sample sample = analysis.getSampleItem().getSample();
-        Patient patient = sampleHumanService.getPatientForSample(sample);
-        Provider provider = sampleHumanService.getProviderForSample(sample);
+	private ServiceRequest transformToServiceRequest(Analysis analysis) {
+		Sample sample = analysis.getSampleItem().getSample();
+		Patient patient = sampleHumanService.getPatientForSample(sample);
+		Provider provider = sampleHumanService.getProviderForSample(sample);
 
-        Organization organization = sampleService.getOrganizationRequester(sample,
-                TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
-        Organization organizationDepartment = sampleService.getOrganizationRequester(sample,
-                TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID);
+		Organization organization = sampleService.getOrganizationRequester(sample,
+				TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
+		Organization organizationDepartment = sampleService.getOrganizationRequester(sample,
+				TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID);
 
-        Test test = analysis.getTest();
-        ServiceRequest serviceRequest = new ServiceRequest();
-        serviceRequest.setId(analysis.getFhirUuidAsString());
-        serviceRequest.addIdentifier(
-                this.createIdentifier(fhirConfig.getOeFhirSystem() + "/analysis_uuid", analysis.getFhirUuidAsString()));
-        serviceRequest.setRequisition(this.createIdentifier(fhirConfig.getOeFhirSystem() + "/samp_labNo",
-                analysis.getSampleItem().getSample().getAccessionNumber()));
-        if (organization != null) {
-            serviceRequest.addLocationReference(
-                    this.createReferenceFor(ResourceType.Location, organization.getFhirUuidAsString()));
-        }
-        if (organizationDepartment != null) {
-            serviceRequest.addLocationReference(
-                    this.createReferenceFor(ResourceType.Location, organizationDepartment.getFhirUuidAsString()));
-        }
+		Test test = analysis.getTest();
+		ServiceRequest serviceRequest = new ServiceRequest();
+		serviceRequest.setId(analysis.getFhirUuidAsString());
+		serviceRequest.addIdentifier(
+				this.createIdentifier(fhirConfig.getOeFhirSystem() + "/analysis_uuid", analysis.getFhirUuidAsString()));
+		serviceRequest.setRequisition(this.createIdentifier(fhirConfig.getOeFhirSystem() + "/samp_labNo",
+				analysis.getSampleItem().getSample().getAccessionNumber()));
+		if (organization != null) {
+			serviceRequest.addLocationReference(
+					this.createReferenceFor(ResourceType.Location, organization.getFhirUuidAsString()));
+		}
+		if (organizationDepartment != null) {
+			serviceRequest.addLocationReference(
+					this.createReferenceFor(ResourceType.Location, organizationDepartment.getFhirUuidAsString()));
+		}
 
-        List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(sample.getReferringId());
+		List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(sample.getReferringId());
 
-        if (eOrders.size() <= 0) {
-            serviceRequest.setIntent(ServiceRequestIntent.ORIGINALORDER);
-        } else if (ElectronicOrderType.FHIR.equals(eOrders.get(eOrders.size() - 1).getType())) {
-            serviceRequest.addBasedOn(this.createReferenceFor(ResourceType.ServiceRequest, sample.getReferringId()));
-            serviceRequest.setIntent(ServiceRequestIntent.ORDER);
-        } else if (ElectronicOrderType.HL7_V2.equals(eOrders.get(eOrders.size() - 1).getType())) {
-            serviceRequest.setIntent(ServiceRequestIntent.ORDER);
-        }
+		if (eOrders.size() <= 0) {
+			serviceRequest.setIntent(ServiceRequestIntent.ORIGINALORDER);
+		} else if (ElectronicOrderType.FHIR.equals(eOrders.get(eOrders.size() - 1).getType())) {
+			serviceRequest.addBasedOn(this.createReferenceFor(ResourceType.ServiceRequest, sample.getReferringId()));
+			serviceRequest.setIntent(ServiceRequestIntent.ORDER);
+		} else if (ElectronicOrderType.HL7_V2.equals(eOrders.get(eOrders.size() - 1).getType())) {
+			serviceRequest.setIntent(ServiceRequestIntent.ORDER);
+		}
 
-        if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.NotStarted))) {
-            serviceRequest.setStatus(ServiceRequestStatus.ACTIVE);
-        } else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.TechnicalAcceptance))) {
-            serviceRequest.setStatus(ServiceRequestStatus.ACTIVE);
-        } else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.TechnicalRejected))) {
-            serviceRequest.setStatus(ServiceRequestStatus.ACTIVE);
-        } else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.Finalized))) {
-            serviceRequest.setStatus(ServiceRequestStatus.COMPLETED);
-        } else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.Canceled))) {
-            serviceRequest.setStatus(ServiceRequestStatus.REVOKED);
-        } else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.SampleRejected))) {
-            serviceRequest.setStatus(ServiceRequestStatus.ENTEREDINERROR);
-        } else {
-            serviceRequest.setStatus(ServiceRequestStatus.UNKNOWN);
-        }
-        ObservationHistory program = observationHistoryService.getObservationHistoriesBySampleIdAndType(sample.getId(),
-                observationHistoryService.getObservationTypeIdForType(ObservationType.PROGRAM));
-        if (program != null && !GenericValidator.isBlankOrNull(program.getValue())) {
-            serviceRequest.addCategory(transformSampleProgramToCodeableConcept(program));
-        }
-        serviceRequest.setPriority(ServiceRequestPriority.ROUTINE);
-        serviceRequest.setCode(transformTestToCodeableConcept(test.getId()));
-        serviceRequest.setAuthoredOn(new Date());
-        for (Note note : noteService.getNotes(analysis)) {
-            serviceRequest.addNote(transformNoteToAnnotation(note));
-        }
-        // TODO performer type?
+		if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.NotStarted))) {
+			serviceRequest.setStatus(ServiceRequestStatus.ACTIVE);
+		} else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.TechnicalAcceptance))) {
+			serviceRequest.setStatus(ServiceRequestStatus.ACTIVE);
+		} else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.TechnicalRejected))) {
+			serviceRequest.setStatus(ServiceRequestStatus.ACTIVE);
+		} else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.Finalized))) {
+			serviceRequest.setStatus(ServiceRequestStatus.COMPLETED);
+		} else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.Canceled))) {
+			serviceRequest.setStatus(ServiceRequestStatus.REVOKED);
+		} else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.SampleRejected))) {
+			serviceRequest.setStatus(ServiceRequestStatus.ENTEREDINERROR);
+		} else {
+			serviceRequest.setStatus(ServiceRequestStatus.UNKNOWN);
+		}
+		ObservationHistory program = observationHistoryService.getObservationHistoriesBySampleIdAndType(sample.getId(),
+				observationHistoryService.getObservationTypeIdForType(ObservationType.PROGRAM));
+		if (program != null && !GenericValidator.isBlankOrNull(program.getValue())) {
+			serviceRequest.addCategory(transformSampleProgramToCodeableConcept(program));
+		}
+		serviceRequest.setPriority(ServiceRequestPriority.ROUTINE);
+		serviceRequest.setCode(transformTestToCodeableConcept(test.getId()));
+		serviceRequest.setAuthoredOn(new Date());
+		for (Note note : noteService.getNotes(analysis)) {
+			serviceRequest.addNote(transformNoteToAnnotation(note));
+		}
+		// TODO performer type?
 
-        serviceRequest.addSpecimen(
-                this.createReferenceFor(ResourceType.Specimen, analysis.getSampleItem().getFhirUuidAsString()));
-        serviceRequest.setSubject(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
-        if (provider != null && provider.getFhirUuid() != null) {
-            serviceRequest
-                    .setRequester(this.createReferenceFor(ResourceType.Practitioner, provider.getFhirUuidAsString()));
-        }
+		serviceRequest.addSpecimen(
+				this.createReferenceFor(ResourceType.Specimen, analysis.getSampleItem().getFhirUuidAsString()));
+		serviceRequest.setSubject(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
+		if (provider != null && provider.getFhirUuid() != null) {
+			serviceRequest
+					.setRequester(this.createReferenceFor(ResourceType.Practitioner, provider.getFhirUuidAsString()));
+		}
 
-        return serviceRequest;
-    }
+		return serviceRequest;
+	}
 
-    private CodeableConcept transformSampleProgramToCodeableConcept(ObservationHistory program) {
-        CodeableConcept codeableConcept = new CodeableConcept();
-        String programDisplay = "";
-        String programCode = "";
-        if ("D".equals(program.getValueType())) {
-            Dictionary dictionary = dictionaryService.get(program.getValue());
-            if (dictionary != null) {
-                programCode = dictionary.getDictEntry();
-                programDisplay = dictionary.getDictEntry();
-            }
-        } else {
-            programCode = program.getValue();
-            programDisplay = program.getValue();
-        }
-        codeableConcept
-                .addCoding(new Coding(fhirConfig.getOeFhirSystem() + "/sample_program", programCode, programDisplay));
-        return codeableConcept;
-    }
+	private CodeableConcept transformSampleProgramToCodeableConcept(ObservationHistory program) {
+		CodeableConcept codeableConcept = new CodeableConcept();
+		String programDisplay = "";
+		String programCode = "";
+		if ("D".equals(program.getValueType())) {
+			Dictionary dictionary = dictionaryService.get(program.getValue());
+			if (dictionary != null) {
+				programCode = dictionary.getDictEntry();
+				programDisplay = dictionary.getDictEntry();
+			}
+		} else {
+			programCode = program.getValue();
+			programDisplay = program.getValue();
+		}
+		codeableConcept
+				.addCoding(new Coding(fhirConfig.getOeFhirSystem() + "/sample_program", programCode, programDisplay));
+		return codeableConcept;
+	}
 
-    private CodeableConcept transformTestToCodeableConcept(String testId) {
-        return transformTestToCodeableConcept(testService.get(testId));
-    }
+	private CodeableConcept transformTestToCodeableConcept(String testId) {
+		return transformTestToCodeableConcept(testService.get(testId));
+	}
 
-    private CodeableConcept transformTestToCodeableConcept(Test test) {
-        CodeableConcept codeableConcept = new CodeableConcept();
-        codeableConcept
-                .addCoding(new Coding("http://loinc.org", test.getLoinc(), test.getLocalizedTestName().getEnglish()));
-        return codeableConcept;
-    }
+	private CodeableConcept transformTestToCodeableConcept(Test test) {
+		CodeableConcept codeableConcept = new CodeableConcept();
+		codeableConcept
+				.addCoding(new Coding("http://loinc.org", test.getLoinc(), test.getLocalizedTestName().getEnglish()));
+		return codeableConcept;
+	}
 
-    private Specimen transformToFhirSpecimen(SampleTestCollection sampleTest) {
-        Specimen specimen = this.transformToSpecimen(sampleTest.item.getId());
-        if (sampleTest.initialSampleConditionIdList != null) {
-            for (ObservationHistory initialSampleCondition : sampleTest.initialSampleConditionIdList) {
-                specimen.addCondition(transformSampleConditionToCodeableConcept(initialSampleCondition));
-            }
-        }
+	private Specimen transformToFhirSpecimen(SampleTestCollection sampleTest) {
+		Specimen specimen = this.transformToSpecimen(sampleTest.item.getId());
+		if (sampleTest.initialSampleConditionIdList != null) {
+			for (ObservationHistory initialSampleCondition : sampleTest.initialSampleConditionIdList) {
+				specimen.addCondition(transformSampleConditionToCodeableConcept(initialSampleCondition));
+			}
+		}
 
-        return specimen;
-    }
+		return specimen;
+	}
 
-    private Specimen transformToSpecimen(String sampleItemId) {
-        return transformToSpecimen(sampleItemService.get(sampleItemId));
-    }
+	private Specimen transformToSpecimen(String sampleItemId) {
+		return transformToSpecimen(sampleItemService.get(sampleItemId));
+	}
 
-    private Specimen transformToSpecimen(SampleItem sampleItem) {
-        Specimen specimen = new Specimen();
-        Patient patient = sampleHumanService.getPatientForSample(sampleItem.getSample());
-        specimen.setId(sampleItem.getFhirUuidAsString());
-        specimen.addIdentifier(this.createIdentifier(fhirConfig.getOeFhirSystem() + "/sampleItem_uuid",
-                sampleItem.getFhirUuidAsString()));
-        specimen.setAccessionIdentifier(this.createIdentifier(fhirConfig.getOeFhirSystem() + "/sampleItem_labNo",
-                sampleItem.getSample().getAccessionNumber() + "-" + sampleItem.getSortOrder()));
-        specimen.setStatus(SpecimenStatus.AVAILABLE);
-        specimen.setType(transformTypeOfSampleToCodeableConcept(sampleItem.getTypeOfSample()));
-        specimen.setReceivedTime(new Date());
-        specimen.setCollection(transformToCollection(sampleItem.getCollectionDate(), sampleItem.getCollector()));
+	private Specimen transformToSpecimen(SampleItem sampleItem) {
+		Specimen specimen = new Specimen();
+		Patient patient = sampleHumanService.getPatientForSample(sampleItem.getSample());
+		specimen.setId(sampleItem.getFhirUuidAsString());
+		specimen.addIdentifier(this.createIdentifier(fhirConfig.getOeFhirSystem() + "/sampleItem_uuid",
+				sampleItem.getFhirUuidAsString()));
+		specimen.setAccessionIdentifier(this.createIdentifier(fhirConfig.getOeFhirSystem() + "/sampleItem_labNo",
+				sampleItem.getSample().getAccessionNumber() + "-" + sampleItem.getSortOrder()));
+		specimen.setStatus(SpecimenStatus.AVAILABLE);
+		specimen.setType(transformTypeOfSampleToCodeableConcept(sampleItem.getTypeOfSample()));
+		specimen.setReceivedTime(new Date());
+		specimen.setCollection(transformToCollection(sampleItem.getCollectionDate(), sampleItem.getCollector()));
 
-        for (Analysis analysis : analysisService.getAnalysesBySampleItem(sampleItem)) {
-            specimen.addRequest(this.createReferenceFor(ResourceType.ServiceRequest, analysis.getFhirUuidAsString()));
-        }
-        specimen.setSubject(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
+		for (Analysis analysis : analysisService.getAnalysesBySampleItem(sampleItem)) {
+			specimen.addRequest(this.createReferenceFor(ResourceType.ServiceRequest, analysis.getFhirUuidAsString()));
+		}
+		specimen.setSubject(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
 
-        return specimen;
-    }
+		return specimen;
+	}
 
-    @SuppressWarnings("unused")
-    private CodeableConcept transformSampleConditionToCodeableConcept(String sampleConditionId) {
-        return transformSampleConditionToCodeableConcept(observationHistoryService.get(sampleConditionId));
-    }
+	@SuppressWarnings("unused")
+	private CodeableConcept transformSampleConditionToCodeableConcept(String sampleConditionId) {
+		return transformSampleConditionToCodeableConcept(observationHistoryService.get(sampleConditionId));
+	}
 
-    private CodeableConcept transformSampleConditionToCodeableConcept(ObservationHistory initialSampleCondition) {
-        String observationValue;
-        String observationDisplay;
-        if (ValueType.DICTIONARY.getCode().equals(initialSampleCondition.getValueType())) {
-            observationValue = dictionaryService.get(initialSampleCondition.getValue()).getDictEntry();
-            observationDisplay = dictionaryService.get(initialSampleCondition.getValue()).getDictEntryDisplayValue();
-        } else if (ValueType.KEY.getCode().equals(initialSampleCondition.getValueType())) {
-            observationValue = localizationService.get(initialSampleCondition.getValue()).getEnglish();
-            observationDisplay = "";
-        } else {
-            observationValue = initialSampleCondition.getValue();
-            observationDisplay = "";
-        }
+	private CodeableConcept transformSampleConditionToCodeableConcept(ObservationHistory initialSampleCondition) {
+		String observationValue;
+		String observationDisplay;
+		if (ValueType.DICTIONARY.getCode().equals(initialSampleCondition.getValueType())) {
+			observationValue = dictionaryService.get(initialSampleCondition.getValue()).getDictEntry();
+			observationDisplay = dictionaryService.get(initialSampleCondition.getValue()).getDictEntryDisplayValue();
+		} else if (ValueType.KEY.getCode().equals(initialSampleCondition.getValueType())) {
+			observationValue = localizationService.get(initialSampleCondition.getValue()).getEnglish();
+			observationDisplay = "";
+		} else {
+			observationValue = initialSampleCondition.getValue();
+			observationDisplay = "";
+		}
 
-        CodeableConcept condition = new CodeableConcept();
-        condition.addCoding(
-                new Coding(fhirConfig.getOeFhirSystem() + "/sample_condition", observationValue, observationDisplay));
-        return condition;
-    }
+		CodeableConcept condition = new CodeableConcept();
+		condition.addCoding(
+				new Coding(fhirConfig.getOeFhirSystem() + "/sample_condition", observationValue, observationDisplay));
+		return condition;
+	}
 
     private SpecimenCollectionComponent transformToCollection(Timestamp collectionDate, String collector) {
         SpecimenCollectionComponent specimenCollectionComponent = new SpecimenCollectionComponent();
         specimenCollectionComponent.setCollected(new DateTimeType(collectionDate));
         // TODO create a collector from this info
-//        specimenCollectionComponent.setCollector(collector);
+        // specimenCollectionComponent.setCollector(collector);
         return specimenCollectionComponent;
     }
 
-    private CodeableConcept transformTypeOfSampleToCodeableConcept(String typeOfSampleId) {
-        return transformTypeOfSampleToCodeableConcept(typeOfSampleService.get(typeOfSampleId));
-    }
+	private CodeableConcept transformTypeOfSampleToCodeableConcept(String typeOfSampleId) {
+		return transformTypeOfSampleToCodeableConcept(typeOfSampleService.get(typeOfSampleId));
+	}
 
-    private CodeableConcept transformTypeOfSampleToCodeableConcept(TypeOfSample typeOfSample) {
-        CodeableConcept codeableConcept = new CodeableConcept();
-        codeableConcept.addCoding(new Coding(fhirConfig.getOeFhirSystem() + "/sampleType",
-                typeOfSample.getLocalAbbreviation(), typeOfSample.getLocalizedName()));
-        return codeableConcept;
-    }
+	private CodeableConcept transformTypeOfSampleToCodeableConcept(TypeOfSample typeOfSample) {
+		CodeableConcept codeableConcept = new CodeableConcept();
+		codeableConcept.addCoding(new Coding(fhirConfig.getOeFhirSystem() + "/sampleType",
+				typeOfSample.getLocalAbbreviation(), typeOfSample.getLocalizedName()));
+		return codeableConcept;
+	}
 
-    @Override
-    @Async
-    @Transactional(readOnly = true)
-    public void transformPersistResultsEntryFhirObjects(ResultsUpdateDataSet actionDataSet)
-            throws FhirLocalPersistingException {
-        CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
-        FhirOperations fhirOperations = new FhirOperations();
-        for (ResultSet resultSet : actionDataSet.getNewResults()) {
-            Observation observation = transformResultToObservation(resultSet.result.getId());
-            this.addToOperations(fhirOperations, tempIdGenerator, observation);
-        }
-        for (ResultSet resultSet : actionDataSet.getModifiedResults()) {
-            Observation observation = this.transformResultToObservation(resultSet.result.getId());
-            this.addToOperations(fhirOperations, tempIdGenerator, observation);
-        }
+	@Override
+	@Async
+	@Transactional(readOnly = true)
+	public void transformPersistResultsEntryFhirObjects(ResultsUpdateDataSet actionDataSet)
+			throws FhirLocalPersistingException {
+		CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
+		FhirOperations fhirOperations = new FhirOperations();
+		for (ResultSet resultSet : actionDataSet.getNewResults()) {
+			Observation observation = transformResultToObservation(resultSet.result.getId());
+			this.addToOperations(fhirOperations, tempIdGenerator, observation);
+		}
+		for (ResultSet resultSet : actionDataSet.getModifiedResults()) {
+			Observation observation = this.transformResultToObservation(resultSet.result.getId());
+			this.addToOperations(fhirOperations, tempIdGenerator, observation);
+		}
 
-        for (Analysis analysis : actionDataSet.getModifiedAnalysis()) {
-            ServiceRequest serviceRequest = this.transformToServiceRequest(analysis.getId());
-            this.addToOperations(fhirOperations, tempIdGenerator, serviceRequest);
-            if (statusService.matches(analysis.getStatusId(), AnalysisStatus.Finalized)) {
-                DiagnosticReport diagnosticReport = this.transformResultToDiagnosticReport(analysis.getId());
-                this.addToOperations(fhirOperations, tempIdGenerator, diagnosticReport);
-            }
-        }
+		for (Analysis analysis : actionDataSet.getModifiedAnalysis()) {
+			ServiceRequest serviceRequest = this.transformToServiceRequest(analysis.getId());
+			this.addToOperations(fhirOperations, tempIdGenerator, serviceRequest);
+			if (statusService.matches(analysis.getStatusId(), AnalysisStatus.Finalized)) {
+				DiagnosticReport diagnosticReport = this.transformResultToDiagnosticReport(analysis.getId());
+				this.addToOperations(fhirOperations, tempIdGenerator, diagnosticReport);
+			}
+		}
 
-        Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
+		Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
 
-    }
+	}
 
-    @Async
-    @Override
-    @Transactional(readOnly = true)
-    public void transformPersistResultValidationFhirObjects(List<Result> deletableList,
-            List<Analysis> analysisUpdateList, ArrayList<Result> resultUpdateList, List<AnalysisItem> resultItemList,
-            ArrayList<Sample> sampleUpdateList, ArrayList<Note> noteUpdateList) throws FhirLocalPersistingException {
-        CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
-        FhirOperations fhirOperations = new FhirOperations();
+	@Async
+	@Override
+	@Transactional(readOnly = true)
+	public void transformPersistResultValidationFhirObjects(List<Result> deletableList,
+			List<Analysis> analysisUpdateList, ArrayList<Result> resultUpdateList, List<AnalysisItem> resultItemList,
+			ArrayList<Sample> sampleUpdateList, ArrayList<Note> noteUpdateList) throws FhirLocalPersistingException {
+		CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
+		FhirOperations fhirOperations = new FhirOperations();
 
-        for (Result result : deletableList) {
-            Observation observation = transformResultToObservation(result.getId());
-            observation.setStatus(ObservationStatus.CANCELLED);
-            this.addToOperations(fhirOperations, tempIdGenerator, observation);
-        }
+		for (Result result : deletableList) {
+			Observation observation = transformResultToObservation(result.getId());
+			observation.setStatus(ObservationStatus.CANCELLED);
+			this.addToOperations(fhirOperations, tempIdGenerator, observation);
+		}
 
-        for (Result result : resultUpdateList) {
-            Observation observation = this.transformResultToObservation(result.getId());
-            this.addToOperations(fhirOperations, tempIdGenerator, observation);
-        }
+		for (Result result : resultUpdateList) {
+			Observation observation = this.transformResultToObservation(result.getId());
+			this.addToOperations(fhirOperations, tempIdGenerator, observation);
+		}
 
-        for (Analysis analysis : analysisUpdateList) {
-            ServiceRequest serviceRequest = this.transformToServiceRequest(analysis.getId());
-            this.addToOperations(fhirOperations, tempIdGenerator, serviceRequest);
-            if (statusService.matches(analysis.getStatusId(), AnalysisStatus.Finalized)) {
-                DiagnosticReport diagnosticReport = this.transformResultToDiagnosticReport(analysis.getId());
-                this.addToOperations(fhirOperations, tempIdGenerator, diagnosticReport);
-            }
-        }
+		for (Analysis analysis : analysisUpdateList) {
+			ServiceRequest serviceRequest = this.transformToServiceRequest(analysis.getId());
+			this.addToOperations(fhirOperations, tempIdGenerator, serviceRequest);
+			if (statusService.matches(analysis.getStatusId(), AnalysisStatus.Finalized)) {
+				DiagnosticReport diagnosticReport = this.transformResultToDiagnosticReport(analysis.getId());
+				this.addToOperations(fhirOperations, tempIdGenerator, diagnosticReport);
+			}
+		}
 
-        Map<String, Task> referingTaskMap = new HashMap<>();
-        for (Sample sample : sampleUpdateList) {
-            Task task = this.transformToTask(sample.getId());
-            Optional<Task> referringTask = getReferringTaskForSample(sample);
-            if (referringTask.isPresent()) {
-                if (referingTaskMap.containsKey(referringTask.get().getIdElement().getIdPart())) {
-                    Task existingReferingTask = referingTaskMap.get(referringTask.get().getIdElement().getIdPart());
-                    updateReferringTaskWithTaskInfo(existingReferingTask, task);
-                    referingTaskMap.put(existingReferingTask.getIdElement().getIdPart(), existingReferingTask);
-                    this.addToOperations(fhirOperations, tempIdGenerator, existingReferingTask);
-                } else {
-                    updateReferringTaskWithTaskInfo(referringTask.get(), task);
-                    referingTaskMap.put(referringTask.get().getIdElement().getIdPart(), referringTask.get());
-                    this.addToOperations(fhirOperations, tempIdGenerator, referringTask.get());
-                }
-            }
-            this.addToOperations(fhirOperations, tempIdGenerator, task);
-        }
+		Map<String, Task> referingTaskMap = new HashMap<>();
+		Map<String, ServiceRequest> referingServiceRequestMap = new HashMap<>();
+		for (Sample sample : sampleUpdateList) {
+			Task task = this.transformToTask(sample.getId());
+			Optional<Task> referringTask = getReferringTaskForSample(sample);
+			if (referringTask.isPresent()) {
+				if (referingTaskMap.containsKey(referringTask.get().getIdElement().getIdPart())) {
+					Task existingReferingTask = referingTaskMap.get(referringTask.get().getIdElement().getIdPart());
+					updateReferringTaskWithTaskInfo(existingReferingTask, task);
+					referingTaskMap.put(existingReferingTask.getIdElement().getIdPart(), existingReferingTask);
+					this.addToOperations(fhirOperations, tempIdGenerator, existingReferingTask);
+				} else {
+					updateReferringTaskWithTaskInfo(referringTask.get(), task);
+					referingTaskMap.put(referringTask.get().getIdElement().getIdPart(), referringTask.get());
+					this.addToOperations(fhirOperations, tempIdGenerator, referringTask.get());
+				}
+			}
+			Optional<ServiceRequest> referingServiceRequest = getReferringServiceRequestForSample(sample);
+			if (referingServiceRequest.isPresent()) {
+				if (referingServiceRequestMap.containsKey(referingServiceRequest.get().getIdElement().getIdPart())) {
+					ServiceRequest existingServiceRequest = referingServiceRequestMap
+							.get(referingServiceRequest.get().getIdElement().getIdPart());
+					updateReferringServiceRequestWithSampleInfo(sample, existingServiceRequest);
+					referingServiceRequestMap.put(existingServiceRequest.getIdElement().getIdPart(),
+							existingServiceRequest);
+					this.addToOperations(fhirOperations, tempIdGenerator, existingServiceRequest);
+				} else {
+					updateReferringServiceRequestWithSampleInfo(sample, referingServiceRequest.get());
+					referingServiceRequestMap.put(referingServiceRequest.get().getIdElement().getIdPart(),
+					    referingServiceRequest.get());
+					this.addToOperations(fhirOperations, tempIdGenerator, referingServiceRequest.get());
+				}
+				
+			}
+			this.addToOperations(fhirOperations, tempIdGenerator, task);
+		}
 
-        Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
-    }
+		Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
+	}
 
-    private void addToOperations(FhirOperations fhirOperations, TempIdGenerator tempIdGenerator, Resource resource) {
-        if (this.setTempIdIfMissing(resource, tempIdGenerator)) {
-            if (fhirOperations.createResources.containsKey(resource.getIdElement().getIdPart())) {
-                LogEvent.logError("", "",
-                        "collision on id: " + resource.getResourceType() + "/" + resource.getIdElement().getIdPart());
-            }
-            fhirOperations.createResources.put(resource.getIdElement().getIdPart(), resource);
-        } else {
-            if (fhirOperations.updateResources.containsKey(resource.getIdElement().getIdPart())) {
-                LogEvent.logError("", "",
-                        "collision on id: " + resource.getResourceType() + "/" + resource.getIdElement().getIdPart());
-            }
-            fhirOperations.updateResources.put(resource.getIdElement().getIdPart(), resource);
-        }
-    }
+	private void addToOperations(FhirOperations fhirOperations, TempIdGenerator tempIdGenerator, Resource resource) {
+		if (this.setTempIdIfMissing(resource, tempIdGenerator)) {
+			if (fhirOperations.createResources.containsKey(resource.getIdElement().getIdPart())) {
+				LogEvent.logError("", "",
+						"collision on id: " + resource.getResourceType() + "/" + resource.getIdElement().getIdPart());
+			}
+			fhirOperations.createResources.put(resource.getIdElement().getIdPart(), resource);
+		} else {
+			if (fhirOperations.updateResources.containsKey(resource.getIdElement().getIdPart())) {
+				LogEvent.logError("", "",
+						"collision on id: " + resource.getResourceType() + "/" + resource.getIdElement().getIdPart());
+			}
+			fhirOperations.updateResources.put(resource.getIdElement().getIdPart(), resource);
+		}
+	}
 
-    private DiagnosticReport transformResultToDiagnosticReport(String analysisId) {
-        return transformResultToDiagnosticReport(analysisService.get(analysisId));
-    }
+	private DiagnosticReport transformResultToDiagnosticReport(String analysisId) {
+		return transformResultToDiagnosticReport(analysisService.get(analysisId));
+	}
 
-    private DiagnosticReport transformResultToDiagnosticReport(Analysis analysis) {
-        List<Result> allResults = resultService.getResultsByAnalysis(analysis);
-        SampleItem sampleItem = analysis.getSampleItem();
-        Patient patient = sampleHumanService.getPatientForSample(sampleItem.getSample());
+	private DiagnosticReport transformResultToDiagnosticReport(Analysis analysis) {
+		List<Result> allResults = resultService.getResultsByAnalysis(analysis);
+		SampleItem sampleItem = analysis.getSampleItem();
+		Patient patient = sampleHumanService.getPatientForSample(sampleItem.getSample());
 
-        DiagnosticReport diagnosticReport = genNewDiagnosticReport(analysis);
-        Test test = analysis.getTest();
+		DiagnosticReport diagnosticReport = genNewDiagnosticReport(analysis);
+		Test test = analysis.getTest();
 
-        if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.Finalized))) {
-            diagnosticReport.setStatus(DiagnosticReportStatus.FINAL);
-        } else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.TechnicalAcceptance))) {
-            diagnosticReport.setStatus(DiagnosticReportStatus.PRELIMINARY);
-        } else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.TechnicalRejected))) {
-            diagnosticReport.setStatus(DiagnosticReportStatus.PARTIAL);
-        } else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.NotStarted))) {
-            diagnosticReport.setStatus(DiagnosticReportStatus.REGISTERED);
-        } else {
-            diagnosticReport.setStatus(DiagnosticReportStatus.UNKNOWN);
-        }
+		if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.Finalized))) {
+			diagnosticReport.setStatus(DiagnosticReportStatus.FINAL);
+		} else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.TechnicalAcceptance))) {
+			diagnosticReport.setStatus(DiagnosticReportStatus.PRELIMINARY);
+		} else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.TechnicalRejected))) {
+			diagnosticReport.setStatus(DiagnosticReportStatus.PARTIAL);
+		} else if (analysis.getStatusId().equals(statusService.getStatusID(AnalysisStatus.NotStarted))) {
+			diagnosticReport.setStatus(DiagnosticReportStatus.REGISTERED);
+		} else {
+			diagnosticReport.setStatus(DiagnosticReportStatus.UNKNOWN);
+		}
 
-        diagnosticReport
-                .addBasedOn(this.createReferenceFor(ResourceType.ServiceRequest, analysis.getFhirUuidAsString()));
-        diagnosticReport.addSpecimen(this.createReferenceFor(ResourceType.Specimen, sampleItem.getFhirUuidAsString()));
-        diagnosticReport.setSubject(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
-        for (Result curResult : allResults) {
-            diagnosticReport
-                    .addResult(this.createReferenceFor(ResourceType.Observation, curResult.getFhirUuidAsString()));
-        }
-        diagnosticReport.setCode(transformTestToCodeableConcept(test.getId()));
+		diagnosticReport
+				.addBasedOn(this.createReferenceFor(ResourceType.ServiceRequest, analysis.getFhirUuidAsString()));
+		diagnosticReport.addSpecimen(this.createReferenceFor(ResourceType.Specimen, sampleItem.getFhirUuidAsString()));
+		diagnosticReport.setSubject(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
+		for (Result curResult : allResults) {
+			diagnosticReport
+					.addResult(this.createReferenceFor(ResourceType.Observation, curResult.getFhirUuidAsString()));
+		}
+		diagnosticReport.setCode(transformTestToCodeableConcept(test.getId()));
 
-        return diagnosticReport;
-    }
+		return diagnosticReport;
+	}
 
-    private DiagnosticReport genNewDiagnosticReport(Analysis analysis) {
-        DiagnosticReport diagnosticReport = new DiagnosticReport();
-        diagnosticReport.setId(analysis.getFhirUuidAsString());
-        diagnosticReport.addIdentifier(this.createIdentifier(fhirConfig.getOeFhirSystem() + "/analysisResult_uuid",
-                analysis.getFhirUuidAsString()));
-        return diagnosticReport;
-    }
+	private DiagnosticReport genNewDiagnosticReport(Analysis analysis) {
+		DiagnosticReport diagnosticReport = new DiagnosticReport();
+		diagnosticReport.setId(analysis.getFhirUuidAsString());
+		diagnosticReport.addIdentifier(this.createIdentifier(fhirConfig.getOeFhirSystem() + "/analysisResult_uuid",
+				analysis.getFhirUuidAsString()));
+		return diagnosticReport;
+	}
 
-    private Observation transformResultToObservation(String resultId) {
-        return transformResultToObservation(resultService.get(resultId));
-    }
+	private Observation transformResultToObservation(String resultId) {
+		return transformResultToObservation(resultService.get(resultId));
+	}
 
-    private Observation transformResultToObservation(Result result) {
-        Analysis analysis = result.getAnalysis();
-        Test test = analysis.getTest();
-        SampleItem sampleItem = analysis.getSampleItem();
-        Patient patient = sampleHumanService.getPatientForSample(sampleItem.getSample());
-        Observation observation = new Observation();
+	private Observation transformResultToObservation(Result result) {
+		Analysis analysis = result.getAnalysis();
+		Test test = analysis.getTest();
+		SampleItem sampleItem = analysis.getSampleItem();
+		Patient patient = sampleHumanService.getPatientForSample(sampleItem.getSample());
+		Observation observation = new Observation();
 
-        observation.setId(result.getFhirUuidAsString());
-        observation.addIdentifier(
-                this.createIdentifier(fhirConfig.getOeFhirSystem() + "/result_uuid", result.getFhirUuidAsString()));
+		observation.setId(result.getFhirUuidAsString());
+		observation.addIdentifier(
+				this.createIdentifier(fhirConfig.getOeFhirSystem() + "/result_uuid", result.getFhirUuidAsString()));
 
         // TODO make sure these align with each other.
         // we may need to add detection for when result is changed and add those status
@@ -991,7 +1073,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         if (result.getAnalysis().getStatusId().equals(statusService.getStatusID(AnalysisStatus.Finalized))) {
             observation.setStatus(ObservationStatus.FINAL);
         } else if (result.getAnalysis().getStatusId().equals(statusService.getStatusID(AnalysisStatus.NotStarted))) {
-            LogEvent.logError(this.getClass().getName(), "transformResultToObservation",
+            LogEvent.logError(this.getClass().getSimpleName(), "transformResultToObservation",
                     "recording result for analysis that is not started.");
             observation.setStatus(ObservationStatus.UNKNOWN);
         } else {
@@ -999,7 +1081,14 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         }
 
         if (!GenericValidator.isBlankOrNull(result.getValue())) {
-            if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())
+            // in case of Viral load test
+			if (result.getAnalysis().getTest().getName().equalsIgnoreCase("Viral Load")) {
+				Quantity quantity = new Quantity();
+				long finalResult = result.getVLValueAsNumber();
+				quantity.setValue(finalResult);
+				quantity.setUnit(resultService.getUOM(result));
+				observation.setValue(quantity);
+			} else if (TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(result.getResultType())
                     && !"0".equals(result.getValue())) {
                 Dictionary dictionary = dictionaryService.getDataForId(result.getValue());
                 observation.setValue(new CodeableConcept(
@@ -1026,268 +1115,272 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         observation.addBasedOn(this.createReferenceFor(ResourceType.ServiceRequest, analysis.getFhirUuidAsString()));
         observation.setSpecimen(this.createReferenceFor(ResourceType.Specimen, sampleItem.getFhirUuidAsString()));
         observation.setSubject(this.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
-//        observation.setIssued(result.getOriginalLastupdated());
-        observation.setIssued(result.getLastupdated());
-        observation.setEffective(new DateTimeType(result.getLastupdated()));
-//      observation.setIssued(new Date());
+        // observation.setIssued(result.getOriginalLastupdated());
+        observation.setIssued(analysis.getReleasedDate());//update to get Released Date instead of commpleted date        observation.setEffective(new DateTimeType(result.getLastupdated()));
+        observation.setEffective(new DateTimeType(analysis.getReleasedDate()));
+// observation.setIssued(new Date());
         return observation;
     }
 
-    @Override
-    public Practitioner transformNameToPractitioner(String practitionerName) {
-        Practitioner practitioner = new Practitioner();
-        HumanName name = practitioner.addName();
+	@Override
+	public Practitioner transformNameToPractitioner(String practitionerName) {
+		Practitioner practitioner = new Practitioner();
+		HumanName name = practitioner.addName();
 
-        if (practitionerName.contains(",")) {
-            String[] names = practitionerName.split(",", 2);
-            name.setFamily(names[0]);
-            for (int i = 1; i < names.length; ++i) {
-                name.addGiven(names[i]);
-            }
-        } else {
-            String[] names = practitionerName.split(" ");
-            if (names.length >= 1) {
-                name.setFamily(names[names.length - 1]);
-                for (int i = 0; i < names.length - 1; ++i) {
-                    name.addGiven(names[i]);
-                }
-            }
-        }
-        return practitioner;
-    }
+		if (practitionerName.contains(",")) {
+			String[] names = practitionerName.split(",", 2);
+			name.setFamily(names[0]);
+			for (int i = 1; i < names.length; ++i) {
+				name.addGiven(names[i]);
+			}
+		} else {
+			String[] names = practitionerName.split(" ");
+			if (names.length >= 1) {
+				name.setFamily(names[names.length - 1]);
+				for (int i = 0; i < names.length - 1; ++i) {
+					name.addGiven(names[i]);
+				}
+			}
+		}
+		return practitioner;
+	}
 
-    @Override
-    @Transactional(readOnly = true)
-    public org.hl7.fhir.r4.model.Organization transformToFhirOrganization(Organization organization) {
-        org.hl7.fhir.r4.model.Organization fhirOrganization = new org.hl7.fhir.r4.model.Organization();
-        fhirOrganization
-                .setId(organization.getFhirUuid() == null ? organization.getId() : organization.getFhirUuidAsString());
-        fhirOrganization.setName(organization.getOrganizationName());
-        fhirOrganization.setActive(organization.getIsActive() == IActionConstants.YES ? true : false);
-        this.setFhirOrganizationIdentifiers(fhirOrganization, organization);
-        this.setFhirAddressInfo(fhirOrganization, organization);
-        this.setFhirOrganizationTypes(fhirOrganization, organization);
-        return fhirOrganization;
-    }
+	@Override
+	@Transactional(readOnly = true)
+	public org.hl7.fhir.r4.model.Organization transformToFhirOrganization(Organization organization) {
+		org.hl7.fhir.r4.model.Organization fhirOrganization = new org.hl7.fhir.r4.model.Organization();
+		fhirOrganization
+				.setId(organization.getFhirUuid() == null ? organization.getId() : organization.getFhirUuidAsString());
+		fhirOrganization.setName(organization.getOrganizationName());
+		fhirOrganization.setActive(organization.getIsActive() == IActionConstants.YES ? true : false);
+		this.setFhirOrganizationIdentifiers(fhirOrganization, organization);
+		this.setFhirAddressInfo(fhirOrganization, organization);
+		this.setFhirOrganizationTypes(fhirOrganization, organization);
+		return fhirOrganization;
+	}
 
-    @Override
-    @Transactional(readOnly = true)
-    public Organization transformToOrganization(org.hl7.fhir.r4.model.Organization fhirOrganization) {
-        Organization organization = new Organization();
-        organization.setOrganizationName(fhirOrganization.getName());
-        organization.setIsActive(Boolean.FALSE == fhirOrganization.getActiveElement().getValue() ? IActionConstants.NO
-                : IActionConstants.YES);
+	@Override
+	@Transactional(readOnly = true)
+	public Organization transformToOrganization(org.hl7.fhir.r4.model.Organization fhirOrganization) {
+		Organization organization = new Organization();
+		organization.setOrganizationName(fhirOrganization.getName());
+		organization.setIsActive(Boolean.FALSE == fhirOrganization.getActiveElement().getValue() ? IActionConstants.NO
+				: IActionConstants.YES);
 
-        setOeOrganizationIdentifiers(organization, fhirOrganization);
-        setOeOrganizationAddressInfo(organization, fhirOrganization);
-        setOeOrganizationTypes(organization, fhirOrganization);
+		setOeOrganizationIdentifiers(organization, fhirOrganization);
+		setOeOrganizationAddressInfo(organization, fhirOrganization);
+		setOeOrganizationTypes(organization, fhirOrganization);
 
-        organization.setMlsLabFlag(IActionConstants.NO);
-        organization.setMlsSentinelLabFlag(IActionConstants.NO);
+		organization.setMlsLabFlag(IActionConstants.NO);
+		organization.setMlsSentinelLabFlag(IActionConstants.NO);
 
-        return organization;
-    }
+		return organization;
+	}
 
-    private void setOeOrganizationIdentifiers(Organization organization,
-            org.hl7.fhir.r4.model.Organization fhirOrganization) {
-        organization.setFhirUuid(UUID.fromString(fhirOrganization.getIdElement().getIdPart()));
-        for (Identifier identifier : fhirOrganization.getIdentifier()) {
-            if (identifier.getSystem().equals(fhirConfig.getOeFhirSystem() + "/org_cliaNum")) {
-                organization.setCliaNum(identifier.getValue());
-            } else if (identifier.getSystem().equals(fhirConfig.getOeFhirSystem() + "/org_shortName")) {
-                organization.setShortName(identifier.getValue());
-            } else if (identifier.getSystem().equals(fhirConfig.getOeFhirSystem() + "/org_code")) {
-                organization.setCode(identifier.getValue());
-            } else if (identifier.getSystem().equals(fhirConfig.getOeFhirSystem() + "/org_uuid")) {
-                organization.setFhirUuid(UUID.fromString(identifier.getValue()));
-            }
-        }
-    }
+	private void setOeOrganizationIdentifiers(Organization organization,
+			org.hl7.fhir.r4.model.Organization fhirOrganization) {
+		organization.setFhirUuid(UUID.fromString(fhirOrganization.getIdElement().getIdPart()));
+		for (Identifier identifier : fhirOrganization.getIdentifier()) {
+			if (identifier.getSystem().equals(fhirConfig.getOeFhirSystem() + "/org_cliaNum")) {
+				organization.setCliaNum(identifier.getValue());
+			} else if (identifier.getSystem().equals(fhirConfig.getOeFhirSystem() + "/org_shortName")) {
+				organization.setShortName(identifier.getValue());
+			} else if (identifier.getSystem().equals(fhirConfig.getOeFhirSystem() + "/org_code")) {
+				organization.setCode(identifier.getValue());
+			} else if (identifier.getSystem().equals(fhirConfig.getOeFhirSystem() + "/org_uuid")) {
+				organization.setFhirUuid(UUID.fromString(identifier.getValue()));
+			}
+		}
+	}
 
-    private void setFhirOrganizationIdentifiers(org.hl7.fhir.r4.model.Organization fhirOrganization,
-            Organization organization) {
-        if (!GenericValidator.isBlankOrNull(organization.getCliaNum())) {
-            fhirOrganization.addIdentifier(new Identifier().setSystem(fhirConfig.getOeFhirSystem() + "/org_cliaNum")
-                    .setValue(organization.getCliaNum()));
-        }
-        if (!GenericValidator.isBlankOrNull(organization.getShortName())) {
-            fhirOrganization.addIdentifier(new Identifier().setSystem(fhirConfig.getOeFhirSystem() + "/org_shortName")
-                    .setValue(organization.getShortName()));
-        }
-        if (!GenericValidator.isBlankOrNull(organization.getCode())) {
-            fhirOrganization.addIdentifier(new Identifier().setSystem(fhirConfig.getOeFhirSystem() + "/org_code")
-                    .setValue(organization.getCode()));
-        }
-        if (!GenericValidator.isBlankOrNull(organization.getCode())) {
-            fhirOrganization.addIdentifier(new Identifier().setSystem(fhirConfig.getOeFhirSystem() + "/org_uuid")
-                    .setValue(organization.getFhirUuidAsString()));
-        }
-    }
+	private void setFhirOrganizationIdentifiers(org.hl7.fhir.r4.model.Organization fhirOrganization,
+			Organization organization) {
+		if (!GenericValidator.isBlankOrNull(organization.getCliaNum())) {
+			fhirOrganization.addIdentifier(new Identifier().setSystem(fhirConfig.getOeFhirSystem() + "/org_cliaNum")
+					.setValue(organization.getCliaNum()));
+		}
+		if (!GenericValidator.isBlankOrNull(organization.getShortName())) {
+			fhirOrganization.addIdentifier(new Identifier().setSystem(fhirConfig.getOeFhirSystem() + "/org_shortName")
+					.setValue(organization.getShortName()));
+		}
+		if (!GenericValidator.isBlankOrNull(organization.getCode())) {
+			fhirOrganization.addIdentifier(new Identifier().setSystem(fhirConfig.getOeFhirSystem() + "/org_code")
+					.setValue(organization.getCode()));
+		}
+		if (!GenericValidator.isBlankOrNull(organization.getCode())) {
+			fhirOrganization.addIdentifier(new Identifier().setSystem(fhirConfig.getOeFhirSystem() + "/org_uuid")
+					.setValue(organization.getFhirUuidAsString()));
+		}
+	}
 
-    private void setOeOrganizationTypes(Organization organization,
-            org.hl7.fhir.r4.model.Organization fhirOrganization) {
-        Set<OrganizationType> orgTypes = new HashSet<>();
-        OrganizationType orgType = null;
-        for (CodeableConcept type : fhirOrganization.getType()) {
-            for (Coding coding : type.getCoding()) {
-                if (coding.getSystem() != null
-                        && coding.getSystem().equals(fhirConfig.getOeFhirSystem() + "/orgType")) {
-                    orgType = new OrganizationType();
-                    orgType.setName(coding.getCode());
-                    orgType.setDescription(type.getText());
-                    orgType.setNameKey("org_type." + coding.getCode() + ".name");
-                    orgType.setOrganizations(new HashSet<>());
-                    orgType.getOrganizations().add(organization);
-                    orgTypes.add(orgType);
-                }
-            }
-        }
-        organization.setOrganizationTypes(orgTypes);
-    }
+	private void setOeOrganizationTypes(Organization organization,
+			org.hl7.fhir.r4.model.Organization fhirOrganization) {
+		Set<OrganizationType> orgTypes = new HashSet<>();
+		OrganizationType orgType = null;
+		for (CodeableConcept type : fhirOrganization.getType()) {
+			for (Coding coding : type.getCoding()) {
+				if (coding.getSystem() != null
+						&& coding.getSystem().equals(fhirConfig.getOeFhirSystem() + "/orgType")) {
+					orgType = new OrganizationType();
+					orgType.setName(coding.getCode());
+					orgType.setDescription(type.getText());
+					orgType.setNameKey("org_type." + coding.getCode() + ".name");
+					orgType.setOrganizations(new HashSet<>());
+					orgType.getOrganizations().add(organization);
+					orgTypes.add(orgType);
+				}
+			}
+		}
+		organization.setOrganizationTypes(orgTypes);
+	}
 
-    private void setFhirOrganizationTypes(org.hl7.fhir.r4.model.Organization fhirOrganization,
-            Organization organization) {
-        Set<OrganizationType> orgTypes = organization.getOrganizationTypes();
-        for (OrganizationType orgType : orgTypes) {
-            fhirOrganization.addType(new CodeableConcept() //
-                    .setText(orgType.getDescription()) //
-                    .addCoding(new Coding() //
-                            .setSystem(fhirConfig.getOeFhirSystem() + "/orgType") //
-                            .setCode(orgType.getName())));
-        }
-    }
+	private void setFhirOrganizationTypes(org.hl7.fhir.r4.model.Organization fhirOrganization,
+			Organization organization) {
+		Set<OrganizationType> orgTypes = organization.getOrganizationTypes();
+		for (OrganizationType orgType : orgTypes) {
+			fhirOrganization.addType(new CodeableConcept() //
+					.setText(orgType.getDescription()) //
+					.addCoding(new Coding() //
+							.setSystem(fhirConfig.getOeFhirSystem() + "/orgType") //
+							.setCode(orgType.getName())));
+		}
+	}
 
-    private void setOeOrganizationAddressInfo(Organization organization,
-            org.hl7.fhir.r4.model.Organization fhirOrganization) {
-        organization.setStreetAddress(fhirOrganization.getAddressFirstRep().getLine().stream()
-                .map(e -> e.asStringValue()).collect(Collectors.joining("\\n")));
-        organization.setCity(fhirOrganization.getAddressFirstRep().getCity());
-        organization.setState(fhirOrganization.getAddressFirstRep().getState());
-        organization.setZipCode(fhirOrganization.getAddressFirstRep().getPostalCode());
-    }
+	private void setOeOrganizationAddressInfo(Organization organization,
+			org.hl7.fhir.r4.model.Organization fhirOrganization) {
+		organization.setStreetAddress(fhirOrganization.getAddressFirstRep().getLine().stream()
+				.map(e -> e.asStringValue()).collect(Collectors.joining("\\n")));
+		organization.setCity(fhirOrganization.getAddressFirstRep().getCity());
+		organization.setState(fhirOrganization.getAddressFirstRep().getState());
+		organization.setZipCode(fhirOrganization.getAddressFirstRep().getPostalCode());
+	}
 
-    private void setFhirAddressInfo(org.hl7.fhir.r4.model.Organization fhirOrganization, Organization organization) {
-        if (!GenericValidator.isBlankOrNull(organization.getStreetAddress())) {
-            fhirOrganization.getAddressFirstRep().addLine(organization.getStreetAddress());
-        }
-        if (!GenericValidator.isBlankOrNull(organization.getCity())) {
-            fhirOrganization.getAddressFirstRep().setCity(organization.getCity());
-        }
-        if (!GenericValidator.isBlankOrNull(organization.getState())) {
-            fhirOrganization.getAddressFirstRep().setState(organization.getState());
-        }
-        if (!GenericValidator.isBlankOrNull(organization.getZipCode())) {
-            fhirOrganization.getAddressFirstRep().setPostalCode(organization.getZipCode());
-        }
-    }
+	private void setFhirAddressInfo(org.hl7.fhir.r4.model.Organization fhirOrganization, Organization organization) {
+		if (!GenericValidator.isBlankOrNull(organization.getStreetAddress())) {
+			fhirOrganization.getAddressFirstRep().addLine(organization.getStreetAddress());
+		}
+		if (!GenericValidator.isBlankOrNull(organization.getCity())) {
+			fhirOrganization.getAddressFirstRep().setCity(organization.getCity());
+		}
+		if (!GenericValidator.isBlankOrNull(organization.getState())) {
+			fhirOrganization.getAddressFirstRep().setState(organization.getState());
+		}
+		if (!GenericValidator.isBlankOrNull(organization.getZipCode())) {
+			fhirOrganization.getAddressFirstRep().setPostalCode(organization.getZipCode());
+		}
+	}
 
-    private Annotation transformNoteToAnnotation(Note note) {
-        Annotation annotation = new Annotation();
-        annotation.setText(note.getText());
-        return annotation;
-    }
+	private Annotation transformNoteToAnnotation(Note note) {
+		Annotation annotation = new Annotation();
+		annotation.setText(note.getText());
+		return annotation;
+	}
 
-    @Override
-    public boolean setTempIdIfMissing(Resource resource, TempIdGenerator tempIdGenerator) {
-        if (GenericValidator.isBlankOrNull(resource.getId())) {
-            resource.setId(tempIdGenerator.getNextId());
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public boolean setTempIdIfMissing(Resource resource, TempIdGenerator tempIdGenerator) {
+		if (GenericValidator.isBlankOrNull(resource.getId())) {
+			resource.setId(tempIdGenerator.getNextId());
+			return true;
+		}
+		return false;
+	}
 
-    @Override
-    public Reference createReferenceFor(Resource resource) {
-        if (resource == null) {
-            return null;
-        }
-        Reference reference = new Reference(resource);
-        reference.setReference(resource.getResourceType() + "/" + resource.getIdElement().getIdPart());
-        return reference;
-    }
+	@Override
+	public Reference createReferenceFor(Resource resource) {
+		if (resource == null) {
+			return null;
+		}
+		Reference reference = new Reference(resource);
+		reference.setReference(resource.getResourceType() + "/" + resource.getIdElement().getIdPart());
+		return reference;
+	}
 
     @Override
     public Reference createReferenceFor(ResourceType resourceType, String id) {
+        if (GenericValidator.isBlankOrNull(id)) {
+            LogEvent.logWarn(this.getClass().getName(), "createReferenceFor",
+                    "null or empty id used in resource:" + resourceType + "/" + id);
+        }
         Reference reference = new Reference();
         reference.setReference(resourceType + "/" + id);
         return reference;
     }
 
-    @Override
-    public String getIdFromLocation(String location) {
-        String id = location.substring(location.indexOf("/") + 1);
-        while (id.lastIndexOf("/") > 0) {
-            id = id.substring(0, id.lastIndexOf("/"));
-        }
-        return id;
-    }
+	@Override
+	public String getIdFromLocation(String location) {
+		String id = location.substring(location.indexOf("/") + 1);
+		while (id.lastIndexOf("/") > 0) {
+			id = id.substring(0, id.lastIndexOf("/"));
+		}
+		return id;
+	}
 
-    @Override
-    public Identifier createIdentifier(String system, String value) {
-        Identifier identifier = new Identifier();
-        identifier.setSystem(system);
-        identifier.setValue(value);
-        return identifier;
-    }
+	@Override
+	public Identifier createIdentifier(String system, String value) {
+		Identifier identifier = new Identifier();
+		identifier.setSystem(system);
+		identifier.setValue(value);
+		return identifier;
+	}
 
-    private class FhirOrderEntryObjects {
-        @SuppressWarnings("unused")
-        public org.hl7.fhir.r4.model.Patient patient;
-        public Practitioner requester;
-        List<FhirSampleEntryObjects> sampleEntryObjectsList = new ArrayList<>();
-    }
+	private class FhirOrderEntryObjects {
+		@SuppressWarnings("unused")
+		public org.hl7.fhir.r4.model.Patient patient;
+		public Practitioner requester;
+		List<FhirSampleEntryObjects> sampleEntryObjectsList = new ArrayList<>();
+	}
 
-    private class FhirSampleEntryObjects {
-        public Practitioner collector;
-        public Specimen specimen;
-        public List<ServiceRequest> serviceRequests = new ArrayList<>();
-    }
+	private class FhirSampleEntryObjects {
+		public Practitioner collector;
+		public Specimen specimen;
+		public List<ServiceRequest> serviceRequests = new ArrayList<>();
+	}
 
-    public void addHumanNameToPerson(HumanName humanName, Person person) {
-        person.setFirstName(
-                humanName.getGivenAsSingleString() == null ? "" : humanName.getGivenAsSingleString().strip());
-        person.setLastName(humanName.getFamily() == null ? "" : humanName.getFamily().strip());
-    }
+	public void addHumanNameToPerson(HumanName humanName, Person person) {
+		person.setFirstName(
+				humanName.getGivenAsSingleString() == null ? "" : humanName.getGivenAsSingleString().strip());
+		person.setLastName(humanName.getFamily() == null ? "" : humanName.getFamily().strip());
+	}
 
-    public void addTelecomToPerson(List<ContactPoint> telecoms, Person person) {
-        for (ContactPoint contact : telecoms) {
-            String contactValue = contact.getValue();
-            if (ContactPointSystem.EMAIL.equals(contact.getSystem())) {
-                person.setEmail(contactValue);
-            } else if (ContactPointSystem.FAX.equals(contact.getSystem())) {
-                person.setFax(contactValue);
-            } else if (ContactPointSystem.PHONE.equals(contact.getSystem())
-                    && ContactPointUse.MOBILE.equals(contact.getUse())) {
-                person.setCellPhone(contactValue);
-                person.setPrimaryPhone(contactValue);
-            } else if (ContactPointSystem.PHONE.equals(contact.getSystem())
-                    && ContactPointUse.HOME.equals(contact.getUse())) {
-                person.setHomePhone(contactValue);
-                if (GenericValidator.isBlankOrNull(person.getPrimaryPhone())) {
-                    person.setPrimaryPhone(contactValue);
-                }
-            } else if (ContactPointSystem.PHONE.equals(contact.getSystem())
-                    && ContactPointUse.WORK.equals(contact.getUse())) {
-                person.setWorkPhone(contactValue);
-                if (GenericValidator.isBlankOrNull(person.getPrimaryPhone())) {
-                    person.setPrimaryPhone(contactValue);
-                }
-            }
-        }
-    }
+	public void addTelecomToPerson(List<ContactPoint> telecoms, Person person) {
+		for (ContactPoint contact : telecoms) {
+			String contactValue = contact.getValue();
+			if (ContactPointSystem.EMAIL.equals(contact.getSystem())) {
+				person.setEmail(contactValue);
+			} else if (ContactPointSystem.FAX.equals(contact.getSystem())) {
+				person.setFax(contactValue);
+			} else if (ContactPointSystem.PHONE.equals(contact.getSystem())
+					&& ContactPointUse.MOBILE.equals(contact.getUse())) {
+				person.setCellPhone(contactValue);
+				person.setPrimaryPhone(contactValue);
+			} else if (ContactPointSystem.PHONE.equals(contact.getSystem())
+					&& ContactPointUse.HOME.equals(contact.getUse())) {
+				person.setHomePhone(contactValue);
+				if (GenericValidator.isBlankOrNull(person.getPrimaryPhone())) {
+					person.setPrimaryPhone(contactValue);
+				}
+			} else if (ContactPointSystem.PHONE.equals(contact.getSystem())
+					&& ContactPointUse.WORK.equals(contact.getUse())) {
+				person.setWorkPhone(contactValue);
+				if (GenericValidator.isBlankOrNull(person.getPrimaryPhone())) {
+					person.setPrimaryPhone(contactValue);
+				}
+			}
+		}
+	}
 
-    @Override
-    public Provider transformToProvider(Practitioner practitioner) {
-        Provider provider = new Provider();
-        provider.setActive(practitioner.getActive());
-        provider.setFhirUuid(UUID.fromString(practitioner.getIdElement().getIdPart()));
+	@Override
+	public Provider transformToProvider(Practitioner practitioner) {
+		Provider provider = new Provider();
+		provider.setActive(practitioner.getActive());
+		provider.setFhirUuid(UUID.fromString(practitioner.getIdElement().getIdPart()));
 
-        provider.setPerson(new Person());
-        addHumanNameToPerson(practitioner.getNameFirstRep(), provider.getPerson());
-        addTelecomToPerson(practitioner.getTelecom(), provider.getPerson());
+		provider.setPerson(new Person());
+		addHumanNameToPerson(practitioner.getNameFirstRep(), provider.getPerson());
+		addTelecomToPerson(practitioner.getTelecom(), provider.getPerson());
 
-        return provider;
+		return provider;
 
-    }
+	}
 
 }

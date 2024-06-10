@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.method.dao.MethodDAO;
 import org.openelisglobal.method.valueholder.Method;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import org.springframework.context.annotation.DependsOn;
 
 @Service
 @DependsOn({ "springContext" })
-public class MethodServiceImpl extends BaseObjectServiceImpl<Method, String> implements MethodService {
+public class MethodServiceImpl extends AuditableBaseObjectServiceImpl<Method, String> implements MethodService {
     @Autowired
     protected MethodDAO baseObjectDAO;
 

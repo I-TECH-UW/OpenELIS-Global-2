@@ -60,7 +60,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
                 systemUserModule.setId(null);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in RoleModule getData()", e);
         }
     }
@@ -74,7 +74,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             Query<RoleModule> query = entityManager.unwrap(Session.class).createQuery(sql, RoleModule.class);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in RoleModule getAllSystemModules()", e);
         }
 
@@ -91,7 +91,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             query.setParameter("param", systemUserId);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in RoleModule getAllRoleModulesBySystemUserId()", e);
         }
 
@@ -113,7 +113,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in RoleModule getPageOfRoleModules()", e);
         }
 
@@ -125,7 +125,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
         try {
             sysUserModule = entityManager.unwrap(Session.class).get(RoleModule.class, idString);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Gender readRoleModule(idString)", e);
         }
 
@@ -179,7 +179,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             return list.size() > 0;
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateRoleModuleExists()", e);
         }
     }
@@ -194,7 +194,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             int roleCount = ((BigInteger) query.uniqueResult()).intValue();
             return roleCount > 0;
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in doesUserHaveAnyModules(int)", e);
         }
     }

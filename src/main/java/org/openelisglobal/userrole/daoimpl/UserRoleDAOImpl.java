@@ -53,7 +53,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
             query.setParameter("userId", Integer.parseInt(userId));
             userRoles = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in UserRoleDAOImpl getUserRolesForUser()", e);
         }
         return userRoles;
@@ -73,7 +73,7 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 
             inRole = result != 0;
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", e);
         }
 
@@ -95,19 +95,20 @@ public class UserRoleDAOImpl extends BaseDAOImpl<UserRole, UserRolePK> implement
 
             inRole = result != 0;
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", e);
         }
 
         return inRole;
     }
 
+
     @Override
     public void deleteLabUnitRoleMap(LabUnitRoleMap roleMap) {
         try {
             entityManager.unwrap(Session.class).delete(roleMap);
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in UserRoleDAOImpl userInRole()", e);
         }
     }

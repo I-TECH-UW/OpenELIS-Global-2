@@ -52,7 +52,7 @@ public class DeletePatientTestDataController extends BaseController {
 
             PatientUtil.invalidateUnknownPatients();
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in DeletePatientTestData performAction()", e);
         }
 

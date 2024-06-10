@@ -41,6 +41,8 @@ LOG_FILE_NAME = "installer.log"
 POSTGRES_ROLE_UPDATE_FILE_NAME = "updateDBPassword.sql"
 SETUP_CONFIG_FILE_NAME = "setup.ini"
 CLIENT_FACING_KEYSTORE = "client_facing_keystore"
+CLIENT_FACING_KEY = "nginx.key.pem"
+CLIENT_FACING_CERT = "nginx.cert.pem"
 KEYSTORE = "keystore"
 TRUSTSTORE = "truststore"
 CLEANUP_SCRIPT_NAME = "logCleanup.sh"
@@ -64,6 +66,8 @@ CRON_INSTALL_DIR = "/etc/cron.d/"
 
 #full file paths
 CLIENT_FACING_KEYSTORE_PATH = OE_ETC_DIR + CLIENT_FACING_KEYSTORE
+CLIENT_FACING_KEY_PATH = OE_ETC_DIR + CLIENT_FACING_KEY
+CLIENT_FACING_CERT_PATH = OE_ETC_DIR + CLIENT_FACING_CERT
 KEYSTORE_PATH = OE_ETC_DIR + KEYSTORE
 TRUSTSTORE_PATH = OE_ETC_DIR + TRUSTSTORE
 
@@ -76,6 +80,8 @@ DB_PORT="5432"
 DOCKER_OE_REPO_NAME = "openelisglobal" #must match docker image name (not container name)
 DOCKER_OE_CONTAINER_NAME = "openelisglobal-webapp" 
 DOCKER_FHIR_API_CONTAINER_NAME = "external-fhir-api"
+DOCKER_NGINX_CONTAINER_NAME = "openelisglobal-proxy"
+DOCKER_FRONTEND_CONTAINER_NAME = "openelisglobal-frontend"
 DOCKER_AUTOHEAL_CONTAINER_NAME = "autoheal-oe"
 DOCKER_DB_CONTAINER_NAME = "openelisglobal-database" 
 DOCKER_DB_BACKUPS_DIR = "/backups/"  # path in docker container
@@ -265,6 +271,8 @@ def install_files_from_templates():
     create_server_xml_files()
     install_cron_tasks()
     install_permissions_file()
+    create_nginx_certs()
+    create_nginx_files()
     if DOCKER_DB:
         install_environment_file()
 
@@ -320,6 +328,10 @@ def create_docker_compose_file():
             line = line.replace("[% oe_name %]", DOCKER_OE_CONTAINER_NAME )
         if line.find("[% fhir_api_name %]")  >= 0:
             line = line.replace("[% fhir_api_name %]", DOCKER_FHIR_API_CONTAINER_NAME )
+        if line.find("[% nginx_name %]")  >= 0:
+            line = line.replace("[% nginx_name %]", DOCKER_NGINX_CONTAINER_NAME )
+        if line.find("[% frontend_name %]")  >= 0:
+            line = line.replace("[% frontend_name %]", DOCKER_FRONTEND_CONTAINER_NAME )
         if line.find("[% autoheal_name %]")  >= 0:
             line = line.replace("[% autoheal_name %]", DOCKER_AUTOHEAL_CONTAINER_NAME )
         if line.find("[% timezone %]")  >= 0:
@@ -332,7 +344,7 @@ def create_docker_compose_file():
         if len(EXTERNAL_HOSTS) > 0:
             if line.find("#eh") >= 0:
                 line = line.replace("#eh", "")
-            docker_external_hosts = "            - " + "\n            - ".join(EXTERNAL_HOSTS)
+            docker_external_hosts = "      - " + "\n      - ".join(EXTERNAL_HOSTS)
             line = line.replace("[% extra_hosts %]", docker_external_hosts )
         
         output_file.write(line)
@@ -460,6 +472,20 @@ def create_server_xml_files():
     output_file.close()
     os.chmod(OE_ETC_DIR + "healthcheck.sh", 0o750) 
     os.chown(OE_ETC_DIR + 'healthcheck.sh', 8443, 8443)      
+    
+#this is somewhat unnecessary as we could just copy the file, but in case we start using variables in the file, this is being used    
+def create_nginx_files():
+    ensure_dir_exists(SECRETS_DIR)
+    template_file = open(INSTALLER_TEMPLATE_DIR + "nginx.conf", "r")
+    output_file = open(SECRETS_DIR + "nginx.conf", "w")
+
+    for line in template_file:
+        output_file.write(line)
+
+    template_file.close()
+    output_file.close()
+    os.chmod(SECRETS_DIR + "common.properties", 0o640)   
+    os.chown(SECRETS_DIR + "nginx.conf", 8443, 8443) 
     
 
 def install_cron_tasks():
@@ -756,6 +782,10 @@ def do_update():
     
     get_stored_user_values()
     
+    create_nginx_certs()
+    
+    create_nginx_files()
+    
     create_docker_compose_file()
     
     create_properties_files()
@@ -826,6 +856,14 @@ def uninstall_docker_images():
     
     log("removing fhir api image...", PRINT_TO_CONSOLE)
     cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_FHIR_API_CONTAINER_NAME + '" --format="{{.ID}}"))'
+    os.system(cmd)
+    
+    log("removing nginx proxy image...", PRINT_TO_CONSOLE)
+    cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_NGINX_CONTAINER_NAME + '" --format="{{.ID}}"))'
+    os.system(cmd)
+    
+    log("removing frontend image...", PRINT_TO_CONSOLE)
+    cmd = 'docker rm $(docker stop $(docker ps -a -q --filter="name=' + DOCKER_FRONTEND_CONTAINER_NAME + '" --format="{{.ID}}"))'
     os.system(cmd)
     
     log("removing autoheal image...", PRINT_TO_CONSOLE)
@@ -1065,7 +1103,7 @@ def set_keystore_password():
         set_keystore_password()
     else:
         with open(CONFIG_DIR + 'KEYSTORE_PASSWORD', mode='wt') as file:
-            file.write(k_password)    
+            file.write(k_password)
     
     
 def is_truststore_password_set():
@@ -1281,6 +1319,19 @@ def create_db_backup_user():
         os.system('sudo service postgresql restart')
     
         
+def create_nginx_certs():
+# copying file as openssl wont accept the same input and output file for passwords
+    cmd = 'cp ' + CONFIG_DIR + 'KEYSTORE_PASSWORD ' + CONFIG_DIR + 'KEYSTORE_PASSWORD2'
+    os.system(cmd)
+#openssl pkcs12 -in /etc/openelis-global/new/client_facing_keystore -out /etc/openelis-global/nginx.key.pem -nocerts -passout file:/var/lib/openelis-global/config/KEYSTORE_PASSWORD -passin file:/var/lib/openelis-global/config/KEYSTORE_PASSWORD2
+    cmd = 'openssl pkcs12 -in ' + CLIENT_FACING_KEYSTORE_PATH + ' -out ' + CLIENT_FACING_KEY_PATH + ' -nocerts -passout file:' + CONFIG_DIR + 'KEYSTORE_PASSWORD -passin file:' + CONFIG_DIR + 'KEYSTORE_PASSWORD2'
+    os.system(cmd)
+#openssl pkcs12 -in /etc/openelis-global/client_facing_keystore -out /etc/openelis-global/nginx.crt.pem -nodes -nokeys -passin file:/var/lib/openelis-global/config/KEYSTORE_PASSWORD -passout file:/var/lib/openelis-global/config/KEYSTORE_PASSWORD
+    cmd = 'openssl pkcs12 -in ' + CLIENT_FACING_KEYSTORE_PATH + ' -out ' + CLIENT_FACING_CERT_PATH + ' -nokeys -nodes -passout file:' + CONFIG_DIR + 'KEYSTORE_PASSWORD -passin file:' + CONFIG_DIR + 'KEYSTORE_PASSWORD2'
+    os.system(cmd)
+# cleanup temp file
+    cmd = 'rm ' + CONFIG_DIR + 'KEYSTORE_PASSWORD2'
+    os.system(cmd)
                 
 #---------------------------------------------------------------------
 #             PASSWORD GENERATION
@@ -1440,13 +1491,13 @@ def load_docker_image():
     cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'AutoHeal_DockerImage.tar.gz'
     os.system(cmd)
     
-#     log("loading dataimport-webapp docker image", PRINT_TO_CONSOLE)
-#     cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'DataImporter_DockerImage.tar.gz'
-#     os.system(cmd)
+    log("loading openelisglobal-frontend docker image", PRINT_TO_CONSOLE)
+    cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'ReactFrontend_DockerImage.tar.gz'
+    os.system(cmd)
     
-#    log("loading datasubscriber-webapp docker image", PRINT_TO_CONSOLE)
-#    cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'DataSubscriber_DockerImage.tar.gz'
-#    os.system(cmd)
+    log("loading nginx-proxy docker image", PRINT_TO_CONSOLE)
+    cmd = 'sudo docker load < ' + INSTALLER_DOCKER_DIR + 'NGINX_DockerImage.tar.gz'
+    os.system(cmd)
 
     if DOCKER_DB:
         log("loading postgres docker image", PRINT_TO_CONSOLE)
@@ -1526,7 +1577,7 @@ def backup_db():
                         clean_exit()  
             elif LOCAL_DB:
                 os.system(
-                    "PGPASSWORD=\"" + CLINLIMS_PWD + "\";export PGPASSWORD; su -c  'pgdump_all --verbose --clean -h localhost -U clinlims clinlims > " + INSTALLER_ROLLBACK_DIR + backup_name + "'")
+                    "PGPASSWORD=\"" + CLINLIMS_PWD + "\";export PGPASSWORD; su -c  'pg_dumpall --verbose --clean -h localhost -U clinlims clinlims > " + INSTALLER_ROLLBACK_DIR + backup_name + "'")
             else:
                 log("can't backup remote databases. proceeding". PRINT_TO_CONSOLE)
         else:

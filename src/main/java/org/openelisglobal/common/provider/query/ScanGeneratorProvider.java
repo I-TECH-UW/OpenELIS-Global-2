@@ -49,13 +49,14 @@ public class ScanGeneratorProvider extends BaseQueryProvider {
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        boolean noIncrement = "true".equals(request.getParameter("noIncrement"));
         String programCode = request.getParameter("programCode");
         String nextNumber = null;
         String error = null;
         try {
             if (GenericValidator.isBlankOrNull(programCode)) {
                 nextNumber = AccessionNumberUtil.getMainAccessionNumberGenerator().getNextAvailableAccessionNumber("",
-                        true);
+                        !noIncrement);
             } else {
                 // check program code validity
                 List<Project> programCodes = projectService.getAllProjects();
@@ -68,7 +69,7 @@ public class ScanGeneratorProvider extends BaseQueryProvider {
                 }
                 if (found) {
                     nextNumber = AccessionNumberUtil.getProgramAccessionNumberGenerator()
-                            .getNextAvailableAccessionNumber(programCode, true);
+                            .getNextAvailableAccessionNumber(programCode, !noIncrement);
                     if (GenericValidator.isBlankOrNull(nextNumber)) {
                         error = MessageUtil.getMessage("error.accession.no.next");
                     }
@@ -78,7 +79,7 @@ public class ScanGeneratorProvider extends BaseQueryProvider {
             }
         } catch (IllegalArgumentException | IllegalStateException e) {
             error = MessageUtil.getMessage("error.accession.no.error");
-            LogEvent.logError(this.getClass().getName(), "processRequest", e.toString());
+            LogEvent.logError(this.getClass().getSimpleName(), "processRequest", e.toString());
         }
 
         String result = GenericValidator.isBlankOrNull(nextNumber) ? INVALID : VALID;

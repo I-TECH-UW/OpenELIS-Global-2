@@ -15,6 +15,7 @@
 */
 package org.openelisglobal.resultvalidation.bean;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -26,9 +27,11 @@ import org.openelisglobal.resultvalidation.form.ResultValidationForm;
 import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 
-public class AnalysisItem {
+public class AnalysisItem implements Serializable{
 
-    private String id;
+    private static final long serialVersionUID = 1L;
+
+	private String id;
 
     private String units;
 
@@ -36,7 +39,9 @@ public class AnalysisItem {
 
     @ValidAccessionNumber(groups = { ResultValidationForm.ResultValidation.class })
     private String accessionNumber;
+    private String patientName;
 
+    private String patientInfo;
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String result;
 
@@ -73,6 +78,9 @@ public class AnalysisItem {
 
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ResultValidationForm.ResultValidation.class })
     private String resultId;
+    private double lowerCritical;
+    private double higherCritical;
+    private  String normalRange;
 
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
     private String resultType;
@@ -92,15 +100,19 @@ public class AnalysisItem {
     private String integralResult;
 
     private String integralAnalysisId;
+    
+    private String genscreenResult;
+    
+    private String genscreenAnalysisId;
 
     private String murexResult;
 
     private String murexAnalysisId;
 
     private String vironostikaResult;
-
+ 
     private String vironostikaAnalysisId;
-
+    
     private String genieIIResult;
 
     private String genieIIAnalysisId;
@@ -144,6 +156,10 @@ public class AnalysisItem {
 
     private boolean showAcceptReject = true;
 
+    private List<IdValuePair> methods;
+    private List<IdValuePair> referralOrganizations;
+    private List<IdValuePair> referralReasons;
+
     private List<IdValuePair> dictionaryResults;
 
     private boolean isMultipleResultForSample = false;
@@ -176,8 +192,8 @@ public class AnalysisItem {
 
     private boolean valid = true;
 
-    private boolean isNormal;
-
+    private boolean isNormal; 
+    
     public String getRejectReasonId() {
         return rejectReasonId;
     }
@@ -230,6 +246,13 @@ public class AnalysisItem {
         return result;
     }
 
+    public String getNormalRange() {
+        return normalRange;
+    }
+
+    public void setNormalRange(String normalRange) {
+        this.normalRange = normalRange;
+    }
     public void setReceivedDate(String receivedDate) {
         this.receivedDate = receivedDate;
     }
@@ -535,6 +558,29 @@ public class AnalysisItem {
         return dictionaryResults;
     }
 
+    public List<IdValuePair> getMethods() {
+        return methods;
+    }
+
+    public void setMethods(List<IdValuePair> methods) {
+        this.methods = methods;
+    }
+
+    public List<IdValuePair> getReferralOrganizations() {
+        return referralOrganizations;
+    }
+
+    public void setReferralOrganizations(List<IdValuePair> referralOrganizations) {
+        this.referralOrganizations = referralOrganizations;
+    }
+
+    public List<IdValuePair> getReferralReasons() {
+        return referralReasons;
+    }
+
+    public void setReferralReasons(List<IdValuePair> referralReasons) {
+        this.referralReasons = referralReasons;
+    }
     public void setAnalysisId(String analysisId) {
         this.analysisId = analysisId;
     }
@@ -725,5 +771,53 @@ public class AnalysisItem {
 
     public void setNormal(boolean isNormal) {
         this.isNormal = isNormal;
+    }
+
+    public double getLowerCritical() {
+        return lowerCritical;
+    }
+
+    public void setLowerCritical(double lowerCritical) {
+        this.lowerCritical = lowerCritical;
+    }
+
+    public double getHigherCritical() {
+        return higherCritical;
+    }
+
+    public void setHigherCritical(double higherCritical) {
+        this.higherCritical = higherCritical;
+    }
+
+	public String getGenscreenResult() {
+		return genscreenResult;
+	}
+
+	public void setGenscreenResult(String genscreenResult) {
+		this.genscreenResult = genscreenResult;
+	}
+
+	public String getGenscreenAnalysisId() {
+		return genscreenAnalysisId;
+	}
+
+	public void setGenscreenAnalysisId(String genscreenAnalysisId) {
+		this.genscreenAnalysisId = genscreenAnalysisId;
+	}
+  
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
+    }
+
+    public String getPatientInfo() {
+        return patientInfo;
+    }
+
+    public void setPatientInfo(String patientInfo) {
+        this.patientInfo = patientInfo;
     }
 }

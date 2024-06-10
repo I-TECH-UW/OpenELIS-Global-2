@@ -8,12 +8,18 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
+import org.openelisglobal.common.provider.validation.AlphanumAccessionValidator;
 import org.openelisglobal.common.services.IReportTrackingService;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.ReportTrackingService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.observationhistory.service.ObservationHistoryService;
+import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.reports.action.implementation.reportBeans.VLReportData;
 import org.openelisglobal.result.service.ResultService;
@@ -37,6 +43,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
     private ResultService resultService = SpringContext.getBean(ResultService.class);
     private SampleOrganizationService orgService = SpringContext.getBean(SampleOrganizationService.class);
     private OrganizationService oService = SpringContext.getBean(OrganizationService.class);
+    private ObservationHistoryService ohService = SpringContext.getBean(ObservationHistoryService.class);
 
     protected List<VLReportData> reportItems;
     private String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
@@ -67,7 +74,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
         setPatientInfo(data);
         setTestInfo(data);
         reportItems.add(data);
-
+        
     }
 
     protected void setTestInfo(VLReportData data) {
@@ -79,6 +86,8 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 
         Date maxCompleationDate = null;
         long maxCompleationTime = 0L;
+        Date maxReleasedDate = null;
+        long maxReleasedTime = 0L;
 //		String invalidValue = MessageUtil.getMessage("report.test.status.inProgress");
 
         for (Analysis analysis : analysisList) {
@@ -90,7 +99,12 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
                     maxCompleationDate = analysis.getCompletedDate();
                     maxCompleationTime = maxCompleationDate.getTime();
                 }
-
+            }
+            if (analysis.getReleasedDate() != null) {
+            	if (analysis.getReleasedDate().getTime() > maxReleasedTime) {
+            		maxReleasedDate = analysis.getReleasedDate();
+            		maxReleasedTime = maxReleasedDate.getTime();
+            	}
             }
 
             String testName = TestServiceImpl.getUserLocalizedTestName(analysis.getTest());
@@ -107,7 +121,7 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
                     // data.setShowVirologie(Boolean.TRUE);
                     String resultValue = "";
                     if (resultList.size() > 0) {
-                        resultValue = resultList.get(resultList.size() - 1).getValue(true);
+                        resultValue = resultList.get(resultList.size() - 1).getValue(false);
                     }
 
                     String baseValue = resultValue;
@@ -141,6 +155,9 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
         if (maxCompleationDate != null) {
             data.setCompleationdate(DateUtil.convertSqlDateToStringDate(maxCompleationDate));
         }
+        if (maxReleasedDate != null) {
+            data.setReleasedate(DateUtil.convertSqlDateToStringDate(maxReleasedDate));
+        }
 
         data.setDuplicateReport(mayBeDuplicate);
         data.setStatus(atLeastOneAnalysisNotValidated ? MessageUtil.getMessage("report.status.partial")
@@ -149,7 +166,9 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
 
     protected void setPatientInfo(VLReportData data) {
 
-        data.setVlPregnancy(MessageUtil.getMessage("answer.no"));
+        data.setVlSuckle(ohService.getMostRecentValueForPatient(ObservationType.VL_SUCKLE, reportPatient.getId()));
+        data.setVlPregnancy(ohService.getMostRecentValueForPatient(ObservationType.VL_PREGNANCY, reportPatient.getId()));
+        data.setvih(ohService.getMostRecentValueForPatient(ObservationType.HIV_STATUS, reportPatient.getId()));
         data.setSubjectno(reportPatient.getNationalId());
         data.setSitesubjectno(reportPatient.getExternalId());
         data.setBirth_date(reportPatient.getBirthDateForDisplay());
@@ -162,7 +181,14 @@ public abstract class PatientVLReport extends RetroCIPatientReport {
         data.setServicename(sampleOrg.getId() == null ? ""
                 : oService.get(sampleOrg.getOrganization().getId()).getOrganizationName());
         data.setDoctor(getObservationValues(OBSERVATION_DOCTOR_ID));
-        data.setAccession_number(reportSample.getAccessionNumber());
+        if (AccessionFormat.ALPHANUM.toString()
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            data.setAccessionNumber(
+                    AlphanumAccessionValidator
+                            .convertAlphaNumLabNumForDisplay(reportSample.getAccessionNumber()));
+        } else {
+            data.setAccessionNumber(reportSample.getAccessionNumber());
+        }
         data.setReceptiondate(DateUtil.convertTimestampToStringDateAndTime(reportSample.getReceivedTimestamp()));
         Timestamp collectionDate = reportSample.getCollectionDate();
 

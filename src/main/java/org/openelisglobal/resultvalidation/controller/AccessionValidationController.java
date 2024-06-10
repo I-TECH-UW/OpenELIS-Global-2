@@ -34,6 +34,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.*;
+
+
 @Controller
 public class AccessionValidationController extends BaseController {
 
@@ -59,9 +67,9 @@ public class AccessionValidationController extends BaseController {
     }
 
     @RequestMapping(value = "/AccessionValidation", method = RequestMethod.GET)
-    public ModelAndView showAccessionValidation(HttpServletRequest request)
+    public ModelAndView showAccessionValidation(HttpServletRequest request,AccessionValidationForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        AccessionValidationForm form = new AccessionValidationForm();
+        //AccessionValidationForm form = new AccessionValidationForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
         form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
@@ -127,6 +135,17 @@ public class AccessionValidationController extends BaseController {
         }
         request.setAttribute("analysisCount", count);
         request.setAttribute("pageSize", count);
+        
+      ObjectMapper mapper = new ObjectMapper();
+      String jsonForm = "";
+      try {
+          jsonForm = mapper.writeValueAsString(form);
+      } catch (JsonProcessingException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+      }
+
+      System.out.println("AccessionValidationController:jsonForm:" + jsonForm);
 
         return findForward(FWD_SUCCESS, form);
     }

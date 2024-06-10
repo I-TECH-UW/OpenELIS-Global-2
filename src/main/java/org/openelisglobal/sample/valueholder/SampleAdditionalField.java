@@ -1,6 +1,7 @@
 package org.openelisglobal.sample.valueholder;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -101,6 +102,22 @@ public class SampleAdditionalField extends BaseObject<SampleAdditionalFieldId> {
 
         public void setSampleId(String sampleId) {
             this.sampleId = sampleId;
+        }
+
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+
+            SampleAdditionalFieldId that = (SampleAdditionalFieldId) o;
+
+            return Objects.equals(this.fieldName, that.fieldName)
+                    && Objects.equals(this.sampleId, that.sampleId);
+        }
+
+        public int hashCode() {
+            return Objects.hash(fieldName, sampleId);
         }
 
     }

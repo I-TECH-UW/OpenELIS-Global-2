@@ -44,8 +44,7 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
             query.setParameter("urlPath", urlPath);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemModuleUrl getByUrlPath()", e);
         }
 
@@ -66,8 +65,7 @@ public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
             query.setParameter("systemModuleId", Integer.parseInt(moduleId));
             moduleUrl = query.getResultStream().findFirst().orElse(null);
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemModuleUrl getByUrlPath()", e);
         }
 

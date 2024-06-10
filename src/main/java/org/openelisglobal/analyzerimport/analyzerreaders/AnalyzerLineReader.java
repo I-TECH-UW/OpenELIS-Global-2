@@ -70,13 +70,11 @@ public class AnalyzerLineReader extends AnalyzerReader {
                 }
             } catch (IOException e) {
                 error = "Unable to read file";
-                LogEvent.logError(e);
                 LogEvent.logError("an error occured detecting the encoding of the analyzer file", e);
                 return false;
             }
         } catch (IOException e) {
             error = "Unable to determine file encoding";
-            LogEvent.logError(e);
             LogEvent.logError("an error occured detecting the encoding of the analyzer file", e);
             return false;
         }

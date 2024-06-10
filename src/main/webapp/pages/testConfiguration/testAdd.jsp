@@ -520,7 +520,6 @@
         var highValidValue, lowValidValue;
         var lowValid = jQuery("#lowValid");
         var highValid = jQuery("#highValid");
-
         lowValid.removeClass("error");
         lowValidValue = +lowValid.val();
         if (lowValidValue != "-Infinity" &&
@@ -529,7 +528,6 @@
             alert("<%=MessageUtil.getContextualMessage("error.low.valid.value")%>");
             return;
         }
-
         highValid.removeClass("error");
         highValidValue = +highValid.val();
         if (highValidValue != "Infinity" &&
@@ -538,7 +536,6 @@
             alert("<%=MessageUtil.getContextualMessage("error.high.valid.value")%>");
             return;
         }
-
         if (lowValidValue != "-Infinity" && highValidValue != "Infinity" &&
                 lowValidValue >= highValidValue) {
             highValid.addClass("error");
@@ -546,7 +543,6 @@
             alert("<%=MessageUtil.getContextualMessage("error.low.high.valid.order")%>");
             return;
         }
-
         jQuery(".rowKey").each(function () {
             //index is in the template
             if (jQuery(this).val() != "index") {
@@ -554,6 +550,48 @@
             }
         });
     }
+
+    function criticalRangeCheckLow(index) {
+         var lowCriticalValue;
+
+        var lowCritical = jQuery("#lowCritical");
+        var lowValid = jQuery("#lowValid");
+        var lowNormal = jQuery("#lowNormal_" + index); 
+
+         lowCritical.removeClass("error");
+        lowCriticalValue = lowCritical.val();
+        if (lowCriticalValue != "-Infinity" && lowCriticalValue < lowValid.val() ||
+         lowCriticalValue != "-Infinity" && lowCriticalValue  > lowNormal.val()) {
+            lowCritical.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.critical.range.value.low")%>");
+            return;
+        }     
+        jQuery(".rowKey").each(function () {
+            //index is in the template
+            if (jQuery(this).val() != "index") {
+                normalRangeCheck(jQuery(this).val());
+            }
+        });
+    }
+
+    function criticalRangeCheckHigh(index) {
+        var highCriticalValue, highValidValue,highNormalValue;
+
+        var highCritical = jQuery("#highCritical");
+        var highValid = jQuery("#highValid");
+        var highNormal = jQuery("#highNormal_" + index);
+        
+        highCritical.removeClass("error");
+        highCriticalValue = highCritical.val();
+        highValidValue = +highValid.val();
+        highNormalValue = +highNormal.val();
+        if (highCriticalValue != "-Infinity" && highCriticalValue < highNormalValue ||
+         highCriticalValue != "-Infinity" && highCriticalValue > highValidValue) {
+             highCritical.addClass("error");
+            alert("<%=MessageUtil.getContextualMessage("error.critical.range.value.high")%>");
+            return;
+        }  
+     }
 
     function reportingRangeCheck() {
         var highReportingRangeValue, lowReportingRangeValue;
@@ -834,6 +872,7 @@
         jQuery("#orderableRO").text(jQuery("#orderable").attr("checked") ? "Y" : "N");
         jQuery("#notifyResultsRO").text(jQuery("#notifyResults").attr("checked") ? "Y" : "N");
         jQuery("#inLabOnlyRO").text(jQuery("#inLabOnly").attr("checked") ? "Y" : "N");
+        jQuery("#antimicrobialResistanceRO").text(jQuery("#antimicrobialResistance").attr("checked") ? "Y" : "N");
     }
 
     function createJSON() {
@@ -852,6 +891,7 @@
         jsonObj.orderable = jQuery("#orderable").attr("checked") ? 'Y' : 'N';
         jsonObj.notifyResults = jQuery("#notifyResults").attr("checked") ? 'Y' : 'N';
         jsonObj.inLabOnly = jQuery("#inLabOnly").attr("checked") ? 'Y' : 'N';
+        jsonObj.antimicrobialResistance = jQuery("#antimicrobialResistance").attr("checked") ? 'Y' : 'N';
         jsonObj.active = jQuery("#active").attr("checked") ? 'Y' : 'N';
         jsonObj.sampleTypes = [];
         addJsonSortingOrder(jsonObj);
@@ -904,6 +944,9 @@
         jsonObj.highValid = jQuery("#highValid").val();
         jsonObj.lowReportingRange = jQuery("#lowReportingRange").val();
         jsonObj.highReportingRange = jQuery("#highReportingRange").val();
+        jsonObj.lowCritical = jQuery("#lowCritical").val();
+        jsonObj.highCritical = jQuery("#highCritical").val();
+
         jsonObj.significantDigits = jQuery("#significantDigits").val();
         jsonObj.resultLimits = [];
 
@@ -1170,6 +1213,8 @@ td {
 					onchange="checkReadyForNextStep()" />
 					<br/>
                     <br/><br/>
+                    <label for="antimicrobialResistance"><spring:message code="test.antimicrobialResistance"/></label>
+                    <input type="checkbox" id="antimicrobialResistance" /><br/>
                     <label for="orderable"><spring:message code="test.isActive"/></label>
                     <input type="checkbox" id="active" checked="checked"/><br/>
                     <label for="orderable"><spring:message code="label.orderable"/></label>
@@ -1211,6 +1256,11 @@ td {
             <spring:message code="result.resultType"/>
             <div class="tab" id="resultTypeRO"></div>
             <br/>
+
+            <spring:message code="test.antimicrobialResistance"/>
+            <div class="tab" id="antimicrobialResistanceRO"></div>
+            <br/>
+
             <spring:message code="test.isActive"/>
             <div class="tab" id="activeRO"></div>
             <br/>
@@ -1395,6 +1445,7 @@ td {
                 <th colspan="2"><spring:message code="configuration.test.catalog.normal.range" /></th>
                 <th colspan="2"><spring:message code="label.reporting.range" /> </th>
                  <th colspan="2"><spring:message code="configuration.test.catalog.valid.range" /> </th>
+                 <th colspan="4"><spring:message code="configuration.test.catalog.critical.range" /> </th>
             </tr>
             <tr>
                 <td><spring:message code="label.sex.dependent" /></td>
@@ -1442,6 +1493,9 @@ td {
 
                 <td><input type="text" value="-Infinity" size="10" id="lowValid" onchange="validRangeCheck();"></td>
                 <td><input type="text" value="Infinity" size="10" id="highValid" onchange="validRangeCheck();"></td>
+
+                <td><input type="text" value="-Infinity" size="5" id="lowCritical" onchange="criticalRangeCheckLow('0');"></td>
+                <td><input type="text" value="-Infinity" size="5" id="highCritical" onchange="criticalRangeCheckHigh('0');"></td>
             </tr>
             <tr class="sexRange_0 row_0" style="display: none">
                 <td></td>

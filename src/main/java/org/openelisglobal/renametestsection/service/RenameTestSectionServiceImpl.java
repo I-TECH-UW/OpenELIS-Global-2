@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.hibernate.Hibernate;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.renametestsection.dao.RenameTestSectionDAO;
 import org.openelisglobal.renametestsection.valueholder.RenameTestSection;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class RenameTestSectionServiceImpl extends BaseObjectServiceImpl<RenameTestSection, String>
+public class RenameTestSectionServiceImpl extends AuditableBaseObjectServiceImpl<RenameTestSection, String>
         implements RenameTestSectionService {
     @Autowired
     protected RenameTestSectionDAO baseObjectDAO;

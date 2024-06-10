@@ -54,7 +54,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
     @Transactional(readOnly = true)
     public List<ObservationHistory> getAll(Patient patient, Sample sample, String observationHistoryTypeId) {
         Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put("patientId", patient.getId());
+        //queryMap.put("patientId", patient.getId());
         if (patient != null && patient.getId() != null) {
             queryMap.put("patientId", patient.getId());
         }
@@ -217,13 +217,13 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
      * @return new RuntimeException
      */
     protected LIMSRuntimeException createAndLogException(String methodName, Exception e) {
-        LogEvent.logError(e.toString(), e);
+        LogEvent.logError(e);
         return new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + methodName, e);
     }
 
     @Override
     @Transactional(readOnly = true)
     public ObservationHistory getById(ObservationHistory observation) throws LIMSRuntimeException {
-        return get(observation.getId()).get();
+        return get(observation.getId()).orElse(null);
     }
 }

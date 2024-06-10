@@ -4,6 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 	 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  	<property name="now" value="now()" dbms="postgresql"/>
 	<changeSet author="moses_mutesa" id="1">
 		<preConditions onFail="MARK_RAN">
 			<tableExists tableName="organization_type" schemaName="clinlims" />

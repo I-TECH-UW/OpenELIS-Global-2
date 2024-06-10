@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.provider.dao.ProviderDAO;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ProviderServiceImpl extends BaseObjectServiceImpl<Provider, String> implements ProviderService {
+public class ProviderServiceImpl extends AuditableBaseObjectServiceImpl<Provider, String> implements ProviderService {
     @Autowired
     protected ProviderDAO baseObjectDAO;
     @Autowired
@@ -112,7 +112,7 @@ public class ProviderServiceImpl extends BaseObjectServiceImpl<Provider, String>
             if (dbProvider.isPresent()) {
                 dbProvider.get().setActive(false);
             } else {
-                LogEvent.logWarn(this.getClass().getName(), "deactivateProviders",
+                LogEvent.logWarn(this.getClass().getSimpleName(), "deactivateProviders",
                         "could not deactivate Provider with id '" + deactivateProvider.getId()
                                 + "' as it could not be found");
             }

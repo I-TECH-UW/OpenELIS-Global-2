@@ -55,7 +55,7 @@ public abstract class ConfigurationProperties {
         GeographicUnit1Label("Geographic Unit 1 Label"), // The Geographical units for a particular region
         GeographicUnit2Label("Geographic Unit 2 Label"), // The Geographical units for a particular district
         AccessionFormat("acessionFormat"), // Format of accession number can be one of SITEYEARNUM, YEARNUM OR
-                                           // PROGRAMNUM see AccessionNumberValidatorFactory
+                                           // PROGRAMNUM, ALPHANUM see AccessionNumberValidatorFactory
         ReflexAction("reflexAction"), // In combination with flags in reflex table determines actual action, should be
                                       // standardize
         TrainingInstallation("TrainingInstallation"), // Flag to indicate if this is a training instance
@@ -82,6 +82,7 @@ public abstract class ConfigurationProperties {
         notesRequiredForModifyResults("modify results note required"), // If true a note is required when a result is
                                                                        // modified
         resultTechnicianName("ResultTechnicianName"), // If true the technicians name is needed for results
+        customCriticalMessage("customCriticalMessage"),// Override the default message for a critical result
         allowResultRejection("allowResultRejection"), // If true then a technician has the ability to reject an
                                                       // individual test and select a reason for rejection
         restrictFreeTextRefSiteEntry("restrictFreeTextRefSiteEntry"), // If true then a user cannot enter new referring
@@ -169,8 +170,14 @@ public abstract class ConfigurationProperties {
         SPECIMEN_FIELD_SEX("patientSexCheck"), //
         SPECIMEN_FIELD_COLLECTED_BY("collectedByCheck"),
         SPECIMEN_FIELD_TESTS("testsCheck"), //
+        BLOCK_BARCODE_HEIGHT("heightBlockLabels"), //
+        BLOCK_BARCODE_WIDTH("widthBlockLabels"), //
+        SLIDE_BARCODE_HEIGHT("heightSlideLabels"), //
+        SLIDE_BARCODE_WIDTH("widthSlideLabels"), //
         ALT_ACCESSION_PREFIX("prePrintAltAccessionPrefix"), //
         USE_ALT_ACCESSION_PREFIX("prePrintUseAltAccession"), //
+        USE_ALPHANUM_ACCESSION_PREFIX("useAlphanumAccessionPrefix"), //
+        ALPHANUM_ACCESSION_PREFIX("alphanumAccessionPrefix"), //
         LAB_DIRECTOR_NAME("labDirectorName"), //
         LAB_DIRECTOR_TITLE("labDirectorTitle"), //
         INFO_HIGHWAY_USERNAME("infoHighway.username"), //

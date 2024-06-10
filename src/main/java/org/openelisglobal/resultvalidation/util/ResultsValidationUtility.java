@@ -111,6 +111,7 @@ public class ResultsValidationUtility {
     @Autowired
     protected ResultLimitService resultLimitService;
 
+    private Patient currentPatient;
     protected String SAMPLE_STATUS_OBSERVATION_HISTORY_TYPE_ID;
     protected String CD4_COUNT_SORT_NUMBER;
 
@@ -162,7 +163,7 @@ public class ResultsValidationUtility {
 
         if (!GenericValidator.isBlankOrNull(testSectionId)) {
             List<ResultValidationItem> testList = getPageUnValidatedTestResultItemsInTestSection(testSectionId,
-                    statusList);
+                    statusList);  
             resultList = testResultListToAnalysisItemList(testList);
             sortByAccessionNumberAndOrder(resultList);
             setGroupingNumbers(resultList);
@@ -299,7 +300,7 @@ public class ResultsValidationUtility {
                                     ? dictionary.getDictEntry()
                                     : dictionary.getLocalAbbreviation();
                         } catch (RuntimeException e) {
-                            LogEvent.logInfo(this.getClass().getName(), "getGroupedTestsForAnalysisList",
+                            LogEvent.logInfo(this.getClass().getSimpleName(), "getGroupedTestsForAnalysisList",
                                     e.getMessage());
                             // no-op
                         }
@@ -342,7 +343,7 @@ public class ResultsValidationUtility {
                                     ? dictionary.getDictEntry()
                                     : dictionary.getLocalAbbreviation();
                         } catch (RuntimeException e) {
-                            LogEvent.logInfo(this.getClass().getName(), "getGroupedTestsForAnalysisList",
+                            LogEvent.logInfo(this.getClass().getSimpleName(), "getGroupedTestsForAnalysisList",
                                     e.getMessage());
                             // no-op
                         }
@@ -430,6 +431,8 @@ public class ResultsValidationUtility {
         String displayTestName = TestServiceImpl.getLocalizedTestNameWithType(test);
 //      displayTestName = augmentTestNameWithRange(displayTestName, result);
 
+       ResultLimit resultLimit = SpringContext.getBean(ResultLimitService.class).getResultLimitForTestAndPatient(test,
+                currentPatient);
         ResultValidationItem testItem = new ResultValidationItem();
 
         testItem.setAccessionNumber(accessionNumber);
@@ -437,6 +440,7 @@ public class ResultsValidationUtility {
         testItem.setSequenceNumber(sequenceNumber);
         testItem.setTestName(displayTestName);
         testItem.setTestId(test.getId());
+        setResultLimitDependencies(resultLimit, testItem, testResults);
         testItem.setAnalysisMethod(analysis.getAnalysisType());
         testItem.setResult(result);
         testItem.setDictionaryResults(getAnyDictonaryValues(testResults));
@@ -450,6 +454,20 @@ public class ResultsValidationUtility {
         testItem.setNormalResult(isNormalResult(analysis, result));
 
         return testItem;
+    }
+
+    private void setResultLimitDependencies(ResultLimit resultLimit, ResultValidationItem testItem,
+         List<TestResult> testResults) {
+        if (resultLimit != null) {
+         testItem.setResultLimitId(resultLimit.getId());
+            testItem.setLowerCritical(
+        resultLimit.getLowCritical() == Double.NEGATIVE_INFINITY ? 0 : resultLimit.getLowCritical());
+             testItem.setHigherCritical(
+                resultLimit.getHighCritical() == Double.POSITIVE_INFINITY ? 0 : resultLimit.getHighCritical());
+
+           testItem.setNormalRange(SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(
+                    resultLimit, testResults.isEmpty() ? "0" : testResults.get(0).getSignificantDigits(), " - "));
+        }
     }
 
     private boolean isNormalResult(Analysis analysis, Result result) {
@@ -590,6 +608,8 @@ public class ResultsValidationUtility {
                 currentMultiSelectAnalysisItem.setQualifiedResultValue(testResultItem.getQualifiedResultValue());
                 currentMultiSelectAnalysisItem.setQualifiedDictionaryId(testResultItem.getQualifiedDictionaryId());
                 currentMultiSelectAnalysisItem.setHasQualifiedResult(true);
+                currentMultiSelectAnalysisItem.setNormalRange(testResultItem.getNormalRange());
+                currentMultiSelectAnalysisItem.setPatientName(testResultItem.getPatientName());
             }
         }
 
@@ -631,6 +651,12 @@ public class ResultsValidationUtility {
         testUnits = augmentUOMWithRange(testUnits, testResultItem.getResult());
 
         analysisResultItem.setAccessionNumber(testResultItem.getAccessionNumber());
+        analysisResultItem.setLowerCritical(
+                        testResultItem.getLowerCritical() == Double.NEGATIVE_INFINITY ? 0 : testResultItem.getLowerCritical());
+        analysisResultItem.setHigherCritical(
+                        testResultItem.getHigherCritical() == Double.POSITIVE_INFINITY ? 0 : testResultItem.getHigherCritical());
+        analysisResultItem.setNormalRange(testResultItem.getNormalRange());
+        analysisResultItem.setPatientName(testResultItem.getPatientName());
         analysisResultItem.setTestName(testName);
         analysisResultItem.setUnits(testUnits);
         analysisResultItem.setAnalysisId(testResultItem.getAnalysis().getId());
@@ -672,7 +698,7 @@ public class ResultsValidationUtility {
     }
 
     protected final String getFormattedResult(ResultValidationItem testResultItem) {
-        String result = testResultItem.getResult().getValue(false);
+        String result = testResultItem.getResult().getValue();
         if (TestIdentityService.getInstance().isTestNumericViralLoad(testResultItem.getTestId())
                 && !GenericValidator.isBlankOrNull(result)) {
             return result.split("\\(")[0].trim();

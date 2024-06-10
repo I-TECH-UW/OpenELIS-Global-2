@@ -80,6 +80,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.notesRequiredForModifyResults,
                 Property.notesRequiredForModifyResults.getName(), "false");
         setDBPropertyMappingAndDefault(Property.resultTechnicianName, Property.resultTechnicianName.getName(), "false");
+        setDBPropertyMappingAndDefault(Property.customCriticalMessage, Property.customCriticalMessage.getName(), "");
         setDBPropertyMappingAndDefault(Property.allowResultRejection, Property.allowResultRejection.getName(), "false");
         setDBPropertyMappingAndDefault(Property.restrictFreeTextRefSiteEntry,
                 Property.restrictFreeTextRefSiteEntry.getName(), "false");
@@ -184,6 +185,10 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
                 "25.4");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_BARCODE_WIDTH, Property.SPECIMEN_BARCODE_WIDTH.getName(),
                 "76.2");
+        setDBPropertyMappingAndDefault(Property.BLOCK_BARCODE_HEIGHT, Property.BLOCK_BARCODE_HEIGHT.getName(), "25.4");
+        setDBPropertyMappingAndDefault(Property.BLOCK_BARCODE_WIDTH, Property.BLOCK_BARCODE_WIDTH.getName(), "76.2");
+        setDBPropertyMappingAndDefault(Property.SLIDE_BARCODE_HEIGHT, Property.SLIDE_BARCODE_HEIGHT.getName(), "25.4");
+        setDBPropertyMappingAndDefault(Property.SLIDE_BARCODE_WIDTH, Property.SLIDE_BARCODE_WIDTH.getName(), "76.2");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_DATE, Property.SPECIMEN_FIELD_DATE.getName(), "true");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_COLLECTED_BY,
                 Property.SPECIMEN_FIELD_COLLECTED_BY.getName(), "true");
@@ -202,7 +207,10 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
 //        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_USERNAME, Property.INFO_HIGHWAY_USERNAME.getName(), "");
 //        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_PASSWORD, Property.INFO_HIGHWAY_PASSWORD.getName(), "");
 //        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ENABLED, Property.INFO_HIGHWAY_ENABLED.getName(), "");
-    }
+        setDBPropertyMappingAndDefault(Property.ALPHANUM_ACCESSION_PREFIX, Property.ALPHANUM_ACCESSION_PREFIX.getName(), "");
+        setDBPropertyMappingAndDefault(Property.USE_ALPHANUM_ACCESSION_PREFIX, Property.USE_ALPHANUM_ACCESSION_PREFIX.getName(), "false");
+
+        }
 
     private void setDBPropertyMappingAndDefault(Property property, String dbName, String defaultValue) {
         dbNamePropertiesMap.put(dbName, property);
@@ -351,13 +359,13 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
             properties.load(propertyStream);
 
         } catch (IOException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
         } finally {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
                 } catch (IOException e) {
-                    LogEvent.logError(e.toString(), e);
+                    LogEvent.logError(e);
                 }
             }
 

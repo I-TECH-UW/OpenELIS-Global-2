@@ -25,8 +25,12 @@ import java.util.Set;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
+import org.openelisglobal.common.provider.validation.AlphanumAccessionValidator;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -235,7 +239,14 @@ public class RetroCINonConformityNotification extends RetroCIReport implements I
             if (eventPrintable(sampleAccessionNumber, event)) {
                 NonConformityReportData item = new NonConformityReportData();
                 QAService qa = new QAService(event);
-                item.setAccessionNumber(sampleAccessionNumber);
+                if (AccessionFormat.ALPHANUM.toString()
+                        .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+                    item.setAccessionNumber(
+                            AlphanumAccessionValidator
+                                    .convertAlphaNumLabNumForDisplay(sampleAccessionNumber));
+                } else {
+                    item.setAccessionNumber(sampleAccessionNumber);
+                }
                 item.setReceivedDate(receivedDate);
                 item.setReceivedHour(receivedHour);
                 item.setService(orgName);

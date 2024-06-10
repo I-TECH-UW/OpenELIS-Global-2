@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
 	<class
@@ -18,12 +18,12 @@
 		<version name="lastupdated" column="LASTUPDATED"
 			type="timestamp" access="field" />
 
-		<many-to-one name="organization"
+		<many-to-one name="organization" lazy="false"
 			class="org.openelisglobal.organization.valueholder.Organization"
 			fetch="select">
 			<column name="ORG_ID" precision="10" scale="0" />
 		</many-to-one>
-		<many-to-one name="sample"
+		<many-to-one name="sample" lazy="false"
 			class="org.openelisglobal.sample.valueholder.Sample" fetch="select">
 			<column name="SAMP_ID" precision="10" scale="0" />
 		</many-to-one>

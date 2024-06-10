@@ -63,6 +63,7 @@ COPY --from=build /build/target/OpenELIS-Global.war /usr/local/tomcat/webapps/Op
 #    org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=false
 #    org.apache.coyote.USE_CUSTOM_STATUS_MSG_IN_HEADER=false
 ADD install/tomcat-resources/catalina.properties /usr/local/tomcat/conf/catalina.properties
+ADD install/tomcat-resources/logging.properties /usr/local/tomcat/conf/logging.properties
 
 #replace ServerInfo.properties with a less informative one
 RUN mkdir -p /usr/local/tomcat/lib/org/apache/catalina/util
@@ -95,7 +96,12 @@ RUN chown tomcat_admin:tomcat /healthcheck.sh; \
 
 ADD install/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chown tomcat_admin:tomcat /docker-entrypoint.sh; \
-    chmod 770 /docker-entrypoint.sh; 
+    chmod 770 /docker-entrypoint.sh;
+
+RUN mkdir -p /var/lib/lucene_index; \
+    chown -R tomcat_admin:tomcat /var/lib/lucene_index; \
+    chmod -R 770 /var/lib/lucene_index;
+
 USER tomcat_admin
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]

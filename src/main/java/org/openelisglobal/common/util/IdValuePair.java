@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /*
  * Nothing special, just for when id's and values should be encapsulated.
@@ -11,13 +13,16 @@ import java.util.List;
  * N.B. This is very light weight, if you want to stick it in a hash and want to use something
  * other than identity of equals then over-ride equals and hash.
  */
-public class IdValuePair implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    private String id;
-    private String value;
-
-    public IdValuePair(String id, String value) {
+public class IdValuePair implements Serializable{
+    
+  
+   private String id;
+   private String value;
+   private static final long serialVersionUID = 1L;
+    
+    @JsonCreator
+    public IdValuePair(@JsonProperty("id") String id, @JsonProperty("value") String value) {
         this.setId(id);
         this.setValue(value);
     }

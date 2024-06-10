@@ -68,7 +68,9 @@ public class ReportImplementationFactory {
             } else if (report.equals("patientHaitiClinical") || report.equals("patientHaitiLNSP")
                     || report.equals("patientCILNSP") || report.equals("patientCILNSP_vreduit")) {
                 return new PatientClinicalReport();
-            } else if (report.equals("indicatorHaitiClinicalHIV")) {
+            }else if (report.equals("TBPatientReport")) {
+                return new PatientClinicalReport();
+            }else if (report.equals("indicatorHaitiClinicalHIV")) {
                 return new IndicatorHIV();
             } else if (report.equals("indicatorHaitiLNSPHIV")) {
                 return new IndicatorHIVLNSP();
@@ -132,11 +134,13 @@ public class ReportImplementationFactory {
                 return new RejectionReportByTestSection();
             } else if (report.equals("CIStudyExport")) {
                 return new ExportStudyProjectByDate();
+            } else if (report.equals("TBOrderExport")) {
+                return new ExportTBOrdersByDate();
+            } else if (report.equals("TBOrderReport")) {
+               return new TBOrderReport();
             } else if (report.equals("Trends")) {
                 return new ExportTrendsByDate();
-            }
-
-            else if (report.equals("covidResultsReport")) {
+            } else if (report.equals("covidResultsReport")) {
                 return new CovidResultsReport();
             } else if (report.equals("statisticsReport")) {
                 return new StatisticsReport();
@@ -195,6 +199,9 @@ public class ReportImplementationFactory {
                 return new PatientCILNSPClinical();
             } else if (report.equals("patientCILNSP_vreduit")) {
                 return new PatientCILNSPClinical_vreduit();
+            	//return new PatientCILNSPClinical();
+            } else if (report.equals("TBPatientReport")) {
+            	return new TBPatientReport();
             } else if (report.equals("indicatorHaitiClinicalHIV")) {
                 return new IndicatorHIV();
             } else if (report.equals("indicatorHaitiLNSPHIV")) {
@@ -208,7 +215,6 @@ public class ReportImplementationFactory {
             } else if (report.equals("ForCIDashboard")) {
                 return new ForCIDashboard();
             }
-
             else if (report.equals("CISampleRoutineExport")) {
                 return new ExportRoutineByDate();
             } else if (report.equals("referredOut")) {
@@ -267,6 +273,8 @@ public class ReportImplementationFactory {
                 return new ExportStudyProjectByDate();
             } else if (report.equals("Trends")) {
                 return new ExportTrendsByDate();
+            } else if (report.equals("TBOrderExport")) {
+                return new ExportTBOrdersByDate();
             } else if (report.equals("MauritiusProtocolSheet")) {
                 return new MauritiusProtocolSheet();
             }
@@ -277,6 +285,17 @@ public class ReportImplementationFactory {
                 return new StatisticsReport();
             } else if (report.equals("sampleRejectionReport")) {
                 return new CSVSampleRejectionReport();
+            }else if (report.equals("PatientPathologyReport")){
+               return new PatientPathologyReport();
+            }
+            else if(report.equals("PatientCytologyReport")){
+               return new PatientCytologyReport();
+            }else if(report.equals("PatientImmunoChemistryReport")){
+               return new PatientImmunoChemistryReport();
+            }else if(report.equals("DualInSituHybridizationReport")){
+                return new DualInSituHybridizationReport();
+            }else if(report.equals("BreastCancerHormoneReceptorReport")){
+                return new BreastCancerHormoneReceptorReport();
             }
         }
 

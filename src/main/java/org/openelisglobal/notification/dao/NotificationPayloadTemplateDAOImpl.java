@@ -31,7 +31,7 @@ public class NotificationPayloadTemplateDAOImpl extends BaseDAOImpl<Notification
             query.setMaxResults(1);
             data = query.getResultList();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(
                     "Error in TestNotificationConfigDAOImpl getTestNotificationConfigForTestId()", e);
         }

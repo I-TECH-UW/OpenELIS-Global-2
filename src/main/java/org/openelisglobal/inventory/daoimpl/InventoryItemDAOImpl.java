@@ -45,7 +45,7 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
             Query<InventoryItem> query = entityManager.unwrap(Session.class).createQuery(sql, InventoryItem.class);
             inventoryItems = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in InventoryItem getAllInventoryItems()", e);
         }
 
@@ -58,7 +58,7 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
         try {
             data = entityManager.unwrap(Session.class).get(InventoryItem.class, idString);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in InventoryItem readInventoryItem()", e);
         }
 

@@ -65,8 +65,8 @@ public class AutocompleteProviderFactory {
             object = classDefinition.newInstance();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
-            throw new LIMSRuntimeException("Unable to create an object for " + className, e, true);
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Unable to create an object for " + className, e);
         }
         return object;
     }
@@ -94,15 +94,15 @@ public class AutocompleteProviderFactory {
                 validationProviderClassMap.load(propertyStream);
             } catch (IOException e) {
                 // bugzilla 2154
-                LogEvent.logError(e.toString(), e);
-                throw new LIMSRuntimeException("Unable to load validation provider class mappings.", e, true);
+                LogEvent.logError(e);
+                throw new LIMSRuntimeException("Unable to load validation provider class mappings.", e);
             } finally {
                 if (null != propertyStream) {
                     try {
                         propertyStream.close();
                     } catch (IOException e) {
                         // bugzilla 2154
-                        LogEvent.logError(e.toString(), e);
+                        LogEvent.logError(e);
                     }
                 }
             }
@@ -110,7 +110,7 @@ public class AutocompleteProviderFactory {
 
         String mapping = validationProviderClassMap.getProperty(validationProvidername);
         if (mapping == null) {
-//            LogEvent.logError(this.getClass().getName(), "getAutocompleteProviderClassName", validationProvidername);
+//            LogEvent.logError(this.getClass().getSimpleName(), "getAutocompleteProviderClassName", validationProvidername);
             throw new LIMSRuntimeException(
                     "getAutocompleteProviderClassName - Unable to find mapping for " + validationProvidername);
         }

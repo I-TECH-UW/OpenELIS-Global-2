@@ -80,7 +80,8 @@ public class SampleEditController extends BaseController {
             "sampleOrderItems.referringPatientNumber", "sampleOrderItems.referringSiteId",
             "sampleOrderItems.referringSiteName", "sampleOrderItems.referringSiteCode",
             "sampleOrderItems.referringSiteDepartmentId", "sampleOrderItems.referringSiteDepartmentName",
-            "sampleOrderItems.program", "sampleOrderItems.providerId", "sampleOrderItems.facilityAddressStreet",
+            "sampleOrderItems.program", "sampleOrderItems.providerId","sampleOrderItems.providerLastName", 
+            "sampleOrderItems.providerFirstName", "sampleOrderItems.facilityAddressStreet",
             "sampleOrderItems.facilityAddressCommune", "sampleOrderItems.facilityPhone", "sampleOrderItems.facilityFax",
             "sampleOrderItems.paymentOptionSelection", "sampleOrderItems.billingReferenceNumber",
             "sampleOrderItems.testLocationCode", "sampleOrderItems.otherLocationCode", "sampleOrderItems.priority",
@@ -419,7 +420,7 @@ public class SampleEditController extends BaseController {
             sampleEditService.editSample(form, request, updatedSample, sampleChanged, getSysUserId(request));
 
         } catch (LIMSRuntimeException e) {
-            if (e.getException() instanceof StaleObjectStateException) {
+            if (e.getCause() instanceof StaleObjectStateException) {
                 result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
             } else {
                 LogEvent.logDebug(e);

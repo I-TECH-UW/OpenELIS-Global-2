@@ -44,7 +44,7 @@ public class CommonPageAttributesInterceptor implements HandlerInterceptor {
                     String actionName = name.substring(1, name.length() - 4);
                     actionName = name.substring(0, 1).toUpperCase() + actionName;
                     request.setAttribute(IActionConstants.ACTION_KEY, actionName);
-                    LogEvent.logInfo("PageAttributesInterceptor", "postHandle()",
+                    LogEvent.logDebug("PageAttributesInterceptor", "postHandle()",
                             "PageAttributesInterceptor formName = " + name + " actionName " + actionName);
                 }
             }

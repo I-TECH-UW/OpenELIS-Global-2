@@ -89,7 +89,7 @@ public class ResultValidationController extends BaseResultValidationController {
     private static final String[] ALLOWED_FIELDS = new String[] { "testSectionId", "paging.currentPage", "testSection",
             "testName", "resultList*.accessionNumber", "resultList*.analysisId", "resultList*.testId",
             "resultList*.sampleId", "resultList*.resultType", "resultList*.sampleGroupingNumber", "resultList*.noteId",
-            "resultList*.resultId", "resultList*.hasQualifiedResult", "resultList*.sampleIsAccepted",
+            "resultList*.resultId", "resultList*.hasQualifiedResult", "resultList*.sampleIsAccepted","resultList*.lowerCritical","resultList*.higherCritical",
             "resultList*.sampleIsRejected", "resultList*.result", "resultList*.qualifiedResultValue",
             "resultList*.multiSelectResultValues", "resultList*.isAccepted", "resultList*.isRejected",
             "resultList*.note" };
@@ -237,7 +237,7 @@ public class ResultValidationController extends BaseResultValidationController {
                 .getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
         List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
         if (checkResults.size() == 0) {
-            LogEvent.logDebug(this.getClass().getName(), "ResultValidation()", "Attempted save of stale page.");
+            LogEvent.logDebug(this.getClass().getSimpleName(), "ResultValidation()", "Attempted save of stale page.");
             List<AnalysisItem> staleItemList = form.getResultList();
 
             Errors staleErrors = new BaseErrors();
@@ -303,7 +303,7 @@ public class ResultValidationController extends BaseResultValidationController {
                 LogEvent.logError(e);
             }
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
             throw e;
         }
 
@@ -509,6 +509,10 @@ public class ResultValidationController extends BaseResultValidationController {
         if (!isBlankOrNull(analysisItem.getIntegralResult())) {
             analysis = getAnalysisFromId(analysisItem.getIntegralAnalysisId());
             analysisList.add(analysis);
+        }
+        if (!isBlankOrNull(analysisItem.getGenscreenResult())) {
+        	analysis = getAnalysisFromId(analysisItem.getGenscreenAnalysisId());
+        	analysisList.add(analysis);
         }
         if (!isBlankOrNull(analysisItem.getVironostikaResult())) {
             analysis = getAnalysisFromId(analysisItem.getVironostikaAnalysisId());

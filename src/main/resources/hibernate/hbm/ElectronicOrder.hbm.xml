@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
 	<class
@@ -45,5 +45,14 @@
 				<param name="useNamed">true</param>
 			</type>
 		</property>
+		<property name="rejectReasonId" type="java.lang.String">
+			<column name="reject_reason_id" length="10" not-null="false" />
+		</property>
+		<property name="qaAuthorizer" type="java.lang.String">
+			<column name="reject_reason" length="200" not-null="false" />
+		</property> 
+		<property name="rejectComment" type="java.lang.String">
+			<column name="reject_comment" length="60" not-null="false" />
+		</property> 
 	</class>
 </hibernate-mapping>

@@ -78,7 +78,7 @@ public class BatchTestReassignmentController extends BaseController {
 
         }
         String jsonString = form.getJsonWad();
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", jsonString);
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", jsonString);
 
         List<Analysis> newAnalysis = new ArrayList<>();
         List<Analysis> cancelAnalysis = new ArrayList<>();
@@ -90,7 +90,7 @@ public class BatchTestReassignmentController extends BaseController {
             analysisService.updateAnalysises(cancelAnalysis, newAnalysis, getSysUserId(request));
 
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
 
         if (changeBeans.isEmpty()) {

@@ -1,8 +1,8 @@
-## Bare Metal Server Installation for OpenELIS Global 2.0 on Ubuntu 20.04 LTS
+## Bare Metal Server Installation for OpenELIS Global 2.0 on Ubuntu 22.04 LTS
 
-### Setup Ubuntu 20.04.2.0 LTS (Focal Fossa)
+### Setup Ubuntu 22.04.2.0 LTS 
 
-1. Boot Ubuntu from a CD. [Note: Use Ubuntu Server 20.04.2.0 LTS, do NOT use desktop] [Download](https://releases.ubuntu.com/20.04/ubuntu-20.04.2-live-server-amd64.iso).
+1. Boot Ubuntu from a CD. [Note: Use Ubuntu Server 22.04.2.0 LTS, do NOT use desktop] [Download](https://ubuntu.com/download/server).
 1. Chose UI language and keyboard layout
 1. Set the network configuration
 1. Use the default mirror
@@ -37,15 +37,69 @@ This updates the system from the sources in the sources list. It updates what ne
 
 3. Install Python
 
-        sudo apt install python2
-    
-### Create and Load SSL Certificates
+        sudo apt install python3
+
+### Options for installing OpenELIS Global software
+
+You can choose to install OpenELIS in an online mode for servers with fast internet connections, and offline, using less internet connectivity by providing a local copy of the images to be loaded. 
+
+### Online OpenELIS installation with Docker-Compose
+This Option can be used where there is fast internet connectivity 
+
+#### Prerequisites for OpenELIS  Online Setup 
+1. Install [Docker](https://linuxize.com/post/how-to-install-and-use-docker-on-ubuntu-20-04/) and [Docker Compose](https://linuxize.com/post/how-to-install-and-use-docker-compose-on-ubuntu-20-04/)
+
+2. Install [git](https://github.com/git-guides/install-git) 
+
+#### Steps to Run Online Setup
+1. Clone the [OpenELIS-Global docker](https://github.com/I-TECH-UW/openelis-docker) repository.   
+
+        git clone https://github.com/I-TECH-UW/openelis-docker.git
+
+1. Move to the Project directory 
+
+         cd  openelis-docker 
+
+##### Running OpenELIS Global 3x in Docker
+    docker-compose up -d
+
+###### The Instaces can be accesed at 
+
+| Instance  |     URL       | credentials (user : password)|
+|---------- |:-------------:|------:                       |
+| Legacy UI   |  https://localhost/api/OpenELIS-Global/  | admin: adminADMIN! |
+| New React UI  |    https://localhost/  |  admin: adminADMIN!
+
+##### Running OpenELIS Global 2x in Docker
+    docker-compose -f docker-compose-2x.yml up -d 
+
+###### The Instaces can be accesed at 
+
+| Instance  |     URL       | credentials (user : password)|
+|---------- |:-------------:|------:                       |
+| OpenElis   |  https://localhost:8443/OpenELIS-Global/  | admin: adminADMIN! |
+
+##### Running OpenELIS-Global2 from source code in docker
+   1. Clone the [OpenELIS Global](https://github.com/I-TECH-UW/OpenELIS-Global-2) repository.     
+
+           git clone https://github.com/I-TECH-UW/OpenELIS-Global-2.git
+
+   1. Build and Run the docker images from source code
+
+    	  docker-compose -f build.docker-compose.yml up -d --build
+  
+
+### Downloaded Installer Offline Setup
+This Option can be used where there is a slow/unstable internet connectivity 
+#### Prerequisites for the OpenELIS  Offline Setup 
+
+##### Create and Load SSL Certificates 
 
 OpenELIS uses SSL certificates to securely communicate with other software or consolidated lab data servers. For a test or temporary instance, use a self-signed certificate, and for a production instance create a proper signed certifcate. **You must have a cert and key created and in the keystore and truststore for the installer to run**
 
 I will include 2 paths, one for generating your own self-signed cert, this is good for just starting out or experimenting, and for using your real certs, which is appropriate for production servers. If you have real certificates skip down to [Use a real certificate, best for production uses](#Use-a-real-certificate-best-for-production-uses)
 
-#### Use a self signed certificate. 
+##### Use a self signed certificate. 
 
 ##### Generate a .crt and .key file for the domain you want to use. 
 
@@ -68,7 +122,7 @@ and then
 
 **Be sure to remember your keystore password, you will need it later **
 	
-#### Create truststore with OpenELIS-Global's cert (or a CA that signs OE certs)
+##### Create truststore with OpenELIS-Global's cert (or a CA that signs OE certs)
 
 **Choose ONE of the two methods below to create your truststore**
 
@@ -91,7 +145,7 @@ and then
 	    openssl pkcs12 -export -nokeys -in /etc/ssl/certs/apache-selfsigned.crt -out /etc/openelis-global/truststore
 
 
-#### Use a real certificate, best for production uses
+##### Use a real certificate, best for production uses
 
 ##### Create keystore from key and cert 
 Make the directories for the keystore
@@ -132,15 +186,16 @@ and then
         openssl pkcs12 -export -nokeys -in path/to/your/cert -out /etc/openelis-global/truststore
 
 
-#### Ensure keystore/truststore permissions are all correct
+##### Ensure keystore/truststore permissions are all correct
 
 Ensure all keystores have global read permission
 
     sudo chmod 644 /etc/openelis-global/keystore /etc/openelis-global/truststore /etc/openelis-global/client_facing_keystore
 	
-### Download OpenELIS Global
 
-1. Install OpenELIS Global
+#### DownLoad and Unzip the Installation Files for Offline Setup
+
+1. Download OpenELIS Global2 Installer
 
     a. [Download latest installer package Here:](https://www.dropbox.com/sh/47lagjht4ynpcg8/AABORyLmkpVTtRReeD6wSnJra?dl=0) 
 
@@ -165,9 +220,9 @@ Ensure all keystores have global read permission
 
 3. Run the install script in Terminal or Putty
 
-        sudo python2 setup_OpenELIS.py
+        sudo python3 setup_OpenELIS.py
 
-### Install OpenELIS Global ###
+#### Install OpenELIS Global2
 
 **OpenELIS Global uses the following file to set things like the consolidated server address, it is not overwritten by the installer. /var/lib/openelisglobal/secrets/extra.properties**
 
@@ -189,7 +244,6 @@ OpenELIS uses FHIR for much of its internal and external communication, if you d
 1. The Consolidated Sevrer is a central server which collects lab data for reporting, serves as a master facility list, etc.  
 	
 
-
 Wait while install procedure completes
 
 
@@ -206,3 +260,5 @@ Follow the SOP at: [Backup Configuration](../backups)
 
 To set the identifier for this particular instance, use the /var/lib/openelisglobal/secrets/extra.properties file, and set the organization value to the same identifier as is set in the consolidated server FHIR location object. 
 EG: `org.openelisglobal.remote.source.identifier=Organization/8136bd30-901c-4d47-b133-72de813404ee`
+
+

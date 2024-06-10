@@ -56,6 +56,9 @@ public class TestAddFormValidator implements Validator {
                 ValidationHelper.validateIdField(StringUtil.nullSafeToString(newTest.get("resultType")), "JsonWad",
                         "resultType", errors, true);
 
+                ValidationHelper.validateYNField(StringUtil.nullSafeToString(newTest.get("antimicrobialResistance")), "JsonWad",
+                        "antimicrobialResistance", errors);
+
                 ValidationHelper.validateYNField(StringUtil.nullSafeToString(newTest.get("orderable")), "JsonWad",
                         "orderable", errors);
 
@@ -131,6 +134,13 @@ public class TestAddFormValidator implements Validator {
                                 StringUtil.nullSafeToString(resultLimit.get("highReportingRange")), "JsonWad",
                                 "result limit [" + i + "] highReportingRange", errors, false, 255,
                                 ValidationHelper.FLOAT_REGEX);
+                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("lowCritical")),
+                                "JsonWad", "result limit [" + i + "] lowCritical", errors, false, 255,
+                                ValidationHelper.FLOAT_REGEX);
+
+                        ValidationHelper.validateField(StringUtil.nullSafeToString(resultLimit.get("highCritical")),
+                                "JsonWad", "result limit [" + i + "] highCritical", errors, false, 255,
+                                ValidationHelper.FLOAT_REGEX);
 
                         if ((Boolean) resultLimit.get("gender")) {
                             ValidationHelper.validateField(
@@ -150,7 +160,7 @@ public class TestAddFormValidator implements Validator {
 
             }
         } catch (ParseException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             errors.rejectValue("jsonWad", "error.field.format.json");
         }
     }

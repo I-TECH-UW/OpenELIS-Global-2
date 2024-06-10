@@ -57,7 +57,7 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
             return list.size() > 0 ? list : null;
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateAnalyzerResultsExists()", e);
         }
     }
@@ -68,7 +68,7 @@ public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
         try {
             data = entityManager.unwrap(Session.class).get(AnalyzerResults.class, idString);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in AnalyzerResults readAnalyzerResults()", e);
         }
         return data;

@@ -76,27 +76,82 @@ All should be using http/https ports (80, 443)
 
 It is recommended to Generate a CA and generate certificates off of this CA, then tell all the servers to trust the same CA (assuming you have control over said CA so only services you want are trusted), but using the same cert for all the services should also work.
 
-Useful links:
+Example instructions:
 
-Creating a CA: [https://scriptcrunch.com/create-ca-tls-ssl-certificates-keys/](https://scriptcrunch.com/create-ca-tls-ssl-certificates-keys/)
+Create a CA (adapted from instuctions [here](https://scriptcrunch.com/create-ca-tls-ssl-certificates-keys/)):
 
-Creating a cert with SAN: [https://www.golinuxcloud.com/openssl-generate-csr-create-san-certificate/](https://www.golinuxcloud.com/openssl-generate-csr-create-san-certificate/)
+`mkdir openssl && cd openssl`
 
-Keystore Truststore: [http://docs.openelis-global.org/en/latest/install/](http://docs.openelis-global.org/en/latest/install/)
+`openssl genrsa -aes256 -out ca.key 4096`
 
-Pem key  > ./prod/ssl/cs.key
+`openssl req -x509 -new -nodes -key ca.key -sha256 -days 3652 -out ca.crt`
 
-Pem cert  > ./prod/ssl/cs.crt
+Create a signed key/cert:
 
-Pem key & pem.crt > ./prod/ssl/cs.keystore
+`openssl genrsa -aes256 -out server.key 2048`
 
-Pem cert and/or Pem CA cert > ./prod/ssl/cs.truststore
+Replace the arguments in < > before running the next command
 
-openssl pkcs12 -inkey prod/ssl/cs.key -in prod/ssl/cs.crt -export -out prod/ssl/cs.keystore
+```
+cat > csr.conf <<EOF
+[ req ]
+default_bits = 2048
+prompt = no
+default_md = sha256
+req_extensions = req_ext
+distinguished_name = dn
 
-keytool -import -alias csCert -file prod/ssl/cs.crt -storetype pkcs12 -keystore prod/ssl/cs.truststore
+[ dn ]
+C = <Country-Short-Name>
+ST = <State>
+L = <City>
+O = <Organization>
+OU = <Organization Unit>
+CN = CS Cert
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = <url-1>
+DNS.2 = *.openelis.org
+IP.1 = <ip-address-1>
+IP.2 = <ip-address-2>
+
+EOF
+```
+
+`openssl req -new -key server.key -out server.csr -config csr.conf`
+
+`openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 1826 -extensions req_ext -extfile csr.conf`
+
+`cat server.crt ca.crt > server-chain.crt`
+
+`cd ..`
+
+Move files to correct locations:
+
+
+`cp openssl/server-chain.crt prod/ssl/cs_frontend.crt`
+
+`cp openssl/server-chain.crt prod/ssl/cs.crt`
+
+`cp openssl/server.key prod/ssl/cs_frontend.key` 
+
+`cp openssl/server.key prod/ssl/cs.key` 
+
+`openssl pkcs12 -inkey prod/ssl/cs.key -in prod/ssl/cs.crt -export -out prod/ssl/cs.keystore`
+
+`sudo chmod +r prod/ssl/cs.keystore`
+
+`sudo apt install default-jre`
+
+`keytool -import -alias csCert -file prod/ssl/cs.crt -storetype pkcs12 -keystore prod/ssl/cs.truststore`
+
+Ensure the key is encrypted with the same password as the keystore
 
 Make sure OE instances trust the cert (or better yet, the CA) for the Consolidated-server by loading them into their truststore. If the Consolidated-server is behind a load balancer that does ssl offloading, this means OE will need to trust the offloaders  cert or CA
+
 
 
 ## Configuring Projects
@@ -105,7 +160,6 @@ Choose one or the other
 
 
 ### Quick Config Container(s):
-
 
 
 * Run ./configure.sh

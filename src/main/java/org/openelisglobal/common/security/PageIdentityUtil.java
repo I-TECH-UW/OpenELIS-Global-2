@@ -46,15 +46,15 @@ public class PageIdentityUtil {
         actionName = (String) request.getAttribute(IActionConstants.ACTION_KEY);
 
 //        String localizedName = MessageUtil.getContextualMessage("dictionary.result.Positif_VIH_2");
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "gnrTest: " +
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "gnrTest: " +
         // localizedName);
 
         if (actionName == null) {
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "actionName is
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "actionName is
             // null");
             actionName = "dummy";
         } else {
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "actionName is "
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "actionName is "
             // + Encode.forJava(actionName));
         }
 

@@ -16,6 +16,8 @@
 */
 package org.openelisglobal.result.action.util;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public interface ResultItem {
 
     public String getAccessionNumber();
@@ -26,6 +28,7 @@ public interface ResultItem {
 
     public void setSequenceNumber(String sequenceNumber);
 
+    @JsonIgnore()
     public String getSequenceAccessionNumber();
 
     public void setShowSampleDetails(boolean showSampleDetails);

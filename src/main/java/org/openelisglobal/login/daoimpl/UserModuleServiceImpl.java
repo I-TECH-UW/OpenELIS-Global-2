@@ -78,7 +78,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
             isFound = permissionModuleService.doesUserHaveAnyModules(usd.getSystemUserId());
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in UserModuleServiceImpl isUserModuleFound()", e);
         }
         return isFound;
@@ -143,7 +143,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
                 }
             } catch (LIMSRuntimeException e) {
                 // bugzilla 2154
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error in UserModuleServiceImpl isVerifyUserModule()", e);
             }
         }
@@ -175,7 +175,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
             }
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in UserModuleServiceImpl getUserLogin()", e);
         }
         return login;
@@ -197,7 +197,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
             }
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in UserModuleServiceImpl isAccountLocked()", e);
         }
         return false;
@@ -219,7 +219,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
             }
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in UserModuleServiceImpl isAccountDisabled()", e);
         }
         return false;
@@ -241,7 +241,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
             }
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in UserModuleServiceImpl isPasswordExpired()", e);
         }
         return false;
@@ -263,7 +263,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
             }
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in UserModuleServiceImpl isUserAdmin()", e);
         }
         return false;
@@ -289,7 +289,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
             request.getSession().setAttribute(USER_SESSION_DATA, usd);
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in UserModuleServiceImpl setupUserSessionTimeOut()", e);
         }
     }
@@ -346,7 +346,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
             }
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in UserModuleServiceImpl getActionName()", e);
         }
         return actionName;
@@ -388,7 +388,7 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
             }
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in UserModuleServiceImpl enabledAdminButtons()", e);
         }
     }

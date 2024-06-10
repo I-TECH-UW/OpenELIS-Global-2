@@ -17,6 +17,7 @@
 package org.openelisglobal.address.valueholder;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class AddressPK implements Serializable {
 
@@ -39,6 +40,22 @@ public class AddressPK implements Serializable {
 
     public void setAddressPartId(String addressPartId) {
         this.addressPartId = addressPartId;
+    }
+
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        AddressPK that = (AddressPK) o;
+
+        return Objects.equals(this.targetId, that.targetId)
+                && Objects.equals(this.addressPartId, that.addressPartId);
+    }
+
+    public int hashCode() {
+        return Objects.hash(targetId, addressPartId);
     }
 
 }

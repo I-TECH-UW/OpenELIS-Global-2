@@ -220,7 +220,7 @@ public class AccessionNumberValidationProvider extends BaseValidationProvider {
 
             } catch (NumberFormatException e) {
                 // bugzilla 2154
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 retVal = INVALID;
             }
 

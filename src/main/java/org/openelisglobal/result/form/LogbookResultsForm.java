@@ -12,6 +12,7 @@ import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.inventory.form.InventoryKitItem;
+import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.referral.action.beanitems.ReferralItem;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.validation.annotations.ValidDate;
@@ -25,6 +26,8 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
     private PagingBean paging;
 
     private String accessionNumber;
+
+    private Patient patient;
 
     @NotNull(groups = { LogbookResults.class })
     private Boolean singlePatient = false;
@@ -89,7 +92,7 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
     @NotNull(groups = { LogbookResults.class })
     private Boolean displayTestSections = true;
 
-    private Boolean searchByRange;
+    private Boolean searchByRange = false;
     private boolean searchFinished;
 
     public LogbookResultsForm() {
@@ -252,6 +255,14 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
 
     public void setAccessionNumber(String accessionNumber) {
         this.accessionNumber = accessionNumber;
+    }
+
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
     }
 
     public boolean getSearchByRange() {

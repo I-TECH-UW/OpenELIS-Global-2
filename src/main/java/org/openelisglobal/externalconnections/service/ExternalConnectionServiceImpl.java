@@ -3,7 +3,7 @@ package org.openelisglobal.externalconnections.service;
 import java.util.List;
 import java.util.Map;
 
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.externalconnections.dao.ExternalConnectionDAO;
 import org.openelisglobal.externalconnections.valueholder.ExternalConnection;
 import org.openelisglobal.externalconnections.valueholder.ExternalConnection.AuthType;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ExternalConnectionServiceImpl extends BaseObjectServiceImpl<ExternalConnection, Integer>
+public class ExternalConnectionServiceImpl extends AuditableBaseObjectServiceImpl<ExternalConnection, Integer>
         implements ExternalConnectionService {
 
     @Autowired

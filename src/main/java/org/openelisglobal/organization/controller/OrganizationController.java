@@ -310,13 +310,12 @@ public class OrganizationController extends BaseController {
             organization = organizationService.get(form.getId());
             request.setAttribute("key", "organization.edit.title");
         }
-        form.setOrganization(organization);
-
         List<String> selectedOrgTypes = form.getSelectedTypes();
 
         organization.setSysUserId(getSysUserId(request));
 
         List states = getPossibleStates(form);
+    
         PropertyUtils.copyProperties(organization, form);
 
         if (FormFields.getInstance().useField(FormFields.Field.OrganizationParent)) {
@@ -341,12 +340,12 @@ public class OrganizationController extends BaseController {
 
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
-            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
+            LogEvent.logError(e);
+            if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
                 result.reject("errors.OptimisticLockException");
             } else {
                 // bugzilla 1482
-                if (e.getException() instanceof LIMSDuplicateRecordException) {
+                if (e.getCause() instanceof LIMSDuplicateRecordException) {
                     String messageKey = "organization.organization";
                     String msg = MessageUtil.getMessage(messageKey);
                     result.reject("errors.DuplicateRecord.activeonly", new String[] { msg },
@@ -430,7 +429,7 @@ public class OrganizationController extends BaseController {
                     departmentAddress = new OrganizationAddress();
                     departmentAddress.setAddressPartId(DEPARTMENT_ID);
                     departmentAddress.setType("D");
-                    departmentAddress.setOrganizationId(form.getOrganization().getId());
+                    departmentAddress.setOrganizationId(form.getId());
                 }
 
                 departmentAddress.setValue(form.getDepartment());
@@ -443,7 +442,7 @@ public class OrganizationController extends BaseController {
                     communeAddress = new OrganizationAddress();
                     communeAddress.setAddressPartId(COMMUNE_ID);
                     communeAddress.setType("T");
-                    communeAddress.setOrganizationId(form.getOrganization().getId());
+                    communeAddress.setOrganizationId(form.getId());
                 }
 
                 communeAddress.setValue(form.getCommune());
@@ -455,7 +454,7 @@ public class OrganizationController extends BaseController {
                     villageAddress = new OrganizationAddress();
                     villageAddress.setAddressPartId(VILLAGE_ID);
                     villageAddress.setType("T");
-                    villageAddress.setOrganizationId(form.getOrganization().getId());
+                    villageAddress.setOrganizationId(form.getId());
                 }
 
                 villageAddress.setValue(form.getVillage());

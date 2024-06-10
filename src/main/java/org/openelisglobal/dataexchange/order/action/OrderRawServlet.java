@@ -44,8 +44,8 @@ public class OrderRawServlet extends HttpServlet {
 
         String sentIndicators = getDocument(request.getInputStream(), request.getContentLength());
 
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", info);
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", sentIndicators);
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", info);
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", sentIndicators);
 
         LogEvent.logFatal("OrderRawServletServlet", "raw", info + sentIndicators);
 

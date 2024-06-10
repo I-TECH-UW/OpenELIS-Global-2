@@ -185,15 +185,15 @@ public class ElectronicOrdersController extends BaseController {
         } catch (ResourceNotFoundException e) {
             String errorMsg = "error in data collection - FHIR resource not found";
             displayItem.setWarnings(Arrays.asList(errorMsg));
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         } catch (NullPointerException e) {
             String errorMsg = "error in data collection - null data";
             displayItem.setWarnings(Arrays.asList(errorMsg));
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         } catch (RuntimeException e) {
             String errorMsg = "error in data collection - unknown exception";
             displayItem.setWarnings(Arrays.asList(errorMsg));
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
 
         return displayItem;

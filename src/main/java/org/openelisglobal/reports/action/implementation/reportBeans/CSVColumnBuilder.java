@@ -40,6 +40,7 @@ import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
@@ -193,7 +194,11 @@ abstract public class CSVColumnBuilder {
                 projectTag = "ARVB";
             } else if (project.getNameKey().contains("VLS")) {
                 projectTag = "VLS";
-            } else {
+            } else if (project.getNameKey().contains("Recency")) {
+                projectTag = "RTRI";
+            } else if (project.getNameKey().contains("HPV")) {
+                projectTag = "HPV";
+            } else  {
                 // otherwise we use the letters from the Sample ID prefix, which
                 // at some locations for some projects is undefined.
                 String code = project.getProgramCode();
@@ -233,11 +238,11 @@ abstract public class CSVColumnBuilder {
     protected void buildResultSet() throws SQLException {
         makeSQL();
         String sql = query.toString();
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===1===\n" +
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "===1===\n" +
         // sql.substring(0, 7000)); // the SQL is
         // chunked out only because Eclipse thinks printing really big strings to the
         // console must be wrong, so it truncates them
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===2===\n" +
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "===2===\n" +
         // sql.substring(7000));
 //		Session session = HibernateUtil.getSession().getSessionFactory().openSession();
 //		PreparedStatement stmt = session.connection().prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -306,7 +311,7 @@ abstract public class CSVColumnBuilder {
             // if you end up where it is because the result set doesn't return a
             // column of the right name
             // Check MAX_POSTGRES_COL_NAME if this fails on a long name
-            LogEvent.logInfo(this.getClass().getName(), "method unkown",
+            LogEvent.logInfo(this.getClass().getSimpleName(), "getValue",
                     "Internal Error: Unable to find db column \"" + column.dbName + "\" in data.");
             return "?" + column.csvName + "?";
         }
@@ -315,15 +320,15 @@ abstract public class CSVColumnBuilder {
         // translate should never return null, "" is better while it is doing
         // translation.
         if (result == null) {
-            LogEvent.logInfo(this.getClass().getName(), "method unkown", "A null found " + column.dbName);
+            LogEvent.logInfo(this.getClass().getSimpleName(), "getValue", "A null found " + column.dbName);
         }
         return result;
     }
 
-    private String prepareColumnName(String columnName) {
+    protected String prepareColumnName(String columnName) {
         // trim and escape the column name so it is more safe from sql injection
         if (!columnName.matches("(?i)[a-zàâçéèêëîïôûùüÿñæœ0-9_ ()%/\\[\\]+\\-]+")) {
-            LogEvent.logWarn(this.getClass().getName(), "prepareColumnName",
+            LogEvent.logWarn(this.getClass().getSimpleName(), "prepareColumnName",
                     "potentially dangerous character detected in '" + columnName + "'");
         }
         return "\"" + trimToPostgresMaxColumnName(columnName = columnName.replace("\"", "\\\"")) + "\"";
@@ -409,7 +414,7 @@ abstract public class CSVColumnBuilder {
             case DROP_ZERO:
                 return ("0".equals(value) || value == null) ? "" : value;
             case TEST_RESULT:
-                return isBlankOrNull(value) ? "" : translateTestResult(csvName, value);
+                return isBlankOrNull(value) ? "" : translateTestResult(this.csvName, value);
             case GEND_CD4:
                 return isBlankOrNull(value) ? "" : translateGendResult(getGendCD4CountAnalyteId(), value);
             case LOG:
@@ -429,10 +434,34 @@ abstract public class CSVColumnBuilder {
                 case NonConforming_depricated:
                     return "N"; // Non-conforming, Non-conformes
                 }
+			case ANALYSIS_STATUS:
+				AnalysisStatus analysisStatus = StatusService.getInstance().getAnalysisStatusForID(value);
+				if (analysisStatus == null)
+					return "?";
+				switch (analysisStatus) {
+				case SampleRejected:
+					return "Reject"; // rejété, entr�e
+				case NotStarted:
+					return "Not_Started"; // entered, entr�e
+				case Canceled:
+					return "Canceled"; // commenced, commenc�
+				case TechnicalAcceptance:
+					return "Validation_Technique"; // Finished, Finale
+				case TechnicalRejected:
+					return "Rejet - Technique"; // Non-conforming, Non-conformes
+				case BiologistRejected:
+					return "Rejet - Biologie"; // entered, entr�e
+				case NonConforming_depricated:
+					return "Non Conforme"; // commenced, commenc�
+				case Finalized:
+					return "Validation_Biologique"; // Finished, Finale
+				
+				
+				}
             case PROJECT:
                 return translateProjectId(value);
             case DEBUG:
-                LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                LogEvent.logInfo(this.getClass().getSimpleName(), "translate",
                         "Processing Column Value: " + csvName + " \"" + value + "\"");
             case BLANK:
                 return "";
@@ -486,7 +515,10 @@ abstract public class CSVColumnBuilder {
          * @throws SQLException
          */
         public String translateTestResult(String testName, String value) throws SQLException {
-            TestResult testResult = testResultsByTestName.get(testName);
+            TestResult testResult = testResultsByTestName.get(testName); 
+            if(testName.equalsIgnoreCase("DNA PCR")) { //need fix: testName is different from map key
+            	return ResourceTranslator.DictionaryTranslator.getInstance().translateRaw(value);
+            }
             // if it is not in the table then its just a value in the result
             // that was NOT selected from a list, thus no translation
             if (testResult == null) {
@@ -538,7 +570,7 @@ abstract public class CSVColumnBuilder {
      * @param lowDatePostgres
      * @param highDatePostgres
      */
-    protected void appendResultCrosstab(Date lowDate, Date highDate) {
+    protected void appendResultCrosstab(Date lowDate, Date highDate, String byDate) {
         // A list of analytes which should not show up in the regular results,
         // because they are not the primary results, but, for example, is a
         // conclusion.
@@ -550,8 +582,8 @@ abstract public class CSVColumnBuilder {
         // Begin cross tab / pivot table
         query.append(" crosstab( " + "\n 'SELECT si.id, t.description, r.value "
                 + "\n FROM clinlims.result AS r, clinlims.analysis AS a, clinlims.sample_item AS si, clinlims.sample AS s, clinlims.test AS t, clinlims.test_result AS tr "
-                + "\n WHERE " + "\n s.id = si.samp_id" + " AND s.collection_date >= date(''"
-                + formatDateForDatabaseSql(lowDate) + "'')  AND s.collection_date <= date(''"
+                + "\n WHERE " + "\n s.id = si.samp_id" + " AND "+ byDate +" >= date(''"
+                + formatDateForDatabaseSql(lowDate) + "'')  AND "+ byDate +" <= date(''"
                 + formatDateForDatabaseSql(highDate) + " '') " + "\n AND s.id = si.samp_id "
                 + "\n AND si.id = a.sampitem_id "
                 // sql injection safe as user cannot overwrite validStatusId in database
@@ -561,7 +593,7 @@ abstract public class CSVColumnBuilder {
                 // " AND r.analyte_id NOT IN ( " + excludeAnalytes) + ")"
                 // + " AND a.test_id = t.id "
                 + "\n ORDER BY 1, 2 "
-                + "\n ', 'SELECT description FROM test where description != ''CD4'' AND is_active = ''Y'' ORDER BY 1' ) ");
+                + "\n ', 'SELECT description FROM test where is_active = ''Y'' ORDER BY 1' ) ");
         // end of cross tab
 
         // Name the test pivot table columns . We'll name them all after the
@@ -573,12 +605,8 @@ abstract public class CSVColumnBuilder {
                 + "\"si_id\" numeric(10) ");
         for (Test col : allTests) {
             String testName = TestServiceImpl.getLocalizedTestNameWithType(col);
-            if (!"CD4".equals(testName)) { // CD4 is listed as a test name but
-                                           // it isn't clear it should be line
-                                           // 446 may also have to be changed
-                // sql injection safe as it is escaped for
-                query.append("\n, " + prepareColumnName(testName) + " varchar(200) ");
-            }
+            // sql injection safe as it is escaped for
+            query.append("\n, " + prepareColumnName(testName) + " varchar(200) ");
         }
         query.append(" ) \n");
         // left join all sample Items from the right sample range to the results table.
@@ -599,7 +627,7 @@ abstract public class CSVColumnBuilder {
      * sb.toString(); }
      */
 
-    protected void appendObservationHistoryCrosstab(Date lowDate, Date highDate) {
+    protected void appendObservationHistoryCrosstab( Date lowDate, Date highDate, String byDate) {
         SQLConstant listName = SQLConstant.DEMO;
         appendCrosstabPreamble(listName);
         query.append( // any Observation History items
@@ -673,9 +701,7 @@ abstract public class CSVColumnBuilder {
     protected void addAllResultsColumns() {
         for (Test test : allTests) {
             String testTag = TestServiceImpl.getLocalizedTestNameWithType(test);
-            if (!"CD4".equals(testTag)) {
-                add(testTag, TestServiceImpl.getLocalizedTestNameWithType(test), TEST_RESULT);
-            }
+            add(testTag, TestServiceImpl.getLocalizedTestNameWithType(test), TEST_RESULT);
         }
     }
 

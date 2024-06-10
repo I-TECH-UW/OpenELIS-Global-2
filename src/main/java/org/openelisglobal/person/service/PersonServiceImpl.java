@@ -11,7 +11,7 @@ import org.openelisglobal.address.service.AddressPartService;
 import org.openelisglobal.address.service.PersonAddressService;
 import org.openelisglobal.address.valueholder.AddressPart;
 import org.openelisglobal.address.valueholder.PersonAddress;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.person.dao.PersonDAO;
 import org.openelisglobal.person.valueholder.Person;
@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @DependsOn({ "springContext" })
-public class PersonServiceImpl extends BaseObjectServiceImpl<Person, String> implements PersonService {
+public class PersonServiceImpl extends AuditableBaseObjectServiceImpl<Person, String> implements PersonService {
 
     private Map<String, String> addressPartIdToNameMap;
 

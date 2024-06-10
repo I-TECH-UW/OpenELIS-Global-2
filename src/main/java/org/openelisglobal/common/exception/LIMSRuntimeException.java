@@ -29,38 +29,6 @@ import org.openelisglobal.common.log.LogEvent;
  * Specialized exceptions should extend this class.
  */
 public class LIMSRuntimeException extends RuntimeException {
-    private Exception exception; // Holds the detailed exception
-
-    /**
-     * Creates a new LIMSException wrapping another exception including a detailed
-     * message.
-     *
-     * @param String    the detailed message
-     * @param Exception the wrapped exception
-     */
-    public LIMSRuntimeException(String pMessage, Exception e) {
-        super(pMessage);
-        exception = e;
-    }
-
-    /**
-     * Creates a new LIMSException wrapping another exception including a detailed
-     * message. Takes a Log object, and will log the same message as an error.
-     * 
-     * @param log       TODO
-     * @param String    the detailed message
-     * @param Exception the wrapped exception
-     * @param Log       the Log to write a message to
-     */
-    public LIMSRuntimeException(String pMessage, Exception pException, boolean log) {
-        super(pMessage);
-        exception = pException;
-
-        LogEvent.logError(pMessage, pException);
-//        if (pLog != null) {
-//            pLog.error(pMessage, pException);
-//        }
-    }
 
     /**
      * Creates a new LIMSException with a detailed message
@@ -68,60 +36,27 @@ public class LIMSRuntimeException extends RuntimeException {
      * @param String the detailed message
      */
     public LIMSRuntimeException(String pMessage) {
-        this(pMessage, null);
+        super(pMessage);
+    }
+
+    /**
+     * Creates a new LIMSException wrapping another exception including a detailed
+     * message.
+     *
+     * @param String    the detailed message
+     * @param Throwable the wrapped exception
+     */
+    public LIMSRuntimeException(String pMessage, Throwable e) {
+        super(pMessage, e);
     }
 
     /**
      * Creates a new LIMSException wrapping another exception
      *
-     * @param Exception the wrapped exception
+     * @param Throwable the wrapped exception
      */
-    public LIMSRuntimeException(Exception e) {
-        this(null, e);
+    public LIMSRuntimeException(Throwable e) {
+        super(e);
     }
 
-    /**
-     * Retreive the wrapped exception
-     *
-     * @return Exception the Wrapped exception
-     */
-    public Exception getException() {
-        return exception;
-    }
-
-    /**
-     * Retrieves the root cause exception.
-     *
-     * @return the root cause exception.
-     */
-    public Exception getRootCause() {
-        if (exception instanceof LIMSRuntimeException) {
-            return ((LIMSRuntimeException) exception).getRootCause();
-        }
-        return exception == null ? this : exception;
-    }
-
-    @Override
-    public void printStackTrace() {
-        if (exception != null) {
-            exception.printStackTrace();
-        }
-        super.printStackTrace();
-    }
-
-    @Override
-    public void printStackTrace(PrintStream s) {
-        if (exception != null) {
-            exception.printStackTrace(s);
-        }
-        super.printStackTrace(s);
-    }
-
-    @Override
-    public void printStackTrace(PrintWriter s) {
-        if (exception != null) {
-            exception.printStackTrace(s);
-        }
-        super.printStackTrace(s);
-    }
 }

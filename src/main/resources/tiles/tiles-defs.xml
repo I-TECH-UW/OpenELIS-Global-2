@@ -130,16 +130,16 @@
 
 	<definition name="masterListsPageRightDefinition"
 		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
-<!-- 		<put-attribute name="rightDictionaryFragment" -->
-<!-- 			value="dictionaryMenuDefinition" /> -->
-<!-- 		<put-attribute name="rightOrganizationFragment" -->
-<!-- 			value="organizationMenuDefinition" /> -->
-<!-- 		<put-attribute name="rightProviderFragment" -->
-<!-- 			value="providerMenuDefinition" /> -->
+		<!-- <put-attribute name="rightDictionaryFragment" -->
+		<!-- value="dictionaryMenuDefinition" /> -->
+		<!-- <put-attribute name="rightOrganizationFragment" -->
+		<!-- value="organizationMenuDefinition" /> -->
+		<!-- <put-attribute name="rightProviderFragment" -->
+		<!-- value="providerMenuDefinition" /> -->
 		<put-attribute name="rightTestSectionFragment"
 			value="testSectionMenuDefinition" />
-<!-- 		<put-attribute name="rightExternalConnectionFragment" -->
-<!-- 			value="externalConnectionMenuDefinition" /> -->
+		<!-- <put-attribute name="rightExternalConnectionFragment" -->
+		<!-- value="externalConnectionMenuDefinition" /> -->
 		<put-attribute name="rightTypeOfSamplePanelFragment"
 			value="/pages/common/emptyPlaceHolder.jsp" />
 		<put-attribute name="rightTypeOfSampleTestFragment"
@@ -216,7 +216,7 @@
 		<put-attribute name="bodyFragment"
 			value="/pages/organization/organization.jsp" />
 	</definition>
-	
+
 	<definition name="externalConnectionDefinition"
 		extends="baseDefinitionNoForm">
 		<put-attribute name="bodyFragment"
@@ -224,14 +224,14 @@
 		<put-attribute name="footerFragment"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
-	
+
 	<definition name="externalConnectionMenuDefinition"
 		extends="baseMenuSelectListDefinition">
 		<put-attribute name="bodyMenuFragment"
 			value="/pages/externalconnections/externalConnectionMenu.jsp" />
 	</definition>
-	
-	
+
+
 	<definition name="dataSubmissionDefinition"
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
@@ -249,7 +249,7 @@
 		<put-attribute name="footerFragment"
 			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
-	
+
 	<definition name="studyElectronicOrderViewDefinition"
 		extends="baseDefinition">
 		<put-attribute name="bodyFragment"
@@ -257,7 +257,7 @@
 		<put-attribute name="footerFragment"
 			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
-	
+
 	<definition name="portableOrderViewDefinition"
 		extends="baseDefinition">
 		<put-attribute name="bodyFragment"
@@ -422,6 +422,16 @@
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
 
+	<definition name="sampleTbEntryDefinition"
+		extends="baseDefinition">
+		<put-attribute name="preSelectionHeaderFragment"
+			value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="bodyFragment"
+			value="/pages/sample/sampleTbAdd.jsp" />
+		<put-attribute name="footerFragment"
+			value="/pages/common/saveCancelFooterButtons.jsp" />
+	</definition>
+
 	<definition name="sampleEntryEIDDefinition"
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
@@ -487,6 +497,8 @@
 			value="/pages/patient/CI/vlStudy.jsp" />
 		<put-attribute name="rtnStudyFragment"
 			value="/pages/patient/CI/rtnStudy.jsp" />
+		<put-attribute name="rtStudyFragment"
+			value="/pages/patient/CI/rtStudy.jsp" />
 	</definition>
 
 	<definition name="patientEntryByProjectDefinition"
@@ -519,8 +531,8 @@
 		template="/pages/result/resultsBySearch.jsp">
 		<put-attribute name="searchPanelFragment"
 			value="/pages/patient/patientEnhancedSearch.jsp" />
-<!-- 		<put-attribute name="searchPanelFragment" -->
-<!-- 			value="/pages/patient/patientSearch.jsp" /> -->
+		<!-- <put-attribute name="searchPanelFragment" -->
+		<!-- value="/pages/patient/patientSearch.jsp" /> -->
 		<put-attribute name="resultsPanelFragment"
 			value="resultListViewCore" />
 	</definition>
@@ -543,8 +555,8 @@
 
 	<definition name="accessionSampleEditCore"
 		template="/pages/result/resultsBySearch.jsp">
-<!-- 		<put-attribute name="searchPanelFragment" -->
-<!-- 			value="/pages/patient/patientSearch.jsp" /> -->
+		<!-- <put-attribute name="searchPanelFragment" -->
+		<!-- value="/pages/patient/patientSearch.jsp" /> -->
 		<put-attribute name="searchPanelFragment"
 			value="/pages/patient/patientEnhancedSearch.jsp" />
 		<put-attribute name="resultsPanelFragment"
@@ -586,35 +598,45 @@
 		<put-attribute name="footerFragment"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
+	
+	<definition name="sampleRejectionDefiniton"
+		extends="baseDefinition">
+		<put-attribute name="preSelectionHeaderFragment"
+			value="/pages/common/actionSuccess.jsp" />
+		<put-attribute name="bodyFragment"
+			value="/pages/qaevent/sampleRejection.jsp" />
+		<put-attribute name="footerFragment"
+			value="/pages/common/saveCancelFooterButtons.jsp" />
+	</definition>
 
 	<definition name="reportNonConformingEventDefiniton"
-				extends="baseDefinition">
+		extends="baseDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
-					   value="/pages/common/actionSuccess.jsp" />
+			value="/pages/common/actionSuccess.jsp" />
 		<put-attribute name="bodyFragment"
-					   value="/pages/qaevent/reportNonConformingEvent.jsp" />
+			value="/pages/qaevent/reportNonConformingEvent.jsp" />
 		<put-attribute name="footerFragment"
-					   value="/pages/common/emptyPlaceHolder.jsp" />
+			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
 
 	<definition name="viewNonConformingEventDefiniton"
-				extends="baseDefinition">
+		extends="baseDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
-					   value="/pages/common/actionSuccess.jsp" />
+			value="/pages/common/actionSuccess.jsp" />
 		<put-attribute name="bodyFragment"
-					   value="/pages/qaevent/viewNonConformingEvent.jsp" />
+			value="/pages/qaevent/viewNonConformingEvent.jsp" />
 		<put-attribute name="footerFragment"
-					   value="/pages/common/emptyPlaceHolder.jsp" />
+			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
 
 	<definition name="correctiveActionDefiniton"
-				extends="baseDefinition">
+		extends="baseDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
-					   value="/pages/common/actionSuccess.jsp" />
+			value="/pages/common/actionSuccess.jsp" />
 		<put-attribute name="bodyFragment"
-					   value="/pages/qaevent/correctiveAction.jsp" />
+			value="/pages/qaevent/correctiveAction.jsp" />
 		<put-attribute name="footerFragment"
-					   value="/pages/common/emptyPlaceHolder.jsp" />
+			value="/pages/common/emptyPlaceHolder.jsp" />
 
 	</definition>
 
@@ -645,7 +667,8 @@
 	</definition>
 	<definition name="auditTrailViewDefinition"
 		extends="baseMenuDefinition">
-		<put-attribute name="bodyFragment" value="auditTrailCore" />
+		<put-attribute name="bodyFragment"
+			value="auditTrailCore" />
 	</definition>
 
 	<definition name="resultListViewCore"
@@ -666,7 +689,8 @@
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
 			value="/pages/common/actionSuccess.jsp" />
-		<put-attribute name="bodyFragment" value="resultsLogbookCore" />
+		<put-attribute name="bodyFragment"
+			value="resultsLogbookCore" />
 		<put-attribute name="footerFragment"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
@@ -678,14 +702,15 @@
 		<put-attribute name="resultsPanelFragment"
 			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
-	
-	
+
+
 
 	<definition name="patientResultDefinition"
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
 			value="/pages/common/actionSuccess.jsp" />
-		<put-attribute name="bodyFragment" value="patientResultsCore" />
+		<put-attribute name="bodyFragment"
+			value="patientResultsCore" />
 		<put-attribute name="footerFragment"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
@@ -694,7 +719,8 @@
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
 			value="/pages/common/actionSuccess.jsp" />
-		<put-attribute name="bodyFragment" value="accessionResultsCore" />
+		<put-attribute name="bodyFragment"
+			value="accessionResultsCore" />
 		<put-attribute name="footerFragment"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
@@ -703,7 +729,8 @@
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
 			value="/pages/common/actionSuccess.jsp" />
-		<put-attribute name="bodyFragment" value="accessionValidationCore" />
+		<put-attribute name="bodyFragment"
+			value="accessionValidationCore" />
 		<put-attribute name="footerFragment"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
@@ -712,7 +739,8 @@
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
 			value="/pages/common/actionSuccess.jsp" />
-		<put-attribute name="bodyFragment" value="statusResultsCore" />
+		<put-attribute name="bodyFragment"
+			value="statusResultsCore" />
 		<put-attribute name="footerFragment"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
@@ -726,7 +754,7 @@
 		<put-attribute name="footerFragment"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
-	
+
 
 	<definition name="resultValidationCoreDefinition"
 		template="/pages/result/resultsBySearch.jsp">
@@ -735,7 +763,7 @@
 		<put-attribute name="resultsPanelFragment"
 			value="/pages/resultvalidation/resultValidation.jsp" />
 	</definition>
-	
+
 	<definition name="accessionValidationRangeCoreDefinition"
 		template="/pages/result/resultsBySearch.jsp">
 		<put-attribute name="searchPanelFragment"
@@ -743,7 +771,7 @@
 		<put-attribute name="resultsPanelFragment"
 			value="/pages/accessionvalidationrange/accessionValidationRange.jsp" />
 	</definition>
-	
+
 	<definition name="accessionValidationRangeDefinition"
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
@@ -753,8 +781,8 @@
 		<put-attribute name="footerFragment"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
-	
-	
+
+
 	<definition name="resultValidationDefinition"
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
@@ -765,7 +793,7 @@
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
 
-	
+
 	<definition name="elisaAlgorithmResultValidationDefinition"
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
@@ -777,7 +805,8 @@
 	</definition>
 	<definition name="workplanResultDefinition"
 		extends="baseDefinition">
-		<put-attribute name="bodyFragment" value="workplanDefinition" />
+		<put-attribute name="bodyFragment"
+			value="workplanDefinition" />
 		<put-attribute name="footerFragment"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
@@ -808,12 +837,13 @@
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
 			value="/pages/common/actionSuccess.jsp" />
-		<put-attribute name="bodyFragment" value="patientManagementCore" />
+		<put-attribute name="bodyFragment"
+			value="patientManagementCore" />
 		<put-attribute name="footerFragment"
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
-	
-	
+
+
 	<definition name="referredOutDefinition"
 		extends="baseDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
@@ -823,7 +853,7 @@
 		<put-attribute name="footerFragment"
 			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
-	
+
 	<definition name="referredOutBodyDefinition"
 		template="/pages/referral/referralOut.jsp">
 		<put-attribute name="referredTestSearchFragment"
@@ -831,7 +861,7 @@
 		<put-attribute name="patientEnhancedSearchFragment"
 			value="/pages/patient/patientEnhancedSearch.jsp" />
 	</definition>
-	
+
 	<definition name="userMasterListsPageDefinition"
 		extends="masterListsPageDefinition">
 		<put-attribute name="bodyFragment"
@@ -849,25 +879,27 @@
 		<put-attribute name="rightMenuFragment"
 			value="unifiedSystemUserMenuDefinition" />
 	</definition>
-	
+
 	<definition name="testNotificationMasterListsPageDefinition"
 		extends="masterListsPageDefinition">
 		<put-attribute name="bodyFragment"
 			value="testNotificationMasterListsPageBodyDefinition" />
 	</definition>
 
-	<definition name="testNotificationMasterListsPageBodyDefinition"
+	<definition
+		name="testNotificationMasterListsPageBodyDefinition"
 		extends="masterListsPageBodyDefinition">
 		<put-attribute name="rightFragment"
 			value="testNotificationMasterListsPageRightDefinition" />
 	</definition>
 
-	<definition name="testNotificationMasterListsPageRightDefinition"
+	<definition
+		name="testNotificationMasterListsPageRightDefinition"
 		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
 		<put-attribute name="rightMenuFragment"
 			value="testNotificationMenuDefinition" />
 	</definition>
-	
+
 	<definition name="siteInfoMasterListsPageDefinition"
 		extends="masterListsPageDefinition">
 		<put-attribute name="bodyFragment"
@@ -885,7 +917,7 @@
 		<put-attribute name="rightMenuFragment"
 			value="siteInformationMenuDefinition" />
 	</definition>
-	
+
 	<definition name="providerMasterListsPageDefinition"
 		extends="masterListsPageDefinition">
 		<put-attribute name="bodyFragment"
@@ -903,7 +935,7 @@
 		<put-attribute name="rightMenuFragment"
 			value="providerMenuDefinition" />
 	</definition>
-	
+
 	<definition name="orgMasterListsPageDefinition"
 		extends="masterListsPageDefinition">
 		<put-attribute name="bodyFragment"
@@ -921,25 +953,28 @@
 		<put-attribute name="rightMenuFragment"
 			value="organizationMenuDefinition" />
 	</definition>
-	
-	<definition name="externalConnectionsMasterListsPageDefinition"
+
+	<definition
+		name="externalConnectionsMasterListsPageDefinition"
 		extends="masterListsPageDefinition">
 		<put-attribute name="bodyFragment"
 			value="externalConnectionsMasterListsPageBodyDefinition" />
 	</definition>
 
-	<definition name="externalConnectionsMasterListsPageBodyDefinition"
+	<definition
+		name="externalConnectionsMasterListsPageBodyDefinition"
 		extends="masterListsPageBodyDefinition">
 		<put-attribute name="rightFragment"
 			value="externalConnectionsMasterListsPageRightDefinition" />
 	</definition>
 
-	<definition name="externalConnectionsMasterListsPageRightDefinition"
+	<definition
+		name="externalConnectionsMasterListsPageRightDefinition"
 		template="/pages/menu/masterListsTab/masterListsPageRight.jsp">
 		<put-attribute name="rightMenuFragment"
 			value="externalConnectionMenuDefinition" />
 	</definition>
-	
+
 	<definition name="dictionaryMasterListsPageDefinition"
 		extends="masterListsPageDefinition">
 		<put-attribute name="bodyFragment"
@@ -957,7 +992,7 @@
 		<put-attribute name="rightMenuFragment"
 			value="dictionaryMenuDefinition" />
 	</definition>
-	
+
 	<definition name="analyzerMasterListsPageDefinition"
 		extends="masterListsPageDefinition">
 		<put-attribute name="bodyFragment"
@@ -975,7 +1010,7 @@
 		<put-attribute name="rightMenuFragment"
 			value="analyzerTestNameMenuDefinition" />
 	</definition>
-	
+
 	<definition name="haitiMasterListsPageRightDefinition"
 		extends="masterListsPageRightDefinition">
 		<put-attribute name="rightTypeOfSampleTestFragment"
@@ -990,28 +1025,28 @@
 			value="roleMenuDefinition" />
 		<put-attribute name="rightUserRoleFragment"
 			value="userRoleMenuDefinition" />
-<!-- 		<put-attribute name="rightSystemUserOnePageFragment" -->
-<!-- 			value="unifiedSystemUserMenuDefinition" /> -->
-<!-- 		<put-attribute name="rightSiteInformationFragment" -->
-<!-- 			value="siteInformationMenuDefinition" /> -->
-<!-- 		<put-attribute name="rightAnalyzerTestNameFragment" -->
-<!-- 			value="analyzerTestNameMenuDefinition" /> -->
-<!-- 		<put-attribute name="rightTestNotificationFragment" -->
-<!-- 			value="testNotificationMenuDefinition" /> -->
+		<!-- <put-attribute name="rightSystemUserOnePageFragment" -->
+		<!-- value="unifiedSystemUserMenuDefinition" /> -->
+		<!-- <put-attribute name="rightSiteInformationFragment" -->
+		<!-- value="siteInformationMenuDefinition" /> -->
+		<!-- <put-attribute name="rightAnalyzerTestNameFragment" -->
+		<!-- value="analyzerTestNameMenuDefinition" /> -->
+		<!-- <put-attribute name="rightTestNotificationFragment" -->
+		<!-- value="testNotificationMenuDefinition" /> -->
 	</definition>
-	
-	<!-- MasterPageLists -->
-<!-- 	<definition name="haitiMasterListsPageDefinition" -->
-<!-- 		extends="masterListsPageDefinition"> -->
-<!-- 		<put-attribute name="bodyFragment" -->
-<!-- 			value="haitiMasterListsPageBodyDefinition" /> -->
-<!-- 	</definition> -->
 
-<!-- 	<definition name="haitiMasterListsPageBodyDefinition" -->
-<!-- 		extends="masterListsPageBodyDefinition"> -->
-<!-- 		<put-attribute name="rightFragment" -->
-<!-- 			value="haitiMasterListsPageRightDefinition" /> -->
-<!-- 	</definition> -->
+	<!-- MasterPageLists -->
+	<!-- <definition name="haitiMasterListsPageDefinition" -->
+	<!-- extends="masterListsPageDefinition"> -->
+	<!-- <put-attribute name="bodyFragment" -->
+	<!-- value="haitiMasterListsPageBodyDefinition" /> -->
+	<!-- </definition> -->
+
+	<!-- <definition name="haitiMasterListsPageBodyDefinition" -->
+	<!-- extends="masterListsPageBodyDefinition"> -->
+	<!-- <put-attribute name="rightFragment" -->
+	<!-- value="haitiMasterListsPageRightDefinition" /> -->
+	<!-- </definition> -->
 
 	<definition name="haitiMasterListsPageRightDefinition"
 		extends="masterListsPageRightDefinition">
@@ -1092,7 +1127,8 @@
 	</definition>
 
 	<definition name="roleDefinition" extends="baseDefinition">
-		<put-attribute name="bodyFragment" value="/pages/role/role.jsp" />
+		<put-attribute name="bodyFragment"
+			value="/pages/role/role.jsp" />
 	</definition>
 
 	<definition name="siteInformationMenuDefinition"
@@ -1364,14 +1400,18 @@
 		<put-attribute name="footerFragment"
 			value="/pages/common/finishFooterButton.jsp" />
 	</definition>
-	
-	<definition name="PrintBarcodeCoreDefinition"  template="/pages/barcode/printBarcode.jsp">
-    	<put-attribute name="prePrintingFragment" value="batchPrePrintParcodeBodyDefinition" />
-    </definition>
-    
-    <definition name="batchPrePrintParcodeBodyDefinition"  template="/pages/barcode/bulkPrePrint.jsp">
-		<put-attribute name="sampleAddFragment" value="/pages/samplebatchentry/setup/sampleAdd.jsp"/>
-    </definition>
+
+	<definition name="PrintBarcodeCoreDefinition"
+		template="/pages/barcode/printBarcode.jsp">
+		<put-attribute name="prePrintingFragment"
+			value="batchPrePrintParcodeBodyDefinition" />
+	</definition>
+
+	<definition name="batchPrePrintParcodeBodyDefinition"
+		template="/pages/barcode/bulkPrePrint.jsp">
+		<put-attribute name="sampleAddFragment"
+			value="/pages/samplebatchentry/setup/sampleAdd.jsp" />
+	</definition>
 
 	<definition name="BarcodeConfigurationDefinition"
 		extends="baseDefinition">
@@ -1397,48 +1437,49 @@
 
 
 	<definition name="ReportManagementDefinition"
-				extends="baseMenuDefinition">
+		extends="baseMenuDefinition">
 		<put-attribute name="bodyFragment"
-					   value="/pages/reportconfiguration/reportConfiguration.jsp" />
+			value="/pages/reportconfiguration/reportConfiguration.jsp" />
 		<put-attribute name="footerFragment"
-					   value="/pages/common/emptyPlaceHolder.jsp" />
+			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
 
 
 	<definition name="resultSelectListDefinition"
-				extends="baseMenuDefinition">
+		extends="baseMenuDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
-					   value="/pages/common/actionSuccess.jsp" />
+			value="/pages/common/actionSuccess.jsp" />
 		<put-attribute name="bodyFragment"
-					   value="/pages/testConfiguration/resultSelectListAdd.jsp" />
+			value="/pages/testConfiguration/resultSelectListAdd.jsp" />
 		<put-attribute name="footerFragment"
-					   value="/pages/common/emptyPlaceHolder.jsp" />
+			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
 
 	<definition name="resultSelectListRenameDefinition"
-				extends="baseDefinition">
+		extends="baseDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
-					   value="/pages/common/actionSuccess.jsp" />
+			value="/pages/common/actionSuccess.jsp" />
 		<put-attribute name="bodyFragment"
-					   value="/pages/testConfiguration/resultSelectListRename.jsp" />
+			value="/pages/testConfiguration/resultSelectListRename.jsp" />
 
 		<put-attribute name="footerFragment"
-					   value="/pages/common/emptyPlaceHolder.jsp" />
+			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
-	
-	<definition name="profileDefinition" extends="baseDefinitionNoForm">
+
+	<definition name="profileDefinition"
+		extends="baseDefinitionNoForm">
 		<put-attribute name="bodyFragment"
-					   value="/pages/profiles/profile.jsp" />
+			value="/pages/profiles/profile.jsp" />
 		<put-attribute name="footerFragment"
-					   value="/pages/common/emptyPlaceHolder.jsp" />
+			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
 
 	<definition name="fhirReferralDefinition"
-				extends="baseDefinition">
+		extends="baseDefinition">
 		<put-attribute name="preSelectionHeaderFragment"
-					   value="/pages/common/actionSuccess.jsp" />
+			value="/pages/common/actionSuccess.jsp" />
 		<put-attribute name="bodyFragment"
-					   value="/pages/fhirReferral/referral.jsp" />
+			value="/pages/fhirReferral/referral.jsp" />
 	</definition>
 
 	<definition name="testNotificationMenuDefinition"
@@ -1458,7 +1499,7 @@
 		<put-attribute name="bodyFragment"
 			value="/pages/testnotification/testNotification.jsp" />
 		<put-attribute name="footerFragment"
-			
+
 			value="/pages/common/saveCancelFooterButtons.jsp" />
 	</definition>
 
@@ -1477,7 +1518,7 @@
 		<put-attribute name="footerFragment"
 			value="/pages/common/emptyPlaceHolder.jsp" />
 	</definition>
- 
+
 	<definition name="quantStudioSetupBodyDefinition"
 		template="/pages/analyzer/quaintstudio/setupExperiment.jsp">
 		<put-attribute name="patientEnhancedSearchFragment"

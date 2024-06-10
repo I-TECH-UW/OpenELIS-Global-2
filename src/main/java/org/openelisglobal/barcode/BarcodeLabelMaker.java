@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.openelisglobal.barcode.labeltype.BlankLabel;
+import org.openelisglobal.barcode.labeltype.BlockLabel;
 import org.openelisglobal.barcode.labeltype.Label;
 import org.openelisglobal.barcode.labeltype.OrderLabel;
+import org.openelisglobal.barcode.labeltype.SlideLabel;
 import org.openelisglobal.barcode.labeltype.SpecimenLabel;
 import org.openelisglobal.barcode.service.BarcodeLabelInfoService;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
@@ -88,6 +90,16 @@ public class BarcodeLabelMaker {
         this.labels = labels;
     }
 
+    public void generateGenericBarcodeLabel(String code, String type) {
+        if ("block".equals(type)) {
+            BlockLabel label = new BlockLabel(code);
+            labels.add(label);
+        } else if ("slide".equals(type)) {
+            SlideLabel label = new SlideLabel(code);
+            labels.add(label);
+        }
+    }
+
     public void generatePrePrintLabels(Integer numSetsOfLabels, Integer numOrderLabelsPerSet,
             Integer numSpecimenLabelsPerSet, String facilityName, List<Test> tests, String startingAt)
             throws LIMSInvalidConfigurationException {
@@ -146,7 +158,7 @@ public class BarcodeLabelMaker {
     public void generateLabels(String labNo, String type, String quantity, String override) {
 
         /*
-         * LogEvent.logInfo(this.getClass().getName(), "method unkown", "labNo: " +
+         * LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "labNo: " +
          * labNo + "\n" + "patientId: " + patientId + "\n" + "type: " + type + "\n" +
          * "quantity: " + quantity + "\n" + "override: " + override);
          */
@@ -232,7 +244,7 @@ public class BarcodeLabelMaker {
      *
      * @return Stream of all labels that have been generated
      */
-    public ByteArrayOutputStream createPrePrintedLabelsAsStream() {
+    public ByteArrayOutputStream createLabelsAsStream() {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         if (labels.isEmpty()) {
             return stream;
@@ -266,7 +278,7 @@ public class BarcodeLabelMaker {
      *
      * @return Stream of all labels that have been generated
      */
-    public ByteArrayOutputStream createLabelsAsStream() {
+    public ByteArrayOutputStream createLabelsAsStreamWithMaximumPrints() {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         if (labels.isEmpty()) {
             return stream;
@@ -320,13 +332,15 @@ public class BarcodeLabelMaker {
 
         // add above fields into table
         Iterable<LabelField> fields = label.getAboveFields();
-        for (LabelField field : fields) {
-            if (field.isStartNewline()) {
-                table.completeRow();
+        if (fields != null) {
+            for (LabelField field : fields) {
+                if (field.isStartNewline()) {
+                    table.completeRow();
+                }
+                table.addCell(createFieldAsPDFField(label, field));
             }
-            table.addCell(createFieldAsPDFField(label, field));
-        }
         table.completeRow();
+    }
 
         // add bar code
         if (label.getScaledBarcodeSpace() != NUM_COLUMNS) {
@@ -389,6 +403,7 @@ public class BarcodeLabelMaker {
         Barcode128 barcode = new Barcode128();
         barcode.setCodeType(Barcode.CODE128);
         barcode.setCode(label.getCode());
+        barcode.setAltText(label.getCodeLabel());
         // shrink bar code height inversely with number of text rows
         barcode.setBarHeight((10 - (label.getNumTextRowsBefore() + label.getNumTextRowsAfter())) * 30 / 10);
         PdfPCell cell = new PdfPCell(barcode.createImageWithBarcode(writer.getDirectContent(), null, null), true);
@@ -506,6 +521,11 @@ public class BarcodeLabelMaker {
 
     public void setSysUserId(String sysUserId) {
         this.sysUserId = sysUserId;
+    }
+
+    public void generateBlockLabel(Integer blockNumber) {
+        // TODO Auto-generated method stub
+
     }
 
 }

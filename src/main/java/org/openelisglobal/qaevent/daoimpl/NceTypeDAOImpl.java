@@ -29,7 +29,7 @@ public class NceTypeDAOImpl extends BaseDAOImpl<NceType, String> implements NceT
             Query<NceType> query = entityManager.unwrap(Session.class).createQuery(sql, NceType.class);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in NceCategory getAllNceType()", e);
         }
         return list;

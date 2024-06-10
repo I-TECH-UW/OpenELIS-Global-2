@@ -42,9 +42,9 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class AccessionNumberUtil {
 
-    private static AccessionNumberValidatorFactory accessionNumberValidatorFactory = new AccessionNumberValidatorFactory();
+    private static AccessionNumberValidatorFactory accessionNumberValidatorFactory = SpringContext.getBean(AccessionNumberValidatorFactory.class);
 
-    private static String blacklistCharacters = ".*['\"<>\\[\\](){};:/?!@#$%^&*+=].*";
+    private static String blacklistCharacters = ".*['\"<>\\[\\](){};:/?!@#$%^&+=].*";
 
     public static boolean containsBlackListCharacters(String value) {
         return value.matches(blacklistCharacters);
@@ -79,6 +79,16 @@ public class AccessionNumberUtil {
         return null;
     }
 
+    public static IAccessionNumberGenerator getAccessionNumberGenerator(AccessionFormat format) {
+        try {
+            return accessionNumberValidatorFactory.getGenerator(format);
+        } catch (LIMSInvalidConfigurationException e) {
+            LogEvent.logError("AccessionNumberUtil", "getAccessionNumberGenerator", e.toString());
+        }
+        return null;
+
+    }
+
     public static IAccessionNumberValidator getAccessionNumberValidator(AccessionFormat format) {
         try {
             return accessionNumberValidatorFactory.getValidator(format);
@@ -90,7 +100,7 @@ public class AccessionNumberUtil {
 
     public static IAccessionNumberGenerator getProgramAccessionNumberGenerator() {
         try {
-            return accessionNumberValidatorFactory.getGenerator(AccessionFormat.PROGRAM);
+            return accessionNumberValidatorFactory.getGenerator(AccessionFormat.PROGRAMNUM);
         } catch (LIMSInvalidConfigurationException e) {
             LogEvent.logError("AccessionNumberUtil", "getProgramAccessionNumberGenerator", e.toString());
         }
@@ -99,7 +109,7 @@ public class AccessionNumberUtil {
 
     public static IAccessionNumberValidator getProgramAccessionNumberValidator() {
         try {
-            return accessionNumberValidatorFactory.getValidator(AccessionFormat.PROGRAM);
+            return accessionNumberValidatorFactory.getValidator(AccessionFormat.PROGRAMNUM);
         } catch (LIMSInvalidConfigurationException e) {
             LogEvent.logError("AccessionNumberUtil", "getProgramAccessionNumberValidator", e.toString());
         }

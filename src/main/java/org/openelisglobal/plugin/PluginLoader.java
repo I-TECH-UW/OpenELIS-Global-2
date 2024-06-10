@@ -89,7 +89,7 @@ public class PluginLoader {
                     loadPlugin(file);
                     pluginList.add(file.getName());
                 } else if (file.isDirectory()) {
-                    LogEvent.logInfo(PluginLoader.class.getName(), "method unkown",
+                    LogEvent.logInfo(PluginLoader.class.getName(), "loadDirectory",
                             "Checking plugin subfolder: " + file.getName());
                     loadDirectory(file);
                 }
@@ -137,7 +137,7 @@ public class PluginLoader {
         if (manifest == null) {
             LogEvent.logError(PluginLoader.class.getName(), "checkJDKVersion",
                     "Manifest file not in jar file, unable to check jdk versions");
-            LogEvent.logInfo(PluginLoader.class.getName(), "method unkown",
+            LogEvent.logInfo(PluginLoader.class.getName(), "checkJDKVersions",
                     "Manifest file not in jar file, unable to check jdk versions");
             return true;
         }
@@ -146,7 +146,7 @@ public class PluginLoader {
         if (buildJdk == null) {
             LogEvent.logError(PluginLoader.class.getName(), "checkJDKVersion",
                     "JDK version not found in manifest file, unable to check jdk versions");
-            LogEvent.logInfo(PluginLoader.class.getName(), "method unkown",
+            LogEvent.logInfo(PluginLoader.class.getName(), "checkJDKVersions",
                     "JDK version not found in manifest file, unable to check jdk versions");
             return true;
         }
@@ -160,7 +160,7 @@ public class PluginLoader {
                     "The plugin " + fileName + " was compiled with a higher JDK version ("
                             + getVersion(jarVersionMajor, jarVersionMinor) + ") than the runtime JDK ("
                             + getVersion(JDK_VERSION_MAJOR, JDK_VERSION_MINOR) + ")");
-            LogEvent.logInfo(PluginLoader.class.getName(), "method unkown",
+            LogEvent.logInfo(PluginLoader.class.getName(), "checkJDKVersions",
                     "The plugin " + fileName + " was compiled with a higher JDK version ("
                             + getVersion(jarVersionMajor, jarVersionMinor) + ") than the runtime JDK ("
                             + getVersion(JDK_VERSION_MAJOR, JDK_VERSION_MINOR) + ")");
@@ -189,13 +189,10 @@ public class PluginLoader {
 
             if (versionElement == null) {
                 LogEvent.logError(PluginLoader.class.getName(), "loadFromXml", "Missing version number in plugin");
-                LogEvent.logInfo(PluginLoader.class.getName(), "method unkown", "Missing version number in plugin");
                 return false;
             }
             if (!SUPPORTED_VERSION.equals(versionElement.getData())) {
                 LogEvent.logError(PluginLoader.class.getName(), "loadFromXml", "Unsupported version number.  Expected "
-                        + SUPPORTED_VERSION + " got " + versionElement.getData());
-                LogEvent.logInfo(PluginLoader.class.getName(), "method unkown", "Unsupported version number.  Expected "
                         + SUPPORTED_VERSION + " got " + versionElement.getData());
                 return false;
             }
@@ -206,7 +203,7 @@ public class PluginLoader {
                 description = analyzerImporter.element(EXTENSION_POINT).element(DESCRIPTION).attribute(VALUE);
                 Attribute path = analyzerImporter.element(EXTENSION_POINT).element(EXTENSION).attribute(PATH);
                 loadActualPlugin(url, path.getValue());
-                LogEvent.logInfo(PluginLoader.class.getName(), "method unkown", "Loaded: " + description.getValue());
+                LogEvent.logInfo(PluginLoader.class.getName(), "loadFromXml", "Loaded: " + description.getValue());
             }
 
             Element menu = doc.getRootElement().element(MENU);
@@ -215,7 +212,7 @@ public class PluginLoader {
                 description = menu.element(EXTENSION_POINT).element(DESCRIPTION).attribute(VALUE);
                 Attribute path = menu.element(EXTENSION_POINT).element(EXTENSION).attribute(PATH);
                 loadActualPlugin(url, path.getValue());
-                LogEvent.logInfo(PluginLoader.class.getName(), "method unkown", "Loaded: " + description.getValue());
+                LogEvent.logInfo(PluginLoader.class.getName(), "loadFromXml", "Loaded: " + description.getValue());
             }
 
             Element permissions = doc.getRootElement().element(PERMISSION);
@@ -224,23 +221,14 @@ public class PluginLoader {
                 description = permissions.element(EXTENSION_POINT).element(DESCRIPTION).attribute(VALUE);
                 Attribute path = permissions.element(EXTENSION_POINT).element(EXTENSION).attribute(PATH);
                 loadActualPlugin(url, path.getValue());
-                LogEvent.logInfo(PluginLoader.class.getName(), "method unkown", "Loaded: " + description.getValue());
+                LogEvent.logInfo(PluginLoader.class.getName(), "loadFromXml", "Loaded: " + description.getValue());
             }
 
-        } catch (MalformedURLException e) {
-            LogEvent.logDebug(e);
-            return false;
-        } catch (IOException e) {
-            LogEvent.logDebug(e);
-            return false;
-        } catch (DocumentException e) {
-            LogEvent.logDebug(e);
-            return false;
-        } catch (LIMSException e) {
+        } catch (IOException | DocumentException | LIMSException e) {
             if (description != null) {
                 LogEvent.logError("Failed Loading: " + description.getValue(), e);
-                LogEvent.logInfo(PluginLoader.class.getName(), "method unkown",
-                        "Failed Loading: " + description.getValue());
+            } else {
+                LogEvent.logError("Failed Loading: " + jar.getName(), e);
             }
             return false;
         }

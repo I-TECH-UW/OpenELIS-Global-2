@@ -21,6 +21,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.XML;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.provider.validation.BaseValidationProvider;
 import org.openelisglobal.common.provider.validation.ValidationProviderFactory;
@@ -38,17 +39,19 @@ public class AjaxXMLServlet extends AjaxServlet {
     @Override
     public void sendData(String field, String message, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-
         if (!StringUtil.isNullorNill(field)) {
-
-            response.setContentType("text/xml");
-            response.setHeader("Cache-Control", "no-cache");
-            response.getWriter().write("<fieldmessage>");
-            response.getWriter().write("<formfield>" + field + "</formfield>");
-            response.getWriter().write("<message>" + message + "</message>");
-            response.getWriter().write("</fieldmessage>");
+            StringBuilder sb = new StringBuilder().append("<fieldmessage>").append("<formfield>").append(field).append("</formfield>").append("<message>").append(message).append("</message>").append("</fieldmessage>");
+            if ("true".equals(request.getParameter("asJSON"))) {
+                response.setContentType("application/json");
+                response.setHeader("Cache-Control", "no-cache");
+                response.getWriter().write(XML.toJSONObject(sb.toString()).toString());
+            } else {
+                response.setContentType("text/xml");
+                response.setHeader("Cache-Control", "no-cache");
+                response.getWriter().write(sb.toString());
+            }
         } else {
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Returning no
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "Returning no
             // content with field " + field + " message " +
             // message);
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
