@@ -42,11 +42,11 @@ import { ArrowLeft, ArrowRight } from "@carbon/icons-react";
 function DictionaryManagement() {
   const intl = useIntl();
   const componentMounted = useRef(false);
+  const dirtyFieldsRef = useRef(new Set());
 
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
   const { reloadConfiguration } = useContext(ConfigurationContext);
-  const [dictionaryMenuz, setDictionaryMenuz] = useState([]);
   const [dictionaryMenuList, setDictionaryMenuList] = useState([]);
 
   const [page, setPage] = useState(1);
@@ -138,7 +138,6 @@ function DictionaryManagement() {
               : "not available",
             lastupdated: item.lastupdated,
           }));
-          console.log("new menu list: " + JSON.stringify(menuList));
           setDictionaryMenuList(menuList);
         }
       }
@@ -209,6 +208,23 @@ function DictionaryManagement() {
   const handleUpdateModal = (e) => {
     e.preventDefault();
 
+    if (!componentMounted.current[dictionaryEntry]) {
+      dirtyFieldsRef.current.add("dictEntry");
+    }
+
+    if (!componentMounted.current[isActive]) {
+      dirtyFieldsRef.current.add("isActive");
+    }
+
+    if (!componentMounted.current[localAbbreviation]) {
+      dirtyFieldsRef.current.add("localAbbreviation");
+    }
+
+    const dirtyFields =
+      dirtyFieldsRef.current.size > 0
+        ? `;${[...dirtyFieldsRef.current].join(";")}`
+        : "";
+
     const updateData = {
       id: dictionaryNumber,
       selectedDictionaryCategoryId: category.id,
@@ -216,23 +232,12 @@ function DictionaryManagement() {
       localAbbreviation: localAbbreviation,
       isActive: isActive.id,
       lastupdated: lastupdated,
+      dirtyFormFields: dirtyFields,
     };
-
-    console.log("Updating with data: " + JSON.stringify(updateData));
-
-    console.log("Updating with data:", {
-      dictionaryNumber,
-      category,
-      dictionaryEntry,
-      localAbbreviation,
-      isActive,
-      lastupdated,
-    });
 
     postToOpenElisServerFullResponse(
       `/rest/Dictionary?ID=${selectedRowId}&startingRecNo=${startingRecNo}`,
       JSON.stringify(updateData),
-      console.log("postdata:" + JSON.stringify(updateData)),
       displayStatus,
     );
     setOpen(false);
@@ -272,26 +277,6 @@ function DictionaryManagement() {
     return <TableCell key={cell.id}>{cell.value}</TableCell>;
   };
 
-  // const handleDictionaryMenuItems = (res) => {
-  //   if (componentMounted.current) {
-  //     const selectedItem = dictionaryMenuList.find(
-  //       (item) => item.id === selectedRowId,
-  //     );
-
-  //     console.log("contents of selected item: " + JSON.stringify(selectedItem));
-  //     if (selectedItem) {
-  //       setDictionaryNumber(selectedItem.id);
-  //       setCategory(selectedItem.category);
-  //       setDictionaryEntry(selectedItem.dictEntry);
-  //       setLocalAbbreviation(selectedItem.localAbbreviation);
-  //       setIsActive(yesOrNo.find((item) => item.id === selectedItem.isActive));
-  //       setLastUpdated(selectedItem.lastupdated);
-  //       setOpen(true);
-  //       setEditMode(false);
-  //     }
-  //   }
-  // };
-
   const handleDictionaryMenuItems = (res) => {
     if (componentMounted.current) {
       setDictionaryNumber(res.id);
@@ -309,7 +294,6 @@ function DictionaryManagement() {
         (item) => item.id === selectedRowId,
       );
 
-      console.log("contents of selected item: " + JSON.stringify(selectedItem));
       if (selectedItem) {
         setDictionaryNumber(selectedItem.id);
         setCategory(selectedItem.category);
@@ -317,10 +301,6 @@ function DictionaryManagement() {
         setLocalAbbreviation(selectedItem.localAbbreviation);
         setIsActive(yesOrNo.find((item) => item.id === selectedItem.isActive));
         setLastUpdated(selectedItem.lastupdated);
-        console.log(
-          "lastupdated for selected item: " +
-            JSON.stringify(selectedItem.lastupdated),
-        );
         setOpen(true);
         setEditMode(false);
       }
