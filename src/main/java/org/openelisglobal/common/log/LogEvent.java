@@ -87,7 +87,7 @@ public class LogEvent {
         getLog().error(errorMessage.toString());
         if (getLog().isDebugEnabled()) {
             StringBuilder stackErrorMessage = new StringBuilder();
-            for (int i = 0; i < MAX_STACK_DEPTH; ++i) {
+            for (int i = 0; (i < MAX_STACK_DEPTH) && (i < stackTrace.length); ++i) {
                 stackErrorMessage.append(sanitizeLogMessage(stackTrace[i].toString()));
                 stackErrorMessage.append(System.lineSeparator());
             }

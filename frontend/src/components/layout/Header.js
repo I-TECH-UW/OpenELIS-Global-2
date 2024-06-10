@@ -213,7 +213,7 @@ function OEHeader(props) {
     return (
       <button
         className={"custom-sidenav-button"}
-        style={{ "margin-left": marginValue }}
+        style={{ marginLeft: marginValue }}
         onClick={() => {
           if (menuItem.menu.openInNewWindow) {
             window.open(menuItem.menu.actionURL);
@@ -232,7 +232,7 @@ function OEHeader(props) {
     return (
       <button
         className={"custom-sidenav-button"}
-        style={{ "margin-left": marginValue }}
+        style={{ marginLeft: marginValue }}
         onClick={(e) => {
           onClickSideNavItem(e, menuItem, path);
         }}
@@ -253,7 +253,7 @@ function OEHeader(props) {
               ? "custom-sidenav-button"
               : "custom-sidenav-button-unclickable"
           }
-          style={{ "margin-left": marginValue }}
+          style={{ marginLeft: marginValue }}
           onClick={() => {
             if (menuItem.menu.openInNewWindow) {
               window.open(menuItem.menu.actionURL);
@@ -298,7 +298,7 @@ function OEHeader(props) {
   const renderSideNavMenuItemLabel = (menuItem, level) => {
     const fontPercent = 100 - 5 * (level - 1) + "%";
     return (
-      <span style={{ "font-size": fontPercent }}>
+      <span style={{ fontSize: fontPercent }}>
         <FormattedMessage id={menuItem.menu.displayKey} />
       </span>
     );

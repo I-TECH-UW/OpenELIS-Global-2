@@ -84,6 +84,33 @@ export const postToOpenElisServerFullResponse = (
     });
 };
 
+export const postToOpenElisServerFormData = (
+  endPoint,
+  formData,
+  callback,
+  extraParams,
+) => {
+  fetch(
+    config.serverBaseUrl + endPoint,
+
+    {
+      credentials: "include",
+      method: "POST",
+      headers: {
+        "X-CSRF-Token": localStorage.getItem("CSRF"),
+      },
+      body: formData,
+    },
+  )
+    .then((response) => response.status)
+    .then((status) => {
+      callback(status, extraParams);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
 export const postToOpenElisServerJsonResponse = (
   endPoint,
   payLoad,
@@ -216,4 +243,37 @@ export function encodeDate(dateString) {
   } else {
     return "";
   }
+}
+
+export function getDifferenceInDays(date1, date2) {
+  console.log("secondDate", date2);
+
+  // Function to parse dates in DD/MM/YYYY format
+  function parseDate(dateStr) {
+    const [day, month, year] = dateStr.split("/").map(Number);
+    return new Date(year, month - 1, day); // Months are 0-based in JavaScript Date
+  }
+
+  function correctDate(firstDate) {
+    // "08/05/2024" the error is 08 is not day it is month and 05 is day
+    let dateParts = firstDate.split("/");
+    if (dateParts[0].length === 4) {
+      return dateParts[1] + "/" + dateParts[0] + "/" + dateParts[2];
+    }
+    return firstDate;
+  }
+
+  // Convert the date strings to Date objects
+  const firstDate = parseDate(correctDate(date1));
+  const secondDate = parseDate(correctDate(date2));
+
+  // Calculate the difference in time (milliseconds)
+  const timeDifference = secondDate - firstDate;
+
+  // Convert the time difference from milliseconds to days
+  const millisecondsPerDay = 1000 * 60 * 60 * 24;
+  const dayDifference = timeDifference / millisecondsPerDay;
+
+  // Return the rounded difference in days
+  return dayDifference;
 }

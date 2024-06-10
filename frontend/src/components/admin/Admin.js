@@ -11,6 +11,7 @@ import {
   NonConformityMenuManagement,
   PatientMenuManagement,
   StudyMenuManagement,
+  DictionaryManagement,
 } from "./menu";
 import {
   Microscope,
@@ -20,6 +21,8 @@ import {
   Catalog,
   Settings,
   ListDropdown,
+  CicsSystemGroup,
+  QrCode,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -33,15 +36,14 @@ import {
 import { CommonProperties } from "./menu/CommonProperties";
 import ConfigMenuDisplay from "./formEntry/common/ConfigMenuDisplay";
 
+import ProviderMenu from "./ProviderMenu/ProviderMenu";
+import BarcodeConfiguration from "./barcodeConfiguration/BarcodeConfiguration";
+
 function Admin() {
   const intl = useIntl();
   return (
     <>
-      <SideNav
-        aria-label="Side navigation"
-        defaultExpanded={true}
-        isRail={true}
-      >
+      <SideNav aria-label="Side navigation" defaultExpanded={true}>
         <SideNavItems className="adminSideNav">
           <SideNavMenu
             renderIcon={Microscope}
@@ -59,6 +61,12 @@ function Admin() {
           </SideNavLink>
           <SideNavLink renderIcon={ChartBubble} href="#program">
             <FormattedMessage id="sidenav.label.admin.program" />
+          </SideNavLink>
+          <SideNavLink renderIcon={CicsSystemGroup} href="#providerMenu">
+            <FormattedMessage id="provider.browse.title" />
+          </SideNavLink>
+          <SideNavLink renderIcon={QrCode} href="#barcodeConfiguration">
+            <FormattedMessage id="sidenav.label.admin.barcodeconfiguration" />
           </SideNavLink>
           <SideNavMenu
             title={intl.formatMessage({ id: "sidenav.label.admin.menu" })}
@@ -97,6 +105,9 @@ function Admin() {
             <SideNavMenuItem href="#PatientConfigurationMenu">
               <FormattedMessage id="sidenav.label.admin.formEntry.patientconfig" />
             </SideNavMenuItem>
+            <SideNavMenuItem href="#PrintedReportsConfigurationMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.PrintedReportsconfig" />
+            </SideNavMenuItem>
             <SideNavMenuItem href="#SampleEntryConfigurationMenu">
               <FormattedMessage id="sidenav.label.admin.formEntry.sampleEntryconfig" />
             </SideNavMenuItem>
@@ -110,6 +121,9 @@ function Admin() {
               id="sidenav.label.admin.commonproperties"
               defaultMessage={"Common Properties"}
             />
+          </SideNavLink>
+          <SideNavLink href="#DictionaryMenu" renderIcon={CharacterWholeNumber}>
+            <FormattedMessage id="dictionary.label.modify" />
           </SideNavLink>
           <SideNavLink
             renderIcon={Catalog}
@@ -132,6 +146,12 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#program">
         <ProgramManagement />
+      </PathRoute>
+      <PathRoute path="#providerMenu">
+        <ProviderMenu />
+      </PathRoute>
+      <PathRoute path="#barcodeConfiguration">
+        <BarcodeConfiguration />
       </PathRoute>
       <PathRoute path="#globalMenuManagement">
         <GlobalMenuManagement />
@@ -187,6 +207,15 @@ function Admin() {
           menuType="PatientConfigurationMenu"
           id="sidenav.label.admin.formEntry.patientconfig"
         />
+      </PathRoute>
+      <PathRoute path="#PrintedReportsConfigurationMenu">
+        <ConfigMenuDisplay
+          menuType="PrintedReportsConfigurationMenu"
+          id="sidenav.label.admin.formEntry.PrintedReportsconfig"
+        />
+      </PathRoute>
+      <PathRoute path="#DictionaryMenu">
+        <DictionaryManagement />
       </PathRoute>
     </>
   );

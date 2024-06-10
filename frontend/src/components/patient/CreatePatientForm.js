@@ -8,6 +8,13 @@ import {
 } from "../utils/Utils";
 import { nationalityList } from "../data/countries";
 import format from "date-fns/format";
+import {
+  differenceInYears,
+  differenceInMonths,
+  differenceInDays,
+  addYears,
+  addMonths,
+} from "date-fns";
 
 import {
   Heading,
@@ -15,8 +22,6 @@ import {
   FormLabel,
   TextInput,
   Button,
-  DatePicker,
-  DatePickerInput,
   RadioButton,
   RadioButtonGroup,
   Section,
@@ -34,6 +39,7 @@ import PatientFormObserver from "./PatientFormObserver";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext, ConfigurationContext } from "../layout/Layout";
 import CreatePatientValidationSchema from "../formModel/validationSchema/CreatePatientValidationShema";
+import CustomDatePicker from "../common/CustomDatePicker";
 function CreatePatientForm(props) {
   const componentMounted = useRef(false);
 
@@ -57,13 +63,24 @@ function CreatePatientForm(props) {
   const [nationalId, setNationalId] = useState(
     props.selectedPatient.nationalId,
   );
+  const [subjectNo, setSubjectNo] = useState(
+    props.selectedPatient.subjectNumber,
+  );
   const handleNationalIdChange = (event) => {
     const newValue = event.target.value;
     setNationalId(newValue);
   };
-  const handleDatePickerChange = (values, ...e) => {
-    var patient = values;
-    patient.birthDateForDisplay = e[1];
+
+  const handleSubjectNoChange = (event) => {
+    const newValue = event.target.value;
+    setSubjectNo(newValue);
+  };
+  const handleDatePickerChange = (values, date) => {
+    var patient = { ...values };
+    if ('date-picker-default-id' in patient) {
+      delete patient['date-picker-default-id'];
+  }
+    patient.birthDateForDisplay = date;
     setPatientDetails(patient);
     if (patient.birthDateForDisplay) {
       getYearsMonthsDaysFromDOB(patient.birthDateForDisplay);
@@ -76,29 +93,27 @@ function CreatePatientForm(props) {
       return;
     }
     const selectedDate = date.split("/");
-    let today = new Date();
-
-    let year = today.getFullYear();
-    let month = today.getMonth() + 1;
-    let day = today.getDate();
-
-    let yy = parseInt(selectedDate[2]);
-    let mm = parseInt(selectedDate[1]);
-    let dd = parseInt(selectedDate[0]);
-
-    let years, months, days;
-    months = month - mm;
-    if (day < dd) {
-      months = months - 1;
+    let yy;
+    let mm;
+    let dd;
+    if (configurationProperties.DEFAULT_DATE_LOCALE == "fr-FR") {
+      yy = parseInt(selectedDate[2]);
+      mm = parseInt(selectedDate[1]);
+      dd = parseInt(selectedDate[0]);
+    } else {
+      yy = parseInt(selectedDate[2]);
+      mm = parseInt(selectedDate[0]);
+      dd = parseInt(selectedDate[1]);
     }
-    years = year - yy;
-    if (month * 100 + day < mm * 100 + dd) {
-      years = years - 1;
-      months = months + 12;
-    }
-    days = Math.floor(
-      (today.getTime() - new Date(yy + years, mm + months - 1, dd).getTime()) /
-        (24 * 60 * 60 * 1000),
+    let formatDate = mm + "/" + dd + "/" + yy;
+
+    const birthDate = new Date(formatDate);
+    const now = new Date();
+    const years = differenceInYears(now, birthDate);
+    const months = differenceInMonths(now, addYears(birthDate, years));
+    const days = differenceInDays(
+      now,
+      addMonths(addYears(birthDate, years), months),
     );
 
     setDateOfBirthFormatter({
@@ -109,16 +124,19 @@ function CreatePatientForm(props) {
     });
   }
 
-  const getDOBByYearMonthsDays = () => {
+  const getDOBByYearMonthsDays = (dobFormatter) => {
     const currentDate = new Date();
     const pastDate = new Date();
 
-    pastDate.setFullYear(
-      currentDate.getFullYear() - dateOfBirthFormatter.years,
+    pastDate.setFullYear(currentDate.getFullYear() - dobFormatter.years);
+    pastDate.setMonth(currentDate.getMonth() - dobFormatter.months);
+    pastDate.setDate(currentDate.getDate() - dobFormatter.days);
+    const dob = format(
+      new Date(pastDate),
+      configurationProperties.DEFAULT_DATE_LOCALE == "fr-FR"
+        ? "dd/MM/yyyy"
+        : "MM/dd/yyyy",
     );
-    pastDate.setMonth(currentDate.getMonth() - dateOfBirthFormatter.months);
-    pastDate.setDate(currentDate.getDate() - dateOfBirthFormatter.days);
-    const dob = format(new Date(pastDate), "dd/MM/yyyy");
     setPatientDetails((prevState) => ({
       ...prevState,
       birthDateForDisplay: dob,
@@ -128,33 +146,35 @@ function CreatePatientForm(props) {
   function handleYearsChange(e, values) {
     setPatientDetails(values);
     let years = e.target.value;
-    setDateOfBirthFormatter({
+    let dobFormatter = {
       ...dateOfBirthFormatter,
       years: years,
-    });
+    };
+    getDOBByYearMonthsDays(dobFormatter);
   }
 
   function handleMonthsChange(e, values) {
     setPatientDetails(values);
     let months = e.target.value;
-    setDateOfBirthFormatter({
+    let dobFormatter = {
       ...dateOfBirthFormatter,
       months: months,
-    });
+    };
+    getDOBByYearMonthsDays(dobFormatter);
   }
 
   function handleDaysChange(e, values) {
     setPatientDetails(values);
     let days = e.target.value;
-    setDateOfBirthFormatter({
+    let dobFormatter = {
       ...dateOfBirthFormatter,
       days: days,
-    });
+    };
+    getDOBByYearMonthsDays(dobFormatter);
   }
   const handleRegionSelection = (e, values) => {
     var patient = values;
     patient.healthDistrict = "";
-    setPatientDetails(patient);
     const { value } = e.target;
     getFromOpenElisServer(
       "/rest/health-districts-for-region?regionId=" + value,
@@ -162,13 +182,9 @@ function CreatePatientForm(props) {
     );
   };
 
-  function fethchHealthDistrictsCallback(res) {
+  function fetchHealthDistrictsCallback(res) {
     setHealthDistricts(res);
   }
-
-  useEffect(() => {
-    getDOBByYearMonthsDays();
-  }, [dateOfBirthFormatter]);
 
   useEffect(() => {
     if (props.selectedPatient.patientPK) {
@@ -176,7 +192,7 @@ function CreatePatientForm(props) {
         getFromOpenElisServer(
           "/rest/health-districts-for-region?regionId=" +
             props.selectedPatient.healthRegion,
-          fethchHealthDistrictsCallback,
+          fetchHealthDistrictsCallback,
         );
       } else {
         //nextState.healthDistricts = [];
@@ -245,7 +261,8 @@ function CreatePatientForm(props) {
     let error;
     if (
       res.status === false &&
-      props.selectedPatient.nationalId !== nationalId
+      (props.selectedPatient.nationalId !== nationalId ||
+        props.selectedPatient.subjectNumber !== subjectNo)
     ) {
       setNotificationVisible(true);
       addNotification({
@@ -307,6 +324,11 @@ function CreatePatientForm(props) {
       (status) => {
         handlePost(status);
         resetForm({ values: CreatePatientFormValues });
+        setDateOfBirthFormatter({
+          years: "",
+          months: "",
+          days: "",
+        });
       },
     );
   };
@@ -380,16 +402,7 @@ function CreatePatientForm(props) {
                 <br></br>
               </Column>
               <Column lg={8} md={4} sm={4}>
-                <Field
-                  name="subjectNumber"
-                  validate={() => {
-                    return handleSubjectNoValidation(
-                      "subjectNumber",
-                      "subjectNumberID",
-                      values.subjectNumber,
-                    );
-                  }}
-                >
+                <Field name="subjectNumber">
                   {({ field }) => (
                     <>
                       <TextInput
@@ -401,6 +414,14 @@ function CreatePatientForm(props) {
                         id={field.name}
                         invalid={errors.subjectNumber && touched.subjectNumber}
                         invalidText={errors.subjectNumber}
+                        onMouseOut={() => {
+                          handleSubjectNoValidation(
+                            "subjectNumber",
+                            "subjectNumberID",
+                            values.subjectNumber,
+                          );
+                        }}
+                        onChange={handleSubjectNoChange}
                         placeholder={intl.formatMessage({
                           id: "patient.information.healthid",
                         })}
@@ -410,16 +431,7 @@ function CreatePatientForm(props) {
                 </Field>
               </Column>
               <Column lg={8} md={4} sm={4}>
-                <Field
-                  name="nationalId"
-                  validate={() => {
-                    return handleSubjectNoValidation(
-                      "nationalId",
-                      "nationalID",
-                      values.nationalId,
-                    );
-                  }}
-                >
+                <Field name="nationalId">
                   {({ field }) => (
                     <TextInput
                       value={values.nationalId || ""}
@@ -572,41 +584,34 @@ function CreatePatientForm(props) {
               <Column lg={8} md={4} sm={4}>
                 <Field name="birthDateForDisplay">
                   {({ field }) => (
-                    <DatePicker
+                    <CustomDatePicker
+                      id={"date-picker-default-id"}
+                      labelText={
+                        <>
+                          {intl.formatMessage({
+                            id: "patient.dob",
+                          })}
+                          <span className="requiredlabel">*</span>
+                        </>
+                      }
+                      autofillDate={true}
                       value={values.birthDateForDisplay || ""}
-                      onChange={(...e) => handleDatePickerChange(values, ...e)}
+                      onChange={(date) => handleDatePickerChange(values, date)}
+                      invalid={
+                        errors.birthDateForDisplay &&
+                        touched.birthDateForDisplay
+                      }
+                      invalidText={errors.birthDateForDisplay}
                       name={field.name}
-                      dateFormat="d/m/Y"
-                      datePickerType="single"
-                      light={true}
-                      maxDate={new Date()}
-                    >
-                      <DatePickerInput
-                        id="date-picker-default-id"
-                        placeholder="dd/mm/yyyy"
-                        labelText={
-                          <>
-                            {intl.formatMessage({
-                              id: "patient.dob",
-                            })}
-                            <span className="requiredlabel">*</span>
-                          </>
-                        }
-                        type="text"
-                        invalid={
-                          errors.birthDateForDisplay &&
-                          touched.birthDateForDisplay
-                        }
-                        invalidText={errors.birthDateForDisplay}
-                        name={field.name}
-                      />
-                    </DatePicker>
+                      disallowFutureDate={true}
+                      updateStateValue={true}
+                    />
                   )}
                 </Field>
               </Column>
               <Column lg={2} md={2} sm={2}>
                 <TextInput
-                  value={dateOfBirthFormatter.years || ""}
+                  value={dateOfBirthFormatter.years}
                   name="years"
                   labelText={intl.formatMessage({
                     id: "patient.age.years",
@@ -621,7 +626,7 @@ function CreatePatientForm(props) {
               </Column>
               <Column lg={2} md={2} sm={2}>
                 <TextInput
-                  value={dateOfBirthFormatter.months || ""}
+                  value={dateOfBirthFormatter.months}
                   name="months"
                   labelText={intl.formatMessage({ id: "patient.age.months" })}
                   type="number"
@@ -634,7 +639,7 @@ function CreatePatientForm(props) {
               </Column>
               <Column lg={2} md={2} sm={2}>
                 <TextInput
-                  value={dateOfBirthFormatter.days || ""}
+                  value={dateOfBirthFormatter.days}
                   name="days"
                   type="number"
                   onChange={(e) => handleDaysChange(e, values)}
@@ -826,6 +831,10 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
+                      <Column lg={16} md={8} sm={4}>
+                        {" "}
+                        <br></br>
+                      </Column>
                       <Column lg={8} md={4} sm={4}>
                         <Field name="healthRegion">
                           {({ field }) => (
@@ -853,10 +862,7 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
-                      <Column lg={16} md={8} sm={4}>
-                        {" "}
-                        <br></br>
-                      </Column>
+
                       <Column lg={8} md={4} sm={4}>
                         <Field name="healthDistrict">
                           {({ field }) => (
@@ -883,6 +889,10 @@ function CreatePatientForm(props) {
                             </Select>
                           )}
                         </Field>
+                      </Column>
+                      <Column lg={16} md={8} sm={4}>
+                        {" "}
+                        <br></br>
                       </Column>
                       <Column lg={8} md={4} sm={4}>
                         <Field name="education">
@@ -911,10 +921,6 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
-                      <Column lg={16} md={8} sm={4}>
-                        {" "}
-                        <br></br>
-                      </Column>
                       <Column lg={8} md={4} sm={4}>
                         <Field name="maritialStatus">
                           {({ field }) => (
@@ -942,6 +948,10 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
+                      <Column lg={16} md={8} sm={4}>
+                        {" "}
+                        <br></br>
+                      </Column>
                       <Column lg={8} md={4} sm={4}>
                         <Field name="nationality">
                           {({ field }) => (
@@ -968,10 +978,6 @@ function CreatePatientForm(props) {
                             </Select>
                           )}
                         </Field>
-                      </Column>
-                      <Column lg={16} md={8} sm={4}>
-                        {" "}
-                        <br></br>
                       </Column>
                       <Column lg={8} md={4} sm={4}>
                         <Field name="otherNationality">
@@ -1012,6 +1018,11 @@ function CreatePatientForm(props) {
                       onClick={() => {
                         resetForm({ values: CreatePatientFormValues });
                         setHealthDistricts([]);
+                        setDateOfBirthFormatter({
+                          years: "",
+                          months: "",
+                          days: "",
+                        });
                       }}
                     >
                       <FormattedMessage id="label.button.clear" />

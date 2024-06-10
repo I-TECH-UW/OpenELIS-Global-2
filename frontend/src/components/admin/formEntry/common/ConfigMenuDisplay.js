@@ -44,7 +44,7 @@ function ConfigMenuDisplay(props) {
 
   const componentMounted = useRef(false);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(30);
   const [modifyButton, setModifyButton] = useState(true);
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [startingRecNo, setStartingRecNo] = useState(1);
@@ -70,6 +70,30 @@ function ConfigMenuDisplay(props) {
     }
   };
 
+  const handleLogoResponse = (res, item) => {
+    const value = res.value;
+    const updatedItem = {
+      id: item.id,
+      startingRecNo: startingRecNo,
+      name: item.name,
+      description: item.description,
+      value: value,
+      valueType: item.valueType,
+    };
+
+    setOrderEntryConfigurationList((prevList) => {
+      const index = prevList.findIndex((prevItem) => prevItem.id === item.id);
+
+      if (index !== -1) {
+        const newList = [...prevList];
+        newList[index] = updatedItem;
+        return newList;
+      } else {
+        return [...prevList, updatedItem];
+      }
+    });
+  };
+
   useEffect(() => {
     componentMounted.current = true;
     getFromOpenElisServer(`/rest/${props.menuType}`, handleMenuItems);
@@ -79,24 +103,40 @@ function ConfigMenuDisplay(props) {
   }, []);
 
   useEffect(() => {
-    if (formEntryConfigMenuList && formEntryConfigMenuList.menuList) {
-      const newConfigList = formEntryConfigMenuList.menuList.map((item) => {
-        let value = item.value;
-        if (item.valueType === "text" && item.tag === "localization") {
-          value =
-            item.localization.localesAndValuesOfLocalesWithValues || value;
-        }
-        return {
-          id: item.id,
-          startingRecNo: startingRecNo,
-          name: item.name,
-          description: item.description,
-          value: value,
-          valueType: item.valueType,
-        };
-      });
-      setOrderEntryConfigurationList(newConfigList);
-    }
+    const updateConfigList = () => {
+      if (formEntryConfigMenuList && formEntryConfigMenuList.menuList) {
+        const updatedList = formEntryConfigMenuList.menuList
+          .map((item) => {
+            let value = item.value;
+            if (item.valueType === "text" && item.tag === "localization") {
+              value =
+                item.localization.localesAndValuesOfLocalesWithValues || value;
+            } else if (item.valueType === "logoUpload") {
+              getFromOpenElisServer(
+                `/dbImage/siteInformation/${item.name}`,
+                (res) => {
+                  handleLogoResponse(res, item);
+                },
+              );
+
+              return null;
+            }
+            return {
+              id: item.id,
+              startingRecNo: startingRecNo,
+              name: item.name,
+              description: item.description,
+              value: value,
+              valueType: item.valueType,
+            };
+          })
+          .filter(Boolean);
+
+        setOrderEntryConfigurationList(updatedList);
+      }
+    };
+
+    updateConfigList();
   }, [formEntryConfigMenuList]);
 
   const renderCell = (cell, row) => {
@@ -114,6 +154,20 @@ function ConfigMenuDisplay(props) {
             setSelectedRowId(row.id);
           }}
         />
+      );
+    } else if (
+      cell.info.header === "value" &&
+      typeof cell.value === "string" &&
+      cell.value.startsWith("data:image")
+    ) {
+      return (
+        <TableCell key={cell.id}>
+          <img
+            src={cell.value}
+            alt="Config Image"
+            style={{ maxWidth: "50px" }}
+          />
+        </TableCell>
       );
     }
     return <TableCell key={cell.id}>{cell.value}</TableCell>;
@@ -231,7 +285,7 @@ function ConfigMenuDisplay(props) {
                     onChange={handlePageChange}
                     page={page}
                     pageSize={pageSize}
-                    pageSizes={[5, 10, 15, 20, 25, 30]}
+                    pageSizes={[5, 20, 30, 50]}
                     totalItems={orderEntryConfigurationList.length}
                     forwardText={intl.formatMessage({
                       id: "pagination.forward",

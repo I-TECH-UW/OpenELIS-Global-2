@@ -11,7 +11,6 @@ import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.RequesterService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.login.valueholder.UserSessionData;
-import org.openelisglobal.qaevent.bean.NonConformingEventDetails;
 import org.openelisglobal.qaevent.form.NonConformingEventForm;
 import org.openelisglobal.qaevent.service.NceCategoryService;
 import org.openelisglobal.qaevent.valueholder.NcEvent;
@@ -128,11 +127,11 @@ public ResponseEntity<?> getNCESampleSearch(
             HttpServletRequest request
     ) {
         try {
-            NonConformingEventDetails eventData = new NonConformingEventDetails();
+            NonConformingEventForm eventData =  new NonConformingEventForm();
             eventData.setLabOrderNumber(params.get("labOrderNumber"));
             eventData.setSpecimenId(params.get("specimenId"));
             eventData.setCurrentUserId(params.get("currentUserId"));
-            eventData.setCategories(nceCategoryService.getAllNceCategories());
+            eventData.setNceCategories(nceCategoryService.getAllNceCategories());
 
             SystemUser systemUser = systemUserService.getUserById(getSysUserId(request));
             eventData.setName(systemUser.getFirstName() + " " + systemUser.getLastName());
@@ -161,7 +160,7 @@ public ResponseEntity<?> getNCESampleSearch(
 
             eventData.setCurrentUserId(getSysUserId(request));
 
-            eventData.setReportUnits(DisplayListService.getInstance()
+            eventData.setReportingUnits(DisplayListService.getInstance()
                     .getList(DisplayListService.ListType.TEST_SECTION_ACTIVE));
 
             requesterService.setSampleId(sample == null ? null : sample.getId());

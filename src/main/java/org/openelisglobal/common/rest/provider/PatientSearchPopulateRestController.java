@@ -8,6 +8,9 @@ import org.openelisglobal.address.service.PersonAddressService;
 import org.openelisglobal.address.valueholder.AddressPart;
 import org.openelisglobal.address.valueholder.PersonAddress;
 import org.openelisglobal.common.rest.provider.bean.PatientInfoBean;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.patient.service.PatientContactService;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.util.PatientUtil;
@@ -118,7 +121,12 @@ public class PatientSearchPopulateRestController {
         patientInfo.setPatientType(getPatientType(patient));
         patientInfo.setInsuranceNumber(identityMap.getIdentityValue(identityList, "INSURANCE"));
         patientInfo.setOccupation(identityMap.getIdentityValue(identityList, "OCCUPATION"));
-        patientInfo.setBirthDateForDisplay(patient.getBirthDateForDisplay());
+        String format1 = "dd/MM/yyyy";
+        String format2 = "MM/dd/yyyy";
+        patientInfo.setBirthDateForDisplay(
+                ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_DATE_LOCALE).equals("fr-FR")
+                        ? DateUtil.formatStringDate(patient.getBirthDateForDisplay(), format1)
+                        : DateUtil.formatStringDate(patient.getBirthDateForDisplay(), format2));
         patientInfo.setCommune(commune);
         patientInfo.setAddressDepartment(dept);
         patientInfo.setMothersInitial(identityMap.getIdentityValue(identityList, "MOTHERS_INITIAL"));
