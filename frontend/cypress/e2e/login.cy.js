@@ -24,6 +24,7 @@ describe("Failing or Succeeding to Login", function () {
   });
 
   it("Attempts to login with only a password", function () {
+    cy.wait(500);
     cy.fixture("Users").then((users) => {
       let user = users[3];
       login.enterPassword(user.password);
@@ -31,6 +32,7 @@ describe("Failing or Succeeding to Login", function () {
     });
   });
   it("Should validate user authentication", function () {
+    cy.wait(500);
     cy.fixture("Users").then((users) => {
       users.forEach((user) => {
         login.enterUsername(user.username);

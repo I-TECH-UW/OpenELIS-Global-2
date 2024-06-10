@@ -48,11 +48,17 @@ class PatientEntryPage {
   }
 
   getMaleGenderRadioButton() {
-    return cy.getElement(':nth-child(2) > .cds--radio-button__label > .cds--radio-button__appearance');
+    return cy.getElement(
+      ":nth-child(2) > .cds--radio-button__label > .cds--radio-button__appearance",
+    );
   }
 
   clickSearchPatientButton() {
     cy.getElement("#local_search").click();
+  }
+
+  getExternalSearchButton() {
+    cy.get("#external_search").should("be.disabled");
   }
 
   getLastName() {
@@ -62,7 +68,17 @@ class PatientEntryPage {
   getFirstName() {
     return cy.getElement(this.firstNameSelector);
   }
+  searchPatientByFirstNameOnly(firstName) {
+    cy.enterText(this.firstNameSelector, firstName);
+  }
 
+  searchPatientByLastNameOnly(lastName) {
+    cy.enterText(this.lastNameSelector, lastName);
+  }
+
+  searchPatientByDateOfBirth(dateOfBirth) {
+    cy.enterText(this.dateOfBirth, dateOfBirth);
+  }
   getSubmitButton() {
     return cy.getElement(this.savePatientBtn);
   }
@@ -80,6 +96,37 @@ class PatientEntryPage {
     return cy.getElement(
       ".cds--data-table.cds--data-table--lg.cds--data-table--sort > tbody",
     );
+  }
+  validatePatientSearchTablebyRespectiveField(expectedFieldValue, searchBy) {
+    this.getPatientSearchResultsTable()
+      .find("tr")
+      .each(($el, index, $list) => {
+        if (searchBy === "firstName") {
+          cy.wrap($el)
+            .find("td:nth-child(3)")
+            .invoke("text")
+            .then((cellText) => {
+              const trimmedText = cellText.trim();
+              expect(trimmedText).to.contain(expectedFieldValue);
+            });
+        } else if (searchBy === "lastName") {
+          cy.wrap($el)
+            .find("td:nth-child(2)")
+            .invoke("text")
+            .then((cellText) => {
+              const trimmedText = cellText.trim();
+              expect(trimmedText).to.contain(expectedFieldValue);
+            });
+        } else if (searchBy === "DOB") {
+          cy.wrap($el)
+            .find("td:nth-child(5)")
+            .invoke("text")
+            .then((cellText) => {
+              const trimmedText = cellText.trim();
+              expect(trimmedText).to.contain(expectedFieldValue);
+            });
+        }
+      });
   }
 
   validatePatientSearchTable(actualName, inValidName) {
