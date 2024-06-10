@@ -76,7 +76,10 @@ function CreatePatientForm(props) {
     setSubjectNo(newValue);
   };
   const handleDatePickerChange = (values, date) => {
-    var patient = values;
+    var patient = { ...values };
+    if ('date-picker-default-id' in patient) {
+      delete patient['date-picker-default-id'];
+  }
     patient.birthDateForDisplay = date;
     setPatientDetails(patient);
     if (patient.birthDateForDisplay) {
@@ -172,7 +175,6 @@ function CreatePatientForm(props) {
   const handleRegionSelection = (e, values) => {
     var patient = values;
     patient.healthDistrict = "";
-    setPatientDetails(patient);
     const { value } = e.target;
     getFromOpenElisServer(
       "/rest/health-districts-for-region?regionId=" + value,
@@ -180,7 +182,7 @@ function CreatePatientForm(props) {
     );
   };
 
-  function fethchHealthDistrictsCallback(res) {
+  function fetchHealthDistrictsCallback(res) {
     setHealthDistricts(res);
   }
 
@@ -190,7 +192,7 @@ function CreatePatientForm(props) {
         getFromOpenElisServer(
           "/rest/health-districts-for-region?regionId=" +
             props.selectedPatient.healthRegion,
-          fethchHealthDistrictsCallback,
+          fetchHealthDistrictsCallback,
         );
       } else {
         //nextState.healthDistricts = [];
@@ -322,6 +324,11 @@ function CreatePatientForm(props) {
       (status) => {
         handlePost(status);
         resetForm({ values: CreatePatientFormValues });
+        setDateOfBirthFormatter({
+          years: "",
+          months: "",
+          days: "",
+        });
       },
     );
   };
@@ -824,6 +831,10 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
+                      <Column lg={16} md={8} sm={4}>
+                        {" "}
+                        <br></br>
+                      </Column>
                       <Column lg={8} md={4} sm={4}>
                         <Field name="healthRegion">
                           {({ field }) => (
@@ -851,10 +862,7 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
-                      <Column lg={16} md={8} sm={4}>
-                        {" "}
-                        <br></br>
-                      </Column>
+
                       <Column lg={8} md={4} sm={4}>
                         <Field name="healthDistrict">
                           {({ field }) => (
@@ -881,6 +889,10 @@ function CreatePatientForm(props) {
                             </Select>
                           )}
                         </Field>
+                      </Column>
+                      <Column lg={16} md={8} sm={4}>
+                        {" "}
+                        <br></br>
                       </Column>
                       <Column lg={8} md={4} sm={4}>
                         <Field name="education">
@@ -909,10 +921,6 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
-                      <Column lg={16} md={8} sm={4}>
-                        {" "}
-                        <br></br>
-                      </Column>
                       <Column lg={8} md={4} sm={4}>
                         <Field name="maritialStatus">
                           {({ field }) => (
@@ -940,6 +948,10 @@ function CreatePatientForm(props) {
                           )}
                         </Field>
                       </Column>
+                      <Column lg={16} md={8} sm={4}>
+                        {" "}
+                        <br></br>
+                      </Column>
                       <Column lg={8} md={4} sm={4}>
                         <Field name="nationality">
                           {({ field }) => (
@@ -966,10 +978,6 @@ function CreatePatientForm(props) {
                             </Select>
                           )}
                         </Field>
-                      </Column>
-                      <Column lg={16} md={8} sm={4}>
-                        {" "}
-                        <br></br>
                       </Column>
                       <Column lg={8} md={4} sm={4}>
                         <Field name="otherNationality">
@@ -1010,6 +1018,11 @@ function CreatePatientForm(props) {
                       onClick={() => {
                         resetForm({ values: CreatePatientFormValues });
                         setHealthDistricts([]);
+                        setDateOfBirthFormatter({
+                          years: "",
+                          months: "",
+                          days: "",
+                        });
                       }}
                     >
                       <FormattedMessage id="label.button.clear" />

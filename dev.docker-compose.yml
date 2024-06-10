@@ -59,6 +59,7 @@ services:
             - ./volume/plugins/:/var/lib/openelis-global/plugins
             - ./volume/tomcat/oe_server.xml:/usr/local/tomcat/conf/server.xml
             - ./target/OpenELIS-Global.war:/usr/local/tomcat/webapps/OpenELIS-Global.war
+            -  lucene_index-vol:/var/lib/lucene_index
         secrets:
             - source: datasource.password
             - source: common.properties
@@ -141,3 +142,4 @@ volumes:
   key_trust-store-volume:
   certs-vol:
   keys-vol:
+  lucene_index-vol:

@@ -5,6 +5,11 @@
     "correctPass": "false"
   },
   {
+    "username": "admin",
+    "password": "wrongPass",
+    "correctPass": "false"
+  },
+  {
     "username": "itech",
     "password": "wrongPass",
     "correctPass": "false"

@@ -14,7 +14,10 @@ import { FormattedMessage, useIntl } from "react-intl";
 import OrderEntryValidationSchema from "../formModel/validationSchema/OrderEntryValidationSchema";
 import config from "../../config.json";
 import PageBreadCrumb from "../common/PageBreadCrumb";
-let breadcrumbs = [{ label: "home.label", link: "/" }];
+let breadcrumbs = [
+  { label: "home.label", link: "/" },
+  { label: "sidenav.label.addorder", link: "/SamplePatientEntry" },
+];
 
 export let sampleObject = {
   index: 0,
