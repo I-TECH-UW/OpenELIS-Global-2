@@ -35,7 +35,7 @@ public class IntegrationTest {
     
     
     @Test
-    public void testIntegration() {
+    public void simulateInteractions_shouldVerifyIntegratedBehavior() {
         // Simulate interactions between the classes
         addressPart.setPartName("StreetX");
         organizationAddress.setType("Office");
@@ -67,7 +67,7 @@ public class IntegrationTest {
     }
     
     @Test
-    public void testOrganizationAddressIntegration() {
+    public void setOrganizationAndAddressPartIds_shouldVerifyCorrectIdsInOrganizationAddress() {
         // Set up organization and address part
         organization.setId("org123");
         addressPart.setId("address123");
@@ -82,27 +82,27 @@ public class IntegrationTest {
     }
     
     @Test
-    public void testAddressPartNotNull() {
+    public void addressPartInitialization_shouldNotBeNull() {
         assertNotNull(addressPart);
     }
 
     @Test
-    public void testOrganizationAddressNotNull() {
+    public void organizationAddressInitialization_shouldNotBeNull() {
         assertNotNull(organizationAddress);
     }
 
     @Test
-    public void testAddressPKNotNull() {
+    public void addressPKInitialization_shouldNotBeNull() {
         assertNotNull(addressPK);
     }
 
     @Test
-    public void testPersonAddressNotNull() {
+    public void personAddressInitialization_shouldNotBeNull() {
         assertNotNull(personAddress);
     }
     
     @Test
-    public void testPersonNotNull() {
+    public void personInitialization_shouldNotBeNull() {
         assertNotNull(person);
     }
     
