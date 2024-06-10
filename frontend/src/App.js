@@ -40,6 +40,7 @@ import PrintBarcode from "./components/printBarcode/Index";
 import NonConformIndex from "./components/nonconform/index";
 import SampleBatchEntrySetup from "./components/batchOrderEntry/SampleBatchEntrySetup.js";
 import AuditTrailReportIndex from "./components/reports/auditTrailReport/Index.js";
+import NotificationTestPage from "./NotificationTestPage.jsx";
 
 export default function App() {
   let i18nConfig = {
@@ -383,6 +384,13 @@ export default function App() {
                   path="/LogbookResults"
                   exact
                   component={() => <ResultSearch />}
+                  role="Results"
+                />
+
+                <SecureRoute
+                  path="/NotificationTestPage"
+                  exact
+                  component={() => <NotificationTestPage />}
                   role="Results"
                 />
                 <SecureRoute

@@ -21,9 +21,7 @@ export const AlertDialog = () => {
               key={index}
               title={notificationBody.title}
               timeout={
-                notificationBody.kind !== NotificationKinds.error
-                  ? 2000
-                  : 3000
+                notificationBody.kind !== NotificationKinds.error ? 2000 : 3000
               }
               onClose={(event) => {
                 return false;
