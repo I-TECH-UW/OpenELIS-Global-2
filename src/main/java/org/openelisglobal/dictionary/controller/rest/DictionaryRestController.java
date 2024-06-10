@@ -66,7 +66,7 @@ public class DictionaryRestController extends BaseController {
     }
 
     @RequestMapping(value = "/Dictionary", method = RequestMethod.GET)
-    public DictionaryForm showDictionary(HttpServletRequest request, @ModelAttribute("form") BaseForm oldForm)
+    public DictionaryForm showDictionary(HttpServletRequest request, @ModelAttribute("dictform") BaseForm oldForm)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         DictionaryForm newForm = resetSessionFormToType(oldForm, DictionaryForm.class);
         newForm.setCancelAction("CancelDictionary");
