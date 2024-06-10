@@ -15,19 +15,19 @@ public class AddressPartTest {
     }
 
     @Test
-    public void testSetAndGetId() {
+    public void setId_shouldSetAndReturnId() {
         addressPart.setId("123");
         assertEquals("123", addressPart.getId());
     }
     
     @Test
-    public void testSetAndGetPartName() {
+    public void setPartName_shouldSetAndReturnPartName() {
         addressPart.setPartName("Street");
         assertEquals("Street", addressPart.getPartName());
     }
 
     @Test
-    public void testSetAndGetDisplayOrder() {
+    public void setDisplayOrder_shouldSetAndReturnDisplayOrder() {
         addressPart.setDisplayOrder("1");
         assertEquals("1", addressPart.getDisplayOrder());
     }

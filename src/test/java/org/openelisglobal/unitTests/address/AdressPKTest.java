@@ -15,19 +15,19 @@ public class AdressPKTest {
 	    }
 
 	    @Test
-	    public void testSetAndGetTargetId() {
+	    public void setTargetId_shouldSetAndReturnTargetId() {
 	        addressPK.setTargetId("123");
 	        Assert.assertEquals("123", addressPK.getTargetId());
 	    }
 
 	    @Test
-	    public void testSetAndGetAddressPartId() {
+	    public void setAddressPartId_shouldSetAndReturnAddressPartId() {
 	        addressPK.setAddressPartId("456");
 	        Assert.assertEquals("456", addressPK.getAddressPartId());
 	    }
 
 	    @Test
-	    public void testEqualsAndHashCode() {
+	    public void equalsAndHashCode_shouldReturnTrueForEqualObjects() {
 	        AddressPK addressPK1 = new AddressPK();
 	        addressPK1.setTargetId("123");
 	        addressPK1.setAddressPartId("456");

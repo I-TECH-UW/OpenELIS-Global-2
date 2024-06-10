@@ -22,22 +22,22 @@ public class PersonAddressTest {
     }
 
     @Test
-    public void testPersonId() { 
+    public void getPersonId_shouldReturnCorrectPersonId() {
         Assert.assertEquals("123", personAddress.getPersonId());
     }
 
     @Test
-    public void testAddressPartId() {
+    public void getAddressPartId_shouldReturnCorrectAddressPartId() {
         Assert.assertEquals("456", personAddress.getAddressPartId());
     }
     
     @Test
-    public void testUniqueIdentifier() {
+    public void getUniqueIdentifier_shouldReturnCorrectUniqueIdentifier() {
         Assert.assertEquals("unique123", personAddress.getUniqueIdentifyer());
     }
 
     @Test
-    public void testStringId() {
+    public void getStringId_shouldReturnConcatenatedStringId() {
         Assert.assertEquals("123456", personAddress.getStringId());
     }
 

@@ -14,7 +14,7 @@ import org.openelisglobal.person.valueholder.Person;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class IntegrationTest {
+public class AddressIntegrationTest {
 
     private AddressPart addressPart;
     private OrganizationAddress organizationAddress;

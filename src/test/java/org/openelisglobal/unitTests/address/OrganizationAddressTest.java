@@ -15,25 +15,25 @@ public class OrganizationAddressTest {
     }
 
     @Test
-    public void testSetAndGetOrganizationId() {
+    public void setOrganizationId_shouldSetAndReturnOrganizationId() {
         organizationAddress.setOrganizationId("123");
         Assert.assertEquals("123", organizationAddress.getOrganizationId());
     }
 
     @Test
-    public void testSetAndGetAddressPartId() {
+    public void setAddressPartId_shouldSetAndReturnAddressPartId() {
         organizationAddress.setAddressPartId("456");
         Assert.assertEquals("456", organizationAddress.getAddressPartId());
     }
 
     @Test
-    public void testSetAndGetUniqueIdentifier() {
+    public void setUniqueIdentifier_shouldSetAndReturnUniqueIdentifier() {
         organizationAddress.setUniqueIdentifyer("unique123");
         Assert.assertEquals("unique123", organizationAddress.getUniqueIdentifyer());
     }
 
     @Test
-    public void testGetStringId() {
+    public void getStringId_shouldReturnConcatenatedId() {
         String organizationId = "123";
         String addressPartId = "456";
         organizationAddress.setOrganizationId("123");
