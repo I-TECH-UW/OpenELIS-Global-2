@@ -11,7 +11,7 @@ class PatientEntryPage {
   city = "input#city";
   primaryPhone = "input#primaryPhone";
   dateOfBirth = "input#date-picker-default-id";
-  savePatientBtn = "button#submit";
+  savePatientBtn = "#submit";
 
   constructor() {}
 
@@ -48,13 +48,11 @@ class PatientEntryPage {
   }
 
   getMaleGenderRadioButton() {
-    return cy.getElement(
-      "div:nth-of-type(1) > .cds--radio-button__label > .cds--radio-button__appearance",
-    );
+    return cy.getElement(':nth-child(2) > .cds--radio-button__label > .cds--radio-button__appearance');
   }
 
   clickSearchPatientButton() {
-    cy.getElement(".cds--form .cds--btn.cds--btn--primary").click();
+    cy.getElement("#local_search").click();
   }
 
   getLastName() {
