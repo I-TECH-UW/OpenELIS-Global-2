@@ -60,7 +60,6 @@ function DictionaryManagement() {
   const [dictionaryEntry, setDictionaryEntry] = useState("");
   const [localAbbreviation, setLocalAbbreviation] = useState("");
   const [isActive, setIsActive] = useState("");
-  const [lastupdated, setLastUpdated] = useState("");
 
   const [fromRecordCount, setFromRecordCount] = useState("");
   const [toRecordCount, setToRecordCount] = useState("");
@@ -231,7 +230,6 @@ function DictionaryManagement() {
       dictEntry: dictionaryEntry,
       localAbbreviation: localAbbreviation,
       isActive: isActive.id,
-      lastupdated: lastupdated,
       dirtyFormFields: dirtyFields,
     };
 
@@ -300,7 +298,6 @@ function DictionaryManagement() {
         setDictionaryEntry(selectedItem.dictEntry);
         setLocalAbbreviation(selectedItem.localAbbreviation);
         setIsActive(yesOrNo.find((item) => item.id === selectedItem.isActive));
-        setLastUpdated(selectedItem.lastupdated);
         setOpen(true);
         setEditMode(false);
       }
