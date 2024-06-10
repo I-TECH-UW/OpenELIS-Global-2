@@ -145,9 +145,20 @@ public class DictionaryRestController extends BaseController {
         return ResponseEntity.status(HttpStatus.OK).body(url);
     }
 
+    /**
+     * @param request
+     * @param form
+     * @param result
+     * @param status
+     * @param redirectAttributes
+     * @return
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     */
     @RequestMapping(value = "/Dictionary", method = RequestMethod.POST)
     public ResponseEntity<?> showUpdateDictionary(HttpServletRequest request,
-                                             @ModelAttribute("form") @Valid DictionaryForm form, BindingResult result, SessionStatus status,
+                                                  @RequestBody @Valid DictionaryForm form, BindingResult result, SessionStatus status,
                                              RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 

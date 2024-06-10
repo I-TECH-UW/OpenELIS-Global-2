@@ -42,11 +42,11 @@ import { ArrowLeft, ArrowRight } from "@carbon/icons-react";
 function DictionaryManagement() {
   const intl = useIntl();
   const componentMounted = useRef(false);
+  const dirtyFieldsRef = useRef(new Set());
 
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
   const { reloadConfiguration } = useContext(ConfigurationContext);
-  const [dictionaryMenuz, setDictionaryMenuz] = useState([]);
   const [dictionaryMenuList, setDictionaryMenuList] = useState([]);
 
   const [page, setPage] = useState(1);
@@ -60,9 +60,8 @@ function DictionaryManagement() {
   const [dictionaryEntry, setDictionaryEntry] = useState("");
   const [localAbbreviation, setLocalAbbreviation] = useState("");
   const [isActive, setIsActive] = useState("");
-  const [lastupdated, setLastUpdated] = useState("");
 
-  const [fromRecordCount, setFromRecordCount] = useState("");
+  const [fromRecordCount, setFromRecordCount] = useState("1");
   const [toRecordCount, setToRecordCount] = useState("");
   const [totalRecordCount, setTotalRecordCount] = useState("");
 
@@ -70,7 +69,7 @@ function DictionaryManagement() {
   const [modifyButton, setModifyButton] = useState(true);
   const [editMode, setEditMode] = useState(true);
 
-  const [paging, setPaging] = useState(2);
+  const [paging, setPaging] = useState(null);
   const [startingRecNo, setStartingRecNo] = useState(1);
 
   useEffect(() => {
@@ -86,12 +85,12 @@ function DictionaryManagement() {
 
   const handleNextPage = () => {
     setPaging((pager) => Math.max(pager, 2));
-    setStartingRecNo(toRecordCount);
+    setStartingRecNo(fromRecordCount);
   };
 
   const handlePreviousPage = () => {
     setPaging((pager) => Math.max(pager - 1, 1));
-    setStartingRecNo(Math.max(toRecordCount, 1));
+    setStartingRecNo(Math.max(fromRecordCount, 1));
   };
 
   const yesOrNo = [
@@ -117,7 +116,30 @@ function DictionaryManagement() {
 
   const fetchedDictionaryMenu = (res) => {
     if (componentMounted.current) {
-      setDictionaryMenuz(res);
+      if (res) {
+        if (
+          res.toRecordCount !== undefined &&
+          res.fromRecordCount !== undefined &&
+          res.totalRecordCount !== undefined
+        ) {
+          setToRecordCount(res.toRecordCount);
+          setFromRecordCount(res.fromRecordCount);
+          setTotalRecordCount(res.totalRecordCount);
+        }
+        if (res.menuList) {
+          const menuList = res.menuList.map((item) => ({
+            id: item.id,
+            dictEntry: item.dictEntry,
+            localAbbreviation: item.localAbbreviation,
+            isActive: item.isActive,
+            categoryName: item.dictionaryCategory
+              ? item.dictionaryCategory.categoryName
+              : "not available",
+            lastupdated: item.lastupdated,
+          }));
+          setDictionaryMenuList(menuList);
+        }
+      }
     }
   };
 
@@ -136,42 +158,6 @@ function DictionaryManagement() {
   }, []);
 
   useEffect(() => {
-    if (dictionaryMenuz) {
-      if (
-        dictionaryMenuz.toRecordCount !== undefined &&
-        dictionaryMenuz.fromRecordCount !== undefined &&
-        dictionaryMenuz.totalRecordCount !== undefined
-      ) {
-        setToRecordCount(dictionaryMenuz.fromRecordCount);
-        setFromRecordCount(dictionaryMenuz.toRecordCount);
-        setTotalRecordCount(dictionaryMenuz.totalRecordCount);
-      }
-
-      if (dictionaryMenuz.menuList) {
-        const newMenuList = dictionaryMenuz.menuList.map((item) => {
-          let value = item.value;
-          if (item.valueType === "text" && item.tag === "localization") {
-            value =
-              item.localization?.localesAndValuesOfLocalesWithValues || value;
-          }
-          return {
-            id: item.id,
-            isActive: item.isActive,
-            dictEntry: item.dictEntry,
-            localAbbreviation: item.localAbbreviation,
-            categoryName: item.dictionaryCategory
-              ? item.dictionaryCategory.categoryName
-              : "not available",
-            lastupdated: item.lastupdated,
-            value: value,
-          };
-        });
-        setDictionaryMenuList(newMenuList);
-      }
-    }
-  }, [dictionaryMenuz]);
-
-  useEffect(() => {
     componentMounted.current = true;
     getFromOpenElisServer(
       "/rest/dictionary-categories",
@@ -184,19 +170,10 @@ function DictionaryManagement() {
 
   const postData = {
     id: dictionaryNumber,
-    selectedDictionaryCategoryId: category.id,
+    selectedDictionaryCategoryId: category?.id,
     dictEntry: dictionaryEntry,
     localAbbreviation: localAbbreviation,
     isActive: isActive.id,
-  };
-
-  const updateData = {
-    id: dictionaryNumber,
-    selectedDictionaryCategoryId: category.id,
-    dictEntry: dictionaryEntry,
-    localAbbreviation: localAbbreviation,
-    isActive: isActive.id,
-    lastupdated: lastupdated,
   };
 
   async function displayStatus(res) {
@@ -229,9 +206,35 @@ function DictionaryManagement() {
 
   const handleUpdateModal = (e) => {
     e.preventDefault();
-    setLastUpdated(lastupdated);
+
+    if (!componentMounted.current[dictionaryEntry]) {
+      dirtyFieldsRef.current.add("dictEntry");
+    }
+
+    if (!componentMounted.current[isActive]) {
+      dirtyFieldsRef.current.add("isActive");
+    }
+
+    if (!componentMounted.current[localAbbreviation]) {
+      dirtyFieldsRef.current.add("localAbbreviation");
+    }
+
+    const dirtyFields =
+      dirtyFieldsRef.current.size > 0
+        ? `;${[...dirtyFieldsRef.current].join(";")}`
+        : "";
+
+    const updateData = {
+      id: dictionaryNumber,
+      selectedDictionaryCategoryId: category.id,
+      dictEntry: dictionaryEntry,
+      localAbbreviation: localAbbreviation,
+      isActive: isActive.id,
+      dirtyFormFields: dirtyFields,
+    };
+
     postToOpenElisServerFullResponse(
-      `/rest/Dictionary?ID=${selectedRowId}`,
+      `/rest/Dictionary?ID=${selectedRowId}&startingRecNo=${startingRecNo}`,
       JSON.stringify(updateData),
       displayStatus,
     );
@@ -285,8 +288,22 @@ function DictionaryManagement() {
   const handleOnClickOnModification = async (event) => {
     event.preventDefault();
     if (selectedRowId) {
+      const selectedItem = dictionaryMenuList.find(
+        (item) => item.id === selectedRowId,
+      );
+
+      if (selectedItem) {
+        setDictionaryNumber(selectedItem.id);
+        setCategory(selectedItem.category);
+        setDictionaryEntry(selectedItem.dictEntry);
+        setLocalAbbreviation(selectedItem.localAbbreviation);
+        setIsActive(yesOrNo.find((item) => item.id === selectedItem.isActive));
+        setOpen(true);
+        setEditMode(false);
+      }
+
       getFromOpenElisServer(
-        `/rest/Dictionary?ID=${selectedRowId}`,
+        `/rest/Dictionary?ID=${selectedRowId}&startingRecNo=${startingRecNo}`,
         handleDictionaryMenuItems,
       );
       setOpen(true);
@@ -394,6 +411,7 @@ function DictionaryManagement() {
                   />
                   <Dropdown
                     id="description"
+                    label=""
                     type="default"
                     items={categoryDescription}
                     titleText="Dictionary Category"
@@ -419,6 +437,7 @@ function DictionaryManagement() {
                   <Dropdown
                     id="isActive"
                     type="default"
+                    label=""
                     items={yesOrNo}
                     titleText="Is Active"
                     itemToString={(item) => (item ? item.id : "")}
@@ -461,21 +480,23 @@ function DictionaryManagement() {
                 }}
               >
                 <Link>
-                  Showing {toRecordCount} - {fromRecordCount} of{" "}
+                  Showing {fromRecordCount} - {toRecordCount} of{" "}
                   {totalRecordCount}
                 </Link>
                 <div style={{ display: "flex", gap: "10px" }}>
                   <Button
                     hasIconOnly
-                    disabled={
-                      (paging === 1 && startingRecNo <= 21) ||
-                      startingRecNo <= 1
-                    }
+                    iconDescription="previous"
+                    disabled={parseInt(fromRecordCount) <= 1}
                     onClick={handlePreviousPage}
                     renderIcon={ArrowLeft}
                   />
                   <Button
                     hasIconOnly
+                    iconDescription="next"
+                    disabled={
+                      parseInt(toRecordCount) >= parseInt(totalRecordCount)
+                    }
                     renderIcon={ArrowRight}
                     onClick={handleNextPage}
                   />
