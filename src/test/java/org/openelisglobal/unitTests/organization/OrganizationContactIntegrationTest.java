@@ -30,7 +30,7 @@ public class OrganizationContactIntegrationTest {
     }
 
     @Test
-    public void testOrganizationContactIntegration() {
+    public void setPersonAndOrganizationId_shouldAssociateCorrectly() {
         // Create an instance of OrganizationContact and associate it with both Person and Organization
         OrganizationContact organizationContact = new OrganizationContact();
         organizationContact.setPerson(person);
