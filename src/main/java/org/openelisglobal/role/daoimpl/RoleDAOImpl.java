@@ -54,7 +54,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
                 role.setId(null);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Role getData()", e);
         }
     }
@@ -107,7 +107,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Role getPageOfRoles()", e);
         }
 
@@ -119,7 +119,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
         try {
             recoveredRole = entityManager.unwrap(Session.class).get(Role.class, idString);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Role readRole()", e);
         }
 
@@ -142,7 +142,7 @@ public class RoleDAOImpl extends BaseDAOImpl<Role, String> implements RoleDAO {
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Role getReferencingRoles()", e);
         }
 

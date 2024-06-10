@@ -51,7 +51,7 @@ public class RenameMethodDAOImpl extends BaseDAOImpl<RenameMethod, String> imple
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Method getMethods(String filter)", e);
         }
         return list;
@@ -103,7 +103,7 @@ public class RenameMethodDAOImpl extends BaseDAOImpl<RenameMethod, String> imple
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateMethodExists()", e);
         }
     }

@@ -237,7 +237,7 @@ public class CovidResultsCSVBuilder extends CovidResultsBuilderImpl {
                     convertJSONToCSV(new JSONObject(task.get().getDescription()), LOCATOR_FORM_PROPERTY_NAME, valueRow,
                             jFamilyTravelCompanions, jNonFamilyTravelCompanions);
                 } catch (JSONException e) {
-                    LogEvent.logError(this.getClass().getName(), "addValueRow",
+                    LogEvent.logError(this.getClass().getSimpleName(), "addValueRow",
                             "could not make json from task description");
                     LogEvent.logError(e);
                 }
@@ -246,9 +246,9 @@ public class CovidResultsCSVBuilder extends CovidResultsBuilderImpl {
             valueRows.add(valueRow);
 
         } catch (IllegalStateException e) {
-            LogEvent.logError(this.getClass().getName(), "addValueRow",
+            LogEvent.logError(this.getClass().getSimpleName(), "addValueRow",
                     "could not retrieve FhirTask from analysis with id: " + analysis.getId());
-            LogEvent.logError(this.getClass().getName(), "addValueRow", e.getMessage());
+            LogEvent.logError(this.getClass().getSimpleName(), "addValueRow", e.getMessage());
         }
     }
 

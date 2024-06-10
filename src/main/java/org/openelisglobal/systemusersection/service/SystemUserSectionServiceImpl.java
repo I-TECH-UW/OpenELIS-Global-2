@@ -3,7 +3,7 @@ package org.openelisglobal.systemusersection.service;
 import java.util.List;
 
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.systemusersection.dao.SystemUserSectionDAO;
 import org.openelisglobal.systemusersection.valueholder.SystemUserSection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class SystemUserSectionServiceImpl extends BaseObjectServiceImpl<SystemUserSection, String>
+public class SystemUserSectionServiceImpl extends AuditableBaseObjectServiceImpl<SystemUserSection, String>
         implements SystemUserSectionService {
     @Autowired
     protected SystemUserSectionDAO baseObjectDAO;

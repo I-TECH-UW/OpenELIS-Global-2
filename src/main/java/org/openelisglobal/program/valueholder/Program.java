@@ -15,15 +15,35 @@
 */
 package org.openelisglobal.program.valueholder;
 
-import org.openelisglobal.common.valueholder.BaseObject;
+import java.util.UUID;
 
+import javax.validation.constraints.Pattern;
+
+import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.common.valueholder.BaseObject;
+import org.openelisglobal.test.valueholder.TestSection;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonAutoDetect(fieldVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)
 public class Program extends BaseObject<String> {
 
+    @JsonProperty("code")
+    @Pattern(regexp = "(?i)^[a-z0-9_ ]*$")
     private String code;
-
+    @JsonProperty("id")
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String id;
-
+    @JsonProperty("programName")
+    @Pattern(regexp = "(?i)^[a-z0-9-_ ]*$")
     private String programName;
+    @JsonProperty("questionnaireUUID")
+    private UUID questionnaireUUID;
+    private TestSection testSection;
+    @JsonProperty("manuallyChanged")
+    private Boolean manuallyChanged;
 
     public Program() {
         super();
@@ -33,6 +53,7 @@ public class Program extends BaseObject<String> {
         return this.code;
     }
 
+    @Override
     public String getId() {
         return this.id;
     }
@@ -45,6 +66,7 @@ public class Program extends BaseObject<String> {
         this.code = code;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -53,4 +75,27 @@ public class Program extends BaseObject<String> {
         this.programName = programName;
     }
 
+    public UUID getQuestionnaireUUID() {
+        return questionnaireUUID;
+    }
+
+    public void setQuestionnaireUUID(UUID questionnaireUUID) {
+        this.questionnaireUUID = questionnaireUUID;
+    }
+
+    public TestSection getTestSection() {
+        return testSection;
+    }
+
+    public void setTestSection(TestSection testSection) {
+        this.testSection = testSection;
+    }   
+
+    public Boolean getManuallyChanged() {
+        return manuallyChanged;
+    }
+
+    public void setManuallyChanged(Boolean manuallyChanged) {
+        this.manuallyChanged = manuallyChanged;
+    }
 }

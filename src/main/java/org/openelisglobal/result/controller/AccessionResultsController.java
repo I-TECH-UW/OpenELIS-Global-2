@@ -53,7 +53,7 @@ public class AccessionResultsController extends BaseController {
     private UserService userService;
 
     public AccessionResultsController(RoleService roleService) {
-        Role editRole = roleService.getRoleByName("Results modifier");
+        Role editRole = roleService.getRoleByName("Results");
         if (editRole != null) {
             RESULT_EDIT_ROLE_ID = editRole.getId();
         } else {
@@ -65,7 +65,7 @@ public class AccessionResultsController extends BaseController {
     public ModelAndView showAccessionResults(HttpServletRequest request)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         AccessionResultsForm form = new AccessionResultsForm();
-
+        System.out.println("AccessionResultsController:");
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
         form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
         form.setRejectReasons(DisplayListService.getInstance()

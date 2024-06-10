@@ -90,7 +90,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
 
             return requester;
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SampleRequester readOld()", e);
         }
     }

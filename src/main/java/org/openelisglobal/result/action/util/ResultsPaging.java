@@ -55,9 +55,9 @@ public class ResultsPaging {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.FALSE);
-        List<TestResultItem> clientTests = form.getTestResult();
-        PagingBean bean = form.getPaging();
-        paging.updatePagedResults(request.getSession(), clientTests, bean, pagingHelper);
+        //List<TestResultItem> clientTests = form.getTestResult();
+        //PagingBean bean = form.getPaging();
+        //paging.updatePagedResults(request.getSession(), clientTests, bean, pagingHelper);
 
         if (newPage < 0) {
             newPage = 0;

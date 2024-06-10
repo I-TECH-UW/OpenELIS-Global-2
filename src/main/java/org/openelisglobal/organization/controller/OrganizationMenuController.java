@@ -79,7 +79,7 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
     @Override
     protected List<Organization> createMenuList(AdminOptionMenuForm<Organization> form, HttpServletRequest request) {
 
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "I am in
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "I am in
         // OrganizationMenuAction createMenuList()");
 
         List<Organization> organizations = new ArrayList<>();
@@ -169,17 +169,17 @@ public class OrganizationMenuController extends BaseMenuController<Organization>
         }
 
         try {
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Going to delete
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "Going to delete
             // Organization");
             organizationService.deactivateOrganizations(organizations);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Just deleted
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "Just deleted
             // Organization");
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
 
             String errorMsg;
-            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
                 errorMsg = "errors.DeleteException";

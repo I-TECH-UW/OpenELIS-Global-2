@@ -73,7 +73,7 @@ public class CustomDateValidator extends DateValidator {
             formatter.parse(value);
         } catch (ParseException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             return false;
         }
         if (strict && (datePattern.length() != value.length())) {
@@ -109,7 +109,7 @@ public class CustomDateValidator extends DateValidator {
             formatter.parse(value);
         } catch (ParseException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             return false;
         }
         return true;

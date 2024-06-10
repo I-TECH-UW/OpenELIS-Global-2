@@ -1,0 +1,12 @@
+# This configuration file is created to run on Gitpod.
+# Please adjust to your needs (see https://www.gitpod.io/docs/introduction/learn-gitpod/gitpod-yaml)
+# and commit this file to your remote git repository to share the goodness with others.
+
+# Learn more from ready-to-use templates: https://www.gitpod.io/docs/introduction/getting-started/quickstart
+
+tasks:
+  - name: Build the Dependencies and Start the docker containers
+    init:  cd dataexport && mvn clean install -DskipTests && cd .. && mvn clean install && cd frontend && npm install && cd ..
+    command:  docker-compose -f dev.docker-compose.yml up -d    
+
+

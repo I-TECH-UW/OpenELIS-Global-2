@@ -96,7 +96,7 @@ public class PatientHistoryService extends AbstractHistoryService {
 
     @Override
     protected void getObservableChanges(History history, Map<String, String> changeMap, String changes) {
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", changes );
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", changes );
         // this may get more complicated
 
         simpleChange(changeMap, changes, DOB_ATTRIBUTE);

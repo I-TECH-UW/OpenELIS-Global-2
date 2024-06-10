@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.project.dao.ProjectDAO;
 import org.openelisglobal.project.valueholder.Project;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ProjectServiceImpl extends BaseObjectServiceImpl<Project, String> implements ProjectService {
+public class ProjectServiceImpl extends AuditableBaseObjectServiceImpl<Project, String> implements ProjectService {
     @Autowired
     protected ProjectDAO baseObjectDAO;
 

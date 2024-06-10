@@ -55,7 +55,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ProviderDAOImpl getData()", e);
         }
     }
@@ -70,7 +70,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ProviderDAOImpl getAllProviders()", e);
         }
 
@@ -93,7 +93,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ProviderDAOImpl getPageOfProviders()", e);
         }
 
@@ -106,7 +106,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             provider = entityManager.unwrap(Session.class).get(Provider.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ProviderDAOImpl readProvider()", e);
         }
 
@@ -126,7 +126,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ProviderDAOImpl getProviderByPerson()", e);
         }
 
@@ -149,7 +149,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ProviderDAOImpl getTotalSearchedProviderCount()", e);
         }
 
@@ -173,7 +173,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ProviderDAOImpl getPagesOfSearchedProviders()", e);
         }
 

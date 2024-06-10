@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
 	<class name="org.openelisglobal.test.valueholder.Test"
@@ -120,6 +120,9 @@
 		</many-to-one>
 		<property name="inLabOnly" type="java.lang.Boolean"
 			column="in_lab_only" />
+
+		<property name="antimicrobialResistance" type="java.lang.Boolean"
+			column="antimicrobial_resistance" />
 	</class>
 <!-- 	<query name="test.getNext"> -->
 <!-- 		from Test t order by t.testSection.testSectionName, t.testName -->

@@ -32,17 +32,6 @@
       	</update>
 	</changeSet>
 	
-	<changeSet author="csteele" id="2">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<indexExists schemaName="clinlims"
-					tableName="referral" indexName="referral_status_index" />
-			</not>
-		</preConditions>
-		<createIndex indexName="referral_status_index"
-			tableName="referral">
-			<column name="status"/>
-		</createIndex>
-	</changeSet>
+	
 	
 </databaseChangeLog>

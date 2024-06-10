@@ -207,9 +207,9 @@ public class TestNotificationServiceImpl implements TestNotificationService {
             sendNotification(smsNotification);
 //                    getSenderForNotification(smsNotification).send(smsNotification);
         } catch (RuntimeException e) {
-            LogEvent.logError(this.getClass().getName(), "createAndSendResultsNotificationSMS",
+            LogEvent.logError(this.getClass().getSimpleName(), "createAndSendResultsNotificationSMS",
                     "could not send sms notification");
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
 
     }
@@ -230,7 +230,7 @@ public class TestNotificationServiceImpl implements TestNotificationService {
             sendNotification(emailNotification);
         } catch (RuntimeException e) {
             // TODO add redundancy mechanism in case can't reach SMTP server
-            LogEvent.logError(this.getClass().getName(), "createAndSendResultsNotificationEmail",
+            LogEvent.logError(this.getClass().getSimpleName(), "createAndSendResultsNotificationEmail",
                     "could not send email notification");
             LogEvent.logError(e);
         }
@@ -290,7 +290,7 @@ public class TestNotificationServiceImpl implements TestNotificationService {
     private boolean canSendSMS(Person person) {
         boolean canSend = person != null && !GenericValidator.isBlankOrNull(person.getPrimaryPhone());
         if (!canSend) {
-            LogEvent.logWarn(this.getClass().getName(), "canSendSMS",
+            LogEvent.logWarn(this.getClass().getSimpleName(), "canSendSMS",
                     "can't send SMS to person as they have no phone on file");
         }
         return canSend;
@@ -299,7 +299,7 @@ public class TestNotificationServiceImpl implements TestNotificationService {
     private boolean canSendEmail(Person person) {
         boolean canSend = person != null && !GenericValidator.isBlankOrNull(person.getEmail());
         if (!canSend) {
-            LogEvent.logWarn(this.getClass().getName(), "canSendEmail",
+            LogEvent.logWarn(this.getClass().getSimpleName(), "canSendEmail",
                     "can't send email to person as they have no email on file");
         }
         return canSend;

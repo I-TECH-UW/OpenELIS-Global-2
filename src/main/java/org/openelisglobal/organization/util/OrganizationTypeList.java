@@ -91,15 +91,14 @@ public enum OrganizationTypeList {
      *         or an empty list.
      */
     public final List<Organization> getList() {
-        List<Organization> all;
+        List<Organization> all = SpringContext.getBean(OrganizationService.class).getOrganizationsByTypeName(orderBy, name);
         try {
-            all = SpringContext.getBean(OrganizationService.class).getOrganizationsByTypeName(orderBy, name);
             if (comparator != null) {
                 Collections.sort(all, comparator);
             }
         } catch (RuntimeException e) {
-            LogEvent.logErrorStack(e);
-            all = new ArrayList<>();
+            LogEvent.logError(e);
+            //all = new ArrayList<>(); must not return empty List if sorting fails
         }
         return all;
     }

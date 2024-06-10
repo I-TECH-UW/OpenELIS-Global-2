@@ -207,7 +207,7 @@ public class SiteInformationMenuController extends BaseMenuController<SiteInform
 
         } catch (LIMSRuntimeException e) {
             String errorMsg;
-            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
                 errorMsg = "errors.DeleteException";

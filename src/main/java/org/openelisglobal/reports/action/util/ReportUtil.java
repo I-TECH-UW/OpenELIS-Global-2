@@ -150,7 +150,7 @@ public class ReportUtil {
 //			}
 
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
     }
 

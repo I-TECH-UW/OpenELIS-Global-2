@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.patienttype.dao.PatientTypeDAO;
 import org.openelisglobal.patienttype.valueholder.PatientType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PatientTypeServiceImpl extends BaseObjectServiceImpl<PatientType, String> implements PatientTypeService {
+public class PatientTypeServiceImpl extends AuditableBaseObjectServiceImpl<PatientType, String> implements PatientTypeService {
 
     @Autowired
     private PatientTypeDAO baseObjectDAO;

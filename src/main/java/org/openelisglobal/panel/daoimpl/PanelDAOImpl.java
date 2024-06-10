@@ -62,7 +62,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Panel getData()", e);
         }
 
@@ -92,7 +92,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             List<Panel> list = query.list();
             return list;
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Panel getAllActivePanels()", e);
         }
 
@@ -109,7 +109,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             List<Panel> list = query.list();
             return list;
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Panel getAllPanels()", e);
         }
 
@@ -132,7 +132,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Panel getPageOfPanels()", e);
         }
 
@@ -145,7 +145,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             panel = entityManager.unwrap(Session.class).get(Panel.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Panel readPanel()", e);
         }
 
@@ -164,7 +164,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Panel getPanels()", e);
         }
         return list;
@@ -212,7 +212,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             }
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicatePanelExists()", e);
         }
     }
@@ -246,7 +246,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             }
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicatePanelDescriptionExists()", e);
         }
     }
@@ -315,7 +315,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             List<Panel> panelList = query.list();
             return panelList.isEmpty() ? null : panelList.get(0);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Panel getPanelByName()", e);
         }
     }

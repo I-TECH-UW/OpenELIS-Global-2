@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping
 	package="org.openelisglobal.resultlimits.valueholder">
 	<class name="ResultLimit" table="RESULT_LIMITS"
@@ -68,6 +68,16 @@
 			type="org.hibernate.type.DoubleType">
 			<column name="high_reporting_range" />
 		</property>
+		
+		<property name="highCritical"
+			type="org.hibernate.type.DoubleType">
+			<column name="high_critical" />
+		</property>
+		<property name="lowCritical"
+			type="org.hibernate.type.DoubleType">
+			<column name="low_critical" />
+		</property>
+		
 		<property name="dictionaryNormalId"
 			type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType"
 			column="normal_dictionary_id" />

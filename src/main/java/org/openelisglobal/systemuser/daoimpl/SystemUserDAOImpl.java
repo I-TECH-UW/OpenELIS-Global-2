@@ -56,7 +56,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUser getData()", e);
         }
     }
@@ -71,7 +71,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUser getAllSystemUsers()", e);
         }
 
@@ -95,7 +95,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUser getPageOfSystemUsers()", e);
         }
 
@@ -108,7 +108,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             su = entityManager.unwrap(Session.class).get(SystemUser.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUser readSystemUser()", e);
         }
 
@@ -153,7 +153,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateSystemUserExists()", e);
         }
     }
@@ -169,7 +169,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             query.setParameter("name", userName);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUser getDataForUser()", e);
         }
 

@@ -64,16 +64,16 @@ public class OrderServlet extends HohServlet {
         public Message processMessage(Message message, Map theMetadata)
                 throws ReceivingApplicationException, HL7Exception {
             // LogEvent.logFatal("OrderServlet", "processMessage", message.encode());
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Received
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "Received
             // message:\n" + message.printStructure());
 
             // TO DO add message signature verification for authentication of messages
 
             OrderWorker worker = new OrderWorker(message);
 
-            worker.setInterpreter(SpringContext.getBean(HL7OrderInterpreter.class));
-            worker.setExistanceChecker(SpringContext.getBean(DBOrderExistanceChecker.class));
-            worker.setPersister(SpringContext.getBean(DBOrderPersister.class));
+            worker.setInterpreter(SpringContext.getBean(IOrderInterpreter.class));
+            worker.setExistanceChecker(SpringContext.getBean(IOrderExistanceChecker.class));
+            worker.setPersister(SpringContext.getBean(IOrderPersister.class));
 
             OrderResult orderResult = worker.handleOrderRequest();
 

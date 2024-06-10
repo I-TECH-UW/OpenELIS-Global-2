@@ -103,7 +103,7 @@ public class RegisterFhirHooksTask {
         }
         try {
             Bundle returnedBundle = fhirClient.transaction().withBundle(subscriptionBundle).encodedJson().execute();
-            LogEvent.logDebug(this.getClass().getName(), "startTask", "subscription bundle returned:\n"
+            LogEvent.logDebug(this.getClass().getSimpleName(), "startTask", "subscription bundle returned:\n"
                     + fhirContext.newJsonParser().encodeResourceToString(returnedBundle));
         } catch (UnprocessableEntityException | DataFormatException e) {
             LogEvent.logError("error while communicating subscription bundle to " + localFhirStorePath + " for "
@@ -143,7 +143,7 @@ public class RegisterFhirHooksTask {
             }
         }
         Bundle returnedBundle = fhirClient.transaction().withBundle(deleteTransactionBundle).encodedJson().execute();
-        LogEvent.logDebug(this.getClass().getName(), "removeOldSubscription",
+        LogEvent.logTrace(this.getClass().getSimpleName(), "removeOldSubscription",
                 "delete old bundle returned:\n" + fhirContext.newJsonParser().encodeResourceToString(returnedBundle));
 
     }

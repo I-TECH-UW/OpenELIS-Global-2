@@ -36,8 +36,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -53,9 +55,13 @@ import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.services.StatusSet;
+import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
+import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl;
 import org.openelisglobal.note.valueholder.Note;
@@ -66,6 +72,7 @@ import org.openelisglobal.observationhistorytype.service.ObservationHistoryTypeS
 import org.openelisglobal.observationhistorytype.valueholder.ObservationHistoryType;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.saving.form.IAccessionerForm;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.util.PatientUtil;
@@ -79,6 +86,8 @@ import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.referencetables.service.ReferenceTablesService;
+import org.openelisglobal.referral.action.beanitems.ReferralItem;
+import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
 import org.openelisglobal.sample.form.ProjectData;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.util.CI.BaseProjectFormMapper;
@@ -142,6 +151,8 @@ import org.springframework.validation.Errors;
  */
 
 public abstract class Accessioner implements IAccessioner {
+    @Autowired
+    private FhirTransformService fhirTransformService;
 
     /**
      * a set of possible analysis status that means an analysis is done
@@ -331,6 +342,7 @@ public abstract class Accessioner implements IAccessioner {
             populateSampleData();
             populateSampleHuman();
             populateObservationHistory();
+			updateSampleWithElectronicEOrders();
 
             // all of the following methods are assumed to only write when
             // necessary
@@ -349,6 +361,14 @@ public abstract class Accessioner implements IAccessioner {
             persistRecordStatus();
             deleteOldPatient();
             populateAndPersistUnderInvestigationNote();
+          //update fhir resources
+            SamplePatientUpdateData updateData = new SamplePatientUpdateData(sysUserId);
+            updateData.setSample(sample);
+            updateData.setAccessionNumber(accessionNumber);
+            updateData.setProvider(null);
+            updateData.setSampleItemsTests(null);
+            PatientManagementInfo patientInfo = new PatientManagementInfo();
+            patientInfo.setPatientPK(patientInDB.getId());
             return IActionConstants.FWD_SUCCESS_INSERT;
         } catch (IllegalAccessException e) {
             logAndAddMessage("save()", "errors.InsertException", e);
@@ -818,6 +838,9 @@ public abstract class Accessioner implements IAccessioner {
 
         patientInDB.setNationalId(convertEmptyToNull(form.getSubjectNumber()));
         patientInDB.setExternalId(convertEmptyToNull(form.getSiteSubjectNumber()));
+		if (ObjectUtils.isNotEmpty(form.getPatientFhirUuid())) {
+			patientInDB.setFhirUuid(UUID.fromString(form.getPatientFhirUuid()));
+		}
         populatePatientBirthDate(form.getBirthDateForDisplay());
 
         projectData = form.getProjectData();
@@ -1002,6 +1025,7 @@ public abstract class Accessioner implements IAccessioner {
      *
      * @
      */
+	@Transactional
     public void completeSample() {
         if (isAllAnalysisDone() && !SpringContext.getBean(IStatusService.class)
                 .getStatusID(OrderStatus.NonConforming_depricated).equals(sample.getStatus())) {
@@ -1104,6 +1128,10 @@ public abstract class Accessioner implements IAccessioner {
      */
     protected void persistSampleHuman() {
         if (sampleHuman != null) {
+			SampleHuman otherSampleHuman = sampleHumanService.getMatch("sampleId", sample.getId()).orElse(null);
+			if (ObjectUtils.isNotEmpty(otherSampleHuman)) {
+				sampleHuman = otherSampleHuman;
+			}
             sampleHuman.setPatientId(patientInDB.getId());
             sampleHuman.setSampleId(sample.getId());
             // we do not store any doctor name as a provider in SampleHuman
@@ -1197,7 +1225,7 @@ public abstract class Accessioner implements IAccessioner {
      *
      */
     protected void persistObservationHistoryLists() {
-        LogEvent.logInfo(this.getClass().getName(), "method unkown", "FUNCTION NAME PROHIBITED !");
+        LogEvent.logInfo(this.getClass().getSimpleName(), "persistObservationHistoryLists", "FUNCTION NAME PROHIBITED !");
     }
 
     protected void persistObservationHistoryLists2() {
@@ -1208,8 +1236,8 @@ public abstract class Accessioner implements IAccessioner {
         for (String listType : observationHistoryLists.keySet()) {
             // throw away the old list
             Map<String, ObservationHistory> oldOHes = findExistingObservationHistories(listType);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", );
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", listType + "
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", );
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", listType + "
             // oldOHes.size = "
             // +oldOHes.size());
             for (ObservationHistory oh : oldOHes.values()) {
@@ -1219,7 +1247,7 @@ public abstract class Accessioner implements IAccessioner {
 
             // insert the new
             List<ObservationHistory> newOHes = observationHistoryLists.get(listType);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", listType + "
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", listType + "
             // newOHes.size = "
             // +newOHes.size());
             for (ObservationHistory newOH : newOHes) {
@@ -1254,19 +1282,25 @@ public abstract class Accessioner implements IAccessioner {
     }
 
     protected void deleteOldPatient() {
-        if (patientToDelete != null) {
-            List<PatientIdentity> oldIdentities = identityService
-                    .getPatientIdentitiesForPatient(patientToDelete.getId());
-            for (PatientIdentity listIdentity : oldIdentities) {
-                identityService.delete(listIdentity.getId(), sysUserId);
-            }
-            Person personToDelete = patientToDelete.getPerson();
-            patientToDelete.setSysUserId(sysUserId);
-            patientService.deleteAll(Arrays.asList(patientToDelete));
-            personToDelete.setSysUserId(sysUserId);
-            personService.deleteAll(Arrays.asList(personToDelete));
-        }
-    }
+		if (patientToDelete != null) {
+			try {
+
+				List<PatientIdentity> oldIdentities = identityService
+						.getPatientIdentitiesForPatient(patientToDelete.getId());
+				for (PatientIdentity listIdentity : oldIdentities) {
+					identityService.delete(listIdentity.getId(), sysUserId);
+				}
+				Person personToDelete = patientToDelete.getPerson();
+				patientToDelete.setSysUserId(sysUserId);
+				patientService.deleteAll(Arrays.asList(patientToDelete));
+				personToDelete.setSysUserId(sysUserId);
+				personService.deleteAll(Arrays.asList(personToDelete));
+
+			} catch (Exception e) {
+				LogEvent.logError(e);
+			}
+		}
+	}
 
     protected List<ObservationHistory> getObservationHistories() {
         return observationHistories;
@@ -1293,8 +1327,7 @@ public abstract class Accessioner implements IAccessioner {
      * @param e          the thrown exception of which to print the stack trace.
      */
     public void logAndAddMessage(String methodName, String messageKey, Exception e) {
-        LogEvent.logDebug(e);
-        LogEvent.logError(e.toString(), e);
+        LogEvent.logError(e);
         if (!messages.hasErrors()) {
             messages.reject(messageKey);
         }
@@ -1311,7 +1344,7 @@ public abstract class Accessioner implements IAccessioner {
 //        try {
 //
 //            String xml = projectFormMapper.getForm().getSampleXML();
-//            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "AMANI:"+xml);
+//            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "AMANI:"+xml);
 //            Document sampleDom = DocumentHelper.parseText(xml);
 //            for (Iterator i = sampleDom.getRootElement().elementIterator("sample"); i.hasNext();) {
 //                Element sampleItem = (Element) i.next();
@@ -1344,13 +1377,24 @@ public abstract class Accessioner implements IAccessioner {
 //
 //    }
 
-    private static String getObservationHistoryTypeId(ObservationHistoryTypeService ohtService, String name) {
-        ObservationHistoryType oht;
-        oht = ohtService.getByName(name);
-        if (oht != null) {
-            return oht.getId();
-        }
+	private static String getObservationHistoryTypeId(ObservationHistoryTypeService ohtService, String name) {
+		ObservationHistoryType oht;
+		oht = ohtService.getByName(name);
+		if (oht != null) {
+			return oht.getId();
+		}
 
-        return null;
-    }
+		return null;
+	}
+
+	private void updateSampleWithElectronicEOrders() {
+		try {
+			if (ObjectUtils.isNotEmpty(projectFormMapper.getForm().getElectronicOrder())) {
+				sample.setReferringId(projectFormMapper.getForm().getElectronicOrder().getExternalId());
+				sample.setClinicalOrderId(projectFormMapper.getForm().getElectronicOrder().getId());
+			}
+		} catch (Exception e) {
+			LogEvent.logError(e);
+		}
+	}
 }

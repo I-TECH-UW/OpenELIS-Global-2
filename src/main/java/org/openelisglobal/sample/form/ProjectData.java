@@ -29,6 +29,7 @@ public class ProjectData implements Serializable {
     private boolean serologyHIVTest;
     private boolean murexTest;
     private boolean integralTest;
+    private boolean genscreenTest;
     private boolean genieIITest;
     private boolean vironostikaTest;
     private boolean genieII100Test;
@@ -61,10 +62,21 @@ public class ProjectData implements Serializable {
     private boolean cd3CountTest;
     private boolean innoliaTest;
     private boolean viralLoadTest;
+    private boolean hpvTest;
     private boolean genotypingTest;
     private boolean dnaPCR;
     private boolean dbsTaken;
     private boolean dbsvlTaken;
+    private boolean pscvlTaken;
+    private boolean asanteTest;
+    private boolean plasmaTaken;
+    private boolean serumTaken;
+    private boolean preservCytTaken = true; //for HPV sample
+    private boolean abbottOrRocheAnalysis = true;//for HPV sample
+    private boolean geneXpertAnalysis;//for HPV sample
+    private boolean selfCollection; //for HPV sample collection
+    private boolean collectionDoneByHealthWorker;//for HPV sample collection
+    
 
     // ARV
     private String doctor;
@@ -481,13 +493,6 @@ public class ProjectData implements Serializable {
         EIDSites = eIDSites;
     }
 
-    public String getEIDsiteName() {
-        return EIDsiteName;
-    }
-
-    public void setEIDsiteName(String eIDsiteName) {
-        EIDsiteName = eIDsiteName;
-    }
 
     public String getEIDsiteCode() {
         return EIDsiteCode;
@@ -662,4 +667,96 @@ public class ProjectData implements Serializable {
     public void setInnoliaTest(boolean innoliaTest) {
         this.innoliaTest = innoliaTest;
     }
+
+	public boolean isPscvlTaken() {
+		return pscvlTaken;
+	}
+
+	public void setPscvlTaken(boolean pscvlTaken) {
+		this.pscvlTaken = pscvlTaken;
+	}
+
+	public boolean isDbsvlTaken() {
+		return dbsvlTaken;
+	}
+    
+	public boolean isPlasmaTaken() {
+		return plasmaTaken;
+	}
+
+	public void setPlasmaTaken(boolean plasmaTaken) {
+		this.plasmaTaken = plasmaTaken;
+	}
+
+	public boolean isSerumTaken() {
+		return serumTaken;
+	}
+
+	public void setSerumTaken(boolean serumTaken) {
+		this.serumTaken = serumTaken;
+	}
+
+	public boolean isAsanteTest() {
+		return asanteTest;
+	}
+
+	public void setAsanteTest(boolean asanteTest) {
+		this.asanteTest = asanteTest;
+	}
+
+	public boolean getGenscreenTest() {
+		return genscreenTest;
+	}
+
+	public void setGenscreenTest(boolean genscreenTest) {
+		this.genscreenTest = genscreenTest;
+	}
+
+	public boolean isHpvTest() {
+		return hpvTest;
+	}
+
+	public void setHpvTest(boolean hpvTest) {
+		this.hpvTest = hpvTest;
+	}
+
+	public boolean getSelfCollection() {
+		return selfCollection;
+	}
+
+	public void setSelfCollection(boolean selfCollection) {
+		this.selfCollection = selfCollection;
+	}
+
+	public boolean getCollectionDoneByHealthWorker() {
+		return collectionDoneByHealthWorker;
+	}
+
+	public void setCollectionDoneByHealthWorker(boolean collectionDoneByHealthWorker) {
+		this.collectionDoneByHealthWorker = collectionDoneByHealthWorker;
+	}
+
+	public boolean isAbbottOrRocheAnalysis() {
+		return abbottOrRocheAnalysis;
+	}
+
+	public void setAbbottOrRocheAnalysis(boolean abottOrRocheAnalysis) {
+		this.abbottOrRocheAnalysis = abottOrRocheAnalysis;
+	}
+
+	public boolean isGeneXpertAnalysis() {
+		return geneXpertAnalysis;
+	}
+
+	public void setGeneXpertAnalysis(boolean geneXpertAnalysis) {
+		this.geneXpertAnalysis = geneXpertAnalysis;
+	}
+
+	public boolean isPreservCytTaken() {
+		return preservCytTaken;
+	}
+
+	public void setPreservCytTaken(boolean preservCytTaken) {
+		this.preservCytTaken = preservCytTaken;
+	}
 }

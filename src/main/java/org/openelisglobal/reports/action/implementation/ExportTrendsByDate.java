@@ -69,7 +69,7 @@ public class ExportTrendsByDate extends CSVSampleExportReport implements IReport
     }
 
     protected String getReportNameForParameterPage() {
-        return MessageUtil.getMessage("reports.label.project.export") + " " + "Date d'impression du rapport";// StringUtil.getContextualMessageForKey("sample.collectionDate");
+        return MessageUtil.getMessage("reports.label.project.export") + " " + MessageUtil.getMessage("sample.export.releasedDate");
     }
 
     @Override
@@ -172,14 +172,22 @@ public class ExportTrendsByDate extends CSVSampleExportReport implements IReport
         String[] splitLine = indicStr.split(":");
         String indic = splitLine[1];
         if (indic.equals("Unsuppressed VL")) {
-            return workingResult.contains("Log7") || !workingResult.contains("L") && !workingResult.contains("X")
-                    && !workingResult.contains("<") && !workingResult.contains(">") && workingResult.length() > 0
-                    && Double.parseDouble(workingResult) >= 1000;
+        	try {
+	            return workingResult.contains("Log7") || !workingResult.contains("L") && !workingResult.contains("X")
+	                    && !workingResult.contains("<") && workingResult.length() > 0
+	                    && (workingResult.replaceAll("[^0-9]", "").length()>0 ? Double.parseDouble(workingResult.replaceAll("[^0-9]", "")) >= 1000 : false);
+        	}catch (Exception e) {
+        		return false;
+			}
         } else if (indic.equals("Suppressed VL")) {
-            return workingResult.contains("L") || workingResult.contains("<")
-                    || (workingResult.length() > 0 && !workingResult.toUpperCase().contains("X")
-                            && !workingResult.toLowerCase().contains("invalid")
-                            && Double.parseDouble(workingResult) < 1000);
+        	try {
+	            return workingResult.contains("L") || workingResult.contains("<")
+	                    || (workingResult.length() > 0 && !workingResult.toUpperCase().contains("X")
+	                            && !workingResult.toLowerCase().contains("invalid")
+	                            && Double.parseDouble(workingResult.replaceAll("[^0-9]", "")) < 1000);
+        	}catch(Exception e) {
+        		return false;
+        	}
         }
 
         return false;
@@ -235,7 +243,7 @@ public class ExportTrendsByDate extends CSVSampleExportReport implements IReport
      *
      * @return a list of the correct projects for display
      */
-    protected List<Project> getProjectList() {
+    public List<Project> getProjectList() {
         List<Project> projects = new ArrayList<>();
         Project project = new Project();
         /*

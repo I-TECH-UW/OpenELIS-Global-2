@@ -49,7 +49,7 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
         if (!hasPermission(errors, request)) {
             LogEvent.logInfo("ModuleAuthenticationInterceptor", "preHandle()",
                     "======> NOT ALLOWED ACCESS TO THIS MODULE");
-            LogEvent.logInfo(this.getClass().getName(), "method unkown", "has no permission"); //
+            LogEvent.logInfo(this.getClass().getSimpleName(), "preHandle", "has no permission"); //
             redirectStrategy.sendRedirect(request, response, "/Home?access=denied");
             return false;
         }

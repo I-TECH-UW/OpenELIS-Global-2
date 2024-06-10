@@ -30,7 +30,7 @@ public class AnalysisNotificationConfigDAOImpl extends BaseDAOImpl<AnalysisNotif
             query.setParameter("analysisId", Integer.parseInt(analysisId));
             data = query.uniqueResult();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(
                     "Error in AnalysisNotificationConfigDAOImpl getAnalysisNotificationConfigForAnalysisId()", e);
         }
@@ -49,7 +49,7 @@ public class AnalysisNotificationConfigDAOImpl extends BaseDAOImpl<AnalysisNotif
                     analysisIds.stream().map(i -> Integer.parseInt(i)).collect(Collectors.toList()));
             data = query.getResultList();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(
                     "Error in AnalysisNotificationConfigDAOImpl getAnalysisNotificationConfigForAnalysisIds()", e);
         }
@@ -67,7 +67,7 @@ public class AnalysisNotificationConfigDAOImpl extends BaseDAOImpl<AnalysisNotif
             query.setParameter("configOptionId", configOptionId);
             data = query.uniqueResult();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in AnalysisNotificationConfigDAOImpl getForConfigOption()", e);
         }
 

@@ -18,12 +18,14 @@
 package org.openelisglobal.test.beanItems;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.Pattern;
 
 import org.openelisglobal.validation.annotations.SafeHtml;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
@@ -38,11 +40,15 @@ import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 import org.openelisglobal.workplan.form.WorkplanForm;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TestResultItem implements ResultItem, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ValidAccessionNumber(format = AccessionFormat.ALPHANUM_DASH, groups = { WorkplanForm.PrintWorkplan.class,
+    @ValidAccessionNumber(format = AccessionFormat.UNFORMATTED, groups = { WorkplanForm.PrintWorkplan.class,
             LogbookResultsForm.LogbookResults.class })
     private String accessionNumber;
     private String sequenceNumber;
@@ -109,6 +115,10 @@ public class TestResultItem implements ResultItem, Serializable {
     private double upperAbnormalRange;
     private double lowerAbnormalRange;
     private String normalRange = "";
+    private double lowerCritical;
+    private double higherCritical;
+    
+    
 
     private int significantDigits = -1;
 
@@ -149,6 +159,9 @@ public class TestResultItem implements ResultItem, Serializable {
     @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { LogbookResultsForm.LogbookResults.class })
     private String resultLimitId;
     private List<IdValuePair> dictionaryResults;
+    private List<IdValuePair> methods;
+    private List<IdValuePair> referralOrganizations;
+    private List<IdValuePair> referralReasons;
     private String remove = NO;
 
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { LogbookResultsForm.LogbookResults.class })
@@ -358,14 +371,16 @@ public class TestResultItem implements ResultItem, Serializable {
         return resultDisplayType.toString();
     }
 
+    @JsonIgnore()
     public ResultDisplayType getRawResultDisplayType() {
         return resultDisplayType;
     }
-
+    
     public void setResultDisplayType(ResultDisplayType resultType) {
         resultDisplayType = resultType;
     }
 
+    @JsonIgnore()
     public ResultDisplayType getEnumResultType() {
         return resultDisplayType;
     }
@@ -410,8 +425,24 @@ public class TestResultItem implements ResultItem, Serializable {
         this.lowerAbnormalRange = lowerAbnormalRange;
     }
 
+    public double getLowerCritical() {
+        return lowerCritical;
+    }
+
+    public void setLowerCritical(double lowerCritical) {
+        this.lowerCritical = lowerCritical;
+    }
+
+    public double getHigherCritical() {
+        return higherCritical;
+    }
+
+    public void setHigherCritical(double higherCritical) {
+        this.higherCritical = higherCritical;
+    }
+
     public String getReportable() {
-        return reportable ? "Y" : "N";
+        return reportable ? IActionConstants.YES : IActionConstants.NO;
     }
 
     public void setReportable(boolean reportable) {
@@ -437,6 +468,22 @@ public class TestResultItem implements ResultItem, Serializable {
     public void setTestMethod(String testMethod) {
         this.testMethod = testMethod;
     }
+    
+    public List<IdValuePair> getReferralOrganizations() {
+        return referralOrganizations;
+    }
+
+    public void setReferralOrganizations(List<IdValuePair> referralOrganizations) {
+        this.referralOrganizations = referralOrganizations;
+    }
+    
+    public List<IdValuePair> getReferralReasons() {
+        return referralReasons;
+    }
+
+    public void setReferralReasons(List<IdValuePair> referralReasons) {
+        this.referralReasons = referralReasons;
+    }
 
     public String getRemove() {
         return remove;
@@ -446,6 +493,7 @@ public class TestResultItem implements ResultItem, Serializable {
         this.remove = remove;
     }
 
+    @JsonIgnore()
     public boolean isRemoved() {
         return NO.equals(remove);
     }
@@ -502,6 +550,16 @@ public class TestResultItem implements ResultItem, Serializable {
     public void setResultValue(String results) {
         resultValue = results;
         setShadowResultValue(results);
+    }
+    
+    public String getResultValueLog() {
+    	try {
+    		DecimalFormat df = new DecimalFormat("###.##");
+    		double val = Double.parseDouble(this.resultValue);
+    		return df.format(Math.log10(val));
+    	}catch(Exception e) {
+    		return "--";
+    	}
     }
 
     public String getShadowResultValue() {
@@ -574,6 +632,14 @@ public class TestResultItem implements ResultItem, Serializable {
 
     public List<IdValuePair> getDictionaryResults() {
         return dictionaryResults == null ? new ArrayList<>() : dictionaryResults;
+    }
+    
+    public void setMethods(List<IdValuePair> methods) {
+        this.methods = methods;
+    }
+
+    public List<IdValuePair> getMethods() {
+        return methods == null ? new ArrayList<>() : methods;
     }
 
     public String getResultLimitId() {

@@ -1,4 +1,14 @@
 site_name: OpenELIS Global Documentation
+site_description: "Technical documentation for the OpenELIS Global2"
+site_author: "I‐TECH (DIGI) - University Of Washington"
+site_url: "https://openelis-global.org/"
+
+# Repository
+repo_name: "OpenELIS-Global-2"
+repo_url: "https://github.com/I-TECH-UW/OpenELIS-Global-2"
+
+# Copyright
+copyright: "Copyright &copy; 2023 I‐TECH (DIGI) - University Of Washington"
 nav:
     - Home: index.md
     - About: about.md
@@ -25,17 +35,25 @@ nav:
        - Adding a Requester to the Consolidated server: add_dr.md
        - Database Profiles Mass facility and test catalog updates: dbprofiles.md
        - Entity Relation Diagram: entity relation diagram.md
+    - Interacting with the co-resident FHIR store: directFHIRCommunication.md
     - Troubleshooting: troubleshooting.md
+    - Google Summer of Code :
+        - GSoC 2024: gsoc.md
+    - GSoC ‐ Guidelines for Students : gsocstudentguide.md
     - Website: http://openelis-global.org
-theme: readthedocs
+
+# Theme
+theme: 
+  name: "material"
+  logo: img/openelis_logo.png
 
 markdown_extensions:
-
-  # Python Markdown
+  - admonition
+  - codehilite:
+      guess_lang: false
   - toc:
-      permalink: true
-  - tables
-markdown_extensions:
-  - tables
+      toc_depth : "3"
+  - footnotes
+
   
 

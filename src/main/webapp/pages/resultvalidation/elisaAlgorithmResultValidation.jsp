@@ -216,10 +216,10 @@ function /*boolean*/ handleEnterEvent(){
 	  		<spring:message code="quick.entry.accession.number.CI"/>
 		</th>
 		<th width="5%">
-	  		Murex
+	  		Murex Combinaison
 		</th>
 		<th width="5%">
-	  		Integral
+	  		Genscreen
 		</th>
 		<th width="5%">
 	  		Vironostika
@@ -286,6 +286,9 @@ function /*boolean*/ handleEnterEvent(){
 
 	<c:forEach items="${form.resultList}" var="resultList" varStatus="iter">
 			<form:hidden path="resultList[${iter.index}].sampleGroupingNumber" />
+			<form:hidden path="resultList[${iter.index}].accessionNumber" />
+			<form:hidden path="resultList[${iter.index}].analysisId" />
+			<form:hidden path="resultList" />
 			<c:set var="accessionNumber" value="${resultList.accessionNumber}"/>
      		<tr id='row_${iter.index}' class='${(rowColorIndex % 2 == 0) ? "evenRow" : "oddRow" }' >
      		<c:set var="rowColorIndex" value="${rowColorIndex + 1}"/>
@@ -299,7 +302,7 @@ function /*boolean*/ handleEnterEvent(){
 					<c:out value="${resultList.murexResult}"/>
 				</td>
 				<td>
-					<c:out value="${resultList.integralResult}"/>
+					<c:out value="${resultList.genscreenResult}"/>
 				</td>
 				<td>
 					<c:out value="${resultList.vironostikaResult}"/>

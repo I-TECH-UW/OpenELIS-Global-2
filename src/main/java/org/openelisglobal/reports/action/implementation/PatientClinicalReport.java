@@ -26,8 +26,12 @@ import java.util.Set;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.constants.Constants;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
+import org.openelisglobal.common.provider.validation.AlphanumAccessionValidator;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.referral.valueholder.Referral;
@@ -88,7 +92,8 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
         List<Analysis> analysisList = analysisService
                 .getAnalysesBySampleIdAndStatusId(sampleService.getId(currentSample), analysisStatusIds);
 
-        List<Analysis> filteredAnalysisList  = userService.filterAnalysesByLabUnitRoles(systemUserId, analysisList, Constants.ROLE_REPORTS);
+        List<Analysis> filteredAnalysisList = userService.filterAnalysesByLabUnitRoles(systemUserId, analysisList,
+                Constants.ROLE_REPORTS);
         currentConclusion = null;
         Set<SampleItem> sampleSet = new HashSet<>();
         List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>(filteredAnalysisList.size());
@@ -298,7 +303,14 @@ public class PatientClinicalReport extends PatientReport implements IReportCreat
                 reportItem.setSeparator(true);
             }
 
-            reportItem.setAccessionNumber(reportItem.getAccessionNumber().split("-")[0]);
+            if (AccessionFormat.ALPHANUM.toString()
+                    .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+                reportItem.setAccessionNumber(
+                        AlphanumAccessionValidator
+                                .convertAlphaNumLabNumForDisplay(reportItem.getAccessionNumber().split("-")[0]));
+            } else {
+                reportItem.setAccessionNumber(reportItem.getAccessionNumber().split("-")[0]);
+            }
             reportItem.setCompleteFlag(MessageUtil
                     .getMessage(sampleCompleteMap.get(reportItem.getAccessionNumber()) ? "report.status.complete"
                             : "report.status.partial"));

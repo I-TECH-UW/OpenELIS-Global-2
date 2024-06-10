@@ -80,7 +80,7 @@ public class ResultReportingTransfer {
 //                org.openelisglobal.patient.valueholder.Patient patient = patientService.getPatientForGuid(patientGuid);
 //                fhirTransformService.createObservationAndDiagnosticReportFromResult(result, patient);
 ////                String fhirJson = fhirTransformService.CreateFhirFromOESample(result, patient);
-////                LogEvent.logDebug(this.getClass().getName(), "sendResults", "" + fhirJson);
+////                LogEvent.logDebug(this.getClass().getSimpleName(), "sendResults", "" + fhirJson);
 //                continue;
 //            }
 //            if (!result.getReferringOrderNumber().isEmpty()) { // eOrder create FHIR
@@ -146,7 +146,7 @@ public class ResultReportingTransfer {
             try {
                 SpringContext.getBean(ReportExternalExportService.class).insert(report);
             } catch (LIMSRuntimeException e) {
-                LogEvent.logErrorStack(e);
+                LogEvent.logError(e);
             }
         }
 
@@ -190,7 +190,7 @@ public class ResultReportingTransfer {
 //					trackService.insert(document);
 //				}
             } catch (LIMSRuntimeException e) {
-                LogEvent.logErrorStack(e);
+                LogEvent.logError(e);
             }
         }
     }

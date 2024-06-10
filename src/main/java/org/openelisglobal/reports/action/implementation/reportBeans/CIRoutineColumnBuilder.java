@@ -80,11 +80,13 @@ public abstract class CIRoutineColumnBuilder extends CSVRoutineColumnBuilder {
     protected String buildWhereSamplePatienOrgSQL(Date lowDate, Date highDate) {
         String WHERE_SAMPLE_PATIENT_ORG = " WHERE " + "\n pat.id = sh.patient_id " + "\n AND sh.samp_id = s.id "
                 + "\n AND s.entered_date >= '" + formatDateForDatabaseSql(lowDate) + "'" + "\n AND s.entered_date <= '"
-                + formatDateForDatabaseSql(highDate) + "'" + "\n AND s.id = sq.sample_id "
-                + "\n AND pat.person_id = per.id " + "\n AND sq.requester_type_id = rq.id "
+                + formatDateForDatabaseSql(highDate) + "'" + "\n "
+                + "\n AND sq.requester_type_id = rq.id "
+                + "\n AND sq.sample_id= s.id "
+                + "\n AND pat.person_id = per.id " + "\n AND o.id = sq.requester_id   "
                 // + ((GenericValidator.isBlankOrNull(projectStr))?"": " AND sp.proj_id = " +
                 // projectStr)
-                + "\n AND o.id = sq.requester_id ";
+                ;
         return WHERE_SAMPLE_PATIENT_ORG;
     }
 

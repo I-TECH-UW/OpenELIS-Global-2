@@ -120,6 +120,7 @@
                    class="textButton"/><br>
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.selectList.add.explain")%><br />
             &nbsp;&nbsp;&nbsp;&nbsp;<%=MessageUtil.getMessage("configuration.selectList.add.alert")%></li>
+         <li><a href="http://localhost:3000/admin"  target="_blank"><u>Manage Testing Algorithms and Reflex tests</u></a></li>    
 
     </ul>
 

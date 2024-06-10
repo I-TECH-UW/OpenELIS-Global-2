@@ -117,7 +117,7 @@ public class MalariaReportingTransfer {
             try {
                 reportExternalExportService.insert(report);
             } catch (LIMSRuntimeException e) {
-                LogEvent.logErrorStack(e);
+                LogEvent.logError(e);
             }
         }
 
@@ -157,7 +157,7 @@ public class MalariaReportingTransfer {
 //					trackService.insert(document);
 //				}
             } catch (LIMSRuntimeException e) {
-                LogEvent.logErrorStack(e);
+                LogEvent.logError(e);
             }
         }
     }

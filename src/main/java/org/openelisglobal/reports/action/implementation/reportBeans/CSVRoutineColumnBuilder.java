@@ -134,8 +134,8 @@ abstract public class CSVRoutineColumnBuilder {
     protected ResultService resultService = SpringContext.getBean(ResultService.class);
     private ObservationHistoryTypeService ohtService = SpringContext.getBean(ObservationHistoryTypeService.class);
     private AnalyteService analyteService = SpringContext.getBean(AnalyteService.class);
-    private TestService testService = SpringContext.getBean(TestService.class);
-    private TestResultService testResultService = SpringContext.getBean(TestResultService.class);
+    protected TestService testService = SpringContext.getBean(TestService.class);
+    protected TestResultService testResultService = SpringContext.getBean(TestResultService.class);
 
     // This is the largest value possible for a postgres column name. The code will
     // convert the
@@ -150,7 +150,7 @@ abstract public class CSVRoutineColumnBuilder {
     @SuppressWarnings("unchecked")
     protected void defineAllTestsAndResults() {
         if (allTests == null) {
-            allTests = testService.getAllOrderBy("name");
+            allTests = testService.getAllOrderBy("description");
         }
         if (testResultsByTestName == null) {
             testResultsByTestName = new HashMap<>();
@@ -215,12 +215,12 @@ abstract public class CSVRoutineColumnBuilder {
         // MAKE SURE ALL GENERATED QUERIES STAY SQL INJECTION SAFE
         makeSQL();
         String sql = query.toString();
-        System.out.println("buildResultSet:" + sql);
+        LogEvent.logDebug(this.getClass().getSimpleName(), "buildResultSet", sql);
         // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===1===\n" +
         // sql.substring(0, 7000)); // the SQL is
         // chunked out only because Eclipse thinks printing really big strings to the
         // console must be wrong, so it truncates them
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "===2===\n" +
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "===2===\n" +
         // sql.substring(7000));
 //		Session session = HibernateUtil.getSession().getSessionFactory().openSession();
 //		PreparedStatement stmt = session.connection().prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -231,7 +231,8 @@ abstract public class CSVRoutineColumnBuilder {
 
             @Override
             public ResultSet execute(Connection connection) throws SQLException {
-                return connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)
+
+            	return connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)
                         .executeQuery();
             }
 
@@ -290,7 +291,7 @@ abstract public class CSVRoutineColumnBuilder {
             // if you end up where it is because the result set doesn't return a
             // column of the right name
             // Check MAX_POSTGRES_COL_NAME if this fails on a long name
-            LogEvent.logInfo(this.getClass().getName(), "method unkown",
+            LogEvent.logInfo(this.getClass().getSimpleName(), "getValue",
                     "Internal Error: Unable to find db column \"" + column.dbName + "\" in data.");
             return "?" + column.csvName + "?";
         }
@@ -299,15 +300,15 @@ abstract public class CSVRoutineColumnBuilder {
         // translate should never return null, "" is better while it is doing
         // translation.
         if (result == null) {
-            LogEvent.logInfo(this.getClass().getName(), "method unkown", "A null found " + column.dbName);
+            LogEvent.logInfo(this.getClass().getSimpleName(), "getValue", "A null found " + column.dbName);
         }
         return result;
     }
 
-    private String prepareColumnName(String columnName) {
+    protected String prepareColumnName(String columnName) {
         // trim and escape the column name so it is more safe from sql injection
         if (!columnName.matches("(?i)[a-zàâçéèêëîïôûùüÿñæœ0-9_ ()%/\\[\\]+\\-]+")) {
-            LogEvent.logWarn(this.getClass().getName(), "prepareColumnName",
+            LogEvent.logWarn(this.getClass().getSimpleName(), "prepareColumnName",
                     "potentially dangerous character detected in '" + columnName + "'");
         }
         return "\"" + trimToPostgresMaxColumnName(columnName = columnName.replace("\"", "\\\"")) + "\"";
@@ -417,7 +418,7 @@ abstract public class CSVRoutineColumnBuilder {
                 }
 
             case DEBUG:
-                LogEvent.logInfo(this.getClass().getName(), "method unkown",
+                LogEvent.logInfo(this.getClass().getSimpleName(), "translate",
                         "Processing Column Value: " + csvName + " \"" + value + "\"");
             case BLANK:
                 return "";
@@ -501,7 +502,7 @@ abstract public class CSVRoutineColumnBuilder {
             List<Result> results = resultService.getResultsForTestAndSample(sampleId, testId);
             StringBuilder multi = new StringBuilder();
             for (Result result : results) {
-                multi.append(ResourceTranslator.DictionaryTranslator.getInstance().translateRaw(result.getValue()));
+                multi.append(ResourceTranslator.DictionaryTranslator.getInstance().translateRaw(result.getValue().replace(",", ".")));
                 multi.append(",");
             }
 
@@ -533,23 +534,26 @@ abstract public class CSVRoutineColumnBuilder {
         // String excludeAnalytes = getExcludedAnalytesSet();
         SQLConstant listName = SQLConstant.RESULT;
         query.append(", \n\n ( SELECT si.samp_id, si.id AS sampleItem_id, si.sort_order AS sampleItemNo, " + listName
-                + ".* " + " FROM sample_item AS si LEFT JOIN \n ");
+                + ".* " + " FROM sample_item AS si JOIN \n ");
 
         // Begin cross tab / pivot table
-        query.append(" crosstab( " + "\n 'SELECT si.id, t.description, r.value "
-                + "\n FROM clinlims.result AS r, clinlims.analysis AS a, clinlims.sample_item AS si, clinlims.sample AS s, clinlims.test AS t, clinlims.test_result AS tr "
-                + "\n WHERE " + "\n s.id = si.samp_id" + " AND s.entered_date >= date(''"
+        query.append(" crosstab( " + "\n 'SELECT si.id, t.description, replace(replace(replace(replace(r.value ,E''\\n'', '' ''), E''\\t'', '' ''), E''\\r'', '' ''),'','',''.'') "
+                + "\n FROM clinlims.result AS r join clinlims.analysis AS a on a.id = r.analysis_id \n "
+                + " join clinlims.sample_item AS si on si.id = a.sampitem_id \n "
+                + " join clinlims.sample AS s on s.id = si.samp_id \n"
+                + " join clinlims.test_result AS tr on r.test_result_id = tr.id \n"
+                + " join clinlims.test AS t on tr.test_id = t.id \n"
+                + " left join sample_projects sp on si.samp_id = sp.samp_id \n"
+                + "\n WHERE sp.id IS NULL AND s.entered_date >= date(''"
                 + formatDateForDatabaseSql(lowDate) + "'')  AND s.entered_date <= date(''"
-                + formatDateForDatabaseSql(highDate) + " '') " + "\n AND s.id = si.samp_id "
-                + "\n AND si.id = a.sampitem_id "
+                + formatDateForDatabaseSql(highDate) + " '') " + "\n "
                 // sql injection safe as user cannot overwrite validStatusId in database
-                + ((validStatusId == null) ? "" : " AND a.status_id = " + validStatusId)
-                + "\n AND a.id = r.analysis_id " + "\n AND r.test_result_id = tr.id" + "\n AND tr.test_id = t.id       "
+                ///+ ((validStatusId == null) ? "" : " AND a.status_id = " + validStatusId)
                 // + (( excludeAnalytes == null)?"":
                 // " AND r.analyte_id NOT IN ( " + excludeAnalytes) + ")"
                 // + " AND a.test_id = t.id "
                 + "\n ORDER BY 1, 2 "
-                + "\n ', 'SELECT description FROM test where is_active = ''Y'' ORDER BY 1' ) ");
+                + "\n ', 'SELECT t.description FROM test t where t.is_active = ''Y'' ORDER BY 1' ) ");
         // end of cross tab
 
         // Name the test pivot table columns . We'll name them all after the
@@ -561,11 +565,7 @@ abstract public class CSVRoutineColumnBuilder {
                 + "\"si_id\" numeric(10) ");
         for (Test col : allTests) {
             String testName = TestServiceImpl.getLocalizedTestNameWithType(col);
-            if (!"CD4".equals(testName)) { // CD4 is listed as a test name but
-                                           // it isn't clear it should be line
-                                           // 446 may also have to be changed
-                query.append("\n, " + prepareColumnName(testName) + " varchar(200) ");
-            }
+            query.append("\n, " + prepareColumnName(testName) + " varchar(200) ");
         }
         query.append(" ) \n");
         // left join all sample Items from the right sample range to the results table.
@@ -661,9 +661,7 @@ abstract public class CSVRoutineColumnBuilder {
     protected void addAllResultsColumns() {
         for (Test test : allTests) {
             String testTag = TestServiceImpl.getLocalizedTestNameWithType(test);
-            if (!"CD4".equals(testTag)) {
-                add(testTag, TestServiceImpl.getLocalizedTestNameWithType(test), TEST_RESULT);
-            }
+            add(testTag, TestServiceImpl.getLocalizedTestNameWithType(test), TEST_RESULT);
         }
     }
 

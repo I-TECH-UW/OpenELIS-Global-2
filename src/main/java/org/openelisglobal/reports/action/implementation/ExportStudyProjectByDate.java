@@ -25,14 +25,21 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.project.service.ProjectService;
 import org.openelisglobal.project.valueholder.Project;
+import org.openelisglobal.reports.action.implementation.reportBeans.ARVFollowupColumnBuilder;
+import org.openelisglobal.reports.action.implementation.reportBeans.ARVInitialColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.CIColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder;
+import org.openelisglobal.reports.action.implementation.reportBeans.HPVColumnBuilder;
+import org.openelisglobal.reports.action.implementation.reportBeans.HPVColumnBuilder;
+import org.openelisglobal.reports.action.implementation.reportBeans.RTNColumnBuilder;
+import org.openelisglobal.reports.action.implementation.reportBeans.RTRIColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.StudyEIDColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.StudyVLColumnBuilder;
 import org.openelisglobal.reports.form.ReportForm;
@@ -180,10 +187,22 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
 
     private CSVColumnBuilder getColumnBuilder(String projectId) {
         String projectTag = CIColumnBuilder.translateProjectId(projectId);
-        if (projectTag.equalsIgnoreCase("DBS")) {
+        if (projectTag.equals("ARVB")) {
+            return new ARVInitialColumnBuilder(dateRange, projectStr);
+        } else if (projectTag.equals("ARVS")) {
+            return new ARVFollowupColumnBuilder(dateRange, projectStr);
+        } else if (projectTag.equalsIgnoreCase("DBS")) {
             return new StudyEIDColumnBuilder(dateRange, projectStr, dateType);
         } else if (projectTag.equalsIgnoreCase("VLS")) {
             return new StudyVLColumnBuilder(dateRange, projectStr, dateType);
+        }else if (projectTag.equalsIgnoreCase("RTN")) {
+            return new RTNColumnBuilder(dateRange, projectStr);
+        } else if (projectTag.equalsIgnoreCase("IND")) {
+            return new RTNColumnBuilder(dateRange, projectStr);
+        }else if (projectTag.equalsIgnoreCase("RTRI")) {
+            return new RTRIColumnBuilder(dateRange, projectStr, dateType);
+        }else if (projectTag.equalsIgnoreCase("HPV")) {
+            return new HPVColumnBuilder(dateRange, projectStr, dateType);
         }
         throw new IllegalArgumentException();
     }
@@ -194,10 +213,22 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
     protected List<Project> getProjectList() {
         List<Project> projects = new ArrayList<>();
         Project project = new Project();
+        project.setProjectName("Antiretroviral Study");
+        projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
+        project.setProjectName("Antiretroviral Followup Study");
+        projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
+        project.setProjectName("Routine HIV Testing");
         project.setProjectName("Early Infant Diagnosis for HIV Study");
         projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
         project.setProjectName("Viral Load Results");
         projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
+        project.setProjectName("Indeterminate Results");
+        projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
+        project.setProjectName("Recency Testing");
+        projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
+        project.setProjectName("HPV Testing");
+        projects.add(SpringContext.getBean(ProjectService.class).getProjectByName(project, false, false));
+        projects.removeIf(Objects::isNull);
         return projects;
     }
 

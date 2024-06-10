@@ -79,6 +79,39 @@ public class PatientSearchLocalWorker extends PatientSearchWorker {
         return success;
     }
 
+    @Override
+    public List<PatientSearchResults> getPatientSearchResults(String lastName, String firstName, String STNumber, String subjectNumber,
+            String nationalID, String patientID, String guid, String dateOfBirth, String gender) {
+
+
+        if (GenericValidator.isBlankOrNull(lastName) && GenericValidator.isBlankOrNull(firstName)
+                && GenericValidator.isBlankOrNull(STNumber) && GenericValidator.isBlankOrNull(subjectNumber)
+                && GenericValidator.isBlankOrNull(nationalID) && GenericValidator.isBlankOrNull(patientID)
+                && GenericValidator.isBlankOrNull(guid) && GenericValidator.isBlankOrNull(dateOfBirth)
+                && GenericValidator.isBlankOrNull(gender)) {
+
+            return new ArrayList<>();
+        }
+
+        // N.B. results do not have the referrinngPatientId information but it is not
+        // displayed so for now it will be left as null
+        List<PatientSearchResults> results = searchResultsService.getSearchResults(lastName, firstName, STNumber,
+                subjectNumber, nationalID, nationalID, patientID, guid, dateOfBirth, gender);
+        if (!GenericValidator.isBlankOrNull(nationalID)) {
+            List<PatientSearchResults> observationResults = getObservationsByReferringPatientId(nationalID);
+            results.addAll(observationResults);
+        }
+        sortPatients(results);
+
+        if (!results.isEmpty()) {
+            for (PatientSearchResults singleResult : results) {
+                singleResult.setDataSourceName(MessageUtil.getMessage("patient.local.source"));
+            }
+        } 
+
+        return results;
+    }
+
     private List<PatientSearchResults> getObservationsByReferringPatientId(String referringId) {
         List<PatientSearchResults> resultList = new ArrayList<>();
         List<ObservationHistory> observationList = SpringContext.getBean(ObservationHistoryService.class)

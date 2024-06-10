@@ -59,13 +59,14 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
             response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
             return;
         }
-
-        if ("true".equalsIgnoreCase(request.getParameter("prePrinting"))) {
+        if ("block".equals(request.getParameter("labelType")) || "slide".equals(request.getParameter("labelType"))) {
+            printPathologyBarcodeLabel(request, response);
+        } else if ("true".equalsIgnoreCase(request.getParameter("prePrinting"))) {
             // writes to response
             try {
                 prePrintLabels(request, response);
             } catch (NumberFormatException | LIMSInvalidConfigurationException e) {
-                LogEvent.logError(this.getClass().getName(), "doGet",
+                LogEvent.logError(this.getClass().getSimpleName(), "doGet",
                         "invalid configuration, could not generate a pre-printed accession number");
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.setContentType("text/html; charset=utf-8");
@@ -77,6 +78,24 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
             printExistingOrder(request, response);
         }
 
+    }
+
+    private void printPathologyBarcodeLabel(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        // create requested labels as pdf stream
+        BarcodeLabelMaker labelMaker = new BarcodeLabelMaker();
+        UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
+        labelMaker.setSysUserId(String.valueOf(usd.getSystemUserId()));
+
+        labelMaker.generateGenericBarcodeLabel(request.getParameter("code"), request.getParameter("labelType"));
+        ByteArrayOutputStream labelAsOutputStream = labelMaker.createLabelsAsStream();
+
+        response.setContentType("application/pdf");
+        response.addHeader("Content-Disposition", "inline; filename=" + "barcode.pdf");
+        response.setContentLength(labelAsOutputStream.size());
+        labelAsOutputStream.writeTo(response.getOutputStream());
+        response.getOutputStream().flush();
+        response.getOutputStream().close();
     }
 
     private void prePrintLabels(HttpServletRequest request, HttpServletResponse response)
@@ -105,7 +124,7 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
                 Integer.parseInt(request.getParameter("numOrderLabelsPerSet")),
                 Integer.parseInt(request.getParameter("numSpecimenLabelsPerSet")), request.getParameter("facilityName"),
                 tests, startingAt);
-        ByteArrayOutputStream labelAsOutputStream = labelMaker.createPrePrintedLabelsAsStream();
+        ByteArrayOutputStream labelAsOutputStream = labelMaker.createLabelsAsStream();
 
         // if empty stream, assume at max printing
         response.setContentType("application/pdf");
@@ -163,7 +182,7 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
         labelMaker.setOverride(override);
         labelMaker.setSysUserId(String.valueOf(usd.getSystemUserId()));
         labelMaker.generateLabels(labNo, type, quantity, override);
-        ByteArrayOutputStream labelAsOutputStream = labelMaker.createLabelsAsStream();
+        ByteArrayOutputStream labelAsOutputStream = labelMaker.createLabelsAsStreamWithMaximumPrints();
 
         // if empty stream, assume at max printing
         if (labelAsOutputStream.size() == 0) {

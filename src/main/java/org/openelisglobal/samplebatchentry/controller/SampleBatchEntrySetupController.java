@@ -13,6 +13,7 @@ import org.openelisglobal.sample.controller.BaseSampleEntryController;
 import org.openelisglobal.sample.form.ProjectData;
 import org.openelisglobal.samplebatchentry.form.SampleBatchEntryForm;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
+import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -52,7 +53,8 @@ public class SampleBatchEntrySetupController extends BaseSampleEntryController {
         form.setProjectDataVL(new ProjectData());
         form.setProjectDataEID(new ProjectData());
 
-        String siteInfo = siteInformationService.getSiteInformationByName("Study Management tab").getValue();
+        SiteInformation siteInfoTab = siteInformationService.getSiteInformationByName("Study Management tab");
+        String siteInfo = siteInfoTab !=null? siteInfoTab.getValue():"true";
         request.getSession().setAttribute("siteInfo", siteInfo);
 
         addProjectList(form);

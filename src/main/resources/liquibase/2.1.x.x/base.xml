@@ -5,6 +5,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 	  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+	<include file="liquibase/2.1.x.x/fix_migration_issues.xml"/>
 	<include file="liquibase/2.1.x.x/external_connections.xml"/>
 	<include file="liquibase/2.1.x.x/lab_director_signature.xml"/>
 	<include file="liquibase/2.1.x.x/sample_nature.xml"/>

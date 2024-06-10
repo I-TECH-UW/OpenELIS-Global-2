@@ -52,7 +52,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TypeOfSampleTest getData()", e);
         }
     }
@@ -73,7 +73,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
             list = query.list();
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TypeOfSampleTest getAllTypeOfSamples()", e);
         }
 
@@ -95,7 +95,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
             query.setMaxResults(endingRecNo - 1);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TypeOfSampleTest getPageOfTypeOfSamples()", e);
         }
 
@@ -108,7 +108,7 @@ public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, Strin
             tos = entityManager.unwrap(Session.class).get(TypeOfSampleTest.class, idString);
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TypeOfSampleTest readTypeOfSample()", e);
         }
 

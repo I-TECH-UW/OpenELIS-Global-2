@@ -201,14 +201,14 @@ public class StringUtil {
                 String post = phone.substring(9, 13);
                 returnPhone = area + "/" + pre + "-" + post;
             } catch (RuntimeException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
             }
 
         }
         if (!StringUtil.isNullorNill(ext)) {
             returnPhone = returnPhone + "." + ext;
         }
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "This is phone "
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "This is phone "
         // + returnPhone);
         return returnPhone;
     }
@@ -223,7 +223,7 @@ public class StringUtil {
                 String post = phone.substring(8, 12);
                 returnPhone = "(" + area + ")" + pre + "-" + post;
             } catch (RuntimeException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
             }
 
         }
@@ -238,7 +238,7 @@ public class StringUtil {
             try {
                 returnPhone = phone.substring(13);
             } catch (RuntimeException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
             }
 
         }
@@ -265,7 +265,7 @@ public class StringUtil {
             }
             return sb.toString();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error converting string to regular expression ", e);
         }
     }
@@ -277,7 +277,7 @@ public class StringUtil {
             }
             return "";
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error trimming string ", e);
         }
     }
@@ -431,7 +431,7 @@ public class StringUtil {
             columns[columns.length - 1] = columns[columns.length - 1] + System.getProperty("line.separator");
             return columns;
         } catch (CsvException | IOException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(e.getMessage(), e);
         }
     }
@@ -450,7 +450,7 @@ public class StringUtil {
         try (CSVReader reader = new CSVReaderBuilder(new StringReader(line)).withCSVParser(parser).build();) {
             return reader.readAll();
         } catch (CsvException | IOException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(e.getMessage(), e);
         }
     }
@@ -634,7 +634,7 @@ public class StringUtil {
         try {
             return new Double(significantDigits);
         } catch (NumberFormatException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             return null;
         }
     }

@@ -28,6 +28,8 @@ import java.util.Set;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.constants.Constants;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
+import org.openelisglobal.common.provider.validation.AlphanumAccessionValidator;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -129,8 +131,9 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
         boolean isConfirmationSample = sampleService.isConfirmationSample(currentSample);
         List<Analysis> analysisList = analysisService
                 .getAnalysesBySampleIdAndStatusId(sampleService.getId(currentSample), analysisStatusIds);
-        
-        List<Analysis> filteredAnalysisList  = userService.filterAnalysesByLabUnitRoles(systemUserId, analysisList, Constants.ROLE_REPORTS);   
+
+        List<Analysis> filteredAnalysisList = userService.filterAnalysesByLabUnitRoles(systemUserId, analysisList,
+                Constants.ROLE_REPORTS);
         List<ClinicalPatientData> currentSampleReportItems = new ArrayList<>(filteredAnalysisList.size());
         currentConclusion = null;
         for (Analysis analysis : filteredAnalysisList) {
@@ -270,8 +273,14 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
         data.setDept(parentData.getDept());
         data.setCommune(parentData.getCommune());
         data.setStNumber(parentData.getStNumber());
-        data.setAccessionNumber(parentData.getAccessionNumber());
         data.setLabOrderType(parentData.getLabOrderType());
+        if (AccessionFormat.ALPHANUM.toString()
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            data.setAccessionNumber(
+                    AlphanumAccessionValidator.convertAlphaNumLabNumForDisplay(parentData.getAccessionNumber()));
+        } else {
+            data.setAccessionNumber(parentData.getAccessionNumber());
+        }
     }
 
     @Override
@@ -329,25 +338,28 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
             }
         });
 
-//        ArrayList<ClinicalPatientData> augmentedList = new ArrayList<>(reportItems.size());
-//        HashSet<String> parentResults = new HashSet<>();
-//        for (ClinicalPatientData data : reportItems) {
-//            if (data.getParentResult() != null && !parentResults.contains(data.getParentResult().getId())) {
-//                parentResults.add(data.getParentResult().getId());
-//                ClinicalPatientData marker = new ClinicalPatientData(data);
-//                ResultService resultResultService = SpringContext.getBean(ResultService.class);
-//                Result result = (data.getParentResult());
-//                marker.setTestName(resultResultService.getSimpleResultValue(result));
-//                marker.setResult(null);
-//                marker.setTestRefRange(null);
-//                marker.setParentMarker(true);
-//                augmentedList.add(marker);
-//            }
-//
-//            augmentedList.add(data);
-//        }
-//
-//        reportItems = augmentedList;
+        // ArrayList<ClinicalPatientData> augmentedList = new
+        // ArrayList<>(reportItems.size());
+        // HashSet<String> parentResults = new HashSet<>();
+        // for (ClinicalPatientData data : reportItems) {
+        // if (data.getParentResult() != null &&
+        // !parentResults.contains(data.getParentResult().getId())) {
+        // parentResults.add(data.getParentResult().getId());
+        // ClinicalPatientData marker = new ClinicalPatientData(data);
+        // ResultService resultResultService =
+        // SpringContext.getBean(ResultService.class);
+        // Result result = (data.getParentResult());
+        // marker.setTestName(resultResultService.getSimpleResultValue(result));
+        // marker.setResult(null);
+        // marker.setTestRefRange(null);
+        // marker.setParentMarker(true);
+        // augmentedList.add(marker);
+        // }
+        //
+        // augmentedList.add(data);
+        // }
+        //
+        // reportItems = augmentedList;
 
         String currentPanelId = null;
         for (ClinicalPatientData reportItem : reportItems) {

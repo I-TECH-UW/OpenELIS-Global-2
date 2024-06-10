@@ -167,7 +167,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestTrailer getData()", e);
         }
     }
@@ -184,7 +184,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestTrailer getAllTestTrailers()", e);
         }
 
@@ -208,7 +208,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestTrailer getPageOfTestTrailers()", e);
         }
 
@@ -221,7 +221,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
             tr = entityManager.unwrap(Session.class).get(TestTrailer.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestTrailer readTestTrailer()", e);
         }
 
@@ -246,7 +246,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestTrailer getTestTrailerByName()", e);
         }
     }
@@ -264,7 +264,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestTrailer getTestTrailers(String filter)", e);
         }
         return list;
@@ -307,7 +307,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateTestTrailerExists()", e);
         }
     }

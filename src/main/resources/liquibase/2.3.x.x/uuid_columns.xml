@@ -32,38 +32,7 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet author="csteele" id="2">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<indexExists schemaName="clinlims" tableName="analysis"
-					indexName="analysis_fhir_uuid_index" />
-			</not>
-		</preConditions>
-		<createIndex indexName="analysis_fhir_uuid_index"
-			tableName="analysis">
-			<column name="fhir_uuid" />
-		</createIndex>
-		<createIndex indexName="result_fhir_uuid_index"
-			tableName="result">
-			<column name="fhir_uuid" />
-		</createIndex>
-		<createIndex indexName="sample_item_fhir_uuid_index"
-			tableName="sample_item">
-			<column name="fhir_uuid" />
-		</createIndex>
-		<createIndex indexName="organization_fhir_uuid_index"
-			tableName="organization">
-			<column name="fhir_uuid" />
-		</createIndex>
-		<createIndex indexName="patient_fhir_uuid_index"
-			tableName="patient">
-			<column name="fhir_uuid" />
-		</createIndex>
-		<createIndex indexName="sample_fhir_uuid_index"
-			tableName="sample">
-			<column name="fhir_uuid"/>
-		</createIndex>
-	</changeSet>
+	
 
 	<changeSet author="csteele" id="3">
 		<preConditions onFail="MARK_RAN">

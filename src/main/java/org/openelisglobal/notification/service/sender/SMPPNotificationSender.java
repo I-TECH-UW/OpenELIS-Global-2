@@ -54,15 +54,15 @@ public class SMPPNotificationSender {
                         new GeneralDataCoding(Alphabet.ALPHA_DEFAULT, MessageClass.CLASS1, false), (byte) 0,
                         notification.getMessage().getBytes());
 
-                LogEvent.logDebug(this.getClass().getName(), "send", "sms messageId: " + messageId);
+                LogEvent.logDebug(this.getClass().getSimpleName(), "send", "sms messageId: " + messageId);
             } catch (IllegalArgumentException | PDUException | ResponseTimeoutException | InvalidResponseException
                     | NegativeResponseException | IOException e) {
-                LogEvent.logErrorStack(e);
+                LogEvent.logError(e);
             }
 
             session.unbindAndClose();
         } catch (IOException | URISyntaxException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
 
     }
@@ -77,7 +77,7 @@ public class SMPPNotificationSender {
         URI uri = new URI(address);
         String systemId = session.connectAndBind(uri.getHost(), uri.getPort(), new BindParameter(BindType.BIND_TX,
                 username, password, bindParamSystemType, TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
-        LogEvent.logDebug(this.getClass().getName(), "initSession",
+        LogEvent.logDebug(this.getClass().getSimpleName(), "initSession",
                 "Connected with SMPP with system id {" + systemId + "}");
         return session;
     }

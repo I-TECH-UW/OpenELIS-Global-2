@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analyzer.service.BidirectionalAnalyzer;
+import org.openelisglobal.analyzerimport.analyzerreaders.ASTMAnalyzerReader;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerReader;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerReaderFactory;
 import org.openelisglobal.analyzerimport.util.AnalyzerTestNameCache;
@@ -92,36 +93,35 @@ public class AnalyzerImportController implements IActionConstants {
     }
 
     @PostMapping("/analyzer/astm")
-    public void doPost(@RequestBody String message, HttpServletRequest request, HttpServletResponse response)
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        AnalyzerReader reader = null;
+        ASTMAnalyzerReader reader = null;
         boolean read = false;
-        InputStream stream = new ByteArrayInputStream(message.getBytes());
+        InputStream stream = request.getInputStream();
 
-        reader = AnalyzerReaderFactory.getReaderFor("astm");
+        reader = (ASTMAnalyzerReader) AnalyzerReaderFactory.getReaderFor("astm");
 
         if (reader != null) {
             read = reader.readStream(stream);
-        }
-        if (read) {
-            boolean successful = reader.insertAnalyzerData(getSysUserId(request));
-
-            if (successful) {
-                response.getWriter().print("success");
-                response.setStatus(HttpServletResponse.SC_OK);
-                return;
-            } else {
-                if (reader != null) {
-                    response.getWriter().print(reader.getError());
+            if (read) {
+                boolean success = reader.processData(getSysUserId(request));
+                if (reader.hasResponse()) {
+                    response.getWriter().print(reader.getResponse());
+                } 
+                if (success) {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    return;
+                } else {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    return;
                 }
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
-
-        } else {
-            if (reader != null) {
+            } else {
                 response.getWriter().print(reader.getError());
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return;
             }
+        } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }

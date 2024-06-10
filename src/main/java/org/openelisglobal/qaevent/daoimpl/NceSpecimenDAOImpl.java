@@ -29,7 +29,7 @@ public class NceSpecimenDAOImpl extends BaseDAOImpl<NceSpecimen, String> impleme
             query.setParameter("nceId", nceId);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in NceCategory getAllNceCategory()", e);
         }
         return list;

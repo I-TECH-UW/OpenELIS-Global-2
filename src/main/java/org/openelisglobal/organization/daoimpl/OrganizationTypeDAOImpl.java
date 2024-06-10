@@ -48,7 +48,7 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
                     OrganizationType.class);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Organization getAllOrganizationTypes()", e);
         }
         return list;
@@ -68,7 +68,7 @@ public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, Strin
             List<OrganizationType> list = query.list();
             return list.size() > 0 ? list.get(0) : null;
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in OrganizationType getOrganizationTypeByName()", e);
         }
     }

@@ -23,4 +23,18 @@
 			<column name="is_active" value="true"/>
 		</insert>
 	</changeSet>
+	<changeSet author="moses_mutesa" id="2">
+	<preConditions onFail="MARK_RAN">
+		<sqlCheck expectedResult="0">SELECT count(*) FROM
+                                clinlims.system_module_url WHERE url_path = '/ResultValidationByTestDate'
+                        </sqlCheck>
+	</preConditions>
+	<comment>Add ResultValidationByTestDate module url to the ResultsValidationGeneral module</comment>
+	<insert schemaName="clinlims" tableName="system_module_url">
+		<column name="id" valueSequenceNext="system_module_url_seq" />
+		<column name="url_path" value="/ResultValidationByTestDate" />
+		<column name="system_module_id"
+                                valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'ResultsValidationGeneral')" />
+	</insert>
+</changeSet>
 </databaseChangeLog>

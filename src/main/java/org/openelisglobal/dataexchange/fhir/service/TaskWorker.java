@@ -108,42 +108,42 @@ public class TaskWorker {
             switch (checkResult) {
             case ORDER_FOUND_QUEUED:
                 if (orderType == OrderType.CANCEL) {
-                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                    LogEvent.logDebug(this.getClass().getSimpleName(), "handleOrderRequest",
                             "cancelling order: " + referringOrderNumber);
                     cancelOrder(referringOrderNumber);
                     return TaskResult.OK;
                 } else {
-                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                    LogEvent.logDebug(this.getClass().getSimpleName(), "handleOrderRequest",
                             "duplicate order found: " + referringOrderNumber);
                     return TaskResult.DUPLICATE_ORDER;
                 }
             case ORDER_FOUND_INPROGRESS:
-                LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                LogEvent.logDebug(this.getClass().getSimpleName(), "handleOrderRequest",
                         "order: " + referringOrderNumber + " is duplicate or already in progress");
                 return orderType == OrderType.CANCEL ? TaskResult.NON_CANCELABLE_ORDER : TaskResult.DUPLICATE_ORDER;
             case NOT_FOUND:
                 if (orderType == OrderType.CANCEL) {
-                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "cant cancel order not found");
+                    LogEvent.logDebug(this.getClass().getSimpleName(), "handleOrderRequest", "cant cancel order not found");
                     return TaskResult.NON_CANCELABLE_ORDER;
                 } else {
-                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                    LogEvent.logDebug(this.getClass().getSimpleName(), "handleOrderRequest",
                             "no order found, entering order: " + referringOrderNumber);
                     insertNewOrder(referringOrderNumber, message, patient, priority, ExternalOrderStatus.Entered);
                     return TaskResult.OK;
                 }
             case ORDER_FOUND_CANCELED:
                 if (orderType == OrderType.CANCEL) {
-                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                    LogEvent.logDebug(this.getClass().getSimpleName(), "handleOrderRequest",
                             "can't cancel already cancelled order: " + referringOrderNumber);
                     return TaskResult.NON_CANCELABLE_ORDER;
                 } else {
-                    LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                    LogEvent.logDebug(this.getClass().getSimpleName(), "handleOrderRequest",
                             "order found cancelled, entering order: " + referringOrderNumber);
                     insertNewOrder(referringOrderNumber, message, patient, priority, ExternalOrderStatus.Entered);
                     return TaskResult.OK;
                 }
             default:
-                LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                LogEvent.logDebug(this.getClass().getSimpleName(), "handleOrderRequest",
                         "undetermined issue in correctly interpreted request: " + interpretResults.get(0).toString()
                                 + " check result: " + checkResult + " for: " + referringOrderNumber + " " + orderType
                                 + " ");
@@ -154,17 +154,17 @@ public class TaskWorker {
         } else if (interpretResults.get(0) == InterpreterResults.UNSUPPORTED_TESTS
                 && checkResult == CheckResult.ORDER_FOUND_QUEUED) {
             if (orderType == OrderType.CANCEL) {
-                LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                LogEvent.logDebug(this.getClass().getSimpleName(), "handleOrderRequest",
                         "cancelling order: " + referringOrderNumber + " despite wrong test specified");
                 cancelOrder(referringOrderNumber);
                 return TaskResult.OK;
             } else {
-                LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+                LogEvent.logDebug(this.getClass().getSimpleName(), "handleOrderRequest",
                         "order: " + referringOrderNumber + " already entered");
                 return TaskResult.DUPLICATE_ORDER;
             }
         } else if (interpretResults.get(0) == InterpreterResults.UNSUPPORTED_TESTS) {
-            LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest",
+            LogEvent.logDebug(this.getClass().getSimpleName(), "handleOrderRequest",
                     "TaskWorker:unsupported tests: " + referringOrderNumber + orderType);
             insertNewOrder(referringOrderNumber, message, patient, priority, ExternalOrderStatus.NonConforming);
             return TaskResult.MESSAGE_ERROR;
@@ -172,12 +172,12 @@ public class TaskWorker {
                 || interpretResults.get(0) == InterpreterResults.MISSING_PATIENT_DOB
                 || interpretResults.get(0) == InterpreterResults.MISSING_PATIENT_GENDER
                 || interpretResults.get(0) == InterpreterResults.MISSING_PATIENT_IDENTIFIER) {
-            LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "missing patient info: "
+            LogEvent.logDebug(this.getClass().getSimpleName(), "handleOrderRequest", "missing patient info: "
                     + interpretResults.get(0).toString() + "for" + referringOrderNumber + " " + orderType + " ");
             insertNewOrder(referringOrderNumber, message, patient, priority, ExternalOrderStatus.NonConforming);
             return TaskResult.MESSAGE_ERROR;
         } else {
-            LogEvent.logDebug(this.getClass().getName(), "handleOrderRequest", "undetermined issue: "
+            LogEvent.logDebug(this.getClass().getSimpleName(), "handleOrderRequest", "undetermined issue: "
                     + interpretResults.get(0).toString() + " for: " + referringOrderNumber + " " + orderType + " ");
             insertNewOrder(referringOrderNumber, message, patient, priority, ExternalOrderStatus.NonConforming);
             return TaskResult.MESSAGE_ERROR;
@@ -186,13 +186,13 @@ public class TaskWorker {
     }
 
     private void cancelOrder(String referringOrderNumber) {
-        LogEvent.logDebug(this.getClass().getName(), "cancelOrder", "cancelOrder: ");
+        LogEvent.logDebug(this.getClass().getSimpleName(), "cancelOrder", "cancelOrder: ");
         persister.cancelOrder(referringOrderNumber);
     }
 
     private void insertNewOrder(String referringOrderNumber, String message, MessagePatient patient,
             OrderPriority orderPriority, ExternalOrderStatus eoStatus) {
-        LogEvent.logDebug(this.getClass().getName(), "insertNewOrder",
+        LogEvent.logDebug(this.getClass().getSimpleName(), "insertNewOrder",
                 "TaskWorker:insertNewOrder: " + referringOrderNumber);
         ElectronicOrder eOrder = new ElectronicOrder();
         eOrder.setExternalId(referringOrderNumber);

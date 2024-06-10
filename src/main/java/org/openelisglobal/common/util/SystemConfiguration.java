@@ -62,14 +62,14 @@ public class SystemConfiguration {
 
         } catch (IOException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
         } finally {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
                 } catch (IOException e) {
                     // bugzilla 2154
-                    LogEvent.logError(e.toString(), e);
+                    LogEvent.logError(e);
                 }
             }
 
@@ -664,7 +664,7 @@ public class SystemConfiguration {
     // 1742 openreports static ids (tests, projects etc.)
     public String getStaticIdByName(String name) {
         String testId = properties.getProperty(name);
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "SystemConfig
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "SystemConfig
         // getting test by name " + name);
         if (testId != null) {
             return testId;

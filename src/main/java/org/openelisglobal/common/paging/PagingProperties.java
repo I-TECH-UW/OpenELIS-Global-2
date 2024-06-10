@@ -5,12 +5,22 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PagingProperties {
+    @Value("${org.openelisglobal.paging.patients.pageSize:99}")
+    private Integer patientsPageSize;
 
     @Value("${org.openelisglobal.paging.results.pageSize:99}")
     private Integer resultsPageSize;
 
     @Value("${org.openelisglobal.paging.validation.pageSize:99}")
     private Integer validationPageSize;
+
+    public Integer getPatientsPageSize() {
+        return patientsPageSize;
+    }
+
+    public void setPatientsPageSize(Integer patientsPageSize) {
+        this.patientsPageSize = patientsPageSize;
+    }
 
     public Integer getResultsPageSize() {
         return resultsPageSize;

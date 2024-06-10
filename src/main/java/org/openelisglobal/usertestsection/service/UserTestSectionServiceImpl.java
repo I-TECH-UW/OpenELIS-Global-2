@@ -51,7 +51,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
             }
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getAllUserTestSectionsByName()", e);
         }
         return list;
@@ -99,7 +99,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 //            }
 //        } catch (RuntimeException e) {
 //            // bugzilla 2154
-//            LogEvent.logError(e.toString(), e);
+//            LogEvent.logError(e);
 //            throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getPageOfTestsBySysUserId()", e);
 //        }
 //        return list;
@@ -125,7 +125,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 //            }
 //        } catch (RuntimeException e) {
 //            // bugzilla 2154
-//            LogEvent.logError(e.toString(), e);
+//            LogEvent.logError(e);
 //            throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getAllUserTestSections()", e);
 //        }
 //        return list;
@@ -154,7 +154,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
             }
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getAllUserTests()", e);
         }
         return list;
@@ -234,7 +234,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 //            }
 //        } catch (RuntimeException e) {
 //            // bugzilla 2154
-//            LogEvent.logError(e.toString(), e);
+//            LogEvent.logError(e);
 //            throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getSamplePdfList()", e);
 //        }
 //        return samplePdfList;
@@ -269,7 +269,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
 //
 //        } catch (RuntimeException e) {
 //            // bugzilla 2154
-//            LogEvent.logError(e.toString(), e);
+//            LogEvent.logError(e);
 //            throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getAnalyses()", e);
 //        }
 //        return newAnalyses;

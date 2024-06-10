@@ -56,11 +56,11 @@ public class ResultValidationPaging {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         request.getSession().setAttribute(IActionConstants.SAVE_DISABLED, IActionConstants.FALSE);
-        List<AnalysisItem> clientAnalysis = form.getResultList();
-        PagingBean bean = form.getPaging();
+       // List<AnalysisItem> clientAnalysis = form.getResultList();
+       // PagingBean bean = form.getPaging();
         String testSectionId = form.getTestSectionId();
 
-        paging.updatePagedResults(request.getSession(), clientAnalysis, bean, pagingHelper);
+       // paging.updatePagedResults(request.getSession(), clientAnalysis, bean, pagingHelper);
 
         if (newPage < 0) {
             newPage = 0;

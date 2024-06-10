@@ -37,7 +37,7 @@ public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, Str
         try {
             data = entityManager.unwrap(Session.class).get(InventoryLocation.class, idString);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in InventoryLocation readInventoryLocation()", e);
         }
 

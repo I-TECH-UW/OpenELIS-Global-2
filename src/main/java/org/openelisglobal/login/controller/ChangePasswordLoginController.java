@@ -89,7 +89,7 @@ public class ChangePasswordLoginController extends BaseController {
 
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             result.reject("login.error.message");
         }
         if (result.hasErrors()) {

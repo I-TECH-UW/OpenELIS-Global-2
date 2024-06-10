@@ -14,7 +14,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisServiceImpl;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -41,7 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @DependsOn({ "springContext" })
-public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> implements NoteService {
+public class NoteServiceImpl extends AuditableBaseObjectServiceImpl<Note, String> implements NoteService {
 
     public enum NoteType {
         EXTERNAL(Note.EXTERNAL), INTERNAL(Note.INTERNAL), REJECTION_REASON(Note.REJECT_REASON),
@@ -68,14 +68,12 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
     private static String TABLE_REFERENCE_ID;
 
     @Autowired
-    private static NoteDAO baseObjectDAO = SpringContext.getBean(NoteDAO.class);
+    private NoteDAO baseObjectDAO;
 
     @Autowired
     private SampleQaEventService sampleQAService;
     @Autowired
     private ReferenceTablesService refTableService;
-    @Autowired
-    private static SystemUserService systemUserService = SpringContext.getBean(SystemUserService.class);
 
     @PostConstruct
     public void initializeGlobalVariables() {
@@ -315,7 +313,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
     public static SystemUser createSystemUser(String currentUserId) {
         SystemUser systemUser = new SystemUser();
         systemUser.setId(currentUserId);
-        systemUserService.getData(systemUser);
+        SpringContext.getBean(SystemUserService.class).getData(systemUser);
         return systemUser;
     }
 
@@ -339,7 +337,7 @@ public class NoteServiceImpl extends BaseObjectServiceImpl<Note, String> impleme
         }
     }
 
-    public static List<Note> getTestNotesInDateRangeByType(Date lowDate, Date highDate, NoteType noteType) {
+    public List<Note> getTestNotesInDateRangeByType(Date lowDate, Date highDate, NoteType noteType) {
         return baseObjectDAO.getNotesInDateRangeAndType(lowDate, DateUtil.addDaysToSQLDate(highDate, 1),
                 noteType.DBCode, AnalysisServiceImpl.getTableReferenceId());
     }

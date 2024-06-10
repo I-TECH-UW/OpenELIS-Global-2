@@ -21,6 +21,7 @@ import java.util.Locale;
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.method.valueholder.Method;
+import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.test.valueholder.Test;
 
 /**
@@ -93,6 +94,8 @@ public interface TestDAO extends BaseDAO<Test, String> {
 
     List<Test> getTestsByTestSectionId(String id) throws LIMSRuntimeException;
 
+    List<Test> getTestsByTestSectionIds(List<Integer> ids) throws LIMSRuntimeException;
+
     Test getTestByGUID(String guid) throws LIMSRuntimeException;
 
     List<Test> getTestsByLoincCode(String loincCode);
@@ -112,5 +115,13 @@ public interface TestDAO extends BaseDAO<Test, String> {
     List<Test> getTestsByName(String testName) throws LIMSRuntimeException;
 
     List<Test> getActiveTestsByName(String testName) throws LIMSRuntimeException;
+    
+    List<Test> getActiveTestsByPanelName(String panelName) throws LIMSRuntimeException;
+    
+    List<Test> getTbTestByMethod(String method) throws LIMSRuntimeException;
+    
+    List<Test> getTbTest() throws LIMSRuntimeException;
+    
+    List<Panel> getTbPanelsByMethod(String method) throws LIMSRuntimeException;
 
 }

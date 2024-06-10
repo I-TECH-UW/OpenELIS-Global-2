@@ -30,7 +30,7 @@ public class PatientContactDAOImpl extends BaseDAOImpl<PatientContact, String> i
             query.setParameter("patientId", Integer.parseInt(patientId));
             patients = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PatientContactDAOImpl getForPatient() ", e);
         }
         return patients;

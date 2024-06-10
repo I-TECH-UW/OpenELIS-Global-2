@@ -68,6 +68,8 @@ public class Patient extends BaseObject<String> {
     private ValueHolderInterface person;
 
     private String externalId;
+    
+    private String upidCode;
 
     private String selectedPersonId;
 
@@ -287,4 +289,13 @@ public class Patient extends BaseObject<String> {
     public void setFhirUuid(UUID fhirUuid) {
         this.fhirUuid = fhirUuid;
     }
+
+	public String getUpidCode() {
+		return upidCode;
+	}
+
+	public void setUpidCode(String upidCode) {
+		this.upidCode = upidCode;
+	}
+ 
 }

@@ -66,7 +66,7 @@ function /*void*/ validateResults( resultBox, row, lowerNormal, upperNormal, low
 		$("valid_" + row).value = true;
 		return;
 	}
-
+	
 	if( lowerAbnormal != upperAbnormal &&
 	   (actualValue < lowerAbnormal || actualValue > upperAbnormal) ){
 		resultBox.style.background = "#ffa0a0";

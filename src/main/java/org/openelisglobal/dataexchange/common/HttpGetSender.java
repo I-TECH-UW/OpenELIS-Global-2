@@ -16,15 +16,23 @@
  */
 package org.openelisglobal.dataexchange.common;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.validator.GenericValidator;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.openelisglobal.common.log.LogEvent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class HttpGetSender extends HttpSender {
+
+    @Autowired
+    private CloseableHttpClient httpClient;
 
     /*
      * (non-Javadoc)
@@ -42,14 +50,15 @@ public class HttpGetSender extends HttpSender {
             return false;
         }
 
-        HttpClient httpclient = new HttpClient();
-        setTimeout(httpclient);
-
-        GetMethod httpGet = new GetMethod(url);
-
-        sendByHttp(httpclient, httpGet);
-
-        return returnStatus == HttpStatus.SC_OK;
+        HttpGet httpGet = new HttpGet(url);
+        try {
+            CloseableHttpResponse response = httpClient.execute(httpGet);
+            returnStatus =  response.getStatusLine().getStatusCode();
+            return returnStatus == HttpStatus.SC_OK;
+        } catch (IOException e1) {
+            LogEvent.logError(e1);
+        }
+        return false;
     }
 
 }

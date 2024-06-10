@@ -19,6 +19,7 @@ import org.openelisglobal.common.services.SampleOrderService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
+import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.services.registration.ResultUpdateRegister;
 import org.openelisglobal.common.services.registration.interfaces.IResultUpdate;
 import org.openelisglobal.common.util.DateUtil;
@@ -30,10 +31,11 @@ import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.person.valueholder.Person;
+import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.result.action.util.ResultSet;
@@ -44,6 +46,7 @@ import org.openelisglobal.sample.bean.SampleEditItem;
 import org.openelisglobal.sample.form.SampleEditForm;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.samplehuman.valueholder.SampleHuman;
 import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
@@ -82,6 +85,8 @@ public class SampleEditServiceImpl implements SampleEditService {
     private TestSectionService testSectionService;
     @Autowired
     private PersonService personService;
+    @Autowired
+    private ProviderService providerService;
     @Autowired
     private SampleRequesterService sampleRequesterService;
     @Autowired
@@ -134,6 +139,7 @@ public class SampleEditServiceImpl implements SampleEditService {
         List<SampleTestCollection> addedSamples = createAddSampleList(form, sampleAddService);
 
         SampleOrderService sampleOrderService = new SampleOrderService(form.getSampleOrderItems());
+        sampleOrderService.setSample(updatedSample);
         SampleOrderService.SampleOrderPersistenceArtifacts orderArtifacts = sampleOrderService
                 .getPersistenceArtifacts(updatedSample, sysUserId);
 
@@ -141,9 +147,18 @@ public class SampleEditServiceImpl implements SampleEditService {
             sampleChanged = true;
             updatedSample = orderArtifacts.getSample();
         }
-
-        Person referringPerson = orderArtifacts.getProviderPerson();
         Patient patient = sampleService.getPatient(updatedSample);
+        persistProviderData(orderArtifacts);
+        SampleHuman sampleHuman = new SampleHuman();
+        sampleHuman.setSampleId(updatedSample.getId());
+        SampleHuman existingSampleHuman = sampleHumanService.getDataBySample(sampleHuman);
+        existingSampleHuman.setSysUserId(sysUserId);
+        existingSampleHuman.setSampleId(updatedSample.getId());
+        existingSampleHuman.setPatientId(patient.getId());
+        if (orderArtifacts.getProvider() != null) {
+            existingSampleHuman.setProviderId(orderArtifacts.getProvider().getId());
+        }
+        sampleHumanService.update(existingSampleHuman);
 
         for (SampleItem sampleItem : updateSampleItemList) {
             sampleItemService.update(sampleItem);
@@ -225,13 +240,6 @@ public class SampleEditServiceImpl implements SampleEditService {
             }
         }
 
-        if (referringPerson != null) {
-            if (referringPerson.getId() == null) {
-                personService.insert(referringPerson);
-            } else {
-                personService.update(referringPerson);
-            }
-        }
 
         for (ObservationHistory observation : orderArtifacts.getObservations()) {
             observationService.save(observation);
@@ -252,12 +260,36 @@ public class SampleEditServiceImpl implements SampleEditService {
             }
         }
 
+        if (orderArtifacts.getProviderDepartmentOrganization() != null) {
+            boolean link = true;
+            String orgTypeId = TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID;
+            Organization org = orderArtifacts.getProviderDepartmentOrganization();
+            if (org.getOrganizationTypes() != null) {
+                if (org.getOrganizationTypes().stream().anyMatch(e -> e.getId().equals(orgTypeId))) {
+                    link = false;
+                }
+            }
+            organizationService.save(orderArtifacts.getProviderDepartmentOrganization());
+            if (link) {
+                organizationService.linkOrganizationAndType(orderArtifacts.getProviderDepartmentOrganization(),
+                        orgTypeId);
+            }
+        }
+
         if (orderArtifacts.getSampleOrganizationRequester() != null) {
             if (orderArtifacts.getProviderOrganization() != null) {
                 orderArtifacts.getSampleOrganizationRequester()
                         .setRequesterId(orderArtifacts.getProviderOrganization().getId());
             }
             sampleRequesterService.save(orderArtifacts.getSampleOrganizationRequester());
+        }
+
+        if (orderArtifacts.getSampleOrganizationDepartRequester() != null) {
+            if (orderArtifacts.getProviderDepartmentOrganization() != null) {
+                orderArtifacts.getSampleOrganizationDepartRequester()
+                        .setRequesterId(orderArtifacts.getProviderDepartmentOrganization().getId());
+            }
+            sampleRequesterService.save(orderArtifacts.getSampleOrganizationDepartRequester());
         }
 
         if (orderArtifacts.getDeletableSampleOrganizationRequester() != null) {
@@ -480,5 +512,15 @@ public class SampleEditServiceImpl implements SampleEditService {
         }
 
         return false;
+    }
+
+    private void persistProviderData(SampleOrderService.SampleOrderPersistenceArtifacts orderArtifacts) {
+        if (orderArtifacts.getProviderPerson() != null && orderArtifacts.getProvider() != null) {
+
+            personService.save(orderArtifacts.getProviderPerson());
+            orderArtifacts.getProvider().setPerson(orderArtifacts.getProviderPerson());
+
+            providerService.save(orderArtifacts.getProvider());
+        }
     }
 }

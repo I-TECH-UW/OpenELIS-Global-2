@@ -72,7 +72,6 @@ public class TestNotificationConfigMenuController extends BaseMenuController<Tes
             testNotificationConfigService.saveTestNotificationConfigsActiveStatuses(form.getMenuList(),
                     this.getSysUserId(request));
         } catch (RuntimeException e) {
-            LogEvent.logError(e);
             LogEvent.logError("could not save result notification configs", e);
             Errors errors = new BaseErrors();
             errors.reject("alert.error", "An error occured while saving");

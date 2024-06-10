@@ -26,6 +26,7 @@ public class IndeterminateReportData {
     private String doctor;
     private String labNo;
     private String integral;
+    private String genscreen;
     private String murex;
     private String vironstika;
     private String genie_hiv1_hiv2;
@@ -215,5 +216,13 @@ public class IndeterminateReportData {
     public void setBioline(String bioline) {
         this.bioline = bioline;
     }
+
+	public String getGenscreen() {
+		return genscreen;
+	}
+
+	public void setGenscreen(String genscreen) {
+		this.genscreen = genscreen;
+	}
 
 }

@@ -218,7 +218,7 @@ public class SampleBatchEntryController extends BaseController {
 //            String fhir_json = fhirTransformService.CreateFhirFromOESample(updateData, patientUpdate, patientInfo, form, request);
         } catch (LIMSRuntimeException e) {
             // ActionError error;
-            if (e.getException() instanceof StaleObjectStateException) {
+            if (e.getCause() instanceof StaleObjectStateException) {
                 // error = new ActionError("errors.OptimisticLockException", null, null);
                 result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
             } else {
@@ -226,7 +226,7 @@ public class SampleBatchEntryController extends BaseController {
                 // error = new ActionError("errors.UpdateException", null, null);
                 result.reject("errors.UpdateException", "errors.UpdateException");
             }
-            LogEvent.logInfo(this.getClass().getName(), "method unkown", result.toString());
+            LogEvent.logInfo(this.getClass().getSimpleName(), "showSamplePatientEntrySave", result.toString());
 
             // errors.add(ActionMessages.GLOBAL_MESSAGE, error);
             saveErrors(result);

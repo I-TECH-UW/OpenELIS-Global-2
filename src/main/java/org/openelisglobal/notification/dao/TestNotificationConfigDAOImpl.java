@@ -30,7 +30,7 @@ public class TestNotificationConfigDAOImpl extends BaseDAOImpl<TestNotificationC
             query.setParameter("testId", Integer.parseInt(testId));
             data = query.uniqueResult();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(
                     "Error in TestNotificationConfigDAOImpl getTestNotificationConfigForTestId()", e);
         }
@@ -49,7 +49,7 @@ public class TestNotificationConfigDAOImpl extends BaseDAOImpl<TestNotificationC
                     testIds.stream().map(i -> Integer.parseInt(i)).collect(Collectors.toList()));
             data = query.getResultList();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(
                     "Error in TestNotificationConfigDAOImpl getTestNotificationConfigsForTestIds()", e);
         }
@@ -67,7 +67,7 @@ public class TestNotificationConfigDAOImpl extends BaseDAOImpl<TestNotificationC
             query.setParameter("configOptionId", configOptionId);
             data = query.uniqueResult();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestNotificationConfigDAOImpl getForConfigOption()", e);
         }
 

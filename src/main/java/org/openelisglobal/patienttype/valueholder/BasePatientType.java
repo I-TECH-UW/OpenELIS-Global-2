@@ -122,7 +122,7 @@ public abstract class BasePatientType extends EnumValueItemImpl {
             if (null == this.getId()) {
                 return super.hashCode();
             } else {
-                String hashStr = this.getClass().getName() + ":" + this.getId().hashCode();
+                String hashStr = this.getClass().getSimpleName() + ":" + this.getId().hashCode();
                 this.hashCodeValue = hashStr.hashCode();
             }
         }

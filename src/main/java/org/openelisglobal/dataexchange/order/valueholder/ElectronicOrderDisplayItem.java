@@ -26,8 +26,12 @@ public class ElectronicOrderDisplayItem {
     private String electronicOrderId;
 
     private String externalOrderId;
+    
+    private String patientUpid;
 
     private String requestDateDisplay;
+    
+    private String collectionDateDisplay;
 
     private String patientLastName;
 
@@ -52,6 +56,8 @@ public class ElectronicOrderDisplayItem {
     private String birthDate;
 
     private String gender;
+    
+    private String qaEventId;
 
     public String getBirthDate() {
         return birthDate;
@@ -192,4 +198,29 @@ public class ElectronicOrderDisplayItem {
     public void setPriority(OrderPriority priority) {
         this.priority = priority;
     }
+
+	public String getPatientUpid() {
+		return patientUpid;
+	}
+
+	public void setPatientUpid(String patientUpid) {
+		this.patientUpid = patientUpid;
+	}
+
+	public String getCollectionDateDisplay() {
+		return collectionDateDisplay;
+	}
+
+	public void setCollectionDateDisplay(String collectionDateDisplay) {
+		this.collectionDateDisplay = collectionDateDisplay;
+	}
+
+	public String getQaEventId() {
+		return qaEventId;
+	}
+
+	public void setQaEventId(String qaEventId) {
+		this.qaEventId = qaEventId;
+	}
+	
 }

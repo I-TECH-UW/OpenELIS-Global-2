@@ -178,6 +178,11 @@
 
         setCorrectSave();
     }
+    
+    function newProvider(){
+    	jQuery("#providerPersonId").val("");
+    	jQuery('#providerPersonId').next('input').val('');
+    }
 
 </script>
 
@@ -420,7 +425,7 @@
 <tr class="provider-info-row">
     <td>
         <%= MessageUtil.getContextualMessage( "sample.entry.provider" ) %>:
-        <% if( FormFields.getInstance().useField( Field.SampleEntryReferralSiteNameRequired ) ){%>
+        <% if( FormFields.getInstance().useField( Field.SampleEntryRequesterPersonRequired ) && restrictNewProviderEntries ){%>
         <span class="requiredlabel">*</span>
         <% } %>
     </td>
@@ -428,11 +433,10 @@
     	<form:select id="providerPersonId" path="sampleOrderItems.providerPersonId" 
                      capitalize="false"
                      invalidlabid='${invalidProvider}'
-       				 clearNonMatching="false"
+       				 clearNonMatching="true"
                      maxrepmsg='maximum reached'
-                     disabled='<%=!restrictNewProviderEntries%>'
                       >
-    		<option></option>
+    		<option value=""></option>
     		<form:options items="${form.sampleOrderItems.providersList}" itemValue="id" itemLabel="value" />
     	</form:select>
     </td> 
@@ -441,12 +445,16 @@
 <tr class="provider-info-row provider-extra-info-row">
 <td>
         <%= MessageUtil.getContextualMessage( "sample.entry.provider.name" ) %>:
+        <% if( FormFields.getInstance().useField( Field.SampleEntryRequesterPersonRequired ) && !restrictNewProviderEntries ){%>
+        <span class="requiredlabel">*</span>
+        <% } %>
     </td>
 <td>
         <form:input path="sampleOrderItems.providerLastName"
                    id="providerLastNameID"
                    onchange="setOrderModified();setCorrectSave();"
                    size="30"
+                   onkeyup="newProvider();"
                   disabled="<%=restrictNewProviderEntries%>"/>
     </td> 
 
@@ -454,12 +462,16 @@
 <tr class="provider-info-row provider-extra-info-row">
     <td>
         <spring:message code="sample.entry.provider.firstName"/>:
+        <% if( FormFields.getInstance().useField( Field.SampleEntryRequesterPersonRequired ) && !restrictNewProviderEntries ){%>
+        <span class="requiredlabel">*</span>
+        <% } %>
 	</td>
     <td>
         <form:input path="sampleOrderItems.providerFirstName"
                    id="providerFirstNameID" 
                    onchange="setOrderModified();"
                    size="30"
+                   onkeyup="newProvider();"
                   disabled="<%=restrictNewProviderEntries%>"/>
     </td>
 </tr>
@@ -473,6 +485,7 @@
                   size="30"
                   disabled="<%=restrictNewProviderEntries%>"
                   maxlength="30"
+                   onkeyup="newProvider();"
                   cssClass="text"
                   onchange="setOrderModified();validatePhoneNumber(this)"/> 
     </td>
@@ -487,6 +500,7 @@
         <form:input path="sampleOrderItems.providerFax"
                   id="providerFaxID"
                   size="20"
+                   onkeyup="newProvider();"
                   disabled="<%=restrictNewProviderEntries%>"
                   cssClass="text"
                   onchange="setOrderModified();makeDirty()"/> 
@@ -502,6 +516,7 @@
         <form:input path="sampleOrderItems.providerEmail"
                   id="providerEmailID"
                   size="20"
+                   onkeyup="newProvider();"
                   disabled="<%=restrictNewProviderEntries%>"
                   cssClass="text"
                   onchange="setOrderModified();makeDirty()"/> 
@@ -690,11 +705,11 @@
         autoCompleteWidth = providerDropdown.width() + 66 + 'px';
         // Actually executes autocomplete
        
-        <% if(restrictNewProviderEntries ){%>
+<%--         <% if(restrictNewProviderEntries ){%> --%>
             if (typeof providerDropdown.combobox === 'function') {
                 providerDropdown.combobox();
             }
-        <% } %>
+<%--         <% } %> --%>
 
         autocompleteResultCallBack = function (selectId, value) {
         	if (selectId === 'requesterId') {

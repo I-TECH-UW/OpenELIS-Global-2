@@ -3,6 +3,7 @@ package org.openelisglobal.testconfiguration.controller;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -130,12 +131,12 @@ public class SampleTypeTestAssignController extends BaseController {
             return findForward(FWD_SUCCESS_INSERT, form);
         }
 
-        TypeOfSampleTest typeOfSampleTestOld = typeOfSampleTestService.getTypeOfSampleTestForTest(testId);
+        List<TypeOfSampleTest> typeOfSampleTestOld = typeOfSampleTestService.getTypeOfSampleTestsForTest(testId);
         boolean deleteExistingTypeOfSampleTest = false;
-        String typeOfSamplesTestID = new String();
+        List<String> typeOfSamplesTestID = new ArrayList<>();
 
         if (typeOfSampleTestOld != null) {
-            typeOfSamplesTestID = typeOfSampleTestOld.getId();
+            typeOfSamplesTestID = typeOfSampleTestOld.stream().map(e -> e.getId()).collect(Collectors.toList());
             deleteExistingTypeOfSampleTest = true;
         }
         // ---------------------------
@@ -163,7 +164,7 @@ public class SampleTypeTestAssignController extends BaseController {
             sampleTypeTestAssignService.update(typeOfSample, testId, typeOfSamplesTestID, sampleTypeId,
                     deleteExistingTypeOfSampleTest, updateTypeOfSample, deActivateTypeOfSample, systemUserId);
         } catch (HibernateException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
         }
 
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.SAMPLE_TYPE);

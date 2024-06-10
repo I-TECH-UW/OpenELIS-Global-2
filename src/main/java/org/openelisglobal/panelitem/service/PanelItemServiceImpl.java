@@ -7,7 +7,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.panelitem.dao.PanelItemDAO;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, String> implements PanelItemService {
+public class PanelItemServiceImpl extends AuditableBaseObjectServiceImpl<PanelItem, String> implements PanelItemService {
     @Autowired
     protected PanelItemDAO baseObjectDAO;
     @Autowired
@@ -116,7 +116,7 @@ public class PanelItemServiceImpl extends BaseObjectServiceImpl<PanelItem, Strin
         try {
             pi = get(idString);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PanelItem readPanelItem()", e);
         }
 

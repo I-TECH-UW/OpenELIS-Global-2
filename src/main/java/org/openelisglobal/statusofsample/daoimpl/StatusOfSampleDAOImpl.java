@@ -65,7 +65,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in StatusOfSample getDataByStatusTypeAndStatusCode()", e);
         }
     }
@@ -89,7 +89,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in StatusOfSample getData()", e);
         }
     }
@@ -111,7 +111,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in StatusOfSample getAllStatusOfSamples()", e);
         }
 
@@ -144,7 +144,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in StatusOfSample getPageOfStatusOfSamples()", e);
         }
 
@@ -164,7 +164,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
             sos = entityManager.unwrap(Session.class).get(StatusOfSample.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in StatusOfSample readStatusOfSample()", e);
         }
 
@@ -225,7 +225,7 @@ public class StatusOfSampleDAOImpl extends BaseDAOImpl<StatusOfSample, String> i
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateStatusOfSampleExists()", e);
         }
     }

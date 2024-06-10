@@ -45,7 +45,7 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
         try {
             current = entityManager.unwrap(Session.class).get(PatientPatientType.class, id);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PatientPatientType getCurrentPatientPatientType()", e);
         }
 
@@ -65,7 +65,7 @@ public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, S
 
             patientTypes = query.list();
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PatientIdentityDAOImpl getPatientPatientTypeForPatient()", e);
         }
 

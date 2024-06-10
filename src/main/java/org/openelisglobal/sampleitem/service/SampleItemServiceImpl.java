@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.referencetables.service.ReferenceTablesService;
 import org.openelisglobal.sampleitem.dao.SampleItemDAO;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class SampleItemServiceImpl extends BaseObjectServiceImpl<SampleItem, String> implements SampleItemService {
+public class SampleItemServiceImpl extends AuditableBaseObjectServiceImpl<SampleItem, String> implements SampleItemService {
 
     private static String SAMPLE_ITEM_TABLE_REFERENCE_ID;
 

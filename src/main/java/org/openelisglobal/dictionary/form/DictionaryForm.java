@@ -6,6 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 import org.openelisglobal.validation.annotations.SafeHtml;
+import org.hibernate.validator.constraints.Length;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
@@ -33,7 +34,9 @@ public class DictionaryForm extends BaseForm {
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String dictEntry = "";
 
+    @NotBlank
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+    @Length(max=10)
     private String localAbbreviation = "";
 
     // in validator
