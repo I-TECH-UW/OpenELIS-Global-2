@@ -43,7 +43,7 @@ function Admin() {
   const intl = useIntl();
   return (
     <>
-      <SideNav aria-label="Side navigation" defaultExpanded={true}>
+      <SideNav aria-label="Side navigation" expanded={true}>
         <SideNavItems className="adminSideNav">
           <SideNavMenu
             renderIcon={Microscope}
