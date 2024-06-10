@@ -655,7 +655,7 @@ export function SearchResultForm(props) {
       </Formik>
       {searchBy.type === "patient" && (
         <Grid>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <SearchPatientForm
               getSelectedPatient={getSelectedPatient}
             ></SearchPatientForm>
