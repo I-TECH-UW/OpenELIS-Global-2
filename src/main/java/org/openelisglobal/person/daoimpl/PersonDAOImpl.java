@@ -142,10 +142,10 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
     @Override
     @Transactional(readOnly = true)
     public Person getPersonById(String personId) throws LIMSRuntimeException {
-        String sql = "From Person p where id = :personId";
+        String sql = "From Person p where p.id = :personId";
         try {
             Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql, Person.class);
-            query.setParameter("personId", Integer.parseInt(personId));
+            query.setParameter("personId", personId);
             Person person = query.uniqueResult();
             return person;
         } catch (HibernateException e) {
@@ -153,5 +153,4 @@ public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements Person
         }
         return null;
     }
-
 }
