@@ -190,6 +190,13 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
         Assert.assertEquals(lastName + ", " + firstName, lastFirstName);
     }
 
+    @Test
+    public void getLastName_shouldReturnEmptyStringForNullPerson() {
+        String retrievedLastName = personService.getLastName(null);
+
+        Assert.assertEquals("", retrievedLastName);
+    }
+
 
 }
 
