@@ -11,6 +11,7 @@ import {
   Link,
   Modal,
   Pagination,
+  Search,
   Section,
   Table,
   TableBody,
@@ -20,9 +21,6 @@ import {
   TableHeader,
   TableRow,
   TableSelectRow,
-  TableToolbar,
-  TableToolbarContent,
-  TableToolbarSearch,
   TextInput,
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -71,11 +69,14 @@ function DictionaryManagement() {
 
   const [paging, setPaging] = useState(null);
   const [startingRecNo, setStartingRecNo] = useState(1);
+  const [isSearching, setIsSearching] = useState(false);
+  const [panelSearchTerm, setPanelSearchTerm] = useState("");
+  const [searchedMenuList, setSearchedMenuList] = useState([]);
 
   useEffect(() => {
     componentMounted.current = true;
     getFromOpenElisServer(
-      `/rest/dictionary-menu?paging=${paging}&startingRecNo=${startingRecNo}`,
+      `/rest/DictionaryMenu?paging=${paging}&startingRecNo=${startingRecNo}`,
       fetchedDictionaryMenu,
     );
     return () => {
@@ -150,8 +151,48 @@ function DictionaryManagement() {
   };
 
   useEffect(() => {
+    if (panelSearchTerm) {
+      getFromOpenElisServer(
+        `/rest/SearchDictionaryMenu?search=Y&startingRecNo=1&searchString=${panelSearchTerm}`,
+        fetchedSearchedDictionaryMenu,
+      );
+    } else {
+      setSearchedMenuList([]);
+    }
+  }, [panelSearchTerm]);
+
+  const fetchedSearchedDictionaryMenu = (res) => {
+    if (componentMounted.current) {
+      if (res) {
+        if (
+          res.toRecordCount !== undefined &&
+          res.fromRecordCount !== undefined &&
+          res.totalRecordCount !== undefined
+        ) {
+          setToRecordCount(res.toRecordCount);
+          setFromRecordCount(res.fromRecordCount);
+          setTotalRecordCount(res.totalRecordCount);
+        }
+        if (res.menuList) {
+          const menuList = res.menuList.map((item) => ({
+            id: item.id,
+            dictEntry: item.dictEntry,
+            localAbbreviation: item.localAbbreviation,
+            isActive: item.isActive,
+            categoryName: item.dictionaryCategory
+              ? item.dictionaryCategory.categoryName
+              : "not available",
+            lastupdated: item.lastupdated,
+          }));
+          setSearchedMenuList(menuList);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
     componentMounted.current = true;
-    getFromOpenElisServer("/rest/dictionary-menu", fetchedDictionaryMenu);
+    getFromOpenElisServer("/rest/DictionaryMenu", fetchedDictionaryMenu);
     return () => {
       componentMounted.current = false;
     };
@@ -345,6 +386,16 @@ function DictionaryManagement() {
     }
   };
 
+  const handlePanelSearchChange = (event) => {
+    const query = event.target.value;
+    setPanelSearchTerm(query);
+    if (query) {
+      setIsSearching(true);
+    } else {
+      setIsSearching(false);
+    }
+  };
+
   return (
     <div className="adminPageContent">
       {notificationVisible === true ? <AlertDialog /> : ""}
@@ -507,14 +558,43 @@ function DictionaryManagement() {
         </Column>
       </Grid>
       <div className="orderLegendBody">
+        <Grid>
+          <Column lg={16} md={8} sm={4}>
+            <Section>
+              <Search
+                size="lg"
+                id="dictionary-entry-search"
+                labelText={<FormattedMessage id="search.by.dictionary.entry" />}
+                placeholder={intl.formatMessage({
+                  id: "search.by.dictionary.entry",
+                })}
+                onChange={handlePanelSearchChange}
+                value={(() => {
+                  if (panelSearchTerm) {
+                    return panelSearchTerm;
+                  }
+                  return "";
+                })()}
+              ></Search>
+            </Section>
+          </Column>
+        </Grid>
+        <br />
         <Grid fullWidth={true} className="gridBoundary">
           <Column lg={16} md={8} sm={4}>
             <DataTable
               size="sm"
-              rows={dictionaryMenuList.slice(
-                (page - 1) * pageSize,
-                page * pageSize,
-              )}
+              rows={
+                isSearching
+                  ? searchedMenuList.slice(
+                      (page - 1) * pageSize,
+                      page * pageSize,
+                    )
+                  : dictionaryMenuList.slice(
+                      (page - 1) * pageSize,
+                      page * pageSize,
+                    )
+              }
               headers={[
                 {
                   key: "select",
@@ -547,42 +627,9 @@ function DictionaryManagement() {
               ]}
               isSortable
             >
-              {({
-                rows,
-                headers,
-                getHeaderProps,
-                getTableProps,
-                getToolbarProps,
-                getBatchActionProps,
-                onInputChange,
-                selectRow,
-              }) => {
-                const batchActionProps = {
-                  ...getBatchActionProps({
-                    onSelectAll: () => {
-                      rows.map((row) => {
-                        if (!row.isSelected) {
-                          selectRow(row.id);
-                        }
-                      });
-                    },
-                  }),
-                };
-
+              {({ rows, headers, getHeaderProps, getTableProps }) => {
                 return (
                   <TableContainer title="" description="">
-                    <TableToolbar {...getToolbarProps()}>
-                      <TableToolbarContent
-                        aria-hidden={batchActionProps.shouldShowBatchActions}
-                      >
-                        <TableToolbarSearch
-                          tabIndex={
-                            batchActionProps.shouldShowBatchActions ? -1 : 0
-                          }
-                          onChange={onInputChange}
-                        />
-                      </TableToolbarContent>
-                    </TableToolbar>
                     <Table {...getTableProps()}>
                       <TableHead>
                         <TableRow>
@@ -619,7 +666,11 @@ function DictionaryManagement() {
               page={page}
               pageSize={pageSize}
               pageSizes={[10, 20]}
-              totalItems={dictionaryMenuList.length}
+              totalItems={
+                isSearching
+                  ? searchedMenuList.length
+                  : dictionaryMenuList.length
+              }
               forwardText={intl.formatMessage({ id: "pagination.forward" })}
               backwardText={intl.formatMessage({ id: "pagination.backward" })}
               size="sm"
