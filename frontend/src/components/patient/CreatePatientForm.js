@@ -76,7 +76,10 @@ function CreatePatientForm(props) {
     setSubjectNo(newValue);
   };
   const handleDatePickerChange = (values, date) => {
-    var patient = values;
+    var patient = { ...values };
+    if ("date-picker-default-id" in patient) {
+      delete patient["date-picker-default-id"];
+    }
     patient.birthDateForDisplay = date;
     setPatientDetails(patient);
     if (patient.birthDateForDisplay) {
@@ -179,7 +182,7 @@ function CreatePatientForm(props) {
     );
   };
 
-  function fethchHealthDistrictsCallback(res) {
+  function fetchHealthDistrictsCallback(res) {
     setHealthDistricts(res);
   }
 
@@ -189,7 +192,7 @@ function CreatePatientForm(props) {
         getFromOpenElisServer(
           "/rest/health-districts-for-region?regionId=" +
             props.selectedPatient.healthRegion,
-          fethchHealthDistrictsCallback,
+          fetchHealthDistrictsCallback,
         );
       } else {
         //nextState.healthDistricts = [];

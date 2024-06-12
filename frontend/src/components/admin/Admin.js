@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import config from "../../config.json";
 import { FormattedMessage, useIntl, injectIntl } from "react-intl";
 import "../Style.css";
@@ -35,15 +35,31 @@ import {
 } from "@carbon/react";
 import { CommonProperties } from "./menu/CommonProperties";
 import ConfigMenuDisplay from "./formEntry/common/ConfigMenuDisplay";
-
 import ProviderMenu from "./ProviderMenu/ProviderMenu";
 import BarcodeConfiguration from "./barcodeConfiguration/BarcodeConfiguration";
 
 function Admin() {
   const intl = useIntl();
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 1024px)"); //applicable for medium screen and below  for only small screen set max-width: 768px
+    const handleMediaQueryChange = () => setIsSmallScreen(mediaQuery.matches);
+
+    handleMediaQueryChange();
+    mediaQuery.addEventListener("change", handleMediaQueryChange);
+
+    return () =>
+      mediaQuery.removeEventListener("change", handleMediaQueryChange);
+  }, []);
+
   return (
     <>
-      <SideNav aria-label="Side navigation" defaultExpanded={true}>
+      <SideNav
+        aria-label="Side navigation"
+        defaultExpanded={true}
+        isRail={isSmallScreen}
+      >
         <SideNavItems className="adminSideNav">
           <SideNavMenu
             renderIcon={Microscope}

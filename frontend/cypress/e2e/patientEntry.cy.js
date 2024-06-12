@@ -20,6 +20,10 @@ describe("Patient Search", function () {
       .should("contain.text", "Add Or Modify Patient");
   });
 
+  it("External search button should be deactivated", function () {
+    patientPage.getExternalSearchButton();
+  });
+
   it("User should be able to navigate to create Patient tab", function () {
     patientPage.clickNewPatientTab();
     patientPage.getSubmitButton().should("be.visible");
@@ -54,6 +58,33 @@ describe("Patient Search", function () {
     });
     cy.wait(200).reload();
   });
+  it("Should search Patient By FirstName only", function () {
+    cy.wait(1000);
+    cy.fixture("Patient").then((patient) => {
+      patientPage.searchPatientByFirstNameOnly(patient.firstName);
+      patientPage.getFirstName().should("have.value", patient.firstName);
+      patientPage.clickSearchPatientButton();
+      patientPage.validatePatientSearchTablebyRespectiveField(
+        patient.firstName,
+        "firstName",
+      );
+    });
+    cy.wait(200).reload();
+  });
+
+  it("Should search Patient By LastName only", function () {
+    cy.wait(1000);
+    cy.fixture("Patient").then((patient) => {
+      patientPage.searchPatientByLastNameOnly(patient.lastName);
+      patientPage.getLastName().should("have.value", patient.lastName);
+      patientPage.clickSearchPatientButton();
+      patientPage.validatePatientSearchTablebyRespectiveField(
+        patient.lastName,
+        "lastName",
+      );
+    });
+    cy.wait(200).reload();
+  });
 
   it("Should search Patient By First and LastName", function () {
     cy.wait(1000);
@@ -71,6 +102,18 @@ describe("Patient Search", function () {
       patientPage.validatePatientSearchTable(
         patient.firstName,
         patient.inValidName,
+      );
+    });
+    cy.wait(200).reload();
+  });
+  it("should search patient By Date Of Birth", function () {
+    cy.wait(1000);
+    cy.fixture("Patient").then((patient) => {
+      patientPage.searchPatientByDateOfBirth(patient.DOB);
+      patientPage.clickSearchPatientButton();
+      patientPage.validatePatientSearchTablebyRespectiveField(
+        patient.DOB,
+        "DOB",
       );
     });
     cy.wait(200).reload();

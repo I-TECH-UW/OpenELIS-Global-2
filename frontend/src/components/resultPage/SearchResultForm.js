@@ -655,7 +655,7 @@ export function SearchResultForm(props) {
       </Formik>
       {searchBy.type === "patient" && (
         <Grid>
-          <Column lg={16}>
+          <Column lg={16} md={8} sm={4}>
             <SearchPatientForm
               getSelectedPatient={getSelectedPatient}
             ></SearchPatientForm>
@@ -1051,6 +1051,7 @@ export function SearchResults(props) {
                 name={"testResult[" + row.id + "].resultValue"}
                 noLabel={true}
                 onChange={(e) => validateResults(e, row.id)}
+                value={row.resultValue}
               >
                 {/* {...updateShadowResult(e, this, param.rowId)} */}
                 <SelectItem text="" value="" />
@@ -1073,6 +1074,7 @@ export function SearchResults(props) {
                 name={"testResult[" + row.id + "].resultValue"}
                 labelText=""
                 //type="number"
+                value={row.resultValue}
                 style={validationState[row.id]?.style}
                 onMouseOut={(e) => {
                   let value = e.target.value;
@@ -1124,6 +1126,7 @@ export function SearchResults(props) {
                 rows={1}
                 labelText=""
                 onChange={(e) => handleChange(e, row.id)}
+                value={row.resultValue}
               />
             );
 
@@ -1135,6 +1138,7 @@ export function SearchResults(props) {
                 rows={1}
                 labelText=""
                 onChange={(e) => handleChange(e, row.id)}
+                value={row.resultValue}
               />
             );
 

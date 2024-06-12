@@ -66,7 +66,7 @@ public class DictionaryRestController extends BaseController {
     }
 
     @RequestMapping(value = "/Dictionary", method = RequestMethod.GET)
-    public DictionaryForm showDictionary(HttpServletRequest request, @ModelAttribute("form") BaseForm oldForm)
+    public DictionaryForm showDictionary(HttpServletRequest request, @ModelAttribute("dictform") BaseForm oldForm)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         DictionaryForm newForm = resetSessionFormToType(oldForm, DictionaryForm.class);
         newForm.setCancelAction("CancelDictionary");
@@ -145,9 +145,20 @@ public class DictionaryRestController extends BaseController {
         return ResponseEntity.status(HttpStatus.OK).body(url);
     }
 
+    /**
+     * @param request
+     * @param form
+     * @param result
+     * @param status
+     * @param redirectAttributes
+     * @return
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     */
     @RequestMapping(value = "/Dictionary", method = RequestMethod.POST)
     public ResponseEntity<?> showUpdateDictionary(HttpServletRequest request,
-                                             @ModelAttribute("form") @Valid DictionaryForm form, BindingResult result, SessionStatus status,
+                                                  @RequestBody @Valid DictionaryForm form, BindingResult result, SessionStatus status,
                                              RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 

@@ -53,7 +53,7 @@ public class DictionaryMenuRestController extends BaseMenuController<Dictionary>
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    @RequestMapping(value = "/dictionary-menu", produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
+    @RequestMapping(value = { "/DictionaryMenu", "/SearchDictionaryMenu" }, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<?> showDictionaryMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         DictionaryMenuForm form = new DictionaryMenuForm();
