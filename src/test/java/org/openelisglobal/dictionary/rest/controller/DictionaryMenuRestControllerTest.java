@@ -40,14 +40,13 @@ public class DictionaryMenuRestControllerTest extends BaseWebContextSensitiveTes
     @Test
     public void getDictionaryMenuList_shouldReturnDictionaryMenu() throws Exception {
         MvcResult mvcResult = super.mockMvc.perform(
-                get("/rest/dictionary-menu")
+                get("/rest/DictionaryMenu")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)).andReturn();
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(200, status);
         String content = mvcResult.getResponse().getContentAsString();
-        System.out.println("menuList: " + content);
         List<DictionaryMenuForm> menuList = Arrays.asList(super.mapFromJson(content, DictionaryMenuForm[].class));
         assertThat(menuList.get(0).getMenuList().get(0).getId(), is("1"));
         assertThat(menuList.get(0).getMenuList().get(0).getIsActive(), is("Y"));
@@ -67,7 +66,6 @@ public class DictionaryMenuRestControllerTest extends BaseWebContextSensitiveTes
         assertEquals(200, status);
         String content = mvcResult.getResponse().getContentAsString();
         List<DictionaryCategory> menuList = Arrays.asList(super.mapFromJson(content, DictionaryCategory[].class));
-        System.out.println("dictionary categories: " + menuList);
         assertThat(menuList, notNullValue());
     }
 
@@ -92,7 +90,7 @@ public class DictionaryMenuRestControllerTest extends BaseWebContextSensitiveTes
 
     @Test
     public void showDeleteDictionary_shouldSuccessfullyDeleteDictionary() throws Exception {
-        MvcResult getMenu = super.mockMvc.perform(get("/rest/dictionary-menu").accept(MediaType.APPLICATION_JSON_VALUE)
+        MvcResult getMenu = super.mockMvc.perform(get("/rest/DictionaryMenu").accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)).andReturn();
 
         int status = getMenu.getResponse().getStatus();
