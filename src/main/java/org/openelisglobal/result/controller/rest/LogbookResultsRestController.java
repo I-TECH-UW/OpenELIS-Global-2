@@ -310,6 +310,9 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
                              patient = getPatient(sample);
                             
                             tests = resultsLoadUtility.getGroupedTestsForSample(sample, patient);
+                            patientName = patientService.getLastFirstName(patient);
+                            patientInfo = patient.getNationalId() + ", " + patient.getGender() + ", "
+                                    + patient.getBirthDateForDisplay();
                         }
 
                     }

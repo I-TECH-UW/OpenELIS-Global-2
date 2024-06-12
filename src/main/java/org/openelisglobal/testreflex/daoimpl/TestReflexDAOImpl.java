@@ -263,7 +263,14 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
                     + "and t.id != :testId";
              
             if (testReflex.getActionScriptlet() != null) {
-                sql = sql + "or trim(lower(t.actionScriptlet.scriptletName)) = :scriptletName ";
+                sql = sql + " or trim(lower(t.actionScriptlet.scriptletName)) = :scriptletName ";
+            }
+            if(testReflex.getRelation() != null){
+                sql = sql + " and t.relation = :relation";
+            }
+
+            if(testReflex.getNonDictionaryValue() != null){
+                sql = sql + " and t.nonDictionaryValue = :nonDictionaryValue";
             }
 
             Query<TestReflex> query = entityManager.unwrap(Session.class).createQuery(sql, TestReflex.class);
@@ -280,7 +287,13 @@ public class TestReflexDAOImpl extends BaseDAOImpl<TestReflex, String> implement
             if (testReflex.getActionScriptlet() != null) {
                 query.setParameter("scriptletName", testReflex.getActionScriptlet().getScriptletName().toLowerCase().trim());
             }
+            if(testReflex.getRelation() != null){
+                query.setParameter("relation",  testReflex.getRelation().toString());  
+            }
 
+            if(testReflex.getNonDictionaryValue() != null){
+                query.setParameter("nonDictionaryValue",  testReflex.getNonDictionaryValue()); 
+            }
             query.setParameter("testId", Integer.parseInt(testReflexId));
 
             list = query.list();
