@@ -22,8 +22,10 @@ import java.util.List;
 
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.result.action.util.ResultUtil;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.valueholder.Sample;
@@ -74,6 +76,16 @@ public class TestReflexResolver {
 
         List<TestReflex> reflexes = testReflexService.getTestReflexsByTestResultAnalyteTest(testResultId, analyteId,
                 testId);
+        // try to check if there other analyte macthicng for this result
+        List<Analyte> otherMatchingAnalyte = ResultUtil.getOtherAnalyteForResult(result);
+        if (!otherMatchingAnalyte.isEmpty()) {
+            for (Analyte otherAnalyte : otherMatchingAnalyte) {
+                reflexes.addAll(
+                        testReflexService.getTestReflexsByTestResultAnalyteTest(testResultId, otherAnalyte.getId(),
+                                testId));
+            }
+        }
+
         return reflexes != null ? reflexes : new ArrayList<>();
     }
 
