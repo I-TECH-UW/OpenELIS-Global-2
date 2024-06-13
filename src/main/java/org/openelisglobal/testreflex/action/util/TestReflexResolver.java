@@ -77,13 +77,11 @@ public class TestReflexResolver {
 
         List<TestReflex> reflexes = testReflexService.getTestReflexsByTestResultAnalyteTest(testResultId, analyteId,
                 testId);
-        LogEvent.logInfo(this.getClass().getSimpleName(), "getTestReflexesForResult: DefaultAnalyte :" ,result.getAnalyte().getAnalyteName());
         // try to check if there other analyte macthicng for this result
         List<Analyte> otherMatchingAnalyte = ResultUtil.getOtherAnalyteForResult(result);
         if (otherMatchingAnalyte != null) {
             if (!otherMatchingAnalyte.isEmpty()) {
                 for (Analyte otherAnalyte : otherMatchingAnalyte) {
-                    LogEvent.logInfo(this.getClass().getSimpleName(), "getTestReflexesForResult: Other Analyte :" ,otherAnalyte.getAnalyteName());
                     reflexes.addAll(
                             testReflexService.getTestReflexsByTestResultAnalyteTest(testResultId, otherAnalyte.getId(),
                                     testId));
@@ -103,6 +101,17 @@ public class TestReflexResolver {
         }
         
         List<TestReflex> reflexes = testReflexService.getTestReflexsByAnalyteAndTest(analyteId, testId);
+         // try to check if there other analyte macthicng for this result
+         List<Analyte> otherMatchingAnalyte = ResultUtil.getOtherAnalyteForResult(result);
+         if (otherMatchingAnalyte != null) {
+             if (!otherMatchingAnalyte.isEmpty()) {
+                 for (Analyte otherAnalyte : otherMatchingAnalyte) {
+                     reflexes.addAll(
+                             testReflexService.getTestReflexsByAnalyteAndTest(otherAnalyte.getId(),
+                                     testId));
+                 }
+             }
+         }
         return reflexes != null ? reflexes : new ArrayList<>();
     }
     
