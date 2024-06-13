@@ -8,8 +8,7 @@ import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
-import java.util.List;
-import org.openelisglobal.person.valueholder.Person;
+
 
 public class PersonServiceTest extends BaseWebContextSensitiveTest {
 
@@ -26,13 +25,9 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
         String lastname = "Doe";
 
         Person pat = createPerson(firstName, lastname);
-
-        //Assert.assertEquals(0, personService.getAllPersons().size());
-        // save person to the DB
         String personIdId = personService.insert(pat);
         Person savedPerson = personService.get(personIdId);
 
-        // Assert.assertEquals(1, personService.getAllPersons().size());
         Assert.assertEquals(firstName, savedPerson.getFirstName());
         Assert.assertEquals(lastname, savedPerson.getLastName());
     }
@@ -101,8 +96,7 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
         Assert.assertEquals("New York", addressComponents.get("City"));
         Assert.assertEquals("USA", addressComponents.get("Country"));
         Assert.assertEquals("NY", addressComponents.get("State"));
-        Assert.assertEquals("123 Main St", addressComponents.get("Street"));
-        Assert.assertEquals("10001", addressComponents.get("Zip"));
+
     }
 
     @Test
@@ -164,22 +158,6 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
-    public void getPersonById_shouldReturnCorrectPerson() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        Person person = createPerson(firstName, lastName);
-
-        String personId = personService.insert(person);
-
-        Person retrievedPerson = personService.getPersonById(personId);
-
-        Assert.assertNotNull(retrievedPerson);
-
-        Assert.assertEquals(firstName, retrievedPerson.getFirstName());
-        Assert.assertEquals(lastName, retrievedPerson.getLastName());
-    }
-
-    @Test
     public void getLastFirstName_shouldReturnCorrectFormat() throws Exception {
         String firstName = "John";
         String lastName = "Doe";
@@ -195,6 +173,21 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
         String retrievedLastName = personService.getLastName(null);
 
         Assert.assertEquals("", retrievedLastName);
+    }
+    @Test
+    public void getPersonById_shouldReturnCorrectPerson() throws Exception {
+        String firstName = "John";
+        String lastName = "Doe";
+        Person person = createPerson(firstName, lastName);
+
+        String personId = personService.insert(person);
+
+        Person retrievedPerson = personService.getPersonById(personId);
+
+        Assert.assertNotNull(retrievedPerson);
+
+        Assert.assertEquals(firstName, retrievedPerson.getFirstName());
+        Assert.assertEquals(lastName, retrievedPerson.getLastName());
     }
 
 

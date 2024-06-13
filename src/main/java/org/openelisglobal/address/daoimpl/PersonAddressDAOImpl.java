@@ -59,8 +59,8 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress, AddressPK> 
 
         try {
             Query<PersonAddress> query = entityManager.unwrap(Session.class).createQuery(sql, PersonAddress.class);
-            query.setParameter("personId", personId);
-            query.setParameter("partId", addressPartId);
+            query.setParameter("personId", Integer.parseInt(personId));
+            query.setParameter("partId", Integer.parseInt(addressPartId));
             PersonAddress addressPart = query.uniqueResult();
             return addressPart;
         } catch (HibernateException e) {
