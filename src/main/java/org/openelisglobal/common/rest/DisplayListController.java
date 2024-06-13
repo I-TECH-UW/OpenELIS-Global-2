@@ -479,7 +479,7 @@ public class DisplayListController extends BaseRestController{
 		List<TestDisplayBean> testItems = new ArrayList<>();
 		List<Test> testList = new ArrayList<>();
 		if (StringUtils.isNotBlank(sampleType)) {
-			testList = typeOfSampleService.getActiveTestsBySampleTypeId(sampleType, false);
+			testList = typeOfSampleService.getActiveTestsBySampleTypeId(sampleType, true);
 		} else {
 			return testItems;
 		}
