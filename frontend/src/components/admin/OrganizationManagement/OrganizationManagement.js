@@ -83,7 +83,7 @@ function OrganizationManagament() {
   function deleteDeactivateOrganizationManagament(event) {
     event.preventDefault();
     setLoading(true);
-    postToOpenElisServer(
+    postToOpenElisServerJsonResponse(
       `/rest/DeleteOrganization?ID=${selectedRowIds.join(",")}&startingRecNo=1`,
       JSON.stringify(selectedRowIdsPost),
       () => {
@@ -252,6 +252,8 @@ function OrganizationManagament() {
   useEffect(() => {
     if (isSearching && panelSearchTerm === "") {
       setIsSearching(false);
+      setPaging(1);
+      setStartingRecNo(1);
     }
   }, [isSearching, panelSearchTerm]);
 
@@ -289,6 +291,8 @@ function OrganizationManagament() {
 
   const handlePanelSearchChange = (event) => {
     setIsSearching(true);
+    setPaging(1);
+    setStartingRecNo(1);
     const query = event.target.value;
     setPanelSearchTerm(query);
     setSelectedRowIds([]);
@@ -489,7 +493,6 @@ function OrganizationManagament() {
                                         selectedRowIds.includes(row.id),
                                     ).length === pageSize
                                 }
-                                // checked={isEveryRowIsChecked}
                                 indeterminate={
                                   selectedRowIds.length > 0 &&
                                   selectedRowIds.length <
@@ -500,7 +503,6 @@ function OrganizationManagament() {
                                       )
                                       .filter((row) => !row.disabled).length
                                 }
-                                // indeterminate={rowsIsPartiallyChecked}
                                 onSelect={() => {
                                   setDeactivateButton(false);
                                   const currentPageIds =
