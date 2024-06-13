@@ -23,6 +23,7 @@ import java.util.List;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyte.valueholder.Analyte;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.result.action.util.ResultUtil;
@@ -76,11 +77,13 @@ public class TestReflexResolver {
 
         List<TestReflex> reflexes = testReflexService.getTestReflexsByTestResultAnalyteTest(testResultId, analyteId,
                 testId);
+        LogEvent.logInfo(this.getClass().getSimpleName(), "getTestReflexesForResult: DefaultAnalyte :" ,result.getAnalyte().getAnalyteName());
         // try to check if there other analyte macthicng for this result
         List<Analyte> otherMatchingAnalyte = ResultUtil.getOtherAnalyteForResult(result);
         if (otherMatchingAnalyte != null) {
             if (!otherMatchingAnalyte.isEmpty()) {
                 for (Analyte otherAnalyte : otherMatchingAnalyte) {
+                    LogEvent.logInfo(this.getClass().getSimpleName(), "getTestReflexesForResult: Other Analyte :" ,otherAnalyte.getAnalyteName());
                     reflexes.addAll(
                             testReflexService.getTestReflexsByTestResultAnalyteTest(testResultId, otherAnalyte.getId(),
                                     testId));
