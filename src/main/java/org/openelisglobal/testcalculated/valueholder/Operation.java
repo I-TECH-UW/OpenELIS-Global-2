@@ -32,6 +32,8 @@ public class Operation implements Comparable<Operation>{
     public final static  String LESS_OR_EQUALS =  "<=";
     public final static  String IN_NORMAL_RANGE =  "IS_IN_NORMAL_RANGE";
     public final static  String OUTSIDE_NORMAL_RANGE =  "IS_OUTSIDE_NORMAL_RANGE";
+    public final static String LOGICAL_AND = "&&";
+    public final static String LOGICAL_OR = "||";
     // constants
     public final static  String TEST_RESULT =  "TEST_RESULT";
     
@@ -150,6 +152,8 @@ public class Operation implements Comparable<Operation>{
       mathFunctions.add(new IdValuePair(LESS_OR_EQUALS ,"Is Less Than Or Equal"));
       mathFunctions.add(new IdValuePair(IN_NORMAL_RANGE ,"Is With In Normal Range"));
       mathFunctions.add(new IdValuePair(OUTSIDE_NORMAL_RANGE ,"Is Out Side Normal Range"));
+      mathFunctions.add(new IdValuePair(LOGICAL_AND ,"And"));
+      mathFunctions.add(new IdValuePair(LOGICAL_OR ,"Or"));
       return mathFunctions;
     }
 

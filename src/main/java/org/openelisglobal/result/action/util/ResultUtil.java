@@ -91,6 +91,9 @@ public class ResultUtil {
         if (result.getTestResult() != null) {
             List<TestAnalyte> testAnalyteList = testAnalyteService
                     .getAllTestAnalytesPerTest(result.getTestResult().getTest());
+            if (testAnalyteList == null) {
+                return otherAnalyte; // or handle the null case appropriately
+            }
 
             Set<TestAnalyte> othertestAnalyteList = new HashSet<>();
             Analyte defaultAnalyte = result.getAnalyte();
