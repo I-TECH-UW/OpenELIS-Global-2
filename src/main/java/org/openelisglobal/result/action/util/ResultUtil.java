@@ -16,10 +16,14 @@
 */
 package org.openelisglobal.result.action.util;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.spring.util.SpringContext;
@@ -75,6 +79,47 @@ public class ResultUtil {
             }
         }
         return null;
+    }
+
+    /*
+         * The logic behind this code is that there are some other matching analytes for a specific result other than 
+         * the Analyte fetched by getTestAnalyteForResult which is set to a Result
+         */
+    @SuppressWarnings("unchecked")
+    public static List<Analyte> getOtherAnalyteForResult(Result result) {
+        List<Analyte> otherAnalyte = new ArrayList<>();
+        if (result.getTestResult() != null) {
+            List<TestAnalyte> testAnalyteList = testAnalyteService
+                    .getAllTestAnalytesPerTest(result.getTestResult().getTest());
+
+            Set<TestAnalyte> othertestAnalyteList = new HashSet<>();
+            Analyte defaultAnalyte = result.getAnalyte();
+            if (defaultAnalyte == null) {
+                return otherAnalyte;
+            }
+            if (testAnalyteList.size() == 1) {
+                return otherAnalyte;
+            }
+
+            if (testAnalyteList.size() > 1) {
+
+                Analysis parentAnalysis = result.getAnalysis().getParentAnalysis();
+
+                if (parentAnalysis == null) {
+                    testAnalyteList.forEach(ta -> {
+                        if (!ta.getAnalyte().getId().equals(defaultAnalyte.getId())) {
+                            othertestAnalyteList.add(ta);
+                        }
+                    });
+                }
+                othertestAnalyteList.forEach(a -> {
+                    otherAnalyte.add(a.getAnalyte());
+                });
+
+                return otherAnalyte;
+            }
+        }
+        return otherAnalyte;
     }
 
     public static boolean areNotes(TestResultItem item) {
