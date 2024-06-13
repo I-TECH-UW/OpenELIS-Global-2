@@ -334,7 +334,11 @@ public class TestCalculatedUtil {
         Test test = testService.getActiveTestById(Integer.valueOf(operation.getValue()));
         if (test != null) {
             Integer resultId = resultCalculation.getTestResultMap().get(Integer.valueOf(test.getId()));
-            Result result = resultService.get(resultId.toString());
+            Result result = null;
+            if(resultId != null){
+                result = resultService.get(resultId.toString());
+            }
+            
             if (result != null) {
                 if (testService.getResultType(result.getTestResult().getTest()).equals("N")) {
                     switch (inputType) {
