@@ -16,24 +16,34 @@ package org.openelisglobal.patient.valueholder;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.UUID;
+
+import org.hibernate.search.engine.backend.types.ObjectStructure;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
 import org.openelisglobal.person.valueholder.Person;
 
+@Indexed
 public class Patient extends BaseObject<String> {
 
   private static final long serialVersionUID = 1L;
 
+  @GenericField
   private String id;
 
   private String race;
 
+  @GenericField
   private String gender;
 
   private Timestamp birthDate;
 
+  @GenericField
   private String birthDateForDisplay;
 
   private String epiFirstName;
@@ -50,6 +60,7 @@ public class Patient extends BaseObject<String> {
 
   private String deathDateForDisplay;
 
+  @KeywordField(normalizer = "lowercase")
   private String nationalId;
 
   private String ethnicity;
@@ -62,8 +73,10 @@ public class Patient extends BaseObject<String> {
 
   private String birthPlace;
 
+  @IndexedEmbedded(structure = ObjectStructure.NESTED)
   private ValueHolderInterface person;
 
+  @KeywordField(normalizer = "lowercase")
   private String externalId;
 
   private String upidCode;
