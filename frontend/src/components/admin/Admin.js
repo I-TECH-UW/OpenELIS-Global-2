@@ -38,7 +38,7 @@ import { CommonProperties } from "./menu/CommonProperties";
 import ConfigMenuDisplay from "./formEntry/common/ConfigMenuDisplay";
 import ProviderMenu from "./ProviderMenu/ProviderMenu";
 import BarcodeConfiguration from "./barcodeConfiguration/BarcodeConfiguration";
-import OrganizationManagament from "./OrganizationManagament/OrganizationManagament";
+import OrganizationManagament from "./OrganizationManagement/OrganizationManagement";
 
 function Admin() {
   const intl = useIntl();
@@ -88,7 +88,7 @@ function Admin() {
           </SideNavLink>
           <SideNavLink
             renderIcon={ContainerSoftware}
-            href="#organizationManagament"
+            href="#organizationManagement"
           >
             <FormattedMessage id="organization.main.title" />
           </SideNavLink>
@@ -177,7 +177,7 @@ function Admin() {
       <PathRoute path="#barcodeConfiguration">
         <BarcodeConfiguration />
       </PathRoute>
-      <PathRoute path="#organizationManagament">
+      <PathRoute path="#organizationManagement">
         <OrganizationManagament />
       </PathRoute>
       <PathRoute path="#globalMenuManagement">

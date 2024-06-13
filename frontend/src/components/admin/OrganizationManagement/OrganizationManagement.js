@@ -39,6 +39,10 @@ import { ArrowLeft, ArrowRight } from "@carbon/icons-react";
 let breadcrumbs = [
   { label: "home.label", link: "/" },
   { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  {
+    label: "organization.main.title",
+    link: "/MasterListsPage#organizationManagement",
+  },
 ];
 
 function OrganizationManagament() {
@@ -59,7 +63,7 @@ function OrganizationManagament() {
   const [panelSearchTerm, setPanelSearchTerm] = useState("");
   const [pagination, setPagination] = useState(null);
   const [totalRecordCount, setTotalRecordCount] = useState("");
-  const [startingRecNo, setStartingRecNo] = useState(20);
+  const [startingRecNo, setStartingRecNo] = useState(1);
   const [fromRecordCount, setFromRecordCount] = useState("");
   const [toRecordCount, setToRecordCount] = useState("");
   const [paging, setPaging] = useState(1);
@@ -82,7 +86,9 @@ function OrganizationManagament() {
     postToOpenElisServer(
       `/rest/DeleteOrganization?ID=${selectedRowIds.join(",")}&startingRecNo=1`,
       JSON.stringify(selectedRowIdsPost),
-      deleteDeactivateOrganizationManagamentCallback(),
+      () => {
+        deleteDeactivateOrganizationManagamentCallback();
+      },
     );
   }
 
@@ -104,7 +110,7 @@ function OrganizationManagament() {
     setSelectedRowIdsPost(selectedIDsObject);
   }, [selectedRowIds, organizationsManagmentListShow]);
 
-  function deleteDeactivateOrganizationManagamentCallback() {
+  const deleteDeactivateOrganizationManagamentCallback = () => {
     setLoading(false);
     setNotificationVisible(true);
     addNotification({
@@ -119,7 +125,7 @@ function OrganizationManagament() {
     setTimeout(() => {
       window.location.reload();
     }, 2000);
-  }
+  };
 
   const handlePageChange = ({ page, pageSize }) => {
     setPage(page);
@@ -283,7 +289,7 @@ function OrganizationManagament() {
 
   const handlePanelSearchChange = (event) => {
     setIsSearching(true);
-    const query = event.target.value.toLowerCase();
+    const query = event.target.value;
     setPanelSearchTerm(query);
     setSelectedRowIds([]);
   };

@@ -41,6 +41,10 @@ import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 let breadcrumbs = [
   { label: "home.label", link: "/" },
   { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  {
+    label: "organization.main.title",
+    link: "/MasterListsPage#organizationManagement",
+  },
 ];
 
 function OrganizationAddModify() {
@@ -66,7 +70,7 @@ function OrganizationAddModify() {
 
   if (!id) {
     setTimeout(() => {
-      window.location.assign("/MasterListsPage");
+      window.location.assign("/MasterListsPage#organizationManagement");
     }, 1000);
 
     return (
@@ -135,13 +139,14 @@ function OrganizationAddModify() {
     postToOpenElisServerJsonResponse(
       `/rest/Organization?ID=${id}&startingRecNo=1`,
       JSON.stringify(orgInfoPost),
-      submitAddUpdatedOrgInfoCallback(),
+      () => {
+        submitAddUpdatedOrgInfoCallback();
+      },
     );
   }
 
-  function submitAddUpdatedOrgInfoCallback() {
+  const submitAddUpdatedOrgInfoCallback = () => {
     setLoading(false);
-    setNotificationVisible(true);
     addNotification({
       title: intl.formatMessage({
         id: "notification.title",
@@ -152,9 +157,10 @@ function OrganizationAddModify() {
       kind: NotificationKinds.success,
     });
     setTimeout(() => {
-      window.location.reload();
+      window.location.assign("/MasterListsPage#organizationManagement");
     }, 2000);
-  }
+    setNotificationVisible(true);
+  };
 
   useEffect(() => {
     setOrgInfoPost((prevOrgInfoPost) => ({
@@ -621,7 +627,11 @@ function OrganizationAddModify() {
                 Save
               </Button>{" "}
               <Button
-                onClick={() => window.location.assign("/MasterListsPage")}
+                onClick={() =>
+                  window.location.assign(
+                    "/MasterListsPage#organizationManagement",
+                  )
+                }
                 kind="tertiary"
                 type="button"
               >
