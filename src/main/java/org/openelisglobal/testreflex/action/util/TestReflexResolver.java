@@ -78,14 +78,16 @@ public class TestReflexResolver {
                 testId);
         // try to check if there other analyte macthicng for this result
         List<Analyte> otherMatchingAnalyte = ResultUtil.getOtherAnalyteForResult(result);
-        if (!otherMatchingAnalyte.isEmpty()) {
-            for (Analyte otherAnalyte : otherMatchingAnalyte) {
-                reflexes.addAll(
-                        testReflexService.getTestReflexsByTestResultAnalyteTest(testResultId, otherAnalyte.getId(),
-                                testId));
+        if (otherMatchingAnalyte != null) {
+            if (!otherMatchingAnalyte.isEmpty()) {
+                for (Analyte otherAnalyte : otherMatchingAnalyte) {
+                    reflexes.addAll(
+                            testReflexService.getTestReflexsByTestResultAnalyteTest(testResultId, otherAnalyte.getId(),
+                                    testId));
+                }
             }
         }
-
+        
         return reflexes != null ? reflexes : new ArrayList<>();
     }
 

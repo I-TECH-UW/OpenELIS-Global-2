@@ -106,7 +106,7 @@ public class TestCalculatedUtil {
                         tests.forEach(test -> {
                             map.put(Integer.valueOf(test.getId()), null);
                         });
-                        // insert innitail result value
+                        // insert innitial result value
                         map.put(Integer.valueOf(resultSet.result.getTestResult().getTest().getId()),
                             Integer.valueOf(resultSet.result.getId()));
                         calc.setTestResultMap(map);
