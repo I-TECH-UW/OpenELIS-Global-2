@@ -1,4 +1,4 @@
-package org.openelisglobal.systemuser.controller;
+package org.openelisglobal.systemuser.controller.rest;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
@@ -49,24 +49,18 @@ import org.openelisglobal.userrole.service.UserRoleService;
 import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
 import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.openelisglobal.systemuser.form.UnifiedSystemUserForm;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RestController
 @RequestMapping("/rest")
@@ -74,11 +68,11 @@ public class UnifiedSystemUserRestController extends BaseController {
 
     private static final String YES = "Y";
     private static final String NO = "N";
-    private static final String ALL_LAB_UNITS = "AllLabUnits";
+    public static final String ALL_LAB_UNITS = "AllLabUnits";
     private static final String RESERVED_ADMIN_NAME = "admin";
     // private static final String GLOBAL_ADMIN_ID = "globalAdminId";
     // private static final String ID = "id";
-    private static final char DEFAULT_OBFUSCATED_CHARACTER = '@';
+    public static final char DEFAULT_OBFUSCATED_CHARACTER = '@';
 
     private static final String[] ALLOWED_FIELDS = new String[] { "systemUserId", "loginUserId", "userLoginName",
             "userPassword", "confirmPassword", "userFirstName", "userLastName", "expirationDate", "timeout",

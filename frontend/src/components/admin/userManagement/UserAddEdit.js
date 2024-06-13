@@ -16,13 +16,22 @@ import {
   Select,
   SelectItem,
   PasswordInput,
+  CheckboxGroup,
+  Checkbox,
+  FormGroup,
 } from "@carbon/react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
-import CustomCheckBox from "../../common/CustomCheckBox";
-import { AlertDialog } from "../../common/CustomNotification";
+import {
+  AlertDialog,
+  NotificationKinds,
+} from "../../common/CustomNotification";
 import { NotificationContext } from "../../layout/Layout.js";
-import { getFromOpenElisServer } from "../../utils/Utils";
+import {
+  getFromOpenElisServer,
+  postToOpenElisServer,
+  postToOpenElisServerJsonResponse,
+} from "../../utils/Utils";
 
 const breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -47,20 +56,23 @@ function UserAddEdit() {
   const [userData, setUserData] = useState(null);
   const [userDataShow, setUserDataShow] = useState({});
   const [userDataPost, setUserDataPost] = useState(null);
+  const [selectedGlobalLabUnitRoles, setSelectedGlobalLabUnitRoles] = useState(
+    [],
+  );
 
-  // const id = new URLSearchParams(useLocation().search).get("ID");
+  const id = new URLSearchParams(useLocation().search).get("ID");
 
-  // if (!id) {
-  //   setTimeout(() => {
-  //     window.location.assign("/MasterListsPage");
-  //   }, 1000);
+  if (!id) {
+    setTimeout(() => {
+      window.location.assign("/MasterListsPage");
+    }, 1000);
 
-  //   return (
-  //     <>
-  //       <Loading />
-  //     </>
-  //   );
-  // }
+    return (
+      <>
+        <Loading />
+      </>
+    );
+  }
 
   const handleUserData = (res) => {
     if (!res) {
@@ -82,7 +94,7 @@ function UserAddEdit() {
     componentMounted.current = true;
     setIsLoading(true);
     getFromOpenElisServer(
-      `/rest/UnifiedSystemUser?ID=1-2&startingRecNo=1&roleFilter=`,
+      `/rest/UnifiedSystemUser?ID=${id}&startingRecNo=1&roleFilter=`,
       handleUserData,
     );
     getFromOpenElisServer(`/rest/rest/users`, handleCopyUserPermissionsList);
@@ -99,13 +111,13 @@ function UserAddEdit() {
         accountDisabled: userData.accountDisabled,
         accountLocked: userData.accountLocked,
         allowCopyUserRoles: userData.allowCopyUserRoles,
-        // cancelAction: userData.cancelAction,
-        // cancelMethod: userData.cancelMethod,
+        cancelAction: userData.cancelAction,
+        cancelMethod: userData.cancelMethod,
         confirmPassword: userData.confirmPassword,
         expirationDate: userData.expirationDate,
-        // formAction: userData.formAction,
-        // formMethod: userData.formMethod,
-        // formName: userData.formName,
+        formAction: userData.formAction,
+        formMethod: userData.formMethod,
+        formName: userData.formName,
         loginUserId: userData.loginUserId,
         selectedRoles: userData.selectedRoles,
         systemUserId: userData.systemUserId,
@@ -179,48 +191,41 @@ function UserAddEdit() {
         };
       });
 
+      if (id !== "0") {
+        const selectedGlobalLabUniRoles = userData.selectedRoles.map(
+          (item) => item,
+        );
+        setSelectedGlobalLabUnitRoles(selectedGlobalLabUniRoles);
+      } else {
+        setSelectedGlobalLabUnitRoles([]);
+      }
+
       setUserDataShow((userDataShow) => ({
         ...userDataShow,
         globalRoles,
         labUnitRoles,
         testSections,
       }));
-
-      // const organizationSelectedTypeOfActivity = userData.selectedTypes.map(
-      //   (item) => {
-      //     return {
-      //       id: item,
-      //     };
-      //   },
-      // );
-      // const organizationSelectedTypeOfActivityListArray = Object.values(
-      //   organizationSelectedTypeOfActivity,
-      // );
-      // setOrgSelectedTypeOfActivity(organizationSelectedTypeOfActivityListArray);
     }
   }, [userData]);
 
   useEffect(() => {
-    if (userDataShow && userDataShow.accountLocked === "Y") {
-      setIsLocked("radio-1");
-    } else {
-      setIsLocked("radio-2");
+    if (userDataShow) {
+      setIsLocked(userDataShow.accountLocked === "Y" ? "radio-1" : "radio-2");
     }
   }, [userDataShow]);
 
   useEffect(() => {
-    if (userDataShow && userDataShow.accountDisabled === "Y") {
-      setIsDisabled("radio-3");
-    } else {
-      setIsDisabled("radio-4");
+    if (userDataShow) {
+      setIsDisabled(
+        userDataShow.accountDisabled === "Y" ? "radio-3" : "radio-4",
+      );
     }
   }, [userDataShow]);
 
   useEffect(() => {
-    if (userDataShow && userDataShow.accountActive === "Y") {
-      setIsActive("radio-5");
-    } else {
-      setIsActive("radio-6");
+    if (userDataShow) {
+      setIsActive(userDataShow.accountActive === "Y" ? "radio-5" : "radio-6");
     }
   }, [userDataShow]);
 
@@ -228,8 +233,8 @@ function UserAddEdit() {
     event.preventDefault();
     setIsLoading(true);
     postToOpenElisServerJsonResponse(
-      `/rest/UnifiedSystemUser?ID=0&startingRecNo=1&roleFilter=`,
-      JSON.stringify(userDataPost),
+      `/rest/UnifiedSystemUser`,
+      JSON.stringify(userData),
       userSavePostCallback(),
     );
   }
@@ -345,6 +350,25 @@ function UserAddEdit() {
   function handleTestSectionsSelectChange(e) {
     setTestSectionsSelect(e.target.value);
     setSaveButton(false);
+  }
+
+  function handleCheckboxChange(roleId) {
+    let updatedRoles;
+    if (selectedGlobalLabUnitRoles.includes(roleId)) {
+      updatedRoles = selectedGlobalLabUnitRoles.filter((id) => id !== roleId);
+    } else {
+      updatedRoles = [...selectedGlobalLabUnitRoles, roleId];
+    }
+
+    setSelectedGlobalLabUnitRoles(updatedRoles);
+    setUserDataPost((prevUserDataPost) => ({
+      ...prevUserDataPost,
+      selectedRoles: updatedRoles,
+    }));
+    setUserData((prevUserData) => ({
+      ...prevUserData,
+      selectedRoles: updatedRoles,
+    }));
   }
 
   if (!isLoading) {
@@ -613,8 +637,18 @@ function UserAddEdit() {
                       defaultSelected={isLocked}
                       name="account-locked"
                     >
-                      <RadioButton labelText="Y" value="radio-1" id="radio-1" />
-                      <RadioButton labelText="N" value="radio-2" id="radio-2" />
+                      <RadioButton
+                        checked={isLocked === "radio-1"}
+                        labelText="Y"
+                        value="radio-1"
+                        id="radio-1"
+                      />
+                      <RadioButton
+                        checked={isLocked === "radio-2"}
+                        labelText="N"
+                        value="radio-2"
+                        id="radio-2"
+                      />
                     </RadioButtonGroup>
                   </Column>
                 </Grid>
@@ -630,8 +664,18 @@ function UserAddEdit() {
                       defaultSelected={isDisabled}
                       name="account-disabled"
                     >
-                      <RadioButton labelText="Y" value="radio-3" id="radio-3" />
-                      <RadioButton labelText="N" value="radio-4" id="radio-4" />
+                      <RadioButton
+                        checked={isDisabled === "radio-3"}
+                        labelText="Y"
+                        value="radio-3"
+                        id="radio-3"
+                      />
+                      <RadioButton
+                        checked={isDisabled === "radio-4"}
+                        labelText="N"
+                        value="radio-4"
+                        id="radio-4"
+                      />
                     </RadioButtonGroup>
                   </Column>
                 </Grid>
@@ -647,8 +691,18 @@ function UserAddEdit() {
                       defaultSelected={isActive}
                       name="account-isActive"
                     >
-                      <RadioButton labelText="Y" value="radio-5" id="radio-5" />
-                      <RadioButton labelText="N" value="radio-6" id="radio-6" />
+                      <RadioButton
+                        checked={isActive === "radio-5"}
+                        labelText="Y"
+                        value="radio-5"
+                        id="radio-5"
+                      />
+                      <RadioButton
+                        checked={isActive === "radio-6"}
+                        labelText="N"
+                        value="radio-6"
+                        id="radio-6"
+                      />
                     </RadioButtonGroup>
                   </Column>
                 </Grid>
@@ -707,14 +761,22 @@ function UserAddEdit() {
                       }
                       onChange={(e) => handleCopyUserPermissionsChange(e)}
                     >
-                      <SelectItem value="0" text="Select User..." />
+                      <SelectItem key="0" value="0" text="Select User..." />
                       {copyUserPermissionList &&
                       copyUserPermissionList.length > 0 ? (
                         copyUserPermissionList.map((section) => (
-                          <SelectItem value={section.id} text={section.value} />
+                          <SelectItem
+                            key={section.id}
+                            value={section.id}
+                            text={section.value}
+                          />
                         ))
                       ) : (
-                        <SelectItem value="" text="No options available" />
+                        <SelectItem
+                          key=""
+                          value=""
+                          text="No options available"
+                        />
                       )}
                     </Select>
                     {/* )} */}
@@ -733,27 +795,32 @@ function UserAddEdit() {
                   <Column lg={8} md={4} sm={4}>
                     <FormattedMessage id="systemuserrole.roles.global" />
                     <br />
-                    <CustomCheckBox
-                      id="global-administrator"
-                      label={"Global Administrator"}
-                    />
-                    <br />
-                    <FormattedMessage id="systemuserrole.roles.subglobal" />
-                    <br />
-                    <CustomCheckBox
-                      id="analyser-import"
-                      label={"Analyser Import"}
-                    />
-                    <CustomCheckBox id="audit-trail" label={"Audit Trail"} />
-                    <CustomCheckBox
-                      id="cytopathologist"
-                      label={"Cytopathologist"}
-                    />
-                    <CustomCheckBox id="pathologist" label={"Pathologist"} />
-                    <CustomCheckBox
-                      id="user-account-administrator"
-                      label={"User Account Administrator"}
-                    />
+                    <FormGroup legendId="global-rules" legendText="">
+                      {userDataShow &&
+                      userDataShow.globalRoles &&
+                      userDataShow.globalRoles.length > 0 ? (
+                        userDataShow.globalRoles.map((section) => (
+                          <Checkbox
+                            key={section.elementID}
+                            id={section.elementID}
+                            value={section.roleId}
+                            labelText={section.roleName}
+                            checked={selectedGlobalLabUnitRoles.includes(
+                              section.roleId,
+                            )}
+                            onChange={() => {
+                              handleCheckboxChange(section.roleId);
+                            }}
+                          />
+                        ))
+                      ) : (
+                        <Checkbox
+                          id="no-options"
+                          value=""
+                          labelText="No options available"
+                        />
+                      )}
+                    </FormGroup>
                     <br />
                   </Column>
                   <Column lg={8} md={4} sm={4}>
@@ -772,29 +839,82 @@ function UserAddEdit() {
                       }
                       onChange={handleTestSectionsSelectChange}
                     >
-                      <SelectItem value="option-1" text="All Lab Units" />
+                      <SelectItem
+                        key="option-1"
+                        value="option-1"
+                        text="All Lab Units"
+                      />
                       {userDataShow &&
                       userDataShow.testSections &&
                       userDataShow.testSections.length > 0 ? (
                         userDataShow.testSections.map((section) => (
-                          <SelectItem value={section.id} text={section.value} />
+                          <SelectItem
+                            key={section.id}
+                            value={section.id}
+                            text={section.value}
+                          />
                         ))
                       ) : (
-                        <SelectItem value="" text="No options available" />
+                        <SelectItem
+                          key=""
+                          value=""
+                          text="No options available"
+                        />
                       )}
                     </Select>
                     <br />
-                    <CustomCheckBox
+                    <Checkbox
                       id="all-permissions"
-                      label={"All Permissions"}
+                      labelText={"All Permissions"}
+                      checked={["4", "5", "7", "10"].every((num) =>
+                        selectedGlobalLabUnitRoles.includes(num),
+                      )}
+                      onChange={() => {
+                        const numbersToAdd = ["4", "5", "7", "10"];
+                        const updatedRoles = [...selectedGlobalLabUnitRoles];
+                        const numbersToRemove = numbersToAdd.filter((num) =>
+                          updatedRoles.includes(num),
+                        );
+                        if (numbersToRemove.length > 0) {
+                          numbersToRemove.forEach((num) => {
+                            const index = updatedRoles.indexOf(num);
+                            if (index !== -1) {
+                              updatedRoles.splice(index, 1);
+                            }
+                          });
+                        } else {
+                          updatedRoles.push(...numbersToAdd);
+                        }
+                        setSelectedGlobalLabUnitRoles(updatedRoles);
+                      }}
                     />
                     <br />
-                    <FormattedMessage id="systemuserrole.roles.sublabunit" />
-                    <br />
-                    <CustomCheckBox id="reception" label={"Reception"} />
-                    <CustomCheckBox id="reports" label={"Reports"} />
-                    <CustomCheckBox id="results" label={"Results"} />
-                    <CustomCheckBox id="validation" label={"Validation"} />
+                    <FormGroup legendId="global-rules" legendText="">
+                      {userDataShow &&
+                      userDataShow.labUnitRoles &&
+                      userDataShow.labUnitRoles.length > 0 ? (
+                        userDataShow.labUnitRoles.map((section) => (
+                          <Checkbox
+                            key={section.elementID}
+                            id={section.elementID}
+                            value={section.roleId}
+                            labelText={section.roleName}
+                            checked={selectedGlobalLabUnitRoles.includes(
+                              section.roleId,
+                            )}
+                            onChange={() => {
+                              handleCheckboxChange(section.roleId);
+                            }}
+                          />
+                        ))
+                      ) : (
+                        <Checkbox
+                          id="no-options"
+                          value=""
+                          labelText="No options available"
+                        />
+                      )}
+                    </FormGroup>
                     <br />
                   </Column>
                 </Grid>
@@ -837,10 +957,17 @@ function UserAddEdit() {
       </button>
       <button
         onClick={() => {
-          console.error(userDataShow.childrenID);
+          console.error(selectedGlobalLabUnitRoles);
         }}
       >
-        childrenID
+        selectedGlobalLabUniRoles
+      </button>
+      <button
+        onClick={() => {
+          console.error(userDataPost);
+        }}
+      >
+        userDataPost
       </button>
       <button
         onClick={() => {
@@ -869,8 +996,8 @@ function UserAddEdit() {
 
 export default injectIntl(UserAddEdit);
 
-// name as props [ add / edit user ]
-// conditonal rendering
+// on change of checkbox need a fix
+// adding another permission if ( all permission is not selected )
 // expiration date fix
 // radio button fixes
-// copy permission fix
+// copy permission fix [ name display fix ]

@@ -60,15 +60,14 @@ function UserManagement() {
   const [selectedRowCombinedUserID, setSelectedRowCombinedUserID] = useState(
     [],
   );
+  const [selectedRowCombinedUserIDPost, setSelectedRowCombinedUserIDPost] =
+    useState([]);
   const [selectedRowIdsPost, setSelectedRowIdsPost] = useState();
-  const [isEveryRowIsChecked, setIsEveryRowIsChecked] = useState(false);
-  const [rowsIsPartiallyChecked, setRowsIsPartiallyChecked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
   const [panelSearchTerm, setPanelSearchTerm] = useState("");
-  const [roleFilter, setRoleFilter] = useState(null);
-  const [pagination, setPagination] = useState(null);
-  const [filter, setFilter] = useState([]);
+  const [roleFilter, setRoleFilter] = useState("");
+  const [filters, setFilters] = useState([]);
   const [startingRecNo, setStartingRecNo] = useState(21);
   const [totalRecordCount, setTotalRecordCount] = useState("");
   const [paging, setPaging] = useState(1);
@@ -80,13 +79,17 @@ function UserManagement() {
     useState([]);
   const [userManagementList, setUserManagementList] = useState();
   const [userManagementListShow, setUserManagementListShow] = useState([]);
+  const [testSectionsSelect, setTestSectionsSelect] = useState("");
+  const [testSectionsShow, setTestSectionsShow] = useState({});
 
   function deleteDeactivateUserManagement(event) {
     event.preventDefault();
     setLoading(true);
     postToOpenElisServerJsonResponse(
-      `/rest/DeleteOrganization?ID=${selectedRowIds.join(",")}&startingRecNo=1`,
-      JSON.stringify(selectedRowIdsPost),
+      `/rest/DeleteUnifiedSystemUser?ID=${selectedRowCombinedUserID.join(
+        ",",
+      )}&startingRecNo=1`,
+      JSON.stringify(selectedRowCombinedUserIDPost),
       deleteDeactivateUserManagementCallback(),
     );
   }
@@ -103,11 +106,20 @@ function UserManagement() {
 
   useEffect(() => {
     const selectedIDsObject = {
+      _selectedIDs: ["on", "on", "on", "on", "on"],
       selectedIDs: selectedRowIds,
     };
 
     setSelectedRowIdsPost(selectedIDsObject);
   }, [selectedRowIds, userManagementListShow]);
+
+  useEffect(() => {
+    const selectedRowCombinedUserIDObject = {
+      selectedIDs: selectedRowCombinedUserID,
+    };
+
+    setSelectedRowCombinedUserIDPost(selectedRowCombinedUserIDObject);
+  }, [selectedRowCombinedUserID, userManagementListShow]);
 
   function deleteDeactivateUserManagementCallback() {
     setLoading(false);
@@ -121,9 +133,9 @@ function UserManagement() {
       }),
       kind: NotificationKinds.success,
     });
-    setTimeout(() => {
-      window.location.reload();
-    }, 2000);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 2000);
   }
 
   const handlePageChange = ({ page, pageSize }) => {
@@ -161,10 +173,33 @@ function UserManagement() {
 
   useEffect(() => {
     getFromOpenElisServer(
-      `/rest/SearchUnifiedSystemUserMenu?search=Y&startingRecNo=1&searchString=${panelSearchTerm}&filter=${filter}&roleFilter=${roleFilter}`,
-      handleSearchedProviderMenuList,
+      `/rest/SearchUnifiedSystemUserMenu?search=Y&startingRecNo=1&searchString=${panelSearchTerm}&filter=${filters.join(
+        ",",
+      )}&roleFilter=${roleFilter}`,
+      handleSearchedProviderMenuList(),
     );
   }, [panelSearchTerm]);
+
+  useEffect(() => {
+    if (userManagementListShow) {
+    }
+  }, [testSectionsShow]);
+
+  useEffect(() => {
+    if (userManagementListShow) {
+      if (selectedRowIds.length > 0) {
+        const combinedIds = selectedRowIds.map((id) => {
+          const selectedRow = userManagementListShow.find(
+            (row) => row.id === id,
+          );
+          return selectedRow.combinedUserID;
+        });
+        setSelectedRowCombinedUserID(combinedIds);
+      } else {
+        setSelectedRowCombinedUserID([]);
+      }
+    }
+  }, [selectedRowIds, userManagementListShow]);
 
   useEffect(() => {
     if (userManagementList) {
@@ -173,7 +208,6 @@ function UserManagement() {
         fromRecordCount: userManagementList.fromRecordCount,
         toRecordCount: userManagementList.toRecordCount,
       };
-      setPagination(pagination);
       setFromRecordCount(pagination.fromRecordCount);
       setToRecordCount(pagination.toRecordCount);
       setTotalRecordCount(pagination.totalRecordCount);
@@ -194,6 +228,15 @@ function UserManagement() {
       });
       const newUserManagementListArray = Object.values(newUserManagementList);
       setUserManagementListShow(newUserManagementListArray);
+
+      const testSections = userManagementList.testSections.map((item) => {
+        return {
+          id: item.id,
+          value: item.value,
+        };
+      });
+
+      setTestSectionsShow(testSections);
     }
   }, [userManagementList]);
 
@@ -228,43 +271,6 @@ function UserManagement() {
     }
   }, [selectedRowIds]);
 
-  // useEffect(() => {
-  //   let currentPageIds;
-  //   if (
-  //     searchedUserManagementListShow &&
-  //     userManagementListShow
-  //   ) {
-  //     currentPageIds = searchedUserManagementListShow
-  //       .slice((page - 1) * pageSize, page * pageSize)
-  //       .filter((row) => !row.disabled)
-  //       .map((row) => row.id);
-  //   } else {
-  //     currentPageIds = userManagementListShow
-  //       .slice((page - 1) * pageSize, page * pageSize)
-  //       .filter((row) => !row.disabled)
-  //       .map((row) => row.id);
-  //   }
-
-  //   const currentPageSelectedIds = selectedRowIds.filter((id) =>
-  //     currentPageIds.includes(id),
-  //   );
-
-  //   setIsEveryRowIsChecked(
-  //     currentPageSelectedIds.length === currentPageIds.length,
-  //   );
-
-  //   setRowsIsPartiallyChecked(
-  //     currentPageSelectedIds.length > 0 &&
-  //       currentPageSelectedIds.length < currentPageIds.length,
-  //   );
-  // }, [
-  //   selectedRowIds,
-  //   page,
-  //   pageSize,
-  //   userManagementListShow,
-  //   searchedUserManagementListShow,
-  // ]);
-
   const renderCell = (cell, row) => {
     if (cell.info.header === "select") {
       return (
@@ -278,17 +284,8 @@ function UserManagement() {
             setDeactivateButton(false);
             if (selectedRowIds.includes(row.id)) {
               setSelectedRowIds(selectedRowIds.filter((id) => id !== row.id));
-              setSelectedRowCombinedUserID((prevIds) =>
-                prevIds.filter(
-                  (selectedId) => selectedId !== row.combinedUserID,
-                ),
-              );
             } else {
               setSelectedRowIds([...selectedRowIds, row.id]);
-              setSelectedRowCombinedUserID((prevIds) => [
-                ...prevIds,
-                row.combinedUserID,
-              ]);
             }
           }}
         />
@@ -304,6 +301,11 @@ function UserManagement() {
     setPanelSearchTerm(query);
     setSelectedRowIds([]);
   };
+
+  function handleTestSectionsSelectChange(e) {
+    setTestSectionsSelect(e.target.value);
+    setRoleFilter(e.target.value);
+  }
 
   if (!loading) {
     return (
@@ -342,8 +344,8 @@ function UserManagement() {
               <Column lg={16} md={8} sm={4}>
                 <Button
                   onClick={() => {
-                    if (selectedRowIds.length === 1) {
-                      const url = `/UnifiedSystemUser?ID=${selectedRowIds[0]}&startingRecNo=1&roleFilter=`;
+                    if (selectedRowCombinedUserID.length === 1) {
+                      const url = `/UnifiedSystemUser?ID=${selectedRowCombinedUserID[0]}&startingRecNo=1&roleFilter=`;
                       window.location.href = url;
                     }
                   }}
@@ -360,9 +362,9 @@ function UserManagement() {
                   <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
                 </Button>{" "}
                 <Button
-                  // UnifiedSystemUser?ID=0&startingRecNo=1&roleFilter=
                   onClick={() => {
-                    window.location.href = "/AddUser";
+                    window.location.href =
+                      "/UnifiedSystemUser?ID=0&startingRecNo=1&roleFilter=";
                   }}
                   type="button"
                 >
@@ -426,10 +428,32 @@ function UserManagement() {
               <FormattedMessage id="menu.label.filter" />
             </Column>
             <Column lg={6} md={6} sm={3}>
-              <Select id={`select-3`} noLabel={true} defaultValue="option-3">
-                <SelectItem value="option-1" text="Option 1" />
-                <SelectItem value="option-2" text="Option 2" />
-                <SelectItem value="option-3" text="Option 3" />
+              <Select
+                id="filters"
+                noLabel={true}
+                defaultValue={
+                  testSectionsShow && testSectionsShow.length > 0
+                    ? testSectionsShow[0].id
+                    : ""
+                }
+                onChange={handleTestSectionsSelectChange}
+              >
+                <SelectItem key="" value="" text="Not Selected" />
+                {testSectionsShow && testSectionsShow.length > 0 ? (
+                  testSectionsShow.map((section) => (
+                    <SelectItem
+                      key={section.id}
+                      value={section.id}
+                      text={section.value}
+                    />
+                  ))
+                ) : (
+                  <SelectItem
+                    key="no-option-available"
+                    value=""
+                    text="No options available"
+                  />
+                )}
               </Select>
               <br />
               <FormattedMessage id="menu.label.filter.role" />
@@ -438,16 +462,28 @@ function UserManagement() {
               <CustomCheckBox
                 id="only-active"
                 label={<FormattedMessage id="menu.label.filter.active" />}
-                onChange={(data) => {
-                  setFilter(...data, "isActive");
+                onChange={(isChecked) => {
+                  if (isChecked) {
+                    setFilters([...filters, "isActive"]);
+                  } else {
+                    setFilters(
+                      filters.filter((filter) => filter !== "isActive"),
+                    );
+                  }
                 }}
               />
               <br />
               <CustomCheckBox
                 id="only-administrator"
                 label={<FormattedMessage id="menu.label.filter.admin" />}
-                onChange={(data) => {
-                  setFilter(...data, "isAdmin");
+                onChange={(isChecked) => {
+                  if (isChecked) {
+                    setFilters([...filters, "isAdmin"]);
+                  } else {
+                    setFilters(
+                      filters.filter((filter) => filter !== "isAdmin"),
+                    );
+                  }
                 }}
               />
             </Column>
@@ -614,20 +650,10 @@ function UserManagement() {
                                           (selectedId) => selectedId !== id,
                                         ),
                                       );
-                                      setSelectedRowCombinedUserID(
-                                        selectedRowCombinedUserID.filter(
-                                          (selectedId) =>
-                                            selectedId !== CombinedUserID,
-                                        ),
-                                      );
                                     } else {
                                       setSelectedRowIds([
                                         ...selectedRowIds,
                                         id,
-                                      ]);
-                                      setSelectedRowCombinedUserID([
-                                        ...selectedRowCombinedUserID,
-                                        CombinedUserID,
                                       ]);
                                     }
                                   }}
@@ -849,20 +875,10 @@ function UserManagement() {
                                           (selectedId) => selectedId !== id,
                                         ),
                                       );
-                                      setSelectedRowCombinedUserID(
-                                        selectedRowCombinedUserID.filter(
-                                          (selectedId) =>
-                                            selectedId !== CombinedUserID,
-                                        ),
-                                      );
                                     } else {
                                       setSelectedRowIds([
                                         ...selectedRowIds,
                                         id,
-                                      ]);
-                                      setSelectedRowCombinedUserID([
-                                        ...selectedRowCombinedUserID,
-                                        CombinedUserID,
                                       ]);
                                     }
                                   }}
@@ -937,6 +953,20 @@ function UserManagement() {
         </button>
         <button
           onClick={() => {
+            console.error(testSectionsSelect);
+          }}
+        >
+          testSectionsSelect
+        </button>
+        <button
+          onClick={() => {
+            console.error(filters);
+          }}
+        >
+          filters
+        </button>
+        <button
+          onClick={() => {
             console.error(selectedRowIds);
           }}
         >
@@ -944,10 +974,10 @@ function UserManagement() {
         </button>
         <button
           onClick={() => {
-            console.error(selectedRowCombinedUserID);
+            console.error(selectedRowCombinedUserIDPost);
           }}
         >
-          selectedRowIdCustomeIds
+          selectedRowCombinedUserIDPost
         </button>
         <button
           onClick={() => {
@@ -962,8 +992,4 @@ function UserManagement() {
 }
 
 export default injectIntl(UserManagement);
-
-// combinedUserID need to handle at modify [ new array on select and give him ]
-// addUser and Modify page
-// main app need to handel there route
 // route should send configuration with ID and perfect route
