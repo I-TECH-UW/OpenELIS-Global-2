@@ -3,6 +3,7 @@ package org.openelisglobal.systemuser.validator;
 import org.openelisglobal.common.provider.validation.ILoginPasswordValidation;
 import org.openelisglobal.common.provider.validation.PasswordValidationFactory;
 import org.openelisglobal.systemuser.controller.UnifiedSystemUserController;
+import org.openelisglobal.systemuser.controller.rest.UnifiedSystemUserRestController;
 import org.openelisglobal.systemuser.form.UnifiedSystemUserForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -20,7 +21,7 @@ public class UnifiedSystemUserFormValidator implements Validator {
     public void validate(Object target, Errors errors) {
         UnifiedSystemUserForm form = (UnifiedSystemUserForm) target;
 
-        if (!form.getUserPassword().matches(UnifiedSystemUserController.DEFAULT_OBFUSCATED_CHARACTER + "+")) {
+        if (!form.getUserPassword().matches(UnifiedSystemUserRestController.DEFAULT_OBFUSCATED_CHARACTER + "+")) {
             ILoginPasswordValidation passValidator = PasswordValidationFactory.getPasswordValidator();
             if (!form.getUserPassword().equals(form.getConfirmPassword())) {
                 errors.reject("login.error.password.notmatch");
@@ -29,5 +30,7 @@ public class UnifiedSystemUserFormValidator implements Validator {
                 errors.reject("login.error.message");
             }
         }
+
     }
+
 }

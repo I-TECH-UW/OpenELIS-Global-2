@@ -1055,7 +1055,5 @@
   "systemuserrole.copypermisions.placeholder": "Copier les autorisations des utilisateurs",
   "systemuserrole.apply": "Appliquer",
   "systemuserrole.roles.global": "Rôles globaux",
-  "systemuserrole.roles.subglobal": "Rôles Sous-Globaux",
-  "systemuserrole.roles.labunit": "Rôles Unité de Laboratoire",
-  "systemuserrole.roles.sublabunit": "Rôles Sous-Unité de Laboratoire"
+  "systemuserrole.roles.labunit": "Rôles Unité de Laboratoire"
 }
