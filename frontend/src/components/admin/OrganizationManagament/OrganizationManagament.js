@@ -54,8 +54,6 @@ function OrganizationManagament() {
   const [modifyButton, setModifyButton] = useState(true);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [selectedRowIdsPost, setSelectedRowIdsPost] = useState([]);
-  const [isEveryRowIsChecked, setIsEveryRowIsChecked] = useState(false);
-  const [rowsIsPartiallyChecked, setRowsIsPartiallyChecked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
   const [panelSearchTerm, setPanelSearchTerm] = useState("");
@@ -245,42 +243,17 @@ function OrganizationManagament() {
     }
   }, [selectedRowIds]);
 
-  // useEffect(() => {
-  //   let currentPageIds;
-  //   if (
-  //     searchedOrganizationManagamentListShow &&
-  //     organizationsManagmentListShow
-  //   ) {
-  //     currentPageIds = searchedOrganizationManagamentListShow
-  //       .slice((page - 1) * pageSize, page * pageSize)
-  //       .filter((row) => !row.disabled)
-  //       .map((row) => row.id);
-  //   } else {
-  //     currentPageIds = organizationsManagmentListShow
-  //       .slice((page - 1) * pageSize, page * pageSize)
-  //       .filter((row) => !row.disabled)
-  //       .map((row) => row.id);
-  //   }
+  useEffect(() => {
+    if (isSearching && panelSearchTerm === "") {
+      setIsSearching(false);
+    }
+  }, [isSearching, panelSearchTerm]);
 
-  //   const currentPageSelectedIds = selectedRowIds.filter((id) =>
-  //     currentPageIds.includes(id),
-  //   );
-
-  //   setIsEveryRowIsChecked(
-  //     currentPageSelectedIds.length === currentPageIds.length,
-  //   );
-
-  //   setRowsIsPartiallyChecked(
-  //     currentPageSelectedIds.length > 0 &&
-  //       currentPageSelectedIds.length < currentPageIds.length,
-  //   );
-  // }, [
-  //   selectedRowIds,
-  //   page,
-  //   pageSize,
-  //   organizationsManagmentListShow,
-  //   searchedOrganizationManagamentListShow,
-  // ]);
+  useEffect(() => {
+    if (selectedRowIds.length === 0) {
+      setDeactivateButton(true);
+    }
+  }, [selectedRowIds]);
 
   const renderCell = (cell, row) => {
     if (cell.info.header === "select") {
@@ -344,7 +317,7 @@ function OrganizationManagament() {
               <Button
                 onClick={() => {
                   if (selectedRowIds.length === 1) {
-                    const url = `/ModifyOrganization?ID=${selectedRowIds[0]}`;
+                    const url = `/Organization?ID=${selectedRowIds[0]}`;
                     window.location.href = url;
                   }
                 }}
@@ -362,7 +335,7 @@ function OrganizationManagament() {
               </Button>{" "}
               <Button
                 onClick={() => {
-                  window.location.href = "/AddOrganization";
+                  window.location.href = "/Organization?ID=0";
                 }}
                 type="button"
               >
@@ -731,7 +704,6 @@ function OrganizationManagament() {
                                         selectedRowIds.includes(row.id),
                                     ).length === pageSize
                                 }
-                                // checked={isEveryRowIsChecked}
                                 indeterminate={
                                   selectedRowIds.length > 0 &&
                                   selectedRowIds.length <
@@ -742,7 +714,6 @@ function OrganizationManagament() {
                                       )
                                       .filter((row) => !row.disabled).length
                                 }
-                                // indeterminate={rowsIsPartiallyChecked}
                                 onSelect={() => {
                                   setDeactivateButton(false);
                                   const currentPageIds =
@@ -864,36 +835,6 @@ function OrganizationManagament() {
             </>
           )}
         </div>
-      </div>
-      <div>
-        <button
-          onClick={() => {
-            console.error(organizationsManagmentList);
-          }}
-        >
-          gotData
-        </button>
-        <button
-          onClick={() => {
-            console.error(selectedRowIds);
-          }}
-        >
-          selectedRowIds
-        </button>
-        <button
-          onClick={() => {
-            console.error(selectedRowIdsPost);
-          }}
-        >
-          selectedRowIdsPost
-        </button>
-        <button
-          onClick={() => {
-            console.error(pagination);
-          }}
-        >
-          pagination
-        </button>
       </div>
     </>
   );

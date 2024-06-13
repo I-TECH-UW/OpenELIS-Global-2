@@ -28,6 +28,7 @@ import org.openelisglobal.common.valueholder.SimpleBaseEntity;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
 import org.openelisglobal.validation.annotations.SafeHtml;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<String> {
     private static final long serialVersionUID = 1L;
@@ -90,6 +91,7 @@ public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<
         return id;
     }
 
+    @JsonIgnore
     public String getConcatOrganizationLocalAbbreviationName() {
         return organizationLocalAbbreviation + "-" + organizationName;
     }
@@ -239,6 +241,7 @@ public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<
         this.organizationLocalAbbreviation = organizationLocalAbbreviation;
     }
 
+    @JsonIgnore
     public String getDoubleName() {
         return shortName + " = " + organizationName;
     }
@@ -273,6 +276,7 @@ public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<
         this.fhirUuid = fhirUuid;
     }
 
+    @JsonIgnore
     public String getFhirUuidAsString() {
         return fhirUuid == null ? "" : fhirUuid.toString();
     }

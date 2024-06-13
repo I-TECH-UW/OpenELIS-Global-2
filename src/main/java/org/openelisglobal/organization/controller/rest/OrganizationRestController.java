@@ -9,8 +9,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openelisglobal.address.service.AddressPartService;
@@ -58,9 +56,6 @@ public class OrganizationRestController extends BaseController {
             "organizationLocalAbbreviation", "organizationName", "shortName", "isActive", "multipleUnit",
             "streetAddress", "city", "department", "commune", "village", "state", "zipCode", "internetAddress",
             "mlsSentinelLabFlag", "cliaNum", "mlsLabFlag", "selectedTypes*" };
-
-    @JsonIgnore
-    private String fhirUuidAsString;
     
     @Autowired
     private OrganizationService organizationService;
