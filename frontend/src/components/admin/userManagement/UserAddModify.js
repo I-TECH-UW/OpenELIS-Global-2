@@ -21,17 +21,17 @@ import {
   FormGroup,
 } from "@carbon/react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
-import PageBreadCrumb from "../../common/PageBreadCrumb";
+import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 import {
   AlertDialog,
   NotificationKinds,
-} from "../../common/CustomNotification";
+} from "../../common/CustomNotification.js";
 import { NotificationContext } from "../../layout/Layout.js";
 import {
   getFromOpenElisServer,
   postToOpenElisServer,
   postToOpenElisServerJsonResponse,
-} from "../../utils/Utils";
+} from "../../utils/Utils.js";
 
 const breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -62,17 +62,24 @@ function UserAddEdit() {
 
   const id = new URLSearchParams(useLocation().search).get("ID");
 
-  if (!id) {
-    setTimeout(() => {
-      window.location.assign("/MasterListsPage");
-    }, 1000);
-
-    return (
-      <>
-        <Loading />
-      </>
-    );
-  }
+  useEffect(() => {
+    componentMounted.current = true;
+    setIsLoading(true);
+    if (id) {
+      getFromOpenElisServer(
+        `/rest/UnifiedSystemUser?ID=${id}&startingRecNo=1&roleFilter=`,
+        handleUserData,
+      );
+    } else {
+      setTimeout(() => {
+        window.location.assign("/MasterListsPage#userManagement");
+      }, 1000);
+    }
+    return () => {
+      componentMounted.current = false;
+      setIsLoading(false);
+    };
+  }, [id]);
 
   const handleUserData = (res) => {
     if (!res) {
@@ -82,6 +89,16 @@ function UserAddEdit() {
     }
   };
 
+  useEffect(() => {
+    componentMounted.current = true;
+    setIsLoading(true);
+    getFromOpenElisServer(`/rest/rest/users`, handleCopyUserPermissionsList);
+    return () => {
+      componentMounted.current = false;
+      setIsLoading(false);
+    };
+  }, []);
+
   const handleCopyUserPermissionsList = (res) => {
     if (!res) {
       setIsLoading(true);
@@ -89,20 +106,6 @@ function UserAddEdit() {
       setCopyUserPermissionList(res);
     }
   };
-
-  useEffect(() => {
-    componentMounted.current = true;
-    setIsLoading(true);
-    getFromOpenElisServer(
-      `/rest/UnifiedSystemUser?ID=${id}&startingRecNo=1&roleFilter=`,
-      handleUserData,
-    );
-    getFromOpenElisServer(`/rest/rest/users`, handleCopyUserPermissionsList);
-    return () => {
-      componentMounted.current = false;
-      setIsLoading(false);
-    };
-  }, []);
 
   useEffect(() => {
     if (userData) {
@@ -135,19 +138,19 @@ function UserAddEdit() {
         accountDisabled: userData.accountDisabled,
         accountLocked: userData.accountLocked,
         allowCopyUserRoles: userData.allowCopyUserRoles,
-        // cancelAction: userData.cancelAction,
-        // cancelMethod: userData.cancelMethod,
-        // confirmPassword: userData.confirmPassword,
+        cancelAction: userData.cancelAction,
+        cancelMethod: userData.cancelMethod,
+        confirmPassword: userData.confirmPassword,
         expirationDate: userData.expirationDate,
-        // formAction: userData.formAction,
-        // formMethod: userData.formMethod,
-        // formName: userData.formName,
-        // globalRoles: userData.globalRoles,
-        // labUnitRoles: userData.labUnitRoles,
+        formAction: userData.formAction,
+        formMethod: userData.formMethod,
+        formName: userData.formName,
+        globalRoles: userData.globalRoles,
+        labUnitRoles: userData.labUnitRoles,
         loginUserId: userData.loginUserId,
         selectedRoles: userData.selectedRoles,
         systemUserId: userData.systemUserId,
-        systemUserIdToCopy: copyUserPermission,
+        systemUserIdToCopy: userData.systemUserIdToCopy,
         systemUserLastupdated: userData.systemUserLastupdated,
         systemUsers: userData.systemUsers,
         testSections: userData.testSections,
@@ -389,7 +392,11 @@ function UserAddEdit() {
             <Section>
               <Section>
                 <Heading>
-                  <FormattedMessage id="unifiedSystemUser.add.user" />
+                  {id === "0" ? (
+                    <FormattedMessage id="unifiedSystemUser.add.user" />
+                  ) : (
+                    <FormattedMessage id="unifiedSystemUser.edit.user" />
+                  )}
                 </Heading>
               </Section>
             </Section>
@@ -795,7 +802,7 @@ function UserAddEdit() {
                   <Column lg={8} md={4} sm={4}>
                     <FormattedMessage id="systemuserrole.roles.global" />
                     <br />
-                    <FormGroup legendId="global-rules" legendText="">
+                    <FormGroup legendId="globalRules" legendText="">
                       {userDataShow &&
                       userDataShow.globalRoles &&
                       userDataShow.globalRoles.length > 0 ? (
@@ -889,7 +896,7 @@ function UserAddEdit() {
                       }}
                     />
                     <br />
-                    <FormGroup legendId="global-rules" legendText="">
+                    <FormGroup legendId="labUnitRoles" legendText="">
                       {userDataShow &&
                       userDataShow.labUnitRoles &&
                       userDataShow.labUnitRoles.length > 0 ? (
@@ -928,7 +935,11 @@ function UserAddEdit() {
                       <FormattedMessage id="label.button.save" />
                     </Button>{" "}
                     <Button
-                      onClick={() => window.location.assign("/MasterListsPage")}
+                      onClick={() =>
+                        window.location.assign(
+                          "/MasterListsPage#userManagement",
+                        )
+                      }
                       kind="tertiary"
                       type="button"
                     >
@@ -1001,3 +1012,5 @@ export default injectIntl(UserAddEdit);
 // expiration date fix
 // radio button fixes
 // copy permission fix [ name display fix ]
+// checkBox function destructuer
+// onSelect of Global Administration it should check/add all other roles
