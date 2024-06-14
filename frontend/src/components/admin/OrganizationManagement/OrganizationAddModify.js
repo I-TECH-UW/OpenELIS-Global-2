@@ -60,25 +60,117 @@ function OrganizationAddModify() {
   const [orgSelectedTypeOfActivity, setOrgSelectedTypeOfActivity] = useState(
     [],
   );
-  const [orgInfo, setOrgInfo] = useState(null);
-  const [orgInfoPost, setOrgInfoPost] = useState(null);
+  const [orgInfo, setOrgInfo] = useState({});
+  const [orgInfoPost, setOrgInfoPost] = useState({});
   const [saveButton, setSaveButton] = useState(true);
-  const [typeOfActivity, setTypeOfActivity] = useState(null);
+  const [typeOfActivity, setTypeOfActivity] = useState();
   const [typeOfActivityShow, setTypeOfActivityShow] = useState([]);
 
   const id = new URLSearchParams(useLocation().search).get("ID");
 
-  if (!id) {
-    setTimeout(() => {
-      window.location.assign("/MasterListsPage#organizationManagement");
-    }, 1000);
+  useEffect(() => {
+    componentMounted.current = true;
+    setLoading(true);
+    if (id) {
+      getFromOpenElisServer(
+        `/rest/Organization?ID=${id}&startingRecNo=1`,
+        handleMenuItems,
+      );
+    } else {
+      setLoading(false);
+      setTimeout(() => {
+        window.location.assign("/MasterListsPage#organizationManagement");
+      }, 1000);
+    }
+    return () => {
+      componentMounted.current = false;
+    };
+  }, [id]);
 
-    return (
-      <>
-        <Loading />
-      </>
-    );
-  }
+  const handleMenuItems = (res) => {
+    if (!res) {
+      setLoading(true);
+    } else {
+      setTypeOfActivity(res);
+    }
+  };
+
+  useEffect(() => {
+    if (typeOfActivity) {
+      const newOrganizationsManagementList = typeOfActivity.orgTypes.map(
+        (item) => {
+          return {
+            id: item.id,
+            name: item.name,
+            description: item.description,
+          };
+        },
+      );
+      const newOrganizationsManagementListArray = Object.values(
+        newOrganizationsManagementList,
+      );
+      setTypeOfActivityShow(newOrganizationsManagementListArray);
+
+      const organizationsManagementIdInfo = {
+        id: typeOfActivity.id,
+        organizationName: typeOfActivity.organizationName,
+        shortName: typeOfActivity.shortName,
+        isActive: typeOfActivity.isActive,
+        internetAddress: typeOfActivity.internetAddress,
+        selectedTypes: typeOfActivity.selectedTypes,
+      };
+
+      const organizationsManagementIdInfoPost = {
+        departmentList: typeOfActivity.departmentList,
+        orgTypes: typeOfActivity.orgTypes,
+        id: typeOfActivity.id,
+        organizationName: typeOfActivity.organizationName,
+        shortName: typeOfActivity.shortName,
+        isActive: typeOfActivity.isActive,
+        lastupdated: typeOfActivity.lastupdated,
+        commune: typeOfActivity.commune,
+        village: typeOfActivity.village,
+        department: typeOfActivity.department,
+        formName: typeOfActivity.formName,
+        formMethod: typeOfActivity.formMethod,
+        cancelAction: typeOfActivity.cancelAction,
+        submitOnCancel: typeOfActivity.submitOnCancel,
+        cancelMethod: typeOfActivity.cancelMethod,
+        mlsSentinelLabFlag: typeOfActivity.mlsSentinelLabFlag,
+        parentOrgName: typeOfActivity.parentOrgName,
+        state: typeOfActivity.state,
+        internetAddress: typeOfActivity.internetAddress,
+        selectedTypes: typeOfActivity.selectedTypes,
+      };
+      setOrgInfo(organizationsManagementIdInfo);
+      setOrgInfoPost(organizationsManagementIdInfoPost);
+      setSelectedRowIds(typeOfActivity.selectedTypes);
+
+      if (id !== "0") {
+        const organizationSelectedTypeOfActivity =
+          typeOfActivity.selectedTypes.map((item) => {
+            return {
+              id: item,
+            };
+          });
+        const organizationSelectedTypeOfActivityListArray = Object.values(
+          organizationSelectedTypeOfActivity,
+        );
+        setOrgSelectedTypeOfActivity(
+          organizationSelectedTypeOfActivityListArray,
+        );
+      } else {
+        setOrgSelectedTypeOfActivity([]);
+      }
+    }
+  }, [typeOfActivity, id]);
+
+  useEffect(() => {
+    setOrgInfoPost((prevOrgInfoPost) => ({
+      ...prevOrgInfoPost,
+      selectedTypes: selectedRowIds,
+    }));
+  }, [selectedRowIds, orgSelectedTypeOfActivity, orgInfo, orgInfoPost]);
 
   // const handlePageChange = ({ page, pageSize }) => {
   //   setPage(page);
@@ -161,103 +253,6 @@ function OrganizationAddModify() {
     }, 2000);
     setNotificationVisible(true);
   };
-
-  useEffect(() => {
-    setOrgInfoPost((prevOrgInfoPost) => ({
-      ...prevOrgInfoPost,
-      selectedTypes: selectedRowIds,
-    }));
-  }, [selectedRowIds, orgSelectedTypeOfActivity, orgInfo]);
-
-  useEffect(() => {
-    if (typeOfActivity) {
-      const newOrganizationsManagementList = typeOfActivity.orgTypes.map(
-        (item) => {
-          return {
-            id: item.id,
-            name: item.name,
-            description: item.description,
-          };
-        },
-      );
-      const newOrganizationsManagementListArray = Object.values(
-        newOrganizationsManagementList,
-      );
-      setTypeOfActivityShow(newOrganizationsManagementListArray);
-
-      const organizationsManagementIdInfo = {
-        id: typeOfActivity.id,
-        organizationName: typeOfActivity.organizationName,
-        shortName: typeOfActivity.shortName,
-        isActive: typeOfActivity.isActive,
-        internetAddress: typeOfActivity.internetAddress,
-        selectedTypes: typeOfActivity.selectedTypes,
-      };
-
-      const organizationsManagementIdInfoPost = {
-        departmentList: typeOfActivity.departmentList,
-        orgTypes: typeOfActivity.orgTypes,
-        id: typeOfActivity.id,
-        organizationName: typeOfActivity.organizationName,
-        shortName: typeOfActivity.shortName,
-        isActive: typeOfActivity.isActive,
-        lastupdated: typeOfActivity.lastupdated,
-        commune: typeOfActivity.commune,
-        village: typeOfActivity.village,
-        department: typeOfActivity.department,
-        formName: typeOfActivity.formName,
-        formMethod: typeOfActivity.formMethod,
-        cancelAction: typeOfActivity.cancelAction,
-        submitOnCancel: typeOfActivity.submitOnCancel,
-        cancelMethod: typeOfActivity.cancelMethod,
-        mlsSentinelLabFlag: typeOfActivity.mlsSentinelLabFlag,
-        parentOrgName: typeOfActivity.parentOrgName,
-        state: typeOfActivity.state,
-        internetAddress: typeOfActivity.internetAddress,
-      };
-      setOrgInfo(organizationsManagementIdInfo);
-      setOrgInfoPost(organizationsManagementIdInfoPost);
-      setSelectedRowIds(typeOfActivity.selectedTypes);
-
-      if (id !== "0") {
-        const organizationSelectedTypeOfActivity =
-          typeOfActivity.selectedTypes.map((item) => {
-            return {
-              id: item,
-            };
-          });
-        const organizationSelectedTypeOfActivityListArray = Object.values(
-          organizationSelectedTypeOfActivity,
-        );
-        setOrgSelectedTypeOfActivity(
-          organizationSelectedTypeOfActivityListArray,
-        );
-      } else {
-        setOrgSelectedTypeOfActivity([]);
-      }
-    }
-  }, [typeOfActivity]);
-
-  const handleMenuItems = (res) => {
-    if (!res) {
-      setLoading(true);
-    } else {
-      setTypeOfActivity(res);
-    }
-  };
-
-  useEffect(() => {
-    componentMounted.current = true;
-    setLoading(true);
-    getFromOpenElisServer(
-      `/rest/Organization?ID=${id}&startingRecNo=1`,
-      handleMenuItems,
-    );
-    return () => {
-      componentMounted.current = false;
-      setLoading(false);
-    };
-  }, []);
 
   const renderCell = (cell, row) => {
     if (cell.info.header === "select") {

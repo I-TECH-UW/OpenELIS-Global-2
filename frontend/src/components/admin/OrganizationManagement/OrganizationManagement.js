@@ -61,7 +61,6 @@ function OrganizationManagament() {
   const [loading, setLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
   const [panelSearchTerm, setPanelSearchTerm] = useState("");
-  const [pagination, setPagination] = useState(null);
   const [totalRecordCount, setTotalRecordCount] = useState("");
   const [startingRecNo, setStartingRecNo] = useState(1);
   const [fromRecordCount, setFromRecordCount] = useState("");
@@ -102,13 +101,14 @@ function OrganizationManagament() {
     setStartingRecNo(Math.max(fromRecordCount, 1));
   };
 
-  useEffect(() => {
-    const selectedIDsObject = {
-      selectedIDs: selectedRowIds,
-    };
-
-    setSelectedRowIdsPost(selectedIDsObject);
-  }, [selectedRowIds, organizationsManagmentListShow]);
+  const handlePanelSearchChange = (event) => {
+    setIsSearching(true);
+    setPaging(1);
+    setStartingRecNo(1);
+    const query = event.target.value;
+    setPanelSearchTerm(query);
+    setSelectedRowIds([]);
+  };
 
   const deleteDeactivateOrganizationManagamentCallback = () => {
     setLoading(false);
@@ -178,7 +178,6 @@ function OrganizationManagament() {
           organizationsManagmentList.modelMap.form.fromRecordCount,
         toRecordCount: organizationsManagmentList.modelMap.form.toRecordCount,
       };
-      setPagination(pagination);
       setFromRecordCount(pagination.fromRecordCount);
       setToRecordCount(pagination.toRecordCount);
       setTotalRecordCount(pagination.totalRecordCount);
@@ -242,6 +241,14 @@ function OrganizationManagament() {
   }, [searchedOrganizationManagamentList]);
 
   useEffect(() => {
+    const selectedIDsObject = {
+      selectedIDs: selectedRowIds,
+    };
+
+    setSelectedRowIdsPost(selectedIDsObject);
+  }, [selectedRowIds, organizationsManagmentListShow]);
+
+  useEffect(() => {
     if (selectedRowIds.length === 1) {
       setModifyButton(false);
     } else {
@@ -287,15 +294,6 @@ function OrganizationManagament() {
     } else {
       return <TableCell key={cell.id}>{cell.value}</TableCell>;
     }
-  };
-
-  const handlePanelSearchChange = (event) => {
-    setIsSearching(true);
-    setPaging(1);
-    setStartingRecNo(1);
-    const query = event.target.value;
-    setPanelSearchTerm(query);
-    setSelectedRowIds([]);
   };
 
   if (!loading) {
