@@ -54,6 +54,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -123,7 +124,7 @@ public class UnifiedSystemUserRestController extends BaseController {
     @ResponseBody
     public List<IdValuePair> getUsersWithRole() {
         List<SystemUser> users = systemUserService.getAll();
-        List<IdValuePair> idValues = users.stream().map(e -> new IdValuePair(e.getId(), e.getDisplayName()))
+        List<IdValuePair> idValues = users.stream().map(e -> new IdValuePair(e.getId(), e.getLoginName()))
                 .collect(Collectors.toList());
         return idValues;
     }
@@ -416,7 +417,7 @@ public class UnifiedSystemUserRestController extends BaseController {
     }
 
     @PostMapping(value = "/UnifiedSystemUser")
-    public Map<String, String> showUpdateUnifiedSystemUser(HttpServletRequest request, @Valid UnifiedSystemUserForm form, BindingResult result) {
+    public Map<String, String> showUpdateUnifiedSystemUser(HttpServletRequest request, @RequestBody @Valid UnifiedSystemUserForm form, BindingResult result) {
         boolean doFiltering = true;
         formValidator.validate(form, result);
         Map<String, String> response = new HashMap<>();

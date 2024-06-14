@@ -39,6 +39,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -258,7 +259,7 @@ public class UnifiedSystemUserMenuRestController extends BaseMenuController<Unif
     }
 
     @PostMapping(value = "/DeleteUnifiedSystemUser")
-    public String showDeleteUnifiedSystemUser(HttpServletRequest request, UnifiedSystemUserMenuForm form, BindingResult result) {
+    public String showDeleteUnifiedSystemUser(HttpServletRequest request, @RequestBody UnifiedSystemUserMenuForm form, BindingResult result) {
         if (result.hasErrors()) {
             saveErrors(result);
             return findForward(FWD_FAIL_DELETE);

@@ -68,7 +68,7 @@ function UserManagement() {
   const [panelSearchTerm, setPanelSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const [filters, setFilters] = useState([]);
-  const [startingRecNo, setStartingRecNo] = useState(21);
+  const [startingRecNo, setStartingRecNo] = useState(1);
   const [totalRecordCount, setTotalRecordCount] = useState("");
   const [paging, setPaging] = useState(1);
   const [fromRecordCount, setFromRecordCount] = useState("");
@@ -106,7 +106,6 @@ function UserManagement() {
 
   useEffect(() => {
     const selectedIDsObject = {
-      _selectedIDs: ["on", "on", "on", "on", "on"],
       selectedIDs: selectedRowIds,
     };
 
@@ -156,12 +155,17 @@ function UserManagement() {
   useEffect(() => {
     componentMounted.current = true;
     setLoading(true);
-    getFromOpenElisServer(`/rest/UnifiedSystemUserMenu`, handleMenuItems);
+    getFromOpenElisServer(
+      `/rest/SearchUnifiedSystemUserMenu?search=N&startingRecNo=${startingRecNo}&filter=${filters.join(
+        ",",
+      )}&roleFilter=${roleFilter}`,
+      handleMenuItems,
+    );
     return () => {
       componentMounted.current = false;
       setLoading(false);
     };
-  }, []);
+  }, [roleFilter, filters, startingRecNo]);
 
   const handleSearchedProviderMenuList = (res) => {
     if (!res) {
@@ -173,17 +177,17 @@ function UserManagement() {
 
   useEffect(() => {
     getFromOpenElisServer(
-      `/rest/SearchUnifiedSystemUserMenu?search=Y&startingRecNo=1&searchString=${panelSearchTerm}&filter=${filters.join(
+      `/rest/SearchUnifiedSystemUserMenu?search=Y&startingRecNo=${startingRecNo}&searchString=${panelSearchTerm}&filter=${filters.join(
         ",",
       )}&roleFilter=${roleFilter}`,
-      handleSearchedProviderMenuList(),
+      handleSearchedProviderMenuList,
     );
-  }, [panelSearchTerm]);
+  }, [panelSearchTerm, roleFilter, filters, startingRecNo]);
 
-  useEffect(() => {
-    if (userManagementListShow) {
-    }
-  }, [testSectionsShow]);
+  // useEffect(() => {
+  //   if (userManagementListShow) {
+  //   }
+  // }, [testSectionsShow]);
 
   useEffect(() => {
     if (userManagementListShow) {
@@ -216,14 +220,14 @@ function UserManagement() {
         return {
           id: item.systemUserId,
           combinedUserID: item.combinedUserID,
-          firstName: item.firstName || "",
-          lastName: item.lastName || "",
-          loginName: item.loginName || "",
-          expDate: item.expDate || "",
-          locked: item.locked || "",
-          disabled: item.disabled || "",
-          active: item.active || "",
-          timeout: item.timeout || "",
+          firstName: item.firstName,
+          lastName: item.lastName,
+          loginName: item.loginName,
+          expDate: item.expDate,
+          locked: item.locked,
+          disabled: item.disabled,
+          active: item.active,
+          timeout: item.timeout,
         };
       });
       const newUserManagementListArray = Object.values(newUserManagementList);
@@ -247,19 +251,20 @@ function UserManagement() {
           return {
             id: item.systemUserId,
             combinedUserID: item.combinedUserID,
-            firstName: item.firstName || "",
-            lastName: item.lastName || "",
-            loginName: item.loginName || "",
-            expDate: item.expDate || "",
-            locked: item.locked || "",
-            disabled: item.disabled || "",
-            active: item.active || "",
-            timeout: item.timeout || "",
+            firstName: item.firstName,
+            lastName: item.lastName,
+            loginName: item.loginName,
+            expDate: item.expDate,
+            locked: item.locked,
+            disabled: item.disabled,
+            active: item.active,
+            timeout: item.timeout,
           };
         },
       );
       const newUserManagementListArray = Object.values(newUserManagementList);
       setSearchedUserManagementListShow(newUserManagementListArray);
+      console.error(searchedUserManagementListShow);
     }
   }, [searchedUserManagementList]);
 
@@ -297,10 +302,26 @@ function UserManagement() {
 
   const handlePanelSearchChange = (event) => {
     setIsSearching(true);
-    const query = event.target.value.toLowerCase();
+    setPaging(1);
+    setStartingRecNo(1);
+    const query = event.target.value;
     setPanelSearchTerm(query);
     setSelectedRowIds([]);
   };
+
+  useEffect(() => {
+    if (isSearching && panelSearchTerm === "") {
+      setIsSearching(false);
+      setPaging(1);
+      setStartingRecNo(1);
+    }
+  }, [isSearching, panelSearchTerm]);
+
+  useEffect(() => {
+    if (selectedRowIds.length === 0) {
+      setDeactivateButton(true);
+    }
+  }, [selectedRowIds]);
 
   function handleTestSectionsSelectChange(e) {
     setTestSectionsSelect(e.target.value);
