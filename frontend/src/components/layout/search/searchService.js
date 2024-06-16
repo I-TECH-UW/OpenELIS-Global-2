@@ -1,67 +1,33 @@
-
 import { getFromOpenElisServer } from "../../utils/Utils";
 
-export const fetchMenuData = (callback) => {
-  getFromOpenElisServer("/rest/menu", callback);
-};
-
-export const flattenMenuItems = (menuItems) => {
-  return menuItems.reduce((menuItem, item) => {
-  menuItem.push(item);
-    if (item.childMenus && item.childMenus.length > 0) {
-      menuItem = menuItem.concat(flattenMenuItems(item.childMenus));
-    }
-    return menuItem;
-  }, []);
-};
-
-export const filterMenuItems = (menuItems, query) => {
-  if (!query) return menuItems;
-
-  const lowerCaseQuery = query.toLowerCase();
-
-  return flattenMenuItems(menuItems).filter((item) => {
-    return (
-      item.menu.displayKey.toLowerCase().includes(lowerCaseQuery) ||
-      item.menu.toolTipKey.toLowerCase().includes(lowerCaseQuery)
-    );
-  });
-};
-
-export const fetchPatientDetails = (patientID, callback) => {
-  const endpoint = `/rest/patient-details?patientID=${patientID}`;
-  let isMounted = true;
-
-  getFromOpenElisServer(endpoint, (response) => {
-    if (isMounted) {
-      if (response) {
-        callback([response]); // Wrap the response in an array for consistency
-      } else {
-        callback([]);
-      }
-    }
-  });
-
-  return () => {
-    isMounted = false;
-  };
-};
-
 export const fetchPatientData = (query, callback) => {
-  const [firstName, lastName,guid] = query.split(" ");
+  const [firstName, lastName] = query.split(" ");
+  const dob = query; // Assuming query can be birthdate, adjust as needed
+  const guid = query; // Assuming query can be guid, adjust as needed
+  const nationalID = query; // Assuming query can be nationalID, adjust as needed
+  const patientID = query; // Assuming query can be patientID, adjust as needed
+  const subjectNumber = query; // Assuming query can be subjectNumber, adjust as needed
+
   const endpoints = [
+    `/rest/patient-search-results?dateOfBirth=${dob}`,
     `/rest/patient-search-results?guid=${guid}`,
+    `/rest/patient-search-results?nationalID=${nationalID}`,
+    `/rest/patient-search-results?patientID=${patientID}`,
+    `/rest/patient-search-results?subjectNumber=${subjectNumber}`,
     `/rest/patient-search-results?firstName=${firstName}`,
     `/rest/patient-search-results?lastName=${lastName || query}`,
     `/rest/patient-search-results?gender=${query}`,
     lastName ? `/rest/patient-search-results?firstName=${firstName}&lastName=${lastName}` : null
-  ].filter(Boolean);
+  ].filter(Boolean); // Filter out null values
 
   let isMounted = true;
+
+  console.log('Endpoints to be called:', endpoints); // Debugging log
 
   Promise.all(endpoints.map(endpoint =>
     new Promise((resolve) => {
       getFromOpenElisServer(endpoint, (response) => {
+        console.log(`Response from endpoint ${endpoint}:`, response); // Debugging log
         if (response && response.patientSearchResults) {
           resolve(response.patientSearchResults);
         } else {
@@ -77,6 +43,7 @@ export const fetchPatientData = (query, callback) => {
           t.patientID === value.patientID
         ))
       );
+      console.log('Combined and unique results:', uniqueResults); // Debugging log
       callback(uniqueResults);
     }
   });
@@ -85,30 +52,24 @@ export const fetchPatientData = (query, callback) => {
     isMounted = false;
   };
 };
-export const handleSearchByLabNo = (accessionNumber, callback) => {
-  const endpoint = `/rest/sample-edit?accessionNumber=${accessionNumber}`;
-  let isMounted = true;
 
-  getFromOpenElisServer(endpoint, (response) => {
-    if (isMounted) {
-      if (response) {
-        callback([response]); // Wrap the response in an array for consistency
-      } else {
-        callback([]);
-      }
-    }
-  });
 
-  return () => {
-    isMounted = false;
-  };
+import React from "react";
+import PropTypes from "prop-types";
+
+export const SuggestionList = ({ suggestions, onSelect }) => {
+  return (
+    <ul className="suggestions">
+      {suggestions.map((suggestion, index) => (
+        <li key={index} onClick={() => onSelect(suggestion)}>
+          {suggestion}
+        </li>
+      ))}
+    </ul>
+  );
 };
 
-export const openPatientResults = (patientId) => {
-  if (patientId) {
-    window.location.href = `/ModifyOrder?patientId=${patientId}`;
-  }
+SuggestionList.propTypes = {
+  suggestions: PropTypes.arrayOf(PropTypes.string).isRequired,
+  onSelect: PropTypes.func.isRequired,
 };
-
- 
- 
