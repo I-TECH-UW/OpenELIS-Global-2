@@ -66,7 +66,7 @@ public class ProviderImportServiceImpl implements ProviderImportService {
                 responseBundle = client.loadPage().next(responseBundle).execute();
                 responseBundles.add(responseBundle);
             }
-//            providerService.deactivateAllProviders();
+            // providerService.deactivateAllProviders();
             importProvidersFromBundle(client, responseBundles);
 
         }
@@ -86,8 +86,7 @@ public class ProviderImportServiceImpl implements ProviderImportService {
                         Provider provider = fhirTransformService.transformToProvider(fhirPractitioner);
                         if (providerService.getProviderByFhirId(provider.getFhirUuid()) == null
                                 || !providerService.getProviderByFhirId(provider.getFhirUuid()).isDesynchronized()) {
-                            providerService.insertOrUpdateProviderByFhirUuid(
-                                    fhirTransformService.transformToProvider(fhirPractitioner));
+                            providerService.insertOrUpdateProviderByFhirUuid(provider.getFhirUuid(), provider);
                             remoteFhirProviders.put(fhirPractitioner.getIdElement().getIdPart(), fhirPractitioner);
                         }
 
@@ -102,5 +101,4 @@ public class ProviderImportServiceImpl implements ProviderImportService {
 
         fhirPersistanceService.updateFhirResourcesInFhirStore(remoteFhirProviders);
     }
-
 }

@@ -122,20 +122,25 @@ public class ProviderServiceImpl extends AuditableBaseObjectServiceImpl<Provider
 
     @Override
     @Transactional
-    public Provider insertOrUpdateProviderByFhirUuid(Provider provider) {
-        Provider dbProvider = getProviderByFhirId(provider.getFhirUuid());
+    public Provider insertOrUpdateProviderByFhirUuid(UUID fhirUuid, Provider provider) {
+        Provider dbProvider = getProviderByFhirId(fhirUuid);
+
         if (dbProvider != null) {
             dbProvider.setActive(provider.getActive());
             dbProvider.getPerson().setLastName(provider.getPerson().getLastName());
             dbProvider.getPerson().setMiddleName(provider.getPerson().getMiddleName());
             dbProvider.getPerson().setFirstName(provider.getPerson().getFirstName());
-
             dbProvider.getPerson().setEmail(provider.getPerson().getEmail());
             dbProvider.getPerson().setPrimaryPhone(provider.getPerson().getPrimaryPhone());
             dbProvider.getPerson().setWorkPhone(provider.getPerson().getWorkPhone());
             dbProvider.getPerson().setFax(provider.getPerson().getFax());
             dbProvider.getPerson().setCellPhone(provider.getPerson().getCellPhone());
+            dbProvider = save(dbProvider);
         } else {
+            if (fhirUuid == null) {
+                fhirUuid = UUID.randomUUID();
+            }
+            provider.setFhirUuid(fhirUuid);
             provider.getPerson().setSysUserId("1");
             provider.setPerson(personService.save(provider.getPerson()));
             provider.setSysUserId("1");
@@ -143,4 +148,5 @@ public class ProviderServiceImpl extends AuditableBaseObjectServiceImpl<Provider
         }
         return dbProvider;
     }
+
 }
