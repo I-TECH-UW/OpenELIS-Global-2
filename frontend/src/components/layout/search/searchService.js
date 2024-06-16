@@ -2,11 +2,11 @@ import { getFromOpenElisServer } from "../../utils/Utils";
 
 export const fetchPatientData = (query, callback) => {
   const [firstName, lastName] = query.split(" ");
-  const dob = query; // Assuming query can be birthdate, adjust as needed
-  const guid = query; // Assuming query can be guid, adjust as needed
-  const nationalID = query; // Assuming query can be nationalID, adjust as needed
-  const patientID = query; // Assuming query can be patientID, adjust as needed
-  const subjectNumber = query; // Assuming query can be subjectNumber, adjust as needed
+  const dob = query; 
+  const guid = query; 
+  const nationalID = query; 
+  const patientID = query; 
+  const subjectNumber = query; 
 
   const endpoints = [
     `/rest/patient-search-results?dateOfBirth=${dob}`,
@@ -22,12 +22,12 @@ export const fetchPatientData = (query, callback) => {
 
   let isMounted = true;
 
-  console.log('Endpoints to be called:', endpoints); // Debugging log
+ 
 
   Promise.all(endpoints.map(endpoint =>
     new Promise((resolve) => {
       getFromOpenElisServer(endpoint, (response) => {
-        console.log(`Response from endpoint ${endpoint}:`, response); // Debugging log
+        
         if (response && response.patientSearchResults) {
           resolve(response.patientSearchResults);
         } else {
@@ -43,7 +43,8 @@ export const fetchPatientData = (query, callback) => {
           t.patientID === value.patientID
         ))
       );
-      console.log('Combined and unique results:', uniqueResults); // Debugging log
+      
+      
       callback(uniqueResults);
     }
   });
