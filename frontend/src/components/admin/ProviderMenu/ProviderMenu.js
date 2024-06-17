@@ -81,20 +81,19 @@ function ProviderMenu() {
     { id: "no", value: "No" },
   ];
 
-  //check
   async function displayStatus(res) {
     setNotificationVisible(true);
     if (res.status == "201" || res.status == "200") {
       addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "success.add.edited.msg" }),
+        message: intl.formatMessage({ id: "save.config.success.msg" }),
       });
     } else {
       addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "error.add.edited.msg" }),
+        message: intl.formatMessage({ id: "server.error.msg" }),
       });
     }
     reloadConfiguration();
