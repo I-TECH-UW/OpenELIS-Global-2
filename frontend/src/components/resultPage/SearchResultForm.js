@@ -893,7 +893,7 @@ export function SearchResults(props) {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "12rem",
+      width: "25rem",
     },
   ];
 
@@ -1035,6 +1035,7 @@ export function SearchResults(props) {
                 rows={1}
                 onChange={(e) => handleChange(e, row.id)}
               ></TextArea>
+               <div className="note" dangerouslySetInnerHTML={{ __html: row.pastNotes }}/>
             </div>
           </>
         );
@@ -1172,19 +1173,6 @@ export function SearchResults(props) {
   const renderReferral = ({ data }) => (
     <>
       <Grid>
-        <Column lg={3}>
-          <TextArea
-            id={"testResult" + data.id + ".pastNotes"}
-            name={"testResult[" + data.id + "].pastNotes"}
-            value={data.pastNotes}
-            disabled={true}
-            type="text"
-            labelText={intl.formatMessage({
-              id: "referral.testresult.pastnote",
-            })}
-            rows={2}
-          ></TextArea>
-        </Column>
         <Column lg={2}>
           <Select
             id={"testMethod" + data.id}
