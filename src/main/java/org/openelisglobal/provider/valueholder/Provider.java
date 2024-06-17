@@ -113,7 +113,6 @@ public class Provider extends BaseObject<String> implements DesynchronousCapable
         return fhirUuid;
     }
 
-    @JsonIgnore
     public String getFhirUuidAsString() {
         return fhirUuid == null ? "" : fhirUuid.toString();
     }
