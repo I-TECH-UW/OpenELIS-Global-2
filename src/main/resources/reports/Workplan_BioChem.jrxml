@@ -93,7 +93,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="5" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Order Number]]></text>
+				<text><![CDATA[Lab Number]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
