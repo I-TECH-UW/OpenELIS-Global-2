@@ -30,5 +30,5 @@ public interface ProviderService extends BaseObjectService<Provider, String> {
 
     void deactivateProviders(List<Provider> providers);
 
-    Provider insertOrUpdateProviderByFhirUuid(Provider provider);
+    Provider insertOrUpdateProviderByFhirUuid(UUID fhirUuid, Provider provider);
 }
