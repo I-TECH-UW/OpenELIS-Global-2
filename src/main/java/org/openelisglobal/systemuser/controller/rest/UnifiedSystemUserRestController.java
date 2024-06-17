@@ -124,7 +124,7 @@ public class UnifiedSystemUserRestController extends BaseController {
     @ResponseBody
     public List<IdValuePair> getUsersWithRole() {
         List<SystemUser> users = systemUserService.getAll();
-        List<IdValuePair> idValues = users.stream().map(e -> new IdValuePair(e.getId(), e.getLoginName()))
+        List<IdValuePair> idValues = users.stream().map(e -> new IdValuePair(e.getId(), e.getDisplayName()))
                 .collect(Collectors.toList());
         return idValues;
     }

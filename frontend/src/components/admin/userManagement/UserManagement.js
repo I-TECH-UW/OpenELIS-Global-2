@@ -43,6 +43,10 @@ import { ArrowLeft, ArrowRight } from "@carbon/icons-react";
 let breadcrumbs = [
   { label: "home.label", link: "/" },
   { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  {
+    label: "unifiedSystemUser.browser.title",
+    link: "/MasterListsPage#userManagement",
+  },
 ];
 
 function UserManagement() {
@@ -604,7 +608,6 @@ function UserManagement() {
                                         selectedRowIds.includes(row.id),
                                     ).length === pageSize
                                 }
-                                // checked={isEveryRowIsChecked}
                                 indeterminate={
                                   selectedRowIds.length > 0 &&
                                   selectedRowIds.length <
@@ -615,7 +618,6 @@ function UserManagement() {
                                       )
                                       .filter((row) => !row.disabled).length
                                 }
-                                // indeterminate={rowsIsPartiallyChecked}
                                 onSelect={() => {
                                   setDeactivateButton(false);
                                   const currentPageIds =
@@ -830,7 +832,6 @@ function UserManagement() {
                                         selectedRowIds.includes(row.id),
                                     ).length === pageSize
                                 }
-                                // checked={isEveryRowIsChecked}
                                 indeterminate={
                                   selectedRowIds.length > 0 &&
                                   selectedRowIds.length <
@@ -841,7 +842,6 @@ function UserManagement() {
                                       )
                                       .filter((row) => !row.disabled).length
                                 }
-                                // indeterminate={rowsIsPartiallyChecked}
                                 onSelect={() => {
                                   setDeactivateButton(false);
                                   const currentPageIds = userManagementListShow
@@ -1013,4 +1013,3 @@ function UserManagement() {
 }
 
 export default injectIntl(UserManagement);
-// route should send configuration with ID and perfect route
