@@ -49,6 +49,9 @@ public class Calculation extends BaseObject<Integer> {
     @Column(name = "active")
     private Boolean active = true;
 
+    @Column(name = "note")
+    private String note;
+
     @Transient
     String localizedName ;
     
@@ -137,5 +140,13 @@ public class Calculation extends BaseObject<Integer> {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 }

@@ -23,6 +23,8 @@ import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
 import org.openelisglobal.person.valueholder.Person;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Provider extends BaseObject<String> implements DesynchronousCapable {
 
     private String id;
