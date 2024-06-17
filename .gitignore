@@ -29,3 +29,6 @@ src/main/resources/adminPassword.txt
 /bin/
 /.apt_generated/
 */plugins/*.jar
+
+dataexport/
+plugins/

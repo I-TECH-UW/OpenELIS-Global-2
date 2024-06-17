@@ -41,6 +41,8 @@ import NonConformIndex from "./components/nonconform/index";
 import SampleBatchEntrySetup from "./components/batchOrderEntry/SampleBatchEntrySetup.js";
 import AuditTrailReportIndex from "./components/reports/auditTrailReport/Index.js";
 import OrganizationAddEdit from "./components/admin/OrganizationManagement/OrganizationAddModify.js";
+import NotificationTestPage from "./components/notifications/NotificationTestPage.jsx";
+
 
 export default function App() {
   let i18nConfig = {
@@ -240,6 +242,12 @@ export default function App() {
                   component={() => <PathologyCaseView />}
                   role=""
                   labUnitRole={{ Pathology: ["Results"] }}
+                />
+                 <SecureRoute
+                  path="/NotificationTestPage"
+                  exact
+                  component={() => <NotificationTestPage />}
+                  role="Results"
                 />
                 <SecureRoute
                   path="/ImmunohistochemistryDashboard"

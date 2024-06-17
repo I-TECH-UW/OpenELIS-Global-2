@@ -23,6 +23,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "@carbon/icons-react";
+import SlideOver from "../notifications/SlideOver";
 
 import {
   HeaderContainer,
@@ -47,6 +48,7 @@ function OEHeader(props) {
   const userSwitchRef = createRef();
   const headerPanelRef = createRef();
   const scrollRef = useRef(window.scrollY);
+  const [isOpen, setIsOpen] = useState(false);
 
   const intl = useIntl();
 
@@ -79,6 +81,11 @@ function OEHeader(props) {
       setMenus(newMenus);
     }
   };
+
+    const toggleSlideOver = () => {
+      setIsOpen(!isOpen);
+    };
+
 
   const clickPanelSwitch = () => {
     setSwitchCollapsed(!switchCollapsed);
@@ -324,138 +331,158 @@ function OEHeader(props) {
       {/* TODO make this generate from Menu table like it did before */}
       <div className="container">
         <Theme>
-          <HeaderContainer
-            render={({ isSideNavExpanded, onClickSideNavExpand }) => (
-              <Header id="mainHeader" className="mainHeader" aria-label="">
-                {userSessionDetails.authenticated && (
-                  <HeaderMenuButton
-                    aria-label={isSideNavExpanded ? "Close menu" : "Open menu"}
-                    onClick={onClickSideNavExpand}
-                    isActive={isSideNavExpanded}
-                    isCollapsible={true}
-                  />
-                )}
-                <HeaderName href="/" prefix="" style={{ padding: "0px" }}>
-                  <span id="header-logo">{logo()}</span>
-                  <div className="banner">
-                    <h5>{configurationProperties?.BANNER_TEXT}</h5>
-                    <p>
-                      <FormattedMessage id="header.label.version" /> &nbsp;{" "}
-                      {configurationProperties?.releaseNumber}
-                    </p>
-                  </div>
-                </HeaderName>
-                <HeaderGlobalBar>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              
+            }}
+          >
+            <HeaderContainer
+              render={({ isSideNavExpanded, onClickSideNavExpand }) => (
+                <Header id="mainHeader" className="mainHeader" aria-label="">
                   {userSessionDetails.authenticated && (
-                    <>
-                      <HeaderGlobalAction
-                        aria-label="Search"
-                        onClick={() => {
-                          /*TODO add search functionality*/
-                        }}
-                      >
-                        <Search size={20} />
-                      </HeaderGlobalAction>
-                      <HeaderGlobalAction
-                        aria-label="Notifications"
-                        onClick={() => {
-                          /*TODO add notification functionality*/
-                        }}
-                      >
-                        <Notification size={20} />
-                      </HeaderGlobalAction>
-                    </>
+                    <HeaderMenuButton
+                      aria-label={
+                        isSideNavExpanded ? "Close menu" : "Open menu"
+                      }
+                      onClick={onClickSideNavExpand}
+                      isActive={isSideNavExpanded}
+                      isCollapsible={true}
+                    />
                   )}
-                  <HeaderGlobalAction
-                    aria-label={panelSwitchLabel()}
-                    onClick={clickPanelSwitch}
-                    ref={userSwitchRef}
-                  >
-                    {panelSwitchIcon()}
-                  </HeaderGlobalAction>
-                </HeaderGlobalBar>
-                <HeaderPanel
-                  aria-label="Header Panel"
-                  expanded={!switchCollapsed}
-                  className="headerPanel"
-                  ref={headerPanelRef}
-                >
-                  <ul>
+                  <HeaderName href="/" prefix="" style={{ padding: "0px" }}>
+                    <span id="header-logo">{logo()}</span>
+                    <div className="banner">
+                      <h5>{configurationProperties?.BANNER_TEXT}</h5>
+                      <p>
+                        <FormattedMessage id="header.label.version" /> &nbsp;{" "}
+                        {configurationProperties?.releaseNumber}
+                      </p>
+                    </div>
+                  </HeaderName>
+                  <HeaderGlobalBar>
                     {userSessionDetails.authenticated && (
                       <>
-                        <li className="userDetails">
-                          <UserAvatarFilledAlt
-                            size={18}
-                            style={{ marginRight: "4px" }}
-                          />
-                          {userSessionDetails.firstName}{" "}
-                          {userSessionDetails.lastName}
-                        </li>
-                        <li
-                          className="userDetails clickableUserDetails"
-                          onClick={logout}
+                        <HeaderGlobalAction
+                          aria-label="Search"
+                          onClick={() => {
+                            /*TODO add search functionality*/
+                          }}
                         >
-                          <Logout
-                            id="sign-out"
-                            style={{ marginRight: "3px" }}
-                          />
-                          <FormattedMessage id="header.label.logout" />
-                        </li>
+                          <Search size={20} />
+                        </HeaderGlobalAction>
+                        <HeaderGlobalAction
+                          aria-label="Notifications"
+                          onClick={toggleSlideOver}
+                        >
+                          <Notification size={20} />
+                        </HeaderGlobalAction>
                       </>
                     )}
-                    <li className="userDetails">
-                      <Select
-                        id="selector"
-                        name="selectLocale"
-                        className="selectLocale"
-                        invalidText="A valid locale value is required"
-                        labelText={
-                          <FormattedMessage id="header.label.selectlocale" />
-                        }
-                        onChange={(event) => {
-                          props.onChangeLanguage(event.target.value);
-                        }}
-                        value={props.intl.locale}
-                      >
-                        <SelectItem text="English" value="en" />
-                        <SelectItem text="French" value="fr" />
-                      </Select>
-                    </li>
-                    <li className="userDetails">
-                      <label className="cds--label">
-                        {" "}
-                        <FormattedMessage id="header.label.version" />:{" "}
-                        {configurationProperties?.releaseNumber}
-                      </label>
-                    </li>
-                  </ul>
-                </HeaderPanel>
-                {userSessionDetails.authenticated && (
-                  <>
-                    <SideNav
-                      aria-label="Side navigation"
-                      expanded={isSideNavExpanded}
-                      isPersistent={false}
+                    <HeaderGlobalAction
+                      aria-label={panelSwitchLabel()}
+                      onClick={clickPanelSwitch}
+                      ref={userSwitchRef}
                     >
-                      <SideNavItems>
-                        {menus["menu"].map((childMenuItem, index) => {
-                          // ignore the Home Menu in the new UI
-                          if (childMenuItem.menu.elementId != "menu_home") {
-                            return generateMenuItems(
-                              childMenuItem,
-                              index,
-                              0,
-                              "$.menu[" + index + "]",
-                            );
+                      {panelSwitchIcon()}
+                    </HeaderGlobalAction>
+                  </HeaderGlobalBar>
+                  <HeaderPanel
+                    aria-label="Header Panel"
+                    expanded={!switchCollapsed}
+                    className="headerPanel"
+                    ref={headerPanelRef}
+                  >
+                    <ul>
+                      {userSessionDetails.authenticated && (
+                        <>
+                          <li className="userDetails">
+                            <UserAvatarFilledAlt
+                              size={18}
+                              style={{ marginRight: "4px" }}
+                            />
+                            {userSessionDetails.firstName}{" "}
+                            {userSessionDetails.lastName}
+                          </li>
+                          <li
+                            className="userDetails clickableUserDetails"
+                            onClick={logout}
+                          >
+                            <Logout
+                              id="sign-out"
+                              style={{ marginRight: "3px" }}
+                            />
+                            <FormattedMessage id="header.label.logout" />
+                          </li>
+                        </>
+                      )}
+                      <li className="userDetails">
+                        <Select
+                          id="selector"
+                          name="selectLocale"
+                          className="selectLocale"
+                          invalidText="A valid locale value is required"
+                          labelText={
+                            <FormattedMessage id="header.label.selectlocale" />
                           }
-                        })}
-                      </SideNavItems>
-                    </SideNav>
-                  </>
-                )}
-              </Header>
-            )}
-          />
+                          onChange={(event) => {
+                            props.onChangeLanguage(event.target.value);
+                          }}
+                          value={props.intl.locale}
+                        >
+                          <SelectItem text="English" value="en" />
+                          <SelectItem text="French" value="fr" />
+                        </Select>
+                      </li>
+                      <li className="userDetails">
+                        <label className="cds--label">
+                          {" "}
+                          <FormattedMessage id="header.label.version" />:{" "}
+                          {configurationProperties?.releaseNumber}
+                        </label>
+                      </li>
+                    </ul>
+                  </HeaderPanel>
+                  {userSessionDetails.authenticated && (
+                    <>
+                      <SideNav
+                        aria-label="Side navigation"
+                        expanded={isSideNavExpanded}
+                        isPersistent={false}
+                      >
+                        <SideNavItems>
+                          {menus["menu"].map((childMenuItem, index) => {
+                            // ignore the Home Menu in the new UI
+                            if (childMenuItem.menu.elementId != "menu_home") {
+                              return generateMenuItems(
+                                childMenuItem,
+                                index,
+                                0,
+                                "$.menu[" + index + "]",
+                              );
+                            }
+                          })}
+                        </SideNavItems>
+                      </SideNav>
+                    </>
+                  )}
+                </Header>
+              )}
+            />
+            <div style={{ flex: 1 }}>
+              <SlideOver
+                open={isOpen}
+                setOpen={setIsOpen}
+                slideFrom="right"
+                title="Notifications"
+              >
+
+                dsfdsfdsf
+               
+              </SlideOver>
+            </div>
+          </div>
         </Theme>
       </div>
     </>
