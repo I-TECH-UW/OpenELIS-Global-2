@@ -1,18 +1,15 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
- *
+ * <p>Copyright (C) CIRG, University of Washington, Seattle WA. All Rights Reserved.
  */
 package org.openelisglobal.patient.valueholder;
 
@@ -21,10 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dictionary.ObservationHistoryList;
@@ -36,1412 +31,1513 @@ import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 
 /**
- * Value object for transfer of observation history (demographic survey
- * questions) from the study (project) based patient entry form. This is one
- * object for all studies.
+ * Value object for transfer of observation history (demographic survey questions) from the study
+ * (project) based patient entry form. This is one object for all studies.
  *
  * @author pahill
  * @since 2010-04-16
  */
 public class ObservationData implements Serializable {
-    private static final long serialVersionUID = 2L;
+  private static final long serialVersionUID = 2L;
 
-    public ObservationData() {
-        super();
-    }
+  public ObservationData() {
+    super();
+  }
 
-    /**
-     * General tag which identifies which set of questions have been answered to
-     * enter/accession this person and sample into the system.
-     */
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String projectFormName;
-
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String educationLevel;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String maritalStatus;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String nationality;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String nationalityOther;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String legalResidence;
-    @ValidName(nameType = NameType.FULL_NAME)
-    private String nameOfDoctor;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String arvProphylaxisBenefit;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String arvProphylaxis;
-
-    /**
-     * Used for both Initial ARV CLI 04 "currently under ARV treatment" and the
-     * slightly different question Follow-up ARV SUI 20 "... on going ARV treatment
-     * ..."
-     */
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String currentARVTreatment;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String priorARVTreatment;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String interruptedARVTreatment;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String aidsStage;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String hivStatus;
-
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String anyPriorDiseases;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String priorDiseases; // drop down value yes, no
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String priorDiseasesValue; // actual string containing other Diseases which is answer to "please specify"
-
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String anyCurrentDiseases;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String currentDiseases;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String currentDiseasesValue; // actual string containing other Diseases which is answer to "please specify"
-
-    private List<Pair<String, String>> priorDiseasesList;
-    private List<Pair<String, String>> currentDiseasesList;
-
-    private List<Pair<String, String>> rtnPriorDiseasesList;
-    private List<Pair<String, String>> rtnCurrentDiseasesList;
-
-    private List<@SafeHtml(level = SafeHtml.SafeListLevel.NONE) String> priorARVTreatmentINNs = Arrays
-            .asList(new String[] { null, null, null, null });
-    private List<@SafeHtml(level = SafeHtml.SafeListLevel.NONE) String> futureARVTreatmentINNs = Arrays
-            .asList(new String[] { null, null, null, null });
-    private List<@SafeHtml(level = SafeHtml.SafeListLevel.NONE) String> currentARVTreatmentINNs = Arrays
-            .asList(new String[] { null, null, null, null });
-    // private List<String> initialSampleConditionINNs= Arrays.asList(new String[]
-    // {null, null, null, null});
-
-    /**
-     * OI = opportunistic infection
-     */
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String currentOITreatment;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String cotrimoxazoleTreatment;
-    @Pattern(regexp = "^[0-9]*$")
-    private String patientWeight;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String karnofskyScore;
-
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String cd4Count;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String cd4Percent;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String initcd4Count;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String initcd4Percent;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String demandcd4Count;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String demandcd4Percent;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String priorCd4Date;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String antiTbTreatment;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String arvTreatmentAnyAdverseEffects;
-
-    @Valid
-    private List<AdverseEffect> arvTreatmentAdverseEffects = Arrays.asList(
-            new AdverseEffect[] { new AdverseEffect(), new AdverseEffect(), new AdverseEffect(), new AdverseEffect() });
-
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String arvTreatmentChange;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String arvTreatmentNew;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String arvTreatmentRegime;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String cotrimoxazoleTreatmentAnyAdverseEffects;
-    @Valid
-    private List<AdverseEffect> cotrimoxazoleTreatmentAdverseEffects = Arrays.asList(
-            new AdverseEffect[] { new AdverseEffect(), new AdverseEffect(), new AdverseEffect(), new AdverseEffect() });
-
-    private String hospital;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String service;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String hospitalPatient;
-
-    // Sample Forms
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String whichPCR;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String reasonForSecondPCRTest;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String indFirstTestName;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String indSecondTestName;
-    @ValidDate
-    private String indFirstTestDate;
-    @ValidDate
-    private String indSecondTestDate;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String indFirstTestResult;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String indSecondTestResult;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String indSiteFinalResult;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String reasonForRequest;
-
-    // VL Patient form
-    @ValidDate
-    private String arvTreatmentInitDate;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String vlReasonForRequest;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String vlOtherReasonForRequest;
-    @ValidDate
-    private String initcd4Date;
-    @ValidDate
-    private String demandcd4Date;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String vlBenefit;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String vlPregnancy;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String vlSuckle;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String priorVLLab;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ResultValidationForm.ResultValidation.class })
-    private String priorVLValue;
-    @ValidDate
-    private String priorVLDate;
-
-    // EID Patient form
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String eidInfantPTME;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String eidTypeOfClinic;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String eidTypeOfClinicOther;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String eidHowChildFed;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String eidStoppedBreastfeeding;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String eidInfantSymptomatic;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String eidMothersHIVStatus;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String eidMothersARV;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String eidInfantsARV;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String eidInfantCotrimoxazole;
-
-    @ValidName(nameType = NameType.FULL_NAME)
-    private String nameOfRequestor;
-
-    @ValidName(nameType = NameType.FULL_NAME)
-    private String nameOfSampler;
-    
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String hpvSamplingMethod;
-
-    /**
-     * Yes/No
-     */
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String anySecondaryTreatment;
-
-    /**
-     * Actual treatment
-     */
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String secondaryTreatment;
-
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String clinicVisits;
-    /**
-     * Reason for test submital
-     */
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String reason;
-
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String underInvestigation;
-
-    // diseases
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String CTBPul;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String CTBExpul;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String CCrblToxo;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String CCryptoMen;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String CGenPrurigo;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String CIST;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String CCervCancer;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String COpharCand;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String CKaposiSarc;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String CShingles;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String CDiarrheaC;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String PTBPul;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String PTBExpul;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String PCrblToxo;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String PCryptoMen;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String PGenPrurigo;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String PIST;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String PCervCancer;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String POpharCand;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String PKaposiSarc;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String PShingles;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String PDiarrheaC;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String weightLoss;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String diarrhea;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String fever;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String cough;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String pulTB;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String expulTB;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String swallPaint;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String cryptoMen;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String recPneumon;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String sespis;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String recInfect;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String curvixC;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String matHIV;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String cachexie;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String thrush;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String dermPruip;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String herpes;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String zona;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String sarcKapo;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String xIngPadenp;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String HIVDement;
-
-    public String getEducationLevel() {
-        return educationLevel;
-    }
+  /**
+   * General tag which identifies which set of questions have been answered to enter/accession this
+   * person and sample into the system.
+   */
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String projectFormName;
 
-    public void setEducationLevel(String educationLevel) {
-        this.educationLevel = educationLevel;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String educationLevel;
 
-    public String getMaritalStatus() {
-        return maritalStatus;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String maritalStatus;
 
-    public void setMaritalStatus(String maritalStatus) {
-        this.maritalStatus = maritalStatus;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String nationality;
 
-    public String getNationality() {
-        return nationality;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String nationalityOther;
 
-    public void setNationality(String nationality) {
-        this.nationality = nationality;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String legalResidence;
 
-    public String getNationalityOther() {
-        return nationalityOther;
-    }
+  @ValidName(nameType = NameType.FULL_NAME)
+  private String nameOfDoctor;
 
-    public void setNationalityOther(String nationalityOther) {
-        this.nationalityOther = nationalityOther;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String arvProphylaxisBenefit;
 
-    public String getLegalResidence() {
-        return legalResidence;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String arvProphylaxis;
 
-    public void setLegalResidence(String legalResidence) {
-        this.legalResidence = legalResidence;
-    }
+  /**
+   * Used for both Initial ARV CLI 04 "currently under ARV treatment" and the slightly different
+   * question Follow-up ARV SUI 20 "... on going ARV treatment ..."
+   */
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String currentARVTreatment;
 
-    public String getNameOfDoctor() {
-        return nameOfDoctor;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String priorARVTreatment;
 
-    public void setNameOfDoctor(String nameOfDoctor) {
-        this.nameOfDoctor = nameOfDoctor;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String interruptedARVTreatment;
 
-    public void setAnyPriorDiseases(String anyPriorDiseases) {
-        this.anyPriorDiseases = anyPriorDiseases;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String aidsStage;
 
-    public String getAnyPriorDiseases() {
-        return anyPriorDiseases;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String hivStatus;
 
-    public void setPriorDiseases(String priorDiseases) {
-        this.priorDiseases = priorDiseases;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String anyPriorDiseases;
 
-    public String getPriorDiseases() {
-        return priorDiseases;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String priorDiseases; // drop down value yes, no
 
-    public String getArvProphylaxisBenefit() {
-        return arvProphylaxisBenefit;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String
+      priorDiseasesValue; // actual string containing other Diseases which is answer to "please
+  // specify"
 
-    public void setArvProphylaxisBenefit(String arvProphylaxisBenefit) {
-        this.arvProphylaxisBenefit = arvProphylaxisBenefit;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String anyCurrentDiseases;
 
-    public String getArvProphylaxis() {
-        return arvProphylaxis;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String currentDiseases;
 
-    public void setArvProphylaxis(String arvProphylaxis) {
-        this.arvProphylaxis = arvProphylaxis;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String
+      currentDiseasesValue; // actual string containing other Diseases which is answer to "please
+  // specify"
 
-    public void setCurrentARVTreatment(String currentARVTreatment) {
-        this.currentARVTreatment = currentARVTreatment;
-    }
+  private List<Pair<String, String>> priorDiseasesList;
+  private List<Pair<String, String>> currentDiseasesList;
 
-    public String getCurrentARVTreatment() {
-        return currentARVTreatment;
-    }
+  private List<Pair<String, String>> rtnPriorDiseasesList;
+  private List<Pair<String, String>> rtnCurrentDiseasesList;
 
-    public void setPriorARVTreatment(String priorARVTreatment) {
-        this.priorARVTreatment = priorARVTreatment;
-    }
+  private List<@SafeHtml(level = SafeHtml.SafeListLevel.NONE) String> priorARVTreatmentINNs =
+      Arrays.asList(new String[] {null, null, null, null});
+  private List<@SafeHtml(level = SafeHtml.SafeListLevel.NONE) String> futureARVTreatmentINNs =
+      Arrays.asList(new String[] {null, null, null, null});
+  private List<@SafeHtml(level = SafeHtml.SafeListLevel.NONE) String> currentARVTreatmentINNs =
+      Arrays.asList(new String[] {null, null, null, null});
+  // private List<String> initialSampleConditionINNs= Arrays.asList(new String[]
+  // {null, null, null, null});
 
-    public String getPriorARVTreatment() {
-        return priorARVTreatment;
-    }
+  /** OI = opportunistic infection */
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String currentOITreatment;
 
-    public void setCotrimoxazoleTreatment(String cotrimoxazoleTreatment) {
-        this.cotrimoxazoleTreatment = cotrimoxazoleTreatment;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String cotrimoxazoleTreatment;
 
-    public String getCotrimoxazoleTreatment() {
-        return cotrimoxazoleTreatment;
-    }
+  @Pattern(regexp = "^[0-9]*$")
+  private String patientWeight;
 
-    public void setAidsStage(String aidsStage) {
-        this.aidsStage = aidsStage;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String karnofskyScore;
 
-    public String getAidsStage() {
-        return aidsStage;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String cd4Count;
 
-    public void setAnyCurrentDiseases(String anyCurrentDiseases) {
-        this.anyCurrentDiseases = anyCurrentDiseases;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String cd4Percent;
 
-    public String getAnyCurrentDiseases() {
-        return anyCurrentDiseases;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String initcd4Count;
 
-    public void setCurrentDiseases(String currentDiseases) {
-        this.currentDiseases = currentDiseases;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String initcd4Percent;
 
-    public String getCurrentDiseases() {
-        return currentDiseases;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String demandcd4Count;
 
-    public void setCurrentOITreatment(String currentTreatment) {
-        currentOITreatment = currentTreatment;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String demandcd4Percent;
 
-    public String getCurrentOITreatment() {
-        return currentOITreatment;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String priorCd4Date;
 
-    public String getPatientWeight() {
-        return patientWeight;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String antiTbTreatment;
 
-    public void setPatientWeight(String patientWeight) {
-        this.patientWeight = patientWeight;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String arvTreatmentAnyAdverseEffects;
 
-    public String getKarnofskyScore() {
-        return karnofskyScore;
-    }
+  @Valid
+  private List<AdverseEffect> arvTreatmentAdverseEffects =
+      Arrays.asList(
+          new AdverseEffect[] {
+            new AdverseEffect(), new AdverseEffect(), new AdverseEffect(), new AdverseEffect()
+          });
 
-    public void setKarnofskyScore(String karnofskyScore) {
-        this.karnofskyScore = karnofskyScore;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String arvTreatmentChange;
 
-    public String getHivStatus() {
-        return hivStatus;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String arvTreatmentNew;
 
-    public void setHivStatus(String hivStatus) {
-        this.hivStatus = hivStatus;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String arvTreatmentRegime;
 
-    public String getCd4Count() {
-        return cd4Count;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String cotrimoxazoleTreatmentAnyAdverseEffects;
 
-    public void setCd4Count(String cd4Count) {
-        this.cd4Count = cd4Count;
-    }
+  @Valid
+  private List<AdverseEffect> cotrimoxazoleTreatmentAdverseEffects =
+      Arrays.asList(
+          new AdverseEffect[] {
+            new AdverseEffect(), new AdverseEffect(), new AdverseEffect(), new AdverseEffect()
+          });
 
-    public String getInitcd4Count() {
-        return initcd4Count;
-    }
+  private String hospital;
 
-    public void setInitcd4Count(String initcd4Count) {
-        this.initcd4Count = initcd4Count;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String service;
 
-    public String getDemandcd4Count() {
-        return demandcd4Count;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String hospitalPatient;
 
-    public void setDemandcd4Count(String demandcd4Count) {
-        this.demandcd4Count = demandcd4Count;
-    }
+  // Sample Forms
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String whichPCR;
 
-    public String getInitcd4Date() {
-        return initcd4Date;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String reasonForSecondPCRTest;
 
-    public void setInitcd4Date(String initcd4Date) {
-        this.initcd4Date = initcd4Date;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String indFirstTestName;
 
-    public String getDemandcd4Date() {
-        return demandcd4Date;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String indSecondTestName;
 
-    public void setDemandcd4Date(String demandcd4Date) {
-        this.demandcd4Date = demandcd4Date;
-    }
+  @ValidDate private String indFirstTestDate;
+  @ValidDate private String indSecondTestDate;
 
-    public String getCd4Percent() {
-        return cd4Percent;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String indFirstTestResult;
 
-    public void setCd4Percent(String cd4Percent) {
-        this.cd4Percent = cd4Percent;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String indSecondTestResult;
 
-    public String getInitcd4Percent() {
-        return initcd4Percent;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String indSiteFinalResult;
 
-    public void setInitcd4Percent(String initcd4Percent) {
-        this.initcd4Percent = initcd4Percent;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String reasonForRequest;
 
-    public String getDemandcd4Percent() {
-        return demandcd4Percent;
-    }
+  // VL Patient form
+  @ValidDate private String arvTreatmentInitDate;
 
-    public void setDemandcd4Percent(String demandcd4Percent) {
-        this.demandcd4Percent = demandcd4Percent;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String vlReasonForRequest;
 
-    public String getPriorCd4Date() {
-        return priorCd4Date;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String vlOtherReasonForRequest;
 
-    public void setPriorCd4Date(String priorCd4Date) {
-        this.priorCd4Date = priorCd4Date;
-    }
+  @ValidDate private String initcd4Date;
+  @ValidDate private String demandcd4Date;
 
-    public String getAntiTbTreatment() {
-        return antiTbTreatment;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String vlBenefit;
 
-    public void setAntiTbTreatment(String antiTbTreatment) {
-        this.antiTbTreatment = antiTbTreatment;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String vlPregnancy;
 
-    public void setInterruptedARVTreatment(String interruptedARV) {
-        interruptedARVTreatment = interruptedARV;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String vlSuckle;
 
-    public String getInterruptedARVTreatment() {
-        return interruptedARVTreatment;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String priorVLLab;
 
-    public String getPriorARVTreatmentINNs(int index) {
-        return priorARVTreatmentINNs.get(index);
-    }
+  @SafeHtml(
+      level = SafeHtml.SafeListLevel.NONE,
+      groups = {ResultValidationForm.ResultValidation.class})
+  private String priorVLValue;
 
-    public void setPriorARVTreatmentINNs(int index, String value) {
-        priorARVTreatmentINNs.set(index, value);
-    }
+  @ValidDate private String priorVLDate;
 
-    public List<String> getPriorARVTreatmentINNsList() {
-        return priorARVTreatmentINNs;
-    }
+  // EID Patient form
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String eidInfantPTME;
 
-    public String getCurrentARVTreatmentINNs(int index) {
-        return currentARVTreatmentINNs.get(index);
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String eidTypeOfClinic;
 
-    public void setCurrentARVTreatmentINNs(int index, String value) {
-        currentARVTreatmentINNs.set(index, value);
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String eidTypeOfClinicOther;
 
-    public List<String> getCurrentARVTreatmentINNsList() {
-        return currentARVTreatmentINNs;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String eidHowChildFed;
 
-    /*
-     * public String getInitialSampleConditionINNs(int index) { return
-     * initialSampleConditionINNs.get(index); }
-     *
-     * public void setInitialSampleConditionINNs(int index, String value) {
-     * initialSampleConditionINNs.set(index, value); }
-     *
-     * public List<String> getInitialSampleConditionINNsList() { return
-     * initialSampleConditionINNs; }
-     */
-
-    public String getFutureARVTreatmentINNs(int index) {
-        return futureARVTreatmentINNs.get(index);
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String eidStoppedBreastfeeding;
 
-    public void setFutureARVTreatmentINNs(int index, String value) {
-        futureARVTreatmentINNs.set(index, value);
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String eidInfantSymptomatic;
 
-    public List<String> getFutureARVTreatmentINNsList() {
-        return futureARVTreatmentINNs;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String eidMothersHIVStatus;
 
-    public void setArvTreatmentAnyAdverseEffects(String arvTreatmentAnyAdverseEffects) {
-        this.arvTreatmentAnyAdverseEffects = arvTreatmentAnyAdverseEffects;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String eidMothersARV;
 
-    public String getArvTreatmentAnyAdverseEffects() {
-        return arvTreatmentAnyAdverseEffects;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String eidInfantsARV;
 
-    public List<AdverseEffect> getArvTreatmentAdverseEffects() {
-        return arvTreatmentAdverseEffects;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String eidInfantCotrimoxazole;
 
-    public void setArvTreatmentChange(String arvTreatmentChange) {
-        this.arvTreatmentChange = arvTreatmentChange;
-    }
+  @ValidName(nameType = NameType.FULL_NAME)
+  private String nameOfRequestor;
 
-    public String getArvTreatmentChange() {
-        return arvTreatmentChange;
-    }
+  @ValidName(nameType = NameType.FULL_NAME)
+  private String nameOfSampler;
 
-    public void setArvTreatmentNew(String arvTreatmentNew) {
-        this.arvTreatmentNew = arvTreatmentNew;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String hpvSamplingMethod;
 
-    public String getArvTreatmentNew() {
-        return arvTreatmentNew;
-    }
+  /** Yes/No */
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String anySecondaryTreatment;
 
-    public void setArvTreatmentRegime(String arvTreatmentRegime) {
-        this.arvTreatmentRegime = arvTreatmentRegime;
-    }
+  /** Actual treatment */
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String secondaryTreatment;
 
-    public String getArvTreatmentRegime() {
-        return arvTreatmentRegime;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String clinicVisits;
+  /** Reason for test submital */
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String reason;
 
-    public void setCotrimoxazoleTreatmentAnyAdverseEffects(String cotrimoxazoleTreatmentAnyAdverseEffects) {
-        this.cotrimoxazoleTreatmentAnyAdverseEffects = cotrimoxazoleTreatmentAnyAdverseEffects;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String underInvestigation;
 
-    public String getCotrimoxazoleTreatmentAnyAdverseEffects() {
-        return cotrimoxazoleTreatmentAnyAdverseEffects;
-    }
+  // diseases
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String CTBPul;
 
-    public List<AdverseEffect> getCotrimoxazoleTreatmentAdverseEffects() {
-        return cotrimoxazoleTreatmentAdverseEffects;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String CTBExpul;
 
-    public void setAnySecondaryTreatment(String anySecondaryTreatment) {
-        this.anySecondaryTreatment = anySecondaryTreatment;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String CCrblToxo;
 
-    public String getAnySecondaryTreatment() {
-        return anySecondaryTreatment;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String CCryptoMen;
 
-    public void setSecondaryTreatment(String secondaryTreatment) {
-        this.secondaryTreatment = secondaryTreatment;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String CGenPrurigo;
 
-    public String getSecondaryTreatment() {
-        return secondaryTreatment;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String CIST;
 
-    public void setClinicVisits(String clinicVisits) {
-        this.clinicVisits = clinicVisits;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String CCervCancer;
 
-    public String getClinicVisits() {
-        return clinicVisits;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String COpharCand;
 
-    public void setHospital(String hospital) {
-        this.hospital = hospital;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String CKaposiSarc;
 
-    public String getHospital() {
-        return hospital;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String CShingles;
 
-    public void setService(String service) {
-        this.service = service;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String CDiarrheaC;
 
-    public String getService() {
-        return service;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String PTBPul;
 
-    public void setHospitalPatient(String hospitalPatient) {
-        this.hospitalPatient = hospitalPatient;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String PTBExpul;
 
-    public String getHospitalPatient() {
-        return hospitalPatient;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String PCrblToxo;
 
-    public String getWhichPCR() {
-        return whichPCR;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String PCryptoMen;
 
-    public void setWhichPCR(String whichPCR) {
-        this.whichPCR = whichPCR;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String PGenPrurigo;
 
-    public String getReasonForSecondPCRTest() {
-        return reasonForSecondPCRTest;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String PIST;
 
-    public void setReasonForSecondPCRTest(String reasonForSecondPCRTest) {
-        this.reasonForSecondPCRTest = reasonForSecondPCRTest;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String PCervCancer;
 
-    public String getIndFirstTestName() {
-        return indFirstTestName;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String POpharCand;
 
-    public void setIndFirstTestName(String indFirstTestName) {
-        this.indFirstTestName = indFirstTestName;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String PKaposiSarc;
 
-    public String getIndSecondTestName() {
-        return indSecondTestName;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String PShingles;
 
-    public void setIndSecondTestName(String indSecondTestName) {
-        this.indSecondTestName = indSecondTestName;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String PDiarrheaC;
 
-    public String getIndFirstTestDate() {
-        return indFirstTestDate;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String weightLoss;
 
-    public void setIndFirstTestDate(String indFirstTestDate) {
-        this.indFirstTestDate = indFirstTestDate;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String diarrhea;
 
-    public String getIndSecondTestDate() {
-        return indSecondTestDate;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String fever;
 
-    public void setIndSecondTestDate(String indSecondTestDate) {
-        this.indSecondTestDate = indSecondTestDate;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String cough;
 
-    public String getIndFirstTestResult() {
-        return indFirstTestResult;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String pulTB;
 
-    public void setIndFirstTestResult(String indFirstTestResult) {
-        this.indFirstTestResult = indFirstTestResult;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String expulTB;
 
-    public String getIndSecondTestResult() {
-        return indSecondTestResult;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String swallPaint;
 
-    public void setIndSecondTestResult(String indSecondTestResult) {
-        this.indSecondTestResult = indSecondTestResult;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String cryptoMen;
 
-    public String getIndSiteFinalResult() {
-        return indSiteFinalResult;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String recPneumon;
 
-    public void setIndSiteFinalResult(String indSiteFinalResult) {
-        this.indSiteFinalResult = indSiteFinalResult;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String sespis;
 
-    public void setReasonForRequest(String reasonForRequest) {
-        this.reasonForRequest = reasonForRequest;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String recInfect;
 
-    public String getReasonForRequest() {
-        return reasonForRequest;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String curvixC;
 
-    public String getEidInfantPTME() {
-        return eidInfantPTME;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String matHIV;
 
-    public void setEidInfantPTME(String eidInfantPTME) {
-        this.eidInfantPTME = eidInfantPTME;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String cachexie;
 
-    public String getEidTypeOfClinic() {
-        return eidTypeOfClinic;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String thrush;
 
-    public void setEidTypeOfClinic(String eidTypeOfClinic) {
-        this.eidTypeOfClinic = eidTypeOfClinic;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String dermPruip;
 
-    public String getEidHowChildFed() {
-        return eidHowChildFed;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String herpes;
 
-    public void setEidHowChildFed(String eidHowChildFed) {
-        this.eidHowChildFed = eidHowChildFed;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String zona;
 
-    public String getEidInfantSymptomatic() {
-        return eidInfantSymptomatic;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String sarcKapo;
 
-    public void setEidInfantSymptomatic(String eidInfantSymptomatic) {
-        this.eidInfantSymptomatic = eidInfantSymptomatic;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String xIngPadenp;
 
-    public String getEidMothersHIVStatus() {
-        return eidMothersHIVStatus;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String HIVDement;
 
-    public void setEidMothersHIVStatus(String eidMothersHIVStatus) {
-        this.eidMothersHIVStatus = eidMothersHIVStatus;
-    }
+  public String getEducationLevel() {
+    return educationLevel;
+  }
 
-    public String getEidMothersARV() {
-        return eidMothersARV;
-    }
+  public void setEducationLevel(String educationLevel) {
+    this.educationLevel = educationLevel;
+  }
 
-    public void setEidMothersARV(String eidMothersARV) {
-        this.eidMothersARV = eidMothersARV;
-    }
+  public String getMaritalStatus() {
+    return maritalStatus;
+  }
 
-    public String getEidInfantsARV() {
-        return eidInfantsARV;
-    }
+  public void setMaritalStatus(String maritalStatus) {
+    this.maritalStatus = maritalStatus;
+  }
 
-    public void setEidInfantsARV(String eidInfantsARV) {
-        this.eidInfantsARV = eidInfantsARV;
-    }
+  public String getNationality() {
+    return nationality;
+  }
 
-    public String getEidInfantCotrimoxazole() {
-        return eidInfantCotrimoxazole;
-    }
+  public void setNationality(String nationality) {
+    this.nationality = nationality;
+  }
 
-    public void setEidInfantCotrimoxazole(String eidInfantCotrimoxazole) {
-        this.eidInfantCotrimoxazole = eidInfantCotrimoxazole;
-    }
+  public String getNationalityOther() {
+    return nationalityOther;
+  }
 
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
+  public void setNationalityOther(String nationalityOther) {
+    this.nationalityOther = nationalityOther;
+  }
 
-    public String getReason() {
-        return reason;
-    }
+  public String getLegalResidence() {
+    return legalResidence;
+  }
 
-    public String getProjectFormName() {
-        return projectFormName;
-    }
+  public void setLegalResidence(String legalResidence) {
+    this.legalResidence = legalResidence;
+  }
 
-    public void setProjectFormName(String projectFormName) {
-        this.projectFormName = projectFormName;
-    }
+  public String getNameOfDoctor() {
+    return nameOfDoctor;
+  }
 
-    public String getNameOfRequestor() {
-        return nameOfRequestor;
-    }
+  public void setNameOfDoctor(String nameOfDoctor) {
+    this.nameOfDoctor = nameOfDoctor;
+  }
 
-    public void setNameOfRequestor(String nameOfRequestor) {
-        this.nameOfRequestor = nameOfRequestor;
-    }
+  public void setAnyPriorDiseases(String anyPriorDiseases) {
+    this.anyPriorDiseases = anyPriorDiseases;
+  }
 
-    public String getNameOfSampler() {
-        return nameOfSampler;
-    }
+  public String getAnyPriorDiseases() {
+    return anyPriorDiseases;
+  }
 
-    public void setNameOfSampler(String nameOfSampler) {
-        this.nameOfSampler = nameOfSampler;
-    }
+  public void setPriorDiseases(String priorDiseases) {
+    this.priorDiseases = priorDiseases;
+  }
 
-    public void setUnderInvestigation(String underInvestigation) {
-        this.underInvestigation = underInvestigation;
-    }
+  public String getPriorDiseases() {
+    return priorDiseases;
+  }
 
-    public String getUnderInvestigation() {
-        return underInvestigation;
-    }
+  public String getArvProphylaxisBenefit() {
+    return arvProphylaxisBenefit;
+  }
 
-    public void setEidTypeOfClinicOther(String eidTypeOfClinicOther) {
-        this.eidTypeOfClinicOther = eidTypeOfClinicOther;
-    }
+  public void setArvProphylaxisBenefit(String arvProphylaxisBenefit) {
+    this.arvProphylaxisBenefit = arvProphylaxisBenefit;
+  }
 
-    public String getEidTypeOfClinicOther() {
-        return eidTypeOfClinicOther;
-    }
+  public String getArvProphylaxis() {
+    return arvProphylaxis;
+  }
 
-    public void setEidStoppedBreastfeeding(String eidStoppedBreastfeeding) {
-        this.eidStoppedBreastfeeding = eidStoppedBreastfeeding;
-    }
+  public void setArvProphylaxis(String arvProphylaxis) {
+    this.arvProphylaxis = arvProphylaxis;
+  }
 
-    public String getEidStoppedBreastfeeding() {
-        return eidStoppedBreastfeeding;
-    }
+  public void setCurrentARVTreatment(String currentARVTreatment) {
+    this.currentARVTreatment = currentARVTreatment;
+  }
 
-    public List<String> getFutureARVTreatmentINNs() {
-        return futureARVTreatmentINNs;
-    }
+  public String getCurrentARVTreatment() {
+    return currentARVTreatment;
+  }
 
-    public void setFutureARVTreatmentINNs(List<String> futureARVTreatmentINNs) {
-        this.futureARVTreatmentINNs = futureARVTreatmentINNs;
-    }
+  public void setPriorARVTreatment(String priorARVTreatment) {
+    this.priorARVTreatment = priorARVTreatment;
+  }
 
-    public String getCTBPul() {
-        return CTBPul;
-    }
+  public String getPriorARVTreatment() {
+    return priorARVTreatment;
+  }
 
-    public void setCTBPul(String cTBPul) {
-        CTBPul = cTBPul;
-    }
+  public void setCotrimoxazoleTreatment(String cotrimoxazoleTreatment) {
+    this.cotrimoxazoleTreatment = cotrimoxazoleTreatment;
+  }
 
-    public String getCTBExpul() {
-        return CTBExpul;
-    }
+  public String getCotrimoxazoleTreatment() {
+    return cotrimoxazoleTreatment;
+  }
 
-    public void setCTBExpul(String cTBExpul) {
-        CTBExpul = cTBExpul;
-    }
+  public void setAidsStage(String aidsStage) {
+    this.aidsStage = aidsStage;
+  }
 
-    public String getCCrblToxo() {
-        return CCrblToxo;
-    }
+  public String getAidsStage() {
+    return aidsStage;
+  }
 
-    public void setCCrblToxo(String cCrblToxo) {
-        CCrblToxo = cCrblToxo;
-    }
+  public void setAnyCurrentDiseases(String anyCurrentDiseases) {
+    this.anyCurrentDiseases = anyCurrentDiseases;
+  }
 
-    public String getCCryptoMen() {
-        return CCryptoMen;
-    }
+  public String getAnyCurrentDiseases() {
+    return anyCurrentDiseases;
+  }
 
-    public void setCCryptoMen(String cCryptoMen) {
-        CCryptoMen = cCryptoMen;
-    }
+  public void setCurrentDiseases(String currentDiseases) {
+    this.currentDiseases = currentDiseases;
+  }
 
-    public String getCGenPrurigo() {
-        return CGenPrurigo;
-    }
+  public String getCurrentDiseases() {
+    return currentDiseases;
+  }
 
-    public void setCGenPrurigo(String cGenPrurigo) {
-        CGenPrurigo = cGenPrurigo;
-    }
+  public void setCurrentOITreatment(String currentTreatment) {
+    currentOITreatment = currentTreatment;
+  }
 
-    public String getCIST() {
-        return CIST;
-    }
+  public String getCurrentOITreatment() {
+    return currentOITreatment;
+  }
 
-    public void setCIST(String cIST) {
-        CIST = cIST;
-    }
+  public String getPatientWeight() {
+    return patientWeight;
+  }
 
-    public String getCCervCancer() {
-        return CCervCancer;
-    }
+  public void setPatientWeight(String patientWeight) {
+    this.patientWeight = patientWeight;
+  }
 
-    public void setCCervCancer(String cCervCancer) {
-        CCervCancer = cCervCancer;
-    }
+  public String getKarnofskyScore() {
+    return karnofskyScore;
+  }
 
-    public String getCOpharCand() {
-        return COpharCand;
-    }
+  public void setKarnofskyScore(String karnofskyScore) {
+    this.karnofskyScore = karnofskyScore;
+  }
 
-    public void setCOpharCand(String cOpharCand) {
-        COpharCand = cOpharCand;
-    }
+  public String getHivStatus() {
+    return hivStatus;
+  }
 
-    public String getCKaposiSarc() {
-        return CKaposiSarc;
-    }
+  public void setHivStatus(String hivStatus) {
+    this.hivStatus = hivStatus;
+  }
 
-    public void setCKaposiSarc(String cKaposiSarc) {
-        CKaposiSarc = cKaposiSarc;
-    }
+  public String getCd4Count() {
+    return cd4Count;
+  }
 
-    public String getCShingles() {
-        return CShingles;
-    }
+  public void setCd4Count(String cd4Count) {
+    this.cd4Count = cd4Count;
+  }
 
-    public void setCShingles(String cShingles) {
-        CShingles = cShingles;
-    }
+  public String getInitcd4Count() {
+    return initcd4Count;
+  }
 
-    public String getCDiarrheaC() {
-        return CDiarrheaC;
-    }
+  public void setInitcd4Count(String initcd4Count) {
+    this.initcd4Count = initcd4Count;
+  }
 
-    public void setCDiarrheaC(String cDiarrheaC) {
-        CDiarrheaC = cDiarrheaC;
-    }
+  public String getDemandcd4Count() {
+    return demandcd4Count;
+  }
 
-    public String getPTBPul() {
-        return PTBPul;
-    }
+  public void setDemandcd4Count(String demandcd4Count) {
+    this.demandcd4Count = demandcd4Count;
+  }
 
-    public void setPTBPul(String pTBPul) {
-        PTBPul = pTBPul;
-    }
+  public String getInitcd4Date() {
+    return initcd4Date;
+  }
 
-    public String getPTBExpul() {
-        return PTBExpul;
-    }
+  public void setInitcd4Date(String initcd4Date) {
+    this.initcd4Date = initcd4Date;
+  }
 
-    public void setPTBExpul(String pTBExpul) {
-        PTBExpul = pTBExpul;
-    }
+  public String getDemandcd4Date() {
+    return demandcd4Date;
+  }
 
-    public String getPCrblToxo() {
-        return PCrblToxo;
-    }
+  public void setDemandcd4Date(String demandcd4Date) {
+    this.demandcd4Date = demandcd4Date;
+  }
 
-    public void setPCrblToxo(String pCrblToxo) {
-        PCrblToxo = pCrblToxo;
-    }
+  public String getCd4Percent() {
+    return cd4Percent;
+  }
 
-    public String getPCryptoMen() {
-        return PCryptoMen;
-    }
+  public void setCd4Percent(String cd4Percent) {
+    this.cd4Percent = cd4Percent;
+  }
 
-    public void setPCryptoMen(String pCryptoMen) {
-        PCryptoMen = pCryptoMen;
-    }
+  public String getInitcd4Percent() {
+    return initcd4Percent;
+  }
 
-    public String getPGenPrurigo() {
-        return PGenPrurigo;
-    }
+  public void setInitcd4Percent(String initcd4Percent) {
+    this.initcd4Percent = initcd4Percent;
+  }
 
-    public void setPGenPrurigo(String pGenPrurigo) {
-        PGenPrurigo = pGenPrurigo;
-    }
+  public String getDemandcd4Percent() {
+    return demandcd4Percent;
+  }
 
-    public String getPIST() {
-        return PIST;
-    }
+  public void setDemandcd4Percent(String demandcd4Percent) {
+    this.demandcd4Percent = demandcd4Percent;
+  }
 
-    public void setPIST(String pIST) {
-        PIST = pIST;
-    }
+  public String getPriorCd4Date() {
+    return priorCd4Date;
+  }
 
-    public String getPCervCancer() {
-        return PCervCancer;
-    }
+  public void setPriorCd4Date(String priorCd4Date) {
+    this.priorCd4Date = priorCd4Date;
+  }
 
-    public void setPCervCancer(String pCervCancer) {
-        PCervCancer = pCervCancer;
-    }
+  public String getAntiTbTreatment() {
+    return antiTbTreatment;
+  }
 
-    public String getPOpharCand() {
-        return POpharCand;
-    }
+  public void setAntiTbTreatment(String antiTbTreatment) {
+    this.antiTbTreatment = antiTbTreatment;
+  }
 
-    public void setPOpharCand(String pOpharCand) {
-        POpharCand = pOpharCand;
-    }
+  public void setInterruptedARVTreatment(String interruptedARV) {
+    interruptedARVTreatment = interruptedARV;
+  }
 
-    public String getPKaposiSarc() {
-        return PKaposiSarc;
-    }
+  public String getInterruptedARVTreatment() {
+    return interruptedARVTreatment;
+  }
 
-    public void setPKaposiSarc(String pKaposiSarc) {
-        PKaposiSarc = pKaposiSarc;
-    }
+  public String getPriorARVTreatmentINNs(int index) {
+    return priorARVTreatmentINNs.get(index);
+  }
 
-    public String getPShingles() {
-        return PShingles;
-    }
+  public void setPriorARVTreatmentINNs(int index, String value) {
+    priorARVTreatmentINNs.set(index, value);
+  }
 
-    public void setPShingles(String pShingles) {
-        PShingles = pShingles;
-    }
+  public List<String> getPriorARVTreatmentINNsList() {
+    return priorARVTreatmentINNs;
+  }
 
-    public String getPDiarrheaC() {
-        return PDiarrheaC;
-    }
+  public String getCurrentARVTreatmentINNs(int index) {
+    return currentARVTreatmentINNs.get(index);
+  }
 
-    public void setPDiarrheaC(String pDiarrheaC) {
-        PDiarrheaC = pDiarrheaC;
-    }
+  public void setCurrentARVTreatmentINNs(int index, String value) {
+    currentARVTreatmentINNs.set(index, value);
+  }
 
-    public String getWeightLoss() {
-        return weightLoss;
-    }
+  public List<String> getCurrentARVTreatmentINNsList() {
+    return currentARVTreatmentINNs;
+  }
 
-    public void setWeightLoss(String weightLoss) {
-        this.weightLoss = weightLoss;
-    }
+  /*
+   * public String getInitialSampleConditionINNs(int index) { return
+   * initialSampleConditionINNs.get(index); }
+   *
+   * public void setInitialSampleConditionINNs(int index, String value) {
+   * initialSampleConditionINNs.set(index, value); }
+   *
+   * public List<String> getInitialSampleConditionINNsList() { return
+   * initialSampleConditionINNs; }
+   */
 
-    public String getDiarrhea() {
-        return diarrhea;
-    }
+  public String getFutureARVTreatmentINNs(int index) {
+    return futureARVTreatmentINNs.get(index);
+  }
 
-    public void setDiarrhea(String diarrhea) {
-        this.diarrhea = diarrhea;
-    }
+  public void setFutureARVTreatmentINNs(int index, String value) {
+    futureARVTreatmentINNs.set(index, value);
+  }
 
-    public String getFever() {
-        return fever;
-    }
+  public List<String> getFutureARVTreatmentINNsList() {
+    return futureARVTreatmentINNs;
+  }
 
-    public void setFever(String fever) {
-        this.fever = fever;
-    }
+  public void setArvTreatmentAnyAdverseEffects(String arvTreatmentAnyAdverseEffects) {
+    this.arvTreatmentAnyAdverseEffects = arvTreatmentAnyAdverseEffects;
+  }
 
-    public String getCough() {
-        return cough;
-    }
+  public String getArvTreatmentAnyAdverseEffects() {
+    return arvTreatmentAnyAdverseEffects;
+  }
 
-    public void setCough(String cough) {
-        this.cough = cough;
-    }
+  public List<AdverseEffect> getArvTreatmentAdverseEffects() {
+    return arvTreatmentAdverseEffects;
+  }
 
-    public String getPulTB() {
-        return pulTB;
-    }
+  public void setArvTreatmentChange(String arvTreatmentChange) {
+    this.arvTreatmentChange = arvTreatmentChange;
+  }
 
-    public void setPulTB(String pulTB) {
-        this.pulTB = pulTB;
-    }
+  public String getArvTreatmentChange() {
+    return arvTreatmentChange;
+  }
 
-    public String getExpulTB() {
-        return expulTB;
-    }
+  public void setArvTreatmentNew(String arvTreatmentNew) {
+    this.arvTreatmentNew = arvTreatmentNew;
+  }
 
-    public void setExpulTB(String expulTB) {
-        this.expulTB = expulTB;
-    }
+  public String getArvTreatmentNew() {
+    return arvTreatmentNew;
+  }
 
-    public String getSwallPaint() {
-        return swallPaint;
-    }
+  public void setArvTreatmentRegime(String arvTreatmentRegime) {
+    this.arvTreatmentRegime = arvTreatmentRegime;
+  }
 
-    public void setSwallPaint(String swallPaint) {
-        this.swallPaint = swallPaint;
-    }
+  public String getArvTreatmentRegime() {
+    return arvTreatmentRegime;
+  }
 
-    public String getCryptoMen() {
-        return cryptoMen;
-    }
+  public void setCotrimoxazoleTreatmentAnyAdverseEffects(
+      String cotrimoxazoleTreatmentAnyAdverseEffects) {
+    this.cotrimoxazoleTreatmentAnyAdverseEffects = cotrimoxazoleTreatmentAnyAdverseEffects;
+  }
 
-    public void setCryptoMen(String cryptoMen) {
-        this.cryptoMen = cryptoMen;
-    }
+  public String getCotrimoxazoleTreatmentAnyAdverseEffects() {
+    return cotrimoxazoleTreatmentAnyAdverseEffects;
+  }
 
-    public String getRecPneumon() {
-        return recPneumon;
-    }
+  public List<AdverseEffect> getCotrimoxazoleTreatmentAdverseEffects() {
+    return cotrimoxazoleTreatmentAdverseEffects;
+  }
 
-    public void setRecPneumon(String recPneumon) {
-        this.recPneumon = recPneumon;
-    }
+  public void setAnySecondaryTreatment(String anySecondaryTreatment) {
+    this.anySecondaryTreatment = anySecondaryTreatment;
+  }
 
-    public String getSespis() {
-        return sespis;
-    }
+  public String getAnySecondaryTreatment() {
+    return anySecondaryTreatment;
+  }
 
-    public void setSespis(String sespis) {
-        this.sespis = sespis;
-    }
+  public void setSecondaryTreatment(String secondaryTreatment) {
+    this.secondaryTreatment = secondaryTreatment;
+  }
 
-    public String getRecInfect() {
-        return recInfect;
-    }
+  public String getSecondaryTreatment() {
+    return secondaryTreatment;
+  }
 
-    public void setRecInfect(String recInfect) {
-        this.recInfect = recInfect;
-    }
+  public void setClinicVisits(String clinicVisits) {
+    this.clinicVisits = clinicVisits;
+  }
 
-    public String getCurvixC() {
-        return curvixC;
-    }
+  public String getClinicVisits() {
+    return clinicVisits;
+  }
 
-    public void setCurvixC(String curvixC) {
-        this.curvixC = curvixC;
-    }
+  public void setHospital(String hospital) {
+    this.hospital = hospital;
+  }
 
-    public String getMatHIV() {
-        return matHIV;
-    }
+  public String getHospital() {
+    return hospital;
+  }
 
-    public void setMatHIV(String matHIV) {
-        this.matHIV = matHIV;
-    }
+  public void setService(String service) {
+    this.service = service;
+  }
 
-    public String getCachexie() {
-        return cachexie;
-    }
+  public String getService() {
+    return service;
+  }
 
-    public void setCachexie(String cachexie) {
-        this.cachexie = cachexie;
-    }
+  public void setHospitalPatient(String hospitalPatient) {
+    this.hospitalPatient = hospitalPatient;
+  }
 
-    public String getThrush() {
-        return thrush;
-    }
+  public String getHospitalPatient() {
+    return hospitalPatient;
+  }
 
-    public void setThrush(String thrush) {
-        this.thrush = thrush;
-    }
+  public String getWhichPCR() {
+    return whichPCR;
+  }
 
-    public String getDermPruip() {
-        return dermPruip;
-    }
+  public void setWhichPCR(String whichPCR) {
+    this.whichPCR = whichPCR;
+  }
 
-    public void setDermPruip(String dermPruip) {
-        this.dermPruip = dermPruip;
-    }
+  public String getReasonForSecondPCRTest() {
+    return reasonForSecondPCRTest;
+  }
 
-    public String getHerpes() {
-        return herpes;
-    }
+  public void setReasonForSecondPCRTest(String reasonForSecondPCRTest) {
+    this.reasonForSecondPCRTest = reasonForSecondPCRTest;
+  }
 
-    public void setHerpes(String herpes) {
-        this.herpes = herpes;
-    }
+  public String getIndFirstTestName() {
+    return indFirstTestName;
+  }
 
-    public String getZona() {
-        return zona;
-    }
+  public void setIndFirstTestName(String indFirstTestName) {
+    this.indFirstTestName = indFirstTestName;
+  }
 
-    public void setZona(String zona) {
-        this.zona = zona;
-    }
+  public String getIndSecondTestName() {
+    return indSecondTestName;
+  }
 
-    public String getSarcKapo() {
-        return sarcKapo;
-    }
+  public void setIndSecondTestName(String indSecondTestName) {
+    this.indSecondTestName = indSecondTestName;
+  }
 
-    public void setSarcKapo(String sarcKapo) {
-        this.sarcKapo = sarcKapo;
-    }
+  public String getIndFirstTestDate() {
+    return indFirstTestDate;
+  }
 
-    public String getxIngPadenp() {
-        return xIngPadenp;
-    }
+  public void setIndFirstTestDate(String indFirstTestDate) {
+    this.indFirstTestDate = indFirstTestDate;
+  }
 
-    public void setxIngPadenp(String xIngPadenp) {
-        this.xIngPadenp = xIngPadenp;
-    }
+  public String getIndSecondTestDate() {
+    return indSecondTestDate;
+  }
 
-    public String getHIVDement() {
-        return HIVDement;
-    }
+  public void setIndSecondTestDate(String indSecondTestDate) {
+    this.indSecondTestDate = indSecondTestDate;
+  }
 
-    public void setHIVDement(String hIVDement) {
-        HIVDement = hIVDement;
-    }
+  public String getIndFirstTestResult() {
+    return indFirstTestResult;
+  }
 
-    public String getPriorDiseasesValue() {
-        return priorDiseasesValue;
-    }
+  public void setIndFirstTestResult(String indFirstTestResult) {
+    this.indFirstTestResult = indFirstTestResult;
+  }
 
-    public void setPriorDiseasesValue(String priorDiseasesValue) {
-        this.priorDiseasesValue = priorDiseasesValue;
-    }
+  public String getIndSecondTestResult() {
+    return indSecondTestResult;
+  }
 
-    public String getCurrentDiseasesValue() {
-        return currentDiseasesValue;
-    }
+  public void setIndSecondTestResult(String indSecondTestResult) {
+    this.indSecondTestResult = indSecondTestResult;
+  }
 
-    public void setCurrentDiseasesValue(String currentDiseasesValue) {
-        this.currentDiseasesValue = currentDiseasesValue;
-    }
+  public String getIndSiteFinalResult() {
+    return indSiteFinalResult;
+  }
 
-    public String getArvTreatmentInitDate() {
-        return arvTreatmentInitDate;
-    }
+  public void setIndSiteFinalResult(String indSiteFinalResult) {
+    this.indSiteFinalResult = indSiteFinalResult;
+  }
 
-    public void setArvTreatmentInitDate(String arvTreatmentInitDate) {
-        this.arvTreatmentInitDate = arvTreatmentInitDate;
-    }
+  public void setReasonForRequest(String reasonForRequest) {
+    this.reasonForRequest = reasonForRequest;
+  }
 
-    public String getVlReasonForRequest() {
-        return vlReasonForRequest;
-    }
+  public String getReasonForRequest() {
+    return reasonForRequest;
+  }
 
-    public void setVlReasonForRequest(String vlReasonForRequest) {
-        this.vlReasonForRequest = vlReasonForRequest;
-    }
+  public String getEidInfantPTME() {
+    return eidInfantPTME;
+  }
 
-    public String getVlOtherReasonForRequest() {
-        return vlOtherReasonForRequest;
-    }
+  public void setEidInfantPTME(String eidInfantPTME) {
+    this.eidInfantPTME = eidInfantPTME;
+  }
 
-    public void setVlOtherReasonForRequest(String vlOtherReasonForRequest) {
-        this.vlOtherReasonForRequest = vlOtherReasonForRequest;
-    }
+  public String getEidTypeOfClinic() {
+    return eidTypeOfClinic;
+  }
 
-    public String getVlBenefit() {
-        return vlBenefit;
-    }
+  public void setEidTypeOfClinic(String eidTypeOfClinic) {
+    this.eidTypeOfClinic = eidTypeOfClinic;
+  }
 
-    public void setVlBenefit(String vlBenefit) {
-        this.vlBenefit = vlBenefit;
-    }
+  public String getEidHowChildFed() {
+    return eidHowChildFed;
+  }
 
-    // -----------
-    public String getVlPregnancy() {
-        return vlPregnancy;
-    }
+  public void setEidHowChildFed(String eidHowChildFed) {
+    this.eidHowChildFed = eidHowChildFed;
+  }
 
-    public void setVlPregnancy(String vlPregnancy) {
-        this.vlPregnancy = vlPregnancy;
-    }
+  public String getEidInfantSymptomatic() {
+    return eidInfantSymptomatic;
+  }
 
-    public String getVlSuckle() {
-        return vlSuckle;
-    }
+  public void setEidInfantSymptomatic(String eidInfantSymptomatic) {
+    this.eidInfantSymptomatic = eidInfantSymptomatic;
+  }
 
-    public void setVlSuckle(String vlSuckle) {
-        this.vlSuckle = vlSuckle;
-    }
-    // -------------
+  public String getEidMothersHIVStatus() {
+    return eidMothersHIVStatus;
+  }
 
-    public String getPriorVLLab() {
-        return priorVLLab;
-    }
+  public void setEidMothersHIVStatus(String eidMothersHIVStatus) {
+    this.eidMothersHIVStatus = eidMothersHIVStatus;
+  }
 
-    public void setPriorVLLab(String priorVLLab) {
-        this.priorVLLab = priorVLLab;
-    }
+  public String getEidMothersARV() {
+    return eidMothersARV;
+  }
 
-    public String getPriorVLValue() {
-        return priorVLValue;
-    }
+  public void setEidMothersARV(String eidMothersARV) {
+    this.eidMothersARV = eidMothersARV;
+  }
 
-    public void setPriorVLValue(String priorVLValue) {
-        this.priorVLValue = priorVLValue;
-    }
+  public String getEidInfantsARV() {
+    return eidInfantsARV;
+  }
 
-    public String getPriorVLDate() {
-        return priorVLDate;
-    }
+  public void setEidInfantsARV(String eidInfantsARV) {
+    this.eidInfantsARV = eidInfantsARV;
+  }
 
-    public void setPriorVLDate(String priorVLDate) {
-        this.priorVLDate = priorVLDate;
-    }
+  public String getEidInfantCotrimoxazole() {
+    return eidInfantCotrimoxazole;
+  }
 
-    public List<Pair<String, String>> getPriorDiseasesList() {
-        if (priorDiseasesList == null) {
-            priorDiseasesList = makeDiseaseList("P", ObservationHistoryList.ARV_DISEASES.getList());
-        }
-        return new ArrayList<>(new HashSet<>(priorDiseasesList));
-    }
+  public void setEidInfantCotrimoxazole(String eidInfantCotrimoxazole) {
+    this.eidInfantCotrimoxazole = eidInfantCotrimoxazole;
+  }
 
-    private List<Pair<String, String>> makeDiseaseList(String prefix, List<Dictionary> dictionaryList) {
-        List<Pair<String, String>> nvList = new ArrayList<>();
-        for (Dictionary dictionary : dictionaryList) {
-            nvList.add(Pair.of(prefix + dictionary.getLocalAbbreviation(), dictionary.getLocalizedName()));
-        }
-        return nvList;
-    }
+  public void setReason(String reason) {
+    this.reason = reason;
+  }
+
+  public String getReason() {
+    return reason;
+  }
+
+  public String getProjectFormName() {
+    return projectFormName;
+  }
+
+  public void setProjectFormName(String projectFormName) {
+    this.projectFormName = projectFormName;
+  }
+
+  public String getNameOfRequestor() {
+    return nameOfRequestor;
+  }
+
+  public void setNameOfRequestor(String nameOfRequestor) {
+    this.nameOfRequestor = nameOfRequestor;
+  }
+
+  public String getNameOfSampler() {
+    return nameOfSampler;
+  }
+
+  public void setNameOfSampler(String nameOfSampler) {
+    this.nameOfSampler = nameOfSampler;
+  }
+
+  public void setUnderInvestigation(String underInvestigation) {
+    this.underInvestigation = underInvestigation;
+  }
+
+  public String getUnderInvestigation() {
+    return underInvestigation;
+  }
+
+  public void setEidTypeOfClinicOther(String eidTypeOfClinicOther) {
+    this.eidTypeOfClinicOther = eidTypeOfClinicOther;
+  }
+
+  public String getEidTypeOfClinicOther() {
+    return eidTypeOfClinicOther;
+  }
+
+  public void setEidStoppedBreastfeeding(String eidStoppedBreastfeeding) {
+    this.eidStoppedBreastfeeding = eidStoppedBreastfeeding;
+  }
+
+  public String getEidStoppedBreastfeeding() {
+    return eidStoppedBreastfeeding;
+  }
+
+  public List<String> getFutureARVTreatmentINNs() {
+    return futureARVTreatmentINNs;
+  }
+
+  public void setFutureARVTreatmentINNs(List<String> futureARVTreatmentINNs) {
+    this.futureARVTreatmentINNs = futureARVTreatmentINNs;
+  }
+
+  public String getCTBPul() {
+    return CTBPul;
+  }
+
+  public void setCTBPul(String cTBPul) {
+    CTBPul = cTBPul;
+  }
+
+  public String getCTBExpul() {
+    return CTBExpul;
+  }
+
+  public void setCTBExpul(String cTBExpul) {
+    CTBExpul = cTBExpul;
+  }
+
+  public String getCCrblToxo() {
+    return CCrblToxo;
+  }
+
+  public void setCCrblToxo(String cCrblToxo) {
+    CCrblToxo = cCrblToxo;
+  }
+
+  public String getCCryptoMen() {
+    return CCryptoMen;
+  }
+
+  public void setCCryptoMen(String cCryptoMen) {
+    CCryptoMen = cCryptoMen;
+  }
+
+  public String getCGenPrurigo() {
+    return CGenPrurigo;
+  }
+
+  public void setCGenPrurigo(String cGenPrurigo) {
+    CGenPrurigo = cGenPrurigo;
+  }
+
+  public String getCIST() {
+    return CIST;
+  }
+
+  public void setCIST(String cIST) {
+    CIST = cIST;
+  }
+
+  public String getCCervCancer() {
+    return CCervCancer;
+  }
+
+  public void setCCervCancer(String cCervCancer) {
+    CCervCancer = cCervCancer;
+  }
 
-    public Pair<String, String> getPriorDiseases(int index) {
-        return getPriorDiseasesList().get(index);
+  public String getCOpharCand() {
+    return COpharCand;
+  }
+
+  public void setCOpharCand(String cOpharCand) {
+    COpharCand = cOpharCand;
+  }
+
+  public String getCKaposiSarc() {
+    return CKaposiSarc;
+  }
+
+  public void setCKaposiSarc(String cKaposiSarc) {
+    CKaposiSarc = cKaposiSarc;
+  }
+
+  public String getCShingles() {
+    return CShingles;
+  }
+
+  public void setCShingles(String cShingles) {
+    CShingles = cShingles;
+  }
+
+  public String getCDiarrheaC() {
+    return CDiarrheaC;
+  }
+
+  public void setCDiarrheaC(String cDiarrheaC) {
+    CDiarrheaC = cDiarrheaC;
+  }
+
+  public String getPTBPul() {
+    return PTBPul;
+  }
+
+  public void setPTBPul(String pTBPul) {
+    PTBPul = pTBPul;
+  }
+
+  public String getPTBExpul() {
+    return PTBExpul;
+  }
+
+  public void setPTBExpul(String pTBExpul) {
+    PTBExpul = pTBExpul;
+  }
+
+  public String getPCrblToxo() {
+    return PCrblToxo;
+  }
+
+  public void setPCrblToxo(String pCrblToxo) {
+    PCrblToxo = pCrblToxo;
+  }
+
+  public String getPCryptoMen() {
+    return PCryptoMen;
+  }
+
+  public void setPCryptoMen(String pCryptoMen) {
+    PCryptoMen = pCryptoMen;
+  }
+
+  public String getPGenPrurigo() {
+    return PGenPrurigo;
+  }
+
+  public void setPGenPrurigo(String pGenPrurigo) {
+    PGenPrurigo = pGenPrurigo;
+  }
+
+  public String getPIST() {
+    return PIST;
+  }
+
+  public void setPIST(String pIST) {
+    PIST = pIST;
+  }
+
+  public String getPCervCancer() {
+    return PCervCancer;
+  }
+
+  public void setPCervCancer(String pCervCancer) {
+    PCervCancer = pCervCancer;
+  }
+
+  public String getPOpharCand() {
+    return POpharCand;
+  }
+
+  public void setPOpharCand(String pOpharCand) {
+    POpharCand = pOpharCand;
+  }
+
+  public String getPKaposiSarc() {
+    return PKaposiSarc;
+  }
+
+  public void setPKaposiSarc(String pKaposiSarc) {
+    PKaposiSarc = pKaposiSarc;
+  }
+
+  public String getPShingles() {
+    return PShingles;
+  }
+
+  public void setPShingles(String pShingles) {
+    PShingles = pShingles;
+  }
+
+  public String getPDiarrheaC() {
+    return PDiarrheaC;
+  }
+
+  public void setPDiarrheaC(String pDiarrheaC) {
+    PDiarrheaC = pDiarrheaC;
+  }
+
+  public String getWeightLoss() {
+    return weightLoss;
+  }
+
+  public void setWeightLoss(String weightLoss) {
+    this.weightLoss = weightLoss;
+  }
+
+  public String getDiarrhea() {
+    return diarrhea;
+  }
+
+  public void setDiarrhea(String diarrhea) {
+    this.diarrhea = diarrhea;
+  }
+
+  public String getFever() {
+    return fever;
+  }
+
+  public void setFever(String fever) {
+    this.fever = fever;
+  }
+
+  public String getCough() {
+    return cough;
+  }
+
+  public void setCough(String cough) {
+    this.cough = cough;
+  }
+
+  public String getPulTB() {
+    return pulTB;
+  }
+
+  public void setPulTB(String pulTB) {
+    this.pulTB = pulTB;
+  }
+
+  public String getExpulTB() {
+    return expulTB;
+  }
+
+  public void setExpulTB(String expulTB) {
+    this.expulTB = expulTB;
+  }
+
+  public String getSwallPaint() {
+    return swallPaint;
+  }
+
+  public void setSwallPaint(String swallPaint) {
+    this.swallPaint = swallPaint;
+  }
+
+  public String getCryptoMen() {
+    return cryptoMen;
+  }
+
+  public void setCryptoMen(String cryptoMen) {
+    this.cryptoMen = cryptoMen;
+  }
+
+  public String getRecPneumon() {
+    return recPneumon;
+  }
+
+  public void setRecPneumon(String recPneumon) {
+    this.recPneumon = recPneumon;
+  }
+
+  public String getSespis() {
+    return sespis;
+  }
+
+  public void setSespis(String sespis) {
+    this.sespis = sespis;
+  }
+
+  public String getRecInfect() {
+    return recInfect;
+  }
+
+  public void setRecInfect(String recInfect) {
+    this.recInfect = recInfect;
+  }
+
+  public String getCurvixC() {
+    return curvixC;
+  }
+
+  public void setCurvixC(String curvixC) {
+    this.curvixC = curvixC;
+  }
+
+  public String getMatHIV() {
+    return matHIV;
+  }
+
+  public void setMatHIV(String matHIV) {
+    this.matHIV = matHIV;
+  }
+
+  public String getCachexie() {
+    return cachexie;
+  }
+
+  public void setCachexie(String cachexie) {
+    this.cachexie = cachexie;
+  }
+
+  public String getThrush() {
+    return thrush;
+  }
+
+  public void setThrush(String thrush) {
+    this.thrush = thrush;
+  }
+
+  public String getDermPruip() {
+    return dermPruip;
+  }
+
+  public void setDermPruip(String dermPruip) {
+    this.dermPruip = dermPruip;
+  }
+
+  public String getHerpes() {
+    return herpes;
+  }
+
+  public void setHerpes(String herpes) {
+    this.herpes = herpes;
+  }
+
+  public String getZona() {
+    return zona;
+  }
+
+  public void setZona(String zona) {
+    this.zona = zona;
+  }
+
+  public String getSarcKapo() {
+    return sarcKapo;
+  }
+
+  public void setSarcKapo(String sarcKapo) {
+    this.sarcKapo = sarcKapo;
+  }
+
+  public String getxIngPadenp() {
+    return xIngPadenp;
+  }
+
+  public void setxIngPadenp(String xIngPadenp) {
+    this.xIngPadenp = xIngPadenp;
+  }
+
+  public String getHIVDement() {
+    return HIVDement;
+  }
+
+  public void setHIVDement(String hIVDement) {
+    HIVDement = hIVDement;
+  }
+
+  public String getPriorDiseasesValue() {
+    return priorDiseasesValue;
+  }
+
+  public void setPriorDiseasesValue(String priorDiseasesValue) {
+    this.priorDiseasesValue = priorDiseasesValue;
+  }
+
+  public String getCurrentDiseasesValue() {
+    return currentDiseasesValue;
+  }
+
+  public void setCurrentDiseasesValue(String currentDiseasesValue) {
+    this.currentDiseasesValue = currentDiseasesValue;
+  }
+
+  public String getArvTreatmentInitDate() {
+    return arvTreatmentInitDate;
+  }
+
+  public void setArvTreatmentInitDate(String arvTreatmentInitDate) {
+    this.arvTreatmentInitDate = arvTreatmentInitDate;
+  }
+
+  public String getVlReasonForRequest() {
+    return vlReasonForRequest;
+  }
+
+  public void setVlReasonForRequest(String vlReasonForRequest) {
+    this.vlReasonForRequest = vlReasonForRequest;
+  }
+
+  public String getVlOtherReasonForRequest() {
+    return vlOtherReasonForRequest;
+  }
+
+  public void setVlOtherReasonForRequest(String vlOtherReasonForRequest) {
+    this.vlOtherReasonForRequest = vlOtherReasonForRequest;
+  }
+
+  public String getVlBenefit() {
+    return vlBenefit;
+  }
+
+  public void setVlBenefit(String vlBenefit) {
+    this.vlBenefit = vlBenefit;
+  }
+
+  // -----------
+  public String getVlPregnancy() {
+    return vlPregnancy;
+  }
+
+  public void setVlPregnancy(String vlPregnancy) {
+    this.vlPregnancy = vlPregnancy;
+  }
+
+  public String getVlSuckle() {
+    return vlSuckle;
+  }
+
+  public void setVlSuckle(String vlSuckle) {
+    this.vlSuckle = vlSuckle;
+  }
+  // -------------
+
+  public String getPriorVLLab() {
+    return priorVLLab;
+  }
+
+  public void setPriorVLLab(String priorVLLab) {
+    this.priorVLLab = priorVLLab;
+  }
+
+  public String getPriorVLValue() {
+    return priorVLValue;
+  }
+
+  public void setPriorVLValue(String priorVLValue) {
+    this.priorVLValue = priorVLValue;
+  }
+
+  public String getPriorVLDate() {
+    return priorVLDate;
+  }
+
+  public void setPriorVLDate(String priorVLDate) {
+    this.priorVLDate = priorVLDate;
+  }
+
+  public List<Pair<String, String>> getPriorDiseasesList() {
+    if (priorDiseasesList == null) {
+      priorDiseasesList = makeDiseaseList("P", ObservationHistoryList.ARV_DISEASES.getList());
     }
+    return new ArrayList<>(new HashSet<>(priorDiseasesList));
+  }
 
-    public List<Pair<String, String>> getCurrentDiseasesList() {
-        if (currentDiseasesList == null) {
-            currentDiseasesList = makeDiseaseList("C", ObservationHistoryList.ARV_DISEASES_SHORT.getList());
-        }
-        return new ArrayList<>(new HashSet<>(currentDiseasesList)); //remove duplicates entry
+  private List<Pair<String, String>> makeDiseaseList(
+      String prefix, List<Dictionary> dictionaryList) {
+    List<Pair<String, String>> nvList = new ArrayList<>();
+    for (Dictionary dictionary : dictionaryList) {
+      nvList.add(
+          Pair.of(prefix + dictionary.getLocalAbbreviation(), dictionary.getLocalizedName()));
     }
+    return nvList;
+  }
 
-    public Pair<String, String> getCurrentDiseases(int index) {
-        return getCurrentDiseasesList().get(index);
+  public Pair<String, String> getPriorDiseases(int index) {
+    return getPriorDiseasesList().get(index);
+  }
+
+  public List<Pair<String, String>> getCurrentDiseasesList() {
+    if (currentDiseasesList == null) {
+      currentDiseasesList =
+          makeDiseaseList("C", ObservationHistoryList.ARV_DISEASES_SHORT.getList());
     }
+    return new ArrayList<>(new HashSet<>(currentDiseasesList)); // remove duplicates entry
+  }
+
+  public Pair<String, String> getCurrentDiseases(int index) {
+    return getCurrentDiseasesList().get(index);
+  }
 
-    public List<Pair<String, String>> getRtnPriorDiseasesList() {
-        if (rtnPriorDiseasesList == null) {
-            rtnPriorDiseasesList = makeDiseaseList("", ObservationHistoryList.RTN_DISEASES.getList());
-        }
-        return new ArrayList<>(new HashSet<>(rtnPriorDiseasesList));
+  public List<Pair<String, String>> getRtnPriorDiseasesList() {
+    if (rtnPriorDiseasesList == null) {
+      rtnPriorDiseasesList = makeDiseaseList("", ObservationHistoryList.RTN_DISEASES.getList());
     }
+    return new ArrayList<>(new HashSet<>(rtnPriorDiseasesList));
+  }
 
-    public List<Pair<String, String>> getRtnCurrentDiseasesList() {
-        if (rtnCurrentDiseasesList == null) {
-            rtnCurrentDiseasesList = makeDiseaseList("", ObservationHistoryList.RTN_EXAM_DISEASES.getList());
-        }
-        return new ArrayList<>(new HashSet<>(rtnCurrentDiseasesList));
+  public List<Pair<String, String>> getRtnCurrentDiseasesList() {
+    if (rtnCurrentDiseasesList == null) {
+      rtnCurrentDiseasesList =
+          makeDiseaseList("", ObservationHistoryList.RTN_EXAM_DISEASES.getList());
     }
+    return new ArrayList<>(new HashSet<>(rtnCurrentDiseasesList));
+  }
 
-	public String getHpvSamplingMethod() {
-		return hpvSamplingMethod;
-	}
+  public String getHpvSamplingMethod() {
+    return hpvSamplingMethod;
+  }
 
-	public void setHpvSamplingMethod(String hpvSamplingMethod) {
-		this.hpvSamplingMethod = hpvSamplingMethod;
-	}
+  public void setHpvSamplingMethod(String hpvSamplingMethod) {
+    this.hpvSamplingMethod = hpvSamplingMethod;
+  }
 }

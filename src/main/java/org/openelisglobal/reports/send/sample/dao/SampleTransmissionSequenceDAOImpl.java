@@ -7,9 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class SampleTransmissionSequenceDAOImpl extends BaseDAOImpl<SampleTransmissionSequence, String>
-        implements SampleTransmissionSequenceDAO {
-    SampleTransmissionSequenceDAOImpl() {
-        super(SampleTransmissionSequence.class);
-    }
+public class SampleTransmissionSequenceDAOImpl
+    extends BaseDAOImpl<SampleTransmissionSequence, String>
+    implements SampleTransmissionSequenceDAO {
+  SampleTransmissionSequenceDAOImpl() {
+    super(SampleTransmissionSequence.class);
+  }
 }

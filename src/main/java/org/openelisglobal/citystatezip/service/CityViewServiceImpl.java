@@ -7,16 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CityViewServiceImpl extends AuditableBaseObjectServiceImpl<CityView, String> implements CityViewService {
-    @Autowired
-    protected CityViewDAO baseObjectDAO;
+public class CityViewServiceImpl extends AuditableBaseObjectServiceImpl<CityView, String>
+    implements CityViewService {
+  @Autowired protected CityViewDAO baseObjectDAO;
 
-    CityViewServiceImpl() {
-        super(CityView.class);
-    }
+  CityViewServiceImpl() {
+    super(CityView.class);
+  }
 
-    @Override
-    protected CityViewDAO getBaseObjectDAO() {
-        return baseObjectDAO;
-    }
+  @Override
+  protected CityViewDAO getBaseObjectDAO() {
+    return baseObjectDAO;
+  }
 }

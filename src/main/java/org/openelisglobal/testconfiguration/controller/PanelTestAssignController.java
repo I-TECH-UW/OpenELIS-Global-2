@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -39,144 +37,147 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class PanelTestAssignController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "panelId", "deactivatePanelId", "currentTests*",
-            "availableTests*" };
+  private static final String[] ALLOWED_FIELDS =
+      new String[] {"panelId", "deactivatePanelId", "currentTests*", "availableTests*"};
 
-    @Autowired
-    private PanelService panelService;
-    @Autowired
-    private PanelItemService panelItemService;
-    @Autowired
-    private TestService testService;
+  @Autowired private PanelService panelService;
+  @Autowired private PanelItemService panelItemService;
+  @Autowired private TestService testService;
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.setAllowedFields(ALLOWED_FIELDS);
+  @InitBinder
+  public void initBinder(WebDataBinder binder) {
+    binder.setAllowedFields(ALLOWED_FIELDS);
+  }
+
+  @RequestMapping(value = "/PanelTestAssign", method = RequestMethod.GET)
+  public ModelAndView showPanelTestAssign(
+      @Valid @ModelAttribute("form") PanelTestAssignForm oldForm,
+      BindingResult result,
+      HttpServletRequest request) {
+    PanelTestAssignForm form = new PanelTestAssignForm();
+
+    if (!result.hasFieldErrors("panelId")) {
+      String panelId = oldForm.getPanelId();
+      if (panelId == null) {
+        panelId = "";
+      }
+      form.setPanelId(panelId);
     }
 
-    @RequestMapping(value = "/PanelTestAssign", method = RequestMethod.GET)
-    public ModelAndView showPanelTestAssign(@Valid @ModelAttribute("form") PanelTestAssignForm oldForm,
-            BindingResult result, HttpServletRequest request) {
-        PanelTestAssignForm form = new PanelTestAssignForm();
+    setupDisplayItems(form);
 
-        if (!result.hasFieldErrors("panelId")) {
-            String panelId = oldForm.getPanelId();
-            if (panelId == null) {
-                panelId = "";
-            }
-            form.setPanelId(panelId);
+    addFlashMsgsToRequest(request);
+
+    return findForward(FWD_SUCCESS, form);
+  }
+
+  private void setupDisplayItems(PanelTestAssignForm form) {
+    List<IdValuePair> panels =
+        DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS);
+
+    form.setPanelList(panels);
+
+    if (!GenericValidator.isBlankOrNull(form.getPanelId())) {
+      Panel panel = panelService.getPanelById(form.getPanelId());
+      IdValuePair panelPair = new IdValuePair(panel.getId(), panel.getLocalizedName());
+
+      List<IdValuePair> tests = new ArrayList<>();
+
+      List<Test> testList = getAllTestsByPanelId(panel.getId(), false);
+
+      PanelTests panelTests = new PanelTests(panelPair);
+      HashSet<String> testIdSet = new HashSet<>();
+
+      for (Test test : testList) {
+        if (test.isActive()) {
+          tests.add(new IdValuePair(test.getId(), TestServiceImpl.getUserLocalizedTestName(test)));
+          testIdSet.add(test.getId());
         }
+      }
+      panelTests.setTests(tests, testIdSet);
 
-        setupDisplayItems(form);
+      form.setSelectedPanel(panelTests);
+    }
+  }
 
-        addFlashMsgsToRequest(request);
+  public List<Test> getAllTestsByPanelId(String panelId, boolean alphabetical) {
+    List<Test> testList = new ArrayList<>();
 
-        return findForward(FWD_SUCCESS, form);
+    List<PanelItem> testLinks = panelItemService.getPanelItemsForPanel(panelId);
+
+    for (PanelItem link : testLinks) {
+      testList.add(link.getTest());
     }
 
-    private void setupDisplayItems(PanelTestAssignForm form) {
-        List<IdValuePair> panels = DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS);
+    if (alphabetical) {
+      Collections.sort(testList, TestComparator.NAME_COMPARATOR);
+    }
+    return testList;
+  }
 
-        form.setPanelList(panels);
-
-        if (!GenericValidator.isBlankOrNull(form.getPanelId())) {
-            Panel panel = panelService.getPanelById(form.getPanelId());
-            IdValuePair panelPair = new IdValuePair(panel.getId(), panel.getLocalizedName());
-
-            List<IdValuePair> tests = new ArrayList<>();
-
-            List<Test> testList = getAllTestsByPanelId(panel.getId(), false);
-
-            PanelTests panelTests = new PanelTests(panelPair);
-            HashSet<String> testIdSet = new HashSet<>();
-
-            for (Test test : testList) {
-                if (test.isActive()) {
-                    tests.add(new IdValuePair(test.getId(), TestServiceImpl.getUserLocalizedTestName(test)));
-                    testIdSet.add(test.getId());
-                }
-            }
-            panelTests.setTests(tests, testIdSet);
-
-            form.setSelectedPanel(panelTests);
-        }
+  @RequestMapping(value = "/PanelTestAssign", method = RequestMethod.POST)
+  public ModelAndView postPanelTestAssign(
+      HttpServletRequest request,
+      @ModelAttribute("form") @Valid PanelTestAssignForm form,
+      BindingResult result,
+      RedirectAttributes redirectAttributes) {
+    if (result.hasErrors()) {
+      saveErrors(result);
+      setupDisplayItems(form);
+      return findForward(FWD_FAIL_INSERT, form);
     }
 
-    public List<Test> getAllTestsByPanelId(String panelId, boolean alphabetical) {
-        List<Test> testList = new ArrayList<>();
+    String panelId = form.getPanelId();
+    String currentUser = getSysUserId(request);
+    boolean updatePanel = false;
 
-        List<PanelItem> testLinks = panelItemService.getPanelItemsForPanel(panelId);
+    Panel panel = panelService.getPanelById(panelId);
 
-        for (PanelItem link : testLinks) {
-            testList.add(link.getTest());
-        }
+    if (!GenericValidator.isBlankOrNull(panelId)) {
+      List<PanelItem> panelItems = panelItemService.getPanelItemsForPanel(panelId);
 
-        if (alphabetical) {
-            Collections.sort(testList, TestComparator.NAME_COMPARATOR);
-        }
-        return testList;
+      List<String> newTestIds = form.getCurrentTests();
+      List<Test> newTests = new ArrayList<>();
+      for (String testId : newTestIds) {
+        newTests.add(testService.get(testId));
+      }
+
+      try {
+        panelItemService.updatePanelItems(panelItems, panel, updatePanel, currentUser, newTests);
+      } catch (LIMSRuntimeException e) {
+        LogEvent.logDebug(e);
+      }
     }
 
-    @RequestMapping(value = "/PanelTestAssign", method = RequestMethod.POST)
-    public ModelAndView postPanelTestAssign(HttpServletRequest request,
-            @ModelAttribute("form") @Valid PanelTestAssignForm form, BindingResult result,
-            RedirectAttributes redirectAttributes) {
-        if (result.hasErrors()) {
-            saveErrors(result);
-            setupDisplayItems(form);
-            return findForward(FWD_FAIL_INSERT, form);
-        }
+    DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);
+    DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS_INACTIVE);
 
-        String panelId = form.getPanelId();
-        String currentUser = getSysUserId(request);
-        boolean updatePanel = false;
+    redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+    return findForward(FWD_SUCCESS_INSERT, form);
+  }
 
-        Panel panel = panelService.getPanelById(panelId);
-
-        if (!GenericValidator.isBlankOrNull(panelId)) {
-            List<PanelItem> panelItems = panelItemService.getPanelItemsForPanel(panelId);
-
-            List<String> newTestIds = form.getCurrentTests();
-            List<Test> newTests = new ArrayList<>();
-            for (String testId : newTestIds) {
-                newTests.add(testService.get(testId));
-            }
-
-            try {
-                panelItemService.updatePanelItems(panelItems, panel, updatePanel, currentUser, newTests);
-            } catch (LIMSRuntimeException e) {
-                LogEvent.logDebug(e);
-            }
-        }
-
-        DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS);
-        DisplayListService.getInstance().refreshList(DisplayListService.ListType.PANELS_INACTIVE);
-
-        redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-        return findForward(FWD_SUCCESS_INSERT, form);
+  @Override
+  protected String findLocalForward(String forward) {
+    if (FWD_SUCCESS.equals(forward)) {
+      return "panelAssignDefinition";
+    } else if (FWD_SUCCESS_INSERT.equals(forward)) {
+      String url =
+          "/PanelTestAssign?panelId=" + Encode.forUriComponent(request.getParameter("panelId"));
+      return "redirect:" + url;
+    } else if (FWD_FAIL_INSERT.equals(forward)) {
+      return "panelAssignDefinition";
+    } else {
+      return "PageNotFound";
     }
+  }
 
-    @Override
-    protected String findLocalForward(String forward) {
-        if (FWD_SUCCESS.equals(forward)) {
-            return "panelAssignDefinition";
-        } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            String url = "/PanelTestAssign?panelId=" + Encode.forUriComponent(request.getParameter("panelId"));
-            return "redirect:" + url;
-        } else if (FWD_FAIL_INSERT.equals(forward)) {
-            return "panelAssignDefinition";
-        } else {
-            return "PageNotFound";
-        }
-    }
+  @Override
+  protected String getPageTitleKey() {
+    return null;
+  }
 
-    @Override
-    protected String getPageTitleKey() {
-        return null;
-    }
-
-    @Override
-    protected String getPageSubtitleKey() {
-        return null;
-    }
+  @Override
+  protected String getPageSubtitleKey() {
+    return null;
+  }
 }

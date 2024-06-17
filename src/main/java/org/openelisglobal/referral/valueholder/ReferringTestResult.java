@@ -19,41 +19,41 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class ReferringTestResult extends BaseObject<String> {
 
-    private static final long serialVersionUID = 1L;
-    private String id;
-    private String sampleItemId;
-    private String testName;
-    private String resultValue;
+  private static final long serialVersionUID = 1L;
+  private String id;
+  private String sampleItemId;
+  private String testName;
+  private String resultValue;
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public String getSampleItemId() {
-        return sampleItemId;
-    }
+  public String getSampleItemId() {
+    return sampleItemId;
+  }
 
-    public void setSampleItemId(String sampleItemId) {
-        this.sampleItemId = sampleItemId;
-    }
+  public void setSampleItemId(String sampleItemId) {
+    this.sampleItemId = sampleItemId;
+  }
 
-    public String getTestName() {
-        return testName;
-    }
+  public String getTestName() {
+    return testName;
+  }
 
-    public void setTestName(String testName) {
-        this.testName = testName;
-    }
+  public void setTestName(String testName) {
+    this.testName = testName;
+  }
 
-    public String getResultValue() {
-        return resultValue;
-    }
+  public String getResultValue() {
+    return resultValue;
+  }
 
-    public void setResultValue(String resultValue) {
-        this.resultValue = resultValue;
-    }
+  public void setResultValue(String resultValue) {
+    this.resultValue = resultValue;
+  }
 }

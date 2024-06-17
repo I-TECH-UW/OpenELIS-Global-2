@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class ProgramDAOImpl extends BaseDAOImpl<Program, String> implements ProgramDAO {
-    ProgramDAOImpl() {
-        super(Program.class);
-    }
+  ProgramDAOImpl() {
+    super(Program.class);
+  }
 }

@@ -8,17 +8,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DataResourceServiceImpl extends AuditableBaseObjectServiceImpl<DataResource, String>
-        implements DataResourceService {
-    @Autowired
-    protected DataResourceDAO baseObjectDAO;
+    implements DataResourceService {
+  @Autowired protected DataResourceDAO baseObjectDAO;
 
-    DataResourceServiceImpl() {
-        super(DataResource.class);
-    }
+  DataResourceServiceImpl() {
+    super(DataResource.class);
+  }
 
-    @Override
-    protected DataResourceDAO getBaseObjectDAO() {
-        return baseObjectDAO;
-    }
-
+  @Override
+  protected DataResourceDAO getBaseObjectDAO() {
+    return baseObjectDAO;
+  }
 }

@@ -11,25 +11,24 @@ import org.springframework.validation.Validator;
 @Component
 public class UnifiedSystemUserFormValidator implements Validator {
 
-    @Override
-    public boolean supports(Class<?> clazz) {
-        return UnifiedSystemUserForm.class.isAssignableFrom(clazz);
+  @Override
+  public boolean supports(Class<?> clazz) {
+    return UnifiedSystemUserForm.class.isAssignableFrom(clazz);
+  }
+
+  @Override
+  public void validate(Object target, Errors errors) {
+    UnifiedSystemUserForm form = (UnifiedSystemUserForm) target;
+
+    if (!form.getUserPassword()
+        .matches(UnifiedSystemUserController.DEFAULT_OBFUSCATED_CHARACTER + "+")) {
+      ILoginPasswordValidation passValidator = PasswordValidationFactory.getPasswordValidator();
+      if (!form.getUserPassword().equals(form.getConfirmPassword())) {
+        errors.reject("login.error.password.notmatch");
+      }
+      if (!passValidator.passwordValid(form.getUserPassword())) {
+        errors.reject("login.error.message");
+      }
     }
-
-    @Override
-    public void validate(Object target, Errors errors) {
-        UnifiedSystemUserForm form = (UnifiedSystemUserForm) target;
-
-        if (!form.getUserPassword().matches(UnifiedSystemUserController.DEFAULT_OBFUSCATED_CHARACTER + "+")) {
-            ILoginPasswordValidation passValidator = PasswordValidationFactory.getPasswordValidator();
-            if (!form.getUserPassword().equals(form.getConfirmPassword())) {
-                errors.reject("login.error.password.notmatch");
-            }
-            if (!passValidator.passwordValid(form.getUserPassword())) {
-                errors.reject("login.error.message");
-            }
-        }
-
-    }
-
+  }
 }

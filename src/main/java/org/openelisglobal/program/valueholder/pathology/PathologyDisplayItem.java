@@ -1,84 +1,84 @@
 package org.openelisglobal.program.valueholder.pathology;
 
-import java.util.Date;
-
-import org.openelisglobal.program.valueholder.pathology.PathologySample.PathologyStatus;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.Date;
+import org.openelisglobal.program.valueholder.pathology.PathologySample.PathologyStatus;
 
 public class PathologyDisplayItem {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date requestDate;
-    private PathologyStatus status;
-    private String lastName;
-    private String firstName;
-    private String assignedTechnician;
-    private String assignedPathologist;
-    private String labNumber;
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+  private Date requestDate;
 
-    private Integer pathologySampleId;
-    public Date getRequestDate() {
-        return requestDate;
-    }
+  private PathologyStatus status;
+  private String lastName;
+  private String firstName;
+  private String assignedTechnician;
+  private String assignedPathologist;
+  private String labNumber;
 
-    public void setRequestDate(Date requestDate) {
-        this.requestDate = requestDate;
-    }
+  private Integer pathologySampleId;
 
-    public PathologyStatus getStatus() {
-        return status;
-    }
+  public Date getRequestDate() {
+    return requestDate;
+  }
 
-    public void setStatus(PathologyStatus status) {
-        this.status = status;
-    }
+  public void setRequestDate(Date requestDate) {
+    this.requestDate = requestDate;
+  }
 
-    public String getLastName() {
-        return lastName;
-    }
+  public PathologyStatus getStatus() {
+    return status;
+  }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+  public void setStatus(PathologyStatus status) {
+    this.status = status;
+  }
 
-    public String getFirstName() {
-        return firstName;
-    }
+  public String getLastName() {
+    return lastName;
+  }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
 
-    public String getAssignedTechnician() {
-        return assignedTechnician;
-    }
+  public String getFirstName() {
+    return firstName;
+  }
 
-    public void setAssignedTechnician(String assignedTechnician) {
-        this.assignedTechnician = assignedTechnician;
-    }
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
 
-    public String getAssignedPathologist() {
-        return assignedPathologist;
-    }
+  public String getAssignedTechnician() {
+    return assignedTechnician;
+  }
 
-    public void setAssignedPathologist(String assignedPathologist) {
-        this.assignedPathologist = assignedPathologist;
-    }
+  public void setAssignedTechnician(String assignedTechnician) {
+    this.assignedTechnician = assignedTechnician;
+  }
 
-    public String getLabNumber() {
-        return labNumber;
-    }
+  public String getAssignedPathologist() {
+    return assignedPathologist;
+  }
 
-    public void setLabNumber(String labNumber) {
-        this.labNumber = labNumber;
-    }
+  public void setAssignedPathologist(String assignedPathologist) {
+    this.assignedPathologist = assignedPathologist;
+  }
 
-    public Integer getPathologySampleId() {
-        return pathologySampleId;
-    }
+  public String getLabNumber() {
+    return labNumber;
+  }
 
-    public void setPathologySampleId(Integer pathologySampleId) {
-        this.pathologySampleId = pathologySampleId;
-    }
+  public void setLabNumber(String labNumber) {
+    this.labNumber = labNumber;
+  }
+
+  public Integer getPathologySampleId() {
+    return pathologySampleId;
+  }
+
+  public void setPathologySampleId(Integer pathologySampleId) {
+    this.pathologySampleId = pathologySampleId;
+  }
 }

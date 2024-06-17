@@ -8,24 +8,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class BarcodeLabelInfoServiceImpl extends AuditableBaseObjectServiceImpl<BarcodeLabelInfo, String>
-        implements BarcodeLabelInfoService {
-    @Autowired
-    protected BarcodeLabelInfoDAO baseObjectDAO;
+public class BarcodeLabelInfoServiceImpl
+    extends AuditableBaseObjectServiceImpl<BarcodeLabelInfo, String>
+    implements BarcodeLabelInfoService {
+  @Autowired protected BarcodeLabelInfoDAO baseObjectDAO;
 
-    BarcodeLabelInfoServiceImpl() {
-        super(BarcodeLabelInfo.class);
-    }
+  BarcodeLabelInfoServiceImpl() {
+    super(BarcodeLabelInfo.class);
+  }
 
-    @Override
-    protected BarcodeLabelInfoDAO getBaseObjectDAO() {
-        return baseObjectDAO;
-    }
+  @Override
+  protected BarcodeLabelInfoDAO getBaseObjectDAO() {
+    return baseObjectDAO;
+  }
 
-    @Override
-    @Transactional(readOnly = true)
-    public BarcodeLabelInfo getDataByCode(String code) {
-        return getMatch("code", code).orElse(null);
-    }
-
+  @Override
+  @Transactional(readOnly = true)
+  public BarcodeLabelInfo getDataByCode(String code) {
+    return getMatch("code", code).orElse(null);
+  }
 }

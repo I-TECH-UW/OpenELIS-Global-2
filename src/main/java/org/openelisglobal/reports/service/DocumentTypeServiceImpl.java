@@ -9,22 +9,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DocumentTypeServiceImpl extends AuditableBaseObjectServiceImpl<DocumentType, String>
-        implements DocumentTypeService {
-    @Autowired
-    protected DocumentTypeDAO baseObjectDAO;
+    implements DocumentTypeService {
+  @Autowired protected DocumentTypeDAO baseObjectDAO;
 
-    DocumentTypeServiceImpl() {
-        super(DocumentType.class);
-    }
+  DocumentTypeServiceImpl() {
+    super(DocumentType.class);
+  }
 
-    @Override
-    protected DocumentTypeDAO getBaseObjectDAO() {
-        return baseObjectDAO;
-    }
+  @Override
+  protected DocumentTypeDAO getBaseObjectDAO() {
+    return baseObjectDAO;
+  }
 
-    @Override
-    @Transactional(readOnly = true)
-    public DocumentType getDocumentTypeByName(String name) {
-        return getMatch("name", name).orElse(null);
-    }
+  @Override
+  @Transactional(readOnly = true)
+  public DocumentType getDocumentTypeByName(String name) {
+    return getMatch("name", name).orElse(null);
+  }
 }

@@ -7,8 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class HL7MessageOutDAOImpl extends BaseDAOImpl<HL7MessageOut, String> implements HL7MessageOutDAO {
-    public HL7MessageOutDAOImpl() {
-        super(HL7MessageOut.class);
-    }
+public class HL7MessageOutDAOImpl extends BaseDAOImpl<HL7MessageOut, String>
+    implements HL7MessageOutDAO {
+  public HL7MessageOutDAOImpl() {
+    super(HL7MessageOut.class);
+  }
 }

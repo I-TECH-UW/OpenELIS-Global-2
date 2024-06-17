@@ -1,9 +1,7 @@
 package org.openelisglobal.analyzer.controller;
 
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.openelisglobal.analyzer.form.ListPluginForm;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -18,44 +16,44 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ListPluginsController extends BaseController {
 
-    // form isn't submitted back
-    private static final String[] ALLOWED_FIELDS = new String[] {};
+  // form isn't submitted back
+  private static final String[] ALLOWED_FIELDS = new String[] {};
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.setAllowedFields(ALLOWED_FIELDS);
+  @InitBinder
+  public void initBinder(WebDataBinder binder) {
+    binder.setAllowedFields(ALLOWED_FIELDS);
+  }
+
+  @RequestMapping(value = "/ListPlugins", method = RequestMethod.GET)
+  public ModelAndView showListPlugins(HttpServletRequest request) {
+    ListPluginForm form = new ListPluginForm();
+
+    List<String> pluginNames = PluginLoader.getCurrentPlugins();
+
+    if (pluginNames.isEmpty()) {
+      pluginNames.add(MessageUtil.getContextualMessage("plugin.no.plugins"));
     }
+    form.setPluginList(pluginNames);
 
-    @RequestMapping(value = "/ListPlugins", method = RequestMethod.GET)
-    public ModelAndView showListPlugins(HttpServletRequest request) {
-        ListPluginForm form = new ListPluginForm();
+    return findForward(FWD_SUCCESS, form);
+  }
 
-        List<String> pluginNames = PluginLoader.getCurrentPlugins();
-
-        if (pluginNames.isEmpty()) {
-            pluginNames.add(MessageUtil.getContextualMessage("plugin.no.plugins"));
-        }
-        form.setPluginList(pluginNames);
-
-        return findForward(FWD_SUCCESS, form);
+  @Override
+  protected String findLocalForward(String forward) {
+    if (FWD_SUCCESS.equals(forward)) {
+      return "ListPluginsPageDefinition";
+    } else {
+      return "PageNotFound";
     }
+  }
 
-    @Override
-    protected String findLocalForward(String forward) {
-        if (FWD_SUCCESS.equals(forward)) {
-            return "ListPluginsPageDefinition";
-        } else {
-            return "PageNotFound";
-        }
-    }
+  @Override
+  protected String getPageTitleKey() {
+    return "plugin.installed.plugins";
+  }
 
-    @Override
-    protected String getPageTitleKey() {
-        return "plugin.installed.plugins";
-    }
-
-    @Override
-    protected String getPageSubtitleKey() {
-        return "plugin.installed.plugins";
-    }
+  @Override
+  protected String getPageSubtitleKey() {
+    return "plugin.installed.plugins";
+  }
 }

@@ -8,15 +8,15 @@
             <column name="id" precision="10" scale="0" />
             <generator class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
                <param name="sequence_name">patient_contact_seq</param>
-            </generator>     
+            </generator>
         </id>
         <version name="lastupdated" column="LASTUPDATED" type="timestamp" access="field"/>
-		<property name="patientId" column="patient_id"
-			type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType" />
-		<many-to-one name="person"
-			class="org.openelisglobal.person.valueholder.Person" fetch="select" lazy="false">
-			<column name="person_id" precision="10" scale="0" />
-		</many-to-one>
+        <property name="patientId" column="patient_id"
+            type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType" />
+        <many-to-one name="person"
+            class="org.openelisglobal.person.valueholder.Person" fetch="select" lazy="false">
+            <column name="person_id" precision="10" scale="0" />
+        </many-to-one>
 
     </class>
 </hibernate-mapping>

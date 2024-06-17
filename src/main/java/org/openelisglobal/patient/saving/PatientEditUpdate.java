@@ -18,9 +18,7 @@ cd /ucd u	* The contents of this file are subject to the Mozilla Public License
 package org.openelisglobal.patient.saving;
 
 import java.lang.reflect.InvocationTargetException;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.form.PatientEntryByProjectForm;
@@ -31,50 +29,50 @@ import org.springframework.stereotype.Service;
  * @author Paul A. Hill (pahill@uw.edu)
  * @since Jul 29, 2010
  */
-
 @Service
 @Scope("prototype")
 public class PatientEditUpdate extends PatientEntry implements IPatientEditUpdate {
-    /**
-     * @param form
-     * @param sysUserId
-     * @param request
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     * @throws LIMSRuntimeException
-     */
-    public PatientEditUpdate(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request) {
-        this();
-        super.setFieldsFromForm(form);
-        super.setSysUserId(sysUserId);
-        super.setRequest(request);
-        // we are not updating the record status in either case
-        newPatientStatus = null;
-        newSampleStatus = null;
-    }
+  /**
+   * @param form
+   * @param sysUserId
+   * @param request
+   * @throws NoSuchMethodException
+   * @throws InvocationTargetException
+   * @throws IllegalAccessException
+   * @throws LIMSRuntimeException
+   */
+  public PatientEditUpdate(
+      PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request) {
+    this();
+    super.setFieldsFromForm(form);
+    super.setSysUserId(sysUserId);
+    super.setRequest(request);
+    // we are not updating the record status in either case
+    newPatientStatus = null;
+    newSampleStatus = null;
+  }
 
-    public PatientEditUpdate() {
-        super();
-        // we are not updating the record status in either case
-        newPatientStatus = null;
-        newSampleStatus = null;
-    }
+  public PatientEditUpdate() {
+    super();
+    // we are not updating the record status in either case
+    newPatientStatus = null;
+    newSampleStatus = null;
+  }
 
-    /**
-     * @see org.openelisglobal.patient.saving.PatientEntry#canAccession()
-     */
-    @Override
-    public boolean canAccession() {
-        String type = request.getParameter("type");
-        if (RequestType.valueOfAsUpperCase(type) == RequestType.READWRITE) {
-            return true;
-        }
-        return false;
+  /**
+   * @see org.openelisglobal.patient.saving.PatientEntry#canAccession()
+   */
+  @Override
+  public boolean canAccession() {
+    String type = request.getParameter("type");
+    if (RequestType.valueOfAsUpperCase(type) == RequestType.READWRITE) {
+      return true;
     }
+    return false;
+  }
 
-    @Override
-    protected String getActionLabel() {
-        return MessageUtil.getMessage("banner.menu.editPatient.ReadWrite");
-    }
+  @Override
+  protected String getActionLabel() {
+    return MessageUtil.getMessage("banner.menu.editPatient.ReadWrite");
+  }
 }

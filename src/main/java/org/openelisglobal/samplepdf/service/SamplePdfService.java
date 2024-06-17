@@ -4,7 +4,7 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.samplepdf.valueholder.SamplePdf;
 
 public interface SamplePdfService extends BaseObjectService<SamplePdf, String> {
-    boolean isAccessionNumberFound(int accessionNumber);
+  boolean isAccessionNumberFound(int accessionNumber);
 
-    SamplePdf getSamplePdfByAccessionNumber(SamplePdf samplePdf);
+  SamplePdf getSamplePdfByAccessionNumber(SamplePdf samplePdf);
 }
