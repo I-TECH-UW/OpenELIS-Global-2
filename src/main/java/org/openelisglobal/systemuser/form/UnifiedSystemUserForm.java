@@ -14,6 +14,7 @@ import org.openelisglobal.role.action.bean.DisplayRole;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class UnifiedSystemUserForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.ID_REGEX)
@@ -93,7 +94,8 @@ public class UnifiedSystemUserForm extends BaseForm {
      * json object , in order to dynamically render sets of Lab Unit Roles with data
      * ,with fields that are mapped to the same path ie testSectionId and
      * selectedLabUnitRoles
-     */
+     **/
+    @JsonIgnore
     private JSONObject userLabRoleData;
 
     // for display
@@ -262,6 +264,7 @@ public class UnifiedSystemUserForm extends BaseForm {
         this.selectedLabUnitRoles = selectedLabUnitRoles;
     }
 
+    @JsonIgnore
     public JSONObject getUserLabRoleData() {
         return userLabRoleData;
     }
@@ -270,6 +273,7 @@ public class UnifiedSystemUserForm extends BaseForm {
         this.userLabRoleData = userLabRoleData;
     }
 
+    @JsonIgnore
     public JSONArray getSystemUsers() {
         return systemUsers;
     }
