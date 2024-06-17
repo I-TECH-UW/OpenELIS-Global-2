@@ -39,6 +39,7 @@ import ConfigMenuDisplay from "./formEntry/common/ConfigMenuDisplay";
 import ProviderMenu from "./ProviderMenu/ProviderMenu";
 import BarcodeConfiguration from "./barcodeConfiguration/BarcodeConfiguration";
 import OrganizationManagament from "./OrganizationManagement/OrganizationManagement";
+import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModify.js";
 
 function Admin() {
   const intl = useIntl();
@@ -179,6 +180,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#organizationManagement">
         <OrganizationManagament />
+      </PathRoute>
+      <PathRoute path="#organizationEdit">
+        <OrganizationAddModify />
       </PathRoute>
       <PathRoute path="#globalMenuManagement">
         <GlobalMenuManagement />
