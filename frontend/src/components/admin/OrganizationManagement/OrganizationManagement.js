@@ -186,8 +186,10 @@ function OrganizationManagament() {
         organizationsManagmentList.modelMap.form.menuList.map((item) => {
           return {
             id: item.id,
-            orgName: item.organizationName ,
-            parentOrg: item.organization ? item.organization.organizationName :"",
+            orgName: item.organizationName,
+            parentOrg: item.organization
+              ? item.organization.organizationName
+              : "",
             orgPrefix: item.shortName || "",
             active: item.isActive || "",
             streetAddress: item.internetAddress || "",
@@ -209,8 +211,10 @@ function OrganizationManagament() {
           (item) => {
             return {
               id: item.id,
-              orgName: item.organizationName ,
-              parentOrg: item.organization ? item.organization.organizationName :"",
+              orgName: item.organizationName,
+              parentOrg: item.organization
+                ? item.organization.organizationName
+                : "",
               orgPrefix: item.shortName || "",
               active: item.isActive || "",
               streetAddress: item.internetAddress || "",
@@ -331,7 +335,8 @@ function OrganizationManagament() {
               </Button>{" "}
               <Button
                 onClick={() => {
-                  window.location.href = "/MasterListsPage#organizationEdit?ID=0";
+                  window.location.href =
+                    "/MasterListsPage#organizationEdit?ID=0";
                 }}
                 type="button"
               >
@@ -357,9 +362,7 @@ function OrganizationManagament() {
                 hasIconOnly={true}
                 renderIcon={ArrowRight}
                 onClick={handleNextPage}
-                disabled={
-                  parseInt(toRecordCount) >= parseInt(totalRecordCount)
-                }
+                disabled={parseInt(toRecordCount) >= parseInt(totalRecordCount)}
                 iconDescription={intl.formatMessage({
                   id: "organization.next",
                 })}

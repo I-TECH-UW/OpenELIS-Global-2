@@ -1035,7 +1035,10 @@ export function SearchResults(props) {
                 rows={1}
                 onChange={(e) => handleChange(e, row.id)}
               ></TextArea>
-               <div className="note" dangerouslySetInnerHTML={{ __html: row.pastNotes }}/>
+              <div
+                className="note"
+                dangerouslySetInnerHTML={{ __html: row.pastNotes }}
+              />
             </div>
           </>
         );
@@ -1085,8 +1088,8 @@ export function SearchResults(props) {
                   let newValidationState = { ...validationState };
                   let validation = (newValidationState[row.id] =
                     validateNumericResults(value, row));
-                    //e.target.value = validation.newValue;
-                    row.resultValue = validation.newValue
+                  //e.target.value = validation.newValue;
+                  row.resultValue = validation.newValue;
                   validation.style = {
                     ...validation?.style,
                     borderColor: validation.isCritical
