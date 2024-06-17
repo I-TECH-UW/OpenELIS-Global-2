@@ -20,25 +20,25 @@ const SlideOver = ({
       stick: "left-0 top-0 h-full",
       animateStart: "-translate-x-full",
       animateEnd: "translate-x-0",
-      proportions: "cui-slideover-x",
+      proportions: "oeui-slideover-x",
     },
     right: {
       stick: "right-0 top-0 h-full",
       animateStart: "translate-x-full",
       animateEnd: "translate-x-0",
-      proportions: "cui-slideover-x",
+      proportions: "oeui-slideover-x",
     },
     top: {
       stick: "top-0 left-0 w-full",
       animateStart: "-translate-y-full",
       animateEnd: "translate-y-0",
-      proportions: "cui-slideover-y",
+      proportions: "oeui-slideover-y",
     },
     bottom: {
       stick: "bottom-0 left-0 w-full",
       animateStart: "translate-y-full",
       animateEnd: "translate-y-0",
-      proportions: "cui-slideover-y",
+      proportions: "oeui-slideover-y",
     },
   };
 
