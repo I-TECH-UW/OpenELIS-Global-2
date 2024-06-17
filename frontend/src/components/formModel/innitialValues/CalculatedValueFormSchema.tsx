@@ -5,6 +5,7 @@ export interface CalculatedValueFormModel {
   sampleId: number;
   testId: number;
   result: string;
+  note : string;
   toggled: boolean;
   active: boolean;
 }
@@ -29,6 +30,7 @@ export const CalculatedValueFormValues: CalculatedValueFormModel = {
   sampleId: null,
   testId: null,
   result: "",
+  note : "" ,
   toggled: true,
   active: true,
   operations: [
