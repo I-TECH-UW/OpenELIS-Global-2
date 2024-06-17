@@ -65,8 +65,34 @@ function OrganizationAddModify() {
   const [saveButton, setSaveButton] = useState(true);
   const [typeOfActivity, setTypeOfActivity] = useState();
   const [typeOfActivityShow, setTypeOfActivityShow] = useState([]);
+  const [id, setId] = useState(null);
 
-  const id = new URLSearchParams(useLocation().search).get("ID");
+  //const id = new URLSearchParams(useLocation().search).get("ID");
+
+  useEffect(() => {
+    const getIdFromUrl = () => {
+      // Get the hash part of the URL
+      const hash = window.location.hash;
+
+      // Check if the hash contains the query parameters
+      if (hash.includes('?')) {
+        // Extract the query part from the hash
+        const queryParams = hash.split('?')[1];
+
+        // Create a URLSearchParams object to easily access the parameters
+        const urlParams = new URLSearchParams(queryParams);
+
+        // Get the value of the 'ID' parameter
+        const id = urlParams.get('ID');
+
+        return id;
+      }
+      return null;
+    };
+
+    const extractedId = getIdFromUrl();
+    setId(extractedId);
+  }, []);
 
   useEffect(() => {
     componentMounted.current = true;
@@ -76,11 +102,6 @@ function OrganizationAddModify() {
         `/rest/Organization?ID=${id}&startingRecNo=1`,
         handleMenuItems,
       );
-    } else {
-      setLoading(false);
-      setTimeout(() => {
-        window.location.assign("/MasterListsPage#organizationManagement");
-      }, 1000);
     }
     return () => {
       componentMounted.current = false;
@@ -170,7 +191,7 @@ function OrganizationAddModify() {
       ...prevOrgInfoPost,
       selectedTypes: selectedRowIds,
     }));
-  }, [selectedRowIds, orgSelectedTypeOfActivity, orgInfo, orgInfoPost]);
+  }, [selectedRowIds, orgInfo]);
 
   // const handlePageChange = ({ page, pageSize }) => {
   //   setPage(page);

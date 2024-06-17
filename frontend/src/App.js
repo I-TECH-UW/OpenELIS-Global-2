@@ -222,12 +222,6 @@ export default function App() {
                   role="Global Administrator"
                 />
                 <SecureRoute
-                  path="/Organization"
-                  exact
-                  component={() => <OrganizationAddEdit />}
-                  role="Global Administrator"
-                />
-                <SecureRoute
                   path="/MasterListsPage"
                   exact
                   component={() => <Admin />}
