@@ -346,7 +346,7 @@ function OrganizationManagament() {
               </h4>
               <Button
                 hasIconOnly={true}
-                disabled={paging === 1 && startingRecNo <= 21}
+                disabled={parseInt(fromRecordCount) <= 1}
                 onClick={handlePreviousPage}
                 renderIcon={ArrowLeft}
                 iconDescription={intl.formatMessage({
@@ -357,6 +357,9 @@ function OrganizationManagament() {
                 hasIconOnly={true}
                 renderIcon={ArrowRight}
                 onClick={handleNextPage}
+                disabled={
+                  parseInt(toRecordCount) >= parseInt(totalRecordCount)
+                }
                 iconDescription={intl.formatMessage({
                   id: "organization.next",
                 })}
