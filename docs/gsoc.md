@@ -51,7 +51,7 @@ If you are new to **OpenELIS Global**, we recommend starting with our
 | 30/Apr/2024   | ✅     | Projects Announced to Orgs                                                                                      |
 | 01/May/2024   | ✅     | Accepted GSoC contributor projects announced                                                                    |
 | 01/May/2024   | ✅     | Community Bonding Period. Students get to know mentors, read documentation, prepare for work on their projects  |
-| 27/May/2024   | ⌛     | Coding officially begins                                                                                        |
+| 27/May/2024   | ✅     | Coding officially begins                                                                                        |
 | 08/Jul/2024   | ⌛     | Mentors and GSoC contributors can begin submitting midterm evaluations                                          |
 | 12/July/2024  | ⌛     | Midterm evaluation deadline (standard coding period)                                                            |
 | 12/July/2024  | ⌛     | Work Period. GSoC contributors work on their project with guidance from Mentors                                 |
