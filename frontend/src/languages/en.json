@@ -1119,5 +1119,6 @@
   "systemuserrole.copypermisions.placeholder": "Copy Users Permisions",
   "systemuserrole.apply": "Apply",
   "systemuserrole.roles.global": "Global Roles",
-  "systemuserrole.roles.labunit": "Lab Unit Roles"
+  "systemuserrole.roles.labunit": "Lab Unit Roles",
+  "systemuserrole.newpermissions": "Add New Permission"
 }
