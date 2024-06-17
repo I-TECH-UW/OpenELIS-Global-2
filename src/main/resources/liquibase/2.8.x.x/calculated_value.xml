@@ -147,4 +147,16 @@
                              columnNames="name"
                              constraintName="calculation_name_unique_constraint"/>
     </changeSet>
+		<changeSet author="moses_mutesa" id="8">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="calculation" schemaName="clinlims" />
+			<not>
+				<columnExists tableName="calculation" columnName="note" />
+			</not>
+		</preConditions>
+		<comment>add note column to calculation table</comment>
+		<addColumn schemaName="clinlims" tableName="calculation">
+			<column name="note" type="varchar(64)"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

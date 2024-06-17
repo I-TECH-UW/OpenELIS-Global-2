@@ -12,6 +12,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jfree.util.Log;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -216,6 +217,20 @@ public class TestCalculatedUtil {
         String resultType = testService.getResultType(test);
         Analysis analysis = null;
         if (test != null) {
+            if (resultCalculation.getTestResultMap().containsKey(Integer.valueOf(test.getId()))) {
+                if (Boolean.valueOf(value)) {
+                    if (StringUtils.isNotBlank(calculation.getNote())) {
+                        Note note = noteService.createSavableNote(resultSet.result.getAnalysis(), NoteType.EXTERNAL,
+                                calculation.getNote(),
+                                CALCULATION_SUBJECT,
+                                systemUserId);
+                        if (!noteService.duplicateNoteExists(note)) {
+                            noteService.save(note);
+                        }
+                    }
+                }
+                return analysis;
+            }
             TestResult testResult = getTestResultForCalculation(calculation);
             Result result = null;
             if (resultCalculation.getResult() != null) {
@@ -257,12 +272,12 @@ public class TestCalculatedUtil {
             }
             if (resultCalculation.getResult() != null) {
                 analysis = createCalculatedAnalysis(resultCalculation.getResult().getAnalysis(), test, resultSet.result,
-                    value, calculation.getName(), systemUserId, resultCalculated);
+                    value, calculation.getName(), systemUserId, resultCalculated, calculation.getNote());
                 result.setAnalysis(analysis);
                 resultService.update(result);
             } else {
                 analysis = createCalculatedAnalysis(null, test, resultSet.result, value, calculation.getName(), systemUserId,
-                    resultCalculated);
+                    resultCalculated , calculation.getNote());
                 result.setAnalysis(analysis);
                 resultService.insert(result);
             }
@@ -272,8 +287,8 @@ public class TestCalculatedUtil {
         return analysis;
     }
     
-    private void createInternalNote(Result result, Analysis newAnalysis, Analysis currentAnalysis, String calculatioName,
-            String systemUserId) {
+    private void createInternalNote(Analysis newAnalysis, Analysis currentAnalysis, String calculatioName,
+            String systemUserId ,String externalNote) {
         List<Note> notes = new ArrayList<>();
         Note note = noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
             "Result Succesfully Calculated From Calculation Rule :" + calculatioName, CALCULATION_SUBJECT, systemUserId);
@@ -288,10 +303,20 @@ public class TestCalculatedUtil {
         if (!noteService.duplicateNoteExists(note2)) {
             notes.add(note2);
         }
+
+        if (StringUtils.isNotBlank(externalNote)) {
+            Note note3 = noteService.createSavableNote(newAnalysis, NoteType.EXTERNAL, externalNote,
+                    CALCULATION_SUBJECT,
+                    systemUserId);
+            if (!noteService.duplicateNoteExists(note3)) {
+                notes.add(note3);
+            }
+        }
+        
         noteService.saveAll(notes);
     }
     
-    private void createMissingValueInternalNote(Result result, Analysis newAnalysis, Analysis currentAnalysis,
+    private void createMissingValueInternalNote(Analysis newAnalysis, Analysis currentAnalysis,
             String calculatioName, String systemUserId) {
         List<Note> notes = new ArrayList<>();
         Note note = noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
@@ -367,7 +392,7 @@ public class TestCalculatedUtil {
     }
     
     private Analysis createCalculatedAnalysis(Analysis existingAnalysis, Test test, Result result, String value,
-            String calculationName, String systemUserId, Boolean resultCalculated) {
+            String calculationName, String systemUserId, Boolean resultCalculated , String externalNote) {
         Analysis currentAnalysis = result.getAnalysis();
         Analysis generatedAnalysis = null;
         if (existingAnalysis != null) {
@@ -400,9 +425,9 @@ public class TestCalculatedUtil {
             analysisService.insert(generatedAnalysis);
         }
         if (resultCalculated) {
-            createInternalNote(result, generatedAnalysis, currentAnalysis, calculationName, systemUserId);
+            createInternalNote(generatedAnalysis, currentAnalysis, calculationName, systemUserId ,externalNote);
         } else {
-            createMissingValueInternalNote(result, generatedAnalysis, currentAnalysis, calculationName, systemUserId);
+            createMissingValueInternalNote(generatedAnalysis, currentAnalysis, calculationName, systemUserId);
         }
         return generatedAnalysis;
     }
