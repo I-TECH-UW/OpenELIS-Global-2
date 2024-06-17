@@ -1,40 +1,33 @@
 package org.openelisglobal.program.bean;
 
 public class CytologyDashBoardCount {
-    Long inProgress;
-    
-    Long awaitingReview;
-    
-    Long complete;
+  Long inProgress;
 
-    
-    public Long getInProgress() {
-        return inProgress;
-    }
+  Long awaitingReview;
 
-    
-    public void setInProgress(Long inProgress) {
-        this.inProgress = inProgress;
-    }
+  Long complete;
 
-    
-    public Long getAwaitingReview() {
-        return awaitingReview;
-    }
+  public Long getInProgress() {
+    return inProgress;
+  }
 
-    
-    public void setAwaitingReview(Long awaitingReview) {
-        this.awaitingReview = awaitingReview;
-    }
+  public void setInProgress(Long inProgress) {
+    this.inProgress = inProgress;
+  }
 
-    
-    public Long getComplete() {
-        return complete;
-    }
+  public Long getAwaitingReview() {
+    return awaitingReview;
+  }
 
-    
-    public void setComplete(Long complete) {
-        this.complete = complete;
-    }
-    
+  public void setAwaitingReview(Long awaitingReview) {
+    this.awaitingReview = awaitingReview;
+  }
+
+  public Long getComplete() {
+    return complete;
+  }
+
+  public void setComplete(Long complete) {
+    this.complete = complete;
+  }
 }

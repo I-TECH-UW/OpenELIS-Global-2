@@ -18,35 +18,34 @@ package org.openelisglobal.image.valueholder;
 
 import org.openelisglobal.common.valueholder.BaseObject;
 
-/**
- */
+/** */
 public class Image extends BaseObject<String> {
-    public static final int MAX_MEMORY_SIZE = 1024 * 1024 * 2;
-    private String id;
-    private String description;
-    private byte[] image;
+  public static final int MAX_MEMORY_SIZE = 1024 * 1024 * 2;
+  private String id;
+  private String description;
+  private byte[] image;
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public byte[] getImage() {
-        return image;
-    }
+  public byte[] getImage() {
+    return image;
+  }
 
-    public void setImage(byte[] image) {
-        this.image = image;
-    }
+  public void setImage(byte[] image) {
+    this.image = image;
+  }
 }

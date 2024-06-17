@@ -7,17 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DataValueServiceImpl extends AuditableBaseObjectServiceImpl<DataValue, String> implements DataValueService {
-    @Autowired
-    protected DataValueDAO baseObjectDAO;
+public class DataValueServiceImpl extends AuditableBaseObjectServiceImpl<DataValue, String>
+    implements DataValueService {
+  @Autowired protected DataValueDAO baseObjectDAO;
 
-    DataValueServiceImpl() {
-        super(DataValue.class);
-    }
+  DataValueServiceImpl() {
+    super(DataValue.class);
+  }
 
-    @Override
-    protected DataValueDAO getBaseObjectDAO() {
-        return baseObjectDAO;
-    }
-
+  @Override
+  protected DataValueDAO getBaseObjectDAO() {
+    return baseObjectDAO;
+  }
 }

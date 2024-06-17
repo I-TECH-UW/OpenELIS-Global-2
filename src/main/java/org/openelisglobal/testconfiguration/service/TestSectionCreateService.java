@@ -7,8 +7,13 @@ import org.openelisglobal.test.valueholder.TestSection;
 
 public interface TestSectionCreateService {
 
-    void insertTestSection(Localization localization, TestSection testSection, SystemModule workplanModule,
-            SystemModule resultModule, SystemModule validationModule, RoleModule workplanResultModule,
-            RoleModule resultResultModule, RoleModule validationValidationModule);
-
+  void insertTestSection(
+      Localization localization,
+      TestSection testSection,
+      SystemModule workplanModule,
+      SystemModule resultModule,
+      SystemModule validationModule,
+      RoleModule workplanResultModule,
+      RoleModule resultResultModule,
+      RoleModule validationValidationModule);
 }

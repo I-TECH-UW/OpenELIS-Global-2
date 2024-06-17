@@ -1,86 +1,84 @@
 package org.openelisglobal.program.valueholder.immunohistochemistry;
 
-import java.util.Date;
-
-import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySample.ImmunohistochemistryStatus;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.Date;
+import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySample.ImmunohistochemistryStatus;
 
 public class ImmunohistochemistryDisplayItem {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date requestDate;
-    private ImmunohistochemistryStatus status;
-    private String lastName;
-    private String firstName;
-    private String assignedTechnician;
-    private String assignedPathologist;
-    private String labNumber;
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+  private Date requestDate;
 
-    private Integer immunohistochemistrySampleId;
+  private ImmunohistochemistryStatus status;
+  private String lastName;
+  private String firstName;
+  private String assignedTechnician;
+  private String assignedPathologist;
+  private String labNumber;
 
-    public Date getRequestDate() {
-        return requestDate;
-    }
+  private Integer immunohistochemistrySampleId;
 
-    public void setRequestDate(Date requestDate) {
-        this.requestDate = requestDate;
-    }
+  public Date getRequestDate() {
+    return requestDate;
+  }
 
-    public ImmunohistochemistryStatus getStatus() {
-        return status;
-    }
+  public void setRequestDate(Date requestDate) {
+    this.requestDate = requestDate;
+  }
 
-    public void setStatus(ImmunohistochemistryStatus status) {
-        this.status = status;
-    }
+  public ImmunohistochemistryStatus getStatus() {
+    return status;
+  }
 
-    public String getLastName() {
-        return lastName;
-    }
+  public void setStatus(ImmunohistochemistryStatus status) {
+    this.status = status;
+  }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+  public String getLastName() {
+    return lastName;
+  }
 
-    public String getFirstName() {
-        return firstName;
-    }
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+  public String getFirstName() {
+    return firstName;
+  }
 
-    public String getAssignedTechnician() {
-        return assignedTechnician;
-    }
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
 
-    public void setAssignedTechnician(String assignedTechnician) {
-        this.assignedTechnician = assignedTechnician;
-    }
+  public String getAssignedTechnician() {
+    return assignedTechnician;
+  }
 
-    public String getAssignedPathologist() {
-        return assignedPathologist;
-    }
+  public void setAssignedTechnician(String assignedTechnician) {
+    this.assignedTechnician = assignedTechnician;
+  }
 
-    public void setAssignedPathologist(String assignedPathologist) {
-        this.assignedPathologist = assignedPathologist;
-    }
+  public String getAssignedPathologist() {
+    return assignedPathologist;
+  }
 
-    public String getLabNumber() {
-        return labNumber;
-    }
+  public void setAssignedPathologist(String assignedPathologist) {
+    this.assignedPathologist = assignedPathologist;
+  }
 
-    public void setLabNumber(String labNumber) {
-        this.labNumber = labNumber;
-    }
+  public String getLabNumber() {
+    return labNumber;
+  }
 
-    public Integer getImmunohistochemistrySampleId() {
-        return immunohistochemistrySampleId;
-    }
+  public void setLabNumber(String labNumber) {
+    this.labNumber = labNumber;
+  }
 
-    public void setImmunohistochemistrySampleId(Integer immunohistochemistrySampleId) {
-        this.immunohistochemistrySampleId = immunohistochemistrySampleId;
-    }
+  public Integer getImmunohistochemistrySampleId() {
+    return immunohistochemistrySampleId;
+  }
 
+  public void setImmunohistochemistrySampleId(Integer immunohistochemistrySampleId) {
+    this.immunohistochemistrySampleId = immunohistochemistrySampleId;
+  }
 }

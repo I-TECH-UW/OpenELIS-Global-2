@@ -1,208 +1,203 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.sampletracking.valueholder;
 
 import java.io.Serializable;
-
 import org.openelisglobal.common.valueholder.BaseObject;
 
 /**
- * @author AIS view sampletracking is mapped to this valueholder bug 1920 -
- *         standards
- *
+ * @author AIS view sampletracking is mapped to this valueholder bug 1920 - standards
  */
-//TODO delete unused class
+// TODO delete unused class
 public class SampleTracking extends BaseObject<String> implements Serializable {
 
-    private SampleTracking sampleTrackingId;
+  private SampleTracking sampleTrackingId;
 
-    private String accNum;
+  private String accNum;
 
-    private String patientId;
+  private String patientId;
 
-    private String cliRef;
+  private String cliRef;
 
-    private String patientLastName;
+  private String patientLastName;
 
-    private String patientFirstName;
+  private String patientFirstName;
 
-    // bugzilla 2069
-    private String organizationLocalAbbreviation;
+  // bugzilla 2069
+  private String organizationLocalAbbreviation;
 
-    private String orgName;
+  private String orgName;
 
-    private String recdDate;
+  private String recdDate;
 
-    private String tosId;
+  private String tosId;
 
-    private String tosDesc;
+  private String tosDesc;
 
-    private String sosId;
+  private String sosId;
 
-    private String sosDesc;
+  private String sosDesc;
 
-    private String collDate;
+  private String collDate;
 
-    private String dateofBirth;
+  private String dateofBirth;
 
-    // bugzilla 2455
-    private String specOrIsolate;
+  // bugzilla 2455
+  private String specOrIsolate;
 
-    public SampleTracking() {
-        super();
-    }
+  public SampleTracking() {
+    super();
+  }
 
-    // bugzilla 2455
-    public String getSpecOrIsolate() {
-        return specOrIsolate;
-    }
+  // bugzilla 2455
+  public String getSpecOrIsolate() {
+    return specOrIsolate;
+  }
 
-    public void setSpecOrIsolate(String specOrIsolate) {
-        this.specOrIsolate = specOrIsolate;
-    }
+  public void setSpecOrIsolate(String specOrIsolate) {
+    this.specOrIsolate = specOrIsolate;
+  }
 
-    public void setSampleTrackingId(SampleTracking sampleTrackingId) {
-        this.sampleTrackingId = sampleTrackingId;
-    }
+  public void setSampleTrackingId(SampleTracking sampleTrackingId) {
+    this.sampleTrackingId = sampleTrackingId;
+  }
 
-    public SampleTracking getSampleTrackingId() {
-        return sampleTrackingId;
-    }
+  public SampleTracking getSampleTrackingId() {
+    return sampleTrackingId;
+  }
 
-    public String getAccNum() {
-        return accNum;
-    }
+  public String getAccNum() {
+    return accNum;
+  }
 
-    public String getPatientId() {
-        return patientId;
-    }
+  public String getPatientId() {
+    return patientId;
+  }
 
-    public String getCliRef() {
-        return cliRef;
-    }
+  public String getCliRef() {
+    return cliRef;
+  }
 
-    public String getPatientLastName() {
-        return patientLastName;
-    }
+  public String getPatientLastName() {
+    return patientLastName;
+  }
 
-    public String getPatientFirstName() {
-        return patientFirstName;
-    }
+  public String getPatientFirstName() {
+    return patientFirstName;
+  }
 
-    public String getOrgName() {
-        return orgName;
-    }
+  public String getOrgName() {
+    return orgName;
+  }
 
-    // bugzilla 2069
-    public String getOrganizationLocalAbbreviation() {
-        return organizationLocalAbbreviation;
-    }
+  // bugzilla 2069
+  public String getOrganizationLocalAbbreviation() {
+    return organizationLocalAbbreviation;
+  }
 
-    public String getRecdDate() {
-        return recdDate;
-    }
+  public String getRecdDate() {
+    return recdDate;
+  }
 
-    public String getTosId() {
-        return tosId;
-    }
+  public String getTosId() {
+    return tosId;
+  }
 
-    public String getTosDesc() {
-        return tosDesc;
-    }
+  public String getTosDesc() {
+    return tosDesc;
+  }
 
-    public String getSosId() {
-        return sosId;
-    }
+  public String getSosId() {
+    return sosId;
+  }
 
-    public String getSosDesc() {
-        return sosDesc;
-    }
+  public String getSosDesc() {
+    return sosDesc;
+  }
 
-    public String getCollDate() {
-        return collDate;
-    }
+  public String getCollDate() {
+    return collDate;
+  }
 
-    public String getDateofBirth() {
-        return dateofBirth;
-    }
+  public String getDateofBirth() {
+    return dateofBirth;
+  }
 
-    public void setAccNum(String accNum) {
-        this.accNum = accNum;
-    }
+  public void setAccNum(String accNum) {
+    this.accNum = accNum;
+  }
 
-    public void setPatientId(String patientId) {
-        this.patientId = patientId;
-    }
+  public void setPatientId(String patientId) {
+    this.patientId = patientId;
+  }
 
-    public void setCliRef(String cliRef) {
-        this.cliRef = cliRef;
-    }
+  public void setCliRef(String cliRef) {
+    this.cliRef = cliRef;
+  }
 
-    public void setPatientLastName(String patientLastName) {
-        this.patientLastName = patientLastName;
-    }
+  public void setPatientLastName(String patientLastName) {
+    this.patientLastName = patientLastName;
+  }
 
-    public void setPatientFirstName(String patientFirstName) {
-        this.patientFirstName = patientFirstName;
-    }
+  public void setPatientFirstName(String patientFirstName) {
+    this.patientFirstName = patientFirstName;
+  }
 
-    public void setOrgName(String orgName) {
-        this.orgName = orgName;
-    }
+  public void setOrgName(String orgName) {
+    this.orgName = orgName;
+  }
 
-    // bugzilla 2069
-    public void setOrganizationLocalAbbreviation(String organizationLocalAbbreviation) {
-        this.organizationLocalAbbreviation = organizationLocalAbbreviation;
-    }
+  // bugzilla 2069
+  public void setOrganizationLocalAbbreviation(String organizationLocalAbbreviation) {
+    this.organizationLocalAbbreviation = organizationLocalAbbreviation;
+  }
 
-    public void setRecdDate(String recdDate) {
-        this.recdDate = recdDate;
-    }
+  public void setRecdDate(String recdDate) {
+    this.recdDate = recdDate;
+  }
 
-    public void setTosId(String tosId) {
-        this.tosId = tosId;
-    }
+  public void setTosId(String tosId) {
+    this.tosId = tosId;
+  }
 
-    public void setTosDesc(String tosDesc) {
-        this.tosDesc = tosDesc;
-    }
+  public void setTosDesc(String tosDesc) {
+    this.tosDesc = tosDesc;
+  }
 
-    public void setSosId(String sosId) {
-        this.sosId = sosId;
-    }
+  public void setSosId(String sosId) {
+    this.sosId = sosId;
+  }
 
-    public void setSosDesc(String sosDesc) {
-        this.sosDesc = sosDesc;
-    }
+  public void setSosDesc(String sosDesc) {
+    this.sosDesc = sosDesc;
+  }
 
-    public void setCollDate(String collDate) {
-        this.collDate = collDate;
-    }
+  public void setCollDate(String collDate) {
+    this.collDate = collDate;
+  }
 
-    public void setDateofBirth(String dateofBirth) {
-        this.dateofBirth = dateofBirth;
-    }
+  public void setDateofBirth(String dateofBirth) {
+    this.dateofBirth = dateofBirth;
+  }
 
-    @Override
-    public String getId() {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public String getId() {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public void setId(String id) {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public void setId(String id) {
+    throw new UnsupportedOperationException();
+  }
 }

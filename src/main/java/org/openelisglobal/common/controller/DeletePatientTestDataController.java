@@ -1,9 +1,7 @@
 package org.openelisglobal.common.controller;
 
 import java.sql.Timestamp;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.hibernate.HibernateException;
 import org.openelisglobal.audittrail.valueholder.History;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -20,66 +18,66 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class DeletePatientTestDataController extends BaseController {
 
-    @Autowired
-    private DatabaseCleanService databaseCleanService;
-    @Autowired
-    private HistoryService historyService;
+  @Autowired private DatabaseCleanService databaseCleanService;
+  @Autowired private HistoryService historyService;
 
-    @GetMapping(value = "/DatabaseCleaningRequest")
-    public String confirmCleanSamplePatientDatabaseEntries() {
-        return findForward(FWD_SUCCESS);
+  @GetMapping(value = "/DatabaseCleaningRequest")
+  public String confirmCleanSamplePatientDatabaseEntries() {
+    return findForward(FWD_SUCCESS);
+  }
+
+  @PostMapping(value = "/DatabaseCleaningRequest")
+  public String cleanSamplePatientDatabaseEntries(HttpServletRequest request) {
+
+    if (!"true"
+        .equals(
+            ConfigurationProperties.getInstance()
+                .getPropertyValueLowerCase(
+                    ConfigurationProperties.Property.TrainingInstallation))) {
+      return findForward(FWD_FAIL_DELETE);
+    }
+    databaseCleanService.cleanDatabase();
+
+    try {
+      History history = new History();
+      history.setActivity("T");
+      history.setTimestamp(new Timestamp(System.currentTimeMillis()));
+
+      history.setNameKey("Database");
+      history.setReferenceId("0");
+      history.setReferenceTable("0");
+      history.setSysUserId(getSysUserId(request));
+      historyService.save(history);
+
+      PatientUtil.invalidateUnknownPatients();
+    } catch (HibernateException e) {
+      LogEvent.logError(e);
+      throw new LIMSRuntimeException("Error in DeletePatientTestData performAction()", e);
     }
 
-    @PostMapping(value = "/DatabaseCleaningRequest")
-    public String cleanSamplePatientDatabaseEntries(HttpServletRequest request) {
+    return findForward(FWD_SUCCESS_DELETE);
+  }
 
-        if (!"true".equals(ConfigurationProperties.getInstance()
-                .getPropertyValueLowerCase(ConfigurationProperties.Property.TrainingInstallation))) {
-            return findForward(FWD_FAIL_DELETE);
-        }
-        databaseCleanService.cleanDatabase();
+  @Override
+  protected String findLocalForward(String forward) {
 
-        try {
-            History history = new History();
-            history.setActivity("T");
-            history.setTimestamp(new Timestamp(System.currentTimeMillis()));
-
-            history.setNameKey("Database");
-            history.setReferenceId("0");
-            history.setReferenceTable("0");
-            history.setSysUserId(getSysUserId(request));
-            historyService.save(history);
-
-            PatientUtil.invalidateUnknownPatients();
-        } catch (HibernateException e) {
-            LogEvent.logError(e);
-            throw new LIMSRuntimeException("Error in DeletePatientTestData performAction()", e);
-        }
-
-        return findForward(FWD_SUCCESS_DELETE);
+    if (FWD_SUCCESS_DELETE.equals(forward)) {
+      return "masterListsPageDefinition";
+    } else if (FWD_SUCCESS.equals(forward)) {
+      return "databaseCleaningDefinition";
     }
+    return "redirect:/Home";
+  }
 
-    @Override
-    protected String findLocalForward(String forward) {
+  @Override
+  protected String getPageTitleKey() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-        if (FWD_SUCCESS_DELETE.equals(forward)) {
-            return "masterListsPageDefinition";
-        } else if (FWD_SUCCESS.equals(forward)) {
-            return "databaseCleaningDefinition";
-        }
-        return "redirect:/Home";
-    }
-
-    @Override
-    protected String getPageTitleKey() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    protected String getPageSubtitleKey() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
+  @Override
+  protected String getPageSubtitleKey() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

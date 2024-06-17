@@ -9,17 +9,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class LabComponentServiceImpl extends AuditableBaseObjectServiceImpl<LabComponent, String>
-        implements LabComponentService {
+    implements LabComponentService {
 
-    @Autowired
-    private LabComponentDAO baseObjectDAO;
+  @Autowired private LabComponentDAO baseObjectDAO;
 
-    public LabComponentServiceImpl() {
-        super(LabComponent.class);
-    }
+  public LabComponentServiceImpl() {
+    super(LabComponent.class);
+  }
 
-    @Override
-    protected BaseDAO<LabComponent, String> getBaseObjectDAO() {
-        return baseObjectDAO;
-    }
+  @Override
+  protected BaseDAO<LabComponent, String> getBaseObjectDAO() {
+    return baseObjectDAO;
+  }
 }

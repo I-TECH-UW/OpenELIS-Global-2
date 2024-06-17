@@ -19,9 +19,7 @@ package org.openelisglobal.common.services;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
-
 import org.openelisglobal.menu.service.MenuService;
 import org.openelisglobal.menu.util.MenuUtil;
 import org.openelisglobal.menu.valueholder.Menu;
@@ -31,108 +29,110 @@ import org.springframework.stereotype.Service;
 @Service
 public class PluginMenuService {
 
-    static PluginMenuService INSTANCE;
+  static PluginMenuService INSTANCE;
 
-    private final Map<String, Menu> elementToMenuMap = new HashMap<>();
-    private final Map<String, Map<String, String>> menuLabelMap = new HashMap<>();
-    private final Map<String, String> actionToKeyMap = new HashMap<>();
-    @Autowired
-    private MenuService menuService;
+  private final Map<String, Menu> elementToMenuMap = new HashMap<>();
+  private final Map<String, Map<String, String>> menuLabelMap = new HashMap<>();
+  private final Map<String, String> actionToKeyMap = new HashMap<>();
+  @Autowired private MenuService menuService;
 
-    public enum KnownMenu {
-        ANALYZER("menu_results_analyzer"), WORKPLAN("menu_workplan");
+  public enum KnownMenu {
+    ANALYZER("menu_results_analyzer"),
+    WORKPLAN("menu_workplan");
 
-        private final String elementId;
+    private final String elementId;
 
-        KnownMenu(String elementId) {
-            this.elementId = elementId;
-        }
-
-        public String getElementId() {
-            return elementId;
-        }
+    KnownMenu(String elementId) {
+      this.elementId = elementId;
     }
 
-    @PostConstruct
-    private void registerInstance() {
-        INSTANCE = this;
+    public String getElementId() {
+      return elementId;
+    }
+  }
+
+  @PostConstruct
+  private void registerInstance() {
+    INSTANCE = this;
+  }
+
+  public static PluginMenuService getInstance() {
+    return INSTANCE;
+  }
+
+  public Menu getKnownMenu(KnownMenu knownMenu, String defaultKnownMenuParentId) {
+    return knownMenu == null
+        ? null
+        : getMenuByElementId(knownMenu.getElementId(), defaultKnownMenuParentId);
+  }
+
+  public Menu getMenuByElementId(String elementId, String defaultKnownMenuParentId) {
+
+    Menu menu = elementToMenuMap.get(elementId);
+
+    if (menu != null) {
+      return menu;
     }
 
-    public static PluginMenuService getInstance() {
-        return INSTANCE;
+    menu = menuService.getMenuByElementId(elementId);
+
+    if (menu != null) {
+      elementToMenuMap.put(elementId, menu);
+      return menu;
     }
 
-    public Menu getKnownMenu(KnownMenu knownMenu, String defaultKnownMenuParentId) {
-        return knownMenu == null ? null : getMenuByElementId(knownMenu.getElementId(), defaultKnownMenuParentId);
+    menu = new Menu();
+    Menu parent = menuService.getMenuByElementId(defaultKnownMenuParentId);
+    menu.setParent(parent);
+    menu.setPresentationOrder(5);
+    menu.setElementId("menu_results_analyzer");
+    menu.setDisplayKey("banner.menu.results.analyzer");
+    MenuUtil.addMenu(menu);
+
+    elementToMenuMap.put(elementId, menu);
+    return menu;
+  }
+
+  public void insertLanguageKeyValue(String key, String value, String locale) {
+    Map<String, String> localSpecificMap = menuLabelMap.get(locale);
+    if (localSpecificMap == null) {
+      localSpecificMap = new HashMap<>();
+      menuLabelMap.put(locale, localSpecificMap);
+    }
+    localSpecificMap.put(key, value);
+  }
+
+  public String getMenuLabel(String locale, String key) {
+    Map<String, String> localSpecificMap = getLocaleSpecificMap(Locale.forLanguageTag(locale));
+    if (localSpecificMap == null) {
+      return key;
     }
 
-    public Menu getMenuByElementId(String elementId, String defaultKnownMenuParentId) {
-
-        Menu menu = elementToMenuMap.get(elementId);
-
-        if (menu != null) {
-            return menu;
-        }
-
-        menu = menuService.getMenuByElementId(elementId);
-
-        if (menu != null) {
-            elementToMenuMap.put(elementId, menu);
-            return menu;
-        }
-
-        menu = new Menu();
-        Menu parent = menuService.getMenuByElementId(defaultKnownMenuParentId);
-        menu.setParent(parent);
-        menu.setPresentationOrder(5);
-        menu.setElementId("menu_results_analyzer");
-        menu.setDisplayKey("banner.menu.results.analyzer");
-        MenuUtil.addMenu(menu);
-
-        elementToMenuMap.put(elementId, menu);
-        return menu;
+    String value = localSpecificMap.get(key);
+    if (value == null) {
+      return key;
     }
+    return value;
+  }
 
-    public void insertLanguageKeyValue(String key, String value, String locale) {
-        Map<String, String> localSpecificMap = menuLabelMap.get(locale);
-        if (localSpecificMap == null) {
-            localSpecificMap = new HashMap<>();
-            menuLabelMap.put(locale, localSpecificMap);
-        }
-        localSpecificMap.put(key, value);
+  private Map<String, String> getLocaleSpecificMap(Locale locale) {
+    Map<String, String> localSpecificMap = menuLabelMap.get(locale.toLanguageTag());
+    if (localSpecificMap == null) {
+      localSpecificMap = menuLabelMap.get(locale.getLanguage());
     }
+    return localSpecificMap;
+  }
 
-    public String getMenuLabel(String locale, String key) {
-        Map<String, String> localSpecificMap = getLocaleSpecificMap(Locale.forLanguageTag(locale));
-        if (localSpecificMap == null) {
-            return key;
-        }
+  public void addMenu(Menu menu) {
+    MenuUtil.addMenu(menu);
+    actionToKeyMap.put(menu.getActionURL(), menu.getDisplayKey());
+  }
 
-        String value = localSpecificMap.get(key);
-        if (value == null) {
-            return key;
-        }
-        return value;
-    }
+  public boolean hasMenu(Menu menu) {
+    return actionToKeyMap.containsKey(menu.getActionURL());
+  }
 
-    private Map<String, String> getLocaleSpecificMap(Locale locale) {
-        Map<String, String> localSpecificMap = menuLabelMap.get(locale.toLanguageTag());
-        if (localSpecificMap == null) {
-            localSpecificMap = menuLabelMap.get(locale.getLanguage());
-        }
-        return localSpecificMap;
-    }
-
-    public void addMenu(Menu menu) {
-        MenuUtil.addMenu(menu);
-        actionToKeyMap.put(menu.getActionURL(), menu.getDisplayKey());
-    }
-
-    public boolean hasMenu(Menu menu) {
-        return actionToKeyMap.containsKey(menu.getActionURL());
-    }
-
-    public String getKeyForAction(String action) {
-        return actionToKeyMap.get(action);
-    }
+  public String getKeyForAction(String action) {
+    return actionToKeyMap.get(action);
+  }
 }

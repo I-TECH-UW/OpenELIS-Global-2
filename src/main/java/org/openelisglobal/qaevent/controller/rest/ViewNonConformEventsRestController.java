@@ -31,38 +31,30 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ViewNonConformEventsRestController {
 
-  @Autowired
-  private NCEventService ncEventService;
+  @Autowired private NCEventService ncEventService;
 
-  @Autowired
-  private NceCategoryService nceCategoryService;
+  @Autowired private NceCategoryService nceCategoryService;
 
-  @Autowired
-  private NceTypeService nceTypeService;
+  @Autowired private NceTypeService nceTypeService;
 
-  @Autowired
-  private NceSpecimenService nceSpecimenService;
+  @Autowired private NceSpecimenService nceSpecimenService;
 
-  @Autowired
-  private SampleItemService sampleItemService;
+  @Autowired private SampleItemService sampleItemService;
 
   private static final String USER_SESSION_DATA = "userSessionData";
 
   private final NonConformingEventWorker nonConformingEventWorker;
 
-  public ViewNonConformEventsRestController(
-    NonConformingEventWorker nonConformingEventWorker
-  ) {
+  public ViewNonConformEventsRestController(NonConformingEventWorker nonConformingEventWorker) {
     this.nonConformingEventWorker = nonConformingEventWorker;
   }
 
   @GetMapping(value = "/rest/viewNonConformEvents")
   public ResponseEntity<?> getNceNumber(
-    @RequestParam(required = false) String labNumber,
-    @RequestParam(required = false) String nceNumber,
-    @RequestParam(required = false) String status,
-    HttpServletRequest request
-  ) {
+      @RequestParam(required = false) String labNumber,
+      @RequestParam(required = false) String nceNumber,
+      @RequestParam(required = false) String status,
+      HttpServletRequest request) {
     Map<String, Object> searchParameters = new HashMap<>();
     searchParameters.put("status", status);
     List<NcEvent> searchResults = new ArrayList<>();
@@ -88,35 +80,22 @@ public class ViewNonConformEventsRestController {
     response.setNceCategories(nceCategoryService.getAllNceCategories());
     response.setNceTypes(nceTypeService.getAllNceTypes());
     response.setLabComponentList(
-      DisplayListService.getInstance()
-        .getList(DisplayListService.ListType.LABORATORY_COMPONENT)
-    );
+        DisplayListService.getInstance().getList(DisplayListService.ListType.LABORATORY_COMPONENT));
     response.setSeverityConsequencesList(
-      DisplayListService.getInstance()
-        .getList(DisplayListService.ListType.SEVERITY_CONSEQUENCES_LIST)
-    );
+        DisplayListService.getInstance()
+            .getList(DisplayListService.ListType.SEVERITY_CONSEQUENCES_LIST));
     response.setReportingUnits(
-      DisplayListService.getInstance()
-        .getList(DisplayListService.ListType.TEST_SECTION_ACTIVE)
-    );
+        DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_ACTIVE));
     response.setSeverityRecurrenceList(
-      DisplayListService.getInstance()
-        .getList(DisplayListService.ListType.SEVERITY_RECURRENCE_LIST)
-    );
+        DisplayListService.getInstance()
+            .getList(DisplayListService.ListType.SEVERITY_RECURRENCE_LIST));
     response.setReportingUnit(event.getReportingUnitId());
-    response.setCurrentUserId(
-      (getSysUserId(request))
-    );
+    response.setCurrentUserId((getSysUserId(request)));
 
-    List<NceSpecimen> specimenList = nceSpecimenService.getAllMatching(
-      "nceId",
-      event.getId()
-    );
+    List<NceSpecimen> specimenList = nceSpecimenService.getAllMatching("nceId", event.getId());
     List<SampleItem> sampleItems = new ArrayList<>();
     for (NceSpecimen specimen : specimenList) {
-      SampleItem si = sampleItemService.getData(
-        specimen.getSampleItemId() + ""
-      );
+      SampleItem si = sampleItemService.getData(specimen.getSampleItemId() + "");
       sampleItems.add(si);
     }
     response.setSpecimens(sampleItems);
@@ -126,13 +105,8 @@ public class ViewNonConformEventsRestController {
     return ResponseEntity.ok().body(response);
   }
 
-  @PostMapping(
-    value = "/rest/viewNonConformEvents",
-    produces = MediaType.APPLICATION_JSON_VALUE
-  )
-  public ResponseEntity<?> postReportNonConformingEvent(
-    @RequestBody NonConformingEventForm form
-  ) {
+  @PostMapping(value = "/rest/viewNonConformEvents", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> postReportNonConformingEvent(@RequestBody NonConformingEventForm form) {
     try {
       boolean updated = nonConformingEventWorker.updateFollowUp(form);
       if (updated) {
@@ -141,16 +115,13 @@ public class ViewNonConformEventsRestController {
         return ResponseEntity.ok().body(Map.of("success", false));
       }
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-        "An error occurred while processing the request." + e
-      );
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("An error occurred while processing the request." + e);
     }
   }
 
   protected String getSysUserId(HttpServletRequest request) {
-    UserSessionData usd = (UserSessionData) request
-      .getSession()
-      .getAttribute(USER_SESSION_DATA);
+    UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
     if (usd == null) {
       usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);
       if (usd == null) {

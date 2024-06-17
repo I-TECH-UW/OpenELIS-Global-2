@@ -1,104 +1,104 @@
 package org.openelisglobal.common.rest.provider.bean.homedashboard;
 
 public class DashBoardMetrics {
-    
-    Integer ordersInProgress = 0;
-    
-    Integer ordersReadyForValidation = 0;
-    
-    Integer ordersCompletedToday = 0;
-    
-    Integer patiallyCompletedToday = 0;
-    
-    Integer orderEnterdByUserToday = 0;
-    
-    Integer ordersRejectedToday = 0;
-    
-    Integer unPritendResults = 0;
-    
-    Integer incomigOrders = 0;
-    
-    Double averageTurnAroudTime = 0.0;
-    
-    Integer delayedTurnAround = 0;
 
-    public Integer getOrdersInProgress() {
-        return ordersInProgress;
-    }
+  Integer ordersInProgress = 0;
 
-    public void setOrdersInProgress(Integer ordersInProgress) {
-        this.ordersInProgress = ordersInProgress;
-    }
- 
-    public Integer getOrdersReadyForValidation() {
-        return ordersReadyForValidation;
-    }
+  Integer ordersReadyForValidation = 0;
 
-    public void setOrdersReadyForValidation(Integer ordersReadyForValidation) {
-        this.ordersReadyForValidation = ordersReadyForValidation;
-    }
+  Integer ordersCompletedToday = 0;
 
-    public Integer getOrdersCompletedToday() {
-        return ordersCompletedToday;
-    }
+  Integer patiallyCompletedToday = 0;
 
-    public void setOrdersCompletedToday(Integer ordersCompletedToday) {
-        this.ordersCompletedToday = ordersCompletedToday;
-    }
+  Integer orderEnterdByUserToday = 0;
 
-    public Integer getPatiallyCompletedToday() {
-        return patiallyCompletedToday;
-    }
+  Integer ordersRejectedToday = 0;
 
-    public void setPatiallyCompletedToday(Integer patiallyCompletedToday) {
-        this.patiallyCompletedToday = patiallyCompletedToday;
-    }
+  Integer unPritendResults = 0;
 
-    public Integer getOrderEnterdByUserToday() {
-        return orderEnterdByUserToday;
-    }
-    
-    public void setOrderEnterdByUserToday(Integer orderEnterdByUserToday) {
-        this.orderEnterdByUserToday = orderEnterdByUserToday;
-    }
+  Integer incomigOrders = 0;
 
-    public Integer getOrdersRejectedToday() {
-        return ordersRejectedToday;
-    }
+  Double averageTurnAroudTime = 0.0;
 
-    public void setOrdersRejectedToday(Integer ordersRejectedToday) {
-        this.ordersRejectedToday = ordersRejectedToday;
-    }
+  Integer delayedTurnAround = 0;
 
-    public Integer getUnPritendResults() {
-        return unPritendResults;
-    }
+  public Integer getOrdersInProgress() {
+    return ordersInProgress;
+  }
 
-    public void setUnPritendResults(Integer unPritendResults) {
-        this.unPritendResults = unPritendResults;
-    }
-    
-    public Integer getIncomigOrders() {
-        return incomigOrders;
-    }
+  public void setOrdersInProgress(Integer ordersInProgress) {
+    this.ordersInProgress = ordersInProgress;
+  }
 
-    public void setIncomigOrders(Integer incomigOrders) {
-        this.incomigOrders = incomigOrders;
-    }
+  public Integer getOrdersReadyForValidation() {
+    return ordersReadyForValidation;
+  }
 
-    public Double getAverageTurnAroudTime() {
-        return averageTurnAroudTime;
-    }
+  public void setOrdersReadyForValidation(Integer ordersReadyForValidation) {
+    this.ordersReadyForValidation = ordersReadyForValidation;
+  }
 
-    public void setAverageTurnAroudTime(Double averageTurnAroudTime) {
-        this.averageTurnAroudTime = averageTurnAroudTime;
-    }
+  public Integer getOrdersCompletedToday() {
+    return ordersCompletedToday;
+  }
 
-    public Integer getDelayedTurnAround() {
-        return delayedTurnAround;
-    }
+  public void setOrdersCompletedToday(Integer ordersCompletedToday) {
+    this.ordersCompletedToday = ordersCompletedToday;
+  }
 
-    public void setDelayedTurnAround(Integer delayedTurnAround) {
-        this.delayedTurnAround = delayedTurnAround;
-    }
+  public Integer getPatiallyCompletedToday() {
+    return patiallyCompletedToday;
+  }
+
+  public void setPatiallyCompletedToday(Integer patiallyCompletedToday) {
+    this.patiallyCompletedToday = patiallyCompletedToday;
+  }
+
+  public Integer getOrderEnterdByUserToday() {
+    return orderEnterdByUserToday;
+  }
+
+  public void setOrderEnterdByUserToday(Integer orderEnterdByUserToday) {
+    this.orderEnterdByUserToday = orderEnterdByUserToday;
+  }
+
+  public Integer getOrdersRejectedToday() {
+    return ordersRejectedToday;
+  }
+
+  public void setOrdersRejectedToday(Integer ordersRejectedToday) {
+    this.ordersRejectedToday = ordersRejectedToday;
+  }
+
+  public Integer getUnPritendResults() {
+    return unPritendResults;
+  }
+
+  public void setUnPritendResults(Integer unPritendResults) {
+    this.unPritendResults = unPritendResults;
+  }
+
+  public Integer getIncomigOrders() {
+    return incomigOrders;
+  }
+
+  public void setIncomigOrders(Integer incomigOrders) {
+    this.incomigOrders = incomigOrders;
+  }
+
+  public Double getAverageTurnAroudTime() {
+    return averageTurnAroudTime;
+  }
+
+  public void setAverageTurnAroudTime(Double averageTurnAroudTime) {
+    this.averageTurnAroudTime = averageTurnAroudTime;
+  }
+
+  public Integer getDelayedTurnAround() {
+    return delayedTurnAround;
+  }
+
+  public void setDelayedTurnAround(Integer delayedTurnAround) {
+    this.delayedTurnAround = delayedTurnAround;
+  }
 }

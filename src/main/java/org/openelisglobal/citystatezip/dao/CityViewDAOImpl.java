@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class CityViewDAOImpl extends BaseDAOImpl<CityView, String> implements CityViewDAO {
-    CityViewDAOImpl() {
-        super(CityView.class);
-    }
+  CityViewDAOImpl() {
+    super(CityView.class);
+  }
 }

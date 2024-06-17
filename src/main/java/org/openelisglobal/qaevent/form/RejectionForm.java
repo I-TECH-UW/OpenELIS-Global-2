@@ -2,10 +2,8 @@ package org.openelisglobal.qaevent.form;
 
 import java.sql.Date;
 import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
-
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.ValidationHelper;
@@ -16,289 +14,283 @@ import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 
 public class RejectionForm extends BaseForm {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	private Boolean readOnly = Boolean.TRUE;
+  private Boolean readOnly = Boolean.TRUE;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
-	private String patientId = "";
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String patientId = "";
 
-	private Date rejectionDate;
-	
-	private String rejectionDateForDisplay;
+  private Date rejectionDate;
 
-	private Date collectionDate;
-	
-	private String collectionDateForDisplay;
+  private String rejectionDateForDisplay;
 
-	private Date receptionDate;
-	
-	private String receptionDateForDisplay;
+  private Date collectionDate;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
-	private String projectId = "";
+  private String collectionDateForDisplay;
 
-	@SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-	private String project = "";
+  private Date receptionDate;
 
-	@Valid
-	private List<Project> projects;
+  private String receptionDateForDisplay;
 
-	@Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
-	private String subjectNo = "";
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String projectId = "";
 
-	@ValidAccessionNumber()
-	private String labNo = "";
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String project = "";
 
-	@SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-	private String doctor = "";
+  @Valid private List<Project> projects;
 
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
-	private String qaEventId;
+  @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX)
+  private String subjectNo = "";
 
-	@SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-	private String sectionId = "";
+  @ValidAccessionNumber() private String labNo = "";
 
-	// for display
-	private List<TestSection> sections;
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String doctor = "";
 
-	private String qaEventTypeId;
-	
-	// for display
-	private List<IdValuePair> qaEventTypes;
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String qaEventId;
 
-	private String typeOfSampleId;
-	
-	// for display
-	private List<IdValuePair> typeOfSamples;
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String sectionId = "";
 
-	@SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-	private String comment = "";
+  // for display
+  private List<TestSection> sections;
 
-	@SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-	private String biologist = "";
+  private String qaEventTypeId;
 
-	// for display
-	private List<IdValuePair> siteList;
-	
-	@Pattern(regexp = ValidationHelper.ID_REGEX)
-	private String organizationId;
+  // for display
+  private List<IdValuePair> qaEventTypes;
 
-	private String samplerName = "";
+  private String typeOfSampleId;
 
-	public RejectionForm() {
-		setFormName("RejectionForm");
-	}
+  // for display
+  private List<IdValuePair> typeOfSamples;
 
-	public Boolean getReadOnly() {
-		return readOnly;
-	}
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String comment = "";
 
-	public void setReadOnly(Boolean readOnly) {
-		this.readOnly = readOnly;
-	}
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String biologist = "";
 
-	public String getPatientId() {
-		return patientId;
-	}
+  // for display
+  private List<IdValuePair> siteList;
 
-	public void setPatientId(String patientId) {
-		this.patientId = patientId;
-	}
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String organizationId;
 
-	public String getProjectId() {
-		return projectId;
-	}
+  private String samplerName = "";
 
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
+  public RejectionForm() {
+    setFormName("RejectionForm");
+  }
 
-	public String getProject() {
-		return project;
-	}
-
-	public void setProject(String project) {
-		this.project = project;
-	}
-
-	public List<Project> getProjects() {
-		return projects;
-	}
-
-	public void setProjects(List<Project> projects) {
-		this.projects = projects;
-	}
-
-	public String getSubjectNo() {
-		return subjectNo;
-	}
-
-	public void setSubjectNo(String subjectNo) {
-		this.subjectNo = subjectNo;
-	}
-
-	public String getLabNo() {
-		return labNo;
-	}
-
-	public void setLabNo(String labNo) {
-		this.labNo = labNo;
-	}
-
-	public String getDoctor() {
-		return doctor;
-	}
-
-	public void setDoctor(String doctor) {
-		this.doctor = doctor;
-	}
-
-	public List<TestSection> getSections() {
-		return sections;
-	}
-
-	public void setSections(List<TestSection> sections) {
-		this.sections = sections;
-	}
-
-	public List<IdValuePair> getQaEventTypes() {
-		return qaEventTypes;
-	}
-
-	public void setQaEventTypes(List<IdValuePair> qaEventTypes) {
-		this.qaEventTypes = qaEventTypes;
-	}
-
-	public List<IdValuePair> getTypeOfSamples() {
-		return typeOfSamples;
-	}
-
-	public void setTypeOfSamples(List<IdValuePair> typeOfSamples) {
-		this.typeOfSamples = typeOfSamples;
-	}
-
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-
-	public List<IdValuePair> getSiteList() {
-		return siteList;
-	}
-
-	public void setSiteList(List<IdValuePair> siteList) {
-		this.siteList = siteList;
-	}
-
-	public Date getRejectionDate() {
-		return rejectionDate;
-	}
-
-	public void setRejectionDate(Date rejectionDate) {
-		this.rejectionDate = rejectionDate;
-	}
-
-	public Date getCollectionDate() {
-		return collectionDate;
-	}
-
-	public void setCollectionDate(Date collectionDate) {
-		this.collectionDate = collectionDate;
-	}
-
-	public Date getReceptionDate() {
-		return receptionDate;
-	}
-
-	public void setReceptionDate(Date receptionDate) {
-		this.receptionDate = receptionDate;
-	}
-
-	public String getBiologist() {
-		return biologist;
-	}
-
-	public void setBiologist(String biologist) {
-		this.biologist = biologist;
-	}
-
-	public String getSamplerName() {
-		return samplerName;
-	}
-
-	public void setSamplerName(String samplerName) {
-		this.samplerName = samplerName;
-	}
-
-	public String getQaEventId() {
-		return qaEventId;
-	}
-
-	public void setQaEventId(String qaEventId) {
-		this.qaEventId = qaEventId;
-	}
-
-	public String getSectionId() {
-		return sectionId;
-	}
-
-	public void setSectionId(String sectionId) {
-		this.sectionId = sectionId;
-	}
-
-	public String getQaEventTypeId() {
-		return qaEventTypeId;
-	}
-
-	public void setQaEventTypeId(String qaEventTypeId) {
-		this.qaEventTypeId = qaEventTypeId;
-	}
-
-	public String getOrganizationId() {
-		return organizationId;
-	}
-
-	public void setOrganizationId(String organizationId) {
-		this.organizationId = organizationId;
-	}
-
-	public String getTypeOfSampleId() {
-		return typeOfSampleId;
-	}
-
-	public void setTypeOfSampleId(String typeOfSampleId) {
-		this.typeOfSampleId = typeOfSampleId;
-	}
-
-	public String getRejectionDateForDisplay() {
-		return rejectionDateForDisplay;
-	}
-
-	public void setRejectionDateForDisplay(String rejectionDateForDisplay) {
-		this.rejectionDateForDisplay = rejectionDateForDisplay;
-	}
-
-	public String getCollectionDateForDisplay() {
-		return collectionDateForDisplay;
-	}
-
-	public void setCollectionDateForDisplay(String collectionDateForDisplay) {
-		this.collectionDateForDisplay = collectionDateForDisplay;
-	}
-
-	public String getReceptionDateForDisplay() {
-		return receptionDateForDisplay;
-	}
-
-	public void setReceptionDateForDisplay(String receptionDateForDisplay) {
-		this.receptionDateForDisplay = receptionDateForDisplay;
-	}
-	
-	
-	
-	
+  public Boolean getReadOnly() {
+    return readOnly;
+  }
+
+  public void setReadOnly(Boolean readOnly) {
+    this.readOnly = readOnly;
+  }
+
+  public String getPatientId() {
+    return patientId;
+  }
+
+  public void setPatientId(String patientId) {
+    this.patientId = patientId;
+  }
+
+  public String getProjectId() {
+    return projectId;
+  }
+
+  public void setProjectId(String projectId) {
+    this.projectId = projectId;
+  }
+
+  public String getProject() {
+    return project;
+  }
+
+  public void setProject(String project) {
+    this.project = project;
+  }
+
+  public List<Project> getProjects() {
+    return projects;
+  }
+
+  public void setProjects(List<Project> projects) {
+    this.projects = projects;
+  }
+
+  public String getSubjectNo() {
+    return subjectNo;
+  }
+
+  public void setSubjectNo(String subjectNo) {
+    this.subjectNo = subjectNo;
+  }
+
+  public String getLabNo() {
+    return labNo;
+  }
+
+  public void setLabNo(String labNo) {
+    this.labNo = labNo;
+  }
+
+  public String getDoctor() {
+    return doctor;
+  }
+
+  public void setDoctor(String doctor) {
+    this.doctor = doctor;
+  }
+
+  public List<TestSection> getSections() {
+    return sections;
+  }
+
+  public void setSections(List<TestSection> sections) {
+    this.sections = sections;
+  }
+
+  public List<IdValuePair> getQaEventTypes() {
+    return qaEventTypes;
+  }
+
+  public void setQaEventTypes(List<IdValuePair> qaEventTypes) {
+    this.qaEventTypes = qaEventTypes;
+  }
+
+  public List<IdValuePair> getTypeOfSamples() {
+    return typeOfSamples;
+  }
+
+  public void setTypeOfSamples(List<IdValuePair> typeOfSamples) {
+    this.typeOfSamples = typeOfSamples;
+  }
+
+  public String getComment() {
+    return comment;
+  }
+
+  public void setComment(String comment) {
+    this.comment = comment;
+  }
+
+  public List<IdValuePair> getSiteList() {
+    return siteList;
+  }
+
+  public void setSiteList(List<IdValuePair> siteList) {
+    this.siteList = siteList;
+  }
+
+  public Date getRejectionDate() {
+    return rejectionDate;
+  }
+
+  public void setRejectionDate(Date rejectionDate) {
+    this.rejectionDate = rejectionDate;
+  }
+
+  public Date getCollectionDate() {
+    return collectionDate;
+  }
+
+  public void setCollectionDate(Date collectionDate) {
+    this.collectionDate = collectionDate;
+  }
+
+  public Date getReceptionDate() {
+    return receptionDate;
+  }
+
+  public void setReceptionDate(Date receptionDate) {
+    this.receptionDate = receptionDate;
+  }
+
+  public String getBiologist() {
+    return biologist;
+  }
+
+  public void setBiologist(String biologist) {
+    this.biologist = biologist;
+  }
+
+  public String getSamplerName() {
+    return samplerName;
+  }
+
+  public void setSamplerName(String samplerName) {
+    this.samplerName = samplerName;
+  }
+
+  public String getQaEventId() {
+    return qaEventId;
+  }
+
+  public void setQaEventId(String qaEventId) {
+    this.qaEventId = qaEventId;
+  }
+
+  public String getSectionId() {
+    return sectionId;
+  }
+
+  public void setSectionId(String sectionId) {
+    this.sectionId = sectionId;
+  }
+
+  public String getQaEventTypeId() {
+    return qaEventTypeId;
+  }
+
+  public void setQaEventTypeId(String qaEventTypeId) {
+    this.qaEventTypeId = qaEventTypeId;
+  }
+
+  public String getOrganizationId() {
+    return organizationId;
+  }
+
+  public void setOrganizationId(String organizationId) {
+    this.organizationId = organizationId;
+  }
+
+  public String getTypeOfSampleId() {
+    return typeOfSampleId;
+  }
+
+  public void setTypeOfSampleId(String typeOfSampleId) {
+    this.typeOfSampleId = typeOfSampleId;
+  }
+
+  public String getRejectionDateForDisplay() {
+    return rejectionDateForDisplay;
+  }
+
+  public void setRejectionDateForDisplay(String rejectionDateForDisplay) {
+    this.rejectionDateForDisplay = rejectionDateForDisplay;
+  }
+
+  public String getCollectionDateForDisplay() {
+    return collectionDateForDisplay;
+  }
+
+  public void setCollectionDateForDisplay(String collectionDateForDisplay) {
+    this.collectionDateForDisplay = collectionDateForDisplay;
+  }
+
+  public String getReceptionDateForDisplay() {
+    return receptionDateForDisplay;
+  }
+
+  public void setReceptionDateForDisplay(String receptionDateForDisplay) {
+    this.receptionDateForDisplay = receptionDateForDisplay;
+  }
 }

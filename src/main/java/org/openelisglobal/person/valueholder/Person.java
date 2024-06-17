@@ -1,26 +1,22 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
  */
 package org.openelisglobal.person.valueholder;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
-
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.validation.annotations.ValidName;
@@ -28,183 +24,185 @@ import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 
 public class Person extends BaseObject<String> {
 
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String id;
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String id;
 
-    @ValidName(nameType = NameType.LAST_NAME)
-    private String lastName;
+  @ValidName(nameType = NameType.LAST_NAME)
+  private String lastName;
 
-    @ValidName(nameType = NameType.FIRST_NAME)
-    private String firstName;
+  @ValidName(nameType = NameType.FIRST_NAME)
+  private String firstName;
 
-    private String middleName;
+  private String middleName;
 
-    private String multipleUnit;
+  private String multipleUnit;
 
-    private String streetAddress;
+  private String streetAddress;
 
-    private String city;
+  private String city;
 
-    private String state;
+  private String state;
 
-    private String zipCode;
+  private String zipCode;
 
-    private String country;
-    @Pattern(regexp = ValidationHelper.PHONE_REGEX)
-    private String workPhone;
-    @Pattern(regexp = ValidationHelper.PHONE_REGEX)
-    private String homePhone;
-    @Pattern(regexp = ValidationHelper.PHONE_REGEX)
-    private String cellPhone;
-    @Pattern(regexp = ValidationHelper.PHONE_REGEX)
-    private String primaryPhone;
+  private String country;
 
-    private String fax;
-    @Email
-    private String email;
+  @Pattern(regexp = ValidationHelper.PHONE_REGEX)
+  private String workPhone;
 
-    private Set patients = new HashSet(0);
+  @Pattern(regexp = ValidationHelper.PHONE_REGEX)
+  private String homePhone;
 
-    public Person() {
-        super();
+  @Pattern(regexp = ValidationHelper.PHONE_REGEX)
+  private String cellPhone;
 
-    }
+  @Pattern(regexp = ValidationHelper.PHONE_REGEX)
+  private String primaryPhone;
 
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
+  private String fax;
+  @Email private String email;
 
-    @Override
-    public String getId() {
-        return id;
-    }
+  private Set patients = new HashSet(0);
 
-    public String getCellPhone() {
-        return cellPhone;
-    }
+  public Person() {
+    super();
+  }
 
-    public void setCellPhone(String cellPhone) {
-        this.cellPhone = cellPhone;
-    }
+  @Override
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public String getCity() {
-        return city;
-    }
+  @Override
+  public String getId() {
+    return id;
+  }
 
-    public void setCity(String city) {
-        this.city = city;
-    }
+  public String getCellPhone() {
+    return cellPhone;
+  }
 
-    public String getCountry() {
-        return country;
-    }
+  public void setCellPhone(String cellPhone) {
+    this.cellPhone = cellPhone;
+  }
 
-    public void setCountry(String country) {
-        this.country = country;
-    }
+  public String getCity() {
+    return city;
+  }
 
-    public String getEmail() {
-        return email;
-    }
+  public void setCity(String city) {
+    this.city = city;
+  }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+  public String getCountry() {
+    return country;
+  }
 
-    public String getFax() {
-        return fax;
-    }
+  public void setCountry(String country) {
+    this.country = country;
+  }
 
-    public void setFax(String fax) {
-        this.fax = fax;
-    }
+  public String getEmail() {
+    return email;
+  }
 
-    public String getFirstName() {
-        return firstName;
-    }
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+  public String getFax() {
+    return fax;
+  }
 
-    public String getHomePhone() {
-        return homePhone;
-    }
+  public void setFax(String fax) {
+    this.fax = fax;
+  }
 
-    public void setHomePhone(String homePhone) {
-        this.homePhone = homePhone;
-    }
+  public String getFirstName() {
+    return firstName;
+  }
 
-    public String getLastName() {
-        return lastName;
-    }
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+  public String getHomePhone() {
+    return homePhone;
+  }
 
-    public String getMiddleName() {
-        return middleName;
-    }
+  public void setHomePhone(String homePhone) {
+    this.homePhone = homePhone;
+  }
 
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
+  public String getLastName() {
+    return lastName;
+  }
 
-    public String getMultipleUnit() {
-        return multipleUnit;
-    }
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
 
-    public void setMultipleUnit(String multipleUnit) {
-        this.multipleUnit = multipleUnit;
-    }
+  public String getMiddleName() {
+    return middleName;
+  }
 
-    public String getState() {
-        return state;
-    }
+  public void setMiddleName(String middleName) {
+    this.middleName = middleName;
+  }
 
-    public void setState(String state) {
-        this.state = state;
-    }
+  public String getMultipleUnit() {
+    return multipleUnit;
+  }
 
-    public String getStreetAddress() {
-        return streetAddress;
-    }
+  public void setMultipleUnit(String multipleUnit) {
+    this.multipleUnit = multipleUnit;
+  }
 
-    public void setStreetAddress(String streetAddress) {
-        this.streetAddress = streetAddress;
-    }
+  public String getState() {
+    return state;
+  }
 
-    public String getWorkPhone() {
-        return workPhone;
-    }
+  public void setState(String state) {
+    this.state = state;
+  }
 
-    public void setWorkPhone(String workPhone) {
-        this.workPhone = workPhone;
-    }
+  public String getStreetAddress() {
+    return streetAddress;
+  }
 
-    public String getZipCode() {
-        return zipCode;
-    }
+  public void setStreetAddress(String streetAddress) {
+    this.streetAddress = streetAddress;
+  }
 
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
-    }
+  public String getWorkPhone() {
+    return workPhone;
+  }
 
-    public Set getPatients() {
-        return this.patients;
-    }
+  public void setWorkPhone(String workPhone) {
+    this.workPhone = workPhone;
+  }
 
-    public void setPatients(Set patients) {
-        this.patients = patients;
-    }
+  public String getZipCode() {
+    return zipCode;
+  }
 
-    public String getPrimaryPhone() {
-        return primaryPhone;
-    }
+  public void setZipCode(String zipCode) {
+    this.zipCode = zipCode;
+  }
 
-    public void setPrimaryPhone(String primaryPhone) {
-        this.primaryPhone = primaryPhone;
-    }
+  public Set getPatients() {
+    return this.patients;
+  }
+
+  public void setPatients(Set patients) {
+    this.patients = patients;
+  }
+
+  public String getPrimaryPhone() {
+    return primaryPhone;
+  }
+
+  public void setPrimaryPhone(String primaryPhone) {
+    this.primaryPhone = primaryPhone;
+  }
 }

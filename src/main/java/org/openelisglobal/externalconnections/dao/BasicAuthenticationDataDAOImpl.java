@@ -1,7 +1,6 @@
 package org.openelisglobal.externalconnections.dao;
 
 import java.util.Optional;
-
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
@@ -14,28 +13,30 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class BasicAuthenticationDataDAOImpl extends BaseDAOImpl<BasicAuthenticationData, Integer>
-        implements BasicAuthenticationDataDAO {
+    implements BasicAuthenticationDataDAO {
 
-    public BasicAuthenticationDataDAOImpl() {
-        super(BasicAuthenticationData.class);
+  public BasicAuthenticationDataDAOImpl() {
+    super(BasicAuthenticationData.class);
+  }
+
+  @Override
+  public Optional<BasicAuthenticationData> getByExternalConnection(Integer externalConnectionId) {
+    BasicAuthenticationData data;
+    try {
+      String sql =
+          "from BasicAuthenticationData as cad where cad.externalConnection.id ="
+              + " :externalConnectionId";
+      Query<BasicAuthenticationData> query =
+          entityManager.unwrap(Session.class).createQuery(sql, BasicAuthenticationData.class);
+      query.setParameter("externalConnectionId", externalConnectionId);
+      data = query.uniqueResult();
+    } catch (RuntimeException e) {
+      // bugzilla 2154
+      LogEvent.logError(e);
+      throw new LIMSRuntimeException(
+          "Error in BasicAuthenticationDataDAOImpl getByExternalConnection()", e);
     }
 
-    @Override
-    public Optional<BasicAuthenticationData> getByExternalConnection(Integer externalConnectionId) {
-        BasicAuthenticationData data;
-        try {
-            String sql = "from BasicAuthenticationData as cad where cad.externalConnection.id = :externalConnectionId";
-            Query<BasicAuthenticationData> query = entityManager.unwrap(Session.class).createQuery(sql,
-                    BasicAuthenticationData.class);
-            query.setParameter("externalConnectionId", externalConnectionId);
-            data = query.uniqueResult();
-        } catch (RuntimeException e) {
-            // bugzilla 2154
-            LogEvent.logError(e);
-            throw new LIMSRuntimeException("Error in BasicAuthenticationDataDAOImpl getByExternalConnection()", e);
-        }
-
-        return Optional.ofNullable(data);
-    }
-
+    return Optional.ofNullable(data);
+  }
 }
