@@ -5,6 +5,6 @@ import org.openelisglobal.systemusermodule.valueholder.SystemUserModule;
 
 public interface SystemUserModuleDAO extends PermissionModuleDAO<SystemUserModule> {
 
-    boolean duplicateSystemUserModuleExists(SystemUserModule systemUserModule) throws LIMSRuntimeException;
-
+  boolean duplicateSystemUserModuleExists(SystemUserModule systemUserModule)
+      throws LIMSRuntimeException;
 }

@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-	  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
 <property name="now" value="now()" dbms="postgresql"/>
  <changeSet author="moses_mutesa" id="1">
-		<preConditions onFail="MARK_RAN">
-			    <tableExists tableName="system_user_role"/>
-				<sqlCheck expectedResult="0">
+        <preConditions onFail="MARK_RAN">
+                <tableExists tableName="system_user_role"/>
+                <sqlCheck expectedResult="0">
                     SELECT COUNT(*) FROM system_user_role WHERE system_user_id = (SELECT id FROM system_user WHERE login_name = 'admin') AND role_id = (SELECT id FROM system_role WHERE name = 'Cytopathologist') ;
-				</sqlCheck>
-		</preConditions>
-		<comment>Add default Program Global Roles to admin User </comment>
-        <insert tableName="system_user_role" schemaName="clinlims"> 
-			<column name="system_user_id" valueComputed="(SELECT id FROM system_user WHERE login_name = 'admin')" />
+                </sqlCheck>
+        </preConditions>
+        <comment>Add default Program Global Roles to admin User </comment>
+        <insert tableName="system_user_role" schemaName="clinlims">
+            <column name="system_user_id" valueComputed="(SELECT id FROM system_user WHERE login_name = 'admin')" />
             <column name="role_id" valueComputed="(SELECT id FROM system_role WHERE name = 'Cytopathologist')" />
-		</insert>
-        <insert tableName="system_user_role" schemaName="clinlims"> 
-			<column name="system_user_id" valueComputed="(SELECT id FROM system_user WHERE login_name = 'admin')" />
+        </insert>
+        <insert tableName="system_user_role" schemaName="clinlims">
+            <column name="system_user_id" valueComputed="(SELECT id FROM system_user WHERE login_name = 'admin')" />
             <column name="role_id" valueComputed="(SELECT id FROM system_role WHERE name = 'Pathologist')" />
-		</insert>
-	</changeSet>	
+        </insert>
+    </changeSet>
     <changeSet author="moses_mutesa" id="2">
-		<preConditions onFail="MARK_RAN">
-        	<sqlCheck expectedResult="1">select count(*) from clinlims.site_information where name = 'restrictFreeTextProviderEntry' AND description = 'should national ID be required on the patient entry screen'; </sqlCheck>
-		</preConditions>
-		<update schemaName="clinlims" tableName="site_information">
-			<column name="value" value="false" />
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">select count(*) from clinlims.site_information where name = 'restrictFreeTextProviderEntry' AND description = 'should national ID be required on the patient entry screen'; </sqlCheck>
+        </preConditions>
+        <update schemaName="clinlims" tableName="site_information">
+            <column name="value" value="false" />
             <column name="description" value="Restrict Free Text Provider Entry" />
-			<where>name = 'restrictFreeTextProviderEntry' AND description = 'should national ID be required on the patient entry screen'</where>
-		</update>
-	</changeSet> 
-    
+            <where>name = 'restrictFreeTextProviderEntry' AND description = 'should national ID be required on the patient entry screen'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>

@@ -2,7 +2,6 @@ package org.openelisglobal.testconfiguration.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import org.hibernate.HibernateException;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.log.LogEvent;
@@ -25,92 +24,94 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class SampleTypeRenameEntryController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "sampleTypeId", "nameEnglish", "nameFrench" };
+  private static final String[] ALLOWED_FIELDS =
+      new String[] {"sampleTypeId", "nameEnglish", "nameFrench"};
 
-    @Autowired
-    private TypeOfSampleService typeOfSampleService;
-    @Autowired
-    private LocalizationService localizationService;
+  @Autowired private TypeOfSampleService typeOfSampleService;
+  @Autowired private LocalizationService localizationService;
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.setAllowedFields(ALLOWED_FIELDS);
+  @InitBinder
+  public void initBinder(WebDataBinder binder) {
+    binder.setAllowedFields(ALLOWED_FIELDS);
+  }
+
+  @RequestMapping(value = "/SampleTypeRenameEntry", method = RequestMethod.GET)
+  public ModelAndView showSampleTypeRenameEntry(HttpServletRequest request) {
+    SampleTypeRenameEntryForm form = new SampleTypeRenameEntryForm();
+
+    form.setSampleTypeList(
+        DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+
+    return findForward(FWD_SUCCESS, form);
+  }
+
+  @Override
+  protected String findLocalForward(String forward) {
+    if (FWD_SUCCESS.equals(forward)) {
+      return "sampleTypeRenameDefinition";
+    } else if (FWD_SUCCESS_INSERT.equals(forward)) {
+      return "redirect:/SampleTypeRenameEntry";
+    } else if (FWD_FAIL_INSERT.equals(forward)) {
+      return "sampleTypeRenameDefinition";
+    } else {
+      return "PageNotFound";
+    }
+  }
+
+  @RequestMapping(value = "/SampleTypeRenameEntry", method = RequestMethod.POST)
+  public ModelAndView updateSampleTypeRenameEntry(
+      HttpServletRequest request,
+      @ModelAttribute("form") @Valid SampleTypeRenameEntryForm form,
+      BindingResult result) {
+    if (result.hasErrors()) {
+      saveErrors(result);
+      form.setSampleTypeList(
+          DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+      return findForward(FWD_FAIL_INSERT, form);
     }
 
-    @RequestMapping(value = "/SampleTypeRenameEntry", method = RequestMethod.GET)
-    public ModelAndView showSampleTypeRenameEntry(HttpServletRequest request) {
-        SampleTypeRenameEntryForm form = new SampleTypeRenameEntryForm();
+    String sampleTypeId = form.getSampleTypeId();
+    String nameEnglish = form.getNameEnglish();
+    String nameFrench = form.getNameFrench();
+    String userId = getSysUserId(request);
 
-        form.setSampleTypeList(
-                DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+    updateSampleTypeNames(sampleTypeId, nameEnglish, nameFrench, userId);
 
-        return findForward(FWD_SUCCESS, form);
+    form.setSampleTypeList(
+        DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
+
+    return findForward(FWD_SUCCESS_INSERT, form);
+  }
+
+  private void updateSampleTypeNames(
+      String sampleTypeId, String nameEnglish, String nameFrench, String userId) {
+    TypeOfSample typeOfSample = typeOfSampleService.getTypeOfSampleById(sampleTypeId);
+
+    if (typeOfSample != null) {
+
+      Localization name = typeOfSample.getLocalization();
+      name.setEnglish(nameEnglish.trim());
+      name.setFrench(nameFrench.trim());
+      name.setSysUserId(userId);
+
+      try {
+        localizationService.update(name);
+      } catch (HibernateException e) {
+        LogEvent.logDebug(e);
+      }
     }
 
-    @Override
-    protected String findLocalForward(String forward) {
-        if (FWD_SUCCESS.equals(forward)) {
-            return "sampleTypeRenameDefinition";
-        } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/SampleTypeRenameEntry";
-        } else if (FWD_FAIL_INSERT.equals(forward)) {
-            return "sampleTypeRenameDefinition";
-        } else {
-            return "PageNotFound";
-        }
-    }
+    // Refresh SampleType names
+    DisplayListService.getInstance().getFreshList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
+  }
 
-    @RequestMapping(value = "/SampleTypeRenameEntry", method = RequestMethod.POST)
-    public ModelAndView updateSampleTypeRenameEntry(HttpServletRequest request,
-            @ModelAttribute("form") @Valid SampleTypeRenameEntryForm form, BindingResult result) {
-        if (result.hasErrors()) {
-            saveErrors(result);
-            form.setSampleTypeList(
-                    DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
-            return findForward(FWD_FAIL_INSERT, form);
-        }
+  @Override
+  protected String getPageTitleKey() {
+    return null;
+  }
 
-        String sampleTypeId = form.getSampleTypeId();
-        String nameEnglish = form.getNameEnglish();
-        String nameFrench = form.getNameFrench();
-        String userId = getSysUserId(request);
-
-        updateSampleTypeNames(sampleTypeId, nameEnglish, nameFrench, userId);
-
-        form.setSampleTypeList(
-                DisplayListService.getInstance().getList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE));
-
-        return findForward(FWD_SUCCESS_INSERT, form);
-    }
-
-    private void updateSampleTypeNames(String sampleTypeId, String nameEnglish, String nameFrench, String userId) {
-        TypeOfSample typeOfSample = typeOfSampleService.getTypeOfSampleById(sampleTypeId);
-
-        if (typeOfSample != null) {
-
-            Localization name = typeOfSample.getLocalization();
-            name.setEnglish(nameEnglish.trim());
-            name.setFrench(nameFrench.trim());
-            name.setSysUserId(userId);
-
-            try {
-                localizationService.update(name);
-            } catch (HibernateException e) {
-                LogEvent.logDebug(e);
-            }
-        }
-
-        // Refresh SampleType names
-        DisplayListService.getInstance().getFreshList(DisplayListService.ListType.SAMPLE_TYPE_ACTIVE);
-    }
-
-    @Override
-    protected String getPageTitleKey() {
-        return null;
-    }
-
-    @Override
-    protected String getPageSubtitleKey() {
-        return null;
-    }
+  @Override
+  protected String getPageSubtitleKey() {
+    return null;
+  }
 }

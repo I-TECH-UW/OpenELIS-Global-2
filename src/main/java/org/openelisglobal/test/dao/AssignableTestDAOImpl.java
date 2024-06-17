@@ -7,8 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class AssignableTestDAOImpl extends BaseDAOImpl<AssignableTest, String> implements AssignableTestDAO {
-    AssignableTestDAOImpl() {
-        super(AssignableTest.class);
-    }
+public class AssignableTestDAOImpl extends BaseDAOImpl<AssignableTest, String>
+    implements AssignableTestDAO {
+  AssignableTestDAOImpl() {
+    super(AssignableTest.class);
+  }
 }

@@ -8,23 +8,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class QaObservationTypeServiceImpl extends AuditableBaseObjectServiceImpl<QaObservationType, String>
-        implements QaObservationTypeService {
-    @Autowired
-    protected QaObservationTypeDAO baseObjectDAO;
+public class QaObservationTypeServiceImpl
+    extends AuditableBaseObjectServiceImpl<QaObservationType, String>
+    implements QaObservationTypeService {
+  @Autowired protected QaObservationTypeDAO baseObjectDAO;
 
-    QaObservationTypeServiceImpl() {
-        super(QaObservationType.class);
-    }
+  QaObservationTypeServiceImpl() {
+    super(QaObservationType.class);
+  }
 
-    @Override
-    protected QaObservationTypeDAO getBaseObjectDAO() {
-        return baseObjectDAO;
-    }
+  @Override
+  protected QaObservationTypeDAO getBaseObjectDAO() {
+    return baseObjectDAO;
+  }
 
-    @Override
-    @Transactional(readOnly = true)
-    public QaObservationType getQaObservationTypeByName(String typeName) {
-        return getBaseObjectDAO().getQaObservationTypeByName(typeName);
-    }
+  @Override
+  @Transactional(readOnly = true)
+  public QaObservationType getQaObservationTypeByName(String typeName) {
+    return getBaseObjectDAO().getQaObservationTypeByName(typeName);
+  }
 }

@@ -6,10 +6,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ClientResultsViewInfoDAOImpl extends BaseDAOImpl<ClientResultsViewBean, Integer>
-        implements ClientResultsViewInfoDAO {
+    implements ClientResultsViewInfoDAO {
 
-    public ClientResultsViewInfoDAOImpl() {
-        super(ClientResultsViewBean.class);
-    }
-
+  public ClientResultsViewInfoDAOImpl() {
+    super(ClientResultsViewBean.class);
+  }
 }

@@ -290,7 +290,10 @@ const Validation = (props) => {
       case "pastNotes":
         return (
           <>
-            <div className="note" dangerouslySetInnerHTML={{ __html: row.pastNotes }}/>
+            <div
+              className="note"
+              dangerouslySetInnerHTML={{ __html: row.pastNotes }}
+            />
           </>
         );
 

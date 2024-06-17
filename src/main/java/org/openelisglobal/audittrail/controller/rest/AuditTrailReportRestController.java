@@ -14,8 +14,7 @@ public class AuditTrailReportRestController {
 
   @GetMapping("/rest/AuditTrailReport")
   public ResponseEntity<AuditTrailViewForm> getAuditTrailReport(
-    @RequestParam String accessionNumber
-  ) {
+      @RequestParam String accessionNumber) {
     AuditTrailViewForm response = new AuditTrailViewForm();
     AuditTrailViewWorker worker = new AuditTrailViewWorker(accessionNumber);
     List<AuditTrailItem> items = worker.getAuditTrail();

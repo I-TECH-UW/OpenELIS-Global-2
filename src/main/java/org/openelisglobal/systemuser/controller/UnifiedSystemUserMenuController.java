@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.action.IActionConstants;
@@ -48,290 +46,300 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedSystemUser> {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIDs*" };
+  private static final String[] ALLOWED_FIELDS = new String[] {"selectedIDs*"};
 
-    @Autowired
-    SystemUserService systemUserService;
-    @Autowired
-    LoginUserService loginService;
-    @Autowired
-    UserRoleService userRoleService;
-    @Autowired
-    UnifiedSystemUserService unifiedSystemUserService;
-    @Autowired
-    private UserService userService;
+  @Autowired SystemUserService systemUserService;
+  @Autowired LoginUserService loginService;
+  @Autowired UserRoleService userRoleService;
+  @Autowired UnifiedSystemUserService unifiedSystemUserService;
+  @Autowired private UserService userService;
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.setAllowedFields(ALLOWED_FIELDS);
+  @InitBinder
+  public void initBinder(WebDataBinder binder) {
+    binder.setAllowedFields(ALLOWED_FIELDS);
+  }
+
+  @RequestMapping(
+      value = {"/UnifiedSystemUserMenu", "/SearchUnifiedSystemUserMenu"},
+      method = RequestMethod.GET)
+  public ModelAndView showUnifiedSystemUserMenu(
+      HttpServletRequest request, RedirectAttributes redirectAttributes)
+      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    String forward = FWD_SUCCESS;
+    UnifiedSystemUserMenuForm form = new UnifiedSystemUserMenuForm();
+
+    form.setFormAction("UnifiedSystemUserMenu");
+    List<IdValuePair> testSections =
+        DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE);
+    form.setTestSections(testSections);
+    forward = performMenuAction(form, request);
+    request.setAttribute(IActionConstants.FORM_NAME, "unifiedSystemUserMenu");
+    request.setAttribute(IActionConstants.MENU_PAGE_INSTRUCTION, "user.select.instruction");
+    request.setAttribute(IActionConstants.MENU_OBJECT_TO_ADD, "label.button.new.user");
+    request.setAttribute(IActionConstants.APPLY_FILTER, "true");
+    if (FWD_FAIL.equals(forward)) {
+      Errors errors = new BaseErrors();
+      errors.reject("error.generic");
+      redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, errors);
+      return findForward(FWD_FAIL, form);
+    } else {
+      return findForward(forward, form);
+    }
+  }
+
+  @Override
+  protected List<UnifiedSystemUser> createMenuList(
+      AdminOptionMenuForm<UnifiedSystemUser> form, HttpServletRequest request) {
+    List<SystemUser> systemUsers = new ArrayList<>();
+
+    int startingRecNo = this.getCurrentStartingRecNo(request);
+
+    systemUsers = systemUserService.getPage(startingRecNo);
+
+    if (YES.equals(request.getParameter("search"))) {
+      systemUsers =
+          systemUserService.getPagesOfSearchedUsers(
+              startingRecNo, request.getParameter("searchString"));
+      request.setAttribute(
+          MENU_TOTAL_RECORDS,
+          String.valueOf(
+              systemUserService.getTotalSearchedUserCount(request.getParameter("searchString"))));
+      request.setAttribute(SEARCHED_STRING, request.getParameter("searchString"));
+    } else {
+      systemUsers = systemUserService.getOrderedPage("loginName", false, startingRecNo);
+      request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(systemUserService.getCount()));
+    }
+    List<UnifiedSystemUser> unifiedUsers = getUnifiedUsers(systemUsers);
+
+    if (request.getParameter("filter") != null) {
+      request.setAttribute(PAGE_SIZE, getPageSize());
+      if (request.getParameter("filter").contains("isActive")) {
+        request.setAttribute(IActionConstants.FILTER_CHECK_ACTIVE, "true");
+        unifiedUsers =
+            unifiedUsers.stream()
+                .filter(user -> user.getActive().equals("Y"))
+                .collect(Collectors.toList());
+      }
+      if (request.getParameter("filter").contains("isAdmin")) {
+        request.setAttribute(IActionConstants.FILTER_CHECK_ADMIN, "true");
+        unifiedUsers = filterUnifiedUsersByAdmin(unifiedUsers);
+      }
+    }
+    if (StringUtils.isNotEmpty(request.getParameter("roleFilter"))) {
+      request.setAttribute(
+          IActionConstants.FILTER_ROLE, request.getParameter("roleFilter").toString());
+      unifiedUsers =
+          filterUnifiedUsersByLabUnitRole(unifiedUsers, request.getParameter("roleFilter"));
     }
 
-    @RequestMapping(value = { "/UnifiedSystemUserMenu", "/SearchUnifiedSystemUserMenu" }, method = RequestMethod.GET)
-    public ModelAndView showUnifiedSystemUserMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        String forward = FWD_SUCCESS;
-        UnifiedSystemUserMenuForm form = new UnifiedSystemUserMenuForm();
+    request.setAttribute("menuDefinition", "UnifiedSystemUserMenuDefinition");
 
-        form.setFormAction("UnifiedSystemUserMenu");
-        List<IdValuePair> testSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE);
-        form.setTestSections(testSections);
-        forward = performMenuAction(form, request);
-        request.setAttribute(IActionConstants.FORM_NAME, "unifiedSystemUserMenu");
-        request.setAttribute(IActionConstants.MENU_PAGE_INSTRUCTION, "user.select.instruction");
-        request.setAttribute(IActionConstants.MENU_OBJECT_TO_ADD, "label.button.new.user");
-        request.setAttribute(IActionConstants.APPLY_FILTER, "true");
-        if (FWD_FAIL.equals(forward)) {
-            Errors errors = new BaseErrors();
-            errors.reject("error.generic");
-            redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, errors);
-            return findForward(FWD_FAIL, form);
-        } else {
-            return findForward(forward, form);
-        }
+    request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
+
+    int numOfRecs = 0;
+    if (unifiedUsers != null) {
+      numOfRecs = Math.min(unifiedUsers.size(), getPageSize());
+      numOfRecs--;
+    }
+    int endingRecNo = startingRecNo + numOfRecs;
+    request.setAttribute(MENU_TO_RECORD, String.valueOf(endingRecNo));
+
+    request.setAttribute(MENU_SEARCH_BY_TABLE_COLUMN, "user.userSearch");
+
+    if (YES.equals(request.getParameter("search"))) {
+      request.setAttribute(IN_MENU_SELECT_LIST_HEADER_SEARCH, "true");
     }
 
-    @Override
-    protected List<UnifiedSystemUser> createMenuList(AdminOptionMenuForm<UnifiedSystemUser> form,
-            HttpServletRequest request) {
-        List<SystemUser> systemUsers = new ArrayList<>();
+    return unifiedUsers;
+  }
 
-        int startingRecNo = this.getCurrentStartingRecNo(request);
+  private List<UnifiedSystemUser> filterUnifiedUsersByAdmin(List<UnifiedSystemUser> users) {
+    List<UnifiedSystemUser> unifiedUsers = new ArrayList<>();
+    List<LoginUser> loginUsers = loginService.getAll();
+    HashMap<String, LoginUser> loginMap = createLoginMap(loginUsers, true);
 
-        systemUsers = systemUserService.getPage(startingRecNo);
+    for (UnifiedSystemUser user : users) {
+      if (loginMap.containsKey(user.getLoginName())) {
+        unifiedUsers.add(user);
+      }
+    }
+    return unifiedUsers;
+  }
 
-        if (YES.equals(request.getParameter("search"))) {
-            systemUsers = systemUserService.getPagesOfSearchedUsers(startingRecNo,
-                    request.getParameter("searchString"));
-            request.setAttribute(MENU_TOTAL_RECORDS,
-                    String.valueOf(systemUserService.getTotalSearchedUserCount(request.getParameter("searchString"))));
-            request.setAttribute(SEARCHED_STRING, request.getParameter("searchString"));
-        } else {
-            systemUsers = systemUserService.getOrderedPage("loginName", false, startingRecNo);
-            request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(systemUserService.getCount()));
+  private List<UnifiedSystemUser> filterUnifiedUsersByLabUnitRole(
+      List<UnifiedSystemUser> users, String labUnit) {
+    List<UnifiedSystemUser> unifiedUsers = new ArrayList<>();
+    List<UserLabUnitRoles> allLabUnitRoles = userService.getAllUserLabUnitRoles();
+    List<Integer> systemUserIds = new ArrayList<>();
+    if (allLabUnitRoles != null && allLabUnitRoles.size() > 0) {
+      for (UserLabUnitRoles userRoles : allLabUnitRoles) {
+        for (LabUnitRoleMap roleMap : userRoles.getLabUnitRoleMap()) {
+          if (roleMap.getLabUnit().trim().equals(labUnit.trim())) {
+            systemUserIds.add(userRoles.getId());
+            break;
+          }
         }
-        List<UnifiedSystemUser> unifiedUsers = getUnifiedUsers(systemUsers);
-
-        if (request.getParameter("filter") != null) {
-            request.setAttribute(PAGE_SIZE, getPageSize());
-            if (request.getParameter("filter").contains("isActive")) {
-                request.setAttribute(IActionConstants.FILTER_CHECK_ACTIVE, "true");
-                unifiedUsers = unifiedUsers.stream().filter(user -> user.getActive().equals("Y"))
-                        .collect(Collectors.toList());
-            }
-            if (request.getParameter("filter").contains("isAdmin")) {
-                request.setAttribute(IActionConstants.FILTER_CHECK_ADMIN, "true");
-                unifiedUsers = filterUnifiedUsersByAdmin(unifiedUsers);
-            }
+      }
+      for (UnifiedSystemUser user : users) {
+        if (systemUserIds.contains(Integer.valueOf(user.getSystemUserId()))) {
+          unifiedUsers.add(user);
         }
-        if (StringUtils.isNotEmpty(request.getParameter("roleFilter"))) {
-            request.setAttribute(IActionConstants.FILTER_ROLE, request.getParameter("roleFilter").toString());
-            unifiedUsers = filterUnifiedUsersByLabUnitRole(unifiedUsers, request.getParameter("roleFilter"));
-        }
+      }
+    }
+    return unifiedUsers;
+  }
 
-        request.setAttribute("menuDefinition", "UnifiedSystemUserMenuDefinition");
+  private List<UnifiedSystemUser> getUnifiedUsers(List<SystemUser> systemUsers) {
 
-        request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
+    List<UnifiedSystemUser> unifiedUsers = new ArrayList<>();
 
-        int numOfRecs = 0;
-        if (unifiedUsers != null) {
-            numOfRecs = Math.min(unifiedUsers.size(), getPageSize());
-            numOfRecs--;
-        }
-        int endingRecNo = startingRecNo + numOfRecs;
-        request.setAttribute(MENU_TO_RECORD, String.valueOf(endingRecNo));
+    List<LoginUser> loginUsers = loginService.getAll();
 
-        request.setAttribute(MENU_SEARCH_BY_TABLE_COLUMN, "user.userSearch");
+    HashMap<String, LoginUser> loginMap = createLoginMap(loginUsers, false);
 
-        if (YES.equals(request.getParameter("search"))) {
-            request.setAttribute(IN_MENU_SELECT_LIST_HEADER_SEARCH, "true");
-        }
-
-        return unifiedUsers;
+    for (SystemUser user : systemUsers) {
+      UnifiedSystemUser unifiedUser = createUnifiedSystemUser(loginMap, user);
+      unifiedUsers.add(unifiedUser);
     }
 
-    private List<UnifiedSystemUser> filterUnifiedUsersByAdmin(List<UnifiedSystemUser> users) {
-        List<UnifiedSystemUser> unifiedUsers = new ArrayList<>();
-        List<LoginUser> loginUsers = loginService.getAll();
-        HashMap<String, LoginUser> loginMap = createLoginMap(loginUsers, true);
+    return unifiedUsers;
+  }
 
-        for (UnifiedSystemUser user : users) {
-            if (loginMap.containsKey(user.getLoginName())) {
-                unifiedUsers.add(user);
-            }
+  private UnifiedSystemUser createUnifiedSystemUser(
+      HashMap<String, LoginUser> loginMap, SystemUser user) {
+
+    UnifiedSystemUser unifiedUser = new UnifiedSystemUser();
+    unifiedUser.setFirstName(user.getFirstName());
+    unifiedUser.setLastName(user.getLastName());
+    unifiedUser.setLoginName(user.getLoginName());
+    unifiedUser.setSystemUserId(user.getId());
+    unifiedUser.setActive(user.getIsActive());
+
+    LoginUser login = loginMap.get(user.getLoginName());
+
+    if (login != null) {
+      unifiedUser.setExpDate(DateUtil.formatDateAsText(login.getPasswordExpiredDate()));
+      unifiedUser.setDisabled(login.getAccountDisabled());
+      unifiedUser.setLocked(login.getAccountLocked());
+      unifiedUser.setTimeout(login.getUserTimeOut());
+      unifiedUser.setLoginUserId(Integer.toString(login.getId()));
+    }
+    return unifiedUser;
+  }
+
+  private HashMap<String, LoginUser> createLoginMap(List<LoginUser> loginUsers, Boolean filter) {
+    HashMap<String, LoginUser> loginMap = new HashMap<>();
+
+    for (LoginUser login : loginUsers) {
+      if (filter) {
+        if (login.getIsAdmin().equals("Y")) {
+          loginMap.put(login.getLoginName(), login);
         }
-        return unifiedUsers;
+      } else {
+        loginMap.put(login.getLoginName(), login);
+      }
+    }
+    return loginMap;
+  }
+
+  @Override
+  protected String getDeactivateDisabled() {
+    return "false";
+  }
+
+  @Override
+  protected int getPageSize() {
+    return SystemConfiguration.getInstance().getDefaultPageSize();
+  }
+
+  @RequestMapping(value = "/DeleteUnifiedSystemUser", method = RequestMethod.POST)
+  public ModelAndView showDeleteUnifiedSystemUser(
+      HttpServletRequest request,
+      @ModelAttribute("form") UnifiedSystemUserMenuForm form,
+      BindingResult result,
+      RedirectAttributes redirectAttributes) {
+    if (result.hasErrors()) {
+      saveErrors(result);
+      return findForward(FWD_FAIL_DELETE, form);
+    }
+    List<String> selectedIDs = form.getSelectedIDs();
+    List<LoginUser> loginUsers = new ArrayList<>();
+    List<SystemUser> systemUsers = new ArrayList<>();
+    List<UserRole> userRoles = new ArrayList<>();
+
+    String sysUserId = getSysUserId(request);
+
+    for (int i = 0; i < selectedIDs.size(); i++) {
+      String systemUserId = UnifiedSystemUser.getSystemUserIDFromCombinedID(selectedIDs.get(i));
+
+      if (!GenericValidator.isBlankOrNull(systemUserId)) {
+        SystemUser systemUser = new SystemUser();
+        systemUser.setId(systemUserId);
+        systemUser.setSysUserId(sysUserId);
+        systemUsers.add(systemUser);
+      }
+
+      Integer loginUserId = UnifiedSystemUser.getLoginUserIDFromCombinedID(selectedIDs.get(i));
+
+      if (null != loginUserId) {
+        LoginUser loginUser = new LoginUser();
+        loginUser.setId(loginUserId);
+        loginUser.setSysUserId(sysUserId);
+        loginUsers.add(loginUser);
+      }
     }
 
-    private List<UnifiedSystemUser> filterUnifiedUsersByLabUnitRole(List<UnifiedSystemUser> users, String labUnit) {
-        List<UnifiedSystemUser> unifiedUsers = new ArrayList<>();
-        List<UserLabUnitRoles> allLabUnitRoles = userService.getAllUserLabUnitRoles();
-        List<Integer> systemUserIds = new ArrayList<>();
-        if (allLabUnitRoles != null && allLabUnitRoles.size() > 0) {
-            for (UserLabUnitRoles userRoles : allLabUnitRoles) {
-                for (LabUnitRoleMap roleMap : userRoles.getLabUnitRoleMap()) {
-                    if (roleMap.getLabUnit().trim().equals(labUnit.trim())) {
-                        systemUserIds.add(userRoles.getId());
-                        break;
-                    }
-                }
-            }
-            for (UnifiedSystemUser user : users) {
-                if (systemUserIds.contains(Integer.valueOf(user.getSystemUserId()))) {
-                    unifiedUsers.add(user);
-                }
-            }
-        }
-        return unifiedUsers;
+    for (SystemUser systemUser : systemUsers) {
+      List<String> roleIds = userRoleService.getRoleIdsForUser(systemUser.getId());
+
+      for (String roleId : roleIds) {
+        UserRole userRole = new UserRole();
+        userRole.setSystemUserId(systemUser.getId());
+        userRole.setRoleId(roleId);
+        userRole.setSysUserId(sysUserId);
+        userRoles.add(userRole);
+      }
     }
 
-    private List<UnifiedSystemUser> getUnifiedUsers(List<SystemUser> systemUsers) {
+    try {
+      unifiedSystemUserService.deleteData(
+          userRoles, systemUsers, loginUsers, getSysUserId(request));
+    } catch (LIMSRuntimeException e) {
 
-        List<UnifiedSystemUser> unifiedUsers = new ArrayList<>();
-
-        List<LoginUser> loginUsers = loginService.getAll();
-
-        HashMap<String, LoginUser> loginMap = createLoginMap(loginUsers, false);
-
-        for (SystemUser user : systemUsers) {
-            UnifiedSystemUser unifiedUser = createUnifiedSystemUser(loginMap, user);
-            unifiedUsers.add(unifiedUser);
-        }
-
-        return unifiedUsers;
+      if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
+        result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
+      } else {
+        result.reject("errors.DeleteException", "errors.DeleteException");
+      }
+      saveErrors(result);
+      return findForward(FWD_FAIL_DELETE, form);
     }
 
-    private UnifiedSystemUser createUnifiedSystemUser(HashMap<String, LoginUser> loginMap, SystemUser user) {
+    return findForward(FWD_SUCCESS_DELETE, form);
+  }
 
-        UnifiedSystemUser unifiedUser = new UnifiedSystemUser();
-        unifiedUser.setFirstName(user.getFirstName());
-        unifiedUser.setLastName(user.getLastName());
-        unifiedUser.setLoginName(user.getLoginName());
-        unifiedUser.setSystemUserId(user.getId());
-        unifiedUser.setActive(user.getIsActive());
-
-        LoginUser login = loginMap.get(user.getLoginName());
-
-        if (login != null) {
-            unifiedUser.setExpDate(DateUtil.formatDateAsText(login.getPasswordExpiredDate()));
-            unifiedUser.setDisabled(login.getAccountDisabled());
-            unifiedUser.setLocked(login.getAccountLocked());
-            unifiedUser.setTimeout(login.getUserTimeOut());
-            unifiedUser.setLoginUserId(Integer.toString(login.getId()));
-        }
-        return unifiedUser;
+  @Override
+  protected String findLocalForward(String forward) {
+    if (FWD_SUCCESS.equals(forward)) {
+      return "userMasterListsPageDefinition";
+    } else if (FWD_FAIL.equals(forward)) {
+      return "redirect:/MasterListsPage";
+    } else if (FWD_SUCCESS_DELETE.equals(forward)) {
+      return "redirect:/UnifiedSystemUserMenu";
+    } else if (FWD_FAIL_DELETE.equals(forward)) {
+      return "redirect:/UnifiedSystemUserMenu";
+    } else {
+      return "PageNotFound";
     }
+  }
 
-    private HashMap<String, LoginUser> createLoginMap(List<LoginUser> loginUsers, Boolean filter) {
-        HashMap<String, LoginUser> loginMap = new HashMap<>();
+  @Override
+  protected String getPageTitleKey() {
+    return "unifiedSystemUser.browser.title";
+  }
 
-        for (LoginUser login : loginUsers) {
-            if (filter) {
-                if (login.getIsAdmin().equals("Y")) {
-                    loginMap.put(login.getLoginName(), login);
-                }
-            } else {
-                loginMap.put(login.getLoginName(), login);
-            }
-        }
-        return loginMap;
-    }
-
-    @Override
-    protected String getDeactivateDisabled() {
-        return "false";
-    }
-
-    @Override
-    protected int getPageSize() {
-        return SystemConfiguration.getInstance().getDefaultPageSize();
-    }
-
-    @RequestMapping(value = "/DeleteUnifiedSystemUser", method = RequestMethod.POST)
-    public ModelAndView showDeleteUnifiedSystemUser(HttpServletRequest request,
-            @ModelAttribute("form") UnifiedSystemUserMenuForm form, BindingResult result,
-            RedirectAttributes redirectAttributes) {
-        if (result.hasErrors()) {
-            saveErrors(result);
-            return findForward(FWD_FAIL_DELETE, form);
-        }
-        List<String> selectedIDs = form.getSelectedIDs();
-        List<LoginUser> loginUsers = new ArrayList<>();
-        List<SystemUser> systemUsers = new ArrayList<>();
-        List<UserRole> userRoles = new ArrayList<>();
-
-        String sysUserId = getSysUserId(request);
-
-        for (int i = 0; i < selectedIDs.size(); i++) {
-            String systemUserId = UnifiedSystemUser.getSystemUserIDFromCombinedID(selectedIDs.get(i));
-
-            if (!GenericValidator.isBlankOrNull(systemUserId)) {
-                SystemUser systemUser = new SystemUser();
-                systemUser.setId(systemUserId);
-                systemUser.setSysUserId(sysUserId);
-                systemUsers.add(systemUser);
-            }
-
-            Integer loginUserId = UnifiedSystemUser.getLoginUserIDFromCombinedID(selectedIDs.get(i));
-
-            if (null != loginUserId) {
-                LoginUser loginUser = new LoginUser();
-                loginUser.setId(loginUserId);
-                loginUser.setSysUserId(sysUserId);
-                loginUsers.add(loginUser);
-            }
-        }
-
-        for (SystemUser systemUser : systemUsers) {
-            List<String> roleIds = userRoleService.getRoleIdsForUser(systemUser.getId());
-
-            for (String roleId : roleIds) {
-                UserRole userRole = new UserRole();
-                userRole.setSystemUserId(systemUser.getId());
-                userRole.setRoleId(roleId);
-                userRole.setSysUserId(sysUserId);
-                userRoles.add(userRole);
-            }
-        }
-
-        try {
-            unifiedSystemUserService.deleteData(userRoles, systemUsers, loginUsers, getSysUserId(request));
-        } catch (LIMSRuntimeException e) {
-
-            if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
-                result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
-            } else {
-                result.reject("errors.DeleteException", "errors.DeleteException");
-            }
-            saveErrors(result);
-            return findForward(FWD_FAIL_DELETE, form);
-
-        }
-
-        return findForward(FWD_SUCCESS_DELETE, form);
-    }
-
-    @Override
-    protected String findLocalForward(String forward) {
-        if (FWD_SUCCESS.equals(forward)) {
-            return "userMasterListsPageDefinition";
-        } else if (FWD_FAIL.equals(forward)) {
-            return "redirect:/MasterListsPage";
-        } else if (FWD_SUCCESS_DELETE.equals(forward)) {
-            return "redirect:/UnifiedSystemUserMenu";
-        } else if (FWD_FAIL_DELETE.equals(forward)) {
-            return "redirect:/UnifiedSystemUserMenu";
-        } else {
-            return "PageNotFound";
-        }
-    }
-
-    @Override
-    protected String getPageTitleKey() {
-        return "unifiedSystemUser.browser.title";
-    }
-
-    @Override
-    protected String getPageSubtitleKey() {
-        return "unifiedSystemUser.browser.title";
-    }
+  @Override
+  protected String getPageSubtitleKey() {
+    return "unifiedSystemUser.browser.title";
+  }
 }

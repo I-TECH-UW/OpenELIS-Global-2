@@ -20,11 +20,9 @@ import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -39,95 +37,99 @@ import org.owasp.encoder.Encode;
 
 public class TestResultLimitsProvider extends BaseQueryProvider {
 
-    protected AjaxServlet ajaxServlet = null;
+  protected AjaxServlet ajaxServlet = null;
 
-    @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+  @Override
+  public void processRequest(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
 
-        String testId = request.getParameter("testId");
+    String testId = request.getParameter("testId");
 
-        String jResult;
-        JSONObject jsonResult = new JSONObject();
-        String jString;
+    String jResult;
+    JSONObject jsonResult = new JSONObject();
+    String jString;
 
-        if (GenericValidator.isBlankOrNull(testId)) {
-            jResult = INVALID;
-            jString = "Internal error, please contact Admin and file bug report";
-        } else {
-            jResult = createJsonTestResultLimits(testId, jsonResult);
-            StringWriter out = new StringWriter();
-            try {
-                jsonResult.writeJSONString(out);
-                jString = out.toString();
-            } catch (IOException e) {
-                LogEvent.logDebug(e);
-                jResult = INVALID;
-                jString = "Internal error, please contact Admin and file bug report";
-            } catch (IllegalStateException e) {
-                LogEvent.logDebug(e);
-                jResult = INVALID;
-                jString = "Internal error, please contact Admin and file bug report";
+    if (GenericValidator.isBlankOrNull(testId)) {
+      jResult = INVALID;
+      jString = "Internal error, please contact Admin and file bug report";
+    } else {
+      jResult = createJsonTestResultLimits(testId, jsonResult);
+      StringWriter out = new StringWriter();
+      try {
+        jsonResult.writeJSONString(out);
+        jString = out.toString();
+      } catch (IOException e) {
+        LogEvent.logDebug(e);
+        jResult = INVALID;
+        jString = "Internal error, please contact Admin and file bug report";
+      } catch (IllegalStateException e) {
+        LogEvent.logDebug(e);
+        jResult = INVALID;
+        jString = "Internal error, please contact Admin and file bug report";
+      }
+    }
+    ajaxServlet.sendData(
+        Encode.forXmlContent(jString), Encode.forXmlContent(jResult), request, response);
+  }
+
+  @SuppressWarnings("unchecked")
+  private String createJsonTestResultLimits(String testId, JSONObject jsonResult)
+      throws IllegalStateException {
+
+    if (GenericValidator.isBlankOrNull(testId)) {
+      throw new IllegalStateException(
+          "TestResultLimitsProvider testId was blank.  It must have a value");
+    }
+
+    Test test = SpringContext.getBean(TestService.class).get(testId);
+    if (test != null) {
+      List<ResultLimit> resultLimits =
+          SpringContext.getBean(ResultLimitService.class).getResultLimits(testId);
+      resultLimits.sort(Comparator.comparing(ResultLimit::getMinAge));
+      Collections.sort(
+          resultLimits,
+          new Comparator<ResultLimit>() {
+            @Override
+            public int compare(ResultLimit e1, ResultLimit e2) {
+              if (e1.getMinAge() == e2.getMinAge()) {
+                return e2.getGender().compareTo(e1.getGender());
+              }
+              return Double.compare(e1.getMinAge(), e2.getMinAge());
             }
-        }
-        ajaxServlet.sendData(Encode.forXmlContent(jString), Encode.forXmlContent(jResult), request, response);
+          });
+      JSONArray limitsArray = new JSONArray();
+      for (ResultLimit resultLimit : resultLimits) {
 
+        JSONObject resultLimitObject = new JSONObject();
+
+        resultLimitObject.put("id", resultLimit.getId());
+        resultLimitObject.put("gender", resultLimit.getGender());
+        resultLimitObject.put("minAge", resultLimit.getMinAge());
+        resultLimitObject.put("maxAge", resultLimit.getMaxAge());
+        resultLimitObject.put("lowNormal", resultLimit.getLowNormal());
+        resultLimitObject.put("highNormal", resultLimit.getHighNormal());
+        resultLimitObject.put("lowValid", resultLimit.getLowValid());
+        resultLimitObject.put("highValid", resultLimit.getHighValid());
+        resultLimitObject.put("highCritical", resultLimit.getHighCritical());
+        resultLimitObject.put("lowCritical", resultLimit.getLowCritical());
+        limitsArray.add(resultLimitObject);
+      }
+
+      jsonResult.put("resultLimits", limitsArray);
+
+      return VALID;
     }
 
-    @SuppressWarnings("unchecked")
-    private String createJsonTestResultLimits(String testId, JSONObject jsonResult) throws IllegalStateException {
+    return INVALID;
+  }
 
-        if (GenericValidator.isBlankOrNull(testId)) {
-            throw new IllegalStateException("TestResultLimitsProvider testId was blank.  It must have a value");
-        }
+  @Override
+  public void setServlet(AjaxServlet as) {
+    ajaxServlet = as;
+  }
 
-        Test test = SpringContext.getBean(TestService.class).get(testId);
-        if (test != null) {
-            List<ResultLimit> resultLimits = SpringContext.getBean(ResultLimitService.class).getResultLimits(testId);
-            resultLimits.sort(Comparator.comparing(ResultLimit::getMinAge));
-            Collections.sort(resultLimits, new Comparator<ResultLimit>() {
-                @Override
-                public int compare(ResultLimit e1, ResultLimit e2) {
-                    if (e1.getMinAge() == e2.getMinAge()) {
-                        return e2.getGender().compareTo(e1.getGender());
-                    }
-                    return Double.compare(e1.getMinAge(), e2.getMinAge());
-                }
-            });
-            JSONArray limitsArray = new JSONArray();
-            for (ResultLimit resultLimit : resultLimits) {
-
-                JSONObject resultLimitObject = new JSONObject();
-
-                resultLimitObject.put("id", resultLimit.getId());
-                resultLimitObject.put("gender", resultLimit.getGender());
-                resultLimitObject.put("minAge", resultLimit.getMinAge());
-                resultLimitObject.put("maxAge", resultLimit.getMaxAge());
-                resultLimitObject.put("lowNormal", resultLimit.getLowNormal());
-                resultLimitObject.put("highNormal", resultLimit.getHighNormal());
-                resultLimitObject.put("lowValid", resultLimit.getLowValid());
-                resultLimitObject.put("highValid", resultLimit.getHighValid());
-                resultLimitObject.put("highCritical", resultLimit.getHighCritical());
-                resultLimitObject.put("lowCritical", resultLimit.getLowCritical());
-                limitsArray.add(resultLimitObject);
-            }
-
-            jsonResult.put("resultLimits", limitsArray);
-
-            return VALID;
-        }
-
-        return INVALID;
-    }
-
-    @Override
-    public void setServlet(AjaxServlet as) {
-        ajaxServlet = as;
-    }
-
-    @Override
-    public AjaxServlet getServlet() {
-        return ajaxServlet;
-    }
-
+  @Override
+  public AjaxServlet getServlet() {
+    return ajaxServlet;
+  }
 }

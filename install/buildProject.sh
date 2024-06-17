@@ -21,35 +21,35 @@ while getopts :dl:t: opt; do
   esac
 done
 
-if [ -d "$DIR" ]; then 
-	cd ${DIR}
-	echo "building in ${DIR}"
+if [ -d "$DIR" ]; then
+    cd ${DIR}
+    echo "building in ${DIR}"
 else
-	echo "could not find directory '${DIR}' to build"
-	exit
+    echo "could not find directory '${DIR}' to build"
+    exit
 fi
 #build and package application
 if [ $dockerBuild == true ]
 then
-	dockerfile="Dockerfile"
-	echo "checking for ${DIR}/Dockerfile.prod"
-	if [ -f "${DIR}/Dockerfile.prod" ]; then
-		echo "production dockerfile found, using Dockerfile.prod"
-    	dockerfile="Dockerfile.prod"
+    dockerfile="Dockerfile"
+    echo "checking for ${DIR}/Dockerfile.prod"
+    if [ -f "${DIR}/Dockerfile.prod" ]; then
+        echo "production dockerfile found, using Dockerfile.prod"
+        dockerfile="Dockerfile.prod"
     else
-		echo "no production dockerfile found, defaulting to Dockerfile"
-	fi
-	if [ -z "${TAG}" ]
-	then
-		docker build --file ${dockerfile} . 
-	else
-		docker build --file ${dockerfile} -t ${TAG} . 
-	fi
+        echo "no production dockerfile found, defaulting to Dockerfile"
+    fi
+    if [ -z "${TAG}" ]
+    then
+        docker build --file ${dockerfile} .
+    else
+        docker build --file ${dockerfile} -t ${TAG} .
+    fi
 else
-	mvn clean install -DskipTests
+    mvn clean install -DskipTests
 fi
-	
-SUCCESS=$? 	
+
+SUCCESS=$?
 if [ $SUCCESS != 0 ]
 then
     echo

@@ -6,6 +6,6 @@ import org.openelisglobal.observationhistorytype.valueholder.ObservationHistoryT
 
 public interface ObservationHistoryTypeDAO extends BaseDAO<ObservationHistoryType, String> {
 
-    ObservationHistoryType getByName(String name) throws LIMSRuntimeException;
-    // insert additional method unique to Demo. History Type here.
+  ObservationHistoryType getByName(String name) throws LIMSRuntimeException;
+  // insert additional method unique to Demo. History Type here.
 }

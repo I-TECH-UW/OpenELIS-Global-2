@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -29,159 +28,158 @@ import org.springframework.stereotype.Service;
 @Service
 public class ResultSelectListServiceImpl implements ResultSelectListService {
 
-    @Autowired
-    private DictionaryService dictionaryService;
-    @Autowired
-    private DictionaryCategoryService dictionaryCategoryService;
-    @Autowired
-    private TestService testService;
-    @Autowired
-    private TestResultService resultService;
-    @Autowired
-    private LocalizationService localizationService;
+  @Autowired private DictionaryService dictionaryService;
+  @Autowired private DictionaryCategoryService dictionaryCategoryService;
+  @Autowired private TestService testService;
+  @Autowired private TestResultService resultService;
+  @Autowired private LocalizationService localizationService;
 
-    @Override
-    public Map<String, List<IdValuePair>> getTestSelectDictionary() {
-        List<TestResult> testResults = resultService.getAllSortedTestResults();
+  @Override
+  public Map<String, List<IdValuePair>> getTestSelectDictionary() {
+    List<TestResult> testResults = resultService.getAllSortedTestResults();
 
-        Map<String, List<IdValuePair>> testDictionary = new HashMap<>();
-        String currentTestId = null;
-        String dictionaryIdGroup = null;
-        for (TestResult testResult : testResults) {
-            if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
-                if (testResult.getTest().getId().equals(currentTestId)) {
-                    dictionaryIdGroup += "," + testResult.getValue();
-                } else {
-                    String previousTestId = currentTestId;
-                    currentTestId = testResult.getTest().getId();
-                    if (dictionaryIdGroup != null) {
-                        List<IdValuePair> pairs = new ArrayList<>();
-                        String[] dictionaryIds = dictionaryIdGroup.split(",");
-                        for (String id : dictionaryIds) {
-                            Dictionary dictionary = dictionaryService.getDictionaryById(id);
-                            if (dictionary != null) {
-                                pairs.add(new IdValuePair(id, dictionary.getLocalizedName()));
-                            }
-                        }
-                        testDictionary.put(previousTestId, pairs);
-                    }
-                    dictionaryIdGroup = testResult.getValue();
-                }
+    Map<String, List<IdValuePair>> testDictionary = new HashMap<>();
+    String currentTestId = null;
+    String dictionaryIdGroup = null;
+    for (TestResult testResult : testResults) {
+      if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(
+          testResult.getTestResultType())) {
+        if (testResult.getTest().getId().equals(currentTestId)) {
+          dictionaryIdGroup += "," + testResult.getValue();
+        } else {
+          String previousTestId = currentTestId;
+          currentTestId = testResult.getTest().getId();
+          if (dictionaryIdGroup != null) {
+            List<IdValuePair> pairs = new ArrayList<>();
+            String[] dictionaryIds = dictionaryIdGroup.split(",");
+            for (String id : dictionaryIds) {
+              Dictionary dictionary = dictionaryService.getDictionaryById(id);
+              if (dictionary != null) {
+                pairs.add(new IdValuePair(id, dictionary.getLocalizedName()));
+              }
             }
+            testDictionary.put(previousTestId, pairs);
+          }
+          dictionaryIdGroup = testResult.getValue();
         }
-        return testDictionary;
+      }
     }
+    return testDictionary;
+  }
 
-    @Override
-    public List<Dictionary> getAllSelectListOptions() {
-        List<Dictionary> dictionaries = new ArrayList<>();
-        List<TestResult> testResults = resultService.getAllSortedTestResults();
-        List<String> ids = new ArrayList<>();
+  @Override
+  public List<Dictionary> getAllSelectListOptions() {
+    List<Dictionary> dictionaries = new ArrayList<>();
+    List<TestResult> testResults = resultService.getAllSortedTestResults();
+    List<String> ids = new ArrayList<>();
 
-        for (TestResult testResult : testResults) {
-            if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
-                if (!ids.contains(testResult.getValue())) {
-                    ids.add(testResult.getValue());
-                }
-            }
+    for (TestResult testResult : testResults) {
+      if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(
+          testResult.getTestResultType())) {
+        if (!ids.contains(testResult.getValue())) {
+          ids.add(testResult.getValue());
         }
-        for (String id : ids) {
-            Dictionary dictionary = dictionaryService.getDictionaryById(id);
-            dictionaries.add(dictionary);
-        }
-        return dictionaries;
+      }
     }
-
-    @Override
-    public boolean addResultSelectList(ResultSelectListForm form, String currentUserId) {
-
-        Dictionary dictionary = new Dictionary();
-        dictionary.setSortOrder(1);
-        dictionary.setIsActive("Y");
-        dictionary.setDictEntry(form.getNameEnglish());
-        dictionary.setLocalAbbreviation(form.getNameEnglish());
-        dictionary.setSysUserId(currentUserId);
-        dictionary.setDictionaryCategory(dictionaryCategoryService.getDictionaryCategoryByName("Test Result"));
-
-        Localization localization = new Localization();
-        localization.setEnglish(form.getNameEnglish());
-        localization.setFrench(form.getNameFrench());
-        localization.setSysUserId(currentUserId);
-        localization = localizationService.save(localization);
-
-        dictionary.setLocalizedDictionaryName(localization);
-        dictionary = dictionaryService.save(dictionary);
-
-        String s = form.getTestSelectListJson();
-
-        JSONParser parser = new JSONParser();
-        try {
-            JSONObject obj = (JSONObject) parser.parse(s);
-            String testsStr = (String) obj.get("tests");
-            JSONArray tests = (JSONArray) parser.parse(testsStr);
-            for (int j = 0; j < tests.size(); j++) {
-                JSONObject testObject = (JSONObject) tests.get(j);
-
-                String testId = (String) testObject.get("id");
-                Test test = testService.getTestById(testId);
-                JSONArray items = (JSONArray) testObject.get("items");
-
-                for (int i = 0; i < items.size(); i++) {
-                    JSONObject object = (JSONObject) items.get(i);
-
-                    if (object.containsKey("id")) {
-                        Map<String, Object> filter = new HashMap<>();
-                        filter.put("test.id", testId);
-                        filter.put("value", object.get("id"));
-                        TestResult testResult = resultService.getMatch(filter).get(); // get((String) object.get("id"));
-                        long order = (Long) object.get("order");
-                        testResult.setSortOrder(String.valueOf(10 * order));
-                        testResult.setSysUserId(currentUserId);
-                        resultService.save(testResult);
-                    } else {
-                        TestResult testResult = new TestResult();
-                        testResult.setIsQuantifiable((Boolean) object.get("qualifiable"));
-                        testResult.setIsNormal((Boolean) object.get("normal"));
-                        testResult.setValue(dictionary.getId());
-                        long order = (Long) object.get("order");
-                        testResult.setSortOrder(String.valueOf(order * 10));
-                        testResult.setTest(test);
-                        testResult.setTestResultType("D");
-                        testResult.setResultGroup("");
-                        testResult.setSysUserId(currentUserId);
-                        resultService.save(testResult);
-                    }
-                }
-            }
-            return true;
-        } catch (ParseException e) {
-            LogEvent.logError(e);
-        }
-        return false;
+    for (String id : ids) {
+      Dictionary dictionary = dictionaryService.getDictionaryById(id);
+      dictionaries.add(dictionary);
     }
+    return dictionaries;
+  }
 
-    @Override
-    public boolean renameOption(ResultSelectListRenameForm form, String currentUserId) {
-        try {
-            Dictionary dictionary = dictionaryService.getDictionaryById(form.getResultSelectOptionId());
+  @Override
+  public boolean addResultSelectList(ResultSelectListForm form, String currentUserId) {
 
-            Localization localization = dictionary.getLocalizedDictionaryName();
-            if (localization == null) {
-                localization = new Localization();
-            }
-            localization.setEnglish(form.getNameEnglish());
-            localization.setFrench(form.getNameFrench());
-            localization.setSysUserId(currentUserId);
-            localizationService.save(localization);
+    Dictionary dictionary = new Dictionary();
+    dictionary.setSortOrder(1);
+    dictionary.setIsActive("Y");
+    dictionary.setDictEntry(form.getNameEnglish());
+    dictionary.setLocalAbbreviation(form.getNameEnglish());
+    dictionary.setSysUserId(currentUserId);
+    dictionary.setDictionaryCategory(
+        dictionaryCategoryService.getDictionaryCategoryByName("Test Result"));
 
-            dictionary.setDictEntry(form.getNameEnglish());
-            dictionary.setLocalAbbreviation(form.getNameEnglish());
-            dictionary.setSysUserId(currentUserId);
-            dictionaryService.save(dictionary);
-            return true;
-        } catch (RuntimeException e) {
-            LogEvent.logError(e);
+    Localization localization = new Localization();
+    localization.setEnglish(form.getNameEnglish());
+    localization.setFrench(form.getNameFrench());
+    localization.setSysUserId(currentUserId);
+    localization = localizationService.save(localization);
+
+    dictionary.setLocalizedDictionaryName(localization);
+    dictionary = dictionaryService.save(dictionary);
+
+    String s = form.getTestSelectListJson();
+
+    JSONParser parser = new JSONParser();
+    try {
+      JSONObject obj = (JSONObject) parser.parse(s);
+      String testsStr = (String) obj.get("tests");
+      JSONArray tests = (JSONArray) parser.parse(testsStr);
+      for (int j = 0; j < tests.size(); j++) {
+        JSONObject testObject = (JSONObject) tests.get(j);
+
+        String testId = (String) testObject.get("id");
+        Test test = testService.getTestById(testId);
+        JSONArray items = (JSONArray) testObject.get("items");
+
+        for (int i = 0; i < items.size(); i++) {
+          JSONObject object = (JSONObject) items.get(i);
+
+          if (object.containsKey("id")) {
+            Map<String, Object> filter = new HashMap<>();
+            filter.put("test.id", testId);
+            filter.put("value", object.get("id"));
+            TestResult testResult =
+                resultService.getMatch(filter).get(); // get((String) object.get("id"));
+            long order = (Long) object.get("order");
+            testResult.setSortOrder(String.valueOf(10 * order));
+            testResult.setSysUserId(currentUserId);
+            resultService.save(testResult);
+          } else {
+            TestResult testResult = new TestResult();
+            testResult.setIsQuantifiable((Boolean) object.get("qualifiable"));
+            testResult.setIsNormal((Boolean) object.get("normal"));
+            testResult.setValue(dictionary.getId());
+            long order = (Long) object.get("order");
+            testResult.setSortOrder(String.valueOf(order * 10));
+            testResult.setTest(test);
+            testResult.setTestResultType("D");
+            testResult.setResultGroup("");
+            testResult.setSysUserId(currentUserId);
+            resultService.save(testResult);
+          }
         }
-        return false;
+      }
+      return true;
+    } catch (ParseException e) {
+      LogEvent.logError(e);
     }
+    return false;
+  }
+
+  @Override
+  public boolean renameOption(ResultSelectListRenameForm form, String currentUserId) {
+    try {
+      Dictionary dictionary = dictionaryService.getDictionaryById(form.getResultSelectOptionId());
+
+      Localization localization = dictionary.getLocalizedDictionaryName();
+      if (localization == null) {
+        localization = new Localization();
+      }
+      localization.setEnglish(form.getNameEnglish());
+      localization.setFrench(form.getNameFrench());
+      localization.setSysUserId(currentUserId);
+      localizationService.save(localization);
+
+      dictionary.setDictEntry(form.getNameEnglish());
+      dictionary.setLocalAbbreviation(form.getNameEnglish());
+      dictionary.setSysUserId(currentUserId);
+      dictionaryService.save(dictionary);
+      return true;
+    } catch (RuntimeException e) {
+      LogEvent.logError(e);
+    }
+    return false;
+  }
 }
