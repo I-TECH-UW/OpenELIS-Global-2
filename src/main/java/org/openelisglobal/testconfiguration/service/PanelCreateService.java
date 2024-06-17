@@ -7,8 +7,15 @@ import org.openelisglobal.systemusermodule.valueholder.RoleModule;
 
 public interface PanelCreateService {
 
-    void insert(Localization localization, Panel panel, SystemModule workplanModule, SystemModule resultModule,
-            SystemModule validationModule, RoleModule workplanResultModule, RoleModule resultResultModule,
-            RoleModule validationValidationModule, String sampleTypeId, String systemUserId);
-
+  void insert(
+      Localization localization,
+      Panel panel,
+      SystemModule workplanModule,
+      SystemModule resultModule,
+      SystemModule validationModule,
+      RoleModule workplanResultModule,
+      RoleModule resultResultModule,
+      RoleModule validationValidationModule,
+      String sampleTypeId,
+      String systemUserId);
 }

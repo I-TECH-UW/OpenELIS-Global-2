@@ -1,7 +1,6 @@
 package org.openelisglobal.externalconnections.valueholder;
 
 import java.net.URI;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -16,7 +15,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
-
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.hibernate.converter.URIConverter;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -26,142 +24,142 @@ import org.openelisglobal.localization.valueholder.Localization;
 @Table(name = "external_connection")
 public class ExternalConnection extends BaseObject<Integer> {
 
-    public enum AuthType {
-        CERTIFICATE("certificate", "externalconnections.authtype.cert"),
-        BASIC("basic", "externalconnections.authtype.basic"),
-//        BEARER("bearer", "externalconnections.authtype.bearer"),
-        NONE("none", "externalconnections.authtype.none");
+  public enum AuthType {
+    CERTIFICATE("certificate", "externalconnections.authtype.cert"),
+    BASIC("basic", "externalconnections.authtype.basic"),
+    //        BEARER("bearer", "externalconnections.authtype.bearer"),
+    NONE("none", "externalconnections.authtype.none");
 
-        private String value;
-        private String messageKey;
+    private String value;
+    private String messageKey;
 
-        AuthType(String value, String messageKey) {
-            this.value = value;
-            this.messageKey = messageKey;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public String getMessage() {
-            return MessageUtil.getMessage(messageKey);
-        }
-
+    AuthType(String value, String messageKey) {
+      this.value = value;
+      this.messageKey = messageKey;
     }
 
-    public enum ProgrammedConnection {
-//        CLINIC_SEARCH("clinlic_search", "externalconnections.clinicsearch"),
-        SMPP_SERVER("smpp_server", "externalconnections.smppserver"),
-        BMP_SMS_SERVER("bmp_sms_server", "externalconnections.bmpsms"),
-        INFO_HIGHWAY("info_highway", "externalconnections.infohighway"),
-        SMTP_SERVER("smtp_server", "externalconnections.smtpserver");
-
-        private String value;
-        private String messageKey;
-
-        ProgrammedConnection(String value, String messageKey) {
-            this.value = value;
-            this.messageKey = messageKey;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public String getMessage() {
-            return MessageUtil.getMessage(messageKey);
-        }
+    public String getValue() {
+      return value;
     }
 
-    private static final long serialVersionUID = -6727446336117070253L;
+    public String getMessage() {
+      return MessageUtil.getMessage(messageKey);
+    }
+  }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "external_connection_generator")
-    @SequenceGenerator(name = "external_connection_generator", sequenceName = "external_connection_seq", allocationSize = 1)
-    private Integer id;
+  public enum ProgrammedConnection {
+    //        CLINIC_SEARCH("clinlic_search", "externalconnections.clinicsearch"),
+    SMPP_SERVER("smpp_server", "externalconnections.smppserver"),
+    BMP_SMS_SERVER("bmp_sms_server", "externalconnections.bmpsms"),
+    INFO_HIGHWAY("info_highway", "externalconnections.infohighway"),
+    SMTP_SERVER("smtp_server", "externalconnections.smtpserver");
 
-    @Column
-    private Boolean active;
+    private String value;
+    private String messageKey;
 
-    @Convert(converter = URIConverter.class)
-    @Column
-    private URI uri;
-
-    @Column(name = "programmed_connection", unique = true)
-    @Enumerated(EnumType.STRING)
-    private ProgrammedConnection programmedConnection;
-
-    @Valid
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "name_localization_id", referencedColumnName = "id")
-    private Localization nameLocalization;
-
-    @Valid
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "description_localization_id", referencedColumnName = "id")
-    private Localization descriptionLocalization;
-
-    @Column(name = "active_authentication_type")
-    @Enumerated(EnumType.STRING)
-    private AuthType activeAuthenticationType;
-
-    @Override
-    public Integer getId() {
-        return id;
+    ProgrammedConnection(String value, String messageKey) {
+      this.value = value;
+      this.messageKey = messageKey;
     }
 
-    @Override
-    public void setId(Integer id) {
-        this.id = id;
+    public String getValue() {
+      return value;
     }
 
-    public URI getUri() {
-        return uri;
+    public String getMessage() {
+      return MessageUtil.getMessage(messageKey);
     }
+  }
 
-    public void setUri(URI uri) {
-        this.uri = uri;
-    }
+  private static final long serialVersionUID = -6727446336117070253L;
 
-    public ProgrammedConnection getProgrammedConnection() {
-        return programmedConnection;
-    }
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "external_connection_generator")
+  @SequenceGenerator(
+      name = "external_connection_generator",
+      sequenceName = "external_connection_seq",
+      allocationSize = 1)
+  private Integer id;
 
-    public void setProgrammedConnection(ProgrammedConnection programmedConnection) {
-        this.programmedConnection = programmedConnection;
-    }
+  @Column private Boolean active;
 
-    public AuthType getActiveAuthenticationType() {
-        return activeAuthenticationType;
-    }
+  @Convert(converter = URIConverter.class)
+  @Column
+  private URI uri;
 
-    public void setActiveAuthenticationType(AuthType activeAuthenticationType) {
-        this.activeAuthenticationType = activeAuthenticationType;
-    }
+  @Column(name = "programmed_connection", unique = true)
+  @Enumerated(EnumType.STRING)
+  private ProgrammedConnection programmedConnection;
 
-    public Localization getDescriptionLocalization() {
-        return descriptionLocalization;
-    }
+  @Valid
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "name_localization_id", referencedColumnName = "id")
+  private Localization nameLocalization;
 
-    public void setDescriptionLocalization(Localization descriptionLocalization) {
-        this.descriptionLocalization = descriptionLocalization;
-    }
+  @Valid
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "description_localization_id", referencedColumnName = "id")
+  private Localization descriptionLocalization;
 
-    public Localization getNameLocalization() {
-        return nameLocalization;
-    }
+  @Column(name = "active_authentication_type")
+  @Enumerated(EnumType.STRING)
+  private AuthType activeAuthenticationType;
 
-    public void setNameLocalization(Localization nameLocalization) {
-        this.nameLocalization = nameLocalization;
-    }
+  @Override
+  public Integer getId() {
+    return id;
+  }
 
-    public Boolean getActive() {
-        return active;
-    }
+  @Override
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
+  public URI getUri() {
+    return uri;
+  }
 
+  public void setUri(URI uri) {
+    this.uri = uri;
+  }
+
+  public ProgrammedConnection getProgrammedConnection() {
+    return programmedConnection;
+  }
+
+  public void setProgrammedConnection(ProgrammedConnection programmedConnection) {
+    this.programmedConnection = programmedConnection;
+  }
+
+  public AuthType getActiveAuthenticationType() {
+    return activeAuthenticationType;
+  }
+
+  public void setActiveAuthenticationType(AuthType activeAuthenticationType) {
+    this.activeAuthenticationType = activeAuthenticationType;
+  }
+
+  public Localization getDescriptionLocalization() {
+    return descriptionLocalization;
+  }
+
+  public void setDescriptionLocalization(Localization descriptionLocalization) {
+    this.descriptionLocalization = descriptionLocalization;
+  }
+
+  public Localization getNameLocalization() {
+    return nameLocalization;
+  }
+
+  public void setNameLocalization(Localization nameLocalization) {
+    this.nameLocalization = nameLocalization;
+  }
+
+  public Boolean getActive() {
+    return active;
+  }
+
+  public void setActive(Boolean active) {
+    this.active = active;
+  }
 }

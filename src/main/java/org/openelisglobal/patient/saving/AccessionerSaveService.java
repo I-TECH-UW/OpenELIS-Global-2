@@ -1,5 +1,3 @@
 package org.openelisglobal.patient.saving;
 
-public class AccessionerSaveService {
-
-}
+public class AccessionerSaveService {}

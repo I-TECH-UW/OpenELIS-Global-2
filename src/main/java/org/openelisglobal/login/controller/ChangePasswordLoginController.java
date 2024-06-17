@@ -2,10 +2,8 @@ package org.openelisglobal.login.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -32,96 +30,96 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class ChangePasswordLoginController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "loginName", "password", "newPassword",
-            "confirmPassword" };
+  private static final String[] ALLOWED_FIELDS =
+      new String[] {"loginName", "password", "newPassword", "confirmPassword"};
 
-    @Autowired
-    private ChangePasswordLoginFormValidator formValidator;
-    @Autowired
-    private LoginValidator loginValidator;
-    @Autowired
-    private LoginUserService loginService;
+  @Autowired private ChangePasswordLoginFormValidator formValidator;
+  @Autowired private LoginValidator loginValidator;
+  @Autowired private LoginUserService loginService;
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.setAllowedFields(ALLOWED_FIELDS);
+  @InitBinder
+  public void initBinder(WebDataBinder binder) {
+    binder.setAllowedFields(ALLOWED_FIELDS);
+  }
+
+  @RequestMapping(value = "/ChangePasswordLogin", method = RequestMethod.GET)
+  public ModelAndView showChangePasswordLogin(HttpServletRequest request) {
+    ChangePasswordLoginForm form = new ChangePasswordLoginForm();
+    form.setFormAction("ChangePasswordLogin");
+    return findForward(FWD_SUCCESS, form);
+  }
+
+  @RequestMapping(value = "/ChangePasswordLogin", method = RequestMethod.POST)
+  public ModelAndView showUpdateLoginChangePassword(
+      @ModelAttribute("form") @Valid ChangePasswordLoginForm form,
+      BindingResult result,
+      RedirectAttributes redirectAttributes)
+      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    formValidator.validate(form, result);
+    if (result.hasErrors()) {
+      saveErrors(result);
+      return findForward(FWD_FAIL_INSERT, form);
     }
 
-    @RequestMapping(value = "/ChangePasswordLogin", method = RequestMethod.GET)
-    public ModelAndView showChangePasswordLogin(HttpServletRequest request) {
-        ChangePasswordLoginForm form = new ChangePasswordLoginForm();
-        form.setFormAction("ChangePasswordLogin");
-        return findForward(FWD_SUCCESS, form);
-    }
+    //		Login newLogin = new Login();
+    //		// populate valueholder from form
+    //		PropertyUtils.copyProperties(newLogin, form);
+    try {
+      LoginUser login;
+      // get user information if password correct
+      Optional<LoginUser> matchedLogin =
+          loginService.getValidatedLogin(form.getLoginName(), form.getPassword());
+      if (!matchedLogin.isPresent()) {
+        result.reject("login.error.message");
+      } else {
+        login = matchedLogin.get();
+        // update fields of login before validating again
+        loginService.hashPassword(login, form.getNewPassword());
+        Errors loginResult = new BeanPropertyBindingResult(login, "loginInfo");
+        loginValidator.unauthenticatedPasswordUpdateValidate(login, loginResult);
 
-    @RequestMapping(value = "/ChangePasswordLogin", method = RequestMethod.POST)
-    public ModelAndView showUpdateLoginChangePassword(@ModelAttribute("form") @Valid ChangePasswordLoginForm form,
-            BindingResult result, RedirectAttributes redirectAttributes)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        formValidator.validate(form, result);
-        if (result.hasErrors()) {
-            saveErrors(result);
-            return findForward(FWD_FAIL_INSERT, form);
+        if (loginResult.hasErrors()) {
+          saveErrors(loginResult);
+          return findForward(FWD_FAIL_INSERT, form);
         }
+        loginService.update(login);
+      }
 
-//		Login newLogin = new Login();
-//		// populate valueholder from form
-//		PropertyUtils.copyProperties(newLogin, form);
-        try {
-            LoginUser login;
-            // get user information if password correct
-            Optional<LoginUser> matchedLogin = loginService.getValidatedLogin(form.getLoginName(), form.getPassword());
-            if (!matchedLogin.isPresent()) {
-                result.reject("login.error.message");
-            } else {
-                login = matchedLogin.get();
-                // update fields of login before validating again
-                loginService.hashPassword(login, form.getNewPassword());
-                Errors loginResult = new BeanPropertyBindingResult(login, "loginInfo");
-                loginValidator.unauthenticatedPasswordUpdateValidate(login, loginResult);
-
-                if (loginResult.hasErrors()) {
-                    saveErrors(loginResult);
-                    return findForward(FWD_FAIL_INSERT, form);
-                }
-                loginService.update(login);
-            }
-
-        } catch (LIMSRuntimeException e) {
-            // bugzilla 2154
-            LogEvent.logError(e);
-            result.reject("login.error.message");
-        }
-        if (result.hasErrors()) {
-            saveErrors(result);
-            return findForward(FWD_FAIL_INSERT, form);
-        }
-
-        redirectAttributes.addFlashAttribute(Constants.SUCCESS_MSG,
-                MessageUtil.getMessage("login.success.changePass.message"));
-        return findForward(FWD_SUCCESS_INSERT, form);
+    } catch (LIMSRuntimeException e) {
+      // bugzilla 2154
+      LogEvent.logError(e);
+      result.reject("login.error.message");
+    }
+    if (result.hasErrors()) {
+      saveErrors(result);
+      return findForward(FWD_FAIL_INSERT, form);
     }
 
-    @Override
-    protected String findLocalForward(String forward) {
-        if (FWD_SUCCESS.equals(forward)) {
-            return "loginChangePasswordDefinition";
-        } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/LoginPage";
-        } else if (FWD_FAIL_INSERT.equals(forward)) {
-            return "loginChangePasswordDefinition";
-        } else {
-            return "PageNotFound";
-        }
-    }
+    redirectAttributes.addFlashAttribute(
+        Constants.SUCCESS_MSG, MessageUtil.getMessage("login.success.changePass.message"));
+    return findForward(FWD_SUCCESS_INSERT, form);
+  }
 
-    @Override
-    protected String getPageTitleKey() {
-        return "login.changePass";
+  @Override
+  protected String findLocalForward(String forward) {
+    if (FWD_SUCCESS.equals(forward)) {
+      return "loginChangePasswordDefinition";
+    } else if (FWD_SUCCESS_INSERT.equals(forward)) {
+      return "redirect:/LoginPage";
+    } else if (FWD_FAIL_INSERT.equals(forward)) {
+      return "loginChangePasswordDefinition";
+    } else {
+      return "PageNotFound";
     }
+  }
 
-    @Override
-    protected String getPageSubtitleKey() {
-        return "login.changePass";
-    }
+  @Override
+  protected String getPageTitleKey() {
+    return "login.changePass";
+  }
+
+  @Override
+  protected String getPageSubtitleKey() {
+    return "login.changePass";
+  }
 }

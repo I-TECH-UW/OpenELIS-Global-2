@@ -1,26 +1,23 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.organization.valueholder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
 import javax.validation.constraints.Pattern;
-
 import org.hibernate.validator.constraints.URL;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.common.valueholder.EnumValueItemImpl;
@@ -30,250 +27,280 @@ import org.openelisglobal.common.valueholder.ValueHolderInterface;
 import org.openelisglobal.validation.annotations.SafeHtml;
 
 public class Organization extends EnumValueItemImpl implements SimpleBaseEntity<String> {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String city;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String cliaNum;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String id;
-    @URL
-    private String internetAddress;
-    @Pattern(regexp = ValidationHelper.YES_NO_REGEX)
-    private String isActive;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String mlsLabFlag;
-    @Pattern(regexp = ValidationHelper.YES_NO_REGEX)
-    private String mlsSentinelLabFlag;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String multipleUnit;
-    private ValueHolderInterface organization;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String organizationName;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String orgMltOrgMltId;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String pwsId;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String shortName;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String state;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String streetAddress;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String zipCode;
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String selectedOrgId;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String organizationLocalAbbreviation;
-    @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
-    private String code;
-    private Set<OrganizationType> organizationTypes;
-    private UUID fhirUuid;
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String city;
 
-    public Organization() {
-        super();
-        organization = new ValueHolder();
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String cliaNum;
 
-    public String getCity() {
-        return city;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String id;
 
-    public String getCliaNum() {
-        return cliaNum;
-    }
+  @URL private String internetAddress;
 
-    @Override
-    public String getId() {
-        return id;
-    }
+  @Pattern(regexp = ValidationHelper.YES_NO_REGEX)
+  private String isActive;
 
-    public String getConcatOrganizationLocalAbbreviationName() {
-        return organizationLocalAbbreviation + "-" + organizationName;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String mlsLabFlag;
 
-    public String getInternetAddress() {
-        return internetAddress;
-    }
+  @Pattern(regexp = ValidationHelper.YES_NO_REGEX)
+  private String mlsSentinelLabFlag;
 
-    @Override
-    public String getIsActive() {
-        return isActive;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String multipleUnit;
 
-    public String getMlsLabFlag() {
-        return mlsLabFlag;
-    }
+  private ValueHolderInterface organization;
 
-    public String getMlsSentinelLabFlag() {
-        return mlsSentinelLabFlag;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String organizationName;
 
-    public String getMultipleUnit() {
-        return multipleUnit;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String orgMltOrgMltId;
 
-    public String getOrgMltOrgMltId() {
-        return orgMltOrgMltId;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String pwsId;
 
-    public Organization getOrganization() {
-        return (Organization) organization.getValue();
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String shortName;
 
-    public String getOrganizationName() {
-        return organizationName;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String state;
 
-    public String getPwsId() {
-        return pwsId;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String streetAddress;
 
-    public String getShortName() {
-        return shortName;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String zipCode;
 
-    public String getState() {
-        return state;
-    }
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String selectedOrgId;
 
-    public String getStreetAddress() {
-        return streetAddress;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String organizationLocalAbbreviation;
 
-    public String getZipCode() {
-        return zipCode;
-    }
+  @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
+  private String code;
 
-    public void setCity(String city) {
-        this.city = city;
-    }
+  private Set<OrganizationType> organizationTypes;
+  private UUID fhirUuid;
 
-    public void setCliaNum(String cliaNum) {
-        this.cliaNum = cliaNum;
-    }
+  public Organization() {
+    super();
+    organization = new ValueHolder();
+  }
 
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
+  public String getCity() {
+    return city;
+  }
 
-    public void setInternetAddress(String internetAddress) {
-        this.internetAddress = internetAddress;
-    }
+  public String getCliaNum() {
+    return cliaNum;
+  }
 
-    @Override
-    public void setIsActive(String isActive) {
-        this.isActive = isActive;
-    }
+  @Override
+  public String getId() {
+    return id;
+  }
 
-    public void setMlsLabFlag(String mlsLabFlag) {
-        this.mlsLabFlag = mlsLabFlag;
-    }
+  @JsonIgnore
+  public String getConcatOrganizationLocalAbbreviationName() {
+    return organizationLocalAbbreviation + "-" + organizationName;
+  }
 
-    public void setMlsSentinelLabFlag(String mlsSentinelLabFlag) {
-        this.mlsSentinelLabFlag = mlsSentinelLabFlag;
-    }
+  public String getInternetAddress() {
+    return internetAddress;
+  }
 
-    public void setMultipleUnit(String multipleUnit) {
-        this.multipleUnit = multipleUnit;
-    }
+  @Override
+  public String getIsActive() {
+    return isActive;
+  }
 
-    public void setOrgMltOrgMltId(String orgMltOrgMltId) {
-        this.orgMltOrgMltId = orgMltOrgMltId;
-    }
+  public String getMlsLabFlag() {
+    return mlsLabFlag;
+  }
 
-    public void setOrganization(Organization organization) {
-        this.organization.setValue(organization);
-    }
+  public String getMlsSentinelLabFlag() {
+    return mlsSentinelLabFlag;
+  }
 
-    public void setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
-    }
+  public String getMultipleUnit() {
+    return multipleUnit;
+  }
 
-    public void setPwsId(String pwsId) {
-        this.pwsId = pwsId;
-    }
+  public String getOrgMltOrgMltId() {
+    return orgMltOrgMltId;
+  }
 
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
-    }
+  public Organization getOrganization() {
+    return (Organization) organization.getValue();
+  }
 
-    public void setState(String state) {
-        this.state = state;
-    }
+  public String getOrganizationName() {
+    return organizationName;
+  }
 
-    public void setStreetAddress(String streetAddress) {
-        this.streetAddress = streetAddress;
-    }
+  public String getPwsId() {
+    return pwsId;
+  }
 
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
-    }
+  public String getShortName() {
+    return shortName;
+  }
 
-    public void setSelectedOrgId(String selectedOrgId) {
-        this.selectedOrgId = selectedOrgId;
-    }
+  public String getState() {
+    return state;
+  }
 
-    public String getSelectedOrgId() {
-        return selectedOrgId;
-    }
+  public String getStreetAddress() {
+    return streetAddress;
+  }
 
-    private Set testSections = new HashSet(0);
+  public String getZipCode() {
+    return zipCode;
+  }
 
-    public Set getTestSections() {
-        return testSections;
-    }
+  public void setCity(String city) {
+    this.city = city;
+  }
 
-    public void setTestSections(Set testSections) {
-        this.testSections = testSections;
-    }
+  public void setCliaNum(String cliaNum) {
+    this.cliaNum = cliaNum;
+  }
 
-    public String getOrganizationLocalAbbreviation() {
-        return organizationLocalAbbreviation;
-    }
+  @Override
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public void setOrganizationLocalAbbreviation(String organizationLocalAbbreviation) {
-        this.organizationLocalAbbreviation = organizationLocalAbbreviation;
-    }
+  public void setInternetAddress(String internetAddress) {
+    this.internetAddress = internetAddress;
+  }
 
-    public String getDoubleName() {
-        return shortName + " = " + organizationName;
-    }
+  @Override
+  public void setIsActive(String isActive) {
+    this.isActive = isActive;
+  }
 
-    @Override
-    public String toString() {
-        return "Organization [id=" + id + ", isActive=" + isActive + ", organizationName=" + organizationName
-                + ", organizationLocalAbbreviation=" + organizationLocalAbbreviation + ", shortName=" + shortName + "]";
-    }
+  public void setMlsLabFlag(String mlsLabFlag) {
+    this.mlsLabFlag = mlsLabFlag;
+  }
 
-    public String getCode() {
-        return code;
-    }
+  public void setMlsSentinelLabFlag(String mlsSentinelLabFlag) {
+    this.mlsSentinelLabFlag = mlsSentinelLabFlag;
+  }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+  public void setMultipleUnit(String multipleUnit) {
+    this.multipleUnit = multipleUnit;
+  }
 
-    public Set<OrganizationType> getOrganizationTypes() {
-        return organizationTypes;
-    }
+  public void setOrgMltOrgMltId(String orgMltOrgMltId) {
+    this.orgMltOrgMltId = orgMltOrgMltId;
+  }
 
-    public void setOrganizationTypes(Set<OrganizationType> organizationTypes) {
-        this.organizationTypes = organizationTypes;
-    }
+  public void setOrganization(Organization organization) {
+    this.organization.setValue(organization);
+  }
 
-    public UUID getFhirUuid() {
-        return fhirUuid;
-    }
+  public void setOrganizationName(String organizationName) {
+    this.organizationName = organizationName;
+  }
 
-    public void setFhirUuid(UUID fhirUuid) {
-        this.fhirUuid = fhirUuid;
-    }
+  public void setPwsId(String pwsId) {
+    this.pwsId = pwsId;
+  }
 
-    public String getFhirUuidAsString() {
-        return fhirUuid == null ? "" : fhirUuid.toString();
-    }
+  public void setShortName(String shortName) {
+    this.shortName = shortName;
+  }
+
+  public void setState(String state) {
+    this.state = state;
+  }
+
+  public void setStreetAddress(String streetAddress) {
+    this.streetAddress = streetAddress;
+  }
+
+  public void setZipCode(String zipCode) {
+    this.zipCode = zipCode;
+  }
+
+  public void setSelectedOrgId(String selectedOrgId) {
+    this.selectedOrgId = selectedOrgId;
+  }
+
+  public String getSelectedOrgId() {
+    return selectedOrgId;
+  }
+
+  private Set testSections = new HashSet(0);
+
+  public Set getTestSections() {
+    return testSections;
+  }
+
+  public void setTestSections(Set testSections) {
+    this.testSections = testSections;
+  }
+
+  public String getOrganizationLocalAbbreviation() {
+    return organizationLocalAbbreviation;
+  }
+
+  public void setOrganizationLocalAbbreviation(String organizationLocalAbbreviation) {
+    this.organizationLocalAbbreviation = organizationLocalAbbreviation;
+  }
+
+  @JsonIgnore
+  public String getDoubleName() {
+    return shortName + " = " + organizationName;
+  }
+
+  @Override
+  public String toString() {
+    return "Organization [id="
+        + id
+        + ", isActive="
+        + isActive
+        + ", organizationName="
+        + organizationName
+        + ", organizationLocalAbbreviation="
+        + organizationLocalAbbreviation
+        + ", shortName="
+        + shortName
+        + "]";
+  }
+
+  public String getCode() {
+    return code;
+  }
+
+  public void setCode(String code) {
+    this.code = code;
+  }
+
+  public Set<OrganizationType> getOrganizationTypes() {
+    return organizationTypes;
+  }
+
+  public void setOrganizationTypes(Set<OrganizationType> organizationTypes) {
+    this.organizationTypes = organizationTypes;
+  }
+
+  public UUID getFhirUuid() {
+    return fhirUuid;
+  }
+
+  public void setFhirUuid(UUID fhirUuid) {
+    this.fhirUuid = fhirUuid;
+  }
+
+  @JsonIgnore
+  public String getFhirUuidAsString() {
+    return fhirUuid == null ? "" : fhirUuid.toString();
+  }
 }

@@ -2,7 +2,6 @@ package org.openelisglobal.userrole.service;
 
 import java.util.Collection;
 import java.util.List;
-
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
 import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
@@ -11,17 +10,17 @@ import org.openelisglobal.userrole.valueholder.UserRolePK;
 
 public interface UserRoleService extends BaseObjectService<UserRole, UserRolePK> {
 
-    List<String> getRoleIdsForUser(String userId);
+  List<String> getRoleIdsForUser(String userId);
 
-    boolean userInRole(String userId, String roleName);
+  boolean userInRole(String userId, String roleName);
 
-    boolean userInRole(String userId, Collection<String> roleNames);
+  boolean userInRole(String userId, Collection<String> roleNames);
 
-    void saveOrUpdateUserLabUnitRoles(UserLabUnitRoles labRoles);
+  void saveOrUpdateUserLabUnitRoles(UserLabUnitRoles labRoles);
 
-    UserLabUnitRoles getUserLabUnitRoles(String userId);
+  UserLabUnitRoles getUserLabUnitRoles(String userId);
 
-    void deleteLabUnitRoleMap(LabUnitRoleMap roleMap);
+  void deleteLabUnitRoleMap(LabUnitRoleMap roleMap);
 
-    List<UserLabUnitRoles> getAllUserLabUnitRoles();
+  List<UserLabUnitRoles> getAllUserLabUnitRoles();
 }

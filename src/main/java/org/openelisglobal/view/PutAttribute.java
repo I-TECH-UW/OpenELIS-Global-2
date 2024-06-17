@@ -8,32 +8,32 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "put-attribute")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PutAttribute {
-    @XmlAttribute(name = "name")
-    private String name;
-    @XmlAttribute(name = "value")
-    private String value;
+  @XmlAttribute(name = "name")
+  private String name;
 
-    public PutAttribute() {
-    }
+  @XmlAttribute(name = "value")
+  private String value;
 
-    public PutAttribute(String name, String value) {
-        this.name = name;
-        this.value = value;
-    }
+  public PutAttribute() {}
 
-    public String getName() {
-        return name;
-    }
+  public PutAttribute(String name, String value) {
+    this.name = name;
+    this.value = value;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getValue() {
-        return value;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+  public String getValue() {
+    return value;
+  }
+
+  public void setValue(String value) {
+    this.value = value;
+  }
 }

@@ -10,19 +10,17 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @Controller
 public class EndpointDocController {
 
-    private final RequestMappingHandlerMapping handlerMapping;
+  private final RequestMappingHandlerMapping handlerMapping;
 
-    @Autowired
-    public EndpointDocController(RequestMappingHandlerMapping handlerMapping) {
+  @Autowired
+  public EndpointDocController(RequestMappingHandlerMapping handlerMapping) {
 
-        this.handlerMapping = handlerMapping;
+    this.handlerMapping = handlerMapping;
+  }
 
-    }
+  @RequestMapping(value = "/endpointdoc", method = RequestMethod.GET)
+  public void show(Model model) {
 
-    @RequestMapping(value = "/endpointdoc", method = RequestMethod.GET)
-    public void show(Model model) {
-
-        model.addAttribute("handlerMethods", this.handlerMapping.getHandlerMethods());
-
-    }
+    model.addAttribute("handlerMethods", this.handlerMapping.getHandlerMethods());
+  }
 }

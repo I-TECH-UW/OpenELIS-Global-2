@@ -1,66 +1,66 @@
 package org.openelisglobal.dataexchange.fhir;
 
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.context.FhirVersionEnum;
+import ca.uhn.fhir.rest.client.apache.ApacheRestfulClientFactory;
+import ca.uhn.fhir.rest.client.api.IRestfulClientFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.context.FhirVersionEnum;
-import ca.uhn.fhir.rest.client.apache.ApacheRestfulClientFactory;
-import ca.uhn.fhir.rest.client.api.IRestfulClientFactory;
-
 @Configuration
 public class FhirConfig {
 
-    @Value("${org.openelisglobal.oe.fhir.system:http://openelis-global.org}")
-    private String oeFhirSystem;
-    @Value("${org.openelisglobal.fhirstore.uri}")
-    private String localFhirStorePath;
-    @Value("${org.openelisglobal.remote.source.uri}")
-    private String[] remoteStorePaths;
-    @Value("${org.openelisglobal.fhirstore.username:}")
-    private String username;
-    @Value("${org.openelisglobal.fhirstore.password:}")
-    private String password;
+  @Value("${org.openelisglobal.oe.fhir.system:http://openelis-global.org}")
+  private String oeFhirSystem;
 
-    @Autowired
-    CloseableHttpClient httpClient;
+  @Value("${org.openelisglobal.fhirstore.uri}")
+  private String localFhirStorePath;
 
-    public String getLocalFhirStorePath() {
-        return localFhirStorePath;
-    }
+  @Value("${org.openelisglobal.remote.source.uri}")
+  private String[] remoteStorePaths;
 
-    @Bean
-    public FhirContext fhirContext() {
-        FhirContext fhirContext = new FhirContext(FhirVersionEnum.R4);
-        configureFhirHttpClient(fhirContext);
-        return fhirContext;
-    }
+  @Value("${org.openelisglobal.fhirstore.username:}")
+  private String username;
 
-    public void configureFhirHttpClient(FhirContext fhirContext) {
-        IRestfulClientFactory clientFactory = new ApacheRestfulClientFactory(fhirContext);
+  @Value("${org.openelisglobal.fhirstore.password:}")
+  private String password;
 
-        clientFactory.setHttpClient(httpClient);
-        fhirContext.setRestfulClientFactory(clientFactory);
+  @Autowired CloseableHttpClient httpClient;
 
-    }
+  public String getLocalFhirStorePath() {
+    return localFhirStorePath;
+  }
 
-    public String getOeFhirSystem() {
-        return oeFhirSystem;
-    }
+  @Bean
+  public FhirContext fhirContext() {
+    FhirContext fhirContext = new FhirContext(FhirVersionEnum.R4);
+    configureFhirHttpClient(fhirContext);
+    return fhirContext;
+  }
 
-    public String getUsername() {
-        return username;
-    }
+  public void configureFhirHttpClient(FhirContext fhirContext) {
+    IRestfulClientFactory clientFactory = new ApacheRestfulClientFactory(fhirContext);
 
-    public String getPassword() {
-        return password;
-    }
+    clientFactory.setHttpClient(httpClient);
+    fhirContext.setRestfulClientFactory(clientFactory);
+  }
 
-    public String[] getRemoteStorePaths() {
-        return remoteStorePaths;
-    }
+  public String getOeFhirSystem() {
+    return oeFhirSystem;
+  }
 
+  public String getUsername() {
+    return username;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public String[] getRemoteStorePaths() {
+    return remoteStorePaths;
+  }
 }

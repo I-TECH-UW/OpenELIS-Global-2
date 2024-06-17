@@ -22,6 +22,5 @@ import org.openelisglobal.testdictionary.valueholder.TestDictionary;
 
 public interface TestDictionaryDAO extends BaseDAO<TestDictionary, String> {
 
-    public TestDictionary getTestDictionaryForTestId(String testId) throws LIMSRuntimeException;
-
+  public TestDictionary getTestDictionaryForTestId(String testId) throws LIMSRuntimeException;
 }

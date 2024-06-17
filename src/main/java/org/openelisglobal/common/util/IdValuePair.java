@@ -1,11 +1,11 @@
 package org.openelisglobal.common.util;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /*
  * Nothing special, just for when id's and values should be encapsulated.
@@ -14,48 +14,49 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * other than identity of equals then over-ride equals and hash.
  */
 
-public class IdValuePair implements Serializable{
-    
-  
-   private String id;
-   private String value;
-   private static final long serialVersionUID = 1L;
-    
-    @JsonCreator
-    public IdValuePair(@JsonProperty("id") String id, @JsonProperty("value") String value) {
-        this.setId(id);
-        this.setValue(value);
-    }
+public class IdValuePair implements Serializable {
 
-    public final void setId(String id) {
-        this.id = id;
-    }
+  private String id;
+  private String value;
+  private static final long serialVersionUID = 1L;
 
-    public String getId() {
-        return id;
-    }
+  @JsonCreator
+  public IdValuePair(@JsonProperty("id") String id, @JsonProperty("value") String value) {
+    this.setId(id);
+    this.setValue(value);
+  }
 
-    public final void setValue(String value) {
-        this.value = value;
-    }
+  public final void setId(String id) {
+    this.id = id;
+  }
 
-    public String getValue() {
-        return value;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public static void sortByValue(List<IdValuePair> list) {
-        if (!list.isEmpty()) {
-            Collections.sort(list, new Comparator<IdValuePair>() {
-                @Override
-                public int compare(IdValuePair o1, IdValuePair o2) {
-                    return o1.getValue().compareTo(o2.getValue());
-                }
-            });
-        }
-    }
+  public final void setValue(String value) {
+    this.value = value;
+  }
 
-    @Override
-    public String toString() {
-        return "id=" + id + ", value=" + value;
+  public String getValue() {
+    return value;
+  }
+
+  public static void sortByValue(List<IdValuePair> list) {
+    if (!list.isEmpty()) {
+      Collections.sort(
+          list,
+          new Comparator<IdValuePair>() {
+            @Override
+            public int compare(IdValuePair o1, IdValuePair o2) {
+              return o1.getValue().compareTo(o2.getValue());
+            }
+          });
     }
+  }
+
+  @Override
+  public String toString() {
+    return "id=" + id + ", value=" + value;
+  }
 }

@@ -1,7 +1,6 @@
 package org.openelisglobal.testreflex.service;
 
 import java.util.List;
-
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
@@ -10,36 +9,37 @@ import org.openelisglobal.testreflex.valueholder.TestReflex;
 import org.openelisglobal.testresult.valueholder.TestResult;
 
 public interface TestReflexService extends BaseObjectService<TestReflex, String> {
-    void getData(TestReflex testReflex);
+  void getData(TestReflex testReflex);
 
-    List<TestReflex> getPageOfTestReflexs(int startingRecNo);
+  List<TestReflex> getPageOfTestReflexs(int startingRecNo);
 
-    List<TestReflex> getTestReflexesByTestResult(TestResult testResult);
+  List<TestReflex> getTestReflexesByTestResult(TestResult testResult);
 
-    List<TestReflex> getTestReflexsByTestAndFlag(String testId, String flag);
+  List<TestReflex> getTestReflexsByTestAndFlag(String testId, String flag);
 
-    Integer getTotalTestReflexCount();
+  Integer getTotalTestReflexCount();
 
-    List<TestReflex> getAllTestReflexs();
+  List<TestReflex> getAllTestReflexs();
 
-    boolean isReflexedTest(Analysis analysis);
+  boolean isReflexedTest(Analysis analysis);
 
-    List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag);
+  List<TestReflex> getFlaggedTestReflexesByTestResult(TestResult testResult, String flag);
 
-    List<TestReflex> getTestReflexesByTestResultAndTestAnalyte(TestResult testResult, TestAnalyte testAnalyte);
+  List<TestReflex> getTestReflexesByTestResultAndTestAnalyte(
+      TestResult testResult, TestAnalyte testAnalyte);
 
-    List<TestReflex> getTestReflexsByTestResultAnalyteTest(String testResultId, String analyteId, String testId);
+  List<TestReflex> getTestReflexsByTestResultAnalyteTest(
+      String testResultId, String analyteId, String testId);
 
-    List<TestReflex> getTestReflexsByAnalyteAndTest(String analyteId, String testId);
-    
-    void saveOrUpdateReflexRule(ReflexRule reflexRule);
+  List<TestReflex> getTestReflexsByAnalyteAndTest(String analyteId, String testId);
 
-    List<ReflexRule> getAllReflexRules();
+  void saveOrUpdateReflexRule(ReflexRule reflexRule);
 
-    void deactivateReflexRule(String id); 
+  List<ReflexRule> getAllReflexRules();
 
-    ReflexRule getReflexRuleByAnalyteId(String analyteId);
+  void deactivateReflexRule(String id);
 
-    List<TestReflex> getTestReflexsByTestAnalyteId(String testAnalyteId) ;
+  ReflexRule getReflexRuleByAnalyteId(String analyteId);
 
+  List<TestReflex> getTestReflexsByTestAnalyteId(String testAnalyteId);
 }

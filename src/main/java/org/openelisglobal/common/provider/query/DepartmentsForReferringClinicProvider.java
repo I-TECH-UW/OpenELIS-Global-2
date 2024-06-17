@@ -20,11 +20,9 @@ package org.openelisglobal.common.provider.query;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.util.XMLUtil;
@@ -34,43 +32,48 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class DepartmentsForReferringClinicProvider extends BaseQueryProvider {
 
-    protected OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
+  protected OrganizationService organizationService =
+      SpringContext.getBean(OrganizationService.class);
 
-    /**
-     * @throws LIMSInvalidConfigurationException
-     * @see org.openelisglobal.common.provider.query.BaseQueryProvider#processRequest(javax.servlet.http.HttpServletRequest,
-     *      javax.servlet.http.HttpServletResponse)
-     */
-    @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+  /**
+   * @throws LIMSInvalidConfigurationException
+   * @see
+   *     org.openelisglobal.common.provider.query.BaseQueryProvider#processRequest(javax.servlet.http.HttpServletRequest,
+   *     javax.servlet.http.HttpServletResponse)
+   */
+  @Override
+  public void processRequest(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
 
-        StringBuilder xml = new StringBuilder();
-        String result = VALID;
+    StringBuilder xml = new StringBuilder();
+    String result = VALID;
 
-        List<Organization> districts = organizationService
-                .getOrganizationsByParentId(request.getParameter("referringClinicId")).stream()
-                .filter(org -> org.getIsActive().equals(IActionConstants.YES)).collect(Collectors.toList());
-        createDepartmentsXml(districts, request.getParameter("selectedValue"), xml);
+    List<Organization> districts =
+        organizationService
+            .getOrganizationsByParentId(request.getParameter("referringClinicId"))
+            .stream()
+            .filter(org -> org.getIsActive().equals(IActionConstants.YES))
+            .collect(Collectors.toList());
+    createDepartmentsXml(districts, request.getParameter("selectedValue"), xml);
 
-        ajaxServlet.sendData(xml.toString(), result, request, response);
+    ajaxServlet.sendData(xml.toString(), result, request, response);
+  }
+
+  private void createDepartmentsXml(
+      List<Organization> departments, String selectedValue, StringBuilder xml) {
+    xml.append("<departments>");
+    for (Organization org : departments) {
+      xml.append("<department ");
+      XMLUtil.appendAttributeKeyValue("id", org.getId(), xml);
+      XMLUtil.appendAttributeKeyValue("value", org.getOrganizationName(), xml);
+      xml.append(" />");
     }
+    xml.append("</departments>");
 
-    private void createDepartmentsXml(List<Organization> departments, String selectedValue, StringBuilder xml) {
-        xml.append("<departments>");
-        for (Organization org : departments) {
-            xml.append("<department ");
-            XMLUtil.appendAttributeKeyValue("id", org.getId(), xml);
-            XMLUtil.appendAttributeKeyValue("value", org.getOrganizationName(), xml);
-            xml.append(" />");
-        }
-        xml.append("</departments>");
-
-        // prevent potential DOS with StringBuilder
-        if (selectedValue.length() > 10) {
-            selectedValue = selectedValue.subSequence(0, 10) + "...";
-        }
-        XMLUtil.appendKeyValue("selectedValue", selectedValue, xml);
+    // prevent potential DOS with StringBuilder
+    if (selectedValue.length() > 10) {
+      selectedValue = selectedValue.subSequence(0, 10) + "...";
     }
-
+    XMLUtil.appendKeyValue("selectedValue", selectedValue, xml);
+  }
 }

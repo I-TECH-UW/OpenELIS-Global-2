@@ -5,37 +5,36 @@ import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFac
 import org.openelisglobal.validation.annotations.SafeHtml;
 
 public class LabNumberManagementForm {
-    
-    private AccessionFormat labNumberType;
 
-    private Boolean usePrefix;
+  private AccessionFormat labNumberType;
 
-    @Length(max = 5, min = 0)
-    @SafeHtml
-    private String alphanumPrefix;
+  private Boolean usePrefix;
 
-    public AccessionFormat getLabNumberType() {
-        return labNumberType;
-    }
+  @Length(max = 5, min = 0)
+  @SafeHtml
+  private String alphanumPrefix;
 
-    public void setLabNumberType(AccessionFormat labNumberType) {
-        this.labNumberType = labNumberType;
-    }
+  public AccessionFormat getLabNumberType() {
+    return labNumberType;
+  }
 
-    public Boolean getUsePrefix() {
-        return usePrefix;
-    }
+  public void setLabNumberType(AccessionFormat labNumberType) {
+    this.labNumberType = labNumberType;
+  }
 
-    public void setUsePrefix(Boolean usePrefix) {
-        this.usePrefix = usePrefix;
-    }
+  public Boolean getUsePrefix() {
+    return usePrefix;
+  }
 
-    public String getAlphanumPrefix() {
-        return alphanumPrefix;
-    }
+  public void setUsePrefix(Boolean usePrefix) {
+    this.usePrefix = usePrefix;
+  }
 
-    public void setAlphanumPrefix(String alphanumPrefix) {
-        this.alphanumPrefix = alphanumPrefix;
-    }
+  public String getAlphanumPrefix() {
+    return alphanumPrefix;
+  }
 
+  public void setAlphanumPrefix(String alphanumPrefix) {
+    this.alphanumPrefix = alphanumPrefix;
+  }
 }

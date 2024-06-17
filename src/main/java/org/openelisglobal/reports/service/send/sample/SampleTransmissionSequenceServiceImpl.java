@@ -7,17 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SampleTransmissionSequenceServiceImpl extends AuditableBaseObjectServiceImpl<SampleTransmissionSequence, String>
-        implements SampleTransmissionSequenceService {
-    @Autowired
-    protected SampleTransmissionSequenceDAO baseObjectDAO;
+public class SampleTransmissionSequenceServiceImpl
+    extends AuditableBaseObjectServiceImpl<SampleTransmissionSequence, String>
+    implements SampleTransmissionSequenceService {
+  @Autowired protected SampleTransmissionSequenceDAO baseObjectDAO;
 
-    SampleTransmissionSequenceServiceImpl() {
-        super(SampleTransmissionSequence.class);
-    }
+  SampleTransmissionSequenceServiceImpl() {
+    super(SampleTransmissionSequence.class);
+  }
 
-    @Override
-    protected SampleTransmissionSequenceDAO getBaseObjectDAO() {
-        return baseObjectDAO;
-    }
+  @Override
+  protected SampleTransmissionSequenceDAO getBaseObjectDAO() {
+    return baseObjectDAO;
+  }
 }

@@ -14,22 +14,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class ProviderController {
 
-    @Autowired
-    private ProviderService providerService;
-    @Autowired
-    private PersonService personService;
+  @Autowired private ProviderService providerService;
+  @Autowired private PersonService personService;
 
-    @GetMapping(value = "/Provider/raw/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public Provider getProvider(@PathVariable String id) {
-        Provider provider = providerService.get(id);
-        return provider;
-    }
+  @GetMapping(value = "/Provider/raw/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseBody
+  public Provider getProvider(@PathVariable String id) {
+    Provider provider = providerService.get(id);
+    return provider;
+  }
 
-    @GetMapping(value = "/Provider/Person/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public Person getPerson(@PathVariable String id) {
-        Person person = personService.get(id);
-        return person;
-    }
+  @GetMapping(value = "/Provider/Person/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseBody
+  public Person getPerson(@PathVariable String id) {
+    Person person = personService.get(id);
+    return person;
+  }
 }
