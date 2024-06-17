@@ -8,9 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class LabComponentDAOImpl extends BaseDAOImpl<LabComponent, String> implements LabComponentDAO {
+public class LabComponentDAOImpl extends BaseDAOImpl<LabComponent, String>
+    implements LabComponentDAO {
 
-    public LabComponentDAOImpl() {
-        super(LabComponent.class);
-    }
+  public LabComponentDAOImpl() {
+    super(LabComponent.class);
+  }
 }

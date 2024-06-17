@@ -7,10 +7,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AnalyzerExperimentDAOImpl extends BaseDAOImpl<AnalyzerExperiment, Integer>
-        implements AnalyzerExperimentDAO {
+    implements AnalyzerExperimentDAO {
 
-    public AnalyzerExperimentDAOImpl() {
-        super(AnalyzerExperiment.class);
-    }
-
+  public AnalyzerExperimentDAOImpl() {
+    super(AnalyzerExperiment.class);
+  }
 }

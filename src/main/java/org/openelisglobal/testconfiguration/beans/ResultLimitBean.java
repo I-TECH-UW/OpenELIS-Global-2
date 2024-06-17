@@ -19,62 +19,58 @@ package org.openelisglobal.testconfiguration.beans;
 import org.openelisglobal.common.util.validator.GenericValidator;
 
 public class ResultLimitBean {
-    private String gender;
-    private String ageRange;
-    private String normalRange;
-    private String validRange;
-    private String reportingRange;
-    private String criticalRange;
+  private String gender;
+  private String ageRange;
+  private String normalRange;
+  private String validRange;
+  private String reportingRange;
+  private String criticalRange;
 
+  public String getGender() {
+    return gender;
+  }
 
+  public void setGender(String gender) {
+    this.gender = GenericValidator.isBlankOrNull(gender) ? "n/a" : gender;
+  }
 
-    public String getGender() {
-        return gender;
-    }
+  public String getAgeRange() {
+    return ageRange;
+  }
 
-    public void setGender(String gender) {
-        this.gender = GenericValidator.isBlankOrNull(gender) ? "n/a" : gender;
-    }
+  public void setAgeRange(String ageRange) {
+    this.ageRange = ageRange;
+  }
 
-    public String getAgeRange() {
-        return ageRange;
-    }
+  public String getNormalRange() {
+    return normalRange;
+  }
 
-    public void setAgeRange(String ageRange) {
-        this.ageRange = ageRange;
-    }
+  public void setNormalRange(String normalRange) {
+    this.normalRange = normalRange;
+  }
 
-    public String getNormalRange() {
-        return normalRange;
-    }
+  public String getValidRange() {
+    return validRange;
+  }
 
-    public void setNormalRange(String normalRange) {
-        this.normalRange = normalRange;
-    }
+  public void setValidRange(String validRange) {
+    this.validRange = validRange;
+  }
 
-    public String getValidRange() {
-        return validRange;
-    }
+  public String getReportingRange() {
+    return reportingRange;
+  }
 
-    public void setValidRange(String validRange) {
-        this.validRange = validRange;
-    }
+  public void setReportingRange(String reportingRange) {
+    this.reportingRange = reportingRange;
+  }
 
-    public String getReportingRange() {
-        return reportingRange;
-    }
+  public String getCriticalRange() {
+    return criticalRange;
+  }
 
-    public void setReportingRange(String reportingRange) {
-        this.reportingRange = reportingRange;
-    }
-
-    public String getCriticalRange() {
-        return criticalRange;
-    }
-
-    public void setCriticalRange(String criticalRange) {
-        this.criticalRange = criticalRange;
-    }
-
-   
+  public void setCriticalRange(String criticalRange) {
+    this.criticalRange = criticalRange;
+  }
 }

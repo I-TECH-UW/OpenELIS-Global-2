@@ -19,17 +19,17 @@ import org.openelisglobal.reports.action.implementation.reportBeans.TestSegmente
 
 public class HaitiLnspEpiExportReport extends HaitiLNSPExportReport {
 
-    @Override
-    public byte[] runReport() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(TestSegmentedExportBean.getHeader());
-        builder.append("\n");
+  @Override
+  public byte[] runReport() {
+    StringBuilder builder = new StringBuilder();
+    builder.append(TestSegmentedExportBean.getHeader());
+    builder.append("\n");
 
-        for (TestSegmentedExportBean testLine : testExportList) {
-            builder.append(testLine.getAsCSVString());
-            builder.append("\n");
-        }
-
-        return builder.toString().getBytes();
+    for (TestSegmentedExportBean testLine : testExportList) {
+      builder.append(testLine.getAsCSVString());
+      builder.append("\n");
     }
+
+    return builder.toString().getBytes();
+  }
 }

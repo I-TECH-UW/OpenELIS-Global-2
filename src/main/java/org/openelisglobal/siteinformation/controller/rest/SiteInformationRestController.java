@@ -4,12 +4,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.openelisglobal.common.controller.BaseController;
@@ -56,371 +54,406 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @SessionAttributes("form")
 public class SiteInformationRestController extends BaseController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "paramName", "value", "localization.localeValues*" };
+  private static final String[] ALLOWED_FIELDS =
+      new String[] {"paramName", "value", "localization.localeValues*"};
 
-    @Autowired
-    SiteInformationFormValidator formValidator;
-    @Autowired
-    private SiteInformationService siteInformationService;
-    @Autowired
-    private LocalizationService localizationService;
-    @Autowired
-    private SiteInformationDomainService siteInformationDomainService;
-    @Autowired
-    private DictionaryService dictionaryService;
-    @Autowired
-    private SampleService sampleService;
-    @Autowired
-    private LocaleResolver localeResolver;
+  @Autowired SiteInformationFormValidator formValidator;
+  @Autowired private SiteInformationService siteInformationService;
+  @Autowired private LocalizationService localizationService;
+  @Autowired private SiteInformationDomainService siteInformationDomainService;
+  @Autowired private DictionaryService dictionaryService;
+  @Autowired private SampleService sampleService;
+  @Autowired private LocaleResolver localeResolver;
 
-    @ModelAttribute("form")
-    public SiteInformationForm form(HttpServletRequest request) {
-        SiteInformationForm form = new SiteInformationForm();
-        setupFormForRequest(form, request);
-        return form;
+  @ModelAttribute("form")
+  public SiteInformationForm form(HttpServletRequest request) {
+    SiteInformationForm form = new SiteInformationForm();
+    setupFormForRequest(form, request);
+    return form;
+  }
+
+  private static final String ACCESSION_NUMBER_PREFIX = "Accession number prefix";
+  private SiteInformationDomain SITE_IDENTITY_DOMAIN;
+  private SiteInformationDomain RESULT_CONFIG_DOMAIN;
+
+  @PostConstruct
+  private void initialize() {
+    SITE_IDENTITY_DOMAIN = siteInformationDomainService.getByName("siteIdentity");
+    RESULT_CONFIG_DOMAIN = siteInformationDomainService.getByName("resultConfiguration");
+  }
+
+  @InitBinder
+  public void initBinder(WebDataBinder binder) {
+    binder.setAllowedFields(ALLOWED_FIELDS);
+  }
+
+  @GetMapping(
+      value = {
+        "/NonConformityConfiguration",
+        "/WorkplanConfiguration",
+        "/PrintedReportsConfiguration",
+        "/SampleEntryConfig",
+        "/ResultConfiguration",
+        "/MenuStatementConfig",
+        "/PatientConfiguration",
+        "/ValidationConfiguration",
+        "/SiteInformation",
+        "/NextPreviousNonConformityConfiguration",
+        "/NextPreviousWorkplanConfiguration",
+        "/NextPreviousPrintedReportsConfiguration",
+        "/NextPreviousSampleEntryConfig",
+        "/NextPreviousResultConfiguration",
+        "/NextPreviousMenuStatementConfig",
+        "/NextPreviousPatientConfiguration",
+        "/NextPreviousSiteInformation",
+        "/NextPreviousValidationConfiguration"
+      },
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  // TODO decide if still needing NextPrevious (functionality is not implemented)
+  public SiteInformationForm showSiteInformation(
+      HttpServletRequest request, SiteInformationForm oldForm)
+      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException,
+          InstantiationException {
+    // protect form from injection arbitrary values on the get step (since csrf is
+    // not checked at this stage)
+    SiteInformationForm newForm = resetSessionFormToType(oldForm, SiteInformationForm.class);
+    setupFormForRequest(newForm, request);
+
+    String id = request.getParameter(ID);
+
+    request.setAttribute(ALLOW_EDITS_KEY, "true");
+    request.setAttribute(PREVIOUS_DISABLED, TRUE);
+    request.setAttribute(NEXT_DISABLED, TRUE);
+
+    boolean isNew = id == null || "0".equals(id);
+
+    if (!isNew) {
+      SiteInformation siteInformation = siteInformationService.get(id);
+
+      request.setAttribute(ID, siteInformation.getId());
+
+      newForm.setParamName(siteInformation.getName());
+      newForm.setDescription(getInstruction(siteInformation));
+      newForm.setValue(siteInformation.getValue());
+      setLocalizationValues(newForm, siteInformation);
+      newForm.setEncrypted(siteInformation.isEncrypted());
+      newForm.setValueType(siteInformation.getValueType());
+      newForm.setEditable(isEditable(siteInformation));
+      newForm.setTag(siteInformation.getTag());
+
+      if ("dictionary".equals(siteInformation.getValueType())) {
+        List<String> dictionaryValues = new ArrayList<>();
+
+        List<Dictionary> dictionaries =
+            dictionaryService.getDictionaryEntriesByCategoryId(
+                siteInformation.getDictionaryCategoryId());
+
+        for (Dictionary dictionary : dictionaries) {
+          dictionaryValues.add(dictionary.getDictEntry());
+        }
+
+        newForm.setDictionaryValues(dictionaryValues);
+      }
     }
 
-    private static final String ACCESSION_NUMBER_PREFIX = "Accession number prefix";
-    private SiteInformationDomain SITE_IDENTITY_DOMAIN;
-    private SiteInformationDomain RESULT_CONFIG_DOMAIN;
-
-    @PostConstruct
-    private void initialize() {
-        SITE_IDENTITY_DOMAIN = siteInformationDomainService.getByName("siteIdentity");
-        RESULT_CONFIG_DOMAIN = siteInformationDomainService.getByName("resultConfiguration");
+    String domainName = newForm.getSiteInfoDomainName();
+    if ("SiteInformation".equals(domainName)) {
+      if (isNew) {
+        request.setAttribute("key", "siteInformation.add.title");
+      } else {
+        request.setAttribute("key", "siteInformation.edit.title");
+      }
+    } else if ("ResultConfiguration".equals(domainName)) {
+      if (isNew) {
+        request.setAttribute("key", "resultConfiguration.add.title");
+      } else {
+        request.setAttribute("key", "resultConfiguration.edit.title");
+      }
     }
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.setAllowedFields(ALLOWED_FIELDS);
+    return (newForm);
+  }
+
+  private void setupFormForRequest(SiteInformationForm form, HttpServletRequest request) {
+    String path = request.getServletPath();
+    if (path.contains("NonConformityConfiguration")) {
+      form.setSiteInfoDomainName("non_conformityConfiguration");
+      form.setFormName("NonConformityConfigurationForm");
+      form.setFormAction("NonConformityConfiguration");
+
+    } else if (path.contains("WorkplanConfiguration")) {
+      form.setSiteInfoDomainName("WorkplanConfiguration");
+      form.setFormName("WorkplanConfigurationForm");
+      form.setFormAction("WorkplanConfiguration");
+
+    } else if (path.contains("PrintedReportsConfiguration")) {
+      form.setSiteInfoDomainName("PrintedReportsConfiguration");
+      form.setFormName("PrintedReportsConfigurationForm");
+      form.setFormAction("PrintedReportsConfiguration");
+
+    } else if (path.contains("SampleEntryConfig")) {
+      form.setSiteInfoDomainName("sampleEntryConfig");
+      form.setFormName("sampleEntryConfigForm");
+      form.setFormAction("SampleEntryConfig");
+
+    } else if (path.contains("ResultConfiguration")) {
+      form.setSiteInfoDomainName("ResultConfiguration");
+      form.setFormName("resultConfigurationForm");
+      form.setFormAction("ResultConfiguration");
+
+    } else if (path.contains("MenuStatementConfig")) {
+      form.setSiteInfoDomainName("MenuStatementConfig");
+      form.setFormName("MenuStatementConfigForm");
+      form.setFormAction("MenuStatementConfig");
+
+    } else if (path.contains("PatientConfiguration")) {
+      form.setSiteInfoDomainName("PaitientConfiguration");
+      form.setFormName("PatientConfigurationForm");
+      form.setFormAction("PatientConfiguration");
+
+    } else if (path.contains("ValidationConfiguration")) {
+      form.setSiteInfoDomainName("validationConfig");
+      form.setFormName("ValidationConfigurationForm");
+      form.setFormAction("ValidationConfiguration");
+
+    } else {
+      form.setSiteInfoDomainName("SiteInformation");
+      form.setFormName("SiteInformationForm");
+      form.setFormAction("SiteInformation");
     }
 
-     @GetMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
-            "/SampleEntryConfig", "/ResultConfiguration", "/MenuStatementConfig", "/PatientConfiguration",
-            "/ValidationConfiguration", "/SiteInformation", "/NextPreviousNonConformityConfiguration",
-            "/NextPreviousWorkplanConfiguration", "/NextPreviousPrintedReportsConfiguration",
-            "/NextPreviousSampleEntryConfig", "/NextPreviousResultConfiguration", "/NextPreviousMenuStatementConfig",
-            "/NextPreviousPatientConfiguration", "/NextPreviousSiteInformation",
-            "/NextPreviousValidationConfiguration" },  produces = MediaType.APPLICATION_JSON_VALUE)
-    // TODO decide if still needing NextPrevious (functionality is not implemented)
-    public SiteInformationForm showSiteInformation(HttpServletRequest request,
-    SiteInformationForm oldForm)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
-        // protect form from injection arbitrary values on the get step (since csrf is
-        // not checked at this stage)
-        SiteInformationForm newForm = resetSessionFormToType(oldForm, SiteInformationForm.class);
-        setupFormForRequest(newForm, request);
+    form.setCancelAction("Cancel" + form.getFormAction());
+  }
 
-        String id = request.getParameter(ID);
-
-        request.setAttribute(ALLOW_EDITS_KEY, "true");
-        request.setAttribute(PREVIOUS_DISABLED, TRUE);
-        request.setAttribute(NEXT_DISABLED, TRUE);
-
-        boolean isNew = id == null || "0".equals(id);
-
-        if (!isNew) {
-            SiteInformation siteInformation = siteInformationService.get(id);
-
-            request.setAttribute(ID, siteInformation.getId());
-
-            newForm.setParamName(siteInformation.getName());
-            newForm.setDescription(getInstruction(siteInformation));
-            newForm.setValue(siteInformation.getValue());
-            setLocalizationValues(newForm, siteInformation);
-            newForm.setEncrypted(siteInformation.isEncrypted());
-            newForm.setValueType(siteInformation.getValueType());
-            newForm.setEditable(isEditable(siteInformation));
-            newForm.setTag(siteInformation.getTag());
-
-            if ("dictionary".equals(siteInformation.getValueType())) {
-                List<String> dictionaryValues = new ArrayList<>();
-
-                List<Dictionary> dictionaries = dictionaryService
-                        .getDictionaryEntriesByCategoryId(siteInformation.getDictionaryCategoryId());
-
-                for (Dictionary dictionary : dictionaries) {
-                    dictionaryValues.add(dictionary.getDictEntry());
-                }
-
-                newForm.setDictionaryValues(dictionaryValues);
-            }
-        }
-
-        String domainName = newForm.getSiteInfoDomainName();
-        if ("SiteInformation".equals(domainName)) {
-            if (isNew) {
-                request.setAttribute("key", "siteInformation.add.title");
-            } else {
-                request.setAttribute("key", "siteInformation.edit.title");
-            }
-        } else if ("ResultConfiguration".equals(domainName)) {
-            if (isNew) {
-                request.setAttribute("key", "resultConfiguration.add.title");
-            } else {
-                request.setAttribute("key", "resultConfiguration.edit.title");
-            }
-        }
-
-        return (newForm);
-
+  private String getInstruction(SiteInformation siteInformation) {
+    String instruction = MessageUtil.getMessage(siteInformation.getInstructionKey());
+    if (GenericValidator.isBlankOrNull(instruction)) {
+      instruction = MessageUtil.getMessage(siteInformation.getDescriptionKey());
     }
 
-    private void setupFormForRequest(SiteInformationForm form, HttpServletRequest request) {
-        String path = request.getServletPath();
-        if (path.contains("NonConformityConfiguration")) {
-            form.setSiteInfoDomainName("non_conformityConfiguration");
-            form.setFormName("NonConformityConfigurationForm");
-            form.setFormAction("NonConformityConfiguration");
+    return GenericValidator.isBlankOrNull(instruction)
+        ? siteInformation.getDescription()
+        : instruction;
+  }
 
-        } else if (path.contains("WorkplanConfiguration")) {
-            form.setSiteInfoDomainName("WorkplanConfiguration");
-            form.setFormName("WorkplanConfigurationForm");
-            form.setFormAction("WorkplanConfiguration");
+  private void setLocalizationValues(SiteInformationForm form, SiteInformation siteInformation) {
+    if ("localization".equals(siteInformation.getTag())) {
+      form.setLocalization(localizationService.get(siteInformation.getValue()));
+    }
+  }
 
-        } else if (path.contains("PrintedReportsConfiguration")) {
-            form.setSiteInfoDomainName("PrintedReportsConfiguration");
-            form.setFormName("PrintedReportsConfigurationForm");
-            form.setFormAction("PrintedReportsConfiguration");
+  private Boolean isEditable(SiteInformation siteInformation) {
+    if (ACCESSION_NUMBER_PREFIX.endsWith(siteInformation.getName())) {
+      return sampleService.getCount() == 0;
+    }
+    return Boolean.TRUE;
+  }
 
-        } else if (path.contains("SampleEntryConfig")) {
-            form.setSiteInfoDomainName("sampleEntryConfig");
-            form.setFormName("sampleEntryConfigForm");
-            form.setFormAction("SampleEntryConfig");
+  @PostMapping(
+      value = {
+        "/NonConformityConfiguration",
+        "/WorkplanConfiguration",
+        "/PrintedReportsConfiguration",
+        "/SampleEntryConfig",
+        "/ResultConfiguration",
+        "/MenuStatementConfig",
+        "/PatientConfiguration",
+        "/ValidationConfiguration",
+        "/SiteInformation"
+      },
+      consumes = MediaType.APPLICATION_JSON_VALUE)
+  public SiteInformationForm showUpdateSiteInformation(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      @RequestBody @Valid SiteInformationForm form,
+      BindingResult result,
+      SessionStatus status,
+      RedirectAttributes redirectAttributes) {
+    formValidator.validate(form, result);
+    if (result.hasErrors()) {
+      saveErrors(result);
+      return (form);
+    }
+    String forward;
 
-        } else if (path.contains("ResultConfiguration")) {
-            form.setSiteInfoDomainName("ResultConfiguration");
-            form.setFormName("resultConfigurationForm");
-            form.setFormAction("ResultConfiguration");
+    request.setAttribute(ALLOW_EDITS_KEY, "true");
+    request.setAttribute(PREVIOUS_DISABLED, "false");
+    request.setAttribute(NEXT_DISABLED, "false");
 
-        } else if (path.contains("MenuStatementConfig")) {
-            form.setSiteInfoDomainName("MenuStatementConfig");
-            form.setFormName("MenuStatementConfigForm");
-            form.setFormAction("MenuStatementConfig");
+    String id = request.getParameter(ID);
+    boolean isNew = id == null || id.equals("0");
 
-        } else if (path.contains("PatientConfiguration")) {
-            form.setSiteInfoDomainName("PaitientConfiguration");
-            form.setFormName("PatientConfigurationForm");
-            form.setFormAction("PatientConfiguration");
+    // N.B. The reason for this branch is that localization does not actually update
+    // site information, it updates the
+    // localization table
+    if ("localization".equals(form.getTag())) {
+      String localizationId = form.getValue();
+      forward = validateAndUpdateLocalization(request, localizationId, form.getLocalization());
+    } else {
+      forward = validateAndUpdateSiteInformation(request, response, form, isNew);
+    }
+    // makes the changes take effect immediately
+    ConfigurationProperties.forceReload();
+    DisplayListService.getInstance().refreshLists();
+    if (FWD_SUCCESS_INSERT.equals(forward)) {
+      redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+      // signal to remove form from session
+      status.setComplete();
+    }
+    return (form);
+  }
 
-        } else if (path.contains("ValidationConfiguration")) {
-            form.setSiteInfoDomainName("validationConfig");
-            form.setFormName("ValidationConfigurationForm");
-            form.setFormAction("ValidationConfiguration");
+  private String validateAndUpdateLocalization(
+      HttpServletRequest request, String localizationId, Localization newLocalization) {
+    Localization localization = localizationService.get(localizationId);
+    localization.setSysUserId(getSysUserId(request));
+    String forward = FWD_SUCCESS_INSERT;
+    if (localizationService.languageChanged(localization, newLocalization)) {
+      Errors errors;
+      for (Locale locale : newLocalization.getAllActiveLocales()) {
+        localization.setLocalizedValue(locale, newLocalization.getLocalizedValue(locale));
+      }
+      try {
+        localizationService.update(localization);
+      } catch (LIMSRuntimeException e) {
+        errors = new BaseErrors();
+        errors.reject("errors.UpdateException");
+        saveErrors(errors);
+        forward = FWD_FAIL_INSERT;
+      }
+    }
+    return forward;
+  }
 
-        } else {
-            form.setSiteInfoDomainName("SiteInformation");
-            form.setFormName("SiteInformationForm");
-            form.setFormAction("SiteInformation");
-        }
+  public String validateAndUpdateSiteInformation(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      SiteInformationForm form,
+      boolean newSiteInformation) {
 
-        form.setCancelAction("Cancel" + form.getFormAction());
+    String name = form.getParamName();
+    String value = form.getValue();
+    Errors errors = new BaseErrors();
+
+    if (!isValid(request, name, value, errors)) {
+      return FWD_FAIL_INSERT;
     }
 
-    private String getInstruction(SiteInformation siteInformation) {
-        String instruction = MessageUtil.getMessage(siteInformation.getInstructionKey());
-        if (GenericValidator.isBlankOrNull(instruction)) {
-            instruction = MessageUtil.getMessage(siteInformation.getDescriptionKey());
-        }
+    String forward = FWD_SUCCESS_INSERT;
+    SiteInformation siteInformation = new SiteInformation();
 
-        return GenericValidator.isBlankOrNull(instruction) ? siteInformation.getDescription() : instruction;
+    if (newSiteInformation) {
+      siteInformation.setName(name);
+      siteInformation.setDescription(form.getDescription());
+      siteInformation.setValueType("text");
+      siteInformation.setEncrypted(form.isEncrypted());
+      siteInformation.setDomain(SITE_IDENTITY_DOMAIN);
+    } else {
+      siteInformation = siteInformationService.get(request.getParameter(ID));
     }
 
-    private void setLocalizationValues(SiteInformationForm form, SiteInformation siteInformation) {
-        if ("localization".equals(siteInformation.getTag())) {
-            form.setLocalization(localizationService.get(siteInformation.getValue()));
-        }
+    siteInformation.setValue(value);
+    siteInformation.setSysUserId(getSysUserId(request));
+
+    String domainName = form.getSiteInfoDomainName();
+
+    if ("SiteInformation".equals(domainName)) {
+      siteInformation.setDomain(SITE_IDENTITY_DOMAIN);
+    } else if ("ResultConfiguration".equals(domainName)) {
+      siteInformation.setDomain(RESULT_CONFIG_DOMAIN);
+    }
+    try {
+      siteInformationService.persistData(siteInformation, newSiteInformation);
+      if (siteInformation.getName().equals(Property.DEFAULT_LANG_LOCALE.getName())) {
+        localeResolver.setLocale(
+            request, response, Locale.forLanguageTag(siteInformation.getValue()));
+      }
+    } catch (LIMSRuntimeException e) {
+      String errorMsg;
+      if (e.getCause() instanceof StaleObjectStateException) {
+
+        errorMsg = "errors.OptimisticLockException";
+
+      } else {
+        errorMsg = "errors.UpdateException";
+      }
+
+      errors.reject(errorMsg);
+      saveErrors(errors);
+
+      // disable previous and next
+      request.setAttribute(PREVIOUS_DISABLED, TRUE);
+      request.setAttribute(NEXT_DISABLED, TRUE);
+      forward = FWD_FAIL_INSERT;
+    }
+    return forward;
+  }
+
+  private boolean isValid(HttpServletRequest request, String name, String value, Errors errors) {
+    if (GenericValidator.isBlankOrNull(name)) {
+      errors.reject("error.SiteInformation.name.required");
+      saveErrors(errors);
+
+      return false;
     }
 
-    private Boolean isEditable(SiteInformation siteInformation) {
-        if (ACCESSION_NUMBER_PREFIX.endsWith(siteInformation.getName())) {
-            return sampleService.getCount() == 0;
-        }
-        return Boolean.TRUE;
+    if ("phone format".equals(name) && !PhoneNumberService.validatePhoneFormat(value)) {
+      errors.reject("error.SiteInformation.phone.format");
+      saveErrors(errors);
+
+      return false;
     }
 
-   @PostMapping(value = { "/NonConformityConfiguration", "/WorkplanConfiguration", "/PrintedReportsConfiguration",
-            "/SampleEntryConfig", "/ResultConfiguration", "/MenuStatementConfig", "/PatientConfiguration",
-            "/ValidationConfiguration", "/SiteInformation" },  consumes = MediaType.APPLICATION_JSON_VALUE)
-    public SiteInformationForm showUpdateSiteInformation(HttpServletRequest request, HttpServletResponse response,
-             @RequestBody @Valid SiteInformationForm form, BindingResult result, SessionStatus status,
-            RedirectAttributes redirectAttributes) {
-        formValidator.validate(form, result);
-        if (result.hasErrors()) {
-            saveErrors(result);
-            return (form);
+    return true;
+  }
 
-        }
-        String forward;
+  @GetMapping(
+      value = {
+        "/CancelNonConformityConfiguration",
+        "/CancelWorkplanConfiguration",
+        "/CancelPrintedReportsConfiguration",
+        "/CancelSampleEntryConfig",
+        "/CancelResultConfiguration",
+        "/CancelMenuStatementConfig",
+        "/CancelPatientConfiguration",
+        "/CancelValidationConfiguration",
+        "/CancelSiteInformation"
+      },
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> cancelSiteInformation(HttpServletRequest request, SessionStatus status) {
+    status.setComplete();
+    return ResponseEntity.status(HttpStatus.OK).body("Cancellation successful");
+  }
 
-        request.setAttribute(ALLOW_EDITS_KEY, "true");
-        request.setAttribute(PREVIOUS_DISABLED, "false");
-        request.setAttribute(NEXT_DISABLED, "false");
-
-        String id = request.getParameter(ID);
-        boolean isNew = id == null || id.equals("0");
-
-        // N.B. The reason for this branch is that localization does not actually update
-        // site information, it updates the
-        // localization table
-        if ("localization".equals(form.getTag())) {
-            String localizationId = form.getValue();
-            forward = validateAndUpdateLocalization(request, localizationId, form.getLocalization());
-        } else {
-            forward = validateAndUpdateSiteInformation(request, response, form, isNew);
-        }
-        // makes the changes take effect immediately
-        ConfigurationProperties.forceReload();
-        DisplayListService.getInstance().refreshLists();
-        if (FWD_SUCCESS_INSERT.equals(forward)) {
-            redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-            // signal to remove form from session
-            status.setComplete();
-        }
-        return (form);
-       
+  @Override
+  protected String findLocalForward(String forward) {
+    String pathNoSuffix = URLUtil.getReourcePathFromRequest(request);
+    if (FWD_SUCCESS.equals(forward)) {
+      return "siteInformationDefinition";
+    } else if (FWD_FAIL.equals(forward)) {
+      return "redirect:/MasterListsPage";
+    } else if (FWD_SUCCESS_INSERT.equals(forward)) {
+      String url = pathNoSuffix + "Menu";
+      return "redirect:" + url;
+    } else if (FWD_FAIL_INSERT.equals(forward)) {
+      String url = pathNoSuffix;
+      return "redirect:" + url;
+    } else if (FWD_CANCEL.equals(forward)) {
+      String prefix = "Cancel";
+      String url = pathNoSuffix.substring(pathNoSuffix.indexOf(prefix) + prefix.length()) + "Menu";
+      return "redirect:" + url;
+    } else {
+      return "PageNotFound";
     }
+  }
 
-    private String validateAndUpdateLocalization(HttpServletRequest request, String localizationId,
-            Localization newLocalization) {
-        Localization localization = localizationService.get(localizationId);
-        localization.setSysUserId(getSysUserId(request));
-        String forward = FWD_SUCCESS_INSERT;
-        if (localizationService.languageChanged(localization, newLocalization)) {
-            Errors errors;
-            for (Locale locale : newLocalization.getAllActiveLocales()) {
-                localization.setLocalizedValue(locale, newLocalization.getLocalizedValue(locale));
-            }
-            try {
-                localizationService.update(localization);
-            } catch (LIMSRuntimeException e) {
-                errors = new BaseErrors();
-                errors.reject("errors.UpdateException");
-                saveErrors(errors);
-                forward = FWD_FAIL_INSERT;
-            }
-        }
-        return forward;
-    }
+  @Override
+  protected String getPageTitleKey() {
+    return (String) request.getAttribute("key");
+  }
 
-    public String validateAndUpdateSiteInformation(HttpServletRequest request, HttpServletResponse response,
-            SiteInformationForm form, boolean newSiteInformation) {
-
-        String name = form.getParamName();
-        String value = form.getValue();
-        Errors errors = new BaseErrors();
-
-        if (!isValid(request, name, value, errors)) {
-            return FWD_FAIL_INSERT;
-        }
-
-        String forward = FWD_SUCCESS_INSERT;
-        SiteInformation siteInformation = new SiteInformation();
-
-        if (newSiteInformation) {
-            siteInformation.setName(name);
-            siteInformation.setDescription(form.getDescription());
-            siteInformation.setValueType("text");
-            siteInformation.setEncrypted(form.isEncrypted());
-            siteInformation.setDomain(SITE_IDENTITY_DOMAIN);
-        } else {
-            siteInformation = siteInformationService.get(request.getParameter(ID));
-        }
-
-        siteInformation.setValue(value);
-        siteInformation.setSysUserId(getSysUserId(request));
-
-        String domainName = form.getSiteInfoDomainName();
-
-        if ("SiteInformation".equals(domainName)) {
-            siteInformation.setDomain(SITE_IDENTITY_DOMAIN);
-        } else if ("ResultConfiguration".equals(domainName)) {
-            siteInformation.setDomain(RESULT_CONFIG_DOMAIN);
-        }
-        try {
-            siteInformationService.persistData(siteInformation, newSiteInformation);
-            if (siteInformation.getName().equals(Property.DEFAULT_LANG_LOCALE.getName())) {
-                localeResolver.setLocale(request, response, Locale.forLanguageTag(siteInformation.getValue()));
-            }
-        } catch (LIMSRuntimeException e) {
-            String errorMsg;
-            if (e.getCause() instanceof StaleObjectStateException) {
-
-                errorMsg = "errors.OptimisticLockException";
-
-            } else {
-                errorMsg = "errors.UpdateException";
-            }
-
-            errors.reject(errorMsg);
-            saveErrors(errors);
-
-            // disable previous and next
-            request.setAttribute(PREVIOUS_DISABLED, TRUE);
-            request.setAttribute(NEXT_DISABLED, TRUE);
-            forward = FWD_FAIL_INSERT;
-
-        }
-        return forward;
-    }
-
-    private boolean isValid(HttpServletRequest request, String name, String value, Errors errors) {
-        if (GenericValidator.isBlankOrNull(name)) {
-            errors.reject("error.SiteInformation.name.required");
-            saveErrors(errors);
-
-            return false;
-        }
-
-        if ("phone format".equals(name) && !PhoneNumberService.validatePhoneFormat(value)) {
-            errors.reject("error.SiteInformation.phone.format");
-            saveErrors(errors);
-
-            return false;
-        }
-
-        return true;
-    }
-
-    @GetMapping(value = { "/CancelNonConformityConfiguration", "/CancelWorkplanConfiguration",
-            "/CancelPrintedReportsConfiguration", "/CancelSampleEntryConfig", "/CancelResultConfiguration",
-            "/CancelMenuStatementConfig", "/CancelPatientConfiguration", "/CancelValidationConfiguration",
-            "/CancelSiteInformation" },  produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> cancelSiteInformation(HttpServletRequest request, SessionStatus status) {
-        status.setComplete();
-        return ResponseEntity.status(HttpStatus.OK).body("Cancellation successful");
-    }
-
-    @Override
-    protected String findLocalForward(String forward) {
-        String pathNoSuffix = URLUtil.getReourcePathFromRequest(request);
-        if (FWD_SUCCESS.equals(forward)) {
-            return "siteInformationDefinition";
-        } else if (FWD_FAIL.equals(forward)) {
-            return "redirect:/MasterListsPage";
-        } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            String url = pathNoSuffix + "Menu";
-            return "redirect:" + url;
-        } else if (FWD_FAIL_INSERT.equals(forward)) {
-            String url = pathNoSuffix;
-            return "redirect:" + url;
-        } else if (FWD_CANCEL.equals(forward)) {
-            String prefix = "Cancel";
-            String url = pathNoSuffix.substring(pathNoSuffix.indexOf(prefix) + prefix.length()) + "Menu";
-            return "redirect:" + url;
-        } else {
-            return "PageNotFound";
-        }
-    }
-
-    @Override
-    protected String getPageTitleKey() {
-        return (String) request.getAttribute("key");
-    }
-
-    @Override
-    protected String getPageSubtitleKey() {
-        return (String) request.getAttribute("key");
-    }
-
+  @Override
+  protected String getPageSubtitleKey() {
+    return (String) request.getAttribute("key");
+  }
 }

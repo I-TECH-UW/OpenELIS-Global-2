@@ -17,31 +17,31 @@
 package org.openelisglobal.test.action;
 
 public class BatchTestStatusChangeBean {
-    private String labNo;
-    private String oldStatus;
-    private String newStatus;
+  private String labNo;
+  private String oldStatus;
+  private String newStatus;
 
-    public String getLabNo() {
-        return labNo;
-    }
+  public String getLabNo() {
+    return labNo;
+  }
 
-    public void setLabNo(String labNo) {
-        this.labNo = labNo;
-    }
+  public void setLabNo(String labNo) {
+    this.labNo = labNo;
+  }
 
-    public String getNewStatus() {
-        return newStatus;
-    }
+  public String getNewStatus() {
+    return newStatus;
+  }
 
-    public void setNewStatus(String newStatus) {
-        this.newStatus = newStatus;
-    }
+  public void setNewStatus(String newStatus) {
+    this.newStatus = newStatus;
+  }
 
-    public String getOldStatus() {
-        return oldStatus;
-    }
+  public String getOldStatus() {
+    return oldStatus;
+  }
 
-    public void setOldStatus(String oldStatus) {
-        this.oldStatus = oldStatus;
-    }
+  public void setOldStatus(String oldStatus) {
+    this.oldStatus = oldStatus;
+  }
 }

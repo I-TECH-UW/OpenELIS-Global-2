@@ -18,145 +18,144 @@ package org.openelisglobal.reports.action.implementation.reportBeans;
 
 import java.sql.Timestamp;
 
-/**
- */
+/** */
 public class ActivityReportBean {
 
-    private String accessionNumber;
-    private String receivedDate;
-    private String collectionDate;
-    private String resultDate;
-    private String patientOrTestName;
-    private String technician;
-    private String resultValue;
-    private String sampleStatus;
-    private String nonPrintingPatient;
+  private String accessionNumber;
+  private String receivedDate;
+  private String collectionDate;
+  private String resultDate;
+  private String patientOrTestName;
+  private String technician;
+  private String resultValue;
+  private String sampleStatus;
+  private String nonPrintingPatient;
 
-    private String patientLastName;
-    private String patientFirstName;
-    private String patientId;
-    private String turnaroundDays;
-    private String turnaroundHours;
+  private String patientLastName;
+  private String patientFirstName;
+  private String patientId;
+  private String turnaroundDays;
+  private String turnaroundHours;
 
-    private Timestamp activityTime;
+  private Timestamp activityTime;
 
-    public String getAccessionNumber() {
-        return accessionNumber;
-    }
+  public String getAccessionNumber() {
+    return accessionNumber;
+  }
 
-    public void setAccessionNumber(String accessionNumber) {
-        this.accessionNumber = accessionNumber;
-    }
+  public void setAccessionNumber(String accessionNumber) {
+    this.accessionNumber = accessionNumber;
+  }
 
-    public String getReceivedDate() {
-        return receivedDate;
-    }
+  public String getReceivedDate() {
+    return receivedDate;
+  }
 
-    public void setReceivedDate(String receivedDate) {
-        this.receivedDate = receivedDate;
-    }
+  public void setReceivedDate(String receivedDate) {
+    this.receivedDate = receivedDate;
+  }
 
-    public String getCollectionDate() {
-        return collectionDate;
-    }
+  public String getCollectionDate() {
+    return collectionDate;
+  }
 
-    public void setCollectionDate(String collectionDate) {
-        this.collectionDate = collectionDate;
-    }
+  public void setCollectionDate(String collectionDate) {
+    this.collectionDate = collectionDate;
+  }
 
-    public String getResultDate() {
-        return resultDate;
-    }
+  public String getResultDate() {
+    return resultDate;
+  }
 
-    public void setResultDate(String resultDate) {
-        this.resultDate = resultDate;
-    }
+  public void setResultDate(String resultDate) {
+    this.resultDate = resultDate;
+  }
 
-    public String getPatientOrTestName() {
-        return patientOrTestName;
-    }
+  public String getPatientOrTestName() {
+    return patientOrTestName;
+  }
 
-    public void setPatientOrTestName(String patientOrTestName) {
-        this.patientOrTestName = patientOrTestName;
-    }
+  public void setPatientOrTestName(String patientOrTestName) {
+    this.patientOrTestName = patientOrTestName;
+  }
 
-    public String getTechnician() {
-        return technician;
-    }
+  public String getTechnician() {
+    return technician;
+  }
 
-    public void setTechnician(String technician) {
-        this.technician = technician;
-    }
+  public void setTechnician(String technician) {
+    this.technician = technician;
+  }
 
-    public String getResultValue() {
-        return resultValue;
-    }
+  public String getResultValue() {
+    return resultValue;
+  }
 
-    public void setResultValue(String resultValue) {
-        this.resultValue = resultValue;
-    }
+  public void setResultValue(String resultValue) {
+    this.resultValue = resultValue;
+  }
 
-    public String getSampleStatus() {
-        return sampleStatus;
-    }
+  public String getSampleStatus() {
+    return sampleStatus;
+  }
 
-    public void setSampleStatus(String sampleStatus) {
-        this.sampleStatus = sampleStatus;
-    }
+  public void setSampleStatus(String sampleStatus) {
+    this.sampleStatus = sampleStatus;
+  }
 
-    public String getNonPrintingPatient() {
-        return nonPrintingPatient;
-    }
+  public String getNonPrintingPatient() {
+    return nonPrintingPatient;
+  }
 
-    public void setNonPrintingPatient(String nonPrintingPatient) {
-        this.nonPrintingPatient = nonPrintingPatient;
-    }
+  public void setNonPrintingPatient(String nonPrintingPatient) {
+    this.nonPrintingPatient = nonPrintingPatient;
+  }
 
-    public Timestamp getActivityTime() {
-        return activityTime;
-    }
+  public Timestamp getActivityTime() {
+    return activityTime;
+  }
 
-    public void setActivityTime(Timestamp activityTime) {
-        this.activityTime = activityTime;
-    }
+  public void setActivityTime(Timestamp activityTime) {
+    this.activityTime = activityTime;
+  }
 
-    public String getPatientLastName() {
-        return patientLastName;
-    }
+  public String getPatientLastName() {
+    return patientLastName;
+  }
 
-    public void setPatientLastName(String patientLastName) {
-        this.patientLastName = patientLastName;
-    }
+  public void setPatientLastName(String patientLastName) {
+    this.patientLastName = patientLastName;
+  }
 
-    public String getPatientFirstName() {
-        return patientFirstName;
-    }
+  public String getPatientFirstName() {
+    return patientFirstName;
+  }
 
-    public void setPatientFirstName(String patientFirstName) {
-        this.patientFirstName = patientFirstName;
-    }
+  public void setPatientFirstName(String patientFirstName) {
+    this.patientFirstName = patientFirstName;
+  }
 
-    public String getPatientId() {
-        return patientId;
-    }
+  public String getPatientId() {
+    return patientId;
+  }
 
-    public void setPatientId(String patientId) {
-        this.patientId = patientId;
-    }
+  public void setPatientId(String patientId) {
+    this.patientId = patientId;
+  }
 
-    public String getTurnaroundDays() {
-        return turnaroundDays;
-    }
+  public String getTurnaroundDays() {
+    return turnaroundDays;
+  }
 
-    public void setTurnaroundDays(String turnaroundDays) {
-        this.turnaroundDays = turnaroundDays;
-    }
+  public void setTurnaroundDays(String turnaroundDays) {
+    this.turnaroundDays = turnaroundDays;
+  }
 
-    public String getTurnaroundHours() {
-        return turnaroundHours;
-    }
+  public String getTurnaroundHours() {
+    return turnaroundHours;
+  }
 
-    public void setTurnaroundHours(String turnaroundHours) {
-        this.turnaroundHours = turnaroundHours;
-    }
+  public void setTurnaroundHours(String turnaroundHours) {
+    this.turnaroundHours = turnaroundHours;
+  }
 }

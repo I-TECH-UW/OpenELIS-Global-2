@@ -3,116 +3,116 @@
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="org.openelisglobal.analysis.valueholder.Analysis"
-		table="ANALYSIS" optimistic-lock="version" dynamic-update="true">
-		<id name="id"
-			type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
-			<column name="ID" precision="10" scale="0" />
-			<generator
-				class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
-				<param name="sequence_name">analysis_seq</param>
-			</generator>
-		</id>
-		<version name="lastupdated" column="LASTUPDATED"
-			type="timestamp" access="field" />
+    <class name="org.openelisglobal.analysis.valueholder.Analysis"
+        table="ANALYSIS" optimistic-lock="version" dynamic-update="true">
+        <id name="id"
+            type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="ID" precision="10" scale="0" />
+            <generator
+                class="org.openelisglobal.hibernate.resources.StringSequenceGenerator">
+                <param name="sequence_name">analysis_seq</param>
+            </generator>
+        </id>
+        <version name="lastupdated" column="LASTUPDATED"
+            type="timestamp" access="field" />
 
-		<many-to-one name="parentResult"
-			class="org.openelisglobal.result.valueholder.Result" fetch="select"
-			lazy="false">
-			<column name="PARENT_RESULT_ID" precision="10" scale="0" />
-		</many-to-one>
-		<many-to-one name="parentAnalysis"
-			class="org.openelisglobal.analysis.valueholder.Analysis"
-			fetch="select"
-			lazy="false">
-			<column name="PARENT_ANALYSIS_ID" precision="10" scale="0" />
-		</many-to-one>
-		<many-to-one name="test"
-			class="org.openelisglobal.test.valueholder.Test" fetch="select"
-			lazy="false">
-			<column name="TEST_ID" precision="10" scale="0" />
-		</many-to-one>
-		<many-to-one name="sampleItem"
-			class="org.openelisglobal.sampleitem.valueholder.SampleItem"
-			fetch="select" lazy="false">
-			<column name="SAMPITEM_ID" precision="10" scale="0" />
-		</many-to-one>
-		<many-to-one name="testSection"
-			class="org.openelisglobal.test.valueholder.TestSection"
-			fetch="select" lazy="false">
-			<column name="TEST_SECT_ID" precision="10" scale="0" />
-		</many-to-one>
-		<many-to-one name="panel"
-			class="org.openelisglobal.panel.valueholder.Panel" fetch="select"
-			lazy="false">
-			<column name="panel_id" precision="10" scale="0" />
-		</many-to-one>
-		<property name="revision"
-			type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
-			<column name="REVISION" precision="22" scale="0" />
-		</property>
-		<property name="status"
-			type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
-			<column name="STATUS" length="3" />
-		</property>
-		<property name="startedDate" type="java.sql.Date">
-			<column name="STARTED_DATE" length="7" />
-		</property>
-		<property name="completedDate" type="java.sql.Date">
-			<column name="COMPLETED_DATE" length="7" />
-		</property>
-		<property name="releasedDate" type="java.sql.Date">
-			<column name="RELEASED_DATE" length="7" />
-		</property>
-		<property name="enteredDate" type="java.sql.Timestamp">
-			<column name="ENTRY_DATE" length="7" />
-		</property>
-		<property name="printedDate" type="java.sql.Date">
-			<column name="PRINTED_DATE" length="7" />
-		</property>
-		<property name="isReportable" type="java.lang.String">
-			<column name="IS_REPORTABLE" length="1" />
-		</property>
-		<property name="soSendReadyDate" type="java.sql.Date">
-			<column name="SO_SEND_READY_DATE" length="7" />
-		</property>
-		<property name="soClientReference" type="java.lang.String">
-			<column name="SO_CLIENT_REFERENCE" length="240" />
-		</property>
-		<property name="soNotifyReceivedDate" type="java.sql.Date">
-			<column name="SO_NOTIFY_RECEIVED_DATE" length="7" />
-		</property>
-		<property name="soNotifySendDate" type="java.sql.Date">
-			<column name="SO_NOTIFY_SEND_DATE" length="7" />
-		</property>
-		<property name="soSendDate" type="java.sql.Date">
-			<column name="SO_SEND_DATE" length="7" />
-		</property>
-		<property name="soSendEntryBy" type="java.lang.String">
-			<column name="SO_SEND_ENTRY_BY" length="240" />
-		</property>
-		<property name="soSendEntryDate" type="java.sql.Date">
-			<column name="SO_SEND_ENTRY_DATE" length="7" />
-		</property>
-		<property name="analysisType" type="java.lang.String">
-			<column name="ANALYSIS_TYPE" length="10" not-null="true" />
-		</property>
-		<property name="triggeredReflex" type="boolean"
-			column="reflex_trigger" />
-		<property name="resultCalculated" type="boolean"
-			column="result_calculated" />	
-		<property name="statusId"
-			type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType"
-			column="status_id" precision="10" />
-		<property name="referredOut" column="referred_out"
-			type="java.lang.Boolean" />
-		<property name="sampleTypeName" column="type_of_sample_name"
-			type="java.lang.String" />
-		<property name="correctedSincePatientReport"
-			column="corrected" type="java.lang.Boolean" />
-		<property name="fhirUuid"
-			column="fhir_uuid" type="java.util.UUID" />
-	</class>
+        <many-to-one name="parentResult"
+            class="org.openelisglobal.result.valueholder.Result" fetch="select"
+            lazy="false">
+            <column name="PARENT_RESULT_ID" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="parentAnalysis"
+            class="org.openelisglobal.analysis.valueholder.Analysis"
+            fetch="select"
+            lazy="false">
+            <column name="PARENT_ANALYSIS_ID" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="test"
+            class="org.openelisglobal.test.valueholder.Test" fetch="select"
+            lazy="false">
+            <column name="TEST_ID" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="sampleItem"
+            class="org.openelisglobal.sampleitem.valueholder.SampleItem"
+            fetch="select" lazy="false">
+            <column name="SAMPITEM_ID" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="testSection"
+            class="org.openelisglobal.test.valueholder.TestSection"
+            fetch="select" lazy="false">
+            <column name="TEST_SECT_ID" precision="10" scale="0" />
+        </many-to-one>
+        <many-to-one name="panel"
+            class="org.openelisglobal.panel.valueholder.Panel" fetch="select"
+            lazy="false">
+            <column name="panel_id" precision="10" scale="0" />
+        </many-to-one>
+        <property name="revision"
+            type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="REVISION" precision="22" scale="0" />
+        </property>
+        <property name="status"
+            type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType">
+            <column name="STATUS" length="3" />
+        </property>
+        <property name="startedDate" type="java.sql.Date">
+            <column name="STARTED_DATE" length="7" />
+        </property>
+        <property name="completedDate" type="java.sql.Date">
+            <column name="COMPLETED_DATE" length="7" />
+        </property>
+        <property name="releasedDate" type="java.sql.Date">
+            <column name="RELEASED_DATE" length="7" />
+        </property>
+        <property name="enteredDate" type="java.sql.Timestamp">
+            <column name="ENTRY_DATE" length="7" />
+        </property>
+        <property name="printedDate" type="java.sql.Date">
+            <column name="PRINTED_DATE" length="7" />
+        </property>
+        <property name="isReportable" type="java.lang.String">
+            <column name="IS_REPORTABLE" length="1" />
+        </property>
+        <property name="soSendReadyDate" type="java.sql.Date">
+            <column name="SO_SEND_READY_DATE" length="7" />
+        </property>
+        <property name="soClientReference" type="java.lang.String">
+            <column name="SO_CLIENT_REFERENCE" length="240" />
+        </property>
+        <property name="soNotifyReceivedDate" type="java.sql.Date">
+            <column name="SO_NOTIFY_RECEIVED_DATE" length="7" />
+        </property>
+        <property name="soNotifySendDate" type="java.sql.Date">
+            <column name="SO_NOTIFY_SEND_DATE" length="7" />
+        </property>
+        <property name="soSendDate" type="java.sql.Date">
+            <column name="SO_SEND_DATE" length="7" />
+        </property>
+        <property name="soSendEntryBy" type="java.lang.String">
+            <column name="SO_SEND_ENTRY_BY" length="240" />
+        </property>
+        <property name="soSendEntryDate" type="java.sql.Date">
+            <column name="SO_SEND_ENTRY_DATE" length="7" />
+        </property>
+        <property name="analysisType" type="java.lang.String">
+            <column name="ANALYSIS_TYPE" length="10" not-null="true" />
+        </property>
+        <property name="triggeredReflex" type="boolean"
+            column="reflex_trigger" />
+        <property name="resultCalculated" type="boolean"
+            column="result_calculated" />
+        <property name="statusId"
+            type="org.openelisglobal.hibernate.resources.usertype.LIMSStringNumberUserType"
+            column="status_id" precision="10" />
+        <property name="referredOut" column="referred_out"
+            type="java.lang.Boolean" />
+        <property name="sampleTypeName" column="type_of_sample_name"
+            type="java.lang.String" />
+        <property name="correctedSincePatientReport"
+            column="corrected" type="java.lang.Boolean" />
+        <property name="fhirUuid"
+            column="fhir_uuid" type="java.util.UUID" />
+    </class>
 
 <!-- 	<!- bugzilla 1993 get sample analyses as reported on in results report  -->
 <!-- 		see main_report.jrxml for printed date update -> -->

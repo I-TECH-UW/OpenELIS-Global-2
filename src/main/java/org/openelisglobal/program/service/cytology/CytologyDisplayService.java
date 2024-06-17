@@ -6,9 +6,9 @@ import org.openelisglobal.program.valueholder.cytology.CytologySample;
 
 public interface CytologyDisplayService {
 
-    CytologyCaseViewDisplayItem convertToCaseDisplayItem(Integer cytologySampleId);
+  CytologyCaseViewDisplayItem convertToCaseDisplayItem(Integer cytologySampleId);
 
-    CytologyDisplayItem convertToDisplayItem(Integer cytologySampleId); 
+  CytologyDisplayItem convertToDisplayItem(Integer cytologySampleId);
 
-    CytologySample getCytologySampleWithLoadedAttributes(Integer cytologySampleId);
+  CytologySample getCytologySampleWithLoadedAttributes(Integer cytologySampleId);
 }

@@ -8,7 +8,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean \
     && apt-get -y update \
     && apt-get -y --no-install-recommends install \
-    git apache2-utils
+    git apache2-utils nodejs npm
 
 ##
 # Copy Source Code

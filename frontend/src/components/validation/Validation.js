@@ -109,7 +109,7 @@ const Validation = (props) => {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "20rem",
+      width: "28rem",
     },
   ];
 
@@ -290,17 +290,10 @@ const Validation = (props) => {
       case "pastNotes":
         return (
           <>
-            <div className="note">
-              <TextArea
-                id={"resultList" + row.id + ".pastNotes"}
-                name={"resultList[" + row.id + "].pastNotes"}
-                value={row.pastNotes}
-                disabled={true}
-                type="text"
-                labelText=""
-                rows={3}
-              ></TextArea>
-            </div>
+            <div
+              className="note"
+              dangerouslySetInnerHTML={{ __html: row.pastNotes }}
+            />
           </>
         );
 
