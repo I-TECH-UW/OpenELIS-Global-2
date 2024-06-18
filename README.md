@@ -13,7 +13,6 @@ You can find more information on how to set up OpenELIS at our
 
 [![Publish OpenELIS WebApp Docker Image Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish-and-test.yml.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish-and-test.yml.yml)
 
-
 [![End to End QA Tests Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/frontend-qa.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/frontend-qa.yml)
 
 ### Running OpenELIS in Docker
@@ -91,4 +90,4 @@ accessing any of these links, simply follow these steps:
 2.  After making changes to the [backend](./src/) directory, run the formatter
     to properly format the Java code
 
-        mvn clean install -P format
+        mvn spotless:apply
