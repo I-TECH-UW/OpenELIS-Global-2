@@ -80,3 +80,16 @@ accessing any of these links, simply follow these steps:
 2. Click on the "Advanced" button.
 3. Finally, click on "Proceed to https://localhost" to access the development
    environment.
+
+#### Formating the Souce code after Making changes
+
+1.  After making Ui changes to the [frontend](./frontend/) directory , run the
+    npm formatter to properly format the fornend code
+
+        cd forntend
+        npm run format
+
+2.  After making changes to the [Backend](./src/) , run the formatter to
+    properly format the Java code
+
+        mvn clean install -P format

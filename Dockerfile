@@ -3,7 +3,7 @@
 #
 FROM maven:3-jdk-11 as build
 
-RUN apt-get update && apt-get install -y nodejs npm
+RUN apt-get -y update
 RUN apt-get -y install git apache2-utils
 
 ##
