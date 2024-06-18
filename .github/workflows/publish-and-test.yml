@@ -19,7 +19,6 @@ env:
   DOCKER_TEST_NAME: ${{ vars.DOCKERHUB_USERNAME }}/openelis-global-2-test
 
 jobs:
-
   build-and-push-image-backend-dev:
     runs-on: ubuntu-latest
     permissions:
@@ -28,6 +27,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
         # Add support for more platforms with QEMU (optional)
         # https://github.com/docker/setup-qemu-action
@@ -62,7 +63,7 @@ jobs:
           cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache-dev
           cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache-dev,mode=max
           build-args: SKIP_SPOTLESS=true
-          
+
   build-and-push-image-frontend-dev:
     runs-on: ubuntu-latest
     permissions:

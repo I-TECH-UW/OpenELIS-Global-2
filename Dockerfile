@@ -16,7 +16,6 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
 ADD ./pom.xml /build/pom.xml
 ADD ./tools /build/tools
 ADD ./src /build/src
-ADD ./dev /build/dev
 
 WORKDIR /build
 
