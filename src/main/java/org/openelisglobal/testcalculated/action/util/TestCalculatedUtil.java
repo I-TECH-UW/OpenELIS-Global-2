@@ -172,7 +172,17 @@ public class TestCalculatedUtil {
                               Operation.OperationType.TEST_RESULT.toString());
                           break;
                         case INTEGER:
-                          function.append(Integer.valueOf(operation.getValue())).append(" ");
+                          try {
+                            if (operation.getValue().contains(".")) {
+                              double val = Double.parseDouble(operation.getValue());
+                              function.append(val).append(" ");
+                            } else {
+                              int number = Integer.parseInt(operation.getValue());
+                              function.append(number).append(" ");
+                            }
+                          } catch (NumberFormatException e) {
+                            
+                          }
                           break;
                         case MATH_FUNCTION:
                           if (operation.getValue().equals(Operation.IN_NORMAL_RANGE)) {
