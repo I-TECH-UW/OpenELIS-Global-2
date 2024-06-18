@@ -37,7 +37,7 @@ services:
 
   oe.openelis.org:
     container_name: openelisglobal-webapp
-    image: "${DOCKER_NAME}:${GITHUB_REF_NAME}"
+    image: "${DOCKER_TEST_NAME}:${GITHUB_REF_NAME}"
     depends_on:
       - database
       - certs
@@ -91,7 +91,7 @@ services:
       - source: hapi_application.yaml 
       
   frontend.openelis.org:
-    image: "${DOCKER_NAME}-frontend:${GITHUB_REF_NAME}"
+    image: "${DOCKER_TEST_NAME}-frontend:${GITHUB_REF_NAME}"
     container_name: openelisglobal-front-end  
     networks:
       - default
