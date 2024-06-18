@@ -58,6 +58,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.DOCKER_NAME }}:buildcache
           cache-to: type=registry,ref=${{ env.DOCKER_NAME }}:buildcache,mode=max
+          build-args: SKIP_SPOTLESS=true
 
   build-and-push-image-frontend:
     runs-on: ubuntu-latest
