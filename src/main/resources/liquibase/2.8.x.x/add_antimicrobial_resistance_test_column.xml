@@ -23,10 +23,11 @@
         <insert tableName="menu" schemaName="clinlims">
             <column name="id" valueSequenceNext="menu_seq" />
             <column name="parent_id"
-                valueComputed="(SELECT id FROM clinlims.menu WHERE element_id = 'menu_reports_whonet_export')" />
+                valueComputed="(SELECT id FROM clinlims.menu WHERE element_id = 'menu_reports')" />
             <column name="presentation_order" value="99" />
             <column name="element_id" value="menu_reports_whonet_export" />
-            <column name="action_url" value="/Report?type=patient&amp;report=whonet_export" />
+            <column name="action_url"
+                value="/Report?type=patient&amp;report=ExportWHONETReportByDate" />
             <column name="display_key" value="reports.export.whonet" />
             <column name="tool_tip_key" value="tooltip.reports.export.whonet" />
             <column name="new_window" value="false" />

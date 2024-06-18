@@ -5,12 +5,12 @@ import java.util.List;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.openelisglobal.internationalization.MessageUtil;
-import org.openelisglobal.reports.action.implementation.reportBeans.WHONETColumnBuilder;
+import org.openelisglobal.reports.action.implementation.reportBeans.WHONETRoutineColumnBuilder;
 import org.openelisglobal.reports.form.ReportForm;
 
 public class WHONETReport extends Report implements IReportParameterSetter, IReportCreator {
 
-  protected List<WHONETColumnBuilder> whonetColumnBuilder = new ArrayList<>();
+  protected List<WHONETRoutineColumnBuilder> whonetColumnBuilder = new ArrayList<>();
   protected String reportPath = "";
   protected DateRange dateRange;
 
@@ -50,7 +50,7 @@ public class WHONETReport extends Report implements IReportParameterSetter, IRep
 
   @Override
   protected String reportFileName() {
-    return "WHOEXPORTREPORT";
+    return "WHONETReport";
   }
 
   @Override
