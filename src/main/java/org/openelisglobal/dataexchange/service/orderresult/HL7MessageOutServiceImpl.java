@@ -8,22 +8,21 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class HL7MessageOutServiceImpl extends AuditableBaseObjectServiceImpl<HL7MessageOut, String>
-        implements HL7MessageOutService {
-    @Autowired
-    protected HL7MessageOutDAO baseObjectDAO;
+    implements HL7MessageOutService {
+  @Autowired protected HL7MessageOutDAO baseObjectDAO;
 
-    HL7MessageOutServiceImpl() {
-        super(HL7MessageOut.class);
-    }
+  HL7MessageOutServiceImpl() {
+    super(HL7MessageOut.class);
+  }
 
-    @Override
-    protected HL7MessageOutDAO getBaseObjectDAO() {
-        return baseObjectDAO;
-    }
+  @Override
+  protected HL7MessageOutDAO getBaseObjectDAO() {
+    return baseObjectDAO;
+  }
 
-    @Override
-    public HL7MessageOut getByData(String msg) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public HL7MessageOut getByData(String msg) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

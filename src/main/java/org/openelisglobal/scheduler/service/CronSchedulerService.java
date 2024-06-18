@@ -5,6 +5,5 @@ import org.openelisglobal.scheduler.valueholder.CronScheduler;
 
 public interface CronSchedulerService extends BaseObjectService<CronScheduler, String> {
 
-    CronScheduler getCronScheduleByJobName(String jobName);
-
+  CronScheduler getCronScheduleByJobName(String jobName);
 }

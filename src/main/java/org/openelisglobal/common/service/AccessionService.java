@@ -6,13 +6,15 @@ import org.openelisglobal.common.valueholder.AccessionNumberInfo.AccessionIdenti
 
 public interface AccessionService {
 
-    long getNextNumberNoIncrement(String prefix, AccessionFormat accessionFormat);
+  long getNextNumberNoIncrement(String prefix, AccessionFormat accessionFormat);
 
-    long getNextNumberIncrement(String prefix, AccessionFormat accessionFormat);
+  long getNextNumberIncrement(String prefix, AccessionFormat accessionFormat);
 
-    long getNextNumberIncrement(AccessionIdentity accessionIdentity) throws LIMSInvalidConfigurationException;
+  long getNextNumberIncrement(AccessionIdentity accessionIdentity)
+      throws LIMSInvalidConfigurationException;
 
-    long getNextNumberNoIncrement(AccessionIdentity accessionIdentity) throws LIMSInvalidConfigurationException;
+  long getNextNumberNoIncrement(AccessionIdentity accessionIdentity)
+      throws LIMSInvalidConfigurationException;
 
-    void setCurVal(String prefix, AccessionFormat accessionFormat, long curVal);
+  void setCurVal(String prefix, AccessionFormat accessionFormat, long curVal);
 }

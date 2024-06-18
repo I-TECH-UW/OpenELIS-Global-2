@@ -8,16 +8,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SampleDomainServiceImpl extends AuditableBaseObjectServiceImpl<SampleDomain, String>
-        implements SampleDomainService {
-    @Autowired
-    protected SampleDomainDAO baseObjectDAO;
+    implements SampleDomainService {
+  @Autowired protected SampleDomainDAO baseObjectDAO;
 
-    SampleDomainServiceImpl() {
-        super(SampleDomain.class);
-    }
+  SampleDomainServiceImpl() {
+    super(SampleDomain.class);
+  }
 
-    @Override
-    protected SampleDomainDAO getBaseObjectDAO() {
-        return baseObjectDAO;
-    }
+  @Override
+  protected SampleDomainDAO getBaseObjectDAO() {
+    return baseObjectDAO;
+  }
 }

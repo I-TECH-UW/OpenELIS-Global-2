@@ -7,8 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class SampleTrackingDAOImpl extends BaseDAOImpl<SampleTracking, String> implements SampleTrackingDAO {
-    SampleTrackingDAOImpl() {
-        super(SampleTracking.class);
-    }
+public class SampleTrackingDAOImpl extends BaseDAOImpl<SampleTracking, String>
+    implements SampleTrackingDAO {
+  SampleTrackingDAOImpl() {
+    super(SampleTracking.class);
+  }
 }

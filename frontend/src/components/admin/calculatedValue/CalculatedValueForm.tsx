@@ -16,10 +16,11 @@ import {
   Column,
   Section,
   Heading,
+  TextArea,
 } from "@carbon/react";
 import AutoComplete from "../../common/AutoComplete.js";
 import { Add, Subtract, Save } from "@carbon/react/icons";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import {
   CalculatedValueFormValues,
   CalculatedValueFormModel,
@@ -60,7 +61,7 @@ interface IdValue {
 interface NotificationContextType {
   notificationVisible: boolean;
   setNotificationVisible: (visible: boolean) => void;
-  setNotificationBody: (body: NotificationBody) => void;
+  addNotification: (body: NotificationBody) => void;
 }
 
 interface NotificationBody {
@@ -87,9 +88,10 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   const [sampleList, setSampleList] = useState([]);
   const [sampleTestList, setSampleTestList] = useState(TestListObj);
   const [loading, setLoading] = useState(true);
-  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+  const { notificationVisible, setNotificationVisible, addNotification } =
     useContext<NotificationContextType>(NotificationContext);
   const [mathFunctions, setMathFunctions] = useState([mathFunction]);
+  const intl = useIntl();
 
   useEffect(() => {
     getFromOpenElisServer("/rest/samples", fetchSamples);
@@ -146,6 +148,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
     sampleId: null,
     testId: null,
     result: null,
+    note: null,
     toggled: true,
     active: true,
     operations: [
@@ -179,16 +182,16 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   const handleDelete = (status) => {
     setNotificationVisible(true);
     if (status == "200") {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.success,
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id="delete.success.msg" />,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "delete.success.msg" }),
       });
     } else {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
-        message: <FormattedMessage id="delete.error.msg" />,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "delete.error.msg" }),
       });
     }
   };
@@ -319,15 +322,15 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
         "submit_" + index,
       ) as HTMLInputElement;
       element.disabled = true;
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.success,
-        title: <FormattedMessage id="notification.title" />,
+        title: intl.formatMessage({ id: "notification.title" }),
         message: "Succesfuly saved",
       });
     } else {
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
+        title: intl.formatMessage({ id: "notification.title" }),
         message: "Duplicate Calculation Name or Error while saving",
       });
     }
@@ -376,9 +379,9 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
       );
     } catch (error) {
       setNotificationVisible(true);
-      setNotificationBody({
+      addNotification({
         kind: NotificationKinds.error,
-        title: <FormattedMessage id="notification.title" />,
+        title: intl.formatMessage({ id: "notification.title" }),
         message: "Invalid Calculation Logic : " + error.message,
       });
     }
@@ -474,6 +477,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                 name="value"
                 type="number"
                 id={index + "_" + operationIndex + "_integer"}
+                step="any"
                 labelText={
                   <FormattedMessage id="testcalculation.label.integer" />
                 }
@@ -890,6 +894,21 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                               )}
                             </>
                           )}
+                          <div>&nbsp; &nbsp;</div>
+                          <div>
+                            <TextArea
+                              name="note"
+                              id={index + "_note"}
+                              rows={1}
+                              labelText={
+                                <FormattedMessage id="rulebuilder.label.addExternalNote" />
+                              }
+                              value={calculation.note}
+                              onChange={(e) => {
+                                handleCalculationFieldChange(e, index);
+                              }}
+                            />
+                          </div>
                         </div>
                       </div>
                       <Button

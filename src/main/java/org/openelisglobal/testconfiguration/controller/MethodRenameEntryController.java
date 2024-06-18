@@ -2,7 +2,6 @@ package org.openelisglobal.testconfiguration.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import org.hibernate.HibernateException;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.log.LogEvent;
@@ -24,89 +23,91 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class MethodRenameEntryController extends BaseController {
-    private static final String[] ALLOWED_FIELDS = new String[] { "methodId", "nameEnglish", "nameFrench" };
+  private static final String[] ALLOWED_FIELDS =
+      new String[] {"methodId", "nameEnglish", "nameFrench"};
 
-    @Autowired
-    LocalizationService localizationService;
-    @Autowired
-    MethodService methodService;
+  @Autowired LocalizationService localizationService;
+  @Autowired MethodService methodService;
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.setAllowedFields(ALLOWED_FIELDS);
+  @InitBinder
+  public void initBinder(WebDataBinder binder) {
+    binder.setAllowedFields(ALLOWED_FIELDS);
+  }
+
+  @RequestMapping(value = "/MethodRenameEntry", method = RequestMethod.GET)
+  public ModelAndView showMethodRenameEntry(HttpServletRequest request) {
+    MethodRenameEntryForm form = new MethodRenameEntryForm();
+
+    form.setMethodList(
+        DisplayListService.getInstance().getList(DisplayListService.ListType.METHODS));
+
+    return findForward(FWD_SUCCESS, form);
+  }
+
+  @Override
+  protected String findLocalForward(String forward) {
+    if (FWD_SUCCESS.equals(forward)) {
+      return "methodRenameDefinition";
+    } else if (FWD_SUCCESS_INSERT.equals(forward)) {
+      return "redirect:/MethodRenameEntry";
+    } else if (FWD_FAIL_INSERT.equals(forward)) {
+      return "methodRenameDefinition";
+    } else {
+      return "PageNotFound";
+    }
+  }
+
+  @RequestMapping(value = "/MethodRenameEntry", method = RequestMethod.POST)
+  public ModelAndView updateMethodRenameEntry(
+      HttpServletRequest request,
+      @ModelAttribute("form") @Valid MethodRenameEntryForm form,
+      BindingResult result) {
+    if (result.hasErrors()) {
+      saveErrors(result);
+      form.setMethodList(
+          DisplayListService.getInstance().getList(DisplayListService.ListType.METHODS));
+      return findForward(FWD_FAIL_INSERT, form);
     }
 
-    @RequestMapping(value = "/MethodRenameEntry", method = RequestMethod.GET)
-    public ModelAndView showMethodRenameEntry(HttpServletRequest request) {
-        MethodRenameEntryForm form = new MethodRenameEntryForm();
+    String methodId = form.getMethodId();
+    String nameEnglish = form.getNameEnglish();
+    String nameFrench = form.getNameFrench();
+    String userId = getSysUserId(request);
 
-        form.setMethodList(DisplayListService.getInstance().getList(DisplayListService.ListType.METHODS));
+    updateMethodNames(methodId, nameEnglish, nameFrench, userId);
 
-        return findForward(FWD_SUCCESS, form);
+    return findForward(FWD_SUCCESS_INSERT, form);
+  }
+
+  private void updateMethodNames(
+      String methodId, String nameEnglish, String nameFrench, String userId) {
+    Method method = methodService.get(methodId);
+
+    if (method != null) {
+
+      Localization name = method.getLocalization();
+      name.setEnglish(nameEnglish.trim());
+      name.setFrench(nameFrench.trim());
+      name.setSysUserId(userId);
+
+      try {
+        localizationService.update(name);
+      } catch (HibernateException e) {
+        LogEvent.logDebug(e);
+      }
     }
 
-    @Override
-    protected String findLocalForward(String forward) {
-        if (FWD_SUCCESS.equals(forward)) {
-            return "methodRenameDefinition";
-        } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-            return "redirect:/MethodRenameEntry";
-        } else if (FWD_FAIL_INSERT.equals(forward)) {
-            return "methodRenameDefinition";
-        } else {
-            return "PageNotFound";
-        }
-    }
+    // Refresh method names
+    DisplayListService.getInstance().getFreshList(DisplayListService.ListType.METHODS);
+  }
 
-    @RequestMapping(value = "/MethodRenameEntry", method = RequestMethod.POST)
-    public ModelAndView updateMethodRenameEntry(HttpServletRequest request,
-            @ModelAttribute("form") @Valid MethodRenameEntryForm form, BindingResult result) {
-        if (result.hasErrors()) {
-            saveErrors(result);
-            form.setMethodList(DisplayListService.getInstance().getList(DisplayListService.ListType.METHODS));
-            return findForward(FWD_FAIL_INSERT, form);
-        }
+  @Override
+  protected String getPageTitleKey() {
+    return null;
+  }
 
-        String methodId = form.getMethodId();
-        String nameEnglish = form.getNameEnglish();
-        String nameFrench = form.getNameFrench();
-        String userId = getSysUserId(request);
-
-        updateMethodNames(methodId, nameEnglish, nameFrench, userId);
-
-        return findForward(FWD_SUCCESS_INSERT, form);
-    }
-
-    private void updateMethodNames(String methodId, String nameEnglish, String nameFrench, String userId) {
-        Method method = methodService.get(methodId);
-
-        if (method != null) {
-
-            Localization name = method.getLocalization();
-            name.setEnglish(nameEnglish.trim());
-            name.setFrench(nameFrench.trim());
-            name.setSysUserId(userId);
-
-            try {
-                localizationService.update(name);
-            } catch (HibernateException e) {
-                LogEvent.logDebug(e);
-            }
-
-        }
-
-        // Refresh method names
-        DisplayListService.getInstance().getFreshList(DisplayListService.ListType.METHODS);
-    }
-
-    @Override
-    protected String getPageTitleKey() {
-        return null;
-    }
-
-    @Override
-    protected String getPageSubtitleKey() {
-        return null;
-    }
-
+  @Override
+  protected String getPageSubtitleKey() {
+    return null;
+  }
 }

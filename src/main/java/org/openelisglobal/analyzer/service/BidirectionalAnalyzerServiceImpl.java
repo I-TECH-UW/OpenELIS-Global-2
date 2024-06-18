@@ -1,5 +1,3 @@
 package org.openelisglobal.analyzer.service;
 
-public class BidirectionalAnalyzerServiceImpl {
-
-}
+public class BidirectionalAnalyzerServiceImpl {}

@@ -3,34 +3,34 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
         version="2.2">
-        
-	<persistence-unit
-		name="OpenELIS-Global-persistence-unit">
-		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-		<!-- converters -->
-		<class>org.itech.fhir.dataexport.core.model.converter.DataExportStatusConverter</class>
-		<class>org.itech.fhir.dataexport.core.model.converter.FhirResourceTypeConverter</class>
-		<class>org.openelisglobal.hibernate.converter.URIConverter</class>
-		<class>org.openelisglobal.security.converter.EncryptionConverter</class>
+    <persistence-unit
+        name="OpenELIS-Global-persistence-unit">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-		<!-- entities -->
-		<class>org.openelisglobal.login.valueholder.LoginUser</class>
-		<class>org.openelisglobal.gender.valueholder.Gender</class>
-		<class>org.openelisglobal.externalconnections.valueholder.ExternalConnection</class>
-		<class>org.openelisglobal.externalconnections.valueholder.ExternalConnectionContact</class>
-		<class>org.openelisglobal.externalconnections.valueholder.CertificateAuthenticationData</class>
-		<class>org.openelisglobal.externalconnections.valueholder.BasicAuthenticationData</class>
-		
-		<class>org.itech.fhir.dataexport.core.model.DataExportAttempt</class>
-		<class>org.itech.fhir.dataexport.core.model.DataExportTask</class>
-		
-		<class>org.ozeki.sms.valueholder.OzekiMessageOut</class>
+        <!-- converters -->
+        <class>org.itech.fhir.dataexport.core.model.converter.DataExportStatusConverter</class>
+        <class>org.itech.fhir.dataexport.core.model.converter.FhirResourceTypeConverter</class>
+        <class>org.openelisglobal.hibernate.converter.URIConverter</class>
+        <class>org.openelisglobal.security.converter.EncryptionConverter</class>
 
-		<properties>
-			<property name="hibernate.ejb.cfgfile"
-				value="hibernate/test-hibernate.cfg.xml" />
-		</properties>
+        <!-- entities -->
+        <class>org.openelisglobal.login.valueholder.LoginUser</class>
+        <class>org.openelisglobal.gender.valueholder.Gender</class>
+        <class>org.openelisglobal.externalconnections.valueholder.ExternalConnection</class>
+        <class>org.openelisglobal.externalconnections.valueholder.ExternalConnectionContact</class>
+        <class>org.openelisglobal.externalconnections.valueholder.CertificateAuthenticationData</class>
+        <class>org.openelisglobal.externalconnections.valueholder.BasicAuthenticationData</class>
 
-	</persistence-unit>
+        <class>org.itech.fhir.dataexport.core.model.DataExportAttempt</class>
+        <class>org.itech.fhir.dataexport.core.model.DataExportTask</class>
+
+        <class>org.ozeki.sms.valueholder.OzekiMessageOut</class>
+
+        <properties>
+            <property name="hibernate.ejb.cfgfile"
+                value="hibernate/test-hibernate.cfg.xml" />
+        </properties>
+
+    </persistence-unit>
 </persistence>

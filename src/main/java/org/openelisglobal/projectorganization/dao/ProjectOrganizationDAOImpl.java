@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class ProjectOrganizationDAOImpl extends BaseDAOImpl<ProjectOrganization, String>
-        implements ProjectOrganizationDAO {
-    ProjectOrganizationDAOImpl() {
-        super(ProjectOrganization.class);
-    }
+    implements ProjectOrganizationDAO {
+  ProjectOrganizationDAOImpl() {
+    super(ProjectOrganization.class);
+  }
 }

@@ -7,17 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AnalysisQaEventActionServiceImpl extends AuditableBaseObjectServiceImpl<AnalysisQaEventAction, String>
-        implements AnalysisQaEventActionService {
-    @Autowired
-    protected AnalysisQaEventActionDAO baseObjectDAO;
+public class AnalysisQaEventActionServiceImpl
+    extends AuditableBaseObjectServiceImpl<AnalysisQaEventAction, String>
+    implements AnalysisQaEventActionService {
+  @Autowired protected AnalysisQaEventActionDAO baseObjectDAO;
 
-    AnalysisQaEventActionServiceImpl() {
-        super(AnalysisQaEventAction.class);
-    }
+  AnalysisQaEventActionServiceImpl() {
+    super(AnalysisQaEventAction.class);
+  }
 
-    @Override
-    protected AnalysisQaEventActionDAO getBaseObjectDAO() {
-        return baseObjectDAO;
-    }
+  @Override
+  protected AnalysisQaEventActionDAO getBaseObjectDAO() {
+    return baseObjectDAO;
+  }
 }

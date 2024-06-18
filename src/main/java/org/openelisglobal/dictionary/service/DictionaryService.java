@@ -1,44 +1,42 @@
 package org.openelisglobal.dictionary.service;
 
 import java.util.List;
-
 import org.openelisglobal.common.service.BaseObjectService;
-import org.openelisglobal.dictionary.daoimpl.DictionaryDAOImpl;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
-import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public interface DictionaryService extends BaseObjectService<Dictionary, String> {
-    void getData(Dictionary dictionary);
+  void getData(Dictionary dictionary);
 
-    Dictionary getDictionaryByLocalAbbrev(Dictionary dictionary);
-    
-    public Dictionary getDictionaryByDictEntry(String dictEntry);
+  Dictionary getDictionaryByLocalAbbrev(Dictionary dictionary);
 
-    Dictionary getDictionaryById(String dictionaryId);
+  public Dictionary getDictionaryByDictEntry(String dictEntry);
 
-    boolean duplicateDictionaryExists(Dictionary dictionary);
+  Dictionary getDictionaryById(String dictionaryId);
 
-    boolean isDictionaryFrozen(Dictionary dictionary);
+  boolean duplicateDictionaryExists(Dictionary dictionary);
 
-    List<Dictionary> getDictionaryEntriesByCategoryId(String categoryId);
+  boolean isDictionaryFrozen(Dictionary dictionary);
 
-    List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String fieldName, String fieldValue,
-            boolean orderByDictEntry);
+  List<Dictionary> getDictionaryEntriesByCategoryId(String categoryId);
 
-    List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(String filter, String dictionaryCategory);
+  List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(
+      String fieldName, String fieldValue, boolean orderByDictEntry);
 
-    Dictionary getDictionaryEntrysByNameAndCategoryDescription(String dictionaryName, String categoryDescription);
+  List<Dictionary> getDictionaryEntrysByCategoryAbbreviation(
+      String filter, String dictionaryCategory);
 
-    List<Dictionary> getDictionaryEntrysByCategoryNameLocalizedSort(String dictionaryCategoryName);
+  Dictionary getDictionaryEntrysByNameAndCategoryDescription(
+      String dictionaryName, String categoryDescription);
 
-    Dictionary getDataForId(String dictId);
+  List<Dictionary> getDictionaryEntrysByCategoryNameLocalizedSort(String dictionaryCategoryName);
 
-    void update(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired);
+  Dictionary getDataForId(String dictId);
 
-    int getCountSearchedDictionaries(String searchString);
+  void update(Dictionary dictionary, boolean isDictionaryFrozenCheckRequired);
 
-    List<Dictionary> getPagesOfSearchedDictionaries(int startingRecNo, String searchString);
+  int getCountSearchedDictionaries(String searchString);
+
+  List<Dictionary> getPagesOfSearchedDictionaries(int startingRecNo, String searchString);
 }
