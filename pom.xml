@@ -16,7 +16,7 @@
     <minor.version>8</minor.version>
     <state.version>1</state.version>
     <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-    <fix.version>34</fix.version>
+    <fix.version>35</fix.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <liquibase.propertyFile>${project.basedir}/liquibase/liquibase.properties</liquibase.propertyFile>
     <castor.version>1.4.1</castor.version>
@@ -629,6 +629,9 @@
                 <exclude>**/target/**</exclude>
                 <exclude>bin/**</exclude>
                 <exclude>tmp/**</exclude>
+                <exclude>tools/Liquibase-Outdated/**</exclude>
+                <exclude>dataexport/**</exclude>
+                <exclude>plugins/**</exclude>
               </excludes>
               <trimTrailingWhitespace />
               <endWithNewline />
@@ -642,6 +645,9 @@
               </includes>
               <excludes>
                 <exclude>**/target/**</exclude>
+                <exclude>tools/Liquibase-Outdated/**</exclude>
+                <exclude>dataexport/**</exclude>
+                <exclude>plugins/**</exclude>
               </excludes>
               <prettier>
                 <!-- Formatter that Spotless supports and can format Markdown:
@@ -671,13 +677,33 @@
         </configuration>
         <executions>
           <execution>
+            <id>format</id>
             <goals>
               <goal>apply</goal>
             </goals>
-            <phase>compile</phase>
+            <phase>none</phase>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>format</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.diffplug.spotless</groupId>
+            <artifactId>spotless-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>format</id>
+                <phase>compile</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

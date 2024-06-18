@@ -52,6 +52,7 @@ function BarcodeConfiguration() {
       setLoading(true);
     } else {
       setBarcodeFormValues(res);
+      setPrePrintDontUseAltAccession(res.prePrintDontUseAltAccession);
       setLoading(false);
     }
   };
@@ -157,7 +158,7 @@ function BarcodeConfiguration() {
       ...barcodeFromValues,
       prePrintAltAccessionPrefix: e.target.value,
     });
-    setSaveButton(false);
+    //setSaveButton(false);
   }
 
   useEffect(() => {
@@ -532,6 +533,11 @@ function BarcodeConfiguration() {
                                       message:
                                         "Input should be alphanumeric and have a maximum length of 4 characters.",
                                     });
+                                  }
+                                  if (value.length < 4) {
+                                    setSaveButton(true);
+                                  } else {
+                                    setSaveButton(false);
                                   }
                                 }}
                               />

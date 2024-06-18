@@ -50,8 +50,10 @@ WORKDIR /build
 
 RUN --mount=type=cache,target=/root/.m2,sharing=locked \
     mvn dependency:go-offline 
+
+ARG SKIP_SPOTLESS="false"
 RUN --mount=type=cache,target=/root/.m2,sharing=locked \
-    mvn clean install -DskipTests
+    mvn clean install -DskipTests -Dspotless.check.skip=${SKIP_SPOTLESS}
 
 ##
 # Run Stage
