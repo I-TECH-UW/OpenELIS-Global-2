@@ -86,7 +86,7 @@ accessing any of these links, simply follow these steps:
 1.  After making UI changes to the [frontend](./frontend/) directory , run the
     formatter to properly format the Frontend code
 
-        cd forntend
+        cd frontend
         npm run format
 
 2.  After making changes to the [backend](./src/) , run the formatter to
