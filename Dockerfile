@@ -3,18 +3,19 @@
 #
 FROM maven:3-jdk-11 as build
 
-RUN apt-get -y update
-RUN apt-get -y install git apache2-utils
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
+    --mount=target=/var/cache/apt,type=cache,sharing=locked \
+    rm -f /etc/apt/apt.conf.d/docker-clean \
+    && apt-get -y update \
+    && apt-get -y --no-install-recommends install \
+    git apache2-utils nodejs npm
 
 ##
 # Copy Source Code
 #
-ADD .git /build/.git
-ADD .gitmodules /build/.gitmodules
 ADD ./pom.xml /build/pom.xml
 ADD ./tools /build/tools
 ADD ./src /build/src
-ADD ./install /build/install
 ADD ./dev /build/dev
 
 WORKDIR /build
@@ -22,23 +23,37 @@ WORKDIR /build
 ##
 # Checkout Dependencies
 #
-RUN git submodule update --init --recursive
-
-ARG DEFAULT_PW="adminADMIN!"
+# this ensures caching isn't used if there's a change in the dataexport
+ADD https://api.github.com/repos/I-TECH-UW/dataexport/git/refs/heads/master version.json 
+RUN git clone https://github.com/I-TECH-UW/dataexport.git /build/dataexport
 
 # OE Default Password
+ARG DEFAULT_PW="adminADMIN!"
+ADD ./install/createDefaultPassword.sh /build/install/createDefaultPassword.sh
 RUN ./install/createDefaultPassword.sh -c -p ${DEFAULT_PW}
 
 ##
 # Build DataExport
 #
-WORKDIR /build/dataexport
-
-RUN mvn clean install -DskipTests
+WORKDIR /build/dataexport/dataexport-core
+RUN --mount=type=cache,target=/root/.m2,sharing=locked \
+    mvn dependency:go-offline 
+RUN --mount=type=cache,target=/root/.m2,sharing=locked \
+    mvn clean install -DskipTests
+WORKDIR /build/dataexport/
+RUN --mount=type=cache,target=/root/.m2,sharing=locked \
+    mvn dependency:go-offline 
+RUN --mount=type=cache,target=/root/.m2,sharing=locked \
+    mvn clean install -DskipTests
 
 WORKDIR /build
 
-RUN	mvn clean install -DskipTests
+RUN --mount=type=cache,target=/root/.m2,sharing=locked \
+    mvn dependency:go-offline 
+
+ARG SKIP_SPOTLESS="false"
+RUN --mount=type=cache,target=/root/.m2,sharing=locked \
+    mvn clean install -DskipTests -Dspotless.check.skip=${SKIP_SPOTLESS}
 
 ##
 # Run Stage
@@ -51,11 +66,11 @@ ADD install/createDefaultPassword.sh ./
 #Clean out unneccessary files from tomcat (especially pre-existing applications) 
 RUN rm -rf /usr/local/tomcat/webapps/* \ 
     /usr/local/tomcat/conf/Catalina/localhost/manager.xml
-    
+
 #Deploy the war into tomcat image and point root to it
 ADD install/tomcat-resources/ROOT.war /usr/local/tomcat/webapps/ROOT.war
 COPY --from=build /build/target/OpenELIS-Global.war /usr/local/tomcat/webapps/OpenELIS-Global.war
-    
+
 #rewrite cataline.properties with our catalina.properties so it contains:
 #    org.apache.catalina.STRICT_SERVLET_COMPLIANCE=true
 #    org.apache.catalina.connector.RECYCLE_FACADES=true

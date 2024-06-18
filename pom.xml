@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.openelisglobal</groupId>
   <artifactId>openelisglobal</artifactId>
@@ -604,8 +606,8 @@
             <sortPom>
               <expandEmptyElements>false</expandEmptyElements>
             </sortPom>
-            <trimTrailingWhitespace/>
-            <endWithNewline/>
+            <trimTrailingWhitespace />
+            <endWithNewline />
             <indent>
               <spaces>true</spaces>
             </indent>
@@ -627,9 +629,12 @@
                 <exclude>**/target/**</exclude>
                 <exclude>bin/**</exclude>
                 <exclude>tmp/**</exclude>
+                <exclude>tools/Liquibase-Outdated/**</exclude>
+                <exclude>dataexport/**</exclude>
+                <exclude>plugins/**</exclude>
               </excludes>
-              <trimTrailingWhitespace/>
-              <endWithNewline/>
+              <trimTrailingWhitespace />
+              <endWithNewline />
               <indent>
                 <spaces>true</spaces>
               </indent>
@@ -640,6 +645,9 @@
               </includes>
               <excludes>
                 <exclude>**/target/**</exclude>
+                <exclude>tools/Liquibase-Outdated/**</exclude>
+                <exclude>dataexport/**</exclude>
+                <exclude>plugins/**</exclude>
               </excludes>
               <prettier>
                 <!-- Formatter that Spotless supports and can format Markdown:
@@ -654,10 +662,10 @@
           </formats>
           <!-- define a language-specific format -->
           <java>
-            <importOrder/>
+            <importOrder />
             <!-- standard import order -->
 
-            <removeUnusedImports/>
+            <removeUnusedImports />
 
             <!-- apply a specific flavor of google-java-format and reflow long strings -->
             <googleJavaFormat>

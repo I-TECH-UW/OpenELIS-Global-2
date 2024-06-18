@@ -27,6 +27,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -671,5 +673,9 @@ public class StringUtil {
       actualValue = actualValue.replaceAll("<|>", "");
     }
     return actualValue;
+  }
+
+  public static String repeat(String s, int times) {
+    return IntStream.range(0, times).mapToObj(i -> s).collect(Collectors.joining(""));
   }
 }
