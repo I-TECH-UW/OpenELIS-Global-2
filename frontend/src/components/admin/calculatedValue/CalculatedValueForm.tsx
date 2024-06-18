@@ -477,6 +477,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                 name="value"
                 type="number"
                 id={index + "_" + operationIndex + "_integer"}
+                step="any"
                 labelText={
                   <FormattedMessage id="testcalculation.label.integer" />
                 }
