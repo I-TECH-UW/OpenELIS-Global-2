@@ -310,7 +310,7 @@ function ProviderMenu() {
       active: isActive.id === "yes",
     };
     postToOpenElisServerFullResponse(
-      "/rest/Provider/FhirUuid?fhirUuid=",
+      "/rest/Provider/FhirUuid?fhirUuid="+currentProvider.fhirUuid,
       JSON.stringify(updatedProvider),
       displayStatus,
     );
