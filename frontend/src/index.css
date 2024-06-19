@@ -13,14 +13,6 @@ code {
 }
 
 
-.slide-over-left {
-  left: 0;
-}
-
-.slide-over-right {
-  right: 0;
-}
-
 .slide-over-root {
   position: fixed;
   top: 0;
@@ -61,15 +53,16 @@ code {
   position: fixed;
   top: 53px; /* Adjust this value based on the height of your header */
   transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
-  width: 100%;
-  max-width: 300px;
+  width: 90%; /* Use percentage for width */
+  max-width: 90%; /* Use percentage for max-width */
   border-radius: 10px;
   height: calc(100% - 20px);  
 }
 
 @media (min-width: 768px) {
   .slide-over-panel {
-    width: 300px;
+    width: 25%; /* Use percentage for width on larger screens */
+    max-width: 30%; /* Use percentage for max-width on larger screens */
   }
 }
 

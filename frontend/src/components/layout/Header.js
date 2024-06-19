@@ -40,6 +40,7 @@ import {
   HeaderPanel,
 } from "@carbon/react";
 import { getFromOpenElisServer } from "../utils/Utils";
+import SlideOverNotifications from "../notifications/SlideOverNotifications";
 
 function OEHeader(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
@@ -478,8 +479,7 @@ function OEHeader(props) {
                 title="Notifications"
               >
 
-                dsfdsfdsf
-               
+                <SlideOverNotifications />  
               </SlideOver>
             </div>
           </div>

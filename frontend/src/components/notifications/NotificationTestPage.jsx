@@ -6,13 +6,18 @@ export default function NotificationTestPage() {
     message: "",
   });
 
-  const submit = () => {
+ const submit = () => {
+  if (data.message.trim() !== "") {
     postToOpenElisServer("/rest/notification", JSON.stringify(data), () => {
       console.log("Success");
     }).catch(error => {
       console.error("Error posting notification:", error);
     });
-  };
+  } else {
+    console.error("Message cannot be empty");
+  }
+};
+
 
   const getAllNotifications = () => {
     getFromOpenElisServer("/rest/notifications", (response) => {

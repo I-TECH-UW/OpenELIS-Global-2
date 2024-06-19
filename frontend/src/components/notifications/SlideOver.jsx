@@ -77,7 +77,7 @@ const SlideOver = ({
           >
             <div
               className="slide-over-header"
-              style={{ marginTop: "6%", padding: "2%" }}
+              style={{ marginTop: "1%", padding: "2%" }}
             >
               <button
                 id="close-slide-over"

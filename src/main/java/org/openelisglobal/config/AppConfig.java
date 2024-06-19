@@ -51,6 +51,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module; 
+
+
+
 @EnableWebMvc
 @Configuration
 @EnableJpaRepositories(basePackages = { "org.itech", "org.ozeki.sms" })
@@ -176,10 +184,11 @@ public class AppConfig implements WebMvcConfigurer {
         MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
 
         ObjectMapper mapper = new ObjectMapper();
-        // Registering Hibernate4Module to support lazy objects
+        //Registering Hibernate4Module to support lazy objects
         mapper.registerModule(new Hibernate5Module());
         mapper.registerModule(new Jdk8Module());
         mapper.setSerializationInclusion(Include.NON_NULL);
+
 
         SimpleModule module = new SimpleModule();
         module.addSerializer(Questionnaire.class, new QuestionnaireSerializer());
