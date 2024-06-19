@@ -13,6 +13,7 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import "../Style.css";
 import { Select, SelectItem } from "@carbon/react";
 import config from "../../config.json";
+import SearchBar from "./search/searchBar";
 import {
   Search,
   Notification,
@@ -56,6 +57,10 @@ function OEHeader(props) {
     menu_billing: { menu: {}, childMenus: [] },
     menu_nonconformity: { menu: {}, childMenus: [] },
   });
+  const [searchBar, setSearchBar] = useState(false);
+  const handleSearch = ()=>{
+    setSearchBar(!searchBar)
+  }
 
   scrollRef.current = window.scrollY;
   useLayoutEffect(() => {
@@ -348,11 +353,11 @@ function OEHeader(props) {
                 <HeaderGlobalBar>
                   {userSessionDetails.authenticated && (
                     <>
+                    {searchBar && <SearchBar />}
                       <HeaderGlobalAction
-                        aria-label="Search"
-                        onClick={() => {
-                          /*TODO add search functionality*/
-                        }}
+                        aria-label={intl.formatMessage({ id: "label.button.search" })}
+                        onClick={handleSearch}
+                        
                       >
                         <Search size={20} />
                       </HeaderGlobalAction>

@@ -1,0 +1,136 @@
+.patientHeader {
+  padding: 10px;
+  margin-bottom: 1rem;
+  border-top: 2px;
+  border-bottom:2px ;
+}
+
+.main {
+  position: absolute;
+  padding: 2px;
+  top: 5px;
+  right: 150px;
+  background-color: white;
+  border: 1px solid #ddd;
+  max-height: 600px; /* Adjusted height */
+  width: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-bar-container {
+  position: relative;
+  display: flex;
+  border: 2px solid #ddd;
+  padding: 10px;
+  background-color: #f9f9f9;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.search-input {
+  width: 100%;
+}
+
+.button {
+  padding: 5px;
+  margin-left: 10px;
+}
+
+.search-history {
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  height: 200px;
+  margin-bottom: 10px;
+  flex-grow: 1;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid #e0e0e0;
+  overflow-y: auto;
+  max-height: fit-content;
+}
+
+.history-text {
+  cursor: pointer;
+  flex-grow: 1;
+}
+
+.history-text:hover {
+  text-decoration: underline;
+}
+
+.remove-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 10px;
+}
+
+.patients {
+  cursor: pointer;
+  padding: 10px;
+ 
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #f9f9f9;
+  margin-bottom: 0.5rem;
+  overflow-y: auto;
+  height: 370px; /* Adjusted height */
+}
+
+.no-suggestions {
+  color: #999;
+  padding: 0.5rem;
+  z-index: 10000;
+  position: absolute;
+}
+
+.suggestions {
+  border: 1px solid #999;
+  border-top-width: 0;
+  list-style: none;
+  max-height: 495px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  top: 50px;
+  overflow-y: auto;
+  position: absolute;
+  background-color: #ffffff;
+  z-index: 10;
+}
+
+.suggestions li {
+  padding: 0.5rem;
+  z-index: 99 !important;
+}
+
+.suggestion-active,
+.suggestions li:hover {
+  background-color: #295785;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.suggestions li:not(:last-of-type) {
+  border-bottom: 1px solid #999;
+}
+
+@media (max-width: 600px) {
+  .history-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .remove-button {
+    margin-left: 0;
+    margin-top: 5px;
+  }
+}
