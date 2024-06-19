@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import {
-  Form,
   Heading,
   Button,
   Loading,
@@ -35,6 +34,7 @@ import {
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 import { ArrowLeft, ArrowRight } from "@carbon/icons-react";
+import ActionPaginationButtonType from "../../common/ActionPaginationButtonType.js";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -171,17 +171,6 @@ function OrganizationManagament() {
 
   useEffect(() => {
     if (organizationsManagmentList) {
-      const pagination = {
-        totalRecordCount:
-          organizationsManagmentList.modelMap.form.totalRecordCount,
-        fromRecordCount:
-          organizationsManagmentList.modelMap.form.fromRecordCount,
-        toRecordCount: organizationsManagmentList.modelMap.form.toRecordCount,
-      };
-      setFromRecordCount(pagination.fromRecordCount);
-      setToRecordCount(pagination.toRecordCount);
-      setTotalRecordCount(pagination.totalRecordCount);
-
       const newOrganizationsManagementList =
         organizationsManagmentList.modelMap.form.menuList.map((item) => {
           return {
@@ -199,6 +188,15 @@ function OrganizationManagament() {
         });
       const newOrganizationsManagementListArray = Object.values(
         newOrganizationsManagementList,
+      );
+      setFromRecordCount(
+        organizationsManagmentList.modelMap.form.totalRecordCount,
+      );
+      setToRecordCount(
+        organizationsManagmentList.modelMap.form.fromRecordCount,
+      );
+      setTotalRecordCount(
+        organizationsManagmentList.modelMap.form.toRecordCount,
       );
       setOrganizationsManagmentListShow(newOrganizationsManagementListArray);
     }
@@ -259,6 +257,8 @@ function OrganizationManagament() {
   useEffect(() => {
     if (selectedRowIds.length === 0) {
       setDeactivateButton(true);
+    } else {
+      setDeactivateButton(false);
     }
   }, [selectedRowIds]);
 
@@ -310,6 +310,22 @@ function OrganizationManagament() {
             </Section>
           </Column>
         </Grid>
+        <br />
+        <ActionPaginationButtonType
+          selectedRowIds={selectedRowIds}
+          modifyButton={modifyButton}
+          deactivateButton={deactivateButton}
+          fromRecordCount={fromRecordCount}
+          toRecordCount={toRecordCount}
+          totalRecordCount={totalRecordCount}
+          handlePreviousPage={handlePreviousPage}
+          handleNextPage={handleNextPage}
+          deleteDeactivate={deleteDeactivateOrganizationManagament}
+          id={selectedRowIds[0]}
+          addButtonRedirectLink={`/MasterListsPage#organizationEdit?ID=0`}
+          modifyButtonRedirectLink={`/MasterListsPage#organizationEdit?ID=`}
+          type="type2"
+        />
         <br />
         <Grid fullWidth={true}>
           <Column lg={16} md={8} sm={4}>
