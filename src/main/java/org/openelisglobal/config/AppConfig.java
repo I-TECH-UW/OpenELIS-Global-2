@@ -55,7 +55,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module; 
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule; 
 
 
 
@@ -103,9 +104,9 @@ public class AppConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor).addPathPatterns("/**");
         registry.addInterceptor(moduleAuthenticationInterceptor).addPathPatterns("/**")
-                .excludePathPatterns(SecurityConfig.OPEN_PAGES) //
-                .excludePathPatterns(SecurityConfig.LOGIN_PAGES) //
-                .excludePathPatterns(SecurityConfig.RESOURCE_PAGES) //
+                .excludePathPatterns(SecurityConfig.OPEN_PAGES)//
+                .excludePathPatterns(SecurityConfig.LOGIN_PAGES)//
+                .excludePathPatterns(SecurityConfig.RESOURCE_PAGES)//
                 .excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES)
                 // TO DO ,we need to have a better way to handle user roles for rest controllers
                 .excludePathPatterns(SecurityConfig.REST_CONTROLLERS);
@@ -122,9 +123,12 @@ public class AppConfig implements WebMvcConfigurer {
         registry.addResourceHandler("css/**").addResourceLocations("classpath:static/css/");
         registry.addResourceHandler("images/**").addResourceLocations("/static/images/");
         registry.addResourceHandler("favicon/**").addResourceLocations("/static/favicon/");
-        registry.addResourceHandler("fontawesome-free-5.13.1-web/**")
+        registry
+                .addResourceHandler("fontawesome-free-5.13.1-web/**")
                 .addResourceLocations("/static/fontawesome-free-5.13.1-web/");
-        registry.addResourceHandler("documentation/**").addResourceLocations("classpath:static/documentation/");
+        registry
+                .addResourceHandler("documentation/**")
+                .addResourceLocations("classpath:static/documentation/");
     }
 
     @Bean
@@ -185,10 +189,10 @@ public class AppConfig implements WebMvcConfigurer {
 
         ObjectMapper mapper = new ObjectMapper();
         //Registering Hibernate4Module to support lazy objects
+        mapper.registerModule(new JavaTimeModule());
         mapper.registerModule(new Hibernate5Module());
         mapper.registerModule(new Jdk8Module());
         mapper.setSerializationInclusion(Include.NON_NULL);
-
 
         SimpleModule module = new SimpleModule();
         module.addSerializer(Questionnaire.class, new QuestionnaireSerializer());
