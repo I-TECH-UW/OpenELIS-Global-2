@@ -327,65 +327,6 @@ function OrganizationManagament() {
           type="type2"
         />
         <br />
-        <Grid fullWidth={true}>
-          <Column lg={16} md={8} sm={4}>
-            <Section>
-              <Button
-                onClick={() => {
-                  if (selectedRowIds.length === 1) {
-                    const url = `/MasterListsPage#organizationEdit?ID=${selectedRowIds[0]}`;
-                    window.location.href = url;
-                  }
-                }}
-                disabled={modifyButton}
-                type="button"
-              >
-                <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.modify" />
-              </Button>{" "}
-              <Button
-                onClick={deleteDeactivateOrganizationManagament}
-                disabled={deactivateButton}
-                type="button"
-              >
-                <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
-              </Button>{" "}
-              <Button
-                onClick={() => {
-                  window.location.href =
-                    "/MasterListsPage#organizationEdit?ID=0";
-                }}
-                type="button"
-              >
-                <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.add" />
-              </Button>
-            </Section>
-            <br />
-            <Section>
-              <h4>
-                <FormattedMessage id="showing" /> {fromRecordCount} -{" "}
-                {toRecordCount} <FormattedMessage id="of" /> {totalRecordCount}{" "}
-              </h4>
-              <Button
-                hasIconOnly={true}
-                disabled={parseInt(fromRecordCount) <= 1}
-                onClick={handlePreviousPage}
-                renderIcon={ArrowLeft}
-                iconDescription={intl.formatMessage({
-                  id: "organization.previous",
-                })}
-              />{" "}
-              <Button
-                hasIconOnly={true}
-                renderIcon={ArrowRight}
-                onClick={handleNextPage}
-                disabled={parseInt(toRecordCount) >= parseInt(totalRecordCount)}
-                iconDescription={intl.formatMessage({
-                  id: "organization.next",
-                })}
-              />
-            </Section>
-          </Column>
-        </Grid>
         <div className="orderLegendBody">
           <Grid>
             <Column lg={16} md={8} sm={4}>
