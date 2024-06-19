@@ -17,7 +17,6 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
-
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.AssociationInverseSide;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.ObjectPath;
