@@ -193,6 +193,7 @@ public class AppConfig implements WebMvcConfigurer {
 
         ObjectMapper mapper = new ObjectMapper();
         // Registering Hibernate4Module to support lazy objects
+        mapper.registerModule(new JavaTimeModule());
         mapper.registerModule(new Hibernate5Module());
         mapper.registerModule(new Jdk8Module());
         mapper.setSerializationInclusion(Include.NON_NULL);
