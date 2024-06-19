@@ -39,7 +39,7 @@
     <h2><spring:message code="nonconforming.page.correctiveAction.title" /></h2>
 
     <select id="searchCriteria" tabindex="1" class="patientSearch">
-        <option value="<c:out value="1" />">Lab Number</option>
+        <option value="<c:out value="1" />">Lab Order Number</option>
         <option value="<c:out value="2" />">NCE Number</option>
     </select>
     <input type="text" name="searchValue" oninput="enableSearch()" id="searchValue">
