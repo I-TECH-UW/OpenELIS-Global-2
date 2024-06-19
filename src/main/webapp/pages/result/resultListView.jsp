@@ -743,14 +743,14 @@ function /*void*/ handleEnterEvent(  ){
 	</c:if>
 
 	<div style="width: 100%">
-		<c:if test="${not (form.paging.totalPages == 0)}">
+	<c:if test="${not (form.paging.totalPages == 0)}">
 			<form:hidden id="currentPageID" path="paging.currentPage" />
 			<c:set var="total" value="${form.paging.totalPages}" />
 			<c:set var="currentPage" value="${form.paging.currentPage}" />
 			<c:if test="${not empty analysisCount}">
-		1 - ${pageSize} of ${analysisCount}
-	</c:if>
-			<c:if test="${empty analysisCount}">
+				1 - ${pageSize} of ${analysisCount}
+			</c:if>
+			<%-- <c:if test="${not empty analysisCount}"> --%>
 				<button type="button" style="width: 100px;"
 					onclick="pager.pageBack();"
 					<c:if test="${currentPage == 1}">disabled="disabled"</c:if>>
@@ -765,7 +765,7 @@ function /*void*/ handleEnterEvent(  ){
 		<c:out value="${form.paging.currentPage}" />
 				<spring:message code="report.pageNumberOf" />
 				<c:out value="${form.paging.totalPages}" />
-			</c:if>
+		<%-- 	</c:if> --%>
 			<div class='textcontent' style="float: right">
 				<span style="visibility: hidden" id="searchNotFound"><em><%=MessageUtil.getMessage("search.term.notFound")%></em></span>
 				<%=MessageUtil.getContextualMessage("result.sample.id")%>
@@ -1413,7 +1413,7 @@ function /*void*/ handleEnterEvent(  ){
 		<c:if test="${not empty analysisCount}">
 		1 - ${pageSize} of ${analysisCount}
 	</c:if>
-		<c:if test="${empty analysisCount}">
+		<%--  <c:if test="${not empty analysisCount}">--%>
 			<c:set var="total" value="${form.paging.totalPages}" />
 			<c:set var="currentPage" value="${form.paging.currentPage}" />
 			<button type="button" style="width: 100px;"
@@ -1427,11 +1427,11 @@ function /*void*/ handleEnterEvent(  ){
 				<spring:message code="label.button.next" />
 			</button>
 	&nbsp;
-	<c:out value="${form.paging.currentPage}" /> of
+	<c:out value="${form.paging.currentPage}" /> 
+	<spring:message code="report.pageNumberOf" />
 	<c:out value="${form.paging.totalPages}" />
-		</c:if>
+		<%--</c:if>--%>
 	</c:if>
-
 </c:if>
 
 

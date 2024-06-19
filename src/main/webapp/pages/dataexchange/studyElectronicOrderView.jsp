@@ -18,7 +18,7 @@
 <script type="text/javascript" src="scripts/jquery-ui.js?"></script>
 <script type="text/javascript">
 
-var colSort = [0,0,0,0,0,0,0,0,0,0,0,0];
+var colSort = [0,0,0,0,0,0,0,0,0,0,0];
 var dirty = false;
 var entering = false;
 
@@ -77,7 +77,7 @@ function enterOrder(index) {
 	
 	var tBody = document.getElementById('eOrderTableBody');
 	var eOrderRow = document.getElementById('eOrderRow_' + index);
-	var enterButton = document.getElementById('enterButton_' + index);
+	var enterButton = document.getElementById('enterButton_' + index); 
 	var editButton = document.getElementById('editButton_' + index);
 	var rejectButton = document.getElementById('rejectButton_' + index);
 	enterButton.style.display='none';
@@ -113,10 +113,10 @@ function rejectOrder(index) {
 	
 	var tBody = document.getElementById('eOrderTableBody');
 	var eOrderRow = document.getElementById('eOrderRow_' + index);
-	var enterButton = document.getElementById('enterButton_' + index);
+	/* var enterButton = document.getElementById('enterButton_' + index); */
 	var editButton = document.getElementById('editButton_' + index);
 	var rejectButton = document.getElementById('rejectButton_' + index);
-	enterButton.style.display='none';
+	/* enterButton.style.display='none'; */
 	editButton.style.display='none';
 	rejectButton.style.display='none';
 	eOrderRow.style.background = '#FF6';
@@ -126,24 +126,12 @@ function rejectOrder(index) {
 	row.style.display = 'none';
 	row = tBody.insertRow(sortedRowIndex - 1);
 	row.id = 'enter-row_' + index;
-	var cell = row.insertCell();
-	cell = row.insertCell();
-	cell.colSpan = '13';
-	var inputHTMLtable = '<table id="qaEventsTable"><thead><tr><th style="width:10%"><spring:message code="label.refusal.reason" /><span class="requiredlabel">*</span></th>';
-	inputHTMLtable+='<th style="width:13%"><spring:message code="label.biologist"/></th>';
-	inputHTMLtable+='<th><spring:message code="nonconformity.note"/></th></tr></thead>';
-	inputHTMLtable+='<tbody><tr><td> <form:select path="qaEventId" id="qaEventSelectBox"  class="eoder_select_qaEvent" htmlEscape="true"> <form:option value="">&nbsp;</form:option> ';
-	inputHTMLtable+='<form:options items="${form.qaEvents}" itemLabel="value" itemValue="id" htmlEscape="true" /></form:select></td>';
-	inputHTMLtable+= '<td> <form:input path="qaAuthorizer" id="qaAuthorizerInput" style="width: 99%" htmlEscape="true"/> </td>';
-	inputHTMLtable+='<td> <form:input path="qaNote" id="qaNoteInput" style="width: 99%" htmlEscape="true"/> </td></tr>';
-	inputHTMLtable+='</tbody></table>';
 
-	var saveHTML = '&nbsp;<button type="button" onclick="saveEntry(\'' + index + '\')"><spring:message code='label.button.save'/></button>';
-	var cancelHTML = '&nbsp;<button type="button" onclick="restoreRow(\'' + index + '\');"><spring:message code='label.button.cancel'/></button>';
-	var checkboxHTML = '';
-	var checkboxLabelHTML = '';
+	var  rejectRowHeader = document.getElementById('rejectRowHeader_' + index);
+	var  rejectRowData = document.getElementById('rejectRowData_' + index);
+	rejectRowHeader.style.display='table-row';
+	rejectRowData.style.display='table-row';
 	
-	cell.innerHTML += inputHTMLtable + saveHTML + cancelHTML + checkboxHTML + checkboxLabelHTML;
 }
 
 function restoreRow(index) {
@@ -155,28 +143,49 @@ function restoreRow(index) {
 	var eOrderRow = document.getElementById('eOrderRow_' + index);
 	eOrderRow.style.display = '';
 	eOrderRow.style.background = '';
-	var enterButton = document.getElementById('enterButton_' + index);
 	var editButton = document.getElementById('editButton_' + index);
 	var rejectButton = document.getElementById('rejectButton_' + index);
-	enterButton.style.display='';
 	editButton.style.display='';
 	rejectButton.style.display='';
+	var  rejectRowHeader = document.getElementById('rejectRowHeader_' + index);
+	var  rejectRowData = document.getElementById('rejectRowData_' + index);
+	rejectRowHeader.style.display='none';
+	rejectRowData.style.display='none';
 }
 
 function saveEntry(index) {
 	entering = false;
-	
     var labNumber = jQuery("#eOrderLabNumber_" + index).val();
 	var externalOrderId = jQuery('#externalOrderId_' + index).val();
-
 	restoreRow(index);
 	markRowOutOfSync(index);
-	
 	window.open('SampleEntryByProject?ID=' + externalOrderId + '&labNumber=' + labNumber + '&attemptAutoSave=true', "_blank");
 }
 
+function rejectEntry(index) {
+	entering = false;	
+	var externalOrderId = jQuery('#externalOrderId_' + index).val();
+	var qaEventId= jQuery('#qaEventId_' + index).val();
+	
+	if(qaEventId){
+		restoreRow(index);
+		markRowOutOfSync(index);
+		const params = new URLSearchParams({
+			searchType: "DATE_STATUS",
+			startDate: jQuery('#startDate').val(),
+			endDate: jQuery('#endDate').val(),
+			statusId: jQuery('#statusId').val(),
+			externalOrderId: jQuery('#externalOrderId_' + index).val(),
+			qaEventId: qaEventId,
+			qaAuthorizer: jQuery('#qaAuthorizerInput_' + index).val(),
+			qaNote: jQuery('#qaNoteInput_' + index).val(),
+		});
+		window.location.href = "rejectElectronicOrders?" + params.toString();
+	}
+}
+
 function markRowOutOfSync(index) {
-	jQuery('#enterButton_' + index).attr('disabled', 'disabled');
+	/* jQuery('#enterButton_' + index).attr('disabled', 'disabled'); */
 	jQuery('#editButton_' + index).attr('disabled', 'disabled');
 	jQuery('#rejectButton_' + index).attr('disabled', 'disabled');
 	jQuery('#eOrderRow_' + index).addClass('unsynced-resource');
@@ -206,7 +215,7 @@ function processScanSuccess(xhr, index) {
 
 function editOrder(index) {
 	var externalOrderId = jQuery('#externalOrderId_' + index).val();
-	location.href='SampleEntryByProject?type=Initial&ID=' + externalOrderId;
+	location.href='SampleEntryByProject?type=initial&ID=' + externalOrderId;
 }
 
 jQuery(document).ready( function() {
@@ -266,46 +275,47 @@ jQuery(document).ready( function() {
 <tr>
     <th class='split-content'>
     	<c:out value="No."/>
+    	<span class="fa" onclick='sort(0)'><i class="fas fa-sort"></i></span>
     </th>
     <th class='split-content'>
     	<spring:message code="study.eorder.requester.facility"/>
-    	<span class="fa" onclick='sort(2)'><i class="fas fa-sort"></i></span>
+    	<span class="fa" onclick='sort(1)'><i class="fas fa-sort"></i></span>
     </th>
     <th class='split-content'>
     	<spring:message code="study.eorder.patient.code"/>
-    	<span class="fa" onclick='sort(3)'><i class="fas fa-sort"></i></span>
+    	<span class="fa" onclick='sort(2)'><i class="fas fa-sort"></i></span>
     </th>
         <th class='split-content'>
     	<spring:message code="study.eorder.patient.upid"/>
-    	<span class="fa" onclick='sort(4)'><i class="fas fa-sort"></i></span>
+    	<span class="fa" onclick='sort(3)'><i class="fas fa-sort"></i></span>
     </th>
     <th class='split-content'>
     	<spring:message code="study.eorder.patient.gender"/>
-    	<span class="fa" onclick='sort(5)'><i class="fas fa-sort"></i></span>
+    	<span class="fa" onclick='sort(4)'><i class="fas fa-sort"></i></span>
     </th>
     <th class='split-content'>
     	<spring:message code="study.eorder.patient.birth_date"/>
-    	<span class="fa" onclick='sort(6)'><i class="fas fa-sort"></i></span>
+    	<span class="fa" onclick='sort(5)'><i class="fas fa-sort"></i></span>
     </th>
     <th class='split-content'>
     	<spring:message code="study.eorder.request.date"/>
-    	<span class="fa" onclick='sort(7)'><i class="fas fa-sort"></i></span>
+    	<span class="fa" onclick='sort(6)'><i class="fas fa-sort"></i></span>
     </th>
-	<th class='split-content'>
-    	<spring:message code="study.eorder.request.priority"/>
-    	<span class="fa" onclick='sort(8)'><i class="fas fa-sort"></i></span>
+    <th class='split-content'>
+    	<spring:message code="study.eorder.collection.date"/>
+    	<span class="fa" onclick='sort(7)'><i class="fas fa-sort"></i></span>
     </th>
     <th class='split-content'>
     	<spring:message code="study.eorder.request.status"/>
-    	<span class="fa" onclick='sort(9)'><i class="fas fa-sort"></i></span>
+    	<span class="fa" onclick='sort(8)'><i class="fas fa-sort"></i></span>
     </th>
     <th class='split-content'>
     	<spring:message code="study.eorder.request.test_name"/>
-    	<span class="fa" onclick='sort(10)'><i class="fas fa-sort"></i></span>
+    	<span class="fa" onclick='sort(9)'><i class="fas fa-sort"></i></span>
     </th>
     <th class='split-content'>
     	<spring:message code="study.eorder.lab_number"/>
-    	<span class="fa" onclick='sort(11)'><i class="fas fa-sort"></i></span>
+    	<span class="fa" onclick='sort(10)'><i class="fas fa-sort"></i></span>
     </th>
 	<th style="background-color:white;" colspan="3">
 		<spring:message code="study.eorder.action.title"/>
@@ -315,6 +325,7 @@ jQuery(document).ready( function() {
 <tbody id="eOrderTableBody">
 	<c:forEach items="${form.eOrders}" var="eOrder" varStatus="iter">
 		<c:set var="entered" value="${not empty eOrder.labNumber}"/>
+		<c:set var="rejected" value="${not empty eOrder.qaEventId}"/>
 		<tr id='eOrderRow_${iter.index}'> 
 	    <td>
 	       <c:out value="${iter.index + 1}"/>
@@ -338,7 +349,7 @@ jQuery(document).ready( function() {
 	       <c:out value="${eOrder.requestDateDisplay}"/>
 	    </td>
  	    <td>
-	       <c:out value="${eOrder.priority}"/>
+	       <c:out value="${eOrder.collectionDateDisplay}"/>
 	    </td>
 	    <td>
 	       <c:out value="${eOrder.status}"/>
@@ -349,25 +360,19 @@ jQuery(document).ready( function() {
 	    <td>
 	       <c:out value="${eOrder.labNumber}"/>
 	    </td>
-<%-- 	    <td>
-	    	<form:hidden id="externalOrderId_${iter.index}" path="eOrders[${iter.index}].externalOrderId" htmlEscape="true" />
-	    	<button type="button" id="enterButton_${iter.index}" onclick="enterOrder('${iter.index}')" ${entered ? 'disabled="disabled"' : '' }>
-	    	<spring:message code="study.eorder.action.enter"/>
-	    	</button>
-	  	</td> --%>
     	<td>
-		    <button type="button" id="editButton_${iter.index}" onclick="editOrder('${iter.index}')" ${entered ? 'disabled="disabled"' : '' }>
+		    <button type="button" id="editButton_${iter.index}" onclick="editOrder('${iter.index}')" ${(entered || rejected) ? 'disabled="disabled"' : '' }>
 		    <spring:message code="study.eorder.action.edit"/>
 		    </button>
 	    </td>
 	    <td>
 	    	<form:hidden id="externalOrderId_${iter.index}" path="eOrders[${iter.index}].externalOrderId" htmlEscape="true" />
-		    <button type="button" id="rejectButton_${iter.index}" onclick="rejectOrder('${iter.index}')" ${entered ? 'disabled="disabled"' : '' }>
+		    <button type="button" id="rejectButton_${iter.index}" onclick="rejectOrder('${iter.index}')" ${(entered || rejected) ? 'disabled="disabled"' : '' }>
 		    <spring:message code="study.eorder.action.reject"/>
 		    </button>
 	    </td>
 	    <td style="background-color:white;">
-			<c:if test="${not empty eOrder.warnings}">
+			<c:if test="${not empty eOrder.warnings or not empty eOrder.qaEventId}">
 				<span class="show-text-hover">
 				<img src="./images/nonconforming.gif">
 				<span class="hidden-text">
@@ -378,6 +383,25 @@ jQuery(document).ready( function() {
 				</span>
 			</c:if>
 		</td>
+	</tr>
+	<tr id="rejectRowHeader_${iter.index}" style="display:none;">
+		<th></th>
+		<th style="width:10%" colspan="2">
+			<spring:message code="label.refusal.reason"/><span class="requiredlabel">*</span>
+		</th>
+		<th style="width:13%" colspan="2"><spring:message code="label.biologist"/></th>
+		<th colspan="4"><spring:message code="nonconformity.note"/></th>
+	</tr>
+	<tr id="rejectRowData_${iter.index}" style="display:none;">
+		<td><form:hidden id="externalOrderI_${iter.index}" path="eOrders[${iter.index}].externalOrderId" htmlEscape="true" /></td>
+		<td colspan="2"><form:select path="qaEventId" id="qaEventId_${iter.index}"  class="eoder_select_qaEvent" htmlEscape="true">
+			<form:option value="">&nbsp;</form:option>
+			<form:options items="${form.qaEvents}" itemLabel="value" itemValue="id" htmlEscape="true" /></form:select>
+		</td>
+		<td colspan="2"><form:input path="qaAuthorizer" id="qaAuthorizerInput_${iter.index}" style="width: 99%" htmlEscape="true"/></td>
+		<td colspan="4"><form:input path="qaNote" id="qaNoteInput_${iter.index}" style="width: 99%" htmlEscape="true"/> </td>
+		<td><button type="button" onclick="rejectEntry(${iter.index})"><spring:message code='label.button.save'/></button></td>
+		<td><button type="button" onclick="restoreRow(${iter.index});"><spring:message code='label.button.cancel'/></button></td>
 	</tr>
 	</c:forEach>
 </tbody>

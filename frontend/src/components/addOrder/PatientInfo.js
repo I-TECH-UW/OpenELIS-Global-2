@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Stack } from "@carbon/react";
+import { Button, Stack, Grid, Column } from "@carbon/react";
 import SearchPatientForm from "../patient/SearchPatientForm";
 import CreatePatientForm from "../patient/CreatePatientForm";
 import { FormattedMessage } from "react-intl";
@@ -84,34 +84,42 @@ const PatientInfo = (props) => {
     <>
       <Stack gap={10}>
         <div className="orderLegendBody">
-          <h3>
-            <FormattedMessage id="banner.menu.patient" />
-          </h3>
-          <div className="tabsLayout">
-            <Button
-              kind={searchPatientTab.kind}
-              onClick={handleSearchPatientTab}
-            >
-              <FormattedMessage id="search.patient.label" />
-            </Button>
-            <Button kind={newPatientTab.kind} onClick={handleNewPatientTab}>
-              <FormattedMessage id="new.patient.label" />
-            </Button>
-          </div>
-          <div className="container">
-            {searchPatientTab.active && (
-              <SearchPatientForm getSelectedPatient={getSelectedPatient} />
-            )}
-            {newPatientTab.active && (
-              <CreatePatientForm
-                showActionsButton={false}
-                selectedPatient={selectedPatient}
-                orderFormValues={orderFormValues}
-                setOrderFormValues={setOrderFormValues}
-                error={error}
-              />
-            )}
-          </div>
+          <Grid>
+            <Column lg={16} md={8} sm={4}>
+              <h3>
+                <FormattedMessage id="banner.menu.patient" />
+              </h3>
+            </Column>
+            <Column lg={4} md={4} sm={2}>
+              <Button
+                kind={searchPatientTab.kind}
+                onClick={handleSearchPatientTab}
+              >
+                <FormattedMessage id="search.patient.label" />
+              </Button>
+            </Column>
+            <Column lg={4} md={4} sm={2}>
+              <Button kind={newPatientTab.kind} onClick={handleNewPatientTab}>
+                <FormattedMessage id="new.patient.label" />
+              </Button>
+            </Column>
+            <Column lg={16} md={8} sm={4}>
+              {searchPatientTab.active && (
+                <SearchPatientForm getSelectedPatient={getSelectedPatient} />
+              )}
+            </Column>
+            <Column lg={16} md={8} sm={4}>
+              {newPatientTab.active && (
+                <CreatePatientForm
+                  showActionsButton={false}
+                  selectedPatient={selectedPatient}
+                  orderFormValues={orderFormValues}
+                  setOrderFormValues={setOrderFormValues}
+                  error={error}
+                />
+              )}
+            </Column>
+          </Grid>
         </div>
       </Stack>
     </>

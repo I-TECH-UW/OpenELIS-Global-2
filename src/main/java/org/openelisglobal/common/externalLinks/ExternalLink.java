@@ -2,5 +2,5 @@ package org.openelisglobal.common.externalLinks;
 
 public interface ExternalLink {
 
-    public void sendRequest(String xml);
+  public void sendRequest(String xml);
 }

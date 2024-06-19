@@ -1,31 +1,29 @@
 package org.openelisglobal.login.service;
 
 import java.util.Optional;
-
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.login.valueholder.LoginUser;
 
 public interface LoginUserService extends BaseObjectService<LoginUser, Integer> {
 
-    String DEFAULT_ADMIN_USER_NAME = "admin";
+  String DEFAULT_ADMIN_USER_NAME = "admin";
 
-    boolean isUserAdmin(LoginUser login) throws LIMSRuntimeException;
+  boolean isUserAdmin(LoginUser login) throws LIMSRuntimeException;
 
-    int getPasswordExpiredDayNo(LoginUser login);
+  int getPasswordExpiredDayNo(LoginUser login);
 
-    LoginUser getUserProfile(String loginName);
+  LoginUser getUserProfile(String loginName);
 
-    int getSystemUserId(LoginUser login);
+  int getSystemUserId(LoginUser login);
 
-    void hashPassword(LoginUser login, String password);
+  void hashPassword(LoginUser login, String password);
 
-    Optional<LoginUser> getValidatedLogin(String loginName, String password);
+  Optional<LoginUser> getValidatedLogin(String loginName, String password);
 
-    boolean defaultAdminExists();
+  boolean defaultAdminExists();
 
-    boolean nonDefaultAdminExists();
+  boolean nonDefaultAdminExists();
 
-    boolean isHashedPassword(String password);
-
+  boolean isHashedPassword(String password);
 }

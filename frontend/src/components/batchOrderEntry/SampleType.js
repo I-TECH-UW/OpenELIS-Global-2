@@ -15,7 +15,6 @@ import { sampleTypeTestsStructure } from "../data/SampleEntryTestsForTypeProvide
 import "../Style.css";
 
 const SampleType = ({ updateFormValues }) => {
-
   const intl = useIntl();
   const [sampleTypes, setSampleTypes] = useState([]);
   const [selectedSampleTypeId, setSelectedSampleTypeId] = useState(null);
@@ -29,7 +28,7 @@ const SampleType = ({ updateFormValues }) => {
   const [filteredTests, setFilteredTests] = useState([]);
   const [filteredPanels, setFilteredPanels] = useState([]);
   const [isSampleSelected, setIsSampleSelected] = useState(false);
-  const[selectedType, setSelectedType] = useState();
+  const [selectedType, setSelectedType] = useState();
 
   const handleTestSearchChange = (e) => {
     const term = e.target.value.toLowerCase();
@@ -66,9 +65,7 @@ const SampleType = ({ updateFormValues }) => {
     setSelectedPanels([]);
     setIsSampleSelected(!!value);
     const selectedId = value;
-    setSelectedType(sampleTypes.find(type => type.id === selectedId));
-   
-
+    setSelectedType(sampleTypes.find((type) => type.id === selectedId));
   };
 
   useEffect(() => {
@@ -99,24 +96,41 @@ const SampleType = ({ updateFormValues }) => {
     }
     setSelectedPanels(updatedPanels);
 
-    const updatedTests = [...selectedTests];
+    var updatedTests = [...selectedTests];
 
     const testMapIds = panel.testMaps.split(",");
-    testMapIds.forEach((testId) => {
-      const isTestSelected = updatedTests.some((test) => test.id === testId);
-      if (!isTestSelected) {
-        const test = sampleTypeTests.tests.find((test) => test.id === testId);
-        if (test) {
-          updatedTests.push({ id: test.id, value: test.name });
+    if (isChecked) {
+      testMapIds.forEach((testId) => {
+        const isTestSelected = updatedTests.some((test) => test.id === testId);
+        if (!isTestSelected) {
+          const test = sampleTypeTests.tests.find((test) => test.id === testId);
+          if (test) {
+            updatedTests.push({ id: test.id, value: test.name });
+          }
         }
-      }
-    });
+      });
+    } else {
+      const removeTests = [];
+      testMapIds.forEach((testId) => {
+        const isTestSelected = updatedTests.some((test) => test.id === testId);
+        if (isTestSelected) {
+          const test = sampleTypeTests.tests.find((test) => test.id === testId);
+          if (test) {
+            removeTests.push({ id: test.id, value: test.name });
+          }
+        }
+      });
+      updatedTests = selectedTests.filter((test) => {
+        return !removeTests.some((subItem) => subItem.id === test.id);
+      });
+    }
 
     setSelectedTests(updatedTests);
     updateFormValues({
       selectedTests: updatedTests,
       selectedPanels: updatedPanels,
-      sampleId: selectedType.value,
+      sampleId: selectedType.id,
+      sampleName: selectedType.value,
     });
   };
 
@@ -132,7 +146,8 @@ const SampleType = ({ updateFormValues }) => {
 
     updateFormValues({
       selectedTests: updatedTests,
-      sampleId: selectedType.value,
+      sampleId: selectedType.id,
+      sampleName: selectedType.value,
     });
   };
 
@@ -156,7 +171,6 @@ const SampleType = ({ updateFormValues }) => {
                 <SelectItem
                   text={intl.formatMessage({ id: "sample.select.type" })}
                   value=""
-
                 />
               )}
               {sampleTypes?.map((sampleType, i) => (
@@ -164,7 +178,6 @@ const SampleType = ({ updateFormValues }) => {
                   text={sampleType.value}
                   value={sampleType.id}
                   key={i}
-
                 />
               ))}
             </Select>

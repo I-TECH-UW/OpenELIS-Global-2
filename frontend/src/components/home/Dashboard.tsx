@@ -27,6 +27,7 @@ import { useState, useEffect, useRef, useContext } from "react";
 import {
   getFromOpenElisServer,
   convertAlphaNumLabNumForDisplay,
+  hasRole,
 } from "../utils/Utils.js";
 import { FormattedMessage, useIntl } from "react-intl";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
@@ -89,7 +90,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   const [data, setData] = useState([]);
   const [testSections, setTestSections] = useState([]);
-  const [selectedTestSection, setSelectedTestSection] = useState("all");
+  const [selectedTestSection, setSelectedTestSection] = useState("");
   const [loading, setLoading] = useState(true);
   const componentMounted = useRef(true);
   const [page, setPage] = useState(1);
@@ -154,12 +155,9 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
   }, [selectedTile]);
 
   useEffect(() => {
-    getFromOpenElisServer(
-      "/rest/displayList/TEST_SECTION_ACTIVE",
-      (fetchedTestSections) => {
-        fetchTestSections(fetchedTestSections);
-      },
-    );
+    getFromOpenElisServer("/rest/user-test-sections", (fetchedTestSections) => {
+      fetchTestSections(fetchedTestSections);
+    });
     return () => {
       componentMounted.current = false;
     };
@@ -167,7 +165,9 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
 
   const fetchTestSections = (res) => {
     setTestSections(res);
-    setSelectedTestSection("all");
+    hasRole(userSessionDetails, "Global Administrator")
+      ? setSelectedTestSection("all")
+      : setSelectedTestSection(res[0]?.id);
   };
 
   const loadNextResultsPage = () => {
@@ -345,13 +345,18 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
       setSelectedTile(tile);
     } else {
       setSelectedTile(null);
-      setSelectedTestSection("all");
+      hasRole(userSessionDetails, "Global Administrator")
+        ? setSelectedTestSection("all")
+        : setSelectedTestSection(testSections[0]?.id);
     }
   };
 
   const handleMaximizeClick = (tile) => {
     console.log("Icon clicked!");
-    if (userSessionDetails.roles.length > 0) {
+    if (
+      testSections?.length > 0 ||
+      hasRole(userSessionDetails, "Global Administrator")
+    ) {
       setSelectedTile(tile);
     } else {
       setNotificationVisible(true);
@@ -432,23 +437,23 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
   const orderHeaders = [
     {
       key: "priority",
-      header: "Priority",
+      header: <FormattedMessage id="eorder.priority" />,
     },
     {
       key: "orderDate",
-      header: "Order Date",
+      header: <FormattedMessage id="sample.label.orderdate" />,
     },
     {
       key: "patientId",
-      header: "Patient Id",
+      header: <FormattedMessage id="patient.id" />,
     },
     {
       key: "labNumber",
-      header: "Lab Number",
+      header: <FormattedMessage id="eorder.labNumber" />,
     },
     {
       key: "testName",
-      header: "Test Name",
+      header: <FormattedMessage id="eorder.test.name" />,
     },
   ];
 
@@ -550,25 +555,46 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                       <Grid>
                         <Column lg={16} md={8} sm={4}>
                           <Tabs>
-                            <TabList aria-label="List of tabs" contained>
-                              <Tab
-                                onClick={() => setSelectedTestSection("all")}
-                              >
-                                <FormattedMessage id="all.label" />
-                              </Tab>
-                              {testSections?.map((item, id) => {
-                                return (
-                                  <Tab
-                                    key={id}
-                                    onClick={() =>
-                                      setSelectedTestSection(item.id)
-                                    }
-                                  >
-                                    {item.value}
-                                  </Tab>
-                                );
-                              })}
-                            </TabList>
+                            {hasRole(
+                              userSessionDetails,
+                              "Global Administrator",
+                            ) ? (
+                              <TabList aria-label="List of tabs" contained>
+                                <Tab
+                                  onClick={() => setSelectedTestSection("all")}
+                                >
+                                  <FormattedMessage id="all.label" />
+                                </Tab>
+
+                                {testSections?.map((item, id) => {
+                                  return (
+                                    <Tab
+                                      key={id}
+                                      onClick={() =>
+                                        setSelectedTestSection(item.id)
+                                      }
+                                    >
+                                      {item.value}
+                                    </Tab>
+                                  );
+                                })}
+                              </TabList>
+                            ) : (
+                              <TabList aria-label="List of tabs" contained>
+                                {testSections?.map((item, id) => {
+                                  return (
+                                    <Tab
+                                      key={id}
+                                      onClick={() =>
+                                        setSelectedTestSection(item.id)
+                                      }
+                                    >
+                                      {item.value}
+                                    </Tab>
+                                  );
+                                })}
+                              </TabList>
+                            )}
                           </Tabs>
                         </Column>
                       </Grid>

@@ -19,7 +19,6 @@ package org.openelisglobal.testconfiguration.action;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.typeofsample.service.TypeOfSamplePanelService;
@@ -32,55 +31,55 @@ import org.springframework.stereotype.Service;
 @Service
 public class PanelTestConfigurationUtil {
 
-    @Autowired
-    TypeOfSamplePanelService typeOfSamplePanelService;
-    @Autowired
-    PanelService panelService;
-    @Autowired
-    TypeOfSampleService typeOfSampleService;
+  @Autowired TypeOfSamplePanelService typeOfSamplePanelService;
+  @Autowired PanelService panelService;
+  @Autowired TypeOfSampleService typeOfSampleService;
 
-    @SuppressWarnings("unchecked")
-    public HashMap<String, List<Panel>> createTypeOfSamplePanelMap(boolean isActive) {
-        HashMap<String, List<Panel>> sampleTypeMap = new HashMap<>();
+  @SuppressWarnings("unchecked")
+  public HashMap<String, List<Panel>> createTypeOfSamplePanelMap(boolean isActive) {
+    HashMap<String, List<Panel>> sampleTypeMap = new HashMap<>();
 
-        List<TypeOfSamplePanel> listOfTypeOfSamplePanels = typeOfSamplePanelService.getAllTypeOfSamplePanels();
-        for (TypeOfSamplePanel typeOfSamplePanel : listOfTypeOfSamplePanels) {
-            TypeOfSample typeOfSample = typeOfSampleService.getTypeOfSampleById(typeOfSamplePanel.getTypeOfSampleId());
-            List<Panel> panelsForThisSampleType = sampleTypeMap.get(typeOfSample.getLocalizedName());
-            if (panelsForThisSampleType == null) {
-                panelsForThisSampleType = new ArrayList<>();
-                sampleTypeMap.put(typeOfSample.getLocalizedName(), panelsForThisSampleType);
-            }
-            Panel panel = panelService.getPanelById(typeOfSamplePanel.getPanelId());
+    List<TypeOfSamplePanel> listOfTypeOfSamplePanels =
+        typeOfSamplePanelService.getAllTypeOfSamplePanels();
+    for (TypeOfSamplePanel typeOfSamplePanel : listOfTypeOfSamplePanels) {
+      TypeOfSample typeOfSample =
+          typeOfSampleService.getTypeOfSampleById(typeOfSamplePanel.getTypeOfSampleId());
+      List<Panel> panelsForThisSampleType = sampleTypeMap.get(typeOfSample.getLocalizedName());
+      if (panelsForThisSampleType == null) {
+        panelsForThisSampleType = new ArrayList<>();
+        sampleTypeMap.put(typeOfSample.getLocalizedName(), panelsForThisSampleType);
+      }
+      Panel panel = panelService.getPanelById(typeOfSamplePanel.getPanelId());
 
-            if ("Y".equals(panel.getIsActive()) && isActive) {
-                sampleTypeMap.get(typeOfSample.getLocalizedName()).add(panel);
-            } else if (!"Y".equals(panel.getIsActive()) && !isActive) {
-                sampleTypeMap.get(typeOfSample.getLocalizedName()).add(panel);
-            }
-        }
-
-        return sampleTypeMap;
+      if ("Y".equals(panel.getIsActive()) && isActive) {
+        sampleTypeMap.get(typeOfSample.getLocalizedName()).add(panel);
+      } else if (!"Y".equals(panel.getIsActive()) && !isActive) {
+        sampleTypeMap.get(typeOfSample.getLocalizedName()).add(panel);
+      }
     }
 
-    @SuppressWarnings("unchecked")
-    public HashMap<String, List<Panel>> createTypeOfSamplePanelMap() {
-        HashMap<String, List<Panel>> sampleTypeMap = new HashMap<>();
+    return sampleTypeMap;
+  }
 
-        List<TypeOfSamplePanel> listOfTypeOfSamplePanels = typeOfSamplePanelService.getAllTypeOfSamplePanels();
-        for (TypeOfSamplePanel typeOfSamplePanel : listOfTypeOfSamplePanels) {
-            TypeOfSample typeOfSample = typeOfSampleService.getTypeOfSampleById(typeOfSamplePanel.getTypeOfSampleId());
-            List<Panel> panelsForThisSampleType = sampleTypeMap.get(typeOfSample.getLocalizedName());
-            if (panelsForThisSampleType == null) {
-                panelsForThisSampleType = new ArrayList<>();
-                sampleTypeMap.put(typeOfSample.getLocalizedName(), panelsForThisSampleType);
-            }
-            Panel panel = panelService.getPanelById(typeOfSamplePanel.getPanelId());
+  @SuppressWarnings("unchecked")
+  public HashMap<String, List<Panel>> createTypeOfSamplePanelMap() {
+    HashMap<String, List<Panel>> sampleTypeMap = new HashMap<>();
 
-            sampleTypeMap.get(typeOfSample.getLocalizedName()).add(panel);
-        }
+    List<TypeOfSamplePanel> listOfTypeOfSamplePanels =
+        typeOfSamplePanelService.getAllTypeOfSamplePanels();
+    for (TypeOfSamplePanel typeOfSamplePanel : listOfTypeOfSamplePanels) {
+      TypeOfSample typeOfSample =
+          typeOfSampleService.getTypeOfSampleById(typeOfSamplePanel.getTypeOfSampleId());
+      List<Panel> panelsForThisSampleType = sampleTypeMap.get(typeOfSample.getLocalizedName());
+      if (panelsForThisSampleType == null) {
+        panelsForThisSampleType = new ArrayList<>();
+        sampleTypeMap.put(typeOfSample.getLocalizedName(), panelsForThisSampleType);
+      }
+      Panel panel = panelService.getPanelById(typeOfSamplePanel.getPanelId());
 
-        return sampleTypeMap;
+      sampleTypeMap.get(typeOfSample.getLocalizedName()).add(panel);
     }
 
+    return sampleTypeMap;
+  }
 }

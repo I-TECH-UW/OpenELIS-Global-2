@@ -1,7 +1,6 @@
 package org.openelisglobal.dataexchange.order.form;
 
 import java.util.List;
-
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrderDisplayItem;
@@ -9,213 +8,214 @@ import org.openelisglobal.organization.valueholder.Organization;
 
 public class ElectronicOrderViewForm extends BaseForm {
 
-    public enum SearchType {
-        IDENTIFIER, DATE_STATUS
-    }
+  public enum SearchType {
+    IDENTIFIER,
+    DATE_STATUS
+  }
 
-    private SearchType searchType;
+  private SearchType searchType;
 
-    private boolean searchFinished;
+  private boolean searchFinished;
 
-    private boolean useAllInfo;
+  private boolean useAllInfo;
 
-    private String searchValue;
+  private String searchValue;
 
-    private String startDate;
+  private String startDate;
 
-    private String endDate;
+  private String endDate;
 
-    private String organizationId;
+  private String organizationId;
 
-    private List<String> facilityIds;
+  private List<String> facilityIds;
 
-    private List<Organization> organizationList;
+  private List<Organization> organizationList;
 
-    private List<String> testIds;
+  private List<String> testIds;
 
-    private String statusId;
+  private String statusId;
 
-    private List<ElectronicOrderDisplayItem> eOrders;
+  private List<ElectronicOrderDisplayItem> eOrders;
 
-    private List<IdValuePair> referralFacilitySelectionList;
+  private List<IdValuePair> referralFacilitySelectionList;
 
-    private List<IdValuePair> testSelectionList;
+  private List<IdValuePair> testSelectionList;
 
-    private List<IdValuePair> statusSelectionList;
+  private List<IdValuePair> statusSelectionList;
 
-    private String qaEventId;
+  private String qaEventId;
 
-    private List<IdValuePair> qaEvents;
+  private List<IdValuePair> qaEvents;
 
-    private String qaAuthorizer;
+  private String qaAuthorizer;
 
-    private String qaNote;
+  private String qaNote;
 
-    public ElectronicOrderViewForm() {
-        setFormName("ElectronicOrderViewForm");
-    }
+  public ElectronicOrderViewForm() {
+    setFormName("ElectronicOrderViewForm");
+  }
 
-    public List<ElectronicOrderDisplayItem> getEOrders() {
-        return eOrders;
-    }
+  public List<ElectronicOrderDisplayItem> getEOrders() {
+    return eOrders;
+  }
 
-    public void setEOrders(List<ElectronicOrderDisplayItem> eOrders) {
-        this.eOrders = eOrders;
-    }
+  public void setEOrders(List<ElectronicOrderDisplayItem> eOrders) {
+    this.eOrders = eOrders;
+  }
 
-    public String getSearchValue() {
-        return searchValue;
-    }
+  public String getSearchValue() {
+    return searchValue;
+  }
 
-    public void setSearchValue(String searchValue) {
-        this.searchValue = searchValue;
-    }
+  public void setSearchValue(String searchValue) {
+    this.searchValue = searchValue;
+  }
 
-    public List<IdValuePair> getReferralFacilitySelectionList() {
-        return referralFacilitySelectionList;
-    }
+  public List<IdValuePair> getReferralFacilitySelectionList() {
+    return referralFacilitySelectionList;
+  }
 
-    public void setReferralFacilitySelectionList(List<IdValuePair> referralFacilitySelectionList) {
-        this.referralFacilitySelectionList = referralFacilitySelectionList;
-    }
+  public void setReferralFacilitySelectionList(List<IdValuePair> referralFacilitySelectionList) {
+    this.referralFacilitySelectionList = referralFacilitySelectionList;
+  }
 
-    public List<IdValuePair> getTestSelectionList() {
-        return testSelectionList;
-    }
+  public List<IdValuePair> getTestSelectionList() {
+    return testSelectionList;
+  }
 
-    public void setTestSelectionList(List<IdValuePair> testSelectionList) {
-        this.testSelectionList = testSelectionList;
-    }
+  public void setTestSelectionList(List<IdValuePair> testSelectionList) {
+    this.testSelectionList = testSelectionList;
+  }
 
-    public List<IdValuePair> getStatusSelectionList() {
-        return statusSelectionList;
-    }
+  public List<IdValuePair> getStatusSelectionList() {
+    return statusSelectionList;
+  }
 
-    public void setStatusSelectionList(List<IdValuePair> statusSelectionList) {
-        this.statusSelectionList = statusSelectionList;
-    }
+  public void setStatusSelectionList(List<IdValuePair> statusSelectionList) {
+    this.statusSelectionList = statusSelectionList;
+  }
 
-    public List<String> getTestIds() {
-        return testIds;
-    }
+  public List<String> getTestIds() {
+    return testIds;
+  }
 
-    public void setTestIds(List<String> testIds) {
-        this.testIds = testIds;
-    }
+  public void setTestIds(List<String> testIds) {
+    this.testIds = testIds;
+  }
 
-    public String getStatusId() {
-        return statusId;
-    }
+  public String getStatusId() {
+    return statusId;
+  }
 
-    public void setStatus(String status) {
-        this.statusId = status;
-    }
+  public void setStatus(String status) {
+    this.statusId = status;
+  }
 
-    public List<String> getFacilityIds() {
-        return facilityIds;
-    }
+  public List<String> getFacilityIds() {
+    return facilityIds;
+  }
 
-    public void setFacilityIds(List<String> facilityIds) {
-        this.facilityIds = facilityIds;
-    }
+  public void setFacilityIds(List<String> facilityIds) {
+    this.facilityIds = facilityIds;
+  }
 
-    public boolean isSearchFinished() {
-        return searchFinished;
-    }
+  public boolean isSearchFinished() {
+    return searchFinished;
+  }
 
-    public void setSearchFinished(boolean searchFinished) {
-        this.searchFinished = searchFinished;
-    }
+  public void setSearchFinished(boolean searchFinished) {
+    this.searchFinished = searchFinished;
+  }
 
-    public SearchType getSearchType() {
-        return searchType;
-    }
+  public SearchType getSearchType() {
+    return searchType;
+  }
 
-    public void setSearchType(SearchType searchType) {
-        this.searchType = searchType;
-    }
+  public void setSearchType(SearchType searchType) {
+    this.searchType = searchType;
+  }
 
-    public String getStartDate() {
-        return startDate;
-    }
+  public String getStartDate() {
+    return startDate;
+  }
 
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
+  public void setStartDate(String startDate) {
+    this.startDate = startDate;
+  }
 
-    public String getEndDate() {
-        return endDate;
-    }
+  public String getEndDate() {
+    return endDate;
+  }
 
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
-    }
+  public void setEndDate(String endDate) {
+    this.endDate = endDate;
+  }
 
-    public List<ElectronicOrderDisplayItem> geteOrders() {
-        return eOrders;
-    }
+  public List<ElectronicOrderDisplayItem> geteOrders() {
+    return eOrders;
+  }
 
-    public void seteOrders(List<ElectronicOrderDisplayItem> eOrders) {
-        this.eOrders = eOrders;
-    }
+  public void seteOrders(List<ElectronicOrderDisplayItem> eOrders) {
+    this.eOrders = eOrders;
+  }
 
-    public void setStatusId(String statusId) {
-        this.statusId = statusId;
-    }
+  public void setStatusId(String statusId) {
+    this.statusId = statusId;
+  }
 
-    public boolean getUseAllInfo() {
-        return useAllInfo;
-    }
+  public boolean getUseAllInfo() {
+    return useAllInfo;
+  }
 
-    public void setUseAllInfo(boolean useAllInfo) {
-        this.useAllInfo = useAllInfo;
-    }
+  public void setUseAllInfo(boolean useAllInfo) {
+    this.useAllInfo = useAllInfo;
+  }
 
-    public List<Organization> getOrganizationList() {
-        return organizationList;
-    }
+  public List<Organization> getOrganizationList() {
+    return organizationList;
+  }
 
-    public void setOrganizationList(List<Organization> organizationList) {
-        this.organizationList = organizationList;
-    }
+  public void setOrganizationList(List<Organization> organizationList) {
+    this.organizationList = organizationList;
+  }
 
-    public String getOrganizationId() {
-        return organizationId;
-    }
+  public String getOrganizationId() {
+    return organizationId;
+  }
 
-    public void setOrganizationId(String organizationId) {
-        this.organizationId = organizationId;
-    }
+  public void setOrganizationId(String organizationId) {
+    this.organizationId = organizationId;
+  }
 
-    public List<IdValuePair> getQaEvents() {
-        return qaEvents;
-    }
+  public List<IdValuePair> getQaEvents() {
+    return qaEvents;
+  }
 
-    public void setQaEvents(List<IdValuePair> qaEvents) {
-        this.qaEvents = qaEvents;
-    }
+  public void setQaEvents(List<IdValuePair> qaEvents) {
+    this.qaEvents = qaEvents;
+  }
 
-    public String getQaAuthorizer() {
-        return qaAuthorizer;
-    }
+  public String getQaAuthorizer() {
+    return qaAuthorizer;
+  }
 
-    public void setQaAuthorizer(String qaAuthorizer) {
-        this.qaAuthorizer = qaAuthorizer;
-    }
+  public void setQaAuthorizer(String qaAuthorizer) {
+    this.qaAuthorizer = qaAuthorizer;
+  }
 
-    public String getQaNote() {
-        return qaNote;
-    }
+  public String getQaNote() {
+    return qaNote;
+  }
 
-    public void setQaNote(String qaNote) {
-        this.qaNote = qaNote;
-    }
+  public void setQaNote(String qaNote) {
+    this.qaNote = qaNote;
+  }
 
-    public String getQaEventId() {
-        return qaEventId;
-    }
+  public String getQaEventId() {
+    return qaEventId;
+  }
 
-    public void setQaEventId(String qaEventId) {
-        this.qaEventId = qaEventId;
-    }
+  public void setQaEventId(String qaEventId) {
+    this.qaEventId = qaEventId;
+  }
 }

@@ -42,13 +42,17 @@ function ReportByID(props) {
     <>
       <br />
       <Form>
-        <Section>
-          <Section>
-            <h3>
-              <FormattedMessage id={props.id} />
-            </h3>
-          </Section>
-        </Section>
+        <Grid>
+          <Column lg={16} md={8} sm={4}>
+            <Section>
+              <Section>
+                <h3>
+                  <FormattedMessage id={props.id} />
+                </h3>
+              </Section>
+            </Section>
+          </Column>
+        </Grid>
         <br />
         {notificationVisible && <AlertDialog />}
         {loading && <Loading />}
@@ -68,7 +72,6 @@ function ReportByID(props) {
                 id: "nationalID.title",
                 defaultMessage: "National ID",
               })}
-              className="inputText"
               value={nationalId}
               onChange={handleInputChange} // Use the new handler here
               invalid={errors.nationalId}

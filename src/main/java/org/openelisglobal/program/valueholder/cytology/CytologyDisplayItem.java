@@ -1,84 +1,83 @@
 package org.openelisglobal.program.valueholder.cytology;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
-
 import org.openelisglobal.program.valueholder.cytology.CytologySample.CytologyStatus;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 public class CytologyDisplayItem {
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date requestDate;
-    private CytologyStatus status;
-    private String lastName;
-    private String firstName;
-    private String assignedTechnician;
-    private String assignedCytoPathologist;
-    private String labNumber;
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+  private Date requestDate;
 
-    private Integer pathologySampleId;
-    public Date getRequestDate() {
-        return requestDate;
-    }
+  private CytologyStatus status;
+  private String lastName;
+  private String firstName;
+  private String assignedTechnician;
+  private String assignedCytoPathologist;
+  private String labNumber;
 
-    public void setRequestDate(Date requestDate) {
-        this.requestDate = requestDate;
-    }
+  private Integer pathologySampleId;
 
-    public CytologyStatus getStatus() {
-        return status;
-    }
+  public Date getRequestDate() {
+    return requestDate;
+  }
 
-    public void setStatus(CytologyStatus status) {
-        this.status = status;
-    }
+  public void setRequestDate(Date requestDate) {
+    this.requestDate = requestDate;
+  }
 
-    public String getLastName() {
-        return lastName;
-    }
+  public CytologyStatus getStatus() {
+    return status;
+  }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+  public void setStatus(CytologyStatus status) {
+    this.status = status;
+  }
 
-    public String getFirstName() {
-        return firstName;
-    }
+  public String getLastName() {
+    return lastName;
+  }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
 
-    public String getAssignedTechnician() {
-        return assignedTechnician;
-    }
+  public String getFirstName() {
+    return firstName;
+  }
 
-    public void setAssignedTechnician(String assignedTechnician) {
-        this.assignedTechnician = assignedTechnician;
-    }
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
 
-    public String getLabNumber() {
-        return labNumber;
-    }
+  public String getAssignedTechnician() {
+    return assignedTechnician;
+  }
 
-    public void setLabNumber(String labNumber) {
-        this.labNumber = labNumber;
-    }
+  public void setAssignedTechnician(String assignedTechnician) {
+    this.assignedTechnician = assignedTechnician;
+  }
 
-    public Integer getPathologySampleId() {
-        return pathologySampleId;
-    }
+  public String getLabNumber() {
+    return labNumber;
+  }
 
-    public void setPathologySampleId(Integer pathologySampleId) {
-        this.pathologySampleId = pathologySampleId;
-    }
- 
-    public String getAssignedCytoPathologist() {
-        return assignedCytoPathologist;
-    }
+  public void setLabNumber(String labNumber) {
+    this.labNumber = labNumber;
+  }
 
-    public void setAssignedCytoPathologist(String assignedCytoPathologist) {
-        this.assignedCytoPathologist = assignedCytoPathologist;
-    }
-    
+  public Integer getPathologySampleId() {
+    return pathologySampleId;
+  }
+
+  public void setPathologySampleId(Integer pathologySampleId) {
+    this.pathologySampleId = pathologySampleId;
+  }
+
+  public String getAssignedCytoPathologist() {
+    return assignedCytoPathologist;
+  }
+
+  public void setAssignedCytoPathologist(String assignedCytoPathologist) {
+    this.assignedCytoPathologist = assignedCytoPathologist;
+  }
 }

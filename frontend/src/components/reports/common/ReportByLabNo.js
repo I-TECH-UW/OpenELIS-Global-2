@@ -29,12 +29,15 @@ function ReportByLabNo(props) {
   return (
     <>
       <Form onSubmit={handleSubmit}>
-        <Section>
-          <h3>
-            <FormattedMessage id={props.id} />
-          </h3>
-        </Section>
-        <br />
+        <Grid>
+          <Column lg={16} md={8} sm={4}>
+            <Section>
+              <h3>
+                <FormattedMessage id={props.id} />
+              </h3>
+            </Section>
+          </Column>
+        </Grid>
         <Grid fullWidth={true}>
           <Column lg={16} md={8} sm={4}>
             <Section>
@@ -58,7 +61,6 @@ function ReportByLabNo(props) {
                 defaultMessage: "From",
               })}
               id="from"
-              className="inputText"
               onChange={handleChange}
             />
           </Column>
@@ -71,7 +73,6 @@ function ReportByLabNo(props) {
                 defaultMessage: "To",
               })}
               id="to"
-              className="inputText"
               onChange={handleChange}
             />
           </Column>

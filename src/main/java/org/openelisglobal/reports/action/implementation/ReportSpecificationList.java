@@ -19,63 +19,59 @@ package org.openelisglobal.reports.action.implementation;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.validation.constraints.Pattern;
-
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.reports.form.ReportForm;
 
-/**
- * Represents a list for report specification
- */
+/** Represents a list for report specification */
 public class ReportSpecificationList implements Serializable {
 
-    private final String label;
-    private final List<IdValuePair> list;
+  private final String label;
+  private final List<IdValuePair> list;
 
-    @Pattern(regexp = ValidationHelper.ID_REGEX)
-    private String selection;
+  @Pattern(regexp = ValidationHelper.ID_REGEX)
+  private String selection;
 
-    public ReportSpecificationList() {
-        label = "";
-        list = new ArrayList<>();
+  public ReportSpecificationList() {
+    label = "";
+    list = new ArrayList<>();
+  }
+
+  public ReportSpecificationList(List<IdValuePair> list, String label) {
+    this.label = label;
+    this.list = list;
+  }
+
+  public void setRequestParameters(ReportForm form) {
+    form.setSelectList(this);
+  }
+
+  public String getLabel() {
+    return label;
+  }
+
+  public List<IdValuePair> getList() {
+    return list;
+  }
+
+  public String getSelection() {
+    return selection;
+  }
+
+  public void setSelection(String selection) {
+    this.selection = selection;
+  }
+
+  public String getSelectionAsName() {
+    String selection = getSelection();
+
+    for (IdValuePair pair : getList()) {
+      if (selection.equals(pair.getId())) {
+        return pair.getValue();
+      }
     }
 
-    public ReportSpecificationList(List<IdValuePair> list, String label) {
-        this.label = label;
-        this.list = list;
-    }
-
-    public void setRequestParameters(ReportForm form) {
-        form.setSelectList(this);
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public List<IdValuePair> getList() {
-        return list;
-    }
-
-    public String getSelection() {
-        return selection;
-    }
-
-    public void setSelection(String selection) {
-        this.selection = selection;
-    }
-
-    public String getSelectionAsName() {
-        String selection = getSelection();
-
-        for (IdValuePair pair : getList()) {
-            if (selection.equals(pair.getId())) {
-                return pair.getValue();
-            }
-        }
-
-        return "";
-    }
+    return "";
+  }
 }

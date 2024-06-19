@@ -812,6 +812,28 @@ function addDateSlashes(field, event) {
     }
 }
 
+function addPatientCodeSlashes(field, event) {
+    var key = event.which ? event.which : event.keyCode; // browser difference
+    if (key == 8) { // delete key? do nothing
+        return;
+    }
+    var v = field.value;
+    var parts = v.split("/");
+    var last2 = v.substring(v.length - 2);
+    if (last2 == "//") {
+        v = v.substring(0, v.length - 1);
+        field.value = v;
+        return;
+    }
+    if (v.length == 5 && parts[0].length == 5) {
+        field.value += "/";
+    } else if (v.length == 8 && parts[1].length == 2 && parts[0].length == 5) {
+        field.value += "/";
+    } else if (v.length == 11 && parts[2].length == 2 && parts[1].length == 2 && parts[0].length == 5) {
+        field.value += "/";
+    }
+}
+
 function filterTimeKeys(field, event) {
     var v = field.value;
     if (v.length > 5) {

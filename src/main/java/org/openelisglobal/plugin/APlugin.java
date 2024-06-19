@@ -17,5 +17,5 @@
 package org.openelisglobal.plugin;
 
 public abstract interface APlugin {
-    public boolean connect();
+  public boolean connect();
 }

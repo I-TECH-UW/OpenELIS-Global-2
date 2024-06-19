@@ -13,11 +13,11 @@ class LoginPage {
   }
 
   getUsernameElement() {
-    return cy.getElement('#loginName');
+    return cy.getElement("#loginName");
   }
 
   getPasswordElement() {
-    return cy.getElement('#password');
+    return cy.getElement("#password");
   }
 
   enterUsername(value) {

@@ -29,23 +29,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ImageDAOImpl extends BaseDAOImpl<Image, String> implements ImageDAO {
 
-    public ImageDAOImpl() {
-        super(Image.class);
+  public ImageDAOImpl() {
+    super(Image.class);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Image getImageByDescription(String imageDescription) {
+
+    try {
+      String sql = "from Image i where i.description = :imageDescription";
+
+      Query<Image> query = entityManager.unwrap(Session.class).createQuery(sql, Image.class);
+      query.setParameter("imageDescription", imageDescription);
+      return query.uniqueResult();
+    } catch (RuntimeException e) {
+      LogEvent.logError(e);
+      throw new LIMSRuntimeException("Error in Image getImageByDescription()", e);
     }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Image getImageByDescription(String imageDescription) {
-
-        try {
-            String sql = "from Image i where i.description = :imageDescription";
-
-            Query<Image> query = entityManager.unwrap(Session.class).createQuery(sql, Image.class);
-            query.setParameter("imageDescription", imageDescription);
-            return query.uniqueResult();
-        } catch (RuntimeException e) {
-            LogEvent.logError(e);
-            throw new LIMSRuntimeException("Error in Image getImageByDescription()", e);
-        }
-    }
+  }
 }

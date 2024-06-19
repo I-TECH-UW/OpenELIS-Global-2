@@ -6,11 +6,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.rest.BaseRestController;
@@ -26,112 +28,111 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
 @RestController("PrintWorkplanReportRestController")
 public class PrintWorkplanReportRestController extends BaseRestController {
 
-    private String reportPath = null;
+  private String reportPath = null;
 
-    @PostMapping(value = "/rest/printWorkplanReport")
-    public void showRestPrintWorkplanReport(HttpServletRequest request, HttpServletResponse response,
-    		@RequestBody @Validated(PrintWorkplan.class) WorkplanForm form, BindingResult result) {
+  @PostMapping(value = "/rest/printWorkplanReport")
+  public void showRestPrintWorkplanReport(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      @RequestBody @Validated(PrintWorkplan.class) WorkplanForm form,
+      BindingResult result) {
 
-        String workplanType = form.getType();
-        String workplanName;
+    String workplanType = form.getType();
+    String workplanName;
 
-        if (workplanType.equals("test")) {
-            String testID = form.getTestTypeID();
-            workplanName = getTestTypeName(testID);
-        } else {
-            workplanType = Character.toUpperCase(workplanType.charAt(0)) + workplanType.substring(1);
-            workplanName = form.getTestName();
-        }
-
-        // get workplan report based on testName
-        IWorkplanReport workplanReport = getWorkplanReport(workplanType, workplanName);
-
-        workplanReport.setReportPath(getReportPath());
-
-        // set jasper report parameters
-        HashMap<String, Object> parameterMap = workplanReport.getParameters();
-
-        // prepare report
-        List<?> workplanRows = workplanReport.prepareRows(form);
-
-        // set Jasper report file name
-        String reportFileName = workplanReport.getFileName();
-        try {
-
-            byte[] bytes = null;
-
-            JRDataSource dataSource = createReportDataSource(workplanRows);
-            bytes = JasperRunManager.runReportToPdf(getReportPath() + reportFileName + ".jasper", parameterMap, dataSource);
-
-            ServletOutputStream servletOutputStream = response.getOutputStream();
-            response.setContentType("application/pdf");
-            response.setContentLength(bytes.length);
-            String downloadFilename = "WorkplanReport";
-            response.setHeader("Content-Disposition", "filename=\"" + downloadFilename + ".pdf\"");
-
-            servletOutputStream.write(bytes, 0, bytes.length);
-            servletOutputStream.flush();
-            servletOutputStream.close();
-
-        } catch (JRException | IOException e) {
-            LogEvent.logError(e);
-            result.reject("error.jasper", "error.jasper");
-        }
+    if (workplanType.equals("test")) {
+      String testID = form.getTestTypeID();
+      workplanName = getTestTypeName(testID);
+    } else {
+      workplanType = Character.toUpperCase(workplanType.charAt(0)) + workplanType.substring(1);
+      workplanName = form.getTestName();
     }
 
-    
-    private JRDataSource createReportDataSource(List<?> includedTests) {
-        JRBeanCollectionDataSource dataSource;
-        dataSource = new JRBeanCollectionDataSource(includedTests);
+    // get workplan report based on testName
+    IWorkplanReport workplanReport = getWorkplanReport(workplanType, workplanName);
 
-        return dataSource;
+    workplanReport.setReportPath(getReportPath());
+
+    // set jasper report parameters
+    HashMap<String, Object> parameterMap = workplanReport.getParameters();
+
+    // prepare report
+    List<?> workplanRows = workplanReport.prepareRows(form);
+
+    // set Jasper report file name
+    String reportFileName = workplanReport.getFileName();
+    try {
+
+      byte[] bytes = null;
+
+      JRDataSource dataSource = createReportDataSource(workplanRows);
+      bytes =
+          JasperRunManager.runReportToPdf(
+              getReportPath() + reportFileName + ".jasper", parameterMap, dataSource);
+
+      ServletOutputStream servletOutputStream = response.getOutputStream();
+      response.setContentType("application/pdf");
+      response.setContentLength(bytes.length);
+      String downloadFilename = "WorkplanReport";
+      response.setHeader("Content-Disposition", "filename=\"" + downloadFilename + ".pdf\"");
+
+      servletOutputStream.write(bytes, 0, bytes.length);
+      servletOutputStream.flush();
+      servletOutputStream.close();
+
+    } catch (JRException | IOException e) {
+      LogEvent.logError(e);
+      result.reject("error.jasper", "error.jasper");
+    }
+  }
+
+  private JRDataSource createReportDataSource(List<?> includedTests) {
+    JRBeanCollectionDataSource dataSource;
+    dataSource = new JRBeanCollectionDataSource(includedTests);
+
+    return dataSource;
+  }
+
+  private String getTestTypeName(String id) {
+    return TestServiceImpl.getUserLocalizedTestName(id);
+  }
+
+  public IWorkplanReport getWorkplanReport(String testType, String name) {
+
+    IWorkplanReport workplan;
+
+    if ("test".equals(testType)) {
+      workplan = new TestWorkplanReport(name);
+    } else {
+      workplan = new TestSectionWorkplanReport(name);
     }
 
-    private String getTestTypeName(String id) {
-        return TestServiceImpl.getUserLocalizedTestName(id);
+    return workplan;
+  }
+
+  private String getReportPath() {
+    String reportPath = getReportPathValue();
+    if (reportPath.endsWith(File.separator)) {
+      return reportPath;
+    } else {
+      return reportPath + File.separator;
     }
+  }
 
-    public IWorkplanReport getWorkplanReport(String testType, String name) {
-
-        IWorkplanReport workplan;
-
-        if ("test".equals(testType)) {
-            workplan = new TestWorkplanReport(name);
-        } else {
-            workplan = new TestSectionWorkplanReport(name);
-        }
-
-        return workplan;
+  private String getReportPathValue() {
+    if (reportPath == null) {
+      ClassLoader classLoader = getClass().getClassLoader();
+      reportPath = classLoader.getResource("reports").getPath();
+      try {
+        reportPath = URLDecoder.decode(reportPath, "UTF-8");
+      } catch (UnsupportedEncodingException e) {
+        LogEvent.logError(e);
+        throw new LIMSRuntimeException(e);
+      }
     }
-
-    private String getReportPath() {
-        String reportPath = getReportPathValue();
-        if (reportPath.endsWith(File.separator)) {
-            return reportPath;
-        } else {
-            return reportPath + File.separator;
-        }
-    }
-
-    private String getReportPathValue() {
-        if (reportPath == null) {
-            ClassLoader classLoader = getClass().getClassLoader();
-            reportPath = classLoader.getResource("reports").getPath();
-            try {
-                reportPath = URLDecoder.decode(reportPath, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                LogEvent.logError(e);
-                throw new LIMSRuntimeException(e);
-            }
-        }
-        return reportPath;
-    }
+    return reportPath;
+  }
 }

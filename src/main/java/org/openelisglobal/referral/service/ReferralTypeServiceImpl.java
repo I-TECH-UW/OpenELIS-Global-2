@@ -9,22 +9,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ReferralTypeServiceImpl extends AuditableBaseObjectServiceImpl<ReferralType, String>
-        implements ReferralTypeService {
-    @Autowired
-    protected ReferralTypeDAO baseObjectDAO;
+    implements ReferralTypeService {
+  @Autowired protected ReferralTypeDAO baseObjectDAO;
 
-    ReferralTypeServiceImpl() {
-        super(ReferralType.class);
-    }
+  ReferralTypeServiceImpl() {
+    super(ReferralType.class);
+  }
 
-    @Override
-    protected ReferralTypeDAO getBaseObjectDAO() {
-        return baseObjectDAO;
-    }
+  @Override
+  protected ReferralTypeDAO getBaseObjectDAO() {
+    return baseObjectDAO;
+  }
 
-    @Override
-    @Transactional(readOnly = true)
-    public ReferralType getReferralTypeByName(String name) {
-        return getMatch("name", name).orElse(null);
-    }
+  @Override
+  @Transactional(readOnly = true)
+  public ReferralType getReferralTypeByName(String name) {
+    return getMatch("name", name).orElse(null);
+  }
 }

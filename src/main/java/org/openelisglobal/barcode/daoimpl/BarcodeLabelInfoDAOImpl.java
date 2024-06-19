@@ -7,19 +7,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Class for inserting, updating, and retrieving
- * lims/barcode/valueholder/BarcodeLabelInfo from the database
- * (clinlims.barcode_label_info)
+ * Class for inserting, updating, and retrieving lims/barcode/valueholder/BarcodeLabelInfo from the
+ * database (clinlims.barcode_label_info)
  *
  * @author Caleb
- *
  */
 @Component
 @Transactional
-public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, String> implements BarcodeLabelInfoDAO {
+public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, String>
+    implements BarcodeLabelInfoDAO {
 
-    public BarcodeLabelInfoDAOImpl() {
-        super(BarcodeLabelInfo.class);
-    }
-
+  public BarcodeLabelInfoDAOImpl() {
+    super(BarcodeLabelInfo.class);
+  }
 }

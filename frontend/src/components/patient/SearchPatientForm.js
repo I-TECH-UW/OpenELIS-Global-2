@@ -8,8 +8,6 @@ import {
   Button,
   Grid,
   Column,
-  DatePicker,
-  DatePickerInput,
   RadioButton,
   RadioButtonGroup,
   DataTable,
@@ -29,10 +27,13 @@ import { Formik, Field } from "formik";
 import SearchPatientFormValues from "../formModel/innitialValues/SearchPatientFormValues";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
+import CustomDatePicker from "../common/CustomDatePicker";
+import { ConfigurationContext } from "../layout/Layout";
 
 function SearchPatientForm(props) {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
 
   const intl = useIntl();
 
@@ -70,7 +71,9 @@ function SearchPatientForm(props) {
       "&dateOfBirth=" +
       values.dateOfBirth +
       "&gender=" +
-      values.gender;
+      values.gender +
+      "&suppressExternalSearch=" +
+      values.suppressExternalSearch;
     getFromOpenElisServer(searchEndPoint, fetchPatientResults);
     setUrl(searchEndPoint);
   };
@@ -121,8 +124,8 @@ function SearchPatientForm(props) {
     props.getSelectedPatient(patientDetails);
   };
 
-  const handleDatePickerChange = (...e) => {
-    setDob(e[1]);
+  const handleDatePickerChange = (date) => {
+    setDob(date);
   };
 
   const patientSelected = (e) => {
@@ -177,156 +180,185 @@ function SearchPatientForm(props) {
             onChange={handleChange}
             onBlur={handleBlur}
           >
-            <Field name="guid">
-              {({ field }) => (
-                <input type="hidden" name={field.name} id={field.name} />
-              )}
-            </Field>
-            <div className="inlineDiv">
-              <Field name="patientId">
+            <Grid>
+              <Field name="guid">
                 {({ field }) => (
-                  <TextInput
-                    name={field.name}
-                    value={values[field.name]}
-                    placeholder={intl.formatMessage({
-                      id: "input.placeholder.patientId",
-                    })}
-                    labelText={intl.formatMessage({
-                      id: "patient.id",
-                      defaultMessage: "Patient Id",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                  />
+                  <input type="hidden" name={field.name} id={field.name} />
                 )}
               </Field>
-              <Field name="labNumber">
-                {({ field }) => (
-                  <CustomLabNumberInput
-                    name={field.name}
-                    placeholder={intl.formatMessage({
-                      id: "input.placeholder.prevLabNumber",
-                    })}
-                    labelText={intl.formatMessage({
-                      id: "patient.prev.lab.no",
-                      defaultMessage: "Previous Lab Number",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                    value={values[field.name]}
-                    onChange={(e, rawValue) => {
-                      setFieldValue(field.name, rawValue);
-                    }}
-                  />
-                )}
-              </Field>
-            </div>
-            <div className="inlineDiv">
-              <Field name="lastName">
-                {({ field }) => (
-                  <TextInput
-                    name={field.name}
-                    placeholder={intl.formatMessage({
-                      id: "input.placeholder.patientLastName",
-                    })}
-                    labelText={intl.formatMessage({
-                      id: "patient.last.name",
-                      defaultMessage: "Last Name",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                  />
-                )}
-              </Field>
-              <Field name="firstName">
-                {({ field }) => (
-                  <TextInput
-                    name={field.name}
-                    placeholder={intl.formatMessage({
-                      id: "input.placeholder.patientFirstName",
-                    })}
-                    labelText={intl.formatMessage({
-                      id: "patient.first.name",
-                      defaultMessage: "First Name",
-                    })}
-                    id={field.name}
-                    className="inputText"
-                  />
-                )}
-              </Field>
-            </div>
-            <div className="inlineDiv">
-              <Field name="dateOfBirth">
-                {({ field }) => (
-                  <DatePicker
-                    onChange={handleDatePickerChange}
-                    name={field.name}
-                    dateFormat="d/m/Y"
-                    datePickerType="single"
-                    light={true}
-                    className="inputText"
-                  >
-                    <DatePickerInput
-                      id="date-picker-default-id"
-                      placeholder="dd/mm/yyyy"
+              <Column lg={16} md={8} sm={4}>
+                {" "}
+                <br />{" "}
+              </Column>
+              <Column lg={8} md={4} sm={4}>
+                <Field name="patientId">
+                  {({ field }) => (
+                    <TextInput
+                      name={field.name}
+                      value={values[field.name]}
+                      placeholder={intl.formatMessage({
+                        id: "input.placeholder.patientId",
+                      })}
+                      labelText={intl.formatMessage({
+                        id: "patient.id",
+                        defaultMessage: "Patient Id",
+                      })}
+                      id={field.name}
+                    />
+                  )}
+                </Field>
+              </Column>
+              <Column lg={8} md={4} sm={4}>
+                <Field name="labNumber">
+                  {({ field }) => (
+                    <CustomLabNumberInput
+                      name={field.name}
+                      placeholder={intl.formatMessage({
+                        id: "input.placeholder.prevLabNumber",
+                      })}
+                      labelText={intl.formatMessage({
+                        id: "patient.prev.lab.no",
+                        defaultMessage: "Previous Lab Number",
+                      })}
+                      id={field.name}
+                      value={values[field.name]}
+                      onChange={(e, rawValue) => {
+                        setFieldValue(field.name, rawValue);
+                      }}
+                    />
+                  )}
+                </Field>
+              </Column>
+              <Column lg={16} md={8} sm={4}>
+                {" "}
+                <br />{" "}
+              </Column>
+              <Column lg={8} md={4} sm={4}>
+                <Field name="lastName">
+                  {({ field }) => (
+                    <TextInput
+                      name={field.name}
+                      placeholder={intl.formatMessage({
+                        id: "input.placeholder.patientLastName",
+                      })}
+                      labelText={intl.formatMessage({
+                        id: "patient.last.name",
+                        defaultMessage: "Last Name",
+                      })}
+                      id={field.name}
+                    />
+                  )}
+                </Field>
+              </Column>
+              <Column lg={8} md={4} sm={4}>
+                <Field name="firstName">
+                  {({ field }) => (
+                    <TextInput
+                      name={field.name}
+                      placeholder={intl.formatMessage({
+                        id: "input.placeholder.patientFirstName",
+                      })}
+                      labelText={intl.formatMessage({
+                        id: "patient.first.name",
+                        defaultMessage: "First Name",
+                      })}
+                      id={field.name}
+                    />
+                  )}
+                </Field>
+              </Column>
+              <Column lg={16} md={8} sm={4}>
+                {" "}
+                <br />{" "}
+              </Column>
+              <Column lg={8} md={4} sm={4}>
+                <Field name="dateOfBirth">
+                  {({ field }) => (
+                    <CustomDatePicker
+                      id={"date-picker-default-id"}
                       labelText={intl.formatMessage({
                         id: "patient.dob",
                         defaultMessage: "Date of Birth",
                       })}
-                      type="text"
+                      autofillDate={true}
+                      value={values.birthDateForDisplay || ""}
+                      onChange={(date) => handleDatePickerChange(date)}
                       name={field.name}
+                      disallowFutureDate={true}
                     />
-                  </DatePicker>
-                )}
-              </Field>
-              <Field name="gender">
-                {({ field }) => (
-                  <RadioButtonGroup
-                    className="inputText"
-                    defaultSelected=""
-                    legendText={intl.formatMessage({
-                      id: "patient.gender",
-                      defaultMessage: "Gender",
-                    })}
-                    name={field.name}
-                    id="search_patient_gender"
-                  >
-                    <RadioButton
-                      id="search-radio-1"
-                      labelText={intl.formatMessage({
-                        id: "patient.male",
-                        defaultMessage: "Male",
+                  )}
+                </Field>
+              </Column>
+              <Column lg={8} md={4} sm={4}>
+                <Field name="gender">
+                  {({ field }) => (
+                    <RadioButtonGroup
+                      defaultSelected=""
+                      legendText={intl.formatMessage({
+                        id: "patient.gender",
+                        defaultMessage: "Gender",
                       })}
-                      value="M"
-                    />
-                    <RadioButton
-                      id="search-radio-2"
-                      labelText={intl.formatMessage({
-                        id: "patient.female",
-                        defaultMessage: "Female",
-                      })}
-                      value="F"
-                    />
-                  </RadioButtonGroup>
-                )}
-              </Field>
-            </div>
-            <div className="formInlineDiv">
-              <div className="searchActionButtons">
-                <Button kind="tertiary">
+                      name={field.name}
+                      id="search_patient_gender"
+                    >
+                      <RadioButton
+                        id="search-radio-1"
+                        labelText={intl.formatMessage({
+                          id: "patient.male",
+                          defaultMessage: "Male",
+                        })}
+                        value="M"
+                      />
+                      <RadioButton
+                        id="search-radio-2"
+                        labelText={intl.formatMessage({
+                          id: "patient.female",
+                          defaultMessage: "Female",
+                        })}
+                        value="F"
+                      />
+                    </RadioButtonGroup>
+                  )}
+                </Field>
+              </Column>
+              <Column lg={16} md={8} sm={4}>
+                {" "}
+                <br />{" "}
+              </Column>
+              <Column lg={4} md={4} sm={2}>
+                <Button
+                  id="local_search"
+                  kind="tertiary"
+                  type="submit"
+                  onClick={() => setFieldValue("suppressExternalSearch", true)}
+                >
+                  <FormattedMessage id="label.button.search" />
+                </Button>
+              </Column>
+              <Column lg={4} md={4} sm={2}>
+                <Button
+                  id="external_search"
+                  type="submit"
+                  disabled={
+                    configurationProperties.UseExternalPatientInfo === "false"
+                  }
+                  kind="tertiary"
+                  onClick={() => setFieldValue("suppressExternalSearch", false)}
+                >
                   <FormattedMessage
                     id="label.button.externalsearch"
                     defaultMessage="External Search"
                   />
                 </Button>
-                <Button type="submit">
-                  <FormattedMessage id="label.button.search" />
-                </Button>
-              </div>
-            </div>
+              </Column>
+            </Grid>
           </Form>
         )}
       </Formik>
+      <Column lg={16}>
+        {" "}
+        <br />{" "}
+      </Column>
       <Column lg={16}>
         {pagination && (
           <Grid>
@@ -354,97 +386,87 @@ function SearchPatientForm(props) {
           </Grid>
         )}
       </Column>
-      <div>
-        <Column lg={16}>
-          <DataTable
-            rows={patientSearchResults}
-            headers={patientSearchHeaderData}
-            isSortable
-          >
-            {({ rows, headers, getHeaderProps, getTableProps }) => (
-              <TableContainer title="Patient Results">
-                <Table {...getTableProps()}>
-                  <TableHead>
-                    <TableRow>
-                      <TableHeader></TableHeader>
-                      {headers.map((header) => (
-                        <TableHeader
-                          key={header.key}
-                          {...getHeaderProps({ header })}
-                        >
-                          {header.header}
-                        </TableHeader>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <>
-                      {rows
-                        .slice((page - 1) * pageSize)
-                        .slice(0, pageSize)
-                        .map((row) => (
-                          <TableRow key={row.id}>
-                            <TableCell>
-                              {" "}
-                              <RadioButton
-                                name="radio-group"
-                                onClick={patientSelected}
-                                labelText=""
-                                id={row.id}
-                              />
-                            </TableCell>
-                            {row.cells.map((cell) => (
-                              <TableCell key={cell.id}>{cell.value}</TableCell>
-                            ))}
-                          </TableRow>
+      <DataTable
+        rows={patientSearchResults}
+        headers={patientSearchHeaderData}
+        isSortable
+      >
+        {({ rows, headers, getHeaderProps, getTableProps }) => (
+          <TableContainer title="Patient Results">
+            <Table {...getTableProps()}>
+              <TableHead>
+                <TableRow>
+                  <TableHeader></TableHeader>
+                  {headers.map((header) => (
+                    <TableHeader
+                      key={header.key}
+                      {...getHeaderProps({ header })}
+                    >
+                      {header.header}
+                    </TableHeader>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <>
+                  {rows
+                    .slice((page - 1) * pageSize)
+                    .slice(0, pageSize)
+                    .map((row) => (
+                      <TableRow key={row.id}>
+                        <TableCell>
+                          {" "}
+                          <RadioButton
+                            name="radio-group"
+                            onClick={patientSelected}
+                            labelText=""
+                            id={row.id}
+                          />
+                        </TableCell>
+                        {row.cells.map((cell) => (
+                          <TableCell key={cell.id}>{cell.value}</TableCell>
                         ))}
-                    </>
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            )}
-          </DataTable>
-          <Pagination
-            onChange={handlePageChange}
-            page={page}
-            pageSize={pageSize}
-            pageSizes={[5, 10, 20, 30]}
-            totalItems={patientSearchResults.length}
-            forwardText={intl.formatMessage({ id: "pagination.forward" })}
-            backwardText={intl.formatMessage({ id: "pagination.backward" })}
-            itemRangeText={(min, max, total) =>
-              intl.formatMessage(
-                { id: "pagination.item-range" },
-                { min: min, max: max, total: total },
-              )
-            }
-            itemsPerPageText={intl.formatMessage({
-              id: "pagination.items-per-page",
-            })}
-            itemText={(min, max) =>
-              intl.formatMessage(
-                { id: "pagination.item" },
-                { min: min, max: max },
-              )
-            }
-            pageNumberText={intl.formatMessage({
-              id: "pagination.page-number",
-            })}
-            pageRangeText={(_current, total) =>
-              intl.formatMessage(
-                { id: "pagination.page-range" },
-                { total: total },
-              )
-            }
-            pageText={(page, pagesUnknown) =>
-              intl.formatMessage(
-                { id: "pagination.page" },
-                { page: pagesUnknown ? "" : page },
-              )
-            }
-          />
-        </Column>
-      </div>
+                      </TableRow>
+                    ))}
+                </>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+      </DataTable>
+      <Pagination
+        onChange={handlePageChange}
+        page={page}
+        pageSize={pageSize}
+        pageSizes={[5, 10, 20, 30]}
+        totalItems={patientSearchResults.length}
+        forwardText={intl.formatMessage({ id: "pagination.forward" })}
+        backwardText={intl.formatMessage({ id: "pagination.backward" })}
+        itemRangeText={(min, max, total) =>
+          intl.formatMessage(
+            { id: "pagination.item-range" },
+            { min: min, max: max, total: total },
+          )
+        }
+        itemsPerPageText={intl.formatMessage({
+          id: "pagination.items-per-page",
+        })}
+        itemText={(min, max) =>
+          intl.formatMessage({ id: "pagination.item" }, { min: min, max: max })
+        }
+        pageNumberText={intl.formatMessage({
+          id: "pagination.page-number",
+        })}
+        pageRangeText={(_current, total) =>
+          intl.formatMessage({ id: "pagination.page-range" }, { total: total })
+        }
+        pageText={(page, pagesUnknown) =>
+          intl.formatMessage(
+            { id: "pagination.page" },
+            { page: pagesUnknown ? "" : page },
+          )
+        }
+      />
     </>
   );
 }

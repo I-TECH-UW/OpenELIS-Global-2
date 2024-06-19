@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class StateViewDAOImpl extends BaseDAOImpl<StateView, String> implements StateViewDAO {
-    StateViewDAOImpl() {
-        super(StateView.class);
-    }
+  StateViewDAOImpl() {
+    super(StateView.class);
+  }
 }

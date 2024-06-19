@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Form,
   FormLabel,
@@ -64,10 +64,10 @@ const ReportByDate = (props) => {
     }
 
     if (
-     ( props.report === "activityReportByTest" ||
-      props.report === "activityReportByPanel" ||
-      props.report === "activityReportByTestSection") &&
-        !reportFormValues.value
+      (props.report === "activityReportByTest" ||
+        props.report === "activityReportByPanel" ||
+        props.report === "activityReportByTestSection") &&
+      !reportFormValues.value
     ) {
       setReportFormValues({
         ...reportFormValues,
@@ -126,7 +126,7 @@ const ReportByDate = (props) => {
       }
     };
 
-    console.log("props", props)
+    console.log("props", props);
     if (
       props.report === "activityReportByTest" ||
       props.report === "activityReportByPanel" ||
@@ -138,22 +138,26 @@ const ReportByDate = (props) => {
 
   return (
     <>
-      <FormLabel>
-        <Section>
-          <Section>
-            <h1>
-              <FormattedMessage id={props.id ?? props.report} />
-            </h1>
-          </Section>
-        </Section>
-      </FormLabel>
+      <Grid fullWidth={true}>
+        <Column lg={8} md={8} sm={4}>
+          <FormLabel>
+            <Section>
+              <Section>
+                <h1>
+                  <FormattedMessage id={props.id ?? props.report} />
+                </h1>
+              </Section>
+            </Section>
+          </FormLabel>
+        </Column>
+      </Grid>
       {notificationVisible && <AlertDialog />}
       {loading && <Loading />}
       <Grid fullWidth={true}>
         <Column lg={16} md={8} sm={4}>
           <Form>
             <Grid fullWidth={true}>
-              <Column lg={10} md={8} sm={4}>
+              <Column lg={16} md={8} sm={4}>
                 <Section>
                   <br />
                   <br />
@@ -161,40 +165,44 @@ const ReportByDate = (props) => {
                     <FormattedMessage id="label.select.dateRange" />
                   </h5>
                 </Section>
-                <div className="inlineDiv">
-                  <CustomDatePicker
-                    key="startDate"
-                    id={"startDate"}
-                    labelText={intl.formatMessage({
-                      id: "eorder.date.start",
-                      defaultMessage: "Start Date",
-                    })}
-                    disallowFutureDate={true}
-                    autofillDate={true}
-                    value={reportFormValues.startDate}
-                    className="inputDate"
-                    onChange={(date) =>
-                      handleDatePickerChangeDate("startDate", date)
-                    }
-                  />
-                  <CustomDatePicker
-                    key="endDate"
-                    id={"endDate"}
-                    labelText={intl.formatMessage({
-                      id: "eorder.date.end",
-                      defaultMessage: "End Date",
-                    })}
-                    disallowFutureDate={true}
-                    className="inputDate"
-                    autofillDate={true}
-                    value={reportFormValues.endDate}
-                    onChange={(date) =>
-                      handleDatePickerChangeDate("endDate", date)
-                    }
-                  />
-                </div>
               </Column>
-              <Column lg={10} md={8} sm={4}>
+              <Column lg={4} md={8} sm={4}>
+                <CustomDatePicker
+                  key="startDate"
+                  id={"startDate"}
+                  labelText={intl.formatMessage({
+                    id: "eorder.date.start",
+                    defaultMessage: "Start Date",
+                  })}
+                  disallowFutureDate={true}
+                  autofillDate={true}
+                  value={reportFormValues.startDate}
+                  onChange={(date) =>
+                    handleDatePickerChangeDate("startDate", date)
+                  }
+                />
+              </Column>
+              <Column lg={4} md={8} sm={4}>
+                <CustomDatePicker
+                  key="endDate"
+                  id={"endDate"}
+                  labelText={intl.formatMessage({
+                    id: "eorder.date.end",
+                    defaultMessage: "End Date",
+                  })}
+                  disallowFutureDate={true}
+                  autofillDate={true}
+                  value={reportFormValues.endDate}
+                  onChange={(date) =>
+                    handleDatePickerChangeDate("endDate", date)
+                  }
+                />
+              </Column>
+              <Column lg={16}>
+                {" "}
+                <br />
+              </Column>
+              <Column lg={8} md={8} sm={4}>
                 {list && list.length > 0 && (
                   <Select
                     id="type"
@@ -209,7 +217,11 @@ const ReportByDate = (props) => {
                       })
                     }
                   >
-                    <SelectItem key={"emptyselect"} value={""} text="Select Test Type" />
+                    <SelectItem
+                      key={"emptyselect"}
+                      value={""}
+                      text="Select Test Type"
+                    />
                     {list.map((statusOption) => (
                       <SelectItem
                         key={statusOption.id}

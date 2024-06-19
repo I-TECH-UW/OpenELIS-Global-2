@@ -180,15 +180,16 @@
 		<td><spring:message code="patient.site.subject.number" /></td>
 		<td><form:input path="siteSubjectNumber"
 				id="vl.siteSubjectNumber" cssClass="text"
-				onchange="vl.checkSiteSubjectNumber(true, false); makeDirty();" />
+				onkeyup="addPatientCodeSlashes(this, event);"
+				onchange="vl.checkSiteSubjectNumber(true, false);validateSiteSubjectNumber(this); makeDirty();" maxlength="18"/>
 			<div id="vl.siteSubjectNumberMessage" class="blank"></div></td>
 	</tr>
-	<tr>
+<%-- 	<tr>
 		<td class=""></td>
 		<td><spring:message code="patient.upid.code" /></td>
 		<td><form:input path="upidCode" id="vl.upidCode" cssClass="text" />
 			<div id="vl.upidCodeMessage" class="blank"></div></td>
-	</tr>
+	</tr> --%>
 	<tr>
 		<td class="required">*</td>
 		<td><spring:message code="patient.project.labNo" /></td>

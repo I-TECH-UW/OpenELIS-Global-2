@@ -7,20 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ExternalConnectionContactServiceImpl extends AuditableBaseObjectServiceImpl<ExternalConnectionContact, Integer>
-        implements ExternalConnectionContactService {
+public class ExternalConnectionContactServiceImpl
+    extends AuditableBaseObjectServiceImpl<ExternalConnectionContact, Integer>
+    implements ExternalConnectionContactService {
 
-    @Autowired
-    protected ExternalConnectionContactDAO baseObjectDAO;
+  @Autowired protected ExternalConnectionContactDAO baseObjectDAO;
 
-    ExternalConnectionContactServiceImpl() {
-        super(ExternalConnectionContact.class);
-        this.auditTrailLog = false;
-    }
+  ExternalConnectionContactServiceImpl() {
+    super(ExternalConnectionContact.class);
+    this.auditTrailLog = false;
+  }
 
-    @Override
-    protected ExternalConnectionContactDAO getBaseObjectDAO() {
-        return baseObjectDAO;
-    }
-
+  @Override
+  protected ExternalConnectionContactDAO getBaseObjectDAO() {
+    return baseObjectDAO;
+  }
 }

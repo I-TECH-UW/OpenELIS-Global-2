@@ -8,9 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class OrganizationHL7SchemaDAOImpl extends BaseDAOImpl<OrganizationHL7Schema, OrganizationSchemaPK>
-        implements OrganizationHL7SchemaDAO {
-    OrganizationHL7SchemaDAOImpl() {
-        super(OrganizationHL7Schema.class);
-    }
+public class OrganizationHL7SchemaDAOImpl
+    extends BaseDAOImpl<OrganizationHL7Schema, OrganizationSchemaPK>
+    implements OrganizationHL7SchemaDAO {
+  OrganizationHL7SchemaDAOImpl() {
+    super(OrganizationHL7Schema.class);
+  }
 }

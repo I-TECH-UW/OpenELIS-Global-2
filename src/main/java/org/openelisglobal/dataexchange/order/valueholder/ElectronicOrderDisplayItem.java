@@ -1,206 +1,220 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
- *
+ * <p>Copyright (C) ITECH, University of Washington, Seattle WA. All Rights Reserved.
  */
-
 package org.openelisglobal.dataexchange.order.valueholder;
 
-import org.openelisglobal.sample.valueholder.OrderPriority;
-
 import java.util.List;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 
 public class ElectronicOrderDisplayItem {
 
-    private String electronicOrderId;
+  private String electronicOrderId;
 
-    private String externalOrderId;
-    
-    private String patientUpid;
+  private String externalOrderId;
 
-    private String requestDateDisplay;
+  private String patientUpid;
 
-    private String patientLastName;
+  private String requestDateDisplay;
 
-    private String patientFirstName;
+  private String collectionDateDisplay;
 
-    private String patientNationalId;
+  private String patientLastName;
 
-    private String requestingFacility;
+  private String patientFirstName;
 
-    private String status;
+  private String patientNationalId;
 
-    private String testName;
+  private String requestingFacility;
 
-    private String referringLabNumber;
+  private String status;
 
-    private String passportNumber;
+  private String testName;
 
-    private String subjectNumber;
+  private String referringLabNumber;
 
-    private String labNumber;
+  private String passportNumber;
 
-    private String birthDate;
+  private String subjectNumber;
 
-    private String gender;
+  private String labNumber;
 
-    public String getBirthDate() {
-        return birthDate;
-    }
+  private String birthDate;
 
-    public void setBirthDate(String birthDate) {
-        this.birthDate = birthDate;
-    }
+  private String gender;
 
-    public String getGender() {
-        return gender;
-    }
+  private String qaEventId;
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
+  public String getBirthDate() {
+    return birthDate;
+  }
 
-    private List<String> warnings;
+  public void setBirthDate(String birthDate) {
+    this.birthDate = birthDate;
+  }
 
-    private OrderPriority priority;
+  public String getGender() {
+    return gender;
+  }
 
-    public String getElectronicOrderId() {
-        return electronicOrderId;
-    }
+  public void setGender(String gender) {
+    this.gender = gender;
+  }
 
-    public void setElectronicOrderId(String electronicOrderId) {
-        this.electronicOrderId = electronicOrderId;
-    }
+  private List<String> warnings;
 
-    public String getRequestDateDisplay() {
-        return requestDateDisplay;
-    }
+  private OrderPriority priority;
 
-    public void setRequestDateDisplay(String requestDateDisplay) {
-        this.requestDateDisplay = requestDateDisplay;
-    }
+  public String getElectronicOrderId() {
+    return electronicOrderId;
+  }
 
-    public String getPatientLastName() {
-        return patientLastName;
-    }
+  public void setElectronicOrderId(String electronicOrderId) {
+    this.electronicOrderId = electronicOrderId;
+  }
 
-    public void setPatientLastName(String patientLastName) {
-        this.patientLastName = patientLastName;
-    }
+  public String getRequestDateDisplay() {
+    return requestDateDisplay;
+  }
 
-    public String getPatientFirstName() {
-        return patientFirstName;
-    }
+  public void setRequestDateDisplay(String requestDateDisplay) {
+    this.requestDateDisplay = requestDateDisplay;
+  }
 
-    public void setPatientFirstName(String patientFirstName) {
-        this.patientFirstName = patientFirstName;
-    }
+  public String getPatientLastName() {
+    return patientLastName;
+  }
 
-    public String getPatientNationalId() {
-        return patientNationalId;
-    }
+  public void setPatientLastName(String patientLastName) {
+    this.patientLastName = patientLastName;
+  }
 
-    public void setPatientNationalId(String patientNationalId) {
-        this.patientNationalId = patientNationalId;
-    }
+  public String getPatientFirstName() {
+    return patientFirstName;
+  }
 
-    public String getRequestingFacility() {
-        return requestingFacility;
-    }
+  public void setPatientFirstName(String patientFirstName) {
+    this.patientFirstName = patientFirstName;
+  }
 
-    public void setRequestingFacility(String requestingFacility) {
-        this.requestingFacility = requestingFacility;
-    }
+  public String getPatientNationalId() {
+    return patientNationalId;
+  }
 
-    public String getStatus() {
-        return status;
-    }
+  public void setPatientNationalId(String patientNationalId) {
+    this.patientNationalId = patientNationalId;
+  }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+  public String getRequestingFacility() {
+    return requestingFacility;
+  }
 
-    public String getTestName() {
-        return testName;
-    }
+  public void setRequestingFacility(String requestingFacility) {
+    this.requestingFacility = requestingFacility;
+  }
 
-    public void setTestName(String testName) {
-        this.testName = testName;
-    }
+  public String getStatus() {
+    return status;
+  }
 
-    public String getReferringLabNumber() {
-        return referringLabNumber;
-    }
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-    public void setReferringLabNumber(String referringLabNumber) {
-        this.referringLabNumber = referringLabNumber;
-    }
+  public String getTestName() {
+    return testName;
+  }
 
-    public String getPassportNumber() {
-        return passportNumber;
-    }
+  public void setTestName(String testName) {
+    this.testName = testName;
+  }
 
-    public void setPassportNumber(String passportNumber) {
-        this.passportNumber = passportNumber;
-    }
+  public String getReferringLabNumber() {
+    return referringLabNumber;
+  }
 
-    public String getSubjectNumber() {
-        return subjectNumber;
-    }
+  public void setReferringLabNumber(String referringLabNumber) {
+    this.referringLabNumber = referringLabNumber;
+  }
 
-    public void setSubjectNumber(String subjectNumber) {
-        this.subjectNumber = subjectNumber;
-    }
+  public String getPassportNumber() {
+    return passportNumber;
+  }
 
-    public String getLabNumber() {
-        return labNumber;
-    }
+  public void setPassportNumber(String passportNumber) {
+    this.passportNumber = passportNumber;
+  }
 
-    public void setLabNumber(String labNumber) {
-        this.labNumber = labNumber;
-    }
+  public String getSubjectNumber() {
+    return subjectNumber;
+  }
 
-    public String getExternalOrderId() {
-        return externalOrderId;
-    }
+  public void setSubjectNumber(String subjectNumber) {
+    this.subjectNumber = subjectNumber;
+  }
 
-    public void setExternalOrderId(String externalOrderId) {
-        this.externalOrderId = externalOrderId;
-    }
+  public String getLabNumber() {
+    return labNumber;
+  }
 
-    public List<String> getWarnings() {
-        return warnings;
-    }
+  public void setLabNumber(String labNumber) {
+    this.labNumber = labNumber;
+  }
 
-    public void setWarnings(List<String> warnings) {
-        this.warnings = warnings;
-    }
+  public String getExternalOrderId() {
+    return externalOrderId;
+  }
 
-    public OrderPriority getPriority() {
-        return priority;
-    }
+  public void setExternalOrderId(String externalOrderId) {
+    this.externalOrderId = externalOrderId;
+  }
 
-    public void setPriority(OrderPriority priority) {
-        this.priority = priority;
-    }
+  public List<String> getWarnings() {
+    return warnings;
+  }
 
-	public String getPatientUpid() {
-		return patientUpid;
-	}
+  public void setWarnings(List<String> warnings) {
+    this.warnings = warnings;
+  }
 
-	public void setPatientUpid(String patientUpid) {
-		this.patientUpid = patientUpid;
-	}
-   
+  public OrderPriority getPriority() {
+    return priority;
+  }
+
+  public void setPriority(OrderPriority priority) {
+    this.priority = priority;
+  }
+
+  public String getPatientUpid() {
+    return patientUpid;
+  }
+
+  public void setPatientUpid(String patientUpid) {
+    this.patientUpid = patientUpid;
+  }
+
+  public String getCollectionDateDisplay() {
+    return collectionDateDisplay;
+  }
+
+  public void setCollectionDateDisplay(String collectionDateDisplay) {
+    this.collectionDateDisplay = collectionDateDisplay;
+  }
+
+  public String getQaEventId() {
+    return qaEventId;
+  }
+
+  public void setQaEventId(String qaEventId) {
+    this.qaEventId = qaEventId;
+  }
 }

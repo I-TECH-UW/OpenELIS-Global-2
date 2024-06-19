@@ -18,35 +18,34 @@ package org.openelisglobal.test.beanItems;
 
 import java.io.Serializable;
 import java.util.List;
-
 import org.openelisglobal.common.util.IdValuePair;
 
 public class TestActivationBean implements Serializable {
-    private IdValuePair sampleType;
-    private List<IdValuePair> activeTests;
-    private List<IdValuePair> inactiveTests;
+  private IdValuePair sampleType;
+  private List<IdValuePair> activeTests;
+  private List<IdValuePair> inactiveTests;
 
-    public IdValuePair getSampleType() {
-        return sampleType;
-    }
+  public IdValuePair getSampleType() {
+    return sampleType;
+  }
 
-    public void setSampleType(IdValuePair sampleType) {
-        this.sampleType = sampleType;
-    }
+  public void setSampleType(IdValuePair sampleType) {
+    this.sampleType = sampleType;
+  }
 
-    public List<IdValuePair> getActiveTests() {
-        return activeTests;
-    }
+  public List<IdValuePair> getActiveTests() {
+    return activeTests;
+  }
 
-    public void setActiveTests(List<IdValuePair> activeTests) {
-        this.activeTests = activeTests;
-    }
+  public void setActiveTests(List<IdValuePair> activeTests) {
+    this.activeTests = activeTests;
+  }
 
-    public List<IdValuePair> getInactiveTests() {
-        return inactiveTests;
-    }
+  public List<IdValuePair> getInactiveTests() {
+    return inactiveTests;
+  }
 
-    public void setInactiveTests(List<IdValuePair> inactiveTests) {
-        this.inactiveTests = inactiveTests;
-    }
+  public void setInactiveTests(List<IdValuePair> inactiveTests) {
+    this.inactiveTests = inactiveTests;
+  }
 }

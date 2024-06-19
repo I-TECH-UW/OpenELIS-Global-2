@@ -175,127 +175,144 @@ function ProgramManagement() {
         <Grid>
           <Column lg={16}>
             <Section>
-              <Section>
-                <Heading>
-                  <FormattedMessage id="edit.add.program.title" />
-                </Heading>
-              </Section>
+              <Heading>
+                <FormattedMessage id="edit.add.program.title" />
+              </Heading>
             </Section>
           </Column>
         </Grid>
         <Form onSubmit={handleSubmit}>
-          <div className="formInlineDiv">
-            <Select
-              id="additionalQuestionsSelect"
-              labelText="Program"
-              onChange={handleProgramSelection}
-            >
-              <SelectItem
-                value=""
-                text={intl.formatMessage({ id: "new.program.label" })}
-              />
-              {programs.map((program) => {
-                return (
-                  <SelectItem
-                    key={program.id}
-                    value={program.id}
-                    text={program.value}
-                  />
-                );
-              })}
-            </Select>
-            {loading && <Loading />}
-          </div>
+          <Grid>
+            <Column lg={8}>
+              <Select
+                id="additionalQuestionsSelect"
+                labelText="Program"
+                onChange={handleProgramSelection}
+              >
+                <SelectItem
+                  value=""
+                  text={intl.formatMessage({ id: "new.program.label" })}
+                />
+                {programs.map((program) => {
+                  return (
+                    <SelectItem
+                      key={program.id}
+                      value={program.id}
+                      text={program.value}
+                    />
+                  );
+                })}
+              </Select>
+              {loading && <Loading />}
+            </Column>
+            <Column lg={16}>
+              <br></br>
+            </Column>
 
-          <div className="formInlineDiv">
-            <input
-              type="hidden"
-              name="program.id"
-              value={programValues.program.id}
-              onChange={handleFieldChange}
-            />
-            <TextInput
-              type="text"
-              name="program.programName"
-              id="program.programName"
-              labelText={intl.formatMessage({ id: "program.name.label" })}
-              value={programValues.program.programName}
-              onChange={handleFieldChange}
-            />
-            <TextInput
-              type="text"
-              name="program.questionnaireUUID"
-              id="program.questionnaireUUID"
-              labelText="UUID"
-              disabled={programValues.program.id !== "" ? true : false}
-              value={programValues.program.questionnaireUUID}
-              onChange={handleFieldChange}
-            />
-          </div>
-          <div className="formInlineDiv">
-            <TextInput
-              type="text"
-              name="program.code"
-              id="program.code"
-              labelText="Code"
-              maxLength="10"
-              value={programValues.program.code}
-              onChange={handleFieldChange}
-            />
-            <Select
-              id="test_section"
-              labelText={intl.formatMessage({ id: "test.section.label" })}
-              name="testSectionId"
-              value={programValues.testSectionId}
-              onChange={handleFieldChange}
-            >
-              <SelectItem value="" text="" />
-              {testSections.map((testSection) => {
-                return (
-                  <SelectItem
-                    key={testSection.id}
-                    value={testSection.id}
-                    text={testSection.value}
-                  />
-                );
-              })}
-            </Select>
-          </div>
-          <div className="formInlineDiv">
-            <TextArea
-              name="additionalOrderEntryQuestions"
-              id="additionalOrderEntryQuestions"
-              labelText="Questionnaire"
-              value={programValues.additionalOrderEntryQuestions || ""}
-              onChange={handleFieldChange}
-              invalid={
-                !additionalOrderEntryQuestionsAreJson &&
-                programValues.additionalOrderEntryQuestions !== ""
-              }
-              invalidText={intl.formatMessage({ id: "invalid.json" })}
-            />
-            {additionalOrderEntryQuestionsAreJson && (
-              <div>
-                <FormLabel>
-                  <FormattedMessage id="example" />
-                </FormLabel>
-                <div className="exampleDiv">
-                  <Questionnaire
-                    questionnaire={JSON.parse(
-                      programValues.additionalOrderEntryQuestions,
-                    )}
-                  />
+            <Column lg={8}>
+              <input
+                type="hidden"
+                name="program.id"
+                value={programValues.program.id}
+                onChange={handleFieldChange}
+              />
+              <TextInput
+                type="text"
+                name="program.programName"
+                id="program.programName"
+                labelText={intl.formatMessage({ id: "program.name.label" })}
+                value={programValues.program.programName}
+                onChange={handleFieldChange}
+              />
+            </Column>
+            <Column lg={8}>
+              <TextInput
+                type="text"
+                name="program.questionnaireUUID"
+                id="program.questionnaireUUID"
+                labelText="UUID"
+                disabled={programValues.program.id !== "" ? true : false}
+                value={programValues.program.questionnaireUUID}
+                onChange={handleFieldChange}
+              />
+            </Column>
+            <Column lg={16}>
+              <br></br>
+            </Column>
+            <Column lg={8}>
+              <TextInput
+                type="text"
+                name="program.code"
+                id="program.code"
+                labelText="Code"
+                maxLength="10"
+                value={programValues.program.code}
+                onChange={handleFieldChange}
+              />
+            </Column>
+            <Column lg={8}>
+              <Select
+                id="test_section"
+                labelText={intl.formatMessage({ id: "test.section.label" })}
+                name="testSectionId"
+                value={programValues.testSectionId}
+                onChange={handleFieldChange}
+              >
+                <SelectItem value="" text="" />
+                {testSections.map((testSection) => {
+                  return (
+                    <SelectItem
+                      key={testSection.id}
+                      value={testSection.id}
+                      text={testSection.value}
+                    />
+                  );
+                })}
+              </Select>
+            </Column>
+            <Column lg={16}>
+              <br></br>
+            </Column>
+            <Column lg={8}>
+              <TextArea
+                name="additionalOrderEntryQuestions"
+                id="additionalOrderEntryQuestions"
+                labelText="Questionnaire"
+                value={programValues.additionalOrderEntryQuestions || ""}
+                onChange={handleFieldChange}
+                invalid={
+                  !additionalOrderEntryQuestionsAreJson &&
+                  programValues.additionalOrderEntryQuestions !== ""
+                }
+                invalidText={intl.formatMessage({ id: "invalid.json" })}
+              />
+            </Column>
+            <Column lg={8}>
+              {additionalOrderEntryQuestionsAreJson && (
+                <div>
+                  <FormLabel>
+                    <FormattedMessage id="example" />
+                  </FormLabel>
+                  <div className="exampleDiv">
+                    <Questionnaire
+                      questionnaire={JSON.parse(
+                        programValues.additionalOrderEntryQuestions,
+                      )}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-          <br></br>
-          <div>
-            <Button type="submit">
-              <FormattedMessage id="label.button.submit" />
-              {isSubmitting && <Loading small={true} />}
-            </Button>
-          </div>
+              )}
+            </Column>
+            <Column lg={16}>
+              <br></br>
+            </Column>
+            <Column lg={3}>
+              <Button type="submit">
+                <FormattedMessage id="label.button.submit" />
+                {isSubmitting && <Loading small={true} />}
+              </Button>
+            </Column>
+          </Grid>
         </Form>
       </div>
     </>

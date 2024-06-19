@@ -1,56 +1,57 @@
 package org.openelisglobal.organization.service;
 
 import java.util.List;
-
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.organization.valueholder.Organization;
 
 public interface OrganizationService extends BaseObjectService<Organization, String> {
-    void getData(Organization organization);
+  void getData(Organization organization);
 
-    Organization getActiveOrganizationByName(Organization organization, boolean ignoreCase);
+  Organization getActiveOrganizationByName(Organization organization, boolean ignoreCase);
 
-    List<Organization> getOrganizationsByParentId(String parentId);
+  List<Organization> getOrganizationsByParentId(String parentId);
 
-    List<Organization> getOrganizationsByTypeName(String orderByProperty, String[] typeName);
+  List<Organization> getOrganizationsByTypeName(String orderByProperty, String[] typeName);
 
-    Integer getTotalOrganizationCount();
+  Integer getTotalOrganizationCount();
 
-    List<Organization> getAllOrganizations();
+  List<Organization> getAllOrganizations();
 
-    List<Organization> getPagesOfSearchedOrganizations(int startRecNo, String searchString);
+  List<Organization> getPagesOfSearchedOrganizations(int startRecNo, String searchString);
 
-    Organization getOrganizationById(String organizationId);
+  Organization getOrganizationById(String organizationId);
 
-    List<Organization> getPageOfOrganizations(int startingRecNo);
+  List<Organization> getPageOfOrganizations(int startingRecNo);
 
-    List<Organization> getOrganizations(String filter);
+  List<Organization> getOrganizations(String filter);
 
-    List<Organization> getOrganizationsByTypeNameAndLeadingChars(String partialName, String typeName);
+  List<Organization> getOrganizationsByTypeNameAndLeadingChars(String partialName, String typeName);
 
-    Organization getOrganizationByLocalAbbreviation(Organization organization, boolean ignoreCase);
+  Organization getOrganizationByLocalAbbreviation(Organization organization, boolean ignoreCase);
 
-    Integer getTotalSearchedOrganizationCount(String searchString);
+  Integer getTotalSearchedOrganizationCount(String searchString);
 
-    void linkOrganizationAndType(Organization organization, String typeId);
+  void linkOrganizationAndType(Organization organization, String typeId);
 
-    List<String> getTypeIdsForOrganizationId(String id);
+  List<String> getTypeIdsForOrganizationId(String id);
 
-    void deleteAllLinksForOrganization(String id);
+  void deleteAllLinksForOrganization(String id);
 
-    List<Organization> getOrganizationsByTypeName(String orderByProperty, String referralOrgType);
+  List<Organization> getOrganizationsByTypeName(String orderByProperty, String referralOrgType);
 
-    void activateOrganizationsAndDeactivateOthers(List<String> organizationNames);
+  void activateOrganizationsAndDeactivateOthers(List<String> organizationNames);
 
-    void deactivateAllOrganizations();
+  void deactivateAllOrganizations();
 
-    void activateOrganizations(List<String> organizationNames);
+  void activateOrganizations(List<String> organizationNames);
 
-    void deactivateOrganizations(List<Organization> organizations);
+  void deactivateOrganizations(List<Organization> organizations);
 
-    Organization getOrganizationByName(Organization organization, boolean ignoreCase);
+  Organization getOrganizationByName(Organization organization, boolean ignoreCase);
 
-    List<Organization> getActiveOrganizations();
+  Organization getOrganizationByShortName(String shortName, boolean ignoreCase);
 
-    Organization getOrganizationByFhirId(String idPart);
+  List<Organization> getActiveOrganizations();
+
+  Organization getOrganizationByFhirId(String idPart);
 }

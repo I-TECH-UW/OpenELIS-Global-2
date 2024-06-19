@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class TestCodeDAOImpl extends BaseDAOImpl<TestCode, TestSchemaPK> implements TestCodeDAO {
-    TestCodeDAOImpl() {
-        super(TestCode.class);
-    }
+  TestCodeDAOImpl() {
+    super(TestCode.class);
+  }
 }

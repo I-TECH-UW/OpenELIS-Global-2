@@ -37,7 +37,7 @@ services:
             
     oe.openelis.org:
         container_name: openelisglobal-webapp 
-        image: itechuw/openelis-global-2:develop_3x   
+        image: itechuw/openelis-global-2-dev:develop 
         depends_on:
             - database
             - certs
@@ -59,6 +59,7 @@ services:
             - ./volume/plugins/:/var/lib/openelis-global/plugins
             - ./volume/tomcat/oe_server.xml:/usr/local/tomcat/conf/server.xml
             - ./target/OpenELIS-Global.war:/usr/local/tomcat/webapps/OpenELIS-Global.war
+            -  lucene_index-vol:/var/lib/lucene_index
         secrets:
             - source: datasource.password
             - source: common.properties
@@ -94,7 +95,7 @@ services:
 
          
     frontend.openelis.org:
-        image: itechuw/openelis-global-2-frontend-dev:develop_3x
+        image: itechuw/openelis-global-2-frontend-dev:develop
         container_name: openelisglobal-front-end
         networks:
             - default
@@ -141,3 +142,4 @@ volumes:
   key_trust-store-volume:
   certs-vol:
   keys-vol:
+  lucene_index-vol:
