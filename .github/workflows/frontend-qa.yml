@@ -1,31 +1,32 @@
 name: OpenELis Frontend QA framework workflow
 on:
   push:
-    branches: [ develop]
+    branches: [develop]
   pull_request:
-    branches: [develop]  
+    branches: [develop]
   workflow_dispatch:
 jobs:
-  install:
+  build-and-run-qa-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout OpenELIS-Global2
         uses: actions/checkout@v2
         with:
-         repository: ${{github.repository}} 
-    
-      - name: Run OpenELS image 
-        run : docker-compose -f build.docker-compose.yml up -d     
-      
-      - name: Sleep for 2 minutes 
+          repository: ${{github.repository}}
+          submodules: recursive
+
+      - name: Run OpenELS image
+        run: docker-compose -f build.docker-compose.yml up -d
+
+      - name: Sleep for 2 minutes
         run: sleep 2m
-        shell: bash   
+        shell: bash
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 14.x
-           
+
       - name: Install dependencies
         run: npm install
         working-directory: frontend
@@ -37,5 +38,3 @@ jobs:
       - name: Run Frontend Qa Workflow
         run: npx cypress run –headless
         working-directory: frontend
-
-

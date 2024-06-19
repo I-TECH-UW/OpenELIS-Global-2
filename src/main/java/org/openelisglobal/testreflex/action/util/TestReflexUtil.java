@@ -704,8 +704,12 @@ public class TestReflexUtil {
         currentAnalysis.setSysUserId(sysUserId);
         currentAnalysis.setTriggeredReflex(Boolean.TRUE);
 
-        analysisService.insert(newAnalysis);
-        analysisService.update(currentAnalysis);
+        try {
+          analysisService.insert(newAnalysis);
+          analysisService.update(currentAnalysis);
+        } catch (Exception e) {
+          return Optional.empty();
+        }
 
         List<Note> notes = new ArrayList<>();
         notes.add(
