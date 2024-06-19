@@ -8,7 +8,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean \
     && apt-get -y update \
     && apt-get -y --no-install-recommends install \
-    git apache2-utils nodejs npm
+    git apache2-utils 
 
 ##
 # Copy Source Code
@@ -44,9 +44,8 @@ WORKDIR /build
 RUN --mount=type=cache,target=/root/.m2,sharing=locked \
     mvn dependency:go-offline 
 
-ARG SKIP_SPOTLESS="false"
 RUN --mount=type=cache,target=/root/.m2,sharing=locked \
-    mvn clean install -DskipTests -Dspotless.check.skip=${SKIP_SPOTLESS}
+    mvn clean install -DskipTests -Dspotless.check.skip=true
 
 ##
 # Run Stage
