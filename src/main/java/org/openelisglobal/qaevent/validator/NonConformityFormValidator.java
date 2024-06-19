@@ -11,30 +11,31 @@ import org.springframework.validation.Validator;
 @Component
 public class NonConformityFormValidator implements Validator {
 
-    @Override
-    public boolean supports(Class<?> clazz) {
-        return NonConformityForm.class.isAssignableFrom(clazz);
+  @Override
+  public boolean supports(Class<?> clazz) {
+    return NonConformityForm.class.isAssignableFrom(clazz);
+  }
+
+  @Override
+  public void validate(Object target, Errors errors) {
+    NonConformityForm form = (NonConformityForm) target;
+
+    // sampleItemsTypeOfSampleIds
+    String[] sampleItemsTypeOfSampleIds = form.getSampleItemsTypeOfSampleIds().split(",", -1);
+    for (String sampleItemsTypeOfSampleId : sampleItemsTypeOfSampleIds) {
+      ValidationHelper.validateIdField(
+          sampleItemsTypeOfSampleId, "sampleItemsTypeOfSampleIds", errors, false);
+      if (errors.hasErrors()) {
+        break;
+      }
     }
 
-    @Override
-    public void validate(Object target, Errors errors) {
-        NonConformityForm form = (NonConformityForm) target;
-
-        // sampleItemsTypeOfSampleIds
-        String[] sampleItemsTypeOfSampleIds = form.getSampleItemsTypeOfSampleIds().split(",", -1);
-        for (String sampleItemsTypeOfSampleId : sampleItemsTypeOfSampleIds) {
-            ValidationHelper.validateIdField(sampleItemsTypeOfSampleId, "sampleItemsTypeOfSampleIds", errors, false);
-            if (errors.hasErrors()) {
-                break;
-            }
-        }
-
-        for (int i = 0; i < form.getQaEvents().size(); ++i) {
-            QaEventItem qaEvent = form.getQaEvents().get(i);
-            if (!GenericValidator.isBlankOrNull(qaEvent.getId())) {
-                ValidationHelper.validateFieldRequired(qaEvent.getQaEvent(), "qaEvents[" + i + "].qaEvent", errors);
-            }
-        }
+    for (int i = 0; i < form.getQaEvents().size(); ++i) {
+      QaEventItem qaEvent = form.getQaEvents().get(i);
+      if (!GenericValidator.isBlankOrNull(qaEvent.getId())) {
+        ValidationHelper.validateFieldRequired(
+            qaEvent.getQaEvent(), "qaEvents[" + i + "].qaEvent", errors);
+      }
     }
-
+  }
 }

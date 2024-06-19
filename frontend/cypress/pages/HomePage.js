@@ -27,7 +27,9 @@ class HomePage {
   }
 
   openNavigationMenu() {
-    cy.get("header#mainHeader > button[title='Open menu']").click();
+    cy.get("header#mainHeader > button[title='Open menu']", {
+      timeout: 30000,
+    }).click();
   }
 
   goToPatientEntry() {

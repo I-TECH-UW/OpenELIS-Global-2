@@ -1,14 +1,11 @@
 package org.openelisglobal.result.controller.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
-import org.openelisglobal.result.controller.LogbookResultsBaseController;
-import org.springframework.http.MediaType;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.services.DisplayListService;
@@ -21,6 +18,7 @@ import org.openelisglobal.inventory.form.InventoryKitItem;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.result.action.util.ResultsLoadUtility;
 import org.openelisglobal.result.action.util.ResultsPaging;
+import org.openelisglobal.result.controller.LogbookResultsBaseController;
 import org.openelisglobal.result.form.AccessionResultsForm;
 import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.role.valueholder.Role;
@@ -32,6 +30,7 @@ import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.userrole.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
@@ -42,307 +41,316 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 @Controller
 @RequestMapping(value = "/rest/")
 public class ResultsRestController extends LogbookResultsBaseController {
 
-    private String RESULT_EDIT_ROLE_ID = "";
+  private String RESULT_EDIT_ROLE_ID = "";
 
-    private InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
-    @Autowired
-    private SampleService sampleService;
-    @Autowired
-    private SampleHumanService sampleHumanService;
-    @Autowired
-    private UserRoleService userRoleService;
-    @Autowired
-    private UserService userService;
+  private InventoryUtility inventoryUtility = SpringContext.getBean(InventoryUtility.class);
+  @Autowired private SampleService sampleService;
+  @Autowired private SampleHumanService sampleHumanService;
+  @Autowired private UserRoleService userRoleService;
+  @Autowired private UserService userService;
 
-    public ResultsRestController(RoleService roleService) {
-        Role editRole = roleService.getRoleByName("Results modifier");
-        if (editRole != null) {
-            RESULT_EDIT_ROLE_ID = editRole.getId();
+  public ResultsRestController(RoleService roleService) {
+    Role editRole = roleService.getRoleByName("Results modifier");
+    if (editRole != null) {
+      RESULT_EDIT_ROLE_ID = editRole.getId();
+    } else {
+      RESULT_EDIT_ROLE_ID = null;
+    }
+  }
+
+  @GetMapping(value = "results", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseBody
+  public AccessionResultsForm getResults(@RequestParam String labNumber)
+      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    //        System.out.println("Get Results:");
+    //          System.out.println("Get Results:" + request.toString());
+
+    //        return
+    // DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS);
+    //        HttpServletRequest request = null;
+    System.out.println("ResultsRestController getTestResult:labNumber:" + labNumber);
+    String accessionNumber = labNumber;
+    // String accessionNumber = "TESTA220000000000042";
+    // String accessionNumber = "TESTA220000000000037";
+
+    AccessionResultsForm form = new AccessionResultsForm();
+
+    request.getSession().setAttribute(SAVE_DISABLED, TRUE);
+    form.setReferralReasons(
+        DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
+    form.setRejectReasons(
+        DisplayListService.getInstance()
+            .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+    form.setReferralOrganizations(
+        DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
+    form.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
+
+    ResultsPaging paging = new ResultsPaging();
+    String newPage = request.getParameter("page");
+    if (GenericValidator.isBlankOrNull(newPage)) {
+
+      //            String accessionNumber = request.getParameter("accessionNumber");
+      form.setDisplayTestKit(false);
+
+      if (!GenericValidator.isBlankOrNull(accessionNumber)) {
+        Errors errors = new BeanPropertyBindingResult(form, "form");
+        ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
+        resultsUtility.setSysUser(getSysUserId(request));
+        // This is for Haiti_LNSP if it gets more complicated use the status set stuff
+        resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
+        resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.SampleRejected);
+        // resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Finalized);
+        resultsUtility.setLockCurrentResults(modifyResultsRoleBased() && userNotInRole(request));
+        validateAll(request, errors, form, accessionNumber);
+
+        if (errors.hasErrors()) {
+          saveErrors(errors);
+          request.setAttribute(ALLOW_EDITS_KEY, "false");
+
+          setEmptyResults(form, accessionNumber);
+
+          //                    IdValuePair formEntry = new IdValuePair("0", form.toString());
+          //                    List<IdValuePair> forms = Arrays.asList(formEntry);
+          //                    forms.add(0, formEntry);
+          //                    return(form);
+        }
+
+        form.setSearchFinished(Boolean.TRUE);
+
+        Sample sample = getSample(accessionNumber);
+
+        if (!GenericValidator.isBlankOrNull(sample.getId())) {
+          Patient patient = getPatient(sample);
+          resultsUtility.addIdentifingPatientInfo(patient, form);
+
+          List<TestResultItem> results = resultsUtility.getGroupedTestsForSample(sample, patient);
+          List<TestResultItem> filteredResults =
+              userService.filterResultsByLabUnitRoles(
+                  getSysUserId(request), results, Constants.ROLE_RESULTS);
+
+          if (resultsUtility.inventoryNeeded()) {
+            addInventory(form);
+            form.setDisplayTestKit(true);
+          } else {
+            addEmptyInventoryList(form, accessionNumber);
+          }
+
+          paging.setDatabaseResults(request, form, filteredResults);
         } else {
-            RESULT_EDIT_ROLE_ID = null;
+          setEmptyResults(form, accessionNumber);
         }
-    }
-
-    @GetMapping(value = "results", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public AccessionResultsForm getResults(@RequestParam String labNumber)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-//        System.out.println("Get Results:");
-//          System.out.println("Get Results:" + request.toString());
-
-//        return DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS);
-//        HttpServletRequest request = null;
-        System.out.println("ResultsRestController getTestResult:labNumber:" + labNumber);
-        String accessionNumber = labNumber;
-        // String accessionNumber = "TESTA220000000000042";
-        // String accessionNumber = "TESTA220000000000037";
-
-        AccessionResultsForm form = new AccessionResultsForm();
-
-        request.getSession().setAttribute(SAVE_DISABLED, TRUE);
-        form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-        form.setRejectReasons(DisplayListService.getInstance()
-                .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
-        form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
-        form.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
-
-        ResultsPaging paging = new ResultsPaging();
-        String newPage = request.getParameter("page");
-        if (GenericValidator.isBlankOrNull(newPage)) {
-
-//            String accessionNumber = request.getParameter("accessionNumber");
-            form.setDisplayTestKit(false);
-
-            if (!GenericValidator.isBlankOrNull(accessionNumber)) {
-                Errors errors = new BeanPropertyBindingResult(form, "form");
-                ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
-                resultsUtility.setSysUser(getSysUserId(request));
-                // This is for Haiti_LNSP if it gets more complicated use the status set stuff
-                resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
-                resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.SampleRejected);
-                // resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Finalized);
-                resultsUtility.setLockCurrentResults(modifyResultsRoleBased() && userNotInRole(request));
-                validateAll(request, errors, form, accessionNumber);
-
-                if (errors.hasErrors()) {
-                    saveErrors(errors);
-                    request.setAttribute(ALLOW_EDITS_KEY, "false");
-
-                    setEmptyResults(form, accessionNumber);
-
-//                    IdValuePair formEntry = new IdValuePair("0", form.toString());
-//                    List<IdValuePair> forms = Arrays.asList(formEntry);
-//                    forms.add(0, formEntry);
-//                    return(form);
-                }
-
-                form.setSearchFinished(Boolean.TRUE);
-
-                Sample sample = getSample(accessionNumber);
-
-                if (!GenericValidator.isBlankOrNull(sample.getId())) {
-                    Patient patient = getPatient(sample);
-                    resultsUtility.addIdentifingPatientInfo(patient, form);
-
-                    List<TestResultItem> results = resultsUtility.getGroupedTestsForSample(sample, patient);
-                    List<TestResultItem> filteredResults = userService
-                            .filterResultsByLabUnitRoles(getSysUserId(request), results, Constants.ROLE_RESULTS);
-
-                    if (resultsUtility.inventoryNeeded()) {
-                        addInventory(form);
-                        form.setDisplayTestKit(true);
-                    } else {
-                        addEmptyInventoryList(form, accessionNumber);
-                    }
-
-                    paging.setDatabaseResults(request, form, filteredResults);
-                } else {
-                    setEmptyResults(form, accessionNumber);
-                }
-            } else {
-                form.setTestResult(new ArrayList<TestResultItem>());
-                form.setSearchFinished(Boolean.FALSE);
-            }
-        } else {
-            paging.page(request, form, Integer.parseInt(newPage));
-        }
-
-        System.out.println("ResultsRestController getTestResult:");
-
-        List<TestResultItem> testResultItems = form.getTestResult();
-////        Timestamp now = new Timestamp(System.currentTimeMillis());
-//
-//        testResultItems.forEach(item -> {
-////             item.getResult().getAnalysis().getTestSection().getOrganization().setLastupdated(now);
-////             System.out.println(":" + item.getResult().getAnalysis().getTestSection().getOrganization().getLastupdated());
-//            System.out.println(":" + item.getTestName());
-//        });
-//        
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonForm = "";
-        try {
-            jsonForm = mapper.writeValueAsString(form);
-        } catch (JsonProcessingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-//       
-//        IdValuePair formsEntry = new IdValuePair("0", jsonForm);
-//        List<IdValuePair> forms = new ArrayList<>();
-//        forms.add(0, formsEntry);
-
-       //System.out.println("ResultsRestController jsonForm:" + jsonForm);
-
-        return (form);
-    }
-
-    @RequestMapping(value = "/AccessionResults", method = RequestMethod.GET)
-    public ModelAndView showAccessionResults(HttpServletRequest request)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        AccessionResultsForm form = new AccessionResultsForm();
-
-        request.getSession().setAttribute(SAVE_DISABLED, TRUE);
-        form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
-        form.setRejectReasons(DisplayListService.getInstance()
-                .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
-        form.setReferralOrganizations(DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
-        form.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
-
-        ResultsPaging paging = new ResultsPaging();
-        String newPage = request.getParameter("page");
-        if (GenericValidator.isBlankOrNull(newPage)) {
-
-            String accessionNumber = request.getParameter("accessionNumber");
-            form.setDisplayTestKit(false);
-
-            if (!GenericValidator.isBlankOrNull(accessionNumber)) {
-                Errors errors = new BeanPropertyBindingResult(form, "form");
-                ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
-                resultsUtility.setSysUser(getSysUserId(request));
-                // This is for Haiti_LNSP if it gets more complicated use the status set stuff
-                resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
-                resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.SampleRejected);
-                // resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Finalized);
-                resultsUtility.setLockCurrentResults(modifyResultsRoleBased() && userNotInRole(request));
-                validateAll(request, errors, form, accessionNumber);
-
-                if (errors.hasErrors()) {
-                    saveErrors(errors);
-                    request.setAttribute(ALLOW_EDITS_KEY, "false");
-
-                    setEmptyResults(form, accessionNumber);
-
-                    return findForward(FWD_FAIL, form);
-                }
-
-                form.setSearchFinished(Boolean.TRUE);
-
-                Sample sample = getSample(accessionNumber);
-
-                if (!GenericValidator.isBlankOrNull(sample.getId())) {
-                    Patient patient = getPatient(sample);
-                    resultsUtility.addIdentifingPatientInfo(patient, form);
-
-                    List<TestResultItem> results = resultsUtility.getGroupedTestsForSample(sample, patient);
-                    List<TestResultItem> filteredResults = userService
-                            .filterResultsByLabUnitRoles(getSysUserId(request), results, Constants.ROLE_RESULTS);
-
-                    if (resultsUtility.inventoryNeeded()) {
-                        addInventory(form);
-                        form.setDisplayTestKit(true);
-                    } else {
-                        addEmptyInventoryList(form, accessionNumber);
-                    }
-
-                    paging.setDatabaseResults(request, form, filteredResults);
-                } else {
-                    setEmptyResults(form, accessionNumber);
-                }
-            } else {
-                form.setTestResult(new ArrayList<TestResultItem>());
-                form.setSearchFinished(Boolean.FALSE);
-            }
-        } else {
-            paging.page(request, form, Integer.parseInt(newPage));
-        }
-
-        return findForward(FWD_SUCCESS, form);
-    }
-
-    private boolean modifyResultsRoleBased() {
-        return "true"
-                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.roleRequiredForModifyResults));
-    }
-
-    private boolean userNotInRole(HttpServletRequest request) {
-        if (userModuleService.isUserAdmin(request)) {
-            return false;
-        }
-
-        List<String> roleIds = userRoleService.getRoleIdsForUser(getSysUserId(request));
-
-        return !roleIds.contains(RESULT_EDIT_ROLE_ID);
-    }
-
-    private void setEmptyResults(AccessionResultsForm form, String accessionNumber)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+      } else {
         form.setTestResult(new ArrayList<TestResultItem>());
-        form.setDisplayTestKit(false);
-        addEmptyInventoryList(form, accessionNumber);
+        form.setSearchFinished(Boolean.FALSE);
+      }
+    } else {
+      paging.page(request, form, Integer.parseInt(newPage));
     }
 
-    private void addInventory(AccessionResultsForm form)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    System.out.println("ResultsRestController getTestResult:");
 
-        List<InventoryKitItem> list = inventoryUtility.getExistingActiveInventory();
-        List<String> hivKits = new ArrayList<>();
-        List<String> syphilisKits = new ArrayList<>();
-        for (InventoryKitItem item : list) {
-            if (item.getType().equals("HIV")) {
-                hivKits.add(item.getInventoryLocationId());
-            } else {
-                syphilisKits.add(item.getInventoryLocationId());
-            }
+    List<TestResultItem> testResultItems = form.getTestResult();
+    ////        Timestamp now = new Timestamp(System.currentTimeMillis());
+    //
+    //        testResultItems.forEach(item -> {
+    ////
+    // item.getResult().getAnalysis().getTestSection().getOrganization().setLastupdated(now);
+    ////             System.out.println(":" +
+    // item.getResult().getAnalysis().getTestSection().getOrganization().getLastupdated());
+    //            System.out.println(":" + item.getTestName());
+    //        });
+    //
+    ObjectMapper mapper = new ObjectMapper();
+    String jsonForm = "";
+    try {
+      jsonForm = mapper.writeValueAsString(form);
+    } catch (JsonProcessingException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    //
+    //        IdValuePair formsEntry = new IdValuePair("0", jsonForm);
+    //        List<IdValuePair> forms = new ArrayList<>();
+    //        forms.add(0, formsEntry);
+
+    // System.out.println("ResultsRestController jsonForm:" + jsonForm);
+
+    return (form);
+  }
+
+  @RequestMapping(value = "/AccessionResults", method = RequestMethod.GET)
+  public ModelAndView showAccessionResults(HttpServletRequest request)
+      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    AccessionResultsForm form = new AccessionResultsForm();
+
+    request.getSession().setAttribute(SAVE_DISABLED, TRUE);
+    form.setReferralReasons(
+        DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
+    form.setRejectReasons(
+        DisplayListService.getInstance()
+            .getNumberedListWithLeadingBlank(DisplayListService.ListType.REJECTION_REASONS));
+    form.setReferralOrganizations(
+        DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
+    form.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
+
+    ResultsPaging paging = new ResultsPaging();
+    String newPage = request.getParameter("page");
+    if (GenericValidator.isBlankOrNull(newPage)) {
+
+      String accessionNumber = request.getParameter("accessionNumber");
+      form.setDisplayTestKit(false);
+
+      if (!GenericValidator.isBlankOrNull(accessionNumber)) {
+        Errors errors = new BeanPropertyBindingResult(form, "form");
+        ResultsLoadUtility resultsUtility = SpringContext.getBean(ResultsLoadUtility.class);
+        resultsUtility.setSysUser(getSysUserId(request));
+        // This is for Haiti_LNSP if it gets more complicated use the status set stuff
+        resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
+        resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.SampleRejected);
+        // resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Finalized);
+        resultsUtility.setLockCurrentResults(modifyResultsRoleBased() && userNotInRole(request));
+        validateAll(request, errors, form, accessionNumber);
+
+        if (errors.hasErrors()) {
+          saveErrors(errors);
+          request.setAttribute(ALLOW_EDITS_KEY, "false");
+
+          setEmptyResults(form, accessionNumber);
+
+          return findForward(FWD_FAIL, form);
         }
-        form.setHivKits(hivKits);
-        form.setSyphilisKits(syphilisKits);
-        form.setInventoryItems(list);
-    }
 
-    private void addEmptyInventoryList(AccessionResultsForm form, String accessionNumber)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        form.setInventoryItems(new ArrayList<InventoryKitItem>());
-        form.setHivKits(new ArrayList<String>());
-        form.setSyphilisKits(new ArrayList<String>());
-    }
+        form.setSearchFinished(Boolean.TRUE);
 
-    private Errors validateAll(HttpServletRequest request, Errors errors, AccessionResultsForm form,
-            String accessionNumber) {
+        Sample sample = getSample(accessionNumber);
 
-        Sample sample = sampleService.getSampleByAccessionNumber(accessionNumber);
+        if (!GenericValidator.isBlankOrNull(sample.getId())) {
+          Patient patient = getPatient(sample);
+          resultsUtility.addIdentifingPatientInfo(patient, form);
 
-        if (sample == null) {
-            // ActionError error = new ActionError("sample.edit.sample.notFound",
-            // accessionNumber, null, null);
-            errors.reject("sample.edit.sample.notFound", new String[] {}, "sample.edit.sample.notFound");
-        }
+          List<TestResultItem> results = resultsUtility.getGroupedTestsForSample(sample, patient);
+          List<TestResultItem> filteredResults =
+              userService.filterResultsByLabUnitRoles(
+                  getSysUserId(request), results, Constants.ROLE_RESULTS);
 
-        return errors;
-    }
+          if (resultsUtility.inventoryNeeded()) {
+            addInventory(form);
+            form.setDisplayTestKit(true);
+          } else {
+            addEmptyInventoryList(form, accessionNumber);
+          }
 
-    private Patient getPatient(Sample sample) {
-        return sampleHumanService.getPatientForSample(sample);
-    }
-
-    private Sample getSample(String accessionNumber) {
-        return sampleService.getSampleByAccessionNumber(accessionNumber);
-    }
-
-    @Override
-    protected String findLocalForward(String forward) {
-        if (FWD_SUCCESS.equals(forward)) {
-            return "accessionResultDefinition";
-        } else if (FWD_FAIL.equals(forward)) {
-            return "accessionResultDefinition";
+          paging.setDatabaseResults(request, form, filteredResults);
         } else {
-            return "PageNotFound";
+          setEmptyResults(form, accessionNumber);
         }
+      } else {
+        form.setTestResult(new ArrayList<TestResultItem>());
+        form.setSearchFinished(Boolean.FALSE);
+      }
+    } else {
+      paging.page(request, form, Integer.parseInt(newPage));
     }
 
-    @Override
-    protected String getPageTitleKey() {
-        return "banner.menu.results";
+    return findForward(FWD_SUCCESS, form);
+  }
+
+  private boolean modifyResultsRoleBased() {
+    return "true"
+        .equals(
+            ConfigurationProperties.getInstance()
+                .getPropertyValue(Property.roleRequiredForModifyResults));
+  }
+
+  private boolean userNotInRole(HttpServletRequest request) {
+    if (userModuleService.isUserAdmin(request)) {
+      return false;
     }
 
-    @Override
-    protected String getPageSubtitleKey() {
-        return "banner.menu.results";
+    List<String> roleIds = userRoleService.getRoleIdsForUser(getSysUserId(request));
+
+    return !roleIds.contains(RESULT_EDIT_ROLE_ID);
+  }
+
+  private void setEmptyResults(AccessionResultsForm form, String accessionNumber)
+      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    form.setTestResult(new ArrayList<TestResultItem>());
+    form.setDisplayTestKit(false);
+    addEmptyInventoryList(form, accessionNumber);
+  }
+
+  private void addInventory(AccessionResultsForm form)
+      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+    List<InventoryKitItem> list = inventoryUtility.getExistingActiveInventory();
+    List<String> hivKits = new ArrayList<>();
+    List<String> syphilisKits = new ArrayList<>();
+    for (InventoryKitItem item : list) {
+      if (item.getType().equals("HIV")) {
+        hivKits.add(item.getInventoryLocationId());
+      } else {
+        syphilisKits.add(item.getInventoryLocationId());
+      }
     }
+    form.setHivKits(hivKits);
+    form.setSyphilisKits(syphilisKits);
+    form.setInventoryItems(list);
+  }
+
+  private void addEmptyInventoryList(AccessionResultsForm form, String accessionNumber)
+      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    form.setInventoryItems(new ArrayList<InventoryKitItem>());
+    form.setHivKits(new ArrayList<String>());
+    form.setSyphilisKits(new ArrayList<String>());
+  }
+
+  private Errors validateAll(
+      HttpServletRequest request,
+      Errors errors,
+      AccessionResultsForm form,
+      String accessionNumber) {
+
+    Sample sample = sampleService.getSampleByAccessionNumber(accessionNumber);
+
+    if (sample == null) {
+      // ActionError error = new ActionError("sample.edit.sample.notFound",
+      // accessionNumber, null, null);
+      errors.reject("sample.edit.sample.notFound", new String[] {}, "sample.edit.sample.notFound");
+    }
+
+    return errors;
+  }
+
+  private Patient getPatient(Sample sample) {
+    return sampleHumanService.getPatientForSample(sample);
+  }
+
+  private Sample getSample(String accessionNumber) {
+    return sampleService.getSampleByAccessionNumber(accessionNumber);
+  }
+
+  @Override
+  protected String findLocalForward(String forward) {
+    if (FWD_SUCCESS.equals(forward)) {
+      return "accessionResultDefinition";
+    } else if (FWD_FAIL.equals(forward)) {
+      return "accessionResultDefinition";
+    } else {
+      return "PageNotFound";
+    }
+  }
+
+  @Override
+  protected String getPageTitleKey() {
+    return "banner.menu.results";
+  }
+
+  @Override
+  protected String getPageSubtitleKey() {
+    return "banner.menu.results";
+  }
 }

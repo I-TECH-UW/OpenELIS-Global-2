@@ -8,20 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ClientResultsViewInfoServiceImpl extends AuditableBaseObjectServiceImpl<ClientResultsViewBean, Integer>
-        implements ClientResultsViewInfoService {
+public class ClientResultsViewInfoServiceImpl
+    extends AuditableBaseObjectServiceImpl<ClientResultsViewBean, Integer>
+    implements ClientResultsViewInfoService {
 
-    @Autowired
-    private ClientResultsViewInfoDAO baseObjectDAO;
+  @Autowired private ClientResultsViewInfoDAO baseObjectDAO;
 
-    public ClientResultsViewInfoServiceImpl() {
-        super(ClientResultsViewBean.class);
-        this.auditTrailLog = false;
-    }
+  public ClientResultsViewInfoServiceImpl() {
+    super(ClientResultsViewBean.class);
+    this.auditTrailLog = false;
+  }
 
-    @Override
-    protected BaseDAO<ClientResultsViewBean, Integer> getBaseObjectDAO() {
-        return baseObjectDAO;
-    }
-
+  @Override
+  protected BaseDAO<ClientResultsViewBean, Integer> getBaseObjectDAO() {
+    return baseObjectDAO;
+  }
 }

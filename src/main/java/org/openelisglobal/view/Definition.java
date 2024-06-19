@@ -1,7 +1,6 @@
 package org.openelisglobal.view;
 
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -12,54 +11,57 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Definition {
 
-    @XmlAttribute(name = "name")
-    private String name;
-    @XmlAttribute(name = "extends")
-    private String extension;
-    @XmlAttribute(name = "template")
-    private String template;
-    @XmlElement(name = "put-attribute")
-    private List<PutAttribute> putAttributes;
+  @XmlAttribute(name = "name")
+  private String name;
 
-    public Definition() {
-    }
+  @XmlAttribute(name = "extends")
+  private String extension;
 
-    public Definition(String name, String extension, String template, List<PutAttribute> putAttributes) {
-        this.name = name;
-        this.extension = extension;
-        this.template = template;
-        this.putAttributes = putAttributes;
-    }
+  @XmlAttribute(name = "template")
+  private String template;
 
-    public String getName() {
-        return name;
-    }
+  @XmlElement(name = "put-attribute")
+  private List<PutAttribute> putAttributes;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public Definition() {}
 
-    public String getExtends() {
-        return extension;
-    }
+  public Definition(
+      String name, String extension, String template, List<PutAttribute> putAttributes) {
+    this.name = name;
+    this.extension = extension;
+    this.template = template;
+    this.putAttributes = putAttributes;
+  }
 
-    public void setExtends(String extension) {
-        this.extension = extension;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getTemplate() {
-        return template;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setTemplate(String template) {
-        this.template = template;
-    }
+  public String getExtends() {
+    return extension;
+  }
 
-    public List<PutAttribute> getPutAttributes() {
-        return putAttributes;
-    }
+  public void setExtends(String extension) {
+    this.extension = extension;
+  }
 
-    public void setPutAttributes(List<PutAttribute> putAttributes) {
-        this.putAttributes = putAttributes;
-    }
+  public String getTemplate() {
+    return template;
+  }
+
+  public void setTemplate(String template) {
+    this.template = template;
+  }
+
+  public List<PutAttribute> getPutAttributes() {
+    return putAttributes;
+  }
+
+  public void setPutAttributes(List<PutAttribute> putAttributes) {
+    this.putAttributes = putAttributes;
+  }
 }

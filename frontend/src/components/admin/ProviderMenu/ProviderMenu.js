@@ -19,12 +19,18 @@ import {
   TableContainer,
   Pagination,
   Search,
+  Modal,
+  TextInput,
+  Dropdown,
 } from "@carbon/react";
 import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
 } from "../../utils/Utils.js";
-import { NotificationContext } from "../../layout/Layout.js";
+import {
+  ConfigurationContext,
+  NotificationContext,
+} from "../../layout/Layout.js";
 import {
   AlertDialog,
   NotificationKinds,
@@ -39,6 +45,7 @@ let breadcrumbs = [
 function ProviderMenu() {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
+  const { reloadConfiguration } = useContext(ConfigurationContext);
 
   const intl = useIntl();
 
@@ -58,6 +65,39 @@ function ProviderMenu() {
   // const [startingRecNo, setStartingRecNo] = useState(1);
   const [providerMenuList, setProviderMenuList] = useState([]);
   const [providerMenuListShow, setProviderMenuListShow] = useState([]);
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [currentProvider, setCurrentProvider] = useState(null);
+  const [lastName, setLastName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [telephone, setTelephone] = useState("");
+  const [fhirUuid, setFhirUuid] = useState("");
+  const [fax, setFax] = useState("");
+  const [isActive, setIsActive] = useState({ id: "yes", value: "Yes" });
+
+  const yesOrNo = [
+    { id: "yes", value: "Yes" },
+    { id: "no", value: "No" },
+  ];
+
+  async function displayStatus(res) {
+    setNotificationVisible(true);
+    if (res.status == "201" || res.status == "200") {
+      addNotification({
+        kind: NotificationKinds.success,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "save.config.success.msg" }),
+      });
+    } else {
+      addNotification({
+        kind: NotificationKinds.error,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "server.error.msg" }),
+      });
+    }
+    reloadConfiguration();
+  }
 
   function deleteDeactivateProvider(event) {
     event.preventDefault();
@@ -114,10 +154,11 @@ function ProviderMenu() {
       const newProviderMenuList = providerMenuList.map((item) => {
         return {
           id: item.id,
+          fhirUuid: item.fhirUuid,
           lastName: item.person.lastName,
           firstName: item.person.firstName,
           active: item.active,
-          telephone: item.person.telephone,
+          telephone: item.person.workPhone,
           fax: item.person.fax,
         };
       });
@@ -207,6 +248,77 @@ function ProviderMenu() {
     setPanelSearchTerm(query);
   };
 
+  const openAddModal = () => {
+    setLastName("");
+    setFirstName("");
+    setTelephone("");
+    setFax("");
+    setIsActive({ id: "yes", value: "Yes" });
+    setIsAddModalOpen(true);
+  };
+
+  const closeAddModal = () => {
+    setIsAddModalOpen(false);
+  };
+
+  const openUpdateModal = (providerId) => {
+    const provider = providerMenuListShow.find((p) => p.id === providerId);
+    setCurrentProvider(provider);
+    setLastName(provider.lastName);
+    setFirstName(provider.firstName);
+    setTelephone(provider.telephone);
+    setFax(provider.fax);
+    setIsActive(
+      provider.active ? { id: "yes", value: "Yes" } : { id: "no", value: "No" },
+    );
+    setIsUpdateModalOpen(true);
+  };
+
+  const closeUpdateModal = () => {
+    setIsUpdateModalOpen(false);
+  };
+
+  const handleAddProvider = () => {
+    const newProvider = {
+      person: {
+        lastName,
+        firstName,
+        workPhone: telephone,
+        fax,
+      },
+      active: isActive.id === "yes",
+    };
+    postToOpenElisServerFullResponse(
+      "/rest/Provider/FhirUuid?fhirUuid=",
+      JSON.stringify(newProvider),
+      displayStatus,
+    );
+
+    closeAddModal();
+    window.location.reload();
+  };
+
+  const handleUpdateProvider = () => {
+    const updatedProvider = {
+      fhirUuid: currentProvider.fhirUuid,
+      person: {
+        lastName,
+        firstName,
+        workPhone: telephone,
+        fax,
+      },
+      active: isActive.id === "yes",
+    };
+    postToOpenElisServerFullResponse(
+      "/rest/Provider/FhirUuid?fhirUuid="+currentProvider.fhirUuid,
+      JSON.stringify(updatedProvider),
+      displayStatus,
+    );
+
+    closeUpdateModal();
+    window.location.reload();
+  };
+
   if (!loading) {
     return (
       <>
@@ -231,13 +343,18 @@ function ProviderMenu() {
             <Section>
               <Form onSubmit={deleteDeactivateProvider}>
                 <Column lg={16} md={8} sm={4}>
-                  <Button kind="tertiary" disabled={true} type="submit">
+                  <Button
+                    onClick={() => openUpdateModal(selectedRowIds[0])}
+                    disabled={selectedRowIds.length !== 1}
+                  >
                     <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.modify" />
                   </Button>{" "}
                   <Button disabled={modifyButton} type="submit">
+                    {" "}
                     <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
                   </Button>{" "}
-                  <Button kind="tertiary" disabled={true} type="submit">
+                  <Button onClick={openAddModal}>
+                    {" "}
                     <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.add" />
                   </Button>
                 </Column>
@@ -245,6 +362,97 @@ function ProviderMenu() {
             </Section>
           </Column>
         </Grid>
+
+        <Modal
+          open={isAddModalOpen}
+          modalHeading="Add Provider"
+          primaryButtonText="Add"
+          secondaryButtonText="Cancel"
+          onRequestSubmit={handleAddProvider}
+          onRequestClose={closeAddModal}
+        >
+          <TextInput
+            id="lastName"
+            labelText={intl.formatMessage({ id: "provider.providerLastName" })}
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+          />
+          <TextInput
+            id="firstName"
+            labelText={intl.formatMessage({ id: "provider.providerFirstName" })}
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+          />
+          <TextInput
+            id="telephone"
+            labelText={intl.formatMessage({ id: "provider.telephone" })}
+            value={telephone}
+            onChange={(e) => setTelephone(e.target.value)}
+          />
+          <TextInput
+            id="fax"
+            labelText={intl.formatMessage({ id: "provider.fax" })}
+            value={fax}
+            onChange={(e) => setFax(e.target.value)}
+          />
+          <Dropdown
+            id="isActive"
+            titleText="Active"
+            label={intl.formatMessage({ id: "provider.select" })}
+            items={yesOrNo}
+            itemToString={(item) => (item ? item.value : "")}
+            selectedItem={isActive}
+            onChange={({ selectedItem }) => setIsActive(selectedItem)}
+          />
+        </Modal>
+
+        <Modal
+          open={isUpdateModalOpen}
+          modalHeading="Update Provider"
+          primaryButtonText="Update"
+          secondaryButtonText="Cancel"
+          onRequestSubmit={handleUpdateProvider}
+          onRequestClose={closeUpdateModal}
+        >
+          <TextInput
+            id="lastName"
+            labelText={intl.formatMessage({ id: "provider.providerLastName" })}
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+          />
+          <TextInput
+            id="firstName"
+            labelText={intl.formatMessage({ id: "provider.providerFirstName" })}
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+          />
+          <TextInput
+            id="telephone"
+            labelText={intl.formatMessage({ id: "provider.telephone" })}
+            value={telephone}
+            onChange={(e) => setTelephone(e.target.value)}
+          />
+          <TextInput
+            id="fax"
+            labelText={intl.formatMessage({ id: "provider.fax" })}
+            value={fax}
+            onChange={(e) => setFax(e.target.value)}
+          />
+          <Dropdown
+            id="isActive"
+            titleText="Active"
+            label={intl.formatMessage({ id: "provider.select" })}
+            items={yesOrNo}
+            itemToString={(item) => (item ? item.value : "")}
+            selectedItem={isActive}
+            onChange={({ selectedItem }) => setIsActive(selectedItem)}
+          />
+        </Modal>
+
         <div className="orderLegendBody">
           <Grid>
             <Column lg={16} md={8} sm={4}>

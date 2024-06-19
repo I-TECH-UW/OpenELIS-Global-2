@@ -7,17 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BasePatientTypeServiceImpl extends AuditableBaseObjectServiceImpl<BasePatientType, String>
-        implements BasePatientTypeService {
-    @Autowired
-    protected BasePatientTypeDAO baseObjectDAO;
+public class BasePatientTypeServiceImpl
+    extends AuditableBaseObjectServiceImpl<BasePatientType, String>
+    implements BasePatientTypeService {
+  @Autowired protected BasePatientTypeDAO baseObjectDAO;
 
-    BasePatientTypeServiceImpl() {
-        super(BasePatientType.class);
-    }
+  BasePatientTypeServiceImpl() {
+    super(BasePatientType.class);
+  }
 
-    @Override
-    protected BasePatientTypeDAO getBaseObjectDAO() {
-        return baseObjectDAO;
-    }
+  @Override
+  protected BasePatientTypeDAO getBaseObjectDAO() {
+    return baseObjectDAO;
+  }
 }

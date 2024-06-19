@@ -5,7 +5,7 @@ import org.openelisglobal.patienttype.valueholder.PatientPatientType;
 import org.openelisglobal.patienttype.valueholder.PatientType;
 
 public interface PatientPatientTypeService extends BaseObjectService<PatientPatientType, String> {
-    PatientType getPatientTypeForPatient(String id);
+  PatientType getPatientTypeForPatient(String id);
 
-    PatientPatientType getPatientPatientTypeForPatient(String patientId);
+  PatientPatientType getPatientPatientTypeForPatient(String patientId);
 }

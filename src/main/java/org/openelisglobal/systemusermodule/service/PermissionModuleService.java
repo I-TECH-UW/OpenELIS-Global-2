@@ -2,22 +2,22 @@ package org.openelisglobal.systemusermodule.service;
 
 import java.util.List;
 import java.util.Set;
-
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.systemusermodule.valueholder.PermissionModule;
 
-public interface PermissionModuleService<T extends PermissionModule> extends BaseObjectService<T, String> {
-    void getData(T permissionModule);
+public interface PermissionModuleService<T extends PermissionModule>
+    extends BaseObjectService<T, String> {
+  void getData(T permissionModule);
 
-    List<T> getAllPermissionModules();
+  List<T> getAllPermissionModules();
 
-    Integer getTotalPermissionModuleCount();
+  Integer getTotalPermissionModuleCount();
 
-    List<T> getPageOfPermissionModules(int startingRecNo);
+  List<T> getPageOfPermissionModules(int startingRecNo);
 
-    List<T> getAllPermissionModulesByAgentId(int systemUserId);
+  List<T> getAllPermissionModulesByAgentId(int systemUserId);
 
-    boolean doesUserHaveAnyModules(int userId);
+  boolean doesUserHaveAnyModules(int userId);
 
-    Set<String> getAllPermittedPagesFromAgentId(int roleId);
+  Set<String> getAllPermittedPagesFromAgentId(int roleId);
 }

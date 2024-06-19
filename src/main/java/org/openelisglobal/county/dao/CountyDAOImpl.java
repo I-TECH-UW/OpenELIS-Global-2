@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class CountyDAOImpl extends BaseDAOImpl<County, String> implements CountyDAO {
-    CountyDAOImpl() {
-        super(County.class);
-    }
+  CountyDAOImpl() {
+    super(County.class);
+  }
 }

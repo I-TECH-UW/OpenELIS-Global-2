@@ -1,312 +1,290 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/ 
-* 
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-* 
-* The Original Code is OpenELIS code.
-* 
-* Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
-*
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) CIRG, University of Washington, Seattle WA. All Rights Reserved.
+ */
 package org.openelisglobal.dataexchange.resultreporting.beans;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
 
 public class TestResultsXmit {
 
-    /**
-     * A String representing the patientId whom the analysis has been done for.
-     */
-    private String patientGUID;
+  /** A String representing the patientId whom the analysis has been done for. */
+  private String patientGUID;
 
-    private CodedValueXmit test;
+  private CodedValueXmit test;
 
-    private CodedValueXmit sampleType;
+  private CodedValueXmit sampleType;
 
-    private TestRangeXmit normalRange;
+  private TestRangeXmit normalRange;
 
-    private String status;
+  private String status;
 
-    private String unitOfMeasure;
+  private String unitOfMeasure;
 
-    public CodedValueXmit getTest() {
-        return test;
-    }
+  public CodedValueXmit getTest() {
+    return test;
+  }
 
-    public void setTest(CodedValueXmit test) {
-        this.test = test;
-    }
+  public void setTest(CodedValueXmit test) {
+    this.test = test;
+  }
 
-    public CodedValueXmit getSampleType() {
-        return sampleType;
-    }
+  public CodedValueXmit getSampleType() {
+    return sampleType;
+  }
 
-    public void setSampleType(CodedValueXmit sampleType) {
-        this.sampleType = sampleType;
-    }
+  public void setSampleType(CodedValueXmit sampleType) {
+    this.sampleType = sampleType;
+  }
 
-    /**
-     * The date representing when the test has been done
-     */
-    private Date testDate;
+  /** The date representing when the test has been done */
+  private Date testDate;
 
-    private String accessionNumber;
+  private String accessionNumber;
 
-    private String referringOrderNumber;
+  private String referringOrderNumber;
 
-    /**
-     * A List representing all results for the given test and analysis.
-     */
-    private List<ResultXmit> results;
+  /** A List representing all results for the given test and analysis. */
+  private List<ResultXmit> results;
 
-    public TestResultsXmit() {
-        results = new ArrayList<ResultXmit>();
-    }
+  public TestResultsXmit() {
+    results = new ArrayList<ResultXmit>();
+  }
 
-    /**
-     * @return the results
-     */
-    public List<ResultXmit> getResults() {
-        return results;
-    }
+  /**
+   * @return the results
+   */
+  public List<ResultXmit> getResults() {
+    return results;
+  }
 
-    /**
-     * @param results the results to set
-     */
-    public void setResults(List<ResultXmit> results) {
-        this.results = results;
-    }
-
-    public void setPatientGUID(String patientGUID) {
-        this.patientGUID = patientGUID;
-    }
+  /**
+   * @param results the results to set
+   */
+  public void setResults(List<ResultXmit> results) {
+    this.results = results;
+  }
 
-    public String getPatientGUID() {
-        return patientGUID;
-    }
+  public void setPatientGUID(String patientGUID) {
+    this.patientGUID = patientGUID;
+  }
 
-    public void setTestDate(Date testDate) {
-        this.testDate = testDate;
-    }
+  public String getPatientGUID() {
+    return patientGUID;
+  }
 
-    public Date getTestDate() {
-        return testDate;
-    }
+  public void setTestDate(Date testDate) {
+    this.testDate = testDate;
+  }
 
-    public String getAccessionNumber() {
-        return accessionNumber;
-    }
+  public Date getTestDate() {
+    return testDate;
+  }
 
-    public void setAccessionNumber(String accessionNumber) {
-        this.accessionNumber = accessionNumber;
-    }
+  public String getAccessionNumber() {
+    return accessionNumber;
+  }
 
-    public String getReferringOrderNumber() {
-        return referringOrderNumber;
-    }
+  public void setAccessionNumber(String accessionNumber) {
+    this.accessionNumber = accessionNumber;
+  }
 
-    public void setReferringOrderNumber(String referringOrderNumber) {
-        this.referringOrderNumber = referringOrderNumber;
-    }
+  public String getReferringOrderNumber() {
+    return referringOrderNumber;
+  }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+  public void setReferringOrderNumber(String referringOrderNumber) {
+    this.referringOrderNumber = referringOrderNumber;
+  }
 
-    public String getStatus() {
-        return status;
-    }
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-    public void setNormalRange(TestRangeXmit normalRange) {
-        this.normalRange = normalRange;
-    }
+  public String getStatus() {
+    return status;
+  }
 
-    public TestRangeXmit getNormalRange() {
-        return normalRange;
-    }
+  public void setNormalRange(TestRangeXmit normalRange) {
+    this.normalRange = normalRange;
+  }
 
-    /**
-     * The section for the test
-     */
-    private String testSection;
+  public TestRangeXmit getNormalRange() {
+    return normalRange;
+  }
 
-    public void setTestSection(String section) {
-        this.testSection = section;
-    }
+  /** The section for the test */
+  private String testSection;
 
-    public String getTestSection() {
-        return testSection;
-    }
+  public void setTestSection(String section) {
+    this.testSection = section;
+  }
 
-    /**
-     * Valid range min/max
-     */
-    private TestRangeXmit validRange;
+  public String getTestSection() {
+    return testSection;
+  }
 
-    public void setValidRange(TestRangeXmit validRange) {
-        this.validRange = validRange;
-    }
+  /** Valid range min/max */
+  private TestRangeXmit validRange;
 
-    public TestRangeXmit getValidRange() {
-        return validRange;
-    }
+  public void setValidRange(TestRangeXmit validRange) {
+    this.validRange = validRange;
+  }
 
-    /**
-     * The notes for the test, concatenated into one string
-     */
-    private String testNotes;
+  public TestRangeXmit getValidRange() {
+    return validRange;
+  }
 
-    public void setTestNotes(String notes) {
-        this.testNotes = notes;
-    }
+  /** The notes for the test, concatenated into one string */
+  private String testNotes;
 
-    public String getTestNotes() {
-        return testNotes;
-    }
+  public void setTestNotes(String notes) {
+    this.testNotes = notes;
+  }
 
-    /**
-     * Following elements are for malaria case reports only
-     */
-    private String patientFirstName;
+  public String getTestNotes() {
+    return testNotes;
+  }
 
-    public void setPatientFirstName(String fname) {
-        this.patientFirstName = fname;
-    }
+  /** Following elements are for malaria case reports only */
+  private String patientFirstName;
 
-    public String getPatientFirstName() {
-        return patientFirstName;
-    }
+  public void setPatientFirstName(String fname) {
+    this.patientFirstName = fname;
+  }
 
-    private String patientLastName;
+  public String getPatientFirstName() {
+    return patientFirstName;
+  }
 
-    public void setPatientLastName(String lname) {
-        this.patientLastName = lname;
-    }
+  private String patientLastName;
 
-    public String getPatientLastName() {
-        return patientLastName;
-    }
+  public void setPatientLastName(String lname) {
+    this.patientLastName = lname;
+  }
 
-    private String patientSTID;
+  public String getPatientLastName() {
+    return patientLastName;
+  }
 
-    public void setPatientSTID(String patientSTID) {
-        this.patientSTID = patientSTID;
-    }
+  private String patientSTID;
 
-    public String getPatientSTID() {
-        return patientSTID;
-    }
+  public void setPatientSTID(String patientSTID) {
+    this.patientSTID = patientSTID;
+  }
 
-    private String patientGender;
+  public String getPatientSTID() {
+    return patientSTID;
+  }
 
-    public void setPatientGender(String gender) {
-        this.patientGender = gender;
-    }
+  private String patientGender;
 
-    public String getPatientGender() {
-        return patientGender;
-    }
+  public void setPatientGender(String gender) {
+    this.patientGender = gender;
+  }
 
-    private String patientStreetAddress;
+  public String getPatientGender() {
+    return patientGender;
+  }
 
-    public void setPatientStreetAddress(String addr) {
-        this.patientStreetAddress = addr;
-    }
+  private String patientStreetAddress;
 
-    public String getPatientStreetAddress() {
-        return patientStreetAddress;
-    }
+  public void setPatientStreetAddress(String addr) {
+    this.patientStreetAddress = addr;
+  }
 
-    private String patientCity;
+  public String getPatientStreetAddress() {
+    return patientStreetAddress;
+  }
 
-    public void setPatientCity(String city) {
-        this.patientCity = city;
-    }
+  private String patientCity;
 
-    public String getPatientCity() {
-        return patientCity;
-    }
+  public void setPatientCity(String city) {
+    this.patientCity = city;
+  }
 
-    private String patientState;
+  public String getPatientCity() {
+    return patientCity;
+  }
 
-    public void setPatientState(String state) {
-        this.patientState = state;
-    }
+  private String patientState;
 
-    public String getPatientState() {
-        return patientState;
-    }
+  public void setPatientState(String state) {
+    this.patientState = state;
+  }
 
-    private String patientZipCode;
+  public String getPatientState() {
+    return patientState;
+  }
 
-    public void setPatientZipCode(String zip) {
-        this.patientZipCode = zip;
-    }
+  private String patientZipCode;
 
-    public String getPatientZipCode() {
-        return patientZipCode;
-    }
+  public void setPatientZipCode(String zip) {
+    this.patientZipCode = zip;
+  }
 
-    private String patientCountry;
+  public String getPatientZipCode() {
+    return patientZipCode;
+  }
 
-    public void setPatientCountry(String country) {
-        this.patientCountry = country;
-    }
+  private String patientCountry;
 
-    public String getPatientCountry() {
-        return patientCountry;
-    }
+  public void setPatientCountry(String country) {
+    this.patientCountry = country;
+  }
 
-    private String patientBirthdate;
+  public String getPatientCountry() {
+    return patientCountry;
+  }
 
-    public void setPatientBirthdate(String birthdate) {
-        this.patientBirthdate = birthdate;
-    }
+  private String patientBirthdate;
 
-    public String getPatientBirthdate() {
-        return patientBirthdate;
-    }
+  public void setPatientBirthdate(String birthdate) {
+    this.patientBirthdate = birthdate;
+  }
 
-    private String patientTelephone;
+  public String getPatientBirthdate() {
+    return patientBirthdate;
+  }
 
-    public void setPatientTelephone(String telephone) {
-        this.patientTelephone = telephone;
-    }
+  private String patientTelephone;
 
-    public String getatientTelephone() {
-        return patientTelephone;
-    }
+  public void setPatientTelephone(String telephone) {
+    this.patientTelephone = telephone;
+  }
 
-    /**
-     * End malaria case report elements
-     */
+  public String getatientTelephone() {
+    return patientTelephone;
+  }
 
-    private Event resultsEvent;
+  /** End malaria case report elements */
+  private Event resultsEvent;
 
-    public void setResultsEvent(Event resultsEvent) {
-        this.resultsEvent = resultsEvent;
-    }
+  public void setResultsEvent(Event resultsEvent) {
+    this.resultsEvent = resultsEvent;
+  }
 
-    public Event getResultsEvent() {
-        return resultsEvent;
-    }
+  public Event getResultsEvent() {
+    return resultsEvent;
+  }
 
-    public String getUnits() {
-        return unitOfMeasure;
-    }
+  public String getUnits() {
+    return unitOfMeasure;
+  }
 
-    public void setUnits(String unitOfMeasure) {
-        this.unitOfMeasure = unitOfMeasure;
-
-    }
+  public void setUnits(String unitOfMeasure) {
+    this.unitOfMeasure = unitOfMeasure;
+  }
 }

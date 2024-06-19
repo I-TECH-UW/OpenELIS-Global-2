@@ -7,17 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SystemModuleParamServiceImpl extends AuditableBaseObjectServiceImpl<SystemModuleParam, String>
-        implements SystemModuleParamService {
-    @Autowired
-    protected SystemModuleParamDAO baseObjectDAO;
+public class SystemModuleParamServiceImpl
+    extends AuditableBaseObjectServiceImpl<SystemModuleParam, String>
+    implements SystemModuleParamService {
+  @Autowired protected SystemModuleParamDAO baseObjectDAO;
 
-    SystemModuleParamServiceImpl() {
-        super(SystemModuleParam.class);
-    }
+  SystemModuleParamServiceImpl() {
+    super(SystemModuleParam.class);
+  }
 
-    @Override
-    protected SystemModuleParamDAO getBaseObjectDAO() {
-        return baseObjectDAO;
-    }
+  @Override
+  protected SystemModuleParamDAO getBaseObjectDAO() {
+    return baseObjectDAO;
+  }
 }

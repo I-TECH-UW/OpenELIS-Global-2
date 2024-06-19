@@ -28,22 +28,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/rest")
 public class NonConformingEventsCorrectionActionRestController {
 
-  private NCEventService ncEventService = SpringContext.getBean(
-    NCEventService.class
-  );
- 
+  private NCEventService ncEventService = SpringContext.getBean(NCEventService.class);
 
   private static final String USER_SESSION_DATA = "userSessionData";
 
-  @Autowired
-  private NonConformingEventWorker nonConformingEventWorker;
+  @Autowired private NonConformingEventWorker nonConformingEventWorker;
 
   @GetMapping(value = "/nonconformingcorrectiveaction")
   public ResponseEntity<?> getNCECorrectionActions(
-    @RequestParam(required = false) String labNumber,
-    @RequestParam(required = false) String nceNumber,
-    @RequestParam(required = false) String status
-  ) {
+      @RequestParam(required = false) String labNumber,
+      @RequestParam(required = false) String nceNumber,
+      @RequestParam(required = false) String status) {
     NonConformingEventForm nceForm = new NonConformingEventForm();
 
     Map<String, Object> searchParameters = new HashMap<>();
@@ -63,19 +58,15 @@ public class NonConformingEventsCorrectionActionRestController {
 
     nceForm.setnceEventsSearchResults(searchResults);
     nceForm.setReportingUnits(
-      DisplayListService.getInstance()
-        .getList(DisplayListService.ListType.TEST_SECTION_ACTIVE)
-    );
+        DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_ACTIVE));
 
     return ResponseEntity.ok().body(nceForm);
   }
 
   @GetMapping(value = "/NCECorrectiveAction")
   public ResponseEntity<?> getNCECorrectiveActionForm(
-    @RequestParam(required = true) String nceNumber,
-    HttpServletRequest request
-  )
-    throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+      @RequestParam(required = true) String nceNumber, HttpServletRequest request)
+      throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
     NonConformingEventForm form = new NonConformingEventForm();
 
     form.setCurrentUserId(getSysUserId(request));
@@ -90,23 +81,19 @@ public class NonConformingEventsCorrectionActionRestController {
   }
 
   @PostMapping(value = "/NCECorrectiveAction")
-  public ResponseEntity<?> updateNCECorretiveActionForm(
-    @RequestBody NonConformingEventForm form
-  ) {
+  public ResponseEntity<?> updateNCECorretiveActionForm(@RequestBody NonConformingEventForm form) {
 
     boolean updated = nonConformingEventWorker.updateCorrectiveAction(form);
 
-     if (updated) {
-        return ResponseEntity.ok().body(Map.of("success", true));
-      } else {
-        return ResponseEntity.ok().body(Map.of("success", false));
-      }
-    
+    if (updated) {
+      return ResponseEntity.ok().body(Map.of("success", true));
+    } else {
+      return ResponseEntity.ok().body(Map.of("success", false));
+    }
   }
+
   protected String getSysUserId(HttpServletRequest request) {
-    UserSessionData usd = (UserSessionData) request
-      .getSession()
-      .getAttribute(USER_SESSION_DATA);
+    UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
     if (usd == null) {
       usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);
       if (usd == null) {

@@ -75,15 +75,15 @@ function OrganizationAddModify() {
       const hash = window.location.hash;
 
       // Check if the hash contains the query parameters
-      if (hash.includes('?')) {
+      if (hash.includes("?")) {
         // Extract the query part from the hash
-        const queryParams = hash.split('?')[1];
+        const queryParams = hash.split("?")[1];
 
         // Create a URLSearchParams object to easily access the parameters
         const urlParams = new URLSearchParams(queryParams);
 
         // Get the value of the 'ID' parameter
-        const id = urlParams.get('ID');
+        const id = urlParams.get("ID");
 
         return id;
       }
