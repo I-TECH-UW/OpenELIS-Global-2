@@ -102,10 +102,14 @@ public class ASTMAnalyzerReader extends AnalyzerReader {
     for (AnalyzerImporterPlugin plugin :
         SpringContext.getBean(PluginAnalyzerService.class).getAnalyzerPlugins()) {
       if (plugin.isTargetAnalyzer(lines)) {
-        this.plugin = plugin;
-        inserter = plugin.getAnalyzerLineInserter();
-        responder = plugin.getAnalyzerResponder();
-        return;
+        try {
+          this.plugin = plugin;
+          inserter = plugin.getAnalyzerLineInserter();
+          responder = plugin.getAnalyzerResponder();
+          return;
+        } catch (RuntimeException e) {
+          LogEvent.logError(e);
+        }
       }
     }
   }

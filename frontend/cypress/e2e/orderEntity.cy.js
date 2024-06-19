@@ -59,7 +59,7 @@ describe("Order Entity", function () {
       const generatedOrderNumber = $input.val();
       cy.fixture("Order").then((order) => {
         order.labNo = generatedOrderNumber;
-        cy.writeFile("cypress/fixtures/Order.json", order);
+        cy.writeFile("cypress/fixtures/EnteredOrder.json", order);
       });
     });
     cy.wait(1000);
