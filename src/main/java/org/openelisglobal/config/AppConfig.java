@@ -1,11 +1,15 @@
 package org.openelisglobal.config;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
-
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Questionnaire;
 import org.hl7.fhir.r4.model.QuestionnaireResponse;
@@ -23,7 +27,6 @@ import org.openelisglobal.security.SecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -48,15 +51,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule; 
-
-
-
 @EnableWebMvc
 @Configuration
 @EnableJpaRepositories(basePackages = { "org.itech", "org.ozeki.sms" })
@@ -69,6 +63,7 @@ public class AppConfig implements WebMvcConfigurer {
     @Autowired
     @Qualifier(value = "ModuleAuthenticationInterceptor")
     HandlerInterceptor moduleAuthenticationInterceptor;
+
     @Autowired
     UrlErrorsInterceptor urlLocatedErrorsInterceptor;
     @Autowired
@@ -99,14 +94,16 @@ public class AppConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor).addPathPatterns("/**");
-        registry.addInterceptor(moduleAuthenticationInterceptor).addPathPatterns("/**")
-                .excludePathPatterns(SecurityConfig.OPEN_PAGES)//
-                .excludePathPatterns(SecurityConfig.LOGIN_PAGES)//
-                .excludePathPatterns(SecurityConfig.RESOURCE_PAGES)//
+        registry
+                .addInterceptor(moduleAuthenticationInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns(SecurityConfig.OPEN_PAGES) //
+                .excludePathPatterns(SecurityConfig.LOGIN_PAGES) //
+                .excludePathPatterns(SecurityConfig.RESOURCE_PAGES) //
                 .excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES)
                 // TO DO ,we need to have a better way to handle user roles for rest controllers
                 .excludePathPatterns(SecurityConfig.REST_CONTROLLERS);
-//                .excludePathPatterns(SecurityConfig.CLIENT_CERTIFICATE_PAGES);
+        // .excludePathPatterns(SecurityConfig.CLIENT_CERTIFICATE_PAGES);
         registry.addInterceptor(urlLocatedErrorsInterceptor).addPathPatterns("/**");
         registry.addInterceptor(pageAttributesInterceptor).addPathPatterns("/**");
     }
@@ -119,9 +116,12 @@ public class AppConfig implements WebMvcConfigurer {
         registry.addResourceHandler("css/**").addResourceLocations("classpath:static/css/");
         registry.addResourceHandler("images/**").addResourceLocations("/static/images/");
         registry.addResourceHandler("favicon/**").addResourceLocations("/static/favicon/");
-        registry.addResourceHandler("fontawesome-free-5.13.1-web/**")
+        registry
+                .addResourceHandler("fontawesome-free-5.13.1-web/**")
                 .addResourceLocations("/static/fontawesome-free-5.13.1-web/");
-        registry.addResourceHandler("documentation/**").addResourceLocations("classpath:static/documentation/");
+        registry
+                .addResourceHandler("documentation/**")
+                .addResourceLocations("classpath:static/documentation/");
     }
 
     @Bean
@@ -161,9 +161,10 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean("localeResolver")
     @Primary
-    //this belongs in InternationalizationConfig.java, but putting it there breaks functionality
+    // this belongs in InternationalizationConfig.java, but putting it there breaks
+    // functionality
     public LocaleResolver localeResolver() {
-         GlobalLocaleResolver localeResolver = new GlobalLocaleResolver();
+        GlobalLocaleResolver localeResolver = new GlobalLocaleResolver();
         String localeName = ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_LANG_LOCALE);
         localeResolver.setDefaultLocale(Locale.forLanguageTag(localeName));
         LocaleContextHolder.setDefaultLocale(Locale.forLanguageTag(localeName));
@@ -174,18 +175,16 @@ public class AppConfig implements WebMvcConfigurer {
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
-    
+
     @Bean
-    public MappingJackson2HttpMessageConverter jacksonMessageConverter(){
+    public MappingJackson2HttpMessageConverter jacksonMessageConverter() {
         MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
 
         ObjectMapper mapper = new ObjectMapper();
-        //Registering Hibernate4Module to support lazy objects
-        mapper.registerModule(new JavaTimeModule());
+        // Registering Hibernate4Module to support lazy objects
         mapper.registerModule(new Hibernate5Module());
         mapper.registerModule(new Jdk8Module());
         mapper.setSerializationInclusion(Include.NON_NULL);
-
 
         SimpleModule module = new SimpleModule();
         module.addSerializer(Questionnaire.class, new QuestionnaireSerializer());
@@ -196,13 +195,12 @@ public class AppConfig implements WebMvcConfigurer {
 
         messageConverter.setObjectMapper(mapper);
         return messageConverter;
-
     }
-    
+
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        //Here we add our custom-configured HttpMessageConverter
+        // Here we add our custom-configured HttpMessageConverter
         converters.add(jacksonMessageConverter());
-        //super.configureMessageConverters(converters);
+        // super.configureMessageConverters(converters);
     }
 }
