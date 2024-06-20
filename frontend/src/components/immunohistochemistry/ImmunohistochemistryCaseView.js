@@ -947,7 +947,11 @@ function ImmunohistochemistryCaseView() {
                 </h5>
               </Column>
               <Column lg={16} md={8} sm={4}>
-                <SearchResults results={results}  setResultForm={setResults} refreshOnSubmit={false}/>
+                <SearchResults
+                  results={results}
+                  setResultForm={setResults}
+                  refreshOnSubmit={false}
+                />
               </Column>
             </Grid>
           </Column>

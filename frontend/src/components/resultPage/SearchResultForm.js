@@ -1519,14 +1519,13 @@ export function SearchResults(props) {
         message: createMesssage(resp),
         kind: NotificationKinds.success,
       });
-      if(props.refreshOnSubmit){
+      if (props.refreshOnSubmit) {
         window.location.href =
-        "/result?type=" +
-        props.searchBy.type +
-        "&doRange=" +
-        props.searchBy.doRange +
-        props.extraParams;
-
+          "/result?type=" +
+          props.searchBy.type +
+          "&doRange=" +
+          props.searchBy.doRange +
+          props.extraParams;
       }
     } else {
       addNotification({
