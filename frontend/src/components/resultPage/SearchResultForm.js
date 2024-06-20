@@ -57,6 +57,7 @@ function ResultSearchPage() {
         searchBy={searchBy}
         results={resultForm}
         setResultForm={setResultForm}
+        refreshOnSubmit={true}
       />
     </>
   );
@@ -1518,12 +1519,15 @@ export function SearchResults(props) {
         message: createMesssage(resp),
         kind: NotificationKinds.success,
       });
-      window.location.href =
+      if(props.refreshOnSubmit){
+        window.location.href =
         "/result?type=" +
         props.searchBy.type +
         "&doRange=" +
         props.searchBy.doRange +
         props.extraParams;
+
+      }
     } else {
       addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
