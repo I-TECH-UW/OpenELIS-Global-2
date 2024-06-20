@@ -261,14 +261,6 @@ const TimelineDataGroup = ({
     setXScroll(e.target.scrollLeft);
   }, 200);
 
-  useEffect(() => {
-    const div: HTMLElement | null = ref.current;
-    if (div) {
-      div.addEventListener("scroll", handleScroll);
-      return () => div.removeEventListener("scroll", handleScroll);
-    }
-  }, [handleScroll]);
-
   const onIntersect = (entries, observer) => {
     entries.forEach((entry) => {
       if (entry.intersectionRatio > 0.5) {
@@ -284,6 +276,47 @@ const TimelineDataGroup = ({
   if (titleRef.current) {
     observer.observe(titleRef.current);
   }
+
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - el.offsetLeft);
+    setScrollLeft(el.scrollLeft);
+    el.style.cursor = "grabbing";
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - el.offsetLeft;
+    const walk = (x - startX) * (el.scrollWidth / el.clientWidth);
+    el.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    el.style.cursor = "grab";
+  };
+
+  useEffect(() => {
+    const div: HTMLElement | null = ref.current;
+    if (div) {
+      div.addEventListener("scroll", handleScroll);
+      div.addEventListener("mousedown", handleMouseDown);
+      div.addEventListener("mousemove", handleMouseMove);
+      div.addEventListener("mouseup", handleMouseUp);
+      return () => {
+        div.removeEventListener("scroll", handleScroll);
+        div.removeEventListener("scroll", handleScroll);
+        div.removeEventListener("mousedown", handleMouseDown);
+        div.removeEventListener("mousemove", handleMouseMove);
+        div.removeEventListener("mouseup", handleMouseUp);
+      };
+    }
+  }, [handleScroll, handleMouseDown, handleMouseMove, handleMouseUp]);
 
   return (
     <>
@@ -324,6 +357,8 @@ export const GroupedTimeline = () => {
   const { t } = useTranslation();
   let shownGroups = 0;
   const tablet = useLayoutType() === "tablet";
+
+  const containerRef = useRef(null);
 
   const {
     data: {
@@ -382,16 +417,18 @@ export const GroupedTimeline = () => {
 
               // show kid rows
               return (
-                <TimelineDataGroup
-                  parent={parent}
-                  subRows={subRows}
-                  key={index}
-                  xScroll={xScroll}
-                  setXScroll={setXScroll}
-                  panelName={panelName}
-                  setPanelName={setPanelName}
-                  groupNumber={shownGroups}
-                />
+                <>
+                  <TimelineDataGroup
+                    parent={parent}
+                    subRows={subRows}
+                    key={index}
+                    xScroll={xScroll}
+                    setXScroll={setXScroll}
+                    panelName={panelName}
+                    setPanelName={setPanelName}
+                    groupNumber={shownGroups}
+                  />
+                </>
               );
             } else return null;
           })}
