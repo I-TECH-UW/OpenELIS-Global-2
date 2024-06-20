@@ -29,6 +29,8 @@ public interface FhirTransformService {
   void transformPersistPatient(PatientManagementInfo patientInfo)
       throws FhirTransformationException, FhirPersistanceException;
 
+  void transformPersistOrganization(Organization organization) throws FhirTransformationException, FhirPersistanceException; 
+
   void transformPersistOrderEntryFhirObjects(
       SamplePatientUpdateData updateData,
       PatientManagementInfo patientInfo,
@@ -66,6 +68,7 @@ public interface FhirTransformService {
 
   Future<Bundle> transformPersistPatients(List<String> patientIds)
       throws FhirLocalPersistingException;
+
 
   Practitioner transformNameToPractitioner(String practitionerName);
 

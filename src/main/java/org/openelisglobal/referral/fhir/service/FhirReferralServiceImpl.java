@@ -40,6 +40,7 @@ import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
+import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirApiWorkFlowServiceImpl.ReferralResultsImportObjects;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
@@ -203,7 +204,24 @@ public class FhirReferralServiceImpl implements FhirReferralService {
   }
 
   private Organization getFhirOrganization(
-      org.openelisglobal.organization.valueholder.Organization organization) {
+      org.openelisglobal.organization.valueholder.Organization organization) { 
+    Optional<Organization> fhiOrganization = fhirPersistanceService
+    .getFhirOrganizationByName(organization.getOrganizationName());
+    if(fhiOrganization.isPresent()){
+      return fhiOrganization.get();
+    }else {
+       try {
+        Organization fhirOrg = fhirTransformService.transformToFhirOrganization(organization);
+        fhirPersistanceService.createFhirResourceInFhirStore(fhirOrg);
+      } catch (FhirTransformationException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } catch (FhirPersistanceException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } 
+    }
+    
     return fhirPersistanceService
         .getFhirOrganizationByName(organization.getOrganizationName())
         .orElseThrow();
