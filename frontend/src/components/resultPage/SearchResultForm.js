@@ -743,7 +743,7 @@ export function SearchResults(props) {
   const [rejectedItems, setRejectedItems] = useState({});
   const [validationState, setValidationState] = useState({});
   const saveStatus = "";
-  const [referTest, setReferTest] = useState(false);
+  const [referTest, setReferTest] = useState({});
 
   const componentMounted = useRef(false);
 
@@ -1203,6 +1203,7 @@ export function SearchResults(props) {
             name={"testResult[" + data.id + "].refer"}
             id={"testResult[" + data.id + "].refer"}
             checked={data.refer === "true"}
+            disabled={data.referredOut}
             onChange={(e) => {
               e.target.value = e.target.checked;
               handleChange(e, data.id);
@@ -1217,7 +1218,7 @@ export function SearchResults(props) {
             labelText={intl.formatMessage({ id: "referral.label.reason" })}
             onChange={(e) => handleChange(e, data.id)}
             value={data?.referralItem?.referralReasonId}
-            disabled={!referTest}
+            disabled={!referTest[data.id]}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
             <SelectItem text="" value="" />
@@ -1240,7 +1241,7 @@ export function SearchResults(props) {
             labelText={intl.formatMessage({ id: "referral.label.institute" })}
             onChange={(e) => handleChange(e, data.id)}
             value={data?.referralItem?.referredInstituteId}
-            disabled={!referTest}
+            disabled={!referTest[data.id]}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
 
@@ -1260,7 +1261,7 @@ export function SearchResults(props) {
             })}
             onChange={(e) => handleChange(e, data.id)}
             value={data?.referralItem?.referredTestId}
-            disabled={!referTest}
+            disabled={!referTest[data.id]}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
 
@@ -1276,7 +1277,7 @@ export function SearchResults(props) {
             onChange={(date) => handleDatePickerChange(date, data.id)}
             name={"testResult[" + data.id + "].referralItem.referredSendDate"}
             value={data?.referralItem?.referredSendDate}
-            disabled={!referTest}
+            disabled={!referTest[data.id]}
             disallowFutureDate={true}
           />
         </Column>
@@ -1414,7 +1415,9 @@ export function SearchResults(props) {
     jp.value(form, name, value);
     var refer = jp.query(form, "testResult[" + rowId + "].refer")[0];
     var testId = jp.query(form, "testResult[" + rowId + "].testId")[0];
-    setReferTest(refer === "true");
+    var referList = { ...referTest };
+    referList[rowId] = refer === "true" ? true : false;
+    setReferTest(referList);
     if (refer == "true") {
       jp.value(
         form,
