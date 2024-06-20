@@ -2,6 +2,7 @@ package org.openelisglobal.logging.controller;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
+import org.openelisglobal.common.log.LogEvent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,5 +51,19 @@ public class LoggingController {
     } else {
       Configurator.setLevel(logger, log4jLogLevel);
     }
+  }
+
+  @GetMapping(path = "/logging/test")
+  public void loggingLevelTest() {
+    LogEvent.logTrace(
+        this.getClass().getSimpleName(), "changeLoggingLevel", "test logging message");
+    LogEvent.logDebug(
+        this.getClass().getSimpleName(), "changeLoggingLevel", "test logging message");
+    LogEvent.logInfo(this.getClass().getSimpleName(), "changeLoggingLevel", "test logging message");
+    LogEvent.logWarn(this.getClass().getSimpleName(), "changeLoggingLevel", "test logging message");
+    LogEvent.logError(
+        this.getClass().getSimpleName(), "changeLoggingLevel", "test logging message");
+    LogEvent.logFatal(
+        this.getClass().getSimpleName(), "changeLoggingLevel", "test logging message");
   }
 }

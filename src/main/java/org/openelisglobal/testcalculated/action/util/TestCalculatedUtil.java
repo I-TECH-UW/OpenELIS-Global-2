@@ -113,20 +113,27 @@ public class TestCalculatedUtil {
                   map.put(Integer.valueOf(test.getId()), null);
                 });
             // insert innitial result value
-            map.put(
-                Integer.valueOf(resultSet.result.getTestResult().getTest().getId()),
-                Integer.valueOf(resultSet.result.getId()));
+            if (resultSet.result.getTestResult().getTest().getId() != null
+                && resultSet.result.getId() != null) {
+              map.put(
+                  Integer.valueOf(resultSet.result.getTestResult().getTest().getId()),
+                  Integer.valueOf(resultSet.result.getId()));
+            }
             calc.setTestResultMap(map);
             resultcalculationService.insert(calc);
           }
 
         } else {
           for (ResultCalculation resultCalculation : resultCalculations) {
-            resultCalculation
-                .getTestResultMap()
-                .put(
-                    Integer.valueOf(resultSet.result.getTestResult().getTest().getId()),
-                    Integer.valueOf(resultSet.result.getId()));
+            if (resultSet.result.getTestResult().getTest().getId() != null
+                && resultSet.result.getId() != null) {
+              resultCalculation
+                  .getTestResultMap()
+                  .put(
+                      Integer.valueOf(resultSet.result.getTestResult().getTest().getId()),
+                      Integer.valueOf(resultSet.result.getId()));
+            }
+
             resultcalculationService.update(resultCalculation);
           }
         }
@@ -172,7 +179,17 @@ public class TestCalculatedUtil {
                               Operation.OperationType.TEST_RESULT.toString());
                           break;
                         case INTEGER:
-                          function.append(Integer.valueOf(operation.getValue())).append(" ");
+                          try {
+                            if (operation.getValue().contains(".")) {
+                              double val = Double.parseDouble(operation.getValue());
+                              function.append(val).append(" ");
+                            } else {
+                              int number = Integer.parseInt(operation.getValue());
+                              function.append(number).append(" ");
+                            }
+                          } catch (NumberFormatException e) {
+
+                          }
                           break;
                         case MATH_FUNCTION:
                           if (operation.getValue().equals(Operation.IN_NORMAL_RANGE)) {
@@ -520,9 +537,18 @@ public class TestCalculatedUtil {
     generatedAnalysis.setSysUserId(systemUserId);
     generatedAnalysis.setResultCalculated(resultCalculated);
     if (existingAnalysis != null) {
-      analysisService.update(generatedAnalysis);
+      try {
+        analysisService.update(generatedAnalysis);
+      } catch (Exception e) {
+        return null;
+      }
+
     } else {
-      analysisService.insert(generatedAnalysis);
+      try {
+        analysisService.insert(generatedAnalysis);
+      } catch (Exception e) {
+        return null;
+      }
     }
     if (resultCalculated) {
       createInternalNote(

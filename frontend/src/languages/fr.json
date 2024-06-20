@@ -961,5 +961,6 @@
   "organization.previous": "Page précédente",
   "organization.next": "Page suivante",
   "showing": "Affichage",
-  "of": "de"
+  "of": "de",
+  "results.label.refer": "Référer le test à un laboratoire de référence"
 }

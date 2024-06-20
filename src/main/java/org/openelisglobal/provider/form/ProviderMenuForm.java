@@ -48,4 +48,14 @@ public class ProviderMenuForm extends AdminOptionMenuForm<Provider> {
   public void setSearchString(String searchString) {
     this.searchString = searchString;
   }
+
+  private List<Provider> providers;
+
+  public List<Provider> getProviders() {
+    return providers;
+  }
+
+  public void setProviders(List<Provider> providers) {
+    this.providers = providers;
+  }
 }

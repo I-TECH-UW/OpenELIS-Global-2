@@ -4,7 +4,12 @@ const login = new LoginPage();
 
 describe("Failing or Succeeding to Login", function () {
   beforeEach("User visits login page", () => {
+    cy.intercept("/api/OpenELIS-Global/LoginPage").as("backend");
     login.visit();
+    cy.wait("@backend", {
+      //wait up to configured time minutes for application to startup
+      timeout: Cypress.env("STARTUP_WAIT_MILLISECONDS"),
+    });
     // login.acceptSelfAssignedCert();
   });
 
