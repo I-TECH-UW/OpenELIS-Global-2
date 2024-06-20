@@ -348,7 +348,8 @@ public class OrganizationRestController extends BaseController {
   @PostMapping(value = "/Organization")
   public ResponseEntity<Object> showUpdateOrganization(
       @RequestBody @Valid OrganizationForm form, BindingResult result)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, FhirTransformationException, FhirPersistanceException {
+      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException,
+          FhirTransformationException, FhirPersistanceException {
 
     // setDefaultButtonAttributes(request);
     if (result.hasErrors()) {
@@ -397,7 +398,7 @@ public class OrganizationRestController extends BaseController {
       persistAddressParts(organization, addressParts);
 
       linkOrgWithOrgType(organization, selectedOrgTypes);
-     fhirTransformService.transformPersistOrganization(organization);
+      fhirTransformService.transformPersistOrganization(organization);
 
     } catch (LIMSRuntimeException e) {
       // bugzilla 2154

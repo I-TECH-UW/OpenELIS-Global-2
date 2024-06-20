@@ -391,14 +391,15 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
   @Transactional
   @Async
-  @Override 
-  public void transformPersistOrganization(Organization organization) throws FhirLocalPersistingException{
+  @Override
+  public void transformPersistOrganization(Organization organization)
+      throws FhirLocalPersistingException {
     CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
     FhirOperations fhirOperations = new FhirOperations();
     org.hl7.fhir.r4.model.Organization fhirOrg = transformToFhirOrganization(organization);
     this.addToOperations(fhirOperations, tempIdGenerator, fhirOrg);
     Bundle responseBundle =
-    fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
+        fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
   }
 
   @Override

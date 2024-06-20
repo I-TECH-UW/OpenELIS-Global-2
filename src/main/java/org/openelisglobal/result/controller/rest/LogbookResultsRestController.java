@@ -723,7 +723,8 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
     if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResultItem.getResultType())
         || TypeOfTestResultServiceImpl.ResultType.isMultiSelectVariant(
             testResultItem.getResultType())) {
-      if ("0".equals(testResultItem.getResultValue()) || StringUtils.isBlank(testResultItem.getResultValue())) {
+      if ("0".equals(testResultItem.getResultValue())
+          || StringUtils.isBlank(testResultItem.getResultValue())) {
         originalResultNote = originalResultNote + "";
       } else {
         Dictionary dictionary = dictionaryService.get(testResultItem.getResultValue());

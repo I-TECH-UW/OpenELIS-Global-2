@@ -204,13 +204,13 @@ public class FhirReferralServiceImpl implements FhirReferralService {
   }
 
   private Organization getFhirOrganization(
-      org.openelisglobal.organization.valueholder.Organization organization) { 
-    Optional<Organization> fhiOrganization = fhirPersistanceService
-    .getFhirOrganizationByName(organization.getOrganizationName());
-    if(fhiOrganization.isPresent()){
+      org.openelisglobal.organization.valueholder.Organization organization) {
+    Optional<Organization> fhiOrganization =
+        fhirPersistanceService.getFhirOrganizationByName(organization.getOrganizationName());
+    if (fhiOrganization.isPresent()) {
       return fhiOrganization.get();
-    }else {
-       try {
+    } else {
+      try {
         Organization fhirOrg = fhirTransformService.transformToFhirOrganization(organization);
         fhirPersistanceService.createFhirResourceInFhirStore(fhirOrg);
       } catch (FhirTransformationException e) {
@@ -219,9 +219,9 @@ public class FhirReferralServiceImpl implements FhirReferralService {
       } catch (FhirPersistanceException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
-      } 
+      }
     }
-    
+
     return fhirPersistanceService
         .getFhirOrganizationByName(organization.getOrganizationName())
         .orElseThrow();

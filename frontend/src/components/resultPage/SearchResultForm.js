@@ -1204,10 +1204,8 @@ export function SearchResults(props) {
             id={"testResult[" + data.id + "].refer"}
             checked={data.refer === "true"}
             onChange={(e) => {
-              // const { name, id, value } = e.target;
               e.target.value = e.target.checked;
               handleChange(e, data.id);
-              //list[index]["active"] = e.target.checked;
             }}
           />
         </Column>
