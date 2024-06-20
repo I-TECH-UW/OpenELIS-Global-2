@@ -57,6 +57,7 @@ function ResultSearchPage() {
         searchBy={searchBy}
         results={resultForm}
         setResultForm={setResultForm}
+        refreshOnSubmit={true}
       />
     </>
   );
@@ -1465,7 +1466,6 @@ export function SearchResults(props) {
     if (form.testResult[rowId].referralItem) {
       if (form.testResult[rowId].referralItem.referredSendDate != date) {
         console.debug("handleDatePickerChange:" + date);
-        var form = { ...props.results };
         var jp = require("jsonpath");
         jp.value(
           form,
@@ -1519,12 +1519,14 @@ export function SearchResults(props) {
         message: createMesssage(resp),
         kind: NotificationKinds.success,
       });
-      window.location.href =
-        "/result?type=" +
-        props.searchBy.type +
-        "&doRange=" +
-        props.searchBy.doRange +
-        props.extraParams;
+      if (props.refreshOnSubmit) {
+        window.location.href =
+          "/result?type=" +
+          props.searchBy.type +
+          "&doRange=" +
+          props.searchBy.doRange +
+          props.extraParams;
+      }
     } else {
       addNotification({
         title: intl.formatMessage({ id: "notification.title" }),
