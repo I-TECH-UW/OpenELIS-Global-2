@@ -1465,7 +1465,6 @@ export function SearchResults(props) {
     if (form.testResult[rowId].referralItem) {
       if (form.testResult[rowId].referralItem.referredSendDate != date) {
         console.debug("handleDatePickerChange:" + date);
-        var form = { ...props.results };
         var jp = require("jsonpath");
         jp.value(
           form,
