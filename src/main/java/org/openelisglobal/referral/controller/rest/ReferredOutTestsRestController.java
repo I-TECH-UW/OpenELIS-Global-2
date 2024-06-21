@@ -1,39 +1,25 @@
-package org.openelisglobal.referral.controller;
+package org.openelisglobal.referral.controller.rest;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import javax.validation.Valid;
 
-import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.referral.form.ReferredOutTestsForm;
 import org.openelisglobal.referral.service.ReferralService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping("/rest/")
 public class ReferredOutTestsRestController {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "labNumber", "testIds", "testUnitIds", "endDate",
-            "startDate", "dateType", "searchType", "selPatient"
-
-    };
+    private static final String[] ALLOWED_FIELDS = new String[] { "labNumber", "testIds","testUnitIds","endDate","startDate", "dateType", "searchType", "selPatient" };
 
     @Autowired
     private ReferralService referralService;
@@ -43,7 +29,7 @@ public class ReferredOutTestsRestController {
         binder.setAllowedFields(ALLOWED_FIELDS);
     }
     
-    private void setupPageForDisplay(ReferredOutTestsForm form) {
+    private void setupPageForDisplay(ReferredOutTestsForm form) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (form.getSearchType() != null) {
             form.setReferralDisplayItems(referralService.getReferralItems(form));
             form.setSearchFinished(true);
@@ -52,23 +38,9 @@ public class ReferredOutTestsRestController {
         form.setTestUnitSelectionList(DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_BY_NAME));
     }
 
-    @GetMapping(value = "ReferredOutTests", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ReferredOutTestsForm showReferredOutTests(@Valid ReferredOutTestsForm form) {
+    @GetMapping(value = "ReferredOutTests")
+    public ReferredOutTestsForm showReferredOutTests(@Valid ReferredOutTestsForm form) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         setupPageForDisplay(form);
-        return form;
-    }
-
-    private void setupPageForDisplayRest(ReferredOutTestsForm form) {
-        if (form.getSearchType() != null) {
-            form.setReferralDisplayItems(referralService.getReferralItems(form));
-            form.setSearchFinished(true);
-        }
-    }
-
-    @PostMapping(value = "ReferredOutTests", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ReferredOutTestsForm submitReferredOutTests(@Valid @RequestBody ReferredOutTestsForm form) {
-        setupPageForDisplayRest(form);
         return form;
     }
     

@@ -46,12 +46,12 @@ function ReferredOutTests(props) {
     {
       id: "option-0",
       text: "Sent Date",
-      tag: "SENT",
+      value: "SENT",
     },
     {
       id: "option-1",
       text: "Result Date",
-      tag: "RESULT",
+      value: "RESULT",
     },
   ];
 
@@ -64,72 +64,58 @@ function ReferredOutTests(props) {
   const [testNamesIdList, setTestNamesIdList] = useState([]);
   const [testNamesValuesList, setTestNamesValuesList] = useState([]);
   const [testNamesPair, setTestNamesPair] = useState([]);
-  const [dateType, setDateType] = useState(dateTypeList[0].tag);
+  const [dateType, setDateType] = useState(dateTypeList[0].value);
   const [loading, setLoading] = useState(false);
   const [searchType, setSearchType] = useState("");
   const [innitialized, setInnitialized] = useState(false);
   const [tests, setTests] = useState([]);
   const [testSections, setTestSections] = useState([]);
-  const [responseData, setResponseData] = useState([]); // response post from backend
+  const [responseData, setResponseData] = useState({});
+  const [responseDataShow, setResponseDataShow] = useState([]);
+
+  useEffect(() => {
+    componentMounted.current = true;
+    getFromOpenElisServer(
+      `/rest/ReferredOutTests?searchType=${searchType}&dateType=${dateType}&startDate=${referredOutTestsFormValues.startDate}&endDate=${referredOutTestsFormValues.endDate}&testUnitIds=${testUnitsIdList}&_testUnitIds=1&testIds=${testNamesIdList}&_testIds=1&labNumber=${referredOutTestsFormValues.labNumberInput}&dateOfBirthSearchValue=&_analysisIds=on`,
+      handleResponseData,
+    );
+    return () => {
+      componentMounted.current = false;
+    };
+  }, [
+    searchType,
+    dateType,
+    referredOutTestsFormValues.startDate,
+    referredOutTestsFormValues.endDate,
+    testUnitsIdList,
+    testNamesIdList,
+    referredOutTestsFormValues.labNumberInput,
+  ]);
 
   const handleReferredOutPatient = () => {
-    const referredOutTestsEndpoint =
-      config.serverBaseUrl + "/rest/ReferredOutTests";
-    const csrfToken = localStorage.getItem("CSRF");
-
-    // const requestBody = {
-    //   searchType: searchType,
-    //   dateType: dateType,
-    //   startDate: referredOutTestsFormValues.startDate,
-    //   endDate: referredOutTestsFormValues.endDate,
-    //   testUnitIds: testUnitsIdList,
-    //   testIds: testNamesIdList,
-    //   labNumber: referredOutTestsFormValues.labNumber,
-    //   labNumberInput: referredOutTestsFormValues.labNumberInput,
-    //   dateOfBirthSearchValue: referredOutTestsFormValues.dateOfBirth,
-    //   selPatient: referredOutTestsFormValues.selectedPatientId,
-    //   _csrf: csrfToken,
-    // };
-
-    const requestBody = {
-      searchType: searchType,
-      dateType: dateType,
-      startDate: referredOutTestsFormValues.startDate,
-      endDate: referredOutTestsFormValues.endDate,
-      testUnitSelectionList: testUnitsPair,
-      testUnitIds: testUnitsIdList,
-      testSelectionList: testNamesPair,
-      testIds: testNamesIdList,
-      // labNumber: referredOutTestsFormValues.labNumber,
-      labNumber: referredOutTestsFormValues.labNumberInput,
-      selPatient: referredOutTestsFormValues.selectedPatientId,
-      // _csrf: csrfToken,
-    };
-
-    fetch(referredOutTestsEndpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-TOKEN": csrfToken,
-      },
-      body: JSON.stringify(requestBody),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to submit data");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.error(JSON.stringify(data));
-        setResponseData(JSON.stringify(data));
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    setLoading(true);
+    getFromOpenElisServer(
+      `/rest/ReferredOutTests?searchType=${searchType}&dateType=${dateType}&startDate=${referredOutTestsFormValues.startDate}&endDate=${referredOutTestsFormValues.endDate}&testUnitIds=${testUnitsIdList}&_testUnitIds=1&testIds=${testNamesIdList}&_testIds=1&labNumber=${referredOutTestsFormValues.labNumberInput}&dateOfBirthSearchValue=&_analysisIds=on`,
+      handleResponseData,
+    );
+    setLoading(false);
   };
 
-  const handleSubmit = (values) => {
+  const handleResponseData = (res) => {
+    if (!res) {
+      setLoading(true);
+    } else {
+      setResponseData(res);
+    }
+  };
+
+  useEffect(() => {
+    if (responseData) {
+      setResponseDataShow(responseData.referralDisplayItems);
+    }
+  }, [responseData]);
+
+  const handleSubmit = () => {
     setLoading(true);
     handleReferredOutPatient();
     setLoading(false);
@@ -151,6 +137,14 @@ function ReferredOutTests(props) {
     });
   };
 
+  const getDataOfBirth = (patient) => {
+    searchType(referredOutTestsFormValues.searchTypeValues[2]);
+    setReferredOutTestsFormValues({
+      ...referredOutTestsFormValues,
+      dateOfBirth: patient.dateOfBirth,
+    });
+  };
+
   const handleDatePickerChangeDate = (datePicker, date) => {
     let updatedDate = date;
     let obj = null;
@@ -169,8 +163,10 @@ function ReferredOutTests(props) {
         break;
       default:
         obj = {
-          startDate: configurationProperties.currentDateAsText,
-          endDate: configurationProperties.currentDateAsText,
+          // startDate: configurationProperties.currentDateAsText,
+          // endDate: configurationProperties.currentDateAsText,
+          startDate: "",
+          endDate: "",
         };
     }
     setReferredOutTestsFormValues({
@@ -240,10 +236,10 @@ function ReferredOutTests(props) {
       setTestNames(testSectionLabel);
       fetchTestSections(fetchedTestSections);
     });
-    // if (testSectionId) {
-    //   let values = { unitType: testSectionId };
-    //   querySearch(values);
-    // }
+    if (testSectionId) {
+      let values = { unitType: testSectionId };
+      querySearch(values);
+    }
   }, []);
 
   useEffect(() => {
@@ -267,8 +263,8 @@ function ReferredOutTests(props) {
       setReferredOutTestsFormValues({
         ...referredOutTestsFormValues,
         dateOfBirth: updatedDate,
-        startDate: updatedDate,
-        endDate: updatedDate,
+        startDate: "",
+        endDate: "",
       });
     }
     if (referredOutTestsFormValues.dateOfBirth != "") {
@@ -309,6 +305,7 @@ function ReferredOutTests(props) {
               <br />
               <SearchPatientForm
                 getSelectedPatient={getSelectedPatient}
+                getDataOfBirth={getDataOfBirth}
               ></SearchPatientForm>
               <div className="formInlineDiv">
                 <div className="searchActionButtons">
@@ -556,6 +553,259 @@ function ReferredOutTests(props) {
             </Form>
           )}
         </Formik>
+        <br />
+        <Grid fullWidth={true}>
+          <Column lg={16} md={8} sm={4}>
+            <span>
+              <FormattedMessage id="referral.matching.search" /> :
+            </span>{" "}
+            <Button kind="tertiary" type="button">
+              <FormattedMessage
+                id="referral.print.selected.patient.reports"
+                defaultMessage="Print Selected Patient Reports"
+              />
+            </Button>{" "}
+            <Button kind="tertiary" type="button">
+              <FormattedMessage
+                id="referral.print.selected.patient.reports.selectnone.button"
+                defaultMessage="Select None"
+              />
+            </Button>{" "}
+            <Button kind="tertiary" type="button">
+              <FormattedMessage
+                id="referral.print.selected.patient.reports.selectall.button"
+                defaultMessage="Select All"
+              />
+            </Button>
+          </Column>
+        </Grid>
+        <br />
+        <Grid fullWidth={true} className="gridBoundary">
+          <Column lg={16} md={8} sm={4}>
+            <br />
+            {/* <DataTable
+              rows={typeOfActivityShow.slice(
+                (page - 1) * pageSize,
+                page * pageSize,
+              )}
+              headers={[
+                {
+                  key: "select",
+                  header: intl.formatMessage({
+                    id: "organization.type.CI.select",
+                  }),
+                },
+                {
+                  key: "resultDate",
+                  header: intl.formatMessage({
+                    id: "referral.search.column.resultDate",
+                  }),
+                },
+                {
+                  key: "labNumber",
+                  header: intl.formatMessage({
+                    id: "sample.label.labnumber",
+                  }),
+                },
+                {
+                  key: "sentDate",
+                  header: intl.formatMessage({
+                    id: "referral.search.column.sentDate",
+                  }),
+                },
+                {
+                  key: "status",
+                  header: intl.formatMessage({
+                    id: "label.filters.status",
+                  }),
+                },
+                {
+                  key: "lastName",
+                  header: intl.formatMessage({
+                    id: "eorder.name.last",
+                  }),
+                },
+                {
+                  key: "firstName",
+                  header: intl.formatMessage({
+                    id: "eorder.name.first",
+                  }),
+                },
+                {
+                  key: "testName",
+                  header: intl.formatMessage({
+                    id: "eorder.test.name",
+                  }),
+                },
+                {
+                  key: "result",
+                  header: intl.formatMessage({
+                    id: "column.name.result",
+                  }),
+                },
+                {
+                  key: "referenceLab",
+                  header: intl.formatMessage({
+                    id: "referral.search.column.referenceLab",
+                  }),
+                },
+                {
+                  key: "notes",
+                  header: intl.formatMessage({
+                    id: "column.name.notes",
+                  }),
+                },
+              ]}
+            >
+              {({
+                rows,
+                headers,
+                getHeaderProps,
+                getTableProps,
+                getSelectionProps,
+              }) => (
+                <TableContainer>
+                  <Table {...getTableProps()}>
+                    <TableHead>
+                      <TableRow>
+                        <TableSelectAll
+                          id="table-select-all"
+                          {...getSelectionProps()}
+                          checked={
+                            selectedRowIds.length === pageSize &&
+                            typeOfActivityShow
+                              .slice((page - 1) * pageSize, page * pageSize)
+                              .filter(
+                                (row) =>
+                                  !row.disabled &&
+                                  selectedRowIds.includes(row.id),
+                              ).length === pageSize
+                          }
+                          indeterminate={
+                            selectedRowIds.length > 0 &&
+                            selectedRowIds.length <
+                              typeOfActivityShow
+                                .slice((page - 1) * pageSize, page * pageSize)
+                                .filter((row) => !row.disabled).length
+                          }
+                          onSelect={() => {
+                            setSaveButton(false);
+                            const currentPageIds = typeOfActivityShow
+                              .slice((page - 1) * pageSize, page * pageSize)
+                              .filter((row) => !row.disabled)
+                              .map((row) => row.id);
+                            if (
+                              selectedRowIds.length === pageSize &&
+                              currentPageIds.every((id) =>
+                                selectedRowIds.includes(id),
+                              )
+                            ) {
+                              setSelectedRowIds([]);
+                            } else {
+                              setSelectedRowIds(
+                                currentPageIds.filter(
+                                  (id) => !selectedRowIds.includes(id),
+                                ),
+                              );
+                            }
+                          }}
+                        />
+                        {headers.map(
+                          (header) =>
+                            header.key !== "select" && (
+                              <TableHeader
+                                key={header.key}
+                                {...getHeaderProps({ header })}
+                              >
+                                {header.header}
+                              </TableHeader>
+                            ),
+                        )}
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      <>
+                        {rows.map((row) => (
+                          <TableRow
+                            key={row.id}
+                            onClick={() => {
+                              const id = row.id;
+                              const isSelected = selectedRowIds.includes(id);
+                              if (isSelected) {
+                                setSelectedRowIds(
+                                  selectedRowIds.filter(
+                                    (selectedId) => selectedId !== id,
+                                  ),
+                                );
+                              } else {
+                                setSelectedRowIds([...selectedRowIds, id]);
+                              }
+                            }}
+                          >
+                            {row.cells.map((cell) => renderCell(cell, row))}
+                          </TableRow>
+                        ))}
+                      </>
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
+            </DataTable> */}
+            {/* <Pagination
+                onChange={handlePageChange}
+                page={page}
+                pageSize={pageSize}
+                pageSizes={[5, 10, 20]}
+                totalItems={typeOfActivityShow.length}
+                forwardText={intl.formatMessage({
+                  id: "pagination.forward",
+                })}
+                backwardText={intl.formatMessage({
+                  id: "pagination.backward",
+                })}
+                itemRangeText={(min, max, total) =>
+                  intl.formatMessage(
+                    { id: "pagination.item-range" },
+                    { min: min, max: max, total: total },
+                  )
+                }
+                itemsPerPageText={intl.formatMessage({
+                  id: "pagination.items-per-page",
+                })}
+                itemText={(min, max) =>
+                  intl.formatMessage(
+                    { id: "pagination.item" },
+                    { min: min, max: max },
+                  )
+                }
+                pageNumberText={intl.formatMessage({
+                  id: "pagination.page-number",
+                })}
+                pageRangeText={(_current, total) =>
+                  intl.formatMessage(
+                    { id: "pagination.page-range" },
+                    { total: total },
+                  )
+                }
+                pageText={(page, pagesUnknown) =>
+                  intl.formatMessage(
+                    { id: "pagination.page" },
+                    { page: pagesUnknown ? "" : page },
+                  )
+                }
+              /> */}
+            <br />
+          </Column>
+        </Grid>
+      </div>
+      <div>
+        <button
+          onClick={() => {
+            console.error(responseData);
+          }}
+        >
+          responseData
+        </button>
       </div>
     </>
   );
