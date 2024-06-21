@@ -21,47 +21,47 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 public class NotificationRestController {
 
-    private final NotificationDAO notificationDAO;
-    private SystemUserService systemUserService;
-    private static final String USER_SESSION_DATA = "userSessionData";
+  private final NotificationDAO notificationDAO;
+  private final SystemUserService systemUserService;
+  private static final String USER_SESSION_DATA = "userSessionData";
 
+  @Autowired
+  public NotificationRestController(NotificationDAO notificationDAO, SystemUserService systemUserService) {
+    this.notificationDAO = notificationDAO;
+    this.systemUserService = systemUserService;
+  }
 
-    @Autowired
-    public NotificationRestController(NotificationDAO notificationDAO, SystemUserService systemUserService) {
-        this.systemUserService = systemUserService;
-        this.notificationDAO = notificationDAO;
+  @GetMapping("/notifications/all")
+  public List<Notification> getNotifications() {
+    return notificationDAO.getNotifications();
+  }
+
+  @GetMapping("/notifications")
+  public List<Notification> getNotificationsByUserId(HttpServletRequest request) {
+
+    String sysUserId = getSysUserId(request);
+
+    return notificationDAO.getNotificationsByUserId(Long.parseLong(sysUserId));
+  }
+
+  @PostMapping("/notification")
+  public ResponseEntity<?> saveNotification(@RequestBody Notification notification, HttpServletRequest request) {
+    notification.setCreatedDate(OffsetDateTime.now());
+    notification.setReadAt(null);
+
+    String sysUserId = getSysUserId(request);
+    if (sysUserId == null) {
+      return ResponseEntity.status(400).body("User session data not found");
     }
 
-    @GetMapping("/notifications")
-    public List<Notification> getNotifications() {
+    notification.setUser(systemUserService.getUserById(getSysUserId(request)));
+    notificationDAO.save(notification);
 
-        return notificationDAO.getNotifications();
-    }
+    return ResponseEntity.ok().body("Notification saved successfully");
+  }
 
-    @PostMapping("/notification")
-    public ResponseEntity<?> saveNotification(@RequestBody Notification notification,
-    HttpServletRequest request
-    ) {
-
-        notification.setCreatedDate(OffsetDateTime.now());
-
-        notification.setReadAt(null);
-
-
-        notification.setUser(systemUserService.getUserById(getSysUserId(request)));
-
-        // notification.setUser();
-
-        notificationDAO.save(notification);
-
-        return ResponseEntity.ok().body("Notification saved successfully");
-    }
-
-
-    protected String getSysUserId(HttpServletRequest request) {
-    UserSessionData usd = (UserSessionData) request
-      .getSession()
-      .getAttribute(USER_SESSION_DATA);
+  protected String getSysUserId(HttpServletRequest request) {
+    UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
     if (usd == null) {
       usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);
       if (usd == null) {
@@ -70,5 +70,4 @@ public class NotificationRestController {
     }
     return String.valueOf(usd.getSystemUserId());
   }
-
 }

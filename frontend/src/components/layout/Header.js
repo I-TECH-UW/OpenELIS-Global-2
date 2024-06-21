@@ -21,6 +21,7 @@ import {
   Logout,
   Close,
   ChevronDown,
+  NotificationNew,
   ChevronUp,
 } from "@carbon/icons-react";
 import SlideOver from "../notifications/SlideOver";
@@ -329,7 +330,6 @@ function OEHeader(props) {
 
   return (
     <>
-      {/* TODO make this generate from Menu table like it did before */}
       <div className="container">
         <Theme>
           <div
@@ -377,7 +377,33 @@ function OEHeader(props) {
                           aria-label="Notifications"
                           onClick={toggleSlideOver}
                         >
-                          <Notification size={20} />
+<div style={{ position: 'relative', display: 'inline-block' }}>
+      <NotificationNew size={20} />
+      <span
+        style={{
+          position: 'absolute',
+          top: '-5px',
+          right: '-5px',
+          backgroundColor: '#3A6B8D',
+          color: 'white',
+          borderRadius: '50%',
+          width: '16px',
+          height: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '10px',
+          animation: 'pulse 5s infinite',
+          transform: 'scale(1)',
+          transformOrigin: 'center center',
+        }}
+      >
+        {`5`}
+      </span>
+      
+    </div>
+                            
+                         
                         </HeaderGlobalAction>
                       </>
                     )}

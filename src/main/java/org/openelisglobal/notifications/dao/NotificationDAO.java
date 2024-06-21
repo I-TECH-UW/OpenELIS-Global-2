@@ -10,5 +10,7 @@ public interface NotificationDAO {
 
     List<Notification> getNotifications();
 
+    List<Notification> getNotificationsByUserId(Long userId);
+
     // Set<Notification> getNotificationsByUserId(Long userId);
 }
