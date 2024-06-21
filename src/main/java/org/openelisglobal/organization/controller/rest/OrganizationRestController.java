@@ -350,14 +350,14 @@ public class OrganizationRestController extends BaseController {
   public ResponseEntity<List<IdValuePair>> getParentOrganization() {
     List<Organization> parentOrgs = organizationService.getAllOrganizations();
     List<IdValuePair> idValuePairs = new ArrayList<>();
-    
+
     for (Organization parentOrg : parentOrgs) {
-        IdValuePair idValuePair = new IdValuePair(parentOrg.getId(), parentOrg.getOrganizationName());
-        idValuePairs.add(idValuePair);
+      IdValuePair idValuePair = new IdValuePair(parentOrg.getId(), parentOrg.getOrganizationName());
+      idValuePairs.add(idValuePair);
     }
 
     return ResponseEntity.ok(idValuePairs);
-}
+  }
 
   @PostMapping(value = "/Organization")
   public ResponseEntity<Object> showUpdateOrganization(
