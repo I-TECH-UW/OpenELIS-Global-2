@@ -21,6 +21,7 @@ import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
@@ -344,6 +345,19 @@ public class OrganizationRestController extends BaseController {
       return ResponseEntity.notFound().build();
     }
   }
+
+  @GetMapping("/ParentOrganization")
+  public ResponseEntity<List<IdValuePair>> getParentOrganization() {
+    List<Organization> parentOrgs = organizationService.getAllOrganizations();
+    List<IdValuePair> idValuePairs = new ArrayList<>();
+    
+    for (Organization parentOrg : parentOrgs) {
+        IdValuePair idValuePair = new IdValuePair(parentOrg.getId(), parentOrg.getOrganizationName());
+        idValuePairs.add(idValuePair);
+    }
+
+    return ResponseEntity.ok(idValuePairs);
+}
 
   @PostMapping(value = "/Organization")
   public ResponseEntity<Object> showUpdateOrganization(
