@@ -236,10 +236,10 @@ function ReferredOutTests(props) {
       setTestNames(testSectionLabel);
       fetchTestSections(fetchedTestSections);
     });
-    if (testSectionId) {
-      let values = { unitType: testSectionId };
-      querySearch(values);
-    }
+    // if (testSectionId) {
+    //   let values = { unitType: testSectionId };
+    //   querySearch(values);
+    // }
   }, []);
 
   useEffect(() => {
