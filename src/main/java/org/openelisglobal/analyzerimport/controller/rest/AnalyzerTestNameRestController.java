@@ -28,7 +28,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
@@ -64,7 +66,7 @@ public class AnalyzerTestNameRestController extends BaseController {
     @GetMapping(value = "/AnalyzerTestName", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> showAnalyzerTestName(
             HttpServletRequest request,
-            BaseForm oldForm)
+            BaseForm oldForm, @RequestParam(value = "ID", required = false) String id)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         AnalyzerTestNameForm newForm = resetSessionFormToType(oldForm, AnalyzerTestNameForm.class);
         newForm.setCancelAction("CancelAnalyzerTestName");
@@ -109,21 +111,20 @@ public class AnalyzerTestNameRestController extends BaseController {
     @PostMapping(value = "/AnalyzerTestName", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> showUpdateAnalyzerTestName(
             HttpServletRequest request,
-            @Valid AnalyzerTestNameForm form,
-            RedirectAttributes redirectAttributes) {
-        Errors errors = new BaseErrors();
-        analyzerTestMappingValidator.validate(form, errors);
-        if (errors.hasErrors()) {
-            saveErrors(errors);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+            @RequestBody @Valid AnalyzerTestNameForm form,
+            BindingResult result,
+            SessionStatus status) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
         }
 
-        String forward = updateAnalyzerTestName(request, form, errors);
+        String forward = updateAnalyzerTestName(request, form, result);
         if (FWD_SUCCESS_INSERT.equals(forward)) {
-            redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-            return ResponseEntity.ok(form);
+            status.setComplete();
+            return ResponseEntity.status(HttpStatus.CREATED).body(form);
         }
-        return ResponseEntity.ok(form);
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result.getAllErrors());
     }
     public String updateAnalyzerTestName(
             HttpServletRequest request, AnalyzerTestNameForm form, Errors errors) {
