@@ -185,7 +185,7 @@ public class AppConfig implements WebMvcConfigurer {
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
-    }
+    }                                                                       
 
     @Bean
     public MappingJackson2HttpMessageConverter jacksonMessageConverter() {
@@ -193,7 +193,7 @@ public class AppConfig implements WebMvcConfigurer {
 
         ObjectMapper mapper = new ObjectMapper();
         // Registering Hibernate4Module to support lazy objects
-        mapper.registerModule(new JavaTimeModule());
+        mapper.registerModule(new JavaTimeModule());                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
         mapper.registerModule(new Hibernate5Module());
         mapper.registerModule(new Jdk8Module());
         mapper.setSerializationInclusion(Include.NON_NULL);
