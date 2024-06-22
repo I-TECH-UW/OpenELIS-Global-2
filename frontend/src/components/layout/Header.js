@@ -84,10 +84,9 @@ function OEHeader(props) {
     }
   };
 
-    const toggleSlideOver = () => {
-      setIsOpen(!isOpen);
-    };
-
+  const toggleSlideOver = () => {
+    setIsOpen(!isOpen);
+  };
 
   const clickPanelSwitch = () => {
     setSwitchCollapsed(!switchCollapsed);
@@ -336,7 +335,6 @@ function OEHeader(props) {
             style={{
               display: "flex",
               flexDirection: "column",
-              
             }}
           >
             <HeaderContainer
@@ -377,33 +375,35 @@ function OEHeader(props) {
                           aria-label="Notifications"
                           onClick={toggleSlideOver}
                         >
-<div style={{ position: 'relative', display: 'inline-block' }}>
-      <NotificationNew size={20} />
-      <span
-        style={{
-          position: 'absolute',
-          top: '-5px',
-          right: '-5px',
-          backgroundColor: '#3A6B8D',
-          color: 'white',
-          borderRadius: '50%',
-          width: '16px',
-          height: '16px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '10px',
-          animation: 'pulse 5s infinite',
-          transform: 'scale(1)',
-          transformOrigin: 'center center',
-        }}
-      >
-        {`5`}
-      </span>
-      
-    </div>
-                            
-                         
+                          <div
+                            style={{
+                              position: "relative",
+                              display: "inline-block",
+                            }}
+                          >
+                            <NotificationNew size={20} />
+                            <span
+                              style={{
+                                position: "absolute",
+                                top: "-5px",
+                                right: "-5px",
+                                backgroundColor: "#3A6B8D",
+                                color: "white",
+                                borderRadius: "50%",
+                                width: "16px",
+                                height: "16px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "10px",
+                                animation: "pulse 5s infinite",
+                                transform: "scale(1)",
+                                transformOrigin: "center center",
+                              }}
+                            >
+                              {`5`}
+                            </span>
+                          </div>
                         </HeaderGlobalAction>
                       </>
                     )}
@@ -504,8 +504,7 @@ function OEHeader(props) {
                 slideFrom="right"
                 title="Notifications"
               >
-
-                <SlideOverNotifications />  
+                <SlideOverNotifications />
               </SlideOver>
             </div>
           </div>
