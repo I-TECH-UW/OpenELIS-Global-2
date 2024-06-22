@@ -12,7 +12,6 @@ code {
     monospace;
 }
 
-
 .slide-over-root {
   position: fixed;
   top: 0;
@@ -24,7 +23,9 @@ code {
   /* Align the SlideOver to the right */
   align-items: flex-start;
   /* Align items at the start (top) */
-  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  transition:
+    opacity 0.3s ease-in-out,
+    visibility 0.3s ease-in-out;
   z-index: 1000;
   visibility: hidden;
   opacity: 0;
@@ -55,7 +56,9 @@ code {
   position: fixed;
   top: 53px;
   /* Adjust this value based on the height of your header */
-  transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+  transition:
+    transform 0.4s ease-in-out,
+    opacity 0.4s ease-in-out;
   width: 90%;
   /* Use percentage for width */
   max-width: 90%;
@@ -145,7 +148,6 @@ code {
   flex-grow: 1;
   /* Allow the body to take remaining height */
 }
-
 
 @keyframes pulse {
   0% {
