@@ -981,5 +981,6 @@
   "referral.print.selected.patient.reports.selectall.button": "Sélectionner tout",
   "referral.search.column.resultDate": "Date de résultat",
   "referral.search.column.sentDate": "Date d'envoi",
-  "referral.search.column.referenceLab": "Laboratoire de référence"
+  "referral.search.column.referenceLab": "Laboratoire de référence",
+  "referral.search.column.analysisId": "Identifiant de l'analyse"
 }

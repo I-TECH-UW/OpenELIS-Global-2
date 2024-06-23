@@ -37,6 +37,13 @@ public class ReferredOutTestsRestController {
     binder.setAllowedFields(ALLOWED_FIELDS);
   }
 
+  @GetMapping(value = "ReferredOutTests")
+  public ReferredOutTestsForm showReferredOutTests(@Valid ReferredOutTestsForm form)
+      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    setupPageForDisplay(form);
+    return form;
+  }
+
   private void setupPageForDisplay(ReferredOutTestsForm form)
       throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
     if (form.getSearchType() != null) {
@@ -47,13 +54,6 @@ public class ReferredOutTestsRestController {
         DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS));
     form.setTestUnitSelectionList(
         DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_BY_NAME));
-  }
-
-  @GetMapping(value = "ReferredOutTests")
-  public ReferredOutTestsForm showReferredOutTests(@Valid ReferredOutTestsForm form)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    setupPageForDisplay(form);
-    return form;
   }
 
   public class NonNumericTests {

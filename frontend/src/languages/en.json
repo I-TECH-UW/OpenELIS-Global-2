@@ -1067,5 +1067,6 @@
   "referral.print.selected.patient.reports.selectall.button": "Select All",
   "referral.search.column.resultDate": "Result Date",
   "referral.search.column.sentDate": "Sent Date",
-  "referral.search.column.referenceLab": "Reference Lab"
+  "referral.search.column.referenceLab": "Reference Lab",
+  "referral.search.column.analysisId": "AnalysisId"
 }
