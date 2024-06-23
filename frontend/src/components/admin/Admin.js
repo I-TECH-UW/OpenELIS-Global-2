@@ -40,6 +40,7 @@ import ProviderMenu from "./ProviderMenu/ProviderMenu";
 import BarcodeConfiguration from "./barcodeConfiguration/BarcodeConfiguration";
 import OrganizationManagament from "./OrganizationManagement/OrganizationManagement";
 import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModify.js";
+import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName.js";
 
 function Admin() {
   const intl = useIntl();
@@ -247,6 +248,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#DictionaryMenu">
         <DictionaryManagement />
+      </PathRoute>
+      <PathRoute path="#AnalyzerTestMenu">
+        <AnalyzerTestName />
       </PathRoute>
     </>
   );

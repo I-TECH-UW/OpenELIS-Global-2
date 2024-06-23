@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import {
-  Form,
   Heading,
   Button,
   Loading,
@@ -19,52 +18,164 @@ import {
   TableContainer,
   Pagination,
   Search,
+  Modal,
+  TextInput,
+  Dropdown,
 } from "@carbon/react";
 import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
 } from "../../utils/Utils.js";
-import { NotificationContext } from "../../layout/Layout.js";
+import {
+  ConfigurationContext,
+  NotificationContext,
+} from "../../layout/Layout.js";
 import {
   AlertDialog,
   NotificationKinds,
 } from "../../common/CustomNotification.js";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
+import ActionPaginationButtonType from "../../common/ActionPaginationButtonType.js";
+import { Json } from "@carbon/icons-react";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
-  // { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  // {
+  //   label: "analyzer.browse.title",
+  //   link: "/MasterListsPage#analyzerMenu",
+  // },
 ];
-function ProviderMenu() {
+function AnalyzerTestName() {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
+  const { reloadConfiguration } = useContext(ConfigurationContext);
 
   const intl = useIntl();
 
   const componentMounted = useRef(false);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [modifyButton, setModifyButton] = useState(true);
+  const [deactivateButton, setDeactivateButton] = useState(true);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
-  const [isEveryRowIsChecked, setIsEveryRowIsChecked] = useState(false);
-  const [rowsIsPartiallyChecked, setRowsIsPartiallyChecked] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [isSearching, setIsSearching] = useState(false);
-  const [panelSearchTerm, setPanelSearchTerm] = useState("");
-  const [searchedProviderMenuList, setSearchedProviderMenuList] = useState([]);
-  const [serachedProviderMenuListShow, setSearchedProviderMenuListShow] =
-    useState([]);
-  // const [startingRecNo, setStartingRecNo] = useState(1);
-  const [providerMenuList, setProviderMenuList] = useState([]);
-  const [providerMenuListShow, setProviderMenuListShow] = useState([]);
+  const [startingRecNo, setStartingRecNo] = useState(21);
+  const [AnalyzerTestName, setAnalyzerTestName] = useState({});
+  const [AnalyzerTestNameShow, setAnalyzerTestNameShow] = useState([]);
+  const [fromRecordCount, setFromRecordCount] = useState("");
+  const [toRecordCount, setToRecordCount] = useState("");
+  const [totalRecordCount, setTotalRecordCount] = useState("");
+  const [paging, setPaging] = useState(1);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
-  function deleteDeactivateProvider(event) {
+  //testing
+  const [currentAnalyzer, setCurrentAnalyzer] = useState(null);
+  const [analyzerName, setAnalyzerName] = useState("");
+  const [testName, setTestName] = useState("");
+  const [actualTestName, SetActualTestName] = useState("");
+
+  // Dropdown data states
+  const [analyzerList, setAnalyzerList] = useState([]);
+  const [testList, setTestList] = useState([]);
+
+  // Selected values for dropdowns
+  const [selectedAnalyzer, setSelectedAnalyzer] = useState(null);
+  const [selectedAnalyzerId, setSelectedAnalyzerId] = useState(null);
+  const [selectedTest, setSelectedTest] = useState(null);
+  const [selectedTestId, setSelectedTestId] = useState(null);
+
+  const handleMenuItems = (res) => {
+    if (!res) {
+      setLoading(true);
+    } else {
+      setAnalyzerTestName(res);
+    }
+  };
+
+  useEffect(() => {
+    componentMounted.current = true;
+    setLoading(true);
+    getFromOpenElisServer("/rest/AnalyzerTestNameMenu", handleMenuItems);
+    return () => {
+      componentMounted.current = false;
+      setLoading(false);
+    };
+  }, [paging, startingRecNo]);
+
+  useEffect(() => {
+    if (AnalyzerTestName.menuList) {
+      const newAnalyzerTestName = AnalyzerTestName.menuList.map((item) => {
+        return {
+          id: item.uniqueId,
+          analyzerName: `${item.analyzerName} - ${item.analyzerTestName}`,
+          actualTestName: item.actualTestName,
+        };
+      });
+      setFromRecordCount(AnalyzerTestName.fromRecordCount);
+      setToRecordCount(AnalyzerTestName.toRecordCount);
+      setTotalRecordCount(AnalyzerTestName.totalRecordCount);
+      setAnalyzerTestNameShow(newAnalyzerTestName);
+    }
+  }, [AnalyzerTestName]);
+
+  const fetchDropdownData = async () => {
+    getFromOpenElisServer(
+      "/rest/AnalyzerTestName?ID=0&startingRecNo=1",
+      handleDropDown,
+    );
+  };
+
+  function handleDropDown(response) {
+    if (response) {
+      setAnalyzerList(response.analyzerList || []);
+      setTestList(response.testList || []);
+    }
+  }
+
+  useEffect(() => {
+    if (selectedRowIds.length === 1) {
+      setModifyButton(false);
+    } else {
+      setModifyButton(true);
+    }
+  }, [selectedRowIds]);
+
+  useEffect(() => {
+    if (selectedRowIds.length === 0) {
+      setDeactivateButton(true);
+    } else {
+      setDeactivateButton(false);
+    }
+  }, [selectedRowIds]);
+
+  async function displayStatus(res) {
+    setNotificationVisible(true);
+    if (res.status == "201" || res.status == "200") {
+      addNotification({
+        kind: NotificationKinds.success,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "save.config.success.msg" }),
+      });
+    } else {
+      addNotification({
+        kind: NotificationKinds.error,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "server.error.msg" }),
+      });
+    }
+    reloadConfiguration();
+  }
+
+  function deleteDeactivateAnalyzer(event) {
     event.preventDefault();
     setLoading(true);
+    const selectedIds = { selectedIDs: selectedRowIds };
     postToOpenElisServerFullResponse(
-      `/DeleteProvider?ID=${selectedRowIds.join(",")}&startingRecNo=1`,
-      serachedProviderMenuListShow || providerMenuListShow, // need to check against the form of restController [mentor]
+      `/rest/DeleteAnalyzerTestName?ID=${selectedRowIds.join(",")}&${startingRecNo}=1`,
+      JSON.stringify(selectedIds),
       setLoading(false),
       setTimeout(() => {
         window.location.reload();
@@ -78,102 +189,72 @@ function ProviderMenu() {
     setSelectedRowIds([]);
   };
 
-  const handleMenuItems = (res) => {
-    if (!res) {
-      setLoading(true);
-    } else {
-      setProviderMenuList(res);
-    }
+  const handleNextPage = () => {
+    setPaging((pager) => Math.max(pager, 2));
+    setStartingRecNo(fromRecordCount);
   };
 
-  useEffect(() => {
-    componentMounted.current = true;
-    setLoading(true);
-    getFromOpenElisServer(`/rest/ProviderMenu`, handleMenuItems);
-    return () => {
-      componentMounted.current = false;
-      setLoading(false);
+  const handlePreviousPage = () => {
+    setPaging((pager) => Math.max(pager - 1, 1));
+    setStartingRecNo(Math.max(fromRecordCount, 1));
+  };
+
+  const openAddModal = () => {
+    setTestName("");
+    setSelectedAnalyzer(null);
+    setSelectedAnalyzerId(null);
+    setSelectedTest(null);
+    setSelectedTestId(null);
+    fetchDropdownData();
+    setIsAddModalOpen(true);
+  };
+
+  const closeAddModal = () => {
+    setIsAddModalOpen(false);
+  };
+
+  const openUpdateModal = (AnalyzerId) => {
+    setIsUpdateModalOpen(true);
+  };
+
+  const closeUpdateModal = () => {
+    setIsUpdateModalOpen(false);
+  };
+
+  const handleAddAnalyzer = () => {
+    const newAnalyzer = {
+      analyzerId: selectedAnalyzerId,
+      analyzerTestName: testName,
+      testId: selectedTestId,
     };
-  }, []);
 
-  const handleSearchedProviderMenuList = (res) => {
-    if (res) {
-      setSearchedProviderMenuList(res);
-    }
+    postToOpenElisServerFullResponse(
+      "/rest/AnalyzerTestName",
+      JSON.stringify(newAnalyzer),
+      displayStatus,
+    );
+
+    closeAddModal();
+    window.location.reload();
   };
 
-  useEffect(() => {
-    getFromOpenElisServer(
-      `/rest/SearchProviderMenu?search=Y&startingRecNo=1&searchString=${panelSearchTerm}`,
-      handleSearchedProviderMenuList,
-    );
-  }, [panelSearchTerm]);
+  const handleUpdateAnalyzer = () => {
+    const newAnalyzer = {
+      analyzerId: selectedAnalyzerId,
+      analyzerTestName: testName,
+      testId: selectedTestId,
+    };
 
-  useEffect(() => {
-    if (providerMenuList) {
-      const newProviderMenuList = providerMenuList.map((item) => {
-        return {
-          id: item.id,
-          lastName: item.person.lastName,
-          firstName: item.person.firstName,
-          active: item.active,
-          telephone: item.person.telephone,
-          fax: item.person.fax,
-        };
-      });
-      setProviderMenuListShow(newProviderMenuList);
-    }
-  }, [providerMenuList]);
-
-  useEffect(() => {
-    if (searchedProviderMenuList) {
-      const newProviderMenuList = searchedProviderMenuList.map((item) => {
-        return {
-          id: item.id,
-          lastName: item.person.lastName,
-          firstName: item.person.firstName,
-          active: item.active,
-          telephone: item.person.telephone,
-          fax: item.person.fax,
-        };
-      });
-      setSearchedProviderMenuListShow(newProviderMenuList);
-    }
-  }, [searchedProviderMenuList]);
-
-  useEffect(() => {
-    let currentPageIds;
-    if (searchedProviderMenuList) {
-      currentPageIds = searchedProviderMenuList
-        .slice((page - 1) * pageSize, page * pageSize)
-        .filter((row) => !row.disabled)
-        .map((row) => row.id);
-    } else {
-      currentPageIds = providerMenuListShow
-        .slice((page - 1) * pageSize, page * pageSize)
-        .filter((row) => !row.disabled)
-        .map((row) => row.id);
-    }
-
-    const currentPageSelectedIds = selectedRowIds.filter((id) =>
-      currentPageIds.includes(id),
+    postToOpenElisServerFullResponse(
+      "/rest/AnalyzerTestName",
+      JSON.stringify(newAnalyzer),
+      displayStatus,
     );
 
-    setIsEveryRowIsChecked(
-      currentPageSelectedIds.length === currentPageIds.length,
-    );
+    closeUpdateModal();
 
-    setRowsIsPartiallyChecked(
-      currentPageSelectedIds.length > 0 &&
-        currentPageSelectedIds.length < currentPageIds.length,
-    );
-  }, [
-    selectedRowIds,
-    page,
-    pageSize,
-    providerMenuListShow,
-    serachedProviderMenuListShow,
-  ]);
+    window.location.reload();
+  };
 
   const renderCell = (cell, row) => {
     if (cell.info.header === "select") {
@@ -185,7 +266,7 @@ function ProviderMenu() {
           name="selectRowCheckbox"
           ariaLabel="selectRows"
           onSelect={() => {
-            setModifyButton(false);
+            setDeactivateButton(false);
             if (selectedRowIds.includes(row.id)) {
               setSelectedRowIds(selectedRowIds.filter((id) => id !== row.id));
             } else {
@@ -201,12 +282,6 @@ function ProviderMenu() {
     }
   };
 
-  const handlePanelSearchChange = (event) => {
-    setIsSearching(true);
-    const query = event.target.value.toLowerCase();
-    setPanelSearchTerm(query);
-  };
-
   if (!loading) {
     return (
       <>
@@ -220,460 +295,293 @@ function ProviderMenu() {
       {notificationVisible === true ? <AlertDialog /> : ""}
       <div className="adminPageContent">
         <PageBreadCrumb breadcrumbs={breadcrumbs} />
-        <Grid>
+        <Grid fullWidth={true}>
           <Column lg={16} md={8} sm={4}>
             <Section>
               <Heading>
-                <FormattedMessage id="provider.browse.title" />
+                {/* <FormattedMessage id="" /> */}
+                Analyzer Test Name
               </Heading>
-            </Section>
-            <br />
-            <Section>
-              <Form onSubmit={deleteDeactivateProvider}>
-                <Column lg={16} md={8} sm={4}>
-                  <Button kind="tertiary" disabled={true} type="submit">
-                    <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.modify" />
-                  </Button>{" "}
-                  <Button disabled={modifyButton} type="submit">
-                    <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
-                  </Button>{" "}
-                  <Button kind="tertiary" disabled={true} type="submit">
-                    <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.add" />
-                  </Button>
-                </Column>
-              </Form>
             </Section>
           </Column>
         </Grid>
-        <div className="orderLegendBody">
-          <Grid>
-            <Column lg={16} md={8} sm={4}>
-              <Section>
-                <Search
-                  size="lg"
-                  id="provider-search-bar"
-                  labelText={<FormattedMessage id="provider.search" />}
-                  placeholder={intl.formatMessage({
-                    id: "provider.search.placeholder",
-                  })}
-                  onChange={handlePanelSearchChange}
-                  value={(() => {
-                    if (panelSearchTerm) {
-                      return panelSearchTerm;
-                    }
-                    return "";
-                  })()}
-                ></Search>
-              </Section>
-            </Column>
-          </Grid>
+        <br />
+        <ActionPaginationButtonType
+          selectedRowIds={selectedRowIds}
+          modifyButton={modifyButton}
+          deactivateButton={deactivateButton}
+          deleteDeactivate={deleteDeactivateAnalyzer}
+          openUpdateModal={openUpdateModal}
+          openAddModal={openAddModal}
+          handlePreviousPage={handlePreviousPage}
+          handleNextPage={handleNextPage}
+          fromRecordCount={fromRecordCount}
+          toRecordCount={toRecordCount}
+          totalRecordCount={totalRecordCount}
+          type="type1"
+        />
+        <br />
+        <Modal
+          open={isAddModalOpen}
+          modalHeading="Add Analyzer"
+          primaryButtonText="Add"
+          secondaryButtonText="Cancel"
+          onRequestSubmit={handleAddAnalyzer}
+          onRequestClose={closeAddModal}
+        >
+          <Dropdown
+            id="analyzer-dropdown"
+            label="Analyzer"
+            items={analyzerList}
+            itemToString={(item) => (item ? item.name : "")}
+            selectedItem={selectedAnalyzer}
+            onChange={({ selectedItem }) => {
+              setSelectedAnalyzer(selectedItem);
+              setSelectedAnalyzerId(selectedItem ? selectedItem.id : null);
+            }}
+          />
           <br />
-          {isSearching ? (
-            <>
-              <Grid fullWidth={true} className="gridBoundary">
-                <Column lg={16} md={8} sm={4}>
-                  <DataTable
-                    rows={serachedProviderMenuListShow.slice(
-                      (page - 1) * pageSize,
-                      page * pageSize,
-                    )}
-                    headers={[
-                      {
-                        key: "select",
-                        header: intl.formatMessage({
-                          id: "provider.select",
-                        }),
-                      },
-                      {
-                        key: "lastName",
-                        header: intl.formatMessage({
-                          id: "provider.providerLastName",
-                        }),
-                      },
+          <TextInput
+            id="testName"
+            labelText="Analyzer Test Name"
+            value={testName}
+            onChange={(e) => setTestName(e.target.value)}
+            required
+          />
+          <br />
 
-                      {
-                        key: "firstName",
-                        header: intl.formatMessage({
-                          id: "provider.providerFirstName",
-                        }),
-                      },
-                      {
-                        key: "active",
-                        header: intl.formatMessage({
-                          id: "provider.isActive",
-                        }),
-                      },
-                      {
-                        key: "telephone",
-                        header: intl.formatMessage({
-                          id: "provider.telephone",
-                        }),
-                      },
-                      {
-                        key: "fax",
-                        header: intl.formatMessage({
-                          id: "provider.fax",
-                        }),
-                      },
-                    ]}
-                  >
-                    {({
-                      rows,
-                      headers,
-                      getHeaderProps,
-                      getTableProps,
-                      getSelectionProps,
-                    }) => (
-                      <TableContainer>
-                        <Table {...getTableProps()}>
-                          <TableHead>
-                            <TableRow>
-                              <TableSelectAll
-                                id="table-select-all"
-                                {...getSelectionProps()}
-                                // checked={
-                                //   selectedRowIds.length === pageSize &&
-                                //   serachedProviderMenuListShow
-                                //     .slice((page - 1) * pageSize, page * pageSize)
-                                //     .filter(
-                                //       (row) =>
-                                //         !row.disabled &&
-                                //         selectedRowIds.includes(row.id),
-                                //     ).length === pageSize
-                                // }
-                                checked={isEveryRowIsChecked}
-                                // indeterminate={
-                                //   selectedRowIds.length > 0 &&
-                                //   selectedRowIds.length <
-                                //     serachedProviderMenuListShow
-                                //       .slice((page - 1) * pageSize, page * pageSize)
-                                //       .filter((row) => !row.disabled).length
-                                // }
-                                indeterminate={rowsIsPartiallyChecked}
-                                onSelect={() => {
-                                  setModifyButton(false);
-                                  const currentPageIds =
-                                    serachedProviderMenuListShow
-                                      .slice(
-                                        (page - 1) * pageSize,
-                                        page * pageSize,
-                                      )
-                                      .filter((row) => !row.disabled)
-                                      .map((row) => row.id);
-                                  if (
-                                    selectedRowIds.length === pageSize &&
-                                    currentPageIds.every((id) =>
-                                      selectedRowIds.includes(id),
-                                    )
-                                  ) {
-                                    setSelectedRowIds([]);
-                                  } else {
-                                    setSelectedRowIds(
-                                      currentPageIds.filter(
-                                        (id) => !selectedRowIds.includes(id),
-                                      ),
-                                    );
-                                  }
-                                }}
-                              />
-                              {headers.map(
-                                (header) =>
-                                  header.key !== "select" && (
-                                    <TableHeader
-                                      key={header.key}
-                                      {...getHeaderProps({ header })}
-                                    >
-                                      {header.header}
-                                    </TableHeader>
-                                  ),
-                              )}
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            <>
-                              {rows.map((row) => (
-                                <TableRow
-                                  key={row.id}
-                                  onClick={() => {
-                                    const id = row.id;
-                                    const isSelected =
-                                      selectedRowIds.includes(id);
-                                    if (isSelected) {
-                                      setSelectedRowIds(
-                                        selectedRowIds.filter(
-                                          (selectedId) => selectedId !== id,
-                                        ),
-                                      );
-                                    } else {
-                                      setSelectedRowIds([
-                                        ...selectedRowIds,
-                                        id,
-                                      ]);
-                                    }
-                                  }}
-                                >
-                                  {row.cells.map((cell) =>
-                                    renderCell(cell, row),
-                                  )}
-                                </TableRow>
-                              ))}
-                            </>
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                    )}
-                  </DataTable>
-                  <Pagination
-                    onChange={handlePageChange}
-                    page={page}
-                    pageSize={pageSize}
-                    pageSizes={[5, 10, 15, 20, 25, 30]}
-                    totalItems={serachedProviderMenuListShow.length}
-                    forwardText={intl.formatMessage({
-                      id: "pagination.forward",
-                    })}
-                    backwardText={intl.formatMessage({
-                      id: "pagination.backward",
-                    })}
-                    itemRangeText={(min, max, total) =>
-                      intl.formatMessage(
-                        { id: "pagination.item-range" },
-                        { min: min, max: max, total: total },
-                      )
-                    }
-                    itemsPerPageText={intl.formatMessage({
-                      id: "pagination.items-per-page",
-                    })}
-                    itemText={(min, max) =>
-                      intl.formatMessage(
-                        { id: "pagination.item" },
-                        { min: min, max: max },
-                      )
-                    }
-                    pageNumberText={intl.formatMessage({
-                      id: "pagination.page-number",
-                    })}
-                    pageRangeText={(_current, total) =>
-                      intl.formatMessage(
-                        { id: "pagination.page-range" },
-                        { total: total },
-                      )
-                    }
-                    pageText={(page, pagesUnknown) =>
-                      intl.formatMessage(
-                        { id: "pagination.page" },
-                        { page: pagesUnknown ? "" : page },
-                      )
-                    }
-                  />
-                </Column>
-              </Grid>
-            </>
-          ) : (
-            <>
-              <Grid fullWidth={true} className="gridBoundary">
-                <Column lg={16} md={8} sm={4}>
-                  <DataTable
-                    rows={providerMenuListShow.slice(
-                      (page - 1) * pageSize,
-                      page * pageSize,
-                    )}
-                    headers={[
-                      {
-                        key: "select",
-                        header: intl.formatMessage({
-                          id: "provider.select",
-                        }),
-                      },
-                      {
-                        key: "lastName",
-                        header: intl.formatMessage({
-                          id: "provider.providerLastName",
-                        }),
-                      },
+          <Dropdown
+            id="test-dropdown"
+            label="Actual Test Name"
+            items={testList}
+            itemToString={(item) => (item ? item.name : "")}
+            selectedItem={selectedTest}
+            onChange={({ selectedItem }) => {
+              setSelectedTest(selectedItem);
+              setSelectedTestId(selectedItem ? selectedItem.id : null);
+            }}
+          />
+        </Modal>
 
-                      {
-                        key: "firstName",
-                        header: intl.formatMessage({
-                          id: "provider.providerFirstName",
-                        }),
-                      },
-                      {
-                        key: "active",
-                        header: intl.formatMessage({
-                          id: "provider.isActive",
-                        }),
-                      },
-                      {
-                        key: "telephone",
-                        header: intl.formatMessage({
-                          id: "provider.telephone",
-                        }),
-                      },
-                      {
-                        key: "fax",
-                        header: intl.formatMessage({
-                          id: "provider.fax",
-                        }),
-                      },
-                    ]}
-                  >
-                    {({
-                      rows,
-                      headers,
-                      getHeaderProps,
-                      getTableProps,
-                      getSelectionProps,
-                    }) => (
-                      <TableContainer>
-                        <Table {...getTableProps()}>
-                          <TableHead>
-                            <TableRow>
-                              <TableSelectAll
-                                id="table-select-all"
-                                {...getSelectionProps()}
-                                // checked={
-                                //   selectedRowIds.length === pageSize &&
-                                //   providerMenuListShow
-                                //     .slice((page - 1) * pageSize, page * pageSize)
-                                //     .filter(
-                                //       (row) =>
-                                //         !row.disabled &&
-                                //         selectedRowIds.includes(row.id),
-                                //     ).length === pageSize
-                                // }
-                                checked={isEveryRowIsChecked}
-                                // indeterminate={
-                                //   selectedRowIds.length > 0 &&
-                                //   selectedRowIds.length <
-                                //     providerMenuListShow
-                                //       .slice((page - 1) * pageSize, page * pageSize)
-                                //       .filter((row) => !row.disabled).length
-                                // }
-                                indeterminate={rowsIsPartiallyChecked}
-                                onSelect={() => {
-                                  setModifyButton(false);
-                                  const currentPageIds = providerMenuListShow
-                                    .slice(
-                                      (page - 1) * pageSize,
-                                      page * pageSize,
-                                    )
+        <Modal
+          open={isUpdateModalOpen}
+          modalHeading="Update Analyzer"
+          primaryButtonText="Update"
+          secondaryButtonText="Cancel"
+          onRequestSubmit={handleUpdateAnalyzer}
+          onRequestClose={closeUpdateModal}
+        >
+          <Dropdown
+            id="analyzer-dropdown"
+            label="Analyzer"
+            items={analyzerList}
+            itemToString={(item) => (item ? item.name : "")}
+            selectedItem={selectedAnalyzer}
+            onChange={({ selectedItem }) => {
+              setSelectedAnalyzer(selectedItem);
+              setSelectedAnalyzerId(selectedItem ? selectedItem.id : null);
+            }}
+          />
+          <br />
+
+          <TextInput
+            id="testName"
+            labelText="Analyzer Test Name"
+            value={testName}
+            onChange={(e) => setTestName(e.target.value)}
+            required
+          />
+          <br />
+
+          <Dropdown
+            id="test-dropdown"
+            label="Actual Test Name"
+            items={testList}
+            itemToString={(item) => (item ? item.name : "")}
+            selectedItem={selectedTest}
+            onChange={({ selectedItem }) => {
+              setSelectedTest(selectedItem);
+              setSelectedTestId(selectedItem ? selectedItem.id : null);
+            }}
+          />
+        </Modal>
+
+        <div className="orderLegendBody">
+          <>
+            <Grid fullWidth={true} className="gridBoundary">
+              <Column lg={16} md={8} sm={4}>
+                <DataTable
+                  rows={AnalyzerTestNameShow.slice(
+                    (page - 1) * pageSize,
+                    page * pageSize,
+                  )}
+                  headers={[
+                    {
+                      key: "select",
+                      header: "select"
+                    },
+                    {
+                      key: "analyzerName",
+                      header:"analyzer"
+                    },
+
+                    {
+                      key: "actualTestName",
+                      header: "actual test Name"
+                    },
+                  ]}
+                >
+                  {({
+                    rows,
+                    headers,
+                    getHeaderProps,
+                    getTableProps,
+                    getSelectionProps,
+                  }) => (
+                    <TableContainer>
+                      <Table {...getTableProps()}>
+                        <TableHead>
+                          <TableRow>
+                            <TableSelectAll
+                              id="table-select-all"
+                              {...getSelectionProps()}
+                              checked={
+                                selectedRowIds.length === pageSize &&
+                                AnalyzerTestNameShow.slice(
+                                  (page - 1) * pageSize,
+                                  page * pageSize,
+                                ).filter(
+                                  (row) =>
+                                    !row.disabled &&
+                                    selectedRowIds.includes(row.id),
+                                ).length === pageSize
+                              }
+                              indeterminate={
+                                selectedRowIds.length > 0 &&
+                                selectedRowIds.length <
+                                  AnalyzerTestNameShow.slice(
+                                    (page - 1) * pageSize,
+                                    page * pageSize,
+                                  ).filter((row) => !row.disabled).length
+                              }
+                              onSelect={() => {
+                                setDeactivateButton(false);
+                                const currentPageIds =
+                                  AnalyzerTestNameShow.slice(
+                                    (page - 1) * pageSize,
+                                    page * pageSize,
+                                  )
                                     .filter((row) => !row.disabled)
                                     .map((row) => row.id);
-                                  if (
-                                    selectedRowIds.length === pageSize &&
-                                    currentPageIds.every((id) =>
-                                      selectedRowIds.includes(id),
-                                    )
-                                  ) {
-                                    setSelectedRowIds([]);
-                                  } else {
+                                if (
+                                  selectedRowIds.length === pageSize &&
+                                  currentPageIds.every((id) =>
+                                    selectedRowIds.includes(id),
+                                  )
+                                ) {
+                                  setSelectedRowIds([]);
+                                } else {
+                                  setSelectedRowIds(
+                                    currentPageIds.filter(
+                                      (id) => !selectedRowIds.includes(id),
+                                    ),
+                                  );
+                                }
+                              }}
+                            />
+                            {headers.map(
+                              (header) =>
+                                header.key !== "select" && (
+                                  <TableHeader
+                                    key={header.key}
+                                    {...getHeaderProps({ header })}
+                                  >
+                                    {header.header}
+                                  </TableHeader>
+                                ),
+                            )}
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          <>
+                            {rows.map((row) => (
+                              <TableRow
+                                key={row.id}
+                                onClick={() => {
+                                  const id = row.id;
+                                  const isSelected =
+                                    selectedRowIds.includes(id);
+                                  if (isSelected) {
                                     setSelectedRowIds(
-                                      currentPageIds.filter(
-                                        (id) => !selectedRowIds.includes(id),
+                                      selectedRowIds.filter(
+                                        (selectedId) => selectedId !== id,
                                       ),
                                     );
+                                  } else {
+                                    setSelectedRowIds([...selectedRowIds, id]);
                                   }
                                 }}
-                              />
-                              {headers.map(
-                                (header) =>
-                                  header.key !== "select" && (
-                                    <TableHeader
-                                      key={header.key}
-                                      {...getHeaderProps({ header })}
-                                    >
-                                      {header.header}
-                                    </TableHeader>
-                                  ),
-                              )}
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            <>
-                              {rows.map((row) => (
-                                <TableRow
-                                  key={row.id}
-                                  onClick={() => {
-                                    const id = row.id;
-                                    const isSelected =
-                                      selectedRowIds.includes(id);
-                                    if (isSelected) {
-                                      setSelectedRowIds(
-                                        selectedRowIds.filter(
-                                          (selectedId) => selectedId !== id,
-                                        ),
-                                      );
-                                    } else {
-                                      setSelectedRowIds([
-                                        ...selectedRowIds,
-                                        id,
-                                      ]);
-                                    }
-                                  }}
-                                >
-                                  {row.cells.map((cell) =>
-                                    renderCell(cell, row),
-                                  )}
-                                </TableRow>
-                              ))}
-                            </>
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                    )}
-                  </DataTable>
-                  <Pagination
-                    onChange={handlePageChange}
-                    page={page}
-                    pageSize={pageSize}
-                    pageSizes={[5, 10, 15, 20, 25, 30]}
-                    totalItems={providerMenuListShow.length}
-                    forwardText={intl.formatMessage({
-                      id: "pagination.forward",
-                    })}
-                    backwardText={intl.formatMessage({
-                      id: "pagination.backward",
-                    })}
-                    itemRangeText={(min, max, total) =>
-                      intl.formatMessage(
-                        { id: "pagination.item-range" },
-                        { min: min, max: max, total: total },
-                      )
-                    }
-                    itemsPerPageText={intl.formatMessage({
-                      id: "pagination.items-per-page",
-                    })}
-                    itemText={(min, max) =>
-                      intl.formatMessage(
-                        { id: "pagination.item" },
-                        { min: min, max: max },
-                      )
-                    }
-                    pageNumberText={intl.formatMessage({
-                      id: "pagination.page-number",
-                    })}
-                    pageRangeText={(_current, total) =>
-                      intl.formatMessage(
-                        { id: "pagination.page-range" },
-                        { total: total },
-                      )
-                    }
-                    pageText={(page, pagesUnknown) =>
-                      intl.formatMessage(
-                        { id: "pagination.page" },
-                        { page: pagesUnknown ? "" : page },
-                      )
-                    }
-                  />
-                </Column>
-              </Grid>
-            </>
-          )}
+                              >
+                                {row.cells.map((cell) => renderCell(cell, row))}
+                              </TableRow>
+                            ))}
+                          </>
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  )}
+                </DataTable>
+                <Pagination
+                  onChange={handlePageChange}
+                  page={page}
+                  pageSize={pageSize}
+                  pageSizes={[10, 20]}
+                  totalItems={AnalyzerTestNameShow.length}
+                  forwardText={intl.formatMessage({
+                    id: "pagination.forward",
+                  })}
+                  backwardText={intl.formatMessage({
+                    id: "pagination.backward",
+                  })}
+                  itemRangeText={(min, max, total) =>
+                    intl.formatMessage(
+                      { id: "pagination.item-range" },
+                      { min: min, max: max, total: total },
+                    )
+                  }
+                  itemsPerPageText={intl.formatMessage({
+                    id: "pagination.items-per-page",
+                  })}
+                  itemText={(min, max) =>
+                    intl.formatMessage(
+                      { id: "pagination.item" },
+                      { min: min, max: max },
+                    )
+                  }
+                  pageNumberText={intl.formatMessage({
+                    id: "pagination.page-number",
+                  })}
+                  pageRangeText={(_current, total) =>
+                    intl.formatMessage(
+                      { id: "pagination.page-range" },
+                      { total: total },
+                    )
+                  }
+                  pageText={(page, pagesUnknown) =>
+                    intl.formatMessage(
+                      { id: "pagination.page" },
+                      { page: pagesUnknown ? "" : page },
+                    )
+                  }
+                />
+              </Column>
+            </Grid>
+          </>
+          {/* )} */}
         </div>
       </div>
     </>
   );
 }
 
-export default injectIntl(ProviderMenu);
+export default injectIntl(AnalyzerTestName);
