@@ -21,8 +21,12 @@ import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
+import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -78,6 +82,7 @@ public class OrganizationRestController extends BaseController {
   @Autowired private CityStateZipService cityStateZipService;
   @Autowired private OrganizationTypeService organizationTypeService;
   @Autowired private DictionaryService dictionaryService;
+  @Autowired private FhirTransformService fhirTransformService;
 
   // @ModelAttribute("form")
   // public OrganizationForm form() {
@@ -341,10 +346,24 @@ public class OrganizationRestController extends BaseController {
     }
   }
 
+  @GetMapping("/ParentOrganization")
+  public ResponseEntity<List<IdValuePair>> getParentOrganization() {
+    List<Organization> parentOrgs = organizationService.getAllOrganizations();
+    List<IdValuePair> idValuePairs = new ArrayList<>();
+
+    for (Organization parentOrg : parentOrgs) {
+      IdValuePair idValuePair = new IdValuePair(parentOrg.getId(), parentOrg.getOrganizationName());
+      idValuePairs.add(idValuePair);
+    }
+
+    return ResponseEntity.ok(idValuePairs);
+  }
+
   @PostMapping(value = "/Organization")
   public ResponseEntity<Object> showUpdateOrganization(
       @RequestBody @Valid OrganizationForm form, BindingResult result)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException,
+          FhirTransformationException, FhirPersistanceException {
 
     // setDefaultButtonAttributes(request);
     if (result.hasErrors()) {
@@ -393,6 +412,7 @@ public class OrganizationRestController extends BaseController {
       persistAddressParts(organization, addressParts);
 
       linkOrgWithOrgType(organization, selectedOrgTypes);
+      fhirTransformService.transformPersistOrganization(organization);
 
     } catch (LIMSRuntimeException e) {
       // bugzilla 2154
