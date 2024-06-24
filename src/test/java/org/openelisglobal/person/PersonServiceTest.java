@@ -1,5 +1,6 @@
 package org.openelisglobal.person;
 
+import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,13 +10,13 @@ import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.util.Set;
 
 public class PersonServiceTest extends BaseWebContextSensitiveTest {
 
   @Autowired PersonService personService;
 
   @Autowired PatientService patientService;
+
   @Before
   public void init() throws Exception {}
 
@@ -31,10 +32,11 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
     String personIdId = personService.insert(pat);
     Person savedPerson = personService.get(personIdId);
 
-    Assert.assertEquals(initialPersonCount+1, personService.getAllPersons().size());
+    Assert.assertEquals(initialPersonCount + 1, personService.getAllPersons().size());
     Assert.assertEquals(firstName, savedPerson.getFirstName());
     Assert.assertEquals(lastname, savedPerson.getLastName());
   }
+
   @Test
   public void createPersonWithMultiplePatients_shouldLinkPatientsToPerson() throws Exception {
 
@@ -56,8 +58,8 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
     for (Patient patient : patients) {
       Assert.assertEquals(savedPerson.getId(), patient.getPerson().getId());
     }
-
   }
+
   @Test
   public void getAllPerson_shouldGetAllPerson() throws Exception {
     patientService.deleteAll(patientService.getAll());

@@ -64,6 +64,7 @@ public class Person extends BaseObject<String> {
   @Email private String email;
 
   private Set<Patient> patients = new HashSet<>(0);
+
   public Person() {
     super();
   }
@@ -197,6 +198,7 @@ public class Person extends BaseObject<String> {
   public void setPatients(Set patients) {
     this.patients = patients;
   }
+
   public void addPatient(Patient patient) {
     patients.add(patient);
     patient.setPerson(this);
