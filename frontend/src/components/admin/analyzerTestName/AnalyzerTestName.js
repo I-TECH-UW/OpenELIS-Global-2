@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import {
   Heading,
-  Button,
   Loading,
   Grid,
   Column,
@@ -17,7 +16,6 @@ import {
   TableSelectAll,
   TableContainer,
   Pagination,
-  Search,
   Modal,
   TextInput,
   Dropdown,
@@ -37,15 +35,14 @@ import {
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 import ActionPaginationButtonType from "../../common/ActionPaginationButtonType.js";
-import { Json } from "@carbon/icons-react";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
   { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
-  // {
-  //   label: "analyzer.browse.title",
-  //   link: "/MasterListsPage#analyzerMenu",
-  // },
+  {
+    label: "sidenav.label.admin.analyzerTest",
+    link: "/MasterListsPage#analyzerMenu",
+  },
 ];
 function AnalyzerTestName() {
   const { notificationVisible, setNotificationVisible, addNotification } =
@@ -70,18 +67,9 @@ function AnalyzerTestName() {
   const [paging, setPaging] = useState(1);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-
-  //testing
-  const [currentAnalyzer, setCurrentAnalyzer] = useState(null);
-  const [analyzerName, setAnalyzerName] = useState("");
   const [testName, setTestName] = useState("");
-  const [actualTestName, SetActualTestName] = useState("");
-
-  // Dropdown data states
   const [analyzerList, setAnalyzerList] = useState([]);
   const [testList, setTestList] = useState([]);
-
-  // Selected values for dropdowns
   const [selectedAnalyzer, setSelectedAnalyzer] = useState(null);
   const [selectedAnalyzerId, setSelectedAnalyzerId] = useState(null);
   const [selectedTest, setSelectedTest] = useState(null);
@@ -115,8 +103,8 @@ function AnalyzerTestName() {
         };
       });
       setFromRecordCount(AnalyzerTestName.fromRecordCount);
-      setToRecordCount(AnalyzerTestName.toRecordCount);
-      setTotalRecordCount(AnalyzerTestName.totalRecordCount);
+      setToRecordCount(AnalyzerTestName.menuList.length);
+      setTotalRecordCount(AnalyzerTestName.menuList.length);
       setAnalyzerTestNameShow(newAnalyzerTestName);
     }
   }, [AnalyzerTestName]);
@@ -214,14 +202,32 @@ function AnalyzerTestName() {
   };
 
   const openUpdateModal = (AnalyzerId) => {
+    fetchDropdownData();
     setIsUpdateModalOpen(true);
   };
 
   const closeUpdateModal = () => {
     setIsUpdateModalOpen(false);
   };
+  const checkIfCombinationExists = () => {
+    return AnalyzerTestNameShow.some(
+      (item) => item.analyzerName === `${selectedAnalyzer.name} - ${testName}`,
+    );
+  };
 
   const handleAddAnalyzer = () => {
+    if (checkIfCombinationExists()) {
+      addNotification({
+        kind: NotificationKinds.error,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({
+          id: "analyzer.combinationName.notification",
+        }),
+      });
+      setNotificationVisible(true);
+      return;
+    }
+
     const newAnalyzer = {
       analyzerId: selectedAnalyzerId,
       analyzerTestName: testName,
@@ -239,6 +245,17 @@ function AnalyzerTestName() {
   };
 
   const handleUpdateAnalyzer = () => {
+    if (checkIfCombinationExists()) {
+      addNotification({
+        kind: NotificationKinds.error,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({
+          id: "analyzer.combinationName.notification",
+        }),
+      });
+      setNotificationVisible(true);
+      return;
+    }
     const newAnalyzer = {
       analyzerId: selectedAnalyzerId,
       analyzerTestName: testName,
@@ -299,8 +316,7 @@ function AnalyzerTestName() {
           <Column lg={16} md={8} sm={4}>
             <Section>
               <Heading>
-                {/* <FormattedMessage id="" /> */}
-                Analyzer Test Name
+                <FormattedMessage id="sidenav.label.admin.analyzerTest" />
               </Heading>
             </Section>
           </Column>
@@ -323,7 +339,8 @@ function AnalyzerTestName() {
         <br />
         <Modal
           open={isAddModalOpen}
-          modalHeading="Add Analyzer"
+          size="sm"
+          modalHeading="Add Analyzer Test Name"
           primaryButtonText="Add"
           secondaryButtonText="Cancel"
           onRequestSubmit={handleAddAnalyzer}
@@ -331,7 +348,9 @@ function AnalyzerTestName() {
         >
           <Dropdown
             id="analyzer-dropdown"
-            label="Analyzer"
+            titleText={intl.formatMessage({
+              id: "banner.menu.results.analyzer",
+            })}
             items={analyzerList}
             itemToString={(item) => (item ? item.name : "")}
             selectedItem={selectedAnalyzer}
@@ -343,7 +362,9 @@ function AnalyzerTestName() {
           <br />
           <TextInput
             id="testName"
-            labelText="Analyzer Test Name"
+            labelText={intl.formatMessage({
+              id: "sidenav.label.admin.analyzerTest",
+            })}
             value={testName}
             onChange={(e) => setTestName(e.target.value)}
             required
@@ -352,7 +373,7 @@ function AnalyzerTestName() {
 
           <Dropdown
             id="test-dropdown"
-            label="Actual Test Name"
+            titleText={intl.formatMessage({ id: "label.actualTestName" })}
             items={testList}
             itemToString={(item) => (item ? item.name : "")}
             selectedItem={selectedTest}
@@ -365,7 +386,8 @@ function AnalyzerTestName() {
 
         <Modal
           open={isUpdateModalOpen}
-          modalHeading="Update Analyzer"
+          size="sm"
+          modalHeading="Update AnalyzerTestName"
           primaryButtonText="Update"
           secondaryButtonText="Cancel"
           onRequestSubmit={handleUpdateAnalyzer}
@@ -373,7 +395,9 @@ function AnalyzerTestName() {
         >
           <Dropdown
             id="analyzer-dropdown"
-            label="Analyzer"
+            titleText={intl.formatMessage({
+              id: "banner.menu.results.analyzer",
+            })}
             items={analyzerList}
             itemToString={(item) => (item ? item.name : "")}
             selectedItem={selectedAnalyzer}
@@ -386,7 +410,9 @@ function AnalyzerTestName() {
 
           <TextInput
             id="testName"
-            labelText="Analyzer Test Name"
+            labelText={intl.formatMessage({
+              id: "sidenav.label.admin.analyzerTest",
+            })}
             value={testName}
             onChange={(e) => setTestName(e.target.value)}
             required
@@ -395,7 +421,7 @@ function AnalyzerTestName() {
 
           <Dropdown
             id="test-dropdown"
-            label="Actual Test Name"
+            titleText={intl.formatMessage({ id: "label.actualTestName" })}
             items={testList}
             itemToString={(item) => (item ? item.name : "")}
             selectedItem={selectedTest}
@@ -418,16 +444,16 @@ function AnalyzerTestName() {
                   headers={[
                     {
                       key: "select",
-                      header: "select"
+                      header: "select",
                     },
                     {
                       key: "analyzerName",
-                      header:"analyzer"
+                      header: "Analyzer - Analyzer test name",
                     },
 
                     {
                       key: "actualTestName",
-                      header: "actual test Name"
+                      header: "Actual test Name",
                     },
                   ]}
                 >
@@ -577,7 +603,6 @@ function AnalyzerTestName() {
               </Column>
             </Grid>
           </>
-          {/* )} */}
         </div>
       </div>
     </>

@@ -75,6 +75,9 @@ function Admin() {
             <SideNavMenuItem href="#calculatedValue">
               <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
             </SideNavMenuItem>
+            <SideNavMenuItem href="#AnalyzerTestName">
+              <FormattedMessage id="sidenav.label.admin.analyzerTest" />
+            </SideNavMenuItem>
           </SideNavMenu>
           <SideNavLink href="#labNumber" renderIcon={CharacterWholeNumber}>
             <FormattedMessage id="sidenav.label.admin.labNumber" />
@@ -167,6 +170,9 @@ function Admin() {
       <PathRoute path="#calculatedValue">
         <CalculatedValue />
       </PathRoute>
+      <PathRoute path="#AnalyzerTestName">
+        <AnalyzerTestName />
+      </PathRoute>
       <PathRoute path="#labNumber">
         <LabNumberManagement />
       </PathRoute>
@@ -248,9 +254,6 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#DictionaryMenu">
         <DictionaryManagement />
-      </PathRoute>
-      <PathRoute path="#AnalyzerTestMenu">
-        <AnalyzerTestName />
       </PathRoute>
     </>
   );

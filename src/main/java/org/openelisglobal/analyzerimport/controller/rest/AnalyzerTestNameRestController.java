@@ -108,6 +108,7 @@ public class AnalyzerTestNameRestController extends BaseController {
     private List<Test> getAllTests() {
         return testService.getAllActiveTests(false);
     }
+
     @PostMapping(value = "/AnalyzerTestName", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> showUpdateAnalyzerTestName(
             HttpServletRequest request,
@@ -126,6 +127,7 @@ public class AnalyzerTestNameRestController extends BaseController {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result.getAllErrors());
     }
+
     public String updateAnalyzerTestName(
             HttpServletRequest request, AnalyzerTestNameForm form, Errors errors) {
         String forward = FWD_SUCCESS_INSERT;
