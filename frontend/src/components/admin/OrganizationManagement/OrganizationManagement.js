@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import {
-  Form,
   Heading,
   Button,
   Loading,
@@ -35,6 +34,7 @@ import {
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 import { ArrowLeft, ArrowRight } from "@carbon/icons-react";
+import ActionPaginationButtonType from "../../common/ActionPaginationButtonType.js";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -171,17 +171,6 @@ function OrganizationManagament() {
 
   useEffect(() => {
     if (organizationsManagmentList) {
-      const pagination = {
-        totalRecordCount:
-          organizationsManagmentList.modelMap.form.totalRecordCount,
-        fromRecordCount:
-          organizationsManagmentList.modelMap.form.fromRecordCount,
-        toRecordCount: organizationsManagmentList.modelMap.form.toRecordCount,
-      };
-      setFromRecordCount(pagination.fromRecordCount);
-      setToRecordCount(pagination.toRecordCount);
-      setTotalRecordCount(pagination.totalRecordCount);
-
       const newOrganizationsManagementList =
         organizationsManagmentList.modelMap.form.menuList.map((item) => {
           return {
@@ -199,6 +188,13 @@ function OrganizationManagament() {
         });
       const newOrganizationsManagementListArray = Object.values(
         newOrganizationsManagementList,
+      );
+      setFromRecordCount(
+        organizationsManagmentList.modelMap.form.fromRecordCount,
+      );
+      setToRecordCount(organizationsManagmentList.modelMap.form.toRecordCount);
+      setTotalRecordCount(
+        organizationsManagmentList.modelMap.form.totalRecordCount,
       );
       setOrganizationsManagmentListShow(newOrganizationsManagementListArray);
     }
@@ -259,6 +255,8 @@ function OrganizationManagament() {
   useEffect(() => {
     if (selectedRowIds.length === 0) {
       setDeactivateButton(true);
+    } else {
+      setDeactivateButton(false);
     }
   }, [selectedRowIds]);
 
@@ -311,65 +309,22 @@ function OrganizationManagament() {
           </Column>
         </Grid>
         <br />
-        <Grid fullWidth={true}>
-          <Column lg={16} md={8} sm={4}>
-            <Section>
-              <Button
-                onClick={() => {
-                  if (selectedRowIds.length === 1) {
-                    const url = `/MasterListsPage#organizationEdit?ID=${selectedRowIds[0]}`;
-                    window.location.href = url;
-                  }
-                }}
-                disabled={modifyButton}
-                type="button"
-              >
-                <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.modify" />
-              </Button>{" "}
-              <Button
-                onClick={deleteDeactivateOrganizationManagament}
-                disabled={deactivateButton}
-                type="button"
-              >
-                <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
-              </Button>{" "}
-              <Button
-                onClick={() => {
-                  window.location.href =
-                    "/MasterListsPage#organizationEdit?ID=0";
-                }}
-                type="button"
-              >
-                <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.add" />
-              </Button>
-            </Section>
-            <br />
-            <Section>
-              <h4>
-                <FormattedMessage id="showing" /> {fromRecordCount} -{" "}
-                {toRecordCount} <FormattedMessage id="of" /> {totalRecordCount}{" "}
-              </h4>
-              <Button
-                hasIconOnly={true}
-                disabled={parseInt(fromRecordCount) <= 1}
-                onClick={handlePreviousPage}
-                renderIcon={ArrowLeft}
-                iconDescription={intl.formatMessage({
-                  id: "organization.previous",
-                })}
-              />{" "}
-              <Button
-                hasIconOnly={true}
-                renderIcon={ArrowRight}
-                onClick={handleNextPage}
-                disabled={parseInt(toRecordCount) >= parseInt(totalRecordCount)}
-                iconDescription={intl.formatMessage({
-                  id: "organization.next",
-                })}
-              />
-            </Section>
-          </Column>
-        </Grid>
+        <ActionPaginationButtonType
+          selectedRowIds={selectedRowIds}
+          modifyButton={modifyButton}
+          deactivateButton={deactivateButton}
+          fromRecordCount={fromRecordCount}
+          toRecordCount={toRecordCount}
+          totalRecordCount={totalRecordCount}
+          handlePreviousPage={handlePreviousPage}
+          handleNextPage={handleNextPage}
+          deleteDeactivate={deleteDeactivateOrganizationManagament}
+          id={selectedRowIds[0]}
+          addButtonRedirectLink={`/MasterListsPage#organizationEdit?ID=0`}
+          modifyButtonRedirectLink={`/MasterListsPage#organizationEdit?ID=`}
+          type="type2"
+        />
+        <br />
         <div className="orderLegendBody">
           <Grid>
             <Column lg={16} md={8} sm={4}>

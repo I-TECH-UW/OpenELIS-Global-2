@@ -26,8 +26,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-// import org.springframework.web.servlet.ModelAndView;
-// import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RestController
 @RequestMapping("/rest")
@@ -56,7 +54,7 @@ public class ProviderMenuRestController extends BaseMenuController<Provider> {
   }
 
   @GetMapping(value = {"/ProviderMenu", "/SearchProviderMenu"})
-  public ResponseEntity<Object> showProviderMenu(HttpServletRequest request)
+  public ResponseEntity<ProviderMenuForm> showProviderMenu(HttpServletRequest request)
       throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
     ProviderMenuForm form = new ProviderMenuForm();
 
@@ -67,13 +65,15 @@ public class ProviderMenuRestController extends BaseMenuController<Provider> {
       // errors.reject("error.generic");
       // redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, errors);
       // return findForward(forward, form);
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ERRORS);
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     } else {
       // request.setAttribute("menuDefinition", "ProviderMenuDefinition");
       addFlashMsgsToRequest(request);
       // return findForward(forward, form);
       List<Provider> providers = createMenuList(form, request);
-      return ResponseEntity.ok(providers);
+      // return ResponseEntity.ok(providers);
+      form.setProviders(providers);
+      return ResponseEntity.ok(form);
     }
   }
 

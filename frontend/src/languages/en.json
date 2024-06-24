@@ -1036,6 +1036,10 @@
   "organization.type.CI.name": "Type of Activity : Name",
   "organization.type.CI.description": "Type of Activity : Description",
   "organization.add.placeholder": "AlphaNumeric Values",
+  "organization.add.placeholder.internetAddress": "https://orgname.com",
+  "organization.search.parent.name": "Parent Organization Names",
+  "notification.organization.post.internetAddress": "Enter a valid Organization Url.",
+  "organization.add.placeholder.parent": "Parent Organization",
   "organization.add.placeholder.active": "Y or N",
   "organization.search.byorgname": "Search By Org Name",
   "organization.search.placeHolder": "Search By Org Name...",
@@ -1050,5 +1054,6 @@
   "organization.previous": "Previous Page",
   "organization.next": "Next Page",
   "showing": "Showing",
-  "of": "of"
+  "of": "of",
+  "results.label.refer": "Refer test to a reference lab"
 }
