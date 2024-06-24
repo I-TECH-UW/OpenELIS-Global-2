@@ -61,6 +61,7 @@ function ReferredOutTests(props) {
 
   const componentMounted = useRef(false);
   const [page, setPage] = useState(1);
+  const [searchButton, setSearchButton] = useState(true);
   const [pageSize, setPageSize] = useState(10);
   const [testUnits, setTestUnits] = useState([]);
   const [testUnitsIdList, setTestUnitsIdList] = useState([]);
@@ -73,7 +74,6 @@ function ReferredOutTests(props) {
   const [dateType, setDateType] = useState(dateTypeList[0].value);
   const [loading, setLoading] = useState(false);
   const [searchType, setSearchType] = useState("");
-  const [innitialized, setInnitialized] = useState(false);
   const [tests, setTests] = useState([]);
   const [testSections, setTestSections] = useState([]);
   const [responseData, setResponseData] = useState({});
@@ -94,7 +94,9 @@ function ReferredOutTests(props) {
         `&testIds=`,
       )}&_testIds=1&labNumber=${
         referredOutTestsFormValues.labNumberInput
-      }&dateOfBirthSearchValue=&selPatient=${
+      }&dateOfBirthSearchValue=${
+        referredOutTestsFormValues.dateOfBirth
+      }&selPatient=${
         referredOutTestsFormValues.selectedPatientId
       }&_analysisIds=on`,
       handleResponseData,
@@ -109,6 +111,7 @@ function ReferredOutTests(props) {
     testNamesIdList,
     referredOutTestsFormValues.labNumberInput,
     referredOutTestsFormValues.selectedPatientId,
+    referredOutTestsFormValues.dateOfBirth,
   ]);
 
   const handleReferredOutPatient = () => {
@@ -146,6 +149,7 @@ function ReferredOutTests(props) {
       labNumberInput: e.target.value,
     });
     setSearchType(referredOutTestsFormValues.searchTypeValues[1]);
+    setSearchButton(false);
   }
 
   const getSelectedPatient = (patient) => {
@@ -154,6 +158,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       selectedPatientId: patient.patientPK,
     });
+    setSearchButton(false);
   };
 
   const getDataOfBirth = (patient) => {
@@ -162,6 +167,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       dateOfBirth: patient.birthDateForDisplay,
     });
+    setSearchButton(false);
   };
 
   const handleDatePickerChangeDate = (datePicker, date) => {
@@ -228,6 +234,7 @@ function ReferredOutTests(props) {
         value: test.value,
       }));
       setTestNamesPair(testNamesPair);
+      setSearchButton(false);
     }
     if (testUnits.testUnits) {
       var testUnitsIdList = testUnits.testUnits.map((test) => test.id);
@@ -239,6 +246,7 @@ function ReferredOutTests(props) {
         value: test.value,
       }));
       setTestUnitsPair(testUnitsPair);
+      setSearchButton(false);
     }
   }, [testNames, testUnits]);
 
@@ -280,28 +288,9 @@ function ReferredOutTests(props) {
       };
       setReferredOutTestsFormValues(searchValues);
       handleSubmit(searchValues);
+      setSearchButton(false);
     }
   }, [referredOutTestsFormValues]);
-
-  useEffect(() => {
-    if (!innitialized) {
-      // let updatedDate = encodeDate(configurationProperties.currentDateAsText);
-      let updatedDate = configurationProperties.currentDateAsText;
-      setReferredOutTestsFormValues({
-        ...referredOutTestsFormValues,
-        dateOfBirth: updatedDate,
-        startDate: "",
-        endDate: "",
-      });
-    }
-    if (referredOutTestsFormValues.dateOfBirth != "") {
-      setInnitialized(true);
-    }
-  }, [
-    referredOutTestsFormValues,
-    innitialized,
-    configurationProperties.currentDateAsText,
-  ]);
 
   useEffect(() => {
     if (selectedRowIds.length > 0) {
@@ -369,10 +358,17 @@ function ReferredOutTests(props) {
               <SearchPatientForm
                 getSelectedPatient={getSelectedPatient}
                 getDataOfBirth={getDataOfBirth}
+                onChange={() => {
+                  setSearchButton(false);
+                }}
               ></SearchPatientForm>
               <div className="formInlineDiv">
                 <div className="searchActionButtons">
-                  <Button type="button" onClick={handleReferredOutPatient}>
+                  <Button
+                    type="button"
+                    disabled={searchButton}
+                    onClick={handleReferredOutPatient}
+                  >
                     <FormattedMessage
                       id="referral.main.button"
                       defaultMessage="Search Referrals By Patient"
@@ -389,7 +385,9 @@ function ReferredOutTests(props) {
           enableReinitialize={true}
           // validationSchema={}
           onSubmit={handleSubmit}
-          onChange
+          onChange={() => {
+            setSearchButton(false);
+          }}
         >
           {({
             values,
@@ -420,9 +418,12 @@ function ReferredOutTests(props) {
                       <Dropdown
                         id={"dateType"}
                         name="dateType"
-                        label="Date Type"
+                        label={
+                          dateTypeList.find((item) => item.value === dateType)
+                            ?.text || ""
+                        }
                         initialSelectedItem={dateTypeList.find(
-                          (item) => item.tag === dateType,
+                          (item) => item.value === dateType,
                         )}
                         items={dateTypeList}
                         itemToString={(item) => (item ? item.text : "")}
@@ -430,7 +431,8 @@ function ReferredOutTests(props) {
                           setSearchType(
                             referredOutTestsFormValues.searchTypeValues[0],
                           );
-                          setDateType(item.selectedItem.tag);
+                          setDateType(item.selectedItem.value);
+                          setSearchButton(false);
                         }}
                       />
                       <h5 style={{ paddingTop: "10px", paddingLeft: "6px" }}>
@@ -447,9 +449,9 @@ function ReferredOutTests(props) {
                         autofillDate={true}
                         value={referredOutTestsFormValues.startDate}
                         className="inputDate"
-                        onChange={(date) =>
-                          handleDatePickerChangeDate("startDate", date)
-                        }
+                        onChange={(date) => {
+                          handleDatePickerChangeDate("startDate", date);
+                        }}
                       />
                       <CustomDatePicker
                         id={"endDate"}
@@ -460,9 +462,9 @@ function ReferredOutTests(props) {
                         className="inputDate"
                         autofillDate={true}
                         value={referredOutTestsFormValues.endDate}
-                        onChange={(date) =>
-                          handleDatePickerChangeDate("endDate", date)
-                        }
+                        onChange={(date) => {
+                          handleDatePickerChangeDate("endDate", date);
+                        }}
                       />
                     </div>
                     <br />
@@ -485,6 +487,7 @@ function ReferredOutTests(props) {
                               setSearchType(
                                 referredOutTestsFormValues.searchTypeValues[0],
                               );
+                              setSearchButton(false);
                             }}
                             selectionFeedback="top-after-reopen"
                           />
@@ -525,6 +528,7 @@ function ReferredOutTests(props) {
                               setSearchType(
                                 referredOutTestsFormValues.searchTypeValues[0],
                               );
+                              setSearchButton(false);
                             }}
                             selectionFeedback="top-after-reopen"
                           />
@@ -552,6 +556,7 @@ function ReferredOutTests(props) {
                       <div className="searchActionButtons">
                         <Button
                           type="button"
+                          disabled={searchButton}
                           onClick={handleReferredOutPatient}
                         >
                           <FormattedMessage
@@ -600,6 +605,7 @@ function ReferredOutTests(props) {
                       <div className="searchActionButtons">
                         <Button
                           type="button"
+                          disabled={searchButton}
                           onClick={handleReferredOutPatient}
                         >
                           <FormattedMessage
@@ -899,40 +905,8 @@ function ReferredOutTests(props) {
           </Column>
         </Grid>
       </div>
-      <div>
-        <button
-          onClick={() => {
-            console.error(responseData);
-          }}
-        >
-          responseData
-        </button>
-        <button
-          onClick={() => {
-            console.error(responseDataShow);
-          }}
-        >
-          responseDataShow
-        </button>
-        <button
-          onClick={() => {
-            console.error(selectedRowIds);
-          }}
-        >
-          selectedRowIds
-        </button>
-        <button
-          onClick={() => {
-            console.error(selectedRowIdsPost);
-          }}
-        >
-          selectedRowIdsPost
-        </button>
-      </div>
     </>
   );
 }
 
 export default injectIntl(ReferredOutTests);
-
-// selPatient is not getting filled
