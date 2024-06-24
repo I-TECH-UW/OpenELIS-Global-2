@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
 import {
   Form,
   Heading,
@@ -29,14 +28,17 @@ import {
   postToOpenElisServerFullResponse,
   postToOpenElisServerJsonResponse,
 } from "../../utils/Utils.js";
-import { NotificationContext } from "../../layout/Layout.js";
+import {
+  ConfigurationContext,
+  NotificationContext,
+} from "../../layout/Layout.js";
 import {
   AlertDialog,
   NotificationKinds,
 } from "../../common/CustomNotification.js";
-import { Field, Formik } from "formik";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
+import AutoComplete from "../../common/AutoComplete.js";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -50,6 +52,7 @@ let breadcrumbs = [
 function OrganizationAddModify() {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
 
   const componentMounted = useRef(false);
   const intl = useIntl();
@@ -60,6 +63,10 @@ function OrganizationAddModify() {
   const [orgSelectedTypeOfActivity, setOrgSelectedTypeOfActivity] = useState(
     [],
   );
+  const [parentOrgList, setParentOrgList] = useState([]);
+  const [parentOrgId, setParentOrgId] = useState("");
+  const [parentOrg, setParentOrg] = useState({});
+  const [parentOrgPost, setParentOrgPost] = useState({});
   const [orgInfo, setOrgInfo] = useState({});
   const [orgInfoPost, setOrgInfoPost] = useState({});
   const [saveButton, setSaveButton] = useState(true);
@@ -67,22 +74,12 @@ function OrganizationAddModify() {
   const [typeOfActivityShow, setTypeOfActivityShow] = useState([]);
   const [id, setId] = useState(null);
 
-  //const id = new URLSearchParams(useLocation().search).get("ID");
-
   useEffect(() => {
     const getIdFromUrl = () => {
-      // Get the hash part of the URL
       const hash = window.location.hash;
-
-      // Check if the hash contains the query parameters
       if (hash.includes("?")) {
-        // Extract the query part from the hash
         const queryParams = hash.split("?")[1];
-
-        // Create a URLSearchParams object to easily access the parameters
         const urlParams = new URLSearchParams(queryParams);
-
-        // Get the value of the 'ID' parameter
         const id = urlParams.get("ID");
 
         return id;
@@ -113,6 +110,18 @@ function OrganizationAddModify() {
       setLoading(true);
     } else {
       setTypeOfActivity(res);
+    }
+  };
+
+  useEffect(() => {
+    getFromOpenElisServer(`/rest/ParentOrganization`, handleParentOrgList);
+  }, []);
+
+  const handleParentOrgList = (res) => {
+    if (!res) {
+      setLoading(true);
+    } else {
+      setParentOrgList(res);
     }
   };
 
@@ -237,15 +246,84 @@ function OrganizationAddModify() {
 
   function handleInternetAddressChange(e) {
     setSaveButton(false);
+    const value = e.target.value.trim();
+    const urlPattern =
+      /^(https?:\/\/)?(www\.)?[\w-]+\.[a-z]{2,}(\.[a-z]{2,})?$/i;
+
+    if (value && !urlPattern.test(value)) {
+      if (!notificationVisible) {
+        setNotificationVisible(true);
+        addNotification({
+          title: intl.formatMessage({
+            id: "notification.title",
+          }),
+          message: intl.formatMessage({
+            id: "notification.organization.post.internetAddress",
+          }),
+          kind: NotificationKinds.info,
+        });
+      }
+    } else {
+      setNotificationVisible(false);
+    }
+
     setOrgInfoPost((prevOrgInfoPost) => ({
       ...prevOrgInfoPost,
-      internetAddress: e.target.value,
+      internetAddress: value,
     }));
     setOrgInfo((prevOrgInfo) => ({
       ...prevOrgInfo,
-      internetAddress: e.target.value,
+      internetAddress: value,
     }));
   }
+
+  function handleParentOrganizationName(e) {
+    setParentOrgPost({
+      ...parentOrgPost,
+      parentOrganizationName: e.target.value,
+    });
+    setSaveButton(false);
+  }
+
+  function handleAutoCompleteParentOrganizationNames(parentOrgId) {
+    setParentOrgId(parentOrgId);
+    setSaveButton(false);
+  }
+
+  const handleParentOrgPost = (res) => {
+    if (!res) {
+      setLoading(true);
+    } else {
+      setParentOrg(res);
+    }
+  };
+
+  useEffect(() => {
+    getFromOpenElisServer(
+      `/rest/organization/${parentOrgId}`,
+      handleParentOrgPost,
+    );
+  }, [parentOrgId]);
+
+  useEffect(() => {
+    if (parentOrg) {
+      const parentOrgPost = {
+        id: parentOrg.id,
+        isActive: parentOrg.isActive,
+        lastupdated: parentOrg.lastupdated,
+        mlsSentinelLabFlag: parentOrg.mlsSentinelLabFlag,
+        organizationName: parentOrg.organizationName,
+        organizationTypes: parentOrg.organizationTypes,
+        shortName: parentOrg.shortName,
+        testSections: parentOrg.testSections,
+      };
+      setParentOrgPost(parentOrgPost);
+      setOrgInfoPost((prevOrgInfo) => ({
+        ...prevOrgInfo,
+        organization: parentOrgPost,
+      }));
+    }
+  }, [parentOrg]);
 
   function submitAddUpdatedOrgInfo() {
     setLoading(true);
@@ -428,7 +506,7 @@ function OrganizationAddModify() {
                       type="text"
                       labelText=""
                       placeholder={intl.formatMessage({
-                        id: "organization.add.placeholder",
+                        id: "organization.add.placeholder.internetAddress",
                       })}
                       // invalid={errors.order && touched.order}
                       // invalidText={errors.order}
@@ -438,6 +516,45 @@ function OrganizationAddModify() {
                           : ""
                       }
                       onChange={(e) => handleInternetAddressChange(e)}
+                    />
+                  </Column>
+                </Grid>
+                <Grid fullWidth={true}>
+                  <Column lg={8} md={4} sm={4}>
+                    <>
+                      <FormattedMessage id="organization.parent" /> :
+                    </>
+                  </Column>
+                  <Column lg={8} md={4} sm={4}>
+                    <AutoComplete
+                      name="parentOrgName"
+                      id="parentOrgName"
+                      allowFreeText={
+                        !(
+                          configurationProperties.restrictFreeTextRefSiteEntry ===
+                          "true"
+                        )
+                      }
+                      value={
+                        typeOfActivity &&
+                        typeOfActivity.organization &&
+                        typeOfActivity.organization.organizationName != ""
+                          ? typeOfActivity.organization.organizationName
+                          : ""
+                      }
+                      onChange={handleParentOrganizationName}
+                      onSelect={handleAutoCompleteParentOrganizationNames}
+                      label={
+                        <>
+                          <FormattedMessage id="organization.search.parent.name" />{" "}
+                          <span className="requiredlabel">*</span>
+                        </>
+                      }
+                      style={{ width: "!important 100%" }}
+                      suggestions={
+                        parentOrgList.length > 0 ? parentOrgList : []
+                      }
+                      required
                     />
                   </Column>
                 </Grid>
