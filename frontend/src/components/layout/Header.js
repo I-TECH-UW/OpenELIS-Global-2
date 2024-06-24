@@ -39,6 +39,7 @@ import {
   HeaderPanel,
 } from "@carbon/react";
 import { getFromOpenElisServer } from "../utils/Utils";
+import SearchBar from "./search/searchBar";
 
 function OEHeader(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
@@ -56,7 +57,7 @@ function OEHeader(props) {
     menu_billing: { menu: {}, childMenus: [] },
     menu_nonconformity: { menu: {}, childMenus: [] },
   });
-
+const [searchBar,setSearchBar] = useState(false);
   scrollRef.current = window.scrollY;
   useLayoutEffect(() => {
     window.scrollTo(0, scrollRef.current);
@@ -83,7 +84,9 @@ function OEHeader(props) {
   const clickPanelSwitch = () => {
     setSwitchCollapsed(!switchCollapsed);
   };
-
+const handleSearch = ()=>{
+  setSearchBar(!searchBar)
+}
   const panelSwitchIcon = () => {
     return userSessionDetails.authenticated ? (
       switchCollapsed ? (
@@ -348,11 +351,10 @@ function OEHeader(props) {
                 <HeaderGlobalBar>
                   {userSessionDetails.authenticated && (
                     <>
+                    {searchBar && <SearchBar/>}
                       <HeaderGlobalAction
                         aria-label="Search"
-                        onClick={() => {
-                          /*TODO add search functionality*/
-                        }}
+                        onClick={handleSearch}
                       >
                         <Search size={20} />
                       </HeaderGlobalAction>

@@ -1,0 +1,101 @@
+.main {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px;
+    font-family: Arial, sans-serif;
+    border-radius: 10px;
+    border: 2px solid #ddd;
+    max-height: 400px;
+    width: 650px;
+    background-color: #333;
+    color: #fff;
+    top: 5px;
+    right: 150px;
+  
+  }
+  
+  .search-bar-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #333;
+  }
+  
+  .search-input {
+    width: 100%;
+    
+    border: 2px solid #ddd;
+    
+  }
+  
+  .search-input:hover {
+    border: 2px solid #0f62fe;
+  }
+  
+  .suggestions {
+    list-style-type: none;
+    margin: 0;
+    top: 56px;
+    padding: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+    position: relative;
+  }
+  
+  .suggestions li {
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .suggestions li.suggestion-active {
+    background-color: #e5e5e5;
+  }
+  
+  .suggestions li:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .delete-button {
+    background: transparent;
+    border: none;
+    color: red;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .patients {
+    overflow-y: auto; /* Makes the content scrollable */
+    width: 100%;
+    max-width: auto;
+    padding: 10px;
+  }
+  
+  .heading {
+    margin-bottom: 5px;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    background-color: #444; /* Slightly lighter background for each heading */
+    border-radius: 5px; /* Rounded corners for headings */
+  }
+  
+  .patientHead {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .heading:hover {
+    background-color: #555; /* Change to your desired hover color */
+  }
+  
