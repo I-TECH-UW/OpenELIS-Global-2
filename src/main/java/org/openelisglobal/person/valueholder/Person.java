@@ -197,6 +197,10 @@ public class Person extends BaseObject<String> {
   public void setPatients(Set patients) {
     this.patients = patients;
   }
+  public void addPatient(Patient patient) {
+    patients.add(patient);
+    patient.setPerson(this);
+  }
 
   public String getPrimaryPhone() {
     return primaryPhone;
