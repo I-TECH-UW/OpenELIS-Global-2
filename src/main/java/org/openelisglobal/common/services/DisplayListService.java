@@ -156,6 +156,7 @@ public class DisplayListService implements LocaleChangeListener {
     TB_FOLLOWUP_LINE1,
     TB_FOLLOWUP_LINE2,
     ARV_ORG_LIST,
+    ACTIVE_ORG_LIST,
     IHC_BREAST_CANCER_REPORT_INTENSITY,
     IHC_BREAST_CANCER_REPORT_CERBB2_PATTERN,
     IHC_BREAST_CANCER_REPORT_MOLE_SUBTYPE;
@@ -334,6 +335,7 @@ public class DisplayListService implements LocaleChangeListener {
     typeToListMap.put(ListType.TB_FOLLOWUP_LINE1, createTBFollowupLine1List());
     typeToListMap.put(ListType.TB_FOLLOWUP_LINE2, createTBFollowupLine2List());
     typeToListMap.put(ListType.ARV_ORG_LIST, createArvOrgList());
+    typeToListMap.put(ListType.ACTIVE_ORG_LIST, createActiveOrganizationsList());
   }
 
   private List<IdValuePair> createPathologyStatusList() {
@@ -646,6 +648,7 @@ public class DisplayListService implements LocaleChangeListener {
     typeToListMap.put(ListType.TB_FOLLOWUP_LINE1, createTBFollowupLine1List());
     typeToListMap.put(ListType.TB_FOLLOWUP_LINE2, createTBFollowupLine2List());
     typeToListMap.put(ListType.ARV_ORG_LIST, createArvOrgList());
+    typeToListMap.put(ListType.ACTIVE_ORG_LIST, createActiveOrganizationsList());
   }
 
   public void refreshList(ListType listType) {
@@ -767,6 +770,10 @@ public class DisplayListService implements LocaleChangeListener {
         {
           typeToListMap.put(ListType.ARV_ORG_LIST, createArvOrgList());
         }
+      case ACTIVE_ORG_LIST : 
+      {
+        typeToListMap.put(ListType.ACTIVE_ORG_LIST, createActiveOrganizationsList());
+      }  
     }
   }
 
@@ -813,6 +820,19 @@ public class DisplayListService implements LocaleChangeListener {
     }
 
     return requesterList;
+  }
+
+  private List<IdValuePair> createActiveOrganizationsList() {
+    List<IdValuePair> activeOrgList = new ArrayList<>();
+
+    List<Organization> orgList = organizationService.getActiveOrganizations();
+
+    for (Organization organization : orgList) {
+
+      activeOrgList.add(new IdValuePair(organization.getId(), organization.getOrganizationName()));
+
+    }
+    return activeOrgList;
   }
 
   private List<IdValuePair> createArvOrgList() {
