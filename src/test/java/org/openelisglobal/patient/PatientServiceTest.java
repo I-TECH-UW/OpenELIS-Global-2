@@ -32,12 +32,12 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
     String gender = "M";
     Patient pat = createPatient(firstName, lastname, dob, gender);
 
-    Assert.assertEquals(0, patientService.getAllPatients().size());
+    int initialPatientCount = patientService.getAllPatients().size();
     // save patient to the DB
     String patientId = patientService.insert(pat);
     Patient savedPatient = patientService.get(patientId);
 
-    Assert.assertEquals(1, patientService.getAllPatients().size());
+    Assert.assertEquals(initialPatientCount + 1, patientService.getAllPatients().size());
     Assert.assertEquals(firstName, savedPatient.getPerson().getFirstName());
     Assert.assertEquals(lastname, savedPatient.getPerson().getLastName());
     Assert.assertEquals(gender, savedPatient.getGender());
@@ -45,6 +45,14 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
 
   @Test
   public void getAllPatients_shouldGetAllPatients() throws Exception {
+    patientService.deleteAll(patientService.getAll());
+    personService.deleteAll(personService.getAll());
+    String firstName = "John";
+    String lastname = "Doe";
+    String dob = "12/12/1992";
+    String gender = "M";
+    Patient patient = createPatient(firstName, lastname, dob, gender);
+    patientService.insert(patient);
     Assert.assertEquals(1, patientService.getAllPatients().size());
   }
 
