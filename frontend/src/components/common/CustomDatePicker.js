@@ -75,6 +75,7 @@ const CustomDatePicker = (props) => {
           labelText={props.labelText}
           invalid={props.invalid}
           invalidText={props.invalidText}
+          disabled={props.disabled}
         />
       </DatePicker>
     </>

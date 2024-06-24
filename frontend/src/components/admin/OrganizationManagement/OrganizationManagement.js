@@ -192,9 +192,7 @@ function OrganizationManagament() {
       setFromRecordCount(
         organizationsManagmentList.modelMap.form.fromRecordCount,
       );
-      setToRecordCount(
-        organizationsManagmentList.modelMap.form.toRecordCount,
-      );
+      setToRecordCount(organizationsManagmentList.modelMap.form.toRecordCount);
       setTotalRecordCount(
         organizationsManagmentList.modelMap.form.totalRecordCount,
       );
