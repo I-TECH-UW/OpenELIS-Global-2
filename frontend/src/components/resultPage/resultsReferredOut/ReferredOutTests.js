@@ -79,6 +79,7 @@ function ReferredOutTests(props) {
   const [responseData, setResponseData] = useState({});
   const [responseDataShow, setResponseDataShow] = useState([]);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
+  const [selectedRowIdsPost, setSelectedRowIdsPost] = useState([]);
 
   useEffect(() => {
     componentMounted.current = true;
@@ -102,12 +103,12 @@ function ReferredOutTests(props) {
       componentMounted.current = false;
     };
   }, [
-    searchType,
     referredOutTestsFormValues.startDate,
     referredOutTestsFormValues.endDate,
     testUnitsIdList,
     testNamesIdList,
     referredOutTestsFormValues.labNumberInput,
+    referredOutTestsFormValues.selectedPatientId,
   ]);
 
   const handleReferredOutPatient = () => {
@@ -210,7 +211,7 @@ function ReferredOutTests(props) {
   const handleReferredOutPatientPrint = () => {
     let patientReport =
       config.serverBaseUrl +
-      `/ReportPrint?report=patientCILNSP_vreduit&type=patient&analysisIds=${selectedRowIds.join(
+      `/ReportPrint?report=patientCILNSP_vreduit&type=patient&analysisIds=${selectedRowIdsPost.join(
         ",",
       )}`;
     window.open(patientReport);
@@ -266,10 +267,6 @@ function ReferredOutTests(props) {
       setTestNames(testSectionLabel);
       fetchTestSections(fetchedTestSections);
     });
-    // if (testSectionId) {
-    //   let values = { unitType: testSectionId };
-    //   querySearch(values);
-    // }
   }, []);
 
   useEffect(() => {
@@ -306,23 +303,33 @@ function ReferredOutTests(props) {
     configurationProperties.currentDateAsText,
   ]);
 
-  const renderCell = (cell, row) => {
+  useEffect(() => {
+    if (selectedRowIds.length > 0) {
+      const selectedAnalysisIds = selectedRowIds.map((index) => {
+        return responseDataShow[index]?.analysisId;
+      });
+      setSelectedRowIdsPost(selectedAnalysisIds);
+    } else {
+      setSelectedRowIdsPost([]);
+    }
+  }, [selectedRowIds, responseDataShow]);
+
+  const renderCell = (cell, row, rowIndex) => {
     if (cell.info.header === "select") {
       return (
         <TableSelectRow
           key={cell.id}
           id={cell.id}
-          checked={selectedRowIds.includes(row.analysisId)}
+          checked={selectedRowIds.includes(rowIndex)}
           name="selectRowCheckbox"
           ariaLabel="selectRows"
           onSelect={() => {
-            const id = row.analysisId;
-            if (selectedRowIds.includes(id)) {
+            if (selectedRowIds.includes(rowIndex)) {
               setSelectedRowIds(
-                selectedRowIds.filter((selectedId) => selectedId !== id),
+                selectedRowIds.filter((selectedId) => selectedId !== rowIndex),
               );
             } else {
-              setSelectedRowIds([...selectedRowIds, id]);
+              setSelectedRowIds([...selectedRowIds, rowIndex]);
             }
           }}
         />
@@ -626,22 +633,31 @@ function ReferredOutTests(props) {
                 defaultMessage="Print Selected Patient Reports"
               />
             </Button>{" "}
+            {responseDataShow && (
+              <Button
+                disabled={selectedRowIds.length === responseDataShow.length}
+                kind="tertiary"
+                type="button"
+                onClick={() => {
+                  const currentPageIndexes = responseDataShow
+                    .slice((page - 1) * pageSize, page * pageSize)
+                    .filter((row) => !row.disabled)
+                    .map((_, index) => index);
+
+                  setSelectedRowIds(currentPageIndexes);
+                }}
+              >
+                <FormattedMessage
+                  id="referral.print.selected.patient.reports.selectall.button"
+                  defaultMessage="Select All"
+                />
+              </Button>
+            )}{" "}
             <Button
-              disabled={
-                selectedRowIds.length > 0 || !(selectedRowIds.length === 0)
-              } // need a check
+              disabled={selectedRowIds.length === 0}
               kind="tertiary"
               type="button"
-            >
-              <FormattedMessage
-                id="referral.print.selected.patient.reports.selectall.button"
-                defaultMessage="Select All"
-              />
-            </Button>{" "}
-            <Button
-              disabled={!(selectedRowIds.length > 0)} // need a check
-              kind="tertiary"
-              type="button"
+              onClick={() => setSelectedRowIds([])}
             >
               <FormattedMessage
                 id="referral.print.selected.patient.reports.selectnone.button"
@@ -754,9 +770,9 @@ function ReferredOutTests(props) {
                               responseDataShow
                                 .slice((page - 1) * pageSize, page * pageSize)
                                 .filter(
-                                  (row) =>
+                                  (row, index) =>
                                     !row.disabled &&
-                                    selectedRowIds.includes(row.analysisId),
+                                    selectedRowIds.includes(index),
                                 ).length === pageSize
                             }
                             indeterminate={
@@ -767,22 +783,21 @@ function ReferredOutTests(props) {
                                   .filter((row) => !row.disabled).length
                             }
                             onSelect={() => {
-                              setSaveButton(false);
                               const currentPageIds = responseDataShow
                                 .slice((page - 1) * pageSize, page * pageSize)
                                 .filter((row) => !row.disabled)
-                                .map((row) => row.analysisId);
+                                .map((row, index) => index);
                               if (
                                 selectedRowIds.length === pageSize &&
-                                currentPageIds.every((id) =>
-                                  selectedRowIds.includes(id),
+                                currentPageIds.every((index) =>
+                                  selectedRowIds.includes(index),
                                 )
                               ) {
                                 setSelectedRowIds([]);
                               } else {
                                 setSelectedRowIds(
                                   currentPageIds.filter(
-                                    (id) => !selectedRowIds.includes(id),
+                                    (index) => !selectedRowIds.includes(index),
                                   ),
                                 );
                               }
@@ -803,24 +818,29 @@ function ReferredOutTests(props) {
                       </TableHead>
                       <TableBody>
                         <>
-                          {rows.map((row) => (
+                          {rows.map((row, rowIndex) => (
                             <TableRow
-                              key={row.analysisId}
+                              key={row.id}
                               onClick={() => {
-                                const id = row.analysisId;
-                                const isSelected = selectedRowIds.includes(id);
+                                const index = responseDataShow.findIndex(
+                                  (item) => item.id === row.id,
+                                );
+                                const isSelected =
+                                  selectedRowIds.includes(index);
                                 if (isSelected) {
                                   setSelectedRowIds(
                                     selectedRowIds.filter(
-                                      (selectedId) => selectedId !== id,
+                                      (selectedId) => selectedId !== index,
                                     ),
                                   );
                                 } else {
-                                  setSelectedRowIds([...selectedRowIds, id]);
+                                  setSelectedRowIds([...selectedRowIds, index]);
                                 }
                               }}
                             >
-                              {row.cells.map((cell) => renderCell(cell, row))}
+                              {row.cells.map((cell) =>
+                                renderCell(cell, row, rowIndex),
+                              )}
                             </TableRow>
                           ))}
                         </>
@@ -901,6 +921,13 @@ function ReferredOutTests(props) {
         >
           selectedRowIds
         </button>
+        <button
+          onClick={() => {
+            console.error(selectedRowIdsPost);
+          }}
+        >
+          selectedRowIdsPost
+        </button>
       </div>
     </>
   );
@@ -909,4 +936,3 @@ function ReferredOutTests(props) {
 export default injectIntl(ReferredOutTests);
 
 // selPatient is not getting filled
-// anylsisId not setting up at selectedRowId need to fix
