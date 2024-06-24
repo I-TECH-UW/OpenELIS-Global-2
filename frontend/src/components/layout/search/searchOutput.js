@@ -11,9 +11,13 @@ function SearchOutput({ loading, patientData }) {
       {loading ? (
         <SearchSkeleton />
       ) : patientData.length > 0 ? (
-        patientData.map((patient, index) => (
+        patientData.map((patient, index) =>
           patient && patient.patientID ? (
-            <div key={patient.patientID} className="heading" onClick={() => openPatientResults(patient.patientID)}>
+            <div
+              key={patient.patientID}
+              className="heading"
+              onClick={() => openPatientResults(patient.patientID)}
+            >
               <PatientHeader
                 id={patient.patientID}
                 lastName={patient.lastName}
@@ -21,15 +25,15 @@ function SearchOutput({ loading, patientData }) {
                 gender={patient.gender}
                 dob={patient.dob}
                 nationalId={patient.nationalId}
-                accessionNumber={patient.accessionNumber}  // Corrected typo here
+                accessionNumber={patient.accessionNumber} // Corrected typo here
                 isOrderPage={true}
                 className="patientHead"
               />
             </div>
           ) : (
             <div key={index}></div>
-          )
-        ))
+          ),
+        )
       ) : (
         <div></div>
       )}

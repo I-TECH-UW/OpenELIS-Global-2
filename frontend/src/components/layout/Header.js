@@ -57,7 +57,7 @@ function OEHeader(props) {
     menu_billing: { menu: {}, childMenus: [] },
     menu_nonconformity: { menu: {}, childMenus: [] },
   });
-const [searchBar,setSearchBar] = useState(false);
+  const [searchBar, setSearchBar] = useState(false);
   scrollRef.current = window.scrollY;
   useLayoutEffect(() => {
     window.scrollTo(0, scrollRef.current);
@@ -84,9 +84,9 @@ const [searchBar,setSearchBar] = useState(false);
   const clickPanelSwitch = () => {
     setSwitchCollapsed(!switchCollapsed);
   };
-const handleSearch = ()=>{
-  setSearchBar(!searchBar)
-}
+  const handleSearch = () => {
+    setSearchBar(!searchBar);
+  };
   const panelSwitchIcon = () => {
     return userSessionDetails.authenticated ? (
       switchCollapsed ? (
@@ -351,7 +351,7 @@ const handleSearch = ()=>{
                 <HeaderGlobalBar>
                   {userSessionDetails.authenticated && (
                     <>
-                    {searchBar && <SearchBar/>}
+                      {searchBar && <SearchBar />}
                       <HeaderGlobalAction
                         aria-label="Search"
                         onClick={handleSearch}

@@ -11,7 +11,9 @@ const SearchBar = (props) => {
   const [patientData, setPatientData] = useState([]);
   const intl = useIntl();
 
-  const validPatients = patientData.filter(patient => patient.patientID && patient.firstName && patient.lastName);
+  const validPatients = patientData.filter(
+    (patient) => patient.patientID && patient.firstName && patient.lastName,
+  );
 
   const {
     textValue,
@@ -32,7 +34,7 @@ const SearchBar = (props) => {
     allowFreeText: true,
     onDelete: (id) => {
       setPatientData((prevData) =>
-        prevData.filter((patient) => patient.patientID !== id)
+        prevData.filter((patient) => patient.patientID !== id),
       );
     },
   });
@@ -85,7 +87,9 @@ const SearchBar = (props) => {
           size="lg"
           placeholder={intl.formatMessage({ id: "label.button.search" })}
           labelText={intl.formatMessage({ id: "label.button.search" })}
-          closeButtonLabelText={intl.formatMessage({ id: "label.button.clear" })}
+          closeButtonLabelText={intl.formatMessage({
+            id: "label.button.clear",
+          })}
           id="search-1"
           value={textValue}
           onChange={handleChange}
@@ -101,19 +105,34 @@ const SearchBar = (props) => {
             {filteredSuggestions.map((suggestion, index) => (
               <li
                 key={suggestion.id}
-                className={index === activeSuggestion ? "suggestion-active" : ""}
+                className={
+                  index === activeSuggestion ? "suggestion-active" : ""
+                }
               >
-                <span onClick={(e) => handleSuggestionClick(e, suggestion.id, suggestion)}>
+                <span
+                  onClick={(e) =>
+                    handleSuggestionClick(e, suggestion.id, suggestion)
+                  }
+                >
                   {suggestion.value}
                 </span>
-                <button className="delete-button" onClick={() => handleSuggestionDelete(suggestion.id)}>x</button>
+                <button
+                  className="delete-button"
+                  onClick={() => handleSuggestionDelete(suggestion.id)}
+                >
+                  x
+                </button>
               </li>
             ))}
           </ul>
         )}
       </div>
       <div className="patients">
-        <SearchOutput loading={loading} patientData={patientData} className="patientHeader" />
+        <SearchOutput
+          loading={loading}
+          patientData={patientData}
+          className="patientHeader"
+        />
       </div>
     </div>
   );

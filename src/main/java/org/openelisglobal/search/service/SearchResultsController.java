@@ -1,4 +1,3 @@
-
 package org.openelisglobal.search.service;
 
 import java.util.List;
