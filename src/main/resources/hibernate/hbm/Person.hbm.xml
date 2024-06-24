@@ -61,7 +61,7 @@
         <property name="email" type="java.lang.String">
             <column name="EMAIL" />
         </property>
-        <set name="patients" table="PATIENT" inverse="true" fetch="select" lazy="false">
+        <set name="patients" table="PATIENT" fetch="select" lazy="false">
             <key>
                 <column name="PERSON_ID" precision="10" scale="0" not-null="true"/>
             </key>
