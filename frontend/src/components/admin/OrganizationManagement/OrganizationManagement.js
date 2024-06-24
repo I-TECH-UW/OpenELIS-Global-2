@@ -190,13 +190,11 @@ function OrganizationManagament() {
         newOrganizationsManagementList,
       );
       setFromRecordCount(
-        organizationsManagmentList.modelMap.form.totalRecordCount,
-      );
-      setToRecordCount(
         organizationsManagmentList.modelMap.form.fromRecordCount,
       );
+      setToRecordCount(organizationsManagmentList.modelMap.form.toRecordCount);
       setTotalRecordCount(
-        organizationsManagmentList.modelMap.form.toRecordCount,
+        organizationsManagmentList.modelMap.form.totalRecordCount,
       );
       setOrganizationsManagmentListShow(newOrganizationsManagementListArray);
     }

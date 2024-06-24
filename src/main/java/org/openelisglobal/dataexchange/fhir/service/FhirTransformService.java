@@ -29,6 +29,9 @@ public interface FhirTransformService {
   void transformPersistPatient(PatientManagementInfo patientInfo)
       throws FhirTransformationException, FhirPersistanceException;
 
+  void transformPersistOrganization(Organization organization)
+      throws FhirTransformationException, FhirPersistanceException;
+
   void transformPersistOrderEntryFhirObjects(
       SamplePatientUpdateData updateData,
       PatientManagementInfo patientInfo,

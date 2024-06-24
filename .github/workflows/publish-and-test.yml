@@ -193,6 +193,10 @@ jobs:
       [build-and-push-test-image-backend, build-and-push-test-image-frontend]
     runs-on: ubuntu-latest
     steps:
+      - name: Sleep for 2 minutes
+        run: sleep 2m
+        shell: bash
+
       - name: Checkout OpenELIS-Global2
         uses: actions/checkout@v4
         with:
