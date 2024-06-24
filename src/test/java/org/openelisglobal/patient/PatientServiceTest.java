@@ -21,26 +21,31 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
 
   @Autowired PersonService personService;
 
-  @Before
-  public void init() throws Exception {}
+  String patientId;
 
-  @Test
-  public void createPatient_shouldCreateNewPatient() throws Exception {
+  @Before
+  public void init() throws Exception {
     String firstName = "John";
     String lastname = "Doe";
     String dob = "12/12/1992";
     String gender = "M";
-    Patient pat = createPatient(firstName, lastname, dob, gender);
+    String nId = "NID45";
+    String race = "Black";
+    Patient pat = createPatient(firstName, lastname, dob, gender, race, nId);
 
-    Assert.assertEquals(0, patientService.getAllPatients().size());
     // save patient to the DB
-    String patientId = patientService.insert(pat);
+    patientId = patientService.insert(pat);
+  }
+
+  @Test
+  public void createPatient_shouldCreateNewPatient() throws Exception {
+
     Patient savedPatient = patientService.get(patientId);
 
     Assert.assertEquals(1, patientService.getAllPatients().size());
-    Assert.assertEquals(firstName, savedPatient.getPerson().getFirstName());
-    Assert.assertEquals(lastname, savedPatient.getPerson().getLastName());
-    Assert.assertEquals(gender, savedPatient.getGender());
+    Assert.assertEquals("John", savedPatient.getPerson().getFirstName());
+    Assert.assertEquals("Doe", savedPatient.getPerson().getLastName());
+    Assert.assertEquals("M", savedPatient.getGender());
   }
 
   @Test
@@ -48,7 +53,30 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
     Assert.assertEquals(1, patientService.getAllPatients().size());
   }
 
-  private Patient createPatient(String firstName, String LastName, String birthDate, String gender)
+  @Test
+  public void getNationalId_shouldReturnNationalId() throws Exception {
+    Patient savedPatient = patientService.get(patientId);
+
+    Assert.assertEquals("NID45", savedPatient.getNationalId());
+  }
+
+  @Test
+  public void getPatientByNationalId_shouldGetAllPatientsByNationalId() {
+    String nId = "NID45";
+
+    Assert.assertEquals(
+        "John", patientService.getPatientByNationalId(nId).getPerson().getFirstName());
+  }
+
+  @Test
+  public void getPatientsByNationalId_shouldGetAllPatientsByNationalId() {
+    String nId = "NID45";
+
+    Assert.assertEquals(1, patientService.getPatientsByNationalId(nId).size());
+  }
+
+  private Patient createPatient(
+      String firstName, String LastName, String birthDate, String gender, String race, String nId)
       throws ParseException {
     Person person = new Person();
     person.setFirstName(firstName);
@@ -64,6 +92,8 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
     pat.setPerson(person);
     pat.setBirthDate(dob);
     pat.setGender(gender);
+    pat.setRace(race);
+    pat.setNationalId(nId);
 
     return pat;
   }
