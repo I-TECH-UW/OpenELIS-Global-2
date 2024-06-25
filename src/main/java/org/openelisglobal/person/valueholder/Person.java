@@ -17,6 +17,10 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.AssociationInverseSide;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.ObjectPath;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.PropertyValue;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.patient.valueholder.Patient;
@@ -29,9 +33,11 @@ public class Person extends BaseObject<String> {
   private String id;
 
   @ValidName(nameType = NameType.LAST_NAME)
+  @KeywordField(normalizer = "lowercase")
   private String lastName;
 
   @ValidName(nameType = NameType.FIRST_NAME)
+  @KeywordField(normalizer = "lowercase")
   private String firstName;
 
   private String middleName;
@@ -63,6 +69,7 @@ public class Person extends BaseObject<String> {
   private String fax;
   @Email private String email;
 
+  @AssociationInverseSide(inversePath = @ObjectPath(@PropertyValue(propertyName = "person")))
   private Set<Patient> patients = new HashSet<>(0);
 
   public Person() {
