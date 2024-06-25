@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ListPluginsRestController extends BaseController {
 
     // form isn't submitted back
-    private static final String[] ALLOWED_FIELDS = new String[]{};
+    private static final String[] ALLOWED_FIELDS = new String[] {};
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
