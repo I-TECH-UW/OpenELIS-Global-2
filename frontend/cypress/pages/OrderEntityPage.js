@@ -31,8 +31,7 @@ class OrderEntityPage {
     ).click();
   }
 
-
-  validateAcessionNumber(order){
+  validateAcessionNumber(order) {
     cy.intercept("GET", `**/rest/SampleEntryAccessionNumberValidation**`).as(
       "accessionNoValidation",
     );
