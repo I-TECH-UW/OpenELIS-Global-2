@@ -696,8 +696,8 @@ export function SearchResultForm(props) {
           </Grid>
         </>
       )}
-      
-      {searchBy.type === "ReferredOutTests" && (<ReferredOutTests/>)}
+
+      {searchBy.type === "ReferredOutTests" && <ReferredOutTests />}
 
       <>
         {pagination && (

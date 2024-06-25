@@ -81,6 +81,7 @@ import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory.ValueType;
+import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.organization.valueholder.OrganizationType;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
@@ -136,6 +137,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
   @Autowired private ReferralSetService referralSetService;
   @Autowired private PersonAddressService personAddressService;
   @Autowired private AddressPartService addressPartService;
+  @Autowired private OrganizationService organizationService;
 
   private String ADDRESS_PART_VILLAGE_ID;
   private String ADDRESS_PART_COMMUNE_ID;
@@ -1395,7 +1397,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
   private void setFhirOrganizationTypes(
       org.hl7.fhir.r4.model.Organization fhirOrganization, Organization organization) {
-    Set<OrganizationType> orgTypes = organization.getOrganizationTypes();
+    Set<OrganizationType> orgTypes =
+        organizationService.get(organization.getId()).getOrganizationTypes();
     for (OrganizationType orgType : orgTypes) {
       fhirOrganization.addType(
           new CodeableConcept() //

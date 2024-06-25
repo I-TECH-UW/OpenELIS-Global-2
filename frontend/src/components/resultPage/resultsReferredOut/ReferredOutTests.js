@@ -61,7 +61,9 @@ function ReferredOutTests(props) {
 
   const componentMounted = useRef(false);
   const [page, setPage] = useState(1);
-  const [searchButton, setSearchButton] = useState(true);
+  const [searchByPatient, setSearchByPatient] = useState(true);
+  const [searchByUnit, setSearchByUnit] = useState(true);
+  const [searchByLabNumber, setSearchByLabNumber] = useState(true);
   const [pageSize, setPageSize] = useState(10);
   const [testUnits, setTestUnits] = useState([]);
   const [testUnitsIdList, setTestUnitsIdList] = useState([]);
@@ -80,39 +82,6 @@ function ReferredOutTests(props) {
   const [responseDataShow, setResponseDataShow] = useState([]);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [selectedRowIdsPost, setSelectedRowIdsPost] = useState([]);
-
-  useEffect(() => {
-    componentMounted.current = true;
-    getFromOpenElisServer(
-      `/rest/ReferredOutTests?searchType=${searchType}&dateType=${dateType}&startDate=${
-        referredOutTestsFormValues.startDate
-      }&endDate=${
-        referredOutTestsFormValues.endDate
-      }&testUnitIds=${testUnitsIdList.join(
-        `&testUnitIds=`,
-      )}&_testUnitIds=1&testIds=${testNamesIdList.join(
-        `&testIds=`,
-      )}&_testIds=1&labNumber=${
-        referredOutTestsFormValues.labNumberInput
-      }&dateOfBirthSearchValue=${
-        referredOutTestsFormValues.dateOfBirth
-      }&selPatient=${
-        referredOutTestsFormValues.selectedPatientId
-      }&_analysisIds=on`,
-      handleResponseData,
-    );
-    return () => {
-      componentMounted.current = false;
-    };
-  }, [
-    referredOutTestsFormValues.startDate,
-    referredOutTestsFormValues.endDate,
-    testUnitsIdList,
-    testNamesIdList,
-    referredOutTestsFormValues.labNumberInput,
-    referredOutTestsFormValues.selectedPatientId,
-    referredOutTestsFormValues.dateOfBirth,
-  ]);
 
   const handleReferredOutPatient = () => {
     setLoading(true);
@@ -133,7 +102,10 @@ function ReferredOutTests(props) {
 
   useEffect(() => {
     if (responseData) {
-      setResponseDataShow(responseData.referralDisplayItems);
+      var objectsWithId = responseData.referralDisplayItems?.map(
+        (obj, index) => ({ ...obj, id: index }),
+      );
+      setResponseDataShow(objectsWithId);
     }
   }, [responseData]);
 
@@ -149,7 +121,7 @@ function ReferredOutTests(props) {
       labNumberInput: e.target.value,
     });
     setSearchType(referredOutTestsFormValues.searchTypeValues[1]);
-    setSearchButton(false);
+    setSearchByLabNumber(false);
   }
 
   const getSelectedPatient = (patient) => {
@@ -158,7 +130,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       selectedPatientId: patient.patientPK,
     });
-    setSearchButton(false);
+    setSearchByPatient(false);
   };
 
   const getDataOfBirth = (patient) => {
@@ -167,7 +139,7 @@ function ReferredOutTests(props) {
       ...referredOutTestsFormValues,
       dateOfBirth: patient.birthDateForDisplay,
     });
-    setSearchButton(false);
+    setSearchByPatient(false);
   };
 
   const handleDatePickerChangeDate = (datePicker, date) => {
@@ -234,7 +206,7 @@ function ReferredOutTests(props) {
         value: test.value,
       }));
       setTestNamesPair(testNamesPair);
-      setSearchButton(false);
+      setSearchByUnit(false);
     }
     if (testUnits.testUnits) {
       var testUnitsIdList = testUnits.testUnits.map((test) => test.id);
@@ -246,7 +218,7 @@ function ReferredOutTests(props) {
         value: test.value,
       }));
       setTestUnitsPair(testUnitsPair);
-      setSearchButton(false);
+      setSearchByUnit(false);
     }
   }, [testNames, testUnits]);
 
@@ -288,9 +260,9 @@ function ReferredOutTests(props) {
       };
       setReferredOutTestsFormValues(searchValues);
       handleSubmit(searchValues);
-      setSearchButton(false);
+      setSearchByPatient(false);
     }
-  }, [referredOutTestsFormValues]);
+  }, []);
 
   useEffect(() => {
     if (selectedRowIds.length > 0) {
@@ -349,44 +321,44 @@ function ReferredOutTests(props) {
         <Grid fullWidth={true}>
           <Column lg={16} md={8} sm={4}>
             <Section>
-              <div className="formInlineDiv">
-                <h5>
-                  <FormattedMessage id="referral.main.button" />
-                </h5>
-              </div>
-              <br />
-              <SearchPatientForm
-                getSelectedPatient={getSelectedPatient}
-                getDataOfBirth={getDataOfBirth}
-                onChange={() => {
-                  setSearchButton(false);
-                }}
-              ></SearchPatientForm>
-              <div className="formInlineDiv">
-                <div className="searchActionButtons">
-                  <Button
-                    type="button"
-                    disabled={searchButton}
-                    onClick={handleReferredOutPatient}
-                  >
-                    <FormattedMessage
-                      id="referral.main.button"
-                      defaultMessage="Search Referrals By Patient"
-                    />
-                  </Button>
-                </div>
-              </div>
+              <h5>
+                <FormattedMessage id="referral.main.button" />
+              </h5>
             </Section>
+          </Column>
+          <br />
+          <Column lg={16} md={8} sm={4}>
+            <SearchPatientForm
+              getSelectedPatient={getSelectedPatient}
+              // getDataOfBirth={getDataOfBirth}
+              onChange={() => {
+                setSearchByPatient(false);
+              }}
+            ></SearchPatientForm>
+          </Column>
+          <br></br>
+          <Column lg={16} md={8} sm={4}>
+            <Button
+              type="button"
+              disabled={searchByPatient}
+              onClick={handleReferredOutPatient}
+            >
+              <FormattedMessage
+                id="referral.main.button"
+                defaultMessage="Search Referrals By Patient"
+              />
+            </Button>
           </Column>
         </Grid>
         <hr />
+        <br></br>
         <Formik
           initialValues={referredOutTestsFormValues}
           enableReinitialize={true}
           // validationSchema={}
           onSubmit={handleSubmit}
           onChange={() => {
-            setSearchButton(false);
+            setSearchByUnit(false);
           }}
         >
           {({
@@ -409,213 +381,221 @@ function ReferredOutTests(props) {
                 )}
               </Field>
               <Grid fullWidth={true}>
+                <Column lg={4} md={8} sm={4}>
+                  <Dropdown
+                    id={"dateType"}
+                    name="dateType"
+                    label={
+                      dateTypeList.find((item) => item.value === dateType)
+                        ?.text || ""
+                    }
+                    labelText={intl.formatMessage({
+                      id: "referral.out.request",
+                      defaultMessage: "Start Date",
+                    })}
+                    initialSelectedItem={dateTypeList.find(
+                      (item) => item.value === dateType,
+                    )}
+                    items={dateTypeList}
+                    itemToString={(item) => (item ? item.text : "")}
+                    onChange={(item) => {
+                      setSearchType(
+                        referredOutTestsFormValues.searchTypeValues[0],
+                      );
+                      setDateType(item.selectedItem.value);
+                      setSearchByUnit(false);
+                    }}
+                  />
+                </Column>
+                <Column lg={12} md={8} sm={4}>
+                  <h5 style={{ paddingTop: "10px", paddingLeft: "6px" }}>
+                    <FormattedMessage id="referral.out.note" />
+                  </h5>
+                </Column>
                 <Column lg={16} md={8} sm={4}>
-                  <Section>
-                    <div className="inlineDiv">
-                      <h5 style={{ paddingTop: "10px", paddingRight: "6px" }}>
-                        <FormattedMessage id="referral.out.request" />
-                      </h5>
-                      <Dropdown
-                        id={"dateType"}
-                        name="dateType"
-                        label={
-                          dateTypeList.find((item) => item.value === dateType)
-                            ?.text || ""
-                        }
-                        initialSelectedItem={dateTypeList.find(
-                          (item) => item.value === dateType,
-                        )}
-                        items={dateTypeList}
-                        itemToString={(item) => (item ? item.text : "")}
-                        onChange={(item) => {
-                          setSearchType(
-                            referredOutTestsFormValues.searchTypeValues[0],
-                          );
-                          setDateType(item.selectedItem.value);
-                          setSearchButton(false);
+                  <br></br>
+                </Column>
+
+                <Column lg={4} md={8} sm={4}>
+                  <CustomDatePicker
+                    id={"startDate"}
+                    labelText={intl.formatMessage({
+                      id: "eorder.date.start",
+                      defaultMessage: "Start Date",
+                    })}
+                    autofillDate={true}
+                    value={referredOutTestsFormValues.startDate}
+                    className="inputDate"
+                    onChange={(date) => {
+                      handleDatePickerChangeDate("startDate", date);
+                    }}
+                  />
+                </Column>
+                <Column lg={4} md={8} sm={4}>
+                  <CustomDatePicker
+                    id={"endDate"}
+                    labelText={intl.formatMessage({
+                      id: "eorder.date.end",
+                      defaultMessage: "End Date",
+                    })}
+                    className="inputDate"
+                    autofillDate={true}
+                    value={referredOutTestsFormValues.endDate}
+                    onChange={(date) => {
+                      handleDatePickerChangeDate("endDate", date);
+                    }}
+                  />
+                </Column>
+                <Column lg={16} md={8} sm={4}>
+                  <br></br>
+                </Column>
+
+                <Column lg={4} md={8} sm={4}>
+                  <FilterableMultiSelect
+                    id="testunits"
+                    titleText={intl.formatMessage({
+                      id: "search.label.testunit",
+                      defaultMessage: "Select Test Unit",
+                    })}
+                    items={testSections}
+                    itemToString={(item) => (item ? item.value : "")}
+                    onChange={(changes) => {
+                      setTestUnits({
+                        ...testUnits,
+                        testUnits: changes.selectedItems,
+                      });
+                      setSearchType(
+                        referredOutTestsFormValues.searchTypeValues[0],
+                      );
+                      setSearchByUnit(false);
+                    }}
+                    selectionFeedback="top-after-reopen"
+                  />
+                </Column>
+
+                <Column lg={12} md={8} sm={4}>
+                  {testUnits.testUnits &&
+                    testUnits.testUnits.map((test, index) => (
+                      <Tag
+                        key={index}
+                        filter
+                        onClose={() => {
+                          var info = { ...testUnits };
+                          info["testUnits"].splice(index, 1);
+                          setTestUnits(info);
                         }}
-                      />
-                      <h5 style={{ paddingTop: "10px", paddingLeft: "6px" }}>
-                        <FormattedMessage id="referral.out.note" />
-                      </h5>
-                    </div>
-                    <div className="formInlineDiv">
-                      <CustomDatePicker
-                        id={"startDate"}
-                        labelText={intl.formatMessage({
-                          id: "eorder.date.start",
-                          defaultMessage: "Start Date",
-                        })}
-                        autofillDate={true}
-                        value={referredOutTestsFormValues.startDate}
-                        className="inputDate"
-                        onChange={(date) => {
-                          handleDatePickerChangeDate("startDate", date);
+                      >
+                        {test.value}
+                      </Tag>
+                    ))}
+                </Column>
+                <Column lg={16} md={8} sm={4}>
+                  <br></br>
+                </Column>
+                <Column lg={4} md={8} sm={4}>
+                  <FilterableMultiSelect
+                    id="testnames"
+                    titleText={intl.formatMessage({
+                      id: "search.label.test",
+                      defaultMessage: "Select Test Name",
+                    })}
+                    items={tests}
+                    itemToString={(item) => (item ? item.value : "")}
+                    onChange={(changes) => {
+                      setTestNames({
+                        ...testNames,
+                        testNames: changes.selectedItems,
+                      });
+                      setSearchType(
+                        referredOutTestsFormValues.searchTypeValues[0],
+                      );
+                      setSearchByUnit(false);
+                    }}
+                    selectionFeedback="top-after-reopen"
+                  />
+                </Column>
+
+                <Column lg={12} md={8} sm={4}>
+                  {testNames.testNames &&
+                    testNames.testNames.map((test, index) => (
+                      <Tag
+                        key={index}
+                        filter
+                        onClose={() => {
+                          var info = { ...testNames };
+                          info["testNames"].splice(index, 1);
+                          setTestNames(info);
                         }}
-                      />
-                      <CustomDatePicker
-                        id={"endDate"}
-                        labelText={intl.formatMessage({
-                          id: "eorder.date.end",
-                          defaultMessage: "End Date",
-                        })}
-                        className="inputDate"
-                        autofillDate={true}
-                        value={referredOutTestsFormValues.endDate}
-                        onChange={(date) => {
-                          handleDatePickerChangeDate("endDate", date);
-                        }}
-                      />
-                    </div>
-                    <br />
-                    <div className="formInlineDiv">
-                      <Grid fullWidth={true}>
-                        <Column lg={16} md={8} sm={4}>
-                          <FilterableMultiSelect
-                            id="testunits"
-                            titleText={intl.formatMessage({
-                              id: "search.label.testunit",
-                              defaultMessage: "Select Test Unit",
-                            })}
-                            items={testSections}
-                            itemToString={(item) => (item ? item.value : "")}
-                            onChange={(changes) => {
-                              setTestUnits({
-                                ...testUnits,
-                                testUnits: changes.selectedItems,
-                              });
-                              setSearchType(
-                                referredOutTestsFormValues.searchTypeValues[0],
-                              );
-                              setSearchButton(false);
-                            }}
-                            selectionFeedback="top-after-reopen"
-                          />
-                        </Column>
-                        <br />
-                        <Column lg={16} md={8} sm={4}>
-                          {testUnits.testUnits &&
-                            testUnits.testUnits.map((test, index) => (
-                              <Tag
-                                key={index}
-                                filter
-                                onClose={() => {
-                                  var info = { ...testUnits };
-                                  info["testUnits"].splice(index, 1);
-                                  setTestUnits(info);
-                                }}
-                              >
-                                {test.value}
-                              </Tag>
-                            ))}
-                        </Column>
-                      </Grid>
-                      <Grid fullWidth={true}>
-                        <Column lg={16} md={8} sm={4}>
-                          <FilterableMultiSelect
-                            id="testnames"
-                            titleText={intl.formatMessage({
-                              id: "search.label.test",
-                              defaultMessage: "Select Test Name",
-                            })}
-                            items={tests}
-                            itemToString={(item) => (item ? item.value : "")}
-                            onChange={(changes) => {
-                              setTestNames({
-                                ...testNames,
-                                testNames: changes.selectedItems,
-                              });
-                              setSearchType(
-                                referredOutTestsFormValues.searchTypeValues[0],
-                              );
-                              setSearchButton(false);
-                            }}
-                            selectionFeedback="top-after-reopen"
-                          />
-                        </Column>
-                        <br />
-                        <Column lg={16} md={8} sm={4}>
-                          {testNames.testNames &&
-                            testNames.testNames.map((test, index) => (
-                              <Tag
-                                key={index}
-                                filter
-                                onClose={() => {
-                                  var info = { ...testNames };
-                                  info["testNames"].splice(index, 1);
-                                  setTestNames(info);
-                                }}
-                              >
-                                {test.value}
-                              </Tag>
-                            ))}
-                        </Column>
-                      </Grid>
-                    </div>
-                    <div className="formInlineDiv">
-                      <div className="searchActionButtons">
-                        <Button
-                          type="button"
-                          disabled={searchButton}
-                          onClick={handleReferredOutPatient}
-                        >
-                          <FormattedMessage
-                            id="referral.button.unitTestSearch"
-                            defaultMessage="Search Referrals By Unit(s) & Test(s)"
-                          />
-                        </Button>
-                      </div>
-                    </div>
-                  </Section>
+                      >
+                        {test.value}
+                      </Tag>
+                    ))}
+                </Column>
+                <Column lg={16} md={8} sm={4}>
+                  <br></br>
+                </Column>
+
+                <Column lg={4} md={8} sm={4}>
+                  <Button
+                    type="button"
+                    disabled={searchByUnit}
+                    onClick={handleReferredOutPatient}
+                  >
+                    <FormattedMessage
+                      id="referral.button.unitTestSearch"
+                      defaultMessage="Search Referrals By Unit(s) & Test(s)"
+                    />
+                  </Button>
                 </Column>
               </Grid>
               <hr />
               <Grid fullWidth={true}>
                 <Column lg={16} md={8} sm={4}>
-                  <Section>
-                    <div className="formInlineDiv">
-                      <h5>
-                        <FormattedMessage id="referral.result.labNumber" />
-                      </h5>
-                    </div>
-                    <br />
-                    <Field name="labNumberInput">
-                      {({ field }) => (
-                        <CustomLabNumberInput
-                          name={field.name}
-                          labelText={intl.formatMessage({
-                            id: "referral.input",
-                            defaultMessage: "Scan OR Enter Manually",
-                          })}
-                          id={field.name}
-                          className="inputText"
-                          value={values[field.name]}
-                          onChange={(e, rawValue) => {
-                            setFieldValue(field.name, rawValue);
-                            setSearchType(
-                              referredOutTestsFormValues.searchTypeValues[1],
-                            );
-                            handleLabNumberSearch(e);
-                          }}
-                        />
-                      )}
-                    </Field>
-                    <br />
-                    <div className="formInlineDiv">
-                      <div className="searchActionButtons">
-                        <Button
-                          type="button"
-                          disabled={searchButton}
-                          onClick={handleReferredOutPatient}
-                        >
-                          <FormattedMessage
-                            id="referral.button.labSearch"
-                            defaultMessage="Search Referrals By Lab Number"
-                          />
-                        </Button>
-                      </div>
-                    </div>
-                  </Section>
+                  <h5>
+                    <FormattedMessage id="referral.result.labNumber" />
+                  </h5>
+                </Column>
+                <Column lg={16} md={8} sm={4}>
+                  <br></br>
+                </Column>
+
+                <Column lg={8} md={8} sm={4}>
+                  <Field name="labNumberInput">
+                    {({ field }) => (
+                      <CustomLabNumberInput
+                        name={field.name}
+                        labelText={intl.formatMessage({
+                          id: "referral.input",
+                          defaultMessage: "Scan OR Enter Manually",
+                        })}
+                        id={field.name}
+                        value={values[field.name]}
+                        onChange={(e, rawValue) => {
+                          setFieldValue(field.name, rawValue);
+                          setSearchType(
+                            referredOutTestsFormValues.searchTypeValues[1],
+                          );
+                          handleLabNumberSearch(e);
+                        }}
+                      />
+                    )}
+                  </Field>
+                </Column>
+                <Column lg={16} md={8} sm={4}>
+                  <br></br>
+                </Column>
+
+                <Column lg={4} md={8} sm={4}>
+                  <Button
+                    type="button"
+                    disabled={searchByLabNumber}
+                    onClick={handleReferredOutPatient}
+                  >
+                    <FormattedMessage
+                      id="referral.button.labSearch"
+                      defaultMessage="Search Referrals By Lab Number"
+                    />
+                  </Button>
                 </Column>
               </Grid>
               <hr />
@@ -624,10 +604,12 @@ function ReferredOutTests(props) {
         </Formik>
         <br />
         <Grid fullWidth={true}>
-          <Column lg={16} md={8} sm={4}>
+          <Column lg={4} md={8} sm={4}>
             <span>
               <FormattedMessage id="referral.matching.search" /> :
             </span>{" "}
+          </Column>
+          <Column lg={4} md={8} sm={4}>
             <Button
               disabled={selectedRowIds.length === 0}
               kind="tertiary"
@@ -639,6 +621,8 @@ function ReferredOutTests(props) {
                 defaultMessage="Print Selected Patient Reports"
               />
             </Button>{" "}
+          </Column>
+          <Column lg={4} md={8} sm={4}>
             {responseDataShow && (
               <Button
                 disabled={selectedRowIds.length === responseDataShow.length}
@@ -659,6 +643,8 @@ function ReferredOutTests(props) {
                 />
               </Button>
             )}{" "}
+          </Column>
+          <Column lg={4} md={8} sm={4}>
             <Button
               disabled={selectedRowIds.length === 0}
               kind="tertiary"
@@ -747,12 +733,6 @@ function ReferredOutTests(props) {
                     key: "notes",
                     header: intl.formatMessage({
                       id: "column.name.notes",
-                    }),
-                  },
-                  {
-                    key: "analysisId",
-                    header: intl.formatMessage({
-                      id: "referral.search.column.analysisId",
                     }),
                   },
                 ]}

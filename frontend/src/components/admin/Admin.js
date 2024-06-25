@@ -75,10 +75,10 @@ function Admin() {
             <SideNavMenuItem href="#calculatedValue">
               <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
             </SideNavMenuItem>
-            <SideNavMenuItem href="#AnalyzerTestName">
-              <FormattedMessage id="sidenav.label.admin.analyzerTest" />
-            </SideNavMenuItem>
           </SideNavMenu>
+          <SideNavLink href="#AnalyzerTestName" renderIcon={ListDropdown}>
+            <FormattedMessage id="sidenav.label.admin.analyzerTest" />
+          </SideNavLink>
           <SideNavLink href="#labNumber" renderIcon={CharacterWholeNumber}>
             <FormattedMessage id="sidenav.label.admin.labNumber" />
           </SideNavLink>

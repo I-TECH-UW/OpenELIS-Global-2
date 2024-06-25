@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -21,7 +22,6 @@ import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
@@ -346,19 +346,6 @@ public class OrganizationRestController extends BaseController {
     }
   }
 
-  @GetMapping("/ParentOrganization")
-  public ResponseEntity<List<IdValuePair>> getParentOrganization() {
-    List<Organization> parentOrgs = organizationService.getAllOrganizations();
-    List<IdValuePair> idValuePairs = new ArrayList<>();
-
-    for (Organization parentOrg : parentOrgs) {
-      IdValuePair idValuePair = new IdValuePair(parentOrg.getId(), parentOrg.getOrganizationName());
-      idValuePairs.add(idValuePair);
-    }
-
-    return ResponseEntity.ok(idValuePairs);
-  }
-
   @PostMapping(value = "/Organization")
   public ResponseEntity<Object> showUpdateOrganization(
       @RequestBody @Valid OrganizationForm form, BindingResult result)
@@ -404,8 +391,19 @@ public class OrganizationRestController extends BaseController {
 
     try {
       if (!isNew) {
+        if (organization.getFhirUuid() == null) {
+          UUID uuid = organizationService.get(organization.getId()).getFhirUuid();
+          if (uuid == null) {
+            organization.setFhirUuid(UUID.randomUUID());
+          } else {
+            organization.setFhirUuid(uuid);
+          }
+        }
         organizationService.update(organization);
       } else {
+        if (organization.getFhirUuid() == null) {
+          organization.setFhirUuid(UUID.randomUUID());
+        }
         organizationService.insert(organization);
       }
 
