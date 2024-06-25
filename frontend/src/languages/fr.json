@@ -266,6 +266,7 @@
   "sidenav.label.admin.formEntry.siteInfoconfig": "Informations sur le site",
   "sidenav.label.admin.formEntry.resultConfig": "Configuration de saisie de résultat",
   "sidenav.label.admin.formEntry.patientconfig": "Configuration de saisie du patient",
+  "sidenav.label.admin.pluginFile": "Fichiers de plugin",
   "sidenav.title.statusreport": "Rapport sur l'état du patient",
   "sidenav.label.statusreport": "Rapport sur l'état du patient",
   "sidenav.title.aggregatereport": "Rapports globaux",
