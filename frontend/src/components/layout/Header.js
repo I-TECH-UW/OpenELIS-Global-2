@@ -352,11 +352,16 @@ function OEHeader(props) {
                   {userSessionDetails.authenticated && (
                     <>
                       {searchBar && <SearchBar />}
+
                       <HeaderGlobalAction
                         aria-label="Search"
                         onClick={handleSearch}
                       >
-                        <Search size={20} />
+                        {!searchBar ? (
+                          <Search size={20} />
+                        ) : (
+                          <Close size={20} />
+                        )}
                       </HeaderGlobalAction>
                       <HeaderGlobalAction
                         aria-label="Notifications"
