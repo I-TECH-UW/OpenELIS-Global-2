@@ -41,8 +41,6 @@ import NonConformIndex from "./components/nonconform/index";
 import SampleBatchEntrySetup from "./components/batchOrderEntry/SampleBatchEntrySetup.js";
 import AuditTrailReportIndex from "./components/reports/auditTrailReport/Index.js";
 import ReferredOutTests from "./components/resultPage/resultsReferredOut/ReferredOutTests.js";
-import UserManagement from "./components/admin/userManagement/UserManagement.js";
-import UserAddEdit from "./components/admin/userManagement/UserAddEdit.js";
 
 export default function App() {
   let i18nConfig = {
