@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +23,16 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
   @Autowired PersonService personService;
 
   @Before
-  public void init() throws Exception {}
+  public void init() throws Exception {
+    patientService.deleteAll(patientService.getAll());
+    personService.deleteAll(personService.getAll());
+  }
+
+  @After
+  public void tearDown() {
+    patientService.deleteAll(patientService.getAll());
+    personService.deleteAll(personService.getAll());
+  }
 
   @Test
   public void createPatient_shouldCreateNewPatient() throws Exception {
@@ -45,6 +55,12 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
 
   @Test
   public void getAllPatients_shouldGetAllPatients() throws Exception {
+    String firstName = "John";
+    String lastname = "Doe";
+    String dob = "12/12/1992";
+    String gender = "M";
+    Patient patient = createPatient(firstName, lastname, dob, gender);
+    patientService.insert(patient);
     Assert.assertEquals(1, patientService.getAllPatients().size());
   }
 
