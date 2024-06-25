@@ -287,6 +287,7 @@
   "sidenav.label.admin.formEntry.resultConfig": "Result Entry Configuration",
   "sidenav.label.admin.formEntry.patientconfig": "Patient Entry Configuration",
   "sidenav.label.admin.formEntry.PrintedReportsconfig": "Printed Report Configuration",
+  "sidenav.label.admin.pluginFile":"Plugin Files",
   "sidenav.title.statusreport": "Patient Status Report",
   "sidenav.label.statusreport": "Patient Status Report",
   "sidenav.title.aggregatereport": "Aggregate Reports",
