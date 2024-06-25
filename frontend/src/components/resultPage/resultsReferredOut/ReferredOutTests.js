@@ -297,6 +297,12 @@ function ReferredOutTests(props) {
       );
     } else if (cell.info.header === "active") {
       return <TableCell key={cell.id}>{cell.value.toString()}</TableCell>;
+    } else if (cell.info.header === "notes") {
+      return (
+        <TableCell key={cell.id}>
+          <div dangerouslySetInnerHTML={{ __html: cell.value }} />
+        </TableCell>
+      );
     } else {
       return <TableCell key={cell.id}>{cell.value}</TableCell>;
     }

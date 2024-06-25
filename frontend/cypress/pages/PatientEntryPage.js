@@ -8,7 +8,7 @@ class PatientEntryPage {
   personContactPrimaryPhone = "input#patientContact\\.person\\.primaryPhone";
   personContactEmail = "input#patientContact\\.person\\.email";
   patientIdSelector = "input#patientId";
-  labNoSelector="#labNumber";
+  labNoSelector = "#labNumber";
   city = "input#city";
   primaryPhone = "input#primaryPhone";
   dateOfBirth = "input#date-picker-default-id";
@@ -93,9 +93,8 @@ class PatientEntryPage {
     cy.enterText(this.patientIdSelector, PID);
   }
 
-  searchPatientBylabNo(labNo){
-    cy.enterText(this. labNoSelector, labNo);
-
+  searchPatientBylabNo(labNo) {
+    cy.enterText(this.labNoSelector, labNo);
   }
 
   getPatientSearchResultsTable() {
