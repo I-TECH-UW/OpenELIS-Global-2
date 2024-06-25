@@ -114,7 +114,10 @@ function OrganizationAddModify() {
   };
 
   useEffect(() => {
-    getFromOpenElisServer(`/rest/displayList/ACTIVE_ORG_LIST`, handleParentOrgList);
+    getFromOpenElisServer(
+      `/rest/displayList/ACTIVE_ORG_LIST`,
+      handleParentOrgList,
+    );
   }, []);
 
   const handleParentOrgList = (res) => {
@@ -151,7 +154,6 @@ function OrganizationAddModify() {
       };
 
       const organizationsManagementIdInfoPost = {
-    
         id: typeOfActivity.id,
         organizationName: typeOfActivity.organizationName,
         shortName: typeOfActivity.shortName,
@@ -170,7 +172,7 @@ function OrganizationAddModify() {
         state: typeOfActivity.state,
         internetAddress: typeOfActivity.internetAddress,
         selectedTypes: typeOfActivity.selectedTypes,
-        organization : typeOfActivity.organization
+        organization: typeOfActivity.organization,
       };
       setOrgInfo(organizationsManagementIdInfo);
       setOrgInfoPost(organizationsManagementIdInfoPost);
@@ -299,7 +301,7 @@ function OrganizationAddModify() {
   };
 
   useEffect(() => {
-    if(parentOrgId){
+    if (parentOrgId) {
       getFromOpenElisServer(
         `/rest/organization/${parentOrgId}`,
         handleParentOrgPost,

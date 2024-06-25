@@ -1397,7 +1397,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
   private void setFhirOrganizationTypes(
       org.hl7.fhir.r4.model.Organization fhirOrganization, Organization organization) {
-    Set<OrganizationType> orgTypes = organizationService.get(organization.getId()).getOrganizationTypes();
+    Set<OrganizationType> orgTypes =
+        organizationService.get(organization.getId()).getOrganizationTypes();
     for (OrganizationType orgType : orgTypes) {
       fhirOrganization.addType(
           new CodeableConcept() //

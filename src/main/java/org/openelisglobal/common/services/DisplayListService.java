@@ -770,10 +770,10 @@ public class DisplayListService implements LocaleChangeListener {
         {
           typeToListMap.put(ListType.ARV_ORG_LIST, createArvOrgList());
         }
-      case ACTIVE_ORG_LIST : 
-      {
-        typeToListMap.put(ListType.ACTIVE_ORG_LIST, createActiveOrganizationsList());
-      }  
+      case ACTIVE_ORG_LIST:
+        {
+          typeToListMap.put(ListType.ACTIVE_ORG_LIST, createActiveOrganizationsList());
+        }
     }
   }
 
@@ -830,7 +830,6 @@ public class DisplayListService implements LocaleChangeListener {
     for (Organization organization : orgList) {
 
       activeOrgList.add(new IdValuePair(organization.getId(), organization.getOrganizationName()));
-
     }
     return activeOrgList;
   }
