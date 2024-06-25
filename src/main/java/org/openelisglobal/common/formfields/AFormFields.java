@@ -22,29 +22,27 @@ import org.openelisglobal.common.formfields.FormFields.Field;
 
 public abstract class AFormFields {
 
-  protected abstract HashMap<FormFields.Field, FormField> getSetAttributes();
+    protected abstract HashMap<FormFields.Field, FormField> getSetAttributes();
 
-  protected abstract HashMap<FormFields.Field, FormField> getDefaultAttributes();
+    protected abstract HashMap<FormFields.Field, FormField> getDefaultAttributes();
 
-  public Map<Field, FormField> getFieldFormSet() throws IllegalStateException {
+    public Map<Field, FormField> getFieldFormSet() throws IllegalStateException {
 
-    Map<FormFields.Field, FormField> defaultAttributes = getDefaultAttributes();
-    Map<FormFields.Field, FormField> setAttributes = getSetAttributes();
-    // if set attribute has a null field value, replace it with the default
-    for (Entry<Field, FormField> setFieldEntry : setAttributes.entrySet()) {
-      if (setAttributes.get(setFieldEntry.getKey()).getLabelKey() == null) {
-        setAttributes
-            .get(setFieldEntry.getKey())
-            .setLabelKey(defaultAttributes.get(setFieldEntry.getKey()).getLabelKey());
-      }
-      if (setAttributes.get(setFieldEntry.getKey()).getInUse() == null) {
-        setAttributes
-            .get(setFieldEntry.getKey())
-            .setInUse(defaultAttributes.get(setFieldEntry.getKey()).getInUse());
-      }
+        Map<FormFields.Field, FormField> defaultAttributes = getDefaultAttributes();
+        Map<FormFields.Field, FormField> setAttributes = getSetAttributes();
+        // if set attribute has a null field value, replace it with the default
+        for (Entry<Field, FormField> setFieldEntry : setAttributes.entrySet()) {
+            if (setAttributes.get(setFieldEntry.getKey()).getLabelKey() == null) {
+                setAttributes.get(setFieldEntry.getKey())
+                        .setLabelKey(defaultAttributes.get(setFieldEntry.getKey()).getLabelKey());
+            }
+            if (setAttributes.get(setFieldEntry.getKey()).getInUse() == null) {
+                setAttributes.get(setFieldEntry.getKey())
+                        .setInUse(defaultAttributes.get(setFieldEntry.getKey()).getInUse());
+            }
+        }
+
+        defaultAttributes.putAll(setAttributes);
+        return defaultAttributes;
     }
-
-    defaultAttributes.putAll(setAttributes);
-    return defaultAttributes;
-  }
 }

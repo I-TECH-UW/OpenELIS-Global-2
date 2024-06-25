@@ -18,19 +18,20 @@ import org.openelisglobal.common.dao.BaseDAO;
 
 public interface AnalyzerDAO extends BaseDAO<Analyzer, String> {
 
-  //	public boolean insertData(Analyzer analyzer) throws LIMSRuntimeException;
+    // public boolean insertData(Analyzer analyzer) throws LIMSRuntimeException;
 
-  //	public void deleteData(List<Analyzer> results) throws LIMSRuntimeException;
+    // public void deleteData(List<Analyzer> results) throws LIMSRuntimeException;
 
-  //	public List<Analyzer> getAllAnalyzers() throws LIMSRuntimeException;
+    // public List<Analyzer> getAllAnalyzers() throws LIMSRuntimeException;
 
-  //	public Analyzer readAnalyzer(String idString) throws LIMSRuntimeException;
+    // public Analyzer readAnalyzer(String idString) throws LIMSRuntimeException;
 
-  //	public void getData(Analyzer analyzer) throws LIMSRuntimeException;
+    // public void getData(Analyzer analyzer) throws LIMSRuntimeException;
 
-  //	public void updateData(Analyzer analyzer) throws LIMSRuntimeException;
+    // public void updateData(Analyzer analyzer) throws LIMSRuntimeException;
 
-  //	public Analyzer getAnalyzerById(Analyzer analyzer) throws LIMSRuntimeException;
+    // public Analyzer getAnalyzerById(Analyzer analyzer) throws
+    // LIMSRuntimeException;
 
-  //	public Analyzer getAnalyzerByName(String name) throws LIMSRuntimeException;
+    // public Analyzer getAnalyzerByName(String name) throws LIMSRuntimeException;
 }

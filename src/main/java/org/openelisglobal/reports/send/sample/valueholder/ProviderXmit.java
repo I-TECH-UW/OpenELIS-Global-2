@@ -14,35 +14,36 @@
 package org.openelisglobal.reports.send.sample.valueholder;
 
 public class ProviderXmit extends org.openelisglobal.provider.valueholder.Provider {
-  private String firstName;
+    private String firstName;
 
-  private String lastName;
+    private String lastName;
 
-  private String workPhone;
+    private String workPhone;
 
-  public ProviderXmit() {}
+    public ProviderXmit() {
+    }
 
-  public String getWorkPhone() {
-    return workPhone;
-  }
+    public String getWorkPhone() {
+        return workPhone;
+    }
 
-  public void setWorkPhone(String workPhone) {
-    this.workPhone = workPhone;
-  }
+    public void setWorkPhone(String workPhone) {
+        this.workPhone = workPhone;
+    }
 
-  public String getFirstName() {
-    return firstName;
-  }
+    public String getFirstName() {
+        return firstName;
+    }
 
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-  public String getLastName() {
-    return lastName;
-  }
+    public String getLastName() {
+        return lastName;
+    }
 
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
-  }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 }

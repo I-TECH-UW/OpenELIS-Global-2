@@ -5,15 +5,15 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.qaevent.valueholder.QaEvent;
 
 public interface QaEventService extends BaseObjectService<QaEvent, String> {
-  void getData(QaEvent qaEvent);
+    void getData(QaEvent qaEvent);
 
-  QaEvent getQaEventByName(QaEvent qaEvent);
+    QaEvent getQaEventByName(QaEvent qaEvent);
 
-  List<QaEvent> getQaEvents(String filter);
+    List<QaEvent> getQaEvents(String filter);
 
-  List<QaEvent> getAllQaEvents();
+    List<QaEvent> getAllQaEvents();
 
-  Integer getTotalQaEventCount();
+    Integer getTotalQaEventCount();
 
-  List<QaEvent> getPageOfQaEvents(int startingRecNo);
+    List<QaEvent> getPageOfQaEvents(int startingRecNo);
 }

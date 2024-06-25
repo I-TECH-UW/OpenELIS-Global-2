@@ -23,91 +23,91 @@ import org.openelisglobal.test.valueholder.Test;
 
 public class TestAnalyte extends EnumValueItemImpl {
 
-  private String id;
+    private String id;
 
-  private ValueHolderInterface test;
+    private ValueHolderInterface test;
 
-  private ValueHolderInterface analyte;
+    private ValueHolderInterface analyte;
 
-  // testing one-to-many
-  private List testResults;
+    // testing one-to-many
+    private List testResults;
 
-  private String resultGroup;
+    private String resultGroup;
 
-  private String testAnalyteType;
+    private String testAnalyteType;
 
-  private String sortOrder;
+    private String sortOrder;
 
-  private String isReportable;
+    private String isReportable;
 
-  public TestAnalyte() {
-    super();
-    this.test = new ValueHolder();
-    this.analyte = new ValueHolder();
-    this.testResults = new ArrayList();
-  }
+    public TestAnalyte() {
+        super();
+        this.test = new ValueHolder();
+        this.analyte = new ValueHolder();
+        this.testResults = new ArrayList();
+    }
 
-  public String getId() {
-    return this.id;
-  }
+    public String getId() {
+        return this.id;
+    }
 
-  public Test getTest() {
-    return (Test) this.test.getValue();
-  }
+    public Test getTest() {
+        return (Test) this.test.getValue();
+    }
 
-  public void setTest(Test test) {
-    this.test.setValue(test);
-  }
+    public void setTest(Test test) {
+        this.test.setValue(test);
+    }
 
-  public Analyte getAnalyte() {
-    return (Analyte) this.analyte.getValue();
-  }
+    public Analyte getAnalyte() {
+        return (Analyte) this.analyte.getValue();
+    }
 
-  public void setAnalyte(Analyte analyte) {
-    this.analyte.setValue(analyte);
-  }
+    public void setAnalyte(Analyte analyte) {
+        this.analyte.setValue(analyte);
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getTestAnalyteType() {
-    return testAnalyteType;
-  }
+    public String getTestAnalyteType() {
+        return testAnalyteType;
+    }
 
-  public void setTestAnalyteType(String testAnalyteType) {
-    this.testAnalyteType = testAnalyteType;
-  }
+    public void setTestAnalyteType(String testAnalyteType) {
+        this.testAnalyteType = testAnalyteType;
+    }
 
-  public String getSortOrder() {
-    return sortOrder;
-  }
+    public String getSortOrder() {
+        return sortOrder;
+    }
 
-  public void setSortOrder(String sortOrder) {
-    this.sortOrder = sortOrder;
-  }
+    public void setSortOrder(String sortOrder) {
+        this.sortOrder = sortOrder;
+    }
 
-  public List getTestResults() {
-    return testResults;
-  }
+    public List getTestResults() {
+        return testResults;
+    }
 
-  public void setTestResults(List testResults) {
-    this.testResults = testResults;
-  }
+    public void setTestResults(List testResults) {
+        this.testResults = testResults;
+    }
 
-  public String getResultGroup() {
-    return resultGroup;
-  }
+    public String getResultGroup() {
+        return resultGroup;
+    }
 
-  public void setResultGroup(String resultGroup) {
-    this.resultGroup = resultGroup;
-  }
+    public void setResultGroup(String resultGroup) {
+        this.resultGroup = resultGroup;
+    }
 
-  public String getIsReportable() {
-    return isReportable;
-  }
+    public String getIsReportable() {
+        return isReportable;
+    }
 
-  public void setIsReportable(String isReportable) {
-    this.isReportable = isReportable;
-  }
+    public void setIsReportable(String isReportable) {
+        this.isReportable = isReportable;
+    }
 }

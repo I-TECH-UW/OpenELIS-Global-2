@@ -19,69 +19,59 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.spring.util.SpringContext;
 
 // Note both Clinical and LNSP should extend common subclass
-public class IndicatorCDIHIVLNSP extends IndicatorHIV
-    implements IReportCreator, IReportParameterSetter {
-  private static String HIV_POSITIVE1_ID = "undefined";
-  private static String HIV_POSITIVE2_ID = "undefined";
-  private static String HIV_POSITIVE12_ID = "undefined";
-  private static String HIV_INDETERMINATE_ID = "undefined";
+public class IndicatorCDIHIVLNSP extends IndicatorHIV implements IReportCreator, IReportParameterSetter {
+    private static String HIV_POSITIVE1_ID = "undefined";
+    private static String HIV_POSITIVE2_ID = "undefined";
+    private static String HIV_POSITIVE12_ID = "undefined";
+    private static String HIV_INDETERMINATE_ID = "undefined";
 
-  private static DictionaryService dictionaryService =
-      SpringContext.getBean(DictionaryService.class);
+    private static DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 
-  static {
-    HIV_TESTS.add("Dénombrement des lymphocytes CD4 (mm3)");
-    HIV_TESTS.add("Dénombrement des lymphocytes  CD4 (%)");
-    HIV_TESTS.add("Test rapide HIV 1 + HIV 2");
+    static {
+        HIV_TESTS.add("Dénombrement des lymphocytes CD4 (mm3)");
+        HIV_TESTS.add("Dénombrement des lymphocytes  CD4 (%)");
+        HIV_TESTS.add("Test rapide HIV 1 + HIV 2");
 
-    Dictionary dictionary =
-        dictionaryService.getDictionaryEntrysByNameAndCategoryDescription(
-            "Positif VIH 1", "Haiti Lab");
-    if (dictionary != null) {
-      HIV_POSITIVE1_ID = dictionary.getId();
+        Dictionary dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Positif VIH 1",
+                "Haiti Lab");
+        if (dictionary != null) {
+            HIV_POSITIVE1_ID = dictionary.getId();
+        }
+
+        dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Positif VIH 2", "Haiti Lab");
+        if (dictionary != null) {
+            HIV_POSITIVE2_ID = dictionary.getId();
+        }
+
+        dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Positif VIH1 et 2",
+                "Haiti Lab");
+        if (dictionary != null) {
+            HIV_POSITIVE12_ID = dictionary.getId();
+        }
+
+        dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Indetermine", "Haiti Lab");
+        if (dictionary != null) {
+            HIV_INDETERMINATE_ID = dictionary.getId();
+        }
     }
 
-    dictionary =
-        dictionaryService.getDictionaryEntrysByNameAndCategoryDescription(
-            "Positif VIH 2", "Haiti Lab");
-    if (dictionary != null) {
-      HIV_POSITIVE2_ID = dictionary.getId();
+    @Override
+    protected String getLabNameLine1() {
+        return MessageUtil.getContextualMessage("report.labName.one");
     }
 
-    dictionary =
-        dictionaryService.getDictionaryEntrysByNameAndCategoryDescription(
-            "Positif VIH1 et 2", "Haiti Lab");
-    if (dictionary != null) {
-      HIV_POSITIVE12_ID = dictionary.getId();
+    @Override
+    protected String getLabNameLine2() {
+        return MessageUtil.getContextualMessage("report.labName.two");
     }
 
-    dictionary =
-        dictionaryService.getDictionaryEntrysByNameAndCategoryDescription(
-            "Indetermine", "Haiti Lab");
-    if (dictionary != null) {
-      HIV_INDETERMINATE_ID = dictionary.getId();
+    @Override
+    protected boolean isPositive(String value) {
+        return HIV_POSITIVE1_ID.equals(value) || HIV_POSITIVE2_ID.equals(value) || HIV_POSITIVE12_ID.equals(value);
     }
-  }
 
-  @Override
-  protected String getLabNameLine1() {
-    return MessageUtil.getContextualMessage("report.labName.one");
-  }
-
-  @Override
-  protected String getLabNameLine2() {
-    return MessageUtil.getContextualMessage("report.labName.two");
-  }
-
-  @Override
-  protected boolean isPositive(String value) {
-    return HIV_POSITIVE1_ID.equals(value)
-        || HIV_POSITIVE2_ID.equals(value)
-        || HIV_POSITIVE12_ID.equals(value);
-  }
-
-  @Override
-  protected boolean isIndeterminate(String value) {
-    return HIV_INDETERMINATE_ID.equals(value);
-  }
+    @Override
+    protected boolean isIndeterminate(String value) {
+        return HIV_INDETERMINATE_ID.equals(value);
+    }
 }

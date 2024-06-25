@@ -7,9 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class AnalysisQaEventDAOImpl extends BaseDAOImpl<AnalysisQaEvent, String>
-    implements AnalysisQaEventDAO {
-  AnalysisQaEventDAOImpl() {
-    super(AnalysisQaEvent.class);
-  }
+public class AnalysisQaEventDAOImpl extends BaseDAOImpl<AnalysisQaEvent, String> implements AnalysisQaEventDAO {
+    AnalysisQaEventDAOImpl() {
+        super(AnalysisQaEvent.class);
+    }
 }

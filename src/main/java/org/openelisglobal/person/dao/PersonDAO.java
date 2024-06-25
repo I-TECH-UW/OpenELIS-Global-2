@@ -20,25 +20,27 @@ import org.openelisglobal.person.valueholder.Person;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface PersonDAO extends BaseDAO<Person, String> {
 
-  //	public boolean insertData(Person person) throws LIMSRuntimeException;
+    // public boolean insertData(Person person) throws LIMSRuntimeException;
 
-  //	public void deleteData(List persons) throws LIMSRuntimeException;
+    // public void deleteData(List persons) throws LIMSRuntimeException;
 
-  List<Person> getAllPersons() throws LIMSRuntimeException;
+    List<Person> getAllPersons() throws LIMSRuntimeException;
 
-  List<Person> getPageOfPersons(int startingRecNo) throws LIMSRuntimeException;
+    List<Person> getPageOfPersons(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(Person person) throws LIMSRuntimeException;
+    void getData(Person person) throws LIMSRuntimeException;
 
-  //	public void updateData(Person person) throws LIMSRuntimeException;
+    // public void updateData(Person person) throws LIMSRuntimeException;
 
-  Person getPersonByLastName(String lastName) throws LIMSRuntimeException;
+    Person getPersonByLastName(String lastName) throws LIMSRuntimeException;
 
-  Person getPersonById(String personId) throws LIMSRuntimeException;
+    Person getPersonById(String personId) throws LIMSRuntimeException;
 }

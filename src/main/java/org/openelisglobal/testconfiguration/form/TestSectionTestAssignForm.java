@@ -8,64 +8,64 @@ import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.validator.ValidationHelper;
 
 public class TestSectionTestAssignForm extends BaseForm {
-  // for display
-  private List testSectionList;
+    // for display
+    private List testSectionList;
 
-  // for display
-  private LinkedHashMap sectionTestList;
+    // for display
+    private LinkedHashMap sectionTestList;
 
-  @NotBlank
-  @Pattern(regexp = ValidationHelper.ID_REGEX)
-  private String testId = "";
+    @NotBlank
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
+    private String testId = "";
 
-  @NotBlank
-  @Pattern(regexp = ValidationHelper.ID_REGEX)
-  private String testSectionId = "";
+    @NotBlank
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
+    private String testSectionId = "";
 
-  @Pattern(regexp = ValidationHelper.ID_REGEX)
-  private String deactivateTestSectionId = "";
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
+    private String deactivateTestSectionId = "";
 
-  public TestSectionTestAssignForm() {
-    setFormName("testSectionTestAssignForm");
-  }
+    public TestSectionTestAssignForm() {
+        setFormName("testSectionTestAssignForm");
+    }
 
-  public List getTestSectionList() {
-    return testSectionList;
-  }
+    public List getTestSectionList() {
+        return testSectionList;
+    }
 
-  public void setTestSectionList(List testSectionList) {
-    this.testSectionList = testSectionList;
-  }
+    public void setTestSectionList(List testSectionList) {
+        this.testSectionList = testSectionList;
+    }
 
-  public LinkedHashMap getSectionTestList() {
-    return sectionTestList;
-  }
+    public LinkedHashMap getSectionTestList() {
+        return sectionTestList;
+    }
 
-  public void setSectionTestList(LinkedHashMap sectionTestList) {
-    this.sectionTestList = sectionTestList;
-  }
+    public void setSectionTestList(LinkedHashMap sectionTestList) {
+        this.sectionTestList = sectionTestList;
+    }
 
-  public String getTestId() {
-    return testId;
-  }
+    public String getTestId() {
+        return testId;
+    }
 
-  public void setTestId(String testId) {
-    this.testId = testId;
-  }
+    public void setTestId(String testId) {
+        this.testId = testId;
+    }
 
-  public String getTestSectionId() {
-    return testSectionId;
-  }
+    public String getTestSectionId() {
+        return testSectionId;
+    }
 
-  public void setTestSectionId(String testSectionId) {
-    this.testSectionId = testSectionId;
-  }
+    public void setTestSectionId(String testSectionId) {
+        this.testSectionId = testSectionId;
+    }
 
-  public String getDeactivateTestSectionId() {
-    return deactivateTestSectionId;
-  }
+    public String getDeactivateTestSectionId() {
+        return deactivateTestSectionId;
+    }
 
-  public void setDeactivateTestSectionId(String deactivateTestSectionId) {
-    this.deactivateTestSectionId = deactivateTestSectionId;
-  }
+    public void setDeactivateTestSectionId(String deactivateTestSectionId) {
+        this.deactivateTestSectionId = deactivateTestSectionId;
+    }
 }

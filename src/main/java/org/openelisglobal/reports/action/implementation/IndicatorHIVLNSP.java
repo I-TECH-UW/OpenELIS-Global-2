@@ -16,22 +16,21 @@ package org.openelisglobal.reports.action.implementation;
 import org.openelisglobal.internationalization.MessageUtil;
 
 // Note both Clinical and LNSP should extend common subclass
-public class IndicatorHIVLNSP extends IndicatorHIV
-    implements IReportCreator, IReportParameterSetter {
+public class IndicatorHIVLNSP extends IndicatorHIV implements IReportCreator, IReportParameterSetter {
 
-  static {
-    HIV_TESTS.add("CD4  Compte Abs");
-    HIV_TESTS.add("CD4 Compte en %");
-    HIV_TESTS.add("Test Rapide VIH");
-  }
+    static {
+        HIV_TESTS.add("CD4  Compte Abs");
+        HIV_TESTS.add("CD4 Compte en %");
+        HIV_TESTS.add("Test Rapide VIH");
+    }
 
-  @Override
-  protected String getLabNameLine1() {
-    return MessageUtil.getContextualMessage("report.labName.one");
-  }
+    @Override
+    protected String getLabNameLine1() {
+        return MessageUtil.getContextualMessage("report.labName.one");
+    }
 
-  @Override
-  protected String getLabNameLine2() {
-    return MessageUtil.getContextualMessage("report.labName.two");
-  }
+    @Override
+    protected String getLabNameLine2() {
+        return MessageUtil.getContextualMessage("report.labName.two");
+    }
 }

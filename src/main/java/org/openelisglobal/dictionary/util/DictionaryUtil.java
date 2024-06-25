@@ -15,7 +15,7 @@ package org.openelisglobal.dictionary.util;
 
 public class DictionaryUtil {
 
-  public static String getHL7ForDictioanryById(String dictionaryId) {
-    return "47";
-  }
+    public static String getHL7ForDictioanryById(String dictionaryId) {
+        return "47";
+    }
 }

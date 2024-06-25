@@ -10,31 +10,29 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class MethodManagementController extends BaseController {
-  @RequestMapping(
-      value = "/MethodManagement",
-      method = {RequestMethod.GET, RequestMethod.POST})
-  public ModelAndView showMethodManagement(HttpServletRequest request) {
-    MethodManagementForm form = new MethodManagementForm();
+    @RequestMapping(value = "/MethodManagement", method = { RequestMethod.GET, RequestMethod.POST })
+    public ModelAndView showMethodManagement(HttpServletRequest request) {
+        MethodManagementForm form = new MethodManagementForm();
 
-    return findForward(FWD_SUCCESS, form);
-  }
-
-  @Override
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "methodManagementDefinition";
-    } else {
-      return "PageNotFound";
+        return findForward(FWD_SUCCESS, form);
     }
-  }
 
-  @Override
-  protected String getPageTitleKey() {
-    return null;
-  }
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "methodManagementDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-  @Override
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
+
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

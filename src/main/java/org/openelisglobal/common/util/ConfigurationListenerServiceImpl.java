@@ -8,19 +8,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class ConfigurationListenerServiceImpl implements ConfigurationListenerService {
 
-  @Autowired private List<ConfigurationListener> configurationListener;
+    @Autowired
+    private List<ConfigurationListener> configurationListener;
 
-  @Override
-  public List<ConfigurationListener> getConfigurationListeners() {
-    return configurationListener;
-  }
-
-  @Override
-  @Async
-  public void refreshConfigurations() {
-    List<ConfigurationListener> configurationListeners = getConfigurationListeners();
-    for (ConfigurationListener configurationListener : configurationListeners) {
-      configurationListener.refreshConfiguration();
+    @Override
+    public List<ConfigurationListener> getConfigurationListeners() {
+        return configurationListener;
     }
-  }
+
+    @Override
+    @Async
+    public void refreshConfigurations() {
+        List<ConfigurationListener> configurationListeners = getConfigurationListeners();
+        for (ConfigurationListener configurationListener : configurationListeners) {
+            configurationListener.refreshConfiguration();
+        }
+    }
 }

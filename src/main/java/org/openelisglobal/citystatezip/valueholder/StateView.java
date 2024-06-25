@@ -17,27 +17,27 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class StateView extends BaseObject<String> {
 
-  private String state;
+    private String state;
 
-  public StateView() {
-    super();
-  }
+    public StateView() {
+        super();
+    }
 
-  public void setState(String state) {
-    this.state = state;
-  }
+    public void setState(String state) {
+        this.state = state;
+    }
 
-  public String getState() {
-    return state;
-  }
+    public String getState() {
+        return state;
+    }
 
-  @Override
-  public String getId() {
-    return getState();
-  }
+    @Override
+    public String getId() {
+        return getState();
+    }
 
-  @Override
-  public void setId(String id) {
-    setState(id);
-  }
+    @Override
+    public void setId(String id) {
+        setState(id);
+    }
 }

@@ -22,12 +22,12 @@ import org.openelisglobal.patientidentitytype.valueholder.PatientIdentityType;
 
 public interface PatientIdentityTypeDAO extends BaseDAO<PatientIdentityType, String> {
 
-  //	public void insertData(PatientIdentityType patientIdenityType) throws LIMSRuntimeException;
+    // public void insertData(PatientIdentityType patientIdenityType) throws
+    // LIMSRuntimeException;
 
-  public List<PatientIdentityType> getAllPatientIdenityTypes() throws LIMSRuntimeException;
+    public List<PatientIdentityType> getAllPatientIdenityTypes() throws LIMSRuntimeException;
 
-  public PatientIdentityType getNamedIdentityType(String name) throws LIMSRuntimeException;
+    public PatientIdentityType getNamedIdentityType(String name) throws LIMSRuntimeException;
 
-  boolean duplicatePatientIdentityTypeExists(PatientIdentityType patientIdentityType)
-      throws LIMSRuntimeException;
+    boolean duplicatePatientIdentityTypeExists(PatientIdentityType patientIdentityType) throws LIMSRuntimeException;
 }

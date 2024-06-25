@@ -43,196 +43,185 @@ import org.openelisglobal.test.valueholder.Test;
 
 public class IPCIRealisationReport extends Report {
 
-  protected List<IPCIRealisationTest> reportItems;
+    protected List<IPCIRealisationTest> reportItems;
 
-  protected String lowerDateRange;
-  protected String upperDateRange;
-  protected Date lowDate;
-  protected Date highDate;
+    protected String lowerDateRange;
+    protected String upperDateRange;
+    protected Date lowDate;
+    protected Date highDate;
 
-  private HashMap<String, TestBucket> testIdToBucketList;
+    private HashMap<String, TestBucket> testIdToBucketList;
 
-  private HashMap<String, TestBucket> concatSection_TestToBucketMap;
+    private HashMap<String, TestBucket> concatSection_TestToBucketMap;
 
-  private ArrayList<TestBucket> testBucketList;
+    private ArrayList<TestBucket> testBucketList;
 
-  private static final String NOT_STARTED_STATUS_ID;
-  private static final String FINALIZED_STATUS_ID;
-  private static final String TECH_ACCEPT_ID;
-  private static final String TECH_REJECT_ID;
-  private static final String BIOLOGIST_REJECT_ID;
-  private static final String USER_TEST_SECTION_ID;
+    private static final String NOT_STARTED_STATUS_ID;
+    private static final String FINALIZED_STATUS_ID;
+    private static final String TECH_ACCEPT_ID;
+    private static final String TECH_REJECT_ID;
+    private static final String BIOLOGIST_REJECT_ID;
+    private static final String USER_TEST_SECTION_ID;
 
-  private static TestSectionService testSectionService =
-      SpringContext.getBean(TestSectionService.class);
-  private TestService testService = SpringContext.getBean(TestService.class);
-  private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+    private static TestSectionService testSectionService = SpringContext.getBean(TestSectionService.class);
+    private TestService testService = SpringContext.getBean(TestService.class);
+    private AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 
-  static {
-    NOT_STARTED_STATUS_ID =
-        SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted);
-    FINALIZED_STATUS_ID =
-        SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized);
-    TECH_ACCEPT_ID =
-        SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
-    TECH_REJECT_ID =
-        SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected);
-    BIOLOGIST_REJECT_ID =
-        SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected);
-    USER_TEST_SECTION_ID = testSectionService.getTestSectionByName("user").getId();
-  }
-
-  @Override
-  public void initializeReport(ReportForm form) {
-    super.initializeReport();
-    errorFound = false;
-
-    lowerDateRange = form.getLowerDateRange();
-    upperDateRange = form.getUpperDateRange();
-
-    if (GenericValidator.isBlankOrNull(lowerDateRange)) {
-      errorFound = true;
-      ErrorMessages msgs = new ErrorMessages();
-      msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.noPrintableItems"));
-      errorMsgs.add(msgs);
+    static {
+        NOT_STARTED_STATUS_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted);
+        FINALIZED_STATUS_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized);
+        TECH_ACCEPT_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance);
+        TECH_REJECT_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected);
+        BIOLOGIST_REJECT_ID = SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected);
+        USER_TEST_SECTION_ID = testSectionService.getTestSectionByName("user").getId();
     }
 
-    if (GenericValidator.isBlankOrNull(upperDateRange)) {
-      upperDateRange = lowerDateRange;
-    }
+    @Override
+    public void initializeReport(ReportForm form) {
+        super.initializeReport();
+        errorFound = false;
 
-    try {
-      lowDate = DateUtil.convertStringDateToSqlDate(lowerDateRange);
-      highDate = DateUtil.convertStringDateToSqlDate(upperDateRange);
-    } catch (LIMSRuntimeException e) {
-      errorFound = true;
-      ErrorMessages msgs = new ErrorMessages();
-      msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.date.format"));
-      errorMsgs.add(msgs);
-    }
+        lowerDateRange = form.getLowerDateRange();
+        upperDateRange = form.getUpperDateRange();
 
-    createReportParameters();
-
-    initializeReportItems();
-
-    setTestMapForAllTests();
-
-    setAnalysisForDateRange();
-
-    setTestAggregates();
-  }
-
-  protected void initializeReportItems() {
-    reportItems = new ArrayList<>();
-  }
-
-  private void setTestMapForAllTests() {
-    testIdToBucketList = new HashMap<>();
-    concatSection_TestToBucketMap = new HashMap<>();
-    testBucketList = new ArrayList<>();
-
-    List<Test> testList = testService.getAllActiveTests(false);
-
-    for (Test test : testList) {
-      TestBucket bucket = new TestBucket();
-
-      bucket.testName = TestServiceImpl.getUserLocalizedTestName(test);
-      bucket.testSection = test.getTestSection().getLocalizedName();
-
-      testIdToBucketList.put(test.getId(), bucket);
-      testBucketList.add(bucket);
-    }
-  }
-
-  private void setTestAggregates() {
-    reportItems = new ArrayList<>();
-    for (TestBucket bucket : testBucketList) {
-      if ((bucket.finishedCount + bucket.notStartedCount + bucket.inProgressCount) > 0) {
-
-        IPCIRealisationTest data = new IPCIRealisationTest();
-
-        data.setPerformed(bucket.finishedCount);
-        data.setRequired(bucket.notStartedCount + bucket.inProgressCount + bucket.finishedCount);
-
-        data.setTestName(bucket.testName);
-        data.setSectionName(bucket.testSection);
-        data.setNoPerformed(data.getRequired() - data.getPerformed());
-        reportItems.add(data);
-      }
-    }
-  }
-
-  private void setAnalysisForDateRange() {
-    List<Analysis> analysisList =
-        analysisService.getAnalysisStartedOrCompletedInDateRange(lowDate, highDate);
-
-    for (Analysis analysis : analysisList) {
-      Test test = analysis.getTest();
-
-      if (test != null) {
-        TestBucket testBucket = null;
-        if (USER_TEST_SECTION_ID.equals(analysis.getTestSection().getId())) {
-          String concatedName =
-              analysis.getTestSection().getLocalizedName()
-                  + TestServiceImpl.getUserLocalizedTestName(analysis.getTest());
-          testBucket = concatSection_TestToBucketMap.get(concatedName);
-          if (testBucket == null) {
-            testBucket = new TestBucket();
-            testBucket.testName = TestServiceImpl.getUserLocalizedReportingTestName(test);
-            testBucket.testSection = analysis.getTestSection().getLocalizedName();
-            concatSection_TestToBucketMap.put(concatedName, testBucket);
-          }
-        } else {
-          testBucket = testIdToBucketList.get(test.getId());
+        if (GenericValidator.isBlankOrNull(lowerDateRange)) {
+            errorFound = true;
+            ErrorMessages msgs = new ErrorMessages();
+            msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.noPrintableItems"));
+            errorMsgs.add(msgs);
         }
 
-        if (testBucket != null) {
-          if (NOT_STARTED_STATUS_ID.equals(analysis.getStatusId())) {
-            testBucket.notStartedCount++;
-          } else if (inProgress(analysis)) {
-            testBucket.inProgressCount++;
-          } else if (FINALIZED_STATUS_ID.equals(analysis.getStatusId())) {
-            testBucket.finishedCount++;
-          }
+        if (GenericValidator.isBlankOrNull(upperDateRange)) {
+            upperDateRange = lowerDateRange;
         }
-      }
+
+        try {
+            lowDate = DateUtil.convertStringDateToSqlDate(lowerDateRange);
+            highDate = DateUtil.convertStringDateToSqlDate(upperDateRange);
+        } catch (LIMSRuntimeException e) {
+            errorFound = true;
+            ErrorMessages msgs = new ErrorMessages();
+            msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.date.format"));
+            errorMsgs.add(msgs);
+        }
+
+        createReportParameters();
+
+        initializeReportItems();
+
+        setTestMapForAllTests();
+
+        setAnalysisForDateRange();
+
+        setTestAggregates();
     }
-  }
 
-  private boolean inProgress(Analysis analysis) {
-    return TECH_ACCEPT_ID.equals(analysis.getStatusId())
-        || TECH_REJECT_ID.equals(analysis.getStatusId())
-        || BIOLOGIST_REJECT_ID.equals(analysis.getStatusId());
-  }
+    protected void initializeReportItems() {
+        reportItems = new ArrayList<>();
+    }
 
-  @Override
-  protected void createReportParameters() {
-    super.createReportParameters();
+    private void setTestMapForAllTests() {
+        testIdToBucketList = new HashMap<>();
+        concatSection_TestToBucketMap = new HashMap<>();
+        testBucketList = new ArrayList<>();
 
-    reportParameters.put("startDate", lowerDateRange);
-    reportParameters.put("stopDate", upperDateRange);
-    reportParameters.put("date_debut", lowerDateRange);
-    reportParameters.put("date_fin", upperDateRange);
-  }
+        List<Test> testList = testService.getAllActiveTests(false);
 
-  @Override
-  public JRDataSource getReportDataSource() throws IllegalStateException {
-    return errorFound
-        ? new JRBeanCollectionDataSource(errorMsgs)
-        : new JRBeanCollectionDataSource(reportItems);
-  }
+        for (Test test : testList) {
+            TestBucket bucket = new TestBucket();
 
-  @Override
-  protected String reportFileName() {
+            bucket.testName = TestServiceImpl.getUserLocalizedTestName(test);
+            bucket.testSection = test.getTestSection().getLocalizedName();
 
-    return "IPCIRealisationTest";
-  }
+            testIdToBucketList.put(test.getId(), bucket);
+            testBucketList.add(bucket);
+        }
+    }
 
-  private class TestBucket {
-    public String testName = "";
-    public String testSection = "";
-    public int notStartedCount = 0;
-    public int inProgressCount = 0;
-    public int finishedCount = 0;
-  }
+    private void setTestAggregates() {
+        reportItems = new ArrayList<>();
+        for (TestBucket bucket : testBucketList) {
+            if ((bucket.finishedCount + bucket.notStartedCount + bucket.inProgressCount) > 0) {
+
+                IPCIRealisationTest data = new IPCIRealisationTest();
+
+                data.setPerformed(bucket.finishedCount);
+                data.setRequired(bucket.notStartedCount + bucket.inProgressCount + bucket.finishedCount);
+
+                data.setTestName(bucket.testName);
+                data.setSectionName(bucket.testSection);
+                data.setNoPerformed(data.getRequired() - data.getPerformed());
+                reportItems.add(data);
+            }
+        }
+    }
+
+    private void setAnalysisForDateRange() {
+        List<Analysis> analysisList = analysisService.getAnalysisStartedOrCompletedInDateRange(lowDate, highDate);
+
+        for (Analysis analysis : analysisList) {
+            Test test = analysis.getTest();
+
+            if (test != null) {
+                TestBucket testBucket = null;
+                if (USER_TEST_SECTION_ID.equals(analysis.getTestSection().getId())) {
+                    String concatedName = analysis.getTestSection().getLocalizedName()
+                            + TestServiceImpl.getUserLocalizedTestName(analysis.getTest());
+                    testBucket = concatSection_TestToBucketMap.get(concatedName);
+                    if (testBucket == null) {
+                        testBucket = new TestBucket();
+                        testBucket.testName = TestServiceImpl.getUserLocalizedReportingTestName(test);
+                        testBucket.testSection = analysis.getTestSection().getLocalizedName();
+                        concatSection_TestToBucketMap.put(concatedName, testBucket);
+                    }
+                } else {
+                    testBucket = testIdToBucketList.get(test.getId());
+                }
+
+                if (testBucket != null) {
+                    if (NOT_STARTED_STATUS_ID.equals(analysis.getStatusId())) {
+                        testBucket.notStartedCount++;
+                    } else if (inProgress(analysis)) {
+                        testBucket.inProgressCount++;
+                    } else if (FINALIZED_STATUS_ID.equals(analysis.getStatusId())) {
+                        testBucket.finishedCount++;
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean inProgress(Analysis analysis) {
+        return TECH_ACCEPT_ID.equals(analysis.getStatusId()) || TECH_REJECT_ID.equals(analysis.getStatusId())
+                || BIOLOGIST_REJECT_ID.equals(analysis.getStatusId());
+    }
+
+    @Override
+    protected void createReportParameters() {
+        super.createReportParameters();
+
+        reportParameters.put("startDate", lowerDateRange);
+        reportParameters.put("stopDate", upperDateRange);
+        reportParameters.put("date_debut", lowerDateRange);
+        reportParameters.put("date_fin", upperDateRange);
+    }
+
+    @Override
+    public JRDataSource getReportDataSource() throws IllegalStateException {
+        return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(reportItems);
+    }
+
+    @Override
+    protected String reportFileName() {
+
+        return "IPCIRealisationTest";
+    }
+
+    private class TestBucket {
+        public String testName = "";
+        public String testSection = "";
+        public int notStartedCount = 0;
+        public int inProgressCount = 0;
+        public int finishedCount = 0;
+    }
 }

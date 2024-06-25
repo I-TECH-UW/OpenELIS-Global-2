@@ -17,26 +17,24 @@ import java.util.Comparator;
 import org.openelisglobal.test.service.TestServiceImpl;
 
 public class TestComparator implements Comparable<Test> {
-  String name;
+    String name;
 
-  // You can put the default sorting capability here
-  public int compareTo(Test t) {
-    return this.name.compareTo(TestServiceImpl.getUserLocalizedTestName(t));
-  }
+    // You can put the default sorting capability here
+    public int compareTo(Test t) {
+        return this.name.compareTo(TestServiceImpl.getUserLocalizedTestName(t));
+    }
 
-  public static final Comparator<Test> NAME_COMPARATOR =
-      new Comparator<Test>() {
+    public static final Comparator<Test> NAME_COMPARATOR = new Comparator<Test>() {
         public int compare(Test a, Test b) {
-          return ((TestServiceImpl.getUserLocalizedTestName(a).toLowerCase())
-              .compareTo(TestServiceImpl.getUserLocalizedTestName(b).toLowerCase()));
+            return ((TestServiceImpl.getUserLocalizedTestName(a).toLowerCase())
+                    .compareTo(TestServiceImpl.getUserLocalizedTestName(b).toLowerCase()));
         }
-      };
+    };
 
-  public static final Comparator<Test> DESCRIPTION_COMPARATOR =
-      new Comparator<Test>() {
+    public static final Comparator<Test> DESCRIPTION_COMPARATOR = new Comparator<Test>() {
         public int compare(Test a, Test b) {
-          return ((TestServiceImpl.getLocalizedTestNameWithType(a).toLowerCase())
-              .compareTo(TestServiceImpl.getLocalizedTestNameWithType(b).toLowerCase()));
+            return ((TestServiceImpl.getLocalizedTestNameWithType(a).toLowerCase())
+                    .compareTo(TestServiceImpl.getLocalizedTestNameWithType(b).toLowerCase()));
         }
-      };
+    };
 }

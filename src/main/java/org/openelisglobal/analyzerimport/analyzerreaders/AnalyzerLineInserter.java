@@ -24,34 +24,33 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public abstract class AnalyzerLineInserter {
 
-  protected AnalyzerResultsService analyzerResultService =
-      SpringContext.getBean(AnalyzerResultsService.class);
+    protected AnalyzerResultsService analyzerResultService = SpringContext.getBean(AnalyzerResultsService.class);
 
-  protected void persistResults(List<AnalyzerResults> results, String systemUserId) {
-    analyzerResultService.insertAnalyzerResults(results, systemUserId);
-  }
-
-  protected boolean persistImport(String currentUserId, List<AnalyzerResults> results) {
-
-    if (results.size() > 0) {
-      for (AnalyzerResults analyzerResults : results) {
-        if (analyzerResults.getTestId().equals("-1")) {
-          analyzerResults.setTestId(null);
-          analyzerResults.setReadOnly(true);
-        }
-      }
-
-      try {
-        persistResults(results, currentUserId);
-      } catch (LIMSRuntimeException e) {
-        LogEvent.logDebug(e);
-        return false;
-      }
+    protected void persistResults(List<AnalyzerResults> results, String systemUserId) {
+        analyzerResultService.insertAnalyzerResults(results, systemUserId);
     }
-    return true;
-  }
 
-  public abstract boolean insert(List<String> lines, String currentUserId);
+    protected boolean persistImport(String currentUserId, List<AnalyzerResults> results) {
 
-  public abstract String getError();
+        if (results.size() > 0) {
+            for (AnalyzerResults analyzerResults : results) {
+                if (analyzerResults.getTestId().equals("-1")) {
+                    analyzerResults.setTestId(null);
+                    analyzerResults.setReadOnly(true);
+                }
+            }
+
+            try {
+                persistResults(results, currentUserId);
+            } catch (LIMSRuntimeException e) {
+                LogEvent.logDebug(e);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public abstract boolean insert(List<String> lines, String currentUserId);
+
+    public abstract String getError();
 }

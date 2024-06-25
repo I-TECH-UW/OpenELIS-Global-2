@@ -19,27 +19,26 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/rest/")
 public class HealthDistrictsForRegionRestController {
-  @Autowired OrganizationService organizationService;
+    @Autowired
+    OrganizationService organizationService;
 
-  @GetMapping(value = "health-districts-for-region", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseBody
-  public List<IdValuePair> getHealthDistrictsForRegion(
-      HttpServletRequest request, @RequestParam String regionId) {
-    if (GenericValidator.isBlankOrNull(regionId)) {
-      return Collections.<IdValuePair>emptyList();
-    }
-    List<Organization> districts = organizationService.getOrganizationsByParentId(regionId);
+    @GetMapping(value = "health-districts-for-region", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<IdValuePair> getHealthDistrictsForRegion(HttpServletRequest request, @RequestParam String regionId) {
+        if (GenericValidator.isBlankOrNull(regionId)) {
+            return Collections.<IdValuePair>emptyList();
+        }
+        List<Organization> districts = organizationService.getOrganizationsByParentId(regionId);
 
-    List<IdValuePair> districtIdValues = new ArrayList<>();
-    if (!districts.isEmpty()) {
-      districts.forEach(
-          org -> {
-            IdValuePair district = new IdValuePair(org.getId(), org.getOrganizationName());
-            districtIdValues.add(district);
-          });
-      return districtIdValues;
-    } else {
-      return Collections.<IdValuePair>emptyList();
+        List<IdValuePair> districtIdValues = new ArrayList<>();
+        if (!districts.isEmpty()) {
+            districts.forEach(org -> {
+                IdValuePair district = new IdValuePair(org.getId(), org.getOrganizationName());
+                districtIdValues.add(district);
+            });
+            return districtIdValues;
+        } else {
+            return Collections.<IdValuePair>emptyList();
+        }
     }
-  }
 }

@@ -10,20 +10,21 @@ import org.springframework.transaction.annotation.Transactional;
 // public class DatabaseChangeLogServiceImpl extends
 // AuditableBaseObjectServiceImpl<DatabaseChangeLog, String> implements DatabaseChangeLogService {
 public class DatabaseChangeLogServiceImpl implements DatabaseChangeLogService {
-  @Autowired protected DatabaseChangeLogDAO baseObjectDAO;
+    @Autowired
+    protected DatabaseChangeLogDAO baseObjectDAO;
 
-  //	public DatabaseChangeLogServiceImpl() {
-  //		super(DatabaseChangeLog.class);
-  //	}
+    // public DatabaseChangeLogServiceImpl() {
+    // super(DatabaseChangeLog.class);
+    // }
 
-  //	@Override
-  protected DatabaseChangeLogDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    // @Override
+    protected DatabaseChangeLogDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public DatabaseChangeLog getLastExecutedChange() {
-    return getBaseObjectDAO().getLastExecutedChange();
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public DatabaseChangeLog getLastExecutedChange() {
+        return getBaseObjectDAO().getLastExecutedChange();
+    }
 }

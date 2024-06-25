@@ -30,76 +30,75 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class RequestersForOrganizationProvider extends BaseQueryProvider {
 
-  protected OrganizationContactService organizationContactService =
-      SpringContext.getBean(OrganizationContactService.class);
+    protected OrganizationContactService organizationContactService = SpringContext
+            .getBean(OrganizationContactService.class);
 
-  protected AjaxServlet ajaxServlet = null;
+    protected AjaxServlet ajaxServlet = null;
 
-  @Override
-  public void processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-    String orgId = request.getParameter("orgId");
+        String orgId = request.getParameter("orgId");
 
-    StringBuilder xml = new StringBuilder();
+        StringBuilder xml = new StringBuilder();
 
-    createXMLOfRequesters(orgId, xml);
+        createXMLOfRequesters(orgId, xml);
 
-    ajaxServlet.sendData(xml.toString(), VALID, request, response);
-  }
-
-  private void createXMLOfRequesters(String orgId, StringBuilder xml) {
-    List<OrganizationContact> orgContactList =
-        organizationContactService.getListForOrganizationId(orgId);
-    xml.append("<requesters>");
-    for (OrganizationContact orgContact : orgContactList) {
-      createXMLOfRequester(orgContact.getPerson(), xml);
+        ajaxServlet.sendData(xml.toString(), VALID, request, response);
     }
-    xml.append("</requesters>");
-  }
 
-  private void createXMLOfRequester(Person person, StringBuilder xml) {
-    xml.append("<requester ");
+    private void createXMLOfRequesters(String orgId, StringBuilder xml) {
+        List<OrganizationContact> orgContactList = organizationContactService.getListForOrganizationId(orgId);
+        xml.append("<requesters>");
+        for (OrganizationContact orgContact : orgContactList) {
+            createXMLOfRequester(orgContact.getPerson(), xml);
+        }
+        xml.append("</requesters>");
+    }
 
-    XMLUtil.appendAttributeKeyValue("id", StringUtil.trim(person.getId()), xml);
-    //        xml.append("id=\"");
-    //        xml.append(StringUtil.trim(person.getId()));
-    //        xml.append("\" ");
+    private void createXMLOfRequester(Person person, StringBuilder xml) {
+        xml.append("<requester ");
 
-    XMLUtil.appendAttributeKeyValue("firstName", StringUtil.trim(person.getFirstName()), xml);
-    //        xml.append("firstName=\"");
-    //        xml.append(StringUtil.trim(person.getFirstName()));
-    //        xml.append("\" ");
+        XMLUtil.appendAttributeKeyValue("id", StringUtil.trim(person.getId()), xml);
+        // xml.append("id=\"");
+        // xml.append(StringUtil.trim(person.getId()));
+        // xml.append("\" ");
 
-    XMLUtil.appendAttributeKeyValue("lastName", StringUtil.trim(person.getLastName()), xml);
-    //        xml.append("lastName=\"");
-    //        xml.append(StringUtil.trim(person.getLastName()));
-    //        xml.append("\" ");
+        XMLUtil.appendAttributeKeyValue("firstName", StringUtil.trim(person.getFirstName()), xml);
+        // xml.append("firstName=\"");
+        // xml.append(StringUtil.trim(person.getFirstName()));
+        // xml.append("\" ");
 
-    XMLUtil.appendAttributeKeyValue("phone", StringUtil.trim(person.getWorkPhone()), xml);
-    //        xml.append("phone=\"");
-    //        xml.append(StringUtil.trim(person.getWorkPhone()));
-    //        xml.append("\" ");
-    XMLUtil.appendAttributeKeyValue("fax", StringUtil.trim(person.getFax()), xml);
-    //        xml.append("fax=\"");
-    //        xml.append(StringUtil.trim(person.getFax()));
-    //        xml.append("\" ");
+        XMLUtil.appendAttributeKeyValue("lastName", StringUtil.trim(person.getLastName()), xml);
+        // xml.append("lastName=\"");
+        // xml.append(StringUtil.trim(person.getLastName()));
+        // xml.append("\" ");
 
-    XMLUtil.appendAttributeKeyValue("email", StringUtil.trim(person.getEmail()), xml);
-    //        xml.append("email=\"");
-    //        xml.append(StringUtil.trim(person.getEmail()));
-    //        xml.append("\" ");
+        XMLUtil.appendAttributeKeyValue("phone", StringUtil.trim(person.getWorkPhone()), xml);
+        // xml.append("phone=\"");
+        // xml.append(StringUtil.trim(person.getWorkPhone()));
+        // xml.append("\" ");
+        XMLUtil.appendAttributeKeyValue("fax", StringUtil.trim(person.getFax()), xml);
+        // xml.append("fax=\"");
+        // xml.append(StringUtil.trim(person.getFax()));
+        // xml.append("\" ");
 
-    xml.append(" />");
-  }
+        XMLUtil.appendAttributeKeyValue("email", StringUtil.trim(person.getEmail()), xml);
+        // xml.append("email=\"");
+        // xml.append(StringUtil.trim(person.getEmail()));
+        // xml.append("\" ");
 
-  @Override
-  public void setServlet(AjaxServlet as) {
-    this.ajaxServlet = as;
-  }
+        xml.append(" />");
+    }
 
-  @Override
-  public AjaxServlet getServlet() {
-    return this.ajaxServlet;
-  }
+    @Override
+    public void setServlet(AjaxServlet as) {
+        this.ajaxServlet = as;
+    }
+
+    @Override
+    public AjaxServlet getServlet() {
+        return this.ajaxServlet;
+    }
 }

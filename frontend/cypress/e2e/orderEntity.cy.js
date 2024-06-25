@@ -53,7 +53,10 @@ describe("Order Entity", function () {
     orderEntityPage.clickNextButton();
   });
 
-  it("Should click generate Lab Order Number and store it in a fixture", function () {
+  it("Should do a validation check for labNo and then click generate Lab Order Number and store it in a fixture", function () {
+    cy.fixture("Order").then((order) => {
+      orderEntityPage.validateAcessionNumber(order.invalidLabNo);
+    });
     orderEntityPage.generateLabOrderNumber();
     cy.get("#labNo").then(($input) => {
       const generatedOrderNumber = $input.val();

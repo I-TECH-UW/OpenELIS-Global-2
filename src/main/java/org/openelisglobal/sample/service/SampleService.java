@@ -17,114 +17,105 @@ import org.openelisglobal.sample.valueholder.SampleAdditionalField.AdditionalFie
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
 
 public interface SampleService extends BaseObjectService<Sample, String> {
-  void getData(Sample sample);
+    void getData(Sample sample);
 
-  List<Sample> getConfirmationSamplesReceivedInDateRange(
-      Date receivedDateStart, Date receivedDateEnd);
+    List<Sample> getConfirmationSamplesReceivedInDateRange(Date receivedDateStart, Date receivedDateEnd);
 
-  List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(
-      List<Integer> inclusiveProjectIdList,
-      List<Integer> inclusiveStatusIdList,
-      String minAccession,
-      String maxAccession);
+    List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(List<Integer> inclusiveProjectIdList,
+            List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession);
 
-  List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(
-      String projectId,
-      List<Integer> inclusiveStatusIdList,
-      String minAccession,
-      String maxAccession);
+    List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(String projectId, List<Integer> inclusiveStatusIdList,
+            String minAccession, String maxAccession);
 
-  String getLargestAccessionNumberWithPrefix(String prefix);
+    String getLargestAccessionNumberWithPrefix(String prefix);
 
-  String getLargestAccessionNumberMatchingPattern(String startingWith, int size);
+    String getLargestAccessionNumberMatchingPattern(String startingWith, int size);
 
-  List<Sample> getSamplesWithPendingQaEventsByService(String serviceId);
+    List<Sample> getSamplesWithPendingQaEventsByService(String serviceId);
 
-  List<Sample> getSamplesByStatusAndDomain(List<String> statuses, String domain);
+    List<Sample> getSamplesByStatusAndDomain(List<String> statuses, String domain);
 
-  List<Sample> getSamplesReceivedOn(String recievedDate);
+    List<Sample> getSamplesReceivedOn(String recievedDate);
 
-  List<Sample> getSamplesCollectedOn(String collectionDate);
+    List<Sample> getSamplesCollectedOn(String collectionDate);
 
-  String getLargestAccessionNumber();
+    String getLargestAccessionNumber();
 
-  List<Sample> getSamplesWithPendingQaEvents(
-      Sample sample, boolean filterByCategory, String qaEventCategoryId, boolean filterByDomain);
+    List<Sample> getSamplesWithPendingQaEvents(Sample sample, boolean filterByCategory, String qaEventCategoryId,
+            boolean filterByDomain);
 
-  Sample getSampleByReferringId(String referringId);
+    Sample getSampleByReferringId(String referringId);
 
-  List<Sample> getSamplesReceivedInDateRange(String receivedDateStart, String receivedDateEnd);
+    List<Sample> getSamplesReceivedInDateRange(String receivedDateStart, String receivedDateEnd);
 
-  List<Sample> getSamplesByAccessionRange(String minAccession, String maxAccession);
+    List<Sample> getSamplesByAccessionRange(String minAccession, String maxAccession);
 
-  boolean insertDataWithAccessionNumber(Sample sample);
+    boolean insertDataWithAccessionNumber(Sample sample);
 
-  void getSampleByAccessionNumber(Sample sample);
+    void getSampleByAccessionNumber(Sample sample);
 
-  Sample getSampleByAccessionNumber(String accessionNumber);
+    Sample getSampleByAccessionNumber(String accessionNumber);
 
-  List<Sample> getPageOfSamples(int startingRecNo);
+    List<Sample> getPageOfSamples(int startingRecNo);
 
-  List<Sample> getSamplesForPatient(String patientID);
+    List<Sample> getSamplesForPatient(String patientID);
 
-  String generateAccessionNumberAndInsert(Sample sample);
+    String generateAccessionNumberAndInsert(Sample sample);
 
-  Organization getOrganizationRequester(Sample sample, String orgTypeId);
+    Organization getOrganizationRequester(Sample sample, String orgTypeId);
 
-  Person getPersonRequester(Sample sample);
+    Person getPersonRequester(Sample sample);
 
-  List<SampleQaEvent> getSampleQAEventList(Sample sample);
+    List<SampleQaEvent> getSampleQAEventList(Sample sample);
 
-  List<Analysis> getAnalysis(Sample sample);
+    List<Analysis> getAnalysis(Sample sample);
 
-  Patient getPatient(Sample sample);
+    Patient getPatient(Sample sample);
 
-  String getId(Sample sample);
+    String getId(Sample sample);
 
-  boolean isConfirmationSample(Sample sample);
+    boolean isConfirmationSample(Sample sample);
 
-  String getReceived24HourTimeForDisplay(Sample sample);
+    String getReceived24HourTimeForDisplay(Sample sample);
 
-  String getReceivedTimeForDisplay(Sample sample);
+    String getReceivedTimeForDisplay(Sample sample);
 
-  String getReceivedDateWithTwoYearDisplay(Sample sample);
+    String getReceivedDateWithTwoYearDisplay(Sample sample);
 
-  String getReceivedDateForDisplay(Sample sample);
+    String getReceivedDateForDisplay(Sample sample);
 
-  String getAccessionNumber(Sample sample);
+    String getAccessionNumber(Sample sample);
 
-  Timestamp getOrderedDate(Sample sample);
+    Timestamp getOrderedDate(Sample sample);
 
-  Date getCompletedDate(Sample sample);
+    Date getCompletedDate(Sample sample);
 
-  String getTwoYearReceivedDateForDisplay(Sample sample);
+    String getTwoYearReceivedDateForDisplay(Sample sample);
 
-  List<SampleAdditionalField> getSampleAdditionalFieldsForSample(String sampleId);
+    List<SampleAdditionalField> getSampleAdditionalFieldsForSample(String sampleId);
 
-  SampleAdditionalField getSampleAdditionalFieldForSample(
-      String sampleId, AdditionalFieldName fieldName);
+    SampleAdditionalField getSampleAdditionalFieldForSample(String sampleId, AdditionalFieldName fieldName);
 
-  SampleAdditionalField saveSampleAdditionalField(SampleAdditionalField sampleAdditionalField);
+    SampleAdditionalField saveSampleAdditionalField(SampleAdditionalField sampleAdditionalField);
 
-  String getSampleStatusForDisplay(Sample sample);
+    String getSampleStatusForDisplay(Sample sample);
 
-  boolean sampleContainsTest(String sampleId, String testId);
+    boolean sampleContainsTest(String sampleId, String testId);
 
-  SampleRequester getOrganizationSampleRequester(Sample sample, String orgTypeId);
+    SampleRequester getOrganizationSampleRequester(Sample sample, String orgTypeId);
 
-  List<Sample> getAllMissingFhirUuid();
+    List<Sample> getAllMissingFhirUuid();
 
-  List<Sample> getSamplesByAnalysisIds(List<String> analysisIds);
+    List<Sample> getSamplesByAnalysisIds(List<String> analysisIds);
 
-  List<Organization> getOrganizationRequesters(Sample sample);
+    List<Organization> getOrganizationRequesters(Sample sample);
 
-  boolean sampleContainsTestWithLoinc(String id, String loinc);
+    boolean sampleContainsTestWithLoinc(String id, String loinc);
 
-  List<Sample> getSamplesForSiteBetweenOrderDates(
-      String referringSiteId, LocalDate lowerDate, LocalDate upperDate);
+    List<Sample> getSamplesForSiteBetweenOrderDates(String referringSiteId, LocalDate lowerDate, LocalDate upperDate);
 
-  List<Sample> getStudySamplesForSiteBetweenOrderDates(
-      String referringSiteId, LocalDate lowerDate, LocalDate upperDate);
+    List<Sample> getStudySamplesForSiteBetweenOrderDates(String referringSiteId, LocalDate lowerDate,
+            LocalDate upperDate);
 
-  List<Sample> getSamplesByPriority(OrderPriority priority);
+    List<Sample> getSamplesByPriority(OrderPriority priority);
 }

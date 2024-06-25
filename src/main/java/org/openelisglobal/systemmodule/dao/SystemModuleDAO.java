@@ -23,21 +23,23 @@ import org.openelisglobal.systemmodule.valueholder.SystemModule;
  */
 public interface SystemModuleDAO extends BaseDAO<SystemModule, String> {
 
-  //	public boolean insertData(SystemModule systemModule) throws LIMSRuntimeException;
+    // public boolean insertData(SystemModule systemModule) throws
+    // LIMSRuntimeException;
 
-  //	public void deleteData(List systemModule) throws LIMSRuntimeException;
+    // public void deleteData(List systemModule) throws LIMSRuntimeException;
 
-  List<SystemModule> getAllSystemModules() throws LIMSRuntimeException;
+    List<SystemModule> getAllSystemModules() throws LIMSRuntimeException;
 
-  List<SystemModule> getPageOfSystemModules(int startingRecNo) throws LIMSRuntimeException;
+    List<SystemModule> getPageOfSystemModules(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(SystemModule systemModule) throws LIMSRuntimeException;
+    void getData(SystemModule systemModule) throws LIMSRuntimeException;
 
-  //	public void updateData(SystemModule systemModule) throws LIMSRuntimeException;
+    // public void updateData(SystemModule systemModule) throws
+    // LIMSRuntimeException;
 
-  Integer getTotalSystemModuleCount() throws LIMSRuntimeException;
+    Integer getTotalSystemModuleCount() throws LIMSRuntimeException;
 
-  SystemModule getSystemModuleByName(String name) throws LIMSRuntimeException;
+    SystemModule getSystemModuleByName(String name) throws LIMSRuntimeException;
 
-  boolean duplicateSystemModuleExists(SystemModule systemModule);
+    boolean duplicateSystemModuleExists(SystemModule systemModule);
 }

@@ -7,9 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class SourceOfSampleDAOImpl extends BaseDAOImpl<SourceOfSample, String>
-    implements SourceOfSampleDAO {
-  SourceOfSampleDAOImpl() {
-    super(SourceOfSample.class);
-  }
+public class SourceOfSampleDAOImpl extends BaseDAOImpl<SourceOfSample, String> implements SourceOfSampleDAO {
+    SourceOfSampleDAOImpl() {
+        super(SourceOfSample.class);
+    }
 }

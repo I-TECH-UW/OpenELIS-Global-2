@@ -910,7 +910,7 @@
   "label.audittrailreport.sitename": "Site Name",
   "label.user.notestsection": "Current User has no Assined Lab Unit . Please Contact admin",
   "reports.label.cistudyexport": "General Report",
-  "header.label.study.ciexport": "Export a CSV File by Date Type",
+  "header.label.study.ciexport": "Export a CSV File by Date",
   "report.select.studttype": "Select Study Type",
   "error.report.csv.study": "Please select study type.",
   "error.report.csv.date": "Please select date type.",

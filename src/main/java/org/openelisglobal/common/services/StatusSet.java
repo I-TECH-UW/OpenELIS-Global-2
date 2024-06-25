@@ -23,59 +23,59 @@ import org.openelisglobal.common.services.StatusService.RecordStatus;
 
 public class StatusSet {
 
-  private OrderStatus sampleStatus;
-  private Map<Analysis, AnalysisStatus> analysisStatus;
-  private RecordStatus sampleRecordStatus;
-  private RecordStatus patientRecordStatus;
+    private OrderStatus sampleStatus;
+    private Map<Analysis, AnalysisStatus> analysisStatus;
+    private RecordStatus sampleRecordStatus;
+    private RecordStatus patientRecordStatus;
 
-  private String patientId;
-  private String sampleId;
+    private String patientId;
+    private String sampleId;
 
-  public OrderStatus getSampleStatus() {
-    return sampleStatus;
-  }
+    public OrderStatus getSampleStatus() {
+        return sampleStatus;
+    }
 
-  public void setSampleStatus(OrderStatus sampleStatus) {
-    this.sampleStatus = sampleStatus;
-  }
+    public void setSampleStatus(OrderStatus sampleStatus) {
+        this.sampleStatus = sampleStatus;
+    }
 
-  public Map<Analysis, AnalysisStatus> getAnalysisStatus() {
-    return analysisStatus;
-  }
+    public Map<Analysis, AnalysisStatus> getAnalysisStatus() {
+        return analysisStatus;
+    }
 
-  public void setAnalysisStatus(Map<Analysis, AnalysisStatus> analysisStatus) {
-    this.analysisStatus = analysisStatus;
-  }
+    public void setAnalysisStatus(Map<Analysis, AnalysisStatus> analysisStatus) {
+        this.analysisStatus = analysisStatus;
+    }
 
-  public RecordStatus getSampleRecordStatus() {
-    return sampleRecordStatus;
-  }
+    public RecordStatus getSampleRecordStatus() {
+        return sampleRecordStatus;
+    }
 
-  public void setSampleRecordStatus(RecordStatus sampleEntryStatus) {
-    sampleRecordStatus = sampleEntryStatus;
-  }
+    public void setSampleRecordStatus(RecordStatus sampleEntryStatus) {
+        sampleRecordStatus = sampleEntryStatus;
+    }
 
-  public RecordStatus getPatientRecordStatus() {
-    return patientRecordStatus;
-  }
+    public RecordStatus getPatientRecordStatus() {
+        return patientRecordStatus;
+    }
 
-  public void setPatientRecordStatus(RecordStatus patientEntryStatus) {
-    patientRecordStatus = patientEntryStatus;
-  }
+    public void setPatientRecordStatus(RecordStatus patientEntryStatus) {
+        patientRecordStatus = patientEntryStatus;
+    }
 
-  public String getPatientId() {
-    return patientId;
-  }
+    public String getPatientId() {
+        return patientId;
+    }
 
-  public void setPatientId(String patientId) {
-    this.patientId = patientId;
-  }
+    public void setPatientId(String patientId) {
+        this.patientId = patientId;
+    }
 
-  public String getSampleId() {
-    return sampleId;
-  }
+    public String getSampleId() {
+        return sampleId;
+    }
 
-  public void setSampleId(String sampleId) {
-    this.sampleId = sampleId;
-  }
+    public void setSampleId(String sampleId) {
+        this.sampleId = sampleId;
+    }
 }

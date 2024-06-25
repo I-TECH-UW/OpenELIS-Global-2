@@ -16,61 +16,57 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String>
-    implements SystemModuleUrlDAO {
+public class SystemModuleUrlDAOImpl extends BaseDAOImpl<SystemModuleUrl, String> implements SystemModuleUrlDAO {
 
-  public SystemModuleUrlDAOImpl() {
-    super(SystemModuleUrl.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<SystemModuleUrl> getByRequest(HttpServletRequest request) {
-    String pathNoSuffix = URLUtil.getReourcePathFromRequest(request);
-
-    List<SystemModuleUrl> sysModUrls = getByUrlPath(pathNoSuffix);
-
-    return sysModUrls;
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<SystemModuleUrl> getByUrlPath(String urlPath) {
-    List<SystemModuleUrl> list;
-    try {
-      String sql = "From SystemModuleUrl smu where smu.urlPath = :urlPath";
-      Query<SystemModuleUrl> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SystemModuleUrl.class);
-      query.setParameter("urlPath", urlPath);
-      list = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SystemModuleUrl getByUrlPath()", e);
+    public SystemModuleUrlDAOImpl() {
+        super(SystemModuleUrl.class);
     }
 
-    return list;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<SystemModuleUrl> getByRequest(HttpServletRequest request) {
+        String pathNoSuffix = URLUtil.getReourcePathFromRequest(request);
 
-  @Override
-  public SystemModuleUrl getByModuleAndUrl(String moduleId, String urlPath) {
-    SystemModuleUrl moduleUrl = null;
-    if (GenericValidator.isBlankOrNull(moduleId)) {
-      return moduleUrl;
-    }
-    try {
-      String sql =
-          "From SystemModuleUrl smu where smu.urlPath = :urlPath AND smu.systemModule ="
-              + " :systemModuleId";
-      Query<SystemModuleUrl> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SystemModuleUrl.class);
-      query.setParameter("urlPath", urlPath);
-      query.setParameter("systemModuleId", Integer.parseInt(moduleId));
-      moduleUrl = query.getResultStream().findFirst().orElse(null);
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SystemModuleUrl getByUrlPath()", e);
+        List<SystemModuleUrl> sysModUrls = getByUrlPath(pathNoSuffix);
+
+        return sysModUrls;
     }
 
-    return moduleUrl;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<SystemModuleUrl> getByUrlPath(String urlPath) {
+        List<SystemModuleUrl> list;
+        try {
+            String sql = "From SystemModuleUrl smu where smu.urlPath = :urlPath";
+            Query<SystemModuleUrl> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModuleUrl.class);
+            query.setParameter("urlPath", urlPath);
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SystemModuleUrl getByUrlPath()", e);
+        }
+
+        return list;
+    }
+
+    @Override
+    public SystemModuleUrl getByModuleAndUrl(String moduleId, String urlPath) {
+        SystemModuleUrl moduleUrl = null;
+        if (GenericValidator.isBlankOrNull(moduleId)) {
+            return moduleUrl;
+        }
+        try {
+            String sql = "From SystemModuleUrl smu where smu.urlPath = :urlPath AND smu.systemModule ="
+                    + " :systemModuleId";
+            Query<SystemModuleUrl> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModuleUrl.class);
+            query.setParameter("urlPath", urlPath);
+            query.setParameter("systemModuleId", Integer.parseInt(moduleId));
+            moduleUrl = query.getResultStream().findFirst().orElse(null);
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SystemModuleUrl getByUrlPath()", e);
+        }
+
+        return moduleUrl;
+    }
 }

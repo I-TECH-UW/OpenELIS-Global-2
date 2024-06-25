@@ -14,28 +14,28 @@
 package org.openelisglobal.common.valueholder;
 
 public interface EnumValueItem {
-  // enum name
-  public String getEnumName();
+    // enum name
+    public String getEnumName();
 
-  public void setEnumName(String enumName);
+    public void setEnumName(String enumName);
 
-  // Each enumValueItem can be retrieved using a string key
-  public String getKey();
+    // Each enumValueItem can be retrieved using a string key
+    public String getKey();
 
-  public void setKey(String key);
+    public void setKey(String key);
 
-  // is enum active
-  public String getIsActive();
+    // is enum active
+    public String getIsActive();
 
-  public void setIsActive(String pActive);
+    public void setIsActive(String pActive);
 
-  // enumValueItem name
-  public String getName();
+    // enumValueItem name
+    public String getName();
 
-  public void setName(String pName);
+    public void setName(String pName);
 
-  // enumValueItem sortorder
-  public String getSortOrder();
+    // enumValueItem sortorder
+    public String getSortOrder();
 
-  public void setSortOrder(String pSortorder);
+    public void setSortOrder(String pSortorder);
 }

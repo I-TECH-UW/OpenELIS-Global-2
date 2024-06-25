@@ -17,48 +17,43 @@ import java.util.Comparator;
 import org.openelisglobal.test.service.TestServiceImpl;
 
 /**
- * @author benzd1 bug 2293 this compares objects that (AssignableTest) can contain tests and panels
- *     (combination of tests) it is used for Assign Test popups
+ * @author benzd1 bug 2293 this compares objects that (AssignableTest) can
+ *         contain tests and panels (combination of tests) it is used for Assign
+ *         Test popups
  */
 public class AssignableTestComparator implements Comparable {
-  String name;
+    String name;
 
-  // You can put the default sorting capability here
-  public int compareTo(Object obj) {
-    Test t = (Test) obj;
-    return this.name.compareTo(TestServiceImpl.getUserLocalizedTestName(t));
-  }
+    // You can put the default sorting capability here
+    public int compareTo(Object obj) {
+        Test t = (Test) obj;
+        return this.name.compareTo(TestServiceImpl.getUserLocalizedTestName(t));
+    }
 
-  public static final Comparator PANEL_TYPE_DESCRIPTION_COMPARATOR =
-      new Comparator() {
+    public static final Comparator PANEL_TYPE_DESCRIPTION_COMPARATOR = new Comparator() {
         public int compare(Object a, Object b) {
-          AssignableTest t_a = (AssignableTest) a;
-          AssignableTest t_b = (AssignableTest) b;
+            AssignableTest t_a = (AssignableTest) a;
+            AssignableTest t_b = (AssignableTest) b;
 
-          return ((t_a.getDescription().toLowerCase())
-              .compareTo(t_b.getDescription().toLowerCase()));
+            return ((t_a.getDescription().toLowerCase()).compareTo(t_b.getDescription().toLowerCase()));
         }
-      };
+    };
 
-  public static final Comparator TEST_TYPE_NAME_COMPARATOR =
-      new Comparator() {
+    public static final Comparator TEST_TYPE_NAME_COMPARATOR = new Comparator() {
         public int compare(Object a, Object b) {
-          AssignableTest t_a = (AssignableTest) a;
-          AssignableTest t_b = (AssignableTest) b;
+            AssignableTest t_a = (AssignableTest) a;
+            AssignableTest t_b = (AssignableTest) b;
 
-          return ((t_a.getAssignableTestName().toLowerCase())
-              .compareTo(t_b.getAssignableTestName().toLowerCase()));
+            return ((t_a.getAssignableTestName().toLowerCase()).compareTo(t_b.getAssignableTestName().toLowerCase()));
         }
-      };
+    };
 
-  public static final Comparator TEST_TYPE_DESCRIPTION_COMPARATOR =
-      new Comparator() {
+    public static final Comparator TEST_TYPE_DESCRIPTION_COMPARATOR = new Comparator() {
         public int compare(Object a, Object b) {
-          AssignableTest t_a = (AssignableTest) a;
-          AssignableTest t_b = (AssignableTest) b;
+            AssignableTest t_a = (AssignableTest) a;
+            AssignableTest t_b = (AssignableTest) b;
 
-          return ((t_a.getDescription().toLowerCase())
-              .compareTo(t_b.getDescription().toLowerCase()));
+            return ((t_a.getDescription().toLowerCase()).compareTo(t_b.getDescription().toLowerCase()));
         }
-      };
+    };
 }

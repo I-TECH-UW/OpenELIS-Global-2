@@ -21,69 +21,73 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class DocumentTrackDAOImpl extends BaseDAOImpl<DocumentTrack, String>
-    implements DocumentTrackDAO {
+public class DocumentTrackDAOImpl extends BaseDAOImpl<DocumentTrack, String> implements DocumentTrackDAO {
 
-  public DocumentTrackDAOImpl() {
-    super(DocumentTrack.class);
-  }
+    public DocumentTrackDAOImpl() {
+        super(DocumentTrack.class);
+    }
 
-  //
-  //	@Override
-  //	public List<DocumentTrack> getByTypeRecordAndTable(String typeId, String tableId, String
-  // recordId)
-  //			throws LIMSRuntimeException {
-  //		String sql = "From DocumentTrack dt where dt.documentTypeId = :typeId and dt.tableId =
-  // :tableId and dt.recordId = :recordId order by dt.reportTime";
-  //
-  //		try {
-  //			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-  //			query.setInteger("typeId", Integer.parseInt(typeId));
-  //			query.setInteger("tableId", Integer.parseInt(tableId));
-  //			query.setInteger("recordId", Integer.parseInt(recordId));
-  //			List<DocumentTrack> documents = query.list();
-  //			// closeSession(); // CSL remove old
-  //			return documents;
-  //
-  //		} catch (HibernateException e) {
-  //			handleException(e, "getByTypeRecordAndTable");
-  //		}
-  //
-  //		return null;
-  //	}
+    //
+    // @Override
+    // public List<DocumentTrack> getByTypeRecordAndTable(String typeId, String
+    // tableId, String
+    // recordId)
+    // throws LIMSRuntimeException {
+    // String sql = "From DocumentTrack dt where dt.documentTypeId = :typeId and
+    // dt.tableId =
+    // :tableId and dt.recordId = :recordId order by dt.reportTime";
+    //
+    // try {
+    // Query query = entityManager.unwrap(Session.class).createQuery(sql);
+    // query.setInteger("typeId", Integer.parseInt(typeId));
+    // query.setInteger("tableId", Integer.parseInt(tableId));
+    // query.setInteger("recordId", Integer.parseInt(recordId));
+    // List<DocumentTrack> documents = query.list();
+    // // closeSession(); // CSL remove old
+    // return documents;
+    //
+    // } catch (HibernateException e) {
+    // handleException(e, "getByTypeRecordAndTable");
+    // }
+    //
+    // return null;
+    // }
 
-  //	@Override
-  //	public List<DocumentTrack> getByTypeRecordAndTableAndName(String reportTypeId, String tableId,
-  // String recordId,
-  //			String name) throws LIMSRuntimeException {
-  //		String sql = "From DocumentTrack dt where dt.documentTypeId = :typeId and dt.tableId =
-  // :tableId and dt.recordId = :recordId and dt.documentName = :name order by dt.reportTime";
-  //
-  //		try {
-  //			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-  //			query.setInteger("typeId", Integer.parseInt(reportTypeId));
-  //			query.setInteger("tableId", Integer.parseInt(tableId));
-  //			query.setInteger("recordId", Integer.parseInt(recordId));
-  //			query.setString("name", name);
-  //			List<DocumentTrack> documents = query.list();
-  //			// closeSession(); // CSL remove old
-  //			return documents;
-  //
-  //		} catch (HibernateException e) {
-  //			handleException(e, "getByTypeRecordAndTableAndName");
-  //		}
-  //
-  //		return null;
-  //	}
+    // @Override
+    // public List<DocumentTrack> getByTypeRecordAndTableAndName(String
+    // reportTypeId, String tableId,
+    // String recordId,
+    // String name) throws LIMSRuntimeException {
+    // String sql = "From DocumentTrack dt where dt.documentTypeId = :typeId and
+    // dt.tableId =
+    // :tableId and dt.recordId = :recordId and dt.documentName = :name order by
+    // dt.reportTime";
+    //
+    // try {
+    // Query query = entityManager.unwrap(Session.class).createQuery(sql);
+    // query.setInteger("typeId", Integer.parseInt(reportTypeId));
+    // query.setInteger("tableId", Integer.parseInt(tableId));
+    // query.setInteger("recordId", Integer.parseInt(recordId));
+    // query.setString("name", name);
+    // List<DocumentTrack> documents = query.list();
+    // // closeSession(); // CSL remove old
+    // return documents;
+    //
+    // } catch (HibernateException e) {
+    // handleException(e, "getByTypeRecordAndTableAndName");
+    // }
+    //
+    // return null;
+    // }
 
-  //	@Override
-  //	public void insertData(DocumentTrack docTrack) {
-  //		insert(docTrack);
-  //	}
+    // @Override
+    // public void insertData(DocumentTrack docTrack) {
+    // insert(docTrack);
+    // }
 
-  //	@Override
-  //	public DocumentTrack readEntity(String id) {
-  //		return get(id).get();
-  //	}
+    // @Override
+    // public DocumentTrack readEntity(String id) {
+    // return get(id).get();
+    // }
 
 }

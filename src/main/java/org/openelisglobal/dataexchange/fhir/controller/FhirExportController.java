@@ -14,14 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/dataexport/fhir")
 public class FhirExportController {
 
-  @Autowired private DataExportService dataExportService;
-  @Autowired private DataExportTaskService dataExportTaskService;
+    @Autowired
+    private DataExportService dataExportService;
+    @Autowired
+    private DataExportTaskService dataExportTaskService;
 
-  @PostMapping
-  public void runAllDataExportTasks()
-      throws InterruptedException, ExecutionException, TimeoutException {
-    for (DataExportTask dataExportTask : dataExportTaskService.getDAO().findAll()) {
-      dataExportService.exportNewDataFromLocalToRemote(dataExportTask);
+    @PostMapping
+    public void runAllDataExportTasks() throws InterruptedException, ExecutionException, TimeoutException {
+        for (DataExportTask dataExportTask : dataExportTaskService.getDAO().findAll()) {
+            dataExportService.exportNewDataFromLocalToRemote(dataExportTask);
+        }
     }
-  }
 }

@@ -24,67 +24,64 @@ import org.openelisglobal.test.valueholder.Test;
 
 public class HPVFormMapper extends BaseProjectFormMapper implements IProjectFormMapper {
 
-  private final String projectCode = MessageUtil.getMessage("sample.entry.project.HPV");
-  private final String projectName = "HPV Testing";
+    private final String projectCode = MessageUtil.getMessage("sample.entry.project.HPV");
+    private final String projectName = "HPV Testing";
 
-  public HPVFormMapper(String projectFormId, IProjectForm form) {
-    super(projectFormId, form);
-  }
-
-  public String getProjectName() {
-    return projectName;
-  }
-
-  @Override
-  public String getProjectCode() {
-    return projectCode;
-  }
-
-  public List<Test> getAbbottOrRocheTests() {
-    List<Test> testList = new ArrayList<>();
-
-    if (projectData.isHpvTest()) {
-      CollectionUtils.addIgnoreNull(testList, createTest("HPV 16", true));
-      CollectionUtils.addIgnoreNull(testList, createTest("HPV 18", true));
-      CollectionUtils.addIgnoreNull(testList, createTest("Autre HPV HR", true));
-    }
-    return testList;
-  }
-
-  public List<Test> getGeneXpertTests() {
-    List<Test> testList = new ArrayList<>();
-
-    if (projectData.isHpvTest()) {
-      CollectionUtils.addIgnoreNull(testList, createTest("HPV 18_45", true));
-      CollectionUtils.addIgnoreNull(testList, createTest("HPV P3", true));
-      CollectionUtils.addIgnoreNull(testList, createTest("HPV P4", true));
-      CollectionUtils.addIgnoreNull(testList, createTest("HPV P5", true));
-    }
-    return testList;
-  }
-
-  @Override
-  public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
-    ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
-    if (projectData.isAbbottOrRocheAnalysis()) {
-      sItemTests.add(
-          new TypeOfSampleTests(
-              getTypeOfSample("Prélèvement cervico-vaginal"), getAbbottOrRocheTests()));
-    }
-    if (projectData.isGeneXpertAnalysis()) {
-      sItemTests.add(
-          new TypeOfSampleTests(
-              getTypeOfSample("Prélèvement cervico-vaginal"), getGeneXpertTests()));
+    public HPVFormMapper(String projectFormId, IProjectForm form) {
+        super(projectFormId, form);
     }
 
-    return sItemTests;
-  }
+    public String getProjectName() {
+        return projectName;
+    }
 
-  /**
-   * @see org.openelisglobal.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
-   */
-  @Override
-  public String getSampleCenterCode() {
-    return projectData.getARVcenterCode();
-  }
+    @Override
+    public String getProjectCode() {
+        return projectCode;
+    }
+
+    public List<Test> getAbbottOrRocheTests() {
+        List<Test> testList = new ArrayList<>();
+
+        if (projectData.isHpvTest()) {
+            CollectionUtils.addIgnoreNull(testList, createTest("HPV 16", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("HPV 18", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Autre HPV HR", true));
+        }
+        return testList;
+    }
+
+    public List<Test> getGeneXpertTests() {
+        List<Test> testList = new ArrayList<>();
+
+        if (projectData.isHpvTest()) {
+            CollectionUtils.addIgnoreNull(testList, createTest("HPV 18_45", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("HPV P3", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("HPV P4", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("HPV P5", true));
+        }
+        return testList;
+    }
+
+    @Override
+    public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
+        ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
+        if (projectData.isAbbottOrRocheAnalysis()) {
+            sItemTests.add(
+                    new TypeOfSampleTests(getTypeOfSample("Prélèvement cervico-vaginal"), getAbbottOrRocheTests()));
+        }
+        if (projectData.isGeneXpertAnalysis()) {
+            sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Prélèvement cervico-vaginal"), getGeneXpertTests()));
+        }
+
+        return sItemTests;
+    }
+
+    /**
+     * @see org.openelisglobal.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
+     */
+    @Override
+    public String getSampleCenterCode() {
+        return projectData.getARVcenterCode();
+    }
 }

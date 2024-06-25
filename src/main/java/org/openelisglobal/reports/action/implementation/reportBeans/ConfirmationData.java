@@ -17,143 +17,143 @@ import java.util.List;
 
 public class ConfirmationData {
 
-  private String organizationName;
-  private String requesterAccession;
-  private String labAccession;
-  private String sampleType;
-  private List<String> requesterTest;
-  private List<String> requesterResult;
-  private List<String> labTest;
-  private List<String> labResult;
-  private List<String> compleationDate;
-  private String requesterName;
-  private String requesterPhone;
-  private String requesterFax;
-  private String requesterEMail;
-  private String note;
-  private String receptionDate;
+    private String organizationName;
+    private String requesterAccession;
+    private String labAccession;
+    private String sampleType;
+    private List<String> requesterTest;
+    private List<String> requesterResult;
+    private List<String> labTest;
+    private List<String> labResult;
+    private List<String> compleationDate;
+    private String requesterName;
+    private String requesterPhone;
+    private String requesterFax;
+    private String requesterEMail;
+    private String note;
+    private String receptionDate;
 
-  public String getOrganizationName() {
-    return organizationName;
-  }
+    public String getOrganizationName() {
+        return organizationName;
+    }
 
-  public void setOrganizationName(String organizationName) {
-    this.organizationName = organizationName;
-  }
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
 
-  public String getRequesterAccession() {
-    return requesterAccession;
-  }
+    public String getRequesterAccession() {
+        return requesterAccession;
+    }
 
-  public void setRequesterAccession(String requesterAccession) {
-    this.requesterAccession = requesterAccession;
-  }
+    public void setRequesterAccession(String requesterAccession) {
+        this.requesterAccession = requesterAccession;
+    }
 
-  public String getLabAccession() {
-    return labAccession;
-  }
+    public String getLabAccession() {
+        return labAccession;
+    }
 
-  public void setLabAccession(String labAccession) {
-    this.labAccession = labAccession;
-  }
+    public void setLabAccession(String labAccession) {
+        this.labAccession = labAccession;
+    }
 
-  public String getSampleType() {
-    return sampleType;
-  }
+    public String getSampleType() {
+        return sampleType;
+    }
 
-  public void setSampleType(String sampleType) {
-    this.sampleType = sampleType;
-  }
+    public void setSampleType(String sampleType) {
+        this.sampleType = sampleType;
+    }
 
-  public List<String> getRequesterTest() {
-    return requesterTest;
-  }
+    public List<String> getRequesterTest() {
+        return requesterTest;
+    }
 
-  public void setRequesterTest(List<String> requesterTest) {
-    this.requesterTest = requesterTest;
-  }
+    public void setRequesterTest(List<String> requesterTest) {
+        this.requesterTest = requesterTest;
+    }
 
-  public List<String> getRequesterResult() {
-    return requesterResult;
-  }
+    public List<String> getRequesterResult() {
+        return requesterResult;
+    }
 
-  public void setRequesterResult(List<String> requesterResult) {
-    this.requesterResult = requesterResult;
-  }
+    public void setRequesterResult(List<String> requesterResult) {
+        this.requesterResult = requesterResult;
+    }
 
-  public List<String> getLabTest() {
-    return labTest;
-  }
+    public List<String> getLabTest() {
+        return labTest;
+    }
 
-  public void setLabTest(List<String> labTest) {
-    this.labTest = labTest;
-  }
+    public void setLabTest(List<String> labTest) {
+        this.labTest = labTest;
+    }
 
-  public List<String> getLabResult() {
-    return labResult;
-  }
+    public List<String> getLabResult() {
+        return labResult;
+    }
 
-  public void setLabResult(List<String> labResult) {
-    this.labResult = labResult;
-  }
+    public void setLabResult(List<String> labResult) {
+        this.labResult = labResult;
+    }
 
-  public String getRequesterName() {
-    return requesterName;
-  }
+    public String getRequesterName() {
+        return requesterName;
+    }
 
-  public void setRequesterName(String requesterName) {
-    this.requesterName = requesterName;
-  }
+    public void setRequesterName(String requesterName) {
+        this.requesterName = requesterName;
+    }
 
-  public String getRequesterPhone() {
-    return requesterPhone;
-  }
+    public String getRequesterPhone() {
+        return requesterPhone;
+    }
 
-  public void setRequesterPhone(String requesterPhone) {
-    this.requesterPhone = requesterPhone;
-  }
+    public void setRequesterPhone(String requesterPhone) {
+        this.requesterPhone = requesterPhone;
+    }
 
-  public String getRequesterFax() {
-    return requesterFax;
-  }
+    public String getRequesterFax() {
+        return requesterFax;
+    }
 
-  public void setRequesterFax(String requesterFax) {
-    this.requesterFax = requesterFax;
-  }
+    public void setRequesterFax(String requesterFax) {
+        this.requesterFax = requesterFax;
+    }
 
-  public String getRequesterEMail() {
-    return requesterEMail;
-  }
+    public String getRequesterEMail() {
+        return requesterEMail;
+    }
 
-  public void setRequesterEMail(String requesterEMail) {
-    this.requesterEMail = requesterEMail;
-  }
+    public void setRequesterEMail(String requesterEMail) {
+        this.requesterEMail = requesterEMail;
+    }
 
-  public String getNote() {
-    return note;
-  }
+    public String getNote() {
+        return note;
+    }
 
-  public void setNote(String note) {
-    this.note = note;
-  }
+    public void setNote(String note) {
+        this.note = note;
+    }
 
-  public Integer getMaxRequesterIndex() {
-    return requesterTest == null ? 0 : requesterTest.size();
-  }
+    public Integer getMaxRequesterIndex() {
+        return requesterTest == null ? 0 : requesterTest.size();
+    }
 
-  public void setReceptionDate(String receptionDate) {
-    this.receptionDate = receptionDate;
-  }
+    public void setReceptionDate(String receptionDate) {
+        this.receptionDate = receptionDate;
+    }
 
-  public String getReceptionDate() {
-    return receptionDate;
-  }
+    public String getReceptionDate() {
+        return receptionDate;
+    }
 
-  public void setCompleationDate(List<String> compleationDate) {
-    this.compleationDate = compleationDate;
-  }
+    public void setCompleationDate(List<String> compleationDate) {
+        this.compleationDate = compleationDate;
+    }
 
-  public List<String> getCompleationDate() {
-    return compleationDate;
-  }
+    public List<String> getCompleationDate() {
+        return compleationDate;
+    }
 }

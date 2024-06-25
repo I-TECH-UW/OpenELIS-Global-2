@@ -6,12 +6,12 @@ import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.renamemethod.valueholder.RenameMethod;
 
 public interface RenameMethodService
-    extends BaseObjectService<org.openelisglobal.renamemethod.valueholder.RenameMethod, String> {
-  List<RenameMethod> getMethods(String filter);
+        extends BaseObjectService<org.openelisglobal.renamemethod.valueholder.RenameMethod, String> {
+    List<RenameMethod> getMethods(String filter);
 
-  List<RenameMethod> getAllInActiveMethods();
+    List<RenameMethod> getAllInActiveMethods();
 
-  void refreshNames();
+    void refreshNames();
 
-  Localization getLocalizationForRenameMethod(String id);
+    Localization getLocalizationForRenameMethod(String id);
 }

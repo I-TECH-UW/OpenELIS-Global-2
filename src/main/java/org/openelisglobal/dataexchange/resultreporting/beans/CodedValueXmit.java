@@ -14,40 +14,40 @@
 package org.openelisglobal.dataexchange.resultreporting.beans;
 
 public class CodedValueXmit {
-  private String text;
-  private String code;
-  private String codeSystem;
-  private String codeName;
+    private String text;
+    private String code;
+    private String codeSystem;
+    private String codeName;
 
-  public String getCodeSystem() {
-    return codeSystem;
-  }
+    public String getCodeSystem() {
+        return codeSystem;
+    }
 
-  public void setCodeSystem(String codeSystem) {
-    this.codeSystem = codeSystem;
-  }
+    public void setCodeSystem(String codeSystem) {
+        this.codeSystem = codeSystem;
+    }
 
-  public String getCodeName() {
-    return codeName;
-  }
+    public String getCodeName() {
+        return codeName;
+    }
 
-  public void setCodeName(String codeName) {
-    this.codeName = codeName;
-  }
+    public void setCodeName(String codeName) {
+        this.codeName = codeName;
+    }
 
-  public String getText() {
-    return text;
-  }
+    public String getText() {
+        return text;
+    }
 
-  public void setText(String text) {
-    this.text = text;
-  }
+    public void setText(String text) {
+        this.text = text;
+    }
 
-  public String getCode() {
-    return code;
-  }
+    public String getCode() {
+        return code;
+    }
 
-  public void setCode(String code) {
-    this.code = code;
-  }
+    public void setCode(String code) {
+        this.code = code;
+    }
 }

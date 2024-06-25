@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class LabelDAOImpl extends BaseDAOImpl<Label, String> implements LabelDAO {
-  LabelDAOImpl() {
-    super(Label.class);
-  }
+    LabelDAOImpl() {
+        super(Label.class);
+    }
 }

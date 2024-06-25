@@ -13,61 +13,59 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ExternalConnectionServiceImpl
-    extends AuditableBaseObjectServiceImpl<ExternalConnection, Integer>
-    implements ExternalConnectionService {
+public class ExternalConnectionServiceImpl extends AuditableBaseObjectServiceImpl<ExternalConnection, Integer>
+        implements ExternalConnectionService {
 
-  @Autowired protected ExternalConnectionDAO baseObjectDAO;
+    @Autowired
+    protected ExternalConnectionDAO baseObjectDAO;
 
-  @Autowired
-  private ExternalConnectionAuthenticationDataService externalConnectionAuthenticationDataService;
+    @Autowired
+    private ExternalConnectionAuthenticationDataService externalConnectionAuthenticationDataService;
 
-  @Autowired private ExternalConnectionContactService externalConnectionContactService;
+    @Autowired
+    private ExternalConnectionContactService externalConnectionContactService;
 
-  ExternalConnectionServiceImpl() {
-    super(ExternalConnection.class);
-    this.auditTrailLog = false;
-  }
-
-  @Override
-  protected ExternalConnectionDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
-
-  @Override
-  @Transactional
-  public void createNewExternalConnection(
-      Map<AuthType, ExternalConnectionAuthenticationData> externalConnectionAuthData,
-      List<ExternalConnectionContact> externalConnectionContacts,
-      ExternalConnection externalConnection) {
-    Integer id = baseObjectDAO.insert(externalConnection);
-    externalConnection = baseObjectDAO.get(id).get();
-    for (ExternalConnectionAuthenticationData authData : externalConnectionAuthData.values()) {
-      authData.setExternalConnection(externalConnection);
-      externalConnectionAuthenticationDataService.insert(authData);
+    ExternalConnectionServiceImpl() {
+        super(ExternalConnection.class);
+        this.auditTrailLog = false;
     }
 
-    for (ExternalConnectionContact externalConnectionContact : externalConnectionContacts) {
-      externalConnectionContact.setExternalConnection(externalConnection);
-      externalConnectionContactService.insert(externalConnectionContact);
+    @Override
+    protected ExternalConnectionDAO getBaseObjectDAO() {
+        return baseObjectDAO;
     }
-  }
 
-  @Override
-  @Transactional
-  public void updateExternalConnection(
-      Map<AuthType, ExternalConnectionAuthenticationData> externalConnectionAuthData,
-      List<ExternalConnectionContact> externalConnectionContacts,
-      ExternalConnection externalConnection) {
-    ExternalConnection updatedExternalConnection = baseObjectDAO.update(externalConnection);
+    @Override
+    @Transactional
+    public void createNewExternalConnection(
+            Map<AuthType, ExternalConnectionAuthenticationData> externalConnectionAuthData,
+            List<ExternalConnectionContact> externalConnectionContacts, ExternalConnection externalConnection) {
+        Integer id = baseObjectDAO.insert(externalConnection);
+        externalConnection = baseObjectDAO.get(id).get();
+        for (ExternalConnectionAuthenticationData authData : externalConnectionAuthData.values()) {
+            authData.setExternalConnection(externalConnection);
+            externalConnectionAuthenticationDataService.insert(authData);
+        }
 
-    for (ExternalConnectionAuthenticationData authData : externalConnectionAuthData.values()) {
-      authData.setExternalConnection(updatedExternalConnection);
-      externalConnectionAuthenticationDataService.save(authData);
+        for (ExternalConnectionContact externalConnectionContact : externalConnectionContacts) {
+            externalConnectionContact.setExternalConnection(externalConnection);
+            externalConnectionContactService.insert(externalConnectionContact);
+        }
     }
-    for (ExternalConnectionContact externalConnectionContact : externalConnectionContacts) {
-      externalConnectionContact.setExternalConnection(updatedExternalConnection);
-      externalConnectionContactService.save(externalConnectionContact);
+
+    @Override
+    @Transactional
+    public void updateExternalConnection(Map<AuthType, ExternalConnectionAuthenticationData> externalConnectionAuthData,
+            List<ExternalConnectionContact> externalConnectionContacts, ExternalConnection externalConnection) {
+        ExternalConnection updatedExternalConnection = baseObjectDAO.update(externalConnection);
+
+        for (ExternalConnectionAuthenticationData authData : externalConnectionAuthData.values()) {
+            authData.setExternalConnection(updatedExternalConnection);
+            externalConnectionAuthenticationDataService.save(authData);
+        }
+        for (ExternalConnectionContact externalConnectionContact : externalConnectionContacts) {
+            externalConnectionContact.setExternalConnection(updatedExternalConnection);
+            externalConnectionContactService.save(externalConnectionContact);
+        }
     }
-  }
 }

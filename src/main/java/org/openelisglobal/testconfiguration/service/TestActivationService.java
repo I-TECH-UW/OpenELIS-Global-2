@@ -6,9 +6,6 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 public interface TestActivationService {
 
-  void updateAll(
-      List<Test> deactivateTests,
-      List<Test> activateTests,
-      List<TypeOfSample> deactivateSampleTypes,
-      List<TypeOfSample> activateSampleTypes);
+    void updateAll(List<Test> deactivateTests, List<Test> activateTests, List<TypeOfSample> deactivateSampleTypes,
+            List<TypeOfSample> activateSampleTypes);
 }

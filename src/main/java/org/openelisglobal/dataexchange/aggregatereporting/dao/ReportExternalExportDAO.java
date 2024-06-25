@@ -20,35 +20,30 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportExternalExport;
 
 public interface ReportExternalExportDAO extends BaseDAO<ReportExternalExport, String> {
-  public List<ReportExternalExport> getRecalculateReportExports(String reportQueueTypeId)
-      throws LIMSRuntimeException;
+    public List<ReportExternalExport> getRecalculateReportExports(String reportQueueTypeId) throws LIMSRuntimeException;
 
-  public List<ReportExternalExport> getUnsentReportExports(String reportQueueTypeId)
-      throws LIMSRuntimeException;
+    public List<ReportExternalExport> getUnsentReportExports(String reportQueueTypeId) throws LIMSRuntimeException;
 
-  public ReportExternalExport getLatestSentReportExport(String reportQueueTypeId)
-      throws LIMSRuntimeException;
+    public ReportExternalExport getLatestSentReportExport(String reportQueueTypeId) throws LIMSRuntimeException;
 
-  public ReportExternalExport getLatestEventReportExport(String reportQueueTypeId)
-      throws LIMSRuntimeException;
+    public ReportExternalExport getLatestEventReportExport(String reportQueueTypeId) throws LIMSRuntimeException;
 
-  public List<ReportExternalExport> getReportsInDateRange(
-      Timestamp lower, Timestamp upper, String reportQueueTypeId) throws LIMSRuntimeException;
+    public List<ReportExternalExport> getReportsInDateRange(Timestamp lower, Timestamp upper, String reportQueueTypeId)
+            throws LIMSRuntimeException;
 
-  //	public void insertReportExternalExport(ReportExternalExport report) throws
-  // LIMSRuntimeException;
+    // public void insertReportExternalExport(ReportExternalExport report) throws
+    // LIMSRuntimeException;
 
-  //	public void updateReportExternalExport(ReportExternalExport report) throws
-  // LIMSRuntimeException;
+    // public void updateReportExternalExport(ReportExternalExport report) throws
+    // LIMSRuntimeException;
 
-  public Timestamp getLastSentTimestamp() throws LIMSRuntimeException;
+    public Timestamp getLastSentTimestamp() throws LIMSRuntimeException;
 
-  public Timestamp getLastCollectedTimestamp() throws LIMSRuntimeException;
+    public Timestamp getLastCollectedTimestamp() throws LIMSRuntimeException;
 
-  public ReportExternalExport getReportByEventDateAndType(ReportExternalExport report)
-      throws LIMSRuntimeException;
+    public ReportExternalExport getReportByEventDateAndType(ReportExternalExport report) throws LIMSRuntimeException;
 
-  public ReportExternalExport loadReport(ReportExternalExport report) throws LIMSRuntimeException;
+    public ReportExternalExport loadReport(ReportExternalExport report) throws LIMSRuntimeException;
 
-  public ReportExternalExport readReportExternalExport(String idString) throws LIMSRuntimeException;
+    public ReportExternalExport readReportExternalExport(String idString) throws LIMSRuntimeException;
 }

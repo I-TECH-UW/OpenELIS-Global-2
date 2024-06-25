@@ -6,5 +6,5 @@ import org.openelisglobal.patient.valueholder.PatientContact;
 
 public interface PatientContactDAO extends BaseDAO<PatientContact, String> {
 
-  List<PatientContact> getForPatient(String patientId);
+    List<PatientContact> getForPatient(String patientId);
 }

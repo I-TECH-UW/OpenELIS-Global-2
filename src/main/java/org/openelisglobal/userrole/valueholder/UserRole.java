@@ -20,78 +20,78 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class UserRole extends BaseObject<UserRolePK> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private UserRolePK compoundId = new UserRolePK();
-  private String userName;
-  private String roleName;
-  private String uniqueIdentifyer;
+    private UserRolePK compoundId = new UserRolePK();
+    private String userName;
+    private String roleName;
+    private String uniqueIdentifyer;
 
-  public void setCompoundId(UserRolePK compoundId) {
-    uniqueIdentifyer = null;
-    this.compoundId = compoundId;
-  }
-
-  public UserRolePK getCompoundId() {
-    return compoundId;
-  }
-
-  public String getStringId() {
-    return compoundId == null ? "0" : compoundId.getSystemUserId() + compoundId.getRoleId();
-  }
-
-  public void setSystemUserId(String systemUserId) {
-    uniqueIdentifyer = null;
-    compoundId.setSystemUserId(systemUserId);
-  }
-
-  public String getSystemUserId() {
-    return compoundId == null ? null : compoundId.getSystemUserId();
-  }
-
-  public void setRoleId(String roleId) {
-    uniqueIdentifyer = null;
-    compoundId.setRoleId(roleId);
-  }
-
-  public String getUserName() {
-    return userName;
-  }
-
-  public void setUserName(String userName) {
-    this.userName = userName;
-  }
-
-  public String getRoleName() {
-    return roleName;
-  }
-
-  public void setRoleName(String roleName) {
-    this.roleName = roleName;
-  }
-
-  public String getRoleId() {
-    return compoundId == null ? null : compoundId.getRoleId();
-  }
-
-  public void setUniqueIdentifyer(String uniqueIdentifyer) {
-    this.uniqueIdentifyer = uniqueIdentifyer;
-  }
-
-  public String getUniqueIdentifyer() {
-    if (GenericValidator.isBlankOrNull(uniqueIdentifyer)) {
-      uniqueIdentifyer = getSystemUserId() + "-" + getRoleId();
+    public void setCompoundId(UserRolePK compoundId) {
+        uniqueIdentifyer = null;
+        this.compoundId = compoundId;
     }
-    return uniqueIdentifyer;
-  }
 
-  @Override
-  public void setId(UserRolePK id) {
-    setCompoundId(id);
-  }
+    public UserRolePK getCompoundId() {
+        return compoundId;
+    }
 
-  @Override
-  public UserRolePK getId() {
-    return getCompoundId();
-  }
+    public String getStringId() {
+        return compoundId == null ? "0" : compoundId.getSystemUserId() + compoundId.getRoleId();
+    }
+
+    public void setSystemUserId(String systemUserId) {
+        uniqueIdentifyer = null;
+        compoundId.setSystemUserId(systemUserId);
+    }
+
+    public String getSystemUserId() {
+        return compoundId == null ? null : compoundId.getSystemUserId();
+    }
+
+    public void setRoleId(String roleId) {
+        uniqueIdentifyer = null;
+        compoundId.setRoleId(roleId);
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public String getRoleId() {
+        return compoundId == null ? null : compoundId.getRoleId();
+    }
+
+    public void setUniqueIdentifyer(String uniqueIdentifyer) {
+        this.uniqueIdentifyer = uniqueIdentifyer;
+    }
+
+    public String getUniqueIdentifyer() {
+        if (GenericValidator.isBlankOrNull(uniqueIdentifyer)) {
+            uniqueIdentifyer = getSystemUserId() + "-" + getRoleId();
+        }
+        return uniqueIdentifyer;
+    }
+
+    @Override
+    public void setId(UserRolePK id) {
+        setCompoundId(id);
+    }
+
+    @Override
+    public UserRolePK getId() {
+        return getCompoundId();
+    }
 }

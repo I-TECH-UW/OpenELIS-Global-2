@@ -39,115 +39,107 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Component
 @Transactional
-public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String>
-    implements SampleProjectDAO {
+public class SampleProjectDAOImpl extends BaseDAOImpl<SampleProject, String> implements SampleProjectDAO {
 
-  public SampleProjectDAOImpl() {
-    super(SampleProject.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public void getData(SampleProject sampleProj) throws LIMSRuntimeException {
-    try {
-      SampleProject data =
-          entityManager.unwrap(Session.class).get(SampleProject.class, sampleProj.getId());
-      if (data != null) {
-        PropertyUtils.copyProperties(sampleProj, data);
-      } else {
-        sampleProj.setId(null);
-      }
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SampleProject getData()", e);
-    }
-  }
-
-  public SampleProject readSampleProject(String idString) {
-    SampleProject sp = null;
-    try {
-      sp = entityManager.unwrap(Session.class).get(SampleProject.class, idString);
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SampleProject readSampleProject()", e);
+    public SampleProjectDAOImpl() {
+        super(SampleProject.class);
     }
 
-    return sp;
-  }
-
-  // AIS - bugzilla 1851
-  // Diane - bugzilla 1920
-  @Override
-  @Transactional(readOnly = true)
-  public List<SampleProject> getSampleProjectsByProjId(String projId) throws LIMSRuntimeException {
-    List<SampleProject> sampleProjects = new ArrayList<>();
-
-    try {
-      String sql = "from SampleProject sp where sp.project = :param";
-      Query<SampleProject> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SampleProject.class);
-      query.setParameter("param", projId);
-
-      sampleProjects = query.list();
-
-      return sampleProjects;
-
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SampleProjectDAO getSampleProjectsByProjId()", e);
-    }
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public SampleProject getSampleProjectBySampleId(String id) throws LIMSRuntimeException {
-    List<SampleProject> sampleProjects = null;
-
-    try {
-      String sql = "from SampleProject sp where sp.sample.id = :sampleId";
-      Query<SampleProject> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SampleProject.class);
-      query.setParameter("sampleId", Integer.parseInt(id));
-
-      sampleProjects = query.list();
-
-    } catch (RuntimeException e) {
-      handleException(e, "getSampleProjectBySampleId");
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(SampleProject sampleProj) throws LIMSRuntimeException {
+        try {
+            SampleProject data = entityManager.unwrap(Session.class).get(SampleProject.class, sampleProj.getId());
+            if (data != null) {
+                PropertyUtils.copyProperties(sampleProj, data);
+            } else {
+                sampleProj.setId(null);
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SampleProject getData()", e);
+        }
     }
 
-    return (sampleProjects == null || sampleProjects.isEmpty()) ? null : sampleProjects.get(0);
-  }
+    public SampleProject readSampleProject(String idString) {
+        SampleProject sp = null;
+        try {
+            sp = entityManager.unwrap(Session.class).get(SampleProject.class, idString);
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SampleProject readSampleProject()", e);
+        }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<SampleProject> getByOrganizationProjectAndReceivedOnRange(
-      String organizationId, String projectName, Date lowReceivedDate, Date highReceivedDate)
-      throws LIMSRuntimeException {
-    List<SampleProject> list = null;
-    try {
-      String sql =
-          "FROM SampleProject as sp  WHERE sp.project.projectName = :projectName AND sp.sample.id"
-              + " IN (SELECT so.sample.id FROM SampleOrganization as so WHERE"
-              + " so.sample.receivedTimestamp >= :dateLow AND so.sample.receivedTimestamp <="
-              + " :dateHigh  AND   so.organization.id = :organizationId ) ";
-      Query<SampleProject> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SampleProject.class);
-
-      query.setParameter("projectName", projectName);
-      query.setParameter("dateLow", lowReceivedDate);
-      query.setParameter("dateHigh", highReceivedDate);
-      query.setParameter("organizationId", Integer.valueOf(organizationId));
-      list = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException(
-          "Exception occurred in SampleNumberDAOImpl.getByOrganizationProjectAndReceivedOnRange",
-          e);
+        return sp;
     }
 
-    return list;
-  }
+    // AIS - bugzilla 1851
+    // Diane - bugzilla 1920
+    @Override
+    @Transactional(readOnly = true)
+    public List<SampleProject> getSampleProjectsByProjId(String projId) throws LIMSRuntimeException {
+        List<SampleProject> sampleProjects = new ArrayList<>();
+
+        try {
+            String sql = "from SampleProject sp where sp.project = :param";
+            Query<SampleProject> query = entityManager.unwrap(Session.class).createQuery(sql, SampleProject.class);
+            query.setParameter("param", projId);
+
+            sampleProjects = query.list();
+
+            return sampleProjects;
+
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SampleProjectDAO getSampleProjectsByProjId()", e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SampleProject getSampleProjectBySampleId(String id) throws LIMSRuntimeException {
+        List<SampleProject> sampleProjects = null;
+
+        try {
+            String sql = "from SampleProject sp where sp.sample.id = :sampleId";
+            Query<SampleProject> query = entityManager.unwrap(Session.class).createQuery(sql, SampleProject.class);
+            query.setParameter("sampleId", Integer.parseInt(id));
+
+            sampleProjects = query.list();
+
+        } catch (RuntimeException e) {
+            handleException(e, "getSampleProjectBySampleId");
+        }
+
+        return (sampleProjects == null || sampleProjects.isEmpty()) ? null : sampleProjects.get(0);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SampleProject> getByOrganizationProjectAndReceivedOnRange(String organizationId, String projectName,
+            Date lowReceivedDate, Date highReceivedDate) throws LIMSRuntimeException {
+        List<SampleProject> list = null;
+        try {
+            String sql = "FROM SampleProject as sp  WHERE sp.project.projectName = :projectName AND sp.sample.id"
+                    + " IN (SELECT so.sample.id FROM SampleOrganization as so WHERE"
+                    + " so.sample.receivedTimestamp >= :dateLow AND so.sample.receivedTimestamp <="
+                    + " :dateHigh  AND   so.organization.id = :organizationId ) ";
+            Query<SampleProject> query = entityManager.unwrap(Session.class).createQuery(sql, SampleProject.class);
+
+            query.setParameter("projectName", projectName);
+            query.setParameter("dateLow", lowReceivedDate);
+            query.setParameter("dateHigh", highReceivedDate);
+            query.setParameter("organizationId", Integer.valueOf(organizationId));
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException(
+                    "Exception occurred in SampleNumberDAOImpl.getByOrganizationProjectAndReceivedOnRange", e);
+        }
+
+        return list;
+    }
 }

@@ -25,59 +25,57 @@ import org.openelisglobal.reports.action.implementation.reportBeans.WHONETRoutin
 
 public abstract class WHONETCSVRoutineSampleExportReport extends WHONETCSVRoutineExportReport {
 
-  protected String lowDateStr;
-  protected String highDateStr;
-  protected List<Object> reportItems;
-  protected int iReportItem = -1;
+    protected String lowDateStr;
+    protected String highDateStr;
+    protected List<Object> reportItems;
+    protected int iReportItem = -1;
 
-  protected WHONETRoutineColumnBuilder WHONETcsvRoutineColumnBuilder;
-  protected DateRange dateRange;
+    protected WHONETRoutineColumnBuilder WHONETcsvRoutineColumnBuilder;
+    protected DateRange dateRange;
 
-  @Override
-  public String getResponseHeaderName() {
-    return "Content-Disposition";
-  }
-
-  @Override
-  public String getResponseHeaderContent() {
-    return "attachment;filename=" + getReportFileName() + ".csv";
-  }
-
-  /**
-   * Do everything necessary for to generate a CSV text file.
-   *
-   * @param reportDefinitionName full path to the definition for the report.
-   * @throws IOException
-   * @throws UnsupportedEncodingException
-   * @throws JRException
-   * @throws SQLException
-   * @throws IllegalStateException
-   * @throws ParseException
-   * @see
-   *     org.openelisglobal.reports.action.implementation.IReportCreator#runReport(java.lang.String,
-   *     Response)
-   */
-  @Override
-  public byte[] runReport()
-      throws UnsupportedEncodingException, IOException, IllegalStateException, SQLException,
-          JRException, ParseException {
-    if (errorFound) {
-      return super.runReport();
+    @Override
+    public String getResponseHeaderName() {
+        return "Content-Disposition";
     }
 
-    ByteArrayOutputStream buffer = new ByteArrayOutputStream(100000);
-    buffer.write(WHONETcsvRoutineColumnBuilder.getColumnNamesLine().getBytes("windows-1252"));
-
-    writeResultsToBuffer(buffer);
-    WHONETcsvRoutineColumnBuilder.closeResultSet();
-
-    return buffer.toByteArray();
-  }
-
-  protected void writeResultsToBuffer(ByteArrayOutputStream buffer)
-      throws IOException, UnsupportedEncodingException, SQLException, ParseException {
-    while (WHONETcsvRoutineColumnBuilder.next()) {
-      buffer.write(WHONETcsvRoutineColumnBuilder.nextLine().getBytes("windows-1252"));
+    @Override
+    public String getResponseHeaderContent() {
+        return "attachment;filename=" + getReportFileName() + ".csv";
     }
-  }
+
+    /**
+     * Do everything necessary for to generate a CSV text file.
+     *
+     * @param reportDefinitionName full path to the definition for the report.
+     * @throws IOException
+     * @throws UnsupportedEncodingException
+     * @throws JRException
+     * @throws SQLException
+     * @throws IllegalStateException
+     * @throws ParseException
+     * @see org.openelisglobal.reports.action.implementation.IReportCreator#runReport(java.lang.String,
+     *      Response)
+     */
+    @Override
+    public byte[] runReport() throws UnsupportedEncodingException, IOException, IllegalStateException, SQLException,
+            JRException, ParseException {
+        if (errorFound) {
+            return super.runReport();
+        }
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream(100000);
+        buffer.write(WHONETcsvRoutineColumnBuilder.getColumnNamesLine().getBytes("windows-1252"));
+
+        writeResultsToBuffer(buffer);
+        WHONETcsvRoutineColumnBuilder.closeResultSet();
+
+        return buffer.toByteArray();
+    }
+
+    protected void writeResultsToBuffer(ByteArrayOutputStream buffer)
+            throws IOException, UnsupportedEncodingException, SQLException, ParseException {
+        while (WHONETcsvRoutineColumnBuilder.next()) {
+            buffer.write(WHONETcsvRoutineColumnBuilder.nextLine().getBytes("windows-1252"));
+        }
+    }
 }

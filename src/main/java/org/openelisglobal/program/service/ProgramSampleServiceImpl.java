@@ -8,20 +8,21 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ProgramSampleServiceImpl extends AuditableBaseObjectServiceImpl<ProgramSample, Integer>
-    implements ProgramSampleService {
-  @Autowired protected ProgramSampleDAO baseObjectDAO;
+        implements ProgramSampleService {
+    @Autowired
+    protected ProgramSampleDAO baseObjectDAO;
 
-  ProgramSampleServiceImpl() {
-    super(ProgramSample.class);
-  }
+    ProgramSampleServiceImpl() {
+        super(ProgramSample.class);
+    }
 
-  @Override
-  protected ProgramSampleDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected ProgramSampleDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-  @Override
-  public ProgramSample getProgrammeSampleBySample(Integer sampleId, String programName) {
-    return getBaseObjectDAO().getProgrammeSampleBySample(sampleId, programName);
-  }
+    @Override
+    public ProgramSample getProgrammeSampleBySample(Integer sampleId, String programName) {
+        return getBaseObjectDAO().getProgrammeSampleBySample(sampleId, programName);
+    }
 }

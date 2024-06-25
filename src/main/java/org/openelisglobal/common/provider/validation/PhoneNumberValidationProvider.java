@@ -22,34 +22,36 @@ import org.openelisglobal.common.servlet.validation.AjaxServlet;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.owasp.encoder.Encode;
 
-/** The QuickEntryAccessionNumberValidationProvider class is used to validate, via AJAX. */
+/**
+ * The QuickEntryAccessionNumberValidationProvider class is used to validate,
+ * via AJAX.
+ */
 public class PhoneNumberValidationProvider extends BaseValidationProvider {
 
-  public PhoneNumberValidationProvider() {
-    super();
-  }
-
-  public PhoneNumberValidationProvider(AjaxServlet ajaxServlet) {
-    this.ajaxServlet = ajaxServlet;
-  }
-
-  @Override
-  public void processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-
-    String field = request.getParameter("fieldId");
-    String phoneNumber = request.getParameter("value");
-
-    PhoneNumberService numberService = new PhoneNumberService();
-    boolean valid = numberService.validatePhoneNumber(phoneNumber);
-
-    String returnData = VALID;
-    if (!valid) {
-      returnData =
-          MessageUtil.getMessage("phone.number.format.error", PhoneNumberService.getPhoneFormat());
+    public PhoneNumberValidationProvider() {
+        super();
     }
 
-    response.setCharacterEncoding("UTF-8");
-    ajaxServlet.sendData(Encode.forXmlContent(field), returnData, request, response);
-  }
+    public PhoneNumberValidationProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
+
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String field = request.getParameter("fieldId");
+        String phoneNumber = request.getParameter("value");
+
+        PhoneNumberService numberService = new PhoneNumberService();
+        boolean valid = numberService.validatePhoneNumber(phoneNumber);
+
+        String returnData = VALID;
+        if (!valid) {
+            returnData = MessageUtil.getMessage("phone.number.format.error", PhoneNumberService.getPhoneFormat());
+        }
+
+        response.setCharacterEncoding("UTF-8");
+        ajaxServlet.sendData(Encode.forXmlContent(field), returnData, request, response);
+    }
 }

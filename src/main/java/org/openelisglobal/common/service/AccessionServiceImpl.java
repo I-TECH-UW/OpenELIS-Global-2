@@ -12,73 +12,65 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AccessionServiceImpl implements AccessionService {
 
-  @Autowired private AccessionDAO accessionDAO;
+    @Autowired
+    private AccessionDAO accessionDAO;
 
-  @Override
-  public long getNextNumberNoIncrement(String prefix, AccessionFormat accessionFormat) {
-    long value;
-    if (accessionDAO.exists(new AccessionIdentity(prefix, accessionFormat))) {
-      value = accessionDAO.getNextNumberNoIncrement(prefix, accessionFormat);
-    } else {
-      value = createAccessionInfo(prefix, accessionFormat, 0L).getCurVal();
+    @Override
+    public long getNextNumberNoIncrement(String prefix, AccessionFormat accessionFormat) {
+        long value;
+        if (accessionDAO.exists(new AccessionIdentity(prefix, accessionFormat))) {
+            value = accessionDAO.getNextNumberNoIncrement(prefix, accessionFormat);
+        } else {
+            value = createAccessionInfo(prefix, accessionFormat, 0L).getCurVal();
+        }
+        return value;
     }
-    return value;
-  }
 
-  @Override
-  public long getNextNumberIncrement(String prefix, AccessionFormat accessionFormat) {
-    long value;
-    if (accessionDAO.exists(new AccessionIdentity(prefix, accessionFormat))) {
-      value = accessionDAO.getNextNumberIncrement(prefix, accessionFormat);
-    } else {
-      value = createAccessionInfo(prefix, accessionFormat, 1L).getCurVal();
+    @Override
+    public long getNextNumberIncrement(String prefix, AccessionFormat accessionFormat) {
+        long value;
+        if (accessionDAO.exists(new AccessionIdentity(prefix, accessionFormat))) {
+            value = accessionDAO.getNextNumberIncrement(prefix, accessionFormat);
+        } else {
+            value = createAccessionInfo(prefix, accessionFormat, 1L).getCurVal();
+        }
+        return value;
     }
-    return value;
-  }
 
-  @Override
-  public long getNextNumberIncrement(AccessionIdentity accessionIdentity) {
-    long value;
-    if (accessionDAO.exists(accessionIdentity)) {
-      value =
-          accessionDAO.getNextNumberIncrement(
-              accessionIdentity.getPrefix(), accessionIdentity.getType());
-    } else {
-      value =
-          createAccessionInfo(accessionIdentity.getPrefix(), accessionIdentity.getType(), 1L)
-              .getCurVal();
+    @Override
+    public long getNextNumberIncrement(AccessionIdentity accessionIdentity) {
+        long value;
+        if (accessionDAO.exists(accessionIdentity)) {
+            value = accessionDAO.getNextNumberIncrement(accessionIdentity.getPrefix(), accessionIdentity.getType());
+        } else {
+            value = createAccessionInfo(accessionIdentity.getPrefix(), accessionIdentity.getType(), 1L).getCurVal();
+        }
+        return value;
     }
-    return value;
-  }
 
-  @Override
-  public long getNextNumberNoIncrement(AccessionIdentity accessionIdentity) {
-    long value;
-    if (accessionDAO.exists(accessionIdentity)) {
-      value =
-          accessionDAO.getNextNumberIncrement(
-              accessionIdentity.getPrefix(), accessionIdentity.getType());
-    } else {
-      value =
-          createAccessionInfo(accessionIdentity.getPrefix(), accessionIdentity.getType(), 0L)
-              .getCurVal();
+    @Override
+    public long getNextNumberNoIncrement(AccessionIdentity accessionIdentity) {
+        long value;
+        if (accessionDAO.exists(accessionIdentity)) {
+            value = accessionDAO.getNextNumberIncrement(accessionIdentity.getPrefix(), accessionIdentity.getType());
+        } else {
+            value = createAccessionInfo(accessionIdentity.getPrefix(), accessionIdentity.getType(), 0L).getCurVal();
+        }
+        return value;
     }
-    return value;
-  }
 
-  private AccessionNumberInfo createAccessionInfo(
-      String prefix, AccessionFormat accessionFormat, long value) {
-    AccessionNumberInfo info = new AccessionNumberInfo();
-    info.setAccessionIdentity(new AccessionIdentity(prefix, accessionFormat));
-    info.setCurVal(value);
+    private AccessionNumberInfo createAccessionInfo(String prefix, AccessionFormat accessionFormat, long value) {
+        AccessionNumberInfo info = new AccessionNumberInfo();
+        info.setAccessionIdentity(new AccessionIdentity(prefix, accessionFormat));
+        info.setCurVal(value);
 
-    return accessionDAO.save(info);
-  }
+        return accessionDAO.save(info);
+    }
 
-  @Override
-  public void setCurVal(String prefix, AccessionFormat accessionFormat, long curVal) {
-    AccessionNumberInfo info = accessionDAO.get(new AccessionIdentity(prefix, accessionFormat));
-    info.setCurVal(curVal);
-    accessionDAO.save(info);
-  }
+    @Override
+    public void setCurVal(String prefix, AccessionFormat accessionFormat, long curVal) {
+        AccessionNumberInfo info = accessionDAO.get(new AccessionIdentity(prefix, accessionFormat));
+        info.setCurVal(curVal);
+        accessionDAO.save(info);
+    }
 }

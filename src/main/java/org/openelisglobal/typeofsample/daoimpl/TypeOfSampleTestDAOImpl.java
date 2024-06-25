@@ -30,151 +30,147 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, String>
-    implements TypeOfSampleTestDAO {
+public class TypeOfSampleTestDAOImpl extends BaseDAOImpl<TypeOfSampleTest, String> implements TypeOfSampleTestDAO {
 
-  public TypeOfSampleTestDAOImpl() {
-    super(TypeOfSampleTest.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public void getData(TypeOfSampleTest typeOfSample) throws LIMSRuntimeException {
-    try {
-      TypeOfSampleTest tos =
-          entityManager.unwrap(Session.class).get(TypeOfSampleTest.class, typeOfSample.getId());
-      if (tos != null) {
-        PropertyUtils.copyProperties(typeOfSample, tos);
-      } else {
-        typeOfSample.setId(null);
-      }
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in TypeOfSampleTest getData()", e);
-    }
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<TypeOfSampleTest> getAllTypeOfSampleTests() throws LIMSRuntimeException {
-
-    List<TypeOfSampleTest> list;
-
-    try {
-      String sql = "from TypeOfSampleTest";
-      Query<TypeOfSampleTest> query =
-          entityManager.unwrap(Session.class).createQuery(sql, TypeOfSampleTest.class);
-      // query.setMaxResults(10);
-      // query.setFirstResult(3);
-      list = query.list();
-    } catch (RuntimeException e) {
-
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in TypeOfSampleTest getAllTypeOfSamples()", e);
+    public TypeOfSampleTestDAOImpl() {
+        super(TypeOfSampleTest.class);
     }
 
-    return list;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(TypeOfSampleTest typeOfSample) throws LIMSRuntimeException {
+        try {
+            TypeOfSampleTest tos = entityManager.unwrap(Session.class).get(TypeOfSampleTest.class,
+                    typeOfSample.getId());
+            if (tos != null) {
+                PropertyUtils.copyProperties(typeOfSample, tos);
+            } else {
+                typeOfSample.setId(null);
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<TypeOfSampleTest> getPageOfTypeOfSampleTests(int startingRecNo)
-      throws LIMSRuntimeException {
-    List<TypeOfSampleTest> list;
-    try {
-      // calculate maxRow to be one more than the page size
-      int endingRecNo = startingRecNo + DEFAULT_PAGE_SIZE + 1;
-
-      String sql = "from TypeOfSampleTest t order by t.typeOfSampleId, t.testId";
-      Query<TypeOfSampleTest> query =
-          entityManager.unwrap(Session.class).createQuery(sql, TypeOfSampleTest.class);
-      query.setFirstResult(startingRecNo - 1);
-      query.setMaxResults(endingRecNo - 1);
-      list = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in TypeOfSampleTest getPageOfTypeOfSamples()", e);
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in TypeOfSampleTest getData()", e);
+        }
     }
 
-    return list;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<TypeOfSampleTest> getAllTypeOfSampleTests() throws LIMSRuntimeException {
 
-  public TypeOfSampleTest readTypeOfSample(String idString) {
-    TypeOfSampleTest tos;
-    try {
-      tos = entityManager.unwrap(Session.class).get(TypeOfSampleTest.class, idString);
-    } catch (RuntimeException e) {
+        List<TypeOfSampleTest> list;
 
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in TypeOfSampleTest readTypeOfSample()", e);
+        try {
+            String sql = "from TypeOfSampleTest";
+            Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TypeOfSampleTest.class);
+            // query.setMaxResults(10);
+            // query.setFirstResult(3);
+            list = query.list();
+        } catch (RuntimeException e) {
+
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in TypeOfSampleTest getAllTypeOfSamples()", e);
+        }
+
+        return list;
     }
 
-    return tos;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<TypeOfSampleTest> getPageOfTypeOfSampleTests(int startingRecNo) throws LIMSRuntimeException {
+        List<TypeOfSampleTest> list;
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + DEFAULT_PAGE_SIZE + 1;
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<TypeOfSampleTest> getTypeOfSampleTestsForSampleType(String sampleTypeId)
-      throws LIMSRuntimeException {
-    String sql = "from TypeOfSampleTest tt where tt.typeOfSampleId = :sampleId";
+            String sql = "from TypeOfSampleTest t order by t.typeOfSampleId, t.testId";
+            Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TypeOfSampleTest.class);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in TypeOfSampleTest getPageOfTypeOfSamples()", e);
+        }
 
-    try {
-      if (sampleTypeId.equals("null")) {
-        // so parseInt doesn't throw
-        sampleTypeId = "0";
-      }
-      Query<TypeOfSampleTest> query =
-          entityManager.unwrap(Session.class).createQuery(sql, TypeOfSampleTest.class);
-      query.setParameter("sampleId", Integer.parseInt(sampleTypeId));
-      List<TypeOfSampleTest> list = query.list();
-      return list;
-    } catch (RuntimeException e) {
-      handleException(e, "getTypeOfSampleTestsForSampleType");
+        return list;
     }
 
-    return null;
-  }
+    public TypeOfSampleTest readTypeOfSample(String idString) {
+        TypeOfSampleTest tos;
+        try {
+            tos = entityManager.unwrap(Session.class).get(TypeOfSampleTest.class, idString);
+        } catch (RuntimeException e) {
 
-  @Override
-  @Transactional(readOnly = true)
-  public TypeOfSampleTest getTypeOfSampleTestForTest(String testId) throws LIMSRuntimeException {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in TypeOfSampleTest readTypeOfSample()", e);
+        }
 
-    String sql = "from TypeOfSampleTest tt where tt.testId = :testId";
-
-    try {
-      Query<TypeOfSampleTest> query =
-          entityManager.unwrap(Session.class).createQuery(sql, TypeOfSampleTest.class);
-      query.setParameter("testId", Integer.parseInt(testId));
-      List<TypeOfSampleTest> list = query.list();
-      return list.size() > 0 ? list.get(0) : null;
-    } catch (RuntimeException e) {
-      handleException(e, "getTypeOfSampleTestForTest");
+        return tos;
     }
 
-    return null;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<TypeOfSampleTest> getTypeOfSampleTestsForSampleType(String sampleTypeId) throws LIMSRuntimeException {
+        String sql = "from TypeOfSampleTest tt where tt.typeOfSampleId = :sampleId";
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<TypeOfSampleTest> getTypeOfSampleTestsForTest(String testId)
-      throws LIMSRuntimeException {
-    String sql = "from TypeOfSampleTest tt where tt.testId = :testId";
+        try {
+            if (sampleTypeId.equals("null")) {
+                // so parseInt doesn't throw
+                sampleTypeId = "0";
+            }
+            Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TypeOfSampleTest.class);
+            query.setParameter("sampleId", Integer.parseInt(sampleTypeId));
+            List<TypeOfSampleTest> list = query.list();
+            return list;
+        } catch (RuntimeException e) {
+            handleException(e, "getTypeOfSampleTestsForSampleType");
+        }
 
-    try {
-      Query<TypeOfSampleTest> query =
-          entityManager.unwrap(Session.class).createQuery(sql, TypeOfSampleTest.class);
-      query.setParameter("testId", Integer.parseInt(testId));
-      List<TypeOfSampleTest> list = query.list();
-      return list;
-    } catch (RuntimeException e) {
-      handleException(e, "getTypeOfSampleTestsForTest");
+        return null;
     }
-    return null;
-  }
 
-  @Override
-  public Integer getTotalTypeOfSampleTestCount() throws LIMSRuntimeException {
-    return this.getCount();
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public TypeOfSampleTest getTypeOfSampleTestForTest(String testId) throws LIMSRuntimeException {
+
+        String sql = "from TypeOfSampleTest tt where tt.testId = :testId";
+
+        try {
+            Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TypeOfSampleTest.class);
+            query.setParameter("testId", Integer.parseInt(testId));
+            List<TypeOfSampleTest> list = query.list();
+            return list.size() > 0 ? list.get(0) : null;
+        } catch (RuntimeException e) {
+            handleException(e, "getTypeOfSampleTestForTest");
+        }
+
+        return null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TypeOfSampleTest> getTypeOfSampleTestsForTest(String testId) throws LIMSRuntimeException {
+        String sql = "from TypeOfSampleTest tt where tt.testId = :testId";
+
+        try {
+            Query<TypeOfSampleTest> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    TypeOfSampleTest.class);
+            query.setParameter("testId", Integer.parseInt(testId));
+            List<TypeOfSampleTest> list = query.list();
+            return list;
+        } catch (RuntimeException e) {
+            handleException(e, "getTypeOfSampleTestsForTest");
+        }
+        return null;
+    }
+
+    @Override
+    public Integer getTotalTypeOfSampleTestCount() throws LIMSRuntimeException {
+        return this.getCount();
+    }
 }

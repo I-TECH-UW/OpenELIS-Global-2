@@ -13,95 +13,95 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class SystemUserModuleServiceImpl
-    extends AuditableBaseObjectServiceImpl<SystemUserModule, String>
-    implements SystemUserModuleService {
+public class SystemUserModuleServiceImpl extends AuditableBaseObjectServiceImpl<SystemUserModule, String>
+        implements SystemUserModuleService {
 
-  @Autowired SystemUserModuleDAO baseObjectDAO;
+    @Autowired
+    SystemUserModuleDAO baseObjectDAO;
 
-  public SystemUserModuleServiceImpl() {
-    super(SystemUserModule.class);
-  }
-
-  @Override
-  protected SystemUserModuleDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public void getData(SystemUserModule systemUserModule) {
-    baseObjectDAO.getData(systemUserModule);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<SystemUserModule> getAllPermissionModules() {
-    return baseObjectDAO.getAllPermissionModules();
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public Integer getTotalPermissionModuleCount() {
-    return baseObjectDAO.getTotalPermissionModuleCount();
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<SystemUserModule> getPageOfPermissionModules(int startingRecNo) {
-    return baseObjectDAO.getPageOfPermissionModules(startingRecNo);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<SystemUserModule> getAllPermissionModulesByAgentId(int systemUserId) {
-    return baseObjectDAO.getAllPermissionModulesByAgentId(systemUserId);
-  }
-
-  @Override
-  public boolean doesUserHaveAnyModules(int userId) {
-    return baseObjectDAO.doesUserHaveAnyModules(userId);
-  }
-
-  @Override
-  public String insert(SystemUserModule systemUserModule) {
-    if (duplicateSystemUserModuleExists(systemUserModule)) {
-      throw new LIMSDuplicateRecordException(
-          "Duplicate record exists for " + systemUserModule.getPermissionAgentId());
+    public SystemUserModuleServiceImpl() {
+        super(SystemUserModule.class);
     }
-    return super.insert(systemUserModule);
-  }
 
-  @Override
-  public SystemUserModule save(SystemUserModule systemUserModule) {
-    if (duplicateSystemUserModuleExists(systemUserModule)) {
-      throw new LIMSDuplicateRecordException(
-          "Duplicate record exists for " + systemUserModule.getPermissionAgentId());
+    @Override
+    protected SystemUserModuleDAO getBaseObjectDAO() {
+        return baseObjectDAO;
     }
-    return super.save(systemUserModule);
-  }
 
-  @Override
-  public SystemUserModule update(SystemUserModule systemUserModule) {
-    if (duplicateSystemUserModuleExists(systemUserModule)) {
-      throw new LIMSDuplicateRecordException(
-          "Duplicate record exists for " + systemUserModule.getPermissionAgentId());
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(SystemUserModule systemUserModule) {
+        baseObjectDAO.getData(systemUserModule);
     }
-    return super.update(systemUserModule);
-  }
 
-  private boolean duplicateSystemUserModuleExists(SystemUserModule systemUserModule) {
-    return baseObjectDAO.duplicateSystemUserModuleExists(systemUserModule);
-  }
-
-  @Override
-  public Set<String> getAllPermittedPagesFromAgentId(int roleId) {
-    Set<String> permittedPages = new HashSet<>();
-    List<SystemUserModule> permissionModules = getAllPermissionModulesByAgentId((roleId));
-
-    for (PermissionModule permissionModule : permissionModules) {
-      permittedPages.add(permissionModule.getSystemModule().getSystemModuleName());
+    @Override
+    @Transactional(readOnly = true)
+    public List<SystemUserModule> getAllPermissionModules() {
+        return baseObjectDAO.getAllPermissionModules();
     }
-    return permittedPages;
-  }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getTotalPermissionModuleCount() {
+        return baseObjectDAO.getTotalPermissionModuleCount();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SystemUserModule> getPageOfPermissionModules(int startingRecNo) {
+        return baseObjectDAO.getPageOfPermissionModules(startingRecNo);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SystemUserModule> getAllPermissionModulesByAgentId(int systemUserId) {
+        return baseObjectDAO.getAllPermissionModulesByAgentId(systemUserId);
+    }
+
+    @Override
+    public boolean doesUserHaveAnyModules(int userId) {
+        return baseObjectDAO.doesUserHaveAnyModules(userId);
+    }
+
+    @Override
+    public String insert(SystemUserModule systemUserModule) {
+        if (duplicateSystemUserModuleExists(systemUserModule)) {
+            throw new LIMSDuplicateRecordException(
+                    "Duplicate record exists for " + systemUserModule.getPermissionAgentId());
+        }
+        return super.insert(systemUserModule);
+    }
+
+    @Override
+    public SystemUserModule save(SystemUserModule systemUserModule) {
+        if (duplicateSystemUserModuleExists(systemUserModule)) {
+            throw new LIMSDuplicateRecordException(
+                    "Duplicate record exists for " + systemUserModule.getPermissionAgentId());
+        }
+        return super.save(systemUserModule);
+    }
+
+    @Override
+    public SystemUserModule update(SystemUserModule systemUserModule) {
+        if (duplicateSystemUserModuleExists(systemUserModule)) {
+            throw new LIMSDuplicateRecordException(
+                    "Duplicate record exists for " + systemUserModule.getPermissionAgentId());
+        }
+        return super.update(systemUserModule);
+    }
+
+    private boolean duplicateSystemUserModuleExists(SystemUserModule systemUserModule) {
+        return baseObjectDAO.duplicateSystemUserModuleExists(systemUserModule);
+    }
+
+    @Override
+    public Set<String> getAllPermittedPagesFromAgentId(int roleId) {
+        Set<String> permittedPages = new HashSet<>();
+        List<SystemUserModule> permissionModules = getAllPermissionModulesByAgentId((roleId));
+
+        for (PermissionModule permissionModule : permissionModules) {
+            permittedPages.add(permissionModule.getSystemModule().getSystemModuleName());
+        }
+        return permittedPages;
+    }
 }

@@ -17,55 +17,56 @@ import java.util.ArrayList;
 
 public class SampleXmit extends org.openelisglobal.sample.valueholder.Sample {
 
-  private PatientXmit patient;
+    private PatientXmit patient;
 
-  private String externalId;
+    private String externalId;
 
-  private ProviderXmit provider;
+    private ProviderXmit provider;
 
-  private FacilityXmit facility;
+    private FacilityXmit facility;
 
-  private ArrayList tests;
+    private ArrayList tests;
 
-  public SampleXmit() {}
+    public SampleXmit() {
+    }
 
-  public PatientXmit getPatient() {
-    return patient;
-  }
+    public PatientXmit getPatient() {
+        return patient;
+    }
 
-  public ArrayList getTests() {
-    return tests;
-  }
+    public ArrayList getTests() {
+        return tests;
+    }
 
-  public void setTests(ArrayList tests) {
-    this.tests = tests;
-  }
+    public void setTests(ArrayList tests) {
+        this.tests = tests;
+    }
 
-  public void setPatient(PatientXmit patient) {
-    this.patient = patient;
-  }
+    public void setPatient(PatientXmit patient) {
+        this.patient = patient;
+    }
 
-  public ProviderXmit getProvider() {
-    return provider;
-  }
+    public ProviderXmit getProvider() {
+        return provider;
+    }
 
-  public void setProvider(ProviderXmit provider) {
-    this.provider = provider;
-  }
+    public void setProvider(ProviderXmit provider) {
+        this.provider = provider;
+    }
 
-  public String getExternalId() {
-    return externalId;
-  }
+    public String getExternalId() {
+        return externalId;
+    }
 
-  public void setExternalId(String externalId) {
-    this.externalId = externalId;
-  }
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
 
-  public FacilityXmit getFacility() {
-    return facility;
-  }
+    public FacilityXmit getFacility() {
+        return facility;
+    }
 
-  public void setFacility(FacilityXmit facility) {
-    this.facility = facility;
-  }
+    public void setFacility(FacilityXmit facility) {
+        this.facility = facility;
+    }
 }

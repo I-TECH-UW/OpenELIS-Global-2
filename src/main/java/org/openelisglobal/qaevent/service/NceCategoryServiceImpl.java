@@ -11,26 +11,27 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class NceCategoryServiceImpl extends AuditableBaseObjectServiceImpl<NceCategory, String>
-    implements NceCategoryService {
+        implements NceCategoryService {
 
-  @Autowired protected NceCategoryDAO baseObjectDAO;
+    @Autowired
+    protected NceCategoryDAO baseObjectDAO;
 
-  NceCategoryServiceImpl() {
-    super(NceCategory.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<NceCategory> getAllNceCategories() {
-    List<NceCategory> nceCategoryList = baseObjectDAO.getAllNceCategory();
-    for (NceCategory category : nceCategoryList) {
-      category.setName(MessageUtil.getMessage(category.getDisplayKey()));
+    NceCategoryServiceImpl() {
+        super(NceCategory.class);
     }
-    return nceCategoryList;
-  }
 
-  @Override
-  protected NceCategoryDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<NceCategory> getAllNceCategories() {
+        List<NceCategory> nceCategoryList = baseObjectDAO.getAllNceCategory();
+        for (NceCategory category : nceCategoryList) {
+            category.setName(MessageUtil.getMessage(category.getDisplayKey()));
+        }
+        return nceCategoryList;
+    }
+
+    @Override
+    protected NceCategoryDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

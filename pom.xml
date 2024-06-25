@@ -667,12 +667,10 @@
 
             <removeUnusedImports />
 
-            <!-- apply a specific flavor of google-java-format and reflow long strings -->
-            <googleJavaFormat>
-              <version>1.15.0</version>
-              <style>GOOGLE</style>
-              <reflowLongStrings>true</reflowLongStrings>
-            </googleJavaFormat>
+            <eclipse>
+              <version>4.26</version>
+              <file>${project.basedir}/tools/OpenELIS_java_formatter.xml</file>
+            </eclipse>
           </java>
         </configuration>
       </plugin>

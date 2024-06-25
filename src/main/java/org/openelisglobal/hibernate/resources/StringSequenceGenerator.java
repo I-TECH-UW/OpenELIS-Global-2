@@ -11,18 +11,16 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.Type;
 
 public class StringSequenceGenerator extends SequenceStyleGenerator {
-  private String numberFormat = "%d";
+    private String numberFormat = "%d";
 
-  @Override
-  public Serializable generate(SharedSessionContractImplementor session, Object object)
-      throws HibernateException {
-    Long id = (Long) super.generate(session, object);
-    return String.format(numberFormat, id);
-  }
+    @Override
+    public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
+        Long id = (Long) super.generate(session, object);
+        return String.format(numberFormat, id);
+    }
 
-  @Override
-  public void configure(Type type, Properties params, ServiceRegistry dialect)
-      throws MappingException {
-    super.configure(LongType.INSTANCE, params, dialect);
-  }
+    @Override
+    public void configure(Type type, Properties params, ServiceRegistry dialect) throws MappingException {
+        super.configure(LongType.INSTANCE, params, dialect);
+    }
 }

@@ -5,7 +5,7 @@ import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 
 public interface LogoUploadService {
 
-  void removeImage(Image image, SiteInformation logoInformation);
+    void removeImage(Image image, SiteInformation logoInformation);
 
-  void saveImage(Image image, boolean newImage, String imageId, SiteInformation logoInformation);
+    void saveImage(Image image, boolean newImage, String imageId, SiteInformation logoInformation);
 }

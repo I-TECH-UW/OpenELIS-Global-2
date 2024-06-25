@@ -21,37 +21,37 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/rest")
 public class ProviderRestController {
 
-  @Autowired private ProviderService providerService;
-  @Autowired private PersonService personService;
+    @Autowired
+    private ProviderService providerService;
+    @Autowired
+    private PersonService personService;
 
-  @GetMapping(value = "/Provider/raw/{id}")
-  @ResponseBody
-  public Provider getProvider(@PathVariable String id) {
-    Provider provider = providerService.get(id);
-    return provider;
-  }
-
-  @GetMapping(value = "/Provider/Person/{id}")
-  @ResponseBody
-  public Person getPerson(@PathVariable String id) {
-    Person person = personService.get(id);
-    return person;
-  }
-
-  @PostMapping(value = "/Provider/FhirUuid")
-  @ResponseBody
-  public ResponseEntity<Object> insertOrUpdateProviderByFhirUuid(
-      @RequestParam(required = false) UUID fhirUuid, @RequestBody Provider provider) {
-    try {
-      if (fhirUuid == null) {
-        fhirUuid = UUID.randomUUID();
-      }
-      Provider updatedProvider =
-          providerService.insertOrUpdateProviderByFhirUuid(fhirUuid, provider);
-      return ResponseEntity.ok(updatedProvider);
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("Error processing request.");
+    @GetMapping(value = "/Provider/raw/{id}")
+    @ResponseBody
+    public Provider getProvider(@PathVariable String id) {
+        Provider provider = providerService.get(id);
+        return provider;
     }
-  }
+
+    @GetMapping(value = "/Provider/Person/{id}")
+    @ResponseBody
+    public Person getPerson(@PathVariable String id) {
+        Person person = personService.get(id);
+        return person;
+    }
+
+    @PostMapping(value = "/Provider/FhirUuid")
+    @ResponseBody
+    public ResponseEntity<Object> insertOrUpdateProviderByFhirUuid(@RequestParam(required = false) UUID fhirUuid,
+            @RequestBody Provider provider) {
+        try {
+            if (fhirUuid == null) {
+                fhirUuid = UUID.randomUUID();
+            }
+            Provider updatedProvider = providerService.insertOrUpdateProviderByFhirUuid(fhirUuid, provider);
+            return ResponseEntity.ok(updatedProvider);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing request.");
+        }
+    }
 }

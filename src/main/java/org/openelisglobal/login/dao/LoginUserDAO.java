@@ -22,36 +22,38 @@ import org.openelisglobal.login.valueholder.LoginUser;
  */
 public interface LoginUserDAO extends BaseDAO<LoginUser, Integer> {
 
-  //	public Login getValidateLogin(Login login) throws LIMSRuntimeException;
+    // public Login getValidateLogin(Login login) throws LIMSRuntimeException;
 
-  //	public void updatePassword(Login login) throws LIMSRuntimeException;
+    // public void updatePassword(Login login) throws LIMSRuntimeException;
 
-  public int getPasswordExpiredDayNo(LoginUser login) throws LIMSRuntimeException;
+    public int getPasswordExpiredDayNo(LoginUser login) throws LIMSRuntimeException;
 
-  public int getSystemUserId(LoginUser login) throws LIMSRuntimeException;
+    public int getSystemUserId(LoginUser login) throws LIMSRuntimeException;
 
-  //	public Login getUserProfile(String loginName) throws LIMSRuntimeException;
+    // public Login getUserProfile(String loginName) throws LIMSRuntimeException;
 
-  //	public boolean insertData(Login login) throws LIMSRuntimeException;
+    // public boolean insertData(Login login) throws LIMSRuntimeException;
 
-  //	public void deleteData(List login) throws LIMSRuntimeException;
+    // public void deleteData(List login) throws LIMSRuntimeException;
 
-  //	public List getAllLoginUsers() throws LIMSRuntimeException;
+    // public List getAllLoginUsers() throws LIMSRuntimeException;
 
-  //	public List getPageOfLoginUsers(int startingRecNo) throws LIMSRuntimeException;
+    // public List getPageOfLoginUsers(int startingRecNo) throws
+    // LIMSRuntimeException;
 
-  //	public void getData(Login login) throws LIMSRuntimeException;
+    // public void getData(Login login) throws LIMSRuntimeException;
 
-  //	public void updateData(Login login, boolean passwordUpdated) throws LIMSRuntimeException;
+    // public void updateData(Login login, boolean passwordUpdated) throws
+    // LIMSRuntimeException;
 
-  //
+    //
 
-  //	public Integer getTotalLoginUserCount() throws LIMSRuntimeException;
+    // public Integer getTotalLoginUserCount() throws LIMSRuntimeException;
 
-  // bugzilla 2286
-  //	public boolean lockAccount(Login login) throws LIMSRuntimeException;
+    // bugzilla 2286
+    // public boolean lockAccount(Login login) throws LIMSRuntimeException;
 
-  //	public boolean unlockAccount(Login login) throws LIMSRuntimeException;
+    // public boolean unlockAccount(Login login) throws LIMSRuntimeException;
 
-  boolean duplicateLoginNameExists(LoginUser login) throws LIMSRuntimeException;
+    boolean duplicateLoginNameExists(LoginUser login) throws LIMSRuntimeException;
 }

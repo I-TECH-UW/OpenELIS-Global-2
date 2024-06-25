@@ -18,21 +18,21 @@ import org.openelisglobal.common.util.ConfigurationProperties.Property;
 
 public class HaitiNonConformityBySectionReason extends NonConformityBySectionReason {
 
-  public HaitiNonConformityBySectionReason() {}
+    public HaitiNonConformityBySectionReason() {
+    }
 
-  @Override
-  protected String getHeaderName() {
-    return "GeneralHeader.jasper";
-  }
+    @Override
+    protected String getHeaderName() {
+        return "GeneralHeader.jasper";
+    }
 
-  @Override
-  protected void createReportParameters() throws IllegalStateException {
-    super.createReportParameters();
-    reportParameters.put("supportStudy", "false");
-    reportParameters.put("supportService", "false");
-    reportParameters.put("supportSiteSubject", "false");
-    reportParameters.put(
-        "labName1", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName));
-    reportParameters.put("labName2", "");
-  }
+    @Override
+    protected void createReportParameters() throws IllegalStateException {
+        super.createReportParameters();
+        reportParameters.put("supportStudy", "false");
+        reportParameters.put("supportService", "false");
+        reportParameters.put("supportSiteSubject", "false");
+        reportParameters.put("labName1", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName));
+        reportParameters.put("labName2", "");
+    }
 }

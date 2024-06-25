@@ -30,61 +30,58 @@ import org.openelisglobal.test.service.TestServiceImpl;
 
 public class ResultHistoryService extends AbstractHistoryService {
 
-  protected ResultService resultService = SpringContext.getBean(ResultService.class);
-  protected HistoryService historyService = SpringContext.getBean(HistoryService.class);
+    protected ResultService resultService = SpringContext.getBean(ResultService.class);
+    protected HistoryService historyService = SpringContext.getBean(HistoryService.class);
 
-  public ResultHistoryService(Result result, Analysis analysis) {
-    setUpForResult(result, analysis);
-  }
-
-  @SuppressWarnings("unchecked")
-  private void setUpForResult(Result result, Analysis analysis) {
-    if (analysis.getTest() != null) {
-      History searchHistory = new History();
-      searchHistory.setReferenceId(result.getId());
-      searchHistory.setReferenceTable(ResultServiceImpl.getTableReferenceId());
-      historyList = historyService.getHistoryByRefIdAndRefTableId(searchHistory);
-
-      newValueMap = new HashMap<>();
-      newValueMap.put(VALUE_ATTRIBUTE, getViewableValue(result.getValue(), result));
-
-      identifier =
-          TestServiceImpl.getLocalizedTestNameWithType(analysis.getTest())
-              + " - "
-              + analysis.getAnalysisType();
-    } else {
-      historyList = new ArrayList<>();
+    public ResultHistoryService(Result result, Analysis analysis) {
+        setUpForResult(result, analysis);
     }
-  }
 
-  @Override
-  protected void addInsertion(History history, List<AuditTrailItem> items) {
-    AuditTrailItem item = getCoreTrail(history);
-    item.setNewValue(newValueMap.get(VALUE_ATTRIBUTE));
-    items.add(item);
-  }
+    @SuppressWarnings("unchecked")
+    private void setUpForResult(Result result, Analysis analysis) {
+        if (analysis.getTest() != null) {
+            History searchHistory = new History();
+            searchHistory.setReferenceId(result.getId());
+            searchHistory.setReferenceTable(ResultServiceImpl.getTableReferenceId());
+            historyList = historyService.getHistoryByRefIdAndRefTableId(searchHistory);
 
-  @Override
-  protected void getObservableChanges(
-      History history, Map<String, String> changeMap, String changes) {
-    String value = extractSimple(changes, "value");
-    if (value != null) {
-      Result result = resultService.getResultById(history.getReferenceId());
-      value = getViewableValue(value, result);
+            newValueMap = new HashMap<>();
+            newValueMap.put(VALUE_ATTRIBUTE, getViewableValue(result.getValue(), result));
 
-      if (value != null) {
-        changeMap.put(VALUE_ATTRIBUTE, value);
-      }
+            identifier = TestServiceImpl.getLocalizedTestNameWithType(analysis.getTest()) + " - "
+                    + analysis.getAnalysisType();
+        } else {
+            historyList = new ArrayList<>();
+        }
     }
-  }
 
-  @Override
-  protected String getObjectName() {
-    return MessageUtil.getMessage("sample.entry.project.result");
-  }
+    @Override
+    protected void addInsertion(History history, List<AuditTrailItem> items) {
+        AuditTrailItem item = getCoreTrail(history);
+        item.setNewValue(newValueMap.get(VALUE_ATTRIBUTE));
+        items.add(item);
+    }
 
-  @Override
-  protected boolean showAttribute() {
-    return true;
-  }
+    @Override
+    protected void getObservableChanges(History history, Map<String, String> changeMap, String changes) {
+        String value = extractSimple(changes, "value");
+        if (value != null) {
+            Result result = resultService.getResultById(history.getReferenceId());
+            value = getViewableValue(value, result);
+
+            if (value != null) {
+                changeMap.put(VALUE_ATTRIBUTE, value);
+            }
+        }
+    }
+
+    @Override
+    protected String getObjectName() {
+        return MessageUtil.getMessage("sample.entry.project.result");
+    }
+
+    @Override
+    protected boolean showAttribute() {
+        return true;
+    }
 }
