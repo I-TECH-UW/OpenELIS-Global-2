@@ -1,7 +1,6 @@
 import React from "react";
-import { SearchSkeleton } from "@carbon/react";
+import { SkeletonPlaceholder, SkeletonText } from "@carbon/react";
 import PatientHeader from "../../common/PatientHeader"; // Ensure this path is correct
-import { FormattedMessage } from "react-intl";
 import { openPatientResults } from "./searchService";
 import "./searchBar.css";
 
@@ -9,7 +8,11 @@ function SearchOutput({ loading, patientData }) {
   return (
     <div>
       {loading ? (
-        <SearchSkeleton />
+        <div>
+          <SkeletonText heading />
+          <SkeletonText width="400px" />
+          <SkeletonText width="300px" />
+        </div>
       ) : patientData.length > 0 ? (
         patientData.map((patient, index) =>
           patient && patient.patientID ? (
@@ -25,7 +28,7 @@ function SearchOutput({ loading, patientData }) {
                 gender={patient.gender}
                 dob={patient.dob}
                 nationalId={patient.nationalId}
-                accessionNumber={patient.accessionNumber} // Corrected typo here
+                accessionNumber={patient.accessionNumber}
                 isOrderPage={true}
                 className="patientHead"
               />
@@ -35,7 +38,11 @@ function SearchOutput({ loading, patientData }) {
           ),
         )
       ) : (
-        <div></div>
+        <div>
+          <SkeletonText heading />
+          <SkeletonText width="400px" />
+          <SkeletonText width="300px" />
+        </div>
       )}
     </div>
   );

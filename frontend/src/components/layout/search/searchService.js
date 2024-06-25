@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getFromOpenElisServer } from "../../utils/Utils";
+
 export const fetchPatientData = async (query, callback) => {
   const [firstName, lastName] = query.split(" ");
   const endpoints = [
@@ -42,6 +43,7 @@ export const fetchPatientData = async (query, callback) => {
     callback([]); // Handle error by returning an empty array
   }
 };
+
 export const openPatientResults = (patientId) => {
   if (patientId) {
     window.location.href = "/ModifyOrder?patientId=" + patientId;

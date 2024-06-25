@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Search } from "@carbon/react";
+import { Button, Search, SkeletonText } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
 import SearchOutput from "./searchOutput";
 import { fetchPatientData, useAutocomplete } from "./searchService";
@@ -49,7 +49,11 @@ const SearchBar = (props) => {
     if (searchInput.trim()) {
       setLoading(true);
       fetchPatientData(searchInput.trim(), (results) => {
-        setPatientData(results);
+        const uniqueResults = results.filter(
+          (result, index, self) =>
+            index === self.findIndex((t) => t.patientID === result.patientID),
+        );
+        setPatientData(uniqueResults);
         setLoading(false);
       });
     }
@@ -63,7 +67,11 @@ const SearchBar = (props) => {
 
     if (userInput.trim()) {
       fetchPatientData(userInput.trim(), (results) => {
-        setPatientData(results);
+        const uniqueResults = results.filter(
+          (result, index, self) =>
+            index === self.findIndex((t) => t.patientID === result.patientID),
+        );
+        setPatientData(uniqueResults);
         setLoading(false);
       });
     } else {
@@ -127,13 +135,21 @@ const SearchBar = (props) => {
           </ul>
         )}
       </div>
-      <div className="patients">
-        <SearchOutput
-          loading={loading}
-          patientData={patientData}
-          className="patientHeader"
-        />
-      </div>
+      {loading ? (
+        <div>
+          <SkeletonText heading />
+          <SkeletonText width="200px" />
+          <SkeletonText width="300px" />
+        </div>
+      ) : (
+        <div className="patients">
+          <SearchOutput
+            loading={loading}
+            patientData={patientData}
+            className="patientHeader"
+          />
+        </div>
+      )}
     </div>
   );
 };
