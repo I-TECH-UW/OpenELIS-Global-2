@@ -23,25 +23,24 @@ import org.openelisglobal.systemusersection.valueholder.SystemUserSection;
  */
 public interface SystemUserSectionDAO extends BaseDAO<SystemUserSection, String> {
 
-  //	public boolean insertData(SystemUserSection systemUserSection) throws LIMSRuntimeException;
+    // public boolean insertData(SystemUserSection systemUserSection) throws
+    // LIMSRuntimeException;
 
-  //	public void deleteData(List systemUserSection) throws LIMSRuntimeException;
+    // public void deleteData(List systemUserSection) throws LIMSRuntimeException;
 
-  List<SystemUserSection> getAllSystemUserSections() throws LIMSRuntimeException;
+    List<SystemUserSection> getAllSystemUserSections() throws LIMSRuntimeException;
 
-  List<SystemUserSection> getPageOfSystemUserSections(int startingRecNo)
-      throws LIMSRuntimeException;
+    List<SystemUserSection> getPageOfSystemUserSections(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(SystemUserSection systemUserSection) throws LIMSRuntimeException;
+    void getData(SystemUserSection systemUserSection) throws LIMSRuntimeException;
 
-  //	public void updateData(SystemUserSection systemUserSection) throws LIMSRuntimeException;
-  //
+    // public void updateData(SystemUserSection systemUserSection) throws
+    // LIMSRuntimeException;
+    //
 
-  Integer getTotalSystemUserSectionCount() throws LIMSRuntimeException;
+    Integer getTotalSystemUserSectionCount() throws LIMSRuntimeException;
 
-  List<SystemUserSection> getAllSystemUserSectionsBySystemUserId(int systemUserId)
-      throws LIMSRuntimeException;
+    List<SystemUserSection> getAllSystemUserSectionsBySystemUserId(int systemUserId) throws LIMSRuntimeException;
 
-  boolean duplicateSystemUserSectionExists(SystemUserSection systemUserSection)
-      throws LIMSRuntimeException;
+    boolean duplicateSystemUserSectionExists(SystemUserSection systemUserSection) throws LIMSRuntimeException;
 }

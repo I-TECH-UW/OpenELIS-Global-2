@@ -13,42 +13,39 @@ import org.openelisglobal.common.valueholder.BaseObject;
 @Table(name = "pathology_block")
 public class PathologyBlock extends BaseObject<Integer> {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pathology_block_generator")
-  @SequenceGenerator(
-      name = "pathology_block_generator",
-      sequenceName = "pathology_block_seq",
-      allocationSize = 1)
-  private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pathology_block_generator")
+    @SequenceGenerator(name = "pathology_block_generator", sequenceName = "pathology_block_seq", allocationSize = 1)
+    private Integer id;
 
-  @Column(name = "block_number")
-  private Integer blockNumber;
+    @Column(name = "block_number")
+    private Integer blockNumber;
 
-  private String location;
+    private String location;
 
-  @Override
-  public Integer getId() {
-    return id;
-  }
+    @Override
+    public Integer getId() {
+        return id;
+    }
 
-  @Override
-  public void setId(Integer id) {
-    this.id = id;
-  }
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-  public Integer getBlockNumber() {
-    return blockNumber;
-  }
+    public Integer getBlockNumber() {
+        return blockNumber;
+    }
 
-  public void setBlockNumber(Integer blockNumber) {
-    this.blockNumber = blockNumber;
-  }
+    public void setBlockNumber(Integer blockNumber) {
+        this.blockNumber = blockNumber;
+    }
 
-  public String getLocation() {
-    return location;
-  }
+    public String getLocation() {
+        return location;
+    }
 
-  public void setLocation(String location) {
-    this.location = location;
-  }
+    public void setLocation(String location) {
+        this.location = location;
+    }
 }

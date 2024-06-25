@@ -20,90 +20,90 @@ import org.openelisglobal.systemusermodule.valueholder.PermissionAgent;
 
 public class Role extends BaseObject<String> implements PermissionAgent {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String id;
-  private String name;
-  private String description;
-  private boolean groupingRole;
-  private String groupingParent;
-  private String displayKey;
-  private boolean active;
-  private boolean editable;
+    private String id;
+    private String name;
+    private String description;
+    private boolean groupingRole;
+    private String groupingParent;
+    private String displayKey;
+    private boolean active;
+    private boolean editable;
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public String getDisplayName() {
-    return getName();
-  }
+    public String getDisplayName() {
+        return getName();
+    }
 
-  public String getShortNameForDisplay() {
-    return getName();
-  }
+    public String getShortNameForDisplay() {
+        return getName();
+    }
 
-  public boolean getGroupingRole() {
-    return groupingRole;
-  }
+    public boolean getGroupingRole() {
+        return groupingRole;
+    }
 
-  public void setGroupingRole(boolean groupingRole) {
-    this.groupingRole = groupingRole;
-  }
+    public void setGroupingRole(boolean groupingRole) {
+        this.groupingRole = groupingRole;
+    }
 
-  public String getGroupingParent() {
-    return groupingParent;
-  }
+    public String getGroupingParent() {
+        return groupingParent;
+    }
 
-  public void setGroupingParent(String groupingParent) {
-    this.groupingParent = groupingParent;
-  }
+    public void setGroupingParent(String groupingParent) {
+        this.groupingParent = groupingParent;
+    }
 
-  public String getDisplayKey() {
-    return displayKey;
-  }
+    public String getDisplayKey() {
+        return displayKey;
+    }
 
-  public void setDisplayKey(String displayKey) {
-    this.displayKey = displayKey;
-  }
+    public void setDisplayKey(String displayKey) {
+        this.displayKey = displayKey;
+    }
 
-  protected String getDefaultLocalizedName() {
-    return getName();
-  }
+    protected String getDefaultLocalizedName() {
+        return getName();
+    }
 
-  public boolean isActive() {
-    return active;
-  }
+    public boolean isActive() {
+        return active;
+    }
 
-  public void setActive(boolean active) {
-    this.active = active;
-  }
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
-  public boolean isEditable() {
-    return editable;
-  }
+    public boolean isEditable() {
+        return editable;
+    }
 
-  public void setEditable(boolean editable) {
-    this.editable = editable;
-  }
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
 }

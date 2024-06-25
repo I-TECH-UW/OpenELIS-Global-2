@@ -6,5 +6,5 @@ import org.openelisglobal.patient.valueholder.PatientContact;
 
 public interface PatientContactService extends BaseObjectService<PatientContact, String> {
 
-  List<PatientContact> getForPatient(String patientId);
+    List<PatientContact> getForPatient(String patientId);
 }

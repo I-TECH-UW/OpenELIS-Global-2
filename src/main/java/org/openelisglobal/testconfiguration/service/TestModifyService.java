@@ -7,10 +7,6 @@ import org.openelisglobal.testconfiguration.controller.TestModifyEntryController
 
 public interface TestModifyService {
 
-  void updateTestSets(
-      List<TestSet> testSets,
-      TestAddParams testAddParams,
-      Localization nameLocalization,
-      Localization reportingNameLocalization,
-      String currentUserId);
+    void updateTestSets(List<TestSet> testSets, TestAddParams testAddParams, Localization nameLocalization,
+            Localization reportingNameLocalization, String currentUserId);
 }

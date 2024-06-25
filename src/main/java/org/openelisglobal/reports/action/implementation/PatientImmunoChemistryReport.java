@@ -13,38 +13,35 @@ import org.openelisglobal.test.service.TestServiceImpl;
 
 public class PatientImmunoChemistryReport extends PatientProgramReport {
 
-  private ImmunohistochemistrySampleService immunohistochemistrySampleService =
-      SpringContext.getBean(ImmunohistochemistrySampleService.class);
-  private ImmunohistochemistrySample immunohistochemistrySample;
+    private ImmunohistochemistrySampleService immunohistochemistrySampleService = SpringContext
+            .getBean(ImmunohistochemistrySampleService.class);
+    private ImmunohistochemistrySample immunohistochemistrySample;
 
-  @Override
-  protected String getReportName() {
-    return "PatientImmunoChemistryReport";
-  }
+    @Override
+    protected String getReportName() {
+        return "PatientImmunoChemistryReport";
+    }
 
-  @Override
-  protected void setAdditionalReportItems() {
-    List<Analysis> analyses =
-        analysisService.getAnalysesBySampleIdAndStatusId(
-            sampleService.getId(sample), analysisStatusIds);
-    List<ProgramSampleReportData.Result> resultsData = new ArrayList<>();
-    analyses.forEach(
-        analysis -> {
-          ProgramSampleReportData.Result resultData = new ProgramSampleReportData.Result();
-          resultData.setTest(TestServiceImpl.getUserLocalizedReportingTestName(analysis.getTest()));
-          List<Result> resultList = analysisService.getResults(analysis);
-          resultData.setResult(getAppropriateResults(resultList));
-          resultData.setUom(getUnitOfMeasure(analysis.getTest()));
-          resultsData.add(resultData);
+    @Override
+    protected void setAdditionalReportItems() {
+        List<Analysis> analyses = analysisService.getAnalysesBySampleIdAndStatusId(sampleService.getId(sample),
+                analysisStatusIds);
+        List<ProgramSampleReportData.Result> resultsData = new ArrayList<>();
+        analyses.forEach(analysis -> {
+            ProgramSampleReportData.Result resultData = new ProgramSampleReportData.Result();
+            resultData.setTest(TestServiceImpl.getUserLocalizedReportingTestName(analysis.getTest()));
+            List<Result> resultList = analysisService.getResults(analysis);
+            resultData.setResult(getAppropriateResults(resultList));
+            resultData.setUom(getUnitOfMeasure(analysis.getTest()));
+            resultsData.add(resultData);
         });
-    data.setResults(resultsData);
-    data.setTextConclusion(form.getConclusion());
-  }
+        data.setResults(resultsData);
+        data.setTextConclusion(form.getConclusion());
+    }
 
-  @Override
-  protected void innitializeSample(ReportForm form) {
-    immunohistochemistrySample =
-        immunohistochemistrySampleService.get(Integer.valueOf(form.getProgramSampleId()));
-    sample = immunohistochemistrySample.getSample();
-  }
+    @Override
+    protected void innitializeSample(ReportForm form) {
+        immunohistochemistrySample = immunohistochemistrySampleService.get(Integer.valueOf(form.getProgramSampleId()));
+        sample = immunohistochemistrySample.getSample();
+    }
 }

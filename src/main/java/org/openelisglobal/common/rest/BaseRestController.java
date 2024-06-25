@@ -8,14 +8,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class BaseRestController implements IActionConstants {
 
-  protected String getSysUserId(HttpServletRequest request) {
-    UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-    if (usd == null) {
-      usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);
-      if (usd == null) {
-        return null;
-      }
+    protected String getSysUserId(HttpServletRequest request) {
+        UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
+        if (usd == null) {
+            usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);
+            if (usd == null) {
+                return null;
+            }
+        }
+        return String.valueOf(usd.getSystemUserId());
     }
-    return String.valueOf(usd.getSystemUserId());
-  }
 }

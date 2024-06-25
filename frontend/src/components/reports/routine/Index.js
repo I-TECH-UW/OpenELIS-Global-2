@@ -77,6 +77,13 @@ export const RoutineReports = (props) => {
         />
       )}
 
+      {type === "patient" && report === "ExportWHONETReportByDate" && (
+        <ReportByDate
+          report={"ExportWHONETReportByDate"}
+          id={"header.label.study.ciexport"}
+        />
+      )}
+
       {type === "routine" && report === "auditTrail" && (
         <AuditTrailReport report={"auditTrail"} id={"reports.auditTrail"} />
       )}

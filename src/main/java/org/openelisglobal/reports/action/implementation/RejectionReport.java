@@ -46,184 +46,167 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestServiceImpl;
 
 public abstract class RejectionReport extends Report implements IReportCreator {
-  private int PREFIX_LENGTH =
-      AccessionNumberUtil.getMainAccessionNumberGenerator().getInvarientLength();
-  protected List<RejectionReportBean> rejections;
-  protected String reportPath = "";
-  protected DateRange dateRange;
+    private int PREFIX_LENGTH = AccessionNumberUtil.getMainAccessionNumberGenerator().getInvarientLength();
+    protected List<RejectionReportBean> rejections;
+    protected String reportPath = "";
+    protected DateRange dateRange;
 
-  protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
+    protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
 
-  @Override
-  public JRDataSource getReportDataSource() throws IllegalStateException {
-    return errorFound
-        ? new JRBeanCollectionDataSource(errorMsgs)
-        : new JRBeanCollectionDataSource(rejections);
-  }
-
-  @Override
-  protected void createReportParameters() {
-    super.createReportParameters();
-    reportParameters.put("activityLabel", getActivityLabel());
-    reportParameters.put(
-        "accessionPrefix", AccessionNumberUtil.getMainAccessionNumberGenerator().getPrefix());
-    reportParameters.put(
-        "labNumberTitle", MessageUtil.getContextualMessage("quick.entry.accession.number"));
-    reportParameters.put(
-        "labName", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName));
-    reportParameters.put("SUBREPORT_DIR", reportPath);
-    reportParameters.put("startDate", dateRange.getLowDateStr());
-    reportParameters.put("endDate", dateRange.getHighDateStr());
-    reportParameters.put("isReportByTest", isReportByTest());
-  }
-
-  protected boolean isReportByTest() {
-    return Boolean.FALSE;
-  }
-
-  protected abstract String getActivityLabel();
-
-  protected abstract void buildReportContent(ReportSpecificationList testSelection);
-
-  @Override
-  public void initializeReport(ReportForm form) {
-    initialized = true;
-    ReportSpecificationList selection = form.getSelectList();
-    dateRange = new DateRange(form.getLowerDateRange(), form.getUpperDateRange());
-
-    errorFound = !validateSubmitParameters(selection);
-    if (errorFound) {
-      return;
+    @Override
+    public JRDataSource getReportDataSource() throws IllegalStateException {
+        return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(rejections);
     }
 
-    buildReportContent(selection);
-    if (rejections.size() == 0) {
-      add1LineErrorMessage("report.error.message.noPrintableItems");
-    }
-  }
-
-  private boolean validateSubmitParameters(ReportSpecificationList selectList) {
-
-    return (dateRange.validateHighLowDate("report.error.message.date.received.missing")
-        && validateSelection(selectList));
-  }
-
-  private boolean validateSelection(ReportSpecificationList selectList) {
-    boolean complete =
-        !GenericValidator.isBlankOrNull(selectList.getSelection())
-            && !"0".equals(selectList.getSelection());
-
-    if (!complete) {
-      add1LineErrorMessage("report.error.message.activity.missing");
+    @Override
+    protected void createReportParameters() {
+        super.createReportParameters();
+        reportParameters.put("activityLabel", getActivityLabel());
+        reportParameters.put("accessionPrefix", AccessionNumberUtil.getMainAccessionNumberGenerator().getPrefix());
+        reportParameters.put("labNumberTitle", MessageUtil.getContextualMessage("quick.entry.accession.number"));
+        reportParameters.put("labName", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName));
+        reportParameters.put("SUBREPORT_DIR", reportPath);
+        reportParameters.put("startDate", dateRange.getLowDateStr());
+        reportParameters.put("endDate", dateRange.getHighDateStr());
+        reportParameters.put("isReportByTest", isReportByTest());
     }
 
-    return complete;
-  }
-
-  protected RejectionReportBean createRejectionReportBean(
-      String noteText, Analysis analysis, boolean useTestName) {
-    RejectionReportBean item = new RejectionReportBean();
-
-    SampleService sampleService = SpringContext.getBean(SampleService.class);
-    Sample sample = analysis.getSampleItem().getSample();
-    PatientService patientService = SpringContext.getBean(PatientService.class);
-    SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
-    Patient patient = sampleHumanService.getPatientForSample(sample);
-
-    List<Result> results = analysisService.getResults(analysis);
-    for (Result result : results) {
-      ResultService resultResultService = SpringContext.getBean(ResultService.class);
-      String signature = resultResultService.getSignature(result);
-      if (!GenericValidator.isBlankOrNull(signature)) {
-        item.setTechnician(signature);
-        break;
-      }
-    }
-    if (AccessionFormat.ALPHANUM
-        .toString()
-        .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
-      item.setAccessionNumber(
-          AlphanumAccessionValidator.convertAlphaNumLabNumForDisplay(
-              sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH)));
-    } else {
-      item.setAccessionNumber(sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH));
-    }
-    item.setReceivedDate(sampleService.getTwoYearReceivedDateForDisplay(sample));
-    item.setCollectionDate(
-        DateUtil.convertTimestampToTwoYearStringDate(analysis.getSampleItem().getCollectionDate()));
-    item.setRejectionReason(noteText);
-
-    StringBuilder nameBuilder =
-        new StringBuilder(patientService.getLastName(patient).toUpperCase());
-    if (!GenericValidator.isBlankOrNull(patientService.getNationalId(patient))) {
-      if (nameBuilder.length() > 0) {
-        nameBuilder.append(" / ");
-      }
-      nameBuilder.append(patientService.getNationalId(patient));
+    protected boolean isReportByTest() {
+        return Boolean.FALSE;
     }
 
-    if (useTestName) {
-      item.setPatientOrTestName(
-          TestServiceImpl.getUserLocalizedTestName(analysisService.getTest(analysis)));
-      item.setNonPrintingPatient(nameBuilder.toString());
-    } else {
-      item.setPatientOrTestName(nameBuilder.toString());
+    protected abstract String getActivityLabel();
+
+    protected abstract void buildReportContent(ReportSpecificationList testSelection);
+
+    @Override
+    public void initializeReport(ReportForm form) {
+        initialized = true;
+        ReportSpecificationList selection = form.getSelectList();
+        dateRange = new DateRange(form.getLowerDateRange(), form.getUpperDateRange());
+
+        errorFound = !validateSubmitParameters(selection);
+        if (errorFound) {
+            return;
+        }
+
+        buildReportContent(selection);
+        if (rejections.size() == 0) {
+            add1LineErrorMessage("report.error.message.noPrintableItems");
+        }
     }
 
-    return item;
-  }
+    private boolean validateSubmitParameters(ReportSpecificationList selectList) {
 
-  @Override
-  protected String reportFileName() {
-    return "RejectionReport";
-  }
-
-  protected RejectionReportBean createIdentityRejectionBean(
-      RejectionReportBean item, boolean blankCollectionDate) {
-    RejectionReportBean filler = new RejectionReportBean();
-
-    filler.setAccessionNumber(item.getAccessionNumber());
-    filler.setReceivedDate(item.getReceivedDate());
-    filler.setCollectionDate(blankCollectionDate ? " " : item.getCollectionDate());
-    filler.setPatientOrTestName(item.getNonPrintingPatient());
-
-    return filler;
-  }
-
-  protected String getNameForId(ReportSpecificationList list) {
-
-    String selection = list.getSelection();
-
-    for (IdValuePair pair : list.getList()) {
-      if (selection.equals(pair.getId())) {
-        return pair.getValue();
-      }
+        return (dateRange.validateHighLowDate("report.error.message.date.received.missing")
+                && validateSelection(selectList));
     }
 
-    return "";
-  }
+    private boolean validateSelection(ReportSpecificationList selectList) {
+        boolean complete = !GenericValidator.isBlankOrNull(selectList.getSelection())
+                && !"0".equals(selectList.getSelection());
 
-  protected void injectPatientLineAndCopyToFinalList(ArrayList<RejectionReportBean> rawResults) {
-    Collections.sort(
-        rawResults,
-        new Comparator<RejectionReportBean>() {
-          @Override
-          public int compare(RejectionReportBean o1, RejectionReportBean o2) {
-            int sortResult = o1.getAccessionNumber().compareTo(o2.getAccessionNumber());
-            return sortResult == 0
-                ? o1.getPatientOrTestName().compareTo(o2.getPatientOrTestName())
-                : sortResult;
-          }
+        if (!complete) {
+            add1LineErrorMessage("report.error.message.activity.missing");
+        }
+
+        return complete;
+    }
+
+    protected RejectionReportBean createRejectionReportBean(String noteText, Analysis analysis, boolean useTestName) {
+        RejectionReportBean item = new RejectionReportBean();
+
+        SampleService sampleService = SpringContext.getBean(SampleService.class);
+        Sample sample = analysis.getSampleItem().getSample();
+        PatientService patientService = SpringContext.getBean(PatientService.class);
+        SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+        Patient patient = sampleHumanService.getPatientForSample(sample);
+
+        List<Result> results = analysisService.getResults(analysis);
+        for (Result result : results) {
+            ResultService resultResultService = SpringContext.getBean(ResultService.class);
+            String signature = resultResultService.getSignature(result);
+            if (!GenericValidator.isBlankOrNull(signature)) {
+                item.setTechnician(signature);
+                break;
+            }
+        }
+        if (AccessionFormat.ALPHANUM.toString()
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            item.setAccessionNumber(AlphanumAccessionValidator.convertAlphaNumLabNumForDisplay(
+                    sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH)));
+        } else {
+            item.setAccessionNumber(sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH));
+        }
+        item.setReceivedDate(sampleService.getTwoYearReceivedDateForDisplay(sample));
+        item.setCollectionDate(
+                DateUtil.convertTimestampToTwoYearStringDate(analysis.getSampleItem().getCollectionDate()));
+        item.setRejectionReason(noteText);
+
+        StringBuilder nameBuilder = new StringBuilder(patientService.getLastName(patient).toUpperCase());
+        if (!GenericValidator.isBlankOrNull(patientService.getNationalId(patient))) {
+            if (nameBuilder.length() > 0) {
+                nameBuilder.append(" / ");
+            }
+            nameBuilder.append(patientService.getNationalId(patient));
+        }
+
+        if (useTestName) {
+            item.setPatientOrTestName(TestServiceImpl.getUserLocalizedTestName(analysisService.getTest(analysis)));
+            item.setNonPrintingPatient(nameBuilder.toString());
+        } else {
+            item.setPatientOrTestName(nameBuilder.toString());
+        }
+
+        return item;
+    }
+
+    @Override
+    protected String reportFileName() {
+        return "RejectionReport";
+    }
+
+    protected RejectionReportBean createIdentityRejectionBean(RejectionReportBean item, boolean blankCollectionDate) {
+        RejectionReportBean filler = new RejectionReportBean();
+
+        filler.setAccessionNumber(item.getAccessionNumber());
+        filler.setReceivedDate(item.getReceivedDate());
+        filler.setCollectionDate(blankCollectionDate ? " " : item.getCollectionDate());
+        filler.setPatientOrTestName(item.getNonPrintingPatient());
+
+        return filler;
+    }
+
+    protected String getNameForId(ReportSpecificationList list) {
+
+        String selection = list.getSelection();
+
+        for (IdValuePair pair : list.getList()) {
+            if (selection.equals(pair.getId())) {
+                return pair.getValue();
+            }
+        }
+
+        return "";
+    }
+
+    protected void injectPatientLineAndCopyToFinalList(ArrayList<RejectionReportBean> rawResults) {
+        Collections.sort(rawResults, new Comparator<RejectionReportBean>() {
+            @Override
+            public int compare(RejectionReportBean o1, RejectionReportBean o2) {
+                int sortResult = o1.getAccessionNumber().compareTo(o2.getAccessionNumber());
+                return sortResult == 0 ? o1.getPatientOrTestName().compareTo(o2.getPatientOrTestName()) : sortResult;
+            }
         });
 
-    String currentAccessionNumber = "";
-    for (RejectionReportBean item : rawResults) {
-      if (!currentAccessionNumber.equals(item.getAccessionNumber())) {
-        rejections.add(createIdentityRejectionBean(item, false));
-        currentAccessionNumber = item.getAccessionNumber();
-      }
-      item.setCollectionDate(null);
-      rejections.add(item);
+        String currentAccessionNumber = "";
+        for (RejectionReportBean item : rawResults) {
+            if (!currentAccessionNumber.equals(item.getAccessionNumber())) {
+                rejections.add(createIdentityRejectionBean(item, false));
+                currentAccessionNumber = item.getAccessionNumber();
+            }
+            item.setCollectionDate(null);
+            rejections.add(item);
+        }
     }
-  }
 }

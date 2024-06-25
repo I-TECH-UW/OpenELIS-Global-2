@@ -9,11 +9,11 @@ import org.openelisglobal.testconfiguration.form.ResultSelectListRenameForm;
 
 public interface ResultSelectListService {
 
-  boolean addResultSelectList(ResultSelectListForm form, String currentUserId);
+    boolean addResultSelectList(ResultSelectListForm form, String currentUserId);
 
-  List<Dictionary> getAllSelectListOptions();
+    List<Dictionary> getAllSelectListOptions();
 
-  Map<String, List<IdValuePair>> getTestSelectDictionary();
+    Map<String, List<IdValuePair>> getTestSelectDictionary();
 
-  boolean renameOption(ResultSelectListRenameForm form, String currentUserId);
+    boolean renameOption(ResultSelectListRenameForm form, String currentUserId);
 }

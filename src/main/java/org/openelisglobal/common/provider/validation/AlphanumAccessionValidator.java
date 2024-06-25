@@ -20,289 +20,260 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class AlphanumAccessionValidator implements IAccessionNumberGenerator {
 
-  protected SampleService sampleService = SpringContext.getBean(SampleService.class);
-  protected AccessionService accessionService = SpringContext.getBean(AccessionService.class);
+    protected SampleService sampleService = SpringContext.getBean(SampleService.class);
+    protected AccessionService accessionService = SpringContext.getBean(AccessionService.class);
 
-  private String startingAt;
-  private Set<String> localReservedNumbers = new HashSet<>();
+    private String startingAt;
+    private Set<String> localReservedNumbers = new HashSet<>();
 
-  @Override
-  public boolean needProgramCode() {
-    return false;
-  }
-
-  @Override
-  public int getInvarientLength() {
-    return getSiteEndIndex();
-  }
-
-  @Override
-  public String getPrefix() {
-    return ConfigurationProperties.getInstance()
-                .getPropertyValue(Property.ALPHANUM_ACCESSION_PREFIX)
-            == null
-        ? ""
-        : ConfigurationProperties.getInstance()
-            .getPropertyValue(Property.ALPHANUM_ACCESSION_PREFIX);
-  }
-
-  protected int getIncrementStartIndex() {
-    return getSiteEndIndex();
-  }
-
-  protected int getYearEndIndex() {
-    return 2;
-  }
-
-  protected int getYearStartIndex() {
-    return 0;
-  }
-
-  protected int getSiteEndIndex() {
-    return getSiteStartIndex() + getPrefix().length();
-  }
-
-  protected int getSiteStartIndex() {
-    return getYearEndIndex();
-  }
-
-  @Override
-  public int getMaxAccessionLength() {
-    return getSiteEndIndex() + getChangeableLength();
-  }
-
-  @Override
-  public int getMinAccessionLength() {
-    return getMaxAccessionLength();
-  }
-
-  @Override
-  public int getChangeableLength() {
-    return 6;
-  }
-
-  public String getOverrideStartingAt() {
-    return startingAt;
-  }
-
-  public void setOverrideStartingAt(String startingAt) {
-    this.startingAt = startingAt;
-  }
-
-  @Override
-  public ValidationResults validFormat(String accessionNumber, boolean checkDate)
-      throws IllegalArgumentException {
-    if (!Boolean.valueOf(
-        ConfigurationProperties.getInstance()
-            .getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
-      return AccessionNumberUtil.containsBlackListCharacters(accessionNumber)
-          ? ValidationResults.FORMAT_FAIL
-          : ValidationResults.SUCCESS;
-    }
-    if (accessionNumber.length() > getMaxAccessionLength()) {
-      return ValidationResults.LENGTH_FAIL;
-    }
-    if (accessionNumber.length() < getMinAccessionLength()) {
-      return ValidationResults.LENGTH_FAIL;
+    @Override
+    public boolean needProgramCode() {
+        return false;
     }
 
-    if (!accessionNumber.substring(getSiteStartIndex(), getSiteEndIndex()).equals(getPrefix())) {
-      return ValidationResults.SITE_FAIL;
+    @Override
+    public int getInvarientLength() {
+        return getSiteEndIndex();
     }
 
-    if (checkDate) {
-      int year = new GregorianCalendar().get(Calendar.YEAR);
-      try {
-        if ((year - 2000)
-            != Integer.parseInt(
-                accessionNumber.substring(getYearStartIndex(), getYearEndIndex()))) {
-          return ValidationResults.YEAR_FAIL;
+    @Override
+    public String getPrefix() {
+        return ConfigurationProperties.getInstance().getPropertyValue(Property.ALPHANUM_ACCESSION_PREFIX) == null ? ""
+                : ConfigurationProperties.getInstance().getPropertyValue(Property.ALPHANUM_ACCESSION_PREFIX);
+    }
+
+    protected int getIncrementStartIndex() {
+        return getSiteEndIndex();
+    }
+
+    protected int getYearEndIndex() {
+        return 2;
+    }
+
+    protected int getYearStartIndex() {
+        return 0;
+    }
+
+    protected int getSiteEndIndex() {
+        return getSiteStartIndex() + getPrefix().length();
+    }
+
+    protected int getSiteStartIndex() {
+        return getYearEndIndex();
+    }
+
+    @Override
+    public int getMaxAccessionLength() {
+        return getSiteEndIndex() + getChangeableLength();
+    }
+
+    @Override
+    public int getMinAccessionLength() {
+        return getMaxAccessionLength();
+    }
+
+    @Override
+    public int getChangeableLength() {
+        return 6;
+    }
+
+    public String getOverrideStartingAt() {
+        return startingAt;
+    }
+
+    public void setOverrideStartingAt(String startingAt) {
+        this.startingAt = startingAt;
+    }
+
+    @Override
+    public ValidationResults validFormat(String accessionNumber, boolean checkDate) throws IllegalArgumentException {
+        if (!Boolean
+                .valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
+            return AccessionNumberUtil.containsBlackListCharacters(accessionNumber) ? ValidationResults.FORMAT_FAIL
+                    : ValidationResults.SUCCESS;
         }
-      } catch (NumberFormatException e) {
-        return ValidationResults.YEAR_FAIL;
-      }
-    } else {
-      try { // quick and dirty to make sure they are digits
-        Integer.parseInt(accessionNumber.substring(getYearStartIndex(), getYearEndIndex()));
-      } catch (NumberFormatException e) {
-        return ValidationResults.YEAR_FAIL;
-      }
+        if (accessionNumber.length() > getMaxAccessionLength()) {
+            return ValidationResults.LENGTH_FAIL;
+        }
+        if (accessionNumber.length() < getMinAccessionLength()) {
+            return ValidationResults.LENGTH_FAIL;
+        }
+
+        if (!accessionNumber.substring(getSiteStartIndex(), getSiteEndIndex()).equals(getPrefix())) {
+            return ValidationResults.SITE_FAIL;
+        }
+
+        if (checkDate) {
+            int year = new GregorianCalendar().get(Calendar.YEAR);
+            try {
+                if ((year - 2000) != Integer
+                        .parseInt(accessionNumber.substring(getYearStartIndex(), getYearEndIndex()))) {
+                    return ValidationResults.YEAR_FAIL;
+                }
+            } catch (NumberFormatException e) {
+                return ValidationResults.YEAR_FAIL;
+            }
+        } else {
+            try { // quick and dirty to make sure they are digits
+                Integer.parseInt(accessionNumber.substring(getYearStartIndex(), getYearEndIndex()));
+            } catch (NumberFormatException e) {
+                return ValidationResults.YEAR_FAIL;
+            }
+        }
+
+        try {
+            IntegerUtil.parseIntBase27(accessionNumber.substring(getIncrementStartIndex()));
+        } catch (NumberFormatException e) {
+            return ValidationResults.FORMAT_FAIL;
+        }
+
+        return ValidationResults.SUCCESS;
     }
 
-    try {
-      IntegerUtil.parseIntBase27(accessionNumber.substring(getIncrementStartIndex()));
-    } catch (NumberFormatException e) {
-      return ValidationResults.FORMAT_FAIL;
+    @Override
+    public String getInvalidFormatMessage(ValidationResults results) {
+        return MessageUtil.getMessage("sample.entry.invalid.accession.number.format.corrected",
+                new String[] { getFormatPattern(), getFormatExample() });
     }
 
-    return ValidationResults.SUCCESS;
-  }
-
-  @Override
-  public String getInvalidFormatMessage(ValidationResults results) {
-    return MessageUtil.getMessage(
-        "sample.entry.invalid.accession.number.format.corrected",
-        new String[] {getFormatPattern(), getFormatExample()});
-  }
-
-  private String getFormatPattern() {
-    StringBuilder format = new StringBuilder();
-    format
-        .append(MessageUtil.getMessage("date.two.digit.year"))
-        .append(getPrefix())
-        .append(StringUtils.rightPad("", getChangeableLength(), "#"));
-    return format.toString();
-  }
-
-  private String getFormatExample() {
-    StringBuilder format = new StringBuilder();
-    format
-        .append(MessageUtil.getMessage("date.two.digit.year"))
-        .append(getPrefix())
-        .append(StringUtils.rightPad("", getChangeableLength(), "1"));
-    return format.toString();
-  }
-
-  @Override
-  public boolean accessionNumberIsUsed(String accessionNumber, String recordType) {
-    return sampleService.getSampleByAccessionNumber(accessionNumber) != null;
-  }
-
-  @Override
-  public ValidationResults checkAccessionNumberValidity(
-      String accessionNumber, String recordType, String isRequired, String projectFormName) {
-    ValidationResults results = validFormat(accessionNumber, true);
-    // TODO refactor accessionNumberIsUsed into two methods so the null isn't
-    // needed. (Its only used for program accession number)
-    if (results == ValidationResults.SUCCESS && accessionNumberIsUsed(accessionNumber, null)) {
-      results = ValidationResults.USED_FAIL;
+    private String getFormatPattern() {
+        StringBuilder format = new StringBuilder();
+        format.append(MessageUtil.getMessage("date.two.digit.year")).append(getPrefix())
+                .append(StringUtils.rightPad("", getChangeableLength(), "#"));
+        return format.toString();
     }
 
-    return results;
-  }
-
-  @Override
-  public String getNextAvailableAccessionNumber(String programCode, boolean reserve) {
-    String nextAccessionNumber;
-    do {
-      if (reserve) {
-        nextAccessionNumber = incrementAccessionNumber();
-      } else {
-        nextAccessionNumber = incrementAccessionNumberNoReserve();
-      }
-    } while (accessionNumberIsUsed(nextAccessionNumber, null));
-    return nextAccessionNumber;
-  }
-
-  @Override
-  public String getNextAccessionNumber(String programCode, boolean reserve) {
-    if (!reserve) {
-      LogEvent.logWarn(
-          BaseSiteYearAccessionValidator.class.getName(),
-          "getNextAvailableAccessionNumber",
-          "this generator always reserves");
+    private String getFormatExample() {
+        StringBuilder format = new StringBuilder();
+        format.append(MessageUtil.getMessage("date.two.digit.year")).append(getPrefix())
+                .append(StringUtils.rightPad("", getChangeableLength(), "1"));
+        return format.toString();
     }
-    return incrementAccessionNumber();
-  }
 
-  @Override
-  public String getInvalidMessage(ValidationResults results) {
-    String suggestedAccessionNumber = getNextAvailableAccessionNumber(null, false);
-
-    return MessageUtil.getMessage("sample.entry.invalid.accession.number.suggestion")
-        + " "
-        + suggestedAccessionNumber;
-  }
-
-  private String incrementAccessionNumber() throws IllegalArgumentException {
-    String year = DateUtil.getTwoDigitYear();
-    if (GenericValidator.isBlankOrNull(startingAt)) {
-      long nextNum =
-          accessionService.getNextNumberIncrement(
-              this.getPrefix() + year, AccessionFormat.ALT_YEAR);
-
-      if (nextNum <= 2147483647L) {
-        String incrementAsString =
-            StringUtils.leftPad(IntegerUtil.toStringBase27((int) nextNum), 6, "0");
-        StringBuilder accessionBuilder = new StringBuilder();
-        accessionBuilder.append(year).append(getPrefix()).append(incrementAsString);
-        return accessionBuilder.toString();
-      } else {
-        throw new IllegalArgumentException("AccessionNumber has no next value - too large for int");
-      }
-    } else {
-      String nextAccessionNumber = startingAt;
-      while (localReservedNumbers.contains(nextAccessionNumber)) {
-        nextAccessionNumber = incrementAccessionNumber(nextAccessionNumber);
-      }
-      localReservedNumbers.add(nextAccessionNumber);
-
-      long increment = Long.parseLong(nextAccessionNumber.substring(getIncrementStartIndex()));
-      long dbIncrement =
-          accessionService.getNextNumberNoIncrement(year + getPrefix(), AccessionFormat.ALPHANUM);
-      if (dbIncrement <= increment) {
-        accessionService.setCurVal(year + getPrefix(), AccessionFormat.ALPHANUM, increment);
-      }
-
-      return nextAccessionNumber;
+    @Override
+    public boolean accessionNumberIsUsed(String accessionNumber, String recordType) {
+        return sampleService.getSampleByAccessionNumber(accessionNumber) != null;
     }
-  }
 
-  private String incrementAccessionNumberNoReserve() throws IllegalArgumentException {
-    String year = DateUtil.getTwoDigitYear();
-    long nextNum =
-        accessionService.getNextNumberNoIncrement(
-            this.getPrefix() + year, AccessionFormat.ALT_YEAR);
-    if (nextNum <= 2147483647L) {
-      String incrementAsString =
-          StringUtils.leftPad(IntegerUtil.toStringBase27((int) nextNum), 6, "0");
-      StringBuilder accessionBuilder = new StringBuilder();
-      accessionBuilder.append(year).append(getPrefix()).append(incrementAsString);
-      return accessionBuilder.toString();
-    } else {
-      throw new IllegalArgumentException("AccessionNumber has no next value - too large for int");
-    }
-  }
+    @Override
+    public ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType, String isRequired,
+            String projectFormName) {
+        ValidationResults results = validFormat(accessionNumber, true);
+        // TODO refactor accessionNumberIsUsed into two methods so the null isn't
+        // needed. (Its only used for program accession number)
+        if (results == ValidationResults.SUCCESS && accessionNumberIsUsed(accessionNumber, null)) {
+            results = ValidationResults.USED_FAIL;
+        }
 
-  private String incrementAccessionNumber(String currentHighAccessionNumber)
-      throws IllegalArgumentException {
-    long increment = Long.parseLong(currentHighAccessionNumber.substring(getIncrementStartIndex()));
-    String incrementAsString;
+        return results;
+    }
 
-    if (increment <= 2147483647L) {
-      incrementAsString =
-          StringUtils.leftPad(IntegerUtil.toStringBase27((int) (++increment)), 6, "0");
-      return currentHighAccessionNumber.substring(0, getIncrementStartIndex()) + incrementAsString;
-    } else {
-      throw new IllegalArgumentException("AccessionNumber has no next value - too large for int");
+    @Override
+    public String getNextAvailableAccessionNumber(String programCode, boolean reserve) {
+        String nextAccessionNumber;
+        do {
+            if (reserve) {
+                nextAccessionNumber = incrementAccessionNumber();
+            } else {
+                nextAccessionNumber = incrementAccessionNumberNoReserve();
+            }
+        } while (accessionNumberIsUsed(nextAccessionNumber, null));
+        return nextAccessionNumber;
     }
-  }
 
-  public static String normalizeAccessionString(String humanReadableAccessionNumber) {
-    if (GenericValidator.isBlankOrNull(humanReadableAccessionNumber)) {
-      return humanReadableAccessionNumber;
+    @Override
+    public String getNextAccessionNumber(String programCode, boolean reserve) {
+        if (!reserve) {
+            LogEvent.logWarn(BaseSiteYearAccessionValidator.class.getName(), "getNextAvailableAccessionNumber",
+                    "this generator always reserves");
+        }
+        return incrementAccessionNumber();
     }
-    return humanReadableAccessionNumber.replace("-", "");
-  }
 
-  // turns format from YYPrefix6AlphaNum to YY-Prefix-3AlphaNum-3AlphaNum
-  // or YY6AlphaNum to YY-3AlphaNum-3AlphaNum
-  public static String convertAlphaNumLabNumForDisplay(String accessionNumber) {
-    if (GenericValidator.isBlankOrNull(accessionNumber)) {
-      return accessionNumber;
+    @Override
+    public String getInvalidMessage(ValidationResults results) {
+        String suggestedAccessionNumber = getNextAvailableAccessionNumber(null, false);
+
+        return MessageUtil.getMessage("sample.entry.invalid.accession.number.suggestion") + " "
+                + suggestedAccessionNumber;
     }
-    StringBuilder builder = new StringBuilder();
-    builder.append(accessionNumber.substring(0, 2)).append("-");
-    if (accessionNumber.length() > 8) {
-      builder
-          .append(accessionNumber.substring(2, accessionNumber.length() - 6).toUpperCase())
-          .append("-");
+
+    private String incrementAccessionNumber() throws IllegalArgumentException {
+        String year = DateUtil.getTwoDigitYear();
+        if (GenericValidator.isBlankOrNull(startingAt)) {
+            long nextNum = accessionService.getNextNumberIncrement(this.getPrefix() + year, AccessionFormat.ALT_YEAR);
+
+            if (nextNum <= 2147483647L) {
+                String incrementAsString = StringUtils.leftPad(IntegerUtil.toStringBase27((int) nextNum), 6, "0");
+                StringBuilder accessionBuilder = new StringBuilder();
+                accessionBuilder.append(year).append(getPrefix()).append(incrementAsString);
+                return accessionBuilder.toString();
+            } else {
+                throw new IllegalArgumentException("AccessionNumber has no next value - too large for int");
+            }
+        } else {
+            String nextAccessionNumber = startingAt;
+            while (localReservedNumbers.contains(nextAccessionNumber)) {
+                nextAccessionNumber = incrementAccessionNumber(nextAccessionNumber);
+            }
+            localReservedNumbers.add(nextAccessionNumber);
+
+            long increment = Long.parseLong(nextAccessionNumber.substring(getIncrementStartIndex()));
+            long dbIncrement = accessionService.getNextNumberNoIncrement(year + getPrefix(), AccessionFormat.ALPHANUM);
+            if (dbIncrement <= increment) {
+                accessionService.setCurVal(year + getPrefix(), AccessionFormat.ALPHANUM, increment);
+            }
+
+            return nextAccessionNumber;
+        }
     }
-    builder
-        .append(
-            accessionNumber.substring(accessionNumber.length() - 6, accessionNumber.length() - 3))
-        .append("-");
-    builder.append(accessionNumber.substring(accessionNumber.length() - 3));
-    return builder.toString();
-  }
+
+    private String incrementAccessionNumberNoReserve() throws IllegalArgumentException {
+        String year = DateUtil.getTwoDigitYear();
+        long nextNum = accessionService.getNextNumberNoIncrement(this.getPrefix() + year, AccessionFormat.ALT_YEAR);
+        if (nextNum <= 2147483647L) {
+            String incrementAsString = StringUtils.leftPad(IntegerUtil.toStringBase27((int) nextNum), 6, "0");
+            StringBuilder accessionBuilder = new StringBuilder();
+            accessionBuilder.append(year).append(getPrefix()).append(incrementAsString);
+            return accessionBuilder.toString();
+        } else {
+            throw new IllegalArgumentException("AccessionNumber has no next value - too large for int");
+        }
+    }
+
+    private String incrementAccessionNumber(String currentHighAccessionNumber) throws IllegalArgumentException {
+        long increment = Long.parseLong(currentHighAccessionNumber.substring(getIncrementStartIndex()));
+        String incrementAsString;
+
+        if (increment <= 2147483647L) {
+            incrementAsString = StringUtils.leftPad(IntegerUtil.toStringBase27((int) (++increment)), 6, "0");
+            return currentHighAccessionNumber.substring(0, getIncrementStartIndex()) + incrementAsString;
+        } else {
+            throw new IllegalArgumentException("AccessionNumber has no next value - too large for int");
+        }
+    }
+
+    public static String normalizeAccessionString(String humanReadableAccessionNumber) {
+        if (GenericValidator.isBlankOrNull(humanReadableAccessionNumber)) {
+            return humanReadableAccessionNumber;
+        }
+        return humanReadableAccessionNumber.replace("-", "");
+    }
+
+    // turns format from YYPrefix6AlphaNum to YY-Prefix-3AlphaNum-3AlphaNum
+    // or YY6AlphaNum to YY-3AlphaNum-3AlphaNum
+    public static String convertAlphaNumLabNumForDisplay(String accessionNumber) {
+        if (GenericValidator.isBlankOrNull(accessionNumber)) {
+            return accessionNumber;
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append(accessionNumber.substring(0, 2)).append("-");
+        if (accessionNumber.length() > 8) {
+            builder.append(accessionNumber.substring(2, accessionNumber.length() - 6).toUpperCase()).append("-");
+        }
+        builder.append(accessionNumber.substring(accessionNumber.length() - 6, accessionNumber.length() - 3))
+                .append("-");
+        builder.append(accessionNumber.substring(accessionNumber.length() - 3));
+        return builder.toString();
+    }
 }

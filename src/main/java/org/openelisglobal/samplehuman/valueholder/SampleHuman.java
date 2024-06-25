@@ -21,49 +21,49 @@ import org.openelisglobal.common.valueholder.BaseObject;
 // TODO remove mention of all non sample_human_PK ids and
 public class SampleHuman extends BaseObject<String> {
 
-  private String id;
+    private String id;
 
-  private String providerId;
+    private String providerId;
 
-  private String sampleId;
+    private String sampleId;
 
-  private String patientId;
+    private String patientId;
 
-  public SampleHuman() {
-    super();
-  }
+    public SampleHuman() {
+        super();
+    }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  @Override
-  public String getId() {
-    return id;
-  }
+    @Override
+    public String getId() {
+        return id;
+    }
 
-  public String getPatientId() {
-    return patientId;
-  }
+    public String getPatientId() {
+        return patientId;
+    }
 
-  public void setPatientId(String patientId) {
-    this.patientId = patientId;
-  }
+    public void setPatientId(String patientId) {
+        this.patientId = patientId;
+    }
 
-  public String getProviderId() {
-    return providerId;
-  }
+    public String getProviderId() {
+        return providerId;
+    }
 
-  public void setProviderId(String providerId) {
-    this.providerId = providerId;
-  }
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
+    }
 
-  public String getSampleId() {
-    return sampleId;
-  }
+    public String getSampleId() {
+        return sampleId;
+    }
 
-  public void setSampleId(String sampleId) {
-    this.sampleId = sampleId;
-  }
+    public void setSampleId(String sampleId) {
+        this.sampleId = sampleId;
+    }
 }

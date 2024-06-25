@@ -9,31 +9,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class SampleRequesterServiceImpl
-    extends AuditableBaseObjectServiceImpl<SampleRequester, String>
-    implements SampleRequesterService {
-  @Autowired protected SampleRequesterDAO baseObjectDAO;
+public class SampleRequesterServiceImpl extends AuditableBaseObjectServiceImpl<SampleRequester, String>
+        implements SampleRequesterService {
+    @Autowired
+    protected SampleRequesterDAO baseObjectDAO;
 
-  SampleRequesterServiceImpl() {
-    super(SampleRequester.class);
-    this.auditTrailLog = true;
-  }
+    SampleRequesterServiceImpl() {
+        super(SampleRequester.class);
+        this.auditTrailLog = true;
+    }
 
-  @Override
-  protected SampleRequesterDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected SampleRequesterDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<SampleRequester> getRequestersForSampleId(String id) {
-    return baseObjectDAO.getRequestersForSampleId(id);
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<SampleRequester> getRequestersForSampleId(String id) {
+        return baseObjectDAO.getRequestersForSampleId(id);
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<SampleRequester> getRequestersForRequesterId(
-      String requesterId, String requesterTypeId) {
-    return baseObjectDAO.getRequestersForRequesterId(requesterId, requesterTypeId);
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<SampleRequester> getRequestersForRequesterId(String requesterId, String requesterTypeId) {
+        return baseObjectDAO.getRequestersForRequesterId(requesterId, requesterTypeId);
+    }
 }

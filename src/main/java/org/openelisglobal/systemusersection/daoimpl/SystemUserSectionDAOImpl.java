@@ -34,151 +34,142 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Component
 @Transactional
-public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, String>
-    implements SystemUserSectionDAO {
+public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, String> implements SystemUserSectionDAO {
 
-  public SystemUserSectionDAOImpl() {
-    super(SystemUserSection.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public void getData(SystemUserSection systemUserSection) throws LIMSRuntimeException {
-    try {
-      SystemUserSection sysUserSection =
-          entityManager
-              .unwrap(Session.class)
-              .get(SystemUserSection.class, systemUserSection.getId());
-      if (sysUserSection != null) {
-        PropertyUtils.copyProperties(systemUserSection, sysUserSection);
-      } else {
-        systemUserSection.setId(null);
-      }
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SystemUserSection getData()", e);
-    }
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<SystemUserSection> getAllSystemUserSections() throws LIMSRuntimeException {
-    List<SystemUserSection> list;
-    try {
-      String sql = "from SystemUserSection";
-      Query<SystemUserSection> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SystemUserSection.class);
-      list = query.list();
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SystemUserSection getAllSystemModules()", e);
+    public SystemUserSectionDAOImpl() {
+        super(SystemUserSection.class);
     }
 
-    return list;
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<SystemUserSection> getAllSystemUserSectionsBySystemUserId(int systemUserId)
-      throws LIMSRuntimeException {
-    List<SystemUserSection> list;
-    try {
-      String sql = "from SystemUserSection s where s.systemUser.id = :param";
-      Query<SystemUserSection> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SystemUserSection.class);
-      query.setParameter("param", systemUserId);
-      list = query.list();
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException(
-          "Error in SystemUserSection getAllSystemUserSectionsBySystemUserId()", e);
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(SystemUserSection systemUserSection) throws LIMSRuntimeException {
+        try {
+            SystemUserSection sysUserSection = entityManager.unwrap(Session.class).get(SystemUserSection.class,
+                    systemUserSection.getId());
+            if (sysUserSection != null) {
+                PropertyUtils.copyProperties(systemUserSection, sysUserSection);
+            } else {
+                systemUserSection.setId(null);
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SystemUserSection getData()", e);
+        }
     }
 
-    return list;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<SystemUserSection> getAllSystemUserSections() throws LIMSRuntimeException {
+        List<SystemUserSection> list;
+        try {
+            String sql = "from SystemUserSection";
+            Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SystemUserSection.class);
+            list = query.list();
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SystemUserSection getAllSystemModules()", e);
+        }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<SystemUserSection> getPageOfSystemUserSections(int startingRecNo)
-      throws LIMSRuntimeException {
-    List<SystemUserSection> list;
-    try {
-      // calculate maxRow to be one more than the page size
-      int endingRecNo =
-          startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
-
-      String sql = "from SystemUserSection s ";
-      Query<SystemUserSection> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SystemUserSection.class);
-      query.setFirstResult(startingRecNo - 1);
-      query.setMaxResults(endingRecNo - 1);
-
-      list = query.list();
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SystemUserSection getPageOfSystemUserSections()", e);
+        return list;
     }
 
-    return list;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<SystemUserSection> getAllSystemUserSectionsBySystemUserId(int systemUserId)
+            throws LIMSRuntimeException {
+        List<SystemUserSection> list;
+        try {
+            String sql = "from SystemUserSection s where s.systemUser.id = :param";
+            Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SystemUserSection.class);
+            query.setParameter("param", systemUserId);
+            list = query.list();
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SystemUserSection getAllSystemUserSectionsBySystemUserId()", e);
+        }
 
-  public SystemUserSection readSystemUserSection(String idString) {
-    SystemUserSection sysUserSection = null;
-    try {
-      sysUserSection = entityManager.unwrap(Session.class).get(SystemUserSection.class, idString);
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException(
-          "Error in SystemUserSection readSystemUserSection(idString)", e);
+        return list;
     }
 
-    return sysUserSection;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<SystemUserSection> getPageOfSystemUserSections(int startingRecNo) throws LIMSRuntimeException {
+        List<SystemUserSection> list;
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
-  @Override
-  @Transactional(readOnly = true)
-  public Integer getTotalSystemUserSectionCount() throws LIMSRuntimeException {
-    return getCount();
-  }
+            String sql = "from SystemUserSection s ";
+            Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SystemUserSection.class);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
 
-  @Override
-  public boolean duplicateSystemUserSectionExists(SystemUserSection systemUserSection)
-      throws LIMSRuntimeException {
-    try {
+            list = query.list();
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SystemUserSection getPageOfSystemUserSections()", e);
+        }
 
-      List<SystemUserSection> list = new ArrayList<>();
-
-      String sql =
-          "from SystemUserSection s where s.systemUser.id = :param and s.testSection.id = :param2"
-              + " and s.id != :param3";
-      Query<SystemUserSection> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SystemUserSection.class);
-      query.setParameter("param", systemUserSection.getSystemUser().getId());
-      query.setParameter("param2", systemUserSection.getTestSection().getId());
-
-      String systemUserSectionId = "0";
-      if (!StringUtil.isNullorNill(systemUserSection.getId())) {
-        systemUserSectionId = systemUserSection.getId();
-      }
-      query.setParameter("param3", systemUserSectionId);
-
-      list = query.list();
-
-      if (list.size() > 0) {
-        return true;
-      } else {
-        return false;
-      }
-
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in duplicateSystemUserSectionExists()", e);
+        return list;
     }
-  }
+
+    public SystemUserSection readSystemUserSection(String idString) {
+        SystemUserSection sysUserSection = null;
+        try {
+            sysUserSection = entityManager.unwrap(Session.class).get(SystemUserSection.class, idString);
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SystemUserSection readSystemUserSection(idString)", e);
+        }
+
+        return sysUserSection;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getTotalSystemUserSectionCount() throws LIMSRuntimeException {
+        return getCount();
+    }
+
+    @Override
+    public boolean duplicateSystemUserSectionExists(SystemUserSection systemUserSection) throws LIMSRuntimeException {
+        try {
+
+            List<SystemUserSection> list = new ArrayList<>();
+
+            String sql = "from SystemUserSection s where s.systemUser.id = :param and s.testSection.id = :param2"
+                    + " and s.id != :param3";
+            Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SystemUserSection.class);
+            query.setParameter("param", systemUserSection.getSystemUser().getId());
+            query.setParameter("param2", systemUserSection.getTestSection().getId());
+
+            String systemUserSectionId = "0";
+            if (!StringUtil.isNullorNill(systemUserSection.getId())) {
+                systemUserSectionId = systemUserSection.getId();
+            }
+            query.setParameter("param3", systemUserSectionId);
+
+            list = query.list();
+
+            if (list.size() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in duplicateSystemUserSectionExists()", e);
+        }
+    }
 }

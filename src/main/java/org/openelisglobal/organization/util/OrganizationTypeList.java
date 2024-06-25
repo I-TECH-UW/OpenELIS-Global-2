@@ -31,88 +31,75 @@ import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.spring.util.SpringContext;
 
 /**
- * Well defined lists of organizations group by organization types and ordered by some column of
- * choice.
+ * Well defined lists of organizations group by organization types and ordered
+ * by some column of choice.
  *
  * @author pahill
  * @since 2010-05-19
  */
 public enum OrganizationTypeList {
-  // ARV_ORGS("shortName", null, "ARV Service Loc"),
-  // ARV_ORGS_BY_NAME("organizationName", null, "ARV Service Loc"),
-  ARV_ORGS("shortName", SHORTNAME_NUMERIC_COMPARATOR, "ARV Service Loc"),
-  ARV_ORGS_BY_NAME("organizationName", ORGANIZATION_NAME_COMPARATOR, "ARV Service Loc"),
-  EID_ORGS(
-      "shortName",
-      SHORTNAME_NUMERIC_COMPARATOR,
-      "EID ACONDA-VS CI",
-      "EID EGPAF",
-      "EID ESTHER",
-      "EID ICAP",
-      "SEV-CI",
-      "ARIEL"),
-  EID_ORGS_BY_NAME(
-      "organizationName",
-      ORGANIZATION_NAME_COMPARATOR,
-      "EID ACONDA-VS CI",
-      "EID EGPAF",
-      "EID ESTHER",
-      "EID ICAP",
-      "SEV-CI",
-      "ARIEL"),
-  RTN_HOSPITALS("shortName", ORGANIZATION_NAME_COMPARATOR, "RTN HIV Hospitals"),
-  RTN_SERVICES("shortName", ORGANIZATION_NAME_COMPARATOR, "RTN HIV Service Loc"),
+    // ARV_ORGS("shortName", null, "ARV Service Loc"),
+    // ARV_ORGS_BY_NAME("organizationName", null, "ARV Service Loc"),
+    ARV_ORGS("shortName", SHORTNAME_NUMERIC_COMPARATOR, "ARV Service Loc"),
+    ARV_ORGS_BY_NAME("organizationName", ORGANIZATION_NAME_COMPARATOR, "ARV Service Loc"),
+    EID_ORGS("shortName", SHORTNAME_NUMERIC_COMPARATOR, "EID ACONDA-VS CI", "EID EGPAF", "EID ESTHER", "EID ICAP",
+            "SEV-CI", "ARIEL"),
+    EID_ORGS_BY_NAME("organizationName", ORGANIZATION_NAME_COMPARATOR, "EID ACONDA-VS CI", "EID EGPAF", "EID ESTHER",
+            "EID ICAP", "SEV-CI", "ARIEL"),
+    RTN_HOSPITALS("shortName", ORGANIZATION_NAME_COMPARATOR, "RTN HIV Hospitals"),
+    RTN_SERVICES("shortName", ORGANIZATION_NAME_COMPARATOR, "RTN HIV Service Loc"),
 // RTN_HOSPITALS("shortName", SHORTNAME_NUMERIC_COMPARATOR, "RTN HIV
 // Hospitals"),
 // RTN_SERVICES("shortName", null, "RTN HIV Service Loc"),
-;
+    ;
 
-  /**
-   * Each member of the enum is one object which when asked will load a list based on an
-   * OrganizationType.short_name
-   *
-   * @param comparator how to sort the list
-   * @param name[] oen or more organization types to use to find this list
-   */
-  private OrganizationTypeList(
-      String orderBy, Comparator<Organization> comparator, String... name) {
-    this.comparator = comparator;
-    this.orderBy = orderBy;
-    this.name = name;
-  }
-
-  /**
-   * The point of this map is to provide a way to get lists needed in UI (or reporting) into a Map
-   * so that on a JSP page, the caller can use: dropDowns.AIDS_STAGES.list
-   */
-  public static final Map<String, OrganizationTypeList> MAP = new HashMap<>();
-
-  static {
-    for (OrganizationTypeList ds : OrganizationTypeList.values()) {
-      MAP.put(ds.name(), ds);
+    /**
+     * Each member of the enum is one object which when asked will load a list based
+     * on an OrganizationType.short_name
+     *
+     * @param comparator how to sort the list
+     * @param name[]     oen or more organization types to use to find this list
+     */
+    private OrganizationTypeList(String orderBy, Comparator<Organization> comparator, String... name) {
+        this.comparator = comparator;
+        this.orderBy = orderBy;
+        this.name = name;
     }
-  }
 
-  private String[] name;
-  private String orderBy;
-  private Comparator<Organization> comparator = null;
+    /**
+     * The point of this map is to provide a way to get lists needed in UI (or
+     * reporting) into a Map so that on a JSP page, the caller can use:
+     * dropDowns.AIDS_STAGES.list
+     */
+    public static final Map<String, OrganizationTypeList> MAP = new HashMap<>();
 
-  /**
-   * Each lists is loaded as needed.
-   *
-   * @return a list of organization associated with a particular organization type or an empty list.
-   */
-  public final List<Organization> getList() {
-    List<Organization> all =
-        SpringContext.getBean(OrganizationService.class).getOrganizationsByTypeName(orderBy, name);
-    try {
-      if (comparator != null) {
-        Collections.sort(all, comparator);
-      }
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      // all = new ArrayList<>(); must not return empty List if sorting fails
+    static {
+        for (OrganizationTypeList ds : OrganizationTypeList.values()) {
+            MAP.put(ds.name(), ds);
+        }
     }
-    return all;
-  }
+
+    private String[] name;
+    private String orderBy;
+    private Comparator<Organization> comparator = null;
+
+    /**
+     * Each lists is loaded as needed.
+     *
+     * @return a list of organization associated with a particular organization type
+     *         or an empty list.
+     */
+    public final List<Organization> getList() {
+        List<Organization> all = SpringContext.getBean(OrganizationService.class).getOrganizationsByTypeName(orderBy,
+                name);
+        try {
+            if (comparator != null) {
+                Collections.sort(all, comparator);
+            }
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            // all = new ArrayList<>(); must not return empty List if sorting fails
+        }
+        return all;
+    }
 }

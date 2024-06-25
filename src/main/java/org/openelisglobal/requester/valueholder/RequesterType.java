@@ -17,24 +17,24 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class RequesterType extends BaseObject<String> {
 
-  private String id;
-  private String requesterType;
+    private String id;
+    private String requesterType;
 
-  @Override
-  public String getId() {
-    return id;
-  }
+    @Override
+    public String getId() {
+        return id;
+    }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getRequesterType() {
-    return requesterType;
-  }
+    public String getRequesterType() {
+        return requesterType;
+    }
 
-  public void setRequesterType(String requesterType) {
-    this.requesterType = requesterType;
-  }
+    public void setRequesterType(String requesterType) {
+        this.requesterType = requesterType;
+    }
 }

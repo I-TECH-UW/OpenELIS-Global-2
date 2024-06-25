@@ -114,7 +114,10 @@ function OrganizationAddModify() {
   };
 
   useEffect(() => {
-    getFromOpenElisServer(`/rest/ParentOrganization`, handleParentOrgList);
+    getFromOpenElisServer(
+      `/rest/displayList/ACTIVE_ORG_LIST`,
+      handleParentOrgList,
+    );
   }, []);
 
   const handleParentOrgList = (res) => {
@@ -151,8 +154,6 @@ function OrganizationAddModify() {
       };
 
       const organizationsManagementIdInfoPost = {
-        departmentList: typeOfActivity.departmentList,
-        orgTypes: typeOfActivity.orgTypes,
         id: typeOfActivity.id,
         organizationName: typeOfActivity.organizationName,
         shortName: typeOfActivity.shortName,
@@ -171,6 +172,7 @@ function OrganizationAddModify() {
         state: typeOfActivity.state,
         internetAddress: typeOfActivity.internetAddress,
         selectedTypes: typeOfActivity.selectedTypes,
+        organization: typeOfActivity.organization,
       };
       setOrgInfo(organizationsManagementIdInfo);
       setOrgInfoPost(organizationsManagementIdInfoPost);
@@ -299,10 +301,12 @@ function OrganizationAddModify() {
   };
 
   useEffect(() => {
-    getFromOpenElisServer(
-      `/rest/organization/${parentOrgId}`,
-      handleParentOrgPost,
-    );
+    if (parentOrgId) {
+      getFromOpenElisServer(
+        `/rest/organization/${parentOrgId}`,
+        handleParentOrgPost,
+      );
+    }
   }, [parentOrgId]);
 
   useEffect(() => {
@@ -315,7 +319,6 @@ function OrganizationAddModify() {
         organizationName: parentOrg.organizationName,
         organizationTypes: parentOrg.organizationTypes,
         shortName: parentOrg.shortName,
-        testSections: parentOrg.testSections,
       };
       setParentOrgPost(parentOrgPost);
       setOrgInfoPost((prevOrgInfo) => ({
@@ -454,6 +457,7 @@ function OrganizationAddModify() {
                       className="defalut"
                       type="text"
                       labelText=""
+                      maxLength={15}
                       placeholder={intl.formatMessage({
                         id: "organization.add.placeholder",
                       })}

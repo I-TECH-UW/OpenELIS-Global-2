@@ -7,6 +7,9 @@
     <changeSet author="rossumg" id="1">
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="test" />
+             <not>
+                <columnExists tableName="test" columnName="antimicrobial_resistance" />
+             </not>
         </preConditions>
         <comment>Add Antimicrobial Resistance column to test table</comment>
         <addColumn tableName="test">

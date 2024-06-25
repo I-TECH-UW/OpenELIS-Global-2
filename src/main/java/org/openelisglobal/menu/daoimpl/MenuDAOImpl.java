@@ -23,76 +23,77 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MenuDAOImpl extends BaseDAOImpl<Menu, String> implements MenuDAO {
 
-  public MenuDAOImpl() {
-    super(Menu.class);
-  }
+    public MenuDAOImpl() {
+        super(Menu.class);
+    }
 
-  //
-  //	@Override
-  //	public List<Menu> getAllMenus() throws LIMSRuntimeException {
-  //
-  //		try {
-  //			String sql = "from Menu";
-  //			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-  //			List<Menu> menus = query.list();
-  //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-  //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-  //
-  //			return menus;
-  //		} catch (HibernateException e) {
-  //			LogEvent.logError("MenuDAOImpl", "getAllMenus()", e.toString());
-  //			throw new LIMSRuntimeException("Error in Menu getAllMenus()", e);
-  //		}
-  //	}
+    //
+    // @Override
+    // public List<Menu> getAllMenus() throws LIMSRuntimeException {
+    //
+    // try {
+    // String sql = "from Menu";
+    // Query query = entityManager.unwrap(Session.class).createQuery(sql);
+    // List<Menu> menus = query.list();
+    // // entityManager.unwrap(Session.class).flush(); // CSL remove old
+    // // entityManager.unwrap(Session.class).clear(); // CSL remove old
+    //
+    // return menus;
+    // } catch (HibernateException e) {
+    // LogEvent.logError("MenuDAOImpl", "getAllMenus()", e.toString());
+    // throw new LIMSRuntimeException("Error in Menu getAllMenus()", e);
+    // }
+    // }
 
-  //
-  //	@Override
-  //	public List<Menu> getAllActiveMenus() throws LIMSRuntimeException {
-  //
-  //		try {
-  //			String sql = "from Menu m where m.isActive = true";
-  //			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-  //			List<Menu> menus = query.list();
-  //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-  //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-  //
-  //			return menus;
-  //		} catch (HibernateException e) {
-  //			LogEvent.logError("MenuDAOImpl", "getAllActiveMenus()", e.toString());
-  //			throw new LIMSRuntimeException("Error in Menu getAllActiveMenus()", e);
-  //		}
-  //	}
+    //
+    // @Override
+    // public List<Menu> getAllActiveMenus() throws LIMSRuntimeException {
+    //
+    // try {
+    // String sql = "from Menu m where m.isActive = true";
+    // Query query = entityManager.unwrap(Session.class).createQuery(sql);
+    // List<Menu> menus = query.list();
+    // // entityManager.unwrap(Session.class).flush(); // CSL remove old
+    // // entityManager.unwrap(Session.class).clear(); // CSL remove old
+    //
+    // return menus;
+    // } catch (HibernateException e) {
+    // LogEvent.logError("MenuDAOImpl", "getAllActiveMenus()", e.toString());
+    // throw new LIMSRuntimeException("Error in Menu getAllActiveMenus()", e);
+    // }
+    // }
 
-  //	@Override
-  //	public Menu getMenuByElementId(String elementId) throws LIMSRuntimeException {
-  //		String sql = "From Menu m where m.elementId = :elementId";
-  //		try {
-  //			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-  //			query.setString("elementId", elementId);
-  //			Menu menu = (Menu) query.uniqueResult();
-  //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-  //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-  //			return menu;
-  //		} catch (HibernateException e) {
-  //			LogEvent.logError("MenuDAOImpl", "getMenuByElementId()", e.toString());
-  //			throw new LIMSRuntimeException("Error in Menu getMenuByElementId()", e);
-  //		}
-  //
-  //	}
+    // @Override
+    // public Menu getMenuByElementId(String elementId) throws LIMSRuntimeException
+    // {
+    // String sql = "From Menu m where m.elementId = :elementId";
+    // try {
+    // Query query = entityManager.unwrap(Session.class).createQuery(sql);
+    // query.setString("elementId", elementId);
+    // Menu menu = (Menu) query.uniqueResult();
+    // // entityManager.unwrap(Session.class).flush(); // CSL remove old
+    // // entityManager.unwrap(Session.class).clear(); // CSL remove old
+    // return menu;
+    // } catch (HibernateException e) {
+    // LogEvent.logError("MenuDAOImpl", "getMenuByElementId()", e.toString());
+    // throw new LIMSRuntimeException("Error in Menu getMenuByElementId()", e);
+    // }
+    //
+    // }
 
-  //	@Override
-  //	public void updateData(Menu menu) throws LIMSRuntimeException {
-  //		try {
-  //			entityManager.unwrap(Session.class).merge(menu);
-  //			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-  //			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-  //			// entityManager.unwrap(Session.class).evict // CSL remove old(menu);
-  //			// entityManager.unwrap(Session.class).refresh // CSL remove old(menu);
-  //		} catch (RuntimeException e) {
-  //
-  //			LogEvent.logError("Menu.DAOImpl", "updateData()", e.toString());
-  //			throw new LIMSRuntimeException("Error in Menu updateData()", e);
-  //		}
-  //	}
+    // @Override
+    // public void updateData(Menu menu) throws LIMSRuntimeException {
+    // try {
+    // entityManager.unwrap(Session.class).merge(menu);
+    // // entityManager.unwrap(Session.class).flush(); // CSL remove old
+    // // entityManager.unwrap(Session.class).clear(); // CSL remove old
+    // // entityManager.unwrap(Session.class).evict // CSL remove old(menu);
+    // // entityManager.unwrap(Session.class).refresh // CSL remove old(menu);
+    // } catch (RuntimeException e) {
+    //
+    // LogEvent.logError("Menu.DAOImpl", "updateData()", e.toString());
+    // throw new LIMSRuntimeException("Error in Menu updateData()", e);
+    // }
+    // }
 
 }

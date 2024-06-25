@@ -11,22 +11,23 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AnalyzerTestMappingServiceImpl
-    extends AuditableBaseObjectServiceImpl<AnalyzerTestMapping, AnalyzerTestMappingPK>
-    implements AnalyzerTestMappingService {
-  @Autowired protected AnalyzerTestMappingDAO baseObjectDAO;
+        extends AuditableBaseObjectServiceImpl<AnalyzerTestMapping, AnalyzerTestMappingPK>
+        implements AnalyzerTestMappingService {
+    @Autowired
+    protected AnalyzerTestMappingDAO baseObjectDAO;
 
-  AnalyzerTestMappingServiceImpl() {
-    super(AnalyzerTestMapping.class);
-    defaultSortOrder = new ArrayList<>();
-  }
+    AnalyzerTestMappingServiceImpl() {
+        super(AnalyzerTestMapping.class);
+        defaultSortOrder = new ArrayList<>();
+    }
 
-  @Override
-  protected AnalyzerTestMappingDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected AnalyzerTestMappingDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-  @Override
-  public List<AnalyzerTestMapping> getAllForAnalyzer(String analyzerId) {
-    return baseObjectDAO.getAllForAnalyzer(analyzerId);
-  }
+    @Override
+    public List<AnalyzerTestMapping> getAllForAnalyzer(String analyzerId) {
+        return baseObjectDAO.getAllForAnalyzer(analyzerId);
+    }
 }

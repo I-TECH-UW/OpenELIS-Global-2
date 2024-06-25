@@ -9,91 +9,91 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class ReportConfigurationForm extends BaseForm implements Serializable {
 
-  private static final long serialVersionUID = 74458L;
+    private static final long serialVersionUID = 74458L;
 
-  private List<Report> reportList;
+    private List<Report> reportList;
 
-  private List<ReportCategory> reportCategoryList;
+    private List<ReportCategory> reportCategoryList;
 
-  private Report currentReport;
+    private Report currentReport;
 
-  private String idOrder;
+    private String idOrder;
 
-  private MultipartFile reportTemplateFile;
+    private MultipartFile reportTemplateFile;
 
-  /*
-   *
-   */
-  private MultipartFile reportDataFile;
+    /*
+     *
+     */
+    private MultipartFile reportDataFile;
 
-  private String menuDisplayKey;
-  private String menuActionUrl;
+    private String menuDisplayKey;
+    private String menuActionUrl;
 
-  public ReportConfigurationForm() {
-    this.currentReport = new Report();
-  }
+    public ReportConfigurationForm() {
+        this.currentReport = new Report();
+    }
 
-  public List<Report> getReportList() {
-    return reportList;
-  }
+    public List<Report> getReportList() {
+        return reportList;
+    }
 
-  public void setReportList(List<Report> reportList) {
-    this.reportList = reportList;
-  }
+    public void setReportList(List<Report> reportList) {
+        this.reportList = reportList;
+    }
 
-  public Report getCurrentReport() {
-    return currentReport;
-  }
+    public Report getCurrentReport() {
+        return currentReport;
+    }
 
-  public void setCurrentReport(Report currentReport) {
-    this.currentReport = currentReport;
-  }
+    public void setCurrentReport(Report currentReport) {
+        this.currentReport = currentReport;
+    }
 
-  public String getIdOrder() {
-    return idOrder;
-  }
+    public String getIdOrder() {
+        return idOrder;
+    }
 
-  public void setIdOrder(String idOrder) {
-    this.idOrder = idOrder;
-  }
+    public void setIdOrder(String idOrder) {
+        this.idOrder = idOrder;
+    }
 
-  public List<ReportCategory> getReportCategoryList() {
-    return reportCategoryList;
-  }
+    public List<ReportCategory> getReportCategoryList() {
+        return reportCategoryList;
+    }
 
-  public void setReportCategoryList(List<ReportCategory> reportCategoryList) {
-    this.reportCategoryList = reportCategoryList;
-  }
+    public void setReportCategoryList(List<ReportCategory> reportCategoryList) {
+        this.reportCategoryList = reportCategoryList;
+    }
 
-  public MultipartFile getReportTemplateFile() {
-    return reportTemplateFile;
-  }
+    public MultipartFile getReportTemplateFile() {
+        return reportTemplateFile;
+    }
 
-  public void setReportTemplateFile(MultipartFile reportTemplateFile) {
-    this.reportTemplateFile = reportTemplateFile;
-  }
+    public void setReportTemplateFile(MultipartFile reportTemplateFile) {
+        this.reportTemplateFile = reportTemplateFile;
+    }
 
-  public MultipartFile getReportDataFile() {
-    return reportDataFile;
-  }
+    public MultipartFile getReportDataFile() {
+        return reportDataFile;
+    }
 
-  public void setReportDataFile(MultipartFile reportDataFile) {
-    this.reportDataFile = reportDataFile;
-  }
+    public void setReportDataFile(MultipartFile reportDataFile) {
+        this.reportDataFile = reportDataFile;
+    }
 
-  public String getMenuDisplayKey() {
-    return menuDisplayKey;
-  }
+    public String getMenuDisplayKey() {
+        return menuDisplayKey;
+    }
 
-  public void setMenuDisplayKey(String menuDisplayKey) {
-    this.menuDisplayKey = menuDisplayKey;
-  }
+    public void setMenuDisplayKey(String menuDisplayKey) {
+        this.menuDisplayKey = menuDisplayKey;
+    }
 
-  public String getMenuActionUrl() {
-    return menuActionUrl;
-  }
+    public String getMenuActionUrl() {
+        return menuActionUrl;
+    }
 
-  public void setMenuActionUrl(String menuActionUrl) {
-    this.menuActionUrl = menuActionUrl;
-  }
+    public void setMenuActionUrl(String menuActionUrl) {
+        this.menuActionUrl = menuActionUrl;
+    }
 }

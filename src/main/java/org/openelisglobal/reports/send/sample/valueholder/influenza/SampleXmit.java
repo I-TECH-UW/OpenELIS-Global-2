@@ -21,77 +21,78 @@ import org.openelisglobal.sample.valueholder.Sample;
  */
 public class SampleXmit extends org.openelisglobal.sample.valueholder.Sample {
 
-  // bugzilla 2437 this is not used for xml but is simply information that is
-  // useful
-  private transient Sample sample;
+    // bugzilla 2437 this is not used for xml but is simply information that is
+    // useful
+    private transient Sample sample;
 
-  private PatientXmit patient;
+    private PatientXmit patient;
 
-  private String sourceOfSample;
+    private String sourceOfSample;
 
-  private String typeOfSampleCode;
+    private String typeOfSampleCode;
 
-  private String typeOfSample;
+    private String typeOfSample;
 
-  private ProviderXmit provider;
+    private ProviderXmit provider;
 
-  private ArrayList tests;
+    private ArrayList tests;
 
-  public SampleXmit() {}
+    public SampleXmit() {
+    }
 
-  public PatientXmit getPatient() {
-    return patient;
-  }
+    public PatientXmit getPatient() {
+        return patient;
+    }
 
-  public ArrayList getTests() {
-    return tests;
-  }
+    public ArrayList getTests() {
+        return tests;
+    }
 
-  public void setTests(ArrayList tests) {
-    this.tests = tests;
-  }
+    public void setTests(ArrayList tests) {
+        this.tests = tests;
+    }
 
-  public void setPatient(PatientXmit patient) {
-    this.patient = patient;
-  }
+    public void setPatient(PatientXmit patient) {
+        this.patient = patient;
+    }
 
-  public ProviderXmit getProvider() {
-    return provider;
-  }
+    public ProviderXmit getProvider() {
+        return provider;
+    }
 
-  public void setProvider(ProviderXmit provider) {
-    this.provider = provider;
-  }
+    public void setProvider(ProviderXmit provider) {
+        this.provider = provider;
+    }
 
-  public String getSourceOfSample() {
-    return sourceOfSample;
-  }
+    public String getSourceOfSample() {
+        return sourceOfSample;
+    }
 
-  public void setSourceOfSample(String sourceOfSample) {
-    this.sourceOfSample = sourceOfSample;
-  }
+    public void setSourceOfSample(String sourceOfSample) {
+        this.sourceOfSample = sourceOfSample;
+    }
 
-  public String getTypeOfSample() {
-    return typeOfSample;
-  }
+    public String getTypeOfSample() {
+        return typeOfSample;
+    }
 
-  public void setTypeOfSample(String typeOfSample) {
-    this.typeOfSample = typeOfSample;
-  }
+    public void setTypeOfSample(String typeOfSample) {
+        this.typeOfSample = typeOfSample;
+    }
 
-  public String getTypeOfSampleCode() {
-    return typeOfSampleCode;
-  }
+    public String getTypeOfSampleCode() {
+        return typeOfSampleCode;
+    }
 
-  public void setTypeOfSampleCode(String typeOfSampleCode) {
-    this.typeOfSampleCode = typeOfSampleCode;
-  }
+    public void setTypeOfSampleCode(String typeOfSampleCode) {
+        this.typeOfSampleCode = typeOfSampleCode;
+    }
 
-  public Sample getSample() {
-    return sample;
-  }
+    public Sample getSample() {
+        return sample;
+    }
 
-  public void setSample(Sample sample) {
-    this.sample = sample;
-  }
+    public void setSample(Sample sample) {
+        this.sample = sample;
+    }
 }

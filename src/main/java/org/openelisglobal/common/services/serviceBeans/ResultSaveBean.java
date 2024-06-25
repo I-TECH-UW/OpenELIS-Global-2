@@ -18,121 +18,121 @@ package org.openelisglobal.common.services.serviceBeans;
 
 public class ResultSaveBean {
 
-  private boolean hasQualifiedResult;
-  private String resultType;
-  private String multiSelectResultValues;
-  private String testId;
-  private String qualifiedResultId;
-  private String qualifiedResultValue;
-  private String qualifiedDictionaryId;
-  private String resultId;
-  private String resultValue;
-  private String reportable;
-  private Double lowerNormalRange;
-  private Double upperNormalRange;
-  private int significantDigits;
+    private boolean hasQualifiedResult;
+    private String resultType;
+    private String multiSelectResultValues;
+    private String testId;
+    private String qualifiedResultId;
+    private String qualifiedResultValue;
+    private String qualifiedDictionaryId;
+    private String resultId;
+    private String resultValue;
+    private String reportable;
+    private Double lowerNormalRange;
+    private Double upperNormalRange;
+    private int significantDigits;
 
-  public boolean isHasQualifiedResult() {
-    return hasQualifiedResult;
-  }
+    public boolean isHasQualifiedResult() {
+        return hasQualifiedResult;
+    }
 
-  public void setHasQualifiedResult(boolean hasQualifiedResult) {
-    this.hasQualifiedResult = hasQualifiedResult;
-  }
+    public void setHasQualifiedResult(boolean hasQualifiedResult) {
+        this.hasQualifiedResult = hasQualifiedResult;
+    }
 
-  public String getResultType() {
-    return resultType;
-  }
+    public String getResultType() {
+        return resultType;
+    }
 
-  public void setResultType(String resultType) {
-    this.resultType = resultType;
-  }
+    public void setResultType(String resultType) {
+        this.resultType = resultType;
+    }
 
-  public String getMultiSelectResultValues() {
-    return multiSelectResultValues;
-  }
+    public String getMultiSelectResultValues() {
+        return multiSelectResultValues;
+    }
 
-  public void setMultiSelectResultValues(String multiSelectResultValues) {
-    this.multiSelectResultValues = multiSelectResultValues;
-  }
+    public void setMultiSelectResultValues(String multiSelectResultValues) {
+        this.multiSelectResultValues = multiSelectResultValues;
+    }
 
-  public String getTestId() {
-    return testId;
-  }
+    public String getTestId() {
+        return testId;
+    }
 
-  public void setTestId(String testId) {
-    this.testId = testId;
-  }
+    public void setTestId(String testId) {
+        this.testId = testId;
+    }
 
-  public String getQualifiedResultId() {
-    return qualifiedResultId;
-  }
+    public String getQualifiedResultId() {
+        return qualifiedResultId;
+    }
 
-  public void setQualifiedResultId(String qualifiedResultId) {
-    this.qualifiedResultId = qualifiedResultId;
-  }
+    public void setQualifiedResultId(String qualifiedResultId) {
+        this.qualifiedResultId = qualifiedResultId;
+    }
 
-  public String getQualifiedResultValue() {
-    return qualifiedResultValue;
-  }
+    public String getQualifiedResultValue() {
+        return qualifiedResultValue;
+    }
 
-  public void setQualifiedResultValue(String qualifiedResultValue) {
-    this.qualifiedResultValue = qualifiedResultValue;
-  }
+    public void setQualifiedResultValue(String qualifiedResultValue) {
+        this.qualifiedResultValue = qualifiedResultValue;
+    }
 
-  public String getQualifiedDictionaryId() {
-    return qualifiedDictionaryId;
-  }
+    public String getQualifiedDictionaryId() {
+        return qualifiedDictionaryId;
+    }
 
-  public void setQualifiedDictionaryId(String qualifiedDictionaryId) {
-    this.qualifiedDictionaryId = qualifiedDictionaryId;
-  }
+    public void setQualifiedDictionaryId(String qualifiedDictionaryId) {
+        this.qualifiedDictionaryId = qualifiedDictionaryId;
+    }
 
-  public String getResultId() {
-    return resultId;
-  }
+    public String getResultId() {
+        return resultId;
+    }
 
-  public void setResultId(String resultId) {
-    this.resultId = resultId;
-  }
+    public void setResultId(String resultId) {
+        this.resultId = resultId;
+    }
 
-  public String getResultValue() {
-    return resultValue;
-  }
+    public String getResultValue() {
+        return resultValue;
+    }
 
-  public void setResultValue(String resultValue) {
-    this.resultValue = resultValue;
-  }
+    public void setResultValue(String resultValue) {
+        this.resultValue = resultValue;
+    }
 
-  public String getReportable() {
-    return reportable;
-  }
+    public String getReportable() {
+        return reportable;
+    }
 
-  public void setReportable(String reportable) {
-    this.reportable = reportable;
-  }
+    public void setReportable(String reportable) {
+        this.reportable = reportable;
+    }
 
-  public Double getLowerNormalRange() {
-    return lowerNormalRange;
-  }
+    public Double getLowerNormalRange() {
+        return lowerNormalRange;
+    }
 
-  public void setLowerNormalRange(Double lowerNormalRange) {
-    this.lowerNormalRange = lowerNormalRange;
-  }
+    public void setLowerNormalRange(Double lowerNormalRange) {
+        this.lowerNormalRange = lowerNormalRange;
+    }
 
-  public Double getUpperNormalRange() {
-    return upperNormalRange;
-  }
+    public Double getUpperNormalRange() {
+        return upperNormalRange;
+    }
 
-  public void setUpperNormalRange(Double upperNormalRange) {
-    this.upperNormalRange = upperNormalRange;
-  }
+    public void setUpperNormalRange(Double upperNormalRange) {
+        this.upperNormalRange = upperNormalRange;
+    }
 
-  public int getSignificantDigits() {
-    return significantDigits;
-  }
+    public int getSignificantDigits() {
+        return significantDigits;
+    }
 
-  public void setSignificantDigits(int significantDigits) {
-    this.significantDigits = significantDigits;
-  }
+    public void setSignificantDigits(int significantDigits) {
+        this.significantDigits = significantDigits;
+    }
 }

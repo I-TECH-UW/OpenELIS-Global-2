@@ -18,10 +18,10 @@ package org.openelisglobal.common.util;
 
 /** */
 public interface LocaleChangeListener {
-  /**
-   * Called when the local has changed
-   *
-   * @param locale the new local
-   */
-  public void localeChanged(String locale);
+    /**
+     * Called when the local has changed
+     *
+     * @param locale the new local
+     */
+    public void localeChanged(String locale);
 }

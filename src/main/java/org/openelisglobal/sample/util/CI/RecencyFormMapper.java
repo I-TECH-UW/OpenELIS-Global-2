@@ -24,61 +24,61 @@ import org.openelisglobal.test.valueholder.Test;
 
 public class RecencyFormMapper extends BaseProjectFormMapper implements IProjectFormMapper {
 
-  private final String projectCode = MessageUtil.getMessage("sample.entry.project.RT");
-  private final String projectName = "Recency Testing";
+    private final String projectCode = MessageUtil.getMessage("sample.entry.project.RT");
+    private final String projectName = "Recency Testing";
 
-  public RecencyFormMapper(String projectFormId, IProjectForm form) {
-    super(projectFormId, form);
-  }
-
-  public String getProjectName() {
-    return projectName;
-  }
-
-  @Override
-  public String getProjectCode() {
-    return projectCode;
-  }
-
-  public List<Test> getPlasmaTests() {
-    List<Test> testList = new ArrayList<>();
-
-    if (projectData.isAsanteTest()) {
-      CollectionUtils.addIgnoreNull(testList, createTest("Asante HIV-1 Rapid Recency", true));
-    }
-    return testList;
-  }
-
-  public List<Test> getSerumTests() {
-    List<Test> testList = new ArrayList<>();
-
-    if (projectData.isAsanteTest()) {
-      CollectionUtils.addIgnoreNull(testList, createTest("Asante HIV-1 Rapid Recency", true));
-    }
-    return testList;
-  }
-
-  @Override
-  public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
-    ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
-
-    // Check for Plasma Tests
-    if (projectData.isPlasmaTaken()) {
-      sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Plasma"), getPlasmaTests()));
+    public RecencyFormMapper(String projectFormId, IProjectForm form) {
+        super(projectFormId, form);
     }
 
-    if (projectData.isSerumTaken()) {
-      sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Serum"), getSerumTests()));
+    public String getProjectName() {
+        return projectName;
     }
 
-    return sItemTests;
-  }
+    @Override
+    public String getProjectCode() {
+        return projectCode;
+    }
 
-  /**
-   * @see org.openelisglobal.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
-   */
-  @Override
-  public String getSampleCenterCode() {
-    return projectData.getARVcenterCode();
-  }
+    public List<Test> getPlasmaTests() {
+        List<Test> testList = new ArrayList<>();
+
+        if (projectData.isAsanteTest()) {
+            CollectionUtils.addIgnoreNull(testList, createTest("Asante HIV-1 Rapid Recency", true));
+        }
+        return testList;
+    }
+
+    public List<Test> getSerumTests() {
+        List<Test> testList = new ArrayList<>();
+
+        if (projectData.isAsanteTest()) {
+            CollectionUtils.addIgnoreNull(testList, createTest("Asante HIV-1 Rapid Recency", true));
+        }
+        return testList;
+    }
+
+    @Override
+    public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
+        ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
+
+        // Check for Plasma Tests
+        if (projectData.isPlasmaTaken()) {
+            sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Plasma"), getPlasmaTests()));
+        }
+
+        if (projectData.isSerumTaken()) {
+            sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Serum"), getSerumTests()));
+        }
+
+        return sItemTests;
+    }
+
+    /**
+     * @see org.openelisglobal.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
+     */
+    @Override
+    public String getSampleCenterCode() {
+        return projectData.getARVcenterCode();
+    }
 }

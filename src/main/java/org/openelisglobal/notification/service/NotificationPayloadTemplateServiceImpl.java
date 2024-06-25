@@ -11,40 +11,40 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class NotificationPayloadTemplateServiceImpl
-    extends AuditableBaseObjectServiceImpl<NotificationPayloadTemplate, Integer>
-    implements NotificationPayloadTemplateService {
+        extends AuditableBaseObjectServiceImpl<NotificationPayloadTemplate, Integer>
+        implements NotificationPayloadTemplateService {
 
-  @Autowired private NotificationPayloadTemplateDAO baseDAO;
+    @Autowired
+    private NotificationPayloadTemplateDAO baseDAO;
 
-  public NotificationPayloadTemplateServiceImpl() {
-    super(NotificationPayloadTemplate.class);
-    this.auditTrailLog = false;
-  }
-
-  @Override
-  protected BaseDAO<NotificationPayloadTemplate, Integer> getBaseObjectDAO() {
-    return baseDAO;
-  }
-
-  @Override
-  public NotificationPayloadTemplate getSystemDefaultPayloadTemplateForType(
-      NotificationPayloadType type) {
-    return baseDAO.getSystemDefaultPayloadTemplateForType(type);
-  }
-
-  @Override
-  @Transactional
-  public void updatePayloadTemplateMessagesAndSubject(
-      NotificationPayloadTemplate newPayloadTemplate, String sysUserId) {
-    NotificationPayloadTemplate oldTemplate;
-    if (newPayloadTemplate.getId() == null) {
-      oldTemplate = newPayloadTemplate;
-    } else {
-      oldTemplate = get(newPayloadTemplate.getId());
-      oldTemplate.setSubjectTemplate(newPayloadTemplate.getSubjectTemplate());
-      oldTemplate.setMessageTemplate(newPayloadTemplate.getMessageTemplate());
+    public NotificationPayloadTemplateServiceImpl() {
+        super(NotificationPayloadTemplate.class);
+        this.auditTrailLog = false;
     }
-    oldTemplate.setSysUserId(sysUserId);
-    save(oldTemplate);
-  }
+
+    @Override
+    protected BaseDAO<NotificationPayloadTemplate, Integer> getBaseObjectDAO() {
+        return baseDAO;
+    }
+
+    @Override
+    public NotificationPayloadTemplate getSystemDefaultPayloadTemplateForType(NotificationPayloadType type) {
+        return baseDAO.getSystemDefaultPayloadTemplateForType(type);
+    }
+
+    @Override
+    @Transactional
+    public void updatePayloadTemplateMessagesAndSubject(NotificationPayloadTemplate newPayloadTemplate,
+            String sysUserId) {
+        NotificationPayloadTemplate oldTemplate;
+        if (newPayloadTemplate.getId() == null) {
+            oldTemplate = newPayloadTemplate;
+        } else {
+            oldTemplate = get(newPayloadTemplate.getId());
+            oldTemplate.setSubjectTemplate(newPayloadTemplate.getSubjectTemplate());
+            oldTemplate.setMessageTemplate(newPayloadTemplate.getMessageTemplate());
+        }
+        oldTemplate.setSysUserId(sysUserId);
+        save(oldTemplate);
+    }
 }

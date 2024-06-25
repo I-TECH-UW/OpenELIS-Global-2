@@ -25,44 +25,41 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType, String>
-    implements TestCodeTypeDAO {
+public class TestCodeTypeDAOImpl extends BaseDAOImpl<TestCodeType, String> implements TestCodeTypeDAO {
 
-  public TestCodeTypeDAOImpl() {
-    super(TestCodeType.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public TestCodeType getTestCodeTypeByName(String name) throws LIMSRuntimeException {
-    String sql = "from TestCodeType et where et.schemaName = :name";
-
-    try {
-      Query<TestCodeType> query =
-          entityManager.unwrap(Session.class).createQuery(sql, TestCodeType.class);
-      query.setParameter("name", name);
-      TestCodeType et = query.uniqueResult();
-      return et;
-    } catch (HibernateException e) {
-      handleException(e, "getTestCodeTypeByName");
+    public TestCodeTypeDAOImpl() {
+        super(TestCodeType.class);
     }
-    return null;
-  }
 
-  @Override
-  @Transactional(readOnly = true)
-  public TestCodeType getTestCodeTypeById(String id) throws LIMSRuntimeException {
-    String sql = "from TestCodeType et where et.id = :id";
+    @Override
+    @Transactional(readOnly = true)
+    public TestCodeType getTestCodeTypeByName(String name) throws LIMSRuntimeException {
+        String sql = "from TestCodeType et where et.schemaName = :name";
 
-    try {
-      Query<TestCodeType> query =
-          entityManager.unwrap(Session.class).createQuery(sql, TestCodeType.class);
-      query.setParameter("id", id);
-      TestCodeType et = query.uniqueResult();
-      return et;
-    } catch (HibernateException e) {
-      handleException(e, "getTestCodeTypeByName");
+        try {
+            Query<TestCodeType> query = entityManager.unwrap(Session.class).createQuery(sql, TestCodeType.class);
+            query.setParameter("name", name);
+            TestCodeType et = query.uniqueResult();
+            return et;
+        } catch (HibernateException e) {
+            handleException(e, "getTestCodeTypeByName");
+        }
+        return null;
     }
-    return null;
-  }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TestCodeType getTestCodeTypeById(String id) throws LIMSRuntimeException {
+        String sql = "from TestCodeType et where et.id = :id";
+
+        try {
+            Query<TestCodeType> query = entityManager.unwrap(Session.class).createQuery(sql, TestCodeType.class);
+            query.setParameter("id", id);
+            TestCodeType et = query.uniqueResult();
+            return et;
+        } catch (HibernateException e) {
+            handleException(e, "getTestCodeTypeByName");
+        }
+        return null;
+    }
 }

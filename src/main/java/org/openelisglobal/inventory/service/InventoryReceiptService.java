@@ -5,11 +5,11 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.inventory.valueholder.InventoryReceipt;
 
 public interface InventoryReceiptService extends BaseObjectService<InventoryReceipt, String> {
-  void getData(InventoryReceipt inventoryReceipt);
+    void getData(InventoryReceipt inventoryReceipt);
 
-  InventoryReceipt getInventoryReceiptById(String id);
+    InventoryReceipt getInventoryReceiptById(String id);
 
-  List<InventoryReceipt> getAllInventoryReceipts();
+    List<InventoryReceipt> getAllInventoryReceipts();
 
-  InventoryReceipt getInventoryReceiptByInventoryItemId(String id);
+    InventoryReceipt getInventoryReceiptByInventoryItemId(String id);
 }

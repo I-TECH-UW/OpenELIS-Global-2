@@ -20,30 +20,33 @@ import org.openelisglobal.testtrailer.valueholder.TestTrailer;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface TestTrailerDAO extends BaseDAO<TestTrailer, String> {
 
-  //	public boolean insertData(TestTrailer testTrailer) throws LIMSRuntimeException;
+    // public boolean insertData(TestTrailer testTrailer) throws
+    // LIMSRuntimeException;
 
-  //	public void deleteData(List testTrailers) throws LIMSRuntimeException;
+    // public void deleteData(List testTrailers) throws LIMSRuntimeException;
 
-  List<TestTrailer> getAllTestTrailers() throws LIMSRuntimeException;
+    List<TestTrailer> getAllTestTrailers() throws LIMSRuntimeException;
 
-  List<TestTrailer> getPageOfTestTrailers(int startingRecNo) throws LIMSRuntimeException;
+    List<TestTrailer> getPageOfTestTrailers(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(TestTrailer testTrailer) throws LIMSRuntimeException;
+    void getData(TestTrailer testTrailer) throws LIMSRuntimeException;
 
-  //	public void updateData(TestTrailer testTrailer) throws LIMSRuntimeException;
+    // public void updateData(TestTrailer testTrailer) throws LIMSRuntimeException;
 
-  TestTrailer getTestTrailerByName(TestTrailer testTrailer) throws LIMSRuntimeException;
+    TestTrailer getTestTrailerByName(TestTrailer testTrailer) throws LIMSRuntimeException;
 
-  List<TestTrailer> getTestTrailers(String filter) throws LIMSRuntimeException;
+    List<TestTrailer> getTestTrailers(String filter) throws LIMSRuntimeException;
 
-  // bugzilla 1411
-  Integer getTotalTestTrailerCount() throws LIMSRuntimeException;
+    // bugzilla 1411
+    Integer getTotalTestTrailerCount() throws LIMSRuntimeException;
 
-  boolean duplicateTestTrailerExists(TestTrailer testTrailer) throws LIMSRuntimeException;
+    boolean duplicateTestTrailerExists(TestTrailer testTrailer) throws LIMSRuntimeException;
 }

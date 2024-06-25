@@ -27,57 +27,55 @@ import org.openelisglobal.reports.action.implementation.Report.DateRange;
  */
 public class WHONETRoutineColumnBuilder extends WHONETCIRoutineColumnBuilder {
 
-  /**
-   * @param dateRange
-   * @param projectStr
-   */
-  public WHONETRoutineColumnBuilder(DateRange dateRange) {
-    super(dateRange);
-  }
-
-  /**
-   * @see
-   *     org.openelisglobal.reports.action.implementation.reportBeans.CIRoutineColumnBuilder#defineAllReportColumns()
-   */
-  @Override
-  protected void defineAllReportColumns() {
-    defineBasicColumns();
-    addAllResultsColumns();
-  }
-
-  /**
-   * @see
-   *     org.openelisglobal.reports.action.implementation.reportBeans.CIRoutineColumnBuilder#makeSQL()
-   */
-  @Override
-  public void makeSQL() {
-    query = new StringBuilder();
-    Date lowDate = dateRange.getLowDate();
-    Date highDate = dateRange.getHighDate();
-
-    query.append(WHONET_SELECT);
-    /*
-     * query.append(SELECT_SAMPLE_PATIENT_ORGANIZATION); // more cross tabulation of
-     * other columns goes where query.append(SELECT_ALL_DEMOGRAPHIC_AND_RESULTS);
-     *
-     * // FROM clause for ordinary lab (sample and patient) tables
-     * query.append(FROM_SAMPLE_PATIENT_ORGANIZATION);
-     *
-     * // all observation history from expressions
-     * appendObservationHistoryCrosstab(lowDate, highDate);
-     *
-     * appendResultCrosstab(lowDate, highDate);
-     *
-     * // and finally the join that puts these all together. Each cross table should
-     * be // listed here otherwise it's not in the result and you'll get a full join
-     * query.append(buildWhereSamplePatienOrgSQL(lowDate, highDate) // insert
-     * joining of any other crosstab here. + "\n AND s.id = demo.samp_id " +
-     * "\n AND s.id = result.samp_id " + "\n ORDER BY s.accession_number"); // no
-     * don't insert another crosstab or table here, go up before the main WHERE //
-     * clause
+    /**
+     * @param dateRange
+     * @param projectStr
      */
-    LogEvent.logTrace("WHONETRoutineColumnBuilder:", "Log SQL", query.toString());
+    public WHONETRoutineColumnBuilder(DateRange dateRange) {
+        super(dateRange);
+    }
 
-    return;
-  }
+    /**
+     * @see org.openelisglobal.reports.action.implementation.reportBeans.CIRoutineColumnBuilder#defineAllReportColumns()
+     */
+    @Override
+    protected void defineAllReportColumns() {
+        defineBasicColumns();
+        addAllResultsColumns();
+    }
+
+    /**
+     * @see org.openelisglobal.reports.action.implementation.reportBeans.CIRoutineColumnBuilder#makeSQL()
+     */
+    @Override
+    public void makeSQL() {
+        query = new StringBuilder();
+        Date lowDate = dateRange.getLowDate();
+        Date highDate = dateRange.getHighDate();
+
+        query.append(WHONET_SELECT);
+        /*
+         * query.append(SELECT_SAMPLE_PATIENT_ORGANIZATION); // more cross tabulation of
+         * other columns goes where query.append(SELECT_ALL_DEMOGRAPHIC_AND_RESULTS);
+         *
+         * // FROM clause for ordinary lab (sample and patient) tables
+         * query.append(FROM_SAMPLE_PATIENT_ORGANIZATION);
+         *
+         * // all observation history from expressions
+         * appendObservationHistoryCrosstab(lowDate, highDate);
+         *
+         * appendResultCrosstab(lowDate, highDate);
+         *
+         * // and finally the join that puts these all together. Each cross table should
+         * be // listed here otherwise it's not in the result and you'll get a full join
+         * query.append(buildWhereSamplePatienOrgSQL(lowDate, highDate) // insert
+         * joining of any other crosstab here. + "\n AND s.id = demo.samp_id " +
+         * "\n AND s.id = result.samp_id " + "\n ORDER BY s.accession_number"); // no
+         * don't insert another crosstab or table here, go up before the main WHERE //
+         * clause
+         */
+        LogEvent.logTrace("WHONETRoutineColumnBuilder:", "Log SQL", query.toString());
+
+        return;
+    }
 }

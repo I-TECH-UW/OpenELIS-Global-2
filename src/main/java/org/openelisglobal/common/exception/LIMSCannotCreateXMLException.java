@@ -14,15 +14,17 @@
 package org.openelisglobal.common.exception;
 
 /**
- * benzd1 Base exception used by the LIMS. Unless special handling can be done with an exception,
- * errors should throw this exception. In the UI portion of the application, this base exception can
- * be caught and an error page displayed.
+ * benzd1 Base exception used by the LIMS. Unless special handling can be done
+ * with an exception, errors should throw this exception. In the UI portion of
+ * the application, this base exception can be caught and an error page
+ * displayed.
  *
- * <p>Specialized exceptions should extend this class.
+ * <p>
+ * Specialized exceptions should extend this class.
  */
 // bugzilla 2393
 public class LIMSCannotCreateXMLException extends LIMSException {
-  public LIMSCannotCreateXMLException(String message) {
-    super(message);
-  }
+    public LIMSCannotCreateXMLException(String message) {
+        super(message);
+    }
 }

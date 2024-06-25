@@ -39,154 +39,150 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class TestUsageUpdate implements IResultUpdate {
 
-  private static String TEST_USAGE_TYPE_ID;
-  private ReportExternalExportService queueService =
-      SpringContext.getBean(ReportExternalExportService.class);
-  private ReportQueueTypeService reportQueueTypeService =
-      SpringContext.getBean(ReportQueueTypeService.class);
-  private static ContainerFactory CONTAINER_FACTORY;
+    private static String TEST_USAGE_TYPE_ID;
+    private ReportExternalExportService queueService = SpringContext.getBean(ReportExternalExportService.class);
+    private ReportQueueTypeService reportQueueTypeService = SpringContext.getBean(ReportQueueTypeService.class);
+    private static ContainerFactory CONTAINER_FACTORY;
 
-  public TestUsageUpdate() {
-    ReportQueueType queueType = reportQueueTypeService.getReportQueueTypeByName("labIndicator");
-    if (queueType != null) {
-      TEST_USAGE_TYPE_ID = queueType.getId();
-    }
+    public TestUsageUpdate() {
+        ReportQueueType queueType = reportQueueTypeService.getReportQueueTypeByName("labIndicator");
+        if (queueType != null) {
+            TEST_USAGE_TYPE_ID = queueType.getId();
+        }
 
-    CONTAINER_FACTORY =
-        new ContainerFactory() {
-          @Override
-          @SuppressWarnings("rawtypes")
-          public List creatArrayContainer() {
-            return new ArrayList();
-          }
+        CONTAINER_FACTORY = new ContainerFactory() {
+            @Override
+            @SuppressWarnings("rawtypes")
+            public List creatArrayContainer() {
+                return new ArrayList();
+            }
 
-          @Override
-          public Map<String, Long> createObjectContainer() {
-            return new HashMap<>();
-          }
+            @Override
+            public Map<String, Long> createObjectContainer() {
+                return new HashMap<>();
+            }
         };
-  }
-
-  @Override
-  public void transactionalUpdate(IResultSaveService resultService) throws LIMSRuntimeException {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void postTransactionalCommitUpdate(IResultSaveService resultSaveService) {
-    Map<String, Map<String, Integer>> dateTestMap = new HashMap<>();
-    List<ReportExternalExport> exports = new ArrayList<>();
-    List<Result> results = getAllResults(resultSaveService);
-
-    createMaps(dateTestMap, results);
-
-    updateData(dateTestMap, exports);
-
-    applyUpdatesToDB(exports);
-  }
-
-  private List<Result> getAllResults(IResultSaveService resultSaveService) {
-    List<Result> results = new ArrayList<>();
-
-    for (ResultSet resultSet : resultSaveService.getNewResults()) {
-      results.add(resultSet.result);
     }
 
-    for (ResultSet resultSet : resultSaveService.getModifiedResults()) {
-      results.add(resultSet.result);
-    }
-    return results;
-  }
+    @Override
+    public void transactionalUpdate(IResultSaveService resultService) throws LIMSRuntimeException {
+        // TODO Auto-generated method stub
 
-  private void createMaps(Map<String, Map<String, Integer>> dateTestMap, List<Result> results) {
-    for (Result result : results) {
-      ResultService resultResultService = SpringContext.getBean(ResultService.class);
-      String testDate = resultResultService.getTestTime(result);
-      if (testDate == null) {
-        testDate = resultResultService.getLastUpdatedTime(result);
-      }
-      Map<String, Integer> testCountMap = dateTestMap.get(testDate);
-
-      if (testCountMap == null) {
-        testCountMap = new HashMap<>();
-        dateTestMap.put(testDate, testCountMap);
-      }
-
-      String testDescription = resultResultService.getTestDescription(result);
-
-      Integer count = testCountMap.get(testDescription);
-      testCountMap.put(testDescription, count == null ? 1 : count + 1);
-    }
-  }
-
-  private void updateData(
-      Map<String, Map<String, Integer>> dateTestMap, List<ReportExternalExport> exports) {
-    for (String date : dateTestMap.keySet()) {
-      ReportExternalExport export = new ReportExternalExport();
-      export.setTypeId(TEST_USAGE_TYPE_ID);
-      export.setEventDate(DateUtil.convertStringDateToTruncatedTimestamp(date));
-      export = queueService.getReportByEventDateAndType(export);
-
-      updateExport(export, dateTestMap.get(date));
-
-      export.setCollectionDate(DateUtil.getNowAsTimestamp());
-
-      exports.add(export);
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  private void updateExport(ReportExternalExport export, Map<String, Integer> testCountMap) {
-    JSONParser parser = new JSONParser();
-    Map<String, Long> databaseTestCountList = null;
-
-    if (export.getData() == null) {
-      export.setData("{}");
     }
 
-    export.setSend(true);
+    @Override
+    public void postTransactionalCommitUpdate(IResultSaveService resultSaveService) {
+        Map<String, Map<String, Integer>> dateTestMap = new HashMap<>();
+        List<ReportExternalExport> exports = new ArrayList<>();
+        List<Result> results = getAllResults(resultSaveService);
 
-    JSONObject json = new JSONObject();
-    try {
-      databaseTestCountList =
-          (Map<String, Long>) parser.parse(export.getData().replace("\n", ""), CONTAINER_FACTORY);
+        createMaps(dateTestMap, results);
 
-      for (String test : testCountMap.keySet()) {
-        Long count = databaseTestCountList.get(test);
-        databaseTestCountList.put(test, count == null ? 1 : count + testCountMap.get(test));
-      }
+        updateData(dateTestMap, exports);
 
-      for (String name : databaseTestCountList.keySet()) {
-        json.put(name, databaseTestCountList.get(name));
-      }
-    } catch (ParseException e) {
-      LogEvent.logInfo(this.getClass().getSimpleName(), "updateExport", e.toString());
+        applyUpdatesToDB(exports);
     }
 
-    StringWriter buffer = new StringWriter();
-    try {
-      json.writeJSONString(buffer);
-    } catch (IOException e) {
-      LogEvent.logDebug(e);
+    private List<Result> getAllResults(IResultSaveService resultSaveService) {
+        List<Result> results = new ArrayList<>();
+
+        for (ResultSet resultSet : resultSaveService.getNewResults()) {
+            results.add(resultSet.result);
+        }
+
+        for (ResultSet resultSet : resultSaveService.getModifiedResults()) {
+            results.add(resultSet.result);
+        }
+        return results;
     }
 
-    String data = buffer.toString().replace("\n", "");
-    export.setData(data);
-  }
+    private void createMaps(Map<String, Map<String, Integer>> dateTestMap, List<Result> results) {
+        for (Result result : results) {
+            ResultService resultResultService = SpringContext.getBean(ResultService.class);
+            String testDate = resultResultService.getTestTime(result);
+            if (testDate == null) {
+                testDate = resultResultService.getLastUpdatedTime(result);
+            }
+            Map<String, Integer> testCountMap = dateTestMap.get(testDate);
 
-  private void applyUpdatesToDB(List<ReportExternalExport> exports) {
-    try {
-      queueService.saveAll(exports);
-      //			for (ReportExternalExport export : exports) {
-      //				if (export.getId() == null) {
-      //					queueService.insertReportExternalExport(export);
-      //				} else {
-      //					queueService.updateReportExternalExport(export);
-      //				}
-      //			}
-    } catch (LIMSRuntimeException e) {
-      LogEvent.logError(e);
+            if (testCountMap == null) {
+                testCountMap = new HashMap<>();
+                dateTestMap.put(testDate, testCountMap);
+            }
+
+            String testDescription = resultResultService.getTestDescription(result);
+
+            Integer count = testCountMap.get(testDescription);
+            testCountMap.put(testDescription, count == null ? 1 : count + 1);
+        }
     }
-  }
+
+    private void updateData(Map<String, Map<String, Integer>> dateTestMap, List<ReportExternalExport> exports) {
+        for (String date : dateTestMap.keySet()) {
+            ReportExternalExport export = new ReportExternalExport();
+            export.setTypeId(TEST_USAGE_TYPE_ID);
+            export.setEventDate(DateUtil.convertStringDateToTruncatedTimestamp(date));
+            export = queueService.getReportByEventDateAndType(export);
+
+            updateExport(export, dateTestMap.get(date));
+
+            export.setCollectionDate(DateUtil.getNowAsTimestamp());
+
+            exports.add(export);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void updateExport(ReportExternalExport export, Map<String, Integer> testCountMap) {
+        JSONParser parser = new JSONParser();
+        Map<String, Long> databaseTestCountList = null;
+
+        if (export.getData() == null) {
+            export.setData("{}");
+        }
+
+        export.setSend(true);
+
+        JSONObject json = new JSONObject();
+        try {
+            databaseTestCountList = (Map<String, Long>) parser.parse(export.getData().replace("\n", ""),
+                    CONTAINER_FACTORY);
+
+            for (String test : testCountMap.keySet()) {
+                Long count = databaseTestCountList.get(test);
+                databaseTestCountList.put(test, count == null ? 1 : count + testCountMap.get(test));
+            }
+
+            for (String name : databaseTestCountList.keySet()) {
+                json.put(name, databaseTestCountList.get(name));
+            }
+        } catch (ParseException e) {
+            LogEvent.logInfo(this.getClass().getSimpleName(), "updateExport", e.toString());
+        }
+
+        StringWriter buffer = new StringWriter();
+        try {
+            json.writeJSONString(buffer);
+        } catch (IOException e) {
+            LogEvent.logDebug(e);
+        }
+
+        String data = buffer.toString().replace("\n", "");
+        export.setData(data);
+    }
+
+    private void applyUpdatesToDB(List<ReportExternalExport> exports) {
+        try {
+            queueService.saveAll(exports);
+            // for (ReportExternalExport export : exports) {
+            // if (export.getId() == null) {
+            // queueService.insertReportExternalExport(export);
+            // } else {
+            // queueService.updateReportExternalExport(export);
+            // }
+            // }
+        } catch (LIMSRuntimeException e) {
+            LogEvent.logError(e);
+        }
+    }
 }

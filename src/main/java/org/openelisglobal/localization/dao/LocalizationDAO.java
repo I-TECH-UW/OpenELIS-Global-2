@@ -21,8 +21,10 @@ import org.openelisglobal.localization.valueholder.Localization;
 
 /** */
 public interface LocalizationDAO extends BaseDAO<Localization, String> {
-  // public Localization getLocalizationById(String id) throws LIMSRuntimeException;
+    // public Localization getLocalizationById(String id) throws
+    // LIMSRuntimeException;
 
-  //	public void updateData(Localization localization) throws LIMSRuntimeException;
+    // public void updateData(Localization localization) throws
+    // LIMSRuntimeException;
 
 }

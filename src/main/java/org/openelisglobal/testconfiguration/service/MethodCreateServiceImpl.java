@@ -15,30 +15,28 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MethodCreateServiceImpl implements MethodCreateService {
 
-  @Autowired private MethodService methodService;
-  @Autowired private LocalizationService localizationService;
-  @Autowired private RoleModuleService roleModuleService;
-  @Autowired private SystemModuleService systemModuleService;
+    @Autowired
+    private MethodService methodService;
+    @Autowired
+    private LocalizationService localizationService;
+    @Autowired
+    private RoleModuleService roleModuleService;
+    @Autowired
+    private SystemModuleService systemModuleService;
 
-  @Override
-  @Transactional
-  public void insertMethod(
-      Localization localization,
-      Method method,
-      SystemModule workplanModule,
-      SystemModule resultModule,
-      SystemModule validationModule,
-      RoleModule workplanResultModule,
-      RoleModule resultResultModule,
-      RoleModule validationValidationModule) {
-    localizationService.insert(localization);
-    method.setLocalization(localization);
-    methodService.insert(method);
-    systemModuleService.insert(workplanModule);
-    systemModuleService.insert(resultModule);
-    systemModuleService.insert(validationModule);
-    roleModuleService.insert(workplanResultModule);
-    roleModuleService.insert(resultResultModule);
-    roleModuleService.insert(validationValidationModule);
-  }
+    @Override
+    @Transactional
+    public void insertMethod(Localization localization, Method method, SystemModule workplanModule,
+            SystemModule resultModule, SystemModule validationModule, RoleModule workplanResultModule,
+            RoleModule resultResultModule, RoleModule validationValidationModule) {
+        localizationService.insert(localization);
+        method.setLocalization(localization);
+        methodService.insert(method);
+        systemModuleService.insert(workplanModule);
+        systemModuleService.insert(resultModule);
+        systemModuleService.insert(validationModule);
+        roleModuleService.insert(workplanResultModule);
+        roleModuleService.insert(resultResultModule);
+        roleModuleService.insert(validationValidationModule);
+    }
 }

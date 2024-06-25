@@ -19,70 +19,68 @@ import org.apache.commons.lang3.StringUtils;
 
 public class ExtendedPatientSearchResults extends PatientSearchResults {
 
-  private String streetName;
+    private String streetName;
 
-  private String flatNumberApartmentName;
+    private String flatNumberApartmentName;
 
-  private String postalCode;
+    private String postalCode;
 
-  private String campCommune;
+    private String campCommune;
 
-  private String town;
+    private String town;
 
-  private String county;
+    private String county;
 
-  public String getStreetName() {
-    return streetName;
-  }
+    public String getStreetName() {
+        return streetName;
+    }
 
-  public void setStreetName(String streetName) {
-    this.streetName = streetName;
-  }
+    public void setStreetName(String streetName) {
+        this.streetName = streetName;
+    }
 
-  public String getStreetAddress() {
-    return StringUtils.trimToNull(
-        (StringUtils.defaultString(flatNumberApartmentName)
-            + " "
-            + StringUtils.defaultString(streetName)));
-  }
+    public String getStreetAddress() {
+        return StringUtils.trimToNull(
+                (StringUtils.defaultString(flatNumberApartmentName) + " " + StringUtils.defaultString(streetName)));
+    }
 
-  public String getFlatNumberApartmentName() {
-    return flatNumberApartmentName;
-  }
+    public String getFlatNumberApartmentName() {
+        return flatNumberApartmentName;
+    }
 
-  public void setFlatNumberApartmentName(String flatNumberApartmentName) {
-    this.flatNumberApartmentName = flatNumberApartmentName;
-  }
+    public void setFlatNumberApartmentName(String flatNumberApartmentName) {
+        this.flatNumberApartmentName = flatNumberApartmentName;
+    }
 
-  public String getPostalCode() {
-    return postalCode;
-  }
+    public String getPostalCode() {
+        return postalCode;
+    }
 
-  public void setPostalCode(String postalCode) {
-    this.postalCode = postalCode;
-  }
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
 
-  public String getCampCommune() {
-    return campCommune;
-  }
+    public String getCampCommune() {
+        return campCommune;
+    }
 
-  public void setCampCommune(String campCommune) {
-    this.campCommune = campCommune;
-  }
+    public void setCampCommune(String campCommune) {
+        this.campCommune = campCommune;
+    }
 
-  public String getTown() {
-    return town;
-  }
+    public String getTown() {
+        return town;
+    }
 
-  public void setTown(String town) {
-    this.town = town;
-  }
+    public void setTown(String town) {
+        this.town = town;
+    }
 
-  public String getCounty() {
-    return county;
-  }
+    public String getCounty() {
+        return county;
+    }
 
-  public void setCounty(String county) {
-    this.county = county;
-  }
+    public void setCounty(String county) {
+        this.county = county;
+    }
 }

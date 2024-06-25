@@ -17,24 +17,24 @@ import java.io.Serializable;
 
 public class SampleConfirmationTest implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String testId;
-  private String result;
+    private String testId;
+    private String result;
 
-  public String getTestId() {
-    return testId;
-  }
+    public String getTestId() {
+        return testId;
+    }
 
-  public void setTestId(String testId) {
-    this.testId = testId;
-  }
+    public void setTestId(String testId) {
+        this.testId = testId;
+    }
 
-  public String getResult() {
-    return result;
-  }
+    public String getResult() {
+        return result;
+    }
 
-  public void setResult(String result) {
-    this.result = result;
-  }
+    public void setResult(String result) {
+        this.result = result;
+    }
 }

@@ -8,7 +8,7 @@ import org.openelisglobal.common.service.BaseObjectService;
 
 public interface AnalyzerExperimentService extends BaseObjectService<AnalyzerExperiment, Integer> {
 
-  Integer saveMapAsCSVFile(String filename, Map<String, String> wellValues) throws LIMSException;
+    Integer saveMapAsCSVFile(String filename, Map<String, String> wellValues) throws LIMSException;
 
-  Map<String, String> getWellValuesForId(Integer id) throws IOException;
+    Map<String, String> getWellValuesForId(Integer id) throws IOException;
 }

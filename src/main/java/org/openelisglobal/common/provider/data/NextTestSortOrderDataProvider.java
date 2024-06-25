@@ -32,54 +32,53 @@ import org.owasp.encoder.Encode;
  */
 public class NextTestSortOrderDataProvider extends BaseDataProvider {
 
-  protected TestService testService = SpringContext.getBean(TestService.class);
-  protected TestSectionService testSectionService = SpringContext.getBean(TestSectionService.class);
+    protected TestService testService = SpringContext.getBean(TestService.class);
+    protected TestSectionService testSectionService = SpringContext.getBean(TestSectionService.class);
 
-  public NextTestSortOrderDataProvider() {
-    super();
-  }
-
-  public NextTestSortOrderDataProvider(AjaxServlet ajaxServlet) {
-    this.ajaxServlet = ajaxServlet;
-  }
-
-  @Override
-  public void processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-    String testSectionId = request.getParameter("tsid");
-    String formField = request.getParameter("field");
-    String result = getData(testSectionId);
-    ajaxServlet.sendData(
-        Encode.forXmlContent(formField), Encode.forXmlContent(result), request, response);
-  }
-
-  // modified for efficiency bugzilla 1367
-  /**
-   * getData() - for NextTestSortOrderDataProvider
-   *
-   * @param testSectionId - String
-   * @return String - data
-   */
-  public String getData(String testSectionId) throws LIMSRuntimeException {
-    String result = INVALID;
-
-    if (!StringUtil.isNullorNill(testSectionId)) {
-      Test test = new Test();
-      TestSection testSection = new TestSection();
-      testSection.setId(testSectionId);
-      testSectionService.getData(testSection);
-
-      if (!StringUtil.isNullorNill(testSection.getId())) {
-        test.setTestSection(testSection);
-
-        Integer sortOrder = testService.getNextAvailableSortOrderByTestSection(test);
-        if (sortOrder != null) {
-          result = sortOrder.toString();
-        } else {
-          result = "1";
-        }
-      }
+    public NextTestSortOrderDataProvider() {
+        super();
     }
-    return result;
-  }
+
+    public NextTestSortOrderDataProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
+
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String testSectionId = request.getParameter("tsid");
+        String formField = request.getParameter("field");
+        String result = getData(testSectionId);
+        ajaxServlet.sendData(Encode.forXmlContent(formField), Encode.forXmlContent(result), request, response);
+    }
+
+    // modified for efficiency bugzilla 1367
+    /**
+     * getData() - for NextTestSortOrderDataProvider
+     *
+     * @param testSectionId - String
+     * @return String - data
+     */
+    public String getData(String testSectionId) throws LIMSRuntimeException {
+        String result = INVALID;
+
+        if (!StringUtil.isNullorNill(testSectionId)) {
+            Test test = new Test();
+            TestSection testSection = new TestSection();
+            testSection.setId(testSectionId);
+            testSectionService.getData(testSection);
+
+            if (!StringUtil.isNullorNill(testSection.getId())) {
+                test.setTestSection(testSection);
+
+                Integer sortOrder = testService.getNextAvailableSortOrderByTestSection(test);
+                if (sortOrder != null) {
+                    result = sortOrder.toString();
+                } else {
+                    result = "1";
+                }
+            }
+        }
+        return result;
+    }
 }

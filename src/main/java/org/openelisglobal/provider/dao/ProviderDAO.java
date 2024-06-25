@@ -21,32 +21,34 @@ import org.openelisglobal.provider.valueholder.Provider;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface ProviderDAO extends BaseDAO<Provider, String> {
 
-  //	public boolean insertData(Provider provider) throws LIMSRuntimeException;
+    // public boolean insertData(Provider provider) throws LIMSRuntimeException;
 
-  //	public void deleteData(List providers) throws LIMSRuntimeException;
+    // public void deleteData(List providers) throws LIMSRuntimeException;
 
-  List<Provider> getAllProviders() throws LIMSRuntimeException;
+    List<Provider> getAllProviders() throws LIMSRuntimeException;
 
-  List<Provider> getPageOfProviders(int startingRecNo) throws LIMSRuntimeException;
+    List<Provider> getPageOfProviders(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(Provider provider) throws LIMSRuntimeException;
+    void getData(Provider provider) throws LIMSRuntimeException;
 
-  //	public void updateData(Provider provider) throws LIMSRuntimeException;
+    // public void updateData(Provider provider) throws LIMSRuntimeException;
 
-  /*
-   * The intent of this is to find the provider linked to a person. It assumes
-   * that each provider is uniquely linked to a person. If more than one provider
-   * is linked to the same person then the first provider is returned.
-   */
-  Provider getProviderByPerson(Person person) throws LIMSRuntimeException;
+    /*
+     * The intent of this is to find the provider linked to a person. It assumes
+     * that each provider is uniquely linked to a person. If more than one provider
+     * is linked to the same person then the first provider is returned.
+     */
+    Provider getProviderByPerson(Person person) throws LIMSRuntimeException;
 
-  int getTotalSearchedProviderCount(String parameter);
+    int getTotalSearchedProviderCount(String parameter);
 
-  List<Provider> getPagesOfSearchedProviders(int startingRecNo, String parameter);
+    List<Provider> getPagesOfSearchedProviders(int startingRecNo, String parameter);
 }

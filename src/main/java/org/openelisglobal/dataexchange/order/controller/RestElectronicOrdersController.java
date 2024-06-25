@@ -44,185 +44,173 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RestElectronicOrdersController extends BaseController {
 
-  private static final String[] ALLOWED_FIELDS =
-      new String[] {
-        "searchType", "searchValue", "startDate", "endDate", "testIds", "statusId", "useAllInfo"
-      };
+    private static final String[] ALLOWED_FIELDS = new String[] { "searchType", "searchValue", "startDate", "endDate",
+            "testIds", "statusId", "useAllInfo" };
 
-  @Autowired private StatusOfSampleService statusOfSampleService;
-  @Autowired private ElectronicOrderService electronicOrderService;
-  @Autowired private PatientService patientService;
-  @Autowired private TestService testService;
-  @Autowired private OrganizationService organizationService;
-  @Autowired private SampleService sampleService;
-  @Autowired private FhirUtil fhirUtil;
-  @Autowired private FhirConfig fhirConfig;
+    @Autowired
+    private StatusOfSampleService statusOfSampleService;
+    @Autowired
+    private ElectronicOrderService electronicOrderService;
+    @Autowired
+    private PatientService patientService;
+    @Autowired
+    private TestService testService;
+    @Autowired
+    private OrganizationService organizationService;
+    @Autowired
+    private SampleService sampleService;
+    @Autowired
+    private FhirUtil fhirUtil;
+    @Autowired
+    private FhirConfig fhirConfig;
 
-  @InitBinder
-  public void initBinder(final WebDataBinder webdataBinder) {
-    webdataBinder.registerCustomEditor(
-        ElectronicOrder.SortOrder.class, new ElectronicOrderSortOrderCategoryConvertor());
-    webdataBinder.setAllowedFields(ALLOWED_FIELDS);
-  }
-
-  @RequestMapping(value = "/rest/ElectronicOrders", method = RequestMethod.GET)
-  public ElectronicOrderViewForm showElectronicOrders(
-      HttpServletRequest request,
-      @ModelAttribute("form") @Valid ElectronicOrderViewForm form,
-      BindingResult result) {
-    form.setReferralFacilitySelectionList(
-        DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
-    form.setTestSelectionList(DisplayListService.getInstance().getList(ListType.ORDERABLE_TESTS));
-    form.setStatusSelectionList(
-        DisplayListService.getInstance().getList(ListType.ELECTRONIC_ORDER_STATUSES));
-
-    if (form.getSearchType() != null) {
-      List<ElectronicOrder> electronicOrders;
-      List<ElectronicOrderDisplayItem> eOrderDisplayItems;
-
-      electronicOrders = electronicOrderService.searchForElectronicOrders(form);
-      eOrderDisplayItems = convertToDisplayItem(electronicOrders, form.getUseAllInfo());
-
-      form.setSearchFinished(true);
-      form.setEOrders(eOrderDisplayItems);
+    @InitBinder
+    public void initBinder(final WebDataBinder webdataBinder) {
+        webdataBinder.registerCustomEditor(ElectronicOrder.SortOrder.class,
+                new ElectronicOrderSortOrderCategoryConvertor());
+        webdataBinder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    return form;
-  }
+    @RequestMapping(value = "/rest/ElectronicOrders", method = RequestMethod.GET)
+    public ElectronicOrderViewForm showElectronicOrders(HttpServletRequest request,
+            @ModelAttribute("form") @Valid ElectronicOrderViewForm form, BindingResult result) {
+        form.setReferralFacilitySelectionList(
+                DisplayListService.getInstance().getList(ListType.REFERRAL_ORGANIZATIONS));
+        form.setTestSelectionList(DisplayListService.getInstance().getList(ListType.ORDERABLE_TESTS));
+        form.setStatusSelectionList(DisplayListService.getInstance().getList(ListType.ELECTRONIC_ORDER_STATUSES));
 
-  private List<ElectronicOrderDisplayItem> convertToDisplayItem(
-      List<ElectronicOrder> electronicOrders, boolean useAllInfo) {
-    return electronicOrders.stream()
-        .map(e -> convertToDisplayItem(e, useAllInfo))
-        .collect(Collectors.toList());
-  }
+        if (form.getSearchType() != null) {
+            List<ElectronicOrder> electronicOrders;
+            List<ElectronicOrderDisplayItem> eOrderDisplayItems;
 
-  private ElectronicOrderDisplayItem convertToDisplayItem(
-      ElectronicOrder electronicOrder, boolean useAllInfo) {
-    ElectronicOrderDisplayItem displayItem = new ElectronicOrderDisplayItem();
+            electronicOrders = electronicOrderService.searchForElectronicOrders(form);
+            eOrderDisplayItems = convertToDisplayItem(electronicOrders, form.getUseAllInfo());
 
-    try {
-
-      displayItem.setStatus(
-          statusOfSampleService.get(electronicOrder.getStatusId()).getDefaultLocalizedName());
-      displayItem.setElectronicOrderId(electronicOrder.getId());
-      displayItem.setExternalOrderId(electronicOrder.getExternalId());
-      displayItem.setPriority(electronicOrder.getPriority());
-
-      Patient patient = electronicOrder.getPatient();
-      if (patient != null) {
-        displayItem.setSubjectNumber(patientService.getSubjectNumber(patient));
-        displayItem.setPatientLastName(patient.getPerson().getLastName());
-        displayItem.setPatientFirstName(patient.getPerson().getFirstName());
-        displayItem.setPatientNationalId(patient.getNationalId());
-      } else {
-        String errorMsg = "error in data collection - Patient was a null resource";
-        displayItem.setWarnings(Arrays.asList(errorMsg));
-      }
-      Task task = fhirUtil.getFhirParser().parseResource(Task.class, electronicOrder.getData());
-      displayItem.setRequestDateDisplay(DateUtil.formatDateAsText(task.getAuthoredOn()));
-
-      Organization organization =
-          organizationService.getOrganizationByFhirId(
-              task.getRestriction().getRecipientFirstRep().getReferenceElement().getIdPart());
-      if (organization != null) {
-        displayItem.setRequestingFacility(organization.getOrganizationName());
-      } else {
-        if (!task.getLocation().isEmpty()) {
-          organization =
-              organizationService.getOrganizationByFhirId(
-                  task.getLocation().getReferenceElement().getIdPart());
-          if (organization != null) {
-            displayItem.setRequestingFacility(organization.getOrganizationName());
-          }
-        }
-      }
-
-      Sample sample = sampleService.getSampleByReferringId(electronicOrder.getExternalId());
-      if (sample != null) {
-        displayItem.setLabNumber(sample.getAccessionNumber());
-      }
-
-      if (useAllInfo) {
-        IGenericClient fhirClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
-
-        ServiceRequest serviceRequest =
-            fhirClient
-                .read()
-                .resource(ServiceRequest.class)
-                .withId(electronicOrder.getExternalId())
-                .execute();
-        if (serviceRequest.getRequisition() != null) {
-          displayItem.setReferringLabNumber(serviceRequest.getRequisition().getValue());
+            form.setSearchFinished(true);
+            form.setEOrders(eOrderDisplayItems);
         }
 
-        Test test = null;
-        for (Coding coding : serviceRequest.getCode().getCoding()) {
-          if (coding.hasSystem()) {
-            if (coding.getSystem().equalsIgnoreCase("http://loinc.org")) {
-              List<Test> tests = testService.getActiveTestsByLoinc(coding.getCode());
-              if (tests.size() != 0) {
-                test = tests.get(0);
-                break;
-              }
+        return form;
+    }
+
+    private List<ElectronicOrderDisplayItem> convertToDisplayItem(List<ElectronicOrder> electronicOrders,
+            boolean useAllInfo) {
+        return electronicOrders.stream().map(e -> convertToDisplayItem(e, useAllInfo)).collect(Collectors.toList());
+    }
+
+    private ElectronicOrderDisplayItem convertToDisplayItem(ElectronicOrder electronicOrder, boolean useAllInfo) {
+        ElectronicOrderDisplayItem displayItem = new ElectronicOrderDisplayItem();
+
+        try {
+
+            displayItem.setStatus(statusOfSampleService.get(electronicOrder.getStatusId()).getDefaultLocalizedName());
+            displayItem.setElectronicOrderId(electronicOrder.getId());
+            displayItem.setExternalOrderId(electronicOrder.getExternalId());
+            displayItem.setPriority(electronicOrder.getPriority());
+
+            Patient patient = electronicOrder.getPatient();
+            if (patient != null) {
+                displayItem.setSubjectNumber(patientService.getSubjectNumber(patient));
+                displayItem.setPatientLastName(patient.getPerson().getLastName());
+                displayItem.setPatientFirstName(patient.getPerson().getFirstName());
+                displayItem.setPatientNationalId(patient.getNationalId());
+            } else {
+                String errorMsg = "error in data collection - Patient was a null resource";
+                displayItem.setWarnings(Arrays.asList(errorMsg));
             }
-          }
-        }
-        if (test != null) {
-          displayItem.setTestName(test.getLocalizedTestName().getLocalizedValue());
+            Task task = fhirUtil.getFhirParser().parseResource(Task.class, electronicOrder.getData());
+            displayItem.setRequestDateDisplay(DateUtil.formatDateAsText(task.getAuthoredOn()));
+
+            Organization organization = organizationService.getOrganizationByFhirId(
+                    task.getRestriction().getRecipientFirstRep().getReferenceElement().getIdPart());
+            if (organization != null) {
+                displayItem.setRequestingFacility(organization.getOrganizationName());
+            } else {
+                if (!task.getLocation().isEmpty()) {
+                    organization = organizationService
+                            .getOrganizationByFhirId(task.getLocation().getReferenceElement().getIdPart());
+                    if (organization != null) {
+                        displayItem.setRequestingFacility(organization.getOrganizationName());
+                    }
+                }
+            }
+
+            Sample sample = sampleService.getSampleByReferringId(electronicOrder.getExternalId());
+            if (sample != null) {
+                displayItem.setLabNumber(sample.getAccessionNumber());
+            }
+
+            if (useAllInfo) {
+                IGenericClient fhirClient = fhirUtil.getFhirClient(fhirConfig.getLocalFhirStorePath());
+
+                ServiceRequest serviceRequest = fhirClient.read().resource(ServiceRequest.class)
+                        .withId(electronicOrder.getExternalId()).execute();
+                if (serviceRequest.getRequisition() != null) {
+                    displayItem.setReferringLabNumber(serviceRequest.getRequisition().getValue());
+                }
+
+                Test test = null;
+                for (Coding coding : serviceRequest.getCode().getCoding()) {
+                    if (coding.hasSystem()) {
+                        if (coding.getSystem().equalsIgnoreCase("http://loinc.org")) {
+                            List<Test> tests = testService.getActiveTestsByLoinc(coding.getCode());
+                            if (tests.size() != 0) {
+                                test = tests.get(0);
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (test != null) {
+                    displayItem.setTestName(test.getLocalizedTestName().getLocalizedValue());
+                }
+
+                String patientUuid = serviceRequest.getSubject().getReferenceElement().getIdPart();
+                org.hl7.fhir.r4.model.Patient fhirPatient = fhirClient.read()
+                        .resource(org.hl7.fhir.r4.model.Patient.class).withId(patientUuid).execute();
+
+                for (Identifier identifier : fhirPatient.getIdentifier()) {
+                    if ("passport".equals(identifier.getSystem())) {
+                        displayItem.setPassportNumber(identifier.getId());
+                    }
+                    if ((fhirConfig.getOeFhirSystem() + "/pat_subjectNumber").equals(identifier.getSystem())) {
+                        displayItem.setSubjectNumber(identifier.getId());
+                    }
+                }
+            }
+        } catch (ResourceNotFoundException e) {
+            String errorMsg = "error in data collection - FHIR resource not found";
+            displayItem.setWarnings(Arrays.asList(errorMsg));
+            LogEvent.logError(e);
+        } catch (NullPointerException e) {
+            String errorMsg = "error in data collection - null data";
+            displayItem.setWarnings(Arrays.asList(errorMsg));
+            LogEvent.logError(e);
+        } catch (RuntimeException e) {
+            String errorMsg = "error in data collection - unknown exception";
+            displayItem.setWarnings(Arrays.asList(errorMsg));
+            LogEvent.logError(e);
         }
 
-        String patientUuid = serviceRequest.getSubject().getReferenceElement().getIdPart();
-        org.hl7.fhir.r4.model.Patient fhirPatient =
-            fhirClient
-                .read()
-                .resource(org.hl7.fhir.r4.model.Patient.class)
-                .withId(patientUuid)
-                .execute();
-
-        for (Identifier identifier : fhirPatient.getIdentifier()) {
-          if ("passport".equals(identifier.getSystem())) {
-            displayItem.setPassportNumber(identifier.getId());
-          }
-          if ((fhirConfig.getOeFhirSystem() + "/pat_subjectNumber")
-              .equals(identifier.getSystem())) {
-            displayItem.setSubjectNumber(identifier.getId());
-          }
-        }
-      }
-    } catch (ResourceNotFoundException e) {
-      String errorMsg = "error in data collection - FHIR resource not found";
-      displayItem.setWarnings(Arrays.asList(errorMsg));
-      LogEvent.logError(e);
-    } catch (NullPointerException e) {
-      String errorMsg = "error in data collection - null data";
-      displayItem.setWarnings(Arrays.asList(errorMsg));
-      LogEvent.logError(e);
-    } catch (RuntimeException e) {
-      String errorMsg = "error in data collection - unknown exception";
-      displayItem.setWarnings(Arrays.asList(errorMsg));
-      LogEvent.logError(e);
+        return displayItem;
     }
 
-    return displayItem;
-  }
-
-  @Override
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "electronicOrderViewDefinition";
-    } else {
-      return "PageNotFound";
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "electronicOrderViewDefinition";
+        } else {
+            return "PageNotFound";
+        }
     }
-  }
 
-  @Override
-  protected String getPageTitleKey() {
-    return "eorder.browse.title";
-  }
+    @Override
+    protected String getPageTitleKey() {
+        return "eorder.browse.title";
+    }
 
-  @Override
-  protected String getPageSubtitleKey() {
-    return "eorder.browse.title";
-  }
+    @Override
+    protected String getPageSubtitleKey() {
+        return "eorder.browse.title";
+    }
 }

@@ -18,60 +18,60 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class ReportExternalImport extends BaseObject<String> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String id;
-  private String sendingSite;
-  private Timestamp eventDate;
-  private Timestamp recievedDate;
-  private String reportType;
-  private String data;
+    private String id;
+    private String sendingSite;
+    private Timestamp eventDate;
+    private Timestamp recievedDate;
+    private String reportType;
+    private String data;
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public Timestamp getEventDate() {
-    return eventDate;
-  }
+    public Timestamp getEventDate() {
+        return eventDate;
+    }
 
-  public void setEventDate(Timestamp eventDate) {
-    this.eventDate = eventDate;
-  }
+    public void setEventDate(Timestamp eventDate) {
+        this.eventDate = eventDate;
+    }
 
-  public Timestamp getRecievedDate() {
-    return recievedDate;
-  }
+    public Timestamp getRecievedDate() {
+        return recievedDate;
+    }
 
-  public void setRecievedDate(Timestamp recievedDate) {
-    this.recievedDate = recievedDate;
-  }
+    public void setRecievedDate(Timestamp recievedDate) {
+        this.recievedDate = recievedDate;
+    }
 
-  public String getData() {
-    return data;
-  }
+    public String getData() {
+        return data;
+    }
 
-  public void setData(String data) {
-    this.data = data;
-  }
+    public void setData(String data) {
+        this.data = data;
+    }
 
-  public void setSendingSite(String sendingSite) {
-    this.sendingSite = sendingSite;
-  }
+    public void setSendingSite(String sendingSite) {
+        this.sendingSite = sendingSite;
+    }
 
-  public String getSendingSite() {
-    return sendingSite;
-  }
+    public String getSendingSite() {
+        return sendingSite;
+    }
 
-  public void setReportType(String reportType) {
-    this.reportType = reportType;
-  }
+    public void setReportType(String reportType) {
+        this.reportType = reportType;
+    }
 
-  public String getReportType() {
-    return reportType;
-  }
+    public String getReportType() {
+        return reportType;
+    }
 }

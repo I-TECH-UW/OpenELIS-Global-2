@@ -17,7 +17,7 @@ package org.openelisglobal.common.provider.validation;
 
 public interface ILoginPasswordValidation {
 
-  public boolean passwordValid(String password);
+    public boolean passwordValid(String password);
 
-  public String getInstructions();
+    public String getInstructions();
 }

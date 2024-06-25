@@ -16,52 +16,49 @@ import org.openelisglobal.result.valueholder.Result;
 
 public class CovidResultsJSONBuilder extends CovidResultsBuilderImpl {
 
-  public CovidResultsJSONBuilder(DateRange dateRange) {
-    super(dateRange);
-  }
-
-  private JSONArray dataSource = new JSONArray();
-
-  @Override
-  public void buildDataSource() {
-    List<Analysis> analysises = getCovidAnalysisWithinDate();
-    for (Analysis analysis : analysises) {
-      dataSource.put(getResultJSON(analysis));
+    public CovidResultsJSONBuilder(DateRange dateRange) {
+        super(dateRange);
     }
-  }
 
-  private JSONObject getResultJSON(Analysis analysis) {
-    Optional<Result> result = getResultForAnalysis(analysis);
-    Patient patient = getPatientForAnalysis(analysis);
-    JSONObject resultJSON = new JSONObject();
-    resultJSON.append(RESULT_PROPERTY_NAME, getResultValue(result));
-    resultJSON.append(
-        ORDER_NUMBER_PROPERTY_NAME, analysis.getSampleItem().getSample().getAccessionNumber());
-    resultJSON.append(DATE_PROPERTY_NAME, analysis.getStartedDateForDisplay());
+    private JSONArray dataSource = new JSONArray();
 
-    resultJSON.append(PATIENT_LAST_NAME_PROPERTY_NAME, patient.getPerson().getLastName());
-    resultJSON.append(PATIENT_FIRST_NAME_PROPERTY_NAME, patient.getPerson().getFirstName());
-    resultJSON.append(PATIENT_DATE_OF_BIRTH_PROPERTY_NAME, patient.getBirthDateForDisplay());
-    resultJSON.append(PATIENT_PHONE_NO_PROPERTY_NAME, patient.getPerson().getPrimaryPhone());
-
-    Optional<Task> task = getReferringTaskForAnalysis(analysis);
-
-    if (task.isPresent() && !GenericValidator.isBlankOrNull(task.get().getDescription())) {
-      try {
-        resultJSON.append(LOCATOR_FORM_PROPERTY_NAME, new JSONObject(task.get().getDescription()));
-      } catch (JSONException e) {
-        LogEvent.logError(
-            this.getClass().getSimpleName(),
-            "getResultJSON",
-            "could not make json from task description");
-        LogEvent.logError(e);
-      }
+    @Override
+    public void buildDataSource() {
+        List<Analysis> analysises = getCovidAnalysisWithinDate();
+        for (Analysis analysis : analysises) {
+            dataSource.put(getResultJSON(analysis));
+        }
     }
-    return resultJSON;
-  }
 
-  @Override
-  public byte[] getDataSourceAsByteArray() {
-    return dataSource.toString(1).getBytes(Charsets.UTF_8);
-  }
+    private JSONObject getResultJSON(Analysis analysis) {
+        Optional<Result> result = getResultForAnalysis(analysis);
+        Patient patient = getPatientForAnalysis(analysis);
+        JSONObject resultJSON = new JSONObject();
+        resultJSON.append(RESULT_PROPERTY_NAME, getResultValue(result));
+        resultJSON.append(ORDER_NUMBER_PROPERTY_NAME, analysis.getSampleItem().getSample().getAccessionNumber());
+        resultJSON.append(DATE_PROPERTY_NAME, analysis.getStartedDateForDisplay());
+
+        resultJSON.append(PATIENT_LAST_NAME_PROPERTY_NAME, patient.getPerson().getLastName());
+        resultJSON.append(PATIENT_FIRST_NAME_PROPERTY_NAME, patient.getPerson().getFirstName());
+        resultJSON.append(PATIENT_DATE_OF_BIRTH_PROPERTY_NAME, patient.getBirthDateForDisplay());
+        resultJSON.append(PATIENT_PHONE_NO_PROPERTY_NAME, patient.getPerson().getPrimaryPhone());
+
+        Optional<Task> task = getReferringTaskForAnalysis(analysis);
+
+        if (task.isPresent() && !GenericValidator.isBlankOrNull(task.get().getDescription())) {
+            try {
+                resultJSON.append(LOCATOR_FORM_PROPERTY_NAME, new JSONObject(task.get().getDescription()));
+            } catch (JSONException e) {
+                LogEvent.logError(this.getClass().getSimpleName(), "getResultJSON",
+                        "could not make json from task description");
+                LogEvent.logError(e);
+            }
+        }
+        return resultJSON;
+    }
+
+    @Override
+    public byte[] getDataSourceAsByteArray() {
+        return dataSource.toString(1).getBytes(Charsets.UTF_8);
+    }
 }

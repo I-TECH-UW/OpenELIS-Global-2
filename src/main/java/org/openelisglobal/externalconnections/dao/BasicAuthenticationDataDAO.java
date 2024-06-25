@@ -6,5 +6,5 @@ import org.openelisglobal.externalconnections.valueholder.BasicAuthenticationDat
 
 public interface BasicAuthenticationDataDAO extends BaseDAO<BasicAuthenticationData, Integer> {
 
-  Optional<BasicAuthenticationData> getByExternalConnection(Integer externalConnectionId);
+    Optional<BasicAuthenticationData> getByExternalConnection(Integer externalConnectionId);
 }

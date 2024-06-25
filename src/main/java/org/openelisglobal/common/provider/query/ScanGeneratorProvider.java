@@ -30,59 +30,56 @@ import org.owasp.encoder.Encode;
 
 public class ScanGeneratorProvider extends BaseQueryProvider {
 
-  protected ProjectService projectService = SpringContext.getBean(ProjectService.class);
+    protected ProjectService projectService = SpringContext.getBean(ProjectService.class);
 
-  public ScanGeneratorProvider() {
-    super();
-  }
-
-  public ScanGeneratorProvider(AjaxServlet ajaxServlet) {
-    this.ajaxServlet = ajaxServlet;
-  }
-
-  @Override
-  public void processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-
-    boolean noIncrement = "true".equals(request.getParameter("noIncrement"));
-    String programCode = request.getParameter("programCode");
-    String nextNumber = null;
-    String error = null;
-    try {
-      if (GenericValidator.isBlankOrNull(programCode)) {
-        nextNumber =
-            AccessionNumberUtil.getMainAccessionNumberGenerator()
-                .getNextAvailableAccessionNumber("", !noIncrement);
-      } else {
-        // check program code validity
-        List<Project> programCodes = projectService.getAllProjects();
-        boolean found = false;
-        for (Project code : programCodes) {
-          if (programCode.equals(code.getProgramCode())) {
-            found = true;
-            break;
-          }
-        }
-        if (found) {
-          nextNumber =
-              AccessionNumberUtil.getProgramAccessionNumberGenerator()
-                  .getNextAvailableAccessionNumber(programCode, !noIncrement);
-          if (GenericValidator.isBlankOrNull(nextNumber)) {
-            error = MessageUtil.getMessage("error.accession.no.next");
-          }
-        } else {
-          error = MessageUtil.getMessage("errors.invalid", "program.code");
-        }
-      }
-    } catch (IllegalArgumentException | IllegalStateException e) {
-      error = MessageUtil.getMessage("error.accession.no.error");
-      LogEvent.logError(this.getClass().getSimpleName(), "processRequest", e.toString());
+    public ScanGeneratorProvider() {
+        super();
     }
 
-    String result = GenericValidator.isBlankOrNull(nextNumber) ? INVALID : VALID;
-    String returnData =
-        Encode.forXmlContent(GenericValidator.isBlankOrNull(error) ? nextNumber : error);
+    public ScanGeneratorProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
 
-    ajaxServlet.sendData(returnData, result, request, response);
-  }
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        boolean noIncrement = "true".equals(request.getParameter("noIncrement"));
+        String programCode = request.getParameter("programCode");
+        String nextNumber = null;
+        String error = null;
+        try {
+            if (GenericValidator.isBlankOrNull(programCode)) {
+                nextNumber = AccessionNumberUtil.getMainAccessionNumberGenerator().getNextAvailableAccessionNumber("",
+                        !noIncrement);
+            } else {
+                // check program code validity
+                List<Project> programCodes = projectService.getAllProjects();
+                boolean found = false;
+                for (Project code : programCodes) {
+                    if (programCode.equals(code.getProgramCode())) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) {
+                    nextNumber = AccessionNumberUtil.getProgramAccessionNumberGenerator()
+                            .getNextAvailableAccessionNumber(programCode, !noIncrement);
+                    if (GenericValidator.isBlankOrNull(nextNumber)) {
+                        error = MessageUtil.getMessage("error.accession.no.next");
+                    }
+                } else {
+                    error = MessageUtil.getMessage("errors.invalid", "program.code");
+                }
+            }
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            error = MessageUtil.getMessage("error.accession.no.error");
+            LogEvent.logError(this.getClass().getSimpleName(), "processRequest", e.toString());
+        }
+
+        String result = GenericValidator.isBlankOrNull(nextNumber) ? INVALID : VALID;
+        String returnData = Encode.forXmlContent(GenericValidator.isBlankOrNull(error) ? nextNumber : error);
+
+        ajaxServlet.sendData(returnData, result, request, response);
+    }
 }

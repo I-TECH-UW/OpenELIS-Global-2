@@ -14,21 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/import")
 public class ImportController {
 
-  @GetMapping(value = "/all")
-  public void importAll() throws FhirLocalPersistingException, FhirGeneralException, IOException {
-    SpringContext.getBean(OrganizationImportService.class).importOrganizationList();
-    SpringContext.getBean(ProviderImportService.class).importPractitionerList();
-  }
+    @GetMapping(value = "/all")
+    public void importAll() throws FhirLocalPersistingException, FhirGeneralException, IOException {
+        SpringContext.getBean(OrganizationImportService.class).importOrganizationList();
+        SpringContext.getBean(ProviderImportService.class).importPractitionerList();
+    }
 
-  @GetMapping(value = "/organization")
-  public void importOrganizations()
-      throws FhirLocalPersistingException, FhirGeneralException, IOException {
-    SpringContext.getBean(OrganizationImportService.class).importOrganizationList();
-  }
+    @GetMapping(value = "/organization")
+    public void importOrganizations() throws FhirLocalPersistingException, FhirGeneralException, IOException {
+        SpringContext.getBean(OrganizationImportService.class).importOrganizationList();
+    }
 
-  @GetMapping(value = "/provider")
-  public void importProviders()
-      throws FhirLocalPersistingException, FhirGeneralException, IOException {
-    SpringContext.getBean(ProviderImportService.class).importPractitionerList();
-  }
+    @GetMapping(value = "/provider")
+    public void importProviders() throws FhirLocalPersistingException, FhirGeneralException, IOException {
+        SpringContext.getBean(ProviderImportService.class).importPractitionerList();
+    }
 }

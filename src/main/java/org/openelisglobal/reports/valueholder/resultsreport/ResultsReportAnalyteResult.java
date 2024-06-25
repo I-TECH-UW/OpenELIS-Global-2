@@ -21,53 +21,53 @@ import org.openelisglobal.result.valueholder.Result;
  */
 public class ResultsReportAnalyteResult {
 
-  private Analyte analyte;
+    private Analyte analyte;
 
-  private Result result;
+    private Result result;
 
-  private String componentName;
+    private String componentName;
 
-  private String resultValue;
+    private String resultValue;
 
-  private String testResultSortOrder;
+    private String testResultSortOrder;
 
-  public String getTestResultSortOrder() {
-    return testResultSortOrder;
-  }
+    public String getTestResultSortOrder() {
+        return testResultSortOrder;
+    }
 
-  public void setTestResultSortOrder(String testResultSortOrder) {
-    this.testResultSortOrder = testResultSortOrder;
-  }
+    public void setTestResultSortOrder(String testResultSortOrder) {
+        this.testResultSortOrder = testResultSortOrder;
+    }
 
-  public String getComponentName() {
-    return componentName;
-  }
+    public String getComponentName() {
+        return componentName;
+    }
 
-  public void setComponentName(String componentName) {
-    this.componentName = componentName;
-  }
+    public void setComponentName(String componentName) {
+        this.componentName = componentName;
+    }
 
-  public String getResultValue() {
-    return resultValue;
-  }
+    public String getResultValue() {
+        return resultValue;
+    }
 
-  public void setResultValue(String resultValue) {
-    this.resultValue = resultValue;
-  }
+    public void setResultValue(String resultValue) {
+        this.resultValue = resultValue;
+    }
 
-  public Result getResult() {
-    return result;
-  }
+    public Result getResult() {
+        return result;
+    }
 
-  public void setResult(Result result) {
-    this.result = result;
-  }
+    public void setResult(Result result) {
+        this.result = result;
+    }
 
-  public Analyte getAnalyte() {
-    return analyte;
-  }
+    public Analyte getAnalyte() {
+        return analyte;
+    }
 
-  public void setAnalyte(Analyte analyte) {
-    this.analyte = analyte;
-  }
+    public void setAnalyte(Analyte analyte) {
+        this.analyte = analyte;
+    }
 }

@@ -24,60 +24,60 @@ import org.openelisglobal.test.valueholder.Test;
 
 public class INDFormMapper extends BaseProjectFormMapper implements IProjectFormMapper {
 
-  private String projectCode = MessageUtil.getMessage("sample.entry.project.LIND");
-  private final String projectName = "Indeterminate Results";
+    private String projectCode = MessageUtil.getMessage("sample.entry.project.LIND");
+    private final String projectName = "Indeterminate Results";
 
-  public INDFormMapper(String projectFormId, IProjectForm form) {
-    super(projectFormId, form);
-  }
-
-  private List<Test> getTests(IProjectForm form) {
-    List<Test> testList = new ArrayList<>();
-
-    if (projectData.getSerologyHIVTest()) {
-      CollectionUtils.addIgnoreNull(testList, createTest("Vironostika", true));
-      CollectionUtils.addIgnoreNull(testList, createTest("Murex Combinaison", true));
-      CollectionUtils.addIgnoreNull(testList, createTest("Murex", true));
-      CollectionUtils.addIgnoreNull(testList, createTest("Genscreen", true));
-      CollectionUtils.addIgnoreNull(testList, createTest("Innolia", true));
+    public INDFormMapper(String projectFormId, IProjectForm form) {
+        super(projectFormId, form);
     }
 
-    return testList;
-  }
+    private List<Test> getTests(IProjectForm form) {
+        List<Test> testList = new ArrayList<>();
 
-  public String getProjectName() {
-    return projectName;
-  }
+        if (projectData.getSerologyHIVTest()) {
+            CollectionUtils.addIgnoreNull(testList, createTest("Vironostika", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Murex Combinaison", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Murex", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Genscreen", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Innolia", true));
+        }
 
-  @Override
-  public String getProjectCode() {
-    return projectCode;
-  }
-
-  @Override
-  public String getOrganizationId() {
-    return projectData.getINDsiteName();
-  }
-
-  @Override
-  public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
-    ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
-
-    // Check for Dry Tube Tests
-    if (projectData.getSerologyHIVTest()) {
-      if (projectData.getDryTubeTaken()) {
-        sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), getTests(form)));
-      }
+        return testList;
     }
 
-    return sItemTests;
-  }
+    public String getProjectName() {
+        return projectName;
+    }
 
-  /**
-   * @see org.openelisglobal.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
-   */
-  @Override
-  public String getSampleCenterCode() {
-    return projectData.getINDsiteCode();
-  }
+    @Override
+    public String getProjectCode() {
+        return projectCode;
+    }
+
+    @Override
+    public String getOrganizationId() {
+        return projectData.getINDsiteName();
+    }
+
+    @Override
+    public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
+        ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
+
+        // Check for Dry Tube Tests
+        if (projectData.getSerologyHIVTest()) {
+            if (projectData.getDryTubeTaken()) {
+                sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), getTests(form)));
+            }
+        }
+
+        return sItemTests;
+    }
+
+    /**
+     * @see org.openelisglobal.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
+     */
+    @Override
+    public String getSampleCenterCode() {
+        return projectData.getINDsiteCode();
+    }
 }

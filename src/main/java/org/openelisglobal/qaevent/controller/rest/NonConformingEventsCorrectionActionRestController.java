@@ -28,78 +28,77 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/rest")
 public class NonConformingEventsCorrectionActionRestController {
 
-  private NCEventService ncEventService = SpringContext.getBean(NCEventService.class);
+    private NCEventService ncEventService = SpringContext.getBean(NCEventService.class);
 
-  private static final String USER_SESSION_DATA = "userSessionData";
+    private static final String USER_SESSION_DATA = "userSessionData";
 
-  @Autowired private NonConformingEventWorker nonConformingEventWorker;
+    @Autowired
+    private NonConformingEventWorker nonConformingEventWorker;
 
-  @GetMapping(value = "/nonconformingcorrectiveaction")
-  public ResponseEntity<?> getNCECorrectionActions(
-      @RequestParam(required = false) String labNumber,
-      @RequestParam(required = false) String nceNumber,
-      @RequestParam(required = false) String status) {
-    NonConformingEventForm nceForm = new NonConformingEventForm();
+    @GetMapping(value = "/nonconformingcorrectiveaction")
+    public ResponseEntity<?> getNCECorrectionActions(@RequestParam(required = false) String labNumber,
+            @RequestParam(required = false) String nceNumber, @RequestParam(required = false) String status) {
+        NonConformingEventForm nceForm = new NonConformingEventForm();
 
-    Map<String, Object> searchParameters = new HashMap<>();
-    List<NcEvent> searchResults = new ArrayList<>();
+        Map<String, Object> searchParameters = new HashMap<>();
+        List<NcEvent> searchResults = new ArrayList<>();
 
-    searchParameters.put("status", status);
+        searchParameters.put("status", status);
 
-    if (!"".equalsIgnoreCase(labNumber)) {
-      searchParameters.put("labOrderNumber", labNumber);
-    } else if (!"".equalsIgnoreCase(nceNumber)) {
-      searchParameters.put("nceNumber", nceNumber);
+        if (!"".equalsIgnoreCase(labNumber)) {
+            searchParameters.put("labOrderNumber", labNumber);
+        } else if (!"".equalsIgnoreCase(nceNumber)) {
+            searchParameters.put("nceNumber", nceNumber);
+        }
+
+        searchResults = ncEventService.getAllMatching(searchParameters);
+
+        System.out.println("search Results Size" + searchResults.size());
+
+        nceForm.setnceEventsSearchResults(searchResults);
+        nceForm.setReportingUnits(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_ACTIVE));
+
+        return ResponseEntity.ok().body(nceForm);
     }
 
-    searchResults = ncEventService.getAllMatching(searchParameters);
+    @GetMapping(value = "/NCECorrectiveAction")
+    public ResponseEntity<?> getNCECorrectiveActionForm(@RequestParam(required = true) String nceNumber,
+            HttpServletRequest request)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        NonConformingEventForm form = new NonConformingEventForm();
 
-    System.out.println("search Results Size" + searchResults.size());
+        form.setCurrentUserId(getSysUserId(request));
 
-    nceForm.setnceEventsSearchResults(searchResults);
-    nceForm.setReportingUnits(
-        DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_ACTIVE));
+        form.setPatientSearch(new PatientSearch());
 
-    return ResponseEntity.ok().body(nceForm);
-  }
+        if (!GenericValidator.isBlankOrNull(nceNumber)) {
+            nonConformingEventWorker.initFormForCorrectiveAction(nceNumber, form);
+        }
 
-  @GetMapping(value = "/NCECorrectiveAction")
-  public ResponseEntity<?> getNCECorrectiveActionForm(
-      @RequestParam(required = true) String nceNumber, HttpServletRequest request)
-      throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-    NonConformingEventForm form = new NonConformingEventForm();
-
-    form.setCurrentUserId(getSysUserId(request));
-
-    form.setPatientSearch(new PatientSearch());
-
-    if (!GenericValidator.isBlankOrNull(nceNumber)) {
-      nonConformingEventWorker.initFormForCorrectiveAction(nceNumber, form);
+        return ResponseEntity.ok().body(form);
     }
 
-    return ResponseEntity.ok().body(form);
-  }
+    @PostMapping(value = "/NCECorrectiveAction")
+    public ResponseEntity<?> updateNCECorretiveActionForm(@RequestBody NonConformingEventForm form) {
 
-  @PostMapping(value = "/NCECorrectiveAction")
-  public ResponseEntity<?> updateNCECorretiveActionForm(@RequestBody NonConformingEventForm form) {
+        boolean updated = nonConformingEventWorker.updateCorrectiveAction(form);
 
-    boolean updated = nonConformingEventWorker.updateCorrectiveAction(form);
-
-    if (updated) {
-      return ResponseEntity.ok().body(Map.of("success", true));
-    } else {
-      return ResponseEntity.ok().body(Map.of("success", false));
+        if (updated) {
+            return ResponseEntity.ok().body(Map.of("success", true));
+        } else {
+            return ResponseEntity.ok().body(Map.of("success", false));
+        }
     }
-  }
 
-  protected String getSysUserId(HttpServletRequest request) {
-    UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-    if (usd == null) {
-      usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);
-      if (usd == null) {
-        return null;
-      }
+    protected String getSysUserId(HttpServletRequest request) {
+        UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
+        if (usd == null) {
+            usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);
+            if (usd == null) {
+                return null;
+            }
+        }
+        return String.valueOf(usd.getSystemUserId());
     }
-    return String.valueOf(usd.getSystemUserId());
-  }
 }

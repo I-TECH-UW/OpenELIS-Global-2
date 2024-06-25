@@ -11,35 +11,34 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AnalysisNotificationConfigServiceImpl
-    extends AuditableBaseObjectServiceImpl<AnalysisNotificationConfig, Integer>
-    implements AnalysisNotificationConfigService {
+        extends AuditableBaseObjectServiceImpl<AnalysisNotificationConfig, Integer>
+        implements AnalysisNotificationConfigService {
 
-  @Autowired private AnalysisNotificationConfigDAO baseDAO;
+    @Autowired
+    private AnalysisNotificationConfigDAO baseDAO;
 
-  public AnalysisNotificationConfigServiceImpl() {
-    super(AnalysisNotificationConfig.class);
-    this.auditTrailLog = false;
-  }
+    public AnalysisNotificationConfigServiceImpl() {
+        super(AnalysisNotificationConfig.class);
+        this.auditTrailLog = false;
+    }
 
-  @Override
-  protected BaseDAO<AnalysisNotificationConfig, Integer> getBaseObjectDAO() {
-    return baseDAO;
-  }
+    @Override
+    protected BaseDAO<AnalysisNotificationConfig, Integer> getBaseObjectDAO() {
+        return baseDAO;
+    }
 
-  @Override
-  public Optional<AnalysisNotificationConfig> getAnalysisNotificationConfigForAnalysisId(
-      String analysisId) {
-    return baseDAO.getAnalysisNotificationConfigForAnalysisId(analysisId);
-  }
+    @Override
+    public Optional<AnalysisNotificationConfig> getAnalysisNotificationConfigForAnalysisId(String analysisId) {
+        return baseDAO.getAnalysisNotificationConfigForAnalysisId(analysisId);
+    }
 
-  @Override
-  public List<AnalysisNotificationConfig> getAnalysisNotificationConfigForAnalysisId(
-      List<String> analysisIds) {
-    return baseDAO.getAnalysisNotificationConfigsForAnalysisIds(analysisIds);
-  }
+    @Override
+    public List<AnalysisNotificationConfig> getAnalysisNotificationConfigForAnalysisId(List<String> analysisIds) {
+        return baseDAO.getAnalysisNotificationConfigsForAnalysisIds(analysisIds);
+    }
 
-  @Override
-  public AnalysisNotificationConfig getForConfigOption(Integer configOptionId) {
-    return baseDAO.getForConfigOption(configOptionId);
-  }
+    @Override
+    public AnalysisNotificationConfig getForConfigOption(Integer configOptionId) {
+        return baseDAO.getForConfigOption(configOptionId);
+    }
 }

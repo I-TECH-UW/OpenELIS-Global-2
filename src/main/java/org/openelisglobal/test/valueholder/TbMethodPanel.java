@@ -26,60 +26,60 @@ import org.openelisglobal.common.valueholder.EnumValueItemImpl;
 @Table(name = "tb_method_panel")
 public class TbMethodPanel extends EnumValueItemImpl {
 
-  private static final long serialVersionUID = -1574344492809195601L;
+    private static final long serialVersionUID = -1574344492809195601L;
 
-  @Id
-  @SequenceGenerator(name = "tb_method_panel_seq", allocationSize = 1, initialValue = 1)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tb_method_panel_seq")
-  @Column
-  private String id;
+    @Id
+    @SequenceGenerator(name = "tb_method_panel_seq", allocationSize = 1, initialValue = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tb_method_panel_seq")
+    @Column
+    private String id;
 
-  @Column(name = "panel_id", nullable = false)
-  private String panelId;
+    @Column(name = "panel_id", nullable = false)
+    private String panelId;
 
-  @Column(name = "method_id", nullable = false)
-  private String methodId;
+    @Column(name = "method_id", nullable = false)
+    private String methodId;
 
-  @Column(name = "is_active")
-  private String isActive;
+    @Column(name = "is_active")
+    private String isActive;
 
-  public TbMethodPanel() {
-    super();
-  }
+    public TbMethodPanel() {
+        super();
+    }
 
-  @Override
-  public String getId() {
-    return id;
-  }
+    @Override
+    public String getId() {
+        return id;
+    }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  @Override
-  public String getIsActive() {
-    return isActive;
-  }
+    @Override
+    public String getIsActive() {
+        return isActive;
+    }
 
-  @Override
-  public void setIsActive(String isActive) {
-    this.isActive = isActive;
-  }
+    @Override
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
+    }
 
-  public String getPanelId() {
-    return panelId;
-  }
+    public String getPanelId() {
+        return panelId;
+    }
 
-  public void setPanelId(String testId) {
-    this.panelId = testId;
-  }
+    public void setPanelId(String testId) {
+        this.panelId = testId;
+    }
 
-  public String getMethodId() {
-    return methodId;
-  }
+    public String getMethodId() {
+        return methodId;
+    }
 
-  public void setMethodId(String methodId) {
-    this.methodId = methodId;
-  }
+    public void setMethodId(String methodId) {
+        this.methodId = methodId;
+    }
 }

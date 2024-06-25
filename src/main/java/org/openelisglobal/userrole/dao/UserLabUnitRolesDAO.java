@@ -18,4 +18,5 @@ package org.openelisglobal.userrole.dao;
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 
-public interface UserLabUnitRolesDAO extends BaseDAO<UserLabUnitRoles, Integer> {}
+public interface UserLabUnitRolesDAO extends BaseDAO<UserLabUnitRoles, Integer> {
+}

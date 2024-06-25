@@ -22,71 +22,71 @@ import org.openelisglobal.common.valueholder.EnumValueItemImpl;
  */
 public class StatusOfSample extends EnumValueItemImpl {
 
-  private static final long serialVersionUID = 1L;
-  private String id;
-  private String statusOfSampleName;
-  private String description;
-  private String code;
-  private String statusType;
-  private String isActive;
+    private static final long serialVersionUID = 1L;
+    private String id;
+    private String statusOfSampleName;
+    private String description;
+    private String code;
+    private String statusType;
+    private String isActive;
 
-  public StatusOfSample() {
-    super();
-  }
+    public StatusOfSample() {
+        super();
+    }
 
-  public String getCode() {
-    return code;
-  }
+    public String getCode() {
+        return code;
+    }
 
-  public void setCode(String code) {
-    this.code = code;
-  }
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-    // bugzilla 1625
-    this.name = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+        // bugzilla 1625
+        this.name = description;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-    // bugzilla 1625
-    this.key = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+        // bugzilla 1625
+        this.key = id;
+    }
 
-  public String getStatusType() {
-    return statusType;
-  }
+    public String getStatusType() {
+        return statusType;
+    }
 
-  public void setStatusType(String statusType) {
-    this.statusType = statusType;
-  }
+    public void setStatusType(String statusType) {
+        this.statusType = statusType;
+    }
 
-  public String getStatusOfSampleName() {
-    return statusOfSampleName;
-  }
+    public String getStatusOfSampleName() {
+        return statusOfSampleName;
+    }
 
-  public void setStatusOfSampleName(String statusOfSampleName) {
-    this.statusOfSampleName = statusOfSampleName;
-  }
+    public void setStatusOfSampleName(String statusOfSampleName) {
+        this.statusOfSampleName = statusOfSampleName;
+    }
 
-  public String getDefaultLocalizedName() {
-    return getStatusOfSampleName();
-  }
+    public String getDefaultLocalizedName() {
+        return getStatusOfSampleName();
+    }
 
-  public String getIsActive() {
-    return isActive;
-  }
+    public String getIsActive() {
+        return isActive;
+    }
 
-  public void setIsActive(String isActive) {
-    this.isActive = isActive;
-  }
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
+    }
 }

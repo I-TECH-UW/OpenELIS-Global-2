@@ -18,79 +18,79 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class PersonAddress extends BaseObject<AddressPK> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private AddressPK compoundId = new AddressPK();
-  private String type;
-  private String value;
-  private String uniqueIdentifyer;
+    private AddressPK compoundId = new AddressPK();
+    private String type;
+    private String value;
+    private String uniqueIdentifyer;
 
-  public AddressPK getCompoundId() {
-    return compoundId;
-  }
-
-  public void setCompoundId(AddressPK compoundId) {
-    uniqueIdentifyer = null;
-    this.compoundId = compoundId;
-  }
-
-  public String getStringId() {
-    return compoundId == null ? "0" : compoundId.getTargetId() + compoundId.getAddressPartId();
-  }
-
-  @Override
-  public void setId(AddressPK id) {
-    setCompoundId(id);
-  }
-
-  @Override
-  public AddressPK getId() {
-    return getCompoundId();
-  }
-
-  public void setPersonId(String personId) {
-    uniqueIdentifyer = null;
-    compoundId.setTargetId(personId);
-  }
-
-  public String getPersonId() {
-    return compoundId == null ? null : compoundId.getTargetId();
-  }
-
-  public void setAddressPartId(String addressPartId) {
-    uniqueIdentifyer = null;
-    compoundId.setAddressPartId(addressPartId);
-  }
-
-  public String getAddressPartId() {
-    return compoundId == null ? null : compoundId.getAddressPartId();
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
-  }
-
-  public void setUniqueIdentifyer(String uniqueIdentifyer) {
-    this.uniqueIdentifyer = uniqueIdentifyer;
-  }
-
-  public String getUniqueIdentifyer() {
-    if (GenericValidator.isBlankOrNull(uniqueIdentifyer)) {
-      uniqueIdentifyer = getPersonId() + "-" + getAddressPartId();
+    public AddressPK getCompoundId() {
+        return compoundId;
     }
 
-    return uniqueIdentifyer;
-  }
+    public void setCompoundId(AddressPK compoundId) {
+        uniqueIdentifyer = null;
+        this.compoundId = compoundId;
+    }
+
+    public String getStringId() {
+        return compoundId == null ? "0" : compoundId.getTargetId() + compoundId.getAddressPartId();
+    }
+
+    @Override
+    public void setId(AddressPK id) {
+        setCompoundId(id);
+    }
+
+    @Override
+    public AddressPK getId() {
+        return getCompoundId();
+    }
+
+    public void setPersonId(String personId) {
+        uniqueIdentifyer = null;
+        compoundId.setTargetId(personId);
+    }
+
+    public String getPersonId() {
+        return compoundId == null ? null : compoundId.getTargetId();
+    }
+
+    public void setAddressPartId(String addressPartId) {
+        uniqueIdentifyer = null;
+        compoundId.setAddressPartId(addressPartId);
+    }
+
+    public String getAddressPartId() {
+        return compoundId == null ? null : compoundId.getAddressPartId();
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public void setUniqueIdentifyer(String uniqueIdentifyer) {
+        this.uniqueIdentifyer = uniqueIdentifyer;
+    }
+
+    public String getUniqueIdentifyer() {
+        if (GenericValidator.isBlankOrNull(uniqueIdentifyer)) {
+            uniqueIdentifyer = getPersonId() + "-" + getAddressPartId();
+        }
+
+        return uniqueIdentifyer;
+    }
 }

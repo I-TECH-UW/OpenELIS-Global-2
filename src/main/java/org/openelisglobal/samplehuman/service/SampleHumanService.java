@@ -8,17 +8,17 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.valueholder.SampleHuman;
 
 public interface SampleHumanService extends BaseObjectService<SampleHuman, String> {
-  void getData(SampleHuman sampleHuman);
+    void getData(SampleHuman sampleHuman);
 
-  Provider getProviderForSample(Sample sample);
+    Provider getProviderForSample(Sample sample);
 
-  Patient getPatientForSample(Sample sample);
+    Patient getPatientForSample(Sample sample);
 
-  List<Sample> getSamplesForPatient(String patientID);
+    List<Sample> getSamplesForPatient(String patientID);
 
-  SampleHuman getDataBySample(SampleHuman sampleHuman);
+    SampleHuman getDataBySample(SampleHuman sampleHuman);
 
-  List<Patient> getAllPatientsWithSampleEntered();
+    List<Patient> getAllPatientsWithSampleEntered();
 
-  List<Patient> getAllPatientsWithSampleEnteredMissingFhirUuid();
+    List<Patient> getAllPatientsWithSampleEnteredMissingFhirUuid();
 }

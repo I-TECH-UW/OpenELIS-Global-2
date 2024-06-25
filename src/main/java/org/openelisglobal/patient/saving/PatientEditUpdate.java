@@ -32,47 +32,46 @@ import org.springframework.stereotype.Service;
 @Service
 @Scope("prototype")
 public class PatientEditUpdate extends PatientEntry implements IPatientEditUpdate {
-  /**
-   * @param form
-   * @param sysUserId
-   * @param request
-   * @throws NoSuchMethodException
-   * @throws InvocationTargetException
-   * @throws IllegalAccessException
-   * @throws LIMSRuntimeException
-   */
-  public PatientEditUpdate(
-      PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request) {
-    this();
-    super.setFieldsFromForm(form);
-    super.setSysUserId(sysUserId);
-    super.setRequest(request);
-    // we are not updating the record status in either case
-    newPatientStatus = null;
-    newSampleStatus = null;
-  }
-
-  public PatientEditUpdate() {
-    super();
-    // we are not updating the record status in either case
-    newPatientStatus = null;
-    newSampleStatus = null;
-  }
-
-  /**
-   * @see org.openelisglobal.patient.saving.PatientEntry#canAccession()
-   */
-  @Override
-  public boolean canAccession() {
-    String type = request.getParameter("type");
-    if (RequestType.valueOfAsUpperCase(type) == RequestType.READWRITE) {
-      return true;
+    /**
+     * @param form
+     * @param sysUserId
+     * @param request
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws LIMSRuntimeException
+     */
+    public PatientEditUpdate(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request) {
+        this();
+        super.setFieldsFromForm(form);
+        super.setSysUserId(sysUserId);
+        super.setRequest(request);
+        // we are not updating the record status in either case
+        newPatientStatus = null;
+        newSampleStatus = null;
     }
-    return false;
-  }
 
-  @Override
-  protected String getActionLabel() {
-    return MessageUtil.getMessage("banner.menu.editPatient.ReadWrite");
-  }
+    public PatientEditUpdate() {
+        super();
+        // we are not updating the record status in either case
+        newPatientStatus = null;
+        newSampleStatus = null;
+    }
+
+    /**
+     * @see org.openelisglobal.patient.saving.PatientEntry#canAccession()
+     */
+    @Override
+    public boolean canAccession() {
+        String type = request.getParameter("type");
+        if (RequestType.valueOfAsUpperCase(type) == RequestType.READWRITE) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected String getActionLabel() {
+        return MessageUtil.getMessage("banner.menu.editPatient.ReadWrite");
+    }
 }

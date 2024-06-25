@@ -36,120 +36,115 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class NoteDAOImpl extends BaseDAOImpl<Note, String> implements NoteDAO {
 
-  public NoteDAOImpl() {
-    super(Note.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public Note getData(String noteId) throws LIMSRuntimeException {
-    try {
-      Note note = entityManager.unwrap(Session.class).get(Note.class, noteId);
-      return note;
-    } catch (RuntimeException e) {
-      handleException(e, "getData");
+    public NoteDAOImpl() {
+        super(Note.class);
     }
 
-    return null;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public Note getData(String noteId) throws LIMSRuntimeException {
+        try {
+            Note note = entityManager.unwrap(Session.class).get(Note.class, noteId);
+            return note;
+        } catch (RuntimeException e) {
+            handleException(e, "getData");
+        }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<Note> getAllNotesByRefIdRefTable(Note note) throws LIMSRuntimeException {
-    try {
-
-      String sql =
-          "from Note n where n.referenceId = :refId and n.referenceTableId = :refTableId order by"
-              + " n.noteType desc, n.lastupdated desc";
-      Query<Note> query = entityManager.unwrap(Session.class).createQuery(sql, Note.class);
-      query.setParameter("refId", Integer.parseInt(note.getReferenceId()));
-
-      query.setParameter("refTableId", Integer.parseInt(note.getReferenceTableId()));
-
-      List<Note> list = query.list();
-      return list;
-
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in Note getAllNotesByRefIdRefTable()", e);
+        return null;
     }
-  }
 
-  @Override
-  public boolean duplicateNoteExists(Note note) {
-    try {
+    @Override
+    @Transactional(readOnly = true)
+    public List<Note> getAllNotesByRefIdRefTable(Note note) throws LIMSRuntimeException {
+        try {
 
-      List<Note> list;
+            String sql = "from Note n where n.referenceId = :refId and n.referenceTableId = :refTableId order by"
+                    + " n.noteType desc, n.lastupdated desc";
+            Query<Note> query = entityManager.unwrap(Session.class).createQuery(sql, Note.class);
+            query.setParameter("refId", Integer.parseInt(note.getReferenceId()));
 
-      String sql =
-          "from Note t where trim(lower(t.noteType)) = :noteType and t.referenceId = :referenceId"
-              + " and t.referenceTableId = :referenceTableId and trim(lower(t.text)) = :param4 and"
-              + " trim(lower(t.subject)) = :param5 and t.id != :noteId";
-      Query<Note> query = entityManager.unwrap(Session.class).createQuery(sql, Note.class);
-      query.setParameter("noteType", note.getNoteType().toLowerCase().trim());
-      query.setParameter("referenceId", Integer.parseInt(note.getReferenceId()));
+            query.setParameter("refTableId", Integer.parseInt(note.getReferenceTableId()));
 
-      query.setParameter("referenceTableId", Integer.parseInt(note.getReferenceTableId()));
-      query.setParameter("param4", note.getText().toLowerCase().trim());
-      query.setParameter("param5", note.getSubject().toLowerCase().trim());
+            List<Note> list = query.list();
+            return list;
 
-      int noteId = !StringUtil.isNullorNill(note.getId()) ? Integer.parseInt(note.getId()) : 0;
-
-      query.setParameter("noteId", noteId);
-
-      list = query.list();
-
-      return list.size() > 0;
-
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in duplicateNoteExists()", e);
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in Note getAllNotesByRefIdRefTable()", e);
+        }
     }
-  }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<Note> getNotesChronologicallyByRefIdAndRefTableAndType(
-      String objectId, String tableId, List<String> filter) throws LIMSRuntimeException {
-    String sql =
-        "FROM Note n where n.referenceId = :refId and n.referenceTableId = :tableId and n.noteType"
-            + " in ( :filter ) order by n.lastupdated asc";
+    @Override
+    public boolean duplicateNoteExists(Note note) {
+        try {
 
-    try {
-      Query<Note> query = entityManager.unwrap(Session.class).createQuery(sql, Note.class);
-      query.setParameter("refId", Integer.parseInt(objectId));
-      query.setParameter("tableId", Integer.parseInt(tableId));
-      query.setParameterList("filter", filter);
+            List<Note> list;
 
-      List<Note> noteList = query.list();
-      return noteList;
-    } catch (HibernateException e) {
-      handleException(e, "getNotesChronologicallyByRefIdAndRefTable");
+            String sql = "from Note t where trim(lower(t.noteType)) = :noteType and t.referenceId = :referenceId"
+                    + " and t.referenceTableId = :referenceTableId and trim(lower(t.text)) = :param4 and"
+                    + " trim(lower(t.subject)) = :param5 and t.id != :noteId";
+            Query<Note> query = entityManager.unwrap(Session.class).createQuery(sql, Note.class);
+            query.setParameter("noteType", note.getNoteType().toLowerCase().trim());
+            query.setParameter("referenceId", Integer.parseInt(note.getReferenceId()));
+
+            query.setParameter("referenceTableId", Integer.parseInt(note.getReferenceTableId()));
+            query.setParameter("param4", note.getText().toLowerCase().trim());
+            query.setParameter("param5", note.getSubject().toLowerCase().trim());
+
+            int noteId = !StringUtil.isNullorNill(note.getId()) ? Integer.parseInt(note.getId()) : 0;
+
+            query.setParameter("noteId", noteId);
+
+            list = query.list();
+
+            return list.size() > 0;
+
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in duplicateNoteExists()", e);
+        }
     }
-    return null;
-  }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<Note> getNotesInDateRangeAndType(
-      Date lowDate, Date highDate, String noteType, String referenceTableId)
-      throws LIMSRuntimeException {
-    String sql =
-        "FROM Note n where n.noteType = :type and n.referenceTableId = :referenceTableId and"
-            + " n.lastupdated between :lowDate and :highDate";
+    @Override
+    @Transactional(readOnly = true)
+    public List<Note> getNotesChronologicallyByRefIdAndRefTableAndType(String objectId, String tableId,
+            List<String> filter) throws LIMSRuntimeException {
+        String sql = "FROM Note n where n.referenceId = :refId and n.referenceTableId = :tableId and n.noteType"
+                + " in ( :filter ) order by n.lastupdated asc";
 
-    try {
-      Query<Note> query = entityManager.unwrap(Session.class).createQuery(sql, Note.class);
-      query.setParameter("type", noteType);
-      query.setParameter("referenceTableId", Integer.parseInt(referenceTableId));
-      query.setParameter("lowDate", lowDate);
-      query.setParameter("highDate", highDate);
+        try {
+            Query<Note> query = entityManager.unwrap(Session.class).createQuery(sql, Note.class);
+            query.setParameter("refId", Integer.parseInt(objectId));
+            query.setParameter("tableId", Integer.parseInt(tableId));
+            query.setParameterList("filter", filter);
 
-      List<Note> noteList = query.list();
-      return noteList;
-    } catch (HibernateException e) {
-      handleException(e, "getNotesInDateRangeAndType");
+            List<Note> noteList = query.list();
+            return noteList;
+        } catch (HibernateException e) {
+            handleException(e, "getNotesChronologicallyByRefIdAndRefTable");
+        }
+        return null;
     }
-    return null;
-  }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Note> getNotesInDateRangeAndType(Date lowDate, Date highDate, String noteType, String referenceTableId)
+            throws LIMSRuntimeException {
+        String sql = "FROM Note n where n.noteType = :type and n.referenceTableId = :referenceTableId and"
+                + " n.lastupdated between :lowDate and :highDate";
+
+        try {
+            Query<Note> query = entityManager.unwrap(Session.class).createQuery(sql, Note.class);
+            query.setParameter("type", noteType);
+            query.setParameter("referenceTableId", Integer.parseInt(referenceTableId));
+            query.setParameter("lowDate", lowDate);
+            query.setParameter("highDate", highDate);
+
+            List<Note> noteList = query.list();
+            return noteList;
+        } catch (HibernateException e) {
+            handleException(e, "getNotesInDateRangeAndType");
+        }
+        return null;
+    }
 }

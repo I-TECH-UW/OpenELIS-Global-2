@@ -7,9 +7,6 @@ import org.openelisglobal.userrole.valueholder.UserRole;
 
 public interface UnifiedSystemUserService {
 
-  void deleteData(
-      List<UserRole> userRoles,
-      List<SystemUser> systemUsers,
-      List<LoginUser> loginUsers,
-      String sysUserId);
+    void deleteData(List<UserRole> userRoles, List<SystemUser> systemUsers, List<LoginUser> loginUsers,
+            String sysUserId);
 }

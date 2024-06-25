@@ -16,5 +16,5 @@ package org.openelisglobal.reports.action.implementation;
 import org.openelisglobal.reports.form.ReportForm;
 
 public interface IReportParameterSetter {
-  void setRequestParameters(ReportForm form);
+    void setRequestParameters(ReportForm form);
 }

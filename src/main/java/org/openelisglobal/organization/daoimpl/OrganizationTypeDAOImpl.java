@@ -28,45 +28,44 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, String>
-    implements OrganizationTypeDAO {
+public class OrganizationTypeDAOImpl extends BaseDAOImpl<OrganizationType, String> implements OrganizationTypeDAO {
 
-  public OrganizationTypeDAOImpl() {
-    super(OrganizationType.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<OrganizationType> getAllOrganizationTypes() throws LIMSRuntimeException {
-    List<OrganizationType> list = null;
-    try {
-      String sql = "from OrganizationType";
-      Query<OrganizationType> query =
-          entityManager.unwrap(Session.class).createQuery(sql, OrganizationType.class);
-      list = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in Organization getAllOrganizationTypes()", e);
+    public OrganizationTypeDAOImpl() {
+        super(OrganizationType.class);
     }
-    return list;
-  }
 
-  @Override
-  @Transactional(readOnly = true)
-  public OrganizationType getOrganizationTypeByName(String name) throws LIMSRuntimeException {
-    String sql = null;
-    try {
-      sql = "from OrganizationType o where o.name = :name";
-      Query<OrganizationType> query =
-          entityManager.unwrap(Session.class).createQuery(sql, OrganizationType.class);
-
-      query.setParameter("name", name);
-
-      List<OrganizationType> list = query.list();
-      return list.size() > 0 ? list.get(0) : null;
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in OrganizationType getOrganizationTypeByName()", e);
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrganizationType> getAllOrganizationTypes() throws LIMSRuntimeException {
+        List<OrganizationType> list = null;
+        try {
+            String sql = "from OrganizationType";
+            Query<OrganizationType> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    OrganizationType.class);
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in Organization getAllOrganizationTypes()", e);
+        }
+        return list;
     }
-  }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OrganizationType getOrganizationTypeByName(String name) throws LIMSRuntimeException {
+        String sql = null;
+        try {
+            sql = "from OrganizationType o where o.name = :name";
+            Query<OrganizationType> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    OrganizationType.class);
+
+            query.setParameter("name", name);
+
+            List<OrganizationType> list = query.list();
+            return list.size() > 0 ? list.get(0) : null;
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in OrganizationType getOrganizationTypeByName()", e);
+        }
+    }
 }

@@ -7,17 +7,17 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
 
 public interface SampleQaEventService extends BaseObjectService<SampleQaEvent, String> {
-  void getData(SampleQaEvent sampleQaEvent);
+    void getData(SampleQaEvent sampleQaEvent);
 
-  SampleQaEvent getData(String sampleQaEventId);
+    SampleQaEvent getData(String sampleQaEventId);
 
-  List<SampleQaEvent> getAllUncompleatedEvents();
+    List<SampleQaEvent> getAllUncompleatedEvents();
 
-  List<SampleQaEvent> getSampleQaEventsBySample(Sample sample);
+    List<SampleQaEvent> getSampleQaEventsBySample(Sample sample);
 
-  List<SampleQaEvent> getSampleQaEventsBySample(SampleQaEvent sampleQaEvent);
+    List<SampleQaEvent> getSampleQaEventsBySample(SampleQaEvent sampleQaEvent);
 
-  List<SampleQaEvent> getSampleQaEventsByUpdatedDate(Date lowDate, Date highDate);
+    List<SampleQaEvent> getSampleQaEventsByUpdatedDate(Date lowDate, Date highDate);
 
-  SampleQaEvent getSampleQaEventBySampleAndQaEvent(SampleQaEvent sampleQaEvent);
+    SampleQaEvent getSampleQaEventBySampleAndQaEvent(SampleQaEvent sampleQaEvent);
 }
