@@ -222,12 +222,6 @@ export default function App() {
                   role="Global Administrator"
                 />
                 <SecureRoute
-                  path="/UnifiedSystemUser"
-                  exact
-                  component={() => <UserAddEdit />}
-                  role="Global Administrator"
-                />
-                <SecureRoute
                   path="/MasterListsPage"
                   exact
                   component={() => <Admin />}

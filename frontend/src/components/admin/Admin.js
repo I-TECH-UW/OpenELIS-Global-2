@@ -43,12 +43,12 @@ import { CommonProperties } from "./menu/CommonProperties";
 import ConfigMenuDisplay from "./formEntry/common/ConfigMenuDisplay";
 import ProviderMenu from "./ProviderMenu/ProviderMenu";
 import BarcodeConfiguration from "./barcodeConfiguration/BarcodeConfiguration";
-import OrganizationManagament from "./OrganizationManagement/OrganizationManagement";
-import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModify.js";
 import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName.js";
 import PluginList from "./pluginFile/PluginFile.js";
 import ResultReportingConfiguration from "./ResultReportingConfiguration/ResultReportingConfiguration.js";
 import PushNotificationPage from "../notifications/PushNotificationPage.jsx";
+import UserManagement from "./userManagement/UserManagement";
+
 function Admin() {
   const intl = useIntl();
   const [isSmallScreen, setIsSmallScreen] = useState(false);
@@ -208,7 +208,7 @@ function Admin() {
         <BarcodeConfiguration />
       </PathRoute>
       <PathRoute path="#organizationManagement">
-        <OrganizationManagament />
+        <OrganizationManagement />
       </PathRoute>
       <PathRoute path="#organizationEdit">
         <OrganizationAddModify />
@@ -218,6 +218,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#userManagement">
         <UserManagement />
+      </PathRoute>
+      <PathRoute path="#userEdit">
+        <UserAddModify />
       </PathRoute>
       <PathRoute path="#globalMenuManagement">
         <GlobalMenuManagement />
