@@ -387,6 +387,14 @@ function ReferredOutTests(props) {
                 )}
               </Field>
               <Grid fullWidth={true}>
+                <Column lg={16} md={8} sm={4}>
+                  <h5>
+                    <FormattedMessage id="referral.out.request" />
+                  </h5>
+                </Column>
+                <Column lg={16} md={8} sm={4}>
+                  <br></br>
+                </Column>
                 <Column lg={4} md={8} sm={4}>
                   <Dropdown
                     id={"dateType"}
@@ -395,10 +403,6 @@ function ReferredOutTests(props) {
                       dateTypeList.find((item) => item.value === dateType)
                         ?.text || ""
                     }
-                    labelText={intl.formatMessage({
-                      id: "referral.out.request",
-                      defaultMessage: "Start Date",
-                    })}
                     initialSelectedItem={dateTypeList.find(
                       (item) => item.value === dateType,
                     )}
@@ -414,9 +418,7 @@ function ReferredOutTests(props) {
                   />
                 </Column>
                 <Column lg={12} md={8} sm={4}>
-                  <h5 style={{ paddingTop: "10px", paddingLeft: "6px" }}>
-                    <FormattedMessage id="referral.out.note" />
-                  </h5>
+                  <FormattedMessage id="referral.out.note" />
                 </Column>
                 <Column lg={16} md={8} sm={4}>
                   <br></br>
