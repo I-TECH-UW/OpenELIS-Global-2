@@ -40,6 +40,7 @@ import ProviderMenu from "./ProviderMenu/ProviderMenu";
 import BarcodeConfiguration from "./barcodeConfiguration/BarcodeConfiguration";
 import OrganizationManagament from "./OrganizationManagement/OrganizationManagement";
 import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModify.js";
+import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName.js";
 
 function Admin() {
   const intl = useIntl();
@@ -73,6 +74,9 @@ function Admin() {
             </SideNavMenuItem>
             <SideNavMenuItem href="#calculatedValue">
               <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#AnalyzerTestName">
+              <FormattedMessage id="sidenav.label.admin.analyzerTest" />
             </SideNavMenuItem>
           </SideNavMenu>
           <SideNavLink href="#labNumber" renderIcon={CharacterWholeNumber}>
@@ -165,6 +169,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#calculatedValue">
         <CalculatedValue />
+      </PathRoute>
+      <PathRoute path="#AnalyzerTestName">
+        <AnalyzerTestName />
       </PathRoute>
       <PathRoute path="#labNumber">
         <LabNumberManagement />
