@@ -1,6 +1,7 @@
 package org.openelisglobal.person;
 
 import java.util.Set;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +19,16 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
   @Autowired PatientService patientService;
 
   @Before
-  public void init() throws Exception {}
+  public void init() throws Exception {
+    patientService.deleteAll(patientService.getAll());
+    personService.deleteAll(personService.getAll());
+  }
+
+  @After
+  public void tearDown() {
+    patientService.deleteAll(patientService.getAll());
+    personService.deleteAll(personService.getAll());
+  }
 
   @Test
   public void createPerson_shouldCreateNewPerson() throws Exception {
@@ -27,12 +37,12 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
 
     Person pat = createPerson(firstName, lastname);
 
-    int initialPersonCount = personService.getAllPersons().size();
+    Assert.assertEquals(0, personService.getAllPersons().size());
     // save person to the DB
     String personIdId = personService.insert(pat);
     Person savedPerson = personService.get(personIdId);
 
-    Assert.assertEquals(initialPersonCount + 1, personService.getAllPersons().size());
+    Assert.assertEquals(1, personService.getAllPersons().size());
     Assert.assertEquals(firstName, savedPerson.getFirstName());
     Assert.assertEquals(lastname, savedPerson.getLastName());
   }
@@ -62,8 +72,6 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
 
   @Test
   public void getAllPerson_shouldGetAllPerson() throws Exception {
-    patientService.deleteAll(patientService.getAll());
-    personService.deleteAll(personService.getAll());
     Person person = new Person();
     personService.insert(person);
     Assert.assertEquals(1, personService.getAllPersons().size());

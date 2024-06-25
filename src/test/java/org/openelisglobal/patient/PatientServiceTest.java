@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +23,16 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
   @Autowired PersonService personService;
 
   @Before
-  public void init() throws Exception {}
+  public void init() throws Exception {
+    patientService.deleteAll(patientService.getAll());
+    personService.deleteAll(personService.getAll());
+  }
+
+  @After
+  public void tearDown() {
+    patientService.deleteAll(patientService.getAll());
+    personService.deleteAll(personService.getAll());
+  }
 
   @Test
   public void createPatient_shouldCreateNewPatient() throws Exception {
@@ -32,12 +42,12 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
     String gender = "M";
     Patient pat = createPatient(firstName, lastname, dob, gender);
 
-    int initialPatientCount = patientService.getAllPatients().size();
+    Assert.assertEquals(0, patientService.getAllPatients().size());
     // save patient to the DB
     String patientId = patientService.insert(pat);
     Patient savedPatient = patientService.get(patientId);
 
-    Assert.assertEquals(initialPatientCount + 1, patientService.getAllPatients().size());
+    Assert.assertEquals(1, patientService.getAllPatients().size());
     Assert.assertEquals(firstName, savedPatient.getPerson().getFirstName());
     Assert.assertEquals(lastname, savedPatient.getPerson().getLastName());
     Assert.assertEquals(gender, savedPatient.getGender());
@@ -45,8 +55,6 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
 
   @Test
   public void getAllPatients_shouldGetAllPatients() throws Exception {
-    patientService.deleteAll(patientService.getAll());
-    personService.deleteAll(personService.getAll());
     String firstName = "John";
     String lastname = "Doe";
     String dob = "12/12/1992";
