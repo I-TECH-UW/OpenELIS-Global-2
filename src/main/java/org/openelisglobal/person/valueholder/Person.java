@@ -19,6 +19,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.common.valueholder.BaseObject;
+import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 
@@ -62,7 +63,7 @@ public class Person extends BaseObject<String> {
   private String fax;
   @Email private String email;
 
-  private Set patients = new HashSet(0);
+  private Set<Patient> patients = new HashSet<>(0);
 
   public Person() {
     super();
@@ -196,6 +197,11 @@ public class Person extends BaseObject<String> {
 
   public void setPatients(Set patients) {
     this.patients = patients;
+  }
+
+  public void addPatient(Patient patient) {
+    patients.add(patient);
+    patient.setPerson(this);
   }
 
   public String getPrimaryPhone() {
