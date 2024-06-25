@@ -122,11 +122,11 @@ describe("Patient Search", function () {
   it("should search patient By Lab Number", function () {
     cy.fixture("Patient").then((patient) => {
       patientPage.searchPatientBylabNo(patient.labNo);
-      patientPage.clickSearchPatientButton();
       cy.intercept(
         "GET",
         `**/rest/patient-search-results?*labNumber=${patient.labNo}*`,
       ).as("getPatientSearch");
+      patientPage.clickSearchPatientButton();
       cy.wait("@getPatientSearch").then((interception) => {
         const responseBody = interception.response.body;
         console.log(responseBody);
