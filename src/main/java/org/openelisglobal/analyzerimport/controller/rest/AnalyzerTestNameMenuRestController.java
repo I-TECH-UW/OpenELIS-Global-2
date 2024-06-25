@@ -23,6 +23,7 @@ import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -35,190 +36,184 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import org.springframework.http.MediaType;
-
 @RestController
 @RequestMapping("/rest")
-public class AnalyzerTestNameMenuRestController extends BaseMenuController<NamedAnalyzerTestMapping> {
+public class AnalyzerTestNameMenuRestController
+    extends BaseMenuController<NamedAnalyzerTestMapping> {
 
-    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIDs*" };
+  private static final String[] ALLOWED_FIELDS = new String[] {"selectedIDs*"};
 
-    @Autowired
-    private AnalyzerTestMappingService analyzerTestMappingService;
-    @Autowired
-    private AnalyzerService analyzerService;
+  @Autowired private AnalyzerTestMappingService analyzerTestMappingService;
+  @Autowired private AnalyzerService analyzerService;
 
-    private static final int ANALYZER_NAME = 0;
-    private static final int ANALYZER_TEST = 1;
+  private static final int ANALYZER_NAME = 0;
+  private static final int ANALYZER_TEST = 1;
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.setAllowedFields(ALLOWED_FIELDS);
+  @InitBinder
+  public void initBinder(WebDataBinder binder) {
+    binder.setAllowedFields(ALLOWED_FIELDS);
+  }
+
+  @GetMapping(value = "/AnalyzerTestNameMenu", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> showAnalyzerTestNameMenu(HttpServletRequest request)
+      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    AnalyzerTestNameMenuForm form = new AnalyzerTestNameMenuForm();
+
+    addFlashMsgsToRequest(request);
+
+    String forward = performMenuAction(form, request);
+    if (FWD_FAIL.equals(forward)) {
+      Errors errors = new BaseErrors();
+      errors.reject("error.generic");
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    } else {
+      return ResponseEntity.ok(form);
+    }
+  }
+
+  @Override
+  protected List<NamedAnalyzerTestMapping> createMenuList(
+      AdminOptionMenuForm<NamedAnalyzerTestMapping> form, HttpServletRequest request) {
+
+    request.setAttribute("menuDefinition", "AnalyzerTestNameMenuDefinition");
+
+    String stringStartingRecNo = (String) request.getAttribute("startingRecNo");
+    int startingRecNo = 0;
+    if (stringStartingRecNo != null) {
+      startingRecNo = Integer.parseInt(stringStartingRecNo);
+      if (startingRecNo < 0) {
+        startingRecNo = 0;
+      }
     }
 
-    @GetMapping(value = "/AnalyzerTestNameMenu", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> showAnalyzerTestNameMenu(
-            HttpServletRequest request)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        AnalyzerTestNameMenuForm form = new AnalyzerTestNameMenuForm();
+    List<NamedAnalyzerTestMapping> mappedTestNameList = new ArrayList<>();
+    List<String> analyzerList = AnalyzerTestNameCache.getInstance().getAnalyzerNames();
+    Analyzer analyzer = new Analyzer();
 
-        addFlashMsgsToRequest(request);
-
-        String forward = performMenuAction(form, request);
-        if (FWD_FAIL.equals(forward)) {
-            Errors errors = new BaseErrors();
-            errors.reject("error.generic");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
-        } else {
-            return ResponseEntity.ok(form);
-        }
+    for (String analyzerName : analyzerList) {
+      Collection<MappedTestName> mappedTestNames =
+          AnalyzerTestNameCache.getInstance().getMappedTestsForAnalyzer(analyzerName).values();
+      if (mappedTestNames.size() > 0) {
+        analyzer.setId(((MappedTestName) mappedTestNames.toArray()[0]).getAnalyzerId());
+        analyzer = analyzerService.get(analyzer.getId());
+        mappedTestNameList.addAll(convertedToNamedList(mappedTestNames, analyzer.getName()));
+      }
     }
 
-    @Override
-    protected List<NamedAnalyzerTestMapping> createMenuList(
-            AdminOptionMenuForm<NamedAnalyzerTestMapping> form, HttpServletRequest request) {
+    setDisplayPageBounds(request, mappedTestNameList.size(), startingRecNo);
 
-        request.setAttribute("menuDefinition", "AnalyzerTestNameMenuDefinition");
+    return mappedTestNameList.subList(
+        Math.min(mappedTestNameList.size(), startingRecNo - 1),
+        Math.min(mappedTestNameList.size(), startingRecNo + getPageSize()));
 
-        String stringStartingRecNo = (String) request.getAttribute("startingRecNo");
-        int startingRecNo = 0;
-        if (stringStartingRecNo != null) {
-            startingRecNo = Integer.parseInt(stringStartingRecNo);
-            if (startingRecNo < 0) {
-                startingRecNo = 0;
-            }
-        }
+    // return mappedTestNameList;
+  }
 
-        List<NamedAnalyzerTestMapping> mappedTestNameList = new ArrayList<>();
-        List<String> analyzerList = AnalyzerTestNameCache.getInstance().getAnalyzerNames();
-        Analyzer analyzer = new Analyzer();
+  private List<NamedAnalyzerTestMapping> convertedToNamedList(
+      Collection<MappedTestName> mappedTestNameList, String analyzerName) {
+    List<NamedAnalyzerTestMapping> namedMappingList = new ArrayList<>();
 
-        for (String analyzerName : analyzerList) {
-            Collection<MappedTestName> mappedTestNames = AnalyzerTestNameCache.getInstance()
-                    .getMappedTestsForAnalyzer(analyzerName).values();
-            if (mappedTestNames.size() > 0) {
-                analyzer.setId(((MappedTestName) mappedTestNames.toArray()[0]).getAnalyzerId());
-                analyzer = analyzerService.get(analyzer.getId());
-                mappedTestNameList.addAll(convertedToNamedList(mappedTestNames, analyzer.getName()));
-            }
-        }
+    for (MappedTestName test : mappedTestNameList) {
+      NamedAnalyzerTestMapping namedMapping = new NamedAnalyzerTestMapping();
+      namedMapping.setActualTestName(test.getOpenElisTestName());
+      namedMapping.setAnalyzerTestName(test.getAnalyzerTestName());
+      namedMapping.setAnalyzerName(analyzerName);
 
-        setDisplayPageBounds(request, mappedTestNameList.size(), startingRecNo);
-
-        return mappedTestNameList.subList(
-                Math.min(mappedTestNameList.size(), startingRecNo - 1),
-                Math.min(mappedTestNameList.size(), startingRecNo + getPageSize()));
-
-        // return mappedTestNameList;
+      namedMappingList.add(namedMapping);
     }
 
-    private List<NamedAnalyzerTestMapping> convertedToNamedList(
-            Collection<MappedTestName> mappedTestNameList, String analyzerName) {
-        List<NamedAnalyzerTestMapping> namedMappingList = new ArrayList<>();
+    return namedMappingList;
+  }
 
-        for (MappedTestName test : mappedTestNameList) {
-            NamedAnalyzerTestMapping namedMapping = new NamedAnalyzerTestMapping();
-            namedMapping.setActualTestName(test.getOpenElisTestName());
-            namedMapping.setAnalyzerTestName(test.getAnalyzerTestName());
-            namedMapping.setAnalyzerName(analyzerName);
+  private void setDisplayPageBounds(HttpServletRequest request, int listSize, int startingRecNo)
+      throws LIMSRuntimeException {
+    request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(listSize));
+    request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
 
-            namedMappingList.add(namedMapping);
-        }
+    int numOfRecs = 0;
+    if (listSize != 0) {
+      numOfRecs = Math.min(listSize, getPageSize());
 
-        return namedMappingList;
+      numOfRecs--;
     }
 
-    private void setDisplayPageBounds(HttpServletRequest request, int listSize, int startingRecNo)
-            throws LIMSRuntimeException {
-        request.setAttribute(MENU_TOTAL_RECORDS, String.valueOf(listSize));
-        request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
+    int endingRecNo = startingRecNo + numOfRecs;
+    request.setAttribute(MENU_TO_RECORD, String.valueOf(endingRecNo));
+  }
 
-        int numOfRecs = 0;
-        if (listSize != 0) {
-            numOfRecs = Math.min(listSize, getPageSize());
+  @Override
+  protected String getDeactivateDisabled() {
+    return "false";
+  }
 
-            numOfRecs--;
-        }
+  @Override
+  protected String getEditDisabled() {
+    return "true";
+  }
 
-        int endingRecNo = startingRecNo + numOfRecs;
-        request.setAttribute(MENU_TO_RECORD, String.valueOf(endingRecNo));
+  @PostMapping(value = "/DeleteAnalyzerTestName", consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> showDeleteAnalyzerTestName(
+      HttpServletRequest request,
+      @RequestBody @Valid AnalyzerTestNameMenuForm form,
+      BindingResult result,
+      RedirectAttributes redirectAttributes)
+      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    if (result.hasErrors()) {
+      saveErrors(result);
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
     }
 
-    @Override
-    protected String getDeactivateDisabled() {
-        return "false";
+    List<String> selectedIDs = form.getSelectedIDs();
+
+    // String sysUserId = getSysUserId(request);
+    List<AnalyzerTestMapping> testMappingList = new ArrayList<>();
+
+    for (int i = 0; i < selectedIDs.size(); i++) {
+      String[] ids = selectedIDs.get(i).split(NamedAnalyzerTestMapping.getUniqueIdSeperator());
+      AnalyzerTestMapping testMapping = new AnalyzerTestMapping();
+      testMapping.setAnalyzerId(
+          AnalyzerTestNameCache.getInstance().getAnalyzerIdForName(ids[ANALYZER_NAME]));
+      testMapping.setAnalyzerTestName(ids[ANALYZER_TEST]);
+      testMapping.setSysUserId(getSysUserId(request));
+      testMappingList.add(testMapping);
+      try {
+        analyzerTestMappingService.delete(testMapping);
+      } catch (LIMSRuntimeException e) {
+        LogEvent.logDebug(e);
+        saveErrors(result);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+      }
     }
 
-    @Override
-    protected String getEditDisabled() {
-        return "true";
+    AnalyzerTestNameCache.getInstance().reloadCache();
+    request.setAttribute("menuDefinition", "AnalyzerTestNameDefinition");
+    redirectAttributes.addFlashAttribute(
+        Constants.SUCCESS_MSG, MessageUtil.getMessage("message.success.delete"));
+    return ResponseEntity.ok(form);
+  }
+
+  @Override
+  protected String findLocalForward(String forward) {
+    if (FWD_SUCCESS.equals(forward)) {
+      return "analyzerMasterListsPageDefinition";
+    } else if (FWD_FAIL.equals(forward)) {
+      return "redirect:/MasterListsPage";
+    } else if (FWD_SUCCESS_DELETE.equals(forward)) {
+      return "redirect:/AnalyzerTestNameMenu";
+    } else if (FWD_FAIL_DELETE.equals(forward)) {
+      return "analyzerMasterListsPageDefinition";
+    } else {
+      return "PageNotFound";
     }
+  }
 
-    @PostMapping(value = "/DeleteAnalyzerTestName", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> showDeleteAnalyzerTestName(
-            HttpServletRequest request,
-            @RequestBody @Valid AnalyzerTestNameMenuForm form, BindingResult result,
-            RedirectAttributes redirectAttributes)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        if (result.hasErrors()) {
-            saveErrors(result);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+  @Override
+  protected String getPageTitleKey() {
+    return "analyzerTestName.browse.title";
+  }
 
-        }
-
-        List<String> selectedIDs = form.getSelectedIDs();
-
-        // String sysUserId = getSysUserId(request);
-        List<AnalyzerTestMapping> testMappingList = new ArrayList<>();
-
-        for (int i = 0; i < selectedIDs.size(); i++) {
-            String[] ids = selectedIDs.get(i).split(NamedAnalyzerTestMapping.getUniqueIdSeperator());
-            AnalyzerTestMapping testMapping = new AnalyzerTestMapping();
-            testMapping.setAnalyzerId(
-                    AnalyzerTestNameCache.getInstance().getAnalyzerIdForName(ids[ANALYZER_NAME]));
-            testMapping.setAnalyzerTestName(ids[ANALYZER_TEST]);
-            testMapping.setSysUserId(getSysUserId(request));
-            testMappingList.add(testMapping);
-            try {
-                analyzerTestMappingService.delete(testMapping);
-            } catch (LIMSRuntimeException e) {
-                LogEvent.logDebug(e);
-                saveErrors(result);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-
-            }
-        }
-
-        AnalyzerTestNameCache.getInstance().reloadCache();
-        request.setAttribute("menuDefinition", "AnalyzerTestNameDefinition");
-        redirectAttributes.addFlashAttribute(
-                Constants.SUCCESS_MSG, MessageUtil.getMessage("message.success.delete"));
-        return ResponseEntity.ok(form);
-
-    }
-
-    @Override
-    protected String findLocalForward(String forward) {
-        if (FWD_SUCCESS.equals(forward)) {
-            return "analyzerMasterListsPageDefinition";
-        } else if (FWD_FAIL.equals(forward)) {
-            return "redirect:/MasterListsPage";
-        } else if (FWD_SUCCESS_DELETE.equals(forward)) {
-            return "redirect:/AnalyzerTestNameMenu";
-        } else if (FWD_FAIL_DELETE.equals(forward)) {
-            return "analyzerMasterListsPageDefinition";
-        } else {
-            return "PageNotFound";
-        }
-    }
-
-    @Override
-    protected String getPageTitleKey() {
-        return "analyzerTestName.browse.title";
-    }
-
-    @Override
-    protected String getPageSubtitleKey() {
-        return "analyzerTestName.browse.title";
-    }
+  @Override
+  protected String getPageSubtitleKey() {
+    return "analyzerTestName.browse.title";
+  }
 }
