@@ -24,7 +24,7 @@ import {
   CicsSystemGroup,
   QrCode,
   ContainerSoftware,
-  BootVolumeAlt
+  BootVolumeAlt,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -94,7 +94,7 @@ function Admin() {
             <FormattedMessage id="sidenav.label.admin.barcodeconfiguration" />
           </SideNavLink>
           <SideNavLink href="#PluginFile" renderIcon={BootVolumeAlt}>
-            <FormattedMessage id="sidenav.label.admin.pluginFile" />
+            <FormattedMessage id="sidenav.label.admin.Listplugin" />
           </SideNavLink>
           <SideNavLink
             renderIcon={ContainerSoftware}

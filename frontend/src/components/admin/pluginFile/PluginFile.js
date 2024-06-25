@@ -9,22 +9,19 @@ import {
   TableCell,
   TableContainer,
   Loading,
-  Grid,
-  Column,
-  Section,
-  Heading,
 } from "@carbon/react";
 import { getFromOpenElisServer } from "../../utils/Utils.js";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 import { FormattedMessage } from "react-intl";
+
 let breadcrumbs = [
-    { label: "home.label", link: "/" },
-    { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
-    {
-      label: "sidenav.label.admin.pluginFile",
-      link: "/MasterListsPage#PluginFile",
-    },
-  ];
+  { label: "home.label", link: "/" },
+  { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  {
+    label: "sidenav.label.admin.pluginFile",
+    link: "/MasterListsPage#PluginFile",
+  },
+];
 
 function PluginList() {
   const [plugins, setPlugins] = useState([]);
@@ -58,33 +55,39 @@ function PluginList() {
 
       <div className="orderLegendBody">
         <TableContainer title="Plugin Files">
-          <DataTable rows={rows} headers={headers}>
-            {({ rows, headers, getHeaderProps, getTableProps }) => (
-              <Table {...getTableProps()}>
-                <TableHead>
-                  <TableRow>
-                    {headers.map((header) => (
-                      <TableHeader
-                        key={header.key}
-                        {...getHeaderProps({ header })}
-                      >
-                        {header.header}
-                      </TableHeader>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row) => (
-                    <TableRow key={row.id}>
-                      {row.cells.map((cell) => (
-                        <TableCell key={cell.id}>{cell.value}</TableCell>
+          {plugins.length === 0 ? (
+            <p>
+              <FormattedMessage id="message.noPluginFound" />
+            </p>
+          ) : (
+            <DataTable rows={rows} headers={headers}>
+              {({ rows, headers, getHeaderProps, getTableProps }) => (
+                <Table {...getTableProps()}>
+                  <TableHead>
+                    <TableRow>
+                      {headers.map((header) => (
+                        <TableHeader
+                          key={header.key}
+                          {...getHeaderProps({ header })}
+                        >
+                          {header.header}
+                        </TableHeader>
                       ))}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </DataTable>
+                  </TableHead>
+                  <TableBody>
+                    {rows.map((row) => (
+                      <TableRow key={row.id}>
+                        {row.cells.map((cell) => (
+                          <TableCell key={cell.id}>{cell.value}</TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </DataTable>
+          )}
         </TableContainer>
       </div>
     </div>
