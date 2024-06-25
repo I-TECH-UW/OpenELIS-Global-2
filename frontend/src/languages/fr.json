@@ -824,7 +824,7 @@
   "label.audittrailreport.sitename": "Nom du site",
   "label.user.notestsection": "L'utilisateur actuel n'a pas d'unité de laboratoire assassinée. Veuillez contacter l'administrateur",
   "reports.label.cistudyexport": "Rapport général",
-  "header.label.study.ciexport": "Exporter un fichier CSV par type de date",
+  "header.label.study.ciexport": "Exporter un fichier CSV par date",
   "report.select.studttype": "Sélectionner le type d'étude",
   "error.report.csv.study": "Veuillez sélectionner le type d'étude.",
   "error.report.csv.date": "Veuillez sélectionner le type de date.",

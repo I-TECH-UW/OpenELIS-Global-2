@@ -634,7 +634,10 @@ public abstract class PatientReport extends Report {
             && ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(
                     ConfigurationProperties.Property.VALIDATE_REJECTED_TESTS, "false"))) {
-      sampleCompleteMap.put(convertToAlphaNumericDisplay(currentSample), Boolean.FALSE);
+
+      if (sampleCompleteMap != null) {
+        sampleCompleteMap.put(convertToAlphaNumericDisplay(currentSample), Boolean.FALSE);
+      }
       setEmptyResult(data);
     } else {
       if (resultList.isEmpty()) {
