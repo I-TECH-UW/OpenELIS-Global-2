@@ -38,7 +38,6 @@ import {
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 import CustomCheckBox from "../../common/CustomCheckBox.js";
-import { ArrowLeft, ArrowRight } from "@carbon/icons-react";
 import ActionPaginationButtonType from "../../common/ActionPaginationButtonType.js";
 
 let breadcrumbs = [
@@ -58,7 +57,7 @@ function UserManagement() {
 
   const componentMounted = useRef(false);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [deactivateButton, setDeactivateButton] = useState(true);
   const [modifyButton, setModifyButton] = useState(true);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
@@ -137,9 +136,9 @@ function UserManagement() {
       }),
       kind: NotificationKinds.success,
     });
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 2000);
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
   }
 
   const handlePageChange = ({ page, pageSize }) => {
@@ -188,11 +187,6 @@ function UserManagement() {
       handleSearchedProviderMenuList,
     );
   }, [panelSearchTerm, roleFilter, filters, startingRecNo]);
-
-  // useEffect(() => {
-  //   if (userManagementListShow) {
-  //   }
-  // }, [testSectionsShow]);
 
   useEffect(() => {
     if (userManagementListShow) {
@@ -385,59 +379,7 @@ function UserManagement() {
                   type="type2"
                 />
                 <br />
-                <Button
-                  onClick={() => {
-                    if (selectedRowCombinedUserID.length === 1) {
-                      const url = `/MasterListsPage#userEdit?ID=${selectedRowCombinedUserID[0]}&startingRecNo=1&roleFilter=`;
-                      window.location.href = url;
-                    }
-                  }}
-                  disabled={modifyButton}
-                  type="button"
-                >
-                  <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.modify" />
-                </Button>{" "}
-                <Button
-                  onClick={deleteDeactivateUserManagement}
-                  disabled={deactivateButton}
-                  type="button"
-                >
-                  <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
-                </Button>{" "}
-                <Button
-                  onClick={() => {
-                    window.location.href =
-                      "/MasterListsPage#userEdit?ID=0&startingRecNo=1&roleFilter=";
-                  }}
-                  type="button"
-                >
-                  <FormattedMessage id="unifiedSystemUser.browser.button.add" />
-                </Button>
               </Column>
-            </Section>
-            <br />
-            <Section>
-              <h4>
-                <FormattedMessage id="showing" /> {fromRecordCount} -{" "}
-                {toRecordCount} <FormattedMessage id="of" /> {totalRecordCount}{" "}
-              </h4>
-              <Button
-                hasIconOnly={true}
-                disabled={paging === 1 && startingRecNo <= 21}
-                onClick={handlePreviousPage}
-                renderIcon={ArrowLeft}
-                iconDescription={intl.formatMessage({
-                  id: "organization.previous",
-                })}
-              />{" "}
-              <Button
-                hasIconOnly={true}
-                renderIcon={ArrowRight}
-                onClick={handleNextPage}
-                iconDescription={intl.formatMessage({
-                  id: "organization.next",
-                })}
-              />
             </Section>
           </Column>
         </Grid>
@@ -937,7 +879,7 @@ function UserManagement() {
                     onChange={handlePageChange}
                     page={page}
                     pageSize={pageSize}
-                    pageSizes={[5, 10, 15, 20]}
+                    pageSizes={[10, 20]}
                     totalItems={userManagementListShow.length}
                     forwardText={intl.formatMessage({
                       id: "pagination.forward",

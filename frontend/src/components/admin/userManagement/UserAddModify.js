@@ -9,13 +9,11 @@ import {
   UnorderedList,
   ListItem,
   RadioButton,
-  RadioButtonGroup,
   Button,
   Loading,
   Select,
   SelectItem,
   PasswordInput,
-  CheckboxGroup,
   Checkbox,
   FormGroup,
 } from "@carbon/react";
@@ -240,19 +238,9 @@ function UserAddModify() {
   useEffect(() => {
     if (userDataShow) {
       setIsLocked(userDataShow.accountLocked === "Y" ? "radio-1" : "radio-2");
-    }
-  }, [userDataShow]);
-
-  useEffect(() => {
-    if (userDataShow) {
       setIsDisabled(
         userDataShow.accountDisabled === "Y" ? "radio-3" : "radio-4",
       );
-    }
-  }, [userDataShow]);
-
-  useEffect(() => {
-    if (userDataShow) {
       setIsActive(userDataShow.accountActive === "Y" ? "radio-5" : "radio-6");
     }
   }, [userDataShow]);
@@ -279,9 +267,9 @@ function UserAddModify() {
       }),
       kind: NotificationKinds.success,
     });
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 2000);
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
   }
 
   function handleUserLoginNameChange(e) {
@@ -770,17 +758,14 @@ function UserAddModify() {
                     </>
                   </Column>
                   <Column lg={8} md={4} sm={4}>
-                    <RadioButtonGroup
-                      defaultSelected={isLocked}
-                      name="account-locked"
-                    >
+                    <span style={{ display: "flex", alignItems: "center" }}>
                       <RadioButton
                         checked={isLocked === "radio-1"}
                         labelText="Y"
                         value="Y"
                         id="radio-1"
                         onClick={(e) => {
-                          setIsDisabled("radio-1");
+                          setIsLocked("radio-1");
                           handleAccountLockedChange(e);
                         }}
                       />
@@ -790,11 +775,11 @@ function UserAddModify() {
                         value="N"
                         id="radio-2"
                         onClick={(e) => {
-                          setIsDisabled("radio-2");
+                          setIsLocked("radio-2");
                           handleAccountLockedChange(e);
                         }}
                       />
-                    </RadioButtonGroup>
+                    </span>
                   </Column>
                 </Grid>
                 <Grid fullWidth={true}>
@@ -805,10 +790,7 @@ function UserAddModify() {
                     </>
                   </Column>
                   <Column lg={8} md={4} sm={4}>
-                    <RadioButtonGroup
-                      defaultSelected={isDisabled}
-                      name="account-disabled"
-                    >
+                    <span style={{ display: "flex", alignItems: "center" }}>
                       <RadioButton
                         checked={isDisabled === "radio-3"}
                         labelText="Y"
@@ -829,7 +811,7 @@ function UserAddModify() {
                           handleAccountDisabledChange(e);
                         }}
                       />
-                    </RadioButtonGroup>
+                    </span>
                   </Column>
                 </Grid>
                 <Grid fullWidth={true}>
@@ -840,17 +822,14 @@ function UserAddModify() {
                     </>
                   </Column>
                   <Column lg={8} md={4} sm={4}>
-                    <RadioButtonGroup
-                      defaultSelected={isActive}
-                      name="account-isActive"
-                    >
+                    <span style={{ display: "flex", alignItems: "center" }}>
                       <RadioButton
                         checked={isActive === "radio-5"}
                         labelText="Y"
                         value="Y"
                         id="radio-5"
                         onClick={(e) => {
-                          setIsDisabled("radio-5");
+                          setIsActive("radio-5");
                           handleAccountActiveChange(e);
                         }}
                       />
@@ -860,11 +839,11 @@ function UserAddModify() {
                         value="N"
                         id="radio-6"
                         onClick={(e) => {
-                          setIsDisabled("radio-6");
+                          setIsActive("radio-6");
                           handleAccountActiveChange(e);
                         }}
                       />
-                    </RadioButtonGroup>
+                    </span>
                   </Column>
                 </Grid>
                 <br />
@@ -1297,6 +1276,4 @@ export default injectIntl(UserAddModify);
 
 // on change of checkbox need a fix
 // adding another permission if ( all permission is not selected )
-// expiration date fix
-// radio button fixes
 // checkBox function destructuer
