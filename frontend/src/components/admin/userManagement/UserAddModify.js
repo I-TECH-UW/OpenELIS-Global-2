@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
 import {
   Grid,
   Column,
@@ -42,7 +41,7 @@ const breadcrumbs = [
   },
 ];
 
-function UserAddEdit() {
+function UserAddModify() {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
@@ -66,14 +65,22 @@ function UserAddEdit() {
   );
   const [additionalGridAdded, setAdditionalGridAdded] = useState(false);
 
-  const id = new URLSearchParams(useLocation().search).get("ID");
+  const ID = (() => {
+    const hash = window.location.hash;
+    if (hash.includes("?")) {
+      const queryParams = hash.split("?")[1];
+      const urlParams = new URLSearchParams(queryParams);
+      return urlParams.get("ID");
+    }
+    return "0";
+  })();
 
   useEffect(() => {
     componentMounted.current = true;
     setIsLoading(true);
-    if (id) {
+    if (ID) {
       getFromOpenElisServer(
-        `/rest/UnifiedSystemUser?ID=${id}&startingRecNo=1&roleFilter=`,
+        `/rest/UnifiedSystemUser?ID=${ID}&startingRecNo=1&roleFilter=`,
         handleUserData,
       );
     } else {
@@ -85,7 +92,7 @@ function UserAddEdit() {
       componentMounted.current = false;
       setIsLoading(false);
     };
-  }, [id]);
+  }, [ID]);
 
   const handleUserData = (res) => {
     if (!res) {
@@ -168,52 +175,65 @@ function UserAddEdit() {
       setUserDataShow(userManagementInfoToShow);
       setUserDataPost(userManagementInfoToPost);
 
-      const globalRoles = userData.globalRoles.map((item) => {
-        return {
-          childrenID: item.childrenID,
-          elementID: item.elementID,
-          groupingRole: item.groupingRole,
-          nestingLevel: item.nestingLevel,
-          parentRole: item.parentRole,
-          roleId: item.roleId,
-          roleName: item.roleName,
-        };
-      });
-
-      const labUnitRoles = userData.labUnitRoles.map((item) => {
-        return {
-          childrenID: item.childrenID,
-          elementID: item.elementID,
-          groupingRole: item.groupingRole,
-          nestingLevel: item.nestingLevel,
-          parentRole: item.parentRole,
-          roleId: item.roleId,
-          roleName: item.roleName,
-        };
-      });
-
-      const testSections = userData.testSections.map((item) => {
-        return {
-          id: item.id,
-          value: item.value,
-        };
-      });
-
-      if (id !== "0") {
-        const selectedGlobalLabUniRoles = userData.selectedRoles.map(
-          (item) => item,
-        );
-        setSelectedGlobalLabUnitRoles(selectedGlobalLabUniRoles);
-      } else {
-        setSelectedGlobalLabUnitRoles([]);
+      if (userData.globalRoles) {
+        const globalRoles = userData.globalRoles.map((item) => {
+          return {
+            childrenID: item.childrenID,
+            elementID: item.elementID,
+            groupingRole: item.groupingRole,
+            nestingLevel: item.nestingLevel,
+            parentRole: item.parentRole,
+            roleId: item.roleId,
+            roleName: item.roleName,
+          };
+        });
+        setUserDataShow((prevUserDataShow) => ({
+          ...prevUserDataShow,
+          globalRoles: globalRoles,
+        }));
       }
 
-      setUserDataShow((userDataShow) => ({
-        ...userDataShow,
-        globalRoles,
-        labUnitRoles,
-        testSections,
-      }));
+      if (userData.labUnitRoles) {
+        const labUnitRoles = userData.labUnitRoles.map((item) => {
+          return {
+            childrenID: item.childrenID,
+            elementID: item.elementID,
+            groupingRole: item.groupingRole,
+            nestingLevel: item.nestingLevel,
+            parentRole: item.parentRole,
+            roleId: item.roleId,
+            roleName: item.roleName,
+          };
+        });
+        setUserDataShow((prevUserDataShow) => ({
+          ...prevUserDataShow,
+          labUnitRoles: labUnitRoles,
+        }));
+      }
+
+      if (userData.testSections) {
+        const testSections = userData.testSections.map((item) => {
+          return {
+            id: item.id,
+            value: item.value,
+          };
+        });
+        setUserDataShow((prevUserDataShow) => ({
+          ...prevUserDataShow,
+          testSections: testSections,
+        }));
+      }
+
+      if (userData.selectedRoles) {
+        if (ID !== "0") {
+          const selectedGlobalLabUniRoles = userData.selectedRoles.map(
+            (item) => item,
+          );
+          setSelectedGlobalLabUnitRoles(selectedGlobalLabUniRoles);
+        } else {
+          setSelectedGlobalLabUnitRoles([]);
+        }
+      }
     }
   }, [userData]);
 
@@ -502,7 +522,7 @@ function UserAddEdit() {
             <Section>
               <Section>
                 <Heading>
-                  {id === "0" ? (
+                  {ID === "0" ? (
                     <FormattedMessage id="unifiedSystemUser.add.user" />
                   ) : (
                     <FormattedMessage id="unifiedSystemUser.edit.user" />
@@ -1273,7 +1293,7 @@ function UserAddEdit() {
   );
 }
 
-export default injectIntl(UserAddEdit);
+export default injectIntl(UserAddModify);
 
 // on change of checkbox need a fix
 // adding another permission if ( all permission is not selected )

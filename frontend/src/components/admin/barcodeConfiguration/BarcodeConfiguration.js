@@ -766,7 +766,9 @@ function BarcodeConfiguration() {
                         title: intl.formatMessage({
                           id: "notification.title",
                         }),
-                        message: "BarCode Configurations has been saved.",
+                        message: intl.formatMessage({
+                          id: "barcode.notification.save",
+                        }),
                       });
                     }}
                     type="submit"

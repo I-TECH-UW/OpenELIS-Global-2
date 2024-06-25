@@ -39,6 +39,7 @@ import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 import CustomCheckBox from "../../common/CustomCheckBox.js";
 import { ArrowLeft, ArrowRight } from "@carbon/icons-react";
+import ActionPaginationButtonType from "../../common/ActionPaginationButtonType.js";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -268,7 +269,6 @@ function UserManagement() {
       );
       const newUserManagementListArray = Object.values(newUserManagementList);
       setSearchedUserManagementListShow(newUserManagementListArray);
-      console.error(searchedUserManagementListShow);
     }
   }, [searchedUserManagementList]);
 
@@ -367,10 +367,28 @@ function UserManagement() {
             <br />
             <Section>
               <Column lg={16} md={8} sm={4}>
+                <br />
+                <ActionPaginationButtonType
+                  selectedRowIds={selectedRowIds}
+                  modifyButton={modifyButton}
+                  deactivateButton={deactivateButton}
+                  fromRecordCount={fromRecordCount}
+                  toRecordCount={toRecordCount}
+                  totalRecordCount={totalRecordCount}
+                  handlePreviousPage={handlePreviousPage}
+                  handleNextPage={handleNextPage}
+                  deleteDeactivate={deleteDeactivateUserManagement}
+                  id={selectedRowCombinedUserID[0]}
+                  otherParmsInLink={`&startingRecNo=1&roleFilter=`}
+                  addButtonRedirectLink={`/MasterListsPage#userEdit?ID=0&startingRecNo=1&roleFilter=`}
+                  modifyButtonRedirectLink={`/MasterListsPage#userEdit?ID=`}
+                  type="type2"
+                />
+                <br />
                 <Button
                   onClick={() => {
                     if (selectedRowCombinedUserID.length === 1) {
-                      const url = `/UnifiedSystemUser?ID=${selectedRowCombinedUserID[0]}&startingRecNo=1&roleFilter=`;
+                      const url = `/MasterListsPage#userEdit?ID=${selectedRowCombinedUserID[0]}&startingRecNo=1&roleFilter=`;
                       window.location.href = url;
                     }
                   }}
@@ -389,7 +407,7 @@ function UserManagement() {
                 <Button
                   onClick={() => {
                     window.location.href =
-                      "/UnifiedSystemUser?ID=0&startingRecNo=1&roleFilter=";
+                      "/MasterListsPage#userEdit?ID=0&startingRecNo=1&roleFilter=";
                   }}
                   type="button"
                 >
