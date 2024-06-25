@@ -17,11 +17,11 @@ import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.menu.valueholder.Menu;
 
 public interface MenuDAO extends BaseDAO<Menu, String> {
-  //	List<Menu> getAllMenus() throws LIMSRuntimeException;
+    // List<Menu> getAllMenus() throws LIMSRuntimeException;
 
-  //	List<Menu> getAllActiveMenus() throws LIMSRuntimeException;
+    // List<Menu> getAllActiveMenus() throws LIMSRuntimeException;
 
-  //	Menu getMenuByElementId(String elementId) throws LIMSRuntimeException;
+    // Menu getMenuByElementId(String elementId) throws LIMSRuntimeException;
 
-  //	void updateData(Menu menu) throws LIMSRuntimeException;
+    // void updateData(Menu menu) throws LIMSRuntimeException;
 }

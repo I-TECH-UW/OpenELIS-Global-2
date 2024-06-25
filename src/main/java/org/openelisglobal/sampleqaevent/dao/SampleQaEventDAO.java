@@ -31,26 +31,25 @@ import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
  */
 public interface SampleQaEventDAO extends BaseDAO<SampleQaEvent, String> {
 
-  //	public boolean insertData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
+    // public boolean insertData(SampleQaEvent sampleQaEvent) throws
+    // LIMSRuntimeException;
 
-  //	public void deleteData(List sampleQaEvents) throws LIMSRuntimeException;
+    // public void deleteData(List sampleQaEvents) throws LIMSRuntimeException;
 
-  void getData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
+    void getData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
 
-  //	public void updateData(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
+    // public void updateData(SampleQaEvent sampleQaEvent) throws
+    // LIMSRuntimeException;
 
-  List<SampleQaEvent> getSampleQaEventsBySample(SampleQaEvent sampleQaEvent)
-      throws LIMSRuntimeException;
+    List<SampleQaEvent> getSampleQaEventsBySample(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
 
-  List<SampleQaEvent> getSampleQaEventsBySample(Sample sample) throws LIMSRuntimeException;
+    List<SampleQaEvent> getSampleQaEventsBySample(Sample sample) throws LIMSRuntimeException;
 
-  SampleQaEvent getSampleQaEventBySampleAndQaEvent(SampleQaEvent sampleQaEvent)
-      throws LIMSRuntimeException;
+    SampleQaEvent getSampleQaEventBySampleAndQaEvent(SampleQaEvent sampleQaEvent) throws LIMSRuntimeException;
 
-  List<SampleQaEvent> getSampleQaEventsByUpdatedDate(Date lowDate, Date highDate)
-      throws LIMSRuntimeException;
+    List<SampleQaEvent> getSampleQaEventsByUpdatedDate(Date lowDate, Date highDate) throws LIMSRuntimeException;
 
-  List<SampleQaEvent> getAllUncompleatedEvents() throws LIMSRuntimeException;
+    List<SampleQaEvent> getAllUncompleatedEvents() throws LIMSRuntimeException;
 
-  SampleQaEvent getData(String sampleQaEventId) throws LIMSRuntimeException;
+    SampleQaEvent getData(String sampleQaEventId) throws LIMSRuntimeException;
 }

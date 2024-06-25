@@ -20,28 +20,31 @@ import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 
 /**
  * @author bill mcgough
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface StatusOfSampleDAO extends BaseDAO<StatusOfSample, String> {
 
-  // bugzilla 1942
-  StatusOfSample getDataByStatusTypeAndStatusCode(StatusOfSample statusofsample)
-      throws LIMSRuntimeException;
+    // bugzilla 1942
+    StatusOfSample getDataByStatusTypeAndStatusCode(StatusOfSample statusofsample) throws LIMSRuntimeException;
 
-  //	public boolean insertData(StatusOfSample sourceOfSample) throws LIMSRuntimeException;
+    // public boolean insertData(StatusOfSample sourceOfSample) throws
+    // LIMSRuntimeException;
 
-  List<StatusOfSample> getAllStatusOfSamples() throws LIMSRuntimeException;
+    List<StatusOfSample> getAllStatusOfSamples() throws LIMSRuntimeException;
 
-  List<StatusOfSample> getPageOfStatusOfSamples(int startingRecNo) throws LIMSRuntimeException;
+    List<StatusOfSample> getPageOfStatusOfSamples(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(StatusOfSample sourceOfSample) throws LIMSRuntimeException;
+    void getData(StatusOfSample sourceOfSample) throws LIMSRuntimeException;
 
-  //	public void updateData(StatusOfSample sourceOfSample) throws LIMSRuntimeException;
+    // public void updateData(StatusOfSample sourceOfSample) throws
+    // LIMSRuntimeException;
 
-  // bugzilla 1411
-  Integer getTotalStatusOfSampleCount() throws LIMSRuntimeException;
+    // bugzilla 1411
+    Integer getTotalStatusOfSampleCount() throws LIMSRuntimeException;
 
-  boolean duplicateStatusOfSampleExists(StatusOfSample statusOfSample) throws LIMSRuntimeException;
+    boolean duplicateStatusOfSampleExists(StatusOfSample statusOfSample) throws LIMSRuntimeException;
 }

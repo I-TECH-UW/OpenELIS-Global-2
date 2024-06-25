@@ -30,57 +30,53 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class SampleHistoryService extends AbstractHistoryService {
 
-  protected ReferenceTablesService referenceTablesService =
-      SpringContext.getBean(ReferenceTablesService.class);
-  protected SampleItemService sampleItemService = SpringContext.getBean(SampleItemService.class);
-  protected HistoryService historyService = SpringContext.getBean(HistoryService.class);
+    protected ReferenceTablesService referenceTablesService = SpringContext.getBean(ReferenceTablesService.class);
+    protected SampleItemService sampleItemService = SpringContext.getBean(SampleItemService.class);
+    protected HistoryService historyService = SpringContext.getBean(HistoryService.class);
 
-  private static String SAMPLE_ITEM_TABLE_ID;
+    private static String SAMPLE_ITEM_TABLE_ID;
 
-  public SampleHistoryService(Sample sample) {
-    SAMPLE_ITEM_TABLE_ID = referenceTablesService.getReferenceTableByName("SAMPLE_ITEM").getId();
-    setUpForSample(sample);
-  }
-
-  @SuppressWarnings("unchecked")
-  private void setUpForSample(Sample sample) {
-    List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(sample.getId());
-
-    History searchHistory = new History();
-    searchHistory.setReferenceTable(SAMPLE_ITEM_TABLE_ID);
-    historyList = new ArrayList<History>();
-
-    for (SampleItem item : sampleItems) {
-      searchHistory.setReferenceId(item.getId());
-      historyList.addAll(historyService.getHistoryByRefIdAndRefTableId(searchHistory));
+    public SampleHistoryService(Sample sample) {
+        SAMPLE_ITEM_TABLE_ID = referenceTablesService.getReferenceTableByName("SAMPLE_ITEM").getId();
+        setUpForSample(sample);
     }
 
-    newValueMap = new HashMap<String, String>();
-  }
+    @SuppressWarnings("unchecked")
+    private void setUpForSample(Sample sample) {
+        List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(sample.getId());
 
-  @Override
-  protected void addInsertion(History history, List<AuditTrailItem> items) {
-    identifier =
-        sampleItemService.getData(history.getReferenceId()).getTypeOfSample().getDescription();
-    items.add(getCoreTrail(history));
-  }
+        History searchHistory = new History();
+        searchHistory.setReferenceTable(SAMPLE_ITEM_TABLE_ID);
+        historyList = new ArrayList<History>();
 
-  @Override
-  protected void getObservableChanges(
-      History history, Map<String, String> changeMap, String changes) {
-    SampleItem item = sampleItemService.getData(history.getReferenceId());
-    String statusId = item.getStatusId();
-    if (statusId != null) {
-      identifier = item.getTypeOfSample().getDescription();
-      newValueMap.put(
-          STATUS_ATTRIBUTE,
-          SpringContext.getBean(IStatusService.class).getStatusNameFromId(statusId));
-      changeMap.put(STATUS_ATTRIBUTE, "");
+        for (SampleItem item : sampleItems) {
+            searchHistory.setReferenceId(item.getId());
+            historyList.addAll(historyService.getHistoryByRefIdAndRefTableId(searchHistory));
+        }
+
+        newValueMap = new HashMap<String, String>();
     }
-  }
 
-  @Override
-  protected String getObjectName() {
-    return MessageUtil.getMessage("sample.entry.sampleList.label");
-  }
+    @Override
+    protected void addInsertion(History history, List<AuditTrailItem> items) {
+        identifier = sampleItemService.getData(history.getReferenceId()).getTypeOfSample().getDescription();
+        items.add(getCoreTrail(history));
+    }
+
+    @Override
+    protected void getObservableChanges(History history, Map<String, String> changeMap, String changes) {
+        SampleItem item = sampleItemService.getData(history.getReferenceId());
+        String statusId = item.getStatusId();
+        if (statusId != null) {
+            identifier = item.getTypeOfSample().getDescription();
+            newValueMap.put(STATUS_ATTRIBUTE,
+                    SpringContext.getBean(IStatusService.class).getStatusNameFromId(statusId));
+            changeMap.put(STATUS_ATTRIBUTE, "");
+        }
+    }
+
+    @Override
+    protected String getObjectName() {
+        return MessageUtil.getMessage("sample.entry.sampleList.label");
+    }
 }

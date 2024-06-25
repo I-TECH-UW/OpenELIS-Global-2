@@ -31,325 +31,322 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class VLReportData {
 
-  private String ampli2;
-  private String ampli2lo;
-  private String subjectno;
-  private String sitesubjectno;
-  private String birth_date;
-  private String age;
-  private String ageMonth = "--";
-  private String ageWeek = "--";
-  private String gender;
-  private String collectiondate;
-  private String receptiondate;
-  private String accession_number;
-  private String servicename;
-  private String doctor;
-  private String compleationdate;
-  private String releasedate;
-  private String vlPregnancy;
-  private String vlSuckle;
-  private String PTME;
-  private String clinicDistrict;
-  private String clinic;
-  private String status;
-  private String vih;
-  private String sampleTypeName;
-  private Boolean duplicateReport = Boolean.FALSE;
+    private String ampli2;
+    private String ampli2lo;
+    private String subjectno;
+    private String sitesubjectno;
+    private String birth_date;
+    private String age;
+    private String ageMonth = "--";
+    private String ageWeek = "--";
+    private String gender;
+    private String collectiondate;
+    private String receptiondate;
+    private String accession_number;
+    private String servicename;
+    private String doctor;
+    private String compleationdate;
+    private String releasedate;
+    private String vlPregnancy;
+    private String vlSuckle;
+    private String PTME;
+    private String clinicDistrict;
+    private String clinic;
+    private String status;
+    private String vih;
+    private String sampleTypeName;
+    private Boolean duplicateReport = Boolean.FALSE;
 
-  private List<SampleQaEvent> sampleQAEventList;
-  private String allQaEvents = null;
-  List<QaEventItem> qaEventItems;
-  private String sampleQAEventNotes = "";
-  private String virologyVlQaEvent = null;
-  private String receptionQaEvent = null;
+    private List<SampleQaEvent> sampleQAEventList;
+    private String allQaEvents = null;
+    List<QaEventItem> qaEventItems;
+    private String sampleQAEventNotes = "";
+    private String virologyVlQaEvent = null;
+    private String receptionQaEvent = null;
 
-  private Map<String, String> previousResultMap = new HashMap<>();
+    private Map<String, String> previousResultMap = new HashMap<>();
 
-  public String getSubjectno() {
-    return subjectno;
-  }
+    public String getSubjectno() {
+        return subjectno;
+    }
 
-  public void setSubjectno(String subjectno) {
-    this.subjectno = subjectno;
-  }
+    public void setSubjectno(String subjectno) {
+        this.subjectno = subjectno;
+    }
 
-  public String getSitesubjectno() {
-    return sitesubjectno;
-  }
+    public String getSitesubjectno() {
+        return sitesubjectno;
+    }
 
-  public void setSitesubjectno(String sitesubjectno) {
-    this.sitesubjectno = sitesubjectno;
-  }
+    public void setSitesubjectno(String sitesubjectno) {
+        this.sitesubjectno = sitesubjectno;
+    }
 
-  public String getBirth_date() {
-    return birth_date;
-  }
+    public String getBirth_date() {
+        return birth_date;
+    }
 
-  public void setBirth_date(String birthDate) {
-    this.birth_date = birthDate;
-  }
+    public void setBirth_date(String birthDate) {
+        this.birth_date = birthDate;
+    }
 
-  public String getAge() {
-    return age;
-  }
+    public String getAge() {
+        return age;
+    }
 
-  public void setAge(String age) {
-    this.age = age;
-  }
+    public void setAge(String age) {
+        this.age = age;
+    }
 
-  public String getAgeMonth() {
-    return ageMonth;
-  }
+    public String getAgeMonth() {
+        return ageMonth;
+    }
 
-  public void setAgeMonth(String agemonth) {
-    this.ageMonth = agemonth;
-  }
+    public void setAgeMonth(String agemonth) {
+        this.ageMonth = agemonth;
+    }
 
-  public String getAgeWeek() {
-    return ageWeek;
-  }
+    public String getAgeWeek() {
+        return ageWeek;
+    }
 
-  public void setAgeWeek(String ageWeek) {
-    this.ageWeek = ageWeek;
-  }
+    public void setAgeWeek(String ageWeek) {
+        this.ageWeek = ageWeek;
+    }
 
-  public String getGender() {
-    return gender;
-  }
+    public String getGender() {
+        return gender;
+    }
 
-  public void setGender(String gender) {
-    this.gender = gender;
-  }
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
-  public String getCollectiondate() {
-    return collectiondate;
-  }
+    public String getCollectiondate() {
+        return collectiondate;
+    }
 
-  public void setCollectiondate(String collectiondate) {
-    this.collectiondate = collectiondate;
-  }
+    public void setCollectiondate(String collectiondate) {
+        this.collectiondate = collectiondate;
+    }
 
-  public String getAccession_number() {
-    return accession_number;
-  }
+    public String getAccession_number() {
+        return accession_number;
+    }
 
-  public void setAccessionNumber(String accessionNumber) {
-    accession_number = accessionNumber;
-  }
+    public void setAccessionNumber(String accessionNumber) {
+        accession_number = accessionNumber;
+    }
 
-  public String getServicename() {
-    return servicename;
-  }
+    public String getServicename() {
+        return servicename;
+    }
 
-  public void setServicename(String servicename) {
-    this.servicename = servicename;
-  }
+    public void setServicename(String servicename) {
+        this.servicename = servicename;
+    }
 
-  public String getDoctor() {
-    return doctor;
-  }
+    public String getDoctor() {
+        return doctor;
+    }
 
-  public void setDoctor(String doctor) {
-    this.doctor = doctor;
-  }
+    public void setDoctor(String doctor) {
+        this.doctor = doctor;
+    }
 
-  public String getCompleationdate() {
-    return compleationdate;
-  }
+    public String getCompleationdate() {
+        return compleationdate;
+    }
 
-  public void setCompleationdate(String compleationdate) {
-    this.compleationdate = compleationdate;
-  }
+    public void setCompleationdate(String compleationdate) {
+        this.compleationdate = compleationdate;
+    }
 
-  public String getPTME() {
-    return PTME;
-  }
+    public String getPTME() {
+        return PTME;
+    }
 
-  public void setPTME(String pTME) {
-    PTME = pTME;
-  }
+    public void setPTME(String pTME) {
+        PTME = pTME;
+    }
 
-  public String getClinicDistrict() {
-    return clinicDistrict;
-  }
+    public String getClinicDistrict() {
+        return clinicDistrict;
+    }
 
-  public void setClinicDistrict(String clinicDistrict) {
-    this.clinicDistrict = clinicDistrict;
-  }
+    public void setClinicDistrict(String clinicDistrict) {
+        this.clinicDistrict = clinicDistrict;
+    }
 
-  public String getClinic() {
-    return clinic;
-  }
+    public String getClinic() {
+        return clinic;
+    }
 
-  public void setClinic(String clinic) {
-    this.clinic = clinic;
-  }
+    public void setClinic(String clinic) {
+        this.clinic = clinic;
+    }
 
-  public void setStatus(String status) {
-    this.status = status;
-  }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-  public String getStatus() {
-    return status;
-  }
+    public String getStatus() {
+        return status;
+    }
 
-  public String getReceptiondate() {
-    return receptiondate;
-  }
+    public String getReceptiondate() {
+        return receptiondate;
+    }
 
-  public void setReceptiondate(String receptiondate) {
-    this.receptiondate = receptiondate;
-  }
+    public void setReceptiondate(String receptiondate) {
+        this.receptiondate = receptiondate;
+    }
 
-  public String getAmpli2() {
-    return ampli2;
-  }
+    public String getAmpli2() {
+        return ampli2;
+    }
 
-  public void setAmpli2(String ampli2) {
-    this.ampli2 = ampli2;
-  }
+    public void setAmpli2(String ampli2) {
+        this.ampli2 = ampli2;
+    }
 
-  public String getAmpli2lo() {
-    return ampli2lo;
-  }
+    public String getAmpli2lo() {
+        return ampli2lo;
+    }
 
-  public void setAmpli2lo(String ampli2lo) {
-    this.ampli2lo = ampli2lo;
-  }
+    public void setAmpli2lo(String ampli2lo) {
+        this.ampli2lo = ampli2lo;
+    }
 
-  public String getVlPregnancy() {
-    return vlPregnancy;
-  }
+    public String getVlPregnancy() {
+        return vlPregnancy;
+    }
 
-  public void setVlPregnancy(String vlPregnancy) {
-    this.vlPregnancy = vlPregnancy;
-  }
+    public void setVlPregnancy(String vlPregnancy) {
+        this.vlPregnancy = vlPregnancy;
+    }
 
-  public String getVlSuckle() {
-    return vlSuckle;
-  }
+    public String getVlSuckle() {
+        return vlSuckle;
+    }
 
-  public void setVlSuckle(String vlSuckle) {
-    this.vlSuckle = vlSuckle;
-  }
+    public void setVlSuckle(String vlSuckle) {
+        this.vlSuckle = vlSuckle;
+    }
 
-  public String getvih() {
-    return vih;
-  }
+    public String getvih() {
+        return vih;
+    }
 
-  public void setvih(String vih) {
-    this.vih = vih;
-  }
+    public void setvih(String vih) {
+        this.vih = vih;
+    }
 
-  public String getSampleTypeName() {
-    return sampleTypeName;
-  }
+    public String getSampleTypeName() {
+        return sampleTypeName;
+    }
 
-  public void setSampleTypeName(String sampleTypeName) {
-    this.sampleTypeName = sampleTypeName;
-  }
+    public void setSampleTypeName(String sampleTypeName) {
+        this.sampleTypeName = sampleTypeName;
+    }
 
-  public Boolean getDuplicateReport() {
-    return duplicateReport;
-  }
+    public Boolean getDuplicateReport() {
+        return duplicateReport;
+    }
 
-  public void setDuplicateReport(Boolean duplicateReport) {
-    this.duplicateReport = duplicateReport;
-  }
+    public void setDuplicateReport(Boolean duplicateReport) {
+        this.duplicateReport = duplicateReport;
+    }
 
-  public String getVirologyVlQaEvent() {
-    return virologyVlQaEvent;
-  }
+    public String getVirologyVlQaEvent() {
+        return virologyVlQaEvent;
+    }
 
-  public void setVirologyVlQaEvent(String virologyVlQaEvent) {
-    this.virologyVlQaEvent = virologyVlQaEvent;
-  }
+    public void setVirologyVlQaEvent(String virologyVlQaEvent) {
+        this.virologyVlQaEvent = virologyVlQaEvent;
+    }
 
-  public String getAllQaEvents() {
-    return allQaEvents;
-  }
+    public String getAllQaEvents() {
+        return allQaEvents;
+    }
 
-  public void setAllQaEvents(String allQaEvents) {
-    this.allQaEvents = allQaEvents;
-  }
+    public void setAllQaEvents(String allQaEvents) {
+        this.allQaEvents = allQaEvents;
+    }
 
-  public String getSampleQAEventNotes() {
-    return sampleQAEventNotes;
-  }
+    public String getSampleQAEventNotes() {
+        return sampleQAEventNotes;
+    }
 
-  public void setSampleQAEventNotes(String sampleQAEventNotes) {
-    this.sampleQAEventNotes = sampleQAEventNotes;
-  }
+    public void setSampleQAEventNotes(String sampleQAEventNotes) {
+        this.sampleQAEventNotes = sampleQAEventNotes;
+    }
 
-  public String getReceptionQaEvent() {
-    return receptionQaEvent;
-  }
+    public String getReceptionQaEvent() {
+        return receptionQaEvent;
+    }
 
-  public void setReceptionQaEvent(String receptionQaEvent) {
-    this.receptionQaEvent = receptionQaEvent;
-  }
+    public void setReceptionQaEvent(String receptionQaEvent) {
+        this.receptionQaEvent = receptionQaEvent;
+    }
 
-  public Map<String, String> getPreviousResultMap() {
-    return previousResultMap;
-  }
+    public Map<String, String> getPreviousResultMap() {
+        return previousResultMap;
+    }
 
-  public void setPreviousResultMap(Map<String, String> previousResultMap) {
-    this.previousResultMap = previousResultMap;
-  }
+    public void setPreviousResultMap(Map<String, String> previousResultMap) {
+        this.previousResultMap = previousResultMap;
+    }
 
-  public void getSampleQaEventItems(Sample sample) {
-    qaEventItems = new ArrayList<>();
-    if (sample != null) {
-      getSampleQaEvents(sample);
-      for (SampleQaEvent event : sampleQAEventList) {
-        QAService qa = new QAService(event);
-        QaEventItem item = new QaEventItem();
-        item.setId(qa.getEventId());
-        item.setQaEvent(qa.getQAEvent().getId());
-        SampleItem sampleItem = qa.getSampleItem();
-        // -1 is the index for "all samples"
-        // String sampleType=(sampleItem == null) ? "-1" :
-        // sampleItem.getTypeOfSample().getNameKey();
-        // allQaEvents=allQaEvents==null?sampleType+":"+qa.getQAEvent().getNameKey():allQaEvents+";"+sampleType+":"+qa.getQAEvent().getNameKey();
+    public void getSampleQaEventItems(Sample sample) {
+        qaEventItems = new ArrayList<>();
+        if (sample != null) {
+            getSampleQaEvents(sample);
+            for (SampleQaEvent event : sampleQAEventList) {
+                QAService qa = new QAService(event);
+                QaEventItem item = new QaEventItem();
+                item.setId(qa.getEventId());
+                item.setQaEvent(qa.getQAEvent().getId());
+                SampleItem sampleItem = qa.getSampleItem();
+                // -1 is the index for "all samples"
+                // String sampleType=(sampleItem == null) ? "-1" :
+                // sampleItem.getTypeOfSample().getNameKey();
+                // allQaEvents=allQaEvents==null?sampleType+":"+qa.getQAEvent().getNameKey():allQaEvents+";"+sampleType+":"+qa.getQAEvent().getNameKey();
 
-        if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
-            && qa.getObservationValue(QAObservationType.SECTION).equals("testSection.VL")) {
-          // virologyVlQaEvent=virologyVlQaEvent==null ?
-          // qa.getQAEvent().getLocalizedName() : virologyVlQaEvent+" ,
-          // "+qa.getQAEvent().getLocalizedName();
-          sampleQAEventNotes = sampleQAEventNotes + "  " + getNoteForSampleQaEvent(event);
-          String sampleType =
-              (sampleItem == null) ? "-1" : sampleItem.getTypeOfSample().getNameKey();
-          allQaEvents =
-              allQaEvents == null
-                  ? sampleType + ":" + qa.getQAEvent().getNameKey()
-                  : allQaEvents + ";" + sampleType + ":" + qa.getQAEvent().getNameKey();
+                if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
+                        && qa.getObservationValue(QAObservationType.SECTION).equals("testSection.VL")) {
+                    // virologyVlQaEvent=virologyVlQaEvent==null ?
+                    // qa.getQAEvent().getLocalizedName() : virologyVlQaEvent+" ,
+                    // "+qa.getQAEvent().getLocalizedName();
+                    sampleQAEventNotes = sampleQAEventNotes + "  " + getNoteForSampleQaEvent(event);
+                    String sampleType = (sampleItem == null) ? "-1" : sampleItem.getTypeOfSample().getNameKey();
+                    allQaEvents = allQaEvents == null ? sampleType + ":" + qa.getQAEvent().getNameKey()
+                            : allQaEvents + ";" + sampleType + ":" + qa.getQAEvent().getNameKey();
+                }
+            }
         }
-      }
     }
-  }
 
-  public void getSampleQaEvents(Sample sample) {
-    SampleService sampleService = SpringContext.getBean(SampleService.class);
-    sampleQAEventList = sampleService.getSampleQAEventList(sample);
-  }
-
-  public static String getNoteForSampleQaEvent(SampleQaEvent sampleQaEvent) {
-    if (sampleQaEvent == null || GenericValidator.isBlankOrNull(sampleQaEvent.getId())) {
-      return null;
-    } else {
-      NoteService noteService = SpringContext.getBean(NoteService.class);
-      Note note = noteService.getMostRecentNoteFilteredBySubject(sampleQaEvent, null);
-      return note != null ? note.getText() : null;
+    public void getSampleQaEvents(Sample sample) {
+        SampleService sampleService = SpringContext.getBean(SampleService.class);
+        sampleQAEventList = sampleService.getSampleQAEventList(sample);
     }
-  }
 
-  public String getReleasedate() {
-    return releasedate;
-  }
+    public static String getNoteForSampleQaEvent(SampleQaEvent sampleQaEvent) {
+        if (sampleQaEvent == null || GenericValidator.isBlankOrNull(sampleQaEvent.getId())) {
+            return null;
+        } else {
+            NoteService noteService = SpringContext.getBean(NoteService.class);
+            Note note = noteService.getMostRecentNoteFilteredBySubject(sampleQaEvent, null);
+            return note != null ? note.getText() : null;
+        }
+    }
 
-  public void setReleasedate(String releasedate) {
-    this.releasedate = releasedate;
-  }
+    public String getReleasedate() {
+        return releasedate;
+    }
+
+    public void setReleasedate(String releasedate) {
+        this.releasedate = releasedate;
+    }
 }

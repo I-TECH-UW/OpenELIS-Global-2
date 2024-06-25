@@ -19,156 +19,151 @@ import org.openelisglobal.systemuser.valueholder.SystemUser;
 @Table(name = "pathology_sample")
 public class PathologySample extends ProgramSample {
 
-  public enum PathologyStatus {
-    GROSSING("Grossing"),
-    CUTTING("Cutting"),
-    PROCESSING("Processing"),
-    SLICING("Slicing for Slides"),
-    STAINING("Staining"),
-    READY_PATHOLOGIST("Ready for Pathologist"),
-    ADDITIONAL_REQUEST("Additional Pathologist Request"),
-    COMPLETED("Completed");
+    public enum PathologyStatus {
+        GROSSING("Grossing"), CUTTING("Cutting"), PROCESSING("Processing"), SLICING("Slicing for Slides"),
+        STAINING("Staining"), READY_PATHOLOGIST("Ready for Pathologist"),
+        ADDITIONAL_REQUEST("Additional Pathologist Request"), COMPLETED("Completed");
 
-    private String display;
+        private String display;
 
-    PathologyStatus(String display) {
-      this.display = display;
+        PathologyStatus(String display) {
+            this.display = display;
+        }
+
+        public String getDisplay() {
+            return display;
+        }
     }
 
-    public String getDisplay() {
-      return display;
+    @Valid
+    @OneToOne
+    @JoinColumn(name = "technician_id", referencedColumnName = "id")
+    private SystemUser technician;
+
+    @Valid
+    @OneToOne
+    @JoinColumn(name = "pathologist_id", referencedColumnName = "id")
+    private SystemUser pathologist;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private PathologyStatus status = PathologyStatus.GROSSING;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "pathology_sample_id")
+    private List<PathologyBlock> blocks;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "pathology_sample_id")
+    private List<PathologySlide> slides;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "pathology_sample_id")
+    private List<PathologyRequest> requests;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "pathology_sample_id")
+    private List<PathologyTechnique> techniques;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "pathology_sample_id")
+    private List<PathologyConclusion> conclusions;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "pathology_sample_id")
+    private List<PathologyReport> reports;
+
+    @Column(name = "gross_exam")
+    private String grossExam;
+
+    @Column(name = "microscopy_exam")
+    private String microscopyExam;
+
+    public List<PathologyRequest> getRequests() {
+        return requests;
     }
-  }
 
-  @Valid
-  @OneToOne
-  @JoinColumn(name = "technician_id", referencedColumnName = "id")
-  private SystemUser technician;
+    public void setRequests(List<PathologyRequest> requests) {
+        this.requests = requests;
+    }
 
-  @Valid
-  @OneToOne
-  @JoinColumn(name = "pathologist_id", referencedColumnName = "id")
-  private SystemUser pathologist;
+    public List<PathologyTechnique> getTechniques() {
+        return techniques;
+    }
 
-  @Enumerated(EnumType.STRING)
-  @NotNull
-  private PathologyStatus status = PathologyStatus.GROSSING;
+    public void setTechniques(List<PathologyTechnique> techniques) {
+        this.techniques = techniques;
+    }
 
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "pathology_sample_id")
-  private List<PathologyBlock> blocks;
+    public List<PathologyConclusion> getConclusions() {
+        return conclusions;
+    }
 
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "pathology_sample_id")
-  private List<PathologySlide> slides;
+    public void setConclusions(List<PathologyConclusion> conclusions) {
+        this.conclusions = conclusions;
+    }
 
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "pathology_sample_id")
-  private List<PathologyRequest> requests;
+    public PathologyStatus getStatus() {
+        return status;
+    }
 
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "pathology_sample_id")
-  private List<PathologyTechnique> techniques;
+    public void setStatus(PathologyStatus status) {
+        this.status = status;
+    }
 
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "pathology_sample_id")
-  private List<PathologyConclusion> conclusions;
+    public SystemUser getTechnician() {
+        return technician;
+    }
 
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "pathology_sample_id")
-  private List<PathologyReport> reports;
+    public void setTechnician(SystemUser technician) {
+        this.technician = technician;
+    }
 
-  @Column(name = "gross_exam")
-  private String grossExam;
+    public SystemUser getPathologist() {
+        return pathologist;
+    }
 
-  @Column(name = "microscopy_exam")
-  private String microscopyExam;
+    public void setPathologist(SystemUser pathologist) {
+        this.pathologist = pathologist;
+    }
 
-  public List<PathologyRequest> getRequests() {
-    return requests;
-  }
+    public List<PathologyBlock> getBlocks() {
+        return blocks;
+    }
 
-  public void setRequests(List<PathologyRequest> requests) {
-    this.requests = requests;
-  }
+    public void setBlocks(List<PathologyBlock> blocks) {
+        this.blocks = blocks;
+    }
 
-  public List<PathologyTechnique> getTechniques() {
-    return techniques;
-  }
+    public List<PathologySlide> getSlides() {
+        return slides;
+    }
 
-  public void setTechniques(List<PathologyTechnique> techniques) {
-    this.techniques = techniques;
-  }
+    public void setSlides(List<PathologySlide> slides) {
+        this.slides = slides;
+    }
 
-  public List<PathologyConclusion> getConclusions() {
-    return conclusions;
-  }
+    public String getGrossExam() {
+        return grossExam;
+    }
 
-  public void setConclusions(List<PathologyConclusion> conclusions) {
-    this.conclusions = conclusions;
-  }
+    public void setGrossExam(String grossExam) {
+        this.grossExam = grossExam;
+    }
 
-  public PathologyStatus getStatus() {
-    return status;
-  }
+    public String getMicroscopyExam() {
+        return microscopyExam;
+    }
 
-  public void setStatus(PathologyStatus status) {
-    this.status = status;
-  }
+    public void setMicroscopyExam(String microscopyExam) {
+        this.microscopyExam = microscopyExam;
+    }
 
-  public SystemUser getTechnician() {
-    return technician;
-  }
+    public List<PathologyReport> getReports() {
+        return reports;
+    }
 
-  public void setTechnician(SystemUser technician) {
-    this.technician = technician;
-  }
-
-  public SystemUser getPathologist() {
-    return pathologist;
-  }
-
-  public void setPathologist(SystemUser pathologist) {
-    this.pathologist = pathologist;
-  }
-
-  public List<PathologyBlock> getBlocks() {
-    return blocks;
-  }
-
-  public void setBlocks(List<PathologyBlock> blocks) {
-    this.blocks = blocks;
-  }
-
-  public List<PathologySlide> getSlides() {
-    return slides;
-  }
-
-  public void setSlides(List<PathologySlide> slides) {
-    this.slides = slides;
-  }
-
-  public String getGrossExam() {
-    return grossExam;
-  }
-
-  public void setGrossExam(String grossExam) {
-    this.grossExam = grossExam;
-  }
-
-  public String getMicroscopyExam() {
-    return microscopyExam;
-  }
-
-  public void setMicroscopyExam(String microscopyExam) {
-    this.microscopyExam = microscopyExam;
-  }
-
-  public List<PathologyReport> getReports() {
-    return reports;
-  }
-
-  public void setReports(List<PathologyReport> reports) {
-    this.reports = reports;
-  }
+    public void setReports(List<PathologyReport> reports) {
+        this.reports = reports;
+    }
 }

@@ -27,32 +27,33 @@ import org.springframework.stereotype.Component;
 @Component
 public class HttpGetSender extends HttpSender {
 
-  @Autowired private CloseableHttpClient httpClient;
+    @Autowired
+    private CloseableHttpClient httpClient;
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.openelisglobal.dataexchange.IExternalSender#sendMessage()
-   */
-  @Override
-  public boolean sendMessage() {
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.openelisglobal.dataexchange.IExternalSender#sendMessage()
+     */
+    @Override
+    public boolean sendMessage() {
 
-    errors = new ArrayList<String>();
+        errors = new ArrayList<String>();
 
-    if (GenericValidator.isBlankOrNull(url)) {
-      LogEvent.logWarn("HttpGetSender", "send message", "The url is null");
-      errors.add("send message The url is null");
-      return false;
+        if (GenericValidator.isBlankOrNull(url)) {
+            LogEvent.logWarn("HttpGetSender", "send message", "The url is null");
+            errors.add("send message The url is null");
+            return false;
+        }
+
+        HttpGet httpGet = new HttpGet(url);
+        try {
+            CloseableHttpResponse response = httpClient.execute(httpGet);
+            returnStatus = response.getStatusLine().getStatusCode();
+            return returnStatus == HttpStatus.SC_OK;
+        } catch (IOException e1) {
+            LogEvent.logError(e1);
+        }
+        return false;
     }
-
-    HttpGet httpGet = new HttpGet(url);
-    try {
-      CloseableHttpResponse response = httpClient.execute(httpGet);
-      returnStatus = response.getStatusLine().getStatusCode();
-      return returnStatus == HttpStatus.SC_OK;
-    } catch (IOException e1) {
-      LogEvent.logError(e1);
-    }
-    return false;
-  }
 }

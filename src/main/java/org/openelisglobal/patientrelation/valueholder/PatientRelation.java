@@ -17,44 +17,44 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class PatientRelation extends BaseObject<String> {
 
-  private String id;
-  private String patientIdSource;
-  private String patientId;
-  private String relation;
+    private String id;
+    private String patientIdSource;
+    private String patientId;
+    private String relation;
 
-  public PatientRelation() {
-    super();
-  }
+    public PatientRelation() {
+        super();
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setPatientIdSource(String patientIdSource) {
-    this.patientIdSource = patientIdSource;
-  }
+    public void setPatientIdSource(String patientIdSource) {
+        this.patientIdSource = patientIdSource;
+    }
 
-  public String getPatientIdSource() {
-    return patientIdSource;
-  }
+    public String getPatientIdSource() {
+        return patientIdSource;
+    }
 
-  public String getPatientId() {
-    return patientId;
-  }
+    public String getPatientId() {
+        return patientId;
+    }
 
-  public void setPatientId(String patientId) {
-    this.patientId = patientId;
-  }
+    public void setPatientId(String patientId) {
+        this.patientId = patientId;
+    }
 
-  public void setRelation(String relation) {
-    this.relation = relation;
-  }
+    public void setRelation(String relation) {
+        this.relation = relation;
+    }
 
-  public String getRelation() {
-    return relation;
-  }
+    public String getRelation() {
+        return relation;
+    }
 }

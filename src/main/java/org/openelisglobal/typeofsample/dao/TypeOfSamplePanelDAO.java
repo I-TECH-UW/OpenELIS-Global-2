@@ -20,20 +20,22 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSamplePanel;
 
 public interface TypeOfSamplePanelDAO extends BaseDAO<TypeOfSamplePanel, String> {
 
-  //	public boolean insertData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException;
+    // public boolean insertData(TypeOfSamplePanel typeOfSamplePanel) throws
+    // LIMSRuntimeException;
 
-  //	public void deleteData(String[] typeOfSamplePanelIds, String currentUserId) throws
-  // LIMSRuntimeException;
+    // public void deleteData(String[] typeOfSamplePanelIds, String currentUserId)
+    // throws
+    // LIMSRuntimeException;
 
-  List<TypeOfSamplePanel> getAllTypeOfSamplePanels() throws LIMSRuntimeException;
+    List<TypeOfSamplePanel> getAllTypeOfSamplePanels() throws LIMSRuntimeException;
 
-  List<TypeOfSamplePanel> getPageOfTypeOfSamplePanel(int startingRecNo) throws LIMSRuntimeException;
+    List<TypeOfSamplePanel> getPageOfTypeOfSamplePanel(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException;
+    void getData(TypeOfSamplePanel typeOfSamplePanel) throws LIMSRuntimeException;
 
-  Integer getTotalTypeOfSamplePanelCount() throws LIMSRuntimeException;
+    Integer getTotalTypeOfSamplePanelCount() throws LIMSRuntimeException;
 
-  List<TypeOfSamplePanel> getTypeOfSamplePanelsForSampleType(String sampleType);
+    List<TypeOfSamplePanel> getTypeOfSamplePanelsForSampleType(String sampleType);
 
-  List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId) throws LIMSRuntimeException;
+    List<TypeOfSamplePanel> getTypeOfSamplePanelsForPanel(String panelId) throws LIMSRuntimeException;
 }

@@ -22,21 +22,21 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 // this should not be a dao, and should instead be a service layer
 public interface UserModuleService {
 
-  public boolean isSessionExpired(HttpServletRequest request) throws LIMSRuntimeException;
+    public boolean isSessionExpired(HttpServletRequest request) throws LIMSRuntimeException;
 
-  public boolean isUserModuleFound(HttpServletRequest request) throws LIMSRuntimeException;
+    public boolean isUserModuleFound(HttpServletRequest request) throws LIMSRuntimeException;
 
-  public boolean isVerifyUserModule(HttpServletRequest request) throws LIMSRuntimeException;
+    public boolean isVerifyUserModule(HttpServletRequest request) throws LIMSRuntimeException;
 
-  public boolean isAccountLocked(HttpServletRequest request) throws LIMSRuntimeException;
+    public boolean isAccountLocked(HttpServletRequest request) throws LIMSRuntimeException;
 
-  public boolean isAccountDisabled(HttpServletRequest request) throws LIMSRuntimeException;
+    public boolean isAccountDisabled(HttpServletRequest request) throws LIMSRuntimeException;
 
-  public boolean isPasswordExpired(HttpServletRequest request) throws LIMSRuntimeException;
+    public boolean isPasswordExpired(HttpServletRequest request) throws LIMSRuntimeException;
 
-  public boolean isUserAdmin(HttpServletRequest request) throws LIMSRuntimeException;
+    public boolean isUserAdmin(HttpServletRequest request) throws LIMSRuntimeException;
 
-  public void setupUserSessionTimeOut(HttpServletRequest request) throws LIMSRuntimeException;
+    public void setupUserSessionTimeOut(HttpServletRequest request) throws LIMSRuntimeException;
 
-  public void enabledAdminButtons(HttpServletRequest request) throws LIMSRuntimeException;
+    public void enabledAdminButtons(HttpServletRequest request) throws LIMSRuntimeException;
 }

@@ -7,17 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SourceOfSampleServiceImpl
-    extends AuditableBaseObjectServiceImpl<SourceOfSample, String>
-    implements SourceOfSampleService {
-  @Autowired protected SourceOfSampleDAO baseObjectDAO;
+public class SourceOfSampleServiceImpl extends AuditableBaseObjectServiceImpl<SourceOfSample, String>
+        implements SourceOfSampleService {
+    @Autowired
+    protected SourceOfSampleDAO baseObjectDAO;
 
-  SourceOfSampleServiceImpl() {
-    super(SourceOfSample.class);
-  }
+    SourceOfSampleServiceImpl() {
+        super(SourceOfSample.class);
+    }
 
-  @Override
-  protected SourceOfSampleDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected SourceOfSampleDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

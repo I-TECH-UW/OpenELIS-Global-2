@@ -5,8 +5,7 @@ import org.openelisglobal.program.valueholder.immunohistochemistry.Immunohistoch
 
 public interface ImmunohistochemistryDisplayService {
 
-  ImmunohistochemistryCaseViewDisplayItem convertToCaseDisplayItem(
-      Integer immunohistochemistrySampleId);
+    ImmunohistochemistryCaseViewDisplayItem convertToCaseDisplayItem(Integer immunohistochemistrySampleId);
 
-  ImmunohistochemistryDisplayItem convertToDisplayItem(Integer immunohistochemistrySampleId);
+    ImmunohistochemistryDisplayItem convertToDisplayItem(Integer immunohistochemistrySampleId);
 }

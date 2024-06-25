@@ -14,47 +14,47 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class ObservationHistoryTypeDAOImpl extends BaseDAOImpl<ObservationHistoryType, String>
-    implements ObservationHistoryTypeDAO {
+        implements ObservationHistoryTypeDAO {
 
-  public ObservationHistoryTypeDAOImpl() {
-    super(ObservationHistoryType.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public ObservationHistoryType getByName(String name) throws LIMSRuntimeException {
-    List<ObservationHistoryType> historyTypeList;
-
-    try {
-      String sql = "from ObservationHistoryType oht where oht.typeName = :name";
-      Query<ObservationHistoryType> query =
-          entityManager.unwrap(Session.class).createQuery(sql, ObservationHistoryType.class);
-      query.setParameter("name", name);
-      historyTypeList = query.list();
-
-      return historyTypeList.size() > 0 ? historyTypeList.get(0) : null;
-
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in ObservationHistoryTypeDAOImpl  getByName()", e);
-    }
-  }
-
-  /** Read all entities from the database. */
-  @Override
-  @Transactional(readOnly = true)
-  public List<ObservationHistoryType> getAll() throws LIMSRuntimeException {
-    List<ObservationHistoryType> entities;
-    try {
-      String sql = "from ObservationHistoryType";
-      Query<ObservationHistoryType> query =
-          entityManager.unwrap(Session.class).createQuery(sql, ObservationHistoryType.class);
-      entities = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logDebug(e);
-      throw (e);
+    public ObservationHistoryTypeDAOImpl() {
+        super(ObservationHistoryType.class);
     }
 
-    return entities;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public ObservationHistoryType getByName(String name) throws LIMSRuntimeException {
+        List<ObservationHistoryType> historyTypeList;
+
+        try {
+            String sql = "from ObservationHistoryType oht where oht.typeName = :name";
+            Query<ObservationHistoryType> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ObservationHistoryType.class);
+            query.setParameter("name", name);
+            historyTypeList = query.list();
+
+            return historyTypeList.size() > 0 ? historyTypeList.get(0) : null;
+
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in ObservationHistoryTypeDAOImpl  getByName()", e);
+        }
+    }
+
+    /** Read all entities from the database. */
+    @Override
+    @Transactional(readOnly = true)
+    public List<ObservationHistoryType> getAll() throws LIMSRuntimeException {
+        List<ObservationHistoryType> entities;
+        try {
+            String sql = "from ObservationHistoryType";
+            Query<ObservationHistoryType> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ObservationHistoryType.class);
+            entities = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logDebug(e);
+            throw (e);
+        }
+
+        return entities;
+    }
 }

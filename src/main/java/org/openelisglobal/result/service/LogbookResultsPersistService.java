@@ -7,6 +7,5 @@ import org.openelisglobal.result.action.util.ResultsUpdateDataSet;
 
 public interface LogbookResultsPersistService {
 
-  List<Analysis> persistDataSet(
-      ResultsUpdateDataSet actionDataSet, List<IResultUpdate> updaters, String sysUserId);
+    List<Analysis> persistDataSet(ResultsUpdateDataSet actionDataSet, List<IResultUpdate> updaters, String sysUserId);
 }

@@ -7,9 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class SampleNewbornDAOImpl extends BaseDAOImpl<SampleNewborn, String>
-    implements SampleNewbornDAO {
-  SampleNewbornDAOImpl() {
-    super(SampleNewborn.class);
-  }
+public class SampleNewbornDAOImpl extends BaseDAOImpl<SampleNewborn, String> implements SampleNewbornDAO {
+    SampleNewbornDAOImpl() {
+        super(SampleNewborn.class);
+    }
 }

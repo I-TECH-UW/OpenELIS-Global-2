@@ -20,16 +20,15 @@ import org.openelisglobal.common.formfields.AdminFormFields.Field;
 
 public class HT_AdminFormFields implements IAdminFormFieldsForImplementation {
 
-  public HashMap<AdminFormFields.Field, Boolean> getImplementationAttributes() {
-    HashMap<AdminFormFields.Field, Boolean> settings =
-        new HashMap<AdminFormFields.Field, Boolean>();
+    public HashMap<AdminFormFields.Field, Boolean> getImplementationAttributes() {
+        HashMap<AdminFormFields.Field, Boolean> settings = new HashMap<AdminFormFields.Field, Boolean>();
 
-    settings.put(Field.OrganizationMenu, Boolean.TRUE);
-    settings.put(Field.SiteInformationMenu, Boolean.TRUE);
-    settings.put(Field.ResultInformationMenu, Boolean.TRUE);
-    settings.put(Field.TestUsageAggregatation, Boolean.TRUE);
-    settings.put(Field.RESULT_REPORTING_CONFIGURATION, Boolean.TRUE);
+        settings.put(Field.OrganizationMenu, Boolean.TRUE);
+        settings.put(Field.SiteInformationMenu, Boolean.TRUE);
+        settings.put(Field.ResultInformationMenu, Boolean.TRUE);
+        settings.put(Field.TestUsageAggregatation, Boolean.TRUE);
+        settings.put(Field.RESULT_REPORTING_CONFIGURATION, Boolean.TRUE);
 
-    return settings;
-  }
+        return settings;
+    }
 }

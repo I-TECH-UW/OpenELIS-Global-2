@@ -15,24 +15,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class NceCategoryDAOImpl extends BaseDAOImpl<NceCategory, String> implements NceCategoryDAO {
 
-  public NceCategoryDAOImpl() {
-    super(NceCategory.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<NceCategory> getAllNceCategory() throws LIMSRuntimeException {
-    List<NceCategory> list;
-    try {
-      String sql = "from NceCategory nc order by nc.id";
-      Query<NceCategory> query =
-          entityManager.unwrap(Session.class).createQuery(sql, NceCategory.class);
-      list = query.list();
-
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in NceCategory getAllNceCategory()", e);
+    public NceCategoryDAOImpl() {
+        super(NceCategory.class);
     }
-    return list;
-  }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<NceCategory> getAllNceCategory() throws LIMSRuntimeException {
+        List<NceCategory> list;
+        try {
+            String sql = "from NceCategory nc order by nc.id";
+            Query<NceCategory> query = entityManager.unwrap(Session.class).createQuery(sql, NceCategory.class);
+            list = query.list();
+
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in NceCategory getAllNceCategory()", e);
+        }
+        return list;
+    }
 }

@@ -8,12 +8,11 @@ import org.openelisglobal.program.valueholder.pathology.PathologySample.Patholog
 
 public interface PathologySampleDAO extends BaseDAO<PathologySample, Integer> {
 
-  List<PathologySample> getWithStatus(List<PathologyStatus> statuses);
+    List<PathologySample> getWithStatus(List<PathologyStatus> statuses);
 
-  Long getCountWithStatusBetweenDates(List<PathologyStatus> statuses, Timestamp from, Timestamp to);
+    Long getCountWithStatusBetweenDates(List<PathologyStatus> statuses, Timestamp from, Timestamp to);
 
-  List<PathologySample> searchWithStatusAndAccesionNumber(
-      List<PathologyStatus> statuses, String labNumber);
+    List<PathologySample> searchWithStatusAndAccesionNumber(List<PathologyStatus> statuses, String labNumber);
 
-  Long getCountWithStatus(List<PathologyStatus> statuses);
+    Long getCountWithStatus(List<PathologyStatus> statuses);
 }

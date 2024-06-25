@@ -42,155 +42,150 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/logoUpload")
 public class LogoUploadController {
 
-  static final long serialVersionUID = 1L;
+    static final long serialVersionUID = 1L;
 
-  @Autowired private ImageService imageService;
-  @Autowired private SiteInformationService siteInformationService;
-  @Autowired private LogoUploadService logoUploadService;
+    @Autowired
+    private ImageService imageService;
+    @Autowired
+    private SiteInformationService siteInformationService;
+    @Autowired
+    private LogoUploadService logoUploadService;
 
-  private static final String[] ALLOWED_FIELDS =
-      new String[] {"logoFile", "removeImage", "logoName"};
+    private static final String[] ALLOWED_FIELDS = new String[] { "logoFile", "removeImage", "logoName" };
 
-  @InitBinder
-  public void initBinder(WebDataBinder binder) {
-    binder.setAllowedFields(ALLOWED_FIELDS);
-  }
-
-  @PostMapping
-  protected String doPost(HttpServletRequest request, @ModelAttribute("form") LogoUploadForm form)
-      throws ServletException, IOException {
-    String whichLogo = form.getLogoName();
-    boolean removeImage = "true".equals(request.getParameter("removeImage"));
-
-    if (removeImage) {
-      removeImage(whichLogo);
-    } else {
-      updateImage(form.getLogoFile(), whichLogo);
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    return "redirect:/PrintedReportsConfigurationMenu";
-  }
+    @PostMapping
+    protected String doPost(HttpServletRequest request, @ModelAttribute("form") LogoUploadForm form)
+            throws ServletException, IOException {
+        String whichLogo = form.getLogoName();
+        boolean removeImage = "true".equals(request.getParameter("removeImage"));
 
-  private void removeImage(String logoName) {
-    File previewFile =
-        new File(imageService.getFullPreviewPath() + imageService.getImageNameFilePath(logoName));
-
-    boolean deleteSuccess = previewFile.delete();
-    if (!deleteSuccess) {
-      LogEvent.logError(
-          this.getClass().getSimpleName(), "removeImage", "could not delete preview file");
-    }
-
-    SiteInformation logoInformation = siteInformationService.getSiteInformationByName(logoName);
-
-    if (logoInformation == null) {
-      return;
-    }
-
-    String imageId = logoInformation.getValue();
-
-    if (!GenericValidator.isBlankOrNull(imageId)) {
-      Image image = imageService.get(imageId);
-
-      try {
-        logoUploadService.removeImage(image, logoInformation);
-      } catch (LIMSRuntimeException e) {
-        LogEvent.logError(e);
-      }
-    }
-  }
-
-  private void updateImage(MultipartFile logoFile, String whichLogo) throws ServletException {
-    try {
-      if (validToWrite(logoFile)) {
-
-        File previewFile =
-            new File(
-                imageService.getFullPreviewPath() + imageService.getImageNameFilePath(whichLogo));
-
-        logoFile.transferTo(previewFile);
-
-        writeFileImageToDatabase(previewFile, whichLogo);
-      }
-    } catch (RuntimeException e) {
-      throw new ServletException(e);
-    } catch (Exception e) {
-      throw new ServletException(e);
-    }
-  }
-
-  private void writeFileImageToDatabase(File file, String logoName) {
-    if (!fileInImageDirectory(file)) {
-      return;
-    }
-    SiteInformation logoInformation = siteInformationService.getSiteInformationByName(logoName);
-
-    if (logoInformation == null) {
-      return;
-    }
-
-    String imageId = logoInformation.getValue();
-
-    boolean newImage = GenericValidator.isBlankOrNull(imageId);
-
-    long fileSize = file.length();
-    byte[] imageData = new byte[(int) fileSize];
-
-    FileInputStream fileInputStream = null;
-    try {
-      fileInputStream = new FileInputStream(file);
-      int bytesRead = fileInputStream.read(imageData);
-      if (bytesRead != fileSize) {
-        throw new IOException(
-            "file size changed between array allocation and file read, suspected attack");
-      }
-    } catch (IOException e) {
-      LogEvent.logError(e);
-    } finally {
-      if (fileInputStream != null) {
-        try {
-          fileInputStream.close();
-        } catch (IOException e) {
-          LogEvent.logError(e.getMessage(), e);
+        if (removeImage) {
+            removeImage(whichLogo);
+        } else {
+            updateImage(form.getLogoFile(), whichLogo);
         }
-      }
+
+        return "redirect:/PrintedReportsConfigurationMenu";
     }
 
-    Image image = new Image();
-    image.setImage(imageData);
-    image.setDescription(logoName);
+    private void removeImage(String logoName) {
+        File previewFile = new File(imageService.getFullPreviewPath() + imageService.getImageNameFilePath(logoName));
 
-    try {
-      logoUploadService.saveImage(image, newImage, imageId, logoInformation);
-    } catch (LIMSRuntimeException e) {
-      LogEvent.logError(e);
+        boolean deleteSuccess = previewFile.delete();
+        if (!deleteSuccess) {
+            LogEvent.logError(this.getClass().getSimpleName(), "removeImage", "could not delete preview file");
+        }
+
+        SiteInformation logoInformation = siteInformationService.getSiteInformationByName(logoName);
+
+        if (logoInformation == null) {
+            return;
+        }
+
+        String imageId = logoInformation.getValue();
+
+        if (!GenericValidator.isBlankOrNull(imageId)) {
+            Image image = imageService.get(imageId);
+
+            try {
+                logoUploadService.removeImage(image, logoInformation);
+            } catch (LIMSRuntimeException e) {
+                LogEvent.logError(e);
+            }
+        }
     }
-  }
 
-  private boolean fileInImageDirectory(File file) {
-    String filePath;
-    try {
-      filePath = file.getCanonicalPath();
-      return filePath.startsWith((new File(imageService.getFullPreviewPath()).getCanonicalPath()));
-    } catch (IOException e) {
-      LogEvent.logError(e);
-      return false;
+    private void updateImage(MultipartFile logoFile, String whichLogo) throws ServletException {
+        try {
+            if (validToWrite(logoFile)) {
+
+                File previewFile = new File(
+                        imageService.getFullPreviewPath() + imageService.getImageNameFilePath(whichLogo));
+
+                logoFile.transferTo(previewFile);
+
+                writeFileImageToDatabase(previewFile, whichLogo);
+            }
+        } catch (RuntimeException e) {
+            throw new ServletException(e);
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
     }
-  }
 
-  private boolean validToWrite(MultipartFile logoFile) {
-    boolean valid =
-        logoFile.getSize() > 0
-            && !GenericValidator.isBlankOrNull(logoFile.getOriginalFilename())
-            && (logoFile.getOriginalFilename().contains("jpg")
-                || logoFile.getOriginalFilename().contains("png")
-                || logoFile.getOriginalFilename().contains("gif"));
+    private void writeFileImageToDatabase(File file, String logoName) {
+        if (!fileInImageDirectory(file)) {
+            return;
+        }
+        SiteInformation logoInformation = siteInformationService.getSiteInformationByName(logoName);
 
-    try (InputStream input = logoFile.getInputStream()) {
-      ImageIO.read(input);
-    } catch (IOException e) {
-      valid = false;
+        if (logoInformation == null) {
+            return;
+        }
+
+        String imageId = logoInformation.getValue();
+
+        boolean newImage = GenericValidator.isBlankOrNull(imageId);
+
+        long fileSize = file.length();
+        byte[] imageData = new byte[(int) fileSize];
+
+        FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = new FileInputStream(file);
+            int bytesRead = fileInputStream.read(imageData);
+            if (bytesRead != fileSize) {
+                throw new IOException("file size changed between array allocation and file read, suspected attack");
+            }
+        } catch (IOException e) {
+            LogEvent.logError(e);
+        } finally {
+            if (fileInputStream != null) {
+                try {
+                    fileInputStream.close();
+                } catch (IOException e) {
+                    LogEvent.logError(e.getMessage(), e);
+                }
+            }
+        }
+
+        Image image = new Image();
+        image.setImage(imageData);
+        image.setDescription(logoName);
+
+        try {
+            logoUploadService.saveImage(image, newImage, imageId, logoInformation);
+        } catch (LIMSRuntimeException e) {
+            LogEvent.logError(e);
+        }
     }
-    return valid;
-  }
+
+    private boolean fileInImageDirectory(File file) {
+        String filePath;
+        try {
+            filePath = file.getCanonicalPath();
+            return filePath.startsWith((new File(imageService.getFullPreviewPath()).getCanonicalPath()));
+        } catch (IOException e) {
+            LogEvent.logError(e);
+            return false;
+        }
+    }
+
+    private boolean validToWrite(MultipartFile logoFile) {
+        boolean valid = logoFile.getSize() > 0 && !GenericValidator.isBlankOrNull(logoFile.getOriginalFilename())
+                && (logoFile.getOriginalFilename().contains("jpg") || logoFile.getOriginalFilename().contains("png")
+                        || logoFile.getOriginalFilename().contains("gif"));
+
+        try (InputStream input = logoFile.getInputStream()) {
+            ImageIO.read(input);
+        } catch (IOException e) {
+            valid = false;
+        }
+        return valid;
+    }
 }

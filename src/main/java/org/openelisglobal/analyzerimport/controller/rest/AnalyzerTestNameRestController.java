@@ -40,207 +40,202 @@ import org.springframework.web.bind.support.SessionStatus;
 @SessionAttributes("form")
 public class AnalyzerTestNameRestController extends BaseController {
 
-  private static final String[] ALLOWED_FIELDS =
-      new String[] {"analyzerId", "analyzerTestName", "testId"};
+    private static final String[] ALLOWED_FIELDS = new String[] { "analyzerId", "analyzerTestName", "testId" };
 
-  @Autowired private AnalyzerTestMappingValidator analyzerTestMappingValidator;
-  @Autowired private AnalyzerTestMappingService analyzerTestMappingService;
-  @Autowired private AnalyzerService analyzerService;
-  @Autowired private TestService testService;
+    @Autowired
+    private AnalyzerTestMappingValidator analyzerTestMappingValidator;
+    @Autowired
+    private AnalyzerTestMappingService analyzerTestMappingService;
+    @Autowired
+    private AnalyzerService analyzerService;
+    @Autowired
+    private TestService testService;
 
-  @ModelAttribute("form")
-  public AnalyzerTestNameForm initForm() {
-    return new AnalyzerTestNameForm();
-  }
-
-  @InitBinder
-  public void initBinder(WebDataBinder binder) {
-    binder.setAllowedFields(ALLOWED_FIELDS);
-  }
-
-  @GetMapping(value = "/AnalyzerTestName", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> showAnalyzerTestName(
-      HttpServletRequest request,
-      BaseForm oldForm,
-      @RequestParam(value = "ID", required = false) String id)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    AnalyzerTestNameForm newForm = resetSessionFormToType(oldForm, AnalyzerTestNameForm.class);
-    newForm.setCancelAction("CancelAnalyzerTestName");
-
-    request.setAttribute(ALLOW_EDITS_KEY, "true");
-    request.setAttribute(PREVIOUS_DISABLED, "true");
-    request.setAttribute(NEXT_DISABLED, "true");
-
-    List<Analyzer> analyzerList = getAllAnalyzers();
-    List<Test> testList = getAllTests();
-
-    newForm.setAnalyzerList(analyzerList);
-    newForm.setTestList(testList);
-
-    if (request.getParameter("ID") != null && isValidID(request.getParameter("ID"))) {
-      String[] splitId = request.getParameter("ID").split("#");
-      newForm.setAnalyzerTestName(splitId[1]);
-      newForm.setTestId(splitId[2]);
-      newForm.setAnalyzerId(splitId[0]);
+    @ModelAttribute("form")
+    public AnalyzerTestNameForm initForm() {
+        return new AnalyzerTestNameForm();
     }
 
-    if (org.apache.commons.validator.GenericValidator.isBlankOrNull(newForm.getAnalyzerId())) {
-      newForm.setNewMapping(true);
-    } else {
-      newForm.setNewMapping(false);
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    return ResponseEntity.ok(newForm);
-  }
+    @GetMapping(value = "/AnalyzerTestName", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> showAnalyzerTestName(HttpServletRequest request, BaseForm oldForm,
+            @RequestParam(value = "ID", required = false) String id)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        AnalyzerTestNameForm newForm = resetSessionFormToType(oldForm, AnalyzerTestNameForm.class);
+        newForm.setCancelAction("CancelAnalyzerTestName");
 
-  private boolean isValidID(String ID) {
-    return ID.matches("^[0-9]+#[^#/\\<>?]*#[0-9]+");
-  }
+        request.setAttribute(ALLOW_EDITS_KEY, "true");
+        request.setAttribute(PREVIOUS_DISABLED, "true");
+        request.setAttribute(NEXT_DISABLED, "true");
 
-  private List<Analyzer> getAllAnalyzers() {
-    return analyzerService.getAll();
-  }
+        List<Analyzer> analyzerList = getAllAnalyzers();
+        List<Test> testList = getAllTests();
 
-  private List<Test> getAllTests() {
-    return testService.getAllActiveTests(false);
-  }
+        newForm.setAnalyzerList(analyzerList);
+        newForm.setTestList(testList);
 
-  @PostMapping(value = "/AnalyzerTestName", consumes = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> showUpdateAnalyzerTestName(
-      HttpServletRequest request,
-      @RequestBody @Valid AnalyzerTestNameForm form,
-      BindingResult result,
-      SessionStatus status) {
-    if (result.hasErrors()) {
-      return ResponseEntity.badRequest().body(result.getAllErrors());
-    }
-
-    String forward = updateAnalyzerTestName(request, form, result);
-    if (FWD_SUCCESS_INSERT.equals(forward)) {
-      status.setComplete();
-      return ResponseEntity.status(HttpStatus.CREATED).body(form);
-    }
-
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result.getAllErrors());
-  }
-
-  public String updateAnalyzerTestName(
-      HttpServletRequest request, AnalyzerTestNameForm form, Errors errors) {
-    String forward = FWD_SUCCESS_INSERT;
-    String analyzerId = form.getAnalyzerId();
-    String analyzerTestName = form.getAnalyzerTestName();
-    String testId = form.getTestId();
-    boolean newMapping = form.isNewMapping();
-
-    AnalyzerTestMapping analyzerTestNameMapping;
-    if (newMapping) {
-      analyzerTestNameMapping = new AnalyzerTestMapping();
-      analyzerTestNameMapping.setAnalyzerId(analyzerId);
-      analyzerTestNameMapping.setAnalyzerTestName(analyzerTestName);
-      analyzerTestNameMapping.setTestId(testId);
-      analyzerTestNameMapping.setSysUserId(getSysUserId(request));
-    } else {
-      analyzerTestNameMapping = getAnalyzerAndTestName(analyzerId, analyzerTestName, testId);
-    }
-
-    try {
-      if (newMapping) {
-        analyzerTestMappingValidator.preInsertValidate(analyzerTestNameMapping, errors);
-        if (errors.hasErrors()) {
-          saveErrors(errors);
-          return FWD_FAIL_INSERT;
+        if (request.getParameter("ID") != null && isValidID(request.getParameter("ID"))) {
+            String[] splitId = request.getParameter("ID").split("#");
+            newForm.setAnalyzerTestName(splitId[1]);
+            newForm.setTestId(splitId[2]);
+            newForm.setAnalyzerId(splitId[0]);
         }
-        analyzerTestMappingService.insert(analyzerTestNameMapping);
-      } else {
-        analyzerTestMappingValidator.preUpdateValidate(analyzerTestNameMapping, errors);
-        if (errors.hasErrors()) {
-          saveErrors(errors);
-          return FWD_FAIL_INSERT;
+
+        if (org.apache.commons.validator.GenericValidator.isBlankOrNull(newForm.getAnalyzerId())) {
+            newForm.setNewMapping(true);
+        } else {
+            newForm.setNewMapping(false);
         }
-        analyzerTestNameMapping.setSysUserId(getSysUserId(request));
-        analyzerTestMappingService.update(analyzerTestNameMapping);
-      }
 
-    } catch (LIMSRuntimeException e) {
-      String errorMsg = null;
-      if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
-        errorMsg = "errors.OptimisticLockException";
-      } else {
-        errorMsg = "errors.UpdateException";
-      }
-
-      persistError(request, errorMsg);
-
-      disableNavigationButtons(request);
-      forward = FWD_FAIL_INSERT;
+        return ResponseEntity.ok(newForm);
     }
 
-    AnalyzerTestNameCache.getInstance().reloadCache();
-
-    return forward;
-  }
-
-  private AnalyzerTestMapping getAnalyzerAndTestName(
-      String analyzerId, String analyzerTestName, String testId) {
-
-    AnalyzerTestMapping existingMapping = null;
-    List<AnalyzerTestMapping> testMappingList = analyzerTestMappingService.getAll();
-    for (AnalyzerTestMapping testMapping : testMappingList) {
-      if (analyzerId.equals(testMapping.getAnalyzerId())
-          && analyzerTestName.equals(testMapping.getAnalyzerTestName())) {
-        existingMapping = testMapping;
-        testMapping.setTestId(testId);
-        break;
-      }
+    private boolean isValidID(String ID) {
+        return ID.matches("^[0-9]+#[^#/\\<>?]*#[0-9]+");
     }
 
-    return existingMapping;
-  }
-
-  private void persistError(HttpServletRequest request, String errorMsg) {
-    Errors errors;
-    errors = new BaseErrors();
-
-    errors.reject(errorMsg);
-    saveErrors(errors);
-  }
-
-  private void disableNavigationButtons(HttpServletRequest request) {
-    request.setAttribute(PREVIOUS_DISABLED, TRUE);
-    request.setAttribute(NEXT_DISABLED, TRUE);
-  }
-
-  @GetMapping(value = "/CancelAnalyzerTestName", produces = MediaType.APPLICATION_JSON_VALUE)
-  public AnalyzerTestNameForm cancelAnalyzerTestName(
-      HttpServletRequest request, SessionStatus status) {
-    status.setComplete();
-    return (new AnalyzerTestNameForm());
-  }
-
-  @Override
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "analyzerTestNameDefinition";
-    } else if (FWD_FAIL.equals(forward)) {
-      return "redirect:/AnalyzerTestNameMenu";
-    } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-      return "redirect:/AnalyzerTestNameMenu";
-    } else if (FWD_FAIL_INSERT.equals(forward)) {
-      return "analyzerTestNameDefinition";
-    } else if (FWD_CANCEL.equals(forward)) {
-      return "redirect:/AnalyzerTestNameMenu";
-    } else {
-      return "PageNotFound";
+    private List<Analyzer> getAllAnalyzers() {
+        return analyzerService.getAll();
     }
-  }
 
-  @Override
-  protected String getPageTitleKey() {
-    return "analyzerTestName.browse.title";
-  }
+    private List<Test> getAllTests() {
+        return testService.getAllActiveTests(false);
+    }
 
-  @Override
-  protected String getPageSubtitleKey() {
-    return "analyzerTestName.browse.title";
-  }
+    @PostMapping(value = "/AnalyzerTestName", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> showUpdateAnalyzerTestName(HttpServletRequest request,
+            @RequestBody @Valid AnalyzerTestNameForm form, BindingResult result, SessionStatus status) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+
+        String forward = updateAnalyzerTestName(request, form, result);
+        if (FWD_SUCCESS_INSERT.equals(forward)) {
+            status.setComplete();
+            return ResponseEntity.status(HttpStatus.CREATED).body(form);
+        }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result.getAllErrors());
+    }
+
+    public String updateAnalyzerTestName(HttpServletRequest request, AnalyzerTestNameForm form, Errors errors) {
+        String forward = FWD_SUCCESS_INSERT;
+        String analyzerId = form.getAnalyzerId();
+        String analyzerTestName = form.getAnalyzerTestName();
+        String testId = form.getTestId();
+        boolean newMapping = form.isNewMapping();
+
+        AnalyzerTestMapping analyzerTestNameMapping;
+        if (newMapping) {
+            analyzerTestNameMapping = new AnalyzerTestMapping();
+            analyzerTestNameMapping.setAnalyzerId(analyzerId);
+            analyzerTestNameMapping.setAnalyzerTestName(analyzerTestName);
+            analyzerTestNameMapping.setTestId(testId);
+            analyzerTestNameMapping.setSysUserId(getSysUserId(request));
+        } else {
+            analyzerTestNameMapping = getAnalyzerAndTestName(analyzerId, analyzerTestName, testId);
+        }
+
+        try {
+            if (newMapping) {
+                analyzerTestMappingValidator.preInsertValidate(analyzerTestNameMapping, errors);
+                if (errors.hasErrors()) {
+                    saveErrors(errors);
+                    return FWD_FAIL_INSERT;
+                }
+                analyzerTestMappingService.insert(analyzerTestNameMapping);
+            } else {
+                analyzerTestMappingValidator.preUpdateValidate(analyzerTestNameMapping, errors);
+                if (errors.hasErrors()) {
+                    saveErrors(errors);
+                    return FWD_FAIL_INSERT;
+                }
+                analyzerTestNameMapping.setSysUserId(getSysUserId(request));
+                analyzerTestMappingService.update(analyzerTestNameMapping);
+            }
+
+        } catch (LIMSRuntimeException e) {
+            String errorMsg = null;
+            if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
+                errorMsg = "errors.OptimisticLockException";
+            } else {
+                errorMsg = "errors.UpdateException";
+            }
+
+            persistError(request, errorMsg);
+
+            disableNavigationButtons(request);
+            forward = FWD_FAIL_INSERT;
+        }
+
+        AnalyzerTestNameCache.getInstance().reloadCache();
+
+        return forward;
+    }
+
+    private AnalyzerTestMapping getAnalyzerAndTestName(String analyzerId, String analyzerTestName, String testId) {
+
+        AnalyzerTestMapping existingMapping = null;
+        List<AnalyzerTestMapping> testMappingList = analyzerTestMappingService.getAll();
+        for (AnalyzerTestMapping testMapping : testMappingList) {
+            if (analyzerId.equals(testMapping.getAnalyzerId())
+                    && analyzerTestName.equals(testMapping.getAnalyzerTestName())) {
+                existingMapping = testMapping;
+                testMapping.setTestId(testId);
+                break;
+            }
+        }
+
+        return existingMapping;
+    }
+
+    private void persistError(HttpServletRequest request, String errorMsg) {
+        Errors errors;
+        errors = new BaseErrors();
+
+        errors.reject(errorMsg);
+        saveErrors(errors);
+    }
+
+    private void disableNavigationButtons(HttpServletRequest request) {
+        request.setAttribute(PREVIOUS_DISABLED, TRUE);
+        request.setAttribute(NEXT_DISABLED, TRUE);
+    }
+
+    @GetMapping(value = "/CancelAnalyzerTestName", produces = MediaType.APPLICATION_JSON_VALUE)
+    public AnalyzerTestNameForm cancelAnalyzerTestName(HttpServletRequest request, SessionStatus status) {
+        status.setComplete();
+        return (new AnalyzerTestNameForm());
+    }
+
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "analyzerTestNameDefinition";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "redirect:/AnalyzerTestNameMenu";
+        } else if (FWD_SUCCESS_INSERT.equals(forward)) {
+            return "redirect:/AnalyzerTestNameMenu";
+        } else if (FWD_FAIL_INSERT.equals(forward)) {
+            return "analyzerTestNameDefinition";
+        } else if (FWD_CANCEL.equals(forward)) {
+            return "redirect:/AnalyzerTestNameMenu";
+        } else {
+            return "PageNotFound";
+        }
+    }
+
+    @Override
+    protected String getPageTitleKey() {
+        return "analyzerTestName.browse.title";
+    }
+
+    @Override
+    protected String getPageSubtitleKey() {
+        return "analyzerTestName.browse.title";
+    }
 }

@@ -14,5 +14,5 @@
 package org.openelisglobal.reports.action.implementation.reportBeans;
 
 public interface ICSVColumnCustomStrategy {
-  String translate(String value, String accessionNumber, String csvName, String dbName);
+    String translate(String value, String accessionNumber, String csvName, String dbName);
 }

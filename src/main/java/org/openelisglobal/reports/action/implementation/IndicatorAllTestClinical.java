@@ -16,17 +16,16 @@ package org.openelisglobal.reports.action.implementation;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 
-public class IndicatorAllTestClinical extends IndicatorAllTest
-    implements IReportCreator, IReportParameterSetter {
+public class IndicatorAllTestClinical extends IndicatorAllTest implements IReportCreator, IReportParameterSetter {
 
-  @Override
-  protected String getLabNameLine1() {
-    return ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName);
-  }
+    @Override
+    protected String getLabNameLine1() {
+        return ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName);
+    }
 
-  @Override
-  protected String getLabNameLine2() {
-    // return "";
-    return ConfigurationProperties.getInstance().getPropertyValue(Property.ADDITIONAL_SITE_INFO);
-  }
+    @Override
+    protected String getLabNameLine2() {
+        // return "";
+        return ConfigurationProperties.getInstance().getPropertyValue(Property.ADDITIONAL_SITE_INFO);
+    }
 }

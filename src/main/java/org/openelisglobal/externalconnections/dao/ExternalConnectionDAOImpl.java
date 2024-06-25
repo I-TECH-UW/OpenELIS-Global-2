@@ -8,9 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class ExternalConnectionDAOImpl extends BaseDAOImpl<ExternalConnection, Integer>
-    implements ExternalConnectionDAO {
+        implements ExternalConnectionDAO {
 
-  public ExternalConnectionDAOImpl() {
-    super(ExternalConnection.class);
-  }
+    public ExternalConnectionDAOImpl() {
+        super(ExternalConnection.class);
+    }
 }

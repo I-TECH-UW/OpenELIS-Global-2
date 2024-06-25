@@ -17,30 +17,30 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public interface ResultItem {
 
-  public String getAccessionNumber();
+    public String getAccessionNumber();
 
-  public void setAccessionNumber(String accessionNumber);
+    public void setAccessionNumber(String accessionNumber);
 
-  public String getSequenceNumber();
+    public String getSequenceNumber();
 
-  public void setSequenceNumber(String sequenceNumber);
+    public void setSequenceNumber(String sequenceNumber);
 
-  @JsonIgnore()
-  public String getSequenceAccessionNumber();
+    @JsonIgnore()
+    public String getSequenceAccessionNumber();
 
-  public void setShowSampleDetails(boolean showSampleDetails);
+    public void setShowSampleDetails(boolean showSampleDetails);
 
-  public boolean isShowSampleDetails();
+    public boolean isShowSampleDetails();
 
-  public void setIsGroupSeparator(boolean isGroupSeparator);
+    public void setIsGroupSeparator(boolean isGroupSeparator);
 
-  public boolean getIsGroupSeparator();
+    public boolean getIsGroupSeparator();
 
-  public void setSampleGroupingNumber(int sampleGroupingNumber);
+    public void setSampleGroupingNumber(int sampleGroupingNumber);
 
-  public int getSampleGroupingNumber();
+    public int getSampleGroupingNumber();
 
-  public String getTestSortOrder();
+    public String getTestSortOrder();
 
-  public String getTestName();
+    public String getTestName();
 }

@@ -9,21 +9,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AddressPartServiceImpl extends AuditableBaseObjectServiceImpl<AddressPart, String>
-    implements AddressPartService {
-  @Autowired protected AddressPartDAO baseObjectDAO;
+        implements AddressPartService {
+    @Autowired
+    protected AddressPartDAO baseObjectDAO;
 
-  public AddressPartServiceImpl() {
-    super(AddressPart.class);
-  }
+    public AddressPartServiceImpl() {
+        super(AddressPart.class);
+    }
 
-  @Override
-  protected AddressPartDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected AddressPartDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public AddressPart getAddresPartByName(String name) {
-    return getMatch("partName", name).orElse(null);
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public AddressPart getAddresPartByName(String name) {
+        return getMatch("partName", name).orElse(null);
+    }
 }

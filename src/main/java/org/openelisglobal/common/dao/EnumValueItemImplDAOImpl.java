@@ -7,9 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class EnumValueItemImplDAOImpl extends BaseDAOImpl<EnumValueItemImpl, String>
-    implements EnumValueItemImplDAO {
-  EnumValueItemImplDAOImpl() {
-    super(EnumValueItemImpl.class);
-  }
+public class EnumValueItemImplDAOImpl extends BaseDAOImpl<EnumValueItemImpl, String> implements EnumValueItemImplDAO {
+    EnumValueItemImplDAOImpl() {
+        super(EnumValueItemImpl.class);
+    }
 }

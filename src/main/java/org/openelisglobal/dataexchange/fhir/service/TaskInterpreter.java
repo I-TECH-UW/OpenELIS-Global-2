@@ -12,24 +12,24 @@ import org.openelisglobal.test.valueholder.Test;
 
 public interface TaskInterpreter {
 
-  public List<String> getUnsupportedTests();
+    public List<String> getUnsupportedTests();
 
-  public List<String> getUnsupportedPanels();
+    public List<String> getUnsupportedPanels();
 
-  String getReferringOrderNumber();
+    String getReferringOrderNumber();
 
-  String getMessage();
+    String getMessage();
 
-  MessagePatient getMessagePatient();
+    MessagePatient getMessagePatient();
 
-  public OrderType getOrderType();
+    public OrderType getOrderType();
 
-  List<InterpreterResults> getResultStatus();
+    List<InterpreterResults> getResultStatus();
 
-  Test getTest();
+    Test getTest();
 
-  OrderPriority getOrderPriority();
+    OrderPriority getOrderPriority();
 
-  List<InterpreterResults> interpret(
-      Task incomingTask, ServiceRequest incomingServiceRequest, Patient incomingPatient);
+    List<InterpreterResults> interpret(Task incomingTask, ServiceRequest incomingServiceRequest,
+            Patient incomingPatient);
 }

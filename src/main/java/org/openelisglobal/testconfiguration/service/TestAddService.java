@@ -6,9 +6,6 @@ import org.openelisglobal.testconfiguration.controller.TestAddController.TestSet
 
 public interface TestAddService {
 
-  void addTests(
-      List<TestSet> testSets,
-      Localization nameLocalization,
-      Localization reportingNameLocalization,
-      String currentUserId);
+    void addTests(List<TestSet> testSets, Localization nameLocalization, Localization reportingNameLocalization,
+            String currentUserId);
 }

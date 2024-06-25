@@ -16,74 +16,74 @@
 package org.openelisglobal.role.action.bean;
 
 public class DisplayRole {
-  public static final String GROUPING_ID = "Grouping_ID";
-  private String roleName;
-  private String roleId;
-  private int nestingLevel = 0;
-  private String elementID;
-  private StringBuilder childrenID;
-  private boolean isGroupingRole = false;
-  private String parentRole;
+    public static final String GROUPING_ID = "Grouping_ID";
+    private String roleName;
+    private String roleId;
+    private int nestingLevel = 0;
+    private String elementID;
+    private StringBuilder childrenID;
+    private boolean isGroupingRole = false;
+    private String parentRole;
 
-  public String getRoleName() {
-    return roleName;
-  }
-
-  public void setRoleName(String roleName) {
-    this.roleName = roleName;
-  }
-
-  public String getRoleId() {
-    return roleId;
-  }
-
-  public void setRoleId(String roleId) {
-    this.roleId = roleId;
-  }
-
-  public int getNestingLevel() {
-    return nestingLevel;
-  }
-
-  public void setNestingLevel(int nestingLevel) {
-    this.nestingLevel = nestingLevel;
-  }
-
-  public String getElementID() {
-    return elementID;
-  }
-
-  public void setElementID(String elementID) {
-    this.elementID = elementID;
-  }
-
-  public String getChildrenID() {
-    return childrenID == null ? "" : '\'' + childrenID.toString() + '\'';
-  }
-
-  public void addChildID(String childId) {
-    if (childrenID == null) {
-      childrenID = new StringBuilder();
-    } else {
-      childrenID.append("_");
+    public String getRoleName() {
+        return roleName;
     }
 
-    childrenID.append(childId);
-  }
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
 
-  public void setGroupingRole(boolean isGroupingRole) {
-    this.isGroupingRole = isGroupingRole;
-  }
+    public String getRoleId() {
+        return roleId;
+    }
 
-  public boolean isGroupingRole() {
-    return isGroupingRole;
-  }
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
 
-  public void setParentRole(String parentRole) {
-    this.parentRole = parentRole;
-  }
+    public int getNestingLevel() {
+        return nestingLevel;
+    }
 
-  public String getParentRole() {
-    return parentRole;
-  }
+    public void setNestingLevel(int nestingLevel) {
+        this.nestingLevel = nestingLevel;
+    }
+
+    public String getElementID() {
+        return elementID;
+    }
+
+    public void setElementID(String elementID) {
+        this.elementID = elementID;
+    }
+
+    public String getChildrenID() {
+        return childrenID == null ? "" : '\'' + childrenID.toString() + '\'';
+    }
+
+    public void addChildID(String childId) {
+        if (childrenID == null) {
+            childrenID = new StringBuilder();
+        } else {
+            childrenID.append("_");
+        }
+
+        childrenID.append(childId);
+    }
+
+    public void setGroupingRole(boolean isGroupingRole) {
+        this.isGroupingRole = isGroupingRole;
+    }
+
+    public boolean isGroupingRole() {
+        return isGroupingRole;
+    }
+
+    public void setParentRole(String parentRole) {
+        this.parentRole = parentRole;
+    }
+
+    public String getParentRole() {
+        return parentRole;
+    }
 }

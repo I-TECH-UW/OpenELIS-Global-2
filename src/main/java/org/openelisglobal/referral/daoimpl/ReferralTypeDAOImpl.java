@@ -27,28 +27,26 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Component
 @Transactional
-public class ReferralTypeDAOImpl extends BaseDAOImpl<ReferralType, String>
-    implements ReferralTypeDAO {
+public class ReferralTypeDAOImpl extends BaseDAOImpl<ReferralType, String> implements ReferralTypeDAO {
 
-  public ReferralTypeDAOImpl() {
-    super(ReferralType.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public ReferralType getReferralTypeByName(String name) throws LIMSRuntimeException {
-    String sql = "From ReferralType rt where rt.name = :name";
-
-    try {
-      Query<ReferralType> query =
-          entityManager.unwrap(Session.class).createQuery(sql, ReferralType.class);
-      query.setParameter("name", name);
-      ReferralType referralType = query.uniqueResult();
-      return referralType;
-    } catch (HibernateException e) {
-      handleException(e, "getReferralTypeByName");
+    public ReferralTypeDAOImpl() {
+        super(ReferralType.class);
     }
 
-    return null;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public ReferralType getReferralTypeByName(String name) throws LIMSRuntimeException {
+        String sql = "From ReferralType rt where rt.name = :name";
+
+        try {
+            Query<ReferralType> query = entityManager.unwrap(Session.class).createQuery(sql, ReferralType.class);
+            query.setParameter("name", name);
+            ReferralType referralType = query.uniqueResult();
+            return referralType;
+        } catch (HibernateException e) {
+            handleException(e, "getReferralTypeByName");
+        }
+
+        return null;
+    }
 }

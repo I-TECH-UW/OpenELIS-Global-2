@@ -21,43 +21,47 @@ import org.openelisglobal.note.valueholder.Note;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface NoteDAO extends BaseDAO<Note, String> {
 
-  //	public boolean insertData(Note note) throws LIMSRuntimeException;
+    // public boolean insertData(Note note) throws LIMSRuntimeException;
 
-  //	public void deleteData(List notes) throws LIMSRuntimeException;
+    // public void deleteData(List notes) throws LIMSRuntimeException;
 
-  //	public List getPageOfNotes(int startingRecNo) throws LIMSRuntimeException;
+    // public List getPageOfNotes(int startingRecNo) throws LIMSRuntimeException;
 
-  //	public void getData(Note note) throws LIMSRuntimeException;
+    // public void getData(Note note) throws LIMSRuntimeException;
 
-  //
+    //
 
-  //	public Integer getTotalNoteCount() throws LIMSRuntimeException;
+    // public Integer getTotalNoteCount() throws LIMSRuntimeException;
 
-  List<Note> getAllNotesByRefIdRefTable(Note note) throws LIMSRuntimeException;
+    List<Note> getAllNotesByRefIdRefTable(Note note) throws LIMSRuntimeException;
 
-  //	public List<Note> getNotesByNoteTypeRefIdRefTable(Note note) throws LIMSRuntimeException;
+    // public List<Note> getNotesByNoteTypeRefIdRefTable(Note note) throws
+    // LIMSRuntimeException;
 
-  List<Note> getNotesChronologicallyByRefIdAndRefTableAndType(
-      String objectId, String tableId, List<String> filter) throws LIMSRuntimeException;
+    List<Note> getNotesChronologicallyByRefIdAndRefTableAndType(String objectId, String tableId, List<String> filter)
+            throws LIMSRuntimeException;
 
-  //	public List<Note> getNoteByRefIAndRefTableAndSubject(String refId, String table_id, String
-  // subject)
-  //			throws LIMSRuntimeException;
+    // public List<Note> getNoteByRefIAndRefTableAndSubject(String refId, String
+    // table_id, String
+    // subject)
+    // throws LIMSRuntimeException;
 
-  Note getData(String noteId) throws LIMSRuntimeException;
+    Note getData(String noteId) throws LIMSRuntimeException;
 
-  //	public List<Note> getNotesChronologicallyByRefIdAndRefTable(String refId, String table_id)
-  //			throws LIMSRuntimeException;
+    // public List<Note> getNotesChronologicallyByRefIdAndRefTable(String refId,
+    // String table_id)
+    // throws LIMSRuntimeException;
 
-  List<Note> getNotesInDateRangeAndType(
-      Date lowDate, Date highDate, String noteType, String referenceTableId)
-      throws LIMSRuntimeException;
+    List<Note> getNotesInDateRangeAndType(Date lowDate, Date highDate, String noteType, String referenceTableId)
+            throws LIMSRuntimeException;
 
-  boolean duplicateNoteExists(Note note);
+    boolean duplicateNoteExists(Note note);
 }

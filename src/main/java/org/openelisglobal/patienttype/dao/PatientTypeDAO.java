@@ -15,23 +15,24 @@ import org.openelisglobal.patienttype.valueholder.PatientType;
 
 public interface PatientTypeDAO extends BaseDAO<PatientType, String> {
 
-  //	public boolean insertData(PatientType patientType) throws LIMSRuntimeException;
+    // public boolean insertData(PatientType patientType) throws
+    // LIMSRuntimeException;
 
-  //	public void deleteData(List patientType) throws LIMSRuntimeException;
+    // public void deleteData(List patientType) throws LIMSRuntimeException;
 
-  List<PatientType> getAllPatientTypes() throws LIMSRuntimeException;
+    List<PatientType> getAllPatientTypes() throws LIMSRuntimeException;
 
-  List<PatientType> getPageOfPatientType(int startingRecNo) throws LIMSRuntimeException;
+    List<PatientType> getPageOfPatientType(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(PatientType patientType) throws LIMSRuntimeException;
+    void getData(PatientType patientType) throws LIMSRuntimeException;
 
-  //	public void updateData(PatientType patientType) throws LIMSRuntimeException;
+    // public void updateData(PatientType patientType) throws LIMSRuntimeException;
 
-  List<PatientType> getPatientTypes(String filter) throws LIMSRuntimeException;
+    List<PatientType> getPatientTypes(String filter) throws LIMSRuntimeException;
 
-  PatientType getPatientTypeByName(PatientType patientType) throws LIMSRuntimeException;
+    PatientType getPatientTypeByName(PatientType patientType) throws LIMSRuntimeException;
 
-  Integer getTotalPatientTypeCount() throws LIMSRuntimeException;
+    Integer getTotalPatientTypeCount() throws LIMSRuntimeException;
 
-  boolean duplicatePatientTypeExists(PatientType patientType);
+    boolean duplicatePatientTypeExists(PatientType patientType);
 }

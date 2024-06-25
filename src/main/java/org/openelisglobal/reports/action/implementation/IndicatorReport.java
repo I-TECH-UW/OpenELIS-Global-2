@@ -25,71 +25,67 @@ import org.openelisglobal.reports.form.ReportForm;
 
 public abstract class IndicatorReport extends Report {
 
-  protected String lowerDateRange;
-  protected String upperDateRange;
-  protected Date lowDate;
-  protected Date highDate;
+    protected String lowerDateRange;
+    protected String upperDateRange;
+    protected Date lowDate;
+    protected Date highDate;
 
-  public void setRequestParameters(ReportForm form) {
-    new ReportSpecificationParameters(
-            ReportSpecificationParameters.Parameter.DATE_RANGE, getNameForReportRequest(), null)
-        .setRequestParameters(form);
-  }
-
-  @Override
-  protected void createReportParameters() {
-    super.createReportParameters();
-
-    reportParameters.put("startDate", lowerDateRange);
-    reportParameters.put("stopDate", upperDateRange);
-    reportParameters.put(
-        "siteId", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteCode));
-    reportParameters.put(
-        "directorName",
-        ConfigurationProperties.getInstance().getPropertyValue(Property.labDirectorName));
-    reportParameters.put("labName1", getLabNameLine1());
-    reportParameters.put("labName2", getLabNameLine2());
-    reportParameters.put("reportTitle", getNameForReport());
-    if (ConfigurationProperties.getInstance()
-        .isPropertyValueEqual(Property.configurationName, "CI LNSP")) {
-      reportParameters.put("headerName", "CILNSPHeader.jasper");
-    } else {
-      reportParameters.put("headerName", "GeneralHeader.jasper");
-    }
-  }
-
-  protected void setDateRange(ReportForm form) {
-    errorFound = false;
-    lowerDateRange = form.getLowerDateRange();
-    upperDateRange = form.getUpperDateRange();
-
-    if (GenericValidator.isBlankOrNull(lowerDateRange)) {
-      errorFound = true;
-      ErrorMessages msgs = new ErrorMessages();
-      msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.noPrintableItems"));
-      errorMsgs.add(msgs);
+    public void setRequestParameters(ReportForm form) {
+        new ReportSpecificationParameters(ReportSpecificationParameters.Parameter.DATE_RANGE, getNameForReportRequest(),
+                null).setRequestParameters(form);
     }
 
-    if (GenericValidator.isBlankOrNull(upperDateRange)) {
-      upperDateRange = lowerDateRange;
+    @Override
+    protected void createReportParameters() {
+        super.createReportParameters();
+
+        reportParameters.put("startDate", lowerDateRange);
+        reportParameters.put("stopDate", upperDateRange);
+        reportParameters.put("siteId", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteCode));
+        reportParameters.put("directorName",
+                ConfigurationProperties.getInstance().getPropertyValue(Property.labDirectorName));
+        reportParameters.put("labName1", getLabNameLine1());
+        reportParameters.put("labName2", getLabNameLine2());
+        reportParameters.put("reportTitle", getNameForReport());
+        if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "CI LNSP")) {
+            reportParameters.put("headerName", "CILNSPHeader.jasper");
+        } else {
+            reportParameters.put("headerName", "GeneralHeader.jasper");
+        }
     }
 
-    try {
-      lowDate = DateUtil.convertStringDateToSqlDate(lowerDateRange);
-      highDate = DateUtil.convertStringDateToSqlDate(upperDateRange);
-    } catch (LIMSRuntimeException e) {
-      errorFound = true;
-      ErrorMessages msgs = new ErrorMessages();
-      msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.date.format"));
-      errorMsgs.add(msgs);
+    protected void setDateRange(ReportForm form) {
+        errorFound = false;
+        lowerDateRange = form.getLowerDateRange();
+        upperDateRange = form.getUpperDateRange();
+
+        if (GenericValidator.isBlankOrNull(lowerDateRange)) {
+            errorFound = true;
+            ErrorMessages msgs = new ErrorMessages();
+            msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.noPrintableItems"));
+            errorMsgs.add(msgs);
+        }
+
+        if (GenericValidator.isBlankOrNull(upperDateRange)) {
+            upperDateRange = lowerDateRange;
+        }
+
+        try {
+            lowDate = DateUtil.convertStringDateToSqlDate(lowerDateRange);
+            highDate = DateUtil.convertStringDateToSqlDate(upperDateRange);
+        } catch (LIMSRuntimeException e) {
+            errorFound = true;
+            ErrorMessages msgs = new ErrorMessages();
+            msgs.setMsgLine1(MessageUtil.getMessage("report.error.message.date.format"));
+            errorMsgs.add(msgs);
+        }
     }
-  }
 
-  protected abstract String getNameForReportRequest();
+    protected abstract String getNameForReportRequest();
 
-  protected abstract String getNameForReport();
+    protected abstract String getNameForReport();
 
-  protected abstract String getLabNameLine1();
+    protected abstract String getLabNameLine1();
 
-  protected abstract String getLabNameLine2();
+    protected abstract String getLabNameLine2();
 }

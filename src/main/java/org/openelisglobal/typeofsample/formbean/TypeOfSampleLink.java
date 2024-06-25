@@ -4,47 +4,47 @@ import java.beans.Beans;
 
 public class TypeOfSampleLink extends Beans {
 
-  private String sampleName;
-  private String linkName;
-  private String linkDescription;
-  private String id;
+    private String sampleName;
+    private String linkName;
+    private String linkDescription;
+    private String id;
 
-  public TypeOfSampleLink(String id, String sampleName, String linkName, String linkDescription) {
-    this.id = id;
-    this.sampleName = sampleName;
-    this.linkName = linkName;
-    this.linkDescription = linkDescription;
-  }
+    public TypeOfSampleLink(String id, String sampleName, String linkName, String linkDescription) {
+        this.id = id;
+        this.sampleName = sampleName;
+        this.linkName = linkName;
+        this.linkDescription = linkDescription;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getSampleName() {
-    return sampleName;
-  }
+    public String getSampleName() {
+        return sampleName;
+    }
 
-  public void setSampleName(String sampleName) {
-    this.sampleName = sampleName;
-  }
+    public void setSampleName(String sampleName) {
+        this.sampleName = sampleName;
+    }
 
-  public String getLinkName() {
-    return linkName;
-  }
+    public String getLinkName() {
+        return linkName;
+    }
 
-  public void setLinkName(String linkName) {
-    this.linkName = linkName;
-  }
+    public void setLinkName(String linkName) {
+        this.linkName = linkName;
+    }
 
-  public String getLinkDescription() {
-    return linkDescription;
-  }
+    public String getLinkDescription() {
+        return linkDescription;
+    }
 
-  public void setLinkDescription(String linkDescription) {
-    this.linkDescription = linkDescription;
-  }
+    public void setLinkDescription(String linkDescription) {
+        this.linkDescription = linkDescription;
+    }
 }

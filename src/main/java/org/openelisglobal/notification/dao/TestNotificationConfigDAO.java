@@ -7,9 +7,9 @@ import org.openelisglobal.notification.valueholder.TestNotificationConfig;
 
 public interface TestNotificationConfigDAO extends BaseDAO<TestNotificationConfig, Integer> {
 
-  Optional<TestNotificationConfig> getTestNotificationConfigForTestId(String testId);
+    Optional<TestNotificationConfig> getTestNotificationConfigForTestId(String testId);
 
-  List<TestNotificationConfig> getTestNotificationConfigsForTestIds(List<String> testIds);
+    List<TestNotificationConfig> getTestNotificationConfigsForTestIds(List<String> testIds);
 
-  TestNotificationConfig getForConfigOption(Integer configOptionId);
+    TestNotificationConfig getForConfigOption(Integer configOptionId);
 }

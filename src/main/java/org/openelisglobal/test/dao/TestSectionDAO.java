@@ -20,43 +20,45 @@ import org.openelisglobal.test.valueholder.TestSection;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface TestSectionDAO extends BaseDAO<TestSection, String> {
 
-  //	public boolean insertData(TestSection testSection) throws LIMSRuntimeException;
+    // public boolean insertData(TestSection testSection) throws
+    // LIMSRuntimeException;
 
-  //	public void deleteData(List testSections) throws LIMSRuntimeException;
+    // public void deleteData(List testSections) throws LIMSRuntimeException;
 
-  List<TestSection> getAllTestSections() throws LIMSRuntimeException;
+    List<TestSection> getAllTestSections() throws LIMSRuntimeException;
 
-  List<TestSection> getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException;
+    List<TestSection> getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(TestSection testSection) throws LIMSRuntimeException;
+    void getData(TestSection testSection) throws LIMSRuntimeException;
 
-  //	public void updateData(TestSection testSection) throws LIMSRuntimeException;
+    // public void updateData(TestSection testSection) throws LIMSRuntimeException;
 
-  List<TestSection> getTestSections(String filter) throws LIMSRuntimeException;
+    List<TestSection> getTestSections(String filter) throws LIMSRuntimeException;
 
-  List<TestSection> getTestSectionsBySysUserId(
-      String filter, int sysUserId, List<String> sectionIdList) throws LIMSRuntimeException;
+    List<TestSection> getTestSectionsBySysUserId(String filter, int sysUserId, List<String> sectionIdList)
+            throws LIMSRuntimeException;
 
-  TestSection getTestSectionByName(TestSection testSection) throws LIMSRuntimeException;
+    TestSection getTestSectionByName(TestSection testSection) throws LIMSRuntimeException;
 
-  Integer getTotalTestSectionCount() throws LIMSRuntimeException;
+    Integer getTotalTestSectionCount() throws LIMSRuntimeException;
 
-  List<TestSection> getAllActiveTestSections() throws LIMSRuntimeException;
+    List<TestSection> getAllActiveTestSections() throws LIMSRuntimeException;
 
-  TestSection getTestSectionByName(String testSection) throws LIMSRuntimeException;
+    TestSection getTestSectionByName(String testSection) throws LIMSRuntimeException;
 
-  TestSection getTestSectionById(String testSectionId) throws LIMSRuntimeException;
+    TestSection getTestSectionById(String testSectionId) throws LIMSRuntimeException;
 
-  List<TestSection> getAllInActiveTestSections() throws LIMSRuntimeException;
+    List<TestSection> getAllInActiveTestSections() throws LIMSRuntimeException;
 
-  boolean duplicateTestSectionExists(TestSection testSection) throws LIMSRuntimeException;
+    boolean duplicateTestSectionExists(TestSection testSection) throws LIMSRuntimeException;
 
-  List<TestSection> getAllTestSectionsBySysUserId(int sysUserId, List<String> sectionIds)
-      throws LIMSRuntimeException;
+    List<TestSection> getAllTestSectionsBySysUserId(int sysUserId, List<String> sectionIds) throws LIMSRuntimeException;
 }

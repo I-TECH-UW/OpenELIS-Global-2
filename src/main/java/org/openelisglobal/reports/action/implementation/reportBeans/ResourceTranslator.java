@@ -30,137 +30,130 @@ import org.openelisglobal.gender.valueholder.Gender;
 import org.openelisglobal.spring.util.SpringContext;
 
 /**
- * RetroCI wants CSV export to list the numeric values that are prefixed on the message resources.
- * We use these classes to go from a DB ID (or other column defined by getKey) to the resource and
- * peel off the value at the front of the localized resource string.
+ * RetroCI wants CSV export to list the numeric values that are prefixed on the
+ * message resources. We use these classes to go from a DB ID (or other column
+ * defined by getKey) to the resource and peel off the value at the front of the
+ * localized resource string.
  *
  * @author Paul A. Hill (pahill@uw.edu)
  * @since Feb 1, 2011
  */
 public class ResourceTranslator<T extends BaseObject<PK>, PK extends Serializable> {
-  /** placed on values that are not actually translated */
-  public static final String NOT_FOUND_TAG = "%%";
+    /** placed on values that are not actually translated */
+    public static final String NOT_FOUND_TAG = "%%";
 
-  protected Map<PK, T> map = new HashMap<>();
+    protected Map<PK, T> map = new HashMap<>();
 
-  /** */
-  public ResourceTranslator(List<T> ts) {
-    for (T t : ts) {
-      map.put(((BaseObject<PK>) t).getId(), t);
-    }
-  }
-
-  /**
-   * What part of the entity is used to lookup the record to find the localized name?
-   *
-   * @param some object
-   * @return some value of some field in that object, typicaly the ID.
-   */
-  protected String getKey(T t) {
-    return ((BaseObject<PK>) t).getId().toString();
-  }
-
-  /** if it is not found in the translator, just return the original value. */
-  public String translateOrNot(String original) {
-    String translation = translate(original);
-    if (translation.startsWith(NOT_FOUND_TAG)) {
-      return original;
-    } else {
-      return translation;
-    }
-  }
-
-  /**
-   * This implements what CI was looking for. Get the localized string, and if it starts with a
-   * number just show that.
-   *
-   * @param id
-   * @return
-   */
-  public String translate(String id) {
-    String resource = translateRaw(id);
-    int dash = resource.indexOf('=');
-    dash = (dash > 1) ? dash : resource.length();
-    String userId = resource.substring(0, dash);
-    return userId;
-  }
-
-  public String translateRaw(String id) {
-    if ("0".equals(id)) {
-      return "";
-    }
-    T t = map.get(id);
-    if (t == null) {
-      // return NOT_FOUND_TAG + " " + id + " not found in " +
-      // this.getClass().getSimpleName() + " " + NOT_FOUND_TAG;
-      LogEvent.logWarn(
-          this.getClass().getSimpleName(),
-          "translateRaw",
-          NOT_FOUND_TAG
-              + " "
-              + id
-              + " not found in "
-              + this.getClass().getSimpleName()
-              + " "
-              + NOT_FOUND_TAG);
-      return id;
-    }
-    String resource = t.getLocalizedName();
-    return resource;
-  }
-
-  public static class GenderTranslator extends ResourceTranslator<Gender, Integer> {
-    private static GenderTranslator instance = null;
-
-    public static GenderTranslator getInstance() {
-      if (instance == null) {
-        instance = new GenderTranslator();
-      }
-      return instance;
+    /** */
+    public ResourceTranslator(List<T> ts) {
+        for (T t : ts) {
+            map.put(((BaseObject<PK>) t).getId(), t);
+        }
     }
 
     /**
-     * Apparently at some locations there is a "0" gender meaning none. so here we just translate
-     * 0/1 to M,F
+     * What part of the entity is used to lookup the record to find the localized
+     * name?
      *
-     * @see
-     *     org.openelisglobal.reports.action.implementation.reportBeans.ResourceTranslator#translate(java.lang.String)
+     * @param some object
+     * @return some value of some field in that object, typicaly the ID.
      */
-    @Override
+    protected String getKey(T t) {
+        return ((BaseObject<PK>) t).getId().toString();
+    }
+
+    /** if it is not found in the translator, just return the original value. */
+    public String translateOrNot(String original) {
+        String translation = translate(original);
+        if (translation.startsWith(NOT_FOUND_TAG)) {
+            return original;
+        } else {
+            return translation;
+        }
+    }
+
+    /**
+     * This implements what CI was looking for. Get the localized string, and if it
+     * starts with a number just show that.
+     *
+     * @param id
+     * @return
+     */
     public String translate(String id) {
-      if ("0".equals(id)) {
-        return "";
-      }
-      return super.translate(id);
+        String resource = translateRaw(id);
+        int dash = resource.indexOf('=');
+        dash = (dash > 1) ? dash : resource.length();
+        String userId = resource.substring(0, dash);
+        return userId;
     }
 
-    private GenderTranslator() {
-      super(SpringContext.getBean(GenderService.class).getAll());
+    public String translateRaw(String id) {
+        if ("0".equals(id)) {
+            return "";
+        }
+        T t = map.get(id);
+        if (t == null) {
+            // return NOT_FOUND_TAG + " " + id + " not found in " +
+            // this.getClass().getSimpleName() + " " + NOT_FOUND_TAG;
+            LogEvent.logWarn(this.getClass().getSimpleName(), "translateRaw", NOT_FOUND_TAG + " " + id
+                    + " not found in " + this.getClass().getSimpleName() + " " + NOT_FOUND_TAG);
+            return id;
+        }
+        String resource = t.getLocalizedName();
+        return resource;
     }
 
-    @Override
-    protected String getKey(Gender d) {
-      return d.getGenderType();
-    }
-  }
+    public static class GenderTranslator extends ResourceTranslator<Gender, Integer> {
+        private static GenderTranslator instance = null;
 
-  public static class DictionaryTranslator extends ResourceTranslator<Dictionary, String> {
-    private static DictionaryTranslator instance = null;
+        public static GenderTranslator getInstance() {
+            if (instance == null) {
+                instance = new GenderTranslator();
+            }
+            return instance;
+        }
 
-    public static DictionaryTranslator getInstance() {
-      if (instance == null) {
-        instance = new DictionaryTranslator();
-      }
-      return instance;
+        /**
+         * Apparently at some locations there is a "0" gender meaning none. so here we
+         * just translate 0/1 to M,F
+         *
+         * @see org.openelisglobal.reports.action.implementation.reportBeans.ResourceTranslator#translate(java.lang.String)
+         */
+        @Override
+        public String translate(String id) {
+            if ("0".equals(id)) {
+                return "";
+            }
+            return super.translate(id);
+        }
+
+        private GenderTranslator() {
+            super(SpringContext.getBean(GenderService.class).getAll());
+        }
+
+        @Override
+        protected String getKey(Gender d) {
+            return d.getGenderType();
+        }
     }
 
-    public DictionaryTranslator() {
-      super(SpringContext.getBean(DictionaryService.class).getAll());
-    }
+    public static class DictionaryTranslator extends ResourceTranslator<Dictionary, String> {
+        private static DictionaryTranslator instance = null;
 
-    @Override
-    protected String getKey(Dictionary d) {
-      return d.getId();
+        public static DictionaryTranslator getInstance() {
+            if (instance == null) {
+                instance = new DictionaryTranslator();
+            }
+            return instance;
+        }
+
+        public DictionaryTranslator() {
+            super(SpringContext.getBean(DictionaryService.class).getAll());
+        }
+
+        @Override
+        protected String getKey(Dictionary d) {
+            return d.getId();
+        }
     }
-  }
 }

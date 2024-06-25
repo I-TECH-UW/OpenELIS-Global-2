@@ -5,13 +5,7 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 public interface SampleTypeTestAssignService {
 
-  void update(
-      TypeOfSample typeOfSample,
-      String testId,
-      List<String> typeOfSamplesTestIDs,
-      String sampleTypeId,
-      boolean deleteExistingTypeOfSampleTest,
-      boolean updateTypeOfSample,
-      TypeOfSample deActivateTypeOfSample,
-      String systemUserId);
+    void update(TypeOfSample typeOfSample, String testId, List<String> typeOfSamplesTestIDs, String sampleTypeId,
+            boolean deleteExistingTypeOfSampleTest, boolean updateTypeOfSample, TypeOfSample deActivateTypeOfSample,
+            String systemUserId);
 }

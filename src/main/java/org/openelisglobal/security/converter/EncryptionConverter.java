@@ -9,19 +9,19 @@ import org.openelisglobal.spring.util.SpringContext;
 @Converter
 public class EncryptionConverter implements AttributeConverter<String, String> {
 
-  @Override
-  public String convertToDatabaseColumn(String attribute) {
-    if (GenericValidator.isBlankOrNull(attribute)) {
-      return attribute;
+    @Override
+    public String convertToDatabaseColumn(String attribute) {
+        if (GenericValidator.isBlankOrNull(attribute)) {
+            return attribute;
+        }
+        return SpringContext.getBean(TextEncryptor.class).encrypt(attribute);
     }
-    return SpringContext.getBean(TextEncryptor.class).encrypt(attribute);
-  }
 
-  @Override
-  public String convertToEntityAttribute(String dbData) {
-    if (GenericValidator.isBlankOrNull(dbData)) {
-      return dbData;
+    @Override
+    public String convertToEntityAttribute(String dbData) {
+        if (GenericValidator.isBlankOrNull(dbData)) {
+            return dbData;
+        }
+        return SpringContext.getBean(TextEncryptor.class).decrypt(dbData);
     }
-    return SpringContext.getBean(TextEncryptor.class).decrypt(dbData);
-  }
 }

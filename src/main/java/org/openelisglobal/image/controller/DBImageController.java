@@ -14,17 +14,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DBImageController {
 
-  @Autowired private ImageService imageService;
+    @Autowired
+    private ImageService imageService;
 
-  @GetMapping(value = "/dbImage/siteInformation/{imageName}")
-  @ResponseBody
-  public IdValuePair getImage(@PathVariable String imageName) {
-    Optional<Image> image = imageService.getImageBySiteInfoName(imageName);
-    if (image.isEmpty()) {
-      return new IdValuePair(imageName, "");
+    @GetMapping(value = "/dbImage/siteInformation/{imageName}")
+    @ResponseBody
+    public IdValuePair getImage(@PathVariable String imageName) {
+        Optional<Image> image = imageService.getImageBySiteInfoName(imageName);
+        if (image.isEmpty()) {
+            return new IdValuePair(imageName, "");
+        }
+        String imageData = "data:image/jpg;base64," + Base64.getEncoder().encodeToString(image.get().getImage());
+        return new IdValuePair(imageName, imageData);
     }
-    String imageData =
-        "data:image/jpg;base64," + Base64.getEncoder().encodeToString(image.get().getImage());
-    return new IdValuePair(imageName, imageData);
-  }
 }

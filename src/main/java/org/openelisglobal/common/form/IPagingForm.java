@@ -4,7 +4,7 @@ import org.openelisglobal.common.paging.PagingBean;
 
 public interface IPagingForm {
 
-  void setPaging(PagingBean pagingBean);
+    void setPaging(PagingBean pagingBean);
 
-  PagingBean getPaging();
+    PagingBean getPaging();
 }

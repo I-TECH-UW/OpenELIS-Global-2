@@ -2,43 +2,43 @@ package org.openelisglobal.program.bean;
 
 public class PathologyDashBoardCount {
 
-  Long inProgress;
+    Long inProgress;
 
-  Long awaitingReview;
+    Long awaitingReview;
 
-  Long additionalRequests;
+    Long additionalRequests;
 
-  Long complete;
+    Long complete;
 
-  public Long getInProgress() {
-    return inProgress;
-  }
+    public Long getInProgress() {
+        return inProgress;
+    }
 
-  public void setInProgress(Long inProgress) {
-    this.inProgress = inProgress;
-  }
+    public void setInProgress(Long inProgress) {
+        this.inProgress = inProgress;
+    }
 
-  public Long getAwaitingReview() {
-    return awaitingReview;
-  }
+    public Long getAwaitingReview() {
+        return awaitingReview;
+    }
 
-  public void setAwaitingReview(Long awaitingReview) {
-    this.awaitingReview = awaitingReview;
-  }
+    public void setAwaitingReview(Long awaitingReview) {
+        this.awaitingReview = awaitingReview;
+    }
 
-  public Long getAdditionalRequests() {
-    return additionalRequests;
-  }
+    public Long getAdditionalRequests() {
+        return additionalRequests;
+    }
 
-  public void setAdditionalRequests(Long additionalRequests) {
-    this.additionalRequests = additionalRequests;
-  }
+    public void setAdditionalRequests(Long additionalRequests) {
+        this.additionalRequests = additionalRequests;
+    }
 
-  public Long getComplete() {
-    return complete;
-  }
+    public Long getComplete() {
+        return complete;
+    }
 
-  public void setComplete(Long complete) {
-    this.complete = complete;
-  }
+    public void setComplete(Long complete) {
+        this.complete = complete;
+    }
 }

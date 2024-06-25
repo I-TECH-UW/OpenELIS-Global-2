@@ -9,14 +9,14 @@
 package org.openelisglobal.patienttype.valueholder;
 
 public class PatientType extends BasePatientType {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public PatientType() {
-    super();
-  }
+    public PatientType() {
+        super();
+    }
 
-  /** Constructor for primary key */
-  public PatientType(String id) {
-    super(id);
-  }
+    /** Constructor for primary key */
+    public PatientType(String id) {
+        super(id);
+    }
 }

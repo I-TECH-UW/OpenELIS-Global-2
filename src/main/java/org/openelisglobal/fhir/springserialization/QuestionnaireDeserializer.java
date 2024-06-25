@@ -12,19 +12,18 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class QuestionnaireDeserializer extends StdDeserializer<Questionnaire> {
 
-  public QuestionnaireDeserializer() {
-    this(null);
-  }
+    public QuestionnaireDeserializer() {
+        this(null);
+    }
 
-  public QuestionnaireDeserializer(Class<Questionnaire> vc) {
-    super(vc);
-  }
+    public QuestionnaireDeserializer(Class<Questionnaire> vc) {
+        super(vc);
+    }
 
-  @Override
-  public Questionnaire deserialize(JsonParser jp, DeserializationContext ctxt)
-      throws IOException, JsonProcessingException {
-    JsonNode node = jp.getCodec().readTree(jp);
-    return (Questionnaire)
-        SpringContext.getBean(FhirUtil.class).getFhirParser().parseResource(node.toString());
-  }
+    @Override
+    public Questionnaire deserialize(JsonParser jp, DeserializationContext ctxt)
+            throws IOException, JsonProcessingException {
+        JsonNode node = jp.getCodec().readTree(jp);
+        return (Questionnaire) SpringContext.getBean(FhirUtil.class).getFhirParser().parseResource(node.toString());
+    }
 }

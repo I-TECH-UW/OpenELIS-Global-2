@@ -15,95 +15,95 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SampleItemServiceImpl extends AuditableBaseObjectServiceImpl<SampleItem, String>
-    implements SampleItemService {
+        implements SampleItemService {
 
-  private static String SAMPLE_ITEM_TABLE_REFERENCE_ID;
+    private static String SAMPLE_ITEM_TABLE_REFERENCE_ID;
 
-  @Autowired protected SampleItemDAO baseObjectDAO;
+    @Autowired
+    protected SampleItemDAO baseObjectDAO;
 
-  @Autowired private ReferenceTablesService refTableService;
+    @Autowired
+    private ReferenceTablesService refTableService;
 
-  @PostConstruct
-  public void initializeGlobalVariables() {
-    SAMPLE_ITEM_TABLE_REFERENCE_ID = refTableService.getReferenceTableByName("SAMPLE_ITEM").getId();
-  }
-
-  SampleItemServiceImpl() {
-    super(SampleItem.class);
-    this.auditTrailLog = true;
-  }
-
-  public static String getSampleItemTableReferenceId() {
-    return SAMPLE_ITEM_TABLE_REFERENCE_ID;
-  }
-
-  @Override
-  protected SampleItemDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
-
-  @Override
-  public String insert(SampleItem sampleItem) {
-    if (sampleItem.getFhirUuid() == null) {
-      sampleItem.setFhirUuid(UUID.randomUUID());
+    @PostConstruct
+    public void initializeGlobalVariables() {
+        SAMPLE_ITEM_TABLE_REFERENCE_ID = refTableService.getReferenceTableByName("SAMPLE_ITEM").getId();
     }
-    return super.insert(sampleItem);
-  }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<SampleItem> getSampleItemsBySampleId(String id) {
-    return baseObjectDAO.getAllMatching("sample.id", id);
-  }
+    SampleItemServiceImpl() {
+        super(SampleItem.class);
+        this.auditTrailLog = true;
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<SampleItem> getSampleItemsBySampleIdAndStatus(
-      String id, Set<Integer> enteredStatusSampleList) {
-    return baseObjectDAO.getSampleItemsBySampleIdAndStatus(id, enteredStatusSampleList);
-  }
+    public static String getSampleItemTableReferenceId() {
+        return SAMPLE_ITEM_TABLE_REFERENCE_ID;
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public void getData(SampleItem sampleItem) {
-    getBaseObjectDAO().getData(sampleItem);
-  }
+    @Override
+    protected SampleItemDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public SampleItem getData(String sampleItemId) {
-    return getBaseObjectDAO().getData(sampleItemId);
-  }
+    @Override
+    public String insert(SampleItem sampleItem) {
+        if (sampleItem.getFhirUuid() == null) {
+            sampleItem.setFhirUuid(UUID.randomUUID());
+        }
+        return super.insert(sampleItem);
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<SampleItem> getSampleItemsBySampleIdAndType(
-      String sampleId, TypeOfSample typeOfSample) {
-    return getBaseObjectDAO().getSampleItemsBySampleIdAndType(sampleId, typeOfSample);
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<SampleItem> getSampleItemsBySampleId(String id) {
+        return baseObjectDAO.getAllMatching("sample.id", id);
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<SampleItem> getPageOfSampleItems(int startingRecNo) {
-    return getBaseObjectDAO().getPageOfSampleItems(startingRecNo);
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<SampleItem> getSampleItemsBySampleIdAndStatus(String id, Set<Integer> enteredStatusSampleList) {
+        return baseObjectDAO.getSampleItemsBySampleIdAndStatus(id, enteredStatusSampleList);
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<SampleItem> getAllSampleItems() {
-    return getBaseObjectDAO().getAllSampleItems();
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(SampleItem sampleItem) {
+        getBaseObjectDAO().getData(sampleItem);
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public void getDataBySample(SampleItem sampleItem) {
-    getBaseObjectDAO().getDataBySample(sampleItem);
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public SampleItem getData(String sampleItemId) {
+        return getBaseObjectDAO().getData(sampleItemId);
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public String getTypeOfSampleId(SampleItem sampleItem) {
-    sampleItem = get(sampleItem.getId());
-    return sampleItem.getTypeOfSampleId();
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<SampleItem> getSampleItemsBySampleIdAndType(String sampleId, TypeOfSample typeOfSample) {
+        return getBaseObjectDAO().getSampleItemsBySampleIdAndType(sampleId, typeOfSample);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SampleItem> getPageOfSampleItems(int startingRecNo) {
+        return getBaseObjectDAO().getPageOfSampleItems(startingRecNo);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SampleItem> getAllSampleItems() {
+        return getBaseObjectDAO().getAllSampleItems();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void getDataBySample(SampleItem sampleItem) {
+        getBaseObjectDAO().getDataBySample(sampleItem);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getTypeOfSampleId(SampleItem sampleItem) {
+        sampleItem = get(sampleItem.getId());
+        return sampleItem.getTypeOfSampleId();
+    }
 }

@@ -20,71 +20,71 @@ import org.openelisglobal.common.valueholder.BaseObject;
  */
 public class SystemModule extends BaseObject<String> {
 
-  private String id;
-  private String systemModuleName;
-  private String description;
-  private String hasSelectFlag;
-  private String hasAddFlag;
-  private String hasUpdateFlag;
-  private String hasDeleteFlag;
+    private String id;
+    private String systemModuleName;
+    private String description;
+    private String hasSelectFlag;
+    private String hasAddFlag;
+    private String hasUpdateFlag;
+    private String hasDeleteFlag;
 
-  public SystemModule() {
-    super();
-  }
+    public SystemModule() {
+        super();
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setSystemModuleName(String systemModuleName) {
-    this.systemModuleName = systemModuleName;
-  }
+    public void setSystemModuleName(String systemModuleName) {
+        this.systemModuleName = systemModuleName;
+    }
 
-  public String getSystemModuleName() {
-    return systemModuleName;
-  }
+    public String getSystemModuleName() {
+        return systemModuleName;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setHasSelectFlag(String hasSelectFlag) {
-    this.hasSelectFlag = hasSelectFlag;
-  }
+    public void setHasSelectFlag(String hasSelectFlag) {
+        this.hasSelectFlag = hasSelectFlag;
+    }
 
-  public String getHasSelectFlag() {
-    return hasSelectFlag;
-  }
+    public String getHasSelectFlag() {
+        return hasSelectFlag;
+    }
 
-  public void setHasAddFlag(String hasAddFlag) {
-    this.hasAddFlag = hasAddFlag;
-  }
+    public void setHasAddFlag(String hasAddFlag) {
+        this.hasAddFlag = hasAddFlag;
+    }
 
-  public String getHasAddFlag() {
-    return hasAddFlag;
-  }
+    public String getHasAddFlag() {
+        return hasAddFlag;
+    }
 
-  public void setHasUpdateFlag(String hasUpdateFlag) {
-    this.hasUpdateFlag = hasUpdateFlag;
-  }
+    public void setHasUpdateFlag(String hasUpdateFlag) {
+        this.hasUpdateFlag = hasUpdateFlag;
+    }
 
-  public String getHasUpdateFlag() {
-    return hasUpdateFlag;
-  }
+    public String getHasUpdateFlag() {
+        return hasUpdateFlag;
+    }
 
-  public void setHasDeleteFlag(String hasDeleteFlag) {
-    this.hasDeleteFlag = hasDeleteFlag;
-  }
+    public void setHasDeleteFlag(String hasDeleteFlag) {
+        this.hasDeleteFlag = hasDeleteFlag;
+    }
 
-  public String getHasDeleteFlag() {
-    return hasDeleteFlag;
-  }
+    public String getHasDeleteFlag() {
+        return hasDeleteFlag;
+    }
 }

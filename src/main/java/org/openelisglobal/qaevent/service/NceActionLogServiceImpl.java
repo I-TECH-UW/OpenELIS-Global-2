@@ -11,22 +11,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class NceActionLogServiceImpl extends AuditableBaseObjectServiceImpl<NceActionLog, String>
-    implements NceActionLogService {
+        implements NceActionLogService {
 
-  @Autowired protected NceActionLogDAO baseObjectDAO;
+    @Autowired
+    protected NceActionLogDAO baseObjectDAO;
 
-  public NceActionLogServiceImpl() {
-    super(NceActionLog.class);
-  }
+    public NceActionLogServiceImpl() {
+        super(NceActionLog.class);
+    }
 
-  @Override
-  @Transactional
-  public List<NceActionLog> getNceActionLogByNceId(String nceId) throws LIMSRuntimeException {
-    return null;
-  }
+    @Override
+    @Transactional
+    public List<NceActionLog> getNceActionLogByNceId(String nceId) throws LIMSRuntimeException {
+        return null;
+    }
 
-  @Override
-  protected NceActionLogDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected NceActionLogDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

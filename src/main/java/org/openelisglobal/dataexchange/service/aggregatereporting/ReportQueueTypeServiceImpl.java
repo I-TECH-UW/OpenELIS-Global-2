@@ -8,23 +8,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ReportQueueTypeServiceImpl
-    extends AuditableBaseObjectServiceImpl<ReportQueueType, String>
-    implements ReportQueueTypeService {
-  @Autowired protected ReportQueueTypeDAO baseObjectDAO;
+public class ReportQueueTypeServiceImpl extends AuditableBaseObjectServiceImpl<ReportQueueType, String>
+        implements ReportQueueTypeService {
+    @Autowired
+    protected ReportQueueTypeDAO baseObjectDAO;
 
-  ReportQueueTypeServiceImpl() {
-    super(ReportQueueType.class);
-  }
+    ReportQueueTypeServiceImpl() {
+        super(ReportQueueType.class);
+    }
 
-  @Override
-  protected ReportQueueTypeDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected ReportQueueTypeDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public ReportQueueType getReportQueueTypeByName(String name) {
-    return getBaseObjectDAO().getReportQueueTypeByName(name);
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public ReportQueueType getReportQueueTypeByName(String name) {
+        return getBaseObjectDAO().getReportQueueTypeByName(name);
+    }
 }

@@ -17,17 +17,17 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.services.IResultSaveService;
 
 public interface IResultUpdate {
-  /**
-   * Will be called after all core database updates have been done but before the changes have been
-   * committed
-   *
-   * @throws LIMSRuntimeException If thrown all transactions will be rolled back
-   */
-  public void transactionalUpdate(IResultSaveService resultService) throws LIMSRuntimeException;
+    /**
+     * Will be called after all core database updates have been done but before the
+     * changes have been committed
+     *
+     * @throws LIMSRuntimeException If thrown all transactions will be rolled back
+     */
+    public void transactionalUpdate(IResultSaveService resultService) throws LIMSRuntimeException;
 
-  /**
-   * Will be called after the transaction has been committed. If the transaction has been rolled
-   * back this will not be called
-   */
-  public void postTransactionalCommitUpdate(IResultSaveService resultService);
+    /**
+     * Will be called after the transaction has been committed. If the transaction
+     * has been rolled back this will not be called
+     */
+    public void postTransactionalCommitUpdate(IResultSaveService resultService);
 }

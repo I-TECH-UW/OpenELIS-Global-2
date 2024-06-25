@@ -31,137 +31,134 @@ import org.springframework.transaction.annotation.Transactional;
 
 /** */
 @Service
-@DependsOn({"springContext"})
+@DependsOn({ "springContext" })
 public class PluginPermissionService implements IPluginPermissionService {
 
-  private SystemModuleService moduleService = SpringContext.getBean(SystemModuleService.class);
-  private SystemModuleUrlService moduleUrlService =
-      SpringContext.getBean(SystemModuleUrlService.class);
-  private RoleService roleService = SpringContext.getBean(RoleService.class);
-  private RoleModuleService roleModuleService = SpringContext.getBean(RoleModuleService.class);
+    private SystemModuleService moduleService = SpringContext.getBean(SystemModuleService.class);
+    private SystemModuleUrlService moduleUrlService = SpringContext.getBean(SystemModuleUrlService.class);
+    private RoleService roleService = SpringContext.getBean(RoleService.class);
+    private RoleModuleService roleModuleService = SpringContext.getBean(RoleModuleService.class);
 
-  public static IPluginPermissionService getInstance() {
-    return SpringContext.getBean(IPluginPermissionService.class);
-  }
-
-  @Override
-  public SystemModule getOrCreateSystemModule(String action, String description) {
-    return getOrCreateSystemModuleByName(action, description);
-  }
-
-  @Override
-  public SystemModule getOrCreateSystemModule(String action, String type, String description) {
-    return getOrCreateSystemModuleByName(action + ":" + type, description);
-  }
-
-  private SystemModule getOrCreateSystemModuleByName(String name, String description) {
-    SystemModule module = moduleService.getSystemModuleByName(name);
-
-    if (module == null || module.getId() == null) {
-      module = new SystemModule();
-      module.setSystemModuleName(name);
-      module.setDescription(description);
-      module.setHasAddFlag("Y");
-      module.setHasDeleteFlag("Y");
-      module.setHasSelectFlag("Y");
-      module.setHasUpdateFlag("Y");
-      module.setSysUserId("1");
-    }
-    return module;
-  }
-
-  @Override
-  public SystemModuleUrl getOrCreateSystemModuleUrl(SystemModule systemModule, String urlPath) {
-    SystemModuleUrl moduleUrl = moduleUrlService.getByModuleAndUrl(systemModule.getId(), urlPath);
-
-    if (moduleUrl == null || moduleUrl.getId() == null) {
-      moduleUrl = new SystemModuleUrl();
-      moduleUrl.setUrlPath(urlPath);
-      moduleUrl.setSystemModule(systemModule);
-      moduleUrl.setSysUserId("1");
-    }
-    return moduleUrl;
-  }
-
-  @Override
-  public Role getSystemRole(String name) {
-    return roleService.getRoleByName(name);
-  }
-
-  @Override
-  @Transactional
-  @Deprecated
-  public boolean bindRoleToModule(Role role, SystemModule module) {
-    if (role == null || module == null) {
-      return false;
+    public static IPluginPermissionService getInstance() {
+        return SpringContext.getBean(IPluginPermissionService.class);
     }
 
-    if (role.getId() == null) {
-      role.setActive(true);
-      roleService.insert(role);
-    } else if (!role.isActive()) {
-      role.setActive(true);
-      roleService.update(role);
+    @Override
+    public SystemModule getOrCreateSystemModule(String action, String description) {
+        return getOrCreateSystemModuleByName(action, description);
     }
 
-    if (module.getId() == null) {
-      moduleService.insert(module);
+    @Override
+    public SystemModule getOrCreateSystemModule(String action, String type, String description) {
+        return getOrCreateSystemModuleByName(action + ":" + type, description);
     }
 
-    RoleModule roleModule =
-        roleModuleService.getRoleModuleByRoleAndModuleId(role.getId(), module.getId());
+    private SystemModule getOrCreateSystemModuleByName(String name, String description) {
+        SystemModule module = moduleService.getSystemModuleByName(name);
 
-    if (roleModule.getId() == null) {
-      roleModule.setRole(role);
-      roleModule.setSystemModule(module);
-      roleModule.setSysUserId("1");
-      roleModule.setHasAdd("Y");
-      roleModule.setHasDelete("Y");
-      roleModule.setHasSelect("Y");
-      roleModule.setHasUpdate("Y");
-      roleModuleService.insert(roleModule);
+        if (module == null || module.getId() == null) {
+            module = new SystemModule();
+            module.setSystemModuleName(name);
+            module.setDescription(description);
+            module.setHasAddFlag("Y");
+            module.setHasDeleteFlag("Y");
+            module.setHasSelectFlag("Y");
+            module.setHasUpdateFlag("Y");
+            module.setSysUserId("1");
+        }
+        return module;
     }
 
-    return true;
-  }
+    @Override
+    public SystemModuleUrl getOrCreateSystemModuleUrl(SystemModule systemModule, String urlPath) {
+        SystemModuleUrl moduleUrl = moduleUrlService.getByModuleAndUrl(systemModule.getId(), urlPath);
 
-  @Override
-  @Transactional
-  public boolean bindRoleToModule(Role role, SystemModule module, SystemModuleUrl moduleUrl) {
-    if (role == null || module == null || moduleUrl == null) {
-      return false;
+        if (moduleUrl == null || moduleUrl.getId() == null) {
+            moduleUrl = new SystemModuleUrl();
+            moduleUrl.setUrlPath(urlPath);
+            moduleUrl.setSystemModule(systemModule);
+            moduleUrl.setSysUserId("1");
+        }
+        return moduleUrl;
     }
 
-    if (role.getId() == null) {
-      role.setActive(true);
-      roleService.insert(role);
-    } else if (!role.isActive()) {
-      role.setActive(true);
-      roleService.update(role);
+    @Override
+    public Role getSystemRole(String name) {
+        return roleService.getRoleByName(name);
     }
 
-    if (module.getId() == null) {
-      moduleService.insert(module);
+    @Override
+    @Transactional
+    @Deprecated
+    public boolean bindRoleToModule(Role role, SystemModule module) {
+        if (role == null || module == null) {
+            return false;
+        }
+
+        if (role.getId() == null) {
+            role.setActive(true);
+            roleService.insert(role);
+        } else if (!role.isActive()) {
+            role.setActive(true);
+            roleService.update(role);
+        }
+
+        if (module.getId() == null) {
+            moduleService.insert(module);
+        }
+
+        RoleModule roleModule = roleModuleService.getRoleModuleByRoleAndModuleId(role.getId(), module.getId());
+
+        if (roleModule.getId() == null) {
+            roleModule.setRole(role);
+            roleModule.setSystemModule(module);
+            roleModule.setSysUserId("1");
+            roleModule.setHasAdd("Y");
+            roleModule.setHasDelete("Y");
+            roleModule.setHasSelect("Y");
+            roleModule.setHasUpdate("Y");
+            roleModuleService.insert(roleModule);
+        }
+
+        return true;
     }
 
-    if (moduleUrl.getId() == null) {
-      moduleUrlService.insert(moduleUrl);
+    @Override
+    @Transactional
+    public boolean bindRoleToModule(Role role, SystemModule module, SystemModuleUrl moduleUrl) {
+        if (role == null || module == null || moduleUrl == null) {
+            return false;
+        }
+
+        if (role.getId() == null) {
+            role.setActive(true);
+            roleService.insert(role);
+        } else if (!role.isActive()) {
+            role.setActive(true);
+            roleService.update(role);
+        }
+
+        if (module.getId() == null) {
+            moduleService.insert(module);
+        }
+
+        if (moduleUrl.getId() == null) {
+            moduleUrlService.insert(moduleUrl);
+        }
+
+        RoleModule roleModule = roleModuleService.getRoleModuleByRoleAndModuleId(role.getId(), module.getId());
+
+        if (roleModule.getId() == null) {
+            roleModule.setRole(role);
+            roleModule.setSystemModule(module);
+            roleModule.setSysUserId("1");
+            roleModule.setHasAdd("Y");
+            roleModule.setHasDelete("Y");
+            roleModule.setHasSelect("Y");
+            roleModule.setHasUpdate("Y");
+            roleModuleService.insert(roleModule);
+        }
+
+        return true;
     }
-
-    RoleModule roleModule =
-        roleModuleService.getRoleModuleByRoleAndModuleId(role.getId(), module.getId());
-
-    if (roleModule.getId() == null) {
-      roleModule.setRole(role);
-      roleModule.setSystemModule(module);
-      roleModule.setSysUserId("1");
-      roleModule.setHasAdd("Y");
-      roleModule.setHasDelete("Y");
-      roleModule.setHasSelect("Y");
-      roleModule.setHasUpdate("Y");
-      roleModuleService.insert(roleModule);
-    }
-
-    return true;
-  }
 }

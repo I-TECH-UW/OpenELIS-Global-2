@@ -37,166 +37,158 @@ import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.spring.util.SpringContext;
 
 public class IndicatorAggregationReportingServlet extends HttpServlet {
-  private ReportExternalImportService reportImportService =
-      SpringContext.getBean(ReportExternalImportService.class);
-  private LoginUserService loginService = SpringContext.getBean(LoginUserService.class);
-  private final String DATE_PATTERN = "yyyy-MM-dd";
+    private ReportExternalImportService reportImportService = SpringContext.getBean(ReportExternalImportService.class);
+    private LoginUserService loginService = SpringContext.getBean(LoginUserService.class);
+    private final String DATE_PATTERN = "yyyy-MM-dd";
 
-  @Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse response)
-      throws ServletException, IOException {
-    response.setStatus(HttpServletResponse.SC_OK);
-  }
-
-  @Override
-  protected void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-
-    //		LogEvent.logFatal("IndicatorAggregationReportingServlet", "size",
-    // String.valueOf(request.getContentLength()));
-    ServletInputStream inputStream = request.getInputStream();
-
-    List<ReportExternalImport> insertableImportReports = new ArrayList<>();
-    List<ReportExternalImport> updatableImportReports = new ArrayList<>();
-
-    Document sentIndicators = getDocument(inputStream, request.getContentLength());
-
-    if (sentIndicators == null) {
-      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      return;
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
-    if (!authenticated(sentIndicators)) {
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      return;
-    }
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-    /*
-     * This is too handle the problem where either 1. The same lab sends a report
-     * quickly enough to cause a race condition 2. Two different labs send a report
-     * at the same time but one is miss-configured and uses the same site id
-     *
-     * In both cases createReportItems considers the report a new one rather than a
-     * modification of an existing report
-     */
-    synchronized (this) {
-      createReportItems(sentIndicators, insertableImportReports, updatableImportReports);
+        // LogEvent.logFatal("IndicatorAggregationReportingServlet", "size",
+        // String.valueOf(request.getContentLength()));
+        ServletInputStream inputStream = request.getInputStream();
 
-      updateReports(insertableImportReports, updatableImportReports);
-    }
+        List<ReportExternalImport> insertableImportReports = new ArrayList<>();
+        List<ReportExternalImport> updatableImportReports = new ArrayList<>();
 
-    response.setStatus(HttpServletResponse.SC_OK);
-  }
+        Document sentIndicators = getDocument(inputStream, request.getContentLength());
 
-  private Document getDocument(ServletInputStream inputStream, int contentLength) {
-    int charCount = 0;
-    byte[] byteBuffer = new byte[contentLength];
-
-    while (true) {
-      try {
-        int readLength = inputStream.readLine(byteBuffer, charCount, 1024);
-        // LogEvent.logFatal("IndicatorAggregationReportingServlet",
-        // String.valueOf(readLength), new String(byteBuffer).trim());
-
-        if (readLength == -1) {
-          return DocumentHelper.parseText(new String(byteBuffer, StandardCharsets.UTF_8).trim());
-        } else {
-          charCount += readLength;
+        if (sentIndicators == null) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
         }
 
-      } catch (IOException e) {
-        LogEvent.logDebug(e);
-        return null;
-      } catch (DocumentException e) {
-        LogEvent.logDebug(e);
-        return null;
-      }
-    }
-  }
-
-  private void updateReports(
-      List<ReportExternalImport> insertableImportReports,
-      List<ReportExternalImport> updatableImportReports) {
-
-    try {
-      reportImportService.updateReports(insertableImportReports, updatableImportReports);
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-    }
-  }
-
-  private void createReportItems(
-      Document aggregateDoc,
-      List<ReportExternalImport> insertableImportReports,
-      List<ReportExternalImport> updatableImportReports) {
-
-    String sendingSiteId = (String) aggregateDoc.getRootElement().element("site-id").getData();
-
-    Set<String> eventDateSet = new HashSet<>(); // to make sure no
-    // duplicates
-
-    for (Object reportObj : aggregateDoc.getRootElement().elements("reports")) {
-      Element report = (Element) reportObj;
-      String eventDate = (String) report.element("event-date").getData();
-      eventDate = eventDate.split(" ")[0];
-
-      if (!eventDateSet.contains(eventDate)) {
-        eventDateSet.add(eventDate);
-
-        String data = (String) report.element("data").getData();
-        ReportExternalImport importReport =
-            createReportExternalImport(sendingSiteId, eventDate, data);
-
-        if (importReport.getId() == null) {
-          insertableImportReports.add(importReport);
-        } else {
-          updatableImportReports.add(importReport);
+        if (!authenticated(sentIndicators)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
-      }
-    }
-  }
 
-  private boolean authenticated(Document sentIndicators) {
-    Element userElement = sentIndicators.getRootElement().element("user");
-    Element passwordElement = sentIndicators.getRootElement().element("drowssap");
+        /*
+         * This is too handle the problem where either 1. The same lab sends a report
+         * quickly enough to cause a race condition 2. Two different labs send a report
+         * at the same time but one is miss-configured and uses the same site id
+         *
+         * In both cases createReportItems considers the report a new one rather than a
+         * modification of an existing report
+         */
+        synchronized (this) {
+            createReportItems(sentIndicators, insertableImportReports, updatableImportReports);
 
-    if (userElement == null || passwordElement == null) {
-      return false;
-    }
+            updateReports(insertableImportReports, updatableImportReports);
+        }
 
-    String user = (String) userElement.getData();
-    String password = (String) passwordElement.getData();
-
-    LoginUser login = new LoginUser();
-    login.setLoginName(user);
-    login.setPassword(password);
-
-    LoginUser loginInfo = loginService.getValidatedLogin(user, password).orElse(null);
-
-    return loginInfo != null;
-  }
-
-  private ReportExternalImport createReportExternalImport(
-      String sendingSiteId, String eventDate, String data) {
-    ReportExternalImport importReport = new ReportExternalImport();
-
-    importReport.setEventDate(
-        DateUtil.convertStringDateToTimestampWithPatternNoLocale(eventDate, DATE_PATTERN));
-    importReport.setSendingSite(sendingSiteId);
-    importReport.setReportType("testIndicators");
-
-    ReportExternalImport rei = reportImportService.getReportByEventDateSiteType(importReport);
-
-    if (rei != null) {
-      importReport = rei;
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
-    importReport.setData(data);
-    importReport.setSysUserId("1");
-    importReport.setRecievedDate(DateUtil.getTimestampAtMidnightForDaysAgo(0));
+    private Document getDocument(ServletInputStream inputStream, int contentLength) {
+        int charCount = 0;
+        byte[] byteBuffer = new byte[contentLength];
 
-    return importReport;
-  }
+        while (true) {
+            try {
+                int readLength = inputStream.readLine(byteBuffer, charCount, 1024);
+                // LogEvent.logFatal("IndicatorAggregationReportingServlet",
+                // String.valueOf(readLength), new String(byteBuffer).trim());
 
-  private static final long serialVersionUID = 1L;
+                if (readLength == -1) {
+                    return DocumentHelper.parseText(new String(byteBuffer, StandardCharsets.UTF_8).trim());
+                } else {
+                    charCount += readLength;
+                }
+
+            } catch (IOException e) {
+                LogEvent.logDebug(e);
+                return null;
+            } catch (DocumentException e) {
+                LogEvent.logDebug(e);
+                return null;
+            }
+        }
+    }
+
+    private void updateReports(List<ReportExternalImport> insertableImportReports,
+            List<ReportExternalImport> updatableImportReports) {
+
+        try {
+            reportImportService.updateReports(insertableImportReports, updatableImportReports);
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+        }
+    }
+
+    private void createReportItems(Document aggregateDoc, List<ReportExternalImport> insertableImportReports,
+            List<ReportExternalImport> updatableImportReports) {
+
+        String sendingSiteId = (String) aggregateDoc.getRootElement().element("site-id").getData();
+
+        Set<String> eventDateSet = new HashSet<>(); // to make sure no
+        // duplicates
+
+        for (Object reportObj : aggregateDoc.getRootElement().elements("reports")) {
+            Element report = (Element) reportObj;
+            String eventDate = (String) report.element("event-date").getData();
+            eventDate = eventDate.split(" ")[0];
+
+            if (!eventDateSet.contains(eventDate)) {
+                eventDateSet.add(eventDate);
+
+                String data = (String) report.element("data").getData();
+                ReportExternalImport importReport = createReportExternalImport(sendingSiteId, eventDate, data);
+
+                if (importReport.getId() == null) {
+                    insertableImportReports.add(importReport);
+                } else {
+                    updatableImportReports.add(importReport);
+                }
+            }
+        }
+    }
+
+    private boolean authenticated(Document sentIndicators) {
+        Element userElement = sentIndicators.getRootElement().element("user");
+        Element passwordElement = sentIndicators.getRootElement().element("drowssap");
+
+        if (userElement == null || passwordElement == null) {
+            return false;
+        }
+
+        String user = (String) userElement.getData();
+        String password = (String) passwordElement.getData();
+
+        LoginUser login = new LoginUser();
+        login.setLoginName(user);
+        login.setPassword(password);
+
+        LoginUser loginInfo = loginService.getValidatedLogin(user, password).orElse(null);
+
+        return loginInfo != null;
+    }
+
+    private ReportExternalImport createReportExternalImport(String sendingSiteId, String eventDate, String data) {
+        ReportExternalImport importReport = new ReportExternalImport();
+
+        importReport.setEventDate(DateUtil.convertStringDateToTimestampWithPatternNoLocale(eventDate, DATE_PATTERN));
+        importReport.setSendingSite(sendingSiteId);
+        importReport.setReportType("testIndicators");
+
+        ReportExternalImport rei = reportImportService.getReportByEventDateSiteType(importReport);
+
+        if (rei != null) {
+            importReport = rei;
+        }
+
+        importReport.setData(data);
+        importReport.setSysUserId("1");
+        importReport.setRecievedDate(DateUtil.getTimestampAtMidnightForDaysAgo(0));
+
+        return importReport;
+    }
+
+    private static final long serialVersionUID = 1L;
 }

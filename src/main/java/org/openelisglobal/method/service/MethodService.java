@@ -5,11 +5,11 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.method.valueholder.Method;
 
 public interface MethodService extends BaseObjectService<Method, String> {
-  List<Method> getMethods(String filter);
+    List<Method> getMethods(String filter);
 
-  List<Method> getAllInActiveMethods();
+    List<Method> getAllInActiveMethods();
 
-  void refreshNames();
+    void refreshNames();
 
-  List<Method> getAllActiveMethods();
+    List<Method> getAllActiveMethods();
 }

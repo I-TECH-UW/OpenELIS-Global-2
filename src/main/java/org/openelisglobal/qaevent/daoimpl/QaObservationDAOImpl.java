@@ -25,43 +25,40 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String>
-    implements QaObservationDAO {
+public class QaObservationDAOImpl extends BaseDAOImpl<QaObservation, String> implements QaObservationDAO {
 
-  public QaObservationDAOImpl() {
-    super(QaObservation.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public QaObservation getQaObservationByTypeAndObserved(
-      String typeName, String observedType, String observedId) throws LIMSRuntimeException {
-    String sql =
-        "FROM QaObservation o where o.observationType.name = :observationName and o.observedType ="
-            + " :observedType and o.observedId = :observedId ";
-
-    try {
-      Query<QaObservation> query =
-          entityManager.unwrap(Session.class).createQuery(sql, QaObservation.class);
-      query.setParameter("observationName", typeName);
-      query.setParameter("observedType", observedType);
-      query.setParameter("observedId", Integer.parseInt(observedId));
-      QaObservation observation = query.uniqueResult();
-      return observation;
-    } catch (HibernateException e) {
-      handleException(e, "getQaObservationByTypeAndObserved");
-    }
-    return null;
-  }
-
-  public QaObservation readQaObservation(String idString) {
-    QaObservation qaObservation = null;
-    try {
-      qaObservation = entityManager.unwrap(Session.class).get(QaObservation.class, idString);
-    } catch (RuntimeException e) {
-      handleException(e, "readQaObservation");
+    public QaObservationDAOImpl() {
+        super(QaObservation.class);
     }
 
-    return qaObservation;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public QaObservation getQaObservationByTypeAndObserved(String typeName, String observedType, String observedId)
+            throws LIMSRuntimeException {
+        String sql = "FROM QaObservation o where o.observationType.name = :observationName and o.observedType ="
+                + " :observedType and o.observedId = :observedId ";
+
+        try {
+            Query<QaObservation> query = entityManager.unwrap(Session.class).createQuery(sql, QaObservation.class);
+            query.setParameter("observationName", typeName);
+            query.setParameter("observedType", observedType);
+            query.setParameter("observedId", Integer.parseInt(observedId));
+            QaObservation observation = query.uniqueResult();
+            return observation;
+        } catch (HibernateException e) {
+            handleException(e, "getQaObservationByTypeAndObserved");
+        }
+        return null;
+    }
+
+    public QaObservation readQaObservation(String idString) {
+        QaObservation qaObservation = null;
+        try {
+            qaObservation = entityManager.unwrap(Session.class).get(QaObservation.class, idString);
+        } catch (RuntimeException e) {
+            handleException(e, "readQaObservation");
+        }
+
+        return qaObservation;
+    }
 }

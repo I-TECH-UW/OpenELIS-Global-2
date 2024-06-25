@@ -5,11 +5,11 @@ import org.openelisglobal.test.beanItems.TestResultItem;
 
 public interface IResultsForm {
 
-  void setTestResult(List<TestResultItem> resultPage);
+    void setTestResult(List<TestResultItem> resultPage);
 
-  List<TestResultItem> getTestResult();
+    List<TestResultItem> getTestResult();
 
-  void setTestSectionId(String string);
+    void setTestSectionId(String string);
 
-  String getTestSectionId();
+    String getTestSectionId();
 }

@@ -10,16 +10,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class NceActionLogDAOImpl extends BaseDAOImpl<NceActionLog, String>
-    implements NceActionLogDAO {
+public class NceActionLogDAOImpl extends BaseDAOImpl<NceActionLog, String> implements NceActionLogDAO {
 
-  public NceActionLogDAOImpl() {
-    super(NceActionLog.class);
-  }
+    public NceActionLogDAOImpl() {
+        super(NceActionLog.class);
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<NceActionLog> getNceActionLogByNceId(String nceId) throws LIMSRuntimeException {
-    return null;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<NceActionLog> getNceActionLogByNceId(String nceId) throws LIMSRuntimeException {
+        return null;
+    }
 }

@@ -20,43 +20,43 @@ import org.openelisglobal.common.valueholder.BaseObject;
  */
 public class MNPHLXmit extends BaseObject<String> {
 
-  private String id;
+    private String id;
 
-  private String sendingApplication;
+    private String sendingApplication;
 
-  private String messageTime;
+    private String messageTime;
 
-  private String processingId;
+    private String processingId;
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getMessageTime() {
-    return messageTime;
-  }
+    public String getMessageTime() {
+        return messageTime;
+    }
 
-  public void setMessageTime(String messageTime) {
-    this.messageTime = messageTime;
-  }
+    public void setMessageTime(String messageTime) {
+        this.messageTime = messageTime;
+    }
 
-  public String getProcessingId() {
-    return processingId;
-  }
+    public String getProcessingId() {
+        return processingId;
+    }
 
-  public void setProcessingId(String processingId) {
-    this.processingId = processingId;
-  }
+    public void setProcessingId(String processingId) {
+        this.processingId = processingId;
+    }
 
-  public String getSendingApplication() {
-    return sendingApplication;
-  }
+    public String getSendingApplication() {
+        return sendingApplication;
+    }
 
-  public void setSendingApplication(String sendingApplication) {
-    this.sendingApplication = sendingApplication;
-  }
+    public void setSendingApplication(String sendingApplication) {
+        this.sendingApplication = sendingApplication;
+    }
 }

@@ -30,85 +30,82 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, String>
-    implements InventoryReceiptDAO {
+public class InventoryReceiptDAOImpl extends BaseDAOImpl<InventoryReceipt, String> implements InventoryReceiptDAO {
 
-  public InventoryReceiptDAOImpl() {
-    super(InventoryReceipt.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<InventoryReceipt> getAllInventoryReceipts() throws LIMSRuntimeException {
-    List<InventoryReceipt> inventoryReceipts;
-    try {
-      String sql = "from InventoryReceipt";
-      Query<InventoryReceipt> query =
-          entityManager.unwrap(Session.class).createQuery(sql, InventoryReceipt.class);
-      inventoryReceipts = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in InventoryReceipt getAllInventoryReceipts()", e);
+    public InventoryReceiptDAOImpl() {
+        super(InventoryReceipt.class);
     }
 
-    return inventoryReceipts;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<InventoryReceipt> getAllInventoryReceipts() throws LIMSRuntimeException {
+        List<InventoryReceipt> inventoryReceipts;
+        try {
+            String sql = "from InventoryReceipt";
+            Query<InventoryReceipt> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    InventoryReceipt.class);
+            inventoryReceipts = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in InventoryReceipt getAllInventoryReceipts()", e);
+        }
 
-  @Override
-  @Transactional(readOnly = true)
-  public void getData(InventoryReceipt inventoryReceipt) throws LIMSRuntimeException {
-    try {
-      InventoryReceipt tmpInventoryReceipt =
-          entityManager.unwrap(Session.class).get(InventoryReceipt.class, inventoryReceipt.getId());
-      if (tmpInventoryReceipt != null) {
-        PropertyUtils.copyProperties(inventoryReceipt, tmpInventoryReceipt);
-      } else {
-        inventoryReceipt.setId(null);
-      }
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in InventoryReceipt getData()", e);
-    }
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public InventoryReceipt getInventoryReceiptById(String idString) throws LIMSRuntimeException {
-    InventoryReceipt data = null;
-    try {
-      data = entityManager.unwrap(Session.class).get(InventoryReceipt.class, idString);
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in InventoryReceipt readInventoryReceipt()", e);
+        return inventoryReceipts;
     }
 
-    return data;
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public InventoryReceipt getInventoryReceiptByInventoryItemId(String id)
-      throws LIMSRuntimeException {
-    InventoryReceipt inventory = null;
-
-    try {
-      List<InventoryReceipt> inventoryReceipts;
-
-      String sql = "from InventoryReceipt where invitem_id = :id";
-      Query<InventoryReceipt> query = entityManager.unwrap(Session.class).createNativeQuery(sql);
-      query.setParameter("id", Integer.parseInt(id));
-      inventoryReceipts = query.list();
-
-      if (inventoryReceipts != null && inventoryReceipts.size() > 0) {
-        inventory = inventoryReceipts.get(0);
-      }
-
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException(
-          "Error in InventoryReceipt getInventoryReceiptByInventoryItemId()", e);
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(InventoryReceipt inventoryReceipt) throws LIMSRuntimeException {
+        try {
+            InventoryReceipt tmpInventoryReceipt = entityManager.unwrap(Session.class).get(InventoryReceipt.class,
+                    inventoryReceipt.getId());
+            if (tmpInventoryReceipt != null) {
+                PropertyUtils.copyProperties(inventoryReceipt, tmpInventoryReceipt);
+            } else {
+                inventoryReceipt.setId(null);
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in InventoryReceipt getData()", e);
+        }
     }
 
-    return inventory;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public InventoryReceipt getInventoryReceiptById(String idString) throws LIMSRuntimeException {
+        InventoryReceipt data = null;
+        try {
+            data = entityManager.unwrap(Session.class).get(InventoryReceipt.class, idString);
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in InventoryReceipt readInventoryReceipt()", e);
+        }
+
+        return data;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public InventoryReceipt getInventoryReceiptByInventoryItemId(String id) throws LIMSRuntimeException {
+        InventoryReceipt inventory = null;
+
+        try {
+            List<InventoryReceipt> inventoryReceipts;
+
+            String sql = "from InventoryReceipt where invitem_id = :id";
+            Query<InventoryReceipt> query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            query.setParameter("id", Integer.parseInt(id));
+            inventoryReceipts = query.list();
+
+            if (inventoryReceipts != null && inventoryReceipts.size() > 0) {
+                inventory = inventoryReceipts.get(0);
+            }
+
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in InventoryReceipt getInventoryReceiptByInventoryItemId()", e);
+        }
+
+        return inventory;
+    }
 }

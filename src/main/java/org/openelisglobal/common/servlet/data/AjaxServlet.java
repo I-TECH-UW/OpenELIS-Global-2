@@ -25,12 +25,11 @@ import org.openelisglobal.common.provider.data.BaseDataProvider;
  */
 public abstract class AjaxServlet extends HttpServlet {
 
-  private BaseDataProvider dataProvider = null;
+    private BaseDataProvider dataProvider = null;
 
-  public abstract void sendData(
-      String field, String message, HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException;
+    public abstract void sendData(String field, String message, HttpServletRequest request,
+            HttpServletResponse response) throws IOException, ServletException;
 
-  public abstract void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException;
+    public abstract void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException;
 }

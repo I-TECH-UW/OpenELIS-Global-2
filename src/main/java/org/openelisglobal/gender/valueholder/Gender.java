@@ -26,73 +26,73 @@ import org.openelisglobal.common.valueholder.BaseObject;
 @Entity
 @Table(name = "gender")
 public class Gender extends BaseObject<Integer> {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gender_generator")
-  @SequenceGenerator(name = "gender_generator", sequenceName = "gender_seq", allocationSize = 1)
-  @Column(name = "id")
-  private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gender_generator")
+    @SequenceGenerator(name = "gender_generator", sequenceName = "gender_seq", allocationSize = 1)
+    @Column(name = "id")
+    private Integer id;
 
-  @Column(name = "description")
-  @Size(max = 20)
-  private String description;
+    @Column(name = "description")
+    @Size(max = 20)
+    private String description;
 
-  @Column(name = "gender_type")
-  @Size(max = 1)
-  private String genderType;
+    @Column(name = "gender_type")
+    @Size(max = 1)
+    private String genderType;
 
-  @Column(name = "name_key")
-  @Size(max = 60)
-  private String nameKey;
+    @Column(name = "name_key")
+    @Size(max = 60)
+    private String nameKey;
 
-  public Gender() {
-    super();
-  }
+    public Gender() {
+        super();
+    }
 
-  @Override
-  public void setId(Integer id) {
-    this.id = id;
-  }
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-  @Override
-  public Integer getId() {
-    return id;
-  }
+    @Override
+    public Integer getId() {
+        return id;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public String getGenderType() {
-    return genderType;
-  }
+    public String getGenderType() {
+        return genderType;
+    }
 
-  public void setGenderType(String genderType) {
-    this.genderType = genderType;
-  }
+    public void setGenderType(String genderType) {
+        this.genderType = genderType;
+    }
 
-  @Override
-  public String getNameKey() {
-    return this.nameKey;
-  }
+    @Override
+    public String getNameKey() {
+        return this.nameKey;
+    }
 
-  @Override
-  public void setNameKey(String nameKey) {
-    this.nameKey = nameKey;
-  }
+    @Override
+    public void setNameKey(String nameKey) {
+        this.nameKey = nameKey;
+    }
 
-  @Override
-  public String getDefaultLocalizedName() {
-    return this.description;
-  }
+    @Override
+    public String getDefaultLocalizedName() {
+        return this.description;
+    }
 
-  @Override
-  public String toString() {
-    return "Gender { Id = " + id + ", description=" + description + " }";
-  }
+    @Override
+    public String toString() {
+        return "Gender { Id = " + id + ", description=" + description + " }";
+    }
 }

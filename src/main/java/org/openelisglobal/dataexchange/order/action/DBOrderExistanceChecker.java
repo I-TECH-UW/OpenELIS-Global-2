@@ -27,41 +27,38 @@ import org.springframework.stereotype.Service;
 @Service
 public class DBOrderExistanceChecker implements IOrderExistanceChecker {
 
-  @Autowired private ElectronicOrderService eOrderService;
+    @Autowired
+    private ElectronicOrderService eOrderService;
 
-  @Override
-  public CheckResult check(String orderId) {
-    if (GenericValidator.isBlankOrNull(orderId)) {
-      LogEvent.logDebug(this.getClass().getSimpleName(), "check", "order not found: " + orderId);
-      return CheckResult.NOT_FOUND;
+    @Override
+    public CheckResult check(String orderId) {
+        if (GenericValidator.isBlankOrNull(orderId)) {
+            LogEvent.logDebug(this.getClass().getSimpleName(), "check", "order not found: " + orderId);
+            return CheckResult.NOT_FOUND;
+        }
+
+        List<ElectronicOrder> eOrders = eOrderService.getElectronicOrdersByExternalId(orderId);
+        if (eOrders == null || eOrders.isEmpty()) {
+            LogEvent.logDebug(this.getClass().getSimpleName(), "check", "order not found: " + orderId);
+            return CheckResult.NOT_FOUND;
+        }
+
+        ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
+        if (SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Cancelled)
+                .equals(eOrder.getStatusId())) {
+            LogEvent.logDebug(this.getClass().getSimpleName(), "check", "order found cancelled: " + orderId);
+            return CheckResult.ORDER_FOUND_CANCELED;
+        }
+
+        if (SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.Entered)
+                .equals(eOrder.getStatusId())
+                || SpringContext.getBean(IStatusService.class).getStatusID(ExternalOrderStatus.NonConforming)
+                        .equals(eOrder.getStatusId())) {
+            LogEvent.logDebug(this.getClass().getSimpleName(), "check", "order queued: " + orderId);
+            return CheckResult.ORDER_FOUND_QUEUED;
+        }
+
+        LogEvent.logDebug(this.getClass().getSimpleName(), "check", "order inb progress: " + orderId);
+        return CheckResult.ORDER_FOUND_INPROGRESS;
     }
-
-    List<ElectronicOrder> eOrders = eOrderService.getElectronicOrdersByExternalId(orderId);
-    if (eOrders == null || eOrders.isEmpty()) {
-      LogEvent.logDebug(this.getClass().getSimpleName(), "check", "order not found: " + orderId);
-      return CheckResult.NOT_FOUND;
-    }
-
-    ElectronicOrder eOrder = eOrders.get(eOrders.size() - 1);
-    if (SpringContext.getBean(IStatusService.class)
-        .getStatusID(ExternalOrderStatus.Cancelled)
-        .equals(eOrder.getStatusId())) {
-      LogEvent.logDebug(
-          this.getClass().getSimpleName(), "check", "order found cancelled: " + orderId);
-      return CheckResult.ORDER_FOUND_CANCELED;
-    }
-
-    if (SpringContext.getBean(IStatusService.class)
-            .getStatusID(ExternalOrderStatus.Entered)
-            .equals(eOrder.getStatusId())
-        || SpringContext.getBean(IStatusService.class)
-            .getStatusID(ExternalOrderStatus.NonConforming)
-            .equals(eOrder.getStatusId())) {
-      LogEvent.logDebug(this.getClass().getSimpleName(), "check", "order queued: " + orderId);
-      return CheckResult.ORDER_FOUND_QUEUED;
-    }
-
-    LogEvent.logDebug(this.getClass().getSimpleName(), "check", "order inb progress: " + orderId);
-    return CheckResult.ORDER_FOUND_INPROGRESS;
-  }
 }

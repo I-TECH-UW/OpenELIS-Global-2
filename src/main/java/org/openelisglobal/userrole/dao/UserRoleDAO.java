@@ -25,12 +25,11 @@ import org.openelisglobal.userrole.valueholder.UserRolePK;
 
 public interface UserRoleDAO extends BaseDAO<UserRole, UserRolePK> {
 
-  public boolean userInRole(String userId, String roleName) throws LIMSRuntimeException;
+    public boolean userInRole(String userId, String roleName) throws LIMSRuntimeException;
 
-  public boolean userInRole(String userId, Collection<String> roleNames)
-      throws LIMSRuntimeException;
+    public boolean userInRole(String userId, Collection<String> roleNames) throws LIMSRuntimeException;
 
-  List<String> getRoleIdsForUser(String userId) throws LIMSRuntimeException;
+    List<String> getRoleIdsForUser(String userId) throws LIMSRuntimeException;
 
-  void deleteLabUnitRoleMap(LabUnitRoleMap roleMap);
+    void deleteLabUnitRoleMap(LabUnitRoleMap roleMap);
 }

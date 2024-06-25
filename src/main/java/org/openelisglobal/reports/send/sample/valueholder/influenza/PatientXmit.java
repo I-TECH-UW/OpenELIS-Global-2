@@ -20,104 +20,105 @@ import org.openelisglobal.common.util.StringUtil;
  */
 public class PatientXmit extends org.openelisglobal.patient.valueholder.Patient {
 
-  private String lastName;
+    private String lastName;
 
-  private String firstName;
+    private String firstName;
 
-  private String middleName;
+    private String middleName;
 
-  private String streetAddress;
+    private String streetAddress;
 
-  private String multipleUnit;
+    private String multipleUnit;
 
-  private String city;
+    private String city;
 
-  private String state;
+    private String state;
 
-  private String zipCode;
+    private String zipCode;
 
-  private String county;
+    private String county;
 
-  public PatientXmit() {}
-
-  public String getCounty() {
-    return county;
-  }
-
-  public void setCounty(String county) {
-    this.county = county;
-  }
-
-  public String getCity() {
-    if (!StringUtil.isNullorNill(city)) {
-      return city.trim();
+    public PatientXmit() {
     }
-    return city;
-  }
 
-  public void setCity(String city) {
-    this.city = city;
-  }
-
-  public String getState() {
-    if (!StringUtil.isNullorNill(state)) {
-      return state.trim();
+    public String getCounty() {
+        return county;
     }
-    return state;
-  }
 
-  public void setState(String state) {
-    this.state = state;
-  }
-
-  public String getStreetAddress() {
-    return streetAddress;
-  }
-
-  public void setStreetAddress(String streetAddress) {
-    this.streetAddress = streetAddress;
-  }
-
-  public String getZipCode() {
-    if (!StringUtil.isNullorNill(zipCode)) {
-      return zipCode.trim();
+    public void setCounty(String county) {
+        this.county = county;
     }
-    return zipCode;
-  }
 
-  public void setZipCode(String zipCode) {
-    this.zipCode = zipCode;
-  }
+    public String getCity() {
+        if (!StringUtil.isNullorNill(city)) {
+            return city.trim();
+        }
+        return city;
+    }
 
-  public String getLastName() {
-    return lastName;
-  }
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
-  }
+    public String getState() {
+        if (!StringUtil.isNullorNill(state)) {
+            return state.trim();
+        }
+        return state;
+    }
 
-  public String getFirstName() {
-    return firstName;
-  }
+    public void setState(String state) {
+        this.state = state;
+    }
 
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
+    public String getStreetAddress() {
+        return streetAddress;
+    }
 
-  public String getMiddleName() {
-    return middleName;
-  }
+    public void setStreetAddress(String streetAddress) {
+        this.streetAddress = streetAddress;
+    }
 
-  public void setMiddleName(String middleName) {
-    this.middleName = middleName;
-  }
+    public String getZipCode() {
+        if (!StringUtil.isNullorNill(zipCode)) {
+            return zipCode.trim();
+        }
+        return zipCode;
+    }
 
-  public String getMultipleUnit() {
-    return multipleUnit;
-  }
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
 
-  public void setMultipleUnit(String multipleUnit) {
-    this.multipleUnit = multipleUnit;
-  }
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getMultipleUnit() {
+        return multipleUnit;
+    }
+
+    public void setMultipleUnit(String multipleUnit) {
+        this.multipleUnit = multipleUnit;
+    }
 }

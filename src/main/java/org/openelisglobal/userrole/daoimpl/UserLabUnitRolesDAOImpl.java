@@ -23,10 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class UserLabUnitRolesDAOImpl extends BaseDAOImpl<UserLabUnitRoles, Integer>
-    implements UserLabUnitRolesDAO {
+public class UserLabUnitRolesDAOImpl extends BaseDAOImpl<UserLabUnitRoles, Integer> implements UserLabUnitRolesDAO {
 
-  public UserLabUnitRolesDAOImpl() {
-    super(UserLabUnitRoles.class);
-  }
+    public UserLabUnitRolesDAOImpl() {
+        super(UserLabUnitRoles.class);
+    }
 }

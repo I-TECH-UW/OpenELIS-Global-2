@@ -33,115 +33,114 @@ import org.openelisglobal.spring.util.SpringContext;
  * @since Jan 26, 2011
  */
 public class ExportTBOrdersByDate extends CSVRoutineSampleExportReport
-    implements IReportParameterSetter, IReportCreator {
-  protected final ProjectService projectService = SpringContext.getBean(ProjectService.class);
+        implements IReportParameterSetter, IReportCreator {
+    protected final ProjectService projectService = SpringContext.getBean(ProjectService.class);
 
-  @Override
-  protected String reportFileName() {
-    return "ExportTBOrdersByDate";
-  }
-
-  @Override
-  public void setRequestParameters(ReportForm form) {
-    try {
-      form.setReportName(getReportNameForParameterPage());
-      form.setUseLowerDateRange(Boolean.TRUE);
-      form.setUseUpperDateRange(Boolean.TRUE);
-    } catch (RuntimeException e) {
-      Log.error("Error in ExportTBOrdersByDate.setRequestParemeters: ", e);
-    }
-  }
-
-  protected String getReportNameForParameterPage() {
-    return MessageUtil.getMessage("reports.label.project.export")
-        + " "
-        + MessageUtil.getContextualMessage("sample.collectionDate");
-  }
-
-  @Override
-  public void initializeReport(ReportForm form) {
-    super.initializeReport();
-    errorFound = false;
-
-    lowDateStr = form.getLowerDateRange();
-    highDateStr = form.getUpperDateRange();
-    dateRange = new DateRange(lowDateStr, highDateStr);
-
-    createReportParameters();
-
-    errorFound = !validateSubmitParameters();
-    if (errorFound) {
-      return;
+    @Override
+    protected String reportFileName() {
+        return "ExportTBOrdersByDate";
     }
 
-    createReportItems();
-  }
-
-  /** check everything */
-  // -----------------------------------
-  private boolean validateSubmitParameters() {
-    return dateRange.validateHighLowDate("report.error.message.date.received.missing");
-  }
-
-  /** creating the list for generation to the report */
-  private void createReportItems() {
-    try {
-      csvRoutineColumnBuilder = getColumnBuilder();
-      csvRoutineColumnBuilder.buildDataSource();
-    } catch (SQLException e) {
-      Log.error("Error in " + this.getClass().getSimpleName() + ".createReportItems: ", e);
-      add1LineErrorMessage("report.error.message.general.error");
-    }
-  }
-
-  @Override
-  protected void writeResultsToBuffer(ByteArrayOutputStream buffer)
-      throws IOException, UnsupportedEncodingException, SQLException, ParseException {
-
-    String currentAccessionNumber = null;
-    String[] splitBase = null;
-    while (csvRoutineColumnBuilder.next()) {
-      String line = csvRoutineColumnBuilder.nextLine();
-      String[] splitLine = StringUtil.separateCSVWithMixedEmbededQuotes(line);
-
-      if (splitLine[0].equals(currentAccessionNumber)) {
-        merge(splitBase, splitLine);
-      } else {
-        if (currentAccessionNumber != null) {
-          writeConsolidatedBaseToBuffer(buffer, splitBase);
+    @Override
+    public void setRequestParameters(ReportForm form) {
+        try {
+            form.setReportName(getReportNameForParameterPage());
+            form.setUseLowerDateRange(Boolean.TRUE);
+            form.setUseUpperDateRange(Boolean.TRUE);
+        } catch (RuntimeException e) {
+            Log.error("Error in ExportTBOrdersByDate.setRequestParemeters: ", e);
         }
-        splitBase = splitLine;
-        currentAccessionNumber = splitBase[0];
-      }
     }
 
-    writeConsolidatedBaseToBuffer(buffer, splitBase);
-  }
-
-  private void merge(String[] base, String[] line) {
-    for (int i = 0; i < base.length; ++i) {
-      if (GenericValidator.isBlankOrNull(base[i])) {
-        base[i] = line[i];
-      }
+    protected String getReportNameForParameterPage() {
+        return MessageUtil.getMessage("reports.label.project.export") + " "
+                + MessageUtil.getContextualMessage("sample.collectionDate");
     }
-  }
 
-  protected void writeConsolidatedBaseToBuffer(ByteArrayOutputStream buffer, String[] splitBase)
-      throws IOException, UnsupportedEncodingException {
+    @Override
+    public void initializeReport(ReportForm form) {
+        super.initializeReport();
+        errorFound = false;
 
-    if (splitBase != null) {
-      StringBuffer consolidatedLine = new StringBuffer();
-      for (String value : splitBase) {
-        consolidatedLine.append(value);
-        consolidatedLine.append(",");
-      }
+        lowDateStr = form.getLowerDateRange();
+        highDateStr = form.getUpperDateRange();
+        dateRange = new DateRange(lowDateStr, highDateStr);
 
-      consolidatedLine.deleteCharAt(consolidatedLine.lastIndexOf(","));
-      buffer.write(consolidatedLine.toString().getBytes("windows-1252"));
+        createReportParameters();
+
+        errorFound = !validateSubmitParameters();
+        if (errorFound) {
+            return;
+        }
+
+        createReportItems();
     }
-  }
 
-  private RoutineColumnBuilder getColumnBuilder() {
-    return new TBColumnBuilder(dateRange);
-  }
+    /** check everything */
+    // -----------------------------------
+    private boolean validateSubmitParameters() {
+        return dateRange.validateHighLowDate("report.error.message.date.received.missing");
+    }
+
+    /** creating the list for generation to the report */
+    private void createReportItems() {
+        try {
+            csvRoutineColumnBuilder = getColumnBuilder();
+            csvRoutineColumnBuilder.buildDataSource();
+        } catch (SQLException e) {
+            Log.error("Error in " + this.getClass().getSimpleName() + ".createReportItems: ", e);
+            add1LineErrorMessage("report.error.message.general.error");
+        }
+    }
+
+    @Override
+    protected void writeResultsToBuffer(ByteArrayOutputStream buffer)
+            throws IOException, UnsupportedEncodingException, SQLException, ParseException {
+
+        String currentAccessionNumber = null;
+        String[] splitBase = null;
+        while (csvRoutineColumnBuilder.next()) {
+            String line = csvRoutineColumnBuilder.nextLine();
+            String[] splitLine = StringUtil.separateCSVWithMixedEmbededQuotes(line);
+
+            if (splitLine[0].equals(currentAccessionNumber)) {
+                merge(splitBase, splitLine);
+            } else {
+                if (currentAccessionNumber != null) {
+                    writeConsolidatedBaseToBuffer(buffer, splitBase);
+                }
+                splitBase = splitLine;
+                currentAccessionNumber = splitBase[0];
+            }
+        }
+
+        writeConsolidatedBaseToBuffer(buffer, splitBase);
+    }
+
+    private void merge(String[] base, String[] line) {
+        for (int i = 0; i < base.length; ++i) {
+            if (GenericValidator.isBlankOrNull(base[i])) {
+                base[i] = line[i];
+            }
+        }
+    }
+
+    protected void writeConsolidatedBaseToBuffer(ByteArrayOutputStream buffer, String[] splitBase)
+            throws IOException, UnsupportedEncodingException {
+
+        if (splitBase != null) {
+            StringBuffer consolidatedLine = new StringBuffer();
+            for (String value : splitBase) {
+                consolidatedLine.append(value);
+                consolidatedLine.append(",");
+            }
+
+            consolidatedLine.deleteCharAt(consolidatedLine.lastIndexOf(","));
+            buffer.write(consolidatedLine.toString().getBytes("windows-1252"));
+        }
+    }
+
+    private RoutineColumnBuilder getColumnBuilder() {
+        return new TBColumnBuilder(dateRange);
+    }
 }

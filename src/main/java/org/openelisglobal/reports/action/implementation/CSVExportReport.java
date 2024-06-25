@@ -24,54 +24,54 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
  */
 public abstract class CSVExportReport extends Report implements JRDataSource {
 
-  /**
-   * @see org.openelisglobal.reports.action.implementation.Report#getContentType()
-   */
-  @Override
-  public String getContentType() {
-    if (errorFound) {
-      return super.getContentType();
-    } else {
-      return "text/plain; charset=UTF-8";
+    /**
+     * @see org.openelisglobal.reports.action.implementation.Report#getContentType()
+     */
+    @Override
+    public String getContentType() {
+        if (errorFound) {
+            return super.getContentType();
+        } else {
+            return "text/plain; charset=UTF-8";
+        }
     }
-  }
 
-  /**
-   * Either we generate a PDF with an error message or we generate data for a CSV file, but if your
-   * expecting to get JasperReport data from this class, it won't work.
-   *
-   * @see org.openelisglobal.reports.action.implementation.IReportCreator#getReportDataSource()
-   */
-  @Override
-  public JRDataSource getReportDataSource() throws IllegalStateException {
-    if (!initialized) {
-      throw new IllegalStateException("initializeReport not called first");
+    /**
+     * Either we generate a PDF with an error message or we generate data for a CSV
+     * file, but if your expecting to get JasperReport data from this class, it
+     * won't work.
+     *
+     * @see org.openelisglobal.reports.action.implementation.IReportCreator#getReportDataSource()
+     */
+    @Override
+    public JRDataSource getReportDataSource() throws IllegalStateException {
+        if (!initialized) {
+            throw new IllegalStateException("initializeReport not called first");
+        }
+        if (errorFound) {
+            return new JRBeanCollectionDataSource(errorMsgs);
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
-    if (errorFound) {
-      return new JRBeanCollectionDataSource(errorMsgs);
-    } else {
-      throw new UnsupportedOperationException();
+
+    /**
+     * This Report can not be sent to JasperReports
+     *
+     * @see net.sf.jasperreports.engine.JRDataSource#getFieldValue(net.sf.jasperreports.engine.JRField)
+     */
+    @Override
+    public Object getFieldValue(JRField arg0) throws JRException {
+        throw new UnsupportedOperationException();
     }
-  }
 
-  /**
-   * This Report can not be sent to JasperReports
-   *
-   * @see
-   *     net.sf.jasperreports.engine.JRDataSource#getFieldValue(net.sf.jasperreports.engine.JRField)
-   */
-  @Override
-  public Object getFieldValue(JRField arg0) throws JRException {
-    throw new UnsupportedOperationException();
-  }
-
-  /**
-   * This Report can not be sent to JasperReports
-   *
-   * @see net.sf.jasperreports.engine.JRDataSource#next()
-   */
-  @Override
-  public boolean next() throws JRException {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * This Report can not be sent to JasperReports
+     *
+     * @see net.sf.jasperreports.engine.JRDataSource#next()
+     */
+    @Override
+    public boolean next() throws JRException {
+        throw new UnsupportedOperationException();
+    }
 }

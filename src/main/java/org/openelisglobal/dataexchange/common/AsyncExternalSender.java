@@ -19,13 +19,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class AsyncExternalSender implements IAsyncExternalSender {
 
-  @Override
-  @Async
-  public void sendMessage(
-      IExternalSender sender, ITransmissionResponseHandler responseHandler, String msg) {
-    sender.sendMessage();
-    if (responseHandler != null) {
-      responseHandler.handleResponse(sender.getSendResponse(), sender.getErrors(), msg);
+    @Override
+    @Async
+    public void sendMessage(IExternalSender sender, ITransmissionResponseHandler responseHandler, String msg) {
+        sender.sendMessage();
+        if (responseHandler != null) {
+            responseHandler.handleResponse(sender.getSendResponse(), sender.getErrors(), msg);
+        }
     }
-  }
 }

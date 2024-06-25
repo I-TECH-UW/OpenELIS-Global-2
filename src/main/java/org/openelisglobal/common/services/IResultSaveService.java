@@ -17,9 +17,9 @@ import java.util.List;
 import org.openelisglobal.result.action.util.ResultSet;
 
 public interface IResultSaveService {
-  public String getCurrentUserId();
+    public String getCurrentUserId();
 
-  public List<ResultSet> getNewResults();
+    public List<ResultSet> getNewResults();
 
-  public List<ResultSet> getModifiedResults();
+    public List<ResultSet> getModifiedResults();
 }

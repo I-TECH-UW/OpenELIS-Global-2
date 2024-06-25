@@ -17,47 +17,47 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class TypeOfTestResult extends BaseObject<String> {
 
-  private String id;
+    private String id;
 
-  private String description;
+    private String description;
 
-  private String testResultType;
+    private String testResultType;
 
-  private String hl7Value;
+    private String hl7Value;
 
-  public String getHl7Value() {
-    return hl7Value;
-  }
+    public String getHl7Value() {
+        return hl7Value;
+    }
 
-  public void setHl7Value(String hl7Value) {
-    this.hl7Value = hl7Value;
-  }
+    public void setHl7Value(String hl7Value) {
+        this.hl7Value = hl7Value;
+    }
 
-  public TypeOfTestResult() {
-    super();
-  }
+    public TypeOfTestResult() {
+        super();
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public String getTestResultType() {
-    return testResultType;
-  }
+    public String getTestResultType() {
+        return testResultType;
+    }
 
-  public void setTestResultType(String testResultType) {
-    this.testResultType = testResultType;
-  }
+    public void setTestResultType(String testResultType) {
+        this.testResultType = testResultType;
+    }
 }
