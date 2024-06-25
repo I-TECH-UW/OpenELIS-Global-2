@@ -20,60 +20,55 @@ import org.openelisglobal.program.valueholder.cytology.CytologyDiagnosis.Diagnos
 @Table(name = "cytology_diagnosis_result_map")
 public class CytologyDiagnosisCategoryResultsMap extends BaseObject<Integer> {
 
-  @Id
-  @Column(name = "id")
-  @GeneratedValue(
-      strategy = GenerationType.SEQUENCE,
-      generator = "cytology_diagnosis_result_map_generator")
-  @SequenceGenerator(
-      name = "cytology_diagnosis_result_map_generator",
-      sequenceName = "cytology_diagnosis_result_map_seq",
-      allocationSize = 1)
-  private Integer id;
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cytology_diagnosis_result_map_generator")
+    @SequenceGenerator(name = "cytology_diagnosis_result_map_generator", sequenceName = "cytology_diagnosis_result_map_seq", allocationSize = 1)
+    private Integer id;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "category")
-  private DiagnosisCategory category;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category")
+    private DiagnosisCategory category;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "result_type")
-  private CytologyDiagnosisResultType resultType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "result_type")
+    private CytologyDiagnosisResultType resultType;
 
-  @Convert(converter = StringListConverter.class)
-  @Column(name = "results")
-  private List<String> results;
+    @Convert(converter = StringListConverter.class)
+    @Column(name = "results")
+    private List<String> results;
 
-  @Override
-  public Integer getId() {
-    return id;
-  }
+    @Override
+    public Integer getId() {
+        return id;
+    }
 
-  @Override
-  public void setId(Integer id) {
-    this.id = id;
-  }
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-  public List<String> getResults() {
-    return results;
-  }
+    public List<String> getResults() {
+        return results;
+    }
 
-  public void setResults(List<String> results) {
-    this.results = results;
-  }
+    public void setResults(List<String> results) {
+        this.results = results;
+    }
 
-  public CytologyDiagnosisResultType getResultType() {
-    return resultType;
-  }
+    public CytologyDiagnosisResultType getResultType() {
+        return resultType;
+    }
 
-  public void setResultType(CytologyDiagnosisResultType resultType) {
-    this.resultType = resultType;
-  }
+    public void setResultType(CytologyDiagnosisResultType resultType) {
+        this.resultType = resultType;
+    }
 
-  public DiagnosisCategory getCategory() {
-    return category;
-  }
+    public DiagnosisCategory getCategory() {
+        return category;
+    }
 
-  public void setCategory(DiagnosisCategory category) {
-    this.category = category;
-  }
+    public void setCategory(DiagnosisCategory category) {
+        this.category = category;
+    }
 }

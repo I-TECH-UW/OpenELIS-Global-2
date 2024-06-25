@@ -19,5 +19,5 @@ import org.openelisglobal.referral.valueholder.ReferralType;
 
 public interface ReferralTypeDAO extends BaseDAO<ReferralType, String> {
 
-  public ReferralType getReferralTypeByName(String name) throws LIMSRuntimeException;
+    public ReferralType getReferralTypeByName(String name) throws LIMSRuntimeException;
 }

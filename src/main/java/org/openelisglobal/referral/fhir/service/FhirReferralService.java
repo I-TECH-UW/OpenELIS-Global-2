@@ -7,12 +7,13 @@ import org.openelisglobal.referral.valueholder.Referral;
 
 public interface FhirReferralService {
 
-  void setReferralResult(ReferralResultsImportObjects resultsImport);
+    void setReferralResult(ReferralResultsImportObjects resultsImport);
 
-  Bundle referAnalysisesToOrganization(Referral referral) throws FhirLocalPersistingException;
+    Bundle referAnalysisesToOrganization(Referral referral) throws FhirLocalPersistingException;
 
-  //    Bundle cancelReferralToOrganization(String organizationId, String sampleId, List<String>
-  // analysisIds)
-  //            throws FhirLocalPersistingException;
+    // Bundle cancelReferralToOrganization(String organizationId, String sampleId,
+    // List<String>
+    // analysisIds)
+    // throws FhirLocalPersistingException;
 
 }

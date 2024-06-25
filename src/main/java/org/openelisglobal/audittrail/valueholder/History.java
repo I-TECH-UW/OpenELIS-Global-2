@@ -22,71 +22,71 @@ import org.openelisglobal.common.valueholder.BaseObject;
  */
 public class History extends BaseObject<String> {
 
-  private String id;
-  private String referenceId;
-  private String referenceTable;
-  private Timestamp timestamp;
-  private String activity;
-  private byte[] changes;
-  private String sys_user_id;
+    private String id;
+    private String referenceId;
+    private String referenceTable;
+    private Timestamp timestamp;
+    private String activity;
+    private byte[] changes;
+    private String sys_user_id;
 
-  @Override
-  public String getSysUserId() {
-    return sys_user_id;
-  }
+    @Override
+    public String getSysUserId() {
+        return sys_user_id;
+    }
 
-  @Override
-  public void setSysUserId(String sys_user_id) {
-    this.sys_user_id = sys_user_id;
-  }
+    @Override
+    public void setSysUserId(String sys_user_id) {
+        this.sys_user_id = sys_user_id;
+    }
 
-  @Override
-  public String getId() {
-    return id;
-  }
+    @Override
+    public String getId() {
+        return id;
+    }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getReferenceId() {
-    return referenceId;
-  }
+    public String getReferenceId() {
+        return referenceId;
+    }
 
-  public void setReferenceId(String referenceId) {
-    this.referenceId = referenceId;
-  }
+    public void setReferenceId(String referenceId) {
+        this.referenceId = referenceId;
+    }
 
-  public String getReferenceTable() {
-    return referenceTable;
-  }
+    public String getReferenceTable() {
+        return referenceTable;
+    }
 
-  public void setReferenceTable(String referenceTable) {
-    this.referenceTable = referenceTable;
-  }
+    public void setReferenceTable(String referenceTable) {
+        this.referenceTable = referenceTable;
+    }
 
-  public Timestamp getTimestamp() {
-    return timestamp;
-  }
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
 
-  public void setTimestamp(Timestamp timestamp) {
-    this.timestamp = timestamp;
-  }
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
 
-  public String getActivity() {
-    return activity;
-  }
+    public String getActivity() {
+        return activity;
+    }
 
-  public void setActivity(String activity) {
-    this.activity = activity;
-  }
+    public void setActivity(String activity) {
+        this.activity = activity;
+    }
 
-  public byte[] getChanges() {
-    return changes;
-  }
+    public byte[] getChanges() {
+        return changes;
+    }
 
-  public void setChanges(byte[] changes) {
-    this.changes = changes;
-  }
+    public void setChanges(byte[] changes) {
+        this.changes = changes;
+    }
 }

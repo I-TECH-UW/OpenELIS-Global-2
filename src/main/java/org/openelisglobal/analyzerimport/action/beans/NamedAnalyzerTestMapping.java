@@ -17,49 +17,48 @@ package org.openelisglobal.analyzerimport.action.beans;
 
 public class NamedAnalyzerTestMapping {
 
-  private String analyzerName;
-  private String analyzerTestName;
-  private String actualTestName;
-  private String uniqueId;
-  private static final String uniqueIdSeperator = "#";
+    private String analyzerName;
+    private String analyzerTestName;
+    private String actualTestName;
+    private String uniqueId;
+    private static final String uniqueIdSeperator = "#";
 
-  public String getAnalyzerName() {
-    return analyzerName;
-  }
-
-  public void setAnalyzerName(String analyzerName) {
-    this.analyzerName = analyzerName;
-  }
-
-  public String getAnalyzerTestName() {
-    return analyzerTestName;
-  }
-
-  public void setAnalyzerTestName(String analyzerTestName) {
-    this.analyzerTestName = analyzerTestName;
-  }
-
-  public String getActualTestName() {
-    return actualTestName;
-  }
-
-  public void setActualTestName(String actualTestName) {
-    this.actualTestName = actualTestName;
-  }
-
-  public void setUniqueId(String uniqueId) {
-    this.uniqueId = uniqueId;
-  }
-
-  public String getUniqueId() {
-    if (uniqueId == null) {
-      uniqueId =
-          analyzerName + uniqueIdSeperator + analyzerTestName + uniqueIdSeperator + actualTestName;
+    public String getAnalyzerName() {
+        return analyzerName;
     }
-    return uniqueId;
-  }
 
-  public static String getUniqueIdSeperator() {
-    return uniqueIdSeperator;
-  }
+    public void setAnalyzerName(String analyzerName) {
+        this.analyzerName = analyzerName;
+    }
+
+    public String getAnalyzerTestName() {
+        return analyzerTestName;
+    }
+
+    public void setAnalyzerTestName(String analyzerTestName) {
+        this.analyzerTestName = analyzerTestName;
+    }
+
+    public String getActualTestName() {
+        return actualTestName;
+    }
+
+    public void setActualTestName(String actualTestName) {
+        this.actualTestName = actualTestName;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
+    public String getUniqueId() {
+        if (uniqueId == null) {
+            uniqueId = analyzerName + uniqueIdSeperator + analyzerTestName + uniqueIdSeperator + actualTestName;
+        }
+        return uniqueId;
+    }
+
+    public static String getUniqueIdSeperator() {
+        return uniqueIdSeperator;
+    }
 }

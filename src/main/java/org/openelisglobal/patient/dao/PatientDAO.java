@@ -21,44 +21,46 @@ import org.openelisglobal.person.valueholder.Person;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface PatientDAO extends BaseDAO<Patient, String> {
 
-  //	public boolean insertData(Patient patient) throws LIMSRuntimeException;
+    // public boolean insertData(Patient patient) throws LIMSRuntimeException;
 
-  //	public void deleteData(List patients) throws LIMSRuntimeException;
+    // public void deleteData(List patients) throws LIMSRuntimeException;
 
-  List<Patient> getAllPatients() throws LIMSRuntimeException;
+    List<Patient> getAllPatients() throws LIMSRuntimeException;
 
-  List<Patient> getPageOfPatients(int startingRecNo) throws LIMSRuntimeException;
+    List<Patient> getPageOfPatients(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(Patient patient) throws LIMSRuntimeException;
+    void getData(Patient patient) throws LIMSRuntimeException;
 
-  //	public void updateData(Patient patient) throws LIMSRuntimeException;
+    // public void updateData(Patient patient) throws LIMSRuntimeException;
 
-  boolean externalIDExists(String patientExternalID);
+    boolean externalIDExists(String patientExternalID);
 
-  Patient readPatient(String idString);
+    Patient readPatient(String idString);
 
-  Patient getPatientByPerson(Person person) throws LIMSRuntimeException;
+    Patient getPatientByPerson(Person person) throws LIMSRuntimeException;
 
-  Patient getPatientByNationalId(String nationalId);
+    Patient getPatientByNationalId(String nationalId);
 
-  Patient getPatientBySubjectNumber(String subjectNumber);
+    Patient getPatientBySubjectNumber(String subjectNumber);
 
-  List<Patient> getPatientsByNationalId(String nationalId) throws LIMSRuntimeException;
+    List<Patient> getPatientsByNationalId(String nationalId) throws LIMSRuntimeException;
 
-  Patient getPatientByExternalId(String externalId);
+    Patient getPatientByExternalId(String externalId);
 
-  List<String> getPatientIdentityBySampleStatusIdAndProject(
-      List<Integer> inclusiveStatusIdList, String study) throws LIMSRuntimeException;
+    List<String> getPatientIdentityBySampleStatusIdAndProject(List<Integer> inclusiveStatusIdList, String study)
+            throws LIMSRuntimeException;
 
-  Patient getData(String patientId) throws LIMSRuntimeException;
+    Patient getData(String patientId) throws LIMSRuntimeException;
 
-  List<Patient> getAllMissingFhirUuid();
+    List<Patient> getAllMissingFhirUuid();
 
-  Patient getByExternalId(String id);
+    Patient getByExternalId(String id);
 }

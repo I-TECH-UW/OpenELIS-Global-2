@@ -20,31 +20,33 @@ import org.openelisglobal.scriptlet.valueholder.Scriptlet;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface ScriptletDAO extends BaseDAO<Scriptlet, String> {
 
-  //	public boolean insertData(Scriptlet scriptlet) throws LIMSRuntimeException;
+    // public boolean insertData(Scriptlet scriptlet) throws LIMSRuntimeException;
 
-  //	public void deleteData(List scriptlets) throws LIMSRuntimeException;
+    // public void deleteData(List scriptlets) throws LIMSRuntimeException;
 
-  List<Scriptlet> getAllScriptlets() throws LIMSRuntimeException;
+    List<Scriptlet> getAllScriptlets() throws LIMSRuntimeException;
 
-  List<Scriptlet> getPageOfScriptlets(int startingRecNo) throws LIMSRuntimeException;
+    List<Scriptlet> getPageOfScriptlets(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(Scriptlet scriptlet) throws LIMSRuntimeException;
+    void getData(Scriptlet scriptlet) throws LIMSRuntimeException;
 
-  //	public void updateData(Scriptlet scriptlet) throws LIMSRuntimeException;
+    // public void updateData(Scriptlet scriptlet) throws LIMSRuntimeException;
 
-  List<Scriptlet> getScriptlets(String filter) throws LIMSRuntimeException;
+    List<Scriptlet> getScriptlets(String filter) throws LIMSRuntimeException;
 
-  Scriptlet getScriptletByName(Scriptlet scriptlet) throws LIMSRuntimeException;
+    Scriptlet getScriptletByName(Scriptlet scriptlet) throws LIMSRuntimeException;
 
-  Integer getTotalScriptletCount() throws LIMSRuntimeException;
+    Integer getTotalScriptletCount() throws LIMSRuntimeException;
 
-  Scriptlet getScriptletById(String scriptletId) throws LIMSRuntimeException;
+    Scriptlet getScriptletById(String scriptletId) throws LIMSRuntimeException;
 
-  boolean duplicateScriptletExists(Scriptlet scriptlet) throws LIMSRuntimeException;
+    boolean duplicateScriptletExists(Scriptlet scriptlet) throws LIMSRuntimeException;
 }

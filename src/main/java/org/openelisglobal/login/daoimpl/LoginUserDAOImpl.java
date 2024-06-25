@@ -35,101 +35,92 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class LoginUserDAOImpl extends BaseDAOImpl<LoginUser, Integer> implements LoginUserDAO {
 
-  public LoginUserDAOImpl() {
-    super(LoginUser.class);
-  }
-
-  @Override
-  public boolean duplicateLoginNameExists(LoginUser login) throws LIMSRuntimeException {
-    try {
-
-      List<LoginUser> list = new ArrayList<>();
-
-      String sql =
-          "from LoginUser l where trim(lower(l.loginName)) = :loginName and l.id != :loginId";
-      Query<LoginUser> query =
-          entityManager.unwrap(Session.class).createQuery(sql, LoginUser.class);
-      query.setParameter("loginName", login.getLoginName().toLowerCase().trim());
-
-      Integer loginId = 0;
-      if (null != login.getId()) {
-        loginId = login.getId();
-      }
-
-      query.setParameter("loginId", loginId);
-
-      list = query.list();
-
-      return list.size() > 0;
-
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in duplicateLoginNameExists()", e);
-    }
-  }
-
-  /**
-   * Get the password expiration day
-   *
-   * @param login the login object
-   * @return type integer the password expiration day
-   */
-  @Override
-  @Transactional
-  public int getPasswordExpiredDayNo(LoginUser login) throws LIMSRuntimeException {
-    int retVal = 0;
-    try {
-      String sql =
-          "SELECT \n"
-              + "                    floor(current_date-password_expired_dt)*-1 as cnt\n"
-              + "                FROM Login_User l where l.LOGIN_NAME = :loginName ";
-      Object obj =
-          entityManager
-              .unwrap(Session.class)
-              .createNativeQuery(sql)
-              .setParameter("loginName", login.getLoginName())
-              .uniqueResult();
-      if (obj != null) {
-        retVal = (int) Float.parseFloat(obj.toString());
-      }
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in getPasswordExpiredDayNo()", e);
+    public LoginUserDAOImpl() {
+        super(LoginUser.class);
     }
 
-    return retVal;
-  }
+    @Override
+    public boolean duplicateLoginNameExists(LoginUser login) throws LIMSRuntimeException {
+        try {
 
-  /**
-   * Get the system user id
-   *
-   * @param login the login object
-   * @return type integer the system user id
-   */
-  @Override
-  @Transactional
-  public int getSystemUserId(LoginUser login) throws LIMSRuntimeException {
-    int retVal = 0;
-    try {
-      String sql =
-          "SELECT id from System_User su Where su.login_name = :loginName and su.is_active='Y'";
-      NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
-      query.setParameter("loginName", login.getLoginName());
-      Object obj = query.uniqueResult();
+            List<LoginUser> list = new ArrayList<>();
 
-      if (obj != null) {
-        retVal = Integer.parseInt(obj.toString());
-      }
+            String sql = "from LoginUser l where trim(lower(l.loginName)) = :loginName and l.id != :loginId";
+            Query<LoginUser> query = entityManager.unwrap(Session.class).createQuery(sql, LoginUser.class);
+            query.setParameter("loginName", login.getLoginName().toLowerCase().trim());
 
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in getSystemUserId()", e);
-    } finally {
+            Integer loginId = 0;
+            if (null != login.getId()) {
+                loginId = login.getId();
+            }
+
+            query.setParameter("loginId", loginId);
+
+            list = query.list();
+
+            return list.size() > 0;
+
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in duplicateLoginNameExists()", e);
+        }
     }
 
-    return retVal;
-  }
+    /**
+     * Get the password expiration day
+     *
+     * @param login the login object
+     * @return type integer the password expiration day
+     */
+    @Override
+    @Transactional
+    public int getPasswordExpiredDayNo(LoginUser login) throws LIMSRuntimeException {
+        int retVal = 0;
+        try {
+            String sql = "SELECT \n" + "                    floor(current_date-password_expired_dt)*-1 as cnt\n"
+                    + "                FROM Login_User l where l.LOGIN_NAME = :loginName ";
+            Object obj = entityManager.unwrap(Session.class).createNativeQuery(sql)
+                    .setParameter("loginName", login.getLoginName()).uniqueResult();
+            if (obj != null) {
+                retVal = (int) Float.parseFloat(obj.toString());
+            }
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in getPasswordExpiredDayNo()", e);
+        }
+
+        return retVal;
+    }
+
+    /**
+     * Get the system user id
+     *
+     * @param login the login object
+     * @return type integer the system user id
+     */
+    @Override
+    @Transactional
+    public int getSystemUserId(LoginUser login) throws LIMSRuntimeException {
+        int retVal = 0;
+        try {
+            String sql = "SELECT id from System_User su Where su.login_name = :loginName and su.is_active='Y'";
+            NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            query.setParameter("loginName", login.getLoginName());
+            Object obj = query.uniqueResult();
+
+            if (obj != null) {
+                retVal = Integer.parseInt(obj.toString());
+            }
+
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in getSystemUserId()", e);
+        } finally {
+        }
+
+        return retVal;
+    }
 }

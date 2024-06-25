@@ -6,11 +6,11 @@ import org.openelisglobal.image.valueholder.Image;
 
 public interface ImageService extends BaseObjectService<Image, String> {
 
-  String getFullPreviewPath();
+    String getFullPreviewPath();
 
-  String getImageNameFilePath(String imageName);
+    String getImageNameFilePath(String imageName);
 
-  Image getImageByDescription(String imageDescription);
+    Image getImageByDescription(String imageDescription);
 
-  Optional<Image> getImageBySiteInfoName(String imageName);
+    Optional<Image> getImageBySiteInfoName(String imageName);
 }

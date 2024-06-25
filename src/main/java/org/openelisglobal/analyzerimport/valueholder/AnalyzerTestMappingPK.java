@@ -20,37 +20,39 @@ import java.util.Objects;
 
 public class AnalyzerTestMappingPK implements Serializable {
 
-  private static final long serialVersionUID = 1L;
-  private String analyzerId;
-  private String analyzerTestName;
+    private static final long serialVersionUID = 1L;
+    private String analyzerId;
+    private String analyzerTestName;
 
-  public String getAnalyzerId() {
-    return analyzerId;
-  }
+    public String getAnalyzerId() {
+        return analyzerId;
+    }
 
-  public void setAnalyzerId(String analyzerId) {
-    this.analyzerId = analyzerId;
-  }
+    public void setAnalyzerId(String analyzerId) {
+        this.analyzerId = analyzerId;
+    }
 
-  public String getAnalyzerTestName() {
-    return analyzerTestName;
-  }
+    public String getAnalyzerTestName() {
+        return analyzerTestName;
+    }
 
-  public void setAnalyzerTestName(String analyzerTestName) {
-    this.analyzerTestName = analyzerTestName;
-  }
+    public void setAnalyzerTestName(String analyzerTestName) {
+        this.analyzerTestName = analyzerTestName;
+    }
 
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
-    AnalyzerTestMappingPK that = (AnalyzerTestMappingPK) o;
+        AnalyzerTestMappingPK that = (AnalyzerTestMappingPK) o;
 
-    return Objects.equals(this.analyzerId, that.analyzerId)
-        && Objects.equals(this.analyzerTestName, that.analyzerTestName);
-  }
+        return Objects.equals(this.analyzerId, that.analyzerId)
+                && Objects.equals(this.analyzerTestName, that.analyzerTestName);
+    }
 
-  public int hashCode() {
-    return Objects.hash(analyzerId, analyzerTestName);
-  }
+    public int hashCode() {
+        return Objects.hash(analyzerId, analyzerTestName);
+    }
 }

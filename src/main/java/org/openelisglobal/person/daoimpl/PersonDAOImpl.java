@@ -38,116 +38,115 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class PersonDAOImpl extends BaseDAOImpl<Person, String> implements PersonDAO {
 
-  public PersonDAOImpl() {
-    super(Person.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public void getData(Person person) throws LIMSRuntimeException {
-    try {
-      Person pers = entityManager.unwrap(Session.class).get(Person.class, person.getId());
-      if (pers != null) {
-        PropertyUtils.copyProperties(person, pers);
-      } else {
-        person.setId(null);
-      }
-
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in Person getData()", e);
-    }
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<Person> getAllPersons() throws LIMSRuntimeException {
-    List<Person> list = new Vector<>();
-    try {
-      String sql = "from Person";
-      Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql, Person.class);
-      list = query.list();
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in Person getAllPersons()", e);
+    public PersonDAOImpl() {
+        super(Person.class);
     }
 
-    return list;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(Person person) throws LIMSRuntimeException {
+        try {
+            Person pers = entityManager.unwrap(Session.class).get(Person.class, person.getId());
+            if (pers != null) {
+                PropertyUtils.copyProperties(person, pers);
+            } else {
+                person.setId(null);
+            }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<Person> getPageOfPersons(int startingRecNo) throws LIMSRuntimeException {
-    List<Person> list = new Vector<>();
-    try {
-      // calculate maxRow to be one more than the page size
-      int endingRecNo =
-          startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
-
-      String sql = "from Person t order by t.id";
-      Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql, Person.class);
-      query.setFirstResult(startingRecNo - 1);
-      query.setMaxResults(endingRecNo - 1);
-
-      list = query.list();
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in Person getPageOfPersons()", e);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in Person getData()", e);
+        }
     }
 
-    return list;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<Person> getAllPersons() throws LIMSRuntimeException {
+        List<Person> list = new Vector<>();
+        try {
+            String sql = "from Person";
+            Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql, Person.class);
+            list = query.list();
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in Person getAllPersons()", e);
+        }
 
-  public Person readPerson(String idString) {
-    Person person = null;
-    try {
-      person = entityManager.unwrap(Session.class).get(Person.class, idString);
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in Person readPerson()", e);
+        return list;
     }
 
-    return person;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<Person> getPageOfPersons(int startingRecNo) throws LIMSRuntimeException {
+        List<Person> list = new Vector<>();
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
-  @Override
-  @Transactional(readOnly = true)
-  public Person getPersonByLastName(String lastName) throws LIMSRuntimeException {
-    List<Person> list = null;
-    try {
-      String sql = "from Person p where p.lastName = :lastName";
-      Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql, Person.class);
-      query.setParameter("lastName", lastName);
+            String sql = "from Person t order by t.id";
+            Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql, Person.class);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
 
-      list = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in Person getPersonByLastName()", e);
+            list = query.list();
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in Person getPageOfPersons()", e);
+        }
+
+        return list;
     }
 
-    if (list.size() > 0) {
-      return list.get(0);
+    public Person readPerson(String idString) {
+        Person person = null;
+        try {
+            person = entityManager.unwrap(Session.class).get(Person.class, idString);
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in Person readPerson()", e);
+        }
+
+        return person;
     }
 
-    return null;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public Person getPersonByLastName(String lastName) throws LIMSRuntimeException {
+        List<Person> list = null;
+        try {
+            String sql = "from Person p where p.lastName = :lastName";
+            Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql, Person.class);
+            query.setParameter("lastName", lastName);
 
-  @Override
-  @Transactional(readOnly = true)
-  public Person getPersonById(String personId) throws LIMSRuntimeException {
-    String sql = "From Person p where id = :personId";
-    try {
-      Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql, Person.class);
-      query.setParameter("personId", Integer.parseInt(personId));
-      Person person = query.uniqueResult();
-      return person;
-    } catch (HibernateException e) {
-      handleException(e, "getPersonById");
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in Person getPersonByLastName()", e);
+        }
+
+        if (list.size() > 0) {
+            return list.get(0);
+        }
+
+        return null;
     }
-    return null;
-  }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Person getPersonById(String personId) throws LIMSRuntimeException {
+        String sql = "From Person p where id = :personId";
+        try {
+            Query<Person> query = entityManager.unwrap(Session.class).createQuery(sql, Person.class);
+            query.setParameter("personId", Integer.parseInt(personId));
+            Person person = query.uniqueResult();
+            return person;
+        } catch (HibernateException e) {
+            handleException(e, "getPersonById");
+        }
+        return null;
+    }
 }

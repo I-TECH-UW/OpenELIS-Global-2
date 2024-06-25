@@ -22,28 +22,28 @@ import org.springframework.stereotype.Service;
 @Service
 public class AddressService {
 
-  public static String getAddresslineLabel1() {
-    return ConfigurationProperties.getInstance()
-        .getPropertyValue(ConfigurationProperties.Property.Addressline1label);
-  }
+    public static String getAddresslineLabel1() {
+        return ConfigurationProperties.getInstance()
+                .getPropertyValue(ConfigurationProperties.Property.Addressline1label);
+    }
 
-  public static String getAddresslineLabel2() {
-    return ConfigurationProperties.getInstance()
-        .getPropertyValue(ConfigurationProperties.Property.Addressline2label);
-  }
+    public static String getAddresslineLabel2() {
+        return ConfigurationProperties.getInstance()
+                .getPropertyValue(ConfigurationProperties.Property.Addressline2label);
+    }
 
-  public static String getAddresslineLabel3() {
-    return ConfigurationProperties.getInstance()
-        .getPropertyValue(ConfigurationProperties.Property.Addressline3label);
-  }
+    public static String getAddresslineLabel3() {
+        return ConfigurationProperties.getInstance()
+                .getPropertyValue(ConfigurationProperties.Property.Addressline3label);
+    }
 
-  public static String getGeographicUnitLabel1() {
-    return ConfigurationProperties.getInstance()
-        .getPropertyValue(ConfigurationProperties.Property.GeographicUnit1Label);
-  }
+    public static String getGeographicUnitLabel1() {
+        return ConfigurationProperties.getInstance()
+                .getPropertyValue(ConfigurationProperties.Property.GeographicUnit1Label);
+    }
 
-  public static String getGeographicUnitLabel2() {
-    return ConfigurationProperties.getInstance()
-        .getPropertyValue(ConfigurationProperties.Property.GeographicUnit2Label);
-  }
+    public static String getGeographicUnitLabel2() {
+        return ConfigurationProperties.getInstance()
+                .getPropertyValue(ConfigurationProperties.Property.GeographicUnit2Label);
+    }
 }

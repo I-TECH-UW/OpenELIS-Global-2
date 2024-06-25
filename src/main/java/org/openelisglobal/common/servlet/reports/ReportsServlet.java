@@ -38,68 +38,66 @@ import org.openelisglobal.spring.util.SpringContext;
  */
 public class ReportsServlet extends HttpServlet {
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
-   * javax.servlet.http.HttpServletResponse)
-   */
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
-    // check for authentication
-    UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
-    if (userModuleService.isSessionExpired(request)) {
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      response.setContentType("text/html; charset=utf-8");
-      response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
-      return;
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
+     * javax.servlet.http.HttpServletResponse)
+     */
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        // check for authentication
+        UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
+        if (userModuleService.isSessionExpired(request)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("text/html; charset=utf-8");
+            response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
+            return;
+        }
+        String reportsProvider = request.getParameter("provider");
+        Map paramMap = request.getParameterMap();
+
+        HashMap parameters = new HashMap();
+
+        Set keySet = paramMap.keySet();
+
+        Collection values = paramMap.values();
+
+        Iterator itKey = keySet.iterator();
+
+        List keyList = new ArrayList();
+
+        while (itKey.hasNext()) {
+            String key = (String) itKey.next();
+            keyList.add(key);
+        }
+
+        Iterator itVal = values.iterator();
+
+        List valList = new ArrayList();
+
+        while (itVal.hasNext()) {
+            String[] vals = (String[]) itVal.next();
+            valList.add(vals[0]);
+        }
+
+        // populate HashMap
+        for (int i = 0; i < keyList.size(); i++) {
+            parameters.put(keyList.get(i), valList.get(i));
+        }
+
+        BaseReportsProvider reportProvider = ReportsProviderFactory.getInstance().getReportsProvider(reportsProvider);
+
+        reportProvider.setServlet(this);
+        // bugzilla 2274: added error handling
+        boolean success = reportProvider.processRequest(parameters, request, response);
+
+        // if unsuccessful route back to reports menu
+        if (!success) {
+            ServletContext context = getServletContext();
+            RequestDispatcher dispatcher = context.getRequestDispatcher("/MainMenu");
+            dispatcher.forward(request, response);
+        }
     }
-    String reportsProvider = request.getParameter("provider");
-    Map paramMap = request.getParameterMap();
-
-    HashMap parameters = new HashMap();
-
-    Set keySet = paramMap.keySet();
-
-    Collection values = paramMap.values();
-
-    Iterator itKey = keySet.iterator();
-
-    List keyList = new ArrayList();
-
-    while (itKey.hasNext()) {
-      String key = (String) itKey.next();
-      keyList.add(key);
-    }
-
-    Iterator itVal = values.iterator();
-
-    List valList = new ArrayList();
-
-    while (itVal.hasNext()) {
-      String[] vals = (String[]) itVal.next();
-      valList.add(vals[0]);
-    }
-
-    // populate HashMap
-    for (int i = 0; i < keyList.size(); i++) {
-      parameters.put(keyList.get(i), valList.get(i));
-    }
-
-    BaseReportsProvider reportProvider =
-        ReportsProviderFactory.getInstance().getReportsProvider(reportsProvider);
-
-    reportProvider.setServlet(this);
-    // bugzilla 2274: added error handling
-    boolean success = reportProvider.processRequest(parameters, request, response);
-
-    // if unsuccessful route back to reports menu
-    if (!success) {
-      ServletContext context = getServletContext();
-      RequestDispatcher dispatcher = context.getRequestDispatcher("/MainMenu");
-      dispatcher.forward(request, response);
-    }
-  }
 }

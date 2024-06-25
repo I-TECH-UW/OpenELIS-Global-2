@@ -5,5 +5,5 @@ import org.openelisglobal.menu.valueholder.AdminMenuItem;
 
 public interface AdminMenuItemService {
 
-  List<AdminMenuItem> getActiveItemsSorted();
+    List<AdminMenuItem> getActiveItemsSorted();
 }

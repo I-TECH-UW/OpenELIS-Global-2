@@ -9,22 +9,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class QaObservationServiceImpl extends AuditableBaseObjectServiceImpl<QaObservation, String>
-    implements QaObservationService {
-  @Autowired protected QaObservationDAO baseObjectDAO;
+        implements QaObservationService {
+    @Autowired
+    protected QaObservationDAO baseObjectDAO;
 
-  QaObservationServiceImpl() {
-    super(QaObservation.class);
-  }
+    QaObservationServiceImpl() {
+        super(QaObservation.class);
+    }
 
-  @Override
-  protected QaObservationDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected QaObservationDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public QaObservation getQaObservationByTypeAndObserved(
-      String typeName, String observedType, String observedId) {
-    return getBaseObjectDAO().getQaObservationByTypeAndObserved(typeName, observedType, observedId);
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public QaObservation getQaObservationByTypeAndObserved(String typeName, String observedType, String observedId) {
+        return getBaseObjectDAO().getQaObservationByTypeAndObserved(typeName, observedType, observedId);
+    }
 }

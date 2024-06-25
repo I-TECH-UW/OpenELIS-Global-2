@@ -7,19 +7,19 @@ import org.openelisglobal.qaevent.valueholder.NcEvent;
 
 public interface NonConformingEventWorker {
 
-  NcEvent create(String labOrderId, List<String> specimens, String systemUserId, String nceNumber);
+    NcEvent create(String labOrderId, List<String> specimens, String systemUserId, String nceNumber);
 
-  boolean update(NonConformingEventForm form);
+    boolean update(NonConformingEventForm form);
 
-  boolean updateFollowUp(NonConformingEventForm form);
+    boolean updateFollowUp(NonConformingEventForm form);
 
-  void initFormForFollowUp(String nceNumber, NonConformingEventForm form)
-      throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
+    void initFormForFollowUp(String nceNumber, NonConformingEventForm form)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
 
-  void initFormForCorrectiveAction(String nceNumber, NonConformingEventForm form)
-      throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
+    void initFormForCorrectiveAction(String nceNumber, NonConformingEventForm form)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
 
-  boolean updateCorrectiveAction(NonConformingEventForm form);
+    boolean updateCorrectiveAction(NonConformingEventForm form);
 
-  boolean resolveNCEvent(NonConformingEventForm form);
+    boolean resolveNCEvent(NonConformingEventForm form);
 }

@@ -18,51 +18,51 @@ import org.openelisglobal.common.valueholder.EnumValueItemImpl;
 // bugzilla 2571 go through ReferenceTablesService to get reference tables info
 public class ReferenceTables extends EnumValueItemImpl {
 
-  private String id;
+    private String id;
 
-  private String tableName;
+    private String tableName;
 
-  private String keepHistory;
+    private String keepHistory;
 
-  private String isHl7Encoded;
+    private String isHl7Encoded;
 
-  public ReferenceTables() {
-    super();
-  }
+    public ReferenceTables() {
+        super();
+    }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  @Override
-  public String getId() {
-    return id;
-  }
+    @Override
+    public String getId() {
+        return id;
+    }
 
-  public String getTableName() {
-    return tableName;
-  }
+    public String getTableName() {
+        return tableName;
+    }
 
-  public void setTableName(String tableName) {
-    this.tableName = tableName;
-    // bugzilla 2571 go through ReferenceTablesService to get reference tables info
-    name = tableName;
-  }
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+        // bugzilla 2571 go through ReferenceTablesService to get reference tables info
+        name = tableName;
+    }
 
-  public String getKeepHistory() {
-    return keepHistory;
-  }
+    public String getKeepHistory() {
+        return keepHistory;
+    }
 
-  public void setKeepHistory(String keepHistory) {
-    this.keepHistory = keepHistory;
-  }
+    public void setKeepHistory(String keepHistory) {
+        this.keepHistory = keepHistory;
+    }
 
-  public String getIsHl7Encoded() {
-    return isHl7Encoded;
-  }
+    public String getIsHl7Encoded() {
+        return isHl7Encoded;
+    }
 
-  public void setIsHl7Encoded(String isHl7Encoded) {
-    this.isHl7Encoded = isHl7Encoded;
-  }
+    public void setIsHl7Encoded(String isHl7Encoded) {
+        this.isHl7Encoded = isHl7Encoded;
+    }
 }

@@ -31,40 +31,40 @@ import org.springframework.stereotype.Component;
 @Component
 public class MalariaResultExporter {
 
-  @Autowired private ReportQueueTypeService reportQueueTypeService;
-  @Autowired private ReportExternalExportService reportExternalExportService;
+    @Autowired
+    private ReportQueueTypeService reportQueueTypeService;
+    @Autowired
+    private ReportExternalExportService reportExternalExportService;
 
-  private String resultReportTypeId;
+    private String resultReportTypeId;
 
-  @PostConstruct
-  private void initializeGlobalVariables() {
-    resultReportTypeId = reportQueueTypeService.getReportQueueTypeByName("malariaCase").getId();
-  }
-
-  @Scheduled(fixedRateString = "#{resultsResendTime}")
-  private void exportResults() {
-    if (shouldReportResults()) {
-      List<ReportExternalExport> reportList =
-          reportExternalExportService.getUnsentReportExports(resultReportTypeId);
-
-      ReportTransmission transmitter = new ReportTransmission();
-      String url =
-          ConfigurationProperties.getInstance().getPropertyValue(Property.malariaCaseReportURL);
-      boolean sendAsychronously = false;
-
-      for (ReportExternalExport report : reportList) {
-        IRowTransmissionResponseHandler responseHandler =
-            (IRowTransmissionResponseHandler) SpringContext.getBean("malariaSuccessReportHandler");
-        responseHandler.setRowId(report.getId());
-        transmitter.sendRawReport(
-            report.getData(), url, sendAsychronously, responseHandler, HTTP_TYPE.POST);
-      }
+    @PostConstruct
+    private void initializeGlobalVariables() {
+        resultReportTypeId = reportQueueTypeService.getReportQueueTypeByName("malariaCase").getId();
     }
-  }
 
-  private boolean shouldReportResults() {
-    String reportResults =
-        ConfigurationProperties.getInstance().getPropertyValueLowerCase(Property.malariaCaseReport);
-    return ("true".equals(reportResults) || "enable".equals(reportResults));
-  }
+    @Scheduled(fixedRateString = "#{resultsResendTime}")
+    private void exportResults() {
+        if (shouldReportResults()) {
+            List<ReportExternalExport> reportList = reportExternalExportService
+                    .getUnsentReportExports(resultReportTypeId);
+
+            ReportTransmission transmitter = new ReportTransmission();
+            String url = ConfigurationProperties.getInstance().getPropertyValue(Property.malariaCaseReportURL);
+            boolean sendAsychronously = false;
+
+            for (ReportExternalExport report : reportList) {
+                IRowTransmissionResponseHandler responseHandler = (IRowTransmissionResponseHandler) SpringContext
+                        .getBean("malariaSuccessReportHandler");
+                responseHandler.setRowId(report.getId());
+                transmitter.sendRawReport(report.getData(), url, sendAsychronously, responseHandler, HTTP_TYPE.POST);
+            }
+        }
+    }
+
+    private boolean shouldReportResults() {
+        String reportResults = ConfigurationProperties.getInstance()
+                .getPropertyValueLowerCase(Property.malariaCaseReport);
+        return ("true".equals(reportResults) || "enable".equals(reportResults));
+    }
 }

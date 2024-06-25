@@ -30,51 +30,48 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class PatientPatientTypeDAOImpl extends BaseDAOImpl<PatientPatientType, String>
-    implements PatientPatientTypeDAO {
+        implements PatientPatientTypeDAO {
 
-  public PatientPatientTypeDAOImpl() {
-    super(PatientPatientType.class);
-  }
-
-  @Transactional(readOnly = true)
-  public PatientPatientType getCurrentPatientPatientType(String id) {
-    PatientPatientType current = null;
-    try {
-      current = entityManager.unwrap(Session.class).get(PatientPatientType.class, id);
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException(
-          "Error in PatientPatientType getCurrentPatientPatientType()", e);
+    public PatientPatientTypeDAOImpl() {
+        super(PatientPatientType.class);
     }
 
-    return current;
-  }
+    @Transactional(readOnly = true)
+    public PatientPatientType getCurrentPatientPatientType(String id) {
+        PatientPatientType current = null;
+        try {
+            current = entityManager.unwrap(Session.class).get(PatientPatientType.class, id);
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in PatientPatientType getCurrentPatientPatientType()", e);
+        }
 
-  @Override
-  @Transactional(readOnly = true)
-  public PatientPatientType getPatientPatientTypeForPatient(String patientId)
-      throws LIMSRuntimeException {
-    List<PatientPatientType> patientTypes;
-
-    try {
-      String sql = "from PatientPatientType pi where pi.patientId = :patientId";
-      Query<PatientPatientType> query =
-          entityManager.unwrap(Session.class).createQuery(sql, PatientPatientType.class);
-      query.setParameter("patientId", Integer.parseInt(patientId));
-
-      patientTypes = query.list();
-    } catch (HibernateException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException(
-          "Error in PatientIdentityDAOImpl getPatientPatientTypeForPatient()", e);
+        return current;
     }
 
-    if (patientTypes.size() > 0) {
-      PatientPatientType patientPatientType = patientTypes.get(0);
+    @Override
+    @Transactional(readOnly = true)
+    public PatientPatientType getPatientPatientTypeForPatient(String patientId) throws LIMSRuntimeException {
+        List<PatientPatientType> patientTypes;
 
-      return patientPatientType;
+        try {
+            String sql = "from PatientPatientType pi where pi.patientId = :patientId";
+            Query<PatientPatientType> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    PatientPatientType.class);
+            query.setParameter("patientId", Integer.parseInt(patientId));
+
+            patientTypes = query.list();
+        } catch (HibernateException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in PatientIdentityDAOImpl getPatientPatientTypeForPatient()", e);
+        }
+
+        if (patientTypes.size() > 0) {
+            PatientPatientType patientPatientType = patientTypes.get(0);
+
+            return patientPatientType;
+        }
+
+        return null;
     }
-
-    return null;
-  }
 }

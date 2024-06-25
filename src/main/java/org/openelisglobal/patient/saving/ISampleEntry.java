@@ -6,11 +6,11 @@ import org.openelisglobal.patient.saving.form.IAccessionerForm;
 
 public interface ISampleEntry extends IAccessioner {
 
-  void setFieldsFromForm(IAccessionerForm form) throws LIMSRuntimeException;
+    void setFieldsFromForm(IAccessionerForm form) throws LIMSRuntimeException;
 
-  void setSysUserId(String sysUserId);
+    void setSysUserId(String sysUserId);
 
-  void setRequest(HttpServletRequest request);
+    void setRequest(HttpServletRequest request);
 
-  boolean canAccession();
+    boolean canAccession();
 }

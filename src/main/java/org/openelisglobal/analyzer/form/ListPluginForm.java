@@ -6,17 +6,17 @@ import org.openelisglobal.validation.annotations.SafeHtml;
 
 public class ListPluginForm extends BaseForm {
 
-  private List<@SafeHtml String> pluginList;
+    private List<@SafeHtml String> pluginList;
 
-  public ListPluginForm() {
-    setFormName("listPluginForm");
-  }
+    public ListPluginForm() {
+        setFormName("listPluginForm");
+    }
 
-  public List<String> getPluginList() {
-    return pluginList;
-  }
+    public List<String> getPluginList() {
+        return pluginList;
+    }
 
-  public void setPluginList(List<String> pluginList) {
-    this.pluginList = pluginList;
-  }
+    public void setPluginList(List<String> pluginList) {
+        this.pluginList = pluginList;
+    }
 }

@@ -22,23 +22,23 @@ import org.openelisglobal.role.valueholder.Role;
 
 public interface RoleDAO extends BaseDAO<Role, String> {
 
-  //	public boolean insertData(Role role) throws LIMSRuntimeException;
+    // public boolean insertData(Role role) throws LIMSRuntimeException;
 
-  //	public void deleteData(List<Role> roles) throws LIMSRuntimeException;
+    // public void deleteData(List<Role> roles) throws LIMSRuntimeException;
 
-  List<Role> getAllRoles() throws LIMSRuntimeException;
+    List<Role> getAllRoles() throws LIMSRuntimeException;
 
-  List<Role> getPageOfRoles(int startingRecNo) throws LIMSRuntimeException;
+    List<Role> getPageOfRoles(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(Role role) throws LIMSRuntimeException;
+    void getData(Role role) throws LIMSRuntimeException;
 
-  //	public void updateData(Role role) throws LIMSRuntimeException;
+    // public void updateData(Role role) throws LIMSRuntimeException;
 
-  List<Role> getReferencingRoles(Role role) throws LIMSRuntimeException;
+    List<Role> getReferencingRoles(Role role) throws LIMSRuntimeException;
 
-  List<Role> getAllActiveRoles() throws LIMSRuntimeException;
+    List<Role> getAllActiveRoles() throws LIMSRuntimeException;
 
-  Role getRoleByName(String name) throws LIMSRuntimeException;
+    Role getRoleByName(String name) throws LIMSRuntimeException;
 
-  Role getRoleById(String roleId) throws LIMSRuntimeException;
+    Role getRoleById(String roleId) throws LIMSRuntimeException;
 }

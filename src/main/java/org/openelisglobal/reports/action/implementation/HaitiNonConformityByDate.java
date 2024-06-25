@@ -18,21 +18,21 @@ import org.openelisglobal.common.util.ConfigurationProperties.Property;
 
 public class HaitiNonConformityByDate extends NonConformityByDate implements IReportCreator {
 
-  public HaitiNonConformityByDate() {}
+    public HaitiNonConformityByDate() {
+    }
 
-  @Override
-  protected String getHeaderName() {
-    return "GeneralHeader.jasper";
-  }
+    @Override
+    protected String getHeaderName() {
+        return "GeneralHeader.jasper";
+    }
 
-  @Override
-  protected void createReportParameters() throws IllegalStateException {
-    super.createReportParameters();
-    reportParameters.put("supportStudy", "false");
-    reportParameters.put("supportService", "false");
-    reportParameters.put("supportSiteSubject", "false");
-    reportParameters.put(
-        "labName1", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName));
-    reportParameters.put("labName2", "");
-  }
+    @Override
+    protected void createReportParameters() throws IllegalStateException {
+        super.createReportParameters();
+        reportParameters.put("supportStudy", "false");
+        reportParameters.put("supportService", "false");
+        reportParameters.put("supportSiteSubject", "false");
+        reportParameters.put("labName1", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName));
+        reportParameters.put("labName2", "");
+    }
 }

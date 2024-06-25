@@ -27,62 +27,61 @@ import org.openelisglobal.test.valueholder.Test;
 
 public class RTNFormMapper extends BaseProjectFormMapper implements IProjectFormMapper {
 
-  private String projectCode = "LRTN";
+    private String projectCode = "LRTN";
 
-  public RTNFormMapper(String projectFormId, IProjectForm form) {
-    super(projectFormId, form);
-  }
-
-  private List<Test> getTests(IProjectForm form) {
-    List<Test> testList = new ArrayList<>();
-
-    if (projectData.getSerologyHIVTest()) {
-      CollectionUtils.addIgnoreNull(testList, createTest("Vironostika", true));
-      CollectionUtils.addIgnoreNull(testList, createTest("Murex Combinaison", true));
-      CollectionUtils.addIgnoreNull(testList, createTest("Murex", true));
-      CollectionUtils.addIgnoreNull(testList, createTest("Genscreen", true));
-      CollectionUtils.addIgnoreNull(testList, createTest("Innolia", true));
+    public RTNFormMapper(String projectFormId, IProjectForm form) {
+        super(projectFormId, form);
     }
 
-    return testList;
-  }
+    private List<Test> getTests(IProjectForm form) {
+        List<Test> testList = new ArrayList<>();
 
-  @Override
-  public String getProjectCode() {
-    return projectCode;
-  }
+        if (projectData.getSerologyHIVTest()) {
+            CollectionUtils.addIgnoreNull(testList, createTest("Vironostika", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Murex Combinaison", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Murex", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Genscreen", true));
+            CollectionUtils.addIgnoreNull(testList, createTest("Innolia", true));
+        }
 
-  @Override
-  public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
-    ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
-
-    // Check for Dry Tube Tests
-    if (projectData.getSerologyHIVTest()) {
-      if (projectData.getDryTubeTaken()) {
-        sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), getTests(form)));
-      }
+        return testList;
     }
-    return sItemTests;
-  }
 
-  /**
-   * No lists of repeating answers in RTN
-   *
-   * @see
-   *     org.openelisglobal.sample.util.CI.BaseProjectFormMapper#readObservationHistoryLists(org.openelisglobal.patient.valueholder.ObservationData)
-   */
-  @Override
-  public Map<String, List<ObservationHistory>> readObservationHistoryLists(ObservationData od) {
-    Map<String, List<ObservationHistory>> historyLists = new HashMap<>();
-    // do nothing
-    return historyLists;
-  }
+    @Override
+    public String getProjectCode() {
+        return projectCode;
+    }
 
-  /**
-   * @see org.openelisglobal.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
-   */
-  @Override
-  public String getSampleCenterCode() {
-    return ORGANIZATION_ID_NONE;
-  }
+    @Override
+    public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
+        ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
+
+        // Check for Dry Tube Tests
+        if (projectData.getSerologyHIVTest()) {
+            if (projectData.getDryTubeTaken()) {
+                sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), getTests(form)));
+            }
+        }
+        return sItemTests;
+    }
+
+    /**
+     * No lists of repeating answers in RTN
+     *
+     * @see org.openelisglobal.sample.util.CI.BaseProjectFormMapper#readObservationHistoryLists(org.openelisglobal.patient.valueholder.ObservationData)
+     */
+    @Override
+    public Map<String, List<ObservationHistory>> readObservationHistoryLists(ObservationData od) {
+        Map<String, List<ObservationHistory>> historyLists = new HashMap<>();
+        // do nothing
+        return historyLists;
+    }
+
+    /**
+     * @see org.openelisglobal.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
+     */
+    @Override
+    public String getSampleCenterCode() {
+        return ORGANIZATION_ID_NONE;
+    }
 }

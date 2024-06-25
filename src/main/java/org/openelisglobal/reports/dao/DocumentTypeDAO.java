@@ -18,5 +18,6 @@ import org.openelisglobal.reports.valueholder.DocumentType;
 
 public interface DocumentTypeDAO extends BaseDAO<DocumentType, String> {
 
-  //	public DocumentType getDocumentTypeByName(String name) throws LIMSRuntimeException;
+    // public DocumentType getDocumentTypeByName(String name) throws
+    // LIMSRuntimeException;
 }

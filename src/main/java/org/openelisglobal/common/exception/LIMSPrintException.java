@@ -16,7 +16,7 @@ package org.openelisglobal.common.exception;
 /** benzd1 */
 // bugzilla 2380
 public class LIMSPrintException extends LIMSException {
-  public LIMSPrintException(String message) {
-    super(message);
-  }
+    public LIMSPrintException(String message) {
+        super(message);
+    }
 }

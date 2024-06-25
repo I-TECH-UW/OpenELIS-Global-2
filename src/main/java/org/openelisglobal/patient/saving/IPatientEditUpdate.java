@@ -1,3 +1,4 @@
 package org.openelisglobal.patient.saving;
 
-public interface IPatientEditUpdate extends IPatientEntry {}
+public interface IPatientEditUpdate extends IPatientEntry {
+}

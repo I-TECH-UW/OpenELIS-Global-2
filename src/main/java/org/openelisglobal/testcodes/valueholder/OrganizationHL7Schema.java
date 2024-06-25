@@ -17,41 +17,41 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class OrganizationHL7Schema extends BaseObject<OrganizationSchemaPK> {
 
-  private static final long serialVersionUID = -9609118384222987L;
+    private static final long serialVersionUID = -9609118384222987L;
 
-  private OrganizationSchemaPK compoundId = new OrganizationSchemaPK();
+    private OrganizationSchemaPK compoundId = new OrganizationSchemaPK();
 
-  public void setCompoundId(OrganizationSchemaPK compoundId) {
-    this.compoundId = compoundId;
-  }
+    public void setCompoundId(OrganizationSchemaPK compoundId) {
+        this.compoundId = compoundId;
+    }
 
-  public OrganizationSchemaPK getCompoundId() {
-    return compoundId;
-  }
+    public OrganizationSchemaPK getCompoundId() {
+        return compoundId;
+    }
 
-  public String getOrganizationId() {
-    return compoundId.getOrganizationId();
-  }
+    public String getOrganizationId() {
+        return compoundId.getOrganizationId();
+    }
 
-  public void setOrganizationId(String organizationId) {
-    compoundId.setOrganizationId(organizationId);
-  }
+    public void setOrganizationId(String organizationId) {
+        compoundId.setOrganizationId(organizationId);
+    }
 
-  public String getEncodingTypeId() {
-    return compoundId.getEncodingTypeId();
-  }
+    public String getEncodingTypeId() {
+        return compoundId.getEncodingTypeId();
+    }
 
-  public void setEncodingTypeId(String encodingTypeId) {
-    compoundId.setEncodingTypeId(encodingTypeId);
-  }
+    public void setEncodingTypeId(String encodingTypeId) {
+        compoundId.setEncodingTypeId(encodingTypeId);
+    }
 
-  @Override
-  public void setId(OrganizationSchemaPK id) {
-    setCompoundId(id);
-  }
+    @Override
+    public void setId(OrganizationSchemaPK id) {
+        setCompoundId(id);
+    }
 
-  @Override
-  public OrganizationSchemaPK getId() {
-    return getCompoundId();
-  }
+    @Override
+    public OrganizationSchemaPK getId() {
+        return getCompoundId();
+    }
 }

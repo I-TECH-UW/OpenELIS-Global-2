@@ -25,41 +25,41 @@ import org.openelisglobal.common.valueholder.BaseObject;
  */
 public class InventoryItem extends BaseObject<String> {
 
-  private static final long serialVersionUID = 1L;
-  private String id;
-  private String name;
-  private String description;
-  private String isActive;
+    private static final long serialVersionUID = 1L;
+    private String id;
+    private String name;
+    private String description;
+    private String isActive;
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public void setIsActive(String isActive) {
-    this.isActive = isActive;
-  }
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
+    }
 
-  public String getIsActive() {
-    return isActive;
-  }
+    public String getIsActive() {
+        return isActive;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 }

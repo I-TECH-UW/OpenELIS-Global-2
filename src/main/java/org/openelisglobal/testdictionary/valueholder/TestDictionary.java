@@ -22,52 +22,52 @@ import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 
 public class TestDictionary extends EnumValueItemImpl {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String id;
-  private ValueHolder dictionaryCategory = new ValueHolder();
-  private String testId;
-  private String context;
-  private String qualifiableDictionaryId;
+    private String id;
+    private ValueHolder dictionaryCategory = new ValueHolder();
+    private String testId;
+    private String context;
+    private String qualifiableDictionaryId;
 
-  public String getQualifiableDictionaryId() {
-    return qualifiableDictionaryId;
-  }
+    public String getQualifiableDictionaryId() {
+        return qualifiableDictionaryId;
+    }
 
-  public void setQualifiableDictionaryId(String qualifiableDictionaryId) {
-    this.qualifiableDictionaryId = qualifiableDictionaryId;
-  }
+    public void setQualifiableDictionaryId(String qualifiableDictionaryId) {
+        this.qualifiableDictionaryId = qualifiableDictionaryId;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  @SuppressWarnings("JpaAttributeTypeInspection")
-  public DictionaryCategory getDictionaryCategory() {
-    return (DictionaryCategory) dictionaryCategory.getValue();
-  }
+    @SuppressWarnings("JpaAttributeTypeInspection")
+    public DictionaryCategory getDictionaryCategory() {
+        return (DictionaryCategory) dictionaryCategory.getValue();
+    }
 
-  public void setDictionaryCategory(DictionaryCategory dictionaryCategory) {
-    this.dictionaryCategory.setValue(dictionaryCategory);
-  }
+    public void setDictionaryCategory(DictionaryCategory dictionaryCategory) {
+        this.dictionaryCategory.setValue(dictionaryCategory);
+    }
 
-  public String getTestId() {
-    return testId;
-  }
+    public String getTestId() {
+        return testId;
+    }
 
-  public void setTestId(String testId) {
-    this.testId = testId;
-  }
+    public void setTestId(String testId) {
+        this.testId = testId;
+    }
 
-  public String getContext() {
-    return context;
-  }
+    public String getContext() {
+        return context;
+    }
 
-  public void setContext(String context) {
-    this.context = context;
-  }
+    public void setContext(String context) {
+        this.context = context;
+    }
 }

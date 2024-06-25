@@ -1,3 +1,4 @@
 package org.openelisglobal.analyzerimport.analyzerreaders;
 
-public class AnalyzerXLSLLineReader {}
+public class AnalyzerXLSLLineReader {
+}

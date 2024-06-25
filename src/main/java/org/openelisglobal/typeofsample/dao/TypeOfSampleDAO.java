@@ -21,53 +21,54 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface TypeOfSampleDAO extends BaseDAO<TypeOfSample, String> {
 
-  public enum SampleDomain {
-    HUMAN,
-    ANIMAL,
-    ENVIRONMENTAL
-  }
+    public enum SampleDomain {
+        HUMAN, ANIMAL, ENVIRONMENTAL
+    }
 
-  String getNameForTypeOfSampleId(String id);
+    String getNameForTypeOfSampleId(String id);
 
-  //	public boolean insertData(TypeOfSample typeOfSample) throws LIMSRuntimeException;
+    // public boolean insertData(TypeOfSample typeOfSample) throws
+    // LIMSRuntimeException;
 
-  //	public void deleteData(List typeOfSamples) throws LIMSRuntimeException;
+    // public void deleteData(List typeOfSamples) throws LIMSRuntimeException;
 
-  List<TypeOfSample> getAllTypeOfSamples() throws LIMSRuntimeException;
+    List<TypeOfSample> getAllTypeOfSamples() throws LIMSRuntimeException;
 
-  List<TypeOfSample> getAllTypeOfSamplesSortOrdered() throws LIMSRuntimeException;
+    List<TypeOfSample> getAllTypeOfSamplesSortOrdered() throws LIMSRuntimeException;
 
-  List<TypeOfSample> getPageOfTypeOfSamples(int startingRecNo) throws LIMSRuntimeException;
+    List<TypeOfSample> getPageOfTypeOfSamples(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(TypeOfSample typeOfSample) throws LIMSRuntimeException;
+    void getData(TypeOfSample typeOfSample) throws LIMSRuntimeException;
 
-  //	public void updateData(TypeOfSample typeOfSample) throws LIMSRuntimeException;
+    // public void updateData(TypeOfSample typeOfSample) throws
+    // LIMSRuntimeException;
 
-  List<TypeOfSample> getTypes(String filter, String domain) throws LIMSRuntimeException;
+    List<TypeOfSample> getTypes(String filter, String domain) throws LIMSRuntimeException;
 
-  List<TypeOfSample> getTypesForDomain(SampleDomain domain) throws LIMSRuntimeException;
+    List<TypeOfSample> getTypesForDomain(SampleDomain domain) throws LIMSRuntimeException;
 
-  Integer getTotalTypeOfSampleCount() throws LIMSRuntimeException;
+    Integer getTotalTypeOfSampleCount() throws LIMSRuntimeException;
 
-  TypeOfSample getTypeOfSampleByDescriptionAndDomain(TypeOfSample tos, boolean ignoreCase)
-      throws LIMSRuntimeException;
+    TypeOfSample getTypeOfSampleByDescriptionAndDomain(TypeOfSample tos, boolean ignoreCase)
+            throws LIMSRuntimeException;
 
-  TypeOfSample getTypeOfSampleById(String typeOfSampleId) throws LIMSRuntimeException;
+    TypeOfSample getTypeOfSampleById(String typeOfSampleId) throws LIMSRuntimeException;
 
-  List<TypeOfSample> getTypesForDomainBySortOrder(SampleDomain human) throws LIMSRuntimeException;
+    List<TypeOfSample> getTypesForDomainBySortOrder(SampleDomain human) throws LIMSRuntimeException;
 
-  TypeOfSample getTypeOfSampleByLocalAbbrevAndDomain(String localAbbrev, String domain)
-      throws LIMSRuntimeException;
+    TypeOfSample getTypeOfSampleByLocalAbbrevAndDomain(String localAbbrev, String domain) throws LIMSRuntimeException;
 
-  TypeOfSample getSampleTypeFromTest(Test test);
+    TypeOfSample getSampleTypeFromTest(Test test);
 
-  void clearMap();
+    void clearMap();
 
-  boolean duplicateTypeOfSampleExists(TypeOfSample typeOfSample) throws LIMSRuntimeException;
+    boolean duplicateTypeOfSampleExists(TypeOfSample typeOfSample) throws LIMSRuntimeException;
 }

@@ -30,44 +30,40 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class HealthDistrictsForRegionProvider extends BaseQueryProvider {
 
-  protected OrganizationService organizationService =
-      SpringContext.getBean(OrganizationService.class);
+    protected OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
 
-  /**
-   * @throws LIMSInvalidConfigurationException
-   * @see
-   *     org.openelisglobal.common.provider.query.BaseQueryProvider#processRequest(javax.servlet.http.HttpServletRequest,
-   *     javax.servlet.http.HttpServletResponse)
-   */
-  @Override
-  public void processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+    /**
+     * @throws LIMSInvalidConfigurationException
+     * @see org.openelisglobal.common.provider.query.BaseQueryProvider#processRequest(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
+     */
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-    StringBuilder xml = new StringBuilder();
-    String result = VALID;
+        StringBuilder xml = new StringBuilder();
+        String result = VALID;
 
-    List<Organization> districts =
-        organizationService.getOrganizationsByParentId(request.getParameter("regionId"));
-    createDistrictXml(districts, request.getParameter("selectedValue"), xml);
+        List<Organization> districts = organizationService.getOrganizationsByParentId(request.getParameter("regionId"));
+        createDistrictXml(districts, request.getParameter("selectedValue"), xml);
 
-    ajaxServlet.sendData(xml.toString(), result, request, response);
-  }
-
-  private void createDistrictXml(
-      List<Organization> districts, String selectedValue, StringBuilder xml) {
-    xml.append("<districts>");
-    for (Organization org : districts) {
-      xml.append("<district ");
-      XMLUtil.appendAttributeKeyValue("id", org.getId(), xml);
-      XMLUtil.appendAttributeKeyValue("value", org.getOrganizationName(), xml);
-      xml.append(" />");
+        ajaxServlet.sendData(xml.toString(), result, request, response);
     }
-    xml.append("</districts>");
 
-    // prevent potential DOS with StringBuilder
-    if (selectedValue.length() > 10) {
-      selectedValue = selectedValue.subSequence(0, 10) + "...";
+    private void createDistrictXml(List<Organization> districts, String selectedValue, StringBuilder xml) {
+        xml.append("<districts>");
+        for (Organization org : districts) {
+            xml.append("<district ");
+            XMLUtil.appendAttributeKeyValue("id", org.getId(), xml);
+            XMLUtil.appendAttributeKeyValue("value", org.getOrganizationName(), xml);
+            xml.append(" />");
+        }
+        xml.append("</districts>");
+
+        // prevent potential DOS with StringBuilder
+        if (selectedValue.length() > 10) {
+            selectedValue = selectedValue.subSequence(0, 10) + "...";
+        }
+        XMLUtil.appendKeyValue("selectedValue", selectedValue, xml);
     }
-    XMLUtil.appendKeyValue("selectedValue", selectedValue, xml);
-  }
 }

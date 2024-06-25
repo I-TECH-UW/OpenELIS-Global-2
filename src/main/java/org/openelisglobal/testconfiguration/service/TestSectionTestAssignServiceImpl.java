@@ -11,24 +11,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TestSectionTestAssignServiceImpl implements TestSectionTestAssignService {
 
-  @Autowired private TestService testService;
-  @Autowired private TestSectionService testSectionService;
+    @Autowired
+    private TestService testService;
+    @Autowired
+    private TestSectionService testSectionService;
 
-  @Override
-  @Transactional
-  public void updateTestAndTestSections(
-      Test test,
-      TestSection testSection,
-      TestSection deActivateTestSection,
-      boolean updateTestSection) {
-    testService.update(test);
+    @Override
+    @Transactional
+    public void updateTestAndTestSections(Test test, TestSection testSection, TestSection deActivateTestSection,
+            boolean updateTestSection) {
+        testService.update(test);
 
-    if (updateTestSection) {
-      testSectionService.update(testSection);
+        if (updateTestSection) {
+            testSectionService.update(testSection);
+        }
+
+        if (deActivateTestSection != null) {
+            testSectionService.update(deActivateTestSection);
+        }
     }
-
-    if (deActivateTestSection != null) {
-      testSectionService.update(deActivateTestSection);
-    }
-  }
 }

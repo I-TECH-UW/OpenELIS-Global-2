@@ -32,52 +32,51 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class GenderDAOImpl extends BaseDAOImpl<Gender, Integer> implements GenderDAO {
 
-  public GenderDAOImpl() {
-    super(Gender.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public Gender getGenderByType(String type) throws LIMSRuntimeException {
-    String sql = "From Gender g where g.genderType = :type";
-    try {
-      Query<Gender> query = entityManager.unwrap(Session.class).createQuery(sql, Gender.class);
-      query.setParameter("type", type);
-      Gender gender = query.uniqueResult();
-      return gender;
-    } catch (HibernateException e) {
-      handleException(e, "getGenderByType");
+    public GenderDAOImpl() {
+        super(Gender.class);
     }
-    return null;
-  }
 
-  // bugzilla 1482
-  @Override
-  public boolean duplicateGenderExists(Gender gender) throws LIMSRuntimeException {
-    try {
-
-      List<Gender> list;
-
-      // not case sensitive hemolysis and Hemolysis are considered
-      // duplicates
-      String sql =
-          "from Gender t where trim(lower(t.genderType)) = :genderType and t.id != :genderId";
-      Query<Gender> query = entityManager.unwrap(Session.class).createQuery(sql, Gender.class);
-      query.setParameter("genderType", gender.getGenderType().toLowerCase().trim());
-
-      // initialize with 0 (for new records where no id has been generated
-      // yet
-      Integer genderId = 0;
-      if (gender.getId() != null) {
-        genderId = gender.getId();
-      }
-      query.setParameter("genderId", genderId);
-      list = query.list();
-      return list.size() > 0;
-    } catch (RuntimeException e) {
-
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in duplicateGenderExists()", e);
+    @Override
+    @Transactional(readOnly = true)
+    public Gender getGenderByType(String type) throws LIMSRuntimeException {
+        String sql = "From Gender g where g.genderType = :type";
+        try {
+            Query<Gender> query = entityManager.unwrap(Session.class).createQuery(sql, Gender.class);
+            query.setParameter("type", type);
+            Gender gender = query.uniqueResult();
+            return gender;
+        } catch (HibernateException e) {
+            handleException(e, "getGenderByType");
+        }
+        return null;
     }
-  }
+
+    // bugzilla 1482
+    @Override
+    public boolean duplicateGenderExists(Gender gender) throws LIMSRuntimeException {
+        try {
+
+            List<Gender> list;
+
+            // not case sensitive hemolysis and Hemolysis are considered
+            // duplicates
+            String sql = "from Gender t where trim(lower(t.genderType)) = :genderType and t.id != :genderId";
+            Query<Gender> query = entityManager.unwrap(Session.class).createQuery(sql, Gender.class);
+            query.setParameter("genderType", gender.getGenderType().toLowerCase().trim());
+
+            // initialize with 0 (for new records where no id has been generated
+            // yet
+            Integer genderId = 0;
+            if (gender.getId() != null) {
+                genderId = gender.getId();
+            }
+            query.setParameter("genderId", genderId);
+            list = query.list();
+            return list.size() > 0;
+        } catch (RuntimeException e) {
+
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in duplicateGenderExists()", e);
+        }
+    }
 }

@@ -21,102 +21,103 @@ import org.openelisglobal.sample.valueholder.SampleAdditionalField.SampleAdditio
 @Table(name = "sample_additional_fields")
 public class SampleAdditionalField extends BaseObject<SampleAdditionalFieldId> {
 
-  public enum AdditionalFieldName {
-    CONTACT_TRACING_INDEX_NAME,
-    CONTACT_TRACING_INDEX_RECORD_NUMBER
-  }
-
-  private static final long serialVersionUID = 932652572195268450L;
-
-  @EmbeddedId private SampleAdditionalFieldId id;
-
-  @MapsId("sampleId") // value corresponds to property in the ID class
-  @ManyToOne
-  @JoinColumn(name = "sample_id")
-  private Sample sample;
-
-  @Column(name = "field_value")
-  private String fieldValue;
-
-  @Override
-  public SampleAdditionalFieldId getId() {
-    return id;
-  }
-
-  @Override
-  public void setId(SampleAdditionalFieldId id) {
-    this.id = id;
-  }
-
-  public Sample getSample() {
-    return sample;
-  }
-
-  public void setSample(Sample sample) {
-    this.sample = sample;
-  }
-
-  public AdditionalFieldName getFieldName() {
-    if (id == null) {
-      id = new SampleAdditionalFieldId();
+    public enum AdditionalFieldName {
+        CONTACT_TRACING_INDEX_NAME, CONTACT_TRACING_INDEX_RECORD_NUMBER
     }
-    return id.getFieldName();
-  }
 
-  public void setFieldName(AdditionalFieldName fieldName) {
-    if (id == null) {
-      id = new SampleAdditionalFieldId();
+    private static final long serialVersionUID = 932652572195268450L;
+
+    @EmbeddedId
+    private SampleAdditionalFieldId id;
+
+    @MapsId("sampleId") // value corresponds to property in the ID class
+    @ManyToOne
+    @JoinColumn(name = "sample_id")
+    private Sample sample;
+
+    @Column(name = "field_value")
+    private String fieldValue;
+
+    @Override
+    public SampleAdditionalFieldId getId() {
+        return id;
     }
-    this.id.setFieldName(fieldName);
-  }
 
-  public String getFieldValue() {
-    return fieldValue;
-  }
+    @Override
+    public void setId(SampleAdditionalFieldId id) {
+        this.id = id;
+    }
 
-  public void setFieldValue(String fieldValue) {
-    this.fieldValue = fieldValue;
-  }
+    public Sample getSample() {
+        return sample;
+    }
 
-  @Embeddable
-  public static class SampleAdditionalFieldId implements Serializable {
-    private static final long serialVersionUID = -9097137007120585441L;
-
-    @Column(name = "field_name")
-    @Enumerated(value = EnumType.STRING)
-    private AdditionalFieldName fieldName;
-
-    @Convert(converter = StringToIntegerConverter.class)
-    private String sampleId;
+    public void setSample(Sample sample) {
+        this.sample = sample;
+    }
 
     public AdditionalFieldName getFieldName() {
-      return fieldName;
+        if (id == null) {
+            id = new SampleAdditionalFieldId();
+        }
+        return id.getFieldName();
     }
 
     public void setFieldName(AdditionalFieldName fieldName) {
-      this.fieldName = fieldName;
+        if (id == null) {
+            id = new SampleAdditionalFieldId();
+        }
+        this.id.setFieldName(fieldName);
     }
 
-    public String getSampleId() {
-      return sampleId;
+    public String getFieldValue() {
+        return fieldValue;
     }
 
-    public void setSampleId(String sampleId) {
-      this.sampleId = sampleId;
+    public void setFieldValue(String fieldValue) {
+        this.fieldValue = fieldValue;
     }
 
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
+    @Embeddable
+    public static class SampleAdditionalFieldId implements Serializable {
+        private static final long serialVersionUID = -9097137007120585441L;
 
-      SampleAdditionalFieldId that = (SampleAdditionalFieldId) o;
+        @Column(name = "field_name")
+        @Enumerated(value = EnumType.STRING)
+        private AdditionalFieldName fieldName;
 
-      return Objects.equals(this.fieldName, that.fieldName)
-          && Objects.equals(this.sampleId, that.sampleId);
+        @Convert(converter = StringToIntegerConverter.class)
+        private String sampleId;
+
+        public AdditionalFieldName getFieldName() {
+            return fieldName;
+        }
+
+        public void setFieldName(AdditionalFieldName fieldName) {
+            this.fieldName = fieldName;
+        }
+
+        public String getSampleId() {
+            return sampleId;
+        }
+
+        public void setSampleId(String sampleId) {
+            this.sampleId = sampleId;
+        }
+
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+
+            SampleAdditionalFieldId that = (SampleAdditionalFieldId) o;
+
+            return Objects.equals(this.fieldName, that.fieldName) && Objects.equals(this.sampleId, that.sampleId);
+        }
+
+        public int hashCode() {
+            return Objects.hash(fieldName, sampleId);
+        }
     }
-
-    public int hashCode() {
-      return Objects.hash(fieldName, sampleId);
-    }
-  }
 }

@@ -20,39 +20,39 @@ import org.openelisglobal.project.valueholder.Project;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface ProjectDAO extends BaseDAO<Project, String> {
 
-  //	public boolean insertData(Project project) throws LIMSRuntimeException;
+    // public boolean insertData(Project project) throws LIMSRuntimeException;
 
-  //	public void deleteData(List projects) throws LIMSRuntimeException;
+    // public void deleteData(List projects) throws LIMSRuntimeException;
 
-  List<Project> getAllProjects() throws LIMSRuntimeException;
+    List<Project> getAllProjects() throws LIMSRuntimeException;
 
-  List<Project> getPageOfProjects(int startingRecNo) throws LIMSRuntimeException;
+    List<Project> getPageOfProjects(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(Project project) throws LIMSRuntimeException;
+    void getData(Project project) throws LIMSRuntimeException;
 
-  //	public void updateData(Project project) throws LIMSRuntimeException;
+    // public void updateData(Project project) throws LIMSRuntimeException;
 
-  // bugzilla 1978: added param activeOnly
-  Project getProjectByName(Project project, boolean ignoreCase, boolean activeOnly)
-      throws LIMSRuntimeException;
+    // bugzilla 1978: added param activeOnly
+    Project getProjectByName(Project project, boolean ignoreCase, boolean activeOnly) throws LIMSRuntimeException;
 
-  // bugzilla 1978: added param activeOnly
-  List<Project> getProjects(String filter, boolean activeOnly) throws LIMSRuntimeException;
+    // bugzilla 1978: added param activeOnly
+    List<Project> getProjects(String filter, boolean activeOnly) throws LIMSRuntimeException;
 
-  // bugzilla 1411
-  Integer getTotalProjectCount() throws LIMSRuntimeException;
+    // bugzilla 1411
+    Integer getTotalProjectCount() throws LIMSRuntimeException;
 
-  // bugzilla 2438
-  Project getProjectByLocalAbbreviation(Project project, boolean activeOnly)
-      throws LIMSRuntimeException;
+    // bugzilla 2438
+    Project getProjectByLocalAbbreviation(Project project, boolean activeOnly) throws LIMSRuntimeException;
 
-  Project getProjectById(String id) throws LIMSRuntimeException;
+    Project getProjectById(String id) throws LIMSRuntimeException;
 
-  boolean duplicateProjectExists(Project project) throws LIMSRuntimeException;
+    boolean duplicateProjectExists(Project project) throws LIMSRuntimeException;
 }

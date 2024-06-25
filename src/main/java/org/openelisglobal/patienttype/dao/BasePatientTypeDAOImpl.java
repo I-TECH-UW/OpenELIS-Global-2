@@ -7,9 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class BasePatientTypeDAOImpl extends BaseDAOImpl<BasePatientType, String>
-    implements BasePatientTypeDAO {
-  BasePatientTypeDAOImpl() {
-    super(BasePatientType.class);
-  }
+public class BasePatientTypeDAOImpl extends BaseDAOImpl<BasePatientType, String> implements BasePatientTypeDAO {
+    BasePatientTypeDAOImpl() {
+        super(BasePatientType.class);
+    }
 }

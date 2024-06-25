@@ -17,33 +17,33 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class AddressPart extends BaseObject<String> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String id;
-  private String partName;
-  private String displayOrder;
+    private String id;
+    private String partName;
+    private String displayOrder;
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getPartName() {
-    return partName;
-  }
+    public String getPartName() {
+        return partName;
+    }
 
-  public void setPartName(String partName) {
-    this.partName = partName;
-  }
+    public void setPartName(String partName) {
+        this.partName = partName;
+    }
 
-  public String getDisplayOrder() {
-    return displayOrder;
-  }
+    public String getDisplayOrder() {
+        return displayOrder;
+    }
 
-  public void setDisplayOrder(String displayOrder) {
-    this.displayOrder = displayOrder;
-  }
+    public void setDisplayOrder(String displayOrder) {
+        this.displayOrder = displayOrder;
+    }
 }

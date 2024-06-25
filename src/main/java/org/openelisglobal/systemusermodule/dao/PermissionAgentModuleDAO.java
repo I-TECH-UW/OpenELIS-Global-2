@@ -25,26 +25,25 @@ import org.openelisglobal.systemusermodule.valueholder.PermissionModule;
  */
 public interface PermissionAgentModuleDAO extends BaseDAO<PermissionModule, String> {
 
-  String SUPERVISOR = "Supervisor";
+    String SUPERVISOR = "Supervisor";
 
-  boolean insertData(PermissionModule permissionModule) throws LIMSRuntimeException;
+    boolean insertData(PermissionModule permissionModule) throws LIMSRuntimeException;
 
-  void deleteData(List<PermissionModule> permissionModules) throws LIMSRuntimeException;
+    void deleteData(List<PermissionModule> permissionModules) throws LIMSRuntimeException;
 
-  List<PermissionModule> getAllPermissionModules() throws LIMSRuntimeException;
+    List<PermissionModule> getAllPermissionModules() throws LIMSRuntimeException;
 
-  List<PermissionModule> getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException;
+    List<PermissionModule> getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(PermissionModule permissionModule) throws LIMSRuntimeException;
+    void getData(PermissionModule permissionModule) throws LIMSRuntimeException;
 
-  void updateData(PermissionModule permissionModule) throws LIMSRuntimeException;
+    void updateData(PermissionModule permissionModule) throws LIMSRuntimeException;
 
-  Integer getTotalPermissionModuleCount() throws LIMSRuntimeException;
+    Integer getTotalPermissionModuleCount() throws LIMSRuntimeException;
 
-  List<PermissionModule> getAllPermissionModulesByAgentId(int systemUserId)
-      throws LIMSRuntimeException;
+    List<PermissionModule> getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException;
 
-  boolean isAgentAllowedAccordingToName(String id, String string) throws LIMSRuntimeException;
+    boolean isAgentAllowedAccordingToName(String id, String string) throws LIMSRuntimeException;
 
-  boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException;
+    boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException;
 }

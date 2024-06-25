@@ -9,17 +9,17 @@ import org.openelisglobal.program.valueholder.cytology.CytologySample.CytologySt
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 
 public interface CytologySampleService extends BaseObjectService<CytologySample, Integer> {
-  List<CytologySample> getWithStatus(List<CytologyStatus> statuses);
+    List<CytologySample> getWithStatus(List<CytologyStatus> statuses);
 
-  List<CytologySample> searchWithStatusAndTerm(List<CytologyStatus> statuses, String searchTerm);
+    List<CytologySample> searchWithStatusAndTerm(List<CytologyStatus> statuses, String searchTerm);
 
-  void assignTechnician(Integer cytologySampleId, SystemUser systemUser);
+    void assignTechnician(Integer cytologySampleId, SystemUser systemUser);
 
-  void assignCytoPathologist(Integer cytologySampleId, SystemUser systemUser);
+    void assignCytoPathologist(Integer cytologySampleId, SystemUser systemUser);
 
-  Long getCountWithStatus(List<CytologyStatus> statuses);
+    Long getCountWithStatus(List<CytologyStatus> statuses);
 
-  Long getCountWithStatusBetweenDates(List<CytologyStatus> statuses, Timestamp from, Timestamp to);
+    Long getCountWithStatusBetweenDates(List<CytologyStatus> statuses, Timestamp from, Timestamp to);
 
-  void updateWithFormValues(Integer cytologySampleId, CytologySampleForm form);
+    void updateWithFormValues(Integer cytologySampleId, CytologySampleForm form);
 }

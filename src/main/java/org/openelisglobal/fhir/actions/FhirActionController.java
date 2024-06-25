@@ -18,34 +18,28 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class FhirActionController {
 
-  @Autowired private FhirConfig fhirConfig;
-  @Autowired private CloseableHttpClient httpClient;
+    @Autowired
+    private FhirConfig fhirConfig;
+    @Autowired
+    private CloseableHttpClient httpClient;
 
-  @PostMapping("/fhir/optimizeStorage")
-  public ResponseEntity<String> triggerOptimizeStorage()
-      throws ClientProtocolException, IOException {
-    HttpPost httpPost = new HttpPost(fhirConfig.getLocalFhirStorePath() + "/$reindex");
-    String json =
-        "{\n"
-            + //
-            "  \"resourceType\": \"Parameters\",\n"
-            + //
-            "  \"parameter\": [ {\n"
-            + //
-            "    \"name\": \"optimizeStorage\",\n"
-            + //
-            "    \"valueString\": \"ALL_VERSIONS\"\n"
-            + //
-            "  } ]\n"
-            + //
-            "}";
-    StringEntity entity = new StringEntity(json, ContentType.APPLICATION_JSON);
-    httpPost.setEntity(entity);
-    httpPost.setHeader("Accept", "application/json");
-    httpPost.setHeader("Content-type", "application/json");
-    try (CloseableHttpResponse res = httpClient.execute(httpPost)) {
-      return ResponseEntity.status(res.getStatusLine().getStatusCode())
-          .body(EntityUtils.toString(res.getEntity(), StandardCharsets.UTF_8));
+    @PostMapping("/fhir/optimizeStorage")
+    public ResponseEntity<String> triggerOptimizeStorage() throws ClientProtocolException, IOException {
+        HttpPost httpPost = new HttpPost(fhirConfig.getLocalFhirStorePath() + "/$reindex");
+        String json = "{\n" + //
+                "  \"resourceType\": \"Parameters\",\n" + //
+                "  \"parameter\": [ {\n" + //
+                "    \"name\": \"optimizeStorage\",\n" + //
+                "    \"valueString\": \"ALL_VERSIONS\"\n" + //
+                "  } ]\n" + //
+                "}";
+        StringEntity entity = new StringEntity(json, ContentType.APPLICATION_JSON);
+        httpPost.setEntity(entity);
+        httpPost.setHeader("Accept", "application/json");
+        httpPost.setHeader("Content-type", "application/json");
+        try (CloseableHttpResponse res = httpClient.execute(httpPost)) {
+            return ResponseEntity.status(res.getStatusLine().getStatusCode())
+                    .body(EntityUtils.toString(res.getEntity(), StandardCharsets.UTF_8));
+        }
     }
-  }
 }

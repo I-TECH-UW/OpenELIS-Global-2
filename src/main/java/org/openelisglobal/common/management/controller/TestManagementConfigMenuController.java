@@ -11,31 +11,29 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class TestManagementConfigMenuController extends BaseController {
 
-  @RequestMapping(
-      value = "/TestManagementConfigMenu",
-      method = {RequestMethod.GET, RequestMethod.POST})
-  public ModelAndView showTestManagementConfigMenu(HttpServletRequest request) {
-    TestManagementConfigForm form = new TestManagementConfigForm();
+    @RequestMapping(value = "/TestManagementConfigMenu", method = { RequestMethod.GET, RequestMethod.POST })
+    public ModelAndView showTestManagementConfigMenu(HttpServletRequest request) {
+        TestManagementConfigForm form = new TestManagementConfigForm();
 
-    return findForward(FWD_SUCCESS, form);
-  }
-
-  @Override
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "testManagementConfigDefinition";
-    } else {
-      return "PageNotFound";
+        return findForward(FWD_SUCCESS, form);
     }
-  }
 
-  @Override
-  protected String getPageTitleKey() {
-    return null;
-  }
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "testManagementConfigDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-  @Override
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
+
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

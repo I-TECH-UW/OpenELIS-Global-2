@@ -10,17 +10,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class ImmediateJobRunner implements IImmediateJobRunner {
 
-  @Override
-  @Async
-  public void runNow(Scheduler scheduler, String jobName) {
-    try {
-      synchronized (scheduler) {
-        if (!scheduler.isShutdown()) {
-          scheduler.triggerJob(new JobKey(jobName + "Job", jobName));
+    @Override
+    @Async
+    public void runNow(Scheduler scheduler, String jobName) {
+        try {
+            synchronized (scheduler) {
+                if (!scheduler.isShutdown()) {
+                    scheduler.triggerJob(new JobKey(jobName + "Job", jobName));
+                }
+            }
+        } catch (SchedulerException e) {
+            LogEvent.logDebug(e);
         }
-      }
-    } catch (SchedulerException e) {
-      LogEvent.logDebug(e);
     }
-  }
 }

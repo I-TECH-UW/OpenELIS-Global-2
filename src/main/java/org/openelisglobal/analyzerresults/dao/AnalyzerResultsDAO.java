@@ -21,20 +21,21 @@ import org.openelisglobal.common.dao.BaseDAO;
 
 public interface AnalyzerResultsDAO extends BaseDAO<AnalyzerResults, String> {
 
-  //	public List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId) throws
-  // LIMSRuntimeException;
+    // public List<AnalyzerResults> getResultsbyAnalyzer(String analyzerId) throws
+    // LIMSRuntimeException;
 
-  //	public void insertAnalyzerResults(List<AnalyzerResults> results, String sysUserId) throws
-  // LIMSRuntimeException;
+    // public void insertAnalyzerResults(List<AnalyzerResults> results, String
+    // sysUserId) throws
+    // LIMSRuntimeException;
 
-  //	public void updateData(AnalyzerResults results) throws LIMSRuntimeException;
+    // public void updateData(AnalyzerResults results) throws LIMSRuntimeException;
 
-  //	public void getData(AnalyzerResults results) throws LIMSRuntimeException;
+    // public void getData(AnalyzerResults results) throws LIMSRuntimeException;
 
-  public AnalyzerResults readAnalyzerResults(String idString);
+    public AnalyzerResults readAnalyzerResults(String idString);
 
-  public List<AnalyzerResults> getDuplicateResultByAccessionAndTest(AnalyzerResults result);
+    public List<AnalyzerResults> getDuplicateResultByAccessionAndTest(AnalyzerResults result);
 
-  //	public void deleteAll(List<AnalyzerResults> deletableAnalyzerResults) throws
-  // LIMSRuntimeException;
+    // public void deleteAll(List<AnalyzerResults> deletableAnalyzerResults) throws
+    // LIMSRuntimeException;
 }

@@ -27,52 +27,55 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/rest/")
 public class CalculatedValueRestController {
 
-  @Autowired TypeOfSampleService typeOfSampleService;
+    @Autowired
+    TypeOfSampleService typeOfSampleService;
 
-  @Autowired TestCalculationService testCalculationService;
+    @Autowired
+    TestCalculationService testCalculationService;
 
-  @Autowired DictionaryService dictionaryService;
+    @Autowired
+    DictionaryService dictionaryService;
 
-  @Autowired PatientService patientService;
+    @Autowired
+    PatientService patientService;
 
-  @Autowired ResultService resultService;
+    @Autowired
+    ResultService resultService;
 
-  @Autowired ResultCalculationService resultCalculationService;
+    @Autowired
+    ResultCalculationService resultCalculationService;
 
-  @PostMapping(value = "test-calculation", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseBody
-  public void saveReflexRule(HttpServletRequest request, @RequestBody Calculation calculation) {
-    if (calculation.getId() != null) {
-      if (testCalculationService.get(calculation.getId()) != null) {
-        testCalculationService.update(calculation);
-      }
-    } else {
-      testCalculationService.save(calculation);
+    @PostMapping(value = "test-calculation", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void saveReflexRule(HttpServletRequest request, @RequestBody Calculation calculation) {
+        if (calculation.getId() != null) {
+            if (testCalculationService.get(calculation.getId()) != null) {
+                testCalculationService.update(calculation);
+            }
+        } else {
+            testCalculationService.save(calculation);
+        }
     }
-  }
 
-  @PostMapping(
-      value = "deactivate-test-calculation/{id}",
-      produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseBody
-  public void deactivateReflexRule(@PathVariable Integer id) {
-    Calculation calculation = testCalculationService.get(id);
-    calculation.setActive(false);
-    testCalculationService.update(calculation);
-  }
+    @PostMapping(value = "deactivate-test-calculation/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void deactivateReflexRule(@PathVariable Integer id) {
+        Calculation calculation = testCalculationService.get(id);
+        calculation.setActive(false);
+        testCalculationService.update(calculation);
+    }
 
-  @GetMapping(value = "test-calculations", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseBody
-  public List<Calculation> getReflexRules(HttpServletRequest request) {
-    List<Calculation> calculations =
-        testCalculationService.getAll().stream().collect(Collectors.toList());
-    calculations.forEach(c -> c.setToggled(false));
-    return !calculations.isEmpty() ? calculations : Collections.<Calculation>emptyList();
-  }
+    @GetMapping(value = "test-calculations", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Calculation> getReflexRules(HttpServletRequest request) {
+        List<Calculation> calculations = testCalculationService.getAll().stream().collect(Collectors.toList());
+        calculations.forEach(c -> c.setToggled(false));
+        return !calculations.isEmpty() ? calculations : Collections.<Calculation>emptyList();
+    }
 
-  @GetMapping(value = "math-functions", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseBody
-  public List<IdValuePair> getMathFunctions() {
-    return Operation.mathFunctions();
-  }
+    @GetMapping(value = "math-functions", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<IdValuePair> getMathFunctions() {
+        return Operation.mathFunctions();
+    }
 }

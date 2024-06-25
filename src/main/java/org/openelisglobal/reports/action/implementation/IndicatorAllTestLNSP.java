@@ -15,16 +15,15 @@ package org.openelisglobal.reports.action.implementation;
 
 import org.openelisglobal.internationalization.MessageUtil;
 
-public class IndicatorAllTestLNSP extends IndicatorAllTest
-    implements IReportCreator, IReportParameterSetter {
+public class IndicatorAllTestLNSP extends IndicatorAllTest implements IReportCreator, IReportParameterSetter {
 
-  @Override
-  protected String getLabNameLine1() {
-    return MessageUtil.getContextualMessage("report.labName.one");
-  }
+    @Override
+    protected String getLabNameLine1() {
+        return MessageUtil.getContextualMessage("report.labName.one");
+    }
 
-  @Override
-  protected String getLabNameLine2() {
-    return MessageUtil.getContextualMessage("report.labName.two");
-  }
+    @Override
+    protected String getLabNameLine2() {
+        return MessageUtil.getContextualMessage("report.labName.two");
+    }
 }

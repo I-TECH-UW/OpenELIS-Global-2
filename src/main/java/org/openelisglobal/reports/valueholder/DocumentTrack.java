@@ -21,68 +21,68 @@ import org.openelisglobal.common.valueholder.ValueHolderInterface;
 
 public class DocumentTrack extends BaseObject<String> implements SimpleBaseEntity<String> {
 
-  private static final long serialVersionUID = 1L;
-  private String id;
-  private String recordId;
-  private String tableId;
-  private String documentTypeId;
-  private ValueHolderInterface parent = new ValueHolder();
-  private Timestamp reportTime;
-  private String documentName;
+    private static final long serialVersionUID = 1L;
+    private String id;
+    private String recordId;
+    private String tableId;
+    private String documentTypeId;
+    private ValueHolderInterface parent = new ValueHolder();
+    private Timestamp reportTime;
+    private String documentName;
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getRecordId() {
-    return recordId;
-  }
+    public String getRecordId() {
+        return recordId;
+    }
 
-  public void setRecordId(String recordId) {
-    this.recordId = recordId;
-  }
+    public void setRecordId(String recordId) {
+        this.recordId = recordId;
+    }
 
-  public String getDocumentTypeId() {
-    return documentTypeId;
-  }
+    public String getDocumentTypeId() {
+        return documentTypeId;
+    }
 
-  public void setDocumentTypeId(String documentTypeId) {
-    this.documentTypeId = documentTypeId;
-  }
+    public void setDocumentTypeId(String documentTypeId) {
+        this.documentTypeId = documentTypeId;
+    }
 
-  public DocumentTrack getParent() {
-    return (DocumentTrack) parent.getValue();
-  }
+    public DocumentTrack getParent() {
+        return (DocumentTrack) parent.getValue();
+    }
 
-  public void setParent(DocumentTrack parent) {
-    this.parent.setValue(parent);
-  }
+    public void setParent(DocumentTrack parent) {
+        this.parent.setValue(parent);
+    }
 
-  public Timestamp getReportTime() {
-    return reportTime;
-  }
+    public Timestamp getReportTime() {
+        return reportTime;
+    }
 
-  public void setReportTime(Timestamp reportTime) {
-    this.reportTime = reportTime;
-  }
+    public void setReportTime(Timestamp reportTime) {
+        this.reportTime = reportTime;
+    }
 
-  public void setTableId(String tableId) {
-    this.tableId = tableId;
-  }
+    public void setTableId(String tableId) {
+        this.tableId = tableId;
+    }
 
-  public String getTableId() {
-    return tableId;
-  }
+    public String getTableId() {
+        return tableId;
+    }
 
-  public String getDocumentName() {
-    return documentName;
-  }
+    public String getDocumentName() {
+        return documentName;
+    }
 
-  public void setDocumentName(String documentName) {
-    this.documentName = documentName;
-  }
+    public void setDocumentName(String documentName) {
+        this.documentName = documentName;
+    }
 }

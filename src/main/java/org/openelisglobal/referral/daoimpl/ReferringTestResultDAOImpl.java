@@ -32,47 +32,45 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult, String>
-    implements ReferringTestResultDAO {
+        implements ReferringTestResultDAO {
 
-  public ReferringTestResultDAOImpl() {
-    super(ReferringTestResult.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<ReferringTestResult> getReferringTestResultsForSampleItem(String sampleItemId)
-      throws LIMSRuntimeException {
-    String sql = "from ReferringTestResult rtr where rtr.sampleItemId = :sampleItemId";
-    try {
-      Query<ReferringTestResult> query =
-          entityManager.unwrap(Session.class).createQuery(sql, ReferringTestResult.class);
-      query.setParameter("sampleItemId", Integer.parseInt(sampleItemId));
-      List<ReferringTestResult> list = query.list();
-      return list;
-    } catch (HibernateException e) {
-      handleException(e, "getReferringTestResultsForSampleItem");
-    }
-    return null;
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<ReferringTestResult> getResultsInDateRange(Date lowDate, Date highDate)
-      throws LIMSRuntimeException {
-    String sql =
-        "from ReferringTestResult rtr where rtr.lastupdated BETWEEN :lowDate AND :highDate";
-    try {
-      Query<ReferringTestResult> query =
-          entityManager.unwrap(Session.class).createQuery(sql, ReferringTestResult.class);
-      query.setParameter("lowDate", lowDate);
-      query.setParameter("highDate", highDate);
-
-      List<ReferringTestResult> list = query.list();
-      return list;
-    } catch (HibernateException e) {
-      handleException(e, "getResultsInDateRange");
+    public ReferringTestResultDAOImpl() {
+        super(ReferringTestResult.class);
     }
 
-    return null;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReferringTestResult> getReferringTestResultsForSampleItem(String sampleItemId)
+            throws LIMSRuntimeException {
+        String sql = "from ReferringTestResult rtr where rtr.sampleItemId = :sampleItemId";
+        try {
+            Query<ReferringTestResult> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReferringTestResult.class);
+            query.setParameter("sampleItemId", Integer.parseInt(sampleItemId));
+            List<ReferringTestResult> list = query.list();
+            return list;
+        } catch (HibernateException e) {
+            handleException(e, "getReferringTestResultsForSampleItem");
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReferringTestResult> getResultsInDateRange(Date lowDate, Date highDate) throws LIMSRuntimeException {
+        String sql = "from ReferringTestResult rtr where rtr.lastupdated BETWEEN :lowDate AND :highDate";
+        try {
+            Query<ReferringTestResult> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReferringTestResult.class);
+            query.setParameter("lowDate", lowDate);
+            query.setParameter("highDate", highDate);
+
+            List<ReferringTestResult> list = query.list();
+            return list;
+        } catch (HibernateException e) {
+            handleException(e, "getResultsInDateRange");
+        }
+
+        return null;
+    }
 }

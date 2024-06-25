@@ -18,13 +18,13 @@ package org.openelisglobal.reports.valueholder.resultsreport;
  */
 public class ResultsReportLabProject {
 
-  private String labProject;
+    private String labProject;
 
-  public String getLabProject() {
-    return labProject;
-  }
+    public String getLabProject() {
+        return labProject;
+    }
 
-  public void setLabProject(String labProject) {
-    this.labProject = labProject;
-  }
+    public void setLabProject(String labProject) {
+        this.labProject = labProject;
+    }
 }

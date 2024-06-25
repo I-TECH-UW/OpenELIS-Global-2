@@ -21,32 +21,37 @@ import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface DictionaryCategoryDAO extends BaseDAO<DictionaryCategory, String> {
 
-  //	public boolean insertData(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException;
+    // public boolean insertData(DictionaryCategory dictionaryCategory) throws
+    // LIMSRuntimeException;
 
-  //	public void deleteData(List dictionaryCategorys) throws LIMSRuntimeException;
+    // public void deleteData(List dictionaryCategorys) throws LIMSRuntimeException;
 
-  //	public List getAllDictionaryCategorys() throws LIMSRuntimeException;
+    // public List getAllDictionaryCategorys() throws LIMSRuntimeException;
 
-  //	public List getPageOfDictionaryCategorys(int startingRecNo) throws LIMSRuntimeException;
+    // public List getPageOfDictionaryCategorys(int startingRecNo) throws
+    // LIMSRuntimeException;
 
-  //	public void getData(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException;
+    // public void getData(DictionaryCategory dictionaryCategory) throws
+    // LIMSRuntimeException;
 
-  //	public void updateData(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException;
+    // public void updateData(DictionaryCategory dictionaryCategory) throws
+    // LIMSRuntimeException;
 
-  //
+    //
 
-  //
-  //	// bugzilla 1411
-  //	public Integer getTotalDictionaryCategoryCount() throws LIMSRuntimeException;
+    //
+    // // bugzilla 1411
+    // public Integer getTotalDictionaryCategoryCount() throws LIMSRuntimeException;
 
-  public DictionaryCategory getDictionaryCategoryByName(String name) throws LIMSRuntimeException;
+    public DictionaryCategory getDictionaryCategoryByName(String name) throws LIMSRuntimeException;
 
-  boolean duplicateDictionaryCategoryExists(DictionaryCategory dictionaryCategory)
-      throws LIMSRuntimeException;
+    boolean duplicateDictionaryCategoryExists(DictionaryCategory dictionaryCategory) throws LIMSRuntimeException;
 }

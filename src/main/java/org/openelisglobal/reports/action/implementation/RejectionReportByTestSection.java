@@ -32,81 +32,66 @@ import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.spring.util.SpringContext;
 
 /** */
-public class RejectionReportByTestSection extends RejectionReport
-    implements IReportParameterSetter {
-  private String unitName;
+public class RejectionReportByTestSection extends RejectionReport implements IReportParameterSetter {
+    private String unitName;
 
-  @Override
-  public void setRequestParameters(ReportForm form) {
-    new ReportSpecificationParameters(
-            ReportSpecificationParameters.Parameter.DATE_RANGE,
-            MessageUtil.getMessage("report.rejection.report.base")
-                + " "
-                + MessageUtil.getMessage("report.by.unit"),
-            MessageUtil.getMessage("report.instruction.all.fields"))
-        .setRequestParameters(form);
-    new ReportSpecificationList(
-            DisplayListService.getInstance()
-                .getList(DisplayListService.ListType.TEST_SECTION_ACTIVE),
-            MessageUtil.getMessage("workplan.unit.types"))
-        .setRequestParameters(form);
-  }
+    @Override
+    public void setRequestParameters(ReportForm form) {
+        new ReportSpecificationParameters(ReportSpecificationParameters.Parameter.DATE_RANGE,
+                MessageUtil.getMessage("report.rejection.report.base") + " " + MessageUtil.getMessage("report.by.unit"),
+                MessageUtil.getMessage("report.instruction.all.fields")).setRequestParameters(form);
+        new ReportSpecificationList(
+                DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_ACTIVE),
+                MessageUtil.getMessage("workplan.unit.types")).setRequestParameters(form);
+    }
 
-  @Override
-  protected String getActivityLabel() {
-    return MessageUtil.getMessage("report.unit") + ": " + unitName;
-  }
+    @Override
+    protected String getActivityLabel() {
+        return MessageUtil.getMessage("report.unit") + ": " + unitName;
+    }
 
-  @Override
-  protected void buildReportContent(ReportSpecificationList panelSelection) {
+    @Override
+    protected void buildReportContent(ReportSpecificationList panelSelection) {
 
-    unitName = getNameForId(panelSelection);
-    createReportParameters();
+        unitName = getNameForId(panelSelection);
+        createReportParameters();
 
-    rejections = new ArrayList<>();
-    ArrayList<RejectionReportBean> rawResults = new ArrayList<>();
+        rejections = new ArrayList<>();
+        ArrayList<RejectionReportBean> rawResults = new ArrayList<>();
 
-    List<Note> testRejectionNotes =
-        SpringContext.getBean(NoteService.class)
-            .getTestNotesInDateRangeByType(
-                dateRange.getLowDate(),
-                dateRange.getHighDate(),
-                NoteServiceImpl.NoteType.REJECTION_REASON);
+        List<Note> testRejectionNotes = SpringContext.getBean(NoteService.class).getTestNotesInDateRangeByType(
+                dateRange.getLowDate(), dateRange.getHighDate(), NoteServiceImpl.NoteType.REJECTION_REASON);
 
-    Collections.sort(
-        testRejectionNotes,
-        new Comparator<Note>() {
-          @Override
-          public int compare(Note o1, Note o2) {
-            return o1.getReferenceId().compareTo(o2.getReferenceId());
-          }
+        Collections.sort(testRejectionNotes, new Comparator<Note>() {
+            @Override
+            public int compare(Note o1, Note o2) {
+                return o1.getReferenceId().compareTo(o2.getReferenceId());
+            }
         });
 
-    Analysis currentAnalysis = new Analysis();
-    String noteText = null;
-    for (Note note : testRejectionNotes) {
-      Analysis analysis = SpringContext.getBean(AnalysisService.class).get(note.getReferenceId());
-      if (analysis != null
-          && analysis.getTestSection() != null
-          && panelSelection.getSelection() != null
-          && panelSelection.getSelection().equals(analysis.getTestSection().getId())) {
-        if (analysis.getId().equals(currentAnalysis.getId())) {
-          noteText += (noteText != null ? "<br/>" : "") + note.getText();
-        } else {
-          if (noteText != null) {
-            rawResults.add(createRejectionReportBean(noteText, currentAnalysis, true));
-          }
-          noteText = note.getText();
+        Analysis currentAnalysis = new Analysis();
+        String noteText = null;
+        for (Note note : testRejectionNotes) {
+            Analysis analysis = SpringContext.getBean(AnalysisService.class).get(note.getReferenceId());
+            if (analysis != null && analysis.getTestSection() != null && panelSelection.getSelection() != null
+                    && panelSelection.getSelection().equals(analysis.getTestSection().getId())) {
+                if (analysis.getId().equals(currentAnalysis.getId())) {
+                    noteText += (noteText != null ? "<br/>" : "") + note.getText();
+                } else {
+                    if (noteText != null) {
+                        rawResults.add(createRejectionReportBean(noteText, currentAnalysis, true));
+                    }
+                    noteText = note.getText();
+                }
+                currentAnalysis = analysis;
+            }
         }
-        currentAnalysis = analysis;
-      }
-    }
 
-    // pick up last rejection note
-    if (noteText != null) {
-      rawResults.add(createRejectionReportBean(noteText, currentAnalysis, true));
-    }
+        // pick up last rejection note
+        if (noteText != null) {
+            rawResults.add(createRejectionReportBean(noteText, currentAnalysis, true));
+        }
 
-    injectPatientLineAndCopyToFinalList(rawResults);
-  }
+        injectPatientLineAndCopyToFinalList(rawResults);
+    }
 }

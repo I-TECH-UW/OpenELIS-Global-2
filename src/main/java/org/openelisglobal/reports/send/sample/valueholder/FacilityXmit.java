@@ -17,74 +17,75 @@ import org.openelisglobal.common.util.StringUtil;
 
 public class FacilityXmit extends org.openelisglobal.provider.valueholder.Provider {
 
-  private String streetAddress;
+    private String streetAddress;
 
-  private String city;
+    private String city;
 
-  private String state;
+    private String state;
 
-  private String zipCode;
+    private String zipCode;
 
-  private String department;
+    private String department;
 
-  private String organizationName;
+    private String organizationName;
 
-  public String getDepartment() {
-    return department;
-  }
-
-  public void setDepartment(String department) {
-    this.department = department;
-  }
-
-  public FacilityXmit() {}
-
-  public String getCity() {
-    if (!StringUtil.isNullorNill(city)) {
-      return city.trim();
+    public String getDepartment() {
+        return department;
     }
-    return city;
-  }
 
-  public void setCity(String city) {
-    this.city = city;
-  }
-
-  public String getState() {
-    if (!StringUtil.isNullorNill(state)) {
-      return state.trim();
+    public void setDepartment(String department) {
+        this.department = department;
     }
-    return state;
-  }
 
-  public void setState(String state) {
-    this.state = state;
-  }
-
-  public String getStreetAddress() {
-    return streetAddress;
-  }
-
-  public void setStreetAddress(String streetAddress) {
-    this.streetAddress = streetAddress;
-  }
-
-  public String getZipCode() {
-    if (!StringUtil.isNullorNill(zipCode)) {
-      return zipCode.trim();
+    public FacilityXmit() {
     }
-    return zipCode;
-  }
 
-  public void setZipCode(String zipCode) {
-    this.zipCode = zipCode;
-  }
+    public String getCity() {
+        if (!StringUtil.isNullorNill(city)) {
+            return city.trim();
+        }
+        return city;
+    }
 
-  public String getOrganizationName() {
-    return organizationName;
-  }
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-  public void setOrganizationName(String organizationName) {
-    this.organizationName = organizationName;
-  }
+    public String getState() {
+        if (!StringUtil.isNullorNill(state)) {
+            return state.trim();
+        }
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getStreetAddress() {
+        return streetAddress;
+    }
+
+    public void setStreetAddress(String streetAddress) {
+        this.streetAddress = streetAddress;
+    }
+
+    public String getZipCode() {
+        if (!StringUtil.isNullorNill(zipCode)) {
+            return zipCode.trim();
+        }
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
 }

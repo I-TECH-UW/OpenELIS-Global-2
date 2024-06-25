@@ -14,20 +14,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class TruststoreServiceImpl implements TruststoreService {
 
-  @Value("${server.ssl.trust-store}")
-  private Resource trustStore;
+    @Value("${server.ssl.trust-store}")
+    private Resource trustStore;
 
-  @Value("${server.ssl.trust-store-password}")
-  private char[] trustStorePassword;
+    @Value("${server.ssl.trust-store-password}")
+    private char[] trustStorePassword;
 
-  @Override
-  public void addTrustedCert(String alias, Certificate certificate)
-      throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-    KeyStore keystore = KeyStore.getInstance(trustStore.getFile(), trustStorePassword);
-    keystore.setCertificateEntry(alias, certificate);
-    // write the changes to the file
-    try (FileOutputStream fos = new FileOutputStream(trustStore.getFile().getAbsolutePath())) {
-      keystore.store(fos, trustStorePassword);
+    @Override
+    public void addTrustedCert(String alias, Certificate certificate)
+            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+        KeyStore keystore = KeyStore.getInstance(trustStore.getFile(), trustStorePassword);
+        keystore.setCertificateEntry(alias, certificate);
+        // write the changes to the file
+        try (FileOutputStream fos = new FileOutputStream(trustStore.getFile().getAbsolutePath())) {
+            keystore.store(fos, trustStorePassword);
+        }
     }
-  }
 }

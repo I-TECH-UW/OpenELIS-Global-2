@@ -17,47 +17,47 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class TestTrailer extends BaseObject<String> {
 
-  private String id;
+    private String id;
 
-  private String testTrailerName;
+    private String testTrailerName;
 
-  private String description;
+    private String description;
 
-  private String text;
+    private String text;
 
-  public TestTrailer() {
-    super();
-  }
+    public TestTrailer() {
+        super();
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setTestTrailerName(String testTrailerName) {
-    this.testTrailerName = testTrailerName;
-  }
+    public void setTestTrailerName(String testTrailerName) {
+        this.testTrailerName = testTrailerName;
+    }
 
-  public String getTestTrailerName() {
-    return testTrailerName;
-  }
+    public String getTestTrailerName() {
+        return testTrailerName;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setText(String text) {
-    this.text = text;
-  }
+    public void setText(String text) {
+        this.text = text;
+    }
 
-  public String getText() {
-    return text;
-  }
+    public String getText() {
+        return text;
+    }
 }

@@ -6,7 +6,7 @@ import org.openelisglobal.qaevent.valueholder.NceSpecimen;
 
 public interface NceSpecimenService extends BaseObjectService<NceSpecimen, String> {
 
-  List<NceSpecimen> getSpecimenByNceId(String nceId);
+    List<NceSpecimen> getSpecimenByNceId(String nceId);
 
-  List<NceSpecimen> getSpecimenBySampleItemId(String sampleId);
+    List<NceSpecimen> getSpecimenBySampleItemId(String sampleId);
 }

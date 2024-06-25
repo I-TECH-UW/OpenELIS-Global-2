@@ -22,41 +22,41 @@ import org.openelisglobal.test.beanItems.TestResultItem;
 
 public class ResultSaveBeanAdapter {
 
-  public static ResultSaveBean fromTestResultItem(TestResultItem item) {
-    ResultSaveBean bean = new ResultSaveBean();
+    public static ResultSaveBean fromTestResultItem(TestResultItem item) {
+        ResultSaveBean bean = new ResultSaveBean();
 
-    bean.setHasQualifiedResult(item.isHasQualifiedResult());
-    bean.setResultType(item.getResultType());
-    bean.setMultiSelectResultValues(item.getMultiSelectResultValues());
-    bean.setTestId(item.getTestId());
-    bean.setQualifiedResultId(item.getQualifiedResultId());
-    bean.setQualifiedResultValue(item.getQualifiedResultValue());
-    bean.setQualifiedDictionaryId(item.getQualifiedDictionaryId());
-    bean.setResultId(item.getResultId());
-    bean.setResultValue(item.getShadowResultValue());
-    bean.setReportable(item.getReportable());
-    bean.setLowerNormalRange(item.getLowerNormalRange());
-    bean.setUpperNormalRange(item.getUpperNormalRange());
-    bean.setSignificantDigits(item.getSignificantDigits());
+        bean.setHasQualifiedResult(item.isHasQualifiedResult());
+        bean.setResultType(item.getResultType());
+        bean.setMultiSelectResultValues(item.getMultiSelectResultValues());
+        bean.setTestId(item.getTestId());
+        bean.setQualifiedResultId(item.getQualifiedResultId());
+        bean.setQualifiedResultValue(item.getQualifiedResultValue());
+        bean.setQualifiedDictionaryId(item.getQualifiedDictionaryId());
+        bean.setResultId(item.getResultId());
+        bean.setResultValue(item.getShadowResultValue());
+        bean.setReportable(item.getReportable());
+        bean.setLowerNormalRange(item.getLowerNormalRange());
+        bean.setUpperNormalRange(item.getUpperNormalRange());
+        bean.setSignificantDigits(item.getSignificantDigits());
 
-    return bean;
-  }
+        return bean;
+    }
 
-  public static ResultSaveBean fromAnalysisItem(AnalysisItem item) {
-    ResultSaveBean bean = new ResultSaveBean();
+    public static ResultSaveBean fromAnalysisItem(AnalysisItem item) {
+        ResultSaveBean bean = new ResultSaveBean();
 
-    bean.setHasQualifiedResult(item.isHasQualifiedResult());
-    bean.setResultType(item.getResultType());
-    bean.setMultiSelectResultValues(item.getMultiSelectResultValues());
-    bean.setTestId(item.getTestId());
-    bean.setQualifiedResultId(item.getQualifiedResultId());
-    bean.setQualifiedResultValue(item.getQualifiedResultValue());
-    bean.setQualifiedDictionaryId(item.getQualifiedDictionaryId());
-    bean.setResultId(item.getResultId());
-    bean.setResultValue(item.getResult());
-    // bean.setReportable("N");
-    bean.setSignificantDigits(item.getSignificantDigits());
+        bean.setHasQualifiedResult(item.isHasQualifiedResult());
+        bean.setResultType(item.getResultType());
+        bean.setMultiSelectResultValues(item.getMultiSelectResultValues());
+        bean.setTestId(item.getTestId());
+        bean.setQualifiedResultId(item.getQualifiedResultId());
+        bean.setQualifiedResultValue(item.getQualifiedResultValue());
+        bean.setQualifiedDictionaryId(item.getQualifiedDictionaryId());
+        bean.setResultId(item.getResultId());
+        bean.setResultValue(item.getResult());
+        // bean.setReportable("N");
+        bean.setSignificantDigits(item.getSignificantDigits());
 
-    return bean;
-  }
+        return bean;
+    }
 }

@@ -18,39 +18,39 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 
 public class PatientARVInitialVersion1Report extends PatientARVReport implements IReportCreator {
-  @Override
-  protected void createReportParameters() {
-    super.createReportParameters();
-    reportParameters.put("showSerologie", Boolean.TRUE);
-    reportParameters.put("showVirologie", Boolean.FALSE);
-  }
-
-  @Override
-  protected String reportFileName() {
-    return "Patient_ARV_Version1";
-  }
-
-  @Override
-  protected String getReportNameForReport() {
-    return MessageUtil.getMessage("sample.entry.project.initialARV.title");
-  }
-
-  @Override
-  protected boolean allowSample() {
-    List<ObservationHistory> historyList =
-        observationHistoryService.getAll(reportPatient, reportSample, OBSERVATION_PROJECT_ID);
-
-    for (ObservationHistory history : historyList) {
-      if ("InitialARV_Id".equals(history.getValue())) {
-        return true;
-      }
+    @Override
+    protected void createReportParameters() {
+        super.createReportParameters();
+        reportParameters.put("showSerologie", Boolean.TRUE);
+        reportParameters.put("showVirologie", Boolean.FALSE);
     }
 
-    return false;
-  }
+    @Override
+    protected String reportFileName() {
+        return "Patient_ARV_Version1";
+    }
 
-  @Override
-  protected String getProjectId() {
-    return ANTIRETROVIRAL_STUDY_ID;
-  }
+    @Override
+    protected String getReportNameForReport() {
+        return MessageUtil.getMessage("sample.entry.project.initialARV.title");
+    }
+
+    @Override
+    protected boolean allowSample() {
+        List<ObservationHistory> historyList = observationHistoryService.getAll(reportPatient, reportSample,
+                OBSERVATION_PROJECT_ID);
+
+        for (ObservationHistory history : historyList) {
+            if ("InitialARV_Id".equals(history.getValue())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    protected String getProjectId() {
+        return ANTIRETROVIRAL_STUDY_ID;
+    }
 }

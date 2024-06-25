@@ -20,57 +20,57 @@ import org.openelisglobal.common.valueholder.ValueHolderInterface;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 
 /**
- * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us) bugzilla 2203 fix to LazyInitializer error
- *     11/07/2007
+ * @author Hung Nguyen (Hung.Nguyen@health.state.mn.us) bugzilla 2203 fix to
+ *         LazyInitializer error 11/07/2007
  */
 public class SystemUserModule extends PermissionModule {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String systemUserId;
-  private ValueHolderInterface systemUser;
+    private String systemUserId;
+    private ValueHolderInterface systemUser;
 
-  public SystemUserModule() {
-    super();
-    this.systemUser = new ValueHolder();
-  }
+    public SystemUserModule() {
+        super();
+        this.systemUser = new ValueHolder();
+    }
 
-  protected void setSystemUserHolder(ValueHolderInterface systemUser) {
-    this.systemUser = systemUser;
-  }
+    protected void setSystemUserHolder(ValueHolderInterface systemUser) {
+        this.systemUser = systemUser;
+    }
 
-  protected ValueHolderInterface getSystemUserHolder() {
-    return this.systemUser;
-  }
+    protected ValueHolderInterface getSystemUserHolder() {
+        return this.systemUser;
+    }
 
-  public void setSystemUser(SystemUser systemUser) {
-    this.systemUser.setValue(systemUser);
-  }
+    public void setSystemUser(SystemUser systemUser) {
+        this.systemUser.setValue(systemUser);
+    }
 
-  public SystemUser getSystemUser() {
-    return (SystemUser) this.systemUser.getValue();
-  }
+    public SystemUser getSystemUser() {
+        return (SystemUser) this.systemUser.getValue();
+    }
 
-  public void setSystemUserId(String systemUserId) {
-    this.systemUserId = systemUserId;
-  }
+    public void setSystemUserId(String systemUserId) {
+        this.systemUserId = systemUserId;
+    }
 
-  public String getSystemUserId() {
-    return systemUserId;
-  }
+    public String getSystemUserId() {
+        return systemUserId;
+    }
 
-  @Override
-  public String getPermissionAgentId() {
-    return getSystemUserId();
-  }
+    @Override
+    public String getPermissionAgentId() {
+        return getSystemUserId();
+    }
 
-  @Override
-  public PermissionAgent getPermissionAgent() {
-    return getSystemUser();
-  }
+    @Override
+    public PermissionAgent getPermissionAgent() {
+        return getSystemUser();
+    }
 
-  @Override
-  public void setPermissionAgent(PermissionAgent agent) {
-    setSystemUser((SystemUser) agent);
-  }
+    @Override
+    public void setPermissionAgent(PermissionAgent agent) {
+        setSystemUser((SystemUser) agent);
+    }
 }

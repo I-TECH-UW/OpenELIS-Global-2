@@ -22,12 +22,11 @@ import org.openelisglobal.organization.valueholder.Organization;
 // should be service layer
 public interface OrganizationOrganizationTypeDAO {
 
-  public void deleteAllLinksForOrganization(String id) throws LIMSRuntimeException;
+    public void deleteAllLinksForOrganization(String id) throws LIMSRuntimeException;
 
-  public void linkOrganizationAndType(Organization org, String typeId) throws LIMSRuntimeException;
+    public void linkOrganizationAndType(Organization org, String typeId) throws LIMSRuntimeException;
 
-  public List<String> getOrganizationIdsForType(String typeId) throws LIMSRuntimeException;
+    public List<String> getOrganizationIdsForType(String typeId) throws LIMSRuntimeException;
 
-  public List<String> getTypeIdsForOrganizationId(String organizationId)
-      throws LIMSRuntimeException;
+    public List<String> getTypeIdsForOrganizationId(String organizationId) throws LIMSRuntimeException;
 }

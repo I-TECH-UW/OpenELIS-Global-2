@@ -5,13 +5,13 @@ import org.openelisglobal.resultvalidation.bean.AnalysisItem;
 
 public interface IValidationForm {
 
-  List<AnalysisItem> getResultList();
+    List<AnalysisItem> getResultList();
 
-  void setResultList(List<AnalysisItem> resultList);
+    void setResultList(List<AnalysisItem> resultList);
 
-  void setTestSectionId(String string);
+    void setTestSectionId(String string);
 
-  String getTestSectionId();
+    String getTestSectionId();
 
-  boolean getSearchFinished();
+    boolean getSearchFinished();
 }

@@ -44,153 +44,146 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> implements SampleHumanDAO {
 
-  public SampleHumanDAOImpl() {
-    super(SampleHuman.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public void getData(SampleHuman sampleHuman) throws LIMSRuntimeException {
-    try {
-      SampleHuman sampHuman =
-          entityManager.unwrap(Session.class).get(SampleHuman.class, sampleHuman.getId());
-      if (sampHuman != null) {
-        PropertyUtils.copyProperties(sampleHuman, sampHuman);
-      } else {
-        sampleHuman.setId(null);
-      }
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SampleHuman getData()", e);
-    }
-  }
-
-  public SampleHuman readSampleHuman(String idString) {
-    SampleHuman sh = null;
-    try {
-      sh = entityManager.unwrap(Session.class).get(SampleHuman.class, idString);
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SampleHuman readSampleHuman()", e);
+    public SampleHumanDAOImpl() {
+        super(SampleHuman.class);
     }
 
-    return sh;
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public void getDataBySample(SampleHuman sampleHuman) throws LIMSRuntimeException {
-
-    try {
-      String sql = "from SampleHuman sh where samp_id = :param";
-      Query<SampleHuman> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SampleHuman.class);
-      query.setParameter("param", Integer.parseInt(sampleHuman.getSampleId()));
-      List<SampleHuman> list = query.list();
-      SampleHuman sh = null;
-      if (list.size() > 0) {
-        sh = list.get(0);
-        PropertyUtils.copyProperties(sampleHuman, sh);
-      }
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SampleHuman getDataBySample()", e);
-    }
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public Patient getPatientForSample(Sample sample) throws LIMSRuntimeException {
-    Patient patient = null;
-    try {
-      String sql =
-          "select patient from Patient as patient, SampleHuman as sampleHuman where"
-              + " sampleHuman.patientId = patient.id and sampleHuman.sampleId = :sId";
-      Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
-      query.setParameter("sId", Integer.parseInt(sample.getId()));
-      patient = query.uniqueResult();
-    } catch (HibernateException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SampleHuman getPatientForSample()", e);
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(SampleHuman sampleHuman) throws LIMSRuntimeException {
+        try {
+            SampleHuman sampHuman = entityManager.unwrap(Session.class).get(SampleHuman.class, sampleHuman.getId());
+            if (sampHuman != null) {
+                PropertyUtils.copyProperties(sampleHuman, sampHuman);
+            } else {
+                sampleHuman.setId(null);
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SampleHuman getData()", e);
+        }
     }
 
-    return patient;
-  }
+    public SampleHuman readSampleHuman(String idString) {
+        SampleHuman sh = null;
+        try {
+            sh = entityManager.unwrap(Session.class).get(SampleHuman.class, idString);
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SampleHuman readSampleHuman()", e);
+        }
 
-  @Override
-  @Transactional(readOnly = true)
-  public Provider getProviderForSample(Sample sample) throws LIMSRuntimeException {
-    try {
-      String sql =
-          "select provider from Provider as provider, SampleHuman as sampleHuman where"
-              + " sampleHuman.providerId = provider.id and sampleHuman.sampleId = :sId";
-      Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
-      query.setParameter("sId", Integer.parseInt(sample.getId()));
-      Provider provider = query.uniqueResult();
-
-      return provider;
-    } catch (HibernateException e) {
-      handleException(e, "getProviderForSample");
+        return sh;
     }
 
-    return null;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public void getDataBySample(SampleHuman sampleHuman) throws LIMSRuntimeException {
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<Sample> getSamplesForPatient(String patientID) throws LIMSRuntimeException {
-
-    List<Sample> samples;
-
-    try {
-      String sql =
-          "select sample from Sample as sample, SampleHuman as sampleHuman where"
-              + " sampleHuman.sampleId = sample.id and sampleHuman.patientId = :patientId order by"
-              + " sample.id";
-      Query<Sample> query = entityManager.unwrap(Session.class).createQuery(sql, Sample.class);
-      query.setParameter("patientId", Integer.parseInt(patientID));
-      samples = query.list();
-    } catch (HibernateException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException(e);
+        try {
+            String sql = "from SampleHuman sh where samp_id = :param";
+            Query<SampleHuman> query = entityManager.unwrap(Session.class).createQuery(sql, SampleHuman.class);
+            query.setParameter("param", Integer.parseInt(sampleHuman.getSampleId()));
+            List<SampleHuman> list = query.list();
+            SampleHuman sh = null;
+            if (list.size() > 0) {
+                sh = list.get(0);
+                PropertyUtils.copyProperties(sampleHuman, sh);
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SampleHuman getDataBySample()", e);
+        }
     }
 
-    return samples;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public Patient getPatientForSample(Sample sample) throws LIMSRuntimeException {
+        Patient patient = null;
+        try {
+            String sql = "select patient from Patient as patient, SampleHuman as sampleHuman where"
+                    + " sampleHuman.patientId = patient.id and sampleHuman.sampleId = :sId";
+            Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
+            query.setParameter("sId", Integer.parseInt(sample.getId()));
+            patient = query.uniqueResult();
+        } catch (HibernateException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SampleHuman getPatientForSample()", e);
+        }
 
-  @Override
-  public List<Patient> getAllPatientsWithSampleEntered() {
-    List<Patient> patients = new ArrayList<>();
-    try {
-      String sql =
-          "select distinct patient from Patient as patient, SampleHuman as sampleHuman where"
-              + " sampleHuman.patientId = patient.id";
-      Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
-      patients = query.getResultList();
-    } catch (HibernateException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SampleHuman getAllPatientsWithSampleEntered()", e);
+        return patient;
     }
 
-    return patients;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public Provider getProviderForSample(Sample sample) throws LIMSRuntimeException {
+        try {
+            String sql = "select provider from Provider as provider, SampleHuman as sampleHuman where"
+                    + " sampleHuman.providerId = provider.id and sampleHuman.sampleId = :sId";
+            Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
+            query.setParameter("sId", Integer.parseInt(sample.getId()));
+            Provider provider = query.uniqueResult();
 
-  @Override
-  public List<Patient> getAllPatientsWithSampleEnteredMissingFhirUuid() {
-    List<Patient> patients = new ArrayList<>();
-    try {
-      String sql =
-          "select distinct patient from Patient as patient, SampleHuman as sampleHuman where"
-              + " sampleHuman.patientId = patient.id AND patient.fhirUuid is null";
-      Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
-      patients = query.getResultList();
-    } catch (HibernateException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SampleHuman getAllPatientsWithSampleEntered()", e);
+            return provider;
+        } catch (HibernateException e) {
+            handleException(e, "getProviderForSample");
+        }
+
+        return null;
     }
 
-    return patients;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<Sample> getSamplesForPatient(String patientID) throws LIMSRuntimeException {
+
+        List<Sample> samples;
+
+        try {
+            String sql = "select sample from Sample as sample, SampleHuman as sampleHuman where"
+                    + " sampleHuman.sampleId = sample.id and sampleHuman.patientId = :patientId order by"
+                    + " sample.id";
+            Query<Sample> query = entityManager.unwrap(Session.class).createQuery(sql, Sample.class);
+            query.setParameter("patientId", Integer.parseInt(patientID));
+            samples = query.list();
+        } catch (HibernateException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException(e);
+        }
+
+        return samples;
+    }
+
+    @Override
+    public List<Patient> getAllPatientsWithSampleEntered() {
+        List<Patient> patients = new ArrayList<>();
+        try {
+            String sql = "select distinct patient from Patient as patient, SampleHuman as sampleHuman where"
+                    + " sampleHuman.patientId = patient.id";
+            Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
+            patients = query.getResultList();
+        } catch (HibernateException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SampleHuman getAllPatientsWithSampleEntered()", e);
+        }
+
+        return patients;
+    }
+
+    @Override
+    public List<Patient> getAllPatientsWithSampleEnteredMissingFhirUuid() {
+        List<Patient> patients = new ArrayList<>();
+        try {
+            String sql = "select distinct patient from Patient as patient, SampleHuman as sampleHuman where"
+                    + " sampleHuman.patientId = patient.id AND patient.fhirUuid is null";
+            Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
+            patients = query.getResultList();
+        } catch (HibernateException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SampleHuman getAllPatientsWithSampleEntered()", e);
+        }
+
+        return patients;
+    }
 }

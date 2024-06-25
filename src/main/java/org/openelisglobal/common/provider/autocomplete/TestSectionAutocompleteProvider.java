@@ -22,10 +22,12 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.usertestsection.service.UserTestSectionService;
 
 /**
- * An example servlet that responds to an ajax:autocomplete tag action. This servlet would be
- * referenced by the baseUrl attribute of the JSP tag.
+ * An example servlet that responds to an ajax:autocomplete tag action. This
+ * servlet would be referenced by the baseUrl attribute of the JSP tag.
  *
- * <p>This servlet should generate XML in the following format: <code><![CDATA[<?xml version="1.0"?>
+ * <p>
+ * This servlet should generate XML in the following format:
+ * <code><![CDATA[<?xml version="1.0"?>
  * <list>
  *   <item value="Item1">First Item</item>
  *   <item value="Item2">Second Item</item>
@@ -36,30 +38,28 @@ import org.openelisglobal.usertestsection.service.UserTestSectionService;
  */
 public class TestSectionAutocompleteProvider extends BaseAutocompleteProvider {
 
-  protected UserTestSectionService userTestSectionService =
-      SpringContext.getBean(UserTestSectionService.class);
+    protected UserTestSectionService userTestSectionService = SpringContext.getBean(UserTestSectionService.class);
 
-  /**
-   * @see
-   *     org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
-   *     javax.servlet.http.HttpServletResponse)
-   */
-  public List processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+    /**
+     * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
+     */
+    public List processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-    // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "I am in
-    // TestSectionAutocompleteProvider "
-    // + request.getParameter("testSectionName"));
-    String testSectionName = request.getParameter("testSectionName");
-    // System.out
-    // .println("TestSectionAutocompleteProvider testSectionName "
-    // + testSectionName);
-    // Get test sections by sys user id
-    // bugzilla 2160
-    List list = userTestSectionService.getAllUserTestSectionsByName(request, testSectionName);
-    // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown",
-    // "TestSectionAutocompleteProvider list "
-    // + list.size());
-    return list;
-  }
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "I am in
+        // TestSectionAutocompleteProvider "
+        // + request.getParameter("testSectionName"));
+        String testSectionName = request.getParameter("testSectionName");
+        // System.out
+        // .println("TestSectionAutocompleteProvider testSectionName "
+        // + testSectionName);
+        // Get test sections by sys user id
+        // bugzilla 2160
+        List list = userTestSectionService.getAllUserTestSectionsByName(request, testSectionName);
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown",
+        // "TestSectionAutocompleteProvider list "
+        // + list.size());
+        return list;
+    }
 }
