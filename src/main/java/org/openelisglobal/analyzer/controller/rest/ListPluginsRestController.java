@@ -17,44 +17,44 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/rest")
 public class ListPluginsRestController extends BaseController {
 
-    // form isn't submitted back
-    private static final String[] ALLOWED_FIELDS = new String[] {};
+  // form isn't submitted back
+  private static final String[] ALLOWED_FIELDS = new String[] {};
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.setAllowedFields(ALLOWED_FIELDS);
+  @InitBinder
+  public void initBinder(WebDataBinder binder) {
+    binder.setAllowedFields(ALLOWED_FIELDS);
+  }
+
+  @GetMapping(value = "/ListPlugins", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ListPluginForm showListPlugins(HttpServletRequest request) {
+    ListPluginForm form = new ListPluginForm();
+
+    List<String> pluginNames = PluginLoader.getCurrentPlugins();
+
+    if (pluginNames.isEmpty()) {
+      pluginNames.add(MessageUtil.getContextualMessage("plugin.no.plugins"));
     }
+    form.setPluginList(pluginNames);
 
-    @GetMapping(value = "/ListPlugins", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ListPluginForm showListPlugins(HttpServletRequest request) {
-        ListPluginForm form = new ListPluginForm();
+    return form;
+  }
 
-        List<String> pluginNames = PluginLoader.getCurrentPlugins();
-
-        if (pluginNames.isEmpty()) {
-            pluginNames.add(MessageUtil.getContextualMessage("plugin.no.plugins"));
-        }
-        form.setPluginList(pluginNames);
-
-        return form;
+  @Override
+  protected String findLocalForward(String forward) {
+    if (FWD_SUCCESS.equals(forward)) {
+      return "ListPluginsPageDefinition";
+    } else {
+      return "PageNotFound";
     }
+  }
 
-    @Override
-    protected String findLocalForward(String forward) {
-        if (FWD_SUCCESS.equals(forward)) {
-            return "ListPluginsPageDefinition";
-        } else {
-            return "PageNotFound";
-        }
-    }
+  @Override
+  protected String getPageTitleKey() {
+    return "plugin.installed.plugins";
+  }
 
-    @Override
-    protected String getPageTitleKey() {
-        return "plugin.installed.plugins";
-    }
-
-    @Override
-    protected String getPageSubtitleKey() {
-        return "plugin.installed.plugins";
-    }
+  @Override
+  protected String getPageSubtitleKey() {
+    return "plugin.installed.plugins";
+  }
 }
