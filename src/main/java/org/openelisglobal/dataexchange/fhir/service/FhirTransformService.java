@@ -26,59 +26,48 @@ import org.openelisglobal.sample.valueholder.Sample;
 
 public interface FhirTransformService {
 
-  void transformPersistPatient(PatientManagementInfo patientInfo)
-      throws FhirTransformationException, FhirPersistanceException;
+    void transformPersistPatient(PatientManagementInfo patientInfo)
+            throws FhirTransformationException, FhirPersistanceException;
 
-  void transformPersistOrganization(Organization organization)
-      throws FhirTransformationException, FhirPersistanceException;
+    void transformPersistOrganization(Organization organization)
+            throws FhirTransformationException, FhirPersistanceException;
 
-  void transformPersistOrderEntryFhirObjects(
-      SamplePatientUpdateData updateData,
-      PatientManagementInfo patientInfo,
-      boolean useReferral,
-      List<ReferralItem> referralItems)
-      throws FhirTransformationException, FhirPersistanceException;
+    void transformPersistOrderEntryFhirObjects(SamplePatientUpdateData updateData, PatientManagementInfo patientInfo,
+            boolean useReferral, List<ReferralItem> referralItems)
+            throws FhirTransformationException, FhirPersistanceException;
 
-  void transformPersistResultsEntryFhirObjects(ResultsUpdateDataSet actionDataSet)
-      throws FhirTransformationException, FhirPersistanceException;
+    void transformPersistResultsEntryFhirObjects(ResultsUpdateDataSet actionDataSet)
+            throws FhirTransformationException, FhirPersistanceException;
 
-  Organization transformToOrganization(org.hl7.fhir.r4.model.Organization fhirOrganization)
-      throws FhirTransformationException;
+    Organization transformToOrganization(org.hl7.fhir.r4.model.Organization fhirOrganization)
+            throws FhirTransformationException;
 
-  org.hl7.fhir.r4.model.Organization transformToFhirOrganization(Organization organization)
-      throws FhirTransformationException;
+    org.hl7.fhir.r4.model.Organization transformToFhirOrganization(Organization organization)
+            throws FhirTransformationException;
 
-  String getIdFromLocation(String location);
+    String getIdFromLocation(String location);
 
-  Reference createReferenceFor(Resource resource);
+    Reference createReferenceFor(Resource resource);
 
-  void transformPersistResultValidationFhirObjects(
-      List<Result> deletableList,
-      List<Analysis> analysisUpdateList,
-      ArrayList<Result> resultUpdateList,
-      List<AnalysisItem> resultItemList,
-      ArrayList<Sample> sampleUpdateList,
-      ArrayList<Note> noteUpdateList)
-      throws FhirLocalPersistingException;
+    void transformPersistResultValidationFhirObjects(List<Result> deletableList, List<Analysis> analysisUpdateList,
+            ArrayList<Result> resultUpdateList, List<AnalysisItem> resultItemList, ArrayList<Sample> sampleUpdateList,
+            ArrayList<Note> noteUpdateList) throws FhirLocalPersistingException;
 
-  org.hl7.fhir.r4.model.Patient transformToFhirPatient(String patientId)
-      throws FhirTransformationException;
+    org.hl7.fhir.r4.model.Patient transformToFhirPatient(String patientId) throws FhirTransformationException;
 
-  Future<Bundle> transformPersistObjectsUnderSamples(List<String> sampleIds)
-      throws FhirLocalPersistingException;
+    Future<Bundle> transformPersistObjectsUnderSamples(List<String> sampleIds) throws FhirLocalPersistingException;
 
-  Future<Bundle> transformPersistPatients(List<String> patientIds)
-      throws FhirLocalPersistingException;
+    Future<Bundle> transformPersistPatients(List<String> patientIds) throws FhirLocalPersistingException;
 
-  Practitioner transformNameToPractitioner(String practitionerName);
+    Practitioner transformNameToPractitioner(String practitionerName);
 
-  Reference createReferenceFor(ResourceType resourceType, String id);
+    Reference createReferenceFor(ResourceType resourceType, String id);
 
-  Identifier createIdentifier(String system, String value);
+    Identifier createIdentifier(String system, String value);
 
-  boolean setTempIdIfMissing(Resource resource, TempIdGenerator tempIdGenerator);
+    boolean setTempIdIfMissing(Resource resource, TempIdGenerator tempIdGenerator);
 
-  Practitioner transformProviderToPractitioner(Provider provider);
+    Practitioner transformProviderToPractitioner(Provider provider);
 
-  Provider transformToProvider(Practitioner practitioner);
+    Provider transformToProvider(Practitioner practitioner);
 }

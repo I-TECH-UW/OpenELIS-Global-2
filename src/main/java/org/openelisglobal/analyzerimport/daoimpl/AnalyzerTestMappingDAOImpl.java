@@ -29,29 +29,28 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class AnalyzerTestMappingDAOImpl
-    extends BaseDAOImpl<AnalyzerTestMapping, AnalyzerTestMappingPK>
-    implements AnalyzerTestMappingDAO {
+public class AnalyzerTestMappingDAOImpl extends BaseDAOImpl<AnalyzerTestMapping, AnalyzerTestMappingPK>
+        implements AnalyzerTestMappingDAO {
 
-  public AnalyzerTestMappingDAOImpl() {
-    super(AnalyzerTestMapping.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<AnalyzerTestMapping> getAllForAnalyzer(String analyzerId) {
-    List<AnalyzerTestMapping> list;
-    try {
-      String sql = "from AnalyzerTestMapping a where a.compoundId.analyzerId = :analyzerId";
-      Query<AnalyzerTestMapping> query =
-          entityManager.unwrap(Session.class).createQuery(sql, AnalyzerTestMapping.class);
-      query.setParameter("analyzerId", Integer.parseInt(analyzerId));
-      list = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in AnalyzerTestMappingDAOImpl getAllForAnalyzer()", e);
+    public AnalyzerTestMappingDAOImpl() {
+        super(AnalyzerTestMapping.class);
     }
 
-    return list;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<AnalyzerTestMapping> getAllForAnalyzer(String analyzerId) {
+        List<AnalyzerTestMapping> list;
+        try {
+            String sql = "from AnalyzerTestMapping a where a.compoundId.analyzerId = :analyzerId";
+            Query<AnalyzerTestMapping> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    AnalyzerTestMapping.class);
+            query.setParameter("analyzerId", Integer.parseInt(analyzerId));
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in AnalyzerTestMappingDAOImpl getAllForAnalyzer()", e);
+        }
+
+        return list;
+    }
 }

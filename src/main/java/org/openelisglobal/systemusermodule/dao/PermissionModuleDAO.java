@@ -25,26 +25,26 @@ import org.openelisglobal.systemusermodule.valueholder.PermissionModule;
  */
 public interface PermissionModuleDAO<T extends PermissionModule> extends BaseDAO<T, String> {
 
-  String SUPERVISOR = "Supervisor";
+    String SUPERVISOR = "Supervisor";
 
-  //	public boolean insertData(T permissionModule) throws LIMSRuntimeException;
+    // public boolean insertData(T permissionModule) throws LIMSRuntimeException;
 
-  //	public void deleteData(List permissionModules) throws LIMSRuntimeException;
+    // public void deleteData(List permissionModules) throws LIMSRuntimeException;
 
-  List<T> getAllPermissionModules() throws LIMSRuntimeException;
+    List<T> getAllPermissionModules() throws LIMSRuntimeException;
 
-  List<T> getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException;
+    List<T> getPageOfPermissionModules(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(T permissionModule) throws LIMSRuntimeException;
+    void getData(T permissionModule) throws LIMSRuntimeException;
 
-  //	public void updateData(T permissionModule) throws LIMSRuntimeException;
+    // public void updateData(T permissionModule) throws LIMSRuntimeException;
 
-  Integer getTotalPermissionModuleCount() throws LIMSRuntimeException;
+    Integer getTotalPermissionModuleCount() throws LIMSRuntimeException;
 
-  List<T> getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException;
+    List<T> getAllPermissionModulesByAgentId(int systemUserId) throws LIMSRuntimeException;
 
-  //	public boolean isAgentAllowedAccordingToName(String id, String string) throws
-  // LIMSRuntimeException;
+    // public boolean isAgentAllowedAccordingToName(String id, String string) throws
+    // LIMSRuntimeException;
 
-  boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException;
+    boolean doesUserHaveAnyModules(int userId) throws LIMSRuntimeException;
 }

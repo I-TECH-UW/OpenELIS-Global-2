@@ -21,189 +21,189 @@ import org.openelisglobal.test.valueholder.Test;
 
 public class TestResult extends BaseObject<String> {
 
-  private static final long serialVersionUID = 1L;
-  private String id;
-  private ValueHolderInterface test;
-  private String testName;
-  private String resultGroup;
-  private String sortOrder;
-  private String flags;
-  private String testResultType;
-  private String value;
-  private String significantDigits;
-  private String quantLimit;
-  private String contLevel;
-  private String scriptletName;
-  private ValueHolderInterface scriptlet;
-  private Boolean isQuantifiable = false;
-  private Boolean isNormal = false;
-  private Boolean isActive = true;
+    private static final long serialVersionUID = 1L;
+    private String id;
+    private ValueHolderInterface test;
+    private String testName;
+    private String resultGroup;
+    private String sortOrder;
+    private String flags;
+    private String testResultType;
+    private String value;
+    private String significantDigits;
+    private String quantLimit;
+    private String contLevel;
+    private String scriptletName;
+    private ValueHolderInterface scriptlet;
+    private Boolean isQuantifiable = false;
+    private Boolean isNormal = false;
+    private Boolean isActive = true;
 
-  // transient
-  private Boolean isDefault = false;
+    // transient
+    private Boolean isDefault = false;
 
-  public TestResult() {
-    super();
-    this.test = new ValueHolder();
-    this.scriptlet = new ValueHolder();
-  }
+    public TestResult() {
+        super();
+        this.test = new ValueHolder();
+        this.scriptlet = new ValueHolder();
+    }
 
-  @Override
-  public String getId() {
-    return this.id;
-  }
+    @Override
+    public String getId() {
+        return this.id;
+    }
 
-  public Test getTest() {
-    return (Test) this.test.getValue();
-  }
+    public Test getTest() {
+        return (Test) this.test.getValue();
+    }
 
-  public void setTest(Test test) {
-    this.test.setValue(test);
-  }
+    public void setTest(Test test) {
+        this.test.setValue(test);
+    }
 
-  protected ValueHolderInterface getTestHolder() {
-    return this.test;
-  }
+    protected ValueHolderInterface getTestHolder() {
+        return this.test;
+    }
 
-  public String getTestName() {
-    return this.testName;
-  }
+    public String getTestName() {
+        return this.testName;
+    }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  protected void setTestHolder(ValueHolderInterface test) {
-    this.test = test;
-  }
+    protected void setTestHolder(ValueHolderInterface test) {
+        this.test = test;
+    }
 
-  public void setTestName(String testName) {
-    this.testName = testName;
-  }
+    public void setTestName(String testName) {
+        this.testName = testName;
+    }
 
-  public String getContLevel() {
-    return contLevel;
-  }
+    public String getContLevel() {
+        return contLevel;
+    }
 
-  public void setContLevel(String contLevel) {
-    this.contLevel = contLevel;
-  }
+    public void setContLevel(String contLevel) {
+        this.contLevel = contLevel;
+    }
 
-  public String getFlags() {
-    return flags;
-  }
+    public String getFlags() {
+        return flags;
+    }
 
-  public void setFlags(String flags) {
-    this.flags = flags;
-  }
+    public void setFlags(String flags) {
+        this.flags = flags;
+    }
 
-  public String getQuantLimit() {
-    return quantLimit;
-  }
+    public String getQuantLimit() {
+        return quantLimit;
+    }
 
-  public void setQuantLimit(String quantLimit) {
-    this.quantLimit = quantLimit;
-  }
+    public void setQuantLimit(String quantLimit) {
+        this.quantLimit = quantLimit;
+    }
 
-  public String getResultGroup() {
-    return resultGroup;
-  }
+    public String getResultGroup() {
+        return resultGroup;
+    }
 
-  public void setResultGroup(String resultGroup) {
-    this.resultGroup = resultGroup;
-  }
+    public void setResultGroup(String resultGroup) {
+        this.resultGroup = resultGroup;
+    }
 
-  public String getSignificantDigits() {
-    return significantDigits;
-  }
+    public String getSignificantDigits() {
+        return significantDigits;
+    }
 
-  public void setSignificantDigits(String significantDigits) {
-    this.significantDigits = significantDigits;
-  }
+    public void setSignificantDigits(String significantDigits) {
+        this.significantDigits = significantDigits;
+    }
 
-  public String getTestResultType() {
-    return testResultType;
-  }
+    public String getTestResultType() {
+        return testResultType;
+    }
 
-  public void setTestResultType(String testResultType) {
-    this.testResultType = testResultType;
-  }
+    public void setTestResultType(String testResultType) {
+        this.testResultType = testResultType;
+    }
 
-  public String getValue() {
-    return value;
-  }
+    public String getValue() {
+        return value;
+    }
 
-  public void setValue(String value) {
-    this.value = value;
-  }
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-  // gnr jackson setter conflict
-  //    public void setTest(ValueHolderInterface test) {
-  //        this.test = test;
-  //    }
+    // gnr jackson setter conflict
+    // public void setTest(ValueHolderInterface test) {
+    // this.test = test;
+    // }
 
-  public String getScriptletName() {
-    return scriptletName;
-  }
+    public String getScriptletName() {
+        return scriptletName;
+    }
 
-  public void setScriptletName(String scriptletName) {
-    this.scriptletName = scriptletName;
-  }
+    public void setScriptletName(String scriptletName) {
+        this.scriptletName = scriptletName;
+    }
 
-  public void setScriptlet(Scriptlet scriptlet) {
-    this.scriptlet.setValue(scriptlet);
-  }
+    public void setScriptlet(Scriptlet scriptlet) {
+        this.scriptlet.setValue(scriptlet);
+    }
 
-  protected void setScriptletHolder(ValueHolderInterface scriptlet) {
-    this.scriptlet = scriptlet;
-  }
+    protected void setScriptletHolder(ValueHolderInterface scriptlet) {
+        this.scriptlet = scriptlet;
+    }
 
-  public Scriptlet getScriptlet() {
-    return (Scriptlet) this.scriptlet.getValue();
-  }
+    public Scriptlet getScriptlet() {
+        return (Scriptlet) this.scriptlet.getValue();
+    }
 
-  protected ValueHolderInterface getScriptletHolder() {
-    return this.scriptlet;
-  }
+    protected ValueHolderInterface getScriptletHolder() {
+        return this.scriptlet;
+    }
 
-  public String getSortOrder() {
-    return sortOrder;
-  }
+    public String getSortOrder() {
+        return sortOrder;
+    }
 
-  public void setSortOrder(String sortOrder) {
-    this.sortOrder = sortOrder;
-  }
+    public void setSortOrder(String sortOrder) {
+        this.sortOrder = sortOrder;
+    }
 
-  public Boolean getIsQuantifiable() {
-    return isQuantifiable;
-  }
+    public Boolean getIsQuantifiable() {
+        return isQuantifiable;
+    }
 
-  public void setIsQuantifiable(Boolean isQuantifiable) {
-    this.isQuantifiable = isQuantifiable;
-  }
+    public void setIsQuantifiable(Boolean isQuantifiable) {
+        this.isQuantifiable = isQuantifiable;
+    }
 
-  public Boolean getIsActive() {
-    return isActive;
-  }
+    public Boolean getIsActive() {
+        return isActive;
+    }
 
-  public void setIsActive(Boolean isActive) {
-    this.isActive = isActive;
-  }
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
 
-  public Boolean getIsNormal() {
-    return isNormal;
-  }
+    public Boolean getIsNormal() {
+        return isNormal;
+    }
 
-  public void setIsNormal(Boolean normal) {
-    isNormal = normal;
-  }
+    public void setIsNormal(Boolean normal) {
+        isNormal = normal;
+    }
 
-  public void setDefault(boolean isDefault) {
-    this.isDefault = isDefault;
-  }
+    public void setDefault(boolean isDefault) {
+        this.isDefault = isDefault;
+    }
 
-  public Boolean getDefault() {
-    return isDefault;
-  }
+    public Boolean getDefault() {
+        return isDefault;
+    }
 }

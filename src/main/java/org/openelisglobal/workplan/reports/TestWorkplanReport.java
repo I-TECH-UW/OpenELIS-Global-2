@@ -28,85 +28,74 @@ import org.openelisglobal.workplan.form.WorkplanForm;
 
 public class TestWorkplanReport implements IWorkplanReport {
 
-  private static int PREFIX_LENGTH =
-      AccessionNumberUtil.getMainAccessionNumberGenerator().getInvarientLength();
-  private static final String BASE_FILE_NAME = "WorkplanByTest";
-  private static final String RESULT_FILE_NAME = "WorkplanResultsByTest";
-  private final HashMap<String, Object> parameterMap = new HashMap<>();
-  private String testName = "";
-  protected String reportPath = "";
+    private static int PREFIX_LENGTH = AccessionNumberUtil.getMainAccessionNumberGenerator().getInvarientLength();
+    private static final String BASE_FILE_NAME = "WorkplanByTest";
+    private static final String RESULT_FILE_NAME = "WorkplanResultsByTest";
+    private final HashMap<String, Object> parameterMap = new HashMap<>();
+    private String testName = "";
+    protected String reportPath = "";
 
-  public TestWorkplanReport(String testType) {
-    testName = testType;
-  }
-
-  @Override
-  public String getFileName() {
-    return ConfigurationProperties.getInstance()
-            .isPropertyValueEqual(Property.RESULTS_ON_WORKPLAN, "false")
-        ? BASE_FILE_NAME
-        : RESULT_FILE_NAME;
-  }
-
-  @Override
-  public HashMap<String, Object> getParameters() {
-    parameterMap.put("testName", testName);
-    parameterMap.put(
-        "printSubjectNo",
-        ConfigurationProperties.getInstance()
-            .isPropertyValueEqual(Property.SUBJECT_ON_WORKPLAN, "true"));
-    parameterMap.put(
-        "printNextVisit",
-        ConfigurationProperties.getInstance()
-            .isPropertyValueEqual(Property.NEXT_VISIT_DATE_ON_WORKPLAN, "true"));
-    parameterMap.put(
-        "labNumberTitle", MessageUtil.getContextualMessage("quick.entry.accession.number"));
-    parameterMap.put("subjectNoTitle", MessageUtil.getContextualMessage("patient.subject.number"));
-    parameterMap.put("nameOfPatient", getNameOfPatient());
-    parameterMap.put(
-        "labName", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName));
-    parameterMap.put(
-        "accessionPrefix", AccessionNumberUtil.getMainAccessionNumberGenerator().getPrefix());
-    parameterMap.put("prefixLength", PREFIX_LENGTH);
-    parameterMap.put("SUBREPORT_DIR", reportPath);
-    parameterMap.put("receptionDate", MessageUtil.getMessage("report.receptionDate"));
-    parameterMap.put("workPlan", MessageUtil.getMessage("report.workPlan"));
-    parameterMap.put("appointmentDate", MessageUtil.getMessage("report.appointmentDate"));
-    parameterMap.put(
-        JRParameter.REPORT_RESOURCE_BUNDLE, MessageUtil.getMessageSourceAsResourceBundle());
-
-    return parameterMap;
-  }
-
-  protected String getNameOfPatient() {
-    if (ConfigurationProperties.getInstance()
-        .isPropertyValueEqual(Property.configurationName, "Haiti LNSP")) {
-      return MessageUtil.getContextualMessage("sample.entry.project.patientName.code");
-    } else {
-      return null;
+    public TestWorkplanReport(String testType) {
+        testName = testType;
     }
-  }
 
-  @Override
-  public List<?> prepareRows(WorkplanForm form) {
-
-    List<TestResultItem> workplanTests = form.getWorkplanTests();
-
-    // remove unwanted tests from workplan
-    List<TestResultItem> includedTests = new ArrayList<>();
-    for (TestResultItem test : workplanTests) {
-      if (!test.isNotIncludedInWorkplan()) {
-        includedTests.add(test);
-      } else {
-        // handles the case that the checkbox is unchecked
-        test.setNotIncludedInWorkplan(false);
-      }
+    @Override
+    public String getFileName() {
+        return ConfigurationProperties.getInstance().isPropertyValueEqual(Property.RESULTS_ON_WORKPLAN, "false")
+                ? BASE_FILE_NAME
+                : RESULT_FILE_NAME;
     }
-    return includedTests;
-  }
 
-  @Override
-  public void setReportPath(String reportPath) {
-    this.reportPath = reportPath;
-  }
+    @Override
+    public HashMap<String, Object> getParameters() {
+        parameterMap.put("testName", testName);
+        parameterMap.put("printSubjectNo",
+                ConfigurationProperties.getInstance().isPropertyValueEqual(Property.SUBJECT_ON_WORKPLAN, "true"));
+        parameterMap.put("printNextVisit", ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(Property.NEXT_VISIT_DATE_ON_WORKPLAN, "true"));
+        parameterMap.put("labNumberTitle", MessageUtil.getContextualMessage("quick.entry.accession.number"));
+        parameterMap.put("subjectNoTitle", MessageUtil.getContextualMessage("patient.subject.number"));
+        parameterMap.put("nameOfPatient", getNameOfPatient());
+        parameterMap.put("labName", ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName));
+        parameterMap.put("accessionPrefix", AccessionNumberUtil.getMainAccessionNumberGenerator().getPrefix());
+        parameterMap.put("prefixLength", PREFIX_LENGTH);
+        parameterMap.put("SUBREPORT_DIR", reportPath);
+        parameterMap.put("receptionDate", MessageUtil.getMessage("report.receptionDate"));
+        parameterMap.put("workPlan", MessageUtil.getMessage("report.workPlan"));
+        parameterMap.put("appointmentDate", MessageUtil.getMessage("report.appointmentDate"));
+        parameterMap.put(JRParameter.REPORT_RESOURCE_BUNDLE, MessageUtil.getMessageSourceAsResourceBundle());
+
+        return parameterMap;
+    }
+
+    protected String getNameOfPatient() {
+        if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "Haiti LNSP")) {
+            return MessageUtil.getContextualMessage("sample.entry.project.patientName.code");
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public List<?> prepareRows(WorkplanForm form) {
+
+        List<TestResultItem> workplanTests = form.getWorkplanTests();
+
+        // remove unwanted tests from workplan
+        List<TestResultItem> includedTests = new ArrayList<>();
+        for (TestResultItem test : workplanTests) {
+            if (!test.isNotIncludedInWorkplan()) {
+                includedTests.add(test);
+            } else {
+                // handles the case that the checkbox is unchecked
+                test.setNotIncludedInWorkplan(false);
+            }
+        }
+        return includedTests;
+    }
+
+    @Override
+    public void setReportPath(String reportPath) {
+        this.reportPath = reportPath;
+    }
 }

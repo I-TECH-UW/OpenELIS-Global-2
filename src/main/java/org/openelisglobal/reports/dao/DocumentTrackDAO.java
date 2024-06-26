@@ -18,15 +18,17 @@ import org.openelisglobal.reports.valueholder.DocumentTrack;
 
 public interface DocumentTrackDAO extends BaseDAO<DocumentTrack, String> {
 
-  //	public List<DocumentTrack> getByTypeRecordAndTable(String typeId, String tableId, String
-  // recordId)
-  //			throws LIMSRuntimeException;
+    // public List<DocumentTrack> getByTypeRecordAndTable(String typeId, String
+    // tableId, String
+    // recordId)
+    // throws LIMSRuntimeException;
 
-  //	public List<DocumentTrack> getByTypeRecordAndTableAndName(String reportTypeId, String
-  // referenceTable, String id,
-  //			String name) throws LIMSRuntimeException;
+    // public List<DocumentTrack> getByTypeRecordAndTableAndName(String
+    // reportTypeId, String
+    // referenceTable, String id,
+    // String name) throws LIMSRuntimeException;
 
-  //	public void insertData(DocumentTrack docTrack);
+    // public void insertData(DocumentTrack docTrack);
 
-  //	public DocumentTrack readEntity(String id);
+    // public DocumentTrack readEntity(String id);
 }

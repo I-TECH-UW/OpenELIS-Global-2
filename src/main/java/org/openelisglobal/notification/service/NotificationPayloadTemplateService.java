@@ -4,12 +4,9 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.notification.valueholder.NotificationPayloadTemplate;
 import org.openelisglobal.notification.valueholder.NotificationPayloadTemplate.NotificationPayloadType;
 
-public interface NotificationPayloadTemplateService
-    extends BaseObjectService<NotificationPayloadTemplate, Integer> {
+public interface NotificationPayloadTemplateService extends BaseObjectService<NotificationPayloadTemplate, Integer> {
 
-  public NotificationPayloadTemplate getSystemDefaultPayloadTemplateForType(
-      NotificationPayloadType type);
+    public NotificationPayloadTemplate getSystemDefaultPayloadTemplateForType(NotificationPayloadType type);
 
-  void updatePayloadTemplateMessagesAndSubject(
-      NotificationPayloadTemplate newPayloadTemplate, String sysUserId);
+    void updatePayloadTemplateMessagesAndSubject(NotificationPayloadTemplate newPayloadTemplate, String sysUserId);
 }

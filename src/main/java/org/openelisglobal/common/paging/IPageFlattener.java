@@ -16,5 +16,5 @@ package org.openelisglobal.common.paging;
 import java.util.List;
 
 public interface IPageFlattener<E> {
-  public E flattenPages(List<E> pages);
+    public E flattenPages(List<E> pages);
 }

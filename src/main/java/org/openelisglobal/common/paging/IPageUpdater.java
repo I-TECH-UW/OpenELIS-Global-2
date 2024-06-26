@@ -14,5 +14,5 @@
 package org.openelisglobal.common.paging;
 
 public interface IPageUpdater<E> {
-  public void updateCache(E cacheItems, E clientItems);
+    public void updateCache(E cacheItems, E clientItems);
 }

@@ -19,5 +19,5 @@ import java.util.HashMap;
 import org.openelisglobal.common.formfields.FormFields.Field;
 
 public interface IFormFieldsForImplementation {
-  public HashMap<Field, FormField> getImplementationAttributes();
+    public HashMap<Field, FormField> getImplementationAttributes();
 }

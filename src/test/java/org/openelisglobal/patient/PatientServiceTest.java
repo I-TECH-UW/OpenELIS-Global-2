@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,54 +18,71 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class PatientServiceTest extends BaseWebContextSensitiveTest {
 
-  @Autowired PatientService patientService;
+    @Autowired
+    PatientService patientService;
 
-  @Autowired PersonService personService;
+    @Autowired
+    PersonService personService;
 
-  @Before
-  public void init() throws Exception {}
+    @Before
+    public void init() throws Exception {
+        patientService.deleteAll(patientService.getAll());
+        personService.deleteAll(personService.getAll());
+    }
 
-  @Test
-  public void createPatient_shouldCreateNewPatient() throws Exception {
-    String firstName = "John";
-    String lastname = "Doe";
-    String dob = "12/12/1992";
-    String gender = "M";
-    Patient pat = createPatient(firstName, lastname, dob, gender);
+    @After
+    public void tearDown() {
+        patientService.deleteAll(patientService.getAll());
+        personService.deleteAll(personService.getAll());
+    }
 
-    Assert.assertEquals(0, patientService.getAllPatients().size());
-    // save patient to the DB
-    String patientId = patientService.insert(pat);
-    Patient savedPatient = patientService.get(patientId);
+    @Test
+    public void createPatient_shouldCreateNewPatient() throws Exception {
+        String firstName = "John";
+        String lastname = "Doe";
+        String dob = "12/12/1992";
+        String gender = "M";
+        Patient pat = createPatient(firstName, lastname, dob, gender);
 
-    Assert.assertEquals(1, patientService.getAllPatients().size());
-    Assert.assertEquals(firstName, savedPatient.getPerson().getFirstName());
-    Assert.assertEquals(lastname, savedPatient.getPerson().getLastName());
-    Assert.assertEquals(gender, savedPatient.getGender());
-  }
+        Assert.assertEquals(0, patientService.getAllPatients().size());
+        // save patient to the DB
+        String patientId = patientService.insert(pat);
+        Patient savedPatient = patientService.get(patientId);
 
-  @Test
-  public void getAllPatients_shouldGetAllPatients() throws Exception {
-    Assert.assertEquals(1, patientService.getAllPatients().size());
-  }
+        Assert.assertEquals(1, patientService.getAllPatients().size());
+        Assert.assertEquals(firstName, savedPatient.getPerson().getFirstName());
+        Assert.assertEquals(lastname, savedPatient.getPerson().getLastName());
+        Assert.assertEquals(gender, savedPatient.getGender());
+    }
 
-  private Patient createPatient(String firstName, String LastName, String birthDate, String gender)
-      throws ParseException {
-    Person person = new Person();
-    person.setFirstName(firstName);
-    person.setLastName(LastName);
-    personService.save(person);
+    @Test
+    public void getAllPatients_shouldGetAllPatients() throws Exception {
+        String firstName = "John";
+        String lastname = "Doe";
+        String dob = "12/12/1992";
+        String gender = "M";
+        Patient patient = createPatient(firstName, lastname, dob, gender);
+        patientService.insert(patient);
+        Assert.assertEquals(1, patientService.getAllPatients().size());
+    }
 
-    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    Date date = dateFormat.parse(birthDate);
-    long time = date.getTime();
-    Timestamp dob = new Timestamp(time);
+    private Patient createPatient(String firstName, String LastName, String birthDate, String gender)
+            throws ParseException {
+        Person person = new Person();
+        person.setFirstName(firstName);
+        person.setLastName(LastName);
+        personService.save(person);
 
-    Patient pat = new Patient();
-    pat.setPerson(person);
-    pat.setBirthDate(dob);
-    pat.setGender(gender);
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = dateFormat.parse(birthDate);
+        long time = date.getTime();
+        Timestamp dob = new Timestamp(time);
 
-    return pat;
-  }
+        Patient pat = new Patient();
+        pat.setPerson(person);
+        pat.setBirthDate(dob);
+        pat.setGender(gender);
+
+        return pat;
+    }
 }

@@ -5,5 +5,5 @@ import org.openelisglobal.reportconfiguration.valueholder.Report;
 
 public interface ReportDAO extends BaseDAO<Report, String> {
 
-  int getMaxSortOrder(String category);
+    int getMaxSortOrder(String category);
 }

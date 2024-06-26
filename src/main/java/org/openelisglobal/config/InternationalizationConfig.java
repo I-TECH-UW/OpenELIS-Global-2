@@ -12,23 +12,23 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @Configuration
 public class InternationalizationConfig {
 
-  @Autowired RequestMappingHandlerMapping requestMappingHandlerMapping;
+    @Autowired
+    RequestMappingHandlerMapping requestMappingHandlerMapping;
 
-  @Bean
-  public MessageSource messageSource() {
-    ReloadableResourceBundleMessageSource messageSource =
-        new ReloadableResourceBundleMessageSource();
-    messageSource.setBasename("classpath:/languages/message");
-    messageSource.setDefaultEncoding("UTF-8");
-    messageSource.setUseCodeAsDefaultMessage(true);
-    MessageUtil.setMessageSource(messageSource);
-    return messageSource;
-  }
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("classpath:/languages/message");
+        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setUseCodeAsDefaultMessage(true);
+        MessageUtil.setMessageSource(messageSource);
+        return messageSource;
+    }
 
-  @Bean
-  public LocaleChangeInterceptor localeChangeInterceptor() {
-    LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
-    localeChangeInterceptor.setParamName("lang");
-    return localeChangeInterceptor;
-  }
+    @Bean
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
+        localeChangeInterceptor.setParamName("lang");
+        return localeChangeInterceptor;
+    }
 }

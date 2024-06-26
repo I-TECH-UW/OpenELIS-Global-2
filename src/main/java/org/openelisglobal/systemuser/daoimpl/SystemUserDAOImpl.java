@@ -36,160 +36,153 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implements SystemUserDAO {
 
-  public SystemUserDAOImpl() {
-    super(SystemUser.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public void getData(SystemUser systemUser) throws LIMSRuntimeException {
-    try {
-      SystemUser sysUser =
-          entityManager.unwrap(Session.class).get(SystemUser.class, systemUser.getId());
-
-      if (sysUser != null) {
-        PropertyUtils.copyProperties(systemUser, sysUser);
-      } else {
-        systemUser.setId(null);
-      }
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SystemUser getData()", e);
-    }
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<SystemUser> getAllSystemUsers() throws LIMSRuntimeException {
-    List<SystemUser> list;
-    try {
-      String sql = "from SystemUser";
-      Query<SystemUser> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
-      list = query.list();
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SystemUser getAllSystemUsers()", e);
+    public SystemUserDAOImpl() {
+        super(SystemUser.class);
     }
 
-    return list;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(SystemUser systemUser) throws LIMSRuntimeException {
+        try {
+            SystemUser sysUser = entityManager.unwrap(Session.class).get(SystemUser.class, systemUser.getId());
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<SystemUser> getPageOfSystemUsers(int startingRecNo) throws LIMSRuntimeException {
-    List<SystemUser> list;
-    try {
-      // calculate maxRow to be one more than the page size
-      int endingRecNo =
-          startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
-
-      // bugzilla 1399
-      String sql = "from SystemUser s order by s.lastName, s.firstName";
-      Query<SystemUser> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
-      query.setFirstResult(startingRecNo - 1);
-      query.setMaxResults(endingRecNo - 1);
-
-      list = query.list();
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SystemUser getPageOfSystemUsers()", e);
+            if (sysUser != null) {
+                PropertyUtils.copyProperties(systemUser, sysUser);
+            } else {
+                systemUser.setId(null);
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SystemUser getData()", e);
+        }
     }
 
-    return list;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<SystemUser> getAllSystemUsers() throws LIMSRuntimeException {
+        List<SystemUser> list;
+        try {
+            String sql = "from SystemUser";
+            Query<SystemUser> query = entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
+            list = query.list();
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SystemUser getAllSystemUsers()", e);
+        }
 
-  public SystemUser readSystemUser(String idString) {
-    SystemUser su = null;
-    try {
-      su = entityManager.unwrap(Session.class).get(SystemUser.class, idString);
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SystemUser readSystemUser()", e);
+        return list;
     }
 
-    return su;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<SystemUser> getPageOfSystemUsers(int startingRecNo) throws LIMSRuntimeException {
+        List<SystemUser> list;
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
-  // bugzilla 1411
-  @Override
-  @Transactional(readOnly = true)
-  public Integer getTotalSystemUserCount() throws LIMSRuntimeException {
-    return getCount();
-  }
+            // bugzilla 1399
+            String sql = "from SystemUser s order by s.lastName, s.firstName";
+            Query<SystemUser> query = entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
 
-  // bugzilla 1482
-  @Override
-  public boolean duplicateSystemUserExists(SystemUser systemUser) throws LIMSRuntimeException {
-    try {
+            list = query.list();
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SystemUser getPageOfSystemUsers()", e);
+        }
 
-      List<SystemUser> list = new ArrayList<>();
-
-      // not case sensitive hemolysis and Hemolysis are considered
-      // duplicates
-      String sql =
-          "from SystemUser t where trim(lower(t.lastName)) = :param and trim(lower(t.firstName)) ="
-              + " :param2 and t.id != :id";
-      Query<SystemUser> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
-      query.setParameter("param", systemUser.getLastName().toLowerCase().trim());
-      query.setParameter("param2", systemUser.getFirstName().toLowerCase().trim());
-
-      // initialize with 0 (for new records where no id has been generated yet
-      String sysUserId = "0";
-      if (!StringUtil.isNullorNill(systemUser.getId())) {
-        sysUserId = systemUser.getId();
-      }
-      query.setParameter("id", Integer.parseInt(sysUserId));
-
-      list = query.list();
-
-      if (list.size() > 0) {
-        return true;
-      } else {
-        return false;
-      }
-
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in duplicateSystemUserExists()", e);
-    }
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public SystemUser getDataForLoginUser(String userName) throws LIMSRuntimeException {
-    List<SystemUser> list;
-    try {
-      String sql = "from SystemUser where login_name = :name";
-      Query<SystemUser> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
-      query.setParameter("name", userName);
-      list = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SystemUser getDataForUser()", e);
+        return list;
     }
 
-    return list.size() > 0 ? list.get(0) : null;
-  }
+    public SystemUser readSystemUser(String idString) {
+        SystemUser su = null;
+        try {
+            su = entityManager.unwrap(Session.class).get(SystemUser.class, idString);
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SystemUser readSystemUser()", e);
+        }
 
-  @Override
-  @Transactional(readOnly = true)
-  public SystemUser getUserById(String userId) throws LIMSRuntimeException {
-    try {
-      SystemUser sysUser = entityManager.unwrap(Session.class).get(SystemUser.class, userId);
-      return sysUser;
-    } catch (RuntimeException e) {
-      handleException(e, "getUserById");
+        return su;
     }
 
-    return null;
-  }
+    // bugzilla 1411
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getTotalSystemUserCount() throws LIMSRuntimeException {
+        return getCount();
+    }
+
+    // bugzilla 1482
+    @Override
+    public boolean duplicateSystemUserExists(SystemUser systemUser) throws LIMSRuntimeException {
+        try {
+
+            List<SystemUser> list = new ArrayList<>();
+
+            // not case sensitive hemolysis and Hemolysis are considered
+            // duplicates
+            String sql = "from SystemUser t where trim(lower(t.lastName)) = :param and trim(lower(t.firstName)) ="
+                    + " :param2 and t.id != :id";
+            Query<SystemUser> query = entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
+            query.setParameter("param", systemUser.getLastName().toLowerCase().trim());
+            query.setParameter("param2", systemUser.getFirstName().toLowerCase().trim());
+
+            // initialize with 0 (for new records where no id has been generated yet
+            String sysUserId = "0";
+            if (!StringUtil.isNullorNill(systemUser.getId())) {
+                sysUserId = systemUser.getId();
+            }
+            query.setParameter("id", Integer.parseInt(sysUserId));
+
+            list = query.list();
+
+            if (list.size() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in duplicateSystemUserExists()", e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SystemUser getDataForLoginUser(String userName) throws LIMSRuntimeException {
+        List<SystemUser> list;
+        try {
+            String sql = "from SystemUser where login_name = :name";
+            Query<SystemUser> query = entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
+            query.setParameter("name", userName);
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SystemUser getDataForUser()", e);
+        }
+
+        return list.size() > 0 ? list.get(0) : null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SystemUser getUserById(String userId) throws LIMSRuntimeException {
+        try {
+            SystemUser sysUser = entityManager.unwrap(Session.class).get(SystemUser.class, userId);
+            return sysUser;
+        } catch (RuntimeException e) {
+            handleException(e, "getUserById");
+        }
+
+        return null;
+    }
 }

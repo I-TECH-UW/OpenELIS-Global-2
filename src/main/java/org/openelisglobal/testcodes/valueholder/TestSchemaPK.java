@@ -18,42 +18,43 @@ import java.util.Objects;
 
 public class TestSchemaPK implements Serializable {
 
-  private static final long serialVersionUID = -4708664634912884009L;
+    private static final long serialVersionUID = -4708664634912884009L;
 
-  private String testId;
-  private String codeTypeId;
+    private String testId;
+    private String codeTypeId;
 
-  public String getTestId() {
-    return testId;
-  }
+    public String getTestId() {
+        return testId;
+    }
 
-  public void setTestId(String testId) {
-    this.testId = testId;
-  }
+    public void setTestId(String testId) {
+        this.testId = testId;
+    }
 
-  public String getCodeTypeId() {
-    return codeTypeId;
-  }
+    public String getCodeTypeId() {
+        return codeTypeId;
+    }
 
-  public void setCodeTypeId(String codeTypeId) {
-    this.codeTypeId = codeTypeId;
-  }
+    public void setCodeTypeId(String codeTypeId) {
+        this.codeTypeId = codeTypeId;
+    }
 
-  public String toString() {
-    return testId + codeTypeId;
-  }
+    public String toString() {
+        return testId + codeTypeId;
+    }
 
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
-    TestSchemaPK that = (TestSchemaPK) o;
+        TestSchemaPK that = (TestSchemaPK) o;
 
-    return Objects.equals(this.testId, that.testId)
-        && Objects.equals(this.codeTypeId, that.codeTypeId);
-  }
+        return Objects.equals(this.testId, that.testId) && Objects.equals(this.codeTypeId, that.codeTypeId);
+    }
 
-  public int hashCode() {
-    return Objects.hash(testId, codeTypeId);
-  }
+    public int hashCode() {
+        return Objects.hash(testId, codeTypeId);
+    }
 }

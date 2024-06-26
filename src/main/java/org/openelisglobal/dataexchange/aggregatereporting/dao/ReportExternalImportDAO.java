@@ -20,20 +20,20 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportExternalImport;
 
 public interface ReportExternalImportDAO extends BaseDAO<ReportExternalImport, String> {
-  public List<ReportExternalImport> getReportsInDateRangeSorted(Timestamp lower, Timestamp upper)
-      throws LIMSRuntimeException;
+    public List<ReportExternalImport> getReportsInDateRangeSorted(Timestamp lower, Timestamp upper)
+            throws LIMSRuntimeException;
 
-  //	public void insertReportExternalImport(ReportExternalImport report) throws
-  // LIMSRuntimeException;
+    // public void insertReportExternalImport(ReportExternalImport report) throws
+    // LIMSRuntimeException;
 
-  //	public void updateReportExternalImport(ReportExternalImport report) throws
-  // LIMSRuntimeException;
+    // public void updateReportExternalImport(ReportExternalImport report) throws
+    // LIMSRuntimeException;
 
-  public List<String> getUniqueSites() throws LIMSRuntimeException;
+    public List<String> getUniqueSites() throws LIMSRuntimeException;
 
-  public List<ReportExternalImport> getReportsInDateRangeSortedForSite(
-      Timestamp beginning, Timestamp end, String site) throws LIMSRuntimeException;
+    public List<ReportExternalImport> getReportsInDateRangeSortedForSite(Timestamp beginning, Timestamp end,
+            String site) throws LIMSRuntimeException;
 
-  public ReportExternalImport getReportByEventDateSiteType(ReportExternalImport importReport)
-      throws LIMSRuntimeException;
+    public ReportExternalImport getReportByEventDateSiteType(ReportExternalImport importReport)
+            throws LIMSRuntimeException;
 }

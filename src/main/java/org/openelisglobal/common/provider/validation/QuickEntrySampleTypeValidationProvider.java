@@ -26,57 +26,55 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.owasp.encoder.Encode;
 
 /**
- * The QuickEntrySampleTypeValidationProvider class is used to validate, via AJAX, the Sample Type
- * entered on the Quick Entry view.
+ * The QuickEntrySampleTypeValidationProvider class is used to validate, via
+ * AJAX, the Sample Type entered on the Quick Entry view.
  *
  * @author Ken Rosha 08/30/2006
  */
 public class QuickEntrySampleTypeValidationProvider extends BaseValidationProvider {
 
-  protected TypeOfSampleService typeOfSampleService =
-      SpringContext.getBean(TypeOfSampleService.class);
+    protected TypeOfSampleService typeOfSampleService = SpringContext.getBean(TypeOfSampleService.class);
 
-  public QuickEntrySampleTypeValidationProvider() {
-    super();
-  }
-  // ==============================================================
-
-  public QuickEntrySampleTypeValidationProvider(AjaxServlet ajaxServlet) {
-    this.ajaxServlet = ajaxServlet;
-  }
-  // ==============================================================
-
-  @Override
-  public void processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-    String targetId = request.getParameter("id");
-    String formField = request.getParameter("field");
-    String result = validate(targetId);
-    ajaxServlet.sendData(
-        Encode.forXmlContent(formField), Encode.forXmlContent(result), request, response);
-  }
-  // ==============================================================
-
-  // modified for efficiency bugzilla 1367
-  public String validate(String targetId) throws LIMSRuntimeException {
-    StringBuffer s = new StringBuffer();
-
-    if (!StringUtil.isNullorNill(targetId)) {
-      TypeOfSample typeOfSample = new TypeOfSample();
-      typeOfSample.setDescription(targetId);
-      // passing in a nill or null domain retrieves records for ALL domains
-      typeOfSample = typeOfSampleService.getTypeOfSampleByDescriptionAndDomain(typeOfSample, true);
-      if (typeOfSample != null) {
-        // bugzilla 1465
-        s.append(VALID + typeOfSample.getId());
-      } else {
-        s.append(INVALID);
-      }
-    } else {
-      s.append(VALID);
+    public QuickEntrySampleTypeValidationProvider() {
+        super();
     }
-    return s.toString();
-  }
+    // ==============================================================
 
-  // ==============================================================
+    public QuickEntrySampleTypeValidationProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
+    // ==============================================================
+
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String targetId = request.getParameter("id");
+        String formField = request.getParameter("field");
+        String result = validate(targetId);
+        ajaxServlet.sendData(Encode.forXmlContent(formField), Encode.forXmlContent(result), request, response);
+    }
+    // ==============================================================
+
+    // modified for efficiency bugzilla 1367
+    public String validate(String targetId) throws LIMSRuntimeException {
+        StringBuffer s = new StringBuffer();
+
+        if (!StringUtil.isNullorNill(targetId)) {
+            TypeOfSample typeOfSample = new TypeOfSample();
+            typeOfSample.setDescription(targetId);
+            // passing in a nill or null domain retrieves records for ALL domains
+            typeOfSample = typeOfSampleService.getTypeOfSampleByDescriptionAndDomain(typeOfSample, true);
+            if (typeOfSample != null) {
+                // bugzilla 1465
+                s.append(VALID + typeOfSample.getId());
+            } else {
+                s.append(INVALID);
+            }
+        } else {
+            s.append(VALID);
+        }
+        return s.toString();
+    }
+
+    // ==============================================================
 }

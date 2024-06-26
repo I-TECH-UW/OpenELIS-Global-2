@@ -1,11 +1,11 @@
 package org.openelisglobal.systemusermodule.valueholder;
 
 public interface PermissionAgent {
-  void setId(String Id);
+    void setId(String Id);
 
-  String getId();
+    String getId();
 
-  String getDisplayName();
+    String getDisplayName();
 
-  String getShortNameForDisplay();
+    String getShortNameForDisplay();
 }

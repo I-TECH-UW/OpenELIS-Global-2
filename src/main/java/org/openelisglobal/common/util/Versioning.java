@@ -27,46 +27,45 @@ import org.springframework.stereotype.Component;
 @Component
 public class Versioning {
 
-  private final String PROPERTY_FILE = "build.properties";
-  private String releaseNumber = " ";
+    private final String PROPERTY_FILE = "build.properties";
+    private String releaseNumber = " ";
 
-  public Versioning() {
-    InputStream propertyStream = null;
-    Properties properties = null;
+    public Versioning() {
+        InputStream propertyStream = null;
+        Properties properties = null;
 
-    try {
-      propertyStream = this.getClass().getClassLoader().getResourceAsStream(PROPERTY_FILE);
-      properties = new Properties();
-      properties.load(propertyStream);
-    } catch (IOException e) {
-      LogEvent.logError(e);
-    } finally {
-      if (null != propertyStream) {
         try {
-          propertyStream.close();
+            propertyStream = this.getClass().getClassLoader().getResourceAsStream(PROPERTY_FILE);
+            properties = new Properties();
+            properties.load(propertyStream);
         } catch (IOException e) {
-          LogEvent.logError(e);
+            LogEvent.logError(e);
+        } finally {
+            if (null != propertyStream) {
+                try {
+                    propertyStream.close();
+                } catch (IOException e) {
+                    LogEvent.logError(e);
+                }
+            }
         }
-      }
-    }
-    if (properties != null) {
-      releaseNumber = properties.getProperty("project.version", " ");
-    }
-  }
-
-  public String getDatabaseVersion() {
-    DatabaseChangeLogService databaseChangeLogService =
-        SpringContext.getBean(DatabaseChangeLogService.class);
-    DatabaseChangeLog changeLog = databaseChangeLogService.getLastExecutedChange();
-
-    if (changeLog != null) {
-      return changeLog.getAuthor() + "/" + changeLog.getId() + "/" + changeLog.getFileName();
+        if (properties != null) {
+            releaseNumber = properties.getProperty("project.version", " ");
+        }
     }
 
-    return "";
-  }
+    public String getDatabaseVersion() {
+        DatabaseChangeLogService databaseChangeLogService = SpringContext.getBean(DatabaseChangeLogService.class);
+        DatabaseChangeLog changeLog = databaseChangeLogService.getLastExecutedChange();
 
-  public String getReleaseNumber() {
-    return releaseNumber;
-  }
+        if (changeLog != null) {
+            return changeLog.getAuthor() + "/" + changeLog.getId() + "/" + changeLog.getFileName();
+        }
+
+        return "";
+    }
+
+    public String getReleaseNumber() {
+        return releaseNumber;
+    }
 }

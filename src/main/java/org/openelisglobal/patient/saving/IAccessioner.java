@@ -10,9 +10,8 @@ import org.springframework.validation.Errors;
 @Component
 public interface IAccessioner {
 
-  String save()
-      throws IllegalAccessException, LIMSRuntimeException, LIMSInvalidConfigurationException,
-          InvocationTargetException, NoSuchMethodException, LIMSException;
+    String save() throws IllegalAccessException, LIMSRuntimeException, LIMSInvalidConfigurationException,
+            InvocationTargetException, NoSuchMethodException, LIMSException;
 
-  Errors getMessages();
+    Errors getMessages();
 }

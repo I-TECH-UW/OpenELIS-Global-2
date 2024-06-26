@@ -23,83 +23,83 @@ import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.owasp.encoder.Encode;
 
-/** The QuickEntryAccessionNumberValidationProvider class is used to validate, via AJAX. */
+/**
+ * The QuickEntryAccessionNumberValidationProvider class is used to validate,
+ * via AJAX.
+ */
 public class NonConformityRecordNumberValidationProvider extends BaseValidationProvider {
 
-  public NonConformityRecordNumberValidationProvider() {
-    super();
-  }
-
-  public NonConformityRecordNumberValidationProvider(AjaxServlet ajaxServlet) {
-    this.ajaxServlet = ajaxServlet;
-  }
-
-  @Override
-  public void processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-
-    String field = request.getParameter("fieldId");
-    String recordNumber = request.getParameter("value");
-
-    RecordValidation validator = new RecordValidation(recordNumber);
-    RecordValidation.Validation result = validator.validate();
-
-    String returnData = VALID;
-    switch (result) {
-      case RECORD_FOUND:
-        returnData = "Record found";
-        break;
-      case RECORD_NOT_FOUND:
-        returnData = "Record not Found";
-        break;
-      default:
-        returnData = validator.getInvalidMessage();
+    public NonConformityRecordNumberValidationProvider() {
+        super();
     }
 
-    response.setCharacterEncoding("UTF-8");
-    ajaxServlet.sendData(Encode.forXmlContent(field), returnData, request, response);
-  }
-
-  public static String getDocumentNumberFormat() {
-    return "ddd/LNSP-" + DateUtil.getTwoDigitYear();
-  }
-
-  static class RecordValidation {
-    String recordNumber;
-    String format;
-    String displayFormat;
-
-    enum Validation {
-      FORMAT_ERROR,
-      RECORD_FOUND,
-      RECORD_NOT_FOUND
+    public NonConformityRecordNumberValidationProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
     }
 
-    public RecordValidation(String recordNumber) {
-      this.recordNumber = recordNumber;
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String field = request.getParameter("fieldId");
+        String recordNumber = request.getParameter("value");
+
+        RecordValidation validator = new RecordValidation(recordNumber);
+        RecordValidation.Validation result = validator.validate();
+
+        String returnData = VALID;
+        switch (result) {
+        case RECORD_FOUND:
+            returnData = "Record found";
+            break;
+        case RECORD_NOT_FOUND:
+            returnData = "Record not Found";
+            break;
+        default:
+            returnData = validator.getInvalidMessage();
+        }
+
+        response.setCharacterEncoding("UTF-8");
+        ajaxServlet.sendData(Encode.forXmlContent(field), returnData, request, response);
     }
 
-    Validation validate() {
-      if (validFormat()) {
-        return Validation.RECORD_NOT_FOUND;
-      }
-
-      return Validation.FORMAT_ERROR;
+    public static String getDocumentNumberFormat() {
+        return "ddd/LNSP-" + DateUtil.getTwoDigitYear();
     }
 
-    private boolean validFormat() {
-      createFormatPattern();
-      Pattern p = Pattern.compile(format);
-      return p.matcher(recordNumber).matches();
-    }
+    static class RecordValidation {
+        String recordNumber;
+        String format;
+        String displayFormat;
 
-    private void createFormatPattern() {
-      format = "\\d{3}/LNSP-" + DateUtil.getTwoDigitYear();
-    }
+        enum Validation {
+            FORMAT_ERROR, RECORD_FOUND, RECORD_NOT_FOUND
+        }
 
-    String getInvalidMessage() {
-      return MessageUtil.getMessage(
-          "nonConformity.document.number.format.error", getDocumentNumberFormat());
+        public RecordValidation(String recordNumber) {
+            this.recordNumber = recordNumber;
+        }
+
+        Validation validate() {
+            if (validFormat()) {
+                return Validation.RECORD_NOT_FOUND;
+            }
+
+            return Validation.FORMAT_ERROR;
+        }
+
+        private boolean validFormat() {
+            createFormatPattern();
+            Pattern p = Pattern.compile(format);
+            return p.matcher(recordNumber).matches();
+        }
+
+        private void createFormatPattern() {
+            format = "\\d{3}/LNSP-" + DateUtil.getTwoDigitYear();
+        }
+
+        String getInvalidMessage() {
+            return MessageUtil.getMessage("nonConformity.document.number.format.error", getDocumentNumberFormat());
+        }
     }
-  }
 }

@@ -15,67 +15,68 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ImageServiceImpl extends AuditableBaseObjectServiceImpl<Image, String>
-    implements ImageService {
-  @Autowired protected ImageDAO baseObjectDAO;
-  @Autowired private SiteInformationService siteInformationService;
-  @Autowired private ServletContext servletContext;
+public class ImageServiceImpl extends AuditableBaseObjectServiceImpl<Image, String> implements ImageService {
+    @Autowired
+    protected ImageDAO baseObjectDAO;
+    @Autowired
+    private SiteInformationService siteInformationService;
+    @Autowired
+    private ServletContext servletContext;
 
-  public static final String PREVIEW_FILE_PATH =
-      File.separator + "static" + File.separator + "images" + File.separator;
-  public String FULL_PREVIEW_FILE_PATH;
+    public static final String PREVIEW_FILE_PATH = File.separator + "static" + File.separator + "images"
+            + File.separator;
+    public String FULL_PREVIEW_FILE_PATH;
 
-  ImageServiceImpl() {
-    super(Image.class);
-    disableLogging();
-  }
-
-  @PostConstruct
-  public void init() {
-    FULL_PREVIEW_FILE_PATH = servletContext.getRealPath("") + PREVIEW_FILE_PATH;
-  }
-
-  @Override
-  protected ImageDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
-
-  @Override
-  public String getFullPreviewPath() {
-    return FULL_PREVIEW_FILE_PATH;
-  }
-
-  @Override
-  public String getImageNameFilePath(String imageName) {
-    switch (imageName) {
-      case "headerLeftImage":
-        return "leftLabLogo.jpg";
-      case "labDirectorSignature":
-        return "labDirectorSignature.jpg";
-      default:
-        return "rightLabLogo.jpg";
+    ImageServiceImpl() {
+        super(Image.class);
+        disableLogging();
     }
-  }
 
-  @Override
-  public Image getImageByDescription(String imageDescription) {
-    return baseObjectDAO.getImageByDescription(imageDescription);
-  }
+    @PostConstruct
+    public void init() {
+        FULL_PREVIEW_FILE_PATH = servletContext.getRealPath("") + PREVIEW_FILE_PATH;
+    }
 
-  @Override
-  public Optional<Image> getImageBySiteInfoName(String imageName) {
-    SiteInformation logoInformation = siteInformationService.getSiteInformationByName(imageName);
-    if (logoInformation == null
-        || logoInformation.getValue() == null
-        || GenericValidator.isBlankOrNull(logoInformation.getValue().trim())) {
-      return Optional.empty();
+    @Override
+    protected ImageDAO getBaseObjectDAO() {
+        return baseObjectDAO;
     }
-    try {
-      Image image = get(logoInformation.getValue());
-      return Optional.ofNullable(image);
-    } catch (Exception e) {
-      LogEvent.logError(e);
-      return Optional.empty();
+
+    @Override
+    public String getFullPreviewPath() {
+        return FULL_PREVIEW_FILE_PATH;
     }
-  }
+
+    @Override
+    public String getImageNameFilePath(String imageName) {
+        switch (imageName) {
+        case "headerLeftImage":
+            return "leftLabLogo.jpg";
+        case "labDirectorSignature":
+            return "labDirectorSignature.jpg";
+        default:
+            return "rightLabLogo.jpg";
+        }
+    }
+
+    @Override
+    public Image getImageByDescription(String imageDescription) {
+        return baseObjectDAO.getImageByDescription(imageDescription);
+    }
+
+    @Override
+    public Optional<Image> getImageBySiteInfoName(String imageName) {
+        SiteInformation logoInformation = siteInformationService.getSiteInformationByName(imageName);
+        if (logoInformation == null || logoInformation.getValue() == null
+                || GenericValidator.isBlankOrNull(logoInformation.getValue().trim())) {
+            return Optional.empty();
+        }
+        try {
+            Image image = get(logoInformation.getValue());
+            return Optional.ofNullable(image);
+        } catch (Exception e) {
+            LogEvent.logError(e);
+            return Optional.empty();
+        }
+    }
 }

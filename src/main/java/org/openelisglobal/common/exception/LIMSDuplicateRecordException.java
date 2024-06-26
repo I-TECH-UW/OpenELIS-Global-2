@@ -14,18 +14,19 @@
 package org.openelisglobal.common.exception;
 
 /**
- * Base exception used by the LIMS. Unless special handling can be done with an exception, errors
- * should throw this exception. In the UI portion of the application, this base exception can be
- * caught and an error page displayed.
+ * Base exception used by the LIMS. Unless special handling can be done with an
+ * exception, errors should throw this exception. In the UI portion of the
+ * application, this base exception can be caught and an error page displayed.
  *
- * <p>Specialized exceptions should extend this class.
+ * <p>
+ * Specialized exceptions should extend this class.
  */
 // bugzilla 1417
 public class LIMSDuplicateRecordException extends LIMSRuntimeException {
 
-  private static final long serialVersionUID = 7139706041722904642L;
+    private static final long serialVersionUID = 7139706041722904642L;
 
-  public LIMSDuplicateRecordException(String message) {
-    super(message);
-  }
+    public LIMSDuplicateRecordException(String message) {
+        super(message);
+    }
 }

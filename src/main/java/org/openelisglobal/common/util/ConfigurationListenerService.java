@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface ConfigurationListenerService {
 
-  List<ConfigurationListener> getConfigurationListeners();
+    List<ConfigurationListener> getConfigurationListeners();
 
-  void refreshConfigurations();
+    void refreshConfigurations();
 }

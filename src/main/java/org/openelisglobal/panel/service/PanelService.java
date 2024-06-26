@@ -7,29 +7,29 @@ import org.openelisglobal.panel.valueholder.Panel;
 
 public interface PanelService extends BaseObjectService<Panel, String> {
 
-  void getData(Panel panel);
+    void getData(Panel panel);
 
-  String getIdForPanelName(String name);
+    String getIdForPanelName(String name);
 
-  String getDescriptionForPanelId(String id);
+    String getDescriptionForPanelId(String id);
 
-  String getNameForPanelId(String panelId);
+    String getNameForPanelId(String panelId);
 
-  List<Panel> getAllActivePanels();
+    List<Panel> getAllActivePanels();
 
-  Integer getTotalPanelCount();
+    Integer getTotalPanelCount();
 
-  List<Panel> getActivePanels(String filter);
+    List<Panel> getActivePanels(String filter);
 
-  Panel getPanelByName(String panelName);
+    Panel getPanelByName(String panelName);
 
-  Panel getPanelByName(Panel panel);
+    Panel getPanelByName(Panel panel);
 
-  Panel getPanelById(String id);
+    Panel getPanelById(String id);
 
-  List<Panel> getPageOfPanels(int startingRecNo);
+    List<Panel> getPageOfPanels(int startingRecNo);
 
-  List<Panel> getAllPanels();
+    List<Panel> getAllPanels();
 
-  Localization getLocalizationForPanel(String id);
+    Localization getLocalizationForPanel(String id);
 }

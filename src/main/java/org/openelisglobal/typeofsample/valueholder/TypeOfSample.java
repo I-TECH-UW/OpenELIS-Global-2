@@ -21,96 +21,96 @@ import org.openelisglobal.localization.valueholder.Localization;
 
 public class TypeOfSample extends BaseObject<String> {
 
-  /** */
-  private static final long serialVersionUID = 1L;
+    /** */
+    private static final long serialVersionUID = 1L;
 
-  private String id;
-  private String description;
-  private String domain;
-  private String localAbbreviation;
-  private boolean isActive;
-  private int sortOrder;
-  private ValueHolder localization = new ValueHolder();
+    private String id;
+    private String description;
+    private String domain;
+    private String localAbbreviation;
+    private boolean isActive;
+    private int sortOrder;
+    private ValueHolder localization = new ValueHolder();
 
-  public String getLocalAbbreviation() {
-    return localAbbreviation;
-  }
-
-  public void setLocalAbbreviation(String localAbbreviation) {
-    this.localAbbreviation = localAbbreviation;
-  }
-
-  public TypeOfSample() {
-    super();
-  }
-
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  @Override
-  public String getId() {
-    return id;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDomain(String domain) {
-    this.domain = domain;
-  }
-
-  public String getDomain() {
-    return domain;
-  }
-
-  @Override
-  protected String getDefaultLocalizedName() {
-    String msg = "";
-    try {
-      msg = getLocalization().getLocalizedValue();
-      return msg;
-    } catch (RuntimeException e) {
-      // throw away
-      return "TypeOfSample:getDefaultLocalizedName:84:";
+    public String getLocalAbbreviation() {
+        return localAbbreviation;
     }
-  }
 
-  public boolean isActive() {
-    return isActive;
-  }
+    public void setLocalAbbreviation(String localAbbreviation) {
+        this.localAbbreviation = localAbbreviation;
+    }
 
-  public void setActive(boolean isActive) {
-    this.isActive = isActive;
-  }
+    public TypeOfSample() {
+        super();
+    }
 
-  public boolean getIsActive() {
-    return isActive;
-  }
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public void setIsActive(boolean isActive) {
-    this.isActive = isActive;
-  }
+    @Override
+    public String getId() {
+        return id;
+    }
 
-  public int getSortOrder() {
-    return sortOrder;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public void setSortOrder(int sortOrder) {
-    this.sortOrder = sortOrder;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public Localization getLocalization() {
-    return (Localization) localization.getValue();
-  }
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 
-  public void setLocalization(Localization localization) {
-    this.localization.setValue(localization);
-  }
+    public String getDomain() {
+        return domain;
+    }
+
+    @Override
+    protected String getDefaultLocalizedName() {
+        String msg = "";
+        try {
+            msg = getLocalization().getLocalizedValue();
+            return msg;
+        } catch (RuntimeException e) {
+            // throw away
+            return "TypeOfSample:getDefaultLocalizedName:84:";
+        }
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public int getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public Localization getLocalization() {
+        return (Localization) localization.getValue();
+    }
+
+    public void setLocalization(Localization localization) {
+        this.localization.setValue(localization);
+    }
 }

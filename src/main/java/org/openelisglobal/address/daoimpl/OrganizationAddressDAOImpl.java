@@ -28,27 +28,27 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class OrganizationAddressDAOImpl extends BaseDAOImpl<OrganizationAddress, AddressPK>
-    implements OrganizationAddressDAO {
+        implements OrganizationAddressDAO {
 
-  public OrganizationAddressDAOImpl() {
-    super(OrganizationAddress.class);
-  }
-
-  @Override
-  public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId)
-      throws LIMSRuntimeException {
-    String sql = "from OrganizationAddress pa where pa.compoundId.targetId = :organizationId";
-
-    try {
-      Query<OrganizationAddress> query =
-          entityManager.unwrap(Session.class).createQuery(sql, OrganizationAddress.class);
-      query.setParameter("organizationId", Integer.parseInt(organizationId));
-      List<OrganizationAddress> addressPartList = query.list();
-      return addressPartList;
-    } catch (HibernateException e) {
-      handleException(e, "getAddressPartsByOrganizationId");
+    public OrganizationAddressDAOImpl() {
+        super(OrganizationAddress.class);
     }
 
-    return null;
-  }
+    @Override
+    public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId)
+            throws LIMSRuntimeException {
+        String sql = "from OrganizationAddress pa where pa.compoundId.targetId = :organizationId";
+
+        try {
+            Query<OrganizationAddress> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    OrganizationAddress.class);
+            query.setParameter("organizationId", Integer.parseInt(organizationId));
+            List<OrganizationAddress> addressPartList = query.list();
+            return addressPartList;
+        } catch (HibernateException e) {
+            handleException(e, "getAddressPartsByOrganizationId");
+        }
+
+        return null;
+    }
 }

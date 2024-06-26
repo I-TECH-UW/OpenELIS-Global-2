@@ -29,49 +29,45 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String>
-    implements AnalyzerResultsDAO {
+public class AnalyzerResultsDAOImpl extends BaseDAOImpl<AnalyzerResults, String> implements AnalyzerResultsDAO {
 
-  public AnalyzerResultsDAOImpl() {
-    super(AnalyzerResults.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<AnalyzerResults> getDuplicateResultByAccessionAndTest(AnalyzerResults result) {
-    try {
-
-      List<AnalyzerResults> list = new ArrayList<>();
-
-      String sql =
-          "from AnalyzerResults a where a.analyzerId = :analyzerId and "
-              + "a.accessionNumber = :assessionNumber and "
-              + "a.testName = :testName";
-      Query<AnalyzerResults> query =
-          entityManager.unwrap(Session.class).createQuery(sql, AnalyzerResults.class);
-      query.setParameter("analyzerId", Integer.parseInt(result.getAnalyzerId()));
-      query.setParameter("assessionNumber", result.getAccessionNumber());
-      query.setParameter("testName", result.getTestName());
-
-      list = query.list();
-
-      return list.size() > 0 ? list : null;
-
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in duplicateAnalyzerResultsExists()", e);
+    public AnalyzerResultsDAOImpl() {
+        super(AnalyzerResults.class);
     }
-  }
 
-  @Override
-  public AnalyzerResults readAnalyzerResults(String idString) throws LIMSRuntimeException {
-    AnalyzerResults data = null;
-    try {
-      data = entityManager.unwrap(Session.class).get(AnalyzerResults.class, idString);
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in AnalyzerResults readAnalyzerResults()", e);
+    @Override
+    @Transactional(readOnly = true)
+    public List<AnalyzerResults> getDuplicateResultByAccessionAndTest(AnalyzerResults result) {
+        try {
+
+            List<AnalyzerResults> list = new ArrayList<>();
+
+            String sql = "from AnalyzerResults a where a.analyzerId = :analyzerId and "
+                    + "a.accessionNumber = :assessionNumber and " + "a.testName = :testName";
+            Query<AnalyzerResults> query = entityManager.unwrap(Session.class).createQuery(sql, AnalyzerResults.class);
+            query.setParameter("analyzerId", Integer.parseInt(result.getAnalyzerId()));
+            query.setParameter("assessionNumber", result.getAccessionNumber());
+            query.setParameter("testName", result.getTestName());
+
+            list = query.list();
+
+            return list.size() > 0 ? list : null;
+
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in duplicateAnalyzerResultsExists()", e);
+        }
     }
-    return data;
-  }
+
+    @Override
+    public AnalyzerResults readAnalyzerResults(String idString) throws LIMSRuntimeException {
+        AnalyzerResults data = null;
+        try {
+            data = entityManager.unwrap(Session.class).get(AnalyzerResults.class, idString);
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in AnalyzerResults readAnalyzerResults()", e);
+        }
+        return data;
+    }
 }

@@ -22,58 +22,58 @@ import org.openelisglobal.region.valueholder.Region;
 
 public class County extends EnumValueItemImpl {
 
-  private String id;
+    private String id;
 
-  private String county;
+    private String county;
 
-  private String regionId;
+    private String regionId;
 
-  private ValueHolderInterface region;
+    private ValueHolderInterface region;
 
-  private Set cities = new HashSet(0);
+    private Set cities = new HashSet(0);
 
-  public County() {
-    super();
-    this.region = new ValueHolder();
-  }
+    public County() {
+        super();
+        this.region = new ValueHolder();
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setCounty(String county) {
-    this.county = county;
-  }
+    public void setCounty(String county) {
+        this.county = county;
+    }
 
-  public String getCounty() {
-    return county;
-  }
+    public String getCounty() {
+        return county;
+    }
 
-  public void setRegionId(String regionId) {
-    this.regionId = regionId;
-  }
+    public void setRegionId(String regionId) {
+        this.regionId = regionId;
+    }
 
-  public String getRegionId() {
-    return regionId;
-  }
+    public String getRegionId() {
+        return regionId;
+    }
 
-  public Region getRegion() {
-    return (Region) this.region.getValue();
-  }
+    public Region getRegion() {
+        return (Region) this.region.getValue();
+    }
 
-  protected ValueHolderInterface getRegionHolder() {
-    return this.region;
-  }
+    protected ValueHolderInterface getRegionHolder() {
+        return this.region;
+    }
 
-  public void setRegion(Region region) {
-    this.region.setValue(region);
-  }
+    public void setRegion(Region region) {
+        this.region.setValue(region);
+    }
 
-  protected void setRegionHolder(ValueHolderInterface region) {
-    this.region = region;
-  }
+    protected void setRegionHolder(ValueHolderInterface region) {
+        this.region = region;
+    }
 }

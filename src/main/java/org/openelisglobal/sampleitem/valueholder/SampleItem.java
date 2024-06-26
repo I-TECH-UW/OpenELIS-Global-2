@@ -28,215 +28,215 @@ import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 
 public class SampleItem extends BaseObject<String> implements NoteObject {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String id;
+    private String id;
 
-  private String quantity;
+    private String quantity;
 
-  private UUID fhirUuid;
-  private ValueHolderInterface sample;
-  private String sampleItemId;
-  private String sortOrder;
-  private ValueHolderInterface sourceOfSample;
-  private String sourceOfSampleId;
-  private String sourceOther;
-  private ValueHolderInterface typeOfSample;
-  private String typeOfSampleId;
-  private ValueHolderInterface unitOfMeasure;
-  private String unitOfMeasureName;
-  private String externalId;
-  private Timestamp collectionDate;
-  private String statusId;
-  private String collector;
-  private boolean rejected = false;
-  private String rejectReasonId;
+    private UUID fhirUuid;
+    private ValueHolderInterface sample;
+    private String sampleItemId;
+    private String sortOrder;
+    private ValueHolderInterface sourceOfSample;
+    private String sourceOfSampleId;
+    private String sourceOther;
+    private ValueHolderInterface typeOfSample;
+    private String typeOfSampleId;
+    private ValueHolderInterface unitOfMeasure;
+    private String unitOfMeasureName;
+    private String externalId;
+    private Timestamp collectionDate;
+    private String statusId;
+    private String collector;
+    private boolean rejected = false;
+    private String rejectReasonId;
 
-  public SampleItem() {
-    super();
-    typeOfSample = new ValueHolder();
-    sourceOfSample = new ValueHolder();
-    unitOfMeasure = new ValueHolder();
-    sample = new ValueHolder();
-  }
-
-  public String getExternalId() {
-    return externalId;
-  }
-
-  public void setExternalId(String externalId) {
-    this.externalId = externalId;
-  }
-
-  public Timestamp getCollectionDate() {
-    return collectionDate;
-  }
-
-  public void setCollectionDate(Timestamp collectionDate) {
-    this.collectionDate = collectionDate;
-  }
-
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  @Override
-  public String getId() {
-    return id;
-  }
-
-  public void setQuantity(String quantity) {
-    this.quantity = quantity;
-  }
-
-  public String getQuantity() {
-    return quantity;
-  }
-
-  public String getTypeOfSampleId() {
-    if (typeOfSampleId == null) {
-      if (getTypeOfSample() != null) {
-        typeOfSampleId = getTypeOfSample().getId();
-      }
+    public SampleItem() {
+        super();
+        typeOfSample = new ValueHolder();
+        sourceOfSample = new ValueHolder();
+        unitOfMeasure = new ValueHolder();
+        sample = new ValueHolder();
     }
 
-    return typeOfSampleId;
-  }
-
-  public String getSortOrder() {
-    return sortOrder;
-  }
-
-  public void setSortOrder(String sortOrder) {
-    this.sortOrder = sortOrder;
-  }
-
-  public String getSourceOfSampleId() {
-    if (sourceOfSampleId == null) {
-      if (getSourceOfSample() != null) {
-        sourceOfSampleId = getSourceOfSample().getId();
-      }
+    public String getExternalId() {
+        return externalId;
     }
-    return sourceOfSampleId;
-  }
 
-  public void setSourceOfSampleId(String sourceOfSampleId) {
-    this.sourceOfSampleId = sourceOfSampleId;
-  }
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
 
-  public String getSourceOther() {
-    return sourceOther;
-  }
+    public Timestamp getCollectionDate() {
+        return collectionDate;
+    }
 
-  public void setSourceOther(String sourceOther) {
-    this.sourceOther = sourceOther;
-  }
+    public void setCollectionDate(Timestamp collectionDate) {
+        this.collectionDate = collectionDate;
+    }
 
-  public Sample getSample() {
-    return (Sample) sample.getValue();
-  }
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public void setSample(Sample sample) {
-    this.sample.setValue(sample);
-  }
+    @Override
+    public String getId() {
+        return id;
+    }
 
-  public String getSampleItemId() {
-    return sampleItemId;
-  }
+    public void setQuantity(String quantity) {
+        this.quantity = quantity;
+    }
 
-  public void setSampleItemId(String sampleItemId) {
-    this.sampleItemId = sampleItemId;
-  }
+    public String getQuantity() {
+        return quantity;
+    }
 
-  public TypeOfSample getTypeOfSample() {
-    return (TypeOfSample) typeOfSample.getValue();
-  }
+    public String getTypeOfSampleId() {
+        if (typeOfSampleId == null) {
+            if (getTypeOfSample() != null) {
+                typeOfSampleId = getTypeOfSample().getId();
+            }
+        }
 
-  public void setTypeOfSample(TypeOfSample typeOfSample) {
-    this.typeOfSample.setValue(typeOfSample);
-  }
+        return typeOfSampleId;
+    }
 
-  public SourceOfSample getSourceOfSample() {
-    return (SourceOfSample) sourceOfSample.getValue();
-  }
+    public String getSortOrder() {
+        return sortOrder;
+    }
 
-  public void setSourceOfSample(SourceOfSample sourceOfSample) {
-    this.sourceOfSample.setValue(sourceOfSample);
-  }
+    public void setSortOrder(String sortOrder) {
+        this.sortOrder = sortOrder;
+    }
 
-  public UnitOfMeasure getUnitOfMeasure() {
-    return (UnitOfMeasure) unitOfMeasure.getValue();
-  }
+    public String getSourceOfSampleId() {
+        if (sourceOfSampleId == null) {
+            if (getSourceOfSample() != null) {
+                sourceOfSampleId = getSourceOfSample().getId();
+            }
+        }
+        return sourceOfSampleId;
+    }
 
-  public void setUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
-    this.unitOfMeasure.setValue(unitOfMeasure);
-  }
+    public void setSourceOfSampleId(String sourceOfSampleId) {
+        this.sourceOfSampleId = sourceOfSampleId;
+    }
 
-  public String getUnitOfMeasureName() {
-    return unitOfMeasureName;
-  }
+    public String getSourceOther() {
+        return sourceOther;
+    }
 
-  public void setUnitOfMeasureName(String unitOfMeasureName) {
-    this.unitOfMeasureName = unitOfMeasureName;
-  }
+    public void setSourceOther(String sourceOther) {
+        this.sourceOther = sourceOther;
+    }
 
-  public String getStatusId() {
-    return statusId;
-  }
+    public Sample getSample() {
+        return (Sample) sample.getValue();
+    }
 
-  public void setStatusId(String statusId) {
-    this.statusId = statusId;
-  }
+    public void setSample(Sample sample) {
+        this.sample.setValue(sample);
+    }
 
-  public String getCollector() {
-    return collector;
-  }
+    public String getSampleItemId() {
+        return sampleItemId;
+    }
 
-  public void setCollector(String collector) {
-    this.collector = collector;
-  }
+    public void setSampleItemId(String sampleItemId) {
+        this.sampleItemId = sampleItemId;
+    }
 
-  @Override
-  public String getTableId() {
-    return SampleItemServiceImpl.getSampleItemTableReferenceId();
-  }
+    public TypeOfSample getTypeOfSample() {
+        return (TypeOfSample) typeOfSample.getValue();
+    }
 
-  @Override
-  public String getObjectId() {
-    return getId();
-  }
+    public void setTypeOfSample(TypeOfSample typeOfSample) {
+        this.typeOfSample.setValue(typeOfSample);
+    }
 
-  @Override
-  public BoundTo getBoundTo() {
-    return BoundTo.SAMPLE_ITEM;
-  }
+    public SourceOfSample getSourceOfSample() {
+        return (SourceOfSample) sourceOfSample.getValue();
+    }
 
-  public UUID getFhirUuid() {
-    return fhirUuid;
-  }
+    public void setSourceOfSample(SourceOfSample sourceOfSample) {
+        this.sourceOfSample.setValue(sourceOfSample);
+    }
 
-  public void setFhirUuid(UUID fhirUuid) {
-    this.fhirUuid = fhirUuid;
-  }
+    public UnitOfMeasure getUnitOfMeasure() {
+        return (UnitOfMeasure) unitOfMeasure.getValue();
+    }
 
-  public String getFhirUuidAsString() {
-    return fhirUuid == null ? "" : fhirUuid.toString();
-  }
+    public void setUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
+        this.unitOfMeasure.setValue(unitOfMeasure);
+    }
 
-  public boolean isRejected() {
-    return rejected;
-  }
+    public String getUnitOfMeasureName() {
+        return unitOfMeasureName;
+    }
 
-  public void setRejected(boolean rejected) {
-    this.rejected = rejected;
-  }
+    public void setUnitOfMeasureName(String unitOfMeasureName) {
+        this.unitOfMeasureName = unitOfMeasureName;
+    }
 
-  public String getRejectReasonId() {
-    return rejectReasonId;
-  }
+    public String getStatusId() {
+        return statusId;
+    }
 
-  public void setRejectReasonId(String rejectReasonId) {
-    this.rejectReasonId = rejectReasonId;
-  }
+    public void setStatusId(String statusId) {
+        this.statusId = statusId;
+    }
+
+    public String getCollector() {
+        return collector;
+    }
+
+    public void setCollector(String collector) {
+        this.collector = collector;
+    }
+
+    @Override
+    public String getTableId() {
+        return SampleItemServiceImpl.getSampleItemTableReferenceId();
+    }
+
+    @Override
+    public String getObjectId() {
+        return getId();
+    }
+
+    @Override
+    public BoundTo getBoundTo() {
+        return BoundTo.SAMPLE_ITEM;
+    }
+
+    public UUID getFhirUuid() {
+        return fhirUuid;
+    }
+
+    public void setFhirUuid(UUID fhirUuid) {
+        this.fhirUuid = fhirUuid;
+    }
+
+    public String getFhirUuidAsString() {
+        return fhirUuid == null ? "" : fhirUuid.toString();
+    }
+
+    public boolean isRejected() {
+        return rejected;
+    }
+
+    public void setRejected(boolean rejected) {
+        this.rejected = rejected;
+    }
+
+    public String getRejectReasonId() {
+        return rejectReasonId;
+    }
+
+    public void setRejectReasonId(String rejectReasonId) {
+        this.rejectReasonId = rejectReasonId;
+    }
 }

@@ -30,68 +30,61 @@ import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 public class AjaxXMLServlet extends AjaxServlet {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  @Override
-  public void sendData(
-      String field, String message, HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
-    if (!StringUtil.isNullorNill(field)) {
-      StringBuilder sb =
-          new StringBuilder()
-              .append("<fieldmessage>")
-              .append("<formfield>")
-              .append(field)
-              .append("</formfield>")
-              .append("<message>")
-              .append(message)
-              .append("</message>")
-              .append("</fieldmessage>");
-      if ("true".equals(request.getParameter("asJSON"))) {
-        response.setContentType("application/json");
-        response.setHeader("Cache-Control", "no-cache");
-        response.getWriter().write(XML.toJSONObject(sb.toString()).toString());
-      } else {
-        response.setContentType("text/xml");
-        response.setHeader("Cache-Control", "no-cache");
-        response.getWriter().write(sb.toString());
-      }
-    } else {
-      // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "Returning no
-      // content with field " + field + " message " +
-      // message);
-      response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-    }
-  }
-
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException, LIMSRuntimeException {
-    boolean unauthorized = false;
-
-    // check for module authentication
-    UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
-    unauthorized |= userModuleService.isSessionExpired(request);
-
-    // check for csrf token to prevent js hijacking since we employ callback
-    // functions
-    CsrfToken officialToken = new HttpSessionCsrfTokenRepository().loadToken(request);
-    String clientSuppliedToken = request.getHeader("X-CSRF-Token");
-    unauthorized |= !officialToken.getToken().equals(clientSuppliedToken);
-
-    if (unauthorized) {
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      response.setContentType("text/html; charset=utf-8");
-      response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
-      return;
+    @Override
+    public void sendData(String field, String message, HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        if (!StringUtil.isNullorNill(field)) {
+            StringBuilder sb = new StringBuilder().append("<fieldmessage>").append("<formfield>").append(field)
+                    .append("</formfield>").append("<message>").append(message).append("</message>")
+                    .append("</fieldmessage>");
+            if ("true".equals(request.getParameter("asJSON"))) {
+                response.setContentType("application/json");
+                response.setHeader("Cache-Control", "no-cache");
+                response.getWriter().write(XML.toJSONObject(sb.toString()).toString());
+            } else {
+                response.setContentType("text/xml");
+                response.setHeader("Cache-Control", "no-cache");
+                response.getWriter().write(sb.toString());
+            }
+        } else {
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "Returning
+            // no
+            // content with field " + field + " message " +
+            // message);
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        }
     }
 
-    String valProvider = request.getParameter("provider");
-    BaseValidationProvider provider =
-        ValidationProviderFactory.getInstance().getValidationProvider(valProvider);
-    provider.setServlet(this);
-    provider.processRequest(request, response);
-  }
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException, LIMSRuntimeException {
+        boolean unauthorized = false;
 
-  public void getHeader(String headerName) {}
+        // check for module authentication
+        UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
+        unauthorized |= userModuleService.isSessionExpired(request);
+
+        // check for csrf token to prevent js hijacking since we employ callback
+        // functions
+        CsrfToken officialToken = new HttpSessionCsrfTokenRepository().loadToken(request);
+        String clientSuppliedToken = request.getHeader("X-CSRF-Token");
+        unauthorized |= !officialToken.getToken().equals(clientSuppliedToken);
+
+        if (unauthorized) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("text/html; charset=utf-8");
+            response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
+            return;
+        }
+
+        String valProvider = request.getParameter("provider");
+        BaseValidationProvider provider = ValidationProviderFactory.getInstance().getValidationProvider(valProvider);
+        provider.setServlet(this);
+        provider.processRequest(request, response);
+    }
+
+    public void getHeader(String headerName) {
+    }
 }

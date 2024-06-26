@@ -18,29 +18,30 @@ import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportExte
 
 public class AggregateReportXmit {
 
-  private Timestamp eventDate;
-  private String data;
+    private Timestamp eventDate;
+    private String data;
 
-  public AggregateReportXmit() {} // Makes CASTOR happy
+    public AggregateReportXmit() {
+    } // Makes CASTOR happy
 
-  public AggregateReportXmit(ReportExternalExport report) {
-    eventDate = report.getEventDate();
-    data = report.getData().replace("\n", "");
-  }
+    public AggregateReportXmit(ReportExternalExport report) {
+        eventDate = report.getEventDate();
+        data = report.getData().replace("\n", "");
+    }
 
-  public Timestamp getEventDate() {
-    return eventDate;
-  }
+    public Timestamp getEventDate() {
+        return eventDate;
+    }
 
-  public void setEventDate(Timestamp eventDate) {
-    this.eventDate = eventDate;
-  }
+    public void setEventDate(Timestamp eventDate) {
+        this.eventDate = eventDate;
+    }
 
-  public String getData() {
-    return data;
-  }
+    public String getData() {
+        return data;
+    }
 
-  public void setData(String data) {
-    this.data = data;
-  }
+    public void setData(String data) {
+        this.data = data;
+    }
 }

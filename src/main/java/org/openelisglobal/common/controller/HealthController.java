@@ -8,25 +8,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/health")
 public class HealthController {
 
-  @GetMapping
-  public HealthState showHealthState() {
-    return new HealthState();
-  }
-
-  public static class HealthState {
-
-    public enum Status {
-      UP
-    };
-
-    public Status status = Status.UP;
-
-    public Status getStatus() {
-      return status;
+    @GetMapping
+    public HealthState showHealthState() {
+        return new HealthState();
     }
 
-    public void setStatus(Status status) {
-      this.status = status;
+    public static class HealthState {
+
+        public enum Status {
+            UP
+        };
+
+        public Status status = Status.UP;
+
+        public Status getStatus() {
+            return status;
+        }
+
+        public void setStatus(Status status) {
+            this.status = status;
+        }
     }
-  }
 }

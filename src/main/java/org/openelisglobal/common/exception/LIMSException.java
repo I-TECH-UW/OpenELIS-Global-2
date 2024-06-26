@@ -15,12 +15,13 @@ package org.openelisglobal.common.exception;
 
 /**
  * @author diane benz
- *     <p>To change the template for this generated type comment go to
- *     Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         <p>
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class LIMSException extends Exception {
 
-  public LIMSException(String message) {
-    super(message);
-  }
+    public LIMSException(String message) {
+        super(message);
+    }
 }

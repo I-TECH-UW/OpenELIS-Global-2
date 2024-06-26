@@ -1,3 +1,4 @@
 package org.openelisglobal.analyzer.service;
 
-public interface BidirectionalAnalyzerService {}
+public interface BidirectionalAnalyzerService {
+}

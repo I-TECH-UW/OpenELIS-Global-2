@@ -20,46 +20,46 @@ import org.openelisglobal.person.valueholder.Person;
 
 public class OrganizationContact extends BaseObject<String> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String id;
-  private String organizationId;
-  private String position;
-  private ValueHolderInterface person;
+    private String id;
+    private String organizationId;
+    private String position;
+    private ValueHolderInterface person;
 
-  public OrganizationContact() {
-    person = new ValueHolder();
-  }
+    public OrganizationContact() {
+        person = new ValueHolder();
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getOrganizationId() {
-    return organizationId;
-  }
+    public String getOrganizationId() {
+        return organizationId;
+    }
 
-  public void setOrganizationId(String organizationId) {
-    this.organizationId = organizationId;
-  }
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
+    }
 
-  public Person getPerson() {
-    return (Person) person.getValue();
-  }
+    public Person getPerson() {
+        return (Person) person.getValue();
+    }
 
-  public void setPerson(Person person) {
-    this.person.setValue(person);
-  }
+    public void setPerson(Person person) {
+        this.person.setValue(person);
+    }
 
-  public void setPosition(String position) {
-    this.position = position;
-  }
+    public void setPosition(String position) {
+        this.position = position;
+    }
 
-  public String getPosition() {
-    return position;
-  }
+    public String getPosition() {
+        return position;
+    }
 }

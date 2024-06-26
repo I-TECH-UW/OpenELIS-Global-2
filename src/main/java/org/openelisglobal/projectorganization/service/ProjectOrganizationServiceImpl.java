@@ -7,17 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProjectOrganizationServiceImpl
-    extends AuditableBaseObjectServiceImpl<ProjectOrganization, String>
-    implements ProjectOrganizationService {
-  @Autowired protected ProjectOrganizationDAO baseObjectDAO;
+public class ProjectOrganizationServiceImpl extends AuditableBaseObjectServiceImpl<ProjectOrganization, String>
+        implements ProjectOrganizationService {
+    @Autowired
+    protected ProjectOrganizationDAO baseObjectDAO;
 
-  ProjectOrganizationServiceImpl() {
-    super(ProjectOrganization.class);
-  }
+    ProjectOrganizationServiceImpl() {
+        super(ProjectOrganization.class);
+    }
 
-  @Override
-  protected ProjectOrganizationDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected ProjectOrganizationDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

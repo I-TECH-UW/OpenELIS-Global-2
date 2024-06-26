@@ -11,19 +11,19 @@ import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.validation.constraintvalidator.OptionalNotBlankConstraintValidator;
 
-@Target({ElementType.FIELD})
+@Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = OptionalNotBlankConstraintValidator.class)
 @Documented
 public @interface OptionalNotBlank {
 
-  String message() default "Cannot be blank";
+    String message() default "Cannot be blank";
 
-  Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-  FormFields.Field[] formFields() default {};
+    FormFields.Field[] formFields() default {};
 
-  ConfigurationProperties.Property[] properties() default {};
+    ConfigurationProperties.Property[] properties() default {};
 
-  Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 }

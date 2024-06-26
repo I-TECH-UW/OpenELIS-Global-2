@@ -27,59 +27,44 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress, AddressPK>
-    implements PersonAddressDAO {
+public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress, AddressPK> implements PersonAddressDAO {
 
-  public PersonAddressDAOImpl() {
-    super(PersonAddress.class);
-  }
+    public PersonAddressDAOImpl() {
+        super(PersonAddress.class);
+    }
 
- Add-more-person-service-Test-#902
+    @Override
+    public List<PersonAddress> getAddressPartsByPersonId(String personId) throws LIMSRuntimeException {
+        String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId";
+      
         try {
             Query<PersonAddress> query = entityManager.unwrap(Session.class).createQuery(sql, PersonAddress.class);
             query.setParameter("personId", personId);
+
             List<PersonAddress> addressPartList = query.list();
             return addressPartList;
         } catch (HibernateException e) {
             handleException(e, "getAddressPartsByPersonId");
         }
 
-  @Override
-  public List<PersonAddress> getAddressPartsByPersonId(String personId)
-      throws LIMSRuntimeException {
-    String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId";
-
-    try {
-      Query<PersonAddress> query =
-          entityManager.unwrap(Session.class).createQuery(sql, PersonAddress.class);
-      query.setParameter("personId", Integer.parseInt(personId));
-      List<PersonAddress> addressPartList = query.list();
-      return addressPartList;
-    } catch (HibernateException e) {
-      handleException(e, "getAddressPartsByPersonId");
+        return null;
     }
 
-    return null;
-  }
+    @Override
+    public PersonAddress getByPersonIdAndPartId(String personId, String addressPartId) throws LIMSRuntimeException {
+        String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId and"
+                + " pa.compoundId.addressPartId = :partId";
 
-  @Override
-  public PersonAddress getByPersonIdAndPartId(String personId, String addressPartId)
-      throws LIMSRuntimeException {
-    String sql =
-        "from PersonAddress pa where pa.compoundId.targetId = :personId and"
-            + " pa.compoundId.addressPartId = :partId";
+        try {
+            Query<PersonAddress> query = entityManager.unwrap(Session.class).createQuery(sql, PersonAddress.class);
+            query.setParameter("personId", Integer.parseInt(personId));
+            query.setParameter("partId", Integer.parseInt(addressPartId));
+            PersonAddress addressPart = query.uniqueResult();
+            return addressPart;
+        } catch (HibernateException e) {
+            handleException(e, "getByPersonIdAndPartId");
+        }
 
-    try {
-      Query<PersonAddress> query =
-          entityManager.unwrap(Session.class).createQuery(sql, PersonAddress.class);
-      query.setParameter("personId", Integer.parseInt(personId));
-      query.setParameter("partId", Integer.parseInt(addressPartId));
-      PersonAddress addressPart = query.uniqueResult();
-      return addressPart;
-    } catch (HibernateException e) {
-      handleException(e, "getByPersonIdAndPartId");
+        return null;
     }
-
-    return null;
-  }
 }

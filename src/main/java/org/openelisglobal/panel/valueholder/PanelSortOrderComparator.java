@@ -19,19 +19,18 @@ package org.openelisglobal.panel.valueholder;
 import java.util.Comparator;
 
 public class PanelSortOrderComparator implements Comparable<Object> {
-  String sortOrder;
+    String sortOrder;
 
-  public int compareTo(Object obj) {
-    Panel t = (Panel) obj;
-    return this.sortOrder.compareTo(t.getSortOrder());
-  }
+    public int compareTo(Object obj) {
+        Panel t = (Panel) obj;
+        return this.sortOrder.compareTo(t.getSortOrder());
+    }
 
-  public static final Comparator<Object> SORT_ORDER_COMPARATOR =
-      new Comparator<Object>() {
+    public static final Comparator<Object> SORT_ORDER_COMPARATOR = new Comparator<Object>() {
         public int compare(Object a, Object b) {
-          Panel t_a = (Panel) a;
-          Panel t_b = (Panel) b;
-          return (new Integer(t_a.getSortOrderInt())).compareTo(new Integer(t_b.getSortOrderInt()));
+            Panel t_a = (Panel) a;
+            Panel t_b = (Panel) b;
+            return (new Integer(t_a.getSortOrderInt())).compareTo(new Integer(t_b.getSortOrderInt()));
         }
-      };
+    };
 }

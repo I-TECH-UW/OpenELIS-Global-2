@@ -25,27 +25,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class ReportQueueTypeDAOImpl extends BaseDAOImpl<ReportQueueType, String>
-    implements ReportQueueTypeDAO {
+public class ReportQueueTypeDAOImpl extends BaseDAOImpl<ReportQueueType, String> implements ReportQueueTypeDAO {
 
-  public ReportQueueTypeDAOImpl() {
-    super(ReportQueueType.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public ReportQueueType getReportQueueTypeByName(String name) throws LIMSRuntimeException {
-    String sql = "from ReportQueueType rqt where rqt.name = :name";
-
-    try {
-      Query<ReportQueueType> query =
-          entityManager.unwrap(Session.class).createQuery(sql, ReportQueueType.class);
-      query.setParameter("name", name);
-      ReportQueueType type = query.uniqueResult();
-      return type;
-    } catch (HibernateException e) {
-      handleException(e, "getReportQueueTypeByName");
+    public ReportQueueTypeDAOImpl() {
+        super(ReportQueueType.class);
     }
-    return null;
-  }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ReportQueueType getReportQueueTypeByName(String name) throws LIMSRuntimeException {
+        String sql = "from ReportQueueType rqt where rqt.name = :name";
+
+        try {
+            Query<ReportQueueType> query = entityManager.unwrap(Session.class).createQuery(sql, ReportQueueType.class);
+            query.setParameter("name", name);
+            ReportQueueType type = query.uniqueResult();
+            return type;
+        } catch (HibernateException e) {
+            handleException(e, "getReportQueueTypeByName");
+        }
+        return null;
+    }
 }

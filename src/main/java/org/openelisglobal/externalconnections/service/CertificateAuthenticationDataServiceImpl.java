@@ -9,24 +9,24 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CertificateAuthenticationDataServiceImpl
-    extends AuditableBaseObjectServiceImpl<CertificateAuthenticationData, Integer>
-    implements CertificateAuthenticationDataService {
+        extends AuditableBaseObjectServiceImpl<CertificateAuthenticationData, Integer>
+        implements CertificateAuthenticationDataService {
 
-  @Autowired protected CertificateAuthenticationDataDAO baseObjectDAO;
+    @Autowired
+    protected CertificateAuthenticationDataDAO baseObjectDAO;
 
-  CertificateAuthenticationDataServiceImpl() {
-    super(CertificateAuthenticationData.class);
-    this.auditTrailLog = false;
-  }
+    CertificateAuthenticationDataServiceImpl() {
+        super(CertificateAuthenticationData.class);
+        this.auditTrailLog = false;
+    }
 
-  @Override
-  protected CertificateAuthenticationDataDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected CertificateAuthenticationDataDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-  @Override
-  public Optional<CertificateAuthenticationData> getByExternalConnection(
-      Integer externalConnectionId) {
-    return baseObjectDAO.getByExternalConnection(externalConnectionId);
-  }
+    @Override
+    public Optional<CertificateAuthenticationData> getByExternalConnection(Integer externalConnectionId) {
+        return baseObjectDAO.getByExternalConnection(externalConnectionId);
+    }
 }

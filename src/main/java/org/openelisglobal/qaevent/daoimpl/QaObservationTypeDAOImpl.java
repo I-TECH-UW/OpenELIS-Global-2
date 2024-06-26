@@ -25,27 +25,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class QaObservationTypeDAOImpl extends BaseDAOImpl<QaObservationType, String>
-    implements QaObservationTypeDAO {
+public class QaObservationTypeDAOImpl extends BaseDAOImpl<QaObservationType, String> implements QaObservationTypeDAO {
 
-  public QaObservationTypeDAOImpl() {
-    super(QaObservationType.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public QaObservationType getQaObservationTypeByName(String typeName) throws LIMSRuntimeException {
-    String sql = "FROM QaObservationType where name = :name";
-
-    try {
-      Query<QaObservationType> query =
-          entityManager.unwrap(Session.class).createQuery(sql, QaObservationType.class);
-      query.setParameter("name", typeName);
-      QaObservationType type = query.uniqueResult();
-      return type;
-    } catch (HibernateException e) {
-      handleException(e, "getQaObservationTypeByName");
+    public QaObservationTypeDAOImpl() {
+        super(QaObservationType.class);
     }
-    return null;
-  }
+
+    @Override
+    @Transactional(readOnly = true)
+    public QaObservationType getQaObservationTypeByName(String typeName) throws LIMSRuntimeException {
+        String sql = "FROM QaObservationType where name = :name";
+
+        try {
+            Query<QaObservationType> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    QaObservationType.class);
+            query.setParameter("name", typeName);
+            QaObservationType type = query.uniqueResult();
+            return type;
+        } catch (HibernateException e) {
+            handleException(e, "getQaObservationTypeByName");
+        }
+        return null;
+    }
 }

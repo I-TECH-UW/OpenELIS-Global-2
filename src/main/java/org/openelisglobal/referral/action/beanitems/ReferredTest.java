@@ -24,166 +24,152 @@ import org.openelisglobal.validation.annotations.ValidDate;
 
 public class ReferredTest implements IReferralResultTest {
 
-  private String referralId;
+    private String referralId;
 
-  @Pattern(
-      regexp = ValidationHelper.ID_REGEX,
-      groups = {ReferredOutTestsForm.ReferredOut.class})
-  private String referredTestId;
-  // the shadow is to track if the test has been changed by the user
-  private String referredTestIdShadow;
+    @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ReferredOutTestsForm.ReferredOut.class })
+    private String referredTestId;
+    // the shadow is to track if the test has been changed by the user
+    private String referredTestIdShadow;
 
-  @SafeHtml(
-      level = SafeHtml.SafeListLevel.NONE,
-      groups = {ReferredOutTestsForm.ReferredOut.class})
-  private String referredResult = "";
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
+    private String referredResult = "";
 
-  @SafeHtml(
-      level = SafeHtml.SafeListLevel.NONE,
-      groups = {ReferredOutTestsForm.ReferredOut.class})
-  private String referredDictionaryResult;
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
+    private String referredDictionaryResult;
 
-  // for display
-  private List<IdValuePair> dictionaryResults = new ArrayList<>();
+    // for display
+    private List<IdValuePair> dictionaryResults = new ArrayList<>();
 
-  @SafeHtml(
-      level = SafeHtml.SafeListLevel.NONE,
-      groups = {ReferredOutTestsForm.ReferredOut.class})
-  private String referredResultType = "";
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
+    private String referredResultType = "";
 
-  @ValidDate(groups = {ReferredOutTestsForm.ReferredOut.class})
-  private String referredReportDate;
+    @ValidDate(groups = { ReferredOutTestsForm.ReferredOut.class })
+    private String referredReportDate;
 
-  @Pattern(
-      regexp = ValidationHelper.ID_REGEX,
-      groups = {ReferredOutTestsForm.ReferredOut.class})
-  private String referralResultId;
+    @Pattern(regexp = ValidationHelper.ID_REGEX, groups = { ReferredOutTestsForm.ReferredOut.class })
+    private String referralResultId;
 
-  private boolean remove = false;
+    private boolean remove = false;
 
-  @SafeHtml(
-      level = SafeHtml.SafeListLevel.NONE,
-      groups = {ReferredOutTestsForm.ReferredOut.class})
-  private String referredMultiDictionaryResult;
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
+    private String referredMultiDictionaryResult;
 
-  @SafeHtml(
-      level = SafeHtml.SafeListLevel.NONE,
-      groups = {ReferredOutTestsForm.ReferredOut.class})
-  private String multiSelectResultValues = "{}";
+    @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { ReferredOutTestsForm.ReferredOut.class })
+    private String multiSelectResultValues = "{}";
 
-  @Override
-  public String getReferralId() {
-    return referralId;
-  }
+    @Override
+    public String getReferralId() {
+        return referralId;
+    }
 
-  @Override
-  public void setReferralId(String referralId) {
-    this.referralId = referralId;
-  }
+    @Override
+    public void setReferralId(String referralId) {
+        this.referralId = referralId;
+    }
 
-  @Override
-  public void setReferredTestId(String referredTestId) {
-    this.referredTestId = referredTestId;
-  }
+    @Override
+    public void setReferredTestId(String referredTestId) {
+        this.referredTestId = referredTestId;
+    }
 
-  @Override
-  public String getReferredTestIdShadow() {
-    return referredTestIdShadow;
-  }
+    @Override
+    public String getReferredTestIdShadow() {
+        return referredTestIdShadow;
+    }
 
-  @Override
-  public void setReferredTestIdShadow(String referredTestIdShadow) {
-    this.referredTestIdShadow = referredTestIdShadow;
-  }
+    @Override
+    public void setReferredTestIdShadow(String referredTestIdShadow) {
+        this.referredTestIdShadow = referredTestIdShadow;
+    }
 
-  @Override
-  public String getReferredTestId() {
-    return referredTestId;
-  }
+    @Override
+    public String getReferredTestId() {
+        return referredTestId;
+    }
 
-  @Override
-  public String getReferredResult() {
-    return referredResult;
-  }
+    @Override
+    public String getReferredResult() {
+        return referredResult;
+    }
 
-  @Override
-  public void setReferredResult(String referredResult) {
-    this.referredResult = referredResult;
-  }
+    @Override
+    public void setReferredResult(String referredResult) {
+        this.referredResult = referredResult;
+    }
 
-  @Override
-  public String getReferredResultType() {
-    return referredResultType;
-  }
+    @Override
+    public String getReferredResultType() {
+        return referredResultType;
+    }
 
-  @Override
-  public void setReferredResultType(String referredResultType) {
-    this.referredResultType = referredResultType;
-  }
+    @Override
+    public void setReferredResultType(String referredResultType) {
+        this.referredResultType = referredResultType;
+    }
 
-  @Override
-  public String getReferredReportDate() {
-    return referredReportDate;
-  }
+    @Override
+    public String getReferredReportDate() {
+        return referredReportDate;
+    }
 
-  @Override
-  public void setReferredReportDate(String referredReportDate) {
-    this.referredReportDate = referredReportDate == null ? "" : referredReportDate;
-  }
+    @Override
+    public void setReferredReportDate(String referredReportDate) {
+        this.referredReportDate = referredReportDate == null ? "" : referredReportDate;
+    }
 
-  public void setRemove(boolean remove) {
-    this.remove = remove;
-  }
+    public void setRemove(boolean remove) {
+        this.remove = remove;
+    }
 
-  public boolean isRemove() {
-    return remove;
-  }
+    public boolean isRemove() {
+        return remove;
+    }
 
-  @Override
-  public void setReferralResultId(String referralResultId) {
-    this.referralResultId = referralResultId;
-  }
+    @Override
+    public void setReferralResultId(String referralResultId) {
+        this.referralResultId = referralResultId;
+    }
 
-  @Override
-  public String getReferralResultId() {
-    return referralResultId;
-  }
+    @Override
+    public String getReferralResultId() {
+        return referralResultId;
+    }
 
-  @Override
-  public void setReferredDictionaryResult(String referredDictionaryResult) {
-    this.referredDictionaryResult = referredDictionaryResult;
-  }
+    @Override
+    public void setReferredDictionaryResult(String referredDictionaryResult) {
+        this.referredDictionaryResult = referredDictionaryResult;
+    }
 
-  @Override
-  public String getReferredDictionaryResult() {
-    return referredDictionaryResult;
-  }
+    @Override
+    public String getReferredDictionaryResult() {
+        return referredDictionaryResult;
+    }
 
-  public void setDictionaryResults(List<IdValuePair> dictionaryResults) {
-    this.dictionaryResults = dictionaryResults;
-  }
+    public void setDictionaryResults(List<IdValuePair> dictionaryResults) {
+        this.dictionaryResults = dictionaryResults;
+    }
 
-  public List<IdValuePair> getDictionaryResults() {
-    return dictionaryResults;
-  }
+    public List<IdValuePair> getDictionaryResults() {
+        return dictionaryResults;
+    }
 
-  @Override
-  public String getReferredMultiDictionaryResult() {
-    return referredMultiDictionaryResult;
-  }
+    @Override
+    public String getReferredMultiDictionaryResult() {
+        return referredMultiDictionaryResult;
+    }
 
-  @Override
-  public void setReferredMultiDictionaryResult(String referredMultiDictionaryResult) {
-    this.referredMultiDictionaryResult = referredMultiDictionaryResult;
-  }
+    @Override
+    public void setReferredMultiDictionaryResult(String referredMultiDictionaryResult) {
+        this.referredMultiDictionaryResult = referredMultiDictionaryResult;
+    }
 
-  @Override
-  public String getMultiSelectResultValues() {
-    return multiSelectResultValues;
-  }
+    @Override
+    public String getMultiSelectResultValues() {
+        return multiSelectResultValues;
+    }
 
-  @Override
-  public void setMultiSelectResultValues(String multiSelectResultValues) {
-    this.multiSelectResultValues = multiSelectResultValues;
-  }
+    @Override
+    public void setMultiSelectResultValues(String multiSelectResultValues) {
+        this.multiSelectResultValues = multiSelectResultValues;
+    }
 }

@@ -17,42 +17,42 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class SamplePdf extends BaseObject<String> {
 
-  private String id;
-  private String accessionNumber;
-  private String allowView;
-  // bugzilla 2529,2530,2531
-  private String barcode;
+    private String id;
+    private String accessionNumber;
+    private String allowView;
+    // bugzilla 2529,2530,2531
+    private String barcode;
 
-  // bugzilla 2529,2530,2531
-  public void setBarcode(String barcode) {
-    this.barcode = barcode;
-  }
+    // bugzilla 2529,2530,2531
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
 
-  public String getBarcode() {
-    return barcode;
-  }
+    public String getBarcode() {
+        return barcode;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public String getAccessionNumber() {
-    return accessionNumber;
-  }
+    public String getAccessionNumber() {
+        return accessionNumber;
+    }
 
-  public void setAccessionNumber(String accessionNumber) {
-    this.accessionNumber = accessionNumber;
-  }
+    public void setAccessionNumber(String accessionNumber) {
+        this.accessionNumber = accessionNumber;
+    }
 
-  public String getAllowView() {
-    return allowView;
-  }
+    public String getAllowView() {
+        return allowView;
+    }
 
-  public void setAllowView(String allowView) {
-    this.allowView = allowView;
-  }
+    public void setAllowView(String allowView) {
+        this.allowView = allowView;
+    }
 }

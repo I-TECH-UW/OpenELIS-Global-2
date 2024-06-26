@@ -6,6 +6,5 @@ import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingExcepti
 
 public interface ProviderImportService {
 
-  void importPractitionerList()
-      throws FhirLocalPersistingException, FhirGeneralException, IOException;
+    void importPractitionerList() throws FhirLocalPersistingException, FhirGeneralException, IOException;
 }

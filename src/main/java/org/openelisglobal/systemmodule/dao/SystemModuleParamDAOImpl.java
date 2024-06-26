@@ -7,9 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class SystemModuleParamDAOImpl extends BaseDAOImpl<SystemModuleParam, String>
-    implements SystemModuleParamDAO {
-  SystemModuleParamDAOImpl() {
-    super(SystemModuleParam.class);
-  }
+public class SystemModuleParamDAOImpl extends BaseDAOImpl<SystemModuleParam, String> implements SystemModuleParamDAO {
+    SystemModuleParamDAOImpl() {
+        super(SystemModuleParam.class);
+    }
 }

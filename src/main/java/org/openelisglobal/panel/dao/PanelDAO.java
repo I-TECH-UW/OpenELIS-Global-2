@@ -20,45 +20,47 @@ import org.openelisglobal.panel.valueholder.Panel;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface PanelDAO extends BaseDAO<Panel, String> {
 
-  //	public boolean insertData(Panel panel) throws LIMSRuntimeException;
+    // public boolean insertData(Panel panel) throws LIMSRuntimeException;
 
-  //	public void deleteData(List panels) throws LIMSRuntimeException;
+    // public void deleteData(List panels) throws LIMSRuntimeException;
 
-  List<Panel> getAllActivePanels() throws LIMSRuntimeException;
+    List<Panel> getAllActivePanels() throws LIMSRuntimeException;
 
-  List<Panel> getPageOfPanels(int startingRecNo) throws LIMSRuntimeException;
+    List<Panel> getPageOfPanels(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(Panel panel) throws LIMSRuntimeException;
+    void getData(Panel panel) throws LIMSRuntimeException;
 
-  //	public void updateData(Panel panel) throws LIMSRuntimeException;
+    // public void updateData(Panel panel) throws LIMSRuntimeException;
 
-  List<Panel> getActivePanels(String filter) throws LIMSRuntimeException;
+    List<Panel> getActivePanels(String filter) throws LIMSRuntimeException;
 
-  List<Panel> getAllPanels() throws LIMSRuntimeException;
+    List<Panel> getAllPanels() throws LIMSRuntimeException;
 
-  Panel getPanelByName(Panel panel) throws LIMSRuntimeException;
+    Panel getPanelByName(Panel panel) throws LIMSRuntimeException;
 
-  Integer getTotalPanelCount() throws LIMSRuntimeException;
+    Integer getTotalPanelCount() throws LIMSRuntimeException;
 
-  String getNameForPanelId(String panelId);
+    String getNameForPanelId(String panelId);
 
-  String getDescriptionForPanelId(String id);
+    String getDescriptionForPanelId(String id);
 
-  String getIdForPanelName(String name);
+    String getIdForPanelName(String name);
 
-  Panel getPanelByName(String panelName) throws LIMSRuntimeException;
+    Panel getPanelByName(String panelName) throws LIMSRuntimeException;
 
-  Panel getPanelById(String id) throws LIMSRuntimeException;
+    Panel getPanelById(String id) throws LIMSRuntimeException;
 
-  boolean duplicatePanelExists(Panel panel);
+    boolean duplicatePanelExists(Panel panel);
 
-  boolean duplicatePanelDescriptionExists(Panel panel);
+    boolean duplicatePanelDescriptionExists(Panel panel);
 
-  void clearIDMaps();
+    void clearIDMaps();
 }

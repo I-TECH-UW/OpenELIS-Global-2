@@ -10,11 +10,11 @@ import org.openelisglobal.testcalculated.valueholder.ResultCalculation;
 
 public interface ResultCalculationDAO extends BaseDAO<ResultCalculation, Integer> {
 
-  List<ResultCalculation> getResultCalculationByPatientAndTest(Patient patient, Test test)
-      throws LIMSRuntimeException;
+    List<ResultCalculation> getResultCalculationByPatientAndTest(Patient patient, Test test)
+            throws LIMSRuntimeException;
 
-  List<ResultCalculation> getResultCalculationByTest(Test test) throws LIMSRuntimeException;
+    List<ResultCalculation> getResultCalculationByTest(Test test) throws LIMSRuntimeException;
 
-  List<ResultCalculation> getResultCalculationByPatientAndCalculation(
-      Patient patient, Calculation calculation) throws LIMSRuntimeException;
+    List<ResultCalculation> getResultCalculationByPatientAndCalculation(Patient patient, Calculation calculation)
+            throws LIMSRuntimeException;
 }

@@ -19,5 +19,5 @@ import org.openelisglobal.requester.valueholder.RequesterType;
 
 public interface RequesterTypeDAO extends BaseDAO<RequesterType, String> {
 
-  public RequesterType getRequesterTypeByName(String typeName) throws LIMSRuntimeException;
+    public RequesterType getRequesterTypeByName(String typeName) throws LIMSRuntimeException;
 }

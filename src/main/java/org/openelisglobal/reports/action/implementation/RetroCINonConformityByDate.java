@@ -19,8 +19,8 @@ package org.openelisglobal.reports.action.implementation;
 
 public class RetroCINonConformityByDate extends NonConformityByDate implements IReportCreator {
 
-  @Override
-  protected String getHeaderName() {
-    return "RetroCIHeader.jasper";
-  }
+    @Override
+    protected String getHeaderName() {
+        return "RetroCIHeader.jasper";
+    }
 }

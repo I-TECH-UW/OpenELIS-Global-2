@@ -15,53 +15,53 @@ package org.openelisglobal.reports.action.implementation.reportBeans;
 
 public class HaitiAggregateReportData {
 
-  private String testName;
-  private String sectionName;
-  private int notStarted;
-  private int inProgress;
-  private int finished;
+    private String testName;
+    private String sectionName;
+    private int notStarted;
+    private int inProgress;
+    private int finished;
 
-  public String getTestName() {
-    return testName;
-  }
+    public String getTestName() {
+        return testName;
+    }
 
-  public void setTestName(String testName) {
-    this.testName = testName;
-  }
+    public void setTestName(String testName) {
+        this.testName = testName;
+    }
 
-  public String getSectionName() {
-    return sectionName;
-  }
+    public String getSectionName() {
+        return sectionName;
+    }
 
-  public void setSectionName(String sectionName) {
-    this.sectionName = sectionName;
-  }
+    public void setSectionName(String sectionName) {
+        this.sectionName = sectionName;
+    }
 
-  public int getNotStarted() {
-    return notStarted;
-  }
+    public int getNotStarted() {
+        return notStarted;
+    }
 
-  public void setNotStarted(int notStarted) {
-    this.notStarted = notStarted;
-  }
+    public void setNotStarted(int notStarted) {
+        this.notStarted = notStarted;
+    }
 
-  public int getInProgress() {
-    return inProgress;
-  }
+    public int getInProgress() {
+        return inProgress;
+    }
 
-  public void setInProgress(int inProgress) {
-    this.inProgress = inProgress;
-  }
+    public void setInProgress(int inProgress) {
+        this.inProgress = inProgress;
+    }
 
-  public int getFinished() {
-    return finished;
-  }
+    public int getFinished() {
+        return finished;
+    }
 
-  public void setFinished(int finished) {
-    this.finished = finished;
-  }
+    public void setFinished(int finished) {
+        this.finished = finished;
+    }
 
-  public int getTotal() {
-    return notStarted + inProgress + finished;
-  }
+    public int getTotal() {
+        return notStarted + inProgress + finished;
+    }
 }

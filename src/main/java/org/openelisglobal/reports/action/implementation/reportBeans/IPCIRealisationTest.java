@@ -20,49 +20,49 @@ package org.openelisglobal.reports.action.implementation.reportBeans;
 
 public class IPCIRealisationTest {
 
-  public String sectionName;
-  public String testName;
-  public int required;
-  public int performed;
-  public int noPerformed;
+    public String sectionName;
+    public String testName;
+    public int required;
+    public int performed;
+    public int noPerformed;
 
-  public String getSectionName() {
-    return sectionName;
-  }
+    public String getSectionName() {
+        return sectionName;
+    }
 
-  public void setSectionName(String sectionName) {
-    this.sectionName = sectionName;
-  }
+    public void setSectionName(String sectionName) {
+        this.sectionName = sectionName;
+    }
 
-  public String getTestName() {
-    return testName;
-  }
+    public String getTestName() {
+        return testName;
+    }
 
-  public void setTestName(String testName) {
-    this.testName = testName;
-  }
+    public void setTestName(String testName) {
+        this.testName = testName;
+    }
 
-  public int getRequired() {
-    return required;
-  }
+    public int getRequired() {
+        return required;
+    }
 
-  public void setRequired(int required) {
-    this.required = required;
-  }
+    public void setRequired(int required) {
+        this.required = required;
+    }
 
-  public int getPerformed() {
-    return performed;
-  }
+    public int getPerformed() {
+        return performed;
+    }
 
-  public void setPerformed(int performed) {
-    this.performed = performed;
-  }
+    public void setPerformed(int performed) {
+        this.performed = performed;
+    }
 
-  public int getNoPerformed() {
-    return noPerformed;
-  }
+    public int getNoPerformed() {
+        return noPerformed;
+    }
 
-  public void setNoPerformed(int noPerformed) {
-    this.noPerformed = noPerformed;
-  }
+    public void setNoPerformed(int noPerformed) {
+        this.noPerformed = noPerformed;
+    }
 }

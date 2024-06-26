@@ -21,95 +21,95 @@ import org.openelisglobal.project.valueholder.Project;
 
 public class ProjectOrganization extends BaseObject<String> {
 
-  private String id;
+    private String id;
 
-  private String organizationId;
+    private String organizationId;
 
-  private ValueHolderInterface organization;
+    private ValueHolderInterface organization;
 
-  private String projectId;
+    private String projectId;
 
-  private ValueHolderInterface project;
+    private ValueHolderInterface project;
 
-  private String projectOrganizationType;
+    private String projectOrganizationType;
 
-  public ProjectOrganization() {
-    super();
-    this.project = new ValueHolder();
-    this.organization = new ValueHolder();
-  }
+    public ProjectOrganization() {
+        super();
+        this.project = new ValueHolder();
+        this.organization = new ValueHolder();
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setProjectOrganizationType(String projectOrganizationType) {
-    this.projectOrganizationType = projectOrganizationType;
-  }
+    public void setProjectOrganizationType(String projectOrganizationType) {
+        this.projectOrganizationType = projectOrganizationType;
+    }
 
-  public String getProjectOrganizationType() {
-    return projectOrganizationType;
-  }
+    public String getProjectOrganizationType() {
+        return projectOrganizationType;
+    }
 
-  public void setOrganizationId(String organizationId) {
-    this.organizationId = organizationId;
-  }
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
+    }
 
-  public String getOrganizationId() {
-    return organizationId;
-  }
+    public String getOrganizationId() {
+        return organizationId;
+    }
 
-  public void setProjectId(String projectId) {
-    this.projectId = projectId;
-  }
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
 
-  public String getProjectId() {
-    return projectId;
-  }
+    public String getProjectId() {
+        return projectId;
+    }
 
-  // SAMPLE
-  public Project getProject() {
-    return (Project) this.project.getValue();
-  }
+    // SAMPLE
+    public Project getProject() {
+        return (Project) this.project.getValue();
+    }
 
-  public void setProject(ValueHolderInterface project) {
-    this.project = project;
-  }
+    public void setProject(ValueHolderInterface project) {
+        this.project = project;
+    }
 
-  public void setProject(Project project) {
-    this.project.setValue(project);
-  }
+    public void setProject(Project project) {
+        this.project.setValue(project);
+    }
 
-  protected ValueHolderInterface getProjectHolder() {
-    return this.project;
-  }
+    protected ValueHolderInterface getProjectHolder() {
+        return this.project;
+    }
 
-  protected void setProjectHolder(ValueHolderInterface project) {
-    this.project = project;
-  }
+    protected void setProjectHolder(ValueHolderInterface project) {
+        this.project = project;
+    }
 
-  // ORGANIZATION
-  public Organization getOrganization() {
-    return (Organization) this.organization.getValue();
-  }
+    // ORGANIZATION
+    public Organization getOrganization() {
+        return (Organization) this.organization.getValue();
+    }
 
-  public void setOrganization(ValueHolderInterface organization) {
-    this.organization = organization;
-  }
+    public void setOrganization(ValueHolderInterface organization) {
+        this.organization = organization;
+    }
 
-  public void setOrganization(Organization organization) {
-    this.organization.setValue(organization);
-  }
+    public void setOrganization(Organization organization) {
+        this.organization.setValue(organization);
+    }
 
-  protected ValueHolderInterface getOrganizationHolder() {
-    return this.organization;
-  }
+    protected ValueHolderInterface getOrganizationHolder() {
+        return this.organization;
+    }
 
-  protected void setOrganizationHolder(ValueHolderInterface organization) {
-    this.organization = organization;
-  }
+    protected void setOrganizationHolder(ValueHolderInterface organization) {
+        this.organization = organization;
+    }
 }

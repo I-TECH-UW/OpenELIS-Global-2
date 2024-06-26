@@ -18,41 +18,39 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 
 public class PatientARVInitialVersion2Report extends PatientARVReport implements IReportCreator {
-  @Override
-  protected String reportFileName() {
-    return "Patient_ARV_Version2";
-  }
-
-  @Override
-  protected String getReportNameForReport() {
-    return MessageUtil.getMessage("sample.entry.project.initialARV.title");
-  }
-
-  @Override
-  protected boolean allowSample() {
-    List<ObservationHistory> historyList =
-        observationHistoryService.getAll(reportPatient, reportSample, OBSERVATION_PROJECT_ID);
-
-    for (ObservationHistory history : historyList) {
-      if ("InitialARV_Id".equals(history.getValue())) {
-        return true;
-      }
+    @Override
+    protected String reportFileName() {
+        return "Patient_ARV_Version2";
     }
 
-    return false;
-  }
+    @Override
+    protected String getReportNameForReport() {
+        return MessageUtil.getMessage("sample.entry.project.initialARV.title");
+    }
 
-  @Override
-  protected String getProjectId() {
-    return ANTIRETROVIRAL_STUDY_ID;
-  }
+    @Override
+    protected boolean allowSample() {
+        List<ObservationHistory> historyList = observationHistoryService.getAll(reportPatient, reportSample,
+                OBSERVATION_PROJECT_ID);
 
-  @Override
-  protected void createReportParameters() {
-    super.createReportParameters();
-    reportParameters.put(
-        "contact",
-        "CHU de Treichville, 01 BP 1712 Tel : 21-21-42-50/21-25-4189 Fax : 21-24-29-69/"
-            + " 21-25-10-63");
-  }
+        for (ObservationHistory history : historyList) {
+            if ("InitialARV_Id".equals(history.getValue())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    protected String getProjectId() {
+        return ANTIRETROVIRAL_STUDY_ID;
+    }
+
+    @Override
+    protected void createReportParameters() {
+        super.createReportParameters();
+        reportParameters.put("contact",
+                "CHU de Treichville, 01 BP 1712 Tel : 21-21-42-50/21-25-4189 Fax : 21-24-29-69/" + " 21-25-10-63");
+    }
 }

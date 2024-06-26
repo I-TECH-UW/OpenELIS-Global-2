@@ -14,8 +14,8 @@
 package org.openelisglobal.reports.action.implementation;
 
 public class PatientEIDVersion1Report extends PatientEIDReport implements IReportCreator {
-  @Override
-  protected String reportFileName() {
-    return "RetroCI_Patient_EID";
-  }
+    @Override
+    protected String reportFileName() {
+        return "RetroCI_Patient_EID";
+    }
 }

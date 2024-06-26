@@ -26,260 +26,260 @@ import org.openelisglobal.testresult.valueholder.TestResult;
 
 public class TestReflex extends EnumValueItemImpl {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String id;
+    private String id;
 
-  private ValueHolderInterface testResult;
+    private ValueHolderInterface testResult;
 
-  private String testResultId;
+    private String testResultId;
 
-  private ValueHolderInterface testAnalyte;
+    private ValueHolderInterface testAnalyte;
 
-  private String testAnalyteId;
+    private String testAnalyteId;
 
-  private ValueHolderInterface test;
+    private ValueHolderInterface test;
 
-  private String testId;
+    private String testId;
 
-  private ValueHolderInterface addedTest;
+    private ValueHolderInterface addedTest;
 
-  private String addedTestId;
+    private String addedTestId;
 
-  private ValueHolderInterface actionScriptlet;
+    private ValueHolderInterface actionScriptlet;
 
-  private String actionScriptletId;
+    private String actionScriptletId;
 
-  private String flags;
+    private String flags;
 
-  private String siblingReflexId;
+    private String siblingReflexId;
 
-  // This is solely for display and a different approach should be used
-  private boolean passiveSibling;
+    // This is solely for display and a different approach should be used
+    private boolean passiveSibling;
 
-  private String nonDictionaryValue;
+    private String nonDictionaryValue;
 
-  private ReflexRuleOptions.NumericRelationOptions relation;
+    private ReflexRuleOptions.NumericRelationOptions relation;
 
-  private String internalNote;
+    private String internalNote;
 
-  private String externalNote;
+    private String externalNote;
 
-  public TestReflex() {
-    super();
-    this.testResult = new ValueHolder();
-    this.testAnalyte = new ValueHolder();
-    this.test = new ValueHolder();
-    this.addedTest = new ValueHolder();
-    actionScriptlet = new ValueHolder();
-  }
-
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getFlags() {
-    return flags;
-  }
-
-  public void setFlags(String flags) {
-    this.flags = flags;
-  }
-
-  public String getTestAnalyteId() {
-    return testAnalyteId;
-  }
-
-  public void setTestAnalyteId(String testAnalyteId) {
-    this.testAnalyteId = testAnalyteId;
-  }
-
-  public String getTestResultId() {
-    if (testResultId == null) {
-      if (getTestResult() != null) {
-        testResultId = getTestResult().getId();
-      }
+    public TestReflex() {
+        super();
+        this.testResult = new ValueHolder();
+        this.testAnalyte = new ValueHolder();
+        this.test = new ValueHolder();
+        this.addedTest = new ValueHolder();
+        actionScriptlet = new ValueHolder();
     }
-    return testResultId;
-  }
 
-  public void setTestResultId(String testResultId) {
-    this.testResultId = testResultId;
-  }
-
-  // test result object
-  public void setTestResult(TestResult testResult) {
-    this.testResult.setValue(testResult);
-  }
-
-  protected void setTestResultHolder(ValueHolderInterface testResult) {
-    this.testResult = testResult;
-  }
-
-  public TestResult getTestResult() {
-    return (TestResult) this.testResult.getValue();
-  }
-
-  protected ValueHolderInterface getTestResultHolder() {
-    return this.testResult;
-  }
-
-  // test analyte object
-  public void setTestAnalyte(TestAnalyte testAnalyte) {
-    testAnalyteId = testAnalyte.getId();
-    this.testAnalyte.setValue(testAnalyte);
-  }
-
-  protected void setTestAnalyteHolder(ValueHolderInterface testAnalyte) {
-    this.testAnalyte = testAnalyte;
-  }
-
-  public TestAnalyte getTestAnalyte() {
-    return (TestAnalyte) this.testAnalyte.getValue();
-  }
-
-  protected ValueHolderInterface getTestAnalyteHolder() {
-    return this.testAnalyte;
-  }
-
-  public String getAddedTestId() {
-    if (addedTestId == null) {
-      if (getAddedTest() != null) {
-        addedTestId = getAddedTest().getId();
-      }
+    public String getId() {
+        return this.id;
     }
-    return addedTestId;
-  }
 
-  public void setAddedTestId(String addedTestId) {
-    this.addedTestId = addedTestId;
-  }
-
-  public String getTestId() {
-    if (testId == null) {
-      if (getTest() != null) {
-        testId = getTest().getId();
-      }
+    public void setId(String id) {
+        this.id = id;
     }
-    return testId;
-  }
 
-  public void setTestId(String testId) {
-    this.testId = testId;
-  }
-
-  // test object
-  public void setTest(Test test) {
-    this.test.setValue(test);
-  }
-
-  protected void setTestHolder(ValueHolderInterface test) {
-    this.test = test;
-  }
-
-  public Test getTest() {
-    return (Test) this.test.getValue();
-  }
-
-  protected ValueHolderInterface getTestHolder() {
-    return this.test;
-  }
-
-  // addedAddedTest object
-  public void setAddedTest(Test addedTest) {
-    this.addedTest.setValue(addedTest);
-  }
-
-  protected void setAddedTestHolder(ValueHolderInterface addedTest) {
-    this.addedTest = addedTest;
-  }
-
-  public Test getAddedTest() {
-    return (Test) this.addedTest.getValue();
-  }
-
-  protected ValueHolderInterface getAddedTestHolder() {
-    return this.addedTest;
-  }
-
-  public String getActionScriptletId() {
-    if (actionScriptletId == null) {
-      if (getActionScriptlet() != null) {
-        actionScriptletId = getActionScriptlet().getId();
-      }
+    public String getFlags() {
+        return flags;
     }
-    return actionScriptletId;
-  }
 
-  public void setActionScriptletId(String actionScriptletId) {
-    this.actionScriptletId = actionScriptletId;
-  }
+    public void setFlags(String flags) {
+        this.flags = flags;
+    }
 
-  public ValueHolderInterface getActionScriptletHolder() {
-    return actionScriptlet;
-  }
+    public String getTestAnalyteId() {
+        return testAnalyteId;
+    }
 
-  public void setActionScriptletHolder(ValueHolderInterface actionScriptlet) {
-    this.actionScriptlet = actionScriptlet;
-  }
+    public void setTestAnalyteId(String testAnalyteId) {
+        this.testAnalyteId = testAnalyteId;
+    }
 
-  public Scriptlet getActionScriptlet() {
-    return (Scriptlet) actionScriptlet.getValue();
-  }
+    public String getTestResultId() {
+        if (testResultId == null) {
+            if (getTestResult() != null) {
+                testResultId = getTestResult().getId();
+            }
+        }
+        return testResultId;
+    }
 
-  public void setActionScriptlet(Scriptlet scriptlet) {
-    this.actionScriptlet.setValue(scriptlet);
-  }
+    public void setTestResultId(String testResultId) {
+        this.testResultId = testResultId;
+    }
 
-  public void setSiblingReflexId(String siblingReflexId) {
-    this.siblingReflexId = siblingReflexId;
-  }
+    // test result object
+    public void setTestResult(TestResult testResult) {
+        this.testResult.setValue(testResult);
+    }
 
-  public String getSiblingReflexId() {
-    return siblingReflexId;
-  }
+    protected void setTestResultHolder(ValueHolderInterface testResult) {
+        this.testResult = testResult;
+    }
 
-  public void setPassiveSibling(boolean isPassiveSibling) {
-    this.passiveSibling = isPassiveSibling;
-  }
+    public TestResult getTestResult() {
+        return (TestResult) this.testResult.getValue();
+    }
 
-  public boolean isPassiveSibling() {
-    return passiveSibling;
-  }
+    protected ValueHolderInterface getTestResultHolder() {
+        return this.testResult;
+    }
 
-  public String getNonDictionaryValue() {
-    return nonDictionaryValue;
-  }
+    // test analyte object
+    public void setTestAnalyte(TestAnalyte testAnalyte) {
+        testAnalyteId = testAnalyte.getId();
+        this.testAnalyte.setValue(testAnalyte);
+    }
 
-  public void setNonDictionaryValue(String nonDictionaryValue) {
-    this.nonDictionaryValue = nonDictionaryValue;
-  }
+    protected void setTestAnalyteHolder(ValueHolderInterface testAnalyte) {
+        this.testAnalyte = testAnalyte;
+    }
 
-  public ReflexRuleOptions.NumericRelationOptions getRelation() {
-    return relation;
-  }
+    public TestAnalyte getTestAnalyte() {
+        return (TestAnalyte) this.testAnalyte.getValue();
+    }
 
-  public void setRelation(ReflexRuleOptions.NumericRelationOptions relation) {
-    this.relation = relation;
-  }
+    protected ValueHolderInterface getTestAnalyteHolder() {
+        return this.testAnalyte;
+    }
 
-  public String getInternalNote() {
-    return internalNote;
-  }
+    public String getAddedTestId() {
+        if (addedTestId == null) {
+            if (getAddedTest() != null) {
+                addedTestId = getAddedTest().getId();
+            }
+        }
+        return addedTestId;
+    }
 
-  public void setInternalNote(String internalNote) {
-    this.internalNote = internalNote;
-  }
+    public void setAddedTestId(String addedTestId) {
+        this.addedTestId = addedTestId;
+    }
 
-  public String getExternalNote() {
-    return externalNote;
-  }
+    public String getTestId() {
+        if (testId == null) {
+            if (getTest() != null) {
+                testId = getTest().getId();
+            }
+        }
+        return testId;
+    }
 
-  public void setExternalNote(String externalNote) {
-    this.externalNote = externalNote;
-  }
+    public void setTestId(String testId) {
+        this.testId = testId;
+    }
+
+    // test object
+    public void setTest(Test test) {
+        this.test.setValue(test);
+    }
+
+    protected void setTestHolder(ValueHolderInterface test) {
+        this.test = test;
+    }
+
+    public Test getTest() {
+        return (Test) this.test.getValue();
+    }
+
+    protected ValueHolderInterface getTestHolder() {
+        return this.test;
+    }
+
+    // addedAddedTest object
+    public void setAddedTest(Test addedTest) {
+        this.addedTest.setValue(addedTest);
+    }
+
+    protected void setAddedTestHolder(ValueHolderInterface addedTest) {
+        this.addedTest = addedTest;
+    }
+
+    public Test getAddedTest() {
+        return (Test) this.addedTest.getValue();
+    }
+
+    protected ValueHolderInterface getAddedTestHolder() {
+        return this.addedTest;
+    }
+
+    public String getActionScriptletId() {
+        if (actionScriptletId == null) {
+            if (getActionScriptlet() != null) {
+                actionScriptletId = getActionScriptlet().getId();
+            }
+        }
+        return actionScriptletId;
+    }
+
+    public void setActionScriptletId(String actionScriptletId) {
+        this.actionScriptletId = actionScriptletId;
+    }
+
+    public ValueHolderInterface getActionScriptletHolder() {
+        return actionScriptlet;
+    }
+
+    public void setActionScriptletHolder(ValueHolderInterface actionScriptlet) {
+        this.actionScriptlet = actionScriptlet;
+    }
+
+    public Scriptlet getActionScriptlet() {
+        return (Scriptlet) actionScriptlet.getValue();
+    }
+
+    public void setActionScriptlet(Scriptlet scriptlet) {
+        this.actionScriptlet.setValue(scriptlet);
+    }
+
+    public void setSiblingReflexId(String siblingReflexId) {
+        this.siblingReflexId = siblingReflexId;
+    }
+
+    public String getSiblingReflexId() {
+        return siblingReflexId;
+    }
+
+    public void setPassiveSibling(boolean isPassiveSibling) {
+        this.passiveSibling = isPassiveSibling;
+    }
+
+    public boolean isPassiveSibling() {
+        return passiveSibling;
+    }
+
+    public String getNonDictionaryValue() {
+        return nonDictionaryValue;
+    }
+
+    public void setNonDictionaryValue(String nonDictionaryValue) {
+        this.nonDictionaryValue = nonDictionaryValue;
+    }
+
+    public ReflexRuleOptions.NumericRelationOptions getRelation() {
+        return relation;
+    }
+
+    public void setRelation(ReflexRuleOptions.NumericRelationOptions relation) {
+        this.relation = relation;
+    }
+
+    public String getInternalNote() {
+        return internalNote;
+    }
+
+    public void setInternalNote(String internalNote) {
+        this.internalNote = internalNote;
+    }
+
+    public String getExternalNote() {
+        return externalNote;
+    }
+
+    public void setExternalNote(String externalNote) {
+        this.externalNote = externalNote;
+    }
 }

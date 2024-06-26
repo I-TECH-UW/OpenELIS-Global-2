@@ -28,81 +28,77 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.spring.util.SpringContext;
 
-public class RetroCIPatientAssociatedReport extends CollectionReport
-    implements IReportParameterSetter {
+public class RetroCIPatientAssociatedReport extends CollectionReport implements IReportParameterSetter {
 
-  private ObservationHistoryService ohService =
-      SpringContext.getBean(ObservationHistoryService.class);
-  private SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+    private ObservationHistoryService ohService = SpringContext.getBean(ObservationHistoryService.class);
+    private SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
 
-  @Override
-  public void setRequestParameters(ReportForm form) {
-    form.setReportName(MessageUtil.getMessage("patient.report.associated.name"));
-    form.setUsePatientNumberDirect(Boolean.TRUE);
-  }
-
-  @Override
-  protected List<byte[]> generateReports() {
-    List<byte[]> byteList = new ArrayList<>();
-
-    Patient patient = getPatient();
-
-    if (patient != null) {
-      String formNameId = ObservationHistoryTypeMap.getInstance().getIDForType("projectFormName");
-      List<Sample> samples = sampleHumanService.getSamplesForPatient(patient.getId());
-
-      for (Sample sample : samples) {
-        List<ObservationHistory> projects = ohService.getAll(patient, sample, formNameId);
-        LogEvent.logInfo(
-            this.getClass().getSimpleName(), "generateReports", sample.getAccessionNumber());
-        if (!projects.isEmpty()) {
-          form.setAccessionDirect(sample.getAccessionNumber());
-
-          if ("InitialARV_Id".equals(projects.get(0).getValue())) {
-            byteList.add(createReport("patientARVInitial1"));
-            byteList.add(createReport("patientARVInitial2"));
-          } else if ("FollowUpARV_Id".equals(projects.get(0).getValue())) {
-            byteList.add(createReport("patientARVFollowup1"));
-            byteList.add(createReport("patientARVFollowup2"));
-          } else if ("RTN_Id".equals(projects.get(0).getValue())) {
-            // no-op
-          } else if ("EID_Id".equals(projects.get(0).getValue())) {
-            byteList.add(createReport("patientEID1"));
-            byteList.add(createReport("patientEID2"));
-          } else if ("Indeterminate_Id".equals(projects.get(0).getValue())) {
-            byteList.add(createReport("patientIndeterminate1"));
-            byteList.add(createReport("patientIndeterminate2"));
-          } else if ("Special_Request_Id".equals(projects.get(0).getValue())) {
-            byteList.add(createReport("patientSpecialReport"));
-          }
-        }
-
-        if (QAService.isOrderNonConforming(sample)) {
-          form.setLowerDateRange(sample.getReceivedDateForDisplay());
-          byteList.add(createReport("retroCINonConformityByDate"));
-        }
-
-        if (isUnderInvestigation(sample)) {
-          form.setLowerDateRange(sample.getReceivedDateForDisplay());
-          byteList.add(createReport("retroCIFollowupRequiredByLocation"));
-        }
-      }
+    @Override
+    public void setRequestParameters(ReportForm form) {
+        form.setReportName(MessageUtil.getMessage("patient.report.associated.name"));
+        form.setUsePatientNumberDirect(Boolean.TRUE);
     }
-    return byteList;
-  }
 
-  private boolean isUnderInvestigation(Sample sample) {
-    String entryUnderInvestigationQuestion =
-        getOptionalObservationHistory(
-            sample, ObservationHistoryTypeMap.getInstance().getIDForType("underInvestigation"));
-    return BaseProjectFormMapper.YES_ANSWERS.contains(entryUnderInvestigationQuestion);
-  }
+    @Override
+    protected List<byte[]> generateReports() {
+        List<byte[]> byteList = new ArrayList<>();
 
-  private String getOptionalObservationHistory(Sample sample, String ohTypeId) {
-    List<ObservationHistory> oh = ohService.getAll(null, sample, ohTypeId);
-    if (oh == null || oh.size() == 0) {
-      return null;
+        Patient patient = getPatient();
+
+        if (patient != null) {
+            String formNameId = ObservationHistoryTypeMap.getInstance().getIDForType("projectFormName");
+            List<Sample> samples = sampleHumanService.getSamplesForPatient(patient.getId());
+
+            for (Sample sample : samples) {
+                List<ObservationHistory> projects = ohService.getAll(patient, sample, formNameId);
+                LogEvent.logInfo(this.getClass().getSimpleName(), "generateReports", sample.getAccessionNumber());
+                if (!projects.isEmpty()) {
+                    form.setAccessionDirect(sample.getAccessionNumber());
+
+                    if ("InitialARV_Id".equals(projects.get(0).getValue())) {
+                        byteList.add(createReport("patientARVInitial1"));
+                        byteList.add(createReport("patientARVInitial2"));
+                    } else if ("FollowUpARV_Id".equals(projects.get(0).getValue())) {
+                        byteList.add(createReport("patientARVFollowup1"));
+                        byteList.add(createReport("patientARVFollowup2"));
+                    } else if ("RTN_Id".equals(projects.get(0).getValue())) {
+                        // no-op
+                    } else if ("EID_Id".equals(projects.get(0).getValue())) {
+                        byteList.add(createReport("patientEID1"));
+                        byteList.add(createReport("patientEID2"));
+                    } else if ("Indeterminate_Id".equals(projects.get(0).getValue())) {
+                        byteList.add(createReport("patientIndeterminate1"));
+                        byteList.add(createReport("patientIndeterminate2"));
+                    } else if ("Special_Request_Id".equals(projects.get(0).getValue())) {
+                        byteList.add(createReport("patientSpecialReport"));
+                    }
+                }
+
+                if (QAService.isOrderNonConforming(sample)) {
+                    form.setLowerDateRange(sample.getReceivedDateForDisplay());
+                    byteList.add(createReport("retroCINonConformityByDate"));
+                }
+
+                if (isUnderInvestigation(sample)) {
+                    form.setLowerDateRange(sample.getReceivedDateForDisplay());
+                    byteList.add(createReport("retroCIFollowupRequiredByLocation"));
+                }
+            }
+        }
+        return byteList;
     }
-    return oh.get(0).getValue();
-  }
+
+    private boolean isUnderInvestigation(Sample sample) {
+        String entryUnderInvestigationQuestion = getOptionalObservationHistory(sample,
+                ObservationHistoryTypeMap.getInstance().getIDForType("underInvestigation"));
+        return BaseProjectFormMapper.YES_ANSWERS.contains(entryUnderInvestigationQuestion);
+    }
+
+    private String getOptionalObservationHistory(Sample sample, String ohTypeId) {
+        List<ObservationHistory> oh = ohService.getAll(null, sample, ohTypeId);
+        if (oh == null || oh.size() == 0) {
+            return null;
+        }
+        return oh.get(0).getValue();
+    }
 }

@@ -20,15 +20,17 @@ import org.openelisglobal.renamemethod.valueholder.RenameMethod;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface RenameMethodDAO extends BaseDAO<RenameMethod, String> {
 
-  List<RenameMethod> getMethods(String filter) throws LIMSRuntimeException;
+    List<RenameMethod> getMethods(String filter) throws LIMSRuntimeException;
 
-  List<RenameMethod> getAllInActiveMethods() throws LIMSRuntimeException;
+    List<RenameMethod> getAllInActiveMethods() throws LIMSRuntimeException;
 
-  boolean duplicateMethodExists(RenameMethod testSection) throws LIMSRuntimeException;
+    boolean duplicateMethodExists(RenameMethod testSection) throws LIMSRuntimeException;
 }

@@ -11,32 +11,27 @@ import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder.SortOrd
 
 public interface ElectronicOrderService extends BaseObjectService<ElectronicOrder, String> {
 
-  List<ElectronicOrder> getAllElectronicOrdersOrderedBy(ElectronicOrder.SortOrder order);
+    List<ElectronicOrder> getAllElectronicOrdersOrderedBy(ElectronicOrder.SortOrder order);
 
-  List<ElectronicOrder> getElectronicOrdersByExternalId(String id);
+    List<ElectronicOrder> getElectronicOrdersByExternalId(String id);
 
-  List<ElectronicOrder> getAllElectronicOrdersContainingValueOrderedBy(
-      String searchValue, SortOrder sortOrder);
+    List<ElectronicOrder> getAllElectronicOrdersContainingValueOrderedBy(String searchValue, SortOrder sortOrder);
 
-  List<ElectronicOrder> getAllElectronicOrdersContainingValuesOrderedBy(
-      String accessionNumber,
-      String patientLastName,
-      String patientFirstName,
-      String gender,
-      SortOrder order);
+    List<ElectronicOrder> getAllElectronicOrdersContainingValuesOrderedBy(String accessionNumber,
+            String patientLastName, String patientFirstName, String gender, SortOrder order);
 
-  List<ElectronicOrder> getElectronicOrdersContainingValueExludedByOrderedBy(
-      String searchValue, List<ExternalOrderStatus> excludedStatuses, SortOrder sortOrder);
+    List<ElectronicOrder> getElectronicOrdersContainingValueExludedByOrderedBy(String searchValue,
+            List<ExternalOrderStatus> excludedStatuses, SortOrder sortOrder);
 
-  List<ElectronicOrder> getAllElectronicOrdersByDateAndStatus(
-      Date startDate, Date endDate, String statusId, SortOrder sortOrder);
+    List<ElectronicOrder> getAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate, String statusId,
+            SortOrder sortOrder);
 
-  int getCountOfAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate, String statusId);
+    int getCountOfAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate, String statusId);
 
-  List<ElectronicOrder> getAllElectronicOrdersByTimestampAndStatus(
-      Timestamp startTimestamp, Timestamp endTimestamp, String statusId, SortOrder statusId2);
+    List<ElectronicOrder> getAllElectronicOrdersByTimestampAndStatus(Timestamp startTimestamp, Timestamp endTimestamp,
+            String statusId, SortOrder statusId2);
 
-  List<ElectronicOrder> searchForElectronicOrders(ElectronicOrderViewForm form);
+    List<ElectronicOrder> searchForElectronicOrders(ElectronicOrderViewForm form);
 
-  List<ElectronicOrder> searchForStudyElectronicOrders(ElectronicOrderViewForm form);
+    List<ElectronicOrder> searchForStudyElectronicOrders(ElectronicOrderViewForm form);
 }

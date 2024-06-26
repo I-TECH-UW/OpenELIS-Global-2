@@ -19,39 +19,39 @@ import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 
 public class PatientARVFollowupVersion1Report extends PatientARVReport implements IReportCreator {
 
-  @Override
-  protected void createReportParameters() {
-    super.createReportParameters();
-    reportParameters.put("showSerologie", Boolean.FALSE);
-    reportParameters.put("showVirologie", Boolean.TRUE);
-  }
-
-  @Override
-  protected String reportFileName() {
-    return "Patient_ARV_Version1";
-  }
-
-  @Override
-  protected String getReportNameForReport() {
-    return MessageUtil.getMessage("reports.label.patient.ARV.followup");
-  }
-
-  @Override
-  protected boolean allowSample() {
-    List<ObservationHistory> historyList =
-        observationHistoryService.getAll(reportPatient, reportSample, OBSERVATION_PROJECT_ID);
-
-    for (ObservationHistory history : historyList) {
-      if ("FollowUpARV_Id".equals(history.getValue())) {
-        return true;
-      }
+    @Override
+    protected void createReportParameters() {
+        super.createReportParameters();
+        reportParameters.put("showSerologie", Boolean.FALSE);
+        reportParameters.put("showVirologie", Boolean.TRUE);
     }
 
-    return false;
-  }
+    @Override
+    protected String reportFileName() {
+        return "Patient_ARV_Version1";
+    }
 
-  @Override
-  protected String getProjectId() {
-    return ANTIRETROVIRAL_FOLLOW_UP_STUDY_ID;
-  }
+    @Override
+    protected String getReportNameForReport() {
+        return MessageUtil.getMessage("reports.label.patient.ARV.followup");
+    }
+
+    @Override
+    protected boolean allowSample() {
+        List<ObservationHistory> historyList = observationHistoryService.getAll(reportPatient, reportSample,
+                OBSERVATION_PROJECT_ID);
+
+        for (ObservationHistory history : historyList) {
+            if ("FollowUpARV_Id".equals(history.getValue())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    protected String getProjectId() {
+        return ANTIRETROVIRAL_FOLLOW_UP_STUDY_ID;
+    }
 }
