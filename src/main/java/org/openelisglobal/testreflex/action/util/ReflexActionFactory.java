@@ -5,14 +5,13 @@ import org.openelisglobal.common.util.ConfigurationProperties.Property;
 
 public class ReflexActionFactory {
 
-  public static ReflexAction getReflexAction() {
-    String reflexAction =
-        ConfigurationProperties.getInstance().getPropertyValue(Property.ReflexAction);
+    public static ReflexAction getReflexAction() {
+        String reflexAction = ConfigurationProperties.getInstance().getPropertyValue(Property.ReflexAction);
 
-    if ("RetroCI".equals(reflexAction)) {
-      return new RetroCIReflexActions();
-    } else {
-      return new DefaultReflexActions();
+        if ("RetroCI".equals(reflexAction)) {
+            return new RetroCIReflexActions();
+        } else {
+            return new DefaultReflexActions();
+        }
     }
-  }
 }

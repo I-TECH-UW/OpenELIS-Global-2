@@ -10,29 +10,29 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomePageController extends BaseController {
 
-  @RequestMapping(value = "/HomePage", method = RequestMethod.GET)
-  public ModelAndView showHomePage(HttpServletRequest request) {
-    MainForm form = new MainForm();
+    @RequestMapping(value = "/HomePage", method = RequestMethod.GET)
+    public ModelAndView showHomePage(HttpServletRequest request) {
+        MainForm form = new MainForm();
 
-    return findForward(FWD_SUCCESS, form);
-  }
-
-  @Override
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "homePageDefinition";
-    } else {
-      return "PageNotFound";
+        return findForward(FWD_SUCCESS, form);
     }
-  }
 
-  @Override
-  protected String getPageTitleKey() {
-    return null;
-  }
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "homePageDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-  @Override
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
+
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

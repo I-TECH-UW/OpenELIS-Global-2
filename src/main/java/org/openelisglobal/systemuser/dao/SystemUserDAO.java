@@ -20,27 +20,29 @@ import org.openelisglobal.systemuser.valueholder.SystemUser;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface SystemUserDAO extends BaseDAO<SystemUser, String> {
 
-  //	public boolean insertData(SystemUser systemUser) throws LIMSRuntimeException;
+    // public boolean insertData(SystemUser systemUser) throws LIMSRuntimeException;
 
-  List<SystemUser> getAllSystemUsers() throws LIMSRuntimeException;
+    List<SystemUser> getAllSystemUsers() throws LIMSRuntimeException;
 
-  List<SystemUser> getPageOfSystemUsers(int startingRecNo) throws LIMSRuntimeException;
+    List<SystemUser> getPageOfSystemUsers(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(SystemUser systemUser) throws LIMSRuntimeException;
+    void getData(SystemUser systemUser) throws LIMSRuntimeException;
 
-  //	public void updateData(SystemUser systemUser) throws LIMSRuntimeException;
+    // public void updateData(SystemUser systemUser) throws LIMSRuntimeException;
 
-  Integer getTotalSystemUserCount() throws LIMSRuntimeException;
+    Integer getTotalSystemUserCount() throws LIMSRuntimeException;
 
-  SystemUser getDataForLoginUser(String name) throws LIMSRuntimeException;
+    SystemUser getDataForLoginUser(String name) throws LIMSRuntimeException;
 
-  SystemUser getUserById(String userId) throws LIMSRuntimeException;
+    SystemUser getUserById(String userId) throws LIMSRuntimeException;
 
-  boolean duplicateSystemUserExists(SystemUser systemUser) throws LIMSRuntimeException;
+    boolean duplicateSystemUserExists(SystemUser systemUser) throws LIMSRuntimeException;
 }

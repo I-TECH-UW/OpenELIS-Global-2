@@ -7,13 +7,7 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 public interface SampleTypeCreateService {
 
-  void createAndInsertSampleType(
-      Localization localization,
-      TypeOfSample typeOfSample,
-      SystemModule workplanModule,
-      SystemModule resultModule,
-      SystemModule validationModule,
-      RoleModule workplanResultModule,
-      RoleModule resultResultModule,
-      RoleModule validationValidationModule);
+    void createAndInsertSampleType(Localization localization, TypeOfSample typeOfSample, SystemModule workplanModule,
+            SystemModule resultModule, SystemModule validationModule, RoleModule workplanResultModule,
+            RoleModule resultResultModule, RoleModule validationValidationModule);
 }

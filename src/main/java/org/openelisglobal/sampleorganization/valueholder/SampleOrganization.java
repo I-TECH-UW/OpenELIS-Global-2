@@ -21,51 +21,51 @@ import org.openelisglobal.sample.valueholder.Sample;
 
 public class SampleOrganization extends BaseObject<String> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String id;
+    private String id;
 
-  private ValueHolderInterface organization;
+    private ValueHolderInterface organization;
 
-  private ValueHolderInterface sample;
+    private ValueHolderInterface sample;
 
-  private String sampleOrganizationType;
+    private String sampleOrganizationType;
 
-  public SampleOrganization() {
-    super();
-    this.sample = new ValueHolder();
-    this.organization = new ValueHolder();
-  }
+    public SampleOrganization() {
+        super();
+        this.sample = new ValueHolder();
+        this.organization = new ValueHolder();
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setSampleOrganizationType(String sampleOrganizationType) {
-    this.sampleOrganizationType = sampleOrganizationType;
-  }
+    public void setSampleOrganizationType(String sampleOrganizationType) {
+        this.sampleOrganizationType = sampleOrganizationType;
+    }
 
-  public String getSampleOrganizationType() {
-    return sampleOrganizationType;
-  }
+    public String getSampleOrganizationType() {
+        return sampleOrganizationType;
+    }
 
-  public Sample getSample() {
-    return (Sample) this.sample.getValue();
-  }
+    public Sample getSample() {
+        return (Sample) this.sample.getValue();
+    }
 
-  public void setSample(Sample sample) {
-    this.sample.setValue(sample);
-  }
+    public void setSample(Sample sample) {
+        this.sample.setValue(sample);
+    }
 
-  public Organization getOrganization() {
-    return (Organization) this.organization.getValue();
-  }
+    public Organization getOrganization() {
+        return (Organization) this.organization.getValue();
+    }
 
-  public void setOrganization(Organization organization) {
-    this.organization.setValue(organization);
-  }
+    public void setOrganization(Organization organization) {
+        this.organization.setValue(organization);
+    }
 }

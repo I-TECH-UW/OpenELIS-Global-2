@@ -119,6 +119,24 @@ describe("Patient Search", function () {
     cy.wait(200).reload();
   });
 
+  it("should search patient By Lab Number", function () {
+    cy.fixture("Patient").then((patient) => {
+      patientPage.searchPatientBylabNo(patient.labNo);
+      cy.intercept(
+        "GET",
+        `**/rest/patient-search-results?*labNumber=${patient.labNo}*`,
+      ).as("getPatientSearch");
+      patientPage.clickSearchPatientButton();
+      cy.wait("@getPatientSearch").then((interception) => {
+        const responseBody = interception.response.body;
+        console.log(responseBody);
+        expect(responseBody.patientSearchResults).to.be.an("array").that.is
+          .empty;
+      });
+    });
+    cy.wait(200).reload();
+  });
+
   it("should search patient By PatientId", function () {
     cy.wait(1000);
     cy.fixture("Patient").then((patient) => {

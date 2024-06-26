@@ -14,95 +14,92 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@DependsOn({"springContext"})
-public class MethodServiceImpl extends AuditableBaseObjectServiceImpl<Method, String>
-    implements MethodService {
-  @Autowired protected MethodDAO baseObjectDAO;
+@DependsOn({ "springContext" })
+public class MethodServiceImpl extends AuditableBaseObjectServiceImpl<Method, String> implements MethodService {
+    @Autowired
+    protected MethodDAO baseObjectDAO;
 
-  private Map<String, String> methodUnitIdToNameMap;
+    private Map<String, String> methodUnitIdToNameMap;
 
-  MethodServiceImpl() {
-    super(Method.class);
-  }
-
-  @Override
-  protected MethodDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<Method> getMethods(String filter) {
-    return getBaseObjectDAO().getMethods(filter);
-  }
-
-  @Override
-  public void delete(Method method) {
-    Method oldMethod = get(method.getId());
-    oldMethod.setIsActive(IActionConstants.NO);
-    oldMethod.setSysUserId(method.getSysUserId());
-    updateDelete(oldMethod);
-  }
-
-  @Override
-  public String insert(Method method) {
-    if (getBaseObjectDAO().duplicateMethodExists(method)) {
-      throw new LIMSDuplicateRecordException(
-          "Duplicate record exists for " + method.getMethodName());
+    MethodServiceImpl() {
+        super(Method.class);
     }
-    return super.insert(method);
-  }
 
-  @Override
-  public Method save(Method method) {
-    if (getBaseObjectDAO().duplicateMethodExists(method)) {
-      throw new LIMSDuplicateRecordException(
-          "Duplicate record exists for " + method.getMethodName());
+    @Override
+    protected MethodDAO getBaseObjectDAO() {
+        return baseObjectDAO;
     }
-    return super.save(method);
-  }
 
-  @Override
-  public Method update(Method method) {
-    if (getBaseObjectDAO().duplicateMethodExists(method)) {
-      throw new LIMSDuplicateRecordException(
-          "Duplicate record exists for " + method.getMethodName());
+    @Override
+    @Transactional(readOnly = true)
+    public List<Method> getMethods(String filter) {
+        return getBaseObjectDAO().getMethods(filter);
     }
-    return super.update(method);
-  }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<Method> getAllInActiveMethods() {
-    return getBaseObjectDAO().getAllInActiveMethods();
-  }
-
-  @Override
-  public void refreshNames() {
-    methodNamesChanged();
-  }
-
-  public void methodNamesChanged() {
-    createMethodToNameMap();
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<Method> getAllActiveMethods() {
-    return getBaseObjectDAO().getAllActiveMethods();
-  }
-
-  private synchronized void createMethodToNameMap() {
-    methodUnitIdToNameMap = new HashMap<>();
-
-    List<Method> methods = baseObjectDAO.getAll();
-
-    for (Method method : methods) {
-      methodUnitIdToNameMap.put(method.getId(), buildMethodName(method).replace("\n", " "));
+    @Override
+    public void delete(Method method) {
+        Method oldMethod = get(method.getId());
+        oldMethod.setIsActive(IActionConstants.NO);
+        oldMethod.setSysUserId(method.getSysUserId());
+        updateDelete(oldMethod);
     }
-  }
 
-  private String buildMethodName(Method method) {
-    return method.getLocalization().getLocalizedValue();
-  }
+    @Override
+    public String insert(Method method) {
+        if (getBaseObjectDAO().duplicateMethodExists(method)) {
+            throw new LIMSDuplicateRecordException("Duplicate record exists for " + method.getMethodName());
+        }
+        return super.insert(method);
+    }
+
+    @Override
+    public Method save(Method method) {
+        if (getBaseObjectDAO().duplicateMethodExists(method)) {
+            throw new LIMSDuplicateRecordException("Duplicate record exists for " + method.getMethodName());
+        }
+        return super.save(method);
+    }
+
+    @Override
+    public Method update(Method method) {
+        if (getBaseObjectDAO().duplicateMethodExists(method)) {
+            throw new LIMSDuplicateRecordException("Duplicate record exists for " + method.getMethodName());
+        }
+        return super.update(method);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Method> getAllInActiveMethods() {
+        return getBaseObjectDAO().getAllInActiveMethods();
+    }
+
+    @Override
+    public void refreshNames() {
+        methodNamesChanged();
+    }
+
+    public void methodNamesChanged() {
+        createMethodToNameMap();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Method> getAllActiveMethods() {
+        return getBaseObjectDAO().getAllActiveMethods();
+    }
+
+    private synchronized void createMethodToNameMap() {
+        methodUnitIdToNameMap = new HashMap<>();
+
+        List<Method> methods = baseObjectDAO.getAll();
+
+        for (Method method : methods) {
+            methodUnitIdToNameMap.put(method.getId(), buildMethodName(method).replace("\n", " "));
+        }
+    }
+
+    private String buildMethodName(Method method) {
+        return method.getLocalization().getLocalizedValue();
+    }
 }

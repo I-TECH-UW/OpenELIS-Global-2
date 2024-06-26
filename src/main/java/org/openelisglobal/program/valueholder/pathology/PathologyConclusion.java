@@ -14,67 +14,63 @@ import org.openelisglobal.common.valueholder.BaseObject;
 @Table(name = "pathology_conclusion")
 public class PathologyConclusion extends BaseObject<Integer> {
 
-  public enum ConclusionType {
-    DICTIONARY("D"),
-    TEXT("T");
+    public enum ConclusionType {
+        DICTIONARY("D"), TEXT("T");
 
-    private String code;
+        private String code;
 
-    ConclusionType(String code) {
-      this.code = code;
+        ConclusionType(String code) {
+            this.code = code;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        static ConclusionType fromCode(String code) {
+            if (code.equals("D")) {
+                return DICTIONARY;
+            }
+            if (code.equals("T")) {
+                return TEXT;
+            }
+            return null;
+        }
     }
 
-    public String getCode() {
-      return code;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pathology_conclusion_generator")
+    @SequenceGenerator(name = "pathology_conclusion_generator", sequenceName = "pathology_conclusion_seq", allocationSize = 1)
+    private Integer id;
+
+    private String value;
+
+    @Enumerated(EnumType.STRING)
+    private ConclusionType type;
+
+    @Override
+    public Integer getId() {
+        return id;
     }
 
-    static ConclusionType fromCode(String code) {
-      if (code.equals("D")) {
-        return DICTIONARY;
-      }
-      if (code.equals("T")) {
-        return TEXT;
-      }
-      return null;
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
     }
-  }
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pathology_conclusion_generator")
-  @SequenceGenerator(
-      name = "pathology_conclusion_generator",
-      sequenceName = "pathology_conclusion_seq",
-      allocationSize = 1)
-  private Integer id;
+    public String getValue() {
+        return value;
+    }
 
-  private String value;
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-  @Enumerated(EnumType.STRING)
-  private ConclusionType type;
+    public ConclusionType getType() {
+        return type;
+    }
 
-  @Override
-  public Integer getId() {
-    return id;
-  }
-
-  @Override
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
-  }
-
-  public ConclusionType getType() {
-    return type;
-  }
-
-  public void setType(ConclusionType type) {
-    this.type = type;
-  }
+    public void setType(ConclusionType type) {
+        this.type = type;
+    }
 }

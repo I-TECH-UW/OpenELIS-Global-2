@@ -16,4 +16,5 @@ package org.openelisglobal.address.dao;
 import org.openelisglobal.address.valueholder.AddressPart;
 import org.openelisglobal.common.dao.BaseDAO;
 
-public interface AddressPartDAO extends BaseDAO<AddressPart, String> {}
+public interface AddressPartDAO extends BaseDAO<AddressPart, String> {
+}

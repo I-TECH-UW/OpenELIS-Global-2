@@ -17,39 +17,34 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LabNumberManagementController {
 
-  @Autowired private SiteInformationService siteInformationService;
+    @Autowired
+    private SiteInformationService siteInformationService;
 
-  @GetMapping("/rest/labnumbermanagement")
-  public LabNumberManagementForm getValues() {
-    LabNumberManagementForm form = new LabNumberManagementForm();
+    @GetMapping("/rest/labnumbermanagement")
+    public LabNumberManagementForm getValues() {
+        LabNumberManagementForm form = new LabNumberManagementForm();
 
-    form.setAlphanumPrefix(
-        ConfigurationProperties.getInstance()
-            .getPropertyValueUpperCase(Property.ALPHANUM_ACCESSION_PREFIX));
-    form.setLabNumberType(
-        AccessionFormat.valueOf(
-            ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat)));
-    form.setUsePrefix(
-        "true"
-            .equals(
-                ConfigurationProperties.getInstance()
-                    .getPropertyValue(Property.USE_ALPHANUM_ACCESSION_PREFIX)));
+        form.setAlphanumPrefix(
+                ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.ALPHANUM_ACCESSION_PREFIX));
+        form.setLabNumberType(AccessionFormat
+                .valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat)));
+        form.setUsePrefix("true".equals(
+                ConfigurationProperties.getInstance().getPropertyValue(Property.USE_ALPHANUM_ACCESSION_PREFIX)));
 
-    return form;
-  }
+        return form;
+    }
 
-  @PostMapping("/rest/labnumbermanagement")
-  public LabNumberManagementForm setValues(@Valid @RequestBody LabNumberManagementForm form) {
-    Map<String, String> map = new HashMap<>();
+    @PostMapping("/rest/labnumbermanagement")
+    public LabNumberManagementForm setValues(@Valid @RequestBody LabNumberManagementForm form) {
+        Map<String, String> map = new HashMap<>();
 
-    map.put(
-        Property.ALPHANUM_ACCESSION_PREFIX.getName(),
-        form.getAlphanumPrefix() != null ? form.getAlphanumPrefix().toUpperCase() : "");
-    map.put(Property.AccessionFormat.getName(), form.getLabNumberType().name());
-    map.put(Property.USE_ALPHANUM_ACCESSION_PREFIX.getName(), form.getUsePrefix().toString());
-    siteInformationService.updateSiteInformationByName(map);
+        map.put(Property.ALPHANUM_ACCESSION_PREFIX.getName(),
+                form.getAlphanumPrefix() != null ? form.getAlphanumPrefix().toUpperCase() : "");
+        map.put(Property.AccessionFormat.getName(), form.getLabNumberType().name());
+        map.put(Property.USE_ALPHANUM_ACCESSION_PREFIX.getName(), form.getUsePrefix().toString());
+        siteInformationService.updateSiteInformationByName(map);
 
-    ConfigurationProperties.forceReload();
-    return form;
-  }
+        ConfigurationProperties.forceReload();
+        return form;
+    }
 }

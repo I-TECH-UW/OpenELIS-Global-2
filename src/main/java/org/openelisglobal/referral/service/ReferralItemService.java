@@ -5,5 +5,5 @@ import org.openelisglobal.referral.action.beanitems.ReferralItem;
 
 public interface ReferralItemService {
 
-  List<ReferralItem> getReferralItems();
+    List<ReferralItem> getReferralItems();
 }

@@ -5,8 +5,7 @@ import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMapping;
 import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMappingPK;
 import org.openelisglobal.common.service.BaseObjectService;
 
-public interface AnalyzerTestMappingService
-    extends BaseObjectService<AnalyzerTestMapping, AnalyzerTestMappingPK> {
+public interface AnalyzerTestMappingService extends BaseObjectService<AnalyzerTestMapping, AnalyzerTestMappingPK> {
 
-  List<AnalyzerTestMapping> getAllForAnalyzer(String analyzerId);
+    List<AnalyzerTestMapping> getAllForAnalyzer(String analyzerId);
 }

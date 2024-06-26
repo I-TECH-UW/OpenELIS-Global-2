@@ -20,25 +20,24 @@ import org.openelisglobal.common.util.ConfigurationProperties.Property;
 
 public class PasswordValidationFactory {
 
-  private static final String MINN_SITE = "MINN";
-  private static final String HAITI_SITE = "HAITI";
-  private static final String CDI_SITE = "CDI";
+    private static final String MINN_SITE = "MINN";
+    private static final String HAITI_SITE = "HAITI";
+    private static final String CDI_SITE = "CDI";
 
-  public static ILoginPasswordValidation getPasswordValidator() {
+    public static ILoginPasswordValidation getPasswordValidator() {
 
-    String requirementSite =
-        ConfigurationProperties.getInstance()
-            .getPropertyValueUpperCase(Property.PasswordRequirments);
-    ILoginPasswordValidation validator = new MinnPasswordValidation();
+        String requirementSite = ConfigurationProperties.getInstance()
+                .getPropertyValueUpperCase(Property.PasswordRequirments);
+        ILoginPasswordValidation validator = new MinnPasswordValidation();
 
-    if (MINN_SITE.equals(requirementSite)) {
-      // no-op Minnesota is the default
-    } else if (HAITI_SITE.equals(requirementSite)) {
-      validator = new HaitiPasswordValidation();
-    } else if (CDI_SITE.equals(requirementSite)) {
-      validator = new CDIPasswordValidation();
+        if (MINN_SITE.equals(requirementSite)) {
+            // no-op Minnesota is the default
+        } else if (HAITI_SITE.equals(requirementSite)) {
+            validator = new HaitiPasswordValidation();
+        } else if (CDI_SITE.equals(requirementSite)) {
+            validator = new CDIPasswordValidation();
+        }
+
+        return validator;
     }
-
-    return validator;
-  }
 }

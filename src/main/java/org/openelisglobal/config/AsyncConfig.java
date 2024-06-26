@@ -11,14 +11,14 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @Configuration
 @EnableAsync
 public class AsyncConfig extends AsyncConfigurerSupport {
-  @Override
-  public Executor getAsyncExecutor() {
-    return new SimpleAsyncTaskExecutor();
-  }
+    @Override
+    public Executor getAsyncExecutor() {
+        return new SimpleAsyncTaskExecutor();
+    }
 
-  @Override
-  @Nullable
-  public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-    return new AsyncExceptionHandler();
-  }
+    @Override
+    @Nullable
+    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+        return new AsyncExceptionHandler();
+    }
 }

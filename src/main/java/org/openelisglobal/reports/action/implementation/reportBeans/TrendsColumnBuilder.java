@@ -24,91 +24,73 @@ import org.openelisglobal.test.valueholder.Test;
 
 public class TrendsColumnBuilder extends CIColumnBuilder {
 
-  public TrendsColumnBuilder(DateRange dateRange, String projectStr) {
-    super(dateRange, projectStr);
-  }
+    public TrendsColumnBuilder(DateRange dateRange, String projectStr) {
+        super(dateRange, projectStr);
+    }
 
-  // @Override
-  @Override
-  protected void defineAllReportColumns() {
-    defineBasicColumns();
-    add("Viral Load", "Viral Load", NONE);
-    add("Viral Load", "Viral Load log", LOG);
-    add("type_of_sample_name", "Type_of_sample", NONE);
-    add("started_date", "STARTED_DATE", DATE_TIME);
-    add("completed_date", "COMPLETED_DATE", DATE_TIME);
-    add("released_date", "RELEASED_DATE", DATE_TIME);
+    // @Override
+    @Override
+    protected void defineAllReportColumns() {
+        defineBasicColumns();
+        add("Viral Load", "Viral Load", NONE);
+        add("Viral Load", "Viral Load log", LOG);
+        add("type_of_sample_name", "Type_of_sample", NONE);
+        add("started_date", "STARTED_DATE", DATE_TIME);
+        add("completed_date", "COMPLETED_DATE", DATE_TIME);
+        add("released_date", "RELEASED_DATE", DATE_TIME);
 
-    add("report_name", "REPORT_NAME", NONE);
-    add("report_generation_time", "REPORT_PRINTED_DATE", DATE_TIME);
-    // addAllResultsColumns();
+        add("report_name", "REPORT_NAME", NONE);
+        add("report_generation_time", "REPORT_PRINTED_DATE", DATE_TIME);
+        // addAllResultsColumns();
 
-  }
+    }
 
-  /**
-   * @return the SQL for (nearly) one big row for each sample in the date range for the particular
-   *     project.
-   */
-  @Override
-  public void makeSQL() {
-    Test test = SpringContext.getBean(TestService.class).getActiveTestByName("Viral Load").get(0);
-    query = new StringBuilder();
-    String lowDatePostgres = postgresDateFormat.format(dateRange.getLowDate());
-    String highDatePostgres = postgresDateFormat.format(dateRange.getHighDate());
-    query.append(SELECT_SAMPLE_PATIENT_ORGANIZATION);
-    // all crosstab generated tables need to be listed in the following list and in
-    // the WHERE clause at the bottom
-    query.append(
-        "\n"
-            + ", pat.id AS patient_oe_id,"
-            + " a.started_date,a.completed_date,a.released_date,a.printed_date, r.value as \"Viral"
-            + " Load\", a.type_of_sample_name, dt.name as report_name,dt.report_generation_time ");
+    /**
+     * @return the SQL for (nearly) one big row for each sample in the date range
+     *         for the particular project.
+     */
+    @Override
+    public void makeSQL() {
+        Test test = SpringContext.getBean(TestService.class).getActiveTestByName("Viral Load").get(0);
+        query = new StringBuilder();
+        String lowDatePostgres = postgresDateFormat.format(dateRange.getLowDate());
+        String highDatePostgres = postgresDateFormat.format(dateRange.getHighDate());
+        query.append(SELECT_SAMPLE_PATIENT_ORGANIZATION);
+        // all crosstab generated tables need to be listed in the following list and in
+        // the WHERE clause at the bottom
+        query.append("\n" + ", pat.id AS patient_oe_id,"
+                + " a.started_date,a.completed_date,a.released_date,a.printed_date, r.value as \"Viral"
+                + " Load\", a.type_of_sample_name, dt.name as report_name,dt.report_generation_time ");
 
-    // ordinary lab (sample and patient) tables
-    query.append(
-        FROM_SAMPLE_PATIENT_ORGANIZATION
-            + ", clinlims.sample_item as si, clinlims.analysis as a, clinlims.result as r,"
-            + " clinlims.document_track as dt ");
+        // ordinary lab (sample and patient) tables
+        query.append(FROM_SAMPLE_PATIENT_ORGANIZATION
+                + ", clinlims.sample_item as si, clinlims.analysis as a, clinlims.result as r,"
+                + " clinlims.document_track as dt ");
 
-    // all observation history values
-    // appendObservationHistoryCrosstab(lowDatePostgres, highDatePostgres);
-    // current ARV treatments
-    // appendRepeatingObservation("currentARVTreatmentINNs", 4, lowDatePostgres,
-    // highDatePostgres, "dt.report_generation_time");
-    // result
-    // appendResultCrosstab(lowDatePostgres, highDatePostgres );
+        // all observation history values
+        // appendObservationHistoryCrosstab(lowDatePostgres, highDatePostgres);
+        // current ARV treatments
+        // appendRepeatingObservation("currentARVTreatmentINNs", 4, lowDatePostgres,
+        // highDatePostgres, "dt.report_generation_time");
+        // result
+        // appendResultCrosstab(lowDatePostgres, highDatePostgres );
 
-    // and finally the join that puts these all together. Each cross table should be
-    // listed here otherwise it's not in the result and you'll get a full join
-    query.append(
-        " WHERE "
-            + "\n a.released_date >= date('"
-            + lowDatePostgres
-            + "')"
-            + "\n AND a.released_date <= date('"
-            + highDatePostgres
-            + "')"
-            + "\n AND dt.name = 'patientVL1'"
-            + "\n AND a.test_id ="
-            + test.getId()
-            + "\n AND dt.row_id=s.id"
-            + "\n AND si.samp_id=s.id"
-            + "\n AND a.sampitem_id = si.id"
-            + "\n AND a.id=r.analysis_id"
-            + "\n AND s.id=sh.samp_id"
-            + "\n AND sh.patient_id=pat.id"
-            + "\n AND pat.person_id = per.id"
-            + "\n AND s.id=so.samp_id"
-            + "\n AND so.org_id=o.id"
-            + "\n AND s.id = sp.samp_id"
-            // + "\n AND s.id=demo.s_id"
-            // + "\n AND s.id = currentARVTreatmentINNs.samp_id"
+        // and finally the join that puts these all together. Each cross table should be
+        // listed here otherwise it's not in the result and you'll get a full join
+        query.append(" WHERE " + "\n a.released_date >= date('" + lowDatePostgres + "')"
+                + "\n AND a.released_date <= date('" + highDatePostgres + "')" + "\n AND dt.name = 'patientVL1'"
+                + "\n AND a.test_id =" + test.getId() + "\n AND dt.row_id=s.id" + "\n AND si.samp_id=s.id"
+                + "\n AND a.sampitem_id = si.id" + "\n AND a.id=r.analysis_id" + "\n AND s.id=sh.samp_id"
+                + "\n AND sh.patient_id=pat.id" + "\n AND pat.person_id = per.id" + "\n AND s.id=so.samp_id"
+                + "\n AND so.org_id=o.id" + "\n AND s.id = sp.samp_id"
+                // + "\n AND s.id=demo.s_id"
+                // + "\n AND s.id = currentARVTreatmentINNs.samp_id"
 
-            + "\n ORDER BY s.accession_number;");
-    /////////
-    // no don't insert another crosstab or table here, go up before the main WHERE
-    ///////// clause
-    // System.out.println(query.toString());
-    return;
-  }
+                + "\n ORDER BY s.accession_number;");
+        /////////
+        // no don't insert another crosstab or table here, go up before the main WHERE
+        ///////// clause
+        // System.out.println(query.toString());
+        return;
+    }
 }

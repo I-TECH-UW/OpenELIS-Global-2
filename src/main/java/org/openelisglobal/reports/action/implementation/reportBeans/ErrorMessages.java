@@ -15,31 +15,31 @@ package org.openelisglobal.reports.action.implementation.reportBeans;
 
 public class ErrorMessages {
 
-  private String msgLine1 = "";
-  private String msgLine2 = "";
-  private String msgLine3 = "";
+    private String msgLine1 = "";
+    private String msgLine2 = "";
+    private String msgLine3 = "";
 
-  public String getMsgLine1() {
-    return msgLine1;
-  }
+    public String getMsgLine1() {
+        return msgLine1;
+    }
 
-  public void setMsgLine1(String msgLine1) {
-    this.msgLine1 = msgLine1;
-  }
+    public void setMsgLine1(String msgLine1) {
+        this.msgLine1 = msgLine1;
+    }
 
-  public String getMsgLine2() {
-    return msgLine2;
-  }
+    public String getMsgLine2() {
+        return msgLine2;
+    }
 
-  public void setMsgLine2(String msgLine2) {
-    this.msgLine2 = msgLine2;
-  }
+    public void setMsgLine2(String msgLine2) {
+        this.msgLine2 = msgLine2;
+    }
 
-  public String getMsgLine3() {
-    return msgLine3;
-  }
+    public String getMsgLine3() {
+        return msgLine3;
+    }
 
-  public void setMsgLine3(String msgLine3) {
-    this.msgLine3 = msgLine3;
-  }
+    public void setMsgLine3(String msgLine3) {
+        this.msgLine3 = msgLine3;
+    }
 }

@@ -16,21 +16,20 @@ package org.openelisglobal.testresult.valueholder;
 import java.util.Comparator;
 
 public class TestResultComparator implements Comparable {
-  String name;
+    String name;
 
-  // You can put the default sorting capability here
-  public int compareTo(Object obj) {
-    TestResult tr = (TestResult) obj;
-    return this.name.compareTo(tr.getValue());
-  }
+    // You can put the default sorting capability here
+    public int compareTo(Object obj) {
+        TestResult tr = (TestResult) obj;
+        return this.name.compareTo(tr.getValue());
+    }
 
-  public static final Comparator VALUE_COMPARATOR =
-      new Comparator() {
+    public static final Comparator VALUE_COMPARATOR = new Comparator() {
         public int compare(Object a, Object b) {
-          TestResult tr_a = (TestResult) a;
-          TestResult tr_b = (TestResult) b;
+            TestResult tr_a = (TestResult) a;
+            TestResult tr_b = (TestResult) b;
 
-          return (((tr_a.getValue()).toLowerCase()).compareTo((tr_b.getValue()).toLowerCase()));
+            return (((tr_a.getValue()).toLowerCase()).compareTo((tr_b.getValue()).toLowerCase()));
         }
-      };
+    };
 }

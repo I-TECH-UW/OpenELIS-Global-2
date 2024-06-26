@@ -29,214 +29,200 @@ import org.owasp.encoder.Encode;
 
 public class AccessionNumberValidationProvider extends BaseValidationProvider {
 
-  protected SampleService sampleService = SpringContext.getBean(SampleService.class);
+    protected SampleService sampleService = SpringContext.getBean(SampleService.class);
 
-  public AccessionNumberValidationProvider() {
-    super();
-  }
-
-  public AccessionNumberValidationProvider(AjaxServlet ajaxServlet) {
-    this.ajaxServlet = ajaxServlet;
-  }
-
-  @Override
-  public void processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-
-    // get id from request
-    String targetId = request.getParameter("id");
-    String formField = request.getParameter("field");
-    String form = request.getParameter("form");
-    String result = validate(targetId, form);
-    ajaxServlet.sendData(Encode.forXmlContent(formField), result, request, response);
-  }
-
-  // modified for efficiency bugzilla 1367
-  /**
-   * validate() - for AccessionNumberValidationProvider
-   *
-   * @param targetId - String
-   * @return String - valid or invalid
-   */
-  public String validate(String targetId, String form) throws LIMSRuntimeException {
-    String retVal = VALID;
-
-    if (!StringUtil.isNullorNill(targetId)) {
-
-      try {
-        // Get sample by passing in sample vo instead of targetId.
-        Sample sample = sampleService.getSampleByAccessionNumber(targetId.trim());
-
-        // BGM - bugzilla 1495 now we need to know which form it's coming from
-        // and need to read what is the correct status from SytemConfig
-        if (sample == null) {
-          retVal = INVALID;
-        } else if (form != null) {
-          if (form.equalsIgnoreCase("humanSampleOneForm")) {
-            // bugzilla 1581 handle null status
-            if (!StringUtil.isNullorNill(sample.getStatus())) {
-              if (!sample
-                  .getStatus()
-                  .equals(SystemConfiguration.getInstance().getSampleStatusQuickEntryComplete())) {
-                retVal = INVALID;
-              }
-            } else {
-              retVal = INVALID;
-            }
-          } else if (form.equalsIgnoreCase("humanSampleTwoForm")) {
-            // bugzilla 1581 handle null status
-            if (!StringUtil.isNullorNill(sample.getStatus())) {
-              if (!sample
-                  .getStatus()
-                  .equals(SystemConfiguration.getInstance().getSampleStatusEntry1Complete())) {
-                retVal = INVALID;
-              }
-            } else {
-              retVal = INVALID;
-            }
-            // bugzilla 2437 batch xml
-            // bugzilla 2472: fix bug
-          } else if (form.equalsIgnoreCase("influenzaSampleXMLBySampleForm")) {
-            if (!StringUtil.isNullorNill(sample.getStatus())) {
-              if (!sample
-                      .getStatus()
-                      .equals(SystemConfiguration.getInstance().getSampleStatusEntry2Complete())
-                  && !sample
-                      .getStatus()
-                      .equals(SystemConfiguration.getInstance().getSampleStatusReleased())) {
-                retVal = INVALIDSTATUS;
-              }
-
-            } else {
-              retVal = INVALID;
-            }
-          } else if (form.equalsIgnoreCase("testManagementForm")) {
-            if (!StringUtil.isNullorNill(sample.getStatus())) {
-              if (sample
-                  .getStatus()
-                  .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted())) {
-                retVal = INVALIDSTATUS;
-              }
-            } else {
-              retVal = INVALID;
-            }
-            // bugzilla 2050
-            // bugzilla 2513
-          } else if (form.equalsIgnoreCase("resultsEntryForm")) {
-            if (!StringUtil.isNullorNill(sample.getStatus())) {
-              if (sample
-                  .getStatus()
-                  .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted())) {
-                retVal = INVALIDSTATUS;
-              }
-
-            } else {
-              retVal = INVALID;
-            }
-          }
-          // bugzilla 2513
-          else if (form.equalsIgnoreCase("batchResultsVerificationForm")) {
-            if (!StringUtil.isNullorNill(sample.getStatus())) {
-              // for human (clinical) we require demographics to be available at time of
-              // results verification
-              if (sample.getDomain() != null
-                  && sample.getDomain().equals(SystemConfiguration.getInstance().getHumanDomain())
-                  && !sample
-                      .getStatus()
-                      .equals(SystemConfiguration.getInstance().getSampleStatusEntry2Complete())) {
-                retVal = INVALIDSTATUS;
-              }
-              // for newborn (and possibly other domains) allow verification of sample results
-              // even after quick entry
-              if (sample.getDomain() != null
-                  && !sample.getDomain().equals(SystemConfiguration.getInstance().getHumanDomain())
-                  && sample
-                      .getStatus()
-                      .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted())) {
-                retVal = INVALIDSTATUS;
-              }
-            } else {
-              retVal = INVALID;
-            }
-            // bugzilla 2028
-          } else if (form.equalsIgnoreCase("qaEventsEntryForm")) {
-            if (!StringUtil.isNullorNill(sample.getStatus())) {
-              if (sample
-                  .getStatus()
-                  .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted())) {
-                retVal = INVALIDSTATUS;
-                // bugzilla 2029
-              }
-            } else if (form.equalsIgnoreCase("batchQaEventsEntryForm")) {
-              if (!StringUtil.isNullorNill(sample.getStatus())) {
-                if (sample
-                    .getStatus()
-                    .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted())) {
-                  retVal = INVALIDSTATUS;
-                }
-              }
-            } else {
-              retVal = INVALID;
-            }
-            // bugzilla 2529
-          } else if (form.equalsIgnoreCase("newbornSampleOneForm")) {
-            if (!StringUtil.isNullorNill(sample.getStatus())) {
-              if (!sample
-                  .getStatus()
-                  .equals(SystemConfiguration.getInstance().getSampleStatusQuickEntryComplete())) {
-                retVal = INVALIDSTATUS;
-              }
-            } else {
-              retVal = INVALID;
-            }
-            // bugzilla 2530
-          } else if (form.equalsIgnoreCase("newbornSampleTwoForm")) {
-            if (!StringUtil.isNullorNill(sample.getStatus())) {
-              if (!sample
-                  .getStatus()
-                  .equals(SystemConfiguration.getInstance().getSampleStatusEntry1Complete())) {
-                retVal = INVALIDSTATUS;
-              }
-            } else {
-              retVal = INVALID;
-            }
-            // bugzilla 2531
-          } else if (form.equalsIgnoreCase("newbornSampleFullForm")) {
-            if (!StringUtil.isNullorNill(sample.getStatus())) {
-              if (!sample
-                  .getStatus()
-                  .equals(SystemConfiguration.getInstance().getSampleStatusEntry2Complete())) {
-                retVal = INVALIDSTATUS;
-              }
-            } else {
-              retVal = INVALID;
-            }
-            // bugzilla 2564
-          } else if (form.equalsIgnoreCase("testManagementNewbornForm")) {
-            if (!StringUtil.isNullorNill(sample.getStatus())) {
-              if (!sample
-                  .getStatus()
-                  .equals(SystemConfiguration.getInstance().getSampleStatusEntry2Complete())) {
-                retVal = INVALIDSTATUS;
-              }
-            } else {
-              retVal = INVALID;
-            }
-          } else {
-            retVal = VALID;
-          }
-        }
-
-      } catch (NumberFormatException e) {
-        // bugzilla 2154
-        LogEvent.logError(e);
-        retVal = INVALID;
-      }
-
-    } else {
-      retVal = INVALID;
+    public AccessionNumberValidationProvider() {
+        super();
     }
 
-    return retVal;
-  }
+    public AccessionNumberValidationProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
+
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // get id from request
+        String targetId = request.getParameter("id");
+        String formField = request.getParameter("field");
+        String form = request.getParameter("form");
+        String result = validate(targetId, form);
+        ajaxServlet.sendData(Encode.forXmlContent(formField), result, request, response);
+    }
+
+    // modified for efficiency bugzilla 1367
+    /**
+     * validate() - for AccessionNumberValidationProvider
+     *
+     * @param targetId - String
+     * @return String - valid or invalid
+     */
+    public String validate(String targetId, String form) throws LIMSRuntimeException {
+        String retVal = VALID;
+
+        if (!StringUtil.isNullorNill(targetId)) {
+
+            try {
+                // Get sample by passing in sample vo instead of targetId.
+                Sample sample = sampleService.getSampleByAccessionNumber(targetId.trim());
+
+                // BGM - bugzilla 1495 now we need to know which form it's coming from
+                // and need to read what is the correct status from SytemConfig
+                if (sample == null) {
+                    retVal = INVALID;
+                } else if (form != null) {
+                    if (form.equalsIgnoreCase("humanSampleOneForm")) {
+                        // bugzilla 1581 handle null status
+                        if (!StringUtil.isNullorNill(sample.getStatus())) {
+                            if (!sample.getStatus()
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusQuickEntryComplete())) {
+                                retVal = INVALID;
+                            }
+                        } else {
+                            retVal = INVALID;
+                        }
+                    } else if (form.equalsIgnoreCase("humanSampleTwoForm")) {
+                        // bugzilla 1581 handle null status
+                        if (!StringUtil.isNullorNill(sample.getStatus())) {
+                            if (!sample.getStatus()
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusEntry1Complete())) {
+                                retVal = INVALID;
+                            }
+                        } else {
+                            retVal = INVALID;
+                        }
+                        // bugzilla 2437 batch xml
+                        // bugzilla 2472: fix bug
+                    } else if (form.equalsIgnoreCase("influenzaSampleXMLBySampleForm")) {
+                        if (!StringUtil.isNullorNill(sample.getStatus())) {
+                            if (!sample.getStatus()
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusEntry2Complete())
+                                    && !sample.getStatus()
+                                            .equals(SystemConfiguration.getInstance().getSampleStatusReleased())) {
+                                retVal = INVALIDSTATUS;
+                            }
+
+                        } else {
+                            retVal = INVALID;
+                        }
+                    } else if (form.equalsIgnoreCase("testManagementForm")) {
+                        if (!StringUtil.isNullorNill(sample.getStatus())) {
+                            if (sample.getStatus()
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted())) {
+                                retVal = INVALIDSTATUS;
+                            }
+                        } else {
+                            retVal = INVALID;
+                        }
+                        // bugzilla 2050
+                        // bugzilla 2513
+                    } else if (form.equalsIgnoreCase("resultsEntryForm")) {
+                        if (!StringUtil.isNullorNill(sample.getStatus())) {
+                            if (sample.getStatus()
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted())) {
+                                retVal = INVALIDSTATUS;
+                            }
+
+                        } else {
+                            retVal = INVALID;
+                        }
+                    }
+                    // bugzilla 2513
+                    else if (form.equalsIgnoreCase("batchResultsVerificationForm")) {
+                        if (!StringUtil.isNullorNill(sample.getStatus())) {
+                            // for human (clinical) we require demographics to be available at time of
+                            // results verification
+                            if (sample.getDomain() != null
+                                    && sample.getDomain().equals(SystemConfiguration.getInstance().getHumanDomain())
+                                    && !sample.getStatus().equals(
+                                            SystemConfiguration.getInstance().getSampleStatusEntry2Complete())) {
+                                retVal = INVALIDSTATUS;
+                            }
+                            // for newborn (and possibly other domains) allow verification of sample results
+                            // even after quick entry
+                            if (sample.getDomain() != null
+                                    && !sample.getDomain().equals(SystemConfiguration.getInstance().getHumanDomain())
+                                    && sample.getStatus()
+                                            .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted())) {
+                                retVal = INVALIDSTATUS;
+                            }
+                        } else {
+                            retVal = INVALID;
+                        }
+                        // bugzilla 2028
+                    } else if (form.equalsIgnoreCase("qaEventsEntryForm")) {
+                        if (!StringUtil.isNullorNill(sample.getStatus())) {
+                            if (sample.getStatus()
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted())) {
+                                retVal = INVALIDSTATUS;
+                                // bugzilla 2029
+                            }
+                        } else if (form.equalsIgnoreCase("batchQaEventsEntryForm")) {
+                            if (!StringUtil.isNullorNill(sample.getStatus())) {
+                                if (sample.getStatus()
+                                        .equals(SystemConfiguration.getInstance().getSampleStatusLabelPrinted())) {
+                                    retVal = INVALIDSTATUS;
+                                }
+                            }
+                        } else {
+                            retVal = INVALID;
+                        }
+                        // bugzilla 2529
+                    } else if (form.equalsIgnoreCase("newbornSampleOneForm")) {
+                        if (!StringUtil.isNullorNill(sample.getStatus())) {
+                            if (!sample.getStatus()
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusQuickEntryComplete())) {
+                                retVal = INVALIDSTATUS;
+                            }
+                        } else {
+                            retVal = INVALID;
+                        }
+                        // bugzilla 2530
+                    } else if (form.equalsIgnoreCase("newbornSampleTwoForm")) {
+                        if (!StringUtil.isNullorNill(sample.getStatus())) {
+                            if (!sample.getStatus()
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusEntry1Complete())) {
+                                retVal = INVALIDSTATUS;
+                            }
+                        } else {
+                            retVal = INVALID;
+                        }
+                        // bugzilla 2531
+                    } else if (form.equalsIgnoreCase("newbornSampleFullForm")) {
+                        if (!StringUtil.isNullorNill(sample.getStatus())) {
+                            if (!sample.getStatus()
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusEntry2Complete())) {
+                                retVal = INVALIDSTATUS;
+                            }
+                        } else {
+                            retVal = INVALID;
+                        }
+                        // bugzilla 2564
+                    } else if (form.equalsIgnoreCase("testManagementNewbornForm")) {
+                        if (!StringUtil.isNullorNill(sample.getStatus())) {
+                            if (!sample.getStatus()
+                                    .equals(SystemConfiguration.getInstance().getSampleStatusEntry2Complete())) {
+                                retVal = INVALIDSTATUS;
+                            }
+                        } else {
+                            retVal = INVALID;
+                        }
+                    } else {
+                        retVal = VALID;
+                    }
+                }
+
+            } catch (NumberFormatException e) {
+                // bugzilla 2154
+                LogEvent.logError(e);
+                retVal = INVALID;
+            }
+
+        } else {
+            retVal = INVALID;
+        }
+
+        return retVal;
+    }
 }

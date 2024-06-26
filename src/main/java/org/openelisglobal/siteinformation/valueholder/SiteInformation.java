@@ -25,142 +25,142 @@ import org.openelisglobal.scheduler.valueholder.CronScheduler;
 
 public class SiteInformation extends BaseObject<String> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String id;
-  private String name;
-  private String description;
+    private String id;
+    private String name;
+    private String description;
 
-  @URL(groups = DataSubmissionForm.DataSubmission.class)
-  private String value;
+    @URL(groups = DataSubmissionForm.DataSubmission.class)
+    private String value;
 
-  private boolean encrypted;
-  private String valueType;
-  private String instructionKey;
-  private ValueHolder domain = new ValueHolder();
-  private int group;
-  private String tag;
-  private Localization localization;
-  private ValueHolder schedule = new ValueHolder();
-  private String dictionaryCategoryId;
-  private String descriptionKey;
+    private boolean encrypted;
+    private String valueType;
+    private String instructionKey;
+    private ValueHolder domain = new ValueHolder();
+    private int group;
+    private String tag;
+    private Localization localization;
+    private ValueHolder schedule = new ValueHolder();
+    private String dictionaryCategoryId;
+    private String descriptionKey;
 
-  public int getGroup() {
-    return group;
-  }
+    public int getGroup() {
+        return group;
+    }
 
-  public void setGroup(int group) {
-    this.group = group;
-  }
+    public void setGroup(int group) {
+        this.group = group;
+    }
 
-  public CronScheduler getSchedule() {
-    return (CronScheduler) schedule.getValue();
-  }
+    public CronScheduler getSchedule() {
+        return (CronScheduler) schedule.getValue();
+    }
 
-  public void setSchedule(CronScheduler schedule) {
-    this.schedule.setValue(schedule);
-  }
+    public void setSchedule(CronScheduler schedule) {
+        this.schedule.setValue(schedule);
+    }
 
-  @Override
-  public String getId() {
-    return id;
-  }
+    @Override
+    public String getId() {
+        return id;
+    }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public void setValue(String value) {
-    this.value = value;
-  }
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-  public String getValue() {
-    return value;
-  }
+    public String getValue() {
+        return value;
+    }
 
-  public void setEncrypted(boolean encrypted) {
-    this.encrypted = encrypted;
-  }
+    public void setEncrypted(boolean encrypted) {
+        this.encrypted = encrypted;
+    }
 
-  public boolean isEncrypted() {
-    return encrypted;
-  }
+    public boolean isEncrypted() {
+        return encrypted;
+    }
 
-  public void setDomain(SiteInformationDomain domain) {
-    this.domain.setValue(domain);
-  }
+    public void setDomain(SiteInformationDomain domain) {
+        this.domain.setValue(domain);
+    }
 
-  public SiteInformationDomain getDomain() {
-    return (SiteInformationDomain) domain.getValue();
-  }
+    public SiteInformationDomain getDomain() {
+        return (SiteInformationDomain) domain.getValue();
+    }
 
-  public String getValueType() {
-    return valueType;
-  }
+    public String getValueType() {
+        return valueType;
+    }
 
-  public void setValueType(String valueType) {
-    this.valueType = valueType;
-  }
+    public void setValueType(String valueType) {
+        this.valueType = valueType;
+    }
 
-  public String getInstructionKey() {
-    return instructionKey;
-  }
+    public String getInstructionKey() {
+        return instructionKey;
+    }
 
-  public void setInstructionKey(String instructionKey) {
-    this.instructionKey = instructionKey;
-  }
+    public void setInstructionKey(String instructionKey) {
+        this.instructionKey = instructionKey;
+    }
 
-  public String getTag() {
-    return tag;
-  }
+    public String getTag() {
+        return tag;
+    }
 
-  public void setTag(String tag) {
-    this.tag = tag;
-  }
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 
-  public String getDictionaryCategoryId() {
-    return dictionaryCategoryId;
-  }
+    public String getDictionaryCategoryId() {
+        return dictionaryCategoryId;
+    }
 
-  public Localization getLocalization() {
-    return localization;
-  }
+    public Localization getLocalization() {
+        return localization;
+    }
 
-  public void setLocalization(Localization localization) {
-    this.localization = localization;
-  }
+    public void setLocalization(Localization localization) {
+        this.localization = localization;
+    }
 
-  public void setDictionaryCategoryId(String dictionaryCategoryId) {
-    this.dictionaryCategoryId = dictionaryCategoryId;
-  }
+    public void setDictionaryCategoryId(String dictionaryCategoryId) {
+        this.dictionaryCategoryId = dictionaryCategoryId;
+    }
 
-  public String getDescriptionKey() {
-    return descriptionKey;
-  }
+    public String getDescriptionKey() {
+        return descriptionKey;
+    }
 
-  public void setDescriptionKey(String descriptionKey) {
-    this.descriptionKey = descriptionKey;
-  }
+    public void setDescriptionKey(String descriptionKey) {
+        this.descriptionKey = descriptionKey;
+    }
 
-  @Override
-  protected String getDefaultLocalizedName() {
-    return localization.getLocalizedValue(Locale.ENGLISH);
-  }
+    @Override
+    protected String getDefaultLocalizedName() {
+        return localization.getLocalizedValue(Locale.ENGLISH);
+    }
 }

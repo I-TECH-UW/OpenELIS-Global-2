@@ -9,10 +9,9 @@ import org.openelisglobal.testcalculated.valueholder.ResultCalculation;
 
 public interface ResultCalculationService extends BaseObjectService<ResultCalculation, Integer> {
 
-  List<ResultCalculation> getResultCalculationByPatientAndTest(Patient patient, Test test);
+    List<ResultCalculation> getResultCalculationByPatientAndTest(Patient patient, Test test);
 
-  List<ResultCalculation> getResultCalculationByTest(Test test);
+    List<ResultCalculation> getResultCalculationByTest(Test test);
 
-  List<ResultCalculation> getResultCalculationByPatientAndCalculation(
-      Patient patient, Calculation calculation);
+    List<ResultCalculation> getResultCalculationByPatientAndCalculation(Patient patient, Calculation calculation);
 }

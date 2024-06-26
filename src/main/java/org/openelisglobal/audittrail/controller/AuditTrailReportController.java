@@ -20,48 +20,48 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class AuditTrailReportController extends BaseController {
 
-  private static final String[] ALLOWED_FIELDS = new String[] {"accessionNumberSearch"};
+    private static final String[] ALLOWED_FIELDS = new String[] { "accessionNumberSearch" };
 
-  @InitBinder
-  public void initBinder(WebDataBinder binder) {
-    binder.setAllowedFields(ALLOWED_FIELDS);
-  }
-
-  @RequestMapping(value = "/AuditTrailReport", method = RequestMethod.GET)
-  public ModelAndView showAuditTrailReport(
-      HttpServletRequest request, @ModelAttribute("form") @Valid AuditTrailViewForm form)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    form.setFormMethod(RequestMethod.GET);
-
-    String accessionNumber = form.getAccessionNumberSearch();
-    if (!GenericValidator.isBlankOrNull(accessionNumber)) {
-      AuditTrailViewWorker worker = new AuditTrailViewWorker(accessionNumber);
-      List<AuditTrailItem> items = worker.getAuditTrail();
-      form.setLog(items);
-      form.setAccessionNumber(accessionNumber);
-      form.setSampleOrderItems(worker.getSampleOrderSnapshot());
-      form.setPatientProperties(worker.getPatientSnapshot());
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    return findForward(FWD_SUCCESS, form);
-  }
+    @RequestMapping(value = "/AuditTrailReport", method = RequestMethod.GET)
+    public ModelAndView showAuditTrailReport(HttpServletRequest request,
+            @ModelAttribute("form") @Valid AuditTrailViewForm form)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        form.setFormMethod(RequestMethod.GET);
 
-  @Override
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "auditTrailViewDefinition";
-    } else {
-      return "PageNotFound";
+        String accessionNumber = form.getAccessionNumberSearch();
+        if (!GenericValidator.isBlankOrNull(accessionNumber)) {
+            AuditTrailViewWorker worker = new AuditTrailViewWorker(accessionNumber);
+            List<AuditTrailItem> items = worker.getAuditTrail();
+            form.setLog(items);
+            form.setAccessionNumber(accessionNumber);
+            form.setSampleOrderItems(worker.getSampleOrderSnapshot());
+            form.setPatientProperties(worker.getPatientSnapshot());
+        }
+
+        return findForward(FWD_SUCCESS, form);
     }
-  }
 
-  @Override
-  protected String getPageTitleKey() {
-    return "reports.auditTrail";
-  }
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "auditTrailViewDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-  @Override
-  protected String getPageSubtitleKey() {
-    return "reports.auditTrail";
-  }
+    @Override
+    protected String getPageTitleKey() {
+        return "reports.auditTrail";
+    }
+
+    @Override
+    protected String getPageSubtitleKey() {
+        return "reports.auditTrail";
+    }
 }

@@ -46,94 +46,92 @@ import org.springframework.validation.Errors;
  */
 public class MycologyWorksheetProvider extends BaseReportsProvider {
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.openelisglobal.common.provider.reports.BaseReportsProvider#
-   * processRequest(java.util.Map, javax.servlet.http.HttpServletRequest,
-   * javax.servlet.http.HttpServletResponse) bugzilla 2274: added boolean
-   * successful
-   */
-  @Override
-  public boolean processRequest(
-      Map parameters, HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.openelisglobal.common.provider.reports.BaseReportsProvider#
+     * processRequest(java.util.Map, javax.servlet.http.HttpServletRequest,
+     * javax.servlet.http.HttpServletResponse) bugzilla 2274: added boolean
+     * successful
+     */
+    @Override
+    public boolean processRequest(Map parameters, HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-    HttpSession session = request.getSession();
-    ServletContext context = session.getServletContext();
-    File reportFile = new File(context.getRealPath("/WEB-INF/reports/specimen_list.jasper"));
+        HttpSession session = request.getSession();
+        ServletContext context = session.getServletContext();
+        File reportFile = new File(context.getRealPath("/WEB-INF/reports/specimen_list.jasper"));
 
-    ServletOutputStream servletOutputStream = response.getOutputStream();
+        ServletOutputStream servletOutputStream = response.getOutputStream();
 
-    byte[] bytes = null;
-    Connection conn = null;
+        byte[] bytes = null;
+        Connection conn = null;
 
-    Errors errors = new BaseErrors();
+        Errors errors = new BaseErrors();
 
-    try {
+        try {
 
-      InitialContext ic = new InitialContext();
-      DataSource nativeDS =
-          (DataSource)
-              ic.lookup(SystemConfiguration.getInstance().getDefaultDataSource().toString());
-      conn = nativeDS.getConnection();
+            InitialContext ic = new InitialContext();
+            DataSource nativeDS = (DataSource) ic
+                    .lookup(SystemConfiguration.getInstance().getDefaultDataSource().toString());
+            conn = nativeDS.getConnection();
 
-      // get yesterday's date as date received
+            // get yesterday's date as date received
 
-      // Put the current system date in a Calendar object.
-      GregorianCalendar gc = new GregorianCalendar();
-      // Subtract one day from the object.
-      gc.add(Calendar.DATE, -1);
-      // Get a Date object based on the Calendar object.
-      Date dayAgo = gc.getTime();
+            // Put the current system date in a Calendar object.
+            GregorianCalendar gc = new GregorianCalendar();
+            // Subtract one day from the object.
+            gc.add(Calendar.DATE, -1);
+            // Get a Date object based on the Calendar object.
+            Date dayAgo = gc.getTime();
 
-      SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-      String dateAsText = sdf.format(dayAgo);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+            String dateAsText = sdf.format(dayAgo);
 
-      // convert string date to java.util.Date by going through java.sql.Date
-      // bugzilla 2274 - date conversion fixed
-      String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
-      java.sql.Date sDate = DateUtil.convertStringDateToSqlDate(dateAsText, locale);
-      java.util.Date date = new java.util.Date(sDate.getTime());
+            // convert string date to java.util.Date by going through java.sql.Date
+            // bugzilla 2274 - date conversion fixed
+            String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+            java.sql.Date sDate = DateUtil.convertStringDateToSqlDate(dateAsText, locale);
+            java.util.Date date = new java.util.Date(sDate.getTime());
 
-      parameters.put("Param_Received_Date", date);
+            parameters.put("Param_Received_Date", date);
 
-      bytes = JasperRunManager.runReportToPdf(reportFile.getPath(), parameters, conn);
+            bytes = JasperRunManager.runReportToPdf(reportFile.getPath(), parameters, conn);
 
-      response.setContentType("application/pdf");
-      response.setContentLength(bytes.length);
+            response.setContentType("application/pdf");
+            response.setContentLength(bytes.length);
 
-      servletOutputStream.write(bytes, 0, bytes.length);
-      servletOutputStream.flush();
-      servletOutputStream.close();
-    } catch (JRException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      // display stack trace in the browser
-      StringWriter stringWriter = new StringWriter();
-      response.setContentType("text/plain");
-      response.getOutputStream().print(stringWriter.toString());
-      errors.reject("errors.jasperreport.general");
-    } catch (SQLException | NamingException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      errors.reject("errors.jasperreport.general");
-    } finally {
-      try {
-        if (conn != null) {
-          conn.close();
+            servletOutputStream.write(bytes, 0, bytes.length);
+            servletOutputStream.flush();
+            servletOutputStream.close();
+        } catch (JRException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            // display stack trace in the browser
+            StringWriter stringWriter = new StringWriter();
+            response.setContentType("text/plain");
+            response.getOutputStream().print(stringWriter.toString());
+            errors.reject("errors.jasperreport.general");
+        } catch (SQLException | NamingException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            errors.reject("errors.jasperreport.general");
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                // bugzilla 2154
+                LogEvent.logError(e);
+            }
         }
-      } catch (SQLException e) {
-        // bugzilla 2154
-        LogEvent.logError(e);
-      }
-    }
 
-    if (errors.hasErrors()) {
-      request.setAttribute(Constants.REQUEST_ERRORS, errors);
-      return false;
-    } else {
-      return true;
+        if (errors.hasErrors()) {
+            request.setAttribute(Constants.REQUEST_ERRORS, errors);
+            return false;
+        } else {
+            return true;
+        }
     }
-  }
 }

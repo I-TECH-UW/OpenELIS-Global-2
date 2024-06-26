@@ -13,27 +13,22 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class QuestionnaireSerializer extends StdSerializer<Questionnaire> {
 
-  public QuestionnaireSerializer() {
-    this(null);
-  }
-
-  public QuestionnaireSerializer(Class<Questionnaire> t) {
-    super(t);
-  }
-
-  @Override
-  public void serialize(Questionnaire value, JsonGenerator jgen, SerializerProvider provider)
-      throws IOException, JsonProcessingException {
-    if (value == null) {
-      return;
+    public QuestionnaireSerializer() {
+        this(null);
     }
-    JsonNode node =
-        new ObjectMapper()
-            .readTree(
-                SpringContext.getBean(FhirUtil.class)
-                    .getFhirParser()
-                    .encodeResourceToString(value)
-                    .getBytes());
-    jgen.writeTree(node);
-  }
+
+    public QuestionnaireSerializer(Class<Questionnaire> t) {
+        super(t);
+    }
+
+    @Override
+    public void serialize(Questionnaire value, JsonGenerator jgen, SerializerProvider provider)
+            throws IOException, JsonProcessingException {
+        if (value == null) {
+            return;
+        }
+        JsonNode node = new ObjectMapper().readTree(
+                SpringContext.getBean(FhirUtil.class).getFhirParser().encodeResourceToString(value).getBytes());
+        jgen.writeTree(node);
+    }
 }

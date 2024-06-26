@@ -20,25 +20,25 @@ import java.util.Map;
 
 public abstract class AAdminFormFields {
 
-  protected abstract HashMap<AdminFormFields.Field, Boolean> getSetAttributes();
+    protected abstract HashMap<AdminFormFields.Field, Boolean> getSetAttributes();
 
-  protected abstract HashMap<AdminFormFields.Field, Boolean> getDefaultAttributes();
+    protected abstract HashMap<AdminFormFields.Field, Boolean> getDefaultAttributes();
 
-  public Map<AdminFormFields.Field, Boolean> getFieldFormSet() throws IllegalStateException {
+    public Map<AdminFormFields.Field, Boolean> getFieldFormSet() throws IllegalStateException {
 
-    Map<AdminFormFields.Field, Boolean> defaultAttributes = getDefaultAttributes();
-    Map<AdminFormFields.Field, Boolean> setAttributes = getSetAttributes();
+        Map<AdminFormFields.Field, Boolean> defaultAttributes = getDefaultAttributes();
+        Map<AdminFormFields.Field, Boolean> setAttributes = getSetAttributes();
 
-    if (defaultAttributes == null) {
-      defaultAttributes = new HashMap<AdminFormFields.Field, Boolean>();
+        if (defaultAttributes == null) {
+            defaultAttributes = new HashMap<AdminFormFields.Field, Boolean>();
+        }
+
+        if (setAttributes == null) {
+            setAttributes = new HashMap<AdminFormFields.Field, Boolean>();
+        }
+
+        defaultAttributes.putAll(setAttributes);
+
+        return defaultAttributes;
     }
-
-    if (setAttributes == null) {
-      setAttributes = new HashMap<AdminFormFields.Field, Boolean>();
-    }
-
-    defaultAttributes.putAll(setAttributes);
-
-    return defaultAttributes;
-  }
 }

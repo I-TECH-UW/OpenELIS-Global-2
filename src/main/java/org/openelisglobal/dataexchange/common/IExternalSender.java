@@ -17,21 +17,21 @@ import java.util.List;
 
 public interface IExternalSender {
 
-  /**
-   * Set the name which will be used in error message i.e. if name == "bob" then if the connection
-   * is rejected the error msg will be "Access denied to bob"
-   *
-   * @param name
-   */
-  public abstract void setTargetName(String name);
+    /**
+     * Set the name which will be used in error message i.e. if name == "bob" then
+     * if the connection is rejected the error msg will be "Access denied to bob"
+     *
+     * @param name
+     */
+    public abstract void setTargetName(String name);
 
-  public abstract boolean sendMessage();
+    public abstract boolean sendMessage();
 
-  public abstract void setMessage(String message);
+    public abstract void setMessage(String message);
 
-  public abstract void setURI(String url);
+    public abstract void setURI(String url);
 
-  public abstract List<String> getErrors();
+    public abstract List<String> getErrors();
 
-  public abstract int getSendResponse();
+    public abstract int getSendResponse();
 }

@@ -40,67 +40,63 @@ import org.springframework.stereotype.Service;
 @Primary
 public class PatientEntry extends Accessioner implements IPatientEntry {
 
-  protected HttpServletRequest request;
+    protected HttpServletRequest request;
 
-  public PatientEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
-      throws LIMSRuntimeException {
-    this();
-    setFieldsFromForm(form);
-    this.request = request;
-    setSysUserId(sysUserId);
-  }
+    public PatientEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request)
+            throws LIMSRuntimeException {
+        this();
+        setFieldsFromForm(form);
+        this.request = request;
+        setSysUserId(sysUserId);
+    }
 
-  public PatientEntry() {
-    super();
-    newPatientStatus = RecordStatus.InitialRegistration;
-    newSampleStatus = RecordStatus.NotRegistered;
-  }
+    public PatientEntry() {
+        super();
+        newPatientStatus = RecordStatus.InitialRegistration;
+        newSampleStatus = RecordStatus.NotRegistered;
+    }
 
-  @Override
-  public void setRequest(HttpServletRequest request) {
-    this.request = request;
-  }
+    @Override
+    public void setRequest(HttpServletRequest request) {
+        this.request = request;
+    }
 
-  @Override
-  public final void setFieldsFromForm(PatientEntryByProjectForm form) throws LIMSRuntimeException {
-    setAccessionNumber(form.getLabNo());
-    setPatientSiteSubjectNo(form.getSiteSubjectNumber());
-    setPatientIdentifier(form.getSubjectNumber());
-    setProjectFormMapperFromForm(form);
-  }
+    @Override
+    public final void setFieldsFromForm(PatientEntryByProjectForm form) throws LIMSRuntimeException {
+        setAccessionNumber(form.getLabNo());
+        setPatientSiteSubjectNo(form.getSiteSubjectNumber());
+        setPatientIdentifier(form.getSubjectNumber());
+        setProjectFormMapperFromForm(form);
+    }
 
-  public void setProjectFormMapperFromForm(PatientEntryByProjectForm form)
-      throws LIMSRuntimeException {
-    projectFormMapper = getProjectFormMapper(form);
-    projectFormMapper.setPatientForm(true);
-    projectForm = projectFormMapper.getProjectForm();
-    findStatusSet();
-  }
+    public void setProjectFormMapperFromForm(PatientEntryByProjectForm form) throws LIMSRuntimeException {
+        projectFormMapper = getProjectFormMapper(form);
+        projectFormMapper.setPatientForm(true);
+        projectForm = projectFormMapper.getProjectForm();
+        findStatusSet();
+    }
 
-  @Override
-  public boolean canAccession() {
-    return (statusSet.getPatientRecordStatus() == null
-        && statusSet.getSampleRecordStatus() == null);
-  }
+    @Override
+    public boolean canAccession() {
+        return (statusSet.getPatientRecordStatus() == null && statusSet.getSampleRecordStatus() == null);
+    }
 
-  @Override
-  protected void populateSampleData() {
-    Timestamp receivedDate =
-        DateUtil.convertStringDatePreserveStringTimeToTimestamp(
-            sample.getReceivedDateForDisplay(), sample.getReceived24HourTimeForDisplay(),
-            projectFormMapper.getReceivedDate(), projectFormMapper.getReceivedTime());
-    Timestamp collectionDate =
-        DateUtil.convertStringDatePreserveStringTimeToTimestamp(
-            sample.getCollectionDateForDisplay(), sample.getCollectionTimeForDisplay(),
-            projectFormMapper.getCollectionDate(), projectFormMapper.getCollectionTime());
+    @Override
+    protected void populateSampleData() {
+        Timestamp receivedDate = DateUtil.convertStringDatePreserveStringTimeToTimestamp(
+                sample.getReceivedDateForDisplay(), sample.getReceived24HourTimeForDisplay(),
+                projectFormMapper.getReceivedDate(), projectFormMapper.getReceivedTime());
+        Timestamp collectionDate = DateUtil.convertStringDatePreserveStringTimeToTimestamp(
+                sample.getCollectionDateForDisplay(), sample.getCollectionTimeForDisplay(),
+                projectFormMapper.getCollectionDate(), projectFormMapper.getCollectionTime());
 
-    populateSample(receivedDate, collectionDate);
-    populateSampleProject();
-    populateSampleOrganization(projectFormMapper.getOrganizationId());
-  }
+        populateSample(receivedDate, collectionDate);
+        populateSampleProject();
+        populateSampleOrganization(projectFormMapper.getOrganizationId());
+    }
 
-  @Override
-  protected String getActionLabel() {
-    return MessageUtil.getMessage("banner.menu.createPatient.Initial");
-  }
+    @Override
+    protected String getActionLabel() {
+        return MessageUtil.getMessage("banner.menu.createPatient.Initial");
+    }
 }

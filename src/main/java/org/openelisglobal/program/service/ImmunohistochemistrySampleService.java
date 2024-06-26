@@ -8,25 +8,22 @@ import org.openelisglobal.program.valueholder.immunohistochemistry.Immunohistoch
 import org.openelisglobal.program.valueholder.immunohistochemistry.ImmunohistochemistrySample.ImmunohistochemistryStatus;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 
-public interface ImmunohistochemistrySampleService
-    extends BaseObjectService<ImmunohistochemistrySample, Integer> {
+public interface ImmunohistochemistrySampleService extends BaseObjectService<ImmunohistochemistrySample, Integer> {
 
-  List<ImmunohistochemistrySample> getWithStatus(List<ImmunohistochemistryStatus> statuses);
+    List<ImmunohistochemistrySample> getWithStatus(List<ImmunohistochemistryStatus> statuses);
 
-  void assignTechnician(Integer pathologySampleId, SystemUser systemUser);
+    void assignTechnician(Integer pathologySampleId, SystemUser systemUser);
 
-  void assignPathologist(Integer pathologySampleId, SystemUser systemUser);
+    void assignPathologist(Integer pathologySampleId, SystemUser systemUser);
 
-  Long getCountWithStatus(List<ImmunohistochemistryStatus> statuses);
+    Long getCountWithStatus(List<ImmunohistochemistryStatus> statuses);
 
-  void updateWithFormValues(
-      Integer immunohistochemistrySampleId, ImmunohistochemistrySampleForm form);
+    void updateWithFormValues(Integer immunohistochemistrySampleId, ImmunohistochemistrySampleForm form);
 
-  List<ImmunohistochemistrySample> searchWithStatusAndTerm(
-      List<ImmunohistochemistryStatus> statuses, String searchTerm);
+    List<ImmunohistochemistrySample> searchWithStatusAndTerm(List<ImmunohistochemistryStatus> statuses,
+            String searchTerm);
 
-  Long getCountWithStatusBetweenDates(
-      List<ImmunohistochemistryStatus> statuses, Timestamp from, Timestamp to);
+    Long getCountWithStatusBetweenDates(List<ImmunohistochemistryStatus> statuses, Timestamp from, Timestamp to);
 
-  ImmunohistochemistrySample getByPathologySampleId(Integer pathologySampleId);
+    ImmunohistochemistrySample getByPathologySampleId(Integer pathologySampleId);
 }

@@ -23,11 +23,11 @@ import org.openelisglobal.referral.valueholder.ReferringTestResult;
 
 public interface ReferringTestResultDAO extends BaseDAO<ReferringTestResult, String> {
 
-  //	public boolean insertData(ReferringTestResult referringTestResult) throws LIMSRuntimeException;
+    // public boolean insertData(ReferringTestResult referringTestResult) throws
+    // LIMSRuntimeException;
 
-  public List<ReferringTestResult> getReferringTestResultsForSampleItem(String sampleItemId)
-      throws LIMSRuntimeException;
+    public List<ReferringTestResult> getReferringTestResultsForSampleItem(String sampleItemId)
+            throws LIMSRuntimeException;
 
-  public List<ReferringTestResult> getResultsInDateRange(Date lowDate, Date highDate)
-      throws LIMSRuntimeException;
+    public List<ReferringTestResult> getResultsInDateRange(Date lowDate, Date highDate) throws LIMSRuntimeException;
 }

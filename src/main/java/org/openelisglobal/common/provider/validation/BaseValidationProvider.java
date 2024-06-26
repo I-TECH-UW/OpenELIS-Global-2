@@ -22,16 +22,16 @@ import org.openelisglobal.common.servlet.validation.AjaxServlet;
 
 public abstract class BaseValidationProvider implements IActionConstants {
 
-  protected AjaxServlet ajaxServlet = null;
+    protected AjaxServlet ajaxServlet = null;
 
-  public abstract void processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException;
+    public abstract void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException;
 
-  public void setServlet(AjaxServlet as) {
-    this.ajaxServlet = as;
-  }
+    public void setServlet(AjaxServlet as) {
+        this.ajaxServlet = as;
+    }
 
-  public AjaxServlet getServlet() {
-    return this.ajaxServlet;
-  }
+    public AjaxServlet getServlet() {
+        return this.ajaxServlet;
+    }
 }

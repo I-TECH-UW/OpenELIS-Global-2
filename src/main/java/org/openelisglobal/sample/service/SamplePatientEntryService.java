@@ -7,10 +7,6 @@ import org.openelisglobal.sample.form.SamplePatientEntryForm;
 
 public interface SamplePatientEntryService {
 
-  void persistData(
-      SamplePatientUpdateData updateData,
-      PatientManagementUpdate patientUpdate,
-      PatientManagementInfo patientInfo,
-      SamplePatientEntryForm form,
-      HttpServletRequest request);
+    void persistData(SamplePatientUpdateData updateData, PatientManagementUpdate patientUpdate,
+            PatientManagementInfo patientInfo, SamplePatientEntryForm form, HttpServletRequest request);
 }

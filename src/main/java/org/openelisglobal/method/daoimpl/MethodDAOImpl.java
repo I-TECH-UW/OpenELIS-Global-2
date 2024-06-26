@@ -35,93 +35,92 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MethodDAOImpl extends BaseDAOImpl<Method, String> implements MethodDAO {
 
-  public MethodDAOImpl() {
-    super(Method.class);
-  }
-
-  // this is for autocomplete
-  @Override
-  @Transactional(readOnly = true)
-  public List<Method> getMethods(String filter) throws LIMSRuntimeException {
-    List<Method> list = new Vector<>();
-    try {
-      String sql =
-          "from Method m where upper(m.methodName) like upper(:param) and m.isActive='Y' order by"
-              + " upper(m.methodName)";
-      Query<Method> query = entityManager.unwrap(Session.class).createQuery(sql, Method.class);
-      query.setParameter("param", filter + "%");
-
-      list = query.list();
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in Method getMethods(String filter)", e);
+    public MethodDAOImpl() {
+        super(Method.class);
     }
-    return list;
-  }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<Method> getAllActiveMethods() {
-    String sql = "from Method m where m.isActive = 'Y'";
+    // this is for autocomplete
+    @Override
+    @Transactional(readOnly = true)
+    public List<Method> getMethods(String filter) throws LIMSRuntimeException {
+        List<Method> list = new Vector<>();
+        try {
+            String sql = "from Method m where upper(m.methodName) like upper(:param) and m.isActive='Y' order by"
+                    + " upper(m.methodName)";
+            Query<Method> query = entityManager.unwrap(Session.class).createQuery(sql, Method.class);
+            query.setParameter("param", filter + "%");
 
-    try {
-      Query<Method> query = entityManager.unwrap(Session.class).createQuery(sql, Method.class);
-      List<Method> sections = query.list();
-      return sections;
-    } catch (HibernateException e) {
-      handleException(e, "getAllActiveMethods");
+            list = query.list();
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in Method getMethods(String filter)", e);
+        }
+        return list;
     }
-    return null;
-  }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<Method> getAllInActiveMethods() {
-    String sql = "from Method m where m.isActive = 'N'";
+    @Override
+    @Transactional(readOnly = true)
+    public List<Method> getAllActiveMethods() {
+        String sql = "from Method m where m.isActive = 'Y'";
 
-    try {
-      Query<Method> query = entityManager.unwrap(Session.class).createQuery(sql, Method.class);
-      List<Method> sections = query.list();
-      return sections;
-    } catch (HibernateException e) {
-      handleException(e, "getAllInActiveMethods");
+        try {
+            Query<Method> query = entityManager.unwrap(Session.class).createQuery(sql, Method.class);
+            List<Method> sections = query.list();
+            return sections;
+        } catch (HibernateException e) {
+            handleException(e, "getAllActiveMethods");
+        }
+        return null;
     }
-    return null;
-  }
 
-  // bugzilla 1482
-  @Override
-  public boolean duplicateMethodExists(Method method) throws LIMSRuntimeException {
-    try {
+    @Override
+    @Transactional(readOnly = true)
+    public List<Method> getAllInActiveMethods() {
+        String sql = "from Method m where m.isActive = 'N'";
 
-      List<Method> list = new ArrayList<>();
-
-      // not case sensitive hemolysis and Hemolysis are considered
-      // duplicates
-      String sql = "from Method t where trim(lower(t.methodName)) = :param and t.id != :param2";
-      Query<Method> query = entityManager.unwrap(Session.class).createQuery(sql, Method.class);
-      query.setParameter("param", method.getMethodName().toLowerCase().trim());
-
-      // initialize with 0 (for new records where no id has been generated yet
-      String methodId = "0";
-      if (!StringUtil.isNullorNill(method.getId())) {
-        methodId = method.getId();
-      }
-      query.setParameter("param2", methodId);
-
-      list = query.list();
-
-      if (list.size() > 0) {
-        return true;
-      } else {
-        return false;
-      }
-
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in duplicateMethodExists()", e);
+        try {
+            Query<Method> query = entityManager.unwrap(Session.class).createQuery(sql, Method.class);
+            List<Method> sections = query.list();
+            return sections;
+        } catch (HibernateException e) {
+            handleException(e, "getAllInActiveMethods");
+        }
+        return null;
     }
-  }
+
+    // bugzilla 1482
+    @Override
+    public boolean duplicateMethodExists(Method method) throws LIMSRuntimeException {
+        try {
+
+            List<Method> list = new ArrayList<>();
+
+            // not case sensitive hemolysis and Hemolysis are considered
+            // duplicates
+            String sql = "from Method t where trim(lower(t.methodName)) = :param and t.id != :param2";
+            Query<Method> query = entityManager.unwrap(Session.class).createQuery(sql, Method.class);
+            query.setParameter("param", method.getMethodName().toLowerCase().trim());
+
+            // initialize with 0 (for new records where no id has been generated yet
+            String methodId = "0";
+            if (!StringUtil.isNullorNill(method.getId())) {
+                methodId = method.getId();
+            }
+            query.setParameter("param2", methodId);
+
+            list = query.list();
+
+            if (list.size() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in duplicateMethodExists()", e);
+        }
+    }
 }

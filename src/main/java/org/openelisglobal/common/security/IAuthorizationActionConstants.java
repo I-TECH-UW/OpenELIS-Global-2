@@ -17,12 +17,12 @@ package org.openelisglobal.common.security;
  * @author Benzd1
  */
 public interface IAuthorizationActionConstants {
-  public static String READ = "read";
-  public static String UPDATE = "update";
-  public static String EDIT = "edit";
-  public static String CREATE = "create";
-  public static String COPY = "copy";
-  public static String DELETE = "delete";
-  public static String CLOSE = "close";
-  public static String UPDATE_TESTCOMPONENT_TESTRESULT = "updateTestComponentTestResult";
+    public static String READ = "read";
+    public static String UPDATE = "update";
+    public static String EDIT = "edit";
+    public static String CREATE = "create";
+    public static String COPY = "copy";
+    public static String DELETE = "delete";
+    public static String CLOSE = "close";
+    public static String UPDATE_TESTCOMPONENT_TESTRESULT = "updateTestComponentTestResult";
 }

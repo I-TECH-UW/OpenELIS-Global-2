@@ -27,47 +27,39 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class EIDTypeOfClinicStrategy implements ICSVColumnCustomStrategy {
 
-  private String CLINIC_OTHER_OBS_HISTORY_TYPE_ID;
-  private String CLINIC_OTHER_DICT_ID;
+    private String CLINIC_OTHER_OBS_HISTORY_TYPE_ID;
+    private String CLINIC_OTHER_DICT_ID;
 
-  public EIDTypeOfClinicStrategy() {
-    Dictionary clinicOtherDictionary =
-        SpringContext.getBean(DictionaryService.class)
-            .getDictionaryEntrysByNameAndCategoryDescription(
-                "4 = Other(Specify)", "EID Type of Clinic");
+    public EIDTypeOfClinicStrategy() {
+        Dictionary clinicOtherDictionary = SpringContext.getBean(DictionaryService.class)
+                .getDictionaryEntrysByNameAndCategoryDescription("4 = Other(Specify)", "EID Type of Clinic");
 
-    if (clinicOtherDictionary != null) {
-      CLINIC_OTHER_DICT_ID = clinicOtherDictionary.getId();
-    }
-
-    ObservationHistoryType observationType =
-        SpringContext.getBean(ObservationHistoryTypeService.class)
-            .getByName("eidTypeOfClinicOther");
-
-    if (observationType != null) {
-      CLINIC_OTHER_OBS_HISTORY_TYPE_ID = observationType.getId();
-    }
-  }
-
-  @Override
-  public String translate(String value, String accessionNumber, String csvName, String dbName) {
-    if (CLINIC_OTHER_DICT_ID.equals(value)) { // clinic "other" was entered
-      Sample sample =
-          SpringContext.getBean(SampleService.class).getSampleByAccessionNumber(accessionNumber);
-
-      if (sample != null) {
-        ObservationHistory observation =
-            SpringContext.getBean(ObservationHistoryService.class)
-                .getObservationHistoriesBySampleIdAndType(
-                    sample.getId(), CLINIC_OTHER_OBS_HISTORY_TYPE_ID);
-
-        if (observation != null) {
-          return observation.getValue();
+        if (clinicOtherDictionary != null) {
+            CLINIC_OTHER_DICT_ID = clinicOtherDictionary.getId();
         }
-      }
+
+        ObservationHistoryType observationType = SpringContext.getBean(ObservationHistoryTypeService.class)
+                .getByName("eidTypeOfClinicOther");
+
+        if (observationType != null) {
+            CLINIC_OTHER_OBS_HISTORY_TYPE_ID = observationType.getId();
+        }
     }
-    return isBlankOrNull(value)
-        ? ""
-        : ResourceTranslator.DictionaryTranslator.getInstance().translate(value);
-  }
+
+    @Override
+    public String translate(String value, String accessionNumber, String csvName, String dbName) {
+        if (CLINIC_OTHER_DICT_ID.equals(value)) { // clinic "other" was entered
+            Sample sample = SpringContext.getBean(SampleService.class).getSampleByAccessionNumber(accessionNumber);
+
+            if (sample != null) {
+                ObservationHistory observation = SpringContext.getBean(ObservationHistoryService.class)
+                        .getObservationHistoriesBySampleIdAndType(sample.getId(), CLINIC_OTHER_OBS_HISTORY_TYPE_ID);
+
+                if (observation != null) {
+                    return observation.getValue();
+                }
+            }
+        }
+        return isBlankOrNull(value) ? "" : ResourceTranslator.DictionaryTranslator.getInstance().translate(value);
+    }
 }

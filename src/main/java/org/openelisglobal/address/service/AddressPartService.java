@@ -5,7 +5,7 @@ import org.openelisglobal.address.valueholder.AddressPart;
 import org.openelisglobal.common.service.BaseObjectService;
 
 public interface AddressPartService extends BaseObjectService<AddressPart, String> {
-  List<AddressPart> getAll();
+    List<AddressPart> getAll();
 
-  AddressPart getAddresPartByName(String name);
+    AddressPart getAddresPartByName(String name);
 }

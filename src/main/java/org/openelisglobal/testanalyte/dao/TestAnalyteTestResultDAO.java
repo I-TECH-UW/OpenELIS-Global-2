@@ -28,53 +28,50 @@ import org.openelisglobal.test.valueholder.Test;
  */
 public interface TestAnalyteTestResultDAO {
 
-  /**
-   * @param test
-   * @param testAnalytes
-   * @param testResults
-   * @return
-   * @throws LIMSRuntimeException
-   */
-  public boolean insertData(Test test, List testAnalytes, List testResults)
-      throws LIMSRuntimeException;
+    /**
+     * @param test
+     * @param testAnalytes
+     * @param testResults
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    public boolean insertData(Test test, List testAnalytes, List testResults) throws LIMSRuntimeException;
 
-  /**
-   * @param startingRecNo
-   * @param test
-   * @return
-   * @throws LIMSRuntimeException
-   */
-  public List getPageOfTestAnalyteTestResults(int startingRecNo, Test test)
-      throws LIMSRuntimeException;
+    /**
+     * @param startingRecNo
+     * @param test
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    public List getPageOfTestAnalyteTestResults(int startingRecNo, Test test) throws LIMSRuntimeException;
 
-  /**
-   * @param test
-   * @return
-   * @throws LIMSRuntimeException
-   */
-  public List getAllTestAnalyteTestResultsPerTest(Test test) throws LIMSRuntimeException;
+    /**
+     * @param test
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    public List getAllTestAnalyteTestResultsPerTest(Test test) throws LIMSRuntimeException;
 
-  /**
-   * @param test
-   * @param oldTestAnalytes
-   * @param oldTestResults
-   * @param testAnalytes
-   * @param testResults
-   * @throws LIMSRuntimeException
-   */
-  public void updateData(
-      Test test, List oldTestAnalytes, List oldTestResults, List testAnalytes, List testResults)
-      throws LIMSRuntimeException;
+    /**
+     * @param test
+     * @param oldTestAnalytes
+     * @param oldTestResults
+     * @param testAnalytes
+     * @param testResults
+     * @throws LIMSRuntimeException
+     */
+    public void updateData(Test test, List oldTestAnalytes, List oldTestResults, List testAnalytes, List testResults)
+            throws LIMSRuntimeException;
 
-  /**
-   * @param id
-   * @return
-   * @throws LIMSRuntimeException
-   */
+    /**
+     * @param id
+     * @return
+     * @throws LIMSRuntimeException
+     */
 
-  /**
-   * @param id
-   * @return
-   * @throws LIMSRuntimeException
-   */
+    /**
+     * @param id
+     * @return
+     * @throws LIMSRuntimeException
+     */
 }

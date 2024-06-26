@@ -17,5 +17,5 @@ import java.util.List;
 
 public interface ITransmissionResponseHandler {
 
-  public void handleResponse(int httpReturnStatus, List<String> errors, String msg);
+    public void handleResponse(int httpReturnStatus, List<String> errors, String msg);
 }

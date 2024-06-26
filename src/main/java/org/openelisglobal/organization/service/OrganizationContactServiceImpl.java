@@ -9,23 +9,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class OrganizationContactServiceImpl
-    extends AuditableBaseObjectServiceImpl<OrganizationContact, String>
-    implements OrganizationContactService {
-  @Autowired protected OrganizationContactDAO baseObjectDAO;
+public class OrganizationContactServiceImpl extends AuditableBaseObjectServiceImpl<OrganizationContact, String>
+        implements OrganizationContactService {
+    @Autowired
+    protected OrganizationContactDAO baseObjectDAO;
 
-  OrganizationContactServiceImpl() {
-    super(OrganizationContact.class);
-  }
+    OrganizationContactServiceImpl() {
+        super(OrganizationContact.class);
+    }
 
-  @Override
-  protected OrganizationContactDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected OrganizationContactDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<OrganizationContact> getListForOrganizationId(String orgId) {
-    return getBaseObjectDAO().getListForOrganizationId(orgId);
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrganizationContact> getListForOrganizationId(String orgId) {
+        return getBaseObjectDAO().getListForOrganizationId(orgId);
+    }
 }

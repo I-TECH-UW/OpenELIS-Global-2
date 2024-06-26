@@ -8,6 +8,6 @@ import java.security.cert.CertificateException;
 
 public interface TruststoreService {
 
-  void addTrustedCert(String alias, Certificate certificate)
-      throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
+    void addTrustedCert(String alias, Certificate certificate)
+            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
 }

@@ -13,90 +13,90 @@ import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 
 public class FhirReferralSearchForm extends BaseForm {
 
-  private static final long serialVersionUID = 3245627796529364543L;
+    private static final long serialVersionUID = 3245627796529364543L;
 
-  protected String externalAccessionNumber;
+    protected String externalAccessionNumber;
 
-  protected String patientID;
+    protected String patientID;
 
-  @ValidName(nameType = NameType.LAST_NAME)
-  protected String patientLastName;
+    @ValidName(nameType = NameType.LAST_NAME)
+    protected String patientLastName;
 
-  @ValidName(nameType = NameType.FIRST_NAME)
-  protected String patientFirstName;
+    @ValidName(nameType = NameType.FIRST_NAME)
+    protected String patientFirstName;
 
-  @ValidDate(relative = DateRelation.PAST)
-  protected String dateOfBirth;
+    @ValidDate(relative = DateRelation.PAST)
+    protected String dateOfBirth;
 
-  @Pattern(regexp = ValidationHelper.GENDER_REGEX)
-  protected String gender;
+    @Pattern(regexp = ValidationHelper.GENDER_REGEX)
+    protected String gender;
 
-  protected List<IdValuePair> genders;
+    protected List<IdValuePair> genders;
 
-  @Min(1)
-  protected int page = 1;
+    @Min(1)
+    protected int page = 1;
 
-  public String getPatientID() {
-    return patientID;
-  }
+    public String getPatientID() {
+        return patientID;
+    }
 
-  public void setPatientID(String patientID) {
-    this.patientID = patientID;
-  }
+    public void setPatientID(String patientID) {
+        this.patientID = patientID;
+    }
 
-  public String getExternalAccessionNumber() {
-    return externalAccessionNumber;
-  }
+    public String getExternalAccessionNumber() {
+        return externalAccessionNumber;
+    }
 
-  public void setExternalAccessionNumber(String externalAccessionNumber) {
-    this.externalAccessionNumber = externalAccessionNumber;
-  }
+    public void setExternalAccessionNumber(String externalAccessionNumber) {
+        this.externalAccessionNumber = externalAccessionNumber;
+    }
 
-  public String getGender() {
-    return gender;
-  }
+    public String getGender() {
+        return gender;
+    }
 
-  public void setGender(String gender) {
-    this.gender = gender;
-  }
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
-  public String getDateOfBirth() {
-    return dateOfBirth;
-  }
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
 
-  public void setDateOfBirth(String dateOfBirth) {
-    this.dateOfBirth = dateOfBirth;
-  }
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
 
-  public String getPatientFirstName() {
-    return patientFirstName;
-  }
+    public String getPatientFirstName() {
+        return patientFirstName;
+    }
 
-  public void setPatientFirstName(String patientFirstName) {
-    this.patientFirstName = patientFirstName;
-  }
+    public void setPatientFirstName(String patientFirstName) {
+        this.patientFirstName = patientFirstName;
+    }
 
-  public String getPatientLastName() {
-    return patientLastName;
-  }
+    public String getPatientLastName() {
+        return patientLastName;
+    }
 
-  public void setPatientLastName(String patientLastName) {
-    this.patientLastName = patientLastName;
-  }
+    public void setPatientLastName(String patientLastName) {
+        this.patientLastName = patientLastName;
+    }
 
-  public int getPage() {
-    return page;
-  }
+    public int getPage() {
+        return page;
+    }
 
-  public void setPage(int page) {
-    this.page = page;
-  }
+    public void setPage(int page) {
+        this.page = page;
+    }
 
-  public List<IdValuePair> getGenders() {
-    return genders;
-  }
+    public List<IdValuePair> getGenders() {
+        return genders;
+    }
 
-  public void setGenders(List<IdValuePair> genders) {
-    this.genders = genders;
-  }
+    public void setGenders(List<IdValuePair> genders) {
+        this.genders = genders;
+    }
 }

@@ -14,67 +14,63 @@ import org.openelisglobal.common.valueholder.BaseObject;
 @Table(name = "pathology_technique")
 public class PathologyTechnique extends BaseObject<Integer> {
 
-  public enum TechniqueType {
-    DICTIONARY("D"),
-    TEXT("T");
+    public enum TechniqueType {
+        DICTIONARY("D"), TEXT("T");
 
-    private String code;
+        private String code;
 
-    TechniqueType(String code) {
-      this.code = code;
+        TechniqueType(String code) {
+            this.code = code;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        static TechniqueType fromCode(String code) {
+            if (code.equals("D")) {
+                return DICTIONARY;
+            }
+            if (code.equals("T")) {
+                return TEXT;
+            }
+            return null;
+        }
     }
 
-    public String getCode() {
-      return code;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pathology_technique_generator")
+    @SequenceGenerator(name = "pathology_technique_generator", sequenceName = "pathology_technique_seq", allocationSize = 1)
+    private Integer id;
+
+    private String value;
+
+    @Enumerated(EnumType.STRING)
+    private TechniqueType type;
+
+    @Override
+    public Integer getId() {
+        return id;
     }
 
-    static TechniqueType fromCode(String code) {
-      if (code.equals("D")) {
-        return DICTIONARY;
-      }
-      if (code.equals("T")) {
-        return TEXT;
-      }
-      return null;
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
     }
-  }
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pathology_technique_generator")
-  @SequenceGenerator(
-      name = "pathology_technique_generator",
-      sequenceName = "pathology_technique_seq",
-      allocationSize = 1)
-  private Integer id;
+    public String getValue() {
+        return value;
+    }
 
-  private String value;
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-  @Enumerated(EnumType.STRING)
-  private TechniqueType type;
+    public TechniqueType getType() {
+        return type;
+    }
 
-  @Override
-  public Integer getId() {
-    return id;
-  }
-
-  @Override
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
-  }
-
-  public TechniqueType getType() {
-    return type;
-  }
-
-  public void setType(TechniqueType type) {
-    this.type = type;
-  }
+    public void setType(TechniqueType type) {
+        this.type = type;
+    }
 }

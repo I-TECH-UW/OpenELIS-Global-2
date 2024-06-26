@@ -17,68 +17,68 @@ import java.io.Serializable;
 
 public class NonConformityItem implements Serializable {
 
-  private static final long serialVersionUID = 77146028090504294L;
-  private String qaEventId;
-  private String qaName;
-  private boolean violetTube;
-  private boolean redTube;
-  private boolean driedBloodSpot;
-  private boolean simpleSelect;
-  private String note;
+    private static final long serialVersionUID = 77146028090504294L;
+    private String qaEventId;
+    private String qaName;
+    private boolean violetTube;
+    private boolean redTube;
+    private boolean driedBloodSpot;
+    private boolean simpleSelect;
+    private String note;
 
-  public String getQaEventId() {
-    return qaEventId;
-  }
+    public String getQaEventId() {
+        return qaEventId;
+    }
 
-  public void setQaEventId(String qaEventId) {
-    this.qaEventId = qaEventId;
-  }
+    public void setQaEventId(String qaEventId) {
+        this.qaEventId = qaEventId;
+    }
 
-  public void setQaName(String qaName) {
-    this.qaName = qaName;
-  }
+    public void setQaName(String qaName) {
+        this.qaName = qaName;
+    }
 
-  public String getQaName() {
-    return qaName;
-  }
+    public String getQaName() {
+        return qaName;
+    }
 
-  public boolean isVioletTube() {
-    return violetTube;
-  }
+    public boolean isVioletTube() {
+        return violetTube;
+    }
 
-  public void setVioletTube(boolean violetTube) {
-    this.violetTube = violetTube;
-  }
+    public void setVioletTube(boolean violetTube) {
+        this.violetTube = violetTube;
+    }
 
-  public boolean isRedTube() {
-    return redTube;
-  }
+    public boolean isRedTube() {
+        return redTube;
+    }
 
-  public void setRedTube(boolean redTube) {
-    this.redTube = redTube;
-  }
+    public void setRedTube(boolean redTube) {
+        this.redTube = redTube;
+    }
 
-  public boolean isDriedBloodSpot() {
-    return driedBloodSpot;
-  }
+    public boolean isDriedBloodSpot() {
+        return driedBloodSpot;
+    }
 
-  public void setDriedBloodSpot(boolean driedBloodSpot) {
-    this.driedBloodSpot = driedBloodSpot;
-  }
+    public void setDriedBloodSpot(boolean driedBloodSpot) {
+        this.driedBloodSpot = driedBloodSpot;
+    }
 
-  public void setSimpleSelect(boolean simpleSelect) {
-    this.simpleSelect = simpleSelect;
-  }
+    public void setSimpleSelect(boolean simpleSelect) {
+        this.simpleSelect = simpleSelect;
+    }
 
-  public boolean isSimpleSelect() {
-    return simpleSelect;
-  }
+    public boolean isSimpleSelect() {
+        return simpleSelect;
+    }
 
-  public String getNote() {
-    return note;
-  }
+    public String getNote() {
+        return note;
+    }
 
-  public void setNote(String note) {
-    this.note = note;
-  }
+    public void setNote(String note) {
+        this.note = note;
+    }
 }

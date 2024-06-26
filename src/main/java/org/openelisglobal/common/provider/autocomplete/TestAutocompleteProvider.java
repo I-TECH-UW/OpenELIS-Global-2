@@ -22,10 +22,12 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
 
 /**
- * An example servlet that responds to an ajax:autocomplete tag action. This servlet would be
- * referenced by the baseUrl attribute of the JSP tag.
+ * An example servlet that responds to an ajax:autocomplete tag action. This
+ * servlet would be referenced by the baseUrl attribute of the JSP tag.
  *
- * <p>This servlet should generate XML in the following format: <code><![CDATA[<?xml version="1.0"?>
+ * <p>
+ * This servlet should generate XML in the following format:
+ * <code><![CDATA[<?xml version="1.0"?>
  * <list>
  *   <item value="Item1">First Item</item>
  *   <item value="Item2">Second Item</item>
@@ -36,24 +38,23 @@ import org.openelisglobal.test.service.TestService;
  */
 public class TestAutocompleteProvider extends BaseAutocompleteProvider {
 
-  protected TestService testService = SpringContext.getBean(TestService.class);
+    protected TestService testService = SpringContext.getBean(TestService.class);
 
-  /**
-   * @see
-   *     org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
-   *     javax.servlet.http.HttpServletResponse)
-   */
-  public List processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+    /**
+     * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
+     */
+    public List processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-    // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "I am in
-    // AutocompleteTestServlet "
-    // + request.getParameter("testName"));
-    String testName = request.getParameter("testName");
-    // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown",
-    // "AutocompleteTestServlet testName " + testName);
-    // bugzilla 2291
-    List list = testService.getTests(testName, false);
-    return list;
-  }
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "I am in
+        // AutocompleteTestServlet "
+        // + request.getParameter("testName"));
+        String testName = request.getParameter("testName");
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown",
+        // "AutocompleteTestServlet testName " + testName);
+        // bugzilla 2291
+        List list = testService.getTests(testName, false);
+        return list;
+    }
 }

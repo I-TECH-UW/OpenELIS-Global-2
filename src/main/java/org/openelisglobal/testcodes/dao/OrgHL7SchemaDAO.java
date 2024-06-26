@@ -20,6 +20,5 @@ import org.openelisglobal.testcodes.valueholder.OrganizationHL7Schema;
 import org.openelisglobal.testcodes.valueholder.OrganizationSchemaPK;
 
 public interface OrgHL7SchemaDAO extends BaseDAO<OrganizationHL7Schema, OrganizationSchemaPK> {
-  public OrganizationHL7Schema getOrganizationHL7SchemaByOrgId(String orgId)
-      throws LIMSRuntimeException;
+    public OrganizationHL7Schema getOrganizationHL7SchemaByOrgId(String orgId) throws LIMSRuntimeException;
 }

@@ -13,31 +13,32 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DataIndicatorServiceImpl extends AuditableBaseObjectServiceImpl<DataIndicator, String>
-    implements DataIndicatorService {
-  @Autowired protected DataIndicatorDAO baseObjectDAO;
+        implements DataIndicatorService {
+    @Autowired
+    protected DataIndicatorDAO baseObjectDAO;
 
-  DataIndicatorServiceImpl() {
-    super(DataIndicator.class);
-  }
+    DataIndicatorServiceImpl() {
+        super(DataIndicator.class);
+    }
 
-  @Override
-  protected DataIndicatorDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected DataIndicatorDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public DataIndicator getIndicatorByTypeYearMonth(TypeOfDataIndicator type, int year, int month) {
-    Map<String, Object> properties = new HashMap<>();
-    properties.put("typeOfDataIndicator.id", type.getId());
-    properties.put("year", year);
-    properties.put("month", month);
-    return getMatch(properties).orElse(null);
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public DataIndicator getIndicatorByTypeYearMonth(TypeOfDataIndicator type, int year, int month) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("typeOfDataIndicator.id", type.getId());
+        properties.put("year", year);
+        properties.put("month", month);
+        return getMatch(properties).orElse(null);
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<DataIndicator> getIndicatorsByStatus(String status) {
-    return getBaseObjectDAO().getAllMatching("status", status);
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<DataIndicator> getIndicatorsByStatus(String status) {
+        return getBaseObjectDAO().getAllMatching("status", status);
+    }
 }

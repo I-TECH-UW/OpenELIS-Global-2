@@ -16,47 +16,45 @@ import java.util.List;
 
 public class IdValuePair implements Serializable {
 
-  private String id;
-  private String value;
-  private static final long serialVersionUID = 1L;
+    private String id;
+    private String value;
+    private static final long serialVersionUID = 1L;
 
-  @JsonCreator
-  public IdValuePair(@JsonProperty("id") String id, @JsonProperty("value") String value) {
-    this.setId(id);
-    this.setValue(value);
-  }
-
-  public final void setId(String id) {
-    this.id = id;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public final void setValue(String value) {
-    this.value = value;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  public static void sortByValue(List<IdValuePair> list) {
-    if (!list.isEmpty()) {
-      Collections.sort(
-          list,
-          new Comparator<IdValuePair>() {
-            @Override
-            public int compare(IdValuePair o1, IdValuePair o2) {
-              return o1.getValue().compareTo(o2.getValue());
-            }
-          });
+    @JsonCreator
+    public IdValuePair(@JsonProperty("id") String id, @JsonProperty("value") String value) {
+        this.setId(id);
+        this.setValue(value);
     }
-  }
 
-  @Override
-  public String toString() {
-    return "id=" + id + ", value=" + value;
-  }
+    public final void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public final void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public static void sortByValue(List<IdValuePair> list) {
+        if (!list.isEmpty()) {
+            Collections.sort(list, new Comparator<IdValuePair>() {
+                @Override
+                public int compare(IdValuePair o1, IdValuePair o2) {
+                    return o1.getValue().compareTo(o2.getValue());
+                }
+            });
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "id=" + id + ", value=" + value;
+    }
 }

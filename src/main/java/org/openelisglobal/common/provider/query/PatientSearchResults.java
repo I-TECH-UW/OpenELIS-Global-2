@@ -19,192 +19,183 @@ import java.math.BigDecimal;
 
 public class PatientSearchResults {
 
-  private String id;
-  private String GUID;
-  private String firstName;
-  private String lastName;
-  private String gender;
-  private String birthdate;
-  private String nationalId;
-  private String externalId;
-  private String stNumber;
-  private String referringSitePatientId;
-  private String subjectNumber;
-  private String mothersName;
-  private String dataSourceName;
-  private String dataSourceId;
-  private String contactName;
-  private String contactEmail;
-  private String contactPhone;
+    private String id;
+    private String GUID;
+    private String firstName;
+    private String lastName;
+    private String gender;
+    private String birthdate;
+    private String nationalId;
+    private String externalId;
+    private String stNumber;
+    private String referringSitePatientId;
+    private String subjectNumber;
+    private String mothersName;
+    private String dataSourceName;
+    private String dataSourceId;
+    private String contactName;
+    private String contactEmail;
+    private String contactPhone;
 
-  public PatientSearchResults() {}
+    public PatientSearchResults() {
+    }
 
-  public PatientSearchResults(
-      BigDecimal id,
-      String first,
-      String last,
-      String gender,
-      String dob,
-      String nationalId,
-      String externalId,
-      String stNumber,
-      String subjectNumber,
-      String guid,
-      String referringSitePatientId) {
-    this.id = id.toPlainString();
-    firstName = first;
-    lastName = last;
-    this.gender = gender;
-    birthdate = dob;
-    this.nationalId = nationalId;
-    this.stNumber = stNumber;
-    this.subjectNumber = subjectNumber;
-    this.GUID = guid;
-    this.externalId = externalId;
-    this.referringSitePatientId = referringSitePatientId;
-  }
+    public PatientSearchResults(BigDecimal id, String first, String last, String gender, String dob, String nationalId,
+            String externalId, String stNumber, String subjectNumber, String guid, String referringSitePatientId) {
+        this.id = id.toPlainString();
+        firstName = first;
+        lastName = last;
+        this.gender = gender;
+        birthdate = dob;
+        this.nationalId = nationalId;
+        this.stNumber = stNumber;
+        this.subjectNumber = subjectNumber;
+        this.GUID = guid;
+        this.externalId = externalId;
+        this.referringSitePatientId = referringSitePatientId;
+    }
 
-  public String getPatientID() {
-    return id;
-  }
+    public String getPatientID() {
+        return id;
+    }
 
-  public void setPatientID(String id) {
-    this.id = id;
-  }
+    public void setPatientID(String id) {
+        this.id = id;
+    }
 
-  public String getFirstName() {
-    return firstName;
-  }
+    public String getFirstName() {
+        return firstName;
+    }
 
-  public String getLastName() {
-    return lastName;
-  }
+    public String getLastName() {
+        return lastName;
+    }
 
-  public String getGender() {
-    return gender;
-  }
+    public String getGender() {
+        return gender;
+    }
 
-  public String getDOB() {
-    return birthdate;
-  }
+    public String getDOB() {
+        return birthdate;
+    }
 
-  public String getNationalId() {
-    return nationalId;
-  }
+    public String getNationalId() {
+        return nationalId;
+    }
 
-  public String getSTNumber() {
-    return stNumber;
-  }
+    public String getSTNumber() {
+        return stNumber;
+    }
 
-  public String getBirthdate() {
-    return birthdate;
-  }
+    public String getBirthdate() {
+        return birthdate;
+    }
 
-  public void setBirthdate(String birthdate) {
-    this.birthdate = birthdate;
-  }
+    public void setBirthdate(String birthdate) {
+        this.birthdate = birthdate;
+    }
 
-  public String getStNumber() {
-    return stNumber;
-  }
+    public String getStNumber() {
+        return stNumber;
+    }
 
-  public void setStNumber(String stNumber) {
-    this.stNumber = stNumber;
-  }
+    public void setStNumber(String stNumber) {
+        this.stNumber = stNumber;
+    }
 
-  public String getSubjectNumber() {
-    return subjectNumber;
-  }
+    public String getSubjectNumber() {
+        return subjectNumber;
+    }
 
-  public void setSubjectNumber(String subjectNumber) {
-    this.subjectNumber = subjectNumber;
-  }
+    public void setSubjectNumber(String subjectNumber) {
+        this.subjectNumber = subjectNumber;
+    }
 
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
-  }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-  public void setGender(String gender) {
-    this.gender = gender;
-  }
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
-  public void setNationalId(String nationalId) {
-    this.nationalId = nationalId;
-  }
+    public void setNationalId(String nationalId) {
+        this.nationalId = nationalId;
+    }
 
-  public void setMothersName(String mothersName) {
-    this.mothersName = mothersName;
-  }
+    public void setMothersName(String mothersName) {
+        this.mothersName = mothersName;
+    }
 
-  public String getMothersName() {
-    return mothersName;
-  }
+    public String getMothersName() {
+        return mothersName;
+    }
 
-  public String getDataSourceName() {
-    return dataSourceName;
-  }
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
 
-  public void setDataSourceName(String dataSourceName) {
-    this.dataSourceName = dataSourceName;
-  }
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
+    }
 
-  public String getDataSourceId() {
-    return dataSourceId;
-  }
+    public String getDataSourceId() {
+        return dataSourceId;
+    }
 
-  public void setDataSourceId(String dataSourceId) {
-    this.dataSourceId = dataSourceId;
-  }
+    public void setDataSourceId(String dataSourceId) {
+        this.dataSourceId = dataSourceId;
+    }
 
-  public void setGUID(String gUID) {
-    GUID = gUID;
-  }
+    public void setGUID(String gUID) {
+        GUID = gUID;
+    }
 
-  public String getGUID() {
-    return GUID;
-  }
+    public String getGUID() {
+        return GUID;
+    }
 
-  public void setExternalId(String externalId) {
-    this.externalId = externalId;
-  }
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
 
-  public String getExternalId() {
-    return externalId;
-  }
+    public String getExternalId() {
+        return externalId;
+    }
 
-  public String getReferringSitePatientId() {
-    return referringSitePatientId;
-  }
+    public String getReferringSitePatientId() {
+        return referringSitePatientId;
+    }
 
-  public void setReferringSitePatientId(String referringSitePatientId) {
-    this.referringSitePatientId = referringSitePatientId;
-  }
+    public void setReferringSitePatientId(String referringSitePatientId) {
+        this.referringSitePatientId = referringSitePatientId;
+    }
 
-  public String getContactName() {
-    return contactName;
-  }
+    public String getContactName() {
+        return contactName;
+    }
 
-  public void setContactName(String contactName) {
-    this.contactName = contactName;
-  }
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
+    }
 
-  public String getContactEmail() {
-    return contactEmail;
-  }
+    public String getContactEmail() {
+        return contactEmail;
+    }
 
-  public void setContactEmail(String contactEmail) {
-    this.contactEmail = contactEmail;
-  }
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
 
-  public String getContactPhone() {
-    return contactPhone;
-  }
+    public String getContactPhone() {
+        return contactPhone;
+    }
 
-  public void setContactPhone(String contactPhone) {
-    this.contactPhone = contactPhone;
-  }
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone;
+    }
 }

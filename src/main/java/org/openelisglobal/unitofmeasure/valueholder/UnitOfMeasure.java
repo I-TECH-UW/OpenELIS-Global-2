@@ -19,68 +19,68 @@ import org.openelisglobal.localization.valueholder.Localization;
 
 public class UnitOfMeasure extends EnumValueItemImpl {
 
-  private String id;
+    private String id;
 
-  private String unitOfMeasureName;
+    private String unitOfMeasureName;
 
-  private String description;
+    private String description;
 
-  private ValueHolderInterface localization;
+    private ValueHolderInterface localization;
 
-  public UnitOfMeasure() {
-    super();
-  }
+    public UnitOfMeasure() {
+        super();
+    }
 
-  public void setId(String id) {
-    this.id = id;
-    this.key = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+        this.key = id;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setUnitOfMeasureName(String unitOfMeasureName) {
-    this.unitOfMeasureName = unitOfMeasureName;
-    this.name = unitOfMeasureName;
-  }
+    public void setUnitOfMeasureName(String unitOfMeasureName) {
+        this.unitOfMeasureName = unitOfMeasureName;
+        this.name = unitOfMeasureName;
+    }
 
-  public String getUnitOfMeasureName() {
-    return unitOfMeasureName;
-  }
+    public String getUnitOfMeasureName() {
+        return unitOfMeasureName;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  @Override
-  protected String getDefaultLocalizedName() {
-    return getUnitOfMeasureName();
-  }
+    @Override
+    protected String getDefaultLocalizedName() {
+        return getUnitOfMeasureName();
+    }
 
-  public Localization getLocalization() {
-    //		return (Localization)localization.getValue();
-    //
-    //		UOM has been designed to support localization,
-    //		this method is the break point, to support localization
-    //		add columns to database table and Hibernation interface
-    //		then call localization.getValue above
-    //
+    public Localization getLocalization() {
+        // return (Localization)localization.getValue();
+        //
+        // UOM has been designed to support localization,
+        // this method is the break point, to support localization
+        // add columns to database table and Hibernation interface
+        // then call localization.getValue above
+        //
 
-    Localization _localization = new Localization();
-    _localization.setId(this.getId());
-    _localization.setDescription(this.getDescription());
-    _localization.setEnglish(this.getDefaultLocalizedName());
-    _localization.setFrench("French");
+        Localization _localization = new Localization();
+        _localization.setId(this.getId());
+        _localization.setDescription(this.getDescription());
+        _localization.setEnglish(this.getDefaultLocalizedName());
+        _localization.setFrench("French");
 
-    return (Localization) _localization;
-  }
+        return (Localization) _localization;
+    }
 
-  public void setLocalization(Localization localization) {
-    this.localization.setValue(localization);
-  }
+    public void setLocalization(Localization localization) {
+        this.localization.setValue(localization);
+    }
 }

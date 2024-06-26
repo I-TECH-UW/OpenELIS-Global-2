@@ -21,27 +21,27 @@ import java.util.List;
 import org.openelisglobal.panel.valueholder.Panel;
 
 public class SampleTypePanel {
-  private String typeOfSampleName;
-  private List<Panel> panels;
+    private String typeOfSampleName;
+    private List<Panel> panels;
 
-  public SampleTypePanel(String typeOfSample) {
-    this.typeOfSampleName = typeOfSample;
-    this.panels = new ArrayList<Panel>();
-  }
+    public SampleTypePanel(String typeOfSample) {
+        this.typeOfSampleName = typeOfSample;
+        this.panels = new ArrayList<Panel>();
+    }
 
-  public String getTypeOfSampleName() {
-    return typeOfSampleName;
-  }
+    public String getTypeOfSampleName() {
+        return typeOfSampleName;
+    }
 
-  public void setTypeOfSampleName(String typeOfSample) {
-    this.typeOfSampleName = typeOfSample;
-  }
+    public void setTypeOfSampleName(String typeOfSample) {
+        this.typeOfSampleName = typeOfSample;
+    }
 
-  public List<Panel> getPanels() {
-    return panels;
-  }
+    public List<Panel> getPanels() {
+        return panels;
+    }
 
-  public void setPanels(List<Panel> panels) {
-    this.panels = panels;
-  }
+    public void setPanels(List<Panel> panels) {
+        this.panels = panels;
+    }
 }

@@ -9,23 +9,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ReferringTestResultServiceImpl
-    extends AuditableBaseObjectServiceImpl<ReferringTestResult, String>
-    implements ReferringTestResultService {
-  @Autowired protected ReferringTestResultDAO baseObjectDAO;
+public class ReferringTestResultServiceImpl extends AuditableBaseObjectServiceImpl<ReferringTestResult, String>
+        implements ReferringTestResultService {
+    @Autowired
+    protected ReferringTestResultDAO baseObjectDAO;
 
-  ReferringTestResultServiceImpl() {
-    super(ReferringTestResult.class);
-  }
+    ReferringTestResultServiceImpl() {
+        super(ReferringTestResult.class);
+    }
 
-  @Override
-  protected ReferringTestResultDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected ReferringTestResultDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<ReferringTestResult> getReferringTestResultsForSampleItem(String id) {
-    return baseObjectDAO.getReferringTestResultsForSampleItem(id);
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReferringTestResult> getReferringTestResultsForSampleItem(String id) {
+        return baseObjectDAO.getReferringTestResultsForSampleItem(id);
+    }
 }

@@ -20,23 +20,24 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 
 public interface TypeOfSampleTestDAO extends BaseDAO<TypeOfSampleTest, String> {
 
-  //	public boolean insertData(TypeOfSampleTest typeOfSample) throws LIMSRuntimeException;
+    // public boolean insertData(TypeOfSampleTest typeOfSample) throws
+    // LIMSRuntimeException;
 
-  //	public void deleteData(String[] typeOfSampleTestIds, String currentUserId) throws
-  // LIMSRuntimeException;
+    // public void deleteData(String[] typeOfSampleTestIds, String currentUserId)
+    // throws
+    // LIMSRuntimeException;
 
-  List<TypeOfSampleTest> getAllTypeOfSampleTests() throws LIMSRuntimeException;
+    List<TypeOfSampleTest> getAllTypeOfSampleTests() throws LIMSRuntimeException;
 
-  List<TypeOfSampleTest> getPageOfTypeOfSampleTests(int startingRecNo) throws LIMSRuntimeException;
+    List<TypeOfSampleTest> getPageOfTypeOfSampleTests(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(TypeOfSampleTest typeOfSampleTest) throws LIMSRuntimeException;
+    void getData(TypeOfSampleTest typeOfSampleTest) throws LIMSRuntimeException;
 
-  Integer getTotalTypeOfSampleTestCount() throws LIMSRuntimeException;
+    Integer getTotalTypeOfSampleTestCount() throws LIMSRuntimeException;
 
-  List<TypeOfSampleTest> getTypeOfSampleTestsForSampleType(String sampleTypeId)
-      throws LIMSRuntimeException;
+    List<TypeOfSampleTest> getTypeOfSampleTestsForSampleType(String sampleTypeId) throws LIMSRuntimeException;
 
-  TypeOfSampleTest getTypeOfSampleTestForTest(String testId) throws LIMSRuntimeException;
+    TypeOfSampleTest getTypeOfSampleTestForTest(String testId) throws LIMSRuntimeException;
 
-  List<TypeOfSampleTest> getTypeOfSampleTestsForTest(String testId) throws LIMSRuntimeException;
+    List<TypeOfSampleTest> getTypeOfSampleTestsForTest(String testId) throws LIMSRuntimeException;
 }

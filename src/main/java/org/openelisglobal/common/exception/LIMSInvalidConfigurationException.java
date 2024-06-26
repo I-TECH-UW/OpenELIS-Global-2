@@ -17,9 +17,9 @@ package org.openelisglobal.common.exception;
 
 public class LIMSInvalidConfigurationException extends LIMSException {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public LIMSInvalidConfigurationException(String message) {
-    super(message);
-  }
+    public LIMSInvalidConfigurationException(String message) {
+        super(message);
+    }
 }

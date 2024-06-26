@@ -32,6 +32,7 @@
                 value="classpath:hibernate/hibernate.cfg.xml" />
             <property name="hibernate.search.backend.directory.type" value="local-filesystem" />
             <property name="hibernate.search.backend.directory.root" value="/var/lib/lucene_index" />
+            <property name="hibernate.search.backend.analysis.configurer" value="class:org.openelisglobal.hibernate.search.analysis.CustomLuceneAnalysisConfigurer"/>
         </properties>
 
     </persistence-unit>

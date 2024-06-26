@@ -39,320 +39,315 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class ProgramAccessionValidator implements IAccessionNumberGenerator {
 
-  protected SampleService sampleService = SpringContext.getBean(SampleService.class);
-  protected ProjectService projectService = SpringContext.getBean(ProjectService.class);
-  protected static ObservationHistoryService observationHistoryService =
-      SpringContext.getBean(ObservationHistoryService.class);
+    protected SampleService sampleService = SpringContext.getBean(SampleService.class);
+    protected ProjectService projectService = SpringContext.getBean(ProjectService.class);
+    protected static ObservationHistoryService observationHistoryService = SpringContext
+            .getBean(ObservationHistoryService.class);
 
-  private static final String INCREMENT_STARTING_VALUE = "00001";
-  private static final int UPPER_INC_RANGE = 99999;
-  private static final int INCREMENT_START = 4;
-  private static final int PROGRAM_START = 0;
-  private static final int PROGRAM_END = 4;
-  private static final int LENGTH = 9;
-  private static final boolean NEED_PROGRAM_CODE = true;
+    private static final String INCREMENT_STARTING_VALUE = "00001";
+    private static final int UPPER_INC_RANGE = 99999;
+    private static final int INCREMENT_START = 4;
+    private static final int PROGRAM_START = 0;
+    private static final int PROGRAM_END = 4;
+    private static final int LENGTH = 9;
+    private static final boolean NEED_PROGRAM_CODE = true;
 
-  @Override
-  public boolean needProgramCode() {
-    return NEED_PROGRAM_CODE;
-  }
-
-  public String createFirstAccessionNumber(String programCode) {
-    return programCode + INCREMENT_STARTING_VALUE;
-  }
-
-  public String incrementAccessionNumber(String currentHighAccessionNumber) {
-
-    int increment = Integer.parseInt(currentHighAccessionNumber.substring(INCREMENT_START));
-    String incrementAsString = INCREMENT_STARTING_VALUE;
-
-    if (increment < UPPER_INC_RANGE) {
-      increment++;
-      incrementAsString = String.format("%05d", increment);
-    } else {
-      throw new IllegalArgumentException("AccessionNumber has no next value");
+    @Override
+    public boolean needProgramCode() {
+        return NEED_PROGRAM_CODE;
     }
 
-    StringBuilder builder =
-        new StringBuilder(
-            currentHighAccessionNumber.substring(PROGRAM_START, PROGRAM_END).toUpperCase());
-    builder.append(incrementAsString);
-
-    return builder.toString();
-  }
-
-  @Override
-  public ValidationResults validFormat(String accessionNumber, boolean checkDate) {
-    // The rule is 4 digit program code and 5 incremented numbers
-    if (accessionNumber.length() != LENGTH) {
-
-      return ValidationResults.LENGTH_FAIL;
+    public String createFirstAccessionNumber(String programCode) {
+        return programCode + INCREMENT_STARTING_VALUE;
     }
 
-    String programCode = accessionNumber.substring(PROGRAM_START, PROGRAM_END).toUpperCase();
+    public String incrementAccessionNumber(String currentHighAccessionNumber) {
 
-    // check program code validity
-    List<Project> programCodes = projectService.getAllProjects();
+        int increment = Integer.parseInt(currentHighAccessionNumber.substring(INCREMENT_START));
+        String incrementAsString = INCREMENT_STARTING_VALUE;
 
-    boolean found = false;
-    for (Project code : programCodes) {
-      if (programCode.equals(code.getProgramCode())) {
-        found = true;
-        break;
-      }
+        if (increment < UPPER_INC_RANGE) {
+            increment++;
+            incrementAsString = String.format("%05d", increment);
+        } else {
+            throw new IllegalArgumentException("AccessionNumber has no next value");
+        }
+
+        StringBuilder builder = new StringBuilder(
+                currentHighAccessionNumber.substring(PROGRAM_START, PROGRAM_END).toUpperCase());
+        builder.append(incrementAsString);
+
+        return builder.toString();
     }
 
-    if (!found) {
-      return ValidationResults.PROGRAM_FAIL;
+    @Override
+    public ValidationResults validFormat(String accessionNumber, boolean checkDate) {
+        // The rule is 4 digit program code and 5 incremented numbers
+        if (accessionNumber.length() != LENGTH) {
+
+            return ValidationResults.LENGTH_FAIL;
+        }
+
+        String programCode = accessionNumber.substring(PROGRAM_START, PROGRAM_END).toUpperCase();
+
+        // check program code validity
+        List<Project> programCodes = projectService.getAllProjects();
+
+        boolean found = false;
+        for (Project code : programCodes) {
+            if (programCode.equals(code.getProgramCode())) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            return ValidationResults.PROGRAM_FAIL;
+        }
+
+        try {
+            Integer.parseInt(accessionNumber.substring(INCREMENT_START));
+        } catch (NumberFormatException e) {
+            return ValidationResults.FORMAT_FAIL;
+        }
+
+        return ValidationResults.SUCCESS;
     }
 
-    try {
-      Integer.parseInt(accessionNumber.substring(INCREMENT_START));
-    } catch (NumberFormatException e) {
-      return ValidationResults.FORMAT_FAIL;
+    @Override
+    public String getInvalidMessage(ValidationResults results) {
+
+        switch (results) {
+        case LENGTH_FAIL:
+            return MessageUtil.getMessage("sample.entry.invalid.accession.number.length");
+        case USED_FAIL:
+            return MessageUtil.getMessage("sample.entry.invalid.accession.number.used");
+        case PROGRAM_FAIL:
+            return MessageUtil.getMessage("sample.entry.invalid.accession.number.program");
+        case FORMAT_FAIL:
+            return MessageUtil.getMessage("sample.entry.invalid.accession.number.format");
+        case REQUIRED_FAIL:
+            return MessageUtil.getMessage("sample.entry.invalid.accession.number.required");
+        case PATIENT_STATUS_FAIL:
+            return MessageUtil.getMessage("sample.entry.invalid.accession.number.patientRecordStatus");
+        case SAMPLE_STATUS_FAIL:
+            return MessageUtil.getMessage("sample.entry.invalid.accession.number.sampleRecordStatus");
+        default:
+            return MessageUtil.getMessage("sample.entry.invalid.accession.number");
+        }
     }
 
-    return ValidationResults.SUCCESS;
-  }
-
-  @Override
-  public String getInvalidMessage(ValidationResults results) {
-
-    switch (results) {
-      case LENGTH_FAIL:
-        return MessageUtil.getMessage("sample.entry.invalid.accession.number.length");
-      case USED_FAIL:
-        return MessageUtil.getMessage("sample.entry.invalid.accession.number.used");
-      case PROGRAM_FAIL:
-        return MessageUtil.getMessage("sample.entry.invalid.accession.number.program");
-      case FORMAT_FAIL:
+    @Override
+    public String getInvalidFormatMessage(ValidationResults results) {
         return MessageUtil.getMessage("sample.entry.invalid.accession.number.format");
-      case REQUIRED_FAIL:
-        return MessageUtil.getMessage("sample.entry.invalid.accession.number.required");
-      case PATIENT_STATUS_FAIL:
-        return MessageUtil.getMessage("sample.entry.invalid.accession.number.patientRecordStatus");
-      case SAMPLE_STATUS_FAIL:
-        return MessageUtil.getMessage("sample.entry.invalid.accession.number.sampleRecordStatus");
-      default:
-        return MessageUtil.getMessage("sample.entry.invalid.accession.number");
-    }
-  }
-
-  @Override
-  public String getInvalidFormatMessage(ValidationResults results) {
-    return MessageUtil.getMessage("sample.entry.invalid.accession.number.format");
-  }
-
-  @Override
-  public String getNextAvailableAccessionNumber(String prefix, boolean reserve) {
-    String nextAccessionNumber = null;
-
-    String curLargestAccessionNumber = sampleService.getLargestAccessionNumberWithPrefix(prefix);
-
-    if (curLargestAccessionNumber == null) {
-      nextAccessionNumber = createFirstAccessionNumber(prefix);
-    } else {
-      nextAccessionNumber = incrementAccessionNumber(curLargestAccessionNumber);
     }
 
-    return nextAccessionNumber;
-  }
+    @Override
+    public String getNextAvailableAccessionNumber(String prefix, boolean reserve) {
+        String nextAccessionNumber = null;
 
-  @Override
-  public boolean accessionNumberIsUsed(String accessionNumber, String recordType) {
-    boolean accessionNumberUsed = sampleService.getSampleByAccessionNumber(accessionNumber) != null;
+        String curLargestAccessionNumber = sampleService.getLargestAccessionNumberWithPrefix(prefix);
 
-    if (recordType == null) {
-      return accessionNumberUsed;
-    }
-    StatusSet statusSet =
-        SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNumber);
-    String recordStatus = new String();
-    boolean isSampleEntry = recordType.contains("Sample");
-    boolean isPatientEntry = recordType.contains("Patient");
-    boolean isInitial = recordType.contains("initial");
-    boolean isDouble = recordType.contains("double");
-
-    if (accessionNumberUsed) {
-
-      // sample entry, get SampleRecordStatus
-      if (isSampleEntry) {
-        recordStatus = statusSet.getSampleRecordStatus().toString();
-      }
-
-      // patient entry, get PatientRecordStatus
-      else if (isPatientEntry) {
-        recordStatus = statusSet.getPatientRecordStatus().toString();
-      }
-
-      // initial entry, the status must be NotRegistered
-      String notRegistered = RecordStatus.NotRegistered.toString();
-      String initialReg = RecordStatus.InitialRegistration.toString();
-      if (isInitial) {
-        if (!notRegistered.equals(recordStatus)) {
-          return true;
-        }
-      }
-
-      // double entry, the status must be InitialRegistration
-      else if (isDouble) {
-        if (!initialReg.equals(recordStatus)) {
-          return false;
+        if (curLargestAccessionNumber == null) {
+            nextAccessionNumber = createFirstAccessionNumber(prefix);
         } else {
-          return true;
+            nextAccessionNumber = incrementAccessionNumber(curLargestAccessionNumber);
         }
-      }
+
+        return nextAccessionNumber;
     }
 
-    return false;
-  }
+    @Override
+    public boolean accessionNumberIsUsed(String accessionNumber, String recordType) {
+        boolean accessionNumberUsed = sampleService.getSampleByAccessionNumber(accessionNumber) != null;
 
-  @Override
-  public int getMaxAccessionLength() {
-    return LENGTH;
-  }
-
-  @Override
-  public int getMinAccessionLength() {
-    return getMaxAccessionLength();
-  }
-
-  /**
-   * There are many possible samples with various status, only some of which are valid during
-   * certain entry steps. This method provides validation results identifying whether a given sample
-   * is appropriate given all the information.
-   *
-   * @param accessionNumber the number for the sample
-   * @param recordType initialPatient, initialSample, doublePatient (double entry for patient),
-   *     doubleSample
-   * @param isRequired the step being done expects the sample to exist. This is used generate
-   *     appropriate results, either REQUIRED_FAIL vs SAMPLE_NOT_FOUND
-   * @param studyFormName - an additional
-   * @return
-   */
-  @Override
-  public ValidationResults checkAccessionNumberValidity(
-      String accessionNumber, String recordType, String isRequired, String studyFormName) {
-
-    ValidationResults results = validFormat(accessionNumber, true);
-    boolean accessionUsed = (sampleService.getSampleByAccessionNumber(accessionNumber) != null);
-    if (results == ValidationResults.SUCCESS) {
-
-      if (IActionConstants.TRUE.equals(isRequired) && !accessionUsed) {
-        results = ValidationResults.REQUIRED_FAIL;
-        return results;
-      } else {
         if (recordType == null) {
-          results = ValidationResults.USED_FAIL;
-          return results;
+            return accessionNumberUsed;
         }
-        // record Type specified, so work out the detailed response to report
-        if (accessionUsed) {
-          if (recordType.contains("initial")) {
-            if (recordType.contains("Patient")) {
-              results =
-                  AccessionNumberUtil.isPatientStatusValid(
-                      accessionNumber, RecordStatus.NotRegistered);
-              if (results != PATIENT_STATUS_FAIL) {
-                results = matchExistingStudyFormName(accessionNumber, studyFormName, false);
-              }
-            } else if (recordType.contains("Sample")) {
-              results =
-                  AccessionNumberUtil.isSampleStatusValid(
-                      accessionNumber, RecordStatus.NotRegistered);
-              if (results != SAMPLE_STATUS_FAIL) {
-                results = matchExistingStudyFormName(accessionNumber, studyFormName, false);
-              }
+        StatusSet statusSet = SpringContext.getBean(IStatusService.class)
+                .getStatusSetForAccessionNumber(accessionNumber);
+        String recordStatus = new String();
+        boolean isSampleEntry = recordType.contains("Sample");
+        boolean isPatientEntry = recordType.contains("Patient");
+        boolean isInitial = recordType.contains("initial");
+        boolean isDouble = recordType.contains("double");
+
+        if (accessionNumberUsed) {
+
+            // sample entry, get SampleRecordStatus
+            if (isSampleEntry) {
+                recordStatus = statusSet.getSampleRecordStatus().toString();
             }
-          } else if (recordType.contains("double")) {
-            if (recordType.contains("Patient")) {
-              results =
-                  AccessionNumberUtil.isPatientStatusValid(
-                      accessionNumber, RecordStatus.InitialRegistration);
-              if (results != PATIENT_STATUS_FAIL) {
-                results = matchExistingStudyFormName(accessionNumber, studyFormName, true);
-              }
-            } else if (recordType.contains("Sample")) {
-              results =
-                  AccessionNumberUtil.isSampleStatusValid(
-                      accessionNumber, RecordStatus.InitialRegistration);
-              if (results != SAMPLE_STATUS_FAIL) {
-                results = matchExistingStudyFormName(accessionNumber, studyFormName, true);
-              }
+
+            // patient entry, get PatientRecordStatus
+            else if (isPatientEntry) {
+                recordStatus = statusSet.getPatientRecordStatus().toString();
             }
-          } else if (recordType.contains("orderModify")) {
-            results = ValidationResults.USED_FAIL;
-          }
-        } else {
-          if (recordType.contains("initial")) {
-            results = ValidationResults.SAMPLE_NOT_FOUND; // initial entry not used is good
-          } else if (recordType.contains("double")) {
-            results = ValidationResults.REQUIRED_FAIL; // double entry not existing is a
-            // problem
-          } else if (recordType.contains("orderModify")) {
-            results = ValidationResults.SAMPLE_NOT_FOUND; // modify order page
-          }
+
+            // initial entry, the status must be NotRegistered
+            String notRegistered = RecordStatus.NotRegistered.toString();
+            String initialReg = RecordStatus.InitialRegistration.toString();
+            if (isInitial) {
+                if (!notRegistered.equals(recordStatus)) {
+                    return true;
+                }
+            }
+
+            // double entry, the status must be InitialRegistration
+            else if (isDouble) {
+                if (!initialReg.equals(recordStatus)) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
         }
-      }
+
+        return false;
     }
-    return results;
-  }
 
-  /**
-   * Can the existing accession number be used in the given form? This method is useful when we have
-   * an existing accessionNumber and want to ask the question.
-   *
-   * @param accessionNumber
-   * @param existingRequired true => it is required that there is an existing studyFormName?
-   * @return
-   */
-  private ValidationResults matchExistingStudyFormName(
-      String accessionNumber, String studyFormName, boolean existingRequired) {
-    if (GenericValidator.isBlankOrNull(studyFormName)) {
-      return SAMPLE_FOUND;
+    @Override
+    public int getMaxAccessionLength() {
+        return LENGTH;
     }
-    String existingName = findStudyFormName(accessionNumber);
-    if (existingName.equals(studyFormName)
-        || (!existingRequired && GenericValidator.isBlankOrNull(existingName))) {
-      return SAMPLE_FOUND;
+
+    @Override
+    public int getMinAccessionLength() {
+        return getMaxAccessionLength();
     }
-    return SAMPLE_STATUS_FAIL; // the sample was entered on a different form!
-  }
 
-  public static String findStudyFormName(String accessionNumber) {
-    StatusSet statusSet =
-        SpringContext.getBean(IStatusService.class).getStatusSetForAccessionNumber(accessionNumber);
-    Patient p = new Patient();
-    p.setId(statusSet.getPatientId());
-    Sample s = new Sample();
-    s.setId(statusSet.getSampleId());
-    List<ObservationHistory> all =
-        observationHistoryService.getAll(
-            p, s, ObservationHistoryTypeMap.getInstance().getIDForType("projectFormName"));
-    String existingName = "";
-    if (all.size() > 0) {
-      existingName = all.get(0).getValue();
+    /**
+     * There are many possible samples with various status, only some of which are
+     * valid during certain entry steps. This method provides validation results
+     * identifying whether a given sample is appropriate given all the information.
+     *
+     * @param accessionNumber the number for the sample
+     * @param recordType      initialPatient, initialSample, doublePatient (double
+     *                        entry for patient), doubleSample
+     * @param isRequired      the step being done expects the sample to exist. This
+     *                        is used generate appropriate results, either
+     *                        REQUIRED_FAIL vs SAMPLE_NOT_FOUND
+     * @param studyFormName   - an additional
+     * @return
+     */
+    @Override
+    public ValidationResults checkAccessionNumberValidity(String accessionNumber, String recordType, String isRequired,
+            String studyFormName) {
+
+        ValidationResults results = validFormat(accessionNumber, true);
+        boolean accessionUsed = (sampleService.getSampleByAccessionNumber(accessionNumber) != null);
+        if (results == ValidationResults.SUCCESS) {
+
+            if (IActionConstants.TRUE.equals(isRequired) && !accessionUsed) {
+                results = ValidationResults.REQUIRED_FAIL;
+                return results;
+            } else {
+                if (recordType == null) {
+                    results = ValidationResults.USED_FAIL;
+                    return results;
+                }
+                // record Type specified, so work out the detailed response to report
+                if (accessionUsed) {
+                    if (recordType.contains("initial")) {
+                        if (recordType.contains("Patient")) {
+                            results = AccessionNumberUtil.isPatientStatusValid(accessionNumber,
+                                    RecordStatus.NotRegistered);
+                            if (results != PATIENT_STATUS_FAIL) {
+                                results = matchExistingStudyFormName(accessionNumber, studyFormName, false);
+                            }
+                        } else if (recordType.contains("Sample")) {
+                            results = AccessionNumberUtil.isSampleStatusValid(accessionNumber,
+                                    RecordStatus.NotRegistered);
+                            if (results != SAMPLE_STATUS_FAIL) {
+                                results = matchExistingStudyFormName(accessionNumber, studyFormName, false);
+                            }
+                        }
+                    } else if (recordType.contains("double")) {
+                        if (recordType.contains("Patient")) {
+                            results = AccessionNumberUtil.isPatientStatusValid(accessionNumber,
+                                    RecordStatus.InitialRegistration);
+                            if (results != PATIENT_STATUS_FAIL) {
+                                results = matchExistingStudyFormName(accessionNumber, studyFormName, true);
+                            }
+                        } else if (recordType.contains("Sample")) {
+                            results = AccessionNumberUtil.isSampleStatusValid(accessionNumber,
+                                    RecordStatus.InitialRegistration);
+                            if (results != SAMPLE_STATUS_FAIL) {
+                                results = matchExistingStudyFormName(accessionNumber, studyFormName, true);
+                            }
+                        }
+                    } else if (recordType.contains("orderModify")) {
+                        results = ValidationResults.USED_FAIL;
+                    }
+                } else {
+                    if (recordType.contains("initial")) {
+                        results = ValidationResults.SAMPLE_NOT_FOUND; // initial entry not used is good
+                    } else if (recordType.contains("double")) {
+                        results = ValidationResults.REQUIRED_FAIL; // double entry not existing is a
+                        // problem
+                    } else if (recordType.contains("orderModify")) {
+                        results = ValidationResults.SAMPLE_NOT_FOUND; // modify order page
+                    }
+                }
+            }
+        }
+        return results;
     }
-    return existingName;
-  }
 
-  @Override
-  public int getInvarientLength() {
-    return PROGRAM_END;
-  }
+    /**
+     * Can the existing accession number be used in the given form? This method is
+     * useful when we have an existing accessionNumber and want to ask the question.
+     *
+     * @param accessionNumber
+     * @param existingRequired true => it is required that there is an existing
+     *                         studyFormName?
+     * @return
+     */
+    private ValidationResults matchExistingStudyFormName(String accessionNumber, String studyFormName,
+            boolean existingRequired) {
+        if (GenericValidator.isBlankOrNull(studyFormName)) {
+            return SAMPLE_FOUND;
+        }
+        String existingName = findStudyFormName(accessionNumber);
+        if (existingName.equals(studyFormName) || (!existingRequired && GenericValidator.isBlankOrNull(existingName))) {
+            return SAMPLE_FOUND;
+        }
+        return SAMPLE_STATUS_FAIL; // the sample was entered on a different form!
+    }
 
-  @Override
-  public int getChangeableLength() {
-    return getMaxAccessionLength() - getInvarientLength();
-  }
+    public static String findStudyFormName(String accessionNumber) {
+        StatusSet statusSet = SpringContext.getBean(IStatusService.class)
+                .getStatusSetForAccessionNumber(accessionNumber);
+        Patient p = new Patient();
+        p.setId(statusSet.getPatientId());
+        Sample s = new Sample();
+        s.setId(statusSet.getSampleId());
+        List<ObservationHistory> all = observationHistoryService.getAll(p, s,
+                ObservationHistoryTypeMap.getInstance().getIDForType("projectFormName"));
+        String existingName = "";
+        if (all.size() > 0) {
+            existingName = all.get(0).getValue();
+        }
+        return existingName;
+    }
 
-  @Override
-  public String getPrefix() {
-    return null; // no single prefix
-  }
+    @Override
+    public int getInvarientLength() {
+        return PROGRAM_END;
+    }
 
-  @Override
-  public String getNextAccessionNumber(String programCode, boolean reserve) {
-    return this.getNextAvailableAccessionNumber(programCode, reserve);
-  }
+    @Override
+    public int getChangeableLength() {
+        return getMaxAccessionLength() - getInvarientLength();
+    }
+
+    @Override
+    public String getPrefix() {
+        return null; // no single prefix
+    }
+
+    @Override
+    public String getNextAccessionNumber(String programCode, boolean reserve) {
+        return this.getNextAvailableAccessionNumber(programCode, reserve);
+    }
 }

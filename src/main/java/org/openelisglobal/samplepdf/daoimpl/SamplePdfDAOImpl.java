@@ -31,51 +31,49 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class SamplePdfDAOImpl extends BaseDAOImpl<SamplePdf, String> implements SamplePdfDAO {
 
-  public SamplePdfDAOImpl() {
-    super(SamplePdf.class);
-  }
-
-  @Override
-  public boolean isAccessionNumberFound(int accessionNumber) throws LIMSRuntimeException {
-    Boolean isFound = false;
-    try {
-      String sql = "from SamplePdf s where s.accessionNumber = :param and s.allowView='Y'";
-      Query<SamplePdf> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SamplePdf.class);
-      query.setParameter("param", accessionNumber);
-      List<SamplePdf> list = query.list();
-      if ((list != null) && !list.isEmpty()) {
-        isFound = true;
-      }
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SamplePdf isAccessionNumberFound()", e);
+    public SamplePdfDAOImpl() {
+        super(SamplePdf.class);
     }
 
-    return isFound;
-  }
+    @Override
+    public boolean isAccessionNumberFound(int accessionNumber) throws LIMSRuntimeException {
+        Boolean isFound = false;
+        try {
+            String sql = "from SamplePdf s where s.accessionNumber = :param and s.allowView='Y'";
+            Query<SamplePdf> query = entityManager.unwrap(Session.class).createQuery(sql, SamplePdf.class);
+            query.setParameter("param", accessionNumber);
+            List<SamplePdf> list = query.list();
+            if ((list != null) && !list.isEmpty()) {
+                isFound = true;
+            }
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SamplePdf isAccessionNumberFound()", e);
+        }
 
-  // bugzilla 2529,2530,2531
-  @Override
-  @Transactional(readOnly = true)
-  public SamplePdf getSamplePdfByAccessionNumber(SamplePdf samplePdf) throws LIMSRuntimeException {
-    try {
-      String sql = "from SamplePdf s where s.accessionNumber = :param";
-      Query<SamplePdf> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SamplePdf.class);
-      query.setParameter("param", samplePdf.getAccessionNumber());
-
-      List<SamplePdf> list = query.list();
-      if ((list != null) && !list.isEmpty()) {
-        samplePdf = list.get(0);
-      }
-
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SamplePdf getSamplePdfByAccessionNumber()", e);
+        return isFound;
     }
 
-    return samplePdf;
-  }
+    // bugzilla 2529,2530,2531
+    @Override
+    @Transactional(readOnly = true)
+    public SamplePdf getSamplePdfByAccessionNumber(SamplePdf samplePdf) throws LIMSRuntimeException {
+        try {
+            String sql = "from SamplePdf s where s.accessionNumber = :param";
+            Query<SamplePdf> query = entityManager.unwrap(Session.class).createQuery(sql, SamplePdf.class);
+            query.setParameter("param", samplePdf.getAccessionNumber());
+
+            List<SamplePdf> list = query.list();
+            if ((list != null) && !list.isEmpty()) {
+                samplePdf = list.get(0);
+            }
+
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SamplePdf getSamplePdfByAccessionNumber()", e);
+        }
+
+        return samplePdf;
+    }
 }

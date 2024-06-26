@@ -17,27 +17,27 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class CityView extends BaseObject<String> {
 
-  private String city;
+    private String city;
 
-  public CityView() {
-    super();
-  }
+    public CityView() {
+        super();
+    }
 
-  public void setCity(String city) {
-    this.city = city;
-  }
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-  public String getCity() {
-    return city;
-  }
+    public String getCity() {
+        return city;
+    }
 
-  @Override
-  public String getId() {
-    return getCity();
-  }
+    @Override
+    public String getId() {
+        return getCity();
+    }
 
-  @Override
-  public void setId(String id) {
-    setCity(id);
-  }
+    @Override
+    public void setId(String id) {
+        setCity(id);
+    }
 }

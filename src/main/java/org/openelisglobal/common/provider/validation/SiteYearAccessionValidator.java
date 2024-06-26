@@ -17,75 +17,70 @@ import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFac
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.DateUtil;
 
-public class SiteYearAccessionValidator extends BaseSiteYearAccessionValidator
-    implements IAccessionNumberGenerator {
+public class SiteYearAccessionValidator extends BaseSiteYearAccessionValidator implements IAccessionNumberGenerator {
 
-  @Override
-  public int getMaxAccessionLength() {
-    return getSiteEndIndex() + 15;
-  }
+    @Override
+    public int getMaxAccessionLength() {
+        return getSiteEndIndex() + 15;
+    }
 
-  @Override
-  public int getMinAccessionLength() {
-    //      return getSiteEndIndex() + 7;
-    return getSiteEndIndex() + 15;
-  }
+    @Override
+    public int getMinAccessionLength() {
+        // return getSiteEndIndex() + 7;
+        return getSiteEndIndex() + 15;
+    }
 
-  @Override
-  protected int getIncrementStartIndex() {
-    return getSiteEndIndex() + 2;
-  }
+    @Override
+    protected int getIncrementStartIndex() {
+        return getSiteEndIndex() + 2;
+    }
 
-  @Override
-  protected int getSiteEndIndex() {
-    return getPrefix().length();
-  }
+    @Override
+    protected int getSiteEndIndex() {
+        return getPrefix().length();
+    }
 
-  @Override
-  protected int getYearEndIndex() {
-    return getSiteEndIndex() + 2;
-  }
+    @Override
+    protected int getYearEndIndex() {
+        return getSiteEndIndex() + 2;
+    }
 
-  @Override
-  protected int getYearStartIndex() {
-    return getSiteEndIndex();
-  }
+    @Override
+    protected int getYearStartIndex() {
+        return getSiteEndIndex();
+    }
 
-  @Override
-  public int getInvarientLength() {
-    return getSiteEndIndex();
-  }
+    @Override
+    public int getInvarientLength() {
+        return getSiteEndIndex();
+    }
 
-  @Override
-  public int getChangeableLength() {
-    return getMaxAccessionLength() - getInvarientLength();
-  }
+    @Override
+    public int getChangeableLength() {
+        return getMaxAccessionLength() - getInvarientLength();
+    }
 
-  @Override
-  public String getPrefix() {
-    return ConfigurationProperties.getInstance()
-        .getPropertyValue(ConfigurationProperties.Property.ACCESSION_NUMBER_PREFIX);
-  }
+    @Override
+    public String getPrefix() {
+        return ConfigurationProperties.getInstance()
+                .getPropertyValue(ConfigurationProperties.Property.ACCESSION_NUMBER_PREFIX);
+    }
 
-  @Override
-  public String incrementAccessionNumber() throws IllegalArgumentException {
-    String year = DateUtil.getTwoDigitYear();
-    long nextNum =
-        accessionService.getNextNumberIncrement(
-            this.getPrefix() + year, AccessionFormat.SITEYEARNUM);
-    String incrementAsString;
-    incrementAsString = String.format("%013d", nextNum);
-    return getPrefix() + year + incrementAsString;
-  }
+    @Override
+    public String incrementAccessionNumber() throws IllegalArgumentException {
+        String year = DateUtil.getTwoDigitYear();
+        long nextNum = accessionService.getNextNumberIncrement(this.getPrefix() + year, AccessionFormat.SITEYEARNUM);
+        String incrementAsString;
+        incrementAsString = String.format("%013d", nextNum);
+        return getPrefix() + year + incrementAsString;
+    }
 
-  @Override
-  public String incrementAccessionNumberNoReserve() throws IllegalArgumentException {
-    String year = DateUtil.getTwoDigitYear();
-    long nextNum =
-        accessionService.getNextNumberNoIncrement(
-            this.getPrefix() + year, AccessionFormat.SITEYEARNUM);
-    String incrementAsString;
-    incrementAsString = String.format("%013d", nextNum);
-    return getPrefix() + year + incrementAsString;
-  }
+    @Override
+    public String incrementAccessionNumberNoReserve() throws IllegalArgumentException {
+        String year = DateUtil.getTwoDigitYear();
+        long nextNum = accessionService.getNextNumberNoIncrement(this.getPrefix() + year, AccessionFormat.SITEYEARNUM);
+        String incrementAsString;
+        incrementAsString = String.format("%013d", nextNum);
+        return getPrefix() + year + incrementAsString;
+    }
 }

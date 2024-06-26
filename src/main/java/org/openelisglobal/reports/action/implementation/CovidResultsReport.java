@@ -17,116 +17,112 @@ import org.openelisglobal.reports.form.ReportForm;
 
 public class CovidResultsReport extends Report implements IReportParameterSetter, IReportCreator {
 
-  private CovidResultsBuilder covidDataBuilder;
-  protected String lowDateStr;
-  protected String highDateStr;
-  protected DateRange dateRange;
-  protected CovidReportType reportType;
+    private CovidResultsBuilder covidDataBuilder;
+    protected String lowDateStr;
+    protected String highDateStr;
+    protected DateRange dateRange;
+    protected CovidReportType reportType;
 
-  @Override
-  protected String reportFileName() {
-    return "CovidResults";
-  }
-
-  @Override
-  public void setRequestParameters(ReportForm form) {
-    try {
-      form.setReportName(getReportNameForParameterPage());
-      form.setUseLowerDateRange(Boolean.TRUE);
-      form.setUseUpperDateRange(Boolean.TRUE);
-    } catch (RuntimeException e) {
-      LogEvent.logError(
-          this.getClass().getSimpleName(),
-          "setRequestParameters",
-          "Runtime exception occured while setting params");
+    @Override
+    protected String reportFileName() {
+        return "CovidResults";
     }
-  }
 
-  protected String getReportNameForParameterPage() {
-    return MessageUtil.getMessage("reports.label.project.export")
-        + " "
-        + MessageUtil.getContextualMessage("sample.collectionDate");
-  }
-
-  @Override
-  public void initializeReport(ReportForm form) {
-    super.initializeReport();
-    lowDateStr = form.getLowerDateRange();
-    highDateStr = form.getUpperDateRange();
-    dateRange = new DateRange(lowDateStr, highDateStr);
-    reportType = CovidReportType.valueOf(form.getType());
-
-    createReportParameters();
-    errorFound = !validateSubmitParameters();
-    if (errorFound) {
-      return;
+    @Override
+    public void setRequestParameters(ReportForm form) {
+        try {
+            form.setReportName(getReportNameForParameterPage());
+            form.setUseLowerDateRange(Boolean.TRUE);
+            form.setUseUpperDateRange(Boolean.TRUE);
+        } catch (RuntimeException e) {
+            LogEvent.logError(this.getClass().getSimpleName(), "setRequestParameters",
+                    "Runtime exception occured while setting params");
+        }
     }
-    createReportItems();
-  }
 
-  /** check everything */
-  private boolean validateSubmitParameters() {
-    return dateRange.validateHighLowDate("report.error.message.date.received.missing");
-  }
-
-  /** creating the list for generation to the report */
-  private void createReportItems() {
-    covidDataBuilder = getDataBuilder();
-    covidDataBuilder.buildDataSource();
-  }
-
-  private CovidResultsBuilder getDataBuilder() {
-    switch (reportType) {
-      case JSON:
-        return new CovidResultsJSONBuilder(dateRange);
-      case CSV:
-        return new CovidResultsCSVBuilder(dateRange);
+    protected String getReportNameForParameterPage() {
+        return MessageUtil.getMessage("reports.label.project.export") + " "
+                + MessageUtil.getContextualMessage("sample.collectionDate");
     }
-    throw new IllegalStateException("type must be 'CSV' or 'JSON'");
-  }
 
-  @Override
-  public byte[] runReport()
-      throws UnsupportedEncodingException, IOException, IllegalStateException, SQLException,
-          JRException, ParseException {
-    return covidDataBuilder.getDataSourceAsByteArray();
-  }
+    @Override
+    public void initializeReport(ReportForm form) {
+        super.initializeReport();
+        lowDateStr = form.getLowerDateRange();
+        highDateStr = form.getUpperDateRange();
+        dateRange = new DateRange(lowDateStr, highDateStr);
+        reportType = CovidReportType.valueOf(form.getType());
 
-  @Override
-  public String getResponseHeaderName() {
-    return "Content-Disposition";
-  }
-
-  @Override
-  public String getContentType() {
-    if (errorFound) {
-      return super.getContentType();
-    } else {
-      return "text/plain; charset=UTF-8";
+        createReportParameters();
+        errorFound = !validateSubmitParameters();
+        if (errorFound) {
+            return;
+        }
+        createReportItems();
     }
-  }
 
-  @Override
-  public String getResponseHeaderContent() {
-    switch (reportType) {
-      case JSON:
-        return "attachment;filename=" + getReportFileName() + ".json";
-      case CSV:
-        return "attachment;filename=" + getReportFileName() + ".csv";
-      default:
+    /** check everything */
+    private boolean validateSubmitParameters() {
+        return dateRange.validateHighLowDate("report.error.message.date.received.missing");
+    }
+
+    /** creating the list for generation to the report */
+    private void createReportItems() {
+        covidDataBuilder = getDataBuilder();
+        covidDataBuilder.buildDataSource();
+    }
+
+    private CovidResultsBuilder getDataBuilder() {
+        switch (reportType) {
+        case JSON:
+            return new CovidResultsJSONBuilder(dateRange);
+        case CSV:
+            return new CovidResultsCSVBuilder(dateRange);
+        }
         throw new IllegalStateException("type must be 'CSV' or 'JSON'");
     }
-  }
 
-  @Override
-  public JRDataSource getReportDataSource() throws IllegalStateException {
-    if (!initialized) {
-      throw new IllegalStateException("initializeReport not called first");
+    @Override
+    public byte[] runReport() throws UnsupportedEncodingException, IOException, IllegalStateException, SQLException,
+            JRException, ParseException {
+        return covidDataBuilder.getDataSourceAsByteArray();
     }
-    if (errorFound) {
-      return new JRBeanCollectionDataSource(errorMsgs);
-    } else {
-      throw new UnsupportedOperationException();
+
+    @Override
+    public String getResponseHeaderName() {
+        return "Content-Disposition";
     }
-  }
+
+    @Override
+    public String getContentType() {
+        if (errorFound) {
+            return super.getContentType();
+        } else {
+            return "text/plain; charset=UTF-8";
+        }
+    }
+
+    @Override
+    public String getResponseHeaderContent() {
+        switch (reportType) {
+        case JSON:
+            return "attachment;filename=" + getReportFileName() + ".json";
+        case CSV:
+            return "attachment;filename=" + getReportFileName() + ".csv";
+        default:
+            throw new IllegalStateException("type must be 'CSV' or 'JSON'");
+        }
+    }
+
+    @Override
+    public JRDataSource getReportDataSource() throws IllegalStateException {
+        if (!initialized) {
+            throw new IllegalStateException("initializeReport not called first");
+        }
+        if (errorFound) {
+            return new JRBeanCollectionDataSource(errorMsgs);
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
 }

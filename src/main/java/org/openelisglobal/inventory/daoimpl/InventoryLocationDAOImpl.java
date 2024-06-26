@@ -24,22 +24,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, String>
-    implements InventoryLocationDAO {
+public class InventoryLocationDAOImpl extends BaseDAOImpl<InventoryLocation, String> implements InventoryLocationDAO {
 
-  public InventoryLocationDAOImpl() {
-    super(InventoryLocation.class);
-  }
-
-  public InventoryLocation readInventoryLocation(String idString) throws LIMSRuntimeException {
-    InventoryLocation data = null;
-    try {
-      data = entityManager.unwrap(Session.class).get(InventoryLocation.class, idString);
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in InventoryLocation readInventoryLocation()", e);
+    public InventoryLocationDAOImpl() {
+        super(InventoryLocation.class);
     }
 
-    return data;
-  }
+    public InventoryLocation readInventoryLocation(String idString) throws LIMSRuntimeException {
+        InventoryLocation data = null;
+        try {
+            data = entityManager.unwrap(Session.class).get(InventoryLocation.class, idString);
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in InventoryLocation readInventoryLocation()", e);
+        }
+
+        return data;
+    }
 }

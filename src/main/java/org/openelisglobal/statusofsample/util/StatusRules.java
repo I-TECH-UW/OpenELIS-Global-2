@@ -24,29 +24,28 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class StatusRules {
 
-  public boolean hasFailedValidation(String analysisStatusId) {
-    return analysisStatusId.equals(
-        SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected));
-  }
+    public boolean hasFailedValidation(String analysisStatusId) {
+        return analysisStatusId
+                .equals(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected));
+    }
 
-  public void setAllowableStatusForLoadingResults(ResultsLoadUtility resultsLoadUtility) {
-    resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.BiologistRejected);
-    resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.NotStarted);
-    resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.NonConforming_depricated);
-    resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.TechnicalRejected);
-    resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.TechnicalAcceptance);
-    resultsLoadUtility.addIncludedSampleStatus(OrderStatus.Entered);
-    resultsLoadUtility.addIncludedSampleStatus(OrderStatus.Started);
-    resultsLoadUtility.addIncludedSampleStatus(OrderStatus.NonConforming_depricated);
-  }
+    public void setAllowableStatusForLoadingResults(ResultsLoadUtility resultsLoadUtility) {
+        resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.BiologistRejected);
+        resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.NotStarted);
+        resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.NonConforming_depricated);
+        resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.TechnicalRejected);
+        resultsLoadUtility.addIncludedAnalysisStatus(AnalysisStatus.TechnicalAcceptance);
+        resultsLoadUtility.addIncludedSampleStatus(OrderStatus.Entered);
+        resultsLoadUtility.addIncludedSampleStatus(OrderStatus.Started);
+        resultsLoadUtility.addIncludedSampleStatus(OrderStatus.NonConforming_depricated);
+    }
 
-  public String getStartingAnalysisStatus() {
-    return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted);
-  }
+    public String getStartingAnalysisStatus() {
+        return SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted);
+    }
 
-  public static boolean useRecordStatusForValidation() {
-    String statusRules =
-        ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
-    return statusRules.equals(IActionConstants.STATUS_RULES_RETROCI);
-  }
+    public static boolean useRecordStatusForValidation() {
+        String statusRules = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
+        return statusRules.equals(IActionConstants.STATUS_RULES_RETROCI);
+    }
 }

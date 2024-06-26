@@ -33,116 +33,110 @@ import org.openelisglobal.testresult.valueholder.TestResult;
 
 public class EvolisReader extends AnalyzerLineInserter {
 
-  protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
-  protected TestService testService = SpringContext.getBean(TestService.class);
-  protected TestResultService testResultService = SpringContext.getBean(TestResultService.class);
+    protected DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+    protected TestService testService = SpringContext.getBean(TestService.class);
+    protected TestResultService testResultService = SpringContext.getBean(TestResultService.class);
 
-  private String NEGATIVE_DICTIONARY_ID = null;
-  private String POSITIVE_DICTIONARY_ID = null;
-  private String INDETERMINATE_DICTIONARY_ID = null;
-  private String DELIMITER = "|";
-  private int Id = 0;
-  private int assay = 1;
-  private int well = 2;
-  private int flag = 3;
-  private int value = 4;
-  private int S_CO = 5;
-  private int result = 6;
+    private String NEGATIVE_DICTIONARY_ID = null;
+    private String POSITIVE_DICTIONARY_ID = null;
+    private String INDETERMINATE_DICTIONARY_ID = null;
+    private String DELIMITER = "|";
+    private int Id = 0;
+    private int assay = 1;
+    private int well = 2;
+    private int flag = 3;
+    private int value = 4;
+    private int S_CO = 5;
+    private int result = 6;
 
-  private AnalyzerReaderUtil readerUtil = new AnalyzerReaderUtil();
+    private AnalyzerReaderUtil readerUtil = new AnalyzerReaderUtil();
 
-  public EvolisReader() {
-    Test test =
-        testService.getTestByLocalizedName(
-            "Integral", Locale.ENGLISH); // integral and murex use the same
-    // dictionary values
+    public EvolisReader() {
+        Test test = testService.getTestByLocalizedName("Integral", Locale.ENGLISH); // integral and murex use the same
+        // dictionary values
 
-    List<TestResult> testResults = testResultService.getActiveTestResultsByTest(test.getId());
+        List<TestResult> testResults = testResultService.getActiveTestResultsByTest(test.getId());
 
-    for (TestResult testResult : testResults) {
-      String dictionaryValue =
-          dictionaryService.getDictionaryById(testResult.getValue()).getDictEntry();
+        for (TestResult testResult : testResults) {
+            String dictionaryValue = dictionaryService.getDictionaryById(testResult.getValue()).getDictEntry();
 
-      if ("Positive".equals(dictionaryValue)) {
-        POSITIVE_DICTIONARY_ID = testResult.getValue();
-      } else if ("Negative".equals(dictionaryValue)) {
-        NEGATIVE_DICTIONARY_ID = testResult.getValue();
-      } else if ("Indeterminate".equals(dictionaryValue)) {
-        INDETERMINATE_DICTIONARY_ID = testResult.getValue();
-      }
-    }
-  }
-
-  @Override
-  public boolean insert(List<String> lines, String currentUserId) {
-
-    boolean successful = true;
-
-    List<AnalyzerResults> results = new ArrayList<>();
-
-    for (int i = 1; i < lines.size(); i++) {
-      addAnalyzerResultFromLine(results, lines.get(i));
+            if ("Positive".equals(dictionaryValue)) {
+                POSITIVE_DICTIONARY_ID = testResult.getValue();
+            } else if ("Negative".equals(dictionaryValue)) {
+                NEGATIVE_DICTIONARY_ID = testResult.getValue();
+            } else if ("Indeterminate".equals(dictionaryValue)) {
+                INDETERMINATE_DICTIONARY_ID = testResult.getValue();
+            }
+        }
     }
 
-    if (results.size() > 0) {
+    @Override
+    public boolean insert(List<String> lines, String currentUserId) {
 
-      // ensure transaction block
-      try {
-        persistResults(results, currentUserId);
-      } catch (LIMSRuntimeException e) {
-        LogEvent.logDebug(e);
-        successful = false;
-      }
-    }
-    return successful;
-  }
+        boolean successful = true;
 
-  private void addAnalyzerResultFromLine(List<AnalyzerResults> results, String line) {
-    line = line.replace("\"", "").replace(DELIMITER, ":");
-    String[] fields = line.split(":");
+        List<AnalyzerResults> results = new ArrayList<>();
 
-    String analyzerAccessionNumber = fields[Id];
+        for (int i = 1; i < lines.size(); i++) {
+            addAnalyzerResultFromLine(results, lines.get(i));
+        }
 
-    if (fields.length == 7
-        && !GenericValidator.isBlankOrNull(analyzerAccessionNumber)
-        && analyzerAccessionNumber.length() > 6
-        && fields[assay].length() > 5) {
+        if (results.size() > 0) {
 
-      MappedTestName mappedName =
-          AnalyzerTestNameCache.getInstance()
-              .getMappedTest(AnalyzerTestNameCache.EVOLIS, fields[assay]);
-      AnalyzerResults analyzerResults = new AnalyzerResults();
-      analyzerResults.setAnalyzerId(mappedName.getAnalyzerId());
-      analyzerResults.setResult(getDictioanryValueForResult(fields[result]));
-      analyzerResults.setResultType("D");
-      analyzerResults.setCompleteDate(new Timestamp(new Date().getTime()));
-      analyzerResults.setTestId(mappedName.getTestId());
-      analyzerResults.setAccessionNumber(analyzerAccessionNumber);
-      analyzerResults.setTestName(mappedName.getOpenElisTestName());
-      analyzerResults.setIsControl(false);
-      results.add(analyzerResults);
-
-      AnalyzerResults resultFromDB = readerUtil.createAnalyzerResultFromDB(analyzerResults);
-      if (resultFromDB != null) {
-        results.add(resultFromDB);
-      }
-    }
-  }
-
-  private String getDictioanryValueForResult(String result) {
-    if ("NEG".equals(result)) {
-      return NEGATIVE_DICTIONARY_ID;
-    } else if ("REACTIVE".equals(result)) {
-      return POSITIVE_DICTIONARY_ID;
-    } else if ("*".equals(result)) {
-      return INDETERMINATE_DICTIONARY_ID;
+            // ensure transaction block
+            try {
+                persistResults(results, currentUserId);
+            } catch (LIMSRuntimeException e) {
+                LogEvent.logDebug(e);
+                successful = false;
+            }
+        }
+        return successful;
     }
 
-    return null;
-  }
+    private void addAnalyzerResultFromLine(List<AnalyzerResults> results, String line) {
+        line = line.replace("\"", "").replace(DELIMITER, ":");
+        String[] fields = line.split(":");
 
-  @Override
-  public String getError() {
-    return "Evolis analyzer unable to write to database";
-  }
+        String analyzerAccessionNumber = fields[Id];
+
+        if (fields.length == 7 && !GenericValidator.isBlankOrNull(analyzerAccessionNumber)
+                && analyzerAccessionNumber.length() > 6 && fields[assay].length() > 5) {
+
+            MappedTestName mappedName = AnalyzerTestNameCache.getInstance().getMappedTest(AnalyzerTestNameCache.EVOLIS,
+                    fields[assay]);
+            AnalyzerResults analyzerResults = new AnalyzerResults();
+            analyzerResults.setAnalyzerId(mappedName.getAnalyzerId());
+            analyzerResults.setResult(getDictioanryValueForResult(fields[result]));
+            analyzerResults.setResultType("D");
+            analyzerResults.setCompleteDate(new Timestamp(new Date().getTime()));
+            analyzerResults.setTestId(mappedName.getTestId());
+            analyzerResults.setAccessionNumber(analyzerAccessionNumber);
+            analyzerResults.setTestName(mappedName.getOpenElisTestName());
+            analyzerResults.setIsControl(false);
+            results.add(analyzerResults);
+
+            AnalyzerResults resultFromDB = readerUtil.createAnalyzerResultFromDB(analyzerResults);
+            if (resultFromDB != null) {
+                results.add(resultFromDB);
+            }
+        }
+    }
+
+    private String getDictioanryValueForResult(String result) {
+        if ("NEG".equals(result)) {
+            return NEGATIVE_DICTIONARY_ID;
+        } else if ("REACTIVE".equals(result)) {
+            return POSITIVE_DICTIONARY_ID;
+        } else if ("*".equals(result)) {
+            return INDETERMINATE_DICTIONARY_ID;
+        }
+
+        return null;
+    }
+
+    @Override
+    public String getError() {
+        return "Evolis analyzer unable to write to database";
+    }
 }

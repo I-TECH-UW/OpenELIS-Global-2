@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AddressPartDAOImpl extends BaseDAOImpl<AddressPart, String> implements AddressPartDAO {
 
-  public AddressPartDAOImpl() {
-    super(AddressPart.class);
-  }
+    public AddressPartDAOImpl() {
+        super(AddressPart.class);
+    }
 }

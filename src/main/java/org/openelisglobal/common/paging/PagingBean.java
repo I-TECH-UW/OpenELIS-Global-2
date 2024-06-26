@@ -21,44 +21,41 @@ import org.openelisglobal.common.util.IdValuePair;
 
 public class PagingBean implements Serializable {
 
-  public interface Paging {}
+    public interface Paging {
+    }
 
-  static final long serialVersionUID = 1L;
+    static final long serialVersionUID = 1L;
 
-  @Pattern(
-      regexp = "^[0-9]*$",
-      groups = {Default.class, Paging.class})
-  private String totalPages;
+    @Pattern(regexp = "^[0-9]*$", groups = { Default.class, Paging.class })
+    private String totalPages;
 
-  @Pattern(
-      regexp = "^[0-9]*$",
-      groups = {Default.class, Paging.class})
-  private String currentPage;
+    @Pattern(regexp = "^[0-9]*$", groups = { Default.class, Paging.class })
+    private String currentPage;
 
-  // for display
-  private List<IdValuePair> searchTermToPage;
+    // for display
+    private List<IdValuePair> searchTermToPage;
 
-  public String getCurrentPage() {
-    return currentPage;
-  }
+    public String getCurrentPage() {
+        return currentPage;
+    }
 
-  public void setCurrentPage(String currentPage) {
-    this.currentPage = currentPage;
-  }
+    public void setCurrentPage(String currentPage) {
+        this.currentPage = currentPage;
+    }
 
-  public void setTotalPages(String totalPages) {
-    this.totalPages = totalPages;
-  }
+    public void setTotalPages(String totalPages) {
+        this.totalPages = totalPages;
+    }
 
-  public String getTotalPages() {
-    return totalPages;
-  }
+    public String getTotalPages() {
+        return totalPages;
+    }
 
-  public void setSearchTermToPage(List<IdValuePair> searchTermToPage) {
-    this.searchTermToPage = searchTermToPage;
-  }
+    public void setSearchTermToPage(List<IdValuePair> searchTermToPage) {
+        this.searchTermToPage = searchTermToPage;
+    }
 
-  public List<IdValuePair> getSearchTermToPage() {
-    return searchTermToPage;
-  }
+    public List<IdValuePair> getSearchTermToPage() {
+        return searchTermToPage;
+    }
 }

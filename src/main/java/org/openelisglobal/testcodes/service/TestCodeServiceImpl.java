@@ -10,16 +10,17 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TestCodeServiceImpl extends AuditableBaseObjectServiceImpl<TestCode, TestSchemaPK>
-    implements TestCodeService {
-  @Autowired protected TestCodeDAO baseObjectDAO;
+        implements TestCodeService {
+    @Autowired
+    protected TestCodeDAO baseObjectDAO;
 
-  TestCodeServiceImpl() {
-    super(TestCode.class);
-    defaultSortOrder = new ArrayList<>();
-  }
+    TestCodeServiceImpl() {
+        super(TestCode.class);
+        defaultSortOrder = new ArrayList<>();
+    }
 
-  @Override
-  protected TestCodeDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected TestCodeDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }
