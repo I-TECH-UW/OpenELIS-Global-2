@@ -25,6 +25,7 @@ import {
   QrCode,
   ContainerSoftware,
   BootVolumeAlt,
+  Report,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -43,6 +44,7 @@ import OrganizationManagament from "./OrganizationManagement/OrganizationManagem
 import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModify.js";
 import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName.js";
 import PluginList from "./pluginFile/PluginFile.js";
+import ResultReportingConfiguration from "./ResultReportingConfiguration/ResultReportingConfiguration.js";
 
 function Admin() {
   const intl = useIntl();
@@ -101,6 +103,9 @@ function Admin() {
             href="#organizationManagement"
           >
             <FormattedMessage id="organization.main.title" />
+          </SideNavLink>
+          <SideNavLink renderIcon={Report} href="#resultReportingConfiguration">
+            <FormattedMessage id="resultreporting.browse.title" />
           </SideNavLink>
           <SideNavMenu
             title={intl.formatMessage({ id: "sidenav.label.admin.menu" })}
@@ -195,6 +200,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#organizationEdit">
         <OrganizationAddModify />
+      </PathRoute>
+      <PathRoute path="#resultReportingConfiguration">
+        <ResultReportingConfiguration />
       </PathRoute>
       <PathRoute path="#globalMenuManagement">
         <GlobalMenuManagement />
