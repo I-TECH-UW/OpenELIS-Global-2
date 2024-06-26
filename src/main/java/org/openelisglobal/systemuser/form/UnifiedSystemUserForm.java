@@ -1,5 +1,6 @@
 package org.openelisglobal.systemuser.form;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.sql.Timestamp;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
@@ -14,7 +15,6 @@ import org.openelisglobal.role.action.bean.DisplayRole;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class UnifiedSystemUserForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.ID_REGEX)

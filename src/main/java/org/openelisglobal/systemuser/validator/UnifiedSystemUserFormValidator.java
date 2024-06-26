@@ -2,7 +2,6 @@ package org.openelisglobal.systemuser.validator;
 
 import org.openelisglobal.common.provider.validation.ILoginPasswordValidation;
 import org.openelisglobal.common.provider.validation.PasswordValidationFactory;
-import org.openelisglobal.systemuser.controller.UnifiedSystemUserController;
 import org.openelisglobal.systemuser.controller.rest.UnifiedSystemUserRestController;
 import org.openelisglobal.systemuser.form.UnifiedSystemUserForm;
 import org.springframework.stereotype.Component;
