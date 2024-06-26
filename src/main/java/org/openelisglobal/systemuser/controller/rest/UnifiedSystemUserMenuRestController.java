@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.action.IActionConstants;
@@ -36,11 +34,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -80,8 +78,10 @@ public class UnifiedSystemUserMenuRestController extends BaseMenuController<Unif
         form.setTestSections(testSections);
         String forward = performMenuAction(form, request);
         // request.setAttribute(IActionConstants.FORM_NAME, "unifiedSystemUserMenu");
-        // request.setAttribute(IActionConstants.MENU_PAGE_INSTRUCTION, "user.select.instruction");
-        // request.setAttribute(IActionConstants.MENU_OBJECT_TO_ADD, "label.button.new.user");
+        // request.setAttribute(IActionConstants.MENU_PAGE_INSTRUCTION,
+        // "user.select.instruction");
+        // request.setAttribute(IActionConstants.MENU_OBJECT_TO_ADD,
+        // "label.button.new.user");
         // request.setAttribute(IActionConstants.APPLY_FILTER, "true");
         if (FWD_FAIL.equals(forward)) {
             Errors errors = new BaseErrors();
@@ -90,9 +90,9 @@ public class UnifiedSystemUserMenuRestController extends BaseMenuController<Unif
             // return findForward(FWD_FAIL, form);
             // result.addError(errors);
             return form;
-        } 
+        }
         // else {
-        //     return findForward(forward, form);
+        // return findForward(forward, form);
         // }
 
         return form;
@@ -157,7 +157,7 @@ public class UnifiedSystemUserMenuRestController extends BaseMenuController<Unif
         form.setToRecordCount(String.valueOf(endingRecNo));
         form.setFromRecordCount(String.valueOf(startingRecNo));
         form.setTotalRecordCount(String.valueOf(String.valueOf(systemUserService.getCount())));
-        
+
         return unifiedUsers;
     }
 
@@ -259,7 +259,8 @@ public class UnifiedSystemUserMenuRestController extends BaseMenuController<Unif
     }
 
     @PostMapping(value = "/DeleteUnifiedSystemUser")
-    public String showDeleteUnifiedSystemUser(HttpServletRequest request, @RequestBody UnifiedSystemUserMenuForm form, BindingResult result) {
+    public String showDeleteUnifiedSystemUser(HttpServletRequest request, @RequestBody UnifiedSystemUserMenuForm form,
+            BindingResult result) {
         if (result.hasErrors()) {
             saveErrors(result);
             return findForward(FWD_FAIL_DELETE);
