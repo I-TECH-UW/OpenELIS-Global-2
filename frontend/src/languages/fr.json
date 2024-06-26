@@ -266,6 +266,7 @@
   "sidenav.label.admin.formEntry.siteInfoconfig": "Informations sur le site",
   "sidenav.label.admin.formEntry.resultConfig": "Configuration de saisie de résultat",
   "sidenav.label.admin.formEntry.patientconfig": "Configuration de saisie du patient",
+  "sidenav.label.admin.pluginFile": "Fichiers de plugin",
   "sidenav.title.statusreport": "Rapport sur l'état du patient",
   "sidenav.label.statusreport": "Rapport sur l'état du patient",
   "sidenav.title.aggregatereport": "Rapports globaux",
@@ -991,5 +992,10 @@
   "referral.search.column.resultDate": "Date de résultat",
   "referral.search.column.sentDate": "Date d'envoi",
   "referral.search.column.referenceLab": "Laboratoire de référence",
-  "referral.search.column.analysisId": "Identifiant de l'analyse"
+  "referral.search.column.analysisId": "Identifiant de l'analyse",
+  "resultreporting.browse.title": "Configuration de la diffusion des résultats",
+  "testnotification.patiententry.info": "Si OpenELIS n'est pas en mesure de se connecter au destinataire des résultats transmis, il les mettra en file d'attente. Une file d'attente grande et croissante est un signe qu'il faut entreprendre des actions correctives, y compris contacter la partie réceptrice.",
+  "resultreporting.config.url": "URL du site vers lequel les résultats seront envoyés. Par exemple http://192.168.56.101/someSite",
+  "resultreporting.config.url.placeholder": "https://nomdelorganisation.com/someSite",
+  "result.report.queue.size": "Taille de la file d'attente :"
 }
