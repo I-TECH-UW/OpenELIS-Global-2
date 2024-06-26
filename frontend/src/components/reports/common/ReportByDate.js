@@ -96,7 +96,10 @@ const ReportByDate = (props) => {
     } else {
       baseParams = `report=${props.report}&type=patient`;
     }
-    const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
+    var baseUrl = `${config.serverBaseUrl}/ReportPrint`;
+    if (props.report === "CISampleRoutineExport") {
+      baseUrl = `${config.serverBaseUrl}/AdminReportPrint`;
+    }
     const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.endDate}&lowerDateRange=${reportFormValues.startDate}`;
 
     window.open(url, "_blank");
