@@ -24,6 +24,7 @@ import {
   CicsSystemGroup,
   QrCode,
   ContainerSoftware,
+  BootVolumeAlt,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -41,6 +42,7 @@ import BarcodeConfiguration from "./barcodeConfiguration/BarcodeConfiguration";
 import OrganizationManagament from "./OrganizationManagement/OrganizationManagement";
 import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModify.js";
 import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName.js";
+import PluginList from "./pluginFile/PluginFile.js";
 
 function Admin() {
   const intl = useIntl();
@@ -90,6 +92,9 @@ function Admin() {
           </SideNavLink>
           <SideNavLink renderIcon={QrCode} href="#barcodeConfiguration">
             <FormattedMessage id="sidenav.label.admin.barcodeconfiguration" />
+          </SideNavLink>
+          <SideNavLink href="#PluginFile" renderIcon={BootVolumeAlt}>
+            <FormattedMessage id="sidenav.label.admin.Listplugin" />
           </SideNavLink>
           <SideNavLink
             renderIcon={ContainerSoftware}
@@ -254,6 +259,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#DictionaryMenu">
         <DictionaryManagement />
+      </PathRoute>
+      <PathRoute path="#PluginFile">
+        <PluginList />
       </PathRoute>
     </>
   );
