@@ -127,6 +127,27 @@ function ResultReportingConfiguration() {
   };
 
   const handleUrlChange = (index, e) => {
+    const value = e.target.value.trim();
+    const urlPattern =
+      /^(https?:\/\/)?(www\.)?[\w-]+\.[a-z]{2,}(\.[a-z]{2,})?$/i;
+
+    if (value && !urlPattern.test(value)) {
+      if (!notificationVisible) {
+        setNotificationVisible(true);
+        addNotification({
+          title: intl.formatMessage({
+            id: "notification.title",
+          }),
+          message: intl.formatMessage({
+            id: "notification.organization.post.internetAddress",
+          }),
+          kind: NotificationKinds.info,
+        });
+      }
+    } else {
+      setNotificationVisible(false);
+    }
+
     const updatedReports = reportsShow.map((report, i) =>
       i === index ? { ...report, url: e.target.value } : report,
     );
@@ -249,7 +270,6 @@ function ResultReportingConfiguration() {
               </Button>
             </Column>
           </Grid>
-          1
         </div>
       </div>
     </>

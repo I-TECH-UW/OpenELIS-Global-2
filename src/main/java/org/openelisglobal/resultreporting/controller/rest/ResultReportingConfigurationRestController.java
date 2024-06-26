@@ -78,7 +78,7 @@ public class ResultReportingConfigurationRestController extends BaseController {
 
     @PostMapping(value = "/ResultReportingConfiguration")
     public ResultReportingConfigurationForm showUpdateResultReportingConfiguration(HttpServletRequest request,
-           @RequestBody @Validated(ResultReportingConfigurationForm.ResultReportConfig.class) ResultReportingConfigurationForm form,
+            @RequestBody @Validated(ResultReportingConfigurationForm.ResultReportConfig.class) ResultReportingConfigurationForm form,
             BindingResult result) {
         if (result.hasErrors()) {
             saveErrors(result);
