@@ -85,7 +85,7 @@ public class ReportController extends BaseController {
         return findForward(FWD_SUCCESS, newForm);
     }
 
-    @RequestMapping(value = { "/ReportPrint", "/AdminReportPrint" }, method = RequestMethod.GET)
+    @RequestMapping(value = "/ReportPrint", method = RequestMethod.GET)
     public ModelAndView showReportPrint(HttpServletRequest request, HttpServletResponse response,
             @ModelAttribute("ReportPrintForm") @Valid ReportForm form, BindingResult result, SessionStatus status)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
