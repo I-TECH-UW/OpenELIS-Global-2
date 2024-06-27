@@ -1,11 +1,14 @@
 package org.openelisglobal.common.rest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -478,6 +481,28 @@ public class DisplayListController extends BaseRestController {
     @GetMapping(value = "test-display-beans", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<TestDisplayBean> getTestBeansBySample(@RequestParam(required = false) String sampleType) {
+        return getTestBeansForSample(sampleType);
+    }
+
+    @GetMapping(value = "test-display-beans-map", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, List<TestDisplayBean>> getTestBeansMap(@RequestParam(required = false) String samplesTypes) {
+
+        List<String> samplesList = new ArrayList<>();
+        if (StringUtils.isNotBlank(samplesTypes)) {
+            samplesList = Arrays.asList(samplesTypes.split(","));
+        }
+        Set<String> sampleSet = new HashSet<>(samplesList);
+        Map<String, List<TestDisplayBean>> testBeanMap = new HashMap<>();
+
+        sampleSet.forEach(sampleType -> {
+            testBeanMap.put(sampleType, getTestBeansForSample(sampleType));
+        });
+        return testBeanMap;
+    }
+
+    private List<TestDisplayBean> getTestBeansForSample(String sampleType) {
+
         List<TestDisplayBean> testItems = new ArrayList<>();
         List<Test> testList = new ArrayList<>();
         if (StringUtils.isNotBlank(sampleType)) {
@@ -509,5 +534,6 @@ public class DisplayListController extends BaseRestController {
             });
         }
         return testItems;
+
     }
 }

@@ -42,7 +42,11 @@ public class TestReflexRuleRestController {
     @PostMapping(value = "deactivate-reflexrule/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public void deactivateReflexRule(@PathVariable String id) {
-        reflexService.deactivateReflexRule(id);
+        try {
+            reflexService.deactivateReflexRule(id);
+        } catch (Exception e) {
+        }
+
     }
 
     @GetMapping(value = "reflexrules", produces = MediaType.APPLICATION_JSON_VALUE)
