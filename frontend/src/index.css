@@ -71,7 +71,7 @@ code {
   .slide-over-panel {
     width: 25%;
     /* Use percentage for width on larger screens */
-    max-width: 30%;
+    max-width: 25%;
     /* Use percentage for max-width on larger screens */
   }
 }
@@ -143,22 +143,41 @@ code {
 }
 
 .slide-over-body {
-  padding: 16px;
+  padding: 0px 6px;
+  margin: 1px;
   overflow-y: auto;
   flex-grow: 1;
   /* Allow the body to take remaining height */
 }
 
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.1);
-  }
-
+  0%,
   100% {
-    transform: scale(1);
+    opacity: 1;
   }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+#profileImage {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 16px; /*ddsfdf*/
+  font-weight: bold;
+  color: #333; /*ddsfdf*/
+  text-align: center;
+  line-height: 25px;
+  background-color: #e0e0e0;
+  margin: 1px 0;
 }

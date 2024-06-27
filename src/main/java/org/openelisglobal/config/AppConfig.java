@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -64,155 +63,157 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @EnableWebMvc
 @Configuration
-@EnableJpaRepositories(basePackages = { "org.itech", "org.ozeki.sms" })
+@EnableJpaRepositories(basePackages = {"org.itech", "org.ozeki.sms"})
 @PropertySource("classpath:application.properties")
 @PropertySource("file:/run/secrets/common.properties")
 @PropertySource(value = "file:/run/secrets/extra.properties", ignoreResourceNotFound = true)
-@ComponentScan(basePackages = { "spring", "org.openelisglobal", "org.itech", "org.ozeki.sms", "oe.plugin" })
+@ComponentScan(
+    basePackages = {"spring", "org.openelisglobal", "org.itech", "org.ozeki.sms", "oe.plugin"})
 public class AppConfig implements WebMvcConfigurer {
 
-    @Autowired
-    @Qualifier(value = "ModuleAuthenticationInterceptor")
-    HandlerInterceptor moduleAuthenticationInterceptor;
+  @Autowired
+  @Qualifier(value = "ModuleAuthenticationInterceptor")
+  HandlerInterceptor moduleAuthenticationInterceptor;
 
-    @Autowired
-    UrlErrorsInterceptor urlLocatedErrorsInterceptor;
-    @Autowired
-    CommonPageAttributesInterceptor pageAttributesInterceptor;
-    @Autowired
-    LocaleChangeInterceptor localeChangeInterceptor;
-    @Autowired
-    LocaleResolver localResolver;
+  @Autowired UrlErrorsInterceptor urlLocatedErrorsInterceptor;
+  @Autowired CommonPageAttributesInterceptor pageAttributesInterceptor;
+  @Autowired LocaleChangeInterceptor localeChangeInterceptor;
+  @Autowired LocaleResolver localResolver;
 
-    @Bean
-    public ViewResolver internalResourceViewResolver() {
-        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setPrefix("");
-        viewResolver.setSuffix("");
-        viewResolver.setContentType("text/html; charset=UTF-8");
-        return viewResolver;
-    }
+  @Bean
+  public ViewResolver internalResourceViewResolver() {
+    InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+    viewResolver.setPrefix("");
+    viewResolver.setSuffix("");
+    viewResolver.setContentType("text/html; charset=UTF-8");
+    return viewResolver;
+  }
 
-    @Bean(name = "filterMultipartResolver")
-    public CommonsMultipartResolver multipartResolver() {
-        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-        multipartResolver.setDefaultEncoding("utf-8");
-        multipartResolver.setMaxUploadSize(20848820);
-        multipartResolver.setResolveLazily(false);
-        return multipartResolver;
-    }
-
-  @Override
-  public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(localeChangeInterceptor).addPathPatterns("/**");
-    registry
-        .addInterceptor(moduleAuthenticationInterceptor)
-        .addPathPatterns("/**")
-        .excludePathPatterns(SecurityConfig.OPEN_PAGES) //
-        .excludePathPatterns(SecurityConfig.LOGIN_PAGES) //
-        .excludePathPatterns(SecurityConfig.RESOURCE_PAGES) //
-        .excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES)
-        // TO DO ,we need to have a better way to handle user roles for rest controllers
-        .excludePathPatterns(SecurityConfig.REST_CONTROLLERS);
-    //                .excludePathPatterns(SecurityConfig.CLIENT_CERTIFICATE_PAGES);
-    registry.addInterceptor(urlLocatedErrorsInterceptor).addPathPatterns("/**");
-    registry.addInterceptor(pageAttributesInterceptor).addPathPatterns("/**");
+  @Bean(name = "filterMultipartResolver")
+  public CommonsMultipartResolver multipartResolver() {
+    CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+    multipartResolver.setDefaultEncoding("utf-8");
+    multipartResolver.setMaxUploadSize(20848820);
+    multipartResolver.setResolveLazily(false);
+    return multipartResolver;
   }
 
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Register resource handlers for css, js, etc.
-        registry.addResourceHandler("select2/**").addResourceLocations("classpath:static/select2/");
-        registry.addResourceHandler("scripts/**").addResourceLocations("classpath:static/scripts/");
-        registry.addResourceHandler("css/**").addResourceLocations("classpath:static/css/");
-        registry.addResourceHandler("images/**").addResourceLocations("/static/images/");
-        registry.addResourceHandler("favicon/**").addResourceLocations("/static/favicon/");
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(localeChangeInterceptor).addPathPatterns("/**");
         registry
-                .addResourceHandler("fontawesome-free-5.13.1-web/**")
-                .addResourceLocations("/static/fontawesome-free-5.13.1-web/");
-        registry
-                .addResourceHandler("documentation/**")
-                .addResourceLocations("classpath:static/documentation/");
+                .addInterceptor(moduleAuthenticationInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns(SecurityConfig.OPEN_PAGES) //
+                .excludePathPatterns(SecurityConfig.LOGIN_PAGES) //
+                .excludePathPatterns(SecurityConfig.RESOURCE_PAGES) //
+                .excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES)
+                // TO DO ,we need to have a better way to handle user roles for rest controllers
+                .excludePathPatterns(SecurityConfig.REST_CONTROLLERS);
+        // .excludePathPatterns(SecurityConfig.CLIENT_CERTIFICATE_PAGES);
+        registry.addInterceptor(urlLocatedErrorsInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(pageAttributesInterceptor).addPathPatterns("/**");
     }
 
-    @Bean
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    // prototype scope so we don't have to restart when connection info is edited
-    public JavaMailSender getJavaMailSender() {
-        ConfigurationProperties configurationProperties = ConfigurationProperties.getInstance();
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
+  @Override
+  public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    // Register resource handlers for css, js, etc.
+    registry.addResourceHandler("select2/**").addResourceLocations("classpath:static/select2/");
+    registry.addResourceHandler("scripts/**").addResourceLocations("classpath:static/scripts/");
+    registry.addResourceHandler("css/**").addResourceLocations("classpath:static/css/");
+    registry.addResourceHandler("images/**").addResourceLocations("/static/images/");
+    registry.addResourceHandler("favicon/**").addResourceLocations("/static/favicon/");
+    registry
+        .addResourceHandler("fontawesome-free-5.13.1-web/**")
+        .addResourceLocations("/static/fontawesome-free-5.13.1-web/");
+    registry
+        .addResourceHandler("documentation/**")
+        .addResourceLocations("classpath:static/documentation/");
+  }
 
-        String address = configurationProperties.getPropertyValue(Property.PATIENT_RESULTS_SMTP_ADDRESS);
-        if (!GenericValidator.isBlankOrNull(address)) {
-            try {
-                URI uri = new URI(address);
-                mailSender.setHost(uri.getHost());
-                mailSender.setPort(uri.getPort());
-            } catch (URISyntaxException e) {
-                LogEvent.logError(e);
-            }
-        }
+  @Bean
+  @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+  // prototype scope so we don't have to restart when connection info is edited
+  public JavaMailSender getJavaMailSender() {
+    ConfigurationProperties configurationProperties = ConfigurationProperties.getInstance();
+    JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+    Properties props = mailSender.getJavaMailProperties();
+    props.put("mail.transport.protocol", "smtp");
+    props.put("mail.smtp.starttls.enable", "true");
+    props.put("mail.debug", "true");
 
-        String username = configurationProperties.getPropertyValue(Property.PATIENT_RESULTS_SMTP_USERNAME);
-        String password = configurationProperties.getPropertyValue(Property.PATIENT_RESULTS_SMTP_PASSWORD);
-        if (!(GenericValidator.isBlankOrNull(username) || GenericValidator.isBlankOrNull(password))) {
-            mailSender.setUsername(username);
-            mailSender.setPassword(password);
-            props.put("mail.smtp.auth", "true");
-        } else {
-            props.put("mail.smtp.auth", "false");
-        }
-
-        return mailSender;
+    String address =
+        configurationProperties.getPropertyValue(Property.PATIENT_RESULTS_SMTP_ADDRESS);
+    if (!GenericValidator.isBlankOrNull(address)) {
+      try {
+        URI uri = new URI(address);
+        mailSender.setHost(uri.getHost());
+        mailSender.setPort(uri.getPort());
+      } catch (URISyntaxException e) {
+        LogEvent.logError(e);
+      }
     }
 
-    @Bean("localeResolver")
-    @Primary
-    // this belongs in InternationalizationConfig.java, but putting it there breaks
-    // functionality
-    public LocaleResolver localeResolver() {
-        GlobalLocaleResolver localeResolver = new GlobalLocaleResolver();
-        String localeName = ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_LANG_LOCALE);
-        localeResolver.setDefaultLocale(Locale.forLanguageTag(localeName));
-        LocaleContextHolder.setDefaultLocale(Locale.forLanguageTag(localeName));
-        return localeResolver;
+    String username =
+        configurationProperties.getPropertyValue(Property.PATIENT_RESULTS_SMTP_USERNAME);
+    String password =
+        configurationProperties.getPropertyValue(Property.PATIENT_RESULTS_SMTP_PASSWORD);
+    if (!(GenericValidator.isBlankOrNull(username) || GenericValidator.isBlankOrNull(password))) {
+      mailSender.setUsername(username);
+      mailSender.setPassword(password);
+      props.put("mail.smtp.auth", "true");
+    } else {
+      props.put("mail.smtp.auth", "false");
     }
 
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }                                                                       
+    return mailSender;
+  }
 
-    @Bean
-    public MappingJackson2HttpMessageConverter jacksonMessageConverter() {
-        MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
+  @Bean("localeResolver")
+  @Primary
+  // this belongs in InternationalizationConfig.java, but putting it there breaks
+  // functionality
+  public LocaleResolver localeResolver() {
+    GlobalLocaleResolver localeResolver = new GlobalLocaleResolver();
+    String localeName =
+        ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_LANG_LOCALE);
+    localeResolver.setDefaultLocale(Locale.forLanguageTag(localeName));
+    LocaleContextHolder.setDefaultLocale(Locale.forLanguageTag(localeName));
+    return localeResolver;
+  }
 
-        ObjectMapper mapper = new ObjectMapper();
-        // Registering Hibernate4Module to support lazy objects
-        mapper.registerModule(new JavaTimeModule());                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-        mapper.registerModule(new Hibernate5Module());
-        mapper.registerModule(new Jdk8Module());
-        mapper.setSerializationInclusion(Include.NON_NULL);
+  @Bean
+  public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+    return new PropertySourcesPlaceholderConfigurer();
+  }
 
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(Questionnaire.class, new QuestionnaireSerializer());
-        module.addDeserializer(Questionnaire.class, new QuestionnaireDeserializer());
-        module.addSerializer(QuestionnaireResponse.class, new QuestionnaireResponseSerializer());
-        module.addDeserializer(QuestionnaireResponse.class, new QuestionnaireResponseDeserializer());
-        mapper.registerModule(module);
+  @Bean
+  public MappingJackson2HttpMessageConverter jacksonMessageConverter() {
+    MappingJackson2HttpMessageConverter messageConverter =
+        new MappingJackson2HttpMessageConverter();
 
-        messageConverter.setObjectMapper(mapper);
-        return messageConverter;
-    }
+    ObjectMapper mapper = new ObjectMapper();
+    // Registering Hibernate4Module to support lazy objects
+    mapper.registerModule(new JavaTimeModule());
+    mapper.registerModule(new Hibernate5Module());
+    mapper.registerModule(new Jdk8Module());
+    mapper.setSerializationInclusion(Include.NON_NULL);
 
-    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        // Here we add our custom-configured HttpMessageConverter
-        converters.add(jacksonMessageConverter());
-        // super.configureMessageConverters(converters);
-    }
+    SimpleModule module = new SimpleModule();
+    module.addSerializer(Questionnaire.class, new QuestionnaireSerializer());
+    module.addDeserializer(Questionnaire.class, new QuestionnaireDeserializer());
+    module.addSerializer(QuestionnaireResponse.class, new QuestionnaireResponseSerializer());
+    module.addDeserializer(QuestionnaireResponse.class, new QuestionnaireResponseDeserializer());
+    mapper.registerModule(module);
+
+    messageConverter.setObjectMapper(mapper);
+    return messageConverter;
+  }
+
+  @Override
+  public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+    // Here we add our custom-configured HttpMessageConverter
+    converters.add(jacksonMessageConverter());
+    // super.configureMessageConverters(converters);
+  }
 }

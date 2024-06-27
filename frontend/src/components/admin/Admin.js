@@ -22,6 +22,7 @@ import {
   Settings,
   ListDropdown,
   CicsSystemGroup,
+  Bullhorn,
   QrCode,
   ContainerSoftware,
   BootVolumeAlt,
@@ -42,9 +43,6 @@ import ProviderMenu from "./ProviderMenu/ProviderMenu";
 import BarcodeConfiguration from "./barcodeConfiguration/BarcodeConfiguration";
 import OrganizationManagament from "./OrganizationManagement/OrganizationManagement";
 import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModify.js";
-import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName.js";
-import PluginList from "./pluginFile/PluginFile.js";
-import ResultReportingConfiguration from "./ResultReportingConfiguration/ResultReportingConfiguration.js";
 
 function Admin() {
   const intl = useIntl();
@@ -164,6 +162,9 @@ function Admin() {
           <SideNavLink href="#DictionaryMenu" renderIcon={CharacterWholeNumber}>
             <FormattedMessage id="dictionary.label.modify" />
           </SideNavLink>
+          <SideNavLink href="#NotifyUser" renderIcon={Bullhorn}>
+            <FormattedMessage id="Notify User" />
+          </SideNavLink>
           <SideNavLink
             renderIcon={Catalog}
             target="_blank"
@@ -257,6 +258,10 @@ function Admin() {
         <ConfigMenuDisplay
           menuType="PatientConfigurationMenu"
           id="sidenav.label.admin.formEntry.patientconfig"
+        />
+      </PathRoute>
+      <PathRoute path="#NotifyUser">
+        <NotificationTestPage
         />
       </PathRoute>
       <PathRoute path="#PrintedReportsConfigurationMenu">

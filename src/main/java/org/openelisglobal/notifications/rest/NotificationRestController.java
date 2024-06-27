@@ -1,5 +1,8 @@
 package org.openelisglobal.notifications.rest;
 
+import java.time.OffsetDateTime;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.notifications.dao.NotificationDAO;
 import org.openelisglobal.notifications.entity.Notification;
@@ -12,11 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.OffsetDateTime;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 @RequestMapping("/rest")
 @RestController
 public class NotificationRestController {
@@ -26,7 +24,8 @@ public class NotificationRestController {
   private static final String USER_SESSION_DATA = "userSessionData";
 
   @Autowired
-  public NotificationRestController(NotificationDAO notificationDAO, SystemUserService systemUserService) {
+  public NotificationRestController(
+      NotificationDAO notificationDAO, SystemUserService systemUserService) {
     this.notificationDAO = notificationDAO;
     this.systemUserService = systemUserService;
   }
@@ -45,7 +44,8 @@ public class NotificationRestController {
   }
 
   @PostMapping("/notification")
-  public ResponseEntity<?> saveNotification(@RequestBody Notification notification, HttpServletRequest request) {
+  public ResponseEntity<?> saveNotification(
+      @RequestBody Notification notification, HttpServletRequest request) {
     notification.setCreatedDate(OffsetDateTime.now());
     notification.setReadAt(null);
 

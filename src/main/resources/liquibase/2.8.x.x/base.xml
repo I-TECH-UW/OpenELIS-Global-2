@@ -4,7 +4,6 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-
 	<include relativeToChangelogFile="true" file="reflex_rule.xml" />
 	<include relativeToChangelogFile="true" file="desynchronous_objects.xml" />
 	<include relativeToChangelogFile="true" file="pathology.xml" />
@@ -19,4 +18,5 @@
 	<include relativeToChangelogFile="true" file="update_default_setting.xml" />
 	<include relativeToChangelogFile="true" file="rename_test_for_csv_export.xml"/>
 	<include relativeToChangelogFile="true" file="loinc.xml"/>
+	<include relativeToChangelogFile="true" file="notifications.xml"/>
 </databaseChangeLog>
