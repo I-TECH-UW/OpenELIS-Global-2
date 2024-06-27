@@ -1085,5 +1085,10 @@
   "referral.search.column.resultDate": "Result Date",
   "referral.search.column.sentDate": "Sent Date",
   "referral.search.column.referenceLab": "Reference Lab",
-  "referral.search.column.analysisId": "AnalysisId"
+  "referral.search.column.analysisId": "AnalysisId",
+  "resultreporting.browse.title": "Result Reporting Configuration",
+  "testnotification.patiententry.info": "If OpenELIS is not able to connect to the recipient of the transmitted results it will queue them up. A large and growing queue is a sign that troubling shootingshould be done including contacting the receiving party.",
+  "resultreporting.config.url": "URL for site to which the results will be sent. For example http://192.168.56.101/someSite",
+  "resultreporting.config.url.placeholder": "https://orgname.com/someSite",
+  "result.report.queue.size": "Queue Size :"
 }
