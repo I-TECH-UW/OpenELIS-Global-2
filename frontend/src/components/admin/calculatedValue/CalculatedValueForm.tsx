@@ -107,7 +107,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   const loadCalculationList = (calculations) => {
     if (componentMounted.current) {
       // console.log(JSON.stringify(reflexRuleList))
-      var sampleList = [];
+      let sampleList = [];
       if (calculations.length > 0) {
         setCalculationList(calculations);
 
