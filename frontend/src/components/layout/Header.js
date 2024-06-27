@@ -381,7 +381,7 @@ function OEHeader(props) {
                               display: "inline-block",
                             }}
                           >
-                            <NotificationNew size={20} />
+                            <Notification size={20} />
                             <span
                               style={{
                                 position: "absolute",
@@ -397,8 +397,8 @@ function OEHeader(props) {
                                 justifyContent: "center",
                                 fontSize: "10px",
                                 animation: "pulse 5s infinite",
-                                transform: "scale(1)",
-                                transformOrigin: "center center",
+                                opacity: 1,
+                                transition: "background-color 0.3s ease-in-out",
                               }}
                             >
                               {`5`}

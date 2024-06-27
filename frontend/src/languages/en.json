@@ -1050,5 +1050,7 @@
   "organization.previous": "Previous Page",
   "organization.next": "Next Page",
   "showing": "Showing",
-  "of": "of"
+  "of": "of",
+  "notify.main.title": "Notify User",
+  "button.send" : "Send"
 }

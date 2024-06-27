@@ -19,7 +19,7 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        
+
         <addForeignKeyConstraint baseTableName="notifications"
                                  baseColumnNames="user_id"
                                  referencedTableName="system_user"

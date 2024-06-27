@@ -1,16 +1,18 @@
 package org.openelisglobal.notifications.dao;
 
 import java.util.List;
-
 import org.openelisglobal.notifications.entity.Notification;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
 
 public interface NotificationDAO {
-    
-    void save(Notification notification);
 
-    List<Notification> getNotifications();
+  void save(Notification notification);
 
-    List<Notification> getNotificationsByUserId(Long userId);
+  List<Notification> getNotifications();
 
-    // Set<Notification> getNotificationsByUserId(Long userId);
+  List<Notification> getNotificationsByUserId(Long userId);
+
+  List<SystemUser> getSystemUsers();
+
+  // Set<Notification> getNotificationsByUserId(Long userId);
 }
