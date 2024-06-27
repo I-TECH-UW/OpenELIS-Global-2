@@ -38,7 +38,7 @@ export const RoutineReports = (props) => {
         />
       )}
 
-      {type === "patient" && report === "CISampleRoutineExport" && (
+      {type === "routine" && report === "CISampleRoutineExport" && (
         <ReportByDate
           report={"CISampleRoutineExport"}
           id={"sideNav.label.exportcsvfile"}
