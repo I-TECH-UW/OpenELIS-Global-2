@@ -17,26 +17,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/fhir")
 public class InternalFhirApi {
 
-  @Autowired CloseableHttpClient httpClient;
+    @Autowired
+    CloseableHttpClient httpClient;
 
-  @Autowired FhirApiWorkflowService fhirApiWorkflowService;
+    @Autowired
+    FhirApiWorkflowService fhirApiWorkflowService;
 
-  private static final String[] ALLOWED_FIELDS = new String[] {"resourceType"};
+    private static final String[] ALLOWED_FIELDS = new String[] { "resourceType" };
 
-  @InitBinder
-  public void initBinder(WebDataBinder binder) {
-    binder.setAllowedFields(ALLOWED_FIELDS);
-  }
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
-  @PutMapping(value = "/{resourceType}/**")
-  public ResponseEntity<String> receiveFhirRequest(
-      @PathVariable("resourceType") ResourceType resourceType) {
-    LogEvent.logDebug(
-        this.getClass().getSimpleName(),
-        "receiveFhirRequest",
-        "received notification for resource of type: " + resourceType);
-    fhirApiWorkflowService.processWorkflow(resourceType);
+    @PutMapping(value = "/{resourceType}/**")
+    public ResponseEntity<String> receiveFhirRequest(@PathVariable("resourceType") ResourceType resourceType) {
+        LogEvent.logDebug(this.getClass().getSimpleName(), "receiveFhirRequest",
+                "received notification for resource of type: " + resourceType);
+        fhirApiWorkflowService.processWorkflow(resourceType);
 
-    return ResponseEntity.ok("");
-  }
+        return ResponseEntity.ok("");
+    }
 }

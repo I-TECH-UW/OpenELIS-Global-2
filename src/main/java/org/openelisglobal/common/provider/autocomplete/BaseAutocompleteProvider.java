@@ -22,16 +22,16 @@ import org.ajaxtags.servlets.BaseAjaxServlet;
 
 public abstract class BaseAutocompleteProvider {
 
-  protected BaseAjaxServlet ajaxServlet = null;
+    protected BaseAjaxServlet ajaxServlet = null;
 
-  public abstract List processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException;
+    public abstract List processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException;
 
-  public void setServlet(BaseAjaxServlet as) {
-    this.ajaxServlet = as;
-  }
+    public void setServlet(BaseAjaxServlet as) {
+        this.ajaxServlet = as;
+    }
 
-  public BaseAjaxServlet getServlet() {
-    return this.ajaxServlet;
-  }
+    public BaseAjaxServlet getServlet() {
+        return this.ajaxServlet;
+    }
 }

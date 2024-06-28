@@ -17,89 +17,82 @@ import org.openelisglobal.common.valueholder.BaseObject;
 @Table(name = "cytology_diagnosis")
 public class CytologyDiagnosis extends BaseObject<Integer> {
 
-  public enum DiagnosisCategory {
-    EPITHELIAL_CELL_ABNORMALITY("Epithelial Cell Abnomality"),
-    NON_NEOPLASTIC_CELLULAR_VARIATIONS("Non-neoplastic cellular variations"),
-    REACTIVE_CELLULAR_CHANGES("Reactive cellular changes"),
-    ORGANISMS("Organisms"),
-    OTHER("Other");
+    public enum DiagnosisCategory {
+        EPITHELIAL_CELL_ABNORMALITY("Epithelial Cell Abnomality"),
+        NON_NEOPLASTIC_CELLULAR_VARIATIONS("Non-neoplastic cellular variations"),
+        REACTIVE_CELLULAR_CHANGES("Reactive cellular changes"), ORGANISMS("Organisms"), OTHER("Other");
 
-    private String display;
+        private String display;
 
-    DiagnosisCategory(String display) {
-      this.display = display;
+        DiagnosisCategory(String display) {
+            this.display = display;
+        }
+
+        public String getDisplay() {
+            return display;
+        }
     }
 
-    public String getDisplay() {
-      return display;
+    public enum CytologyDiagnosisResultType {
+        DICTIONARY("D"), TEXT("T");
+
+        private String code;
+
+        CytologyDiagnosisResultType(String code) {
+            this.code = code;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        static CytologyDiagnosisResultType fromCode(String code) {
+            if (code.equals("D")) {
+                return DICTIONARY;
+            }
+            if (code.equals("T")) {
+                return TEXT;
+            }
+            return null;
+        }
     }
-  }
 
-  public enum CytologyDiagnosisResultType {
-    DICTIONARY("D"),
-    TEXT("T");
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cytology_diagnosis_generator")
+    @SequenceGenerator(name = "cytology_diagnosis_generator", sequenceName = "cytology_diagnosis_seq", allocationSize = 1)
+    private Integer id;
 
-    private String code;
+    @Column(name = "negative_diagnosis")
+    private Boolean negativeDiagnosis = true;
 
-    CytologyDiagnosisResultType(String code) {
-      this.code = code;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "cytology_diagnosis_id")
+    List<CytologyDiagnosisCategoryResultsMap> diagnosisResultsMaps;
+
+    @Override
+    public Integer getId() {
+        return id;
     }
 
-    public String getCode() {
-      return code;
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    static CytologyDiagnosisResultType fromCode(String code) {
-      if (code.equals("D")) {
-        return DICTIONARY;
-      }
-      if (code.equals("T")) {
-        return TEXT;
-      }
-      return null;
+    public List<CytologyDiagnosisCategoryResultsMap> getDiagnosisResultsMaps() {
+        return diagnosisResultsMaps;
     }
-  }
 
-  @Id
-  @Column(name = "id")
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cytology_diagnosis_generator")
-  @SequenceGenerator(
-      name = "cytology_diagnosis_generator",
-      sequenceName = "cytology_diagnosis_seq",
-      allocationSize = 1)
-  private Integer id;
+    public void setDiagnosisResultsMaps(List<CytologyDiagnosisCategoryResultsMap> diagnosisResultsMaps) {
+        this.diagnosisResultsMaps = diagnosisResultsMaps;
+    }
 
-  @Column(name = "negative_diagnosis")
-  private Boolean negativeDiagnosis = true;
+    public Boolean getNegativeDiagnosis() {
+        return negativeDiagnosis;
+    }
 
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "cytology_diagnosis_id")
-  List<CytologyDiagnosisCategoryResultsMap> diagnosisResultsMaps;
-
-  @Override
-  public Integer getId() {
-    return id;
-  }
-
-  @Override
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-  public List<CytologyDiagnosisCategoryResultsMap> getDiagnosisResultsMaps() {
-    return diagnosisResultsMaps;
-  }
-
-  public void setDiagnosisResultsMaps(
-      List<CytologyDiagnosisCategoryResultsMap> diagnosisResultsMaps) {
-    this.diagnosisResultsMaps = diagnosisResultsMaps;
-  }
-
-  public Boolean getNegativeDiagnosis() {
-    return negativeDiagnosis;
-  }
-
-  public void setNegativeDiagnosis(Boolean negativeDiagnosis) {
-    this.negativeDiagnosis = negativeDiagnosis;
-  }
+    public void setNegativeDiagnosis(Boolean negativeDiagnosis) {
+        this.negativeDiagnosis = negativeDiagnosis;
+    }
 }

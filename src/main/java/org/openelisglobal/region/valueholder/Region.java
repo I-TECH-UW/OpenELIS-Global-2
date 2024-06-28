@@ -19,37 +19,37 @@ import org.openelisglobal.common.valueholder.EnumValueItemImpl;
 
 public class Region extends EnumValueItemImpl {
 
-  private String region;
+    private String region;
 
-  private String id;
+    private String id;
 
-  private Set counties = new HashSet(0);
+    private Set counties = new HashSet(0);
 
-  public Region() {
-    super();
-  }
+    public Region() {
+        super();
+    }
 
-  public String getRegion() {
-    return this.region;
-  }
+    public String getRegion() {
+        return this.region;
+    }
 
-  public String getId() {
-    return this.id;
-  }
+    public String getId() {
+        return this.id;
+    }
 
-  public void setRegion(String region) {
-    this.region = region;
-  }
+    public void setRegion(String region) {
+        this.region = region;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public Set getCounties() {
-    return this.counties;
-  }
+    public Set getCounties() {
+        return this.counties;
+    }
 
-  public void setCounties(Set counties) {
-    this.counties = counties;
-  }
+    public void setCounties(Set counties) {
+        this.counties = counties;
+    }
 }

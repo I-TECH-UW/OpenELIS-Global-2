@@ -26,40 +26,38 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String>
-    implements InventoryItemDAO {
+public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> implements InventoryItemDAO {
 
-  public InventoryItemDAOImpl() {
-    super(InventoryItem.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<InventoryItem> getAllInventoryItems() throws LIMSRuntimeException {
-    List<InventoryItem> inventoryItems;
-    try {
-      String sql = "from InventoryItem";
-      Query<InventoryItem> query =
-          entityManager.unwrap(Session.class).createQuery(sql, InventoryItem.class);
-      inventoryItems = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in InventoryItem getAllInventoryItems()", e);
+    public InventoryItemDAOImpl() {
+        super(InventoryItem.class);
     }
 
-    return inventoryItems;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<InventoryItem> getAllInventoryItems() throws LIMSRuntimeException {
+        List<InventoryItem> inventoryItems;
+        try {
+            String sql = "from InventoryItem";
+            Query<InventoryItem> query = entityManager.unwrap(Session.class).createQuery(sql, InventoryItem.class);
+            inventoryItems = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in InventoryItem getAllInventoryItems()", e);
+        }
 
-  @Override
-  public InventoryItem readInventoryItem(String idString) throws LIMSRuntimeException {
-    InventoryItem data = null;
-    try {
-      data = entityManager.unwrap(Session.class).get(InventoryItem.class, idString);
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in InventoryItem readInventoryItem()", e);
+        return inventoryItems;
     }
 
-    return data;
-  }
+    @Override
+    public InventoryItem readInventoryItem(String idString) throws LIMSRuntimeException {
+        InventoryItem data = null;
+        try {
+            data = entityManager.unwrap(Session.class).get(InventoryItem.class, idString);
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in InventoryItem readInventoryItem()", e);
+        }
+
+        return data;
+    }
 }

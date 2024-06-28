@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class RegionDAOImpl extends BaseDAOImpl<Region, String> implements RegionDAO {
-  RegionDAOImpl() {
-    super(Region.class);
-  }
+    RegionDAOImpl() {
+        super(Region.class);
+    }
 }

@@ -20,16 +20,15 @@ import org.openelisglobal.common.formfields.AdminFormFields.Field;
 
 public class CI_RETROAdminFormFields implements IAdminFormFieldsForImplementation {
 
-  public HashMap<AdminFormFields.Field, Boolean> getImplementationAttributes() {
-    HashMap<AdminFormFields.Field, Boolean> settings =
-        new HashMap<AdminFormFields.Field, Boolean>();
+    public HashMap<AdminFormFields.Field, Boolean> getImplementationAttributes() {
+        HashMap<AdminFormFields.Field, Boolean> settings = new HashMap<AdminFormFields.Field, Boolean>();
 
-    settings.put(Field.DictionaryMenu, Boolean.TRUE);
-    settings.put(Field.OrganizationMenu, Boolean.TRUE);
-    settings.put(Field.SiteInformationMenu, Boolean.TRUE);
-    settings.put(Field.ResultInformationMenu, Boolean.TRUE);
-    settings.put(Field.SampleEntryMenu, Boolean.TRUE);
-    settings.put(Field.PATIENT_ENTRY_CONFIGURATION, Boolean.TRUE);
-    return settings;
-  }
+        settings.put(Field.DictionaryMenu, Boolean.TRUE);
+        settings.put(Field.OrganizationMenu, Boolean.TRUE);
+        settings.put(Field.SiteInformationMenu, Boolean.TRUE);
+        settings.put(Field.ResultInformationMenu, Boolean.TRUE);
+        settings.put(Field.SampleEntryMenu, Boolean.TRUE);
+        settings.put(Field.PATIENT_ENTRY_CONFIGURATION, Boolean.TRUE);
+        return settings;
+    }
 }

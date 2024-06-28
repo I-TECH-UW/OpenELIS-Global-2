@@ -9,18 +9,18 @@ import org.springframework.stereotype.Service;
 @Service
 public interface LocalizationService extends BaseObjectService<Localization, String> {
 
-  @Override
-  String insert(Localization localization);
+    @Override
+    String insert(Localization localization);
 
-  boolean languageChanged(Localization localization, Localization oldLocalization);
+    boolean languageChanged(Localization localization, Localization oldLocalization);
 
-  void updateTestNames(Localization name, Localization reportingName);
+    void updateTestNames(Localization name, Localization reportingName);
 
-  String getCurrentLocaleLanguage();
+    String getCurrentLocaleLanguage();
 
-  String getLocalizedValueById(String id);
+    String getLocalizedValueById(String id);
 
-  List<Locale> getAllActiveLocales();
+    List<Locale> getAllActiveLocales();
 
-  Locale getCurrentLocale();
+    Locale getCurrentLocale();
 }

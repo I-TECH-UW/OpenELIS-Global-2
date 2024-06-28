@@ -22,30 +22,24 @@ import org.openelisglobal.result.valueholder.ResultSignature;
 import org.openelisglobal.sample.valueholder.Sample;
 
 public class ResultSet {
-  public final Result result;
-  public final ResultSignature signature;
-  public final ResultInventory testKit;
-  public final Patient patient;
-  public final Sample sample;
-  public final Map<String, List<String>> triggersToSelectedReflexesMap;
-  public final boolean alwaysInsertSignature;
-  public final boolean multipleResultsForAnalysis;
+    public final Result result;
+    public final ResultSignature signature;
+    public final ResultInventory testKit;
+    public final Patient patient;
+    public final Sample sample;
+    public final Map<String, List<String>> triggersToSelectedReflexesMap;
+    public final boolean alwaysInsertSignature;
+    public final boolean multipleResultsForAnalysis;
 
-  public ResultSet(
-      Result result,
-      ResultSignature signature,
-      ResultInventory testKit,
-      Patient patient,
-      Sample sample,
-      Map<String, List<String>> triggersToSelectedReflexesMap,
-      boolean multipleResultsForAnalysis) {
-    this.result = result;
-    this.signature = signature;
-    this.testKit = testKit;
-    this.patient = patient;
-    this.sample = sample;
-    this.triggersToSelectedReflexesMap = triggersToSelectedReflexesMap;
-    this.multipleResultsForAnalysis = multipleResultsForAnalysis;
-    alwaysInsertSignature = signature != null && signature.getId() == null;
-  }
+    public ResultSet(Result result, ResultSignature signature, ResultInventory testKit, Patient patient, Sample sample,
+            Map<String, List<String>> triggersToSelectedReflexesMap, boolean multipleResultsForAnalysis) {
+        this.result = result;
+        this.signature = signature;
+        this.testKit = testKit;
+        this.patient = patient;
+        this.sample = sample;
+        this.triggersToSelectedReflexesMap = triggersToSelectedReflexesMap;
+        this.multipleResultsForAnalysis = multipleResultsForAnalysis;
+        alwaysInsertSignature = signature != null && signature.getId() == null;
+    }
 }

@@ -34,26 +34,24 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Scope("prototype")
-public class PatientEntryAfterSampleEntry extends PatientEntry
-    implements IPatientEntryAfterSampleEntry {
+public class PatientEntryAfterSampleEntry extends PatientEntry implements IPatientEntryAfterSampleEntry {
 
-  public PatientEntryAfterSampleEntry(
-      PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request) {
-    this();
-    super.setFieldsFromForm(form);
-    super.setSysUserId(sysUserId);
-    super.setRequest(request);
-  }
+    public PatientEntryAfterSampleEntry(PatientEntryByProjectForm form, String sysUserId, HttpServletRequest request) {
+        this();
+        super.setFieldsFromForm(form);
+        super.setSysUserId(sysUserId);
+        super.setRequest(request);
+    }
 
-  public PatientEntryAfterSampleEntry() {
-    newPatientStatus = RecordStatus.InitialRegistration;
-    newSampleStatus = null; // leave it be
-  }
+    public PatientEntryAfterSampleEntry() {
+        newPatientStatus = RecordStatus.InitialRegistration;
+        newSampleStatus = null; // leave it be
+    }
 
-  /** An existing not registered patient with the sample already somewhere else */
-  @Override
-  public boolean canAccession() {
-    return (NotRegistered == statusSet.getPatientRecordStatus()
-        && NotRegistered != statusSet.getSampleRecordStatus());
-  }
+    /** An existing not registered patient with the sample already somewhere else */
+    @Override
+    public boolean canAccession() {
+        return (NotRegistered == statusSet.getPatientRecordStatus()
+                && NotRegistered != statusSet.getSampleRecordStatus());
+    }
 }

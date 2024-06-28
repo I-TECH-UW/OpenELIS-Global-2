@@ -22,181 +22,181 @@ import org.openelisglobal.test.valueholder.Test;
 
 public class QaEvent extends BaseObject<String> {
 
-  private String id;
+    private String id;
 
-  private String qaEventName;
+    private String qaEventName;
 
-  private String description;
+    private String description;
 
-  private ValueHolderInterface type;
-  // Bugzilla 2246
-  private String selectedTypeId;
+    private ValueHolderInterface type;
+    // Bugzilla 2246
+    private String selectedTypeId;
 
-  private String isBillable;
+    private String isBillable;
 
-  private String isHoldable;
+    private String isHoldable;
 
-  private String reportingSequence;
+    private String reportingSequence;
 
-  private String reportingText;
+    private String reportingText;
 
-  private ValueHolderInterface test;
+    private ValueHolderInterface test;
 
-  private String selectedTestId;
+    private String selectedTestId;
 
-  // (concatenate qaEvent name/desc)
-  private String qaEventDisplayValue;
+    // (concatenate qaEvent name/desc)
+    private String qaEventDisplayValue;
 
-  // bugzilla 2506
-  private ValueHolderInterface category;
-  private String selectedCategoryId;
+    // bugzilla 2506
+    private ValueHolderInterface category;
+    private String selectedCategoryId;
 
-  public QaEvent() {
-    super();
-    this.test = new ValueHolder();
-    this.type = new ValueHolder();
-    this.category = new ValueHolder();
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getIsBillable() {
-    return isBillable;
-  }
-
-  public void setIsBillable(String isBillable) {
-    this.isBillable = isBillable;
-  }
-
-  public String getQaEventName() {
-    return qaEventName;
-  }
-
-  public void setQaEventName(String qaEventName) {
-    this.qaEventName = qaEventName;
-  }
-
-  public String getReportingSequence() {
-    return reportingSequence;
-  }
-
-  public void setReportingSequence(String reportingSequence) {
-    this.reportingSequence = reportingSequence;
-  }
-
-  public String getReportingText() {
-    return reportingText;
-  }
-
-  public void setReportingText(String reportingText) {
-    this.reportingText = reportingText;
-  }
-
-  protected void setTestHolder(ValueHolderInterface test) {
-    this.test = test;
-  }
-
-  protected ValueHolderInterface getTestHolder() {
-    return this.test;
-  }
-
-  public void setTest(Test test) {
-    this.test.setValue(test);
-  }
-
-  public Test getTest() {
-    return (Test) this.test.getValue();
-  }
-
-  protected void setTypeHolder(ValueHolderInterface type) {
-    this.type = type;
-  }
-
-  protected ValueHolderInterface getTypeHolder() {
-    return this.type;
-  }
-
-  public void setType(Dictionary type) {
-    this.type.setValue(type);
-  }
-
-  public Dictionary getType() {
-    return (Dictionary) this.type.getValue();
-  }
-
-  public String getSelectedTestId() {
-    return selectedTestId;
-  }
-
-  public void setSelectedTestId(String selectedTestId) {
-    this.selectedTestId = selectedTestId;
-  }
-
-  // Bugzilla 2246
-  public void setSelectedTypeId(String selectedTypeId) {
-    this.selectedTypeId = selectedTypeId;
-  }
-
-  public String getSelectedTypeId() {
-    return selectedTypeId;
-  }
-
-  public String getIsHoldable() {
-    return isHoldable;
-  }
-
-  public void setIsHoldable(String isHoldable) {
-    this.isHoldable = isHoldable;
-  }
-
-  public String getQaEventDisplayValue() {
-    if (!StringUtil.isNullorNill(this.qaEventName)) {
-      qaEventDisplayValue = qaEventName + "-" + description;
-    } else {
-      qaEventDisplayValue = description;
+    public QaEvent() {
+        super();
+        this.test = new ValueHolder();
+        this.type = new ValueHolder();
+        this.category = new ValueHolder();
     }
-    return qaEventDisplayValue;
-  }
 
-  public String getSelectedCategoryId() {
-    return selectedCategoryId;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public void setSelectedCategoryId(String selectedCategoryId) {
-    this.selectedCategoryId = selectedCategoryId;
-  }
+    public String getId() {
+        return id;
+    }
 
-  protected void setCategoryHolder(ValueHolderInterface category) {
-    this.category = category;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  protected ValueHolderInterface getCategoryHolder() {
-    return this.category;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public void setCategory(Dictionary category) {
-    this.category.setValue(category);
-  }
+    public String getIsBillable() {
+        return isBillable;
+    }
 
-  public Dictionary getCategory() {
-    return (Dictionary) this.category.getValue();
-  }
+    public void setIsBillable(String isBillable) {
+        this.isBillable = isBillable;
+    }
 
-  protected String getDefaultLocalizedName() {
-    return getQaEventName();
-  }
+    public String getQaEventName() {
+        return qaEventName;
+    }
+
+    public void setQaEventName(String qaEventName) {
+        this.qaEventName = qaEventName;
+    }
+
+    public String getReportingSequence() {
+        return reportingSequence;
+    }
+
+    public void setReportingSequence(String reportingSequence) {
+        this.reportingSequence = reportingSequence;
+    }
+
+    public String getReportingText() {
+        return reportingText;
+    }
+
+    public void setReportingText(String reportingText) {
+        this.reportingText = reportingText;
+    }
+
+    protected void setTestHolder(ValueHolderInterface test) {
+        this.test = test;
+    }
+
+    protected ValueHolderInterface getTestHolder() {
+        return this.test;
+    }
+
+    public void setTest(Test test) {
+        this.test.setValue(test);
+    }
+
+    public Test getTest() {
+        return (Test) this.test.getValue();
+    }
+
+    protected void setTypeHolder(ValueHolderInterface type) {
+        this.type = type;
+    }
+
+    protected ValueHolderInterface getTypeHolder() {
+        return this.type;
+    }
+
+    public void setType(Dictionary type) {
+        this.type.setValue(type);
+    }
+
+    public Dictionary getType() {
+        return (Dictionary) this.type.getValue();
+    }
+
+    public String getSelectedTestId() {
+        return selectedTestId;
+    }
+
+    public void setSelectedTestId(String selectedTestId) {
+        this.selectedTestId = selectedTestId;
+    }
+
+    // Bugzilla 2246
+    public void setSelectedTypeId(String selectedTypeId) {
+        this.selectedTypeId = selectedTypeId;
+    }
+
+    public String getSelectedTypeId() {
+        return selectedTypeId;
+    }
+
+    public String getIsHoldable() {
+        return isHoldable;
+    }
+
+    public void setIsHoldable(String isHoldable) {
+        this.isHoldable = isHoldable;
+    }
+
+    public String getQaEventDisplayValue() {
+        if (!StringUtil.isNullorNill(this.qaEventName)) {
+            qaEventDisplayValue = qaEventName + "-" + description;
+        } else {
+            qaEventDisplayValue = description;
+        }
+        return qaEventDisplayValue;
+    }
+
+    public String getSelectedCategoryId() {
+        return selectedCategoryId;
+    }
+
+    public void setSelectedCategoryId(String selectedCategoryId) {
+        this.selectedCategoryId = selectedCategoryId;
+    }
+
+    protected void setCategoryHolder(ValueHolderInterface category) {
+        this.category = category;
+    }
+
+    protected ValueHolderInterface getCategoryHolder() {
+        return this.category;
+    }
+
+    public void setCategory(Dictionary category) {
+        this.category.setValue(category);
+    }
+
+    public Dictionary getCategory() {
+        return (Dictionary) this.category.getValue();
+    }
+
+    protected String getDefaultLocalizedName() {
+        return getQaEventName();
+    }
 }

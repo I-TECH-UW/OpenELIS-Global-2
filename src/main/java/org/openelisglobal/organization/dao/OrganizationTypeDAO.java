@@ -22,12 +22,12 @@ import org.openelisglobal.organization.valueholder.OrganizationType;
 
 public interface OrganizationTypeDAO extends BaseDAO<OrganizationType, String> {
 
-  List<OrganizationType> getAllOrganizationTypes() throws LIMSRuntimeException;
+    List<OrganizationType> getAllOrganizationTypes() throws LIMSRuntimeException;
 
-  /**
-   * @param name the
-   * @return
-   * @throws LIMSRuntimeException
-   */
-  OrganizationType getOrganizationTypeByName(String name) throws LIMSRuntimeException;
+    /**
+     * @param name the
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    OrganizationType getOrganizationTypeByName(String name) throws LIMSRuntimeException;
 }

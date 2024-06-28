@@ -17,37 +17,37 @@ import org.openelisglobal.common.valueholder.EnumValueItemImpl;
 
 public class SampleDomain extends EnumValueItemImpl {
 
-  private String code;
+    private String code;
 
-  private String id;
+    private String id;
 
-  private String description;
+    private String description;
 
-  public SampleDomain() {
-    super();
-  }
+    public SampleDomain() {
+        super();
+    }
 
-  public String getCode() {
-    return this.code;
-  }
+    public String getCode() {
+        return this.code;
+    }
 
-  public String getId() {
-    return this.id;
-  }
+    public String getId() {
+        return this.id;
+    }
 
-  public String getDescription() {
-    return this.description;
-  }
+    public String getDescription() {
+        return this.description;
+    }
 
-  public void setCode(String code) {
-    this.code = code;
-  }
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

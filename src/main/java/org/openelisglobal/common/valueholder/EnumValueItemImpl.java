@@ -17,68 +17,68 @@ import org.openelisglobal.common.action.IActionConstants;
 
 public abstract class EnumValueItemImpl extends BaseObject<String> implements EnumValueItem {
 
-  protected String name;
+    protected String name;
 
-  protected String enumName;
+    protected String enumName;
 
-  protected String sortOrder;
+    protected String sortOrder;
 
-  protected String key;
+    protected String key;
 
-  protected String isActive = IActionConstants.YES;
+    protected String isActive = IActionConstants.YES;
 
-  // enum name
-  @Override
-  public String getEnumName() {
-    return enumName;
-  }
+    // enum name
+    @Override
+    public String getEnumName() {
+        return enumName;
+    }
 
-  @Override
-  public void setEnumName(String enumName) {
-    this.enumName = enumName;
-  }
+    @Override
+    public void setEnumName(String enumName) {
+        this.enumName = enumName;
+    }
 
-  // Each enumValueItem can be retrieved using a string key
-  @Override
-  public String getKey() {
-    return key;
-  }
+    // Each enumValueItem can be retrieved using a string key
+    @Override
+    public String getKey() {
+        return key;
+    }
 
-  @Override
-  public void setKey(String key) {
-    this.key = key;
-  }
+    @Override
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-  // enumValueItem name
-  @Override
-  public String getName() {
-    return name;
-  }
+    // enumValueItem name
+    @Override
+    public String getName() {
+        return name;
+    }
 
-  @Override
-  public void setName(String pName) {
-    name = pName;
-  }
+    @Override
+    public void setName(String pName) {
+        name = pName;
+    }
 
-  // enumValueItem sortorder
-  @Override
-  public String getSortOrder() {
-    return sortOrder;
-  }
+    // enumValueItem sortorder
+    @Override
+    public String getSortOrder() {
+        return sortOrder;
+    }
 
-  @Override
-  public void setSortOrder(String pSortorder) {
-    sortOrder = pSortorder;
-  }
+    @Override
+    public void setSortOrder(String pSortorder) {
+        sortOrder = pSortorder;
+    }
 
-  // is enum active
-  @Override
-  public String getIsActive() {
-    return isActive;
-  }
+    // is enum active
+    @Override
+    public String getIsActive() {
+        return isActive;
+    }
 
-  @Override
-  public void setIsActive(String pActive) {
-    isActive = pActive;
-  }
+    @Override
+    public void setIsActive(String pActive) {
+        isActive = pActive;
+    }
 }

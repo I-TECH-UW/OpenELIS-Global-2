@@ -19,5 +19,5 @@ import org.openelisglobal.siteinformation.valueholder.SiteInformationDomain;
 
 public interface SiteInformationDomainDAO extends BaseDAO<SiteInformationDomain, String> {
 
-  public SiteInformationDomain getByName(String name) throws LIMSRuntimeException;
+    public SiteInformationDomain getByName(String name) throws LIMSRuntimeException;
 }

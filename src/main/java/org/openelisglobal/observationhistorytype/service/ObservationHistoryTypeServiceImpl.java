@@ -8,23 +8,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ObservationHistoryTypeServiceImpl
-    extends AuditableBaseObjectServiceImpl<ObservationHistoryType, String>
-    implements ObservationHistoryTypeService {
-  @Autowired protected ObservationHistoryTypeDAO baseObjectDAO;
+public class ObservationHistoryTypeServiceImpl extends AuditableBaseObjectServiceImpl<ObservationHistoryType, String>
+        implements ObservationHistoryTypeService {
+    @Autowired
+    protected ObservationHistoryTypeDAO baseObjectDAO;
 
-  public ObservationHistoryTypeServiceImpl() {
-    super(ObservationHistoryType.class);
-  }
+    public ObservationHistoryTypeServiceImpl() {
+        super(ObservationHistoryType.class);
+    }
 
-  @Override
-  protected ObservationHistoryTypeDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected ObservationHistoryTypeDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public ObservationHistoryType getByName(String name) {
-    return getBaseObjectDAO().getByName(name);
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public ObservationHistoryType getByName(String name) {
+        return getBaseObjectDAO().getByName(name);
+    }
 }

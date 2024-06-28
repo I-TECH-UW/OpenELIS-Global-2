@@ -27,51 +27,49 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class ARVFollowupInitalHIVStrategy implements ICSVColumnCustomStrategy {
 
-  private SampleService sampleService = SpringContext.getBean(SampleService.class);
-  private SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
-  private ObservationHistoryService ohService =
-      SpringContext.getBean(ObservationHistoryService.class);
-  private DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+    private SampleService sampleService = SpringContext.getBean(SampleService.class);
+    private SampleHumanService sampleHumanService = SpringContext.getBean(SampleHumanService.class);
+    private ObservationHistoryService ohService = SpringContext.getBean(ObservationHistoryService.class);
+    private DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 
-  @Override
-  public String translate(String value, String accessionNumber, String csvName, String dbName) {
-    Sample sample = sampleService.getSampleByAccessionNumber(accessionNumber);
+    @Override
+    public String translate(String value, String accessionNumber, String csvName, String dbName) {
+        Sample sample = sampleService.getSampleByAccessionNumber(accessionNumber);
 
-    if (sample == null) {
-      return "";
+        if (sample == null) {
+            return "";
+        }
+
+        Patient patient = sampleHumanService.getPatientForSample(sample);
+
+        if (patient == null) {
+            return "";
+        }
+
+        List<Sample> samples = sampleHumanService.getSamplesForPatient(patient.getId());
+
+        if (samples == null || samples.size() < 2) {
+            return "";
+        }
+
+        Sample firstSample = samples.get(0);
+
+        String typeId = ObservationHistoryTypeMap.getInstance().getIDForType("projectFormName");
+        ObservationHistory oh = ohService.getObservationHistoriesBySampleIdAndType(firstSample.getId(), typeId);
+
+        if (oh == null) {
+            return "";
+        }
+
+        if ("InitialARV_Id".equals(oh.getValue())) {
+            typeId = ObservationHistoryTypeMap.getInstance().getIDForType("hivStatus");
+            oh = ohService.getObservationHistoriesBySampleIdAndType(firstSample.getId(), typeId);
+
+            if (oh != null && !GenericValidator.isBlankOrNull(oh.getValue())) {
+                return dictionaryService.getDataForId(oh.getValue()).getLocalizedName();
+            }
+        }
+
+        return "";
     }
-
-    Patient patient = sampleHumanService.getPatientForSample(sample);
-
-    if (patient == null) {
-      return "";
-    }
-
-    List<Sample> samples = sampleHumanService.getSamplesForPatient(patient.getId());
-
-    if (samples == null || samples.size() < 2) {
-      return "";
-    }
-
-    Sample firstSample = samples.get(0);
-
-    String typeId = ObservationHistoryTypeMap.getInstance().getIDForType("projectFormName");
-    ObservationHistory oh =
-        ohService.getObservationHistoriesBySampleIdAndType(firstSample.getId(), typeId);
-
-    if (oh == null) {
-      return "";
-    }
-
-    if ("InitialARV_Id".equals(oh.getValue())) {
-      typeId = ObservationHistoryTypeMap.getInstance().getIDForType("hivStatus");
-      oh = ohService.getObservationHistoriesBySampleIdAndType(firstSample.getId(), typeId);
-
-      if (oh != null && !GenericValidator.isBlankOrNull(oh.getValue())) {
-        return dictionaryService.getDataForId(oh.getValue()).getLocalizedName();
-      }
-    }
-
-    return "";
-  }
 }

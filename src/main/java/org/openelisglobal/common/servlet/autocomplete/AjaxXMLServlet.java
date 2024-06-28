@@ -30,37 +30,36 @@ import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 public class AjaxXMLServlet extends BaseAjaxServlet {
 
-  @Override
-  public String getXmlContent(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException, IllegalAccessException, InvocationTargetException,
-          NoSuchMethodException {
-    boolean unauthorized = false;
+    @Override
+    public String getXmlContent(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+            IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        boolean unauthorized = false;
 
-    // check for module authentication
-    UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
-    unauthorized |= userModuleService.isSessionExpired(request);
+        // check for module authentication
+        UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
+        unauthorized |= userModuleService.isSessionExpired(request);
 
-    // check for csrf token to prevent js hijacking since we employ callback
-    // functions
-    CsrfToken officialToken = new HttpSessionCsrfTokenRepository().loadToken(request);
-    String clientSuppliedToken = request.getHeader("X-CSRF-Token");
-    unauthorized |= !officialToken.getToken().equals(clientSuppliedToken);
+        // check for csrf token to prevent js hijacking since we employ callback
+        // functions
+        CsrfToken officialToken = new HttpSessionCsrfTokenRepository().loadToken(request);
+        String clientSuppliedToken = request.getHeader("X-CSRF-Token");
+        unauthorized |= !officialToken.getToken().equals(clientSuppliedToken);
 
-    if (unauthorized) {
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      return new AjaxXmlBuilder().toString();
+        if (unauthorized) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return new AjaxXmlBuilder().toString();
+        }
+
+        String autocompleteProvider = request.getParameter("provider");
+        String autocompleteFieldName = request.getParameter("fieldName");
+        String autocompleteId = request.getParameter("idName");
+
+        BaseAutocompleteProvider provider = AutocompleteProviderFactory.getInstance()
+                .getAutocompleteProvider(autocompleteProvider);
+
+        provider.setServlet(this);
+        List list = provider.processRequest(request, response);
+
+        return new AjaxXmlBuilder().addItems(list, autocompleteFieldName, autocompleteId).toString();
     }
-
-    String autocompleteProvider = request.getParameter("provider");
-    String autocompleteFieldName = request.getParameter("fieldName");
-    String autocompleteId = request.getParameter("idName");
-
-    BaseAutocompleteProvider provider =
-        AutocompleteProviderFactory.getInstance().getAutocompleteProvider(autocompleteProvider);
-
-    provider.setServlet(this);
-    List list = provider.processRequest(request, response);
-
-    return new AjaxXmlBuilder().addItems(list, autocompleteFieldName, autocompleteId).toString();
-  }
 }

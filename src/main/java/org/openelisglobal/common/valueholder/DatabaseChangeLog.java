@@ -19,51 +19,51 @@ import java.sql.Timestamp;
 
 public class DatabaseChangeLog extends BaseObject<String> {
 
-  private String id;
-  private String author;
-  private Timestamp executed;
-  private String fileName;
-  private String comment;
+    private String id;
+    private String author;
+    private Timestamp executed;
+    private String fileName;
+    private String comment;
 
-  @Override
-  public String getId() {
-    return id;
-  }
+    @Override
+    public String getId() {
+        return id;
+    }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getAuthor() {
-    return author;
-  }
+    public String getAuthor() {
+        return author;
+    }
 
-  public void setAuthor(String author) {
-    this.author = author;
-  }
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 
-  public void setExecuted(Timestamp executed) {
-    this.executed = executed;
-  }
+    public void setExecuted(Timestamp executed) {
+        this.executed = executed;
+    }
 
-  public Timestamp getExecuted() {
-    return executed;
-  }
+    public Timestamp getExecuted() {
+        return executed;
+    }
 
-  public String getFileName() {
-    return fileName;
-  }
+    public String getFileName() {
+        return fileName;
+    }
 
-  public void setFileName(String fileName) {
-    this.fileName = fileName;
-  }
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
-  public String getComment() {
-    return comment;
-  }
+    public String getComment() {
+        return comment;
+    }
 
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 }

@@ -32,86 +32,80 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class OrganizationOrganizationTypeDAOImpl implements OrganizationOrganizationTypeDAO {
 
-  @PersistenceContext EntityManager entityManager;
+    @PersistenceContext
+    EntityManager entityManager;
 
-  @Override
-  @Transactional
-  public void deleteAllLinksForOrganization(String id) throws LIMSRuntimeException {
+    @Override
+    @Transactional
+    public void deleteAllLinksForOrganization(String id) throws LIMSRuntimeException {
 
-    try {
-      String sql = "delete from organization_organization_type where org_id = :id";
-      NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
-      query.setParameter("id", Integer.parseInt(id));
-      query.executeUpdate();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException(
-          "Error in OrganizationOrganizationType deleteAllLinksForOrganization()", e);
+        try {
+            String sql = "delete from organization_organization_type where org_id = :id";
+            NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            query.setParameter("id", Integer.parseInt(id));
+            query.executeUpdate();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in OrganizationOrganizationType deleteAllLinksForOrganization()", e);
+        }
     }
-  }
 
-  @Override
-  @Transactional
-  public void linkOrganizationAndType(Organization org, String typeId) throws LIMSRuntimeException {
+    @Override
+    @Transactional
+    public void linkOrganizationAndType(Organization org, String typeId) throws LIMSRuntimeException {
 
-    try {
-      String sql =
-          "INSERT INTO organization_organization_type(org_id, org_type_id)VALUES (:org_id,"
-              + " :type_id);";
-      NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
-      query.setParameter("org_id", Integer.parseInt(org.getId()));
-      query.setParameter("type_id", Integer.parseInt(typeId));
-      query.executeUpdate();
+        try {
+            String sql = "INSERT INTO organization_organization_type(org_id, org_type_id)VALUES (:org_id,"
+                    + " :type_id);";
+            NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            query.setParameter("org_id", Integer.parseInt(org.getId()));
+            query.setParameter("type_id", Integer.parseInt(typeId));
+            query.executeUpdate();
 
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException(
-          "Error in OrganizationOrganizationType linkOrganizationAndType()", e);
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in OrganizationOrganizationType linkOrganizationAndType()", e);
+        }
     }
-  }
 
-  @Override
-  @Transactional
-  public List<String> getOrganizationIdsForType(String typeId) throws LIMSRuntimeException {
-    List<String> orgIdList = null;
-    String sql =
-        "select cast(org_id AS varchar) from organization_organization_type where org_type_id ="
-            + " :orgTypeId";
+    @Override
+    @Transactional
+    public List<String> getOrganizationIdsForType(String typeId) throws LIMSRuntimeException {
+        List<String> orgIdList = null;
+        String sql = "select cast(org_id AS varchar) from organization_organization_type where org_type_id ="
+                + " :orgTypeId";
 
-    try {
-      NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
-      query.setParameter("orgTypeId", Integer.parseInt(typeId));
-      orgIdList = query.list();
+        try {
+            NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            query.setParameter("orgTypeId", Integer.parseInt(typeId));
+            orgIdList = query.list();
 
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException(
-          "Error in OrganizationOrganizationType getOrganizationForType()", e);
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in OrganizationOrganizationType getOrganizationForType()", e);
+        }
+        return orgIdList;
     }
-    return orgIdList;
-  }
 
-  @Override
-  @Transactional
-  public List<String> getTypeIdsForOrganizationId(String organizationId)
-      throws LIMSRuntimeException {
-    List<String> orgIdList = null;
-    String sql =
-        "select cast(org_type_id AS varchar) from organization_organization_type where org_id ="
-            + " :orgId";
+    @Override
+    @Transactional
+    public List<String> getTypeIdsForOrganizationId(String organizationId) throws LIMSRuntimeException {
+        List<String> orgIdList = null;
+        String sql = "select cast(org_type_id AS varchar) from organization_organization_type where org_id ="
+                + " :orgId";
 
-    try {
-      NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
-      query.setParameter("orgId", Integer.parseInt(organizationId));
-      orgIdList = query.list();
+        try {
+            NativeQuery query = entityManager.unwrap(Session.class).createNativeQuery(sql);
+            query.setParameter("orgId", Integer.parseInt(organizationId));
+            orgIdList = query.list();
 
-    } catch (RuntimeException e) {
-      handleException(e, "getTypeIdsForOrganizationId");
+        } catch (RuntimeException e) {
+            handleException(e, "getTypeIdsForOrganizationId");
+        }
+        return orgIdList;
     }
-    return orgIdList;
-  }
 
-  private void handleException(Exception e, String string) {
-    LogEvent.logError(e);
-  }
+    private void handleException(Exception e, String string) {
+        LogEvent.logError(e);
+    }
 }

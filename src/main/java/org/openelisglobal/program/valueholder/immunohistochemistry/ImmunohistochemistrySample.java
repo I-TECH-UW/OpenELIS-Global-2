@@ -20,95 +20,93 @@ import org.openelisglobal.systemuser.valueholder.SystemUser;
 @Table(name = "immunohistochemistry_sample")
 public class ImmunohistochemistrySample extends ProgramSample {
 
-  private static final long serialVersionUID = -9073029687643009937L;
+    private static final long serialVersionUID = -9073029687643009937L;
 
-  public enum ImmunohistochemistryStatus {
-    IN_PROGRESS("In Progress"),
-    READY_PATHOLOGIST("Ready for Pathologist"),
-    COMPLETED("Completed");
+    public enum ImmunohistochemistryStatus {
+        IN_PROGRESS("In Progress"), READY_PATHOLOGIST("Ready for Pathologist"), COMPLETED("Completed");
 
-    private String display;
+        private String display;
 
-    ImmunohistochemistryStatus(String display) {
-      this.display = display;
+        ImmunohistochemistryStatus(String display) {
+            this.display = display;
+        }
+
+        public String getDisplay() {
+            return display;
+        }
     }
 
-    public String getDisplay() {
-      return display;
+    @Valid
+    @OneToOne
+    @JoinColumn(name = "technician_id", referencedColumnName = "id")
+    private SystemUser technician;
+
+    @Valid
+    @OneToOne
+    @JoinColumn(name = "pathologist_id", referencedColumnName = "id")
+    private SystemUser pathologist;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private ImmunohistochemistryStatus status = ImmunohistochemistryStatus.IN_PROGRESS;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "immunohistochemistry_sample_id")
+    private List<ImmunohistochemistrySampleReport> reports;
+
+    @Valid
+    @OneToOne
+    @JoinColumn(name = "pathology_sample_id", referencedColumnName = "id")
+    private PathologySample pathologySample;
+
+    @Column(name = "reffered")
+    private Boolean reffered = false;
+
+    public ImmunohistochemistryStatus getStatus() {
+        return status;
     }
-  }
 
-  @Valid
-  @OneToOne
-  @JoinColumn(name = "technician_id", referencedColumnName = "id")
-  private SystemUser technician;
+    public void setStatus(ImmunohistochemistryStatus status) {
+        this.status = status;
+    }
 
-  @Valid
-  @OneToOne
-  @JoinColumn(name = "pathologist_id", referencedColumnName = "id")
-  private SystemUser pathologist;
+    public SystemUser getTechnician() {
+        return technician;
+    }
 
-  @Enumerated(EnumType.STRING)
-  @NotNull
-  private ImmunohistochemistryStatus status = ImmunohistochemistryStatus.IN_PROGRESS;
+    public void setTechnician(SystemUser technician) {
+        this.technician = technician;
+    }
 
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "immunohistochemistry_sample_id")
-  private List<ImmunohistochemistrySampleReport> reports;
+    public SystemUser getPathologist() {
+        return pathologist;
+    }
 
-  @Valid
-  @OneToOne
-  @JoinColumn(name = "pathology_sample_id", referencedColumnName = "id")
-  private PathologySample pathologySample;
+    public void setPathologist(SystemUser pathologist) {
+        this.pathologist = pathologist;
+    }
 
-  @Column(name = "reffered")
-  private Boolean reffered = false;
+    public List<ImmunohistochemistrySampleReport> getReports() {
+        return reports;
+    }
 
-  public ImmunohistochemistryStatus getStatus() {
-    return status;
-  }
+    public void setReports(List<ImmunohistochemistrySampleReport> reports) {
+        this.reports = reports;
+    }
 
-  public void setStatus(ImmunohistochemistryStatus status) {
-    this.status = status;
-  }
+    public PathologySample getPathologySample() {
+        return pathologySample;
+    }
 
-  public SystemUser getTechnician() {
-    return technician;
-  }
+    public void setPathologySample(PathologySample pathologySample) {
+        this.pathologySample = pathologySample;
+    }
 
-  public void setTechnician(SystemUser technician) {
-    this.technician = technician;
-  }
+    public Boolean getReffered() {
+        return reffered;
+    }
 
-  public SystemUser getPathologist() {
-    return pathologist;
-  }
-
-  public void setPathologist(SystemUser pathologist) {
-    this.pathologist = pathologist;
-  }
-
-  public List<ImmunohistochemistrySampleReport> getReports() {
-    return reports;
-  }
-
-  public void setReports(List<ImmunohistochemistrySampleReport> reports) {
-    this.reports = reports;
-  }
-
-  public PathologySample getPathologySample() {
-    return pathologySample;
-  }
-
-  public void setPathologySample(PathologySample pathologySample) {
-    this.pathologySample = pathologySample;
-  }
-
-  public Boolean getReffered() {
-    return reffered;
-  }
-
-  public void setReffered(Boolean reffered) {
-    this.reffered = reffered;
-  }
+    public void setReffered(Boolean reffered) {
+        this.reffered = reffered;
+    }
 }

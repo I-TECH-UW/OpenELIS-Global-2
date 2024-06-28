@@ -8,20 +8,20 @@ import org.openelisglobal.notification.valueholder.NotificationConfigOption.Noti
 
 public abstract class NotificationConfig<T> extends BaseObject<Integer> {
 
-  private static final long serialVersionUID = -7224488513935429998L;
+    private static final long serialVersionUID = -7224488513935429998L;
 
-  public abstract List<NotificationConfigOption> getOptions();
+    public abstract List<NotificationConfigOption> getOptions();
 
-  public abstract void setOptions(List<NotificationConfigOption> options);
+    public abstract void setOptions(List<NotificationConfigOption> options);
 
-  public abstract NotificationConfigOption getOptionFor(
-      NotificationNature nature, NotificationMethod methodType, NotificationPersonType personType);
+    public abstract NotificationConfigOption getOptionFor(NotificationNature nature, NotificationMethod methodType,
+            NotificationPersonType personType);
 
-  public abstract NotificationConfigOption getPatientEmail();
+    public abstract NotificationConfigOption getPatientEmail();
 
-  public abstract NotificationConfigOption getPatientSMS();
+    public abstract NotificationConfigOption getPatientSMS();
 
-  public abstract NotificationConfigOption getProviderEmail();
+    public abstract NotificationConfigOption getProviderEmail();
 
-  public abstract NotificationConfigOption getProviderSMS();
+    public abstract NotificationConfigOption getProviderSMS();
 }

@@ -22,33 +22,27 @@ import org.openelisglobal.common.valueholder.BaseObject;
  */
 public interface AuditTrailService {
 
-  void saveHistory(
-      BaseObject newObject,
-      BaseObject existingObject,
-      String sysUserId,
-      String event,
-      String tableName)
-      throws LIMSRuntimeException;
+    void saveHistory(BaseObject newObject, BaseObject existingObject, String sysUserId, String event, String tableName)
+            throws LIMSRuntimeException;
 
-  void saveNewHistory(BaseObject newObject, String sysUserId, String tableName)
-      throws LIMSRuntimeException;
+    void saveNewHistory(BaseObject newObject, String sysUserId, String tableName) throws LIMSRuntimeException;
 
-  String getXML(String table, String id) throws LIMSRuntimeException;
+    String getXML(String table, String id) throws LIMSRuntimeException;
 
-  String getXMLData(String table, String id) throws LIMSRuntimeException;
+    String getXMLData(String table, String id) throws LIMSRuntimeException;
 
-  // public List getHistoryByRefIdAndRefTableId(History history) throws
-  // LIMSRuntimeException;
+    // public List getHistoryByRefIdAndRefTableId(History history) throws
+    // LIMSRuntimeException;
 
-  // public List getHistoryByRefIdAndRefTableId(String refId, String tableId)
-  // throws LIMSRuntimeException;
+    // public List getHistoryByRefIdAndRefTableId(String refId, String tableId)
+    // throws LIMSRuntimeException;
 
-  // public List getHistoryBySystemUserAndDateAndRefTableId(History history)
-  // throws LIMSRuntimeException;
+    // public List getHistoryBySystemUserAndDateAndRefTableId(History history)
+    // throws LIMSRuntimeException;
 
-  // public String retrieveBlobData(String id) throws LIMSRuntimeException;
+    // public String retrieveBlobData(String id) throws LIMSRuntimeException;
 
-  // public List<History> getHistoryByRefTableIdAndDateRange(String
-  // referenceTableId, Date start, Date end)
-  // throws LIMSRuntimeException;
+    // public List<History> getHistoryByRefTableIdAndDateRange(String
+    // referenceTableId, Date start, Date end)
+    // throws LIMSRuntimeException;
 }

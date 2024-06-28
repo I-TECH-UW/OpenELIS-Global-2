@@ -17,10 +17,10 @@
 package org.openelisglobal.plugin;
 
 public abstract class MenuPlugin implements APlugin {
-  public boolean connect() {
-    insertMenu();
-    return true;
-  }
+    public boolean connect() {
+        insertMenu();
+        return true;
+    }
 
-  protected abstract void insertMenu();
+    protected abstract void insertMenu();
 }

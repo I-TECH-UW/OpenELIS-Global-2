@@ -38,73 +38,77 @@ import org.springframework.transaction.annotation.Transactional;
 @Scope("prototype")
 public class SuccessReportHandler implements IRowTransmissionResponseHandler {
 
-  @Autowired private ReferenceTablesService referenceTablesService;
-  @Autowired private DocumentTypeService documentTypeService;
-  @Autowired private DocumentTrackService documentTrackService;
-  @Autowired private ReportExternalExportService reportExternalExportService;
+    @Autowired
+    private ReferenceTablesService referenceTablesService;
+    @Autowired
+    private DocumentTypeService documentTypeService;
+    @Autowired
+    private DocumentTrackService documentTrackService;
+    @Autowired
+    private ReportExternalExportService reportExternalExportService;
 
-  String externalExportRowId;
+    String externalExportRowId;
 
-  public SuccessReportHandler(String rowId) {
-    externalExportRowId = rowId;
-  }
+    public SuccessReportHandler(String rowId) {
+        externalExportRowId = rowId;
+    }
 
-  public SuccessReportHandler() {}
+    public SuccessReportHandler() {
+    }
 
-  @Override
-  public void setRowId(String rowId) {
-    externalExportRowId = rowId;
-  }
+    @Override
+    public void setRowId(String rowId) {
+        externalExportRowId = rowId;
+    }
 
-  @Override
-  @Transactional
-  public void handleResponse(int httpReturnStatus, List<String> errors, String msg) {
+    @Override
+    @Transactional
+    public void handleResponse(int httpReturnStatus, List<String> errors, String msg) {
 
-    if (httpReturnStatus == HttpServletResponse.SC_OK) {
-      ReportExternalExport report =
-          reportExternalExportService.readReportExternalExport(externalExportRowId);
-      List<DocumentTrack> documents = getSentDocuments(report.getBookkeepingData());
+        if (httpReturnStatus == HttpServletResponse.SC_OK) {
+            ReportExternalExport report = reportExternalExportService.readReportExternalExport(externalExportRowId);
+            List<DocumentTrack> documents = getSentDocuments(report.getBookkeepingData());
 
-      try {
-        for (DocumentTrack document : documents) {
-          documentTrackService.insert(document);
+            try {
+                for (DocumentTrack document : documents) {
+                    documentTrackService.insert(document);
+                }
+                reportExternalExportService.delete(report);
+
+            } catch (LIMSRuntimeException e) {
+                LogEvent.logError(e);
+                throw e;
+            }
         }
-        reportExternalExportService.delete(report);
-
-      } catch (LIMSRuntimeException e) {
-        LogEvent.logError(e);
-        throw e;
-      }
     }
-  }
 
-  private List<DocumentTrack> getSentDocuments(String bookkeepingData) {
-    List<DocumentTrack> documentList = new ArrayList<>();
-    String resultTableId = getResultTableId();
-    DocumentType type = getResultType();
-    Timestamp now = DateUtil.getNowAsTimestamp();
+    private List<DocumentTrack> getSentDocuments(String bookkeepingData) {
+        List<DocumentTrack> documentList = new ArrayList<>();
+        String resultTableId = getResultTableId();
+        DocumentType type = getResultType();
+        Timestamp now = DateUtil.getNowAsTimestamp();
 
-    if (!GenericValidator.isBlankOrNull(bookkeepingData)) {
-      String[] resultIdList = bookkeepingData.split(",");
+        if (!GenericValidator.isBlankOrNull(bookkeepingData)) {
+            String[] resultIdList = bookkeepingData.split(",");
 
-      for (int i = 0; i < resultIdList.length; i++) {
-        DocumentTrack document = new DocumentTrack();
-        document.setDocumentTypeId(type.getId());
-        document.setRecordId(resultIdList[i]);
-        document.setReportTime(now);
-        document.setTableId(resultTableId);
-        document.setSysUserId("1");
-        documentList.add(document);
-      }
+            for (int i = 0; i < resultIdList.length; i++) {
+                DocumentTrack document = new DocumentTrack();
+                document.setDocumentTypeId(type.getId());
+                document.setRecordId(resultIdList[i]);
+                document.setReportTime(now);
+                document.setTableId(resultTableId);
+                document.setSysUserId("1");
+                documentList.add(document);
+            }
+        }
+        return documentList;
     }
-    return documentList;
-  }
 
-  private DocumentType getResultType() {
-    return documentTypeService.getDocumentTypeByName("malariaCase");
-  }
+    private DocumentType getResultType() {
+        return documentTypeService.getDocumentTypeByName("malariaCase");
+    }
 
-  private String getResultTableId() {
-    return referenceTablesService.getReferenceTableByName("RESULT").getId();
-  }
+    private String getResultTableId() {
+        return referenceTablesService.getReferenceTableByName("RESULT").getId();
+    }
 }

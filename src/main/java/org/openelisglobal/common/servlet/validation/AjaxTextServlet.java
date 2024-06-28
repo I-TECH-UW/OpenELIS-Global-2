@@ -28,45 +28,42 @@ import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 public class AjaxTextServlet extends AjaxServlet {
 
-  @Override
-  public void sendData(
-      String field, String message, HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
-    if (!StringUtil.isNullorNill(field) && !StringUtil.isNullorNill(message)) {
-      response.setContentType("text/plain");
-      response.setHeader("Cache-Control", "no-cache");
-      response.getWriter().write(message);
-    } else {
-      response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-    }
-  }
-
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
-    boolean unauthorized = false;
-
-    // check for module authentication
-    UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
-    unauthorized |= userModuleService.isSessionExpired(request);
-
-    // check for csrf token to prevent js hijacking since we employ callback
-    // functions
-    CsrfToken officialToken = new HttpSessionCsrfTokenRepository().loadToken(request);
-    String clientSuppliedToken = request.getHeader("X-CSRF-Token");
-    unauthorized |= !officialToken.getToken().equals(clientSuppliedToken);
-
-    if (unauthorized) {
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      response.setContentType("text/html; charset=utf-8");
-      response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
-      return;
+    @Override
+    public void sendData(String field, String message, HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        if (!StringUtil.isNullorNill(field) && !StringUtil.isNullorNill(message)) {
+            response.setContentType("text/plain");
+            response.setHeader("Cache-Control", "no-cache");
+            response.getWriter().write(message);
+        } else {
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        }
     }
 
-    String valProvider = request.getParameter("provider");
-    BaseValidationProvider provider =
-        ValidationProviderFactory.getInstance().getValidationProvider(valProvider);
-    provider.setServlet(this);
-    provider.processRequest(request, response);
-  }
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        boolean unauthorized = false;
+
+        // check for module authentication
+        UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
+        unauthorized |= userModuleService.isSessionExpired(request);
+
+        // check for csrf token to prevent js hijacking since we employ callback
+        // functions
+        CsrfToken officialToken = new HttpSessionCsrfTokenRepository().loadToken(request);
+        String clientSuppliedToken = request.getHeader("X-CSRF-Token");
+        unauthorized |= !officialToken.getToken().equals(clientSuppliedToken);
+
+        if (unauthorized) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("text/html; charset=utf-8");
+            response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
+            return;
+        }
+
+        String valProvider = request.getParameter("provider");
+        BaseValidationProvider provider = ValidationProviderFactory.getInstance().getValidationProvider(valProvider);
+        provider.setServlet(this);
+        provider.processRequest(request, response);
+    }
 }

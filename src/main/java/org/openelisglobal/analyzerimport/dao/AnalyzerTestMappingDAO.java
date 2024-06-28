@@ -20,19 +20,22 @@ import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMapping;
 import org.openelisglobal.analyzerimport.valueholder.AnalyzerTestMappingPK;
 import org.openelisglobal.common.dao.BaseDAO;
 
-public interface AnalyzerTestMappingDAO
-    extends BaseDAO<AnalyzerTestMapping, AnalyzerTestMappingPK> {
+public interface AnalyzerTestMappingDAO extends BaseDAO<AnalyzerTestMapping, AnalyzerTestMappingPK> {
 
-  List<AnalyzerTestMapping> getAllForAnalyzer(String analyzerId);
+    List<AnalyzerTestMapping> getAllForAnalyzer(String analyzerId);
 
-  //	List<AnalyzerTestMapping> getAllAnalyzerTestMappings() throws LIMSRuntimeException;
+    // List<AnalyzerTestMapping> getAllAnalyzerTestMappings() throws
+    // LIMSRuntimeException;
 
-  //	void deleteData(List<AnalyzerTestMapping> testMappingList, String currentUserId) throws
-  // LIMSRuntimeException;
+    // void deleteData(List<AnalyzerTestMapping> testMappingList, String
+    // currentUserId) throws
+    // LIMSRuntimeException;
 
-  //	void insertData(AnalyzerTestMapping analyzerTestMapping, String currentUserId) throws
-  // LIMSRuntimeException;
+    // void insertData(AnalyzerTestMapping analyzerTestMapping, String
+    // currentUserId) throws
+    // LIMSRuntimeException;
 
-  //	void updateMapping(AnalyzerTestMapping analyzerTestNameMapping, String currentUserId) throws
-  // LIMSRuntimeException;
+    // void updateMapping(AnalyzerTestMapping analyzerTestNameMapping, String
+    // currentUserId) throws
+    // LIMSRuntimeException;
 }

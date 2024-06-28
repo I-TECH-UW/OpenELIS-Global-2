@@ -17,59 +17,59 @@ import org.openelisglobal.common.valueholder.EnumValueItemImpl;
 
 public class ResultSignature extends EnumValueItemImpl {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String id;
-  private String systemUserId;
-  private String resultId;
-  private boolean isSupervisor;
-  private String nonUserName;
+    private String id;
+    private String systemUserId;
+    private String resultId;
+    private boolean isSupervisor;
+    private String nonUserName;
 
-  public String getSystemUserId() {
-    return systemUserId;
-  }
+    public String getSystemUserId() {
+        return systemUserId;
+    }
 
-  public void setSystemUserId(String systemUserId) {
-    this.systemUserId = systemUserId;
-  }
+    public void setSystemUserId(String systemUserId) {
+        this.systemUserId = systemUserId;
+    }
 
-  public String getResultId() {
-    return resultId;
-  }
+    public String getResultId() {
+        return resultId;
+    }
 
-  public void setResultId(String resultId) {
-    this.resultId = resultId;
-  }
+    public void setResultId(String resultId) {
+        this.resultId = resultId;
+    }
 
-  public boolean getIsSupervisor() {
-    return isSupervisor;
-  }
+    public boolean getIsSupervisor() {
+        return isSupervisor;
+    }
 
-  public void setIsSupervisor(boolean isSupervisor) {
-    this.isSupervisor = isSupervisor;
-  }
+    public void setIsSupervisor(boolean isSupervisor) {
+        this.isSupervisor = isSupervisor;
+    }
 
-  public String getSortOrder() {
-    return sortOrder;
-  }
+    public String getSortOrder() {
+        return sortOrder;
+    }
 
-  public void setSortOrder(String sortOrder) {
-    this.sortOrder = sortOrder;
-  }
+    public void setSortOrder(String sortOrder) {
+        this.sortOrder = sortOrder;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getId() {
-    return this.id;
-  }
+    public String getId() {
+        return this.id;
+    }
 
-  public void setNonUserName(String nonUserName) {
-    this.nonUserName = nonUserName;
-  }
+    public void setNonUserName(String nonUserName) {
+        this.nonUserName = nonUserName;
+    }
 
-  public String getNonUserName() {
-    return nonUserName;
-  }
+    public String getNonUserName() {
+        return nonUserName;
+    }
 }

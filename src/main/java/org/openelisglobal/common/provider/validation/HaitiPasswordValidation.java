@@ -21,28 +21,26 @@ import org.openelisglobal.internationalization.MessageUtil;
 
 public class HaitiPasswordValidation implements ILoginPasswordValidation {
 
-  /*
-   * Current Haiti requirements # Password must:be at least 7 characters long #
-   * contain only upper or lower case characters # numbers # must have at least
-   * one of the following characters (*,$,#,!)
-   *
-   */
+    /*
+     * Current Haiti requirements # Password must:be at least 7 characters long #
+     * contain only upper or lower case characters # numbers # must have at least
+     * one of the following characters (*,$,#,!)
+     *
+     */
 
-  private static final Pattern NEGATION_Of_MUST_ONLY_CONTAIN = Pattern.compile("[^\\w*$#!]");
-  private static final Pattern SPECIAL_CHARS = Pattern.compile("[*$#!]+");
+    private static final Pattern NEGATION_Of_MUST_ONLY_CONTAIN = Pattern.compile("[^\\w*$#!]");
+    private static final Pattern SPECIAL_CHARS = Pattern.compile("[*$#!]+");
 
-  public boolean passwordValid(String password) {
-    // make sure it is long enough and
-    // make sure it only contains the characters we want and
-    // make sure it contains at least one special character
+    public boolean passwordValid(String password) {
+        // make sure it is long enough and
+        // make sure it only contains the characters we want and
+        // make sure it contains at least one special character
 
-    return !GenericValidator.isBlankOrNull(password)
-        && password.length() >= 7
-        && !NEGATION_Of_MUST_ONLY_CONTAIN.matcher(password).find()
-        && SPECIAL_CHARS.matcher(password).find();
-  }
+        return !GenericValidator.isBlankOrNull(password) && password.length() >= 7
+                && !NEGATION_Of_MUST_ONLY_CONTAIN.matcher(password).find() && SPECIAL_CHARS.matcher(password).find();
+    }
 
-  public String getInstructions() {
-    return MessageUtil.getMessage("login.complexity.message");
-  }
+    public String getInstructions() {
+        return MessageUtil.getMessage("login.complexity.message");
+    }
 }

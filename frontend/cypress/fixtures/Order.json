@@ -9,5 +9,6 @@
     "firstName": "Optimus",
     "lastName": "Prime"
   },
-  "labNo": ""
+  "labNo": "",
+  "invalidLabNo": "DEV0124000000000000"
 }

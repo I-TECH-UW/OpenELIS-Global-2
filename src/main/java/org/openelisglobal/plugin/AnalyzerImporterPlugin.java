@@ -21,16 +21,15 @@ import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerLineInserter;
 import org.openelisglobal.analyzerimport.analyzerreaders.AnalyzerResponder;
 
 public interface AnalyzerImporterPlugin extends APlugin {
-  public boolean isTargetAnalyzer(List<String> lines);
+    public boolean isTargetAnalyzer(List<String> lines);
 
-  public AnalyzerLineInserter getAnalyzerLineInserter();
+    public AnalyzerLineInserter getAnalyzerLineInserter();
 
-  default boolean isAnalyzerResult(List<String> lines) {
-    return true;
-  }
-  ;
+    default boolean isAnalyzerResult(List<String> lines) {
+        return true;
+    };
 
-  default AnalyzerResponder getAnalyzerResponder() {
-    return null;
-  }
+    default AnalyzerResponder getAnalyzerResponder() {
+        return null;
+    }
 }

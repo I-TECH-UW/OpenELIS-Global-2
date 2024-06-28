@@ -6,13 +6,13 @@ import org.openelisglobal.common.valueholder.AccessionNumberInfo.AccessionIdenti
 
 public interface AccessionDAO {
 
-  long getNextNumberNoIncrement(String prefix, AccessionFormat accessionFormat);
+    long getNextNumberNoIncrement(String prefix, AccessionFormat accessionFormat);
 
-  long getNextNumberIncrement(String prefix, AccessionFormat accessionFormat);
+    long getNextNumberIncrement(String prefix, AccessionFormat accessionFormat);
 
-  AccessionNumberInfo save(AccessionNumberInfo info);
+    AccessionNumberInfo save(AccessionNumberInfo info);
 
-  AccessionNumberInfo get(AccessionIdentity accessionIdentity);
+    AccessionNumberInfo get(AccessionIdentity accessionIdentity);
 
-  boolean exists(AccessionIdentity accessionIdentity);
+    boolean exists(AccessionIdentity accessionIdentity);
 }

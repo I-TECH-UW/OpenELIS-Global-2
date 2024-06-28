@@ -2,7 +2,7 @@ package org.openelisglobal.reports.action.implementation.reportBeans;
 
 public interface CovidResultsBuilder {
 
-  void buildDataSource();
+    void buildDataSource();
 
-  byte[] getDataSourceAsByteArray();
+    byte[] getDataSourceAsByteArray();
 }

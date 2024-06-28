@@ -30,6 +30,7 @@
         <properties>
             <property name="hibernate.ejb.cfgfile"
                 value="hibernate/test-hibernate.cfg.xml" />
+            <property name="hibernate.search.backend.analysis.configurer" value="class:org.openelisglobal.hibernate.search.analysis.CustomLuceneAnalysisConfigurer"/>
         </properties>
 
     </persistence-unit>

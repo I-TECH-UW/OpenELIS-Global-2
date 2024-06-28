@@ -14,31 +14,31 @@
 package org.openelisglobal.dataexchange.resultreporting.beans;
 
 public class TestRangeXmit {
-  private String low;
-  private String high;
-  private String units;
+    private String low;
+    private String high;
+    private String units;
 
-  public String getLow() {
-    return low;
-  }
+    public String getLow() {
+        return low;
+    }
 
-  public void setLow(String low) {
-    this.low = low;
-  }
+    public void setLow(String low) {
+        this.low = low;
+    }
 
-  public String getHigh() {
-    return high;
-  }
+    public String getHigh() {
+        return high;
+    }
 
-  public void setHigh(String high) {
-    this.high = high;
-  }
+    public void setHigh(String high) {
+        this.high = high;
+    }
 
-  public String getUnits() {
-    return units;
-  }
+    public String getUnits() {
+        return units;
+    }
 
-  public void setUnits(String units) {
-    this.units = units;
-  }
+    public void setUnits(String units) {
+        this.units = units;
+    }
 }

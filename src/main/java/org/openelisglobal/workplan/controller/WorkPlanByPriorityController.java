@@ -45,160 +45,159 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class WorkPlanByPriorityController extends BaseWorkplanController {
 
-  private static final String[] ALLOWED_FIELDS = new String[] {};
+    private static final String[] ALLOWED_FIELDS = new String[] {};
 
-  @Autowired private AnalysisService analysisService;
-  @Autowired private SampleQaEventService sampleQaEventService;
-  @Autowired private UserService userService;
-  @Autowired private SampleService sampleService;
+    @Autowired
+    private AnalysisService analysisService;
+    @Autowired
+    private SampleQaEventService sampleQaEventService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private SampleService sampleService;
 
-  @InitBinder
-  public void initBinder(WebDataBinder binder) {
-    binder.setAllowedFields(ALLOWED_FIELDS);
-  }
-
-  @RequestMapping(value = "/WorkPlanByPriority", method = RequestMethod.GET)
-  public ModelAndView showWorkPlanByPriority(
-      HttpServletRequest request,
-      @ModelAttribute("form") @Validated(PrintWorkplan.class) WorkplanForm oldForm,
-      BindingResult result)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    WorkplanForm form = new WorkplanForm();
-
-    request.getSession().setAttribute(SAVE_DISABLED, "true");
-
-    List<TestResultItem> workplanTests;
-    List<TestResultItem> filteredTests;
-
-    OrderPriority priority = null;
-    if (!result.hasFieldErrors("priority")) {
-      priority = oldForm.getPriority();
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    if (priority != null) {
-      workplanTests = getWorkplanByPriority(priority);
-      filteredTests =
-          userService.filterResultsByLabUnitRoles(
-              getSysUserId(request), workplanTests, Constants.ROLE_RESULTS);
+    @RequestMapping(value = "/WorkPlanByPriority", method = RequestMethod.GET)
+    public ModelAndView showWorkPlanByPriority(HttpServletRequest request,
+            @ModelAttribute("form") @Validated(PrintWorkplan.class) WorkplanForm oldForm, BindingResult result)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        WorkplanForm form = new WorkplanForm();
 
-      ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility();
-      resultsLoadUtility.sortByAccessionAndSequence(filteredTests);
-      form.setPriority(priority);
-      form.setTestName(priority.name());
-      form.setWorkplanTests(filteredTests);
-      form.setSearchFinished(Boolean.TRUE);
+        request.getSession().setAttribute(SAVE_DISABLED, "true");
 
-    } else {
-      // no search done, set workplanTests as empty
-      form.setSearchFinished(Boolean.FALSE);
-      form.setPriority(null);
-      form.setWorkplanTests(new ArrayList<TestResultItem>());
-    }
+        List<TestResultItem> workplanTests;
+        List<TestResultItem> filteredTests;
 
-    form.setPriorityList(DisplayListService.getInstance().getList(ListType.ORDER_PRIORITY));
-    if (!result.hasFieldErrors("type")) {
-      form.setType(oldForm.getType());
-    }
-    form.setType("priority");
-    form.setSearchLabel(MessageUtil.getMessage("workplan.priority.list"));
-    form.setSearchAction("WorkPlanByPriority");
-
-    return findForward(FWD_SUCCESS, form);
-  }
-
-  @SuppressWarnings("unchecked")
-  private List<TestResultItem> getWorkplanByPriority(OrderPriority priority) {
-
-    List<TestResultItem> workplanTestList = new ArrayList<>();
-    String currentAccessionNumber = null;
-    String subjectNumber = null;
-    String patientName = null;
-    String nextVisit = null;
-    int sampleGroupingNumber = 0;
-
-    if (priority != null) {
-      List<Analysis> analysisList =
-          analysisService.getAnalysesByPriorityAndStatusId(priority, statusList);
-      for (Analysis analysis : analysisList) {
-        TestResultItem testResultItem = new TestResultItem();
-        testResultItem.setTestId(analysis.getTest().getId());
-        Sample sample = analysis.getSampleItem().getSample();
-        testResultItem.setAccessionNumber(sample.getAccessionNumber());
-        testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
-        testResultItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
-        boolean nonConforming = QAService.isAnalysisParentNonConforming(analysis);
-        if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
-          nonConforming = nonConforming || getQaEventByTestSection(analysis);
+        OrderPriority priority = null;
+        if (!result.hasFieldErrors("priority")) {
+            priority = oldForm.getPriority();
         }
-        testResultItem.setNonconforming(nonConforming);
 
-        if (!testResultItem.getAccessionNumber().equals(currentAccessionNumber)) {
-          sampleGroupingNumber++;
-          currentAccessionNumber = testResultItem.getAccessionNumber();
-          subjectNumber = getSubjectNumber(analysis);
-          patientName = getPatientName(analysis);
-          nextVisit =
-              SpringContext.getBean(ObservationHistoryService.class)
-                  .getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId());
+        if (priority != null) {
+            workplanTests = getWorkplanByPriority(priority);
+            filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests,
+                    Constants.ROLE_RESULTS);
+
+            ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility();
+            resultsLoadUtility.sortByAccessionAndSequence(filteredTests);
+            form.setPriority(priority);
+            form.setTestName(priority.name());
+            form.setWorkplanTests(filteredTests);
+            form.setSearchFinished(Boolean.TRUE);
+
+        } else {
+            // no search done, set workplanTests as empty
+            form.setSearchFinished(Boolean.FALSE);
+            form.setPriority(null);
+            form.setWorkplanTests(new ArrayList<TestResultItem>());
         }
-        testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
-        testResultItem.setPatientInfo(subjectNumber);
-        testResultItem.setPatientName(patientName);
-        testResultItem.setNextVisitDate(nextVisit);
 
-        workplanTestList.add(testResultItem);
-      }
-    }
-    return workplanTestList;
-  }
-
-  private boolean getQaEventByTestSection(Analysis analysis) {
-
-    if (analysis.getTestSection() != null && analysis.getSampleItem().getSample() != null) {
-      Sample sample = analysis.getSampleItem().getSample();
-      List<SampleQaEvent> sampleQaEventsList = getSampleQaEvents(sample);
-      for (SampleQaEvent event : sampleQaEventsList) {
-        QAService qa = new QAService(event);
-        if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
-            && qa.getObservationValue(QAObservationType.SECTION)
-                .equals(analysis.getTestSection().getNameKey())) {
-          return true;
+        form.setPriorityList(DisplayListService.getInstance().getList(ListType.ORDER_PRIORITY));
+        if (!result.hasFieldErrors("type")) {
+            form.setType(oldForm.getType());
         }
-      }
+        form.setType("priority");
+        form.setSearchLabel(MessageUtil.getMessage("workplan.priority.list"));
+        form.setSearchAction("WorkPlanByPriority");
+
+        return findForward(FWD_SUCCESS, form);
     }
-    return false;
-  }
 
-  public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
-    return sampleQaEventService.getSampleQaEventsBySample(sample);
-  }
+    @SuppressWarnings("unchecked")
+    private List<TestResultItem> getWorkplanByPriority(OrderPriority priority) {
 
-  @Override
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "workplanResultDefinition";
-    } else if (FWD_FAIL.equals(forward)) {
-      return "homePageDefinition";
-    } else {
-      return "PageNotFound";
+        List<TestResultItem> workplanTestList = new ArrayList<>();
+        String currentAccessionNumber = null;
+        String subjectNumber = null;
+        String patientName = null;
+        String nextVisit = null;
+        int sampleGroupingNumber = 0;
+
+        if (priority != null) {
+            List<Analysis> analysisList = analysisService.getAnalysesByPriorityAndStatusId(priority, statusList);
+            for (Analysis analysis : analysisList) {
+                TestResultItem testResultItem = new TestResultItem();
+                testResultItem.setTestId(analysis.getTest().getId());
+                Sample sample = analysis.getSampleItem().getSample();
+                testResultItem.setAccessionNumber(sample.getAccessionNumber());
+                testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
+                testResultItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
+                boolean nonConforming = QAService.isAnalysisParentNonConforming(analysis);
+                if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
+                    nonConforming = nonConforming || getQaEventByTestSection(analysis);
+                }
+                testResultItem.setNonconforming(nonConforming);
+
+                if (!testResultItem.getAccessionNumber().equals(currentAccessionNumber)) {
+                    sampleGroupingNumber++;
+                    currentAccessionNumber = testResultItem.getAccessionNumber();
+                    subjectNumber = getSubjectNumber(analysis);
+                    patientName = getPatientName(analysis);
+                    nextVisit = SpringContext.getBean(ObservationHistoryService.class)
+                            .getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId());
+                }
+                testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
+                testResultItem.setPatientInfo(subjectNumber);
+                testResultItem.setPatientName(patientName);
+                testResultItem.setNextVisitDate(nextVisit);
+
+                workplanTestList.add(testResultItem);
+            }
+        }
+        return workplanTestList;
     }
-  }
 
-  class ValueComparator implements Comparator<IdValuePair> {
+    private boolean getQaEventByTestSection(Analysis analysis) {
+
+        if (analysis.getTestSection() != null && analysis.getSampleItem().getSample() != null) {
+            Sample sample = analysis.getSampleItem().getSample();
+            List<SampleQaEvent> sampleQaEventsList = getSampleQaEvents(sample);
+            for (SampleQaEvent event : sampleQaEventsList) {
+                QAService qa = new QAService(event);
+                if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
+                        && qa.getObservationValue(QAObservationType.SECTION)
+                                .equals(analysis.getTestSection().getNameKey())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
+        return sampleQaEventService.getSampleQaEventsBySample(sample);
+    }
 
     @Override
-    public int compare(IdValuePair p1, IdValuePair p2) {
-      return p1.getValue().toUpperCase().compareTo(p2.getValue().toUpperCase());
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "workplanResultDefinition";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "homePageDefinition";
+        } else {
+            return "PageNotFound";
+        }
     }
-  }
 
-  @Override
-  protected String getPageTitleKey() {
-    return "workplan.priority.title";
-  }
+    class ValueComparator implements Comparator<IdValuePair> {
 
-  @Override
-  protected String getPageSubtitleKey() {
-    return "workplan.priority.title";
-  }
+        @Override
+        public int compare(IdValuePair p1, IdValuePair p2) {
+            return p1.getValue().toUpperCase().compareTo(p2.getValue().toUpperCase());
+        }
+    }
+
+    @Override
+    protected String getPageTitleKey() {
+        return "workplan.priority.title";
+    }
+
+    @Override
+    protected String getPageSubtitleKey() {
+        return "workplan.priority.title";
+    }
 }

@@ -34,103 +34,102 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController("WorkplanByPriorityRestController")
 public class WorkplanByPriorityRestController extends WorkplanRestController {
 
-  @Autowired private AnalysisService analysisService;
-  @Autowired private SampleQaEventService sampleQaEventService;
-  @Autowired private UserService userService;
+    @Autowired
+    private AnalysisService analysisService;
+    @Autowired
+    private SampleQaEventService sampleQaEventService;
+    @Autowired
+    private UserService userService;
 
-  @RequestMapping(value = "/rest/workplan-by-priority", method = RequestMethod.GET)
-  public WorkplanForm showWorkPlanByPriority(
-      HttpServletRequest request,
-      @RequestParam(name = "priority", defaultValue = "") OrderPriority priority)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    @RequestMapping(value = "/rest/workplan-by-priority", method = RequestMethod.GET)
+    public WorkplanForm showWorkPlanByPriority(HttpServletRequest request,
+            @RequestParam(name = "priority", defaultValue = "") OrderPriority priority)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-    WorkplanPaging paging = new WorkplanPaging();
-    WorkplanForm form = new WorkplanForm();
-    List<TestResultItem> workplanTests = new ArrayList<TestResultItem>();
-    List<TestResultItem> filteredTests = new ArrayList<TestResultItem>();
+        WorkplanPaging paging = new WorkplanPaging();
+        WorkplanForm form = new WorkplanForm();
+        List<TestResultItem> workplanTests = new ArrayList<TestResultItem>();
+        List<TestResultItem> filteredTests = new ArrayList<TestResultItem>();
 
-    String requestedPage = request.getParameter("page");
-    if (GenericValidator.isBlankOrNull(requestedPage)) {
-      workplanTests = getWorkplanByPriority(priority);
-      filteredTests =
-          userService.filterResultsByLabUnitRoles(
-              getSysUserId(request), workplanTests, Constants.ROLE_RESULTS);
+        String requestedPage = request.getParameter("page");
+        if (GenericValidator.isBlankOrNull(requestedPage)) {
+            workplanTests = getWorkplanByPriority(priority);
+            filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests,
+                    Constants.ROLE_RESULTS);
 
-      ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility();
-      resultsLoadUtility.sortByAccessionAndSequence(filteredTests);
+            ResultsLoadUtility resultsLoadUtility = new ResultsLoadUtility();
+            resultsLoadUtility.sortByAccessionAndSequence(filteredTests);
 
-      paging.setDatabaseResults(request, form, filteredTests);
-    } else {
-      int requestedPageNumber = Integer.parseInt(requestedPage);
-      paging.page(request, form, requestedPageNumber);
+            paging.setDatabaseResults(request, form, filteredTests);
+        } else {
+            int requestedPageNumber = Integer.parseInt(requestedPage);
+            paging.page(request, form, requestedPageNumber);
+        }
+
+        return form;
     }
 
-    return form;
-  }
+    private List<TestResultItem> getWorkplanByPriority(OrderPriority priority) {
 
-  private List<TestResultItem> getWorkplanByPriority(OrderPriority priority) {
+        List<TestResultItem> workplanTestList = new ArrayList<>();
+        String currentAccessionNumber = null;
+        String subjectNumber = null;
+        String patientName = null;
+        String nextVisit = null;
+        int sampleGroupingNumber = 0;
 
-    List<TestResultItem> workplanTestList = new ArrayList<>();
-    String currentAccessionNumber = null;
-    String subjectNumber = null;
-    String patientName = null;
-    String nextVisit = null;
-    int sampleGroupingNumber = 0;
+        if (priority != null) {
+            List<Analysis> analysisList = analysisService.getAnalysesByPriorityAndStatusId(priority, statusList);
+            for (Analysis analysis : analysisList) {
+                TestResultItem testResultItem = new TestResultItem();
+                testResultItem.setTestId(analysis.getTest().getId());
+                Sample sample = analysis.getSampleItem().getSample();
+                testResultItem.setAccessionNumber(sample.getAccessionNumber());
+                testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
+                testResultItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
+                boolean nonConforming = QAService.isAnalysisParentNonConforming(analysis);
+                if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
+                    nonConforming = nonConforming || getQaEventByTestSection(analysis);
+                }
+                testResultItem.setNonconforming(nonConforming);
 
-    if (priority != null) {
-      List<Analysis> analysisList =
-          analysisService.getAnalysesByPriorityAndStatusId(priority, statusList);
-      for (Analysis analysis : analysisList) {
-        TestResultItem testResultItem = new TestResultItem();
-        testResultItem.setTestId(analysis.getTest().getId());
-        Sample sample = analysis.getSampleItem().getSample();
-        testResultItem.setAccessionNumber(sample.getAccessionNumber());
-        testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
-        testResultItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
-        boolean nonConforming = QAService.isAnalysisParentNonConforming(analysis);
-        if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
-          nonConforming = nonConforming || getQaEventByTestSection(analysis);
+                if (!testResultItem.getAccessionNumber().equals(currentAccessionNumber)) {
+                    sampleGroupingNumber++;
+                    currentAccessionNumber = testResultItem.getAccessionNumber();
+                    subjectNumber = getSubjectNumber(analysis);
+                    patientName = getPatientName(analysis);
+                    nextVisit = SpringContext.getBean(ObservationHistoryService.class)
+                            .getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId());
+                }
+                testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
+                testResultItem.setPatientInfo(subjectNumber);
+                testResultItem.setPatientName(patientName);
+                testResultItem.setNextVisitDate(nextVisit);
+
+                workplanTestList.add(testResultItem);
+            }
         }
-        testResultItem.setNonconforming(nonConforming);
-
-        if (!testResultItem.getAccessionNumber().equals(currentAccessionNumber)) {
-          sampleGroupingNumber++;
-          currentAccessionNumber = testResultItem.getAccessionNumber();
-          subjectNumber = getSubjectNumber(analysis);
-          patientName = getPatientName(analysis);
-          nextVisit =
-              SpringContext.getBean(ObservationHistoryService.class)
-                  .getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId());
-        }
-        testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
-        testResultItem.setPatientInfo(subjectNumber);
-        testResultItem.setPatientName(patientName);
-        testResultItem.setNextVisitDate(nextVisit);
-
-        workplanTestList.add(testResultItem);
-      }
+        return workplanTestList;
     }
-    return workplanTestList;
-  }
 
-  private boolean getQaEventByTestSection(Analysis analysis) {
+    private boolean getQaEventByTestSection(Analysis analysis) {
 
-    if (analysis.getTestSection() != null && analysis.getSampleItem().getSample() != null) {
-      Sample sample = analysis.getSampleItem().getSample();
-      List<SampleQaEvent> sampleQaEventsList = getSampleQaEvents(sample);
-      for (SampleQaEvent event : sampleQaEventsList) {
-        QAService qa = new QAService(event);
-        if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
-            && qa.getObservationValue(QAObservationType.SECTION)
-                .equals(analysis.getTestSection().getNameKey())) {
-          return true;
+        if (analysis.getTestSection() != null && analysis.getSampleItem().getSample() != null) {
+            Sample sample = analysis.getSampleItem().getSample();
+            List<SampleQaEvent> sampleQaEventsList = getSampleQaEvents(sample);
+            for (SampleQaEvent event : sampleQaEventsList) {
+                QAService qa = new QAService(event);
+                if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
+                        && qa.getObservationValue(QAObservationType.SECTION)
+                                .equals(analysis.getTestSection().getNameKey())) {
+                    return true;
+                }
+            }
         }
-      }
+        return false;
     }
-    return false;
-  }
 
-  public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
-    return sampleQaEventService.getSampleQaEventsBySample(sample);
-  }
+    public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
+        return sampleQaEventService.getSampleQaEventsBySample(sample);
+    }
 }

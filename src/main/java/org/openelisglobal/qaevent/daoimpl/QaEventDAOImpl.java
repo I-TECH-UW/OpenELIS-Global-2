@@ -37,168 +37,165 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEventDAO {
 
-  public QaEventDAOImpl() {
-    super(QaEvent.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public void getData(QaEvent qaEvent) throws LIMSRuntimeException {
-    try {
-      QaEvent qaEv = entityManager.unwrap(Session.class).get(QaEvent.class, qaEvent.getId());
-      if (qaEv != null) {
-        PropertyUtils.copyProperties(qaEvent, qaEv);
-
-      } else {
-        qaEvent.setId(null);
-      }
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in QaEvent getData()", e);
-    }
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<QaEvent> getAllQaEvents() throws LIMSRuntimeException {
-    List<QaEvent> list;
-    try {
-      String sql = "from QaEvent qe order by qe.id";
-      Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
-      list = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in QaEvent getAllQaEvents()", e);
+    public QaEventDAOImpl() {
+        super(QaEvent.class);
     }
 
-    return list;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(QaEvent qaEvent) throws LIMSRuntimeException {
+        try {
+            QaEvent qaEv = entityManager.unwrap(Session.class).get(QaEvent.class, qaEvent.getId());
+            if (qaEv != null) {
+                PropertyUtils.copyProperties(qaEvent, qaEv);
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<QaEvent> getPageOfQaEvents(int startingRecNo) throws LIMSRuntimeException {
-    List<QaEvent> list = new Vector<>();
-    try {
-      // calculate maxRow to be one more than the page size
-      int endingRecNo =
-          startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
-
-      String sql = "from QaEvent qe order by qe.qaEventName";
-      Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
-      query.setFirstResult(startingRecNo - 1);
-      query.setMaxResults(endingRecNo - 1);
-
-      list = query.list();
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in QaEvent getPageOfQaEvents()", e);
+            } else {
+                qaEvent.setId(null);
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in QaEvent getData()", e);
+        }
     }
 
-    return list;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<QaEvent> getAllQaEvents() throws LIMSRuntimeException {
+        List<QaEvent> list;
+        try {
+            String sql = "from QaEvent qe order by qe.id";
+            Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in QaEvent getAllQaEvents()", e);
+        }
 
-  public QaEvent readQaEvent(String idString) {
-    QaEvent qaEvent = null;
-    try {
-      qaEvent = entityManager.unwrap(Session.class).get(QaEvent.class, idString);
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in QaEvent readQaEvent()", e);
+        return list;
     }
 
-    return qaEvent;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<QaEvent> getPageOfQaEvents(int startingRecNo) throws LIMSRuntimeException {
+        List<QaEvent> list = new Vector<>();
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
-  // this is for autocomplete
-  @Override
-  @Transactional(readOnly = true)
-  public List<QaEvent> getQaEvents(String filter) throws LIMSRuntimeException {
-    List<QaEvent> list = new Vector<>();
-    try {
-      String sql =
-          "from QaEvent qe where upper(qe.qaEventName) like upper(:param) order by"
-              + " upper(qe.qaEventName)";
-      Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
-      query.setParameter("param", filter + "%");
+            String sql = "from QaEvent qe order by qe.qaEventName";
+            Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
 
-      list = query.list();
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in QaEvent getQaEvents(String filter)", e);
+            list = query.list();
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in QaEvent getPageOfQaEvents()", e);
+        }
+
+        return list;
     }
-    return list;
-  }
 
-  @Override
-  @Transactional(readOnly = true)
-  public QaEvent getQaEventByName(QaEvent qaEvent) throws LIMSRuntimeException {
-    try {
-      String sql = "from QaEvent qe where qe.qaEventName = :param";
-      Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
-      query.setParameter("param", qaEvent.getQaEventName());
+    public QaEvent readQaEvent(String idString) {
+        QaEvent qaEvent = null;
+        try {
+            qaEvent = entityManager.unwrap(Session.class).get(QaEvent.class, idString);
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in QaEvent readQaEvent()", e);
+        }
 
-      List<QaEvent> list = query.list();
-      QaEvent qe = null;
-      if (list.size() > 0) {
-        qe = list.get(0);
-      }
-
-      return qe;
-
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in QaEvent getQaEventByName()", e);
+        return qaEvent;
     }
-  }
 
-  @Override
-  @Transactional(readOnly = true)
-  public Integer getTotalQaEventCount() throws LIMSRuntimeException {
-    return getCount();
-  }
+    // this is for autocomplete
+    @Override
+    @Transactional(readOnly = true)
+    public List<QaEvent> getQaEvents(String filter) throws LIMSRuntimeException {
+        List<QaEvent> list = new Vector<>();
+        try {
+            String sql = "from QaEvent qe where upper(qe.qaEventName) like upper(:param) order by"
+                    + " upper(qe.qaEventName)";
+            Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
+            query.setParameter("param", filter + "%");
 
-  @Override
-  public boolean duplicateQaEventExists(QaEvent qaEvent) throws LIMSRuntimeException {
-    try {
-
-      List<QaEvent> list = new ArrayList<>();
-
-      // not case sensitive hemolysis and Hemolysis are considered
-      // duplicates
-      String sql =
-          "from QaEvent t where ((trim(lower(t.qaEventName)) = :param and trim(lower(t.type)) ="
-              + " :param3 and t.id != :param2) or (trim(lower(t.description)) = :param4 and"
-              + " trim(lower(t.type)) = :param3 and t.id != :param2)) ";
-
-      Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
-      query.setParameter("param", qaEvent.getQaEventName().toLowerCase().trim());
-      query.setParameter("param3", qaEvent.getType());
-      query.setParameter("param4", qaEvent.getDescription().toLowerCase().trim());
-
-      // initialize with 0 (for new records where no id has been generated yet
-      String qaEventId = "0";
-      if (!StringUtil.isNullorNill(qaEvent.getId())) {
-        qaEventId = qaEvent.getId();
-      }
-      query.setParameter("param2", qaEventId);
-
-      list = query.list();
-
-      if (list.size() > 0) {
-        return true;
-      } else {
-        return false;
-      }
-
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in duplicateQaEventExists()", e);
+            list = query.list();
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in QaEvent getQaEvents(String filter)", e);
+        }
+        return list;
     }
-  }
+
+    @Override
+    @Transactional(readOnly = true)
+    public QaEvent getQaEventByName(QaEvent qaEvent) throws LIMSRuntimeException {
+        try {
+            String sql = "from QaEvent qe where qe.qaEventName = :param";
+            Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
+            query.setParameter("param", qaEvent.getQaEventName());
+
+            List<QaEvent> list = query.list();
+            QaEvent qe = null;
+            if (list.size() > 0) {
+                qe = list.get(0);
+            }
+
+            return qe;
+
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in QaEvent getQaEventByName()", e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getTotalQaEventCount() throws LIMSRuntimeException {
+        return getCount();
+    }
+
+    @Override
+    public boolean duplicateQaEventExists(QaEvent qaEvent) throws LIMSRuntimeException {
+        try {
+
+            List<QaEvent> list = new ArrayList<>();
+
+            // not case sensitive hemolysis and Hemolysis are considered
+            // duplicates
+            String sql = "from QaEvent t where ((trim(lower(t.qaEventName)) = :param and trim(lower(t.type)) ="
+                    + " :param3 and t.id != :param2) or (trim(lower(t.description)) = :param4 and"
+                    + " trim(lower(t.type)) = :param3 and t.id != :param2)) ";
+
+            Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
+            query.setParameter("param", qaEvent.getQaEventName().toLowerCase().trim());
+            query.setParameter("param3", qaEvent.getType());
+            query.setParameter("param4", qaEvent.getDescription().toLowerCase().trim());
+
+            // initialize with 0 (for new records where no id has been generated yet
+            String qaEventId = "0";
+            if (!StringUtil.isNullorNill(qaEvent.getId())) {
+                qaEventId = qaEvent.getId();
+            }
+            query.setParameter("param2", qaEventId);
+
+            list = query.list();
+
+            if (list.size() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in duplicateQaEventExists()", e);
+        }
+    }
 }

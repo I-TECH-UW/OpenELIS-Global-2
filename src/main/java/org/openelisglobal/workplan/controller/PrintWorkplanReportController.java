@@ -31,142 +31,127 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class PrintWorkplanReportController extends BaseController {
 
-  private static final String[] ALLOWED_FIELDS =
-      new String[] {
-        "selectedSearchID",
-        "type",
-        "testTypeID",
-        "testSectionId",
-        "testName",
-        "workplanTests*.accessionNumber",
-        "workplanTests*.patientInfo",
-        "workplanTests*.receivedDate",
-        "workplanTests*.testName",
-        "workplanTests*.notIncludedInWorkplan",
-        "resultList"
-      };
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedSearchID", "type", "testTypeID",
+            "testSectionId", "testName", "workplanTests*.accessionNumber", "workplanTests*.patientInfo",
+            "workplanTests*.receivedDate", "workplanTests*.testName", "workplanTests*.notIncludedInWorkplan",
+            "resultList" };
 
-  @InitBinder
-  public void initBinder(WebDataBinder binder) {
-    binder.setAllowedFields(ALLOWED_FIELDS);
-  }
-
-  @RequestMapping(value = "/PrintWorkplanReport", method = RequestMethod.POST)
-  public void showPrintWorkplanReport(
-      HttpServletRequest request,
-      HttpServletResponse response,
-      @ModelAttribute("form") @Validated(PrintWorkplan.class) WorkplanForm form,
-      BindingResult result) {
-    if (result.hasErrors()) {
-      writeErrorsToResponse(result, response);
-      return;
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    request.getSession().setAttribute(SAVE_DISABLED, "true");
+    @RequestMapping(value = "/PrintWorkplanReport", method = RequestMethod.POST)
+    public void showPrintWorkplanReport(HttpServletRequest request, HttpServletResponse response,
+            @ModelAttribute("form") @Validated(PrintWorkplan.class) WorkplanForm form, BindingResult result) {
+        if (result.hasErrors()) {
+            writeErrorsToResponse(result, response);
+            return;
+        }
 
-    String workplanType = form.getType();
-    String workplanName;
+        request.getSession().setAttribute(SAVE_DISABLED, "true");
 
-    if (workplanType.equals("test")) {
-      String testID = form.getTestTypeID();
-      workplanName = getTestTypeName(testID);
-    } else {
-      workplanType = Character.toUpperCase(workplanType.charAt(0)) + workplanType.substring(1);
-      workplanName = form.getTestName();
+        String workplanType = form.getType();
+        String workplanName;
+
+        if (workplanType.equals("test")) {
+            String testID = form.getTestTypeID();
+            workplanName = getTestTypeName(testID);
+        } else {
+            workplanType = Character.toUpperCase(workplanType.charAt(0)) + workplanType.substring(1);
+            workplanName = form.getTestName();
+        }
+
+        // get workplan report based on testName
+        IWorkplanReport workplanReport = getWorkplanReport(workplanType, workplanName);
+
+        workplanReport.setReportPath(getReportPath());
+
+        // set jasper report parameters
+        HashMap<String, Object> parameterMap = workplanReport.getParameters();
+
+        // prepare report
+        List<?> workplanRows = workplanReport.prepareRows(form);
+
+        // set Jasper report file name
+        String reportFileName = workplanReport.getFileName();
+        ClassLoader classLoader = getClass().getClassLoader();
+        File reportFile = new File(classLoader.getResource("reports/" + reportFileName + ".jasper").getFile());
+
+        try {
+
+            byte[] bytes = null;
+
+            JRDataSource dataSource = createReportDataSource(workplanRows);
+            bytes = JasperRunManager.runReportToPdf(reportFile.getAbsolutePath(), parameterMap, dataSource);
+
+            ServletOutputStream servletOutputStream = response.getOutputStream();
+            response.setContentType("application/pdf");
+            response.setContentLength(bytes.length);
+            String downloadFilename = "WorkplanReport";
+            response.setHeader("Content-Disposition", "filename=\"" + downloadFilename + ".pdf\"");
+
+            servletOutputStream.write(bytes, 0, bytes.length);
+            servletOutputStream.flush();
+            servletOutputStream.close();
+
+        } catch (JRException | IOException e) {
+            LogEvent.logError(e);
+            result.reject("error.jasper", "error.jasper");
+        }
+        if (result.hasErrors()) {
+            saveErrors(result);
+        }
     }
 
-    // get workplan report based on testName
-    IWorkplanReport workplanReport = getWorkplanReport(workplanType, workplanName);
+    private JRDataSource createReportDataSource(List<?> includedTests) {
+        JRBeanCollectionDataSource dataSource;
+        dataSource = new JRBeanCollectionDataSource(includedTests);
 
-    workplanReport.setReportPath(getReportPath());
-
-    // set jasper report parameters
-    HashMap<String, Object> parameterMap = workplanReport.getParameters();
-
-    // prepare report
-    List<?> workplanRows = workplanReport.prepareRows(form);
-
-    // set Jasper report file name
-    String reportFileName = workplanReport.getFileName();
-    ClassLoader classLoader = getClass().getClassLoader();
-    File reportFile =
-        new File(classLoader.getResource("reports/" + reportFileName + ".jasper").getFile());
-
-    try {
-
-      byte[] bytes = null;
-
-      JRDataSource dataSource = createReportDataSource(workplanRows);
-      bytes =
-          JasperRunManager.runReportToPdf(reportFile.getAbsolutePath(), parameterMap, dataSource);
-
-      ServletOutputStream servletOutputStream = response.getOutputStream();
-      response.setContentType("application/pdf");
-      response.setContentLength(bytes.length);
-      String downloadFilename = "WorkplanReport";
-      response.setHeader("Content-Disposition", "filename=\"" + downloadFilename + ".pdf\"");
-
-      servletOutputStream.write(bytes, 0, bytes.length);
-      servletOutputStream.flush();
-      servletOutputStream.close();
-
-    } catch (JRException | IOException e) {
-      LogEvent.logError(e);
-      result.reject("error.jasper", "error.jasper");
-    }
-    if (result.hasErrors()) {
-      saveErrors(result);
-    }
-  }
-
-  private JRDataSource createReportDataSource(List<?> includedTests) {
-    JRBeanCollectionDataSource dataSource;
-    dataSource = new JRBeanCollectionDataSource(includedTests);
-
-    return dataSource;
-  }
-
-  private String getTestTypeName(String id) {
-    return TestServiceImpl.getUserLocalizedTestName(id);
-  }
-
-  public IWorkplanReport getWorkplanReport(String testType, String name) {
-
-    IWorkplanReport workplan;
-
-    if ("test".equals(testType)) {
-      workplan = new TestWorkplanReport(name);
-      //        } else if ("Serology".equals(testType)) {
-      //            workplan = new ElisaWorkplanReport(name);
-    } else {
-      workplan = new TestSectionWorkplanReport(name);
+        return dataSource;
     }
 
-    return workplan;
-  }
-
-  public String getReportPath() {
-    ClassLoader classLoader = getClass().getClassLoader();
-    File reportFile = new File(classLoader.getResource("reports/").getFile());
-    return reportFile.getAbsolutePath();
-  }
-
-  @Override
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "homePageDefinition";
-    } else {
-      return "PageNotFound";
+    private String getTestTypeName(String id) {
+        return TestServiceImpl.getUserLocalizedTestName(id);
     }
-  }
 
-  @Override
-  protected String getPageSubtitleKey() {
-    return "workplan.title";
-  }
+    public IWorkplanReport getWorkplanReport(String testType, String name) {
 
-  @Override
-  protected String getPageTitleKey() {
-    return "workplan.title";
-  }
+        IWorkplanReport workplan;
+
+        if ("test".equals(testType)) {
+            workplan = new TestWorkplanReport(name);
+            // } else if ("Serology".equals(testType)) {
+            // workplan = new ElisaWorkplanReport(name);
+        } else {
+            workplan = new TestSectionWorkplanReport(name);
+        }
+
+        return workplan;
+    }
+
+    public String getReportPath() {
+        ClassLoader classLoader = getClass().getClassLoader();
+        File reportFile = new File(classLoader.getResource("reports/").getFile());
+        return reportFile.getAbsolutePath();
+    }
+
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "homePageDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
+
+    @Override
+    protected String getPageSubtitleKey() {
+        return "workplan.title";
+    }
+
+    @Override
+    protected String getPageTitleKey() {
+        return "workplan.title";
+    }
 }

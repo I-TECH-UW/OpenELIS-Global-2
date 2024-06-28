@@ -25,130 +25,130 @@ import org.openelisglobal.systemuser.valueholder.SystemUser;
 
 public class AnalysisQaEventAction extends BaseObject<String> {
 
-  private String id;
+    private String id;
 
-  private String analysisQaEventId;
+    private String analysisQaEventId;
 
-  private ValueHolderInterface analysisQaEvent;
+    private ValueHolderInterface analysisQaEvent;
 
-  private String actionId;
+    private String actionId;
 
-  private ValueHolderInterface action;
+    private ValueHolderInterface action;
 
-  private Date createdDate;
+    private Date createdDate;
 
-  private String createdDateForDisplay;
+    private String createdDateForDisplay;
 
-  // bugzilla 2481
-  private SystemUser systemUser;
+    // bugzilla 2481
+    private SystemUser systemUser;
 
-  private String systemUserId;
+    private String systemUserId;
 
-  public AnalysisQaEventAction() {
-    super();
-    this.action = new ValueHolder();
-    this.analysisQaEvent = new ValueHolder();
-  }
+    public AnalysisQaEventAction() {
+        super();
+        this.action = new ValueHolder();
+        this.analysisQaEvent = new ValueHolder();
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  // Action
-  public Action getAction() {
-    return (Action) this.action.getValue();
-  }
+    // Action
+    public Action getAction() {
+        return (Action) this.action.getValue();
+    }
 
-  public void setAction(ValueHolderInterface action) {
-    this.action = action;
-  }
+    public void setAction(ValueHolderInterface action) {
+        this.action = action;
+    }
 
-  public void setAction(Action action) {
-    this.action.setValue(action);
-  }
+    public void setAction(Action action) {
+        this.action.setValue(action);
+    }
 
-  protected ValueHolderInterface getActionHolder() {
-    return this.action;
-  }
+    protected ValueHolderInterface getActionHolder() {
+        return this.action;
+    }
 
-  protected void setActionHolder(ValueHolderInterface action) {
-    this.action = action;
-  }
+    protected void setActionHolder(ValueHolderInterface action) {
+        this.action = action;
+    }
 
-  // ANALYSIS_QA_EVENT
-  public AnalysisQaEvent getAnalysisQaEvent() {
-    return (AnalysisQaEvent) this.analysisQaEvent.getValue();
-  }
+    // ANALYSIS_QA_EVENT
+    public AnalysisQaEvent getAnalysisQaEvent() {
+        return (AnalysisQaEvent) this.analysisQaEvent.getValue();
+    }
 
-  public void setAnalysisQaEvent(ValueHolderInterface analysisQaEvent) {
-    this.analysisQaEvent = analysisQaEvent;
-  }
+    public void setAnalysisQaEvent(ValueHolderInterface analysisQaEvent) {
+        this.analysisQaEvent = analysisQaEvent;
+    }
 
-  public void setAnalysisQaEvent(AnalysisQaEvent analysisQaEvent) {
-    this.analysisQaEvent.setValue(analysisQaEvent);
-  }
+    public void setAnalysisQaEvent(AnalysisQaEvent analysisQaEvent) {
+        this.analysisQaEvent.setValue(analysisQaEvent);
+    }
 
-  protected ValueHolderInterface getAnalysisQaEventHolder() {
-    return this.analysisQaEvent;
-  }
+    protected ValueHolderInterface getAnalysisQaEventHolder() {
+        return this.analysisQaEvent;
+    }
 
-  protected void setAnalysisQaEventHolder(ValueHolderInterface analysisQaEvent) {
-    this.analysisQaEvent = analysisQaEvent;
-  }
+    protected void setAnalysisQaEventHolder(ValueHolderInterface analysisQaEvent) {
+        this.analysisQaEvent = analysisQaEvent;
+    }
 
-  public String getActionId() {
-    return actionId;
-  }
+    public String getActionId() {
+        return actionId;
+    }
 
-  public void setActionId(String actionId) {
-    this.actionId = actionId;
-  }
+    public void setActionId(String actionId) {
+        this.actionId = actionId;
+    }
 
-  public Date getCreatedDate() {
-    return createdDate;
-  }
+    public Date getCreatedDate() {
+        return createdDate;
+    }
 
-  public void setCreatedDate(Date createdDate) {
-    this.createdDate = createdDate;
-    this.createdDateForDisplay = DateUtil.convertSqlDateToStringDate(createdDate);
-  }
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+        this.createdDateForDisplay = DateUtil.convertSqlDateToStringDate(createdDate);
+    }
 
-  public String getCreatedDateForDisplay() {
-    return this.createdDateForDisplay;
-  }
+    public String getCreatedDateForDisplay() {
+        return this.createdDateForDisplay;
+    }
 
-  public void setCreatedDateForDisplay(String createdDateForDisplay) {
-    this.createdDateForDisplay = createdDateForDisplay;
-    // also update the java.sql.Date
-    String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
-    this.createdDate = DateUtil.convertStringDateToSqlDate(createdDateForDisplay, locale);
-  }
+    public void setCreatedDateForDisplay(String createdDateForDisplay) {
+        this.createdDateForDisplay = createdDateForDisplay;
+        // also update the java.sql.Date
+        String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+        this.createdDate = DateUtil.convertStringDateToSqlDate(createdDateForDisplay, locale);
+    }
 
-  public String getAnalysisQaEventId() {
-    return analysisQaEventId;
-  }
+    public String getAnalysisQaEventId() {
+        return analysisQaEventId;
+    }
 
-  public void setAnalysisQaEventId(String analysisQaEventId) {
-    this.analysisQaEventId = analysisQaEventId;
-  }
+    public void setAnalysisQaEventId(String analysisQaEventId) {
+        this.analysisQaEventId = analysisQaEventId;
+    }
 
-  public void setSystemUser(SystemUser systemUser) {
-    this.systemUser = systemUser;
-  }
+    public void setSystemUser(SystemUser systemUser) {
+        this.systemUser = systemUser;
+    }
 
-  public SystemUser getSystemUser() {
-    return this.systemUser;
-  }
+    public SystemUser getSystemUser() {
+        return this.systemUser;
+    }
 
-  public String getSystemUserId() {
-    return systemUserId;
-  }
+    public String getSystemUserId() {
+        return systemUserId;
+    }
 
-  public void setSystemUserId(String systemUserId) {
-    this.systemUserId = systemUserId;
-  }
+    public void setSystemUserId(String systemUserId) {
+        this.systemUserId = systemUserId;
+    }
 }

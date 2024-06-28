@@ -28,6 +28,7 @@ import SearchResultFormValues from "../formModel/innitialValues/SearchResultForm
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
 import SearchPatientForm from "../patient/SearchPatientForm";
+import ReferredOutTests from "./resultsReferredOut/ReferredOutTests";
 import { ConfigurationContext } from "../layout/Layout";
 import config from "../../config.json";
 import CustomDatePicker from "../common/CustomDatePicker";
@@ -57,6 +58,7 @@ function ResultSearchPage() {
         searchBy={searchBy}
         results={resultForm}
         setResultForm={setResultForm}
+        refreshOnSubmit={true}
       />
     </>
   );
@@ -695,6 +697,8 @@ export function SearchResultForm(props) {
         </>
       )}
 
+      {searchBy.type === "ReferredOutTests" && <ReferredOutTests />}
+
       <>
         {pagination && (
           <Grid>
@@ -743,6 +747,7 @@ export function SearchResults(props) {
   const [rejectedItems, setRejectedItems] = useState({});
   const [validationState, setValidationState] = useState({});
   const saveStatus = "";
+  const [referTest, setReferTest] = useState({});
 
   const componentMounted = useRef(false);
 
@@ -1183,7 +1188,7 @@ export function SearchResults(props) {
             name={"testResult[" + data.id + "].testMethod"}
             labelText={intl.formatMessage({ id: "referral.label.testmethod" })}
             onChange={(e) => handleChange(e, data.id)}
-            value={data.method}
+            value={data.testMethod}
           >
             <SelectItem text="" value="" />
             {methods.map((method, method_index) => (
@@ -1195,13 +1200,29 @@ export function SearchResults(props) {
             ))}
           </Select>
         </Column>
+        <Column lg={1}></Column>
+        <Column lg={2}>
+          <Checkbox
+            labelText={intl.formatMessage({ id: "results.label.refer" })}
+            name={"testResult[" + data.id + "].refer"}
+            id={"testResult[" + data.id + "].refer"}
+            checked={data.refer === "true"}
+            disabled={data.referredOut}
+            onChange={(e) => {
+              e.target.value = e.target.checked;
+              handleChange(e, data.id);
+            }}
+          />
+        </Column>
         <Column lg={3}>
           <Select
             id={"referralReason" + data.id}
-            name={"testResult[" + data.id + "].referralReason"}
+            name={"testResult[" + data.id + "].referralItem.referralReasonId"}
             // noLabel={true}
             labelText={intl.formatMessage({ id: "referral.label.reason" })}
             onChange={(e) => handleChange(e, data.id)}
+            value={data?.referralItem?.referralReasonId}
+            disabled={!referTest[data.id]}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
             <SelectItem text="" value="" />
@@ -1217,10 +1238,14 @@ export function SearchResults(props) {
         <Column lg={3}>
           <Select
             id={"institute" + data.id}
-            name={"testResult[" + data.id + "].institute"}
+            name={
+              "testResult[" + data.id + "].referralItem.referredInstituteId"
+            }
             // noLabel={true}
             labelText={intl.formatMessage({ id: "referral.label.institute" })}
             onChange={(e) => handleChange(e, data.id)}
+            value={data?.referralItem?.referredInstituteId}
+            disabled={!referTest[data.id]}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
 
@@ -1233,12 +1258,14 @@ export function SearchResults(props) {
         <Column lg={3}>
           <Select
             id={"testToPerform" + data.id}
-            name={"testResult[" + data.id + "].testToPerform"}
+            name={"testResult[" + data.id + "].referralItem.referredTestId"}
             // noLabel={true}
             labelText={intl.formatMessage({
               id: "referral.label.testtoperform",
             })}
             onChange={(e) => handleChange(e, data.id)}
+            value={data?.referralItem?.referredTestId}
+            disabled={!referTest[data.id]}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
 
@@ -1252,7 +1279,10 @@ export function SearchResults(props) {
               id: "referral.label.sentdate",
             })}
             onChange={(date) => handleDatePickerChange(date, data.id)}
-            name={"testResult[" + data.id + "].sentDate_"}
+            name={"testResult[" + data.id + "].referralItem.referredSendDate"}
+            value={data?.referralItem?.referredSendDate}
+            disabled={!referTest[data.id]}
+            disallowFutureDate={true}
           />
         </Column>
       </Grid>
@@ -1387,6 +1417,34 @@ export function SearchResults(props) {
     var form = { ...props.results };
     var jp = require("jsonpath");
     jp.value(form, name, value);
+    var refer = jp.query(form, "testResult[" + rowId + "].refer")[0];
+    var testId = jp.query(form, "testResult[" + rowId + "].testId")[0];
+    var referList = { ...referTest };
+    referList[rowId] = refer === "true" ? true : false;
+    setReferTest(referList);
+    if (refer == "true") {
+      jp.value(
+        form,
+        "testResult[" + rowId + "].referralItem.referredTestId",
+        testId,
+      );
+      jp.value(
+        form,
+        "testResult[" + rowId + "].referralItem.referredSendDate",
+        configurationProperties.currentDateAsText,
+      );
+    } else {
+      jp.value(
+        form,
+        "testResult[" + rowId + "].referralItem.referredTestId",
+        "",
+      );
+      jp.value(
+        form,
+        "testResult[" + rowId + "].referralItem.referredSendDate",
+        "",
+      );
+    }
     var isModified = "testResult[" + rowId + "].isModified";
     jp.value(form, isModified, "true");
     props.setResultForm(form);
@@ -1417,12 +1475,21 @@ export function SearchResults(props) {
   };
 
   const handleDatePickerChange = (date, rowId) => {
-    console.debug("handleDatePickerChange:" + date);
-    var form = props.results;
-    var jp = require("jsonpath");
-    jp.value(form, "testResult[" + rowId + "].sentDate_", date);
-    var isModified = "testResult[" + rowId + "].isModified";
-    jp.value(form, isModified, "true");
+    var form = { ...props.results };
+    if (form.testResult[rowId].referralItem) {
+      if (form.testResult[rowId].referralItem.referredSendDate != date) {
+        console.debug("handleDatePickerChange:" + date);
+        var jp = require("jsonpath");
+        jp.value(
+          form,
+          "testResult[" + rowId + "].referralItem.referredSendDate",
+          date,
+        );
+        var isModified = "testResult[" + rowId + "].isModified";
+        jp.value(form, isModified, "true");
+        props.setResultForm(form);
+      }
+    }
   };
 
   const handleAcceptAsIsChange = (e, rowId) => {
@@ -1465,12 +1532,14 @@ export function SearchResults(props) {
         message: createMesssage(resp),
         kind: NotificationKinds.success,
       });
-      window.location.href =
-        "/result?type=" +
-        props.searchBy.type +
-        "&doRange=" +
-        props.searchBy.doRange +
-        props.extraParams;
+      if (props.refreshOnSubmit) {
+        window.location.href =
+          "/result?type=" +
+          props.searchBy.type +
+          "&doRange=" +
+          props.searchBy.doRange +
+          props.extraParams;
+      }
     } else {
       addNotification({
         title: intl.formatMessage({ id: "notification.title" }),

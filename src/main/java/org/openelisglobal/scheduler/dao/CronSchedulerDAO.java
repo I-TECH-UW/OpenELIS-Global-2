@@ -17,11 +17,14 @@ import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.scheduler.valueholder.CronScheduler;
 
 public interface CronSchedulerDAO extends BaseDAO<CronScheduler, String> {
-  //	public List<CronScheduler> getAllCronSchedules() throws LIMSRuntimeException;
+    // public List<CronScheduler> getAllCronSchedules() throws LIMSRuntimeException;
 
-  //	public CronScheduler getCronScheduleByJobName(String jobName) throws LIMSRuntimeException;
+    // public CronScheduler getCronScheduleByJobName(String jobName) throws
+    // LIMSRuntimeException;
 
-  //	public Optional<CronScheduler> update(CronScheduler cronScheduler) throws LIMSRuntimeException;
+    // public Optional<CronScheduler> update(CronScheduler cronScheduler) throws
+    // LIMSRuntimeException;
 
-  //	public CronScheduler getCronScheduleById(String schedulerId) throws LIMSRuntimeException;
+    // public CronScheduler getCronScheduleById(String schedulerId) throws
+    // LIMSRuntimeException;
 }

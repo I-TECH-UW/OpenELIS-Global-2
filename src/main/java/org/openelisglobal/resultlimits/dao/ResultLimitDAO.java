@@ -20,19 +20,19 @@ import org.openelisglobal.resultlimits.valueholder.ResultLimit;
 
 public interface ResultLimitDAO extends BaseDAO<ResultLimit, String> {
 
-  //	boolean insertData(ResultLimit resultLimit) throws LIMSRuntimeException;
+    // boolean insertData(ResultLimit resultLimit) throws LIMSRuntimeException;
 
-  //	void deleteData(List resultLimits) throws LIMSRuntimeException;
+    // void deleteData(List resultLimits) throws LIMSRuntimeException;
 
-  List<ResultLimit> getAllResultLimits() throws LIMSRuntimeException;
+    List<ResultLimit> getAllResultLimits() throws LIMSRuntimeException;
 
-  List<ResultLimit> getPageOfResultLimits(int startingRecNo) throws LIMSRuntimeException;
+    List<ResultLimit> getPageOfResultLimits(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(ResultLimit resultLimit) throws LIMSRuntimeException;
+    void getData(ResultLimit resultLimit) throws LIMSRuntimeException;
 
-  //	void updateData(ResultLimit resultLimit) throws LIMSRuntimeException;
+    // void updateData(ResultLimit resultLimit) throws LIMSRuntimeException;
 
-  List<ResultLimit> getAllResultLimitsForTest(String testId) throws LIMSRuntimeException;
+    List<ResultLimit> getAllResultLimitsForTest(String testId) throws LIMSRuntimeException;
 
-  ResultLimit getResultLimitById(String resultLimitId) throws LIMSRuntimeException;
+    ResultLimit getResultLimitById(String resultLimitId) throws LIMSRuntimeException;
 }

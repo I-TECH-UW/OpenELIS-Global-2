@@ -20,52 +20,52 @@ import java.io.Serializable;
  */
 public class UserSessionData implements Serializable {
 
-  /** */
-  private static final long serialVersionUID = -2401594712506375645L;
+    /** */
+    private static final long serialVersionUID = -2401594712506375645L;
 
-  private String elisUserName;
-  private int userTimeOut;
-  private int systemUserId;
-  private String loginName;
-  private boolean isAdmin;
+    private String elisUserName;
+    private int userTimeOut;
+    private int systemUserId;
+    private String loginName;
+    private boolean isAdmin;
 
-  public void setElisUserName(String elisUserName) {
-    this.elisUserName = elisUserName;
-  }
+    public void setElisUserName(String elisUserName) {
+        this.elisUserName = elisUserName;
+    }
 
-  public String getElisUserName() {
-    return elisUserName;
-  }
+    public String getElisUserName() {
+        return elisUserName;
+    }
 
-  public void setUserTimeOut(int userTimeOut) {
-    this.userTimeOut = userTimeOut;
-  }
+    public void setUserTimeOut(int userTimeOut) {
+        this.userTimeOut = userTimeOut;
+    }
 
-  public int getUserTimeOut() {
-    return userTimeOut;
-  }
+    public int getUserTimeOut() {
+        return userTimeOut;
+    }
 
-  public void setSytemUserId(int systemUserId) {
-    this.systemUserId = systemUserId;
-  }
+    public void setSytemUserId(int systemUserId) {
+        this.systemUserId = systemUserId;
+    }
 
-  public int getSystemUserId() {
-    return systemUserId;
-  }
+    public int getSystemUserId() {
+        return systemUserId;
+    }
 
-  public void setLoginName(String loginName) {
-    this.loginName = loginName;
-  }
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
+    }
 
-  public String getLoginName() {
-    return loginName;
-  }
+    public String getLoginName() {
+        return loginName;
+    }
 
-  public boolean isAdmin() {
-    return isAdmin;
-  }
+    public boolean isAdmin() {
+        return isAdmin;
+    }
 
-  public void setAdmin(boolean isAdmin) {
-    this.isAdmin = isAdmin;
-  }
+    public void setAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
+    }
 }

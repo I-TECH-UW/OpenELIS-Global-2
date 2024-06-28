@@ -29,32 +29,31 @@ import org.springframework.stereotype.Component;
 @Component
 public class HttpPostSender extends HttpSender {
 
-  @Autowired private CloseableHttpClient httpClient;
+    @Autowired
+    private CloseableHttpClient httpClient;
 
-  @Override
-  public boolean sendMessage() {
+    @Override
+    public boolean sendMessage() {
 
-    errors = new ArrayList<>();
+        errors = new ArrayList<>();
 
-    if (GenericValidator.isBlankOrNull(message) || GenericValidator.isBlankOrNull(url)) {
-      LogEvent.logWarn(
-          "HttpPutSender",
-          "send message",
-          "The " + message == null ? " message " : "url" + " is null");
-      errors.add("send message The " + (message == null ? " message " : "url") + " is null");
-      errors.add("Application not configured correctly for sending results");
-      return false;
+        if (GenericValidator.isBlankOrNull(message) || GenericValidator.isBlankOrNull(url)) {
+            LogEvent.logWarn("HttpPutSender", "send message",
+                    "The " + message == null ? " message " : "url" + " is null");
+            errors.add("send message The " + (message == null ? " message " : "url") + " is null");
+            errors.add("Application not configured correctly for sending results");
+            return false;
+        }
+
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(new StringEntity(message, ContentType.TEXT_PLAIN));
+        try {
+            CloseableHttpResponse response = httpClient.execute(httpPost);
+            returnStatus = response.getStatusLine().getStatusCode();
+            return returnStatus == HttpStatus.SC_OK;
+        } catch (IOException e1) {
+            LogEvent.logError(e1);
+        }
+        return false;
     }
-
-    HttpPost httpPost = new HttpPost(url);
-    httpPost.setEntity(new StringEntity(message, ContentType.TEXT_PLAIN));
-    try {
-      CloseableHttpResponse response = httpClient.execute(httpPost);
-      returnStatus = response.getStatusLine().getStatusCode();
-      return returnStatus == HttpStatus.SC_OK;
-    } catch (IOException e1) {
-      LogEvent.logError(e1);
-    }
-    return false;
-  }
 }

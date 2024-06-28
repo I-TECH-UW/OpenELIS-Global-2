@@ -15,22 +15,22 @@ package org.openelisglobal.reports.action.implementation.reportBeans;
 
 public class SectionPerformanceData {
 
-  private Integer categoryValue;
-  private String categoryLabel;
+    private Integer categoryValue;
+    private String categoryLabel;
 
-  public Integer getCategoryValue() {
-    return categoryValue;
-  }
+    public Integer getCategoryValue() {
+        return categoryValue;
+    }
 
-  public void setCategoryValue(Integer categoryValue) {
-    this.categoryValue = categoryValue;
-  }
+    public void setCategoryValue(Integer categoryValue) {
+        this.categoryValue = categoryValue;
+    }
 
-  public String getCategoryLabel() {
-    return categoryLabel;
-  }
+    public String getCategoryLabel() {
+        return categoryLabel;
+    }
 
-  public void setCategoryLabel(String categoryLabel) {
-    this.categoryLabel = categoryLabel;
-  }
+    public void setCategoryLabel(String categoryLabel) {
+        this.categoryLabel = categoryLabel;
+    }
 }

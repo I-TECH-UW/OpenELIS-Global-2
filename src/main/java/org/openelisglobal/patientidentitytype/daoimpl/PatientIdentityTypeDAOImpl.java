@@ -29,66 +29,66 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class PatientIdentityTypeDAOImpl extends BaseDAOImpl<PatientIdentityType, String>
-    implements PatientIdentityTypeDAO {
+        implements PatientIdentityTypeDAO {
 
-  public PatientIdentityTypeDAOImpl() {
-    super(PatientIdentityType.class);
-  }
-
-  @SuppressWarnings("unused")
-  private static Log log = LogFactory.getLog(PatientIdentityTypeDAOImpl.class);
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<PatientIdentityType> getAllPatientIdenityTypes() throws LIMSRuntimeException {
-    List<PatientIdentityType> list = null;
-    try {
-      String sql = "from PatientIdentityType";
-      Query<PatientIdentityType> query =
-          entityManager.unwrap(Session.class).createQuery(sql, PatientIdentityType.class);
-
-      list = query.list();
-    } catch (HibernateException e) {
-      handleException(e, "getAllPatientIdenityTypes");
+    public PatientIdentityTypeDAOImpl() {
+        super(PatientIdentityType.class);
     }
 
-    return list;
-  }
+    @SuppressWarnings("unused")
+    private static Log log = LogFactory.getLog(PatientIdentityTypeDAOImpl.class);
 
-  @Override
-  public boolean duplicatePatientIdentityTypeExists(PatientIdentityType patientIdentityType)
-      throws LIMSRuntimeException {
-    try {
-      String sql = "from PatientIdentityType t where upper(t.identityType) = :identityType";
-      Query<PatientIdentityType> query =
-          entityManager.unwrap(Session.class).createQuery(sql, PatientIdentityType.class);
+    @Override
+    @Transactional(readOnly = true)
+    public List<PatientIdentityType> getAllPatientIdenityTypes() throws LIMSRuntimeException {
+        List<PatientIdentityType> list = null;
+        try {
+            String sql = "from PatientIdentityType";
+            Query<PatientIdentityType> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    PatientIdentityType.class);
 
-      query.setParameter("identityType", patientIdentityType.getIdentityType().toUpperCase());
+            list = query.list();
+        } catch (HibernateException e) {
+            handleException(e, "getAllPatientIdenityTypes");
+        }
 
-      List<PatientIdentityType> list = query.list();
-      return list.size() > 0;
-    } catch (HibernateException e) {
-      handleException(e, "duplicatePatientIdentityTypeExists");
+        return list;
     }
 
-    return false;
-  }
+    @Override
+    public boolean duplicatePatientIdentityTypeExists(PatientIdentityType patientIdentityType)
+            throws LIMSRuntimeException {
+        try {
+            String sql = "from PatientIdentityType t where upper(t.identityType) = :identityType";
+            Query<PatientIdentityType> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    PatientIdentityType.class);
 
-  @Override
-  @Transactional(readOnly = true)
-  public PatientIdentityType getNamedIdentityType(String name) throws LIMSRuntimeException {
-    String sql = "from PatientIdentityType t where t.identityType = :identityType";
+            query.setParameter("identityType", patientIdentityType.getIdentityType().toUpperCase());
 
-    try {
-      Query<PatientIdentityType> query =
-          entityManager.unwrap(Session.class).createQuery(sql, PatientIdentityType.class);
-      query.setParameter("identityType", name);
-      PatientIdentityType pit = query.uniqueResult();
-      return pit;
-    } catch (HibernateException e) {
-      handleException(e, "getNamedIdentityType");
+            List<PatientIdentityType> list = query.list();
+            return list.size() > 0;
+        } catch (HibernateException e) {
+            handleException(e, "duplicatePatientIdentityTypeExists");
+        }
+
+        return false;
     }
 
-    return null;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public PatientIdentityType getNamedIdentityType(String name) throws LIMSRuntimeException {
+        String sql = "from PatientIdentityType t where t.identityType = :identityType";
+
+        try {
+            Query<PatientIdentityType> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    PatientIdentityType.class);
+            query.setParameter("identityType", name);
+            PatientIdentityType pit = query.uniqueResult();
+            return pit;
+        } catch (HibernateException e) {
+            handleException(e, "getNamedIdentityType");
+        }
+
+        return null;
+    }
 }

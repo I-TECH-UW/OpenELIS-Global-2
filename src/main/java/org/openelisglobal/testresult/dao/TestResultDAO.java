@@ -22,36 +22,36 @@ import org.openelisglobal.testresult.valueholder.TestResult;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface TestResultDAO extends BaseDAO<TestResult, String> {
 
-  //	public boolean insertData(TestResult testResult) throws LIMSRuntimeException;
+    // public boolean insertData(TestResult testResult) throws LIMSRuntimeException;
 
-  //	public void deleteData(List testResults) throws LIMSRuntimeException;
+    // public void deleteData(List testResults) throws LIMSRuntimeException;
 
-  List<TestResult> getAllTestResults() throws LIMSRuntimeException;
+    List<TestResult> getAllTestResults() throws LIMSRuntimeException;
 
-  List<TestResult> getPageOfTestResults(int startingRecNo) throws LIMSRuntimeException;
+    List<TestResult> getPageOfTestResults(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(TestResult testResult) throws LIMSRuntimeException;
+    void getData(TestResult testResult) throws LIMSRuntimeException;
 
-  //	public void updateData(TestResult testResult) throws LIMSRuntimeException;
+    // public void updateData(TestResult testResult) throws LIMSRuntimeException;
 
-  TestResult getTestResultById(TestResult testResult) throws LIMSRuntimeException;
+    TestResult getTestResultById(TestResult testResult) throws LIMSRuntimeException;
 
-  List<TestResult> getTestResultsByTestAndResultGroup(TestAnalyte testAnalyte)
-      throws LIMSRuntimeException;
+    List<TestResult> getTestResultsByTestAndResultGroup(TestAnalyte testAnalyte) throws LIMSRuntimeException;
 
-  List<TestResult> getAllActiveTestResultsPerTest(Test test) throws LIMSRuntimeException;
+    List<TestResult> getAllActiveTestResultsPerTest(Test test) throws LIMSRuntimeException;
 
-  /*
-   * Finds a TestResult by a test id and dictionary result id
-   */
-  TestResult getTestResultsByTestAndDictonaryResult(String testId, String result)
-      throws LIMSRuntimeException;
+    /*
+     * Finds a TestResult by a test id and dictionary result id
+     */
+    TestResult getTestResultsByTestAndDictonaryResult(String testId, String result) throws LIMSRuntimeException;
 
-  List<TestResult> getActiveTestResultsByTest(String testId) throws LIMSRuntimeException;
+    List<TestResult> getActiveTestResultsByTest(String testId) throws LIMSRuntimeException;
 }

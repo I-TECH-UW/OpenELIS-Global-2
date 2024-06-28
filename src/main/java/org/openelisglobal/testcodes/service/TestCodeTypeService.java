@@ -4,7 +4,7 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.testcodes.valueholder.TestCodeType;
 
 public interface TestCodeTypeService extends BaseObjectService<TestCodeType, String> {
-  TestCodeType getTestCodeTypeById(String id);
+    TestCodeType getTestCodeTypeById(String id);
 
-  TestCodeType getTestCodeTypeByName(String name);
+    TestCodeType getTestCodeTypeByName(String name);
 }

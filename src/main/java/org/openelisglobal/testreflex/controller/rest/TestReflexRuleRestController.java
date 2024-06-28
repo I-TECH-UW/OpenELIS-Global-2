@@ -26,55 +26,53 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/rest/")
 public class TestReflexRuleRestController {
 
-  @Autowired TestReflexService reflexService;
-  @Autowired DictionaryService dictionaryService;
-  @Autowired TypeOfSampleService typeOfSampleService;
+    @Autowired
+    TestReflexService reflexService;
+    @Autowired
+    DictionaryService dictionaryService;
+    @Autowired
+    TypeOfSampleService typeOfSampleService;
 
-  @PostMapping(value = "reflexrule", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseBody
-  public void saveReflexRule(HttpServletRequest request, @RequestBody ReflexRule reflexRule) {
-    reflexService.saveOrUpdateReflexRule(reflexRule);
-  }
+    @PostMapping(value = "reflexrule", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void saveReflexRule(HttpServletRequest request, @RequestBody ReflexRule reflexRule) {
+        reflexService.saveOrUpdateReflexRule(reflexRule);
+    }
 
-  @PostMapping(value = "deactivate-reflexrule/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseBody
-  public void deactivateReflexRule(@PathVariable String id) {
-    reflexService.deactivateReflexRule(id);
-  }
+    @PostMapping(value = "deactivate-reflexrule/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void deactivateReflexRule(@PathVariable String id) {
+        try {
+            reflexService.deactivateReflexRule(id);
+        } catch (Exception e) {
+        }
 
-  @GetMapping(value = "reflexrules", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseBody
-  public List<ReflexRule> getReflexRules(HttpServletRequest request) {
-    List<ReflexRule> rules =
-        reflexService.getAllReflexRules().stream().collect(Collectors.toList());
-    rules.forEach(rule -> rule.setToggled(false));
-    return !rules.isEmpty() ? rules : Collections.<ReflexRule>emptyList();
-  }
+    }
 
-  @GetMapping(value = "reflexrule-options", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseBody
-  public ReflexRuleOptionsDisplayItem getReflexRuleOptions() {
-    ReflexRuleOptionsDisplayItem options = new ReflexRuleOptionsDisplayItem();
-    List<LabelValuePair> overallOptions = new ArrayList<>();
-    ReflexRuleOptions.OverallOptions.stream()
-        .forEach(
-            option ->
-                overallOptions.add(new LabelValuePair(option.getDisplayName(), option.name())));
-    List<LabelValuePair> generalRelationOptions = new ArrayList<>();
-    ReflexRuleOptions.GeneralRelationOptions.stream()
-        .forEach(
-            option ->
-                generalRelationOptions.add(
-                    new LabelValuePair(option.getDisplayName(), option.name())));
-    List<LabelValuePair> numericRelationOptions = new ArrayList<>();
-    ReflexRuleOptions.NumericRelationOptions.stream()
-        .forEach(
-            option ->
-                numericRelationOptions.add(
-                    new LabelValuePair(option.getDisplayName(), option.name())));
-    options.setOverallOptions(overallOptions);
-    options.setGeneralRelationOptions(generalRelationOptions);
-    options.setNumericRelationOptions(numericRelationOptions);
-    return options;
-  }
+    @GetMapping(value = "reflexrules", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<ReflexRule> getReflexRules(HttpServletRequest request) {
+        List<ReflexRule> rules = reflexService.getAllReflexRules().stream().collect(Collectors.toList());
+        rules.forEach(rule -> rule.setToggled(false));
+        return !rules.isEmpty() ? rules : Collections.<ReflexRule>emptyList();
+    }
+
+    @GetMapping(value = "reflexrule-options", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ReflexRuleOptionsDisplayItem getReflexRuleOptions() {
+        ReflexRuleOptionsDisplayItem options = new ReflexRuleOptionsDisplayItem();
+        List<LabelValuePair> overallOptions = new ArrayList<>();
+        ReflexRuleOptions.OverallOptions.stream()
+                .forEach(option -> overallOptions.add(new LabelValuePair(option.getDisplayName(), option.name())));
+        List<LabelValuePair> generalRelationOptions = new ArrayList<>();
+        ReflexRuleOptions.GeneralRelationOptions.stream().forEach(
+                option -> generalRelationOptions.add(new LabelValuePair(option.getDisplayName(), option.name())));
+        List<LabelValuePair> numericRelationOptions = new ArrayList<>();
+        ReflexRuleOptions.NumericRelationOptions.stream().forEach(
+                option -> numericRelationOptions.add(new LabelValuePair(option.getDisplayName(), option.name())));
+        options.setOverallOptions(overallOptions);
+        options.setGeneralRelationOptions(generalRelationOptions);
+        options.setNumericRelationOptions(numericRelationOptions);
+        return options;
+    }
 }

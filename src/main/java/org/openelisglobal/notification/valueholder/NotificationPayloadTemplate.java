@@ -15,63 +15,58 @@ import org.openelisglobal.common.valueholder.BaseObject;
 @Table(name = "notification_payload_template")
 public class NotificationPayloadTemplate extends BaseObject<Integer> {
 
-  private static final long serialVersionUID = 3273600381468746329L;
+    private static final long serialVersionUID = 3273600381468746329L;
 
-  public enum NotificationPayloadType {
-    TEST_RESULT
-  }
+    public enum NotificationPayloadType {
+        TEST_RESULT
+    }
 
-  @Id
-  @GeneratedValue(
-      strategy = GenerationType.SEQUENCE,
-      generator = "notification_payload_template_generator")
-  @SequenceGenerator(
-      name = "notification_payload_template_generator",
-      sequenceName = "notification_payload_template_seq",
-      allocationSize = 1)
-  private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_payload_template_generator")
+    @SequenceGenerator(name = "notification_payload_template_generator", sequenceName = "notification_payload_template_seq", allocationSize = 1)
+    private Integer id;
 
-  @Column(unique = true)
-  @Enumerated(EnumType.STRING)
-  private NotificationPayloadType type;
+    @Column(unique = true)
+    @Enumerated(EnumType.STRING)
+    private NotificationPayloadType type;
 
-  @Column(name = "message_template")
-  private String messageTemplate;
+    @Column(name = "message_template")
+    private String messageTemplate;
 
-  @Column(name = "subject_template")
-  private String subjectTemplate;
+    @Column(name = "subject_template")
+    private String subjectTemplate;
 
-  public String getMessageTemplate() {
-    return messageTemplate;
-  }
+    public String getMessageTemplate() {
+        return messageTemplate;
+    }
 
-  public void setMessageTemplate(String messageTemplate) {
-    this.messageTemplate = messageTemplate;
-  }
+    public void setMessageTemplate(String messageTemplate) {
+        this.messageTemplate = messageTemplate;
+    }
 
-  public String getSubjectTemplate() {
-    return subjectTemplate;
-  }
+    public String getSubjectTemplate() {
+        return subjectTemplate;
+    }
 
-  public void setSubjectTemplate(String subjectTemplate) {
-    this.subjectTemplate = subjectTemplate;
-  }
+    public void setSubjectTemplate(String subjectTemplate) {
+        this.subjectTemplate = subjectTemplate;
+    }
 
-  public NotificationPayloadType getType() {
-    return type;
-  }
+    public NotificationPayloadType getType() {
+        return type;
+    }
 
-  public void setType(NotificationPayloadType type) {
-    this.type = type;
-  }
+    public void setType(NotificationPayloadType type) {
+        this.type = type;
+    }
 
-  @Override
-  public Integer getId() {
-    return id;
-  }
+    @Override
+    public Integer getId() {
+        return id;
+    }
 
-  @Override
-  public void setId(Integer id) {
-    this.id = id;
-  }
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }

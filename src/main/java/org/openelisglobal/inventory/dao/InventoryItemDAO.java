@@ -20,19 +20,22 @@ import org.openelisglobal.inventory.valueholder.InventoryItem;
 
 public interface InventoryItemDAO extends BaseDAO<InventoryItem, String> {
 
-  //	public boolean insertData(InventoryItem InventoryItem) throws LIMSRuntimeException;
+    // public boolean insertData(InventoryItem InventoryItem) throws
+    // LIMSRuntimeException;
 
-  //	public void deleteData(List<InventoryItem> results) throws LIMSRuntimeException;
+    // public void deleteData(List<InventoryItem> results) throws
+    // LIMSRuntimeException;
 
-  public List<InventoryItem> getAllInventoryItems() throws LIMSRuntimeException;
+    public List<InventoryItem> getAllInventoryItems() throws LIMSRuntimeException;
 
-  public InventoryItem readInventoryItem(String idString) throws LIMSRuntimeException;
+    public InventoryItem readInventoryItem(String idString) throws LIMSRuntimeException;
 
-  //	public void getData(InventoryItem inventoryItem) throws LIMSRuntimeException;
+    // public void getData(InventoryItem inventoryItem) throws LIMSRuntimeException;
 
-  //	public void updateData(InventoryItem inventoryItem) throws LIMSRuntimeException;
+    // public void updateData(InventoryItem inventoryItem) throws
+    // LIMSRuntimeException;
 
-  //	public InventoryItem getInventoryItemById(InventoryItem inventoryItem) throws
-  // LIMSRuntimeException;
+    // public InventoryItem getInventoryItemById(InventoryItem inventoryItem) throws
+    // LIMSRuntimeException;
 
 }

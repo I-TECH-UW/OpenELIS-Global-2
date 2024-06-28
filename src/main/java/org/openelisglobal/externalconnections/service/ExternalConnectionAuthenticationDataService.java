@@ -6,12 +6,11 @@ import org.openelisglobal.externalconnections.valueholder.ExternalConnectionAuth
 
 public interface ExternalConnectionAuthenticationDataService {
 
-  Map<AuthType, ExternalConnectionAuthenticationData> getForExternalConnection(
-      Integer externalConnectionId);
+    Map<AuthType, ExternalConnectionAuthenticationData> getForExternalConnection(Integer externalConnectionId);
 
-  Integer insert(ExternalConnectionAuthenticationData authData);
+    Integer insert(ExternalConnectionAuthenticationData authData);
 
-  ExternalConnectionAuthenticationData update(ExternalConnectionAuthenticationData authData);
+    ExternalConnectionAuthenticationData update(ExternalConnectionAuthenticationData authData);
 
-  ExternalConnectionAuthenticationData save(ExternalConnectionAuthenticationData authData);
+    ExternalConnectionAuthenticationData save(ExternalConnectionAuthenticationData authData);
 }

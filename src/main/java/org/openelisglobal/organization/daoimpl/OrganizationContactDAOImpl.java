@@ -27,27 +27,26 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class OrganizationContactDAOImpl extends BaseDAOImpl<OrganizationContact, String>
-    implements OrganizationContactDAO {
+        implements OrganizationContactDAO {
 
-  public OrganizationContactDAOImpl() {
-    super(OrganizationContact.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<OrganizationContact> getListForOrganizationId(String orgId)
-      throws LIMSRuntimeException {
-    String sql = "From OrganizationContact oc where oc.organizationId = :orgId";
-    try {
-      Query<OrganizationContact> query =
-          entityManager.unwrap(Session.class).createQuery(sql, OrganizationContact.class);
-      query.setParameter("orgId", Integer.parseInt(orgId));
-      List<OrganizationContact> contactList = query.list();
-      return contactList;
-    } catch (HibernateException e) {
-      handleException(e, "getListForOrganizationId");
+    public OrganizationContactDAOImpl() {
+        super(OrganizationContact.class);
     }
 
-    return null;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrganizationContact> getListForOrganizationId(String orgId) throws LIMSRuntimeException {
+        String sql = "From OrganizationContact oc where oc.organizationId = :orgId";
+        try {
+            Query<OrganizationContact> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    OrganizationContact.class);
+            query.setParameter("orgId", Integer.parseInt(orgId));
+            List<OrganizationContact> contactList = query.list();
+            return contactList;
+        } catch (HibernateException e) {
+            handleException(e, "getListForOrganizationId");
+        }
+
+        return null;
+    }
 }

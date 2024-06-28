@@ -55,257 +55,214 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/rest")
 public class SampleBatchEntryRestController extends BaseController {
 
-  private static final String[] ALLOWED_FIELDS =
-      new String[] {
-        "patientProperties.currentDate",
-        "patientProperties.patientLastUpdated",
-        "patientProperties.personLastUpdated",
-        "patientProperties.patientUpdateStatus",
-        "patientProperties.patientPK",
-        "patientProperties.guid",
-        "patientProperties.STnumber",
-        "patientProperties.subjectNumber",
-        "patientProperties.nationalId",
-        "patientProperties.lastName",
-        "patientProperties.firstName",
-        "patientProperties.aka",
-        "patientProperties.birthDateForDisplay",
-        "patientProperties.age",
-        "patientProperties.gender",
-        //
-        "sampleOrderItems.labNo",
-        //
-        "sampleOrderItems.newRequesterName",
-        "sampleOrderItems.referringSiteId",
-        "sampleOrderItems.referringSiteDepartmentId",
-        "form.sampleOrderItems.referringSiteName",
-        "patientProperties.patientUpdateStatus",
-        "currentDate",
-        "currentTime",
-        "sampleOrderItems.receivedDateForDisplay",
-        "sampleOrderItems.receivedTime",
-        "sampleXML",
-        "testSectionList",
-        //
-        "method",
-        "facilityIDCheck",
-        "facilityID",
-        "patientInfoCheck"
-      };
+    private static final String[] ALLOWED_FIELDS = new String[] { "patientProperties.currentDate",
+            "patientProperties.patientLastUpdated", "patientProperties.personLastUpdated",
+            "patientProperties.patientUpdateStatus", "patientProperties.patientPK", "patientProperties.guid",
+            "patientProperties.STnumber", "patientProperties.subjectNumber", "patientProperties.nationalId",
+            "patientProperties.lastName", "patientProperties.firstName", "patientProperties.aka",
+            "patientProperties.birthDateForDisplay", "patientProperties.age", "patientProperties.gender",
+            //
+            "sampleOrderItems.labNo",
+            //
+            "sampleOrderItems.newRequesterName", "sampleOrderItems.referringSiteId",
+            "sampleOrderItems.referringSiteDepartmentId", "form.sampleOrderItems.referringSiteName",
+            "patientProperties.patientUpdateStatus", "currentDate", "currentTime",
+            "sampleOrderItems.receivedDateForDisplay", "sampleOrderItems.receivedTime", "sampleXML", "testSectionList",
+            //
+            "method", "facilityIDCheck", "facilityID", "patientInfoCheck" };
 
-  @Autowired SampleBatchEntryFormValidator formValidator;
+    @Autowired
+    SampleBatchEntryFormValidator formValidator;
 
-  @Autowired TestService testService;
-  @Autowired TypeOfSampleService typeOfSampleService;
-  @Autowired OrganizationService organizationService;
+    @Autowired
+    TestService testService;
+    @Autowired
+    TypeOfSampleService typeOfSampleService;
+    @Autowired
+    OrganizationService organizationService;
 
-  @Autowired SamplePatientEntryFormValidator entryFormValidator;
+    @Autowired
+    SamplePatientEntryFormValidator entryFormValidator;
 
-  @Autowired private SamplePatientEntryService samplePatientEntryService;
+    @Autowired
+    private SamplePatientEntryService samplePatientEntryService;
 
-  protected FhirTransformService fhirTransformService =
-      SpringContext.getBean(FhirTransformService.class);
+    protected FhirTransformService fhirTransformService = SpringContext.getBean(FhirTransformService.class);
 
-  @InitBinder
-  public void initBinder(WebDataBinder binder) {
-    binder.setAllowedFields(ALLOWED_FIELDS);
-  }
-
-  @PostMapping(
-      value = "/SampleBatchEntry",
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
-  public SampleBatchEntryForm showSampleBatchEntry(
-      HttpServletRequest request,
-      @RequestBody SampleBatchEntryForm form,
-      BindingResult result,
-      RedirectAttributes redirectAttributes)
-      throws DocumentException {
-    formValidator.validate(form, result);
-    if (result.hasErrors()) {
-      saveErrors(result);
-      return (form);
-    }
-    String sampleXML = form.getSampleXML();
-    SampleOrderService sampleOrderService = new SampleOrderService();
-    SampleOrderItem soi = sampleOrderService.getSampleOrderItem();
-    soi.setReceivedTime(form.getSampleOrderItems().getReceivedTime());
-    soi.setReceivedDateForDisplay(form.getSampleOrderItems().getReceivedDateForDisplay());
-    soi.setNewRequesterName(form.getSampleOrderItems().getNewRequesterName());
-    soi.setReferringSiteId(form.getFacilityID());
-    soi.setReferringSiteDepartmentId(form.getSampleOrderItems().getReferringSiteDepartmentId());
-
-    form.setSampleOrderItems(soi);
-
-    form.setLocalDBOnly(
-        ConfigurationProperties.getInstance()
-            .getPropertyValueLowerCase(Property.UseExternalPatientInfo)
-            .equals("false"));
-
-    // get summary of tests selected to place in common fields section
-    Document sampleDom = DocumentHelper.parseText(sampleXML);
-    Element sampleItem = sampleDom.getRootElement().element("sample");
-    String testIDs = sampleItem.attributeValue("tests");
-    StringTokenizer tokenizer = new StringTokenizer(testIDs, ",");
-    StringBuilder sBuilder = new StringBuilder();
-    String separator = "";
-    while (tokenizer.hasMoreTokens()) {
-      sBuilder.append(separator);
-      sBuilder.append(
-          TestServiceImpl.getUserLocalizedTestName(testService.get(tokenizer.nextToken().trim())));
-      separator = "<br>";
-    }
-    String sampleType =
-        typeOfSampleService.get(sampleItem.attributeValue("sampleID")).getLocalAbbreviation();
-    String testNames = sBuilder.toString();
-    request.setAttribute("sampleType", sampleType);
-    request.setAttribute("testNames", testNames);
-
-    // get facility name from id
-    String facilityName = "";
-    if (!StringUtil.isNullorNill(form.getFacilityID())) {
-      Organization organization = organizationService.get(form.getFacilityID());
-      facilityName = organization.getOrganizationName();
-    } else if (!StringUtil.isNullorNill(form.getSampleOrderItems().getNewRequesterName())) {
-      facilityName = form.getSampleOrderItems().getNewRequesterName();
-    }
-    String departmentName = "";
-    if (!StringUtil.isNullorNill(form.getSampleOrderItems().getReferringSiteDepartmentId())) {
-      Organization organization =
-          organizationService.get(form.getSampleOrderItems().getReferringSiteDepartmentId());
-      departmentName = organization.getOrganizationName();
-    }
-    request.setAttribute("facilityName", facilityName);
-    request.setAttribute("departmentName", departmentName);
-    form.setPatientSearch(new PatientSearch());
-
-    redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-
-    return (form);
-  }
-
-  @PostMapping(
-      value = "/SamplePatientEntryBatch",
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseBody
-  public SamplePatientEntryForm showSamplePatientEntrySave(
-      HttpServletRequest request,
-      @RequestBody @Validated(SamplePatientEntryForm.SamplePatientEntryBatch.class)
-          SamplePatientEntryForm form,
-      BindingResult result,
-      RedirectAttributes redirectAttributes)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-    entryFormValidator.validate(form, result);
-    if (result.hasErrors()) {
-      saveErrors(result);
-    }
-    SamplePatientUpdateData updateData = new SamplePatientUpdateData(getSysUserId(request));
-
-    PatientManagementInfo patientInfo = form.getPatientProperties();
-    SampleOrderItem sampleOrder = form.getSampleOrderItems();
-
-    boolean trackPayments =
-        ConfigurationProperties.getInstance()
-            .isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
-
-    String receivedDateForDisplay = sampleOrder.getReceivedDateForDisplay();
-    if (org.apache.commons.validator.GenericValidator.isBlankOrNull(receivedDateForDisplay)) {
-      receivedDateForDisplay = DateUtil.getCurrentDateAsText();
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(
-        sampleOrder.getReceivedTime())) {
-      receivedDateForDisplay += " " + sampleOrder.getReceivedTime();
-    } else {
-      receivedDateForDisplay += " 00:00";
+    @PostMapping(value = "/SampleBatchEntry", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public SampleBatchEntryForm showSampleBatchEntry(HttpServletRequest request, @RequestBody SampleBatchEntryForm form,
+            BindingResult result, RedirectAttributes redirectAttributes) throws DocumentException {
+        formValidator.validate(form, result);
+        if (result.hasErrors()) {
+            saveErrors(result);
+            return (form);
+        }
+        String sampleXML = form.getSampleXML();
+        SampleOrderService sampleOrderService = new SampleOrderService();
+        SampleOrderItem soi = sampleOrderService.getSampleOrderItem();
+        soi.setReceivedTime(form.getSampleOrderItems().getReceivedTime());
+        soi.setReceivedDateForDisplay(form.getSampleOrderItems().getReceivedDateForDisplay());
+        soi.setNewRequesterName(form.getSampleOrderItems().getNewRequesterName());
+        soi.setReferringSiteId(form.getFacilityID());
+        soi.setReferringSiteDepartmentId(form.getSampleOrderItems().getReferringSiteDepartmentId());
+
+        form.setSampleOrderItems(soi);
+
+        form.setLocalDBOnly(ConfigurationProperties.getInstance()
+                .getPropertyValueLowerCase(Property.UseExternalPatientInfo).equals("false"));
+
+        // get summary of tests selected to place in common fields section
+        Document sampleDom = DocumentHelper.parseText(sampleXML);
+        Element sampleItem = sampleDom.getRootElement().element("sample");
+        String testIDs = sampleItem.attributeValue("tests");
+        StringTokenizer tokenizer = new StringTokenizer(testIDs, ",");
+        StringBuilder sBuilder = new StringBuilder();
+        String separator = "";
+        while (tokenizer.hasMoreTokens()) {
+            sBuilder.append(separator);
+            sBuilder.append(TestServiceImpl.getUserLocalizedTestName(testService.get(tokenizer.nextToken().trim())));
+            separator = "<br>";
+        }
+        String sampleType = typeOfSampleService.get(sampleItem.attributeValue("sampleID")).getLocalAbbreviation();
+        String testNames = sBuilder.toString();
+        request.setAttribute("sampleType", sampleType);
+        request.setAttribute("testNames", testNames);
+
+        // get facility name from id
+        String facilityName = "";
+        if (!StringUtil.isNullorNill(form.getFacilityID())) {
+            Organization organization = organizationService.get(form.getFacilityID());
+            facilityName = organization.getOrganizationName();
+        } else if (!StringUtil.isNullorNill(form.getSampleOrderItems().getNewRequesterName())) {
+            facilityName = form.getSampleOrderItems().getNewRequesterName();
+        }
+        String departmentName = "";
+        if (!StringUtil.isNullorNill(form.getSampleOrderItems().getReferringSiteDepartmentId())) {
+            Organization organization = organizationService
+                    .get(form.getSampleOrderItems().getReferringSiteDepartmentId());
+            departmentName = organization.getOrganizationName();
+        }
+        request.setAttribute("facilityName", facilityName);
+        request.setAttribute("departmentName", departmentName);
+        form.setPatientSearch(new PatientSearch());
+
+        redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+
+        return (form);
     }
 
-    updateData.setCollectionDateFromRecieveDateIfNeeded(receivedDateForDisplay);
-    updateData.initializeRequester(sampleOrder);
+    @PostMapping(value = "/SamplePatientEntryBatch", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public SamplePatientEntryForm showSamplePatientEntrySave(HttpServletRequest request,
+            @RequestBody @Validated(SamplePatientEntryForm.SamplePatientEntryBatch.class) SamplePatientEntryForm form,
+            BindingResult result, RedirectAttributes redirectAttributes)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-    PatientManagementUpdate patientUpdate = SpringContext.getBean(PatientManagementUpdate.class);
-    patientUpdate.setSysUserIdFromRequest(request);
-    testAndInitializePatientForSaving(request, patientInfo, patientUpdate, updateData);
+        entryFormValidator.validate(form, result);
+        if (result.hasErrors()) {
+            saveErrors(result);
+        }
+        SamplePatientUpdateData updateData = new SamplePatientUpdateData(getSysUserId(request));
 
-    updateData.setAccessionNumber(sampleOrder.getLabNo());
-    updateData.initProvider(sampleOrder);
-    updateData.initSampleData(
-        form.getSampleXML(), receivedDateForDisplay, trackPayments, sampleOrder);
-    updateData.validateSample(result);
+        PatientManagementInfo patientInfo = form.getPatientProperties();
+        SampleOrderItem sampleOrder = form.getSampleOrderItems();
 
-    if (result.hasErrors()) {
-      saveErrors(result);
+        boolean trackPayments = ConfigurationProperties.getInstance()
+                .isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
+
+        String receivedDateForDisplay = sampleOrder.getReceivedDateForDisplay();
+        if (org.apache.commons.validator.GenericValidator.isBlankOrNull(receivedDateForDisplay)) {
+            receivedDateForDisplay = DateUtil.getCurrentDateAsText();
+        }
+
+        if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(sampleOrder.getReceivedTime())) {
+            receivedDateForDisplay += " " + sampleOrder.getReceivedTime();
+        } else {
+            receivedDateForDisplay += " 00:00";
+        }
+
+        updateData.setCollectionDateFromRecieveDateIfNeeded(receivedDateForDisplay);
+        updateData.initializeRequester(sampleOrder);
+
+        PatientManagementUpdate patientUpdate = SpringContext.getBean(PatientManagementUpdate.class);
+        patientUpdate.setSysUserIdFromRequest(request);
+        testAndInitializePatientForSaving(request, patientInfo, patientUpdate, updateData);
+
+        updateData.setAccessionNumber(sampleOrder.getLabNo());
+        updateData.initProvider(sampleOrder);
+        updateData.initSampleData(form.getSampleXML(), receivedDateForDisplay, trackPayments, sampleOrder);
+        updateData.validateSample(result);
+
+        if (result.hasErrors()) {
+            saveErrors(result);
+        }
+
+        try {
+            samplePatientEntryService.persistData(updateData, patientUpdate, patientInfo, form, request);
+            try {
+                fhirTransformService.transformPersistOrderEntryFhirObjects(updateData, patientInfo, false, null);
+            } catch (FhirTransformationException | FhirPersistanceException e) {
+                LogEvent.logError(e);
+            }
+        } catch (LIMSRuntimeException e) {
+            if (e.getCause() instanceof StaleObjectStateException) {
+                result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
+            } else {
+                LogEvent.logDebug(e);
+                result.reject("errors.UpdateException", "errors.UpdateException");
+            }
+            LogEvent.logInfo(this.getClass().getSimpleName(), "showSamplePatientEntrySave", result.toString());
+            saveErrors(result);
+            request.setAttribute(ALLOW_EDITS_KEY, "false");
+        }
+
+        redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+        return (form);
     }
 
-    try {
-      samplePatientEntryService.persistData(updateData, patientUpdate, patientInfo, form, request);
-      try {
-        fhirTransformService.transformPersistOrderEntryFhirObjects(
-            updateData, patientInfo, false, null);
-      } catch (FhirTransformationException | FhirPersistanceException e) {
-        LogEvent.logError(e);
-      }
-    } catch (LIMSRuntimeException e) {
-      if (e.getCause() instanceof StaleObjectStateException) {
-        result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
-      } else {
-        LogEvent.logDebug(e);
-        result.reject("errors.UpdateException", "errors.UpdateException");
-      }
-      LogEvent.logInfo(
-          this.getClass().getSimpleName(), "showSamplePatientEntrySave", result.toString());
-      saveErrors(result);
-      request.setAttribute(ALLOW_EDITS_KEY, "false");
+    private void testAndInitializePatientForSaving(HttpServletRequest request, PatientManagementInfo patientInfo,
+            IPatientUpdate patientUpdate, SamplePatientUpdateData updateData)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        patientUpdate.setPatientUpdateStatus(patientInfo);
+        updateData.setSavePatient(patientUpdate.getPatientUpdateStatus() != PatientUpdateStatus.NO_ACTION);
+
+        if (updateData.isSavePatient()) {
+            updateData.setPatientErrors(patientUpdate.preparePatientData(request, patientInfo));
+        } else {
+            updateData.setPatientErrors(new BaseErrors());
+        }
     }
 
-    redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-    return (form);
-  }
-
-  private void testAndInitializePatientForSaving(
-      HttpServletRequest request,
-      PatientManagementInfo patientInfo,
-      IPatientUpdate patientUpdate,
-      SamplePatientUpdateData updateData)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-    patientUpdate.setPatientUpdateStatus(patientInfo);
-    updateData.setSavePatient(
-        patientUpdate.getPatientUpdateStatus() != PatientUpdateStatus.NO_ACTION);
-
-    if (updateData.isSavePatient()) {
-      updateData.setPatientErrors(patientUpdate.preparePatientData(request, patientInfo));
-    } else {
-      updateData.setPatientErrors(new BaseErrors());
+    @Override
+    protected String findLocalForward(String forward) {
+        switch (forward) {
+        case "On Demand":
+            return "sampleBatchEntryOnDemandDefinition";
+        case "Pre-Printed":
+            return "sampleBatchEntryPrePrintedDefinition";
+        case FWD_FAIL:
+        case FWD_FAIL_INSERT:
+            return "sampleBatchEntrySetupDefinition";
+        case FWD_SUCCESS_INSERT:
+            return "redirect:/SamplePatientEntry";
+        default:
+            return "redirect:/SampleBatchEntrySetup";
+        }
     }
-  }
 
-  @Override
-  protected String findLocalForward(String forward) {
-    switch (forward) {
-      case "On Demand":
-        return "sampleBatchEntryOnDemandDefinition";
-      case "Pre-Printed":
-        return "sampleBatchEntryPrePrintedDefinition";
-      case FWD_FAIL:
-      case FWD_FAIL_INSERT:
-        return "sampleBatchEntrySetupDefinition";
-      case FWD_SUCCESS_INSERT:
-        return "redirect:/SamplePatientEntry";
-      default:
-        return "redirect:/SampleBatchEntrySetup";
+    @Override
+    protected String getPageTitleKey() {
+        return "sample.batchentry.title";
     }
-  }
 
-  @Override
-  protected String getPageTitleKey() {
-    return "sample.batchentry.title";
-  }
-
-  @Override
-  protected String getPageSubtitleKey() {
-    return "sample.batchentry.title";
-  }
+    @Override
+    protected String getPageSubtitleKey() {
+        return "sample.batchentry.title";
+    }
 }

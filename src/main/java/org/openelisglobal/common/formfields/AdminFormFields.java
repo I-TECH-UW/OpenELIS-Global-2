@@ -19,81 +19,36 @@ import java.util.Map;
 
 public class AdminFormFields {
 
-  public static enum Field {
-    ActionMenu,
-    AnalyteMenu,
-    AnalyzerTestNameMenu,
-    CodeElementXref,
-    CodeElementTypeMenu,
-    CountyMenu,
-    DictionaryMenu,
-    DictionaryCategoryMenu,
-    ExternalConnections,
-    LabelMenu,
-    MethodMenu,
-    OrganizationMenu,
-    PanelMenu,
-    PanelItemMenu,
-    PatientTypeMenu,
-    ProgramMenu,
-    ProjectMenu,
-    ProviderMenu,
-    QaEventMenu,
-    ReceiverCodeElementMenu,
-    RegionMenu,
-    ResultLimitsMenu,
-    RoleMenu,
-    SiteInformationMenu,
-    SampleEntryMenu,
-    ResultInformationMenu,
-    SampleDomainMenu,
-    ScriptletMenu,
-    SourceOfSampleMenu,
-    StatusOfSampleMenu,
-    TestMenu,
-    TestAnalyteMenu,
-    TestReflexMenu,
-    TestResultMenu,
-    TestSectionMenu,
-    TestTrailerMenu,
-    TypeOfSampleMenu,
-    TypeOfSamplePanelMenu,
-    TypeOfSampleTestMenu,
-    TypeOfTestResultMenu,
-    UnitOfMeasureMenu,
-    TestAnalyteTestResult,
-    LoginUserMenu,
-    SystemUserMenu,
-    UserRoleMenu,
-    SystemModuleMenu,
-    SystemUserSectionMenu,
-    SystemUserModuleMenu,
-    UnifiedSystemUserMenu,
-    TestUsageAggregatation,
-    RESULT_REPORTING_CONFIGURATION,
-    PRINTED_REPORTS_CONFIGURATION,
-    WORKPLAN_CONFIGURATION,
-    NON_CONFORMITY_CONFIGURATION,
-    PATIENT_ENTRY_CONFIGURATION,
-  }
-
-  private static AdminFormFields instance = null;
-
-  private Map<AdminFormFields.Field, Boolean> fields;
-
-  private AdminFormFields() {
-    fields = new DefaultAdminFormFields().getFieldFormSet();
-  }
-
-  public static AdminFormFields getInstance() {
-    if (instance == null) {
-      instance = new AdminFormFields();
+    public static enum Field {
+        ActionMenu, AnalyteMenu, AnalyzerTestNameMenu, CodeElementXref, CodeElementTypeMenu, CountyMenu, DictionaryMenu,
+        DictionaryCategoryMenu, ExternalConnections, LabelMenu, MethodMenu, OrganizationMenu, PanelMenu, PanelItemMenu,
+        PatientTypeMenu, ProgramMenu, ProjectMenu, ProviderMenu, QaEventMenu, ReceiverCodeElementMenu, RegionMenu,
+        ResultLimitsMenu, RoleMenu, SiteInformationMenu, SampleEntryMenu, ResultInformationMenu, SampleDomainMenu,
+        ScriptletMenu, SourceOfSampleMenu, StatusOfSampleMenu, TestMenu, TestAnalyteMenu, TestReflexMenu,
+        TestResultMenu, TestSectionMenu, TestTrailerMenu, TypeOfSampleMenu, TypeOfSamplePanelMenu, TypeOfSampleTestMenu,
+        TypeOfTestResultMenu, UnitOfMeasureMenu, TestAnalyteTestResult, LoginUserMenu, SystemUserMenu, UserRoleMenu,
+        SystemModuleMenu, SystemUserSectionMenu, SystemUserModuleMenu, UnifiedSystemUserMenu, TestUsageAggregatation,
+        RESULT_REPORTING_CONFIGURATION, PRINTED_REPORTS_CONFIGURATION, WORKPLAN_CONFIGURATION,
+        NON_CONFORMITY_CONFIGURATION, PATIENT_ENTRY_CONFIGURATION,
     }
 
-    return instance;
-  }
+    private static AdminFormFields instance = null;
 
-  public boolean useField(AdminFormFields.Field field) {
-    return fields.get(field);
-  }
+    private Map<AdminFormFields.Field, Boolean> fields;
+
+    private AdminFormFields() {
+        fields = new DefaultAdminFormFields().getFieldFormSet();
+    }
+
+    public static AdminFormFields getInstance() {
+        if (instance == null) {
+            instance = new AdminFormFields();
+        }
+
+        return instance;
+    }
+
+    public boolean useField(AdminFormFields.Field field) {
+        return fields.get(field);
+    }
 }

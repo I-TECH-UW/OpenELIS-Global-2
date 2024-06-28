@@ -17,71 +17,60 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TestSiteYearReport {
-  public static enum Months {
-    jan(0),
-    feb(1),
-    march(2),
-    april(3),
-    may(4),
-    june(5),
-    july(6),
-    aug(7),
-    sept(8),
-    oct(9),
-    nov(10),
-    dec(11);
+    public static enum Months {
+        jan(0), feb(1), march(2), april(3), may(4), june(5), july(6), aug(7), sept(8), oct(9), nov(10), dec(11);
 
-    private final int index;
+        private final int index;
 
-    Months(int index) {
-      this.index = index;
+        Months(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
     }
 
-    public int getIndex() {
-      return index;
+    private String testName;
+    private String siteName;
+    private Map<Months, Integer> monthCountMap = new HashMap<Months, Integer>();
+
+    public TestSiteYearReport() {
+        for (Months month : Months.values()) {
+            monthCountMap.put(month, 0);
+        }
     }
-  }
 
-  private String testName;
-  private String siteName;
-  private Map<Months, Integer> monthCountMap = new HashMap<Months, Integer>();
-
-  public TestSiteYearReport() {
-    for (Months month : Months.values()) {
-      monthCountMap.put(month, 0);
+    public String getTestName() {
+        return testName;
     }
-  }
 
-  public String getTestName() {
-    return testName;
-  }
+    public void setTestName(String testName) {
+        this.testName = testName;
+    }
 
-  public void setTestName(String testName) {
-    this.testName = testName;
-  }
+    public String getSiteName() {
+        return siteName;
+    }
 
-  public String getSiteName() {
-    return siteName;
-  }
+    public void setSiteName(String siteName) {
+        this.siteName = siteName;
+    }
 
-  public void setSiteName(String siteName) {
-    this.siteName = siteName;
-  }
+    public Map<Months, Integer> getMonthCountMap() {
+        return monthCountMap;
+    }
 
-  public Map<Months, Integer> getMonthCountMap() {
-    return monthCountMap;
-  }
+    public void setMonthCountMap(Map<Months, Integer> monthCountMap) {
+        this.monthCountMap = monthCountMap;
+    }
 
-  public void setMonthCountMap(Map<Months, Integer> monthCountMap) {
-    this.monthCountMap = monthCountMap;
-  }
+    public void addToMonth(Months month, int newCount) {
+        Integer count = monthCountMap.get(month);
+        monthCountMap.put(month, count + newCount);
+    }
 
-  public void addToMonth(Months month, int newCount) {
-    Integer count = monthCountMap.get(month);
-    monthCountMap.put(month, count + newCount);
-  }
-
-  public int getCountForMonth(Months month) {
-    return monthCountMap.get(month);
-  }
+    public int getCountForMonth(Months month) {
+        return monthCountMap.get(month);
+    }
 }

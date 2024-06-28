@@ -21,11 +21,11 @@ import org.openelisglobal.workplan.form.WorkplanForm;
 
 public interface IWorkplanReport {
 
-  HashMap<String, Object> getParameters();
+    HashMap<String, Object> getParameters();
 
-  String getFileName();
+    String getFileName();
 
-  List<?> prepareRows(WorkplanForm dynaForm);
+    List<?> prepareRows(WorkplanForm dynaForm);
 
-  void setReportPath(String reportPath);
+    void setReportPath(String reportPath);
 }

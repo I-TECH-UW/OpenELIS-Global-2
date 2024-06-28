@@ -7,21 +7,21 @@ import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 public interface SampleItemService extends BaseObjectService<SampleItem, String> {
-  void getData(SampleItem sampleItem);
+    void getData(SampleItem sampleItem);
 
-  SampleItem getData(String sampleItemId);
+    SampleItem getData(String sampleItemId);
 
-  List<SampleItem> getSampleItemsBySampleIdAndType(String sampleId, TypeOfSample typeOfSample);
+    List<SampleItem> getSampleItemsBySampleIdAndType(String sampleId, TypeOfSample typeOfSample);
 
-  List<SampleItem> getPageOfSampleItems(int startingRecNo);
+    List<SampleItem> getPageOfSampleItems(int startingRecNo);
 
-  List<SampleItem> getAllSampleItems();
+    List<SampleItem> getAllSampleItems();
 
-  List<SampleItem> getSampleItemsBySampleId(String id);
+    List<SampleItem> getSampleItemsBySampleId(String id);
 
-  List<SampleItem> getSampleItemsBySampleIdAndStatus(String id, Set<Integer> includedStatusList);
+    List<SampleItem> getSampleItemsBySampleIdAndStatus(String id, Set<Integer> includedStatusList);
 
-  void getDataBySample(SampleItem sampleItem);
+    void getDataBySample(SampleItem sampleItem);
 
-  String getTypeOfSampleId(SampleItem sampleItem);
+    String getTypeOfSampleId(SampleItem sampleItem);
 }

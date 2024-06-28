@@ -24,37 +24,38 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ConfigurationSideEffects {
-  @Autowired private RoleService roleService;
-  @Autowired private SiteInformationService siteInformationService;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private SiteInformationService siteInformationService;
 
-  public void siteInformationChanged(SiteInformation siteInformation) {
-    if (Property.DEFAULT_LANG_LOCALE.getName().equals(siteInformation.getName())) {
-      // this is done in SiteInformationController.java as we need to have the user
-      // request to change the locale
-    }
-
-    if (Property.roleRequiredForModifyResults.getName().equals(siteInformation.getName())) {
-      Role modifierRole = roleService.getRoleByName("Results modifier");
-
-      if (modifierRole != null && modifierRole.getId() != null) {
-        modifierRole.setActive("true".equals(siteInformation.getValue()));
-        modifierRole.setSysUserId(siteInformation.getSysUserId());
-        roleService.update(modifierRole);
-      }
-    }
-
-    if (Property.SiteCode.getName().equals(siteInformation.getName())) {
-      SiteInformation accessionFormat =
-          siteInformationService.getSiteInformationByName("acessionFormat");
-      if ("SITEYEARNUM".equals(accessionFormat.getValue())) {
-        SiteInformation accessionPrefix =
-            siteInformationService.getSiteInformationByName("Accession number prefix");
-        if (GenericValidator.isBlankOrNull(accessionPrefix.getValue())) {
-          accessionPrefix.setValue(siteInformation.getValue());
-          accessionPrefix.setSysUserId(siteInformation.getSysUserId());
-          siteInformationService.update(accessionPrefix);
+    public void siteInformationChanged(SiteInformation siteInformation) {
+        if (Property.DEFAULT_LANG_LOCALE.getName().equals(siteInformation.getName())) {
+            // this is done in SiteInformationController.java as we need to have the user
+            // request to change the locale
         }
-      }
+
+        if (Property.roleRequiredForModifyResults.getName().equals(siteInformation.getName())) {
+            Role modifierRole = roleService.getRoleByName("Results modifier");
+
+            if (modifierRole != null && modifierRole.getId() != null) {
+                modifierRole.setActive("true".equals(siteInformation.getValue()));
+                modifierRole.setSysUserId(siteInformation.getSysUserId());
+                roleService.update(modifierRole);
+            }
+        }
+
+        if (Property.SiteCode.getName().equals(siteInformation.getName())) {
+            SiteInformation accessionFormat = siteInformationService.getSiteInformationByName("acessionFormat");
+            if ("SITEYEARNUM".equals(accessionFormat.getValue())) {
+                SiteInformation accessionPrefix = siteInformationService
+                        .getSiteInformationByName("Accession number prefix");
+                if (GenericValidator.isBlankOrNull(accessionPrefix.getValue())) {
+                    accessionPrefix.setValue(siteInformation.getValue());
+                    accessionPrefix.setSysUserId(siteInformation.getSysUserId());
+                    siteInformationService.update(accessionPrefix);
+                }
+            }
+        }
     }
-  }
 }

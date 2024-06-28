@@ -8,15 +8,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TestCalculationServiceImpl extends AuditableBaseObjectServiceImpl<Calculation, Integer>
-    implements TestCalculationService {
-  @Autowired TestCalculationDAO testCalculationDAOdao;
+        implements TestCalculationService {
+    @Autowired
+    TestCalculationDAO testCalculationDAOdao;
 
-  public TestCalculationServiceImpl() {
-    super(Calculation.class);
-  }
+    public TestCalculationServiceImpl() {
+        super(Calculation.class);
+    }
 
-  @Override
-  protected TestCalculationDAO getBaseObjectDAO() {
-    return testCalculationDAOdao;
-  }
+    @Override
+    protected TestCalculationDAO getBaseObjectDAO() {
+        return testCalculationDAOdao;
+    }
 }

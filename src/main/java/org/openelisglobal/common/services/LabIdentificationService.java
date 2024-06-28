@@ -22,23 +22,23 @@ import org.springframework.stereotype.Service;
 @Service
 public class LabIdentificationService {
 
-  public String getLabId() {
-    return ConfigurationProperties.getInstance().getPropertyValue(Property.SiteCode);
-  }
+    public String getLabId() {
+        return ConfigurationProperties.getInstance().getPropertyValue(Property.SiteCode);
+    }
 
-  public String getLabName() {
-    return ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName);
-  }
+    public String getLabName() {
+        return ConfigurationProperties.getInstance().getPropertyValue(Property.SiteName);
+    }
 
-  public String getLabAddress() {
-    return "";
-  }
+    public String getLabAddress() {
+        return "";
+    }
 
-  public String getLabPhone() {
-    return "";
-  }
+    public String getLabPhone() {
+        return "";
+    }
 
-  public Locale getLanguageLocale() {
-    return SystemConfiguration.getInstance().getDefaultLocale();
-  }
+    public Locale getLanguageLocale() {
+        return SystemConfiguration.getInstance().getDefaultLocale();
+    }
 }

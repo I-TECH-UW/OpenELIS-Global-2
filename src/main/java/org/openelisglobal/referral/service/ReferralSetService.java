@@ -10,13 +10,8 @@ import org.openelisglobal.sample.valueholder.Sample;
 
 public interface ReferralSetService {
 
-  void updateReferralSets(
-      List<ReferralSet> referralSetList,
-      List<Sample> modifiedSamples,
-      Set<Sample> parentSamples,
-      List<ReferralResult> removableReferralResults,
-      String sysUserId);
+    void updateReferralSets(List<ReferralSet> referralSetList, List<Sample> modifiedSamples, Set<Sample> parentSamples,
+            List<ReferralResult> removableReferralResults, String sysUserId);
 
-  void createSaveReferralSetsSamplePatientEntry(
-      List<ReferralItem> referralItems, SamplePatientUpdateData updateData);
+    void createSaveReferralSetsSamplePatientEntry(List<ReferralItem> referralItems, SamplePatientUpdateData updateData);
 }

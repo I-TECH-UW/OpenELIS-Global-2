@@ -16,58 +16,58 @@ package org.openelisglobal.dataexchange.aggregatereporting;
 import java.util.List;
 
 public class SendingAggregateReportWrapper {
-  private String siteId;
-  private String siteName;
-  private String version = "1";
-  private String user;
-  private String password;
-  private List<AggregateReportXmit> reports;
+    private String siteId;
+    private String siteName;
+    private String version = "1";
+    private String user;
+    private String password;
+    private List<AggregateReportXmit> reports;
 
-  public String getUser() {
-    return user;
-  }
+    public String getUser() {
+        return user;
+    }
 
-  public void setUser(String user) {
-    this.user = user;
-  }
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-  public String getSiteId() {
-    return siteId;
-  }
+    public String getSiteId() {
+        return siteId;
+    }
 
-  public void setSiteId(String siteId) {
-    this.siteId = siteId;
-  }
+    public void setSiteId(String siteId) {
+        this.siteId = siteId;
+    }
 
-  public String getSiteName() {
-    return siteName;
-  }
+    public String getSiteName() {
+        return siteName;
+    }
 
-  public void setSiteName(String siteName) {
-    this.siteName = siteName;
-  }
+    public void setSiteName(String siteName) {
+        this.siteName = siteName;
+    }
 
-  public String getVersion() {
-    return version;
-  }
+    public String getVersion() {
+        return version;
+    }
 
-  public void setVersion(String version) {
-    this.version = version;
-  }
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-  public List<AggregateReportXmit> getReports() {
-    return reports;
-  }
+    public List<AggregateReportXmit> getReports() {
+        return reports;
+    }
 
-  public void setReports(List<AggregateReportXmit> reports) {
-    this.reports = reports;
-  }
+    public void setReports(List<AggregateReportXmit> reports) {
+        this.reports = reports;
+    }
 
-  public void setPassword(String password) {
-    this.password = password;
-  }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-  public String getPassword() {
-    return password;
-  }
+    public String getPassword() {
+        return password;
+    }
 }

@@ -19,7 +19,7 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.testcodes.valueholder.TestCodeType;
 
 public interface TestCodeTypeDAO extends BaseDAO<TestCodeType, String> {
-  public TestCodeType getTestCodeTypeByName(String name) throws LIMSRuntimeException;
+    public TestCodeType getTestCodeTypeByName(String name) throws LIMSRuntimeException;
 
-  public TestCodeType getTestCodeTypeById(String id) throws LIMSRuntimeException;
+    public TestCodeType getTestCodeTypeById(String id) throws LIMSRuntimeException;
 }

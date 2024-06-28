@@ -31,70 +31,70 @@ import org.openelisglobal.reports.form.ReportForm;
  */
 public class HaitiExportReport extends CSVSampleExportReport implements IReportParameterSetter {
 
-  @Override
-  protected String reportFileName() {
-    return "HaitiExportReport";
-  }
-
-  @Override
-  public void setRequestParameters(ReportForm form) {
-    try {
-      form.setReportName(getReportNameForParameterPage());
-      form.setUseLowerDateRange(Boolean.TRUE);
-      form.setUseUpperDateRange(Boolean.TRUE);
-    } catch (RuntimeException e) {
-      Log.error("Error in " + this.getClass().getSimpleName() + ".setRequestParemeters: ", e);
-    }
-  }
-
-  protected String getReportNameForParameterPage() {
-    return MessageUtil.getMessage("reports.label.project.export")
-        + " "
-        + MessageUtil.getContextualMessage("sample.collectionDate");
-  }
-
-  /**
-   * @see
-   *     org.openelisglobal.reports.action.implementation.IReportCreator#initializeReport(org.openelisglobal.common.action.BaseActionForm)
-   */
-  @Override
-  public void initializeReport(ReportForm form) {
-    super.initializeReport();
-    errorFound = false;
-
-    lowDateStr = form.getLowerDateRange();
-    highDateStr = form.getUpperDateRange();
-    dateRange = new DateRange(lowDateStr, highDateStr);
-
-    createReportParameters();
-
-    errorFound = !validateSubmitParameters();
-    if (errorFound) {
-      return;
+    @Override
+    protected String reportFileName() {
+        return "HaitiExportReport";
     }
 
-    createReportItems();
-  }
-
-  /** check everything */
-  private boolean validateSubmitParameters() {
-    return dateRange.validateHighLowDate("report.error.message.date.received.missing");
-  }
-
-  /** creating the list for generation to the report, putting results in resultSet */
-  private void createReportItems() {
-    try {
-      // we have to round up everything via hibernate first, since many of our methods
-      // close the connection
-      ResourceTranslator.DictionaryTranslator.getInstance();
-      ResourceTranslator.GenderTranslator.getInstance();
-
-      csvColumnBuilder = new HaitiColumnBuilder(dateRange);
-      csvColumnBuilder.buildDataSource();
-    } catch (SQLException e) {
-      Log.error("Error in " + this.getClass().getSimpleName() + ".createReportItems: ", e);
-      LogEvent.logDebug(e);
-      add1LineErrorMessage("report.error.message.general.error");
+    @Override
+    public void setRequestParameters(ReportForm form) {
+        try {
+            form.setReportName(getReportNameForParameterPage());
+            form.setUseLowerDateRange(Boolean.TRUE);
+            form.setUseUpperDateRange(Boolean.TRUE);
+        } catch (RuntimeException e) {
+            Log.error("Error in " + this.getClass().getSimpleName() + ".setRequestParemeters: ", e);
+        }
     }
-  }
+
+    protected String getReportNameForParameterPage() {
+        return MessageUtil.getMessage("reports.label.project.export") + " "
+                + MessageUtil.getContextualMessage("sample.collectionDate");
+    }
+
+    /**
+     * @see org.openelisglobal.reports.action.implementation.IReportCreator#initializeReport(org.openelisglobal.common.action.BaseActionForm)
+     */
+    @Override
+    public void initializeReport(ReportForm form) {
+        super.initializeReport();
+        errorFound = false;
+
+        lowDateStr = form.getLowerDateRange();
+        highDateStr = form.getUpperDateRange();
+        dateRange = new DateRange(lowDateStr, highDateStr);
+
+        createReportParameters();
+
+        errorFound = !validateSubmitParameters();
+        if (errorFound) {
+            return;
+        }
+
+        createReportItems();
+    }
+
+    /** check everything */
+    private boolean validateSubmitParameters() {
+        return dateRange.validateHighLowDate("report.error.message.date.received.missing");
+    }
+
+    /**
+     * creating the list for generation to the report, putting results in resultSet
+     */
+    private void createReportItems() {
+        try {
+            // we have to round up everything via hibernate first, since many of our methods
+            // close the connection
+            ResourceTranslator.DictionaryTranslator.getInstance();
+            ResourceTranslator.GenderTranslator.getInstance();
+
+            csvColumnBuilder = new HaitiColumnBuilder(dateRange);
+            csvColumnBuilder.buildDataSource();
+        } catch (SQLException e) {
+            Log.error("Error in " + this.getClass().getSimpleName() + ".createReportItems: ", e);
+            LogEvent.logDebug(e);
+            add1LineErrorMessage("report.error.message.general.error");
+        }
+    }
 }
