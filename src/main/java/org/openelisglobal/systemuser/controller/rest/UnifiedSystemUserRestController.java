@@ -43,6 +43,7 @@ import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.systemuser.validator.UnifiedSystemUserFormValidator;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.systemuser.valueholder.UnifiedSystemUser;
+import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.userrole.service.UserRoleService;
 import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
 import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
@@ -93,6 +94,8 @@ public class UnifiedSystemUserRestController extends BaseController {
     private UserModuleService userModuleService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private TestSectionService testSectionService;
     // private static final String RESERVED_ADMIN_NAME = "admin";
 
     private static String GLOBAL_ADMIN_ID;
@@ -654,6 +657,30 @@ public class UnifiedSystemUserRestController extends BaseController {
         userService.saveUserLabUnitRoles(user, selectedLabUnitRolesMap, loggedOnUserId);
     }
 
+    // private void setLabunitRolesForExistingUser(UnifiedSystemUserForm form) {
+    // UserLabUnitRoles roles =
+    // userService.getUserLabUnitRoles(form.getSystemUserId());
+    // if (roles != null) {
+    // Set<LabUnitRoleMap> roleMaps = roles.getLabUnitRoleMap();
+    // List<String> userLabUnits = new ArrayList<>();
+    // roleMaps.forEach(map -> userLabUnits.add(map.getLabUnit()));
+    // JSONObject userLabData = new JSONObject();
+    // if (userLabUnits.contains(ALL_LAB_UNITS)) {
+    // roleMaps.stream().filter(map ->
+    // map.getLabUnit().equals(ALL_LAB_UNITS)).forEach(
+    // map -> userLabData.put(map.getLabUnit(),
+    // map.getRoles().stream().collect(Collectors.toList())));
+    // } else {
+    // for (LabUnitRoleMap map : roleMaps) {
+    // userLabData.put(map.getLabUnit(),
+    // map.getRoles().stream().collect(Collectors.toList()));
+    // }
+    // }
+
+    // form.setUserLabRoleData(userLabData);
+    // }
+    // }
+
     private void setLabunitRolesForExistingUser(UnifiedSystemUserForm form) {
         UserLabUnitRoles roles = userService.getUserLabUnitRoles(form.getSystemUserId());
         if (roles != null) {
@@ -669,8 +696,23 @@ public class UnifiedSystemUserRestController extends BaseController {
                     userLabData.put(map.getLabUnit(), map.getRoles().stream().collect(Collectors.toList()));
                 }
             }
-
             form.setUserLabRoleData(userLabData);
+
+            Map<String, List<String>> userTestSectionLabUnits = new HashMap<>();
+            if (userLabUnits.contains(ALL_LAB_UNITS)) {
+                roleMaps.stream().filter(map -> map.getLabUnit().equals(ALL_LAB_UNITS))
+                        .forEach(map -> userTestSectionLabUnits.put(map.getLabUnit(), map.getRoles().stream()
+                                .map(r -> roleService.getRoleById(r).getId().trim()).collect(Collectors.toList())));
+            } else {
+                for (LabUnitRoleMap map : roleMaps) {
+                    userTestSectionLabUnits.put(testSectionService.get(map.getLabUnit()).getId(), map.getRoles()
+                            .stream().map(r -> roleService.getRoleById(r).getId().trim()).collect(Collectors.toList()));
+                }
+            }
+
+            System.out.println(userTestSectionLabUnits);
+
+            form.setSelectedTestSectionLabUnits(userTestSectionLabUnits);
         }
     }
 

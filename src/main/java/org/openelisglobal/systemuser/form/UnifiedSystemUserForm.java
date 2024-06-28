@@ -2,7 +2,9 @@ package org.openelisglobal.systemuser.form;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import org.json.JSONArray;
@@ -296,5 +298,15 @@ public class UnifiedSystemUserForm extends BaseForm {
 
     public void setAllowCopyUserRoles(String allowCopyUserRoles) {
         this.allowCopyUserRoles = allowCopyUserRoles;
+    }
+
+    private Map<String, List<String>> selectedTestSectionLabUnits = new HashMap<>();
+
+    public Map<String, List<String>> getSelectedTestSectionLabUnits() {
+        return selectedTestSectionLabUnits;
+    }
+
+    public void setSelectedTestSectionLabUnits(Map<String, List<String>> selectedTestSectionLabUnits) {
+        this.selectedTestSectionLabUnits = selectedTestSectionLabUnits;
     }
 }
