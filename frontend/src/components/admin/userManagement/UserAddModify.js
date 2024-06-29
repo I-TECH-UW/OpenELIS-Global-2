@@ -54,7 +54,6 @@ function UserAddModify() {
   const [copyUserPermission, setCopyUserPermission] = useState("0");
   const [copyUserPermissionList, setCopyUserPermissionList] = useState(null);
   const [testSectionsSelect, setTestSectionsSelect] = useState("AllLabUnits");
-  const [testSectionsSelectArray, setTestSectionsSelectArray] = useState([]);
   const [userData, setUserData] = useState(null);
   const [userDataShow, setUserDataShow] = useState({});
   const [userDataPost, setUserDataPost] = useState(null);
@@ -63,7 +62,6 @@ function UserAddModify() {
   );
   const [selectedTestSectionLabUnits, setSelectedTestSectionLabUnits] =
     useState({});
-  // const [additionalGridAdded, setAdditionalGridAdded] = useState(false);
 
   const ID = (() => {
     const hash = window.location.hash;
@@ -261,31 +259,44 @@ function UserAddModify() {
     }
   }, [userDataShow]);
 
-  function userSavePostCall(event) {
-    event.preventDefault();
+  function userSavePostCall() {
     setIsLoading(true);
     postToOpenElisServerJsonResponse(
       `/rest/UnifiedSystemUser`,
       JSON.stringify(userDataPost),
-      userSavePostCallback(),
+      (res) => {
+        userSavePostCallback(res);
+      },
     );
   }
 
-  function userSavePostCallback() {
-    setIsLoading(false);
-    setNotificationVisible(true);
-    addNotification({
-      title: intl.formatMessage({
-        id: "notification.title",
-      }),
-      message: intl.formatMessage({
-        id: "notification.organization.post.save.success",
-      }),
-      kind: NotificationKinds.success,
-    });
-    setTimeout(() => {
-      window.location.reload();
-    }, 2000);
+  function userSavePostCallback(res) {
+    if (res) {
+      setIsLoading(false);
+      addNotification({
+        title: intl.formatMessage({
+          id: "notification.title",
+        }),
+        message: intl.formatMessage({
+          id: "notification.organization.post.save.success",
+        }),
+        kind: NotificationKinds.success,
+      });
+      setNotificationVisible(true);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 2000);
+    } else {
+      addNotification({
+        kind: NotificationKinds.error,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "server.error.msg" }),
+      });
+      setNotificationVisible(true);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 2000);
+    }
   }
 
   function handleUserLoginNameChange(e) {
@@ -433,30 +444,6 @@ function UserAddModify() {
     userSavePostCall();
   }
 
-  function handleTestSectionsSelectChange(e) {
-    const selectedValue = e.target.value;
-    if (!testSectionsSelectArray.includes(selectedValue)) {
-      setTestSectionsSelectArray([...testSectionsSelectArray, selectedValue]);
-    } else {
-      const updatedArray = testSectionsSelectArray.filter(
-        (value) => value !== selectedValue,
-      );
-      setTestSectionsSelectArray(updatedArray);
-    }
-
-    const index = userDataShow.testSections.findIndex(
-      (item) => item.id === selectedValue,
-    );
-    if (index !== -1) {
-      const updatedArray = [...userDataShow.testSections];
-      updatedArray.splice(index, 1);
-      setUserDataShow({ ...userDataShow, testSections: updatedArray });
-    }
-
-    setTestSectionsSelect(selectedValue);
-    setSaveButton(false);
-  }
-
   function handleCheckboxChange(roleId) {
     const numberToUpdate = ["71", "72", "73", "11", "2"];
     let updatedRoles = [...selectedGlobalLabUnitRoles];
@@ -489,8 +476,17 @@ function UserAddModify() {
     setSaveButton(false);
   }
 
-  function handleTestSectionsSelectChange2(e) {
+  function handleTestSectionsSelectChange(e, key) {
     const selectedValue = e.target.value;
+
+    if (Object.keys(selectedTestSectionLabUnits).includes(selectedValue)) {
+      alert(`Section ${selectedValue} is already selected.`);
+      const updatedSelections = { ...selectedTestSectionLabUnits };
+      delete updatedSelections[selectedValue];
+      setSelectedTestSectionLabUnits(updatedSelections);
+      return;
+    }
+
     let updatedTestSectionLabUnits = { ...selectedTestSectionLabUnits };
 
     if (!Object.keys(updatedTestSectionLabUnits).includes(selectedValue)) {
@@ -499,77 +495,15 @@ function UserAddModify() {
       delete updatedTestSectionLabUnits[selectedValue];
     }
 
-    setSelectedTestSectionLabUnits(updatedTestSectionLabUnits);
-
-    const index = userDataShow.testSections.findIndex(
-      (item) => item.id === selectedValue,
-    );
-    if (index !== -1) {
-      const updatedArray = [...userDataShow.testSections];
-      updatedArray.splice(index, 1);
-      setUserDataShow({ ...userDataShow, testSections: updatedArray });
+    if (key !== selectedValue) {
+      delete updatedTestSectionLabUnits[key];
     }
+
+    setSelectedTestSectionLabUnits(updatedTestSectionLabUnits);
 
     setTestSectionsSelect(selectedValue);
     setSaveButton(false);
   }
-
-  function handleCheckboxChange2(sectionKey, roleId) {
-    console.error(sectionKey);
-    let updatedTestSectionLabUnits = { ...selectedTestSectionLabUnits };
-
-    if (!updatedTestSectionLabUnits[sectionKey]) {
-      updatedTestSectionLabUnits[sectionKey] = [];
-    }
-
-    if (updatedTestSectionLabUnits[sectionKey].includes(roleId)) {
-      updatedTestSectionLabUnits[sectionKey] = updatedTestSectionLabUnits[
-        sectionKey
-      ].filter((id) => id !== roleId);
-    } else {
-      updatedTestSectionLabUnits[sectionKey].push(roleId);
-    }
-
-    setSelectedTestSectionLabUnits(updatedTestSectionLabUnits);
-
-    setUserDataPost((prevUserDataPost) => ({
-      ...prevUserDataPost,
-      selectedTestSectionLabUnits: updatedTestSectionLabUnits,
-    }));
-
-    setUserDataShow((prevUserData) => ({
-      ...prevUserData,
-      selectedTestSectionLabUnits: updatedTestSectionLabUnits,
-    }));
-
-    setUserData((prevUserData) => ({
-      ...prevUserData,
-      selectedTestSectionLabUnits: updatedTestSectionLabUnits,
-    }));
-
-    setSaveButton(false);
-  }
-
-  // useEffect(() => {
-  //   if (userDataShow && userDataShow.testSections) {
-  //     if (
-  //       userDataShow.testSections.length > 0 &&
-  //       testSectionsSelectArray.length > 0
-  //     ) {
-  //       setAdditionalGridAdded(false);
-  //     } else {
-  //       setAdditionalGridAdded(true);
-  //     }
-  //   }
-  // }, [additionalGridAdded, userDataShow, userData]);
-
-  // const toggleAdditionalGrid = () => {
-  //   if (userDataShow.testSections.length === 0) {
-  //     setAdditionalGridAdded(false);
-  //   } else {
-  //     setAdditionalGridAdded(true);
-  //   }
-  // };
 
   const addRoleToSelectedUnits = (key, roleIdToAdd) => {
     setSelectedTestSectionLabUnits((prevUnits) => {
@@ -595,6 +529,47 @@ function UserAddModify() {
       return updatedUnits;
     });
   };
+
+  const addNewSection = () => {
+    const newIds = userDataShow.testSections
+      .filter(
+        (section) =>
+          !Object.keys(selectedTestSectionLabUnits).includes(section.id),
+      )
+      .map((section) => section.id);
+
+    if (newIds.length > 0) {
+      setSelectedTestSectionLabUnits((prev) => ({
+        ...prev,
+        [newIds[0]]: [],
+      }));
+    }
+  };
+
+  const removeSection = (keyToRemove) => {
+    const updatedSections = { ...selectedTestSectionLabUnits };
+    delete updatedSections[keyToRemove];
+    setSelectedTestSectionLabUnits(updatedSections);
+  };
+
+  useEffect(() => {
+    if (selectedTestSectionLabUnits) {
+      setUserDataPost((prevUserDataPost) => ({
+        ...prevUserDataPost,
+        selectedTestSectionLabUnits: selectedTestSectionLabUnits,
+      }));
+
+      setUserDataShow((prevUserData) => ({
+        ...prevUserData,
+        selectedTestSectionLabUnits: selectedTestSectionLabUnits,
+      }));
+
+      setUserData((prevUserData) => ({
+        ...prevUserData,
+        selectedTestSectionLabUnits: selectedTestSectionLabUnits,
+      }));
+    }
+  }, [selectedTestSectionLabUnits]);
 
   if (!isLoading) {
     return (
@@ -1069,133 +1044,23 @@ function UserAddModify() {
                     <br />
                   </Column>
                 </Grid>
-                <br />
-                {/* <Grid fullWidth={true}>
-                  <Column lg={8} md={4} sm={4}>
-                    <FormattedMessage id="systemuserrole.roles.labunit" />
-                    <br />
-                    <br />
-                    <Select
-                      id="select-3"
-                      noLabel={true}
-                      defaultValue={
-                        userData &&
-                        userData.testSections &&
-                        userData.testSections.length > 0
-                          ? userData.testSections[0].id
-                          : ""
-                      }
-                      onChange={(e) => {
-                        handleTestSectionsSelectChange(e);
-                      }}
-                    >
-                      <SelectItem
-                        key="option-1"
-                        value="AllLabUnits"
-                        text="All Lab Units"
-                        onClick={(e) => {
-                          handleTestSectionsSelectChange(e);
-                        }}
-                      />
-                      {userData &&
-                      userData.testSections &&
-                      userData.testSections.length > 0 ? (
-                        userData.testSections.map((section) => (
-                          <SelectItem
-                            key={section.id}
-                            value={section.id}
-                            text={section.value}
-                          />
-                        ))
-                      ) : (
-                        <SelectItem
-                          key=""
-                          value=""
-                          text="No options available"
-                        />
-                      )}
-                    </Select>
-                    <br />
-                    <Checkbox
-                      id="all-permissions"
-                      labelText={"All Permissions"}
-                      checked={["4", "5", "7", "10"].every((num) =>
-                        selectedGlobalLabUnitRoles.includes(num),
-                      )}
-                      onChange={() => {
-                        const numbersToAdd = ["4", "5", "7", "10"];
-                        const updatedRoles = [...selectedGlobalLabUnitRoles];
-                        const numbersToRemove = numbersToAdd.filter((num) =>
-                          updatedRoles.includes(num),
-                        );
-                        if (numbersToRemove.length > 0) {
-                          numbersToRemove.forEach((num) => {
-                            const index = updatedRoles.indexOf(num);
-                            if (index !== -1) {
-                              updatedRoles.splice(index, 1);
-                            }
-                          });
-                        } else {
-                          updatedRoles.push(...numbersToAdd);
-                        }
-                        setSelectedGlobalLabUnitRoles(updatedRoles);
-                        setSaveButton(false);
-                      }}
-                    />
-                    <br />
-                    <FormGroup legendId="labUnitRoles" legendText="">
-                      {userDataShow &&
-                      userDataShow.labUnitRoles &&
-                      userDataShow.labUnitRoles.length > 0 ? (
-                        userDataShow.labUnitRoles.map((section) => (
-                          <Checkbox
-                            key={section.elementID}
-                            id={section.elementID}
-                            value={section.roleId}
-                            labelText={section.roleName}
-                            checked={selectedGlobalLabUnitRoles.includes(
-                              section.roleId,
-                            )}
-                            onChange={() => {
-                              handleCheckboxChange(section.roleId);
-                            }}
-                          />
-                        ))
-                      ) : (
-                        <Checkbox
-                          id="no-options"
-                          value=""
-                          labelText="No options available"
-                        />
-                      )}
-                    </FormGroup>
-                    <br />
-                  </Column>
-                </Grid> */}
-                <br />
                 <Grid fullWidth={true}>
                   <Column lg={8} md={4} sm={4}>
                     <FormattedMessage id="systemuserrole.roles.labunit" />
                   </Column>
                 </Grid>
-                {/* test block start */}
-                <hr />
                 <br />
                 <>
                   {Object.keys(selectedTestSectionLabUnits).map((key) => (
-                    <Grid fullWidth={true} key={key}>
+                    <Grid
+                      fullWidth={true}
+                      key={key}
+                      style={{ paddingBottom: "10px" }}
+                    >
                       <Column lg={8} md={4} sm={4}>
-                        {/* { key === userDataShow.testSections[0].id ? :} */}
                         <Select
                           id={`select-${key}`}
                           noLabel={true}
-                          // defaultValue={
-                          //   userDataShow &&
-                          //   userDataShow.testSections &&
-                          //   userDataShow.testSections.length > 0
-                          //     ? userDataShow.testSections[0].id
-                          //     : ""
-                          // }
                           defaultValue={
                             userDataShow &&
                             userDataShow.testSections &&
@@ -1205,19 +1070,27 @@ function UserAddModify() {
                                 )?.id || userDataShow.testSections[0].id
                               : ""
                           }
-                          // onChange={handleTestSectionsSelectChange2}
-                          onChange={(e) => handleTestSectionsSelectChange2(e)}
+                          onChange={(e) =>
+                            handleTestSectionsSelectChange(e, key)
+                          }
                         >
                           {userDataShow &&
                           userDataShow.testSections &&
                           userDataShow.testSections.length > 0 ? (
-                            userDataShow.testSections.map((section) => (
-                              <SelectItem
-                                key={`${section.id}-${key}`}
-                                value={section.id}
-                                text={section.value}
-                              />
-                            ))
+                            userDataShow.testSections
+                              .filter(
+                                (section) =>
+                                  !Object.keys(
+                                    selectedTestSectionLabUnits,
+                                  ).includes(section.id) || section.id === key,
+                              )
+                              .map((section) => (
+                                <SelectItem
+                                  key={`${section.id}-${key}`}
+                                  value={section.id}
+                                  text={section.value}
+                                />
+                              ))
                           ) : (
                             <SelectItem
                               key=""
@@ -1306,25 +1179,26 @@ function UserAddModify() {
                             />
                           )}
                         </FormGroup>
+                        <Button
+                          onClick={() => removeSection(key)}
+                          kind="tertiary"
+                          type="button"
+                        >
+                          <FormattedMessage id="systemuserrole.rmpermissions" />
+                        </Button>
                       </Column>
                     </Grid>
                   ))}
                 </>
-                <br />
                 <Grid fullWidth={true}>
                   <Column lg={16} md={8} sm={4}>
-                    <Button
-                      // disabled={saveButton}
-                      // onClick={userSavePostCall}
-                      type="button"
-                    >
+                    <Button onClick={addNewSection} type="button">
                       <FormattedMessage id="systemuserrole.newpermissions" />
                     </Button>
                   </Column>
                 </Grid>
                 <hr />
                 <br />
-                {/* test block end */}
                 <Grid fullWidth={true}>
                   <Column lg={16} md={8} sm={4}>
                     <Button
@@ -1420,9 +1294,3 @@ function UserAddModify() {
 }
 
 export default injectIntl(UserAddModify);
-
-// on change of checkbox need a fix
-// adding another permission if ( all permission is not selected )
-// checkBox function destructuer
-// dynamic addition of add permission is needed
-// need to handle AllLabUnits case

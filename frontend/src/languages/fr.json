@@ -1057,5 +1057,6 @@
   "systemuserrole.roles.global": "Rôles globaux",
   "systemuserrole.roles.labunit": "Rôles Unité de Laboratoire",
   "systemuserrole.newpermissions": "Ajouter une nouvelle permission",
+  "systemuserrole.rmpermissions": "Supprimer la permission",
   "barcode.notification.save": "Les configurations de code-barres ont été enregistrées."
 }

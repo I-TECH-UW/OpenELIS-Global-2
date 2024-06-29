@@ -1151,5 +1151,6 @@
   "systemuserrole.roles.global": "Global Roles",
   "systemuserrole.roles.labunit": "Lab Unit Roles",
   "systemuserrole.newpermissions": "Add New Permission",
+  "systemuserrole.rmpermissions": "Remove Permission",
   "barcode.notification.save": "BarCode Configurations has been saved."
 }
