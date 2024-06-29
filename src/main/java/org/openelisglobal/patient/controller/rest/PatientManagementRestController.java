@@ -62,12 +62,11 @@ public class PatientManagementRestController extends BaseRestController {
         Patient patient = new Patient();
 
         if (patientInfo.getPatientUpdateStatus() != PatientUpdateStatus.NO_ACTION) {
-            preparePatientData(bindingResult ,request, patientInfo, patient);
-            if(bindingResult.hasErrors()){
+            preparePatientData(bindingResult, request, patientInfo, patient);
+            if (bindingResult.hasErrors()) {
                 try {
                     throw new BindException(bindingResult);
-                }
-                catch (BindException e) {
+                } catch (BindException e) {
                     LogEvent.logError(e);
                 }
             }

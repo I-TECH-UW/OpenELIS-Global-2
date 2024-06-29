@@ -1,6 +1,9 @@
 package org.openelisglobal.dataexchange.fhir.service;
 
 import ca.uhn.fhir.model.api.TemporalPrecisionEnum;
+import ca.uhn.fhir.parser.DataFormatException;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.client.exceptions.FhirClientConnectionException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -16,10 +19,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
-
-import ca.uhn.fhir.parser.DataFormatException;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.client.exceptions.FhirClientConnectionException;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.Annotation;
@@ -388,8 +387,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
         try {
             crClient.create().resource(patient).execute();
-        }
-        catch (FhirClientConnectionException e) {
+        } catch (FhirClientConnectionException e) {
             Throwable cause = e.getCause();
             if (cause instanceof DataFormatException) {
                 LogEvent.logWarn(e.getMessage(), "create", "Client Registry responds with unsupported data format!");
