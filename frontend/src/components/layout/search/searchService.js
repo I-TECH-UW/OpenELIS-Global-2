@@ -40,7 +40,7 @@ export const fetchPatientData = async (query, callback) => {
 
     callback(uniqueResults);
   } catch (error) {
-    callback([]); // Handle error by returning an empty array
+    callback([]);
   }
 };
 

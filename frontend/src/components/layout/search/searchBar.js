@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Button, Search, SkeletonText } from "@carbon/react";
+import {
+  Button,
+  Search,
+  Tile,
+  Layer,
+  Grid,
+  Column,
+  Loading,
+} from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
 import SearchOutput from "./searchOutput";
 import { fetchPatientData, useAutocomplete } from "./searchService";
@@ -51,6 +59,9 @@ const SearchBar = (props) => {
       fetchPatientData(searchInput.trim(), (results) => {
         const uniqueResults = results.filter(
           (result, index, self) =>
+            result.patientID &&
+            result.firstName &&
+            result.lastName &&
             index === self.findIndex((t) => t.patientID === result.patientID),
         );
         setPatientData(uniqueResults);
@@ -69,6 +80,9 @@ const SearchBar = (props) => {
       fetchPatientData(userInput.trim(), (results) => {
         const uniqueResults = results.filter(
           (result, index, self) =>
+            result.patientID &&
+            result.firstName &&
+            result.lastName &&
             index === self.findIndex((t) => t.patientID === result.patientID),
         );
         setPatientData(uniqueResults);
@@ -89,68 +103,77 @@ const SearchBar = (props) => {
   };
 
   return (
-    <div className="main">
-      <div className="search-bar-container">
-        <Search
-          size="lg"
-          placeholder={intl.formatMessage({ id: "label.button.search" })}
-          labelText={intl.formatMessage({ id: "label.button.search" })}
-          closeButtonLabelText={intl.formatMessage({
-            id: "label.button.clear",
-          })}
-          id="search-1"
-          value={textValue}
-          onChange={handleChange}
-          onKeyDown={handleAutocompleteKeyDown}
-          onClear={handleClearSearch}
-          className="search-input"
-        />
-        <Button className="button" onClick={handleSearch}>
-          <FormattedMessage id="label.button.search" />
-        </Button>
-        {showSuggestions && (
-          <ul className="suggestions">
-            {filteredSuggestions.map((suggestion, index) => (
-              <li
-                key={suggestion.id}
-                className={
-                  index === activeSuggestion ? "suggestion-active" : ""
-                }
-              >
-                <span
-                  onClick={(e) =>
-                    handleSuggestionClick(e, suggestion.id, suggestion)
+    <Layer className="main">
+      <Grid>
+        <Column sm={4} md={6} lg={12}>
+          <div className="search-bar-container">
+            <Search
+              size="sm"
+              placeholder={intl.formatMessage({ id: "label.button.search" })}
+              labelText={intl.formatMessage({ id: "label.button.search" })}
+              closeButtonLabelText={intl.formatMessage({
+                id: "label.button.clear",
+              })}
+              id="search-1"
+              value={textValue}
+              onChange={handleChange}
+              onKeyDown={handleAutocompleteKeyDown}
+              onClear={handleClearSearch}
+              className="search-input"
+              autoComplete
+            />
+            <Button
+              size="sm"
+              style={{ width: 50 }}
+              onClick={handleSearch}
+              aria-label={intl.formatMessage({ id: "label.button.search" })}
+            >
+              <FormattedMessage id="label.button.search" />
+            </Button>
+          </div>
+          {showSuggestions && (
+            <ul className="suggestions">
+              {filteredSuggestions.map((suggestion, index) => (
+                <li
+                  key={suggestion.id}
+                  className={
+                    index === activeSuggestion ? "suggestion-active" : ""
                   }
                 >
-                  {suggestion.value}
-                </span>
-                <button
-                  className="delete-button"
-                  onClick={() => handleSuggestionDelete(suggestion.id)}
-                >
-                  x
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-      {loading ? (
-        <div>
-          <SkeletonText heading />
-          <SkeletonText width="200px" />
-          <SkeletonText width="300px" />
-        </div>
-      ) : (
-        <div className="patients">
-          <SearchOutput
-            loading={loading}
-            patientData={patientData}
-            className="patientHeader"
-          />
-        </div>
-      )}
-    </div>
+                  <span
+                    onClick={(e) =>
+                      handleSuggestionClick(e, suggestion.id, suggestion)
+                    }
+                  >
+                    {suggestion.value}
+                  </span>
+                  <button
+                    className="delete-button"
+                    onClick={() => handleSuggestionDelete(suggestion.id)}
+                  >
+                    x
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Column>
+        <Column sm={4} md={6} lg={12}>
+          {(loading || patientData.length > 0) && (
+            <Tile className="patients">
+              {loading ? (
+                <Loading
+                  description={intl.formatMessage({ id: "label.loading" })}
+                  withOverlay={false}
+                />
+              ) : (
+                <SearchOutput loading={loading} patientData={patientData} />
+              )}
+            </Tile>
+          )}
+        </Column>
+      </Grid>
+    </Layer>
   );
 };
 
