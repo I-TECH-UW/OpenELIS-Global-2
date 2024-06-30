@@ -114,7 +114,7 @@ const SearchBar = (props) => {
               closeButtonLabelText={intl.formatMessage({
                 id: "label.button.clear",
               })}
-              id="search-1"
+              id="searchItem"
               value={textValue}
               onChange={handleChange}
               onKeyDown={handleAutocompleteKeyDown}
