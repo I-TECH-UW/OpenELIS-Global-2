@@ -24,6 +24,8 @@ import {
   CicsSystemGroup,
   QrCode,
   ContainerSoftware,
+  BootVolumeAlt,
+  Report,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -40,6 +42,9 @@ import ProviderMenu from "./ProviderMenu/ProviderMenu";
 import BarcodeConfiguration from "./barcodeConfiguration/BarcodeConfiguration";
 import OrganizationManagament from "./OrganizationManagement/OrganizationManagement";
 import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModify.js";
+import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName.js";
+import PluginList from "./pluginFile/PluginFile.js";
+import ResultReportingConfiguration from "./ResultReportingConfiguration/ResultReportingConfiguration.js";
 
 function Admin() {
   const intl = useIntl();
@@ -75,6 +80,9 @@ function Admin() {
               <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
             </SideNavMenuItem>
           </SideNavMenu>
+          <SideNavLink href="#AnalyzerTestName" renderIcon={ListDropdown}>
+            <FormattedMessage id="sidenav.label.admin.analyzerTest" />
+          </SideNavLink>
           <SideNavLink href="#labNumber" renderIcon={CharacterWholeNumber}>
             <FormattedMessage id="sidenav.label.admin.labNumber" />
           </SideNavLink>
@@ -87,11 +95,17 @@ function Admin() {
           <SideNavLink renderIcon={QrCode} href="#barcodeConfiguration">
             <FormattedMessage id="sidenav.label.admin.barcodeconfiguration" />
           </SideNavLink>
+          <SideNavLink href="#PluginFile" renderIcon={BootVolumeAlt}>
+            <FormattedMessage id="sidenav.label.admin.Listplugin" />
+          </SideNavLink>
           <SideNavLink
             renderIcon={ContainerSoftware}
             href="#organizationManagement"
           >
             <FormattedMessage id="organization.main.title" />
+          </SideNavLink>
+          <SideNavLink renderIcon={Report} href="#resultReportingConfiguration">
+            <FormattedMessage id="resultreporting.browse.title" />
           </SideNavLink>
           <SideNavMenu
             title={intl.formatMessage({ id: "sidenav.label.admin.menu" })}
@@ -166,6 +180,9 @@ function Admin() {
       <PathRoute path="#calculatedValue">
         <CalculatedValue />
       </PathRoute>
+      <PathRoute path="#AnalyzerTestName">
+        <AnalyzerTestName />
+      </PathRoute>
       <PathRoute path="#labNumber">
         <LabNumberManagement />
       </PathRoute>
@@ -183,6 +200,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#organizationEdit">
         <OrganizationAddModify />
+      </PathRoute>
+      <PathRoute path="#resultReportingConfiguration">
+        <ResultReportingConfiguration />
       </PathRoute>
       <PathRoute path="#globalMenuManagement">
         <GlobalMenuManagement />
@@ -247,6 +267,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#DictionaryMenu">
         <DictionaryManagement />
+      </PathRoute>
+      <PathRoute path="#PluginFile">
+        <PluginList />
       </PathRoute>
     </>
   );

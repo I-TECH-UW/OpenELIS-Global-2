@@ -9,22 +9,21 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import org.openelisglobal.validation.constraintvalidator.PasswordConstraintValidator;
 
-@Target({ElementType.FIELD})
+@Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = PasswordConstraintValidator.class)
 @Documented
 public @interface Password {
 
-  public enum PasswordState {
-    PRE_HASH,
-    POST_HASH
-  }
+    public enum PasswordState {
+        PRE_HASH, POST_HASH
+    }
 
-  String message() default "must be complex enough";
+    String message() default "must be complex enough";
 
-  Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-  PasswordState state() default PasswordState.PRE_HASH;
+    PasswordState state() default PasswordState.PRE_HASH;
 
-  Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 }

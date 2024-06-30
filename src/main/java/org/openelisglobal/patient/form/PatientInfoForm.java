@@ -2,31 +2,31 @@ package org.openelisglobal.patient.form;
 
 public interface PatientInfoForm {
 
-  String getFirstName();
+    String getFirstName();
 
-  void setFirstName(String firstName);
+    void setFirstName(String firstName);
 
-  void setLastName(String lastName);
+    void setLastName(String lastName);
 
-  String getLastName();
+    String getLastName();
 
-  void setDob(String birthDateForDisplay);
+    void setDob(String birthDateForDisplay);
 
-  String getDob();
+    String getDob();
 
-  void setGender(String gender);
+    void setGender(String gender);
 
-  String getGender();
+    String getGender();
 
-  void setNationalId(String object);
+    void setNationalId(String object);
 
-  String getNationalId();
+    String getNationalId();
 
-  void setSubjectNumber(String subjectNumber);
+    void setSubjectNumber(String subjectNumber);
 
-  String getSubjectNumber();
+    String getSubjectNumber();
 
-  void setSt(String identityValue);
+    void setSt(String identityValue);
 
-  String getSt();
+    String getSt();
 }

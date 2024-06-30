@@ -38,117 +38,116 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/rest/")
 public class PatientManagementRestController extends BaseRestController {
-  @Autowired SearchResultsService searchService;
-  @Autowired PatientIdentityService patientIdentityService;
-  @Autowired PatientService patientService;
-  @Autowired FhirTransformService fhirTransformService;
+    @Autowired
+    SearchResultsService searchService;
+    @Autowired
+    PatientIdentityService patientIdentityService;
+    @Autowired
+    PatientService patientService;
+    @Autowired
+    FhirTransformService fhirTransformService;
 
-  @PostMapping(value = "patient-management", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseBody
-  public void savepatient(
-      HttpServletRequest request,
-      @Validated(SamplePatientEntryForm.SamplePatientEntry.class) @RequestBody
-          PatientManagementInfo patientInfo,
-      BindingResult bindingResult)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    @PostMapping(value = "patient-management", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void savepatient(HttpServletRequest request,
+            @Validated(SamplePatientEntryForm.SamplePatientEntry.class) @RequestBody PatientManagementInfo patientInfo,
+            BindingResult bindingResult)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-    if (StringUtils.isNotBlank(patientInfo.getPatientPK())) {
-      patientInfo.setPatientUpdateStatus(PatientUpdateStatus.UPDATE);
-    } else {
-      patientInfo.setPatientUpdateStatus(PatientUpdateStatus.ADD);
-    }
-    Patient patient = new Patient();
-
-    if (patientInfo.getPatientUpdateStatus() != PatientUpdateStatus.NO_ACTION) {
-      preparePatientData(bindingResult, request, patientInfo, patient);
-      if (bindingResult.hasErrors()) {
-        try {
-          throw new BindException(bindingResult);
-        } catch (BindException e) {
-          LogEvent.logError(e);
-        }
-      }
-      try {
-        patientService.persistPatientData(patientInfo, patient, getSysUserId(request));
-        fhirTransformService.transformPersistPatient(patientInfo);
-      } catch (LIMSRuntimeException e) {
-
-        if (e.getCause() instanceof StaleObjectStateException) {
-
+        if (StringUtils.isNotBlank(patientInfo.getPatientPK())) {
+            patientInfo.setPatientUpdateStatus(PatientUpdateStatus.UPDATE);
         } else {
-          LogEvent.logDebug(e);
+            patientInfo.setPatientUpdateStatus(PatientUpdateStatus.ADD);
         }
-        request.setAttribute(ALLOW_EDITS_KEY, "false");
+        Patient patient = new Patient();
 
-      } catch (FhirTransformationException | FhirPersistanceException e) {
-        LogEvent.logError(e);
-      }
-    }
-  }
+        if (patientInfo.getPatientUpdateStatus() != PatientUpdateStatus.NO_ACTION) {
+            preparePatientData(bindingResult, request, patientInfo, patient);
+            if (bindingResult.hasErrors()) {
+                try {
+                    throw new BindException(bindingResult);
+                } catch (BindException e) {
+                    LogEvent.logError(e);
+                }
+            }
+            try {
+                patientService.persistPatientData(patientInfo, patient, getSysUserId(request));
+                fhirTransformService.transformPersistPatient(patientInfo);
+            } catch (LIMSRuntimeException e) {
 
-  private void preparePatientData(
-      Errors errors, HttpServletRequest request, PatientManagementInfo patientInfo, Patient patient)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+                if (e.getCause() instanceof StaleObjectStateException) {
 
-    ValidatePatientInfo.validatePatientInfo(errors, patientInfo);
-    if (errors.hasErrors()) {
-      return;
-    }
+                } else {
+                    LogEvent.logDebug(e);
+                }
+                request.setAttribute(ALLOW_EDITS_KEY, "false");
 
-    initMembers(patient);
-    patientInfo.setPatientIdentities(new ArrayList<PatientIdentity>());
-
-    if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {
-      Patient dbPatient = loadForUpdate(patientInfo);
-      PropertyUtils.copyProperties(patient, dbPatient);
-    }
-
-    copyFormBeanToValueHolders(patientInfo, patient);
-
-    setSystemUserID(patientInfo, patient, request);
-
-    setLastUpdatedTimeStamps(patientInfo, patient);
-  }
-
-  private void copyFormBeanToValueHolders(PatientManagementInfo patientInfo, Patient patient)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    PropertyUtils.copyProperties(patient, patientInfo);
-    PropertyUtils.copyProperties(patient.getPerson(), patientInfo);
-  }
-
-  private void setSystemUserID(
-      PatientManagementInfo patientInfo, Patient patient, HttpServletRequest request) {
-    patient.setSysUserId(getSysUserId(request));
-    patient.getPerson().setSysUserId(getSysUserId(request));
-
-    for (PatientIdentity identity : patientInfo.getPatientIdentities()) {
-      identity.setSysUserId(getSysUserId(request));
-    }
-    patientInfo.getPatientContact().setSysUserId(getSysUserId(request));
-  }
-
-  private void initMembers(Patient patient) {
-    patient.setPerson(new Person());
-  }
-
-  private void setLastUpdatedTimeStamps(PatientManagementInfo patientInfo, Patient patient) {
-    String patientUpdate = patientInfo.getPatientLastUpdated();
-    if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(patientUpdate)) {
-      Timestamp timeStamp = Timestamp.valueOf(patientUpdate);
-      patient.setLastupdated(timeStamp);
+            } catch (FhirTransformationException | FhirPersistanceException e) {
+                LogEvent.logError(e);
+            }
+        }
     }
 
-    String personUpdate = patientInfo.getPersonLastUpdated();
-    if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(personUpdate)) {
-      Timestamp timeStamp = Timestamp.valueOf(personUpdate);
-      patient.getPerson().setLastupdated(timeStamp);
-    }
-  }
+    private void preparePatientData(Errors errors, HttpServletRequest request, PatientManagementInfo patientInfo,
+            Patient patient) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-  private Patient loadForUpdate(PatientManagementInfo patientInfo) {
-    Patient patient = patientService.get(patientInfo.getPatientPK());
-    patientInfo.setPatientIdentities(
-        patientIdentityService.getPatientIdentitiesForPatient(patient.getId()));
-    return patient;
-  }
+        ValidatePatientInfo.validatePatientInfo(errors, patientInfo);
+        if (errors.hasErrors()) {
+            return;
+        }
+
+        initMembers(patient);
+        patientInfo.setPatientIdentities(new ArrayList<PatientIdentity>());
+
+        if (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.UPDATE) {
+            Patient dbPatient = loadForUpdate(patientInfo);
+            PropertyUtils.copyProperties(patient, dbPatient);
+        }
+
+        copyFormBeanToValueHolders(patientInfo, patient);
+
+        setSystemUserID(patientInfo, patient, request);
+
+        setLastUpdatedTimeStamps(patientInfo, patient);
+    }
+
+    private void copyFormBeanToValueHolders(PatientManagementInfo patientInfo, Patient patient)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        PropertyUtils.copyProperties(patient, patientInfo);
+        PropertyUtils.copyProperties(patient.getPerson(), patientInfo);
+    }
+
+    private void setSystemUserID(PatientManagementInfo patientInfo, Patient patient, HttpServletRequest request) {
+        patient.setSysUserId(getSysUserId(request));
+        patient.getPerson().setSysUserId(getSysUserId(request));
+
+        for (PatientIdentity identity : patientInfo.getPatientIdentities()) {
+            identity.setSysUserId(getSysUserId(request));
+        }
+        patientInfo.getPatientContact().setSysUserId(getSysUserId(request));
+    }
+
+    private void initMembers(Patient patient) {
+        patient.setPerson(new Person());
+    }
+
+    private void setLastUpdatedTimeStamps(PatientManagementInfo patientInfo, Patient patient) {
+        String patientUpdate = patientInfo.getPatientLastUpdated();
+        if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(patientUpdate)) {
+            Timestamp timeStamp = Timestamp.valueOf(patientUpdate);
+            patient.setLastupdated(timeStamp);
+        }
+
+        String personUpdate = patientInfo.getPersonLastUpdated();
+        if (!org.apache.commons.validator.GenericValidator.isBlankOrNull(personUpdate)) {
+            Timestamp timeStamp = Timestamp.valueOf(personUpdate);
+            patient.getPerson().setLastupdated(timeStamp);
+        }
+    }
+
+    private Patient loadForUpdate(PatientManagementInfo patientInfo) {
+        Patient patient = patientService.get(patientInfo.getPatientPK());
+        patientInfo.setPatientIdentities(patientIdentityService.getPatientIdentitiesForPatient(patient.getId()));
+        return patient;
+    }
 }

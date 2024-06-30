@@ -9,21 +9,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CronSchedulerServiceImpl extends AuditableBaseObjectServiceImpl<CronScheduler, String>
-    implements CronSchedulerService {
-  @Autowired protected CronSchedulerDAO baseObjectDAO;
+        implements CronSchedulerService {
+    @Autowired
+    protected CronSchedulerDAO baseObjectDAO;
 
-  CronSchedulerServiceImpl() {
-    super(CronScheduler.class);
-  }
+    CronSchedulerServiceImpl() {
+        super(CronScheduler.class);
+    }
 
-  @Override
-  protected CronSchedulerDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected CronSchedulerDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public CronScheduler getCronScheduleByJobName(String jobName) {
-    return getMatch("jobName", jobName).orElse(null);
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public CronScheduler getCronScheduleByJobName(String jobName) {
+        return getMatch("jobName", jobName).orElse(null);
+    }
 }

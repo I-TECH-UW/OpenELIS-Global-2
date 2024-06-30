@@ -16,44 +16,44 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ListPluginsController extends BaseController {
 
-  // form isn't submitted back
-  private static final String[] ALLOWED_FIELDS = new String[] {};
+    // form isn't submitted back
+    private static final String[] ALLOWED_FIELDS = new String[] {};
 
-  @InitBinder
-  public void initBinder(WebDataBinder binder) {
-    binder.setAllowedFields(ALLOWED_FIELDS);
-  }
-
-  @RequestMapping(value = "/ListPlugins", method = RequestMethod.GET)
-  public ModelAndView showListPlugins(HttpServletRequest request) {
-    ListPluginForm form = new ListPluginForm();
-
-    List<String> pluginNames = PluginLoader.getCurrentPlugins();
-
-    if (pluginNames.isEmpty()) {
-      pluginNames.add(MessageUtil.getContextualMessage("plugin.no.plugins"));
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
-    form.setPluginList(pluginNames);
 
-    return findForward(FWD_SUCCESS, form);
-  }
+    @RequestMapping(value = "/ListPlugins", method = RequestMethod.GET)
+    public ModelAndView showListPlugins(HttpServletRequest request) {
+        ListPluginForm form = new ListPluginForm();
 
-  @Override
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "ListPluginsPageDefinition";
-    } else {
-      return "PageNotFound";
+        List<String> pluginNames = PluginLoader.getCurrentPlugins();
+
+        if (pluginNames.isEmpty()) {
+            pluginNames.add(MessageUtil.getContextualMessage("plugin.no.plugins"));
+        }
+        form.setPluginList(pluginNames);
+
+        return findForward(FWD_SUCCESS, form);
     }
-  }
 
-  @Override
-  protected String getPageTitleKey() {
-    return "plugin.installed.plugins";
-  }
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "ListPluginsPageDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-  @Override
-  protected String getPageSubtitleKey() {
-    return "plugin.installed.plugins";
-  }
+    @Override
+    protected String getPageTitleKey() {
+        return "plugin.installed.plugins";
+    }
+
+    @Override
+    protected String getPageSubtitleKey() {
+        return "plugin.installed.plugins";
+    }
 }

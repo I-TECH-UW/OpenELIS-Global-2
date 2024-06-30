@@ -14,39 +14,41 @@
 package org.openelisglobal.common.exception;
 
 /**
- * Base exception used by the LIMS. Unless special handling can be done with an exception, errors
- * should throw this exception. In the UI portion of the application, this base exception can be
- * caught and an error page displayed.
+ * Base exception used by the LIMS. Unless special handling can be done with an
+ * exception, errors should throw this exception. In the UI portion of the
+ * application, this base exception can be caught and an error page displayed.
  *
- * <p>Specialized exceptions should extend this class.
+ * <p>
+ * Specialized exceptions should extend this class.
  */
 public class LIMSRuntimeException extends RuntimeException {
 
-  /**
-   * Creates a new LIMSException with a detailed message
-   *
-   * @param String the detailed message
-   */
-  public LIMSRuntimeException(String pMessage) {
-    super(pMessage);
-  }
+    /**
+     * Creates a new LIMSException with a detailed message
+     *
+     * @param String the detailed message
+     */
+    public LIMSRuntimeException(String pMessage) {
+        super(pMessage);
+    }
 
-  /**
-   * Creates a new LIMSException wrapping another exception including a detailed message.
-   *
-   * @param String the detailed message
-   * @param Throwable the wrapped exception
-   */
-  public LIMSRuntimeException(String pMessage, Throwable e) {
-    super(pMessage, e);
-  }
+    /**
+     * Creates a new LIMSException wrapping another exception including a detailed
+     * message.
+     *
+     * @param String    the detailed message
+     * @param Throwable the wrapped exception
+     */
+    public LIMSRuntimeException(String pMessage, Throwable e) {
+        super(pMessage, e);
+    }
 
-  /**
-   * Creates a new LIMSException wrapping another exception
-   *
-   * @param Throwable the wrapped exception
-   */
-  public LIMSRuntimeException(Throwable e) {
-    super(e);
-  }
+    /**
+     * Creates a new LIMSException wrapping another exception
+     *
+     * @param Throwable the wrapped exception
+     */
+    public LIMSRuntimeException(Throwable e) {
+        super(e);
+    }
 }

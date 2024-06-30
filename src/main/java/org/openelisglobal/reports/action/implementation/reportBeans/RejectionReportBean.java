@@ -19,67 +19,67 @@ package org.openelisglobal.reports.action.implementation.reportBeans;
 /** */
 public class RejectionReportBean {
 
-  private String accessionNumber;
-  private String receivedDate;
-  private String collectionDate;
-  private String patientOrTestName;
-  private String technician;
-  private String nonPrintingPatient;
-  private String rejectionReason;
+    private String accessionNumber;
+    private String receivedDate;
+    private String collectionDate;
+    private String patientOrTestName;
+    private String technician;
+    private String nonPrintingPatient;
+    private String rejectionReason;
 
-  public String getAccessionNumber() {
-    return accessionNumber;
-  }
+    public String getAccessionNumber() {
+        return accessionNumber;
+    }
 
-  public void setAccessionNumber(String accessionNumber) {
-    this.accessionNumber = accessionNumber;
-  }
+    public void setAccessionNumber(String accessionNumber) {
+        this.accessionNumber = accessionNumber;
+    }
 
-  public String getReceivedDate() {
-    return receivedDate;
-  }
+    public String getReceivedDate() {
+        return receivedDate;
+    }
 
-  public void setReceivedDate(String receivedDate) {
-    this.receivedDate = receivedDate;
-  }
+    public void setReceivedDate(String receivedDate) {
+        this.receivedDate = receivedDate;
+    }
 
-  public String getCollectionDate() {
-    return collectionDate;
-  }
+    public String getCollectionDate() {
+        return collectionDate;
+    }
 
-  public void setCollectionDate(String collectionDate) {
-    this.collectionDate = collectionDate;
-  }
+    public void setCollectionDate(String collectionDate) {
+        this.collectionDate = collectionDate;
+    }
 
-  public String getPatientOrTestName() {
-    return patientOrTestName;
-  }
+    public String getPatientOrTestName() {
+        return patientOrTestName;
+    }
 
-  public void setPatientOrTestName(String patientOrTestName) {
-    this.patientOrTestName = patientOrTestName;
-  }
+    public void setPatientOrTestName(String patientOrTestName) {
+        this.patientOrTestName = patientOrTestName;
+    }
 
-  public String getTechnician() {
-    return technician;
-  }
+    public String getTechnician() {
+        return technician;
+    }
 
-  public void setTechnician(String technician) {
-    this.technician = technician;
-  }
+    public void setTechnician(String technician) {
+        this.technician = technician;
+    }
 
-  public String getNonPrintingPatient() {
-    return nonPrintingPatient;
-  }
+    public String getNonPrintingPatient() {
+        return nonPrintingPatient;
+    }
 
-  public void setNonPrintingPatient(String nonPrintingPatient) {
-    this.nonPrintingPatient = nonPrintingPatient;
-  }
+    public void setNonPrintingPatient(String nonPrintingPatient) {
+        this.nonPrintingPatient = nonPrintingPatient;
+    }
 
-  public String getRejectionReason() {
-    return rejectionReason;
-  }
+    public String getRejectionReason() {
+        return rejectionReason;
+    }
 
-  public void setRejectionReason(String rejectionReason) {
-    this.rejectionReason = rejectionReason;
-  }
+    public void setRejectionReason(String rejectionReason) {
+        this.rejectionReason = rejectionReason;
+    }
 }

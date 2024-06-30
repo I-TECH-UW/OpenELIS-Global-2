@@ -21,8 +21,7 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 
 public interface PersonAddressDAO extends BaseDAO<PersonAddress, AddressPK> {
 
-  List<PersonAddress> getAddressPartsByPersonId(String personId) throws LIMSRuntimeException;
+    List<PersonAddress> getAddressPartsByPersonId(String personId) throws LIMSRuntimeException;
 
-  PersonAddress getByPersonIdAndPartId(String personId, String addressPartId)
-      throws LIMSRuntimeException;
+    PersonAddress getByPersonIdAndPartId(String personId, String addressPartId) throws LIMSRuntimeException;
 }

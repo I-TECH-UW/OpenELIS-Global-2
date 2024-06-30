@@ -31,239 +31,217 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class SiteInformationMenuController extends BaseMenuController<SiteInformation> {
 
-  private static final String[] ALLOWED_FIELDS = new String[] {"selectedIds*"};
+    private static final String[] ALLOWED_FIELDS = new String[] { "selectedIds*" };
 
-  @Autowired private SiteInformationMenuFormValidator formValidator;
-  @Autowired private SiteInformationService siteInformationService;
-  @Autowired private LocalizationService localizationService;
+    @Autowired
+    private SiteInformationMenuFormValidator formValidator;
+    @Autowired
+    private SiteInformationService siteInformationService;
+    @Autowired
+    private LocalizationService localizationService;
 
-  private static final String TITLE_KEY = "titleKey";
+    private static final String TITLE_KEY = "titleKey";
 
-  @InitBinder
-  public void initBinder(WebDataBinder binder) {
-    binder.setAllowedFields(ALLOWED_FIELDS);
-  }
-
-  @RequestMapping(
-      value = {
-        "/NonConformityConfigurationMenu",
-        "/WorkplanConfigurationMenu",
-        "/PrintedReportsConfigurationMenu",
-        "/SampleEntryConfigMenu",
-        "/ResultConfigurationMenu",
-        "/MenuStatementConfigMenu",
-        "/PatientConfigurationMenu",
-        "/ValidationConfigurationMenu",
-        "/SiteInformationMenu"
-      },
-      method = RequestMethod.GET)
-  public ModelAndView showSiteInformationMenu(
-      HttpServletRequest request, RedirectAttributes redirectAttributes)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    SiteInformationMenuForm form = new SiteInformationMenuForm();
-    setupFormForRequest(form, request);
-
-    String forward = performMenuAction(form, request);
-    if (FWD_FAIL.equals(forward)) {
-      Errors errors = new BaseErrors();
-      errors.reject("error.generic");
-      redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, errors);
-      return findForward(FWD_FAIL, form);
-    } else {
-      addFlashMsgsToRequest(request);
-      return findForward(forward, form);
-    }
-  }
-
-  private void setupFormForRequest(SiteInformationMenuForm form, HttpServletRequest request) {
-    String path = request.getServletPath();
-
-    if (path.contains("NonConformityConfiguration")) {
-      form.setSiteInfoDomainName("non_conformityConfiguration");
-      form.setFormName("NonConformityConfigurationMenuForm");
-    } else if (path.contains("WorkplanConfiguration")) {
-      form.setSiteInfoDomainName("WorkplanConfiguration");
-      form.setFormName("WorkplanConfigurationMenuForm");
-    } else if (path.contains("PrintedReportsConfiguration")) {
-      form.setSiteInfoDomainName("PrintedReportsConfiguration");
-      form.setFormName("PrintedReportsConfigurationMenuForm");
-    } else if (path.contains("SampleEntryConfig")) {
-      form.setSiteInfoDomainName("sampleEntryConfig");
-      form.setFormName("sampleEntryConfigMenuForm");
-    } else if (path.contains("ResultConfiguration")) {
-      form.setSiteInfoDomainName("ResultConfiguration");
-      form.setFormName("resultConfigurationMenuForm");
-    } else if (path.contains("MenuStatementConfig")) {
-      form.setSiteInfoDomainName("MenuStatementConfig");
-      form.setFormName("MenuStatementConfigMenuForm");
-    } else if (path.contains("PatientConfiguration")) {
-      form.setSiteInfoDomainName("PatientConfiguration");
-      form.setFormName("PatientConfigurationMenuForm");
-    } else if (path.contains("ValidationConfiguration")) {
-      form.setSiteInfoDomainName("validationConfig");
-      form.setFormName("ValidationConfigurationMenuForm");
-    } else {
-      form.setSiteInfoDomainName("SiteInformation");
-      form.setFormName("siteInformationMenuForm");
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    form.setFormMethod(RequestMethod.POST);
-  }
+    @RequestMapping(value = { "/NonConformityConfigurationMenu", "/WorkplanConfigurationMenu",
+            "/PrintedReportsConfigurationMenu", "/SampleEntryConfigMenu", "/ResultConfigurationMenu",
+            "/MenuStatementConfigMenu", "/PatientConfigurationMenu", "/ValidationConfigurationMenu",
+            "/SiteInformationMenu" }, method = RequestMethod.GET)
+    public ModelAndView showSiteInformationMenu(HttpServletRequest request, RedirectAttributes redirectAttributes)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        SiteInformationMenuForm form = new SiteInformationMenuForm();
+        setupFormForRequest(form, request);
 
-  @Override
-  protected List<SiteInformation> createMenuList(
-      AdminOptionMenuForm<SiteInformation> form, HttpServletRequest request) {
-    List<SiteInformation> configurationList;
-
-    if (!(form instanceof SiteInformationMenuForm)) {
-      throw new ClassCastException();
+        String forward = performMenuAction(form, request);
+        if (FWD_FAIL.equals(forward)) {
+            Errors errors = new BaseErrors();
+            errors.reject("error.generic");
+            redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, errors);
+            return findForward(FWD_FAIL, form);
+        } else {
+            addFlashMsgsToRequest(request);
+            return findForward(forward, form);
+        }
     }
 
-    SiteInformationMenuForm siteInformationMenuForm = (SiteInformationMenuForm) form;
+    private void setupFormForRequest(SiteInformationMenuForm form, HttpServletRequest request) {
+        String path = request.getServletPath();
 
-    String domainName = siteInformationMenuForm.getSiteInfoDomainName();
-    String dbDomainName = null;
-    if ("SiteInformation".equals(domainName)) {
-      dbDomainName = "siteIdentity";
-      request.setAttribute(TITLE_KEY, "siteInformation.browse.title");
-    } else if ("ResultConfiguration".equals(domainName)) {
-      dbDomainName = "resultConfiguration";
-      request.setAttribute(TITLE_KEY, "resultConfiguration.browse.title");
-    } else if ("sampleEntryConfig".equals(domainName)) {
-      dbDomainName = "sampleEntryConfig";
-      request.setAttribute(TITLE_KEY, "sample.entry.browse.title");
-    } else if ("PrintedReportsConfiguration".equals(domainName)) {
-      dbDomainName = "printedReportsConfig";
-      request.setAttribute(TITLE_KEY, "printedReportsConfiguration.browse.title");
-    } else if ("WorkplanConfiguration".equals(domainName)) {
-      dbDomainName = "workplanConfig";
-      request.setAttribute(TITLE_KEY, "workplanConfiguration.browse.title");
-    } else if ("non_conformityConfiguration".equals(domainName)) {
-      dbDomainName = "non_conformityConfig";
-      request.setAttribute(TITLE_KEY, "nonConformityConfiguration.browse.title");
-    } else if ("PatientConfiguration".equals(domainName)) {
-      dbDomainName = "patientEntryConfig";
-      request.setAttribute(TITLE_KEY, "patientEntryConfiguration.browse.title");
-    } else if ("MenuStatementConfig".equals(domainName)) {
-      dbDomainName = "MenuStatementConfig";
-      request.setAttribute(TITLE_KEY, "MenuStatementConfig.browse.title");
-    } else if ("validationConfig".equals(domainName)) {
-      dbDomainName = "validationConfig";
-      request.setAttribute(TITLE_KEY, "validationConfig.browse.title");
+        if (path.contains("NonConformityConfiguration")) {
+            form.setSiteInfoDomainName("non_conformityConfiguration");
+            form.setFormName("NonConformityConfigurationMenuForm");
+        } else if (path.contains("WorkplanConfiguration")) {
+            form.setSiteInfoDomainName("WorkplanConfiguration");
+            form.setFormName("WorkplanConfigurationMenuForm");
+        } else if (path.contains("PrintedReportsConfiguration")) {
+            form.setSiteInfoDomainName("PrintedReportsConfiguration");
+            form.setFormName("PrintedReportsConfigurationMenuForm");
+        } else if (path.contains("SampleEntryConfig")) {
+            form.setSiteInfoDomainName("sampleEntryConfig");
+            form.setFormName("sampleEntryConfigMenuForm");
+        } else if (path.contains("ResultConfiguration")) {
+            form.setSiteInfoDomainName("ResultConfiguration");
+            form.setFormName("resultConfigurationMenuForm");
+        } else if (path.contains("MenuStatementConfig")) {
+            form.setSiteInfoDomainName("MenuStatementConfig");
+            form.setFormName("MenuStatementConfigMenuForm");
+        } else if (path.contains("PatientConfiguration")) {
+            form.setSiteInfoDomainName("PatientConfiguration");
+            form.setFormName("PatientConfigurationMenuForm");
+        } else if (path.contains("ValidationConfiguration")) {
+            form.setSiteInfoDomainName("validationConfig");
+            form.setFormName("ValidationConfigurationMenuForm");
+        } else {
+            form.setSiteInfoDomainName("SiteInformation");
+            form.setFormName("siteInformationMenuForm");
+        }
+
+        form.setFormMethod(RequestMethod.POST);
     }
 
-    int startingRecNo = Integer.parseInt((String) request.getAttribute("startingRecNo"));
+    @Override
+    protected List<SiteInformation> createMenuList(AdminOptionMenuForm<SiteInformation> form,
+            HttpServletRequest request) {
+        List<SiteInformation> configurationList;
 
-    request.setAttribute("menuDefinition", "SiteInformationMenuDefinition");
+        if (!(form instanceof SiteInformationMenuForm)) {
+            throw new ClassCastException();
+        }
 
-    configurationList =
-        siteInformationService.getPageOfSiteInformationByDomainName(startingRecNo, dbDomainName);
-    for (SiteInformation siteInformation : configurationList) {
-      if ("localization".equals(siteInformation.getTag())) {
-        siteInformation.setLocalization(localizationService.get(siteInformation.getValue()));
-      }
+        SiteInformationMenuForm siteInformationMenuForm = (SiteInformationMenuForm) form;
+
+        String domainName = siteInformationMenuForm.getSiteInfoDomainName();
+        String dbDomainName = null;
+        if ("SiteInformation".equals(domainName)) {
+            dbDomainName = "siteIdentity";
+            request.setAttribute(TITLE_KEY, "siteInformation.browse.title");
+        } else if ("ResultConfiguration".equals(domainName)) {
+            dbDomainName = "resultConfiguration";
+            request.setAttribute(TITLE_KEY, "resultConfiguration.browse.title");
+        } else if ("sampleEntryConfig".equals(domainName)) {
+            dbDomainName = "sampleEntryConfig";
+            request.setAttribute(TITLE_KEY, "sample.entry.browse.title");
+        } else if ("PrintedReportsConfiguration".equals(domainName)) {
+            dbDomainName = "printedReportsConfig";
+            request.setAttribute(TITLE_KEY, "printedReportsConfiguration.browse.title");
+        } else if ("WorkplanConfiguration".equals(domainName)) {
+            dbDomainName = "workplanConfig";
+            request.setAttribute(TITLE_KEY, "workplanConfiguration.browse.title");
+        } else if ("non_conformityConfiguration".equals(domainName)) {
+            dbDomainName = "non_conformityConfig";
+            request.setAttribute(TITLE_KEY, "nonConformityConfiguration.browse.title");
+        } else if ("PatientConfiguration".equals(domainName)) {
+            dbDomainName = "patientEntryConfig";
+            request.setAttribute(TITLE_KEY, "patientEntryConfiguration.browse.title");
+        } else if ("MenuStatementConfig".equals(domainName)) {
+            dbDomainName = "MenuStatementConfig";
+            request.setAttribute(TITLE_KEY, "MenuStatementConfig.browse.title");
+        } else if ("validationConfig".equals(domainName)) {
+            dbDomainName = "validationConfig";
+            request.setAttribute(TITLE_KEY, "validationConfig.browse.title");
+        }
+
+        int startingRecNo = Integer.parseInt((String) request.getAttribute("startingRecNo"));
+
+        request.setAttribute("menuDefinition", "SiteInformationMenuDefinition");
+
+        configurationList = siteInformationService.getPageOfSiteInformationByDomainName(startingRecNo, dbDomainName);
+        for (SiteInformation siteInformation : configurationList) {
+            if ("localization".equals(siteInformation.getTag())) {
+                siteInformation.setLocalization(localizationService.get(siteInformation.getValue()));
+            }
+        }
+
+        hideEncryptedFields(configurationList);
+
+        setDisplayPageBounds(request, configurationList == null ? 0 : configurationList.size(), startingRecNo,
+                siteInformationService.getCountForDomainName(dbDomainName));
+
+        return configurationList;
     }
 
-    hideEncryptedFields(configurationList);
-
-    setDisplayPageBounds(
-        request,
-        configurationList == null ? 0 : configurationList.size(),
-        startingRecNo,
-        siteInformationService.getCountForDomainName(dbDomainName));
-
-    return configurationList;
-  }
-
-  private void hideEncryptedFields(List<SiteInformation> siteInformationList) {
-    for (SiteInformation siteInformation : siteInformationList) {
-      if (siteInformation.isEncrypted()
-          && !GenericValidator.isBlankOrNull(siteInformation.getValue())) {
-        siteInformation.setValue(siteInformation.getValue().replaceAll(".", "*"));
-      }
-    }
-  }
-
-  @Override
-  protected String getDeactivateDisabled() {
-    return "true";
-  }
-
-  @Override
-  protected String getAddDisabled() {
-    return "true";
-  }
-
-  @RequestMapping(
-      value = {
-        "/DeleteMenuStatementConfig",
-        "/DeleteWorkplanConfiguration",
-        "/DeletePatientConfiguration",
-        "/DeleteNonConformityConfiguration",
-        "/DeleteResultConfiguration",
-        "/DeletePrintedReportsConfiguration",
-        "/DeleteSiteInformation"
-      },
-      method = RequestMethod.GET)
-  public ModelAndView showDeleteSiteInformation(
-      HttpServletRequest request,
-      @ModelAttribute("form") @Valid SiteInformationMenuForm form,
-      BindingResult result,
-      RedirectAttributes redirectAttributes) {
-    formValidator.validate(form, result);
-    if (result.hasErrors()) {
-      redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
-      return findForward(FWD_FAIL_DELETE, form);
+    private void hideEncryptedFields(List<SiteInformation> siteInformationList) {
+        for (SiteInformation siteInformation : siteInformationList) {
+            if (siteInformation.isEncrypted() && !GenericValidator.isBlankOrNull(siteInformation.getValue())) {
+                siteInformation.setValue(siteInformation.getValue().replaceAll(".", "*"));
+            }
+        }
     }
 
-    List<String> selectedIDs = form.getSelectedIDs();
-    try {
-      siteInformationService.deleteAll(selectedIDs, getSysUserId(request));
-      // for (String siteInformationId : selectedIDs) {
-      // siteInformationDAO.deleteData(siteInformationId, getSysUserId(request));
-      // siteInformationService.delete(siteInformationId, getSysUserId(request));
-      // }
-
-    } catch (LIMSRuntimeException e) {
-      String errorMsg;
-      if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
-        errorMsg = "errors.OptimisticLockException";
-      } else {
-        errorMsg = "errors.DeleteException";
-      }
-      result.reject(errorMsg);
-      redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
-      return findForward(FWD_FAIL_DELETE, form);
+    @Override
+    protected String getDeactivateDisabled() {
+        return "true";
     }
 
-    ConfigurationProperties.forceReload();
-
-    redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-    return findForward(FWD_SUCCESS_DELETE, form);
-  }
-
-  @Override
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "siteInfoMasterListsPageDefinition";
-    } else if (FWD_FAIL.equals(forward)) {
-      return "redirect:/MasterListsPage";
-    } else if (FWD_SUCCESS_DELETE.equals(forward)) {
-      return "redirect:/MasterListsPage";
-    } else if (FWD_FAIL_DELETE.equals(forward)) {
-      return "redirect:/MasterListsPage";
-    } else {
-      return "PageNotFound";
+    @Override
+    protected String getAddDisabled() {
+        return "true";
     }
-  }
 
-  @Override
-  protected String getPageTitleKey() {
-    return (String) request.getAttribute(TITLE_KEY);
-  }
+    @RequestMapping(value = { "/DeleteMenuStatementConfig", "/DeleteWorkplanConfiguration",
+            "/DeletePatientConfiguration", "/DeleteNonConformityConfiguration", "/DeleteResultConfiguration",
+            "/DeletePrintedReportsConfiguration", "/DeleteSiteInformation" }, method = RequestMethod.GET)
+    public ModelAndView showDeleteSiteInformation(HttpServletRequest request,
+            @ModelAttribute("form") @Valid SiteInformationMenuForm form, BindingResult result,
+            RedirectAttributes redirectAttributes) {
+        formValidator.validate(form, result);
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
+            return findForward(FWD_FAIL_DELETE, form);
+        }
 
-  @Override
-  protected String getPageSubtitleKey() {
-    return (String) request.getAttribute(TITLE_KEY);
-  }
+        List<String> selectedIDs = form.getSelectedIDs();
+        try {
+            siteInformationService.deleteAll(selectedIDs, getSysUserId(request));
+            // for (String siteInformationId : selectedIDs) {
+            // siteInformationDAO.deleteData(siteInformationId, getSysUserId(request));
+            // siteInformationService.delete(siteInformationId, getSysUserId(request));
+            // }
+
+        } catch (LIMSRuntimeException e) {
+            String errorMsg;
+            if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
+                errorMsg = "errors.OptimisticLockException";
+            } else {
+                errorMsg = "errors.DeleteException";
+            }
+            result.reject(errorMsg);
+            redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
+            return findForward(FWD_FAIL_DELETE, form);
+        }
+
+        ConfigurationProperties.forceReload();
+
+        redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+        return findForward(FWD_SUCCESS_DELETE, form);
+    }
+
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "siteInfoMasterListsPageDefinition";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "redirect:/MasterListsPage";
+        } else if (FWD_SUCCESS_DELETE.equals(forward)) {
+            return "redirect:/MasterListsPage";
+        } else if (FWD_FAIL_DELETE.equals(forward)) {
+            return "redirect:/MasterListsPage";
+        } else {
+            return "PageNotFound";
+        }
+    }
+
+    @Override
+    protected String getPageTitleKey() {
+        return (String) request.getAttribute(TITLE_KEY);
+    }
+
+    @Override
+    protected String getPageSubtitleKey() {
+        return (String) request.getAttribute(TITLE_KEY);
+    }
 }

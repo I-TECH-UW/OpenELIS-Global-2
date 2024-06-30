@@ -20,13 +20,13 @@ import org.openelisglobal.common.valueholder.BaseObject;
  */
 public class SampleTransmissionSequence extends BaseObject<String> {
 
-  private String id;
+    private String id;
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 }

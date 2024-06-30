@@ -16,40 +16,40 @@
 package org.openelisglobal.analyzerimport.util;
 
 public class MappedTestName {
-  private String analyzerTestName;
-  private String openElisTestName;
-  private String analyzerId;
-  private String testId;
+    private String analyzerTestName;
+    private String openElisTestName;
+    private String analyzerId;
+    private String testId;
 
-  public String getAnalyzerTestName() {
-    return analyzerTestName;
-  }
+    public String getAnalyzerTestName() {
+        return analyzerTestName;
+    }
 
-  public void setAnalyzerTestName(String analyzerTestName) {
-    this.analyzerTestName = analyzerTestName;
-  }
+    public void setAnalyzerTestName(String analyzerTestName) {
+        this.analyzerTestName = analyzerTestName;
+    }
 
-  public String getOpenElisTestName() {
-    return openElisTestName;
-  }
+    public String getOpenElisTestName() {
+        return openElisTestName;
+    }
 
-  public void setOpenElisTestName(String openElisTestName) {
-    this.openElisTestName = openElisTestName;
-  }
+    public void setOpenElisTestName(String openElisTestName) {
+        this.openElisTestName = openElisTestName;
+    }
 
-  public String getTestId() {
-    return testId;
-  }
+    public String getTestId() {
+        return testId;
+    }
 
-  public void setTestId(String testId) {
-    this.testId = testId;
-  }
+    public void setTestId(String testId) {
+        this.testId = testId;
+    }
 
-  public void setAnalyzerId(String analyzerId) {
-    this.analyzerId = analyzerId;
-  }
+    public void setAnalyzerId(String analyzerId) {
+        this.analyzerId = analyzerId;
+    }
 
-  public String getAnalyzerId() {
-    return analyzerId;
-  }
+    public String getAnalyzerId() {
+        return analyzerId;
+    }
 }

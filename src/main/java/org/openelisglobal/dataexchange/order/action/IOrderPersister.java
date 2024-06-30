@@ -17,9 +17,9 @@ import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 
 public interface IOrderPersister {
 
-  void persist(MessagePatient patient, ElectronicOrder eOrder);
+    void persist(MessagePatient patient, ElectronicOrder eOrder);
 
-  String getServiceUserId();
+    String getServiceUserId();
 
-  void cancelOrder(String referringOrderNumber);
+    void cancelOrder(String referringOrderNumber);
 }

@@ -22,33 +22,36 @@ import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface SampleItemDAO extends BaseDAO<SampleItem, String> {
 
-  //	public boolean insertData(SampleItem sampleItem) throws LIMSRuntimeException;
+    // public boolean insertData(SampleItem sampleItem) throws LIMSRuntimeException;
 
-  //	public void deleteData(List<SampleItem> sampleItems) throws LIMSRuntimeException;
+    // public void deleteData(List<SampleItem> sampleItems) throws
+    // LIMSRuntimeException;
 
-  public List<SampleItem> getAllSampleItems() throws LIMSRuntimeException;
+    public List<SampleItem> getAllSampleItems() throws LIMSRuntimeException;
 
-  public List<SampleItem> getPageOfSampleItems(int startingRecNo) throws LIMSRuntimeException;
+    public List<SampleItem> getPageOfSampleItems(int startingRecNo) throws LIMSRuntimeException;
 
-  public void getData(SampleItem sampleItem) throws LIMSRuntimeException;
+    public void getData(SampleItem sampleItem) throws LIMSRuntimeException;
 
-  //	public void updateData(SampleItem sampleItem) throws LIMSRuntimeException;
+    // public void updateData(SampleItem sampleItem) throws LIMSRuntimeException;
 
-  public void getDataBySample(SampleItem sampleItem) throws LIMSRuntimeException;
+    public void getDataBySample(SampleItem sampleItem) throws LIMSRuntimeException;
 
-  public List<SampleItem> getSampleItemsBySampleId(String id) throws LIMSRuntimeException;
+    public List<SampleItem> getSampleItemsBySampleId(String id) throws LIMSRuntimeException;
 
-  public List<SampleItem> getSampleItemsBySampleIdAndType(
-      String sampleId, TypeOfSample typeOfSample) throws LIMSRuntimeException;
+    public List<SampleItem> getSampleItemsBySampleIdAndType(String sampleId, TypeOfSample typeOfSample)
+            throws LIMSRuntimeException;
 
-  public List<SampleItem> getSampleItemsBySampleIdAndStatus(
-      String id, Set<Integer> includedStatusList) throws LIMSRuntimeException;
+    public List<SampleItem> getSampleItemsBySampleIdAndStatus(String id, Set<Integer> includedStatusList)
+            throws LIMSRuntimeException;
 
-  public SampleItem getData(String sampleItemId) throws LIMSRuntimeException;
+    public SampleItem getData(String sampleItemId) throws LIMSRuntimeException;
 }

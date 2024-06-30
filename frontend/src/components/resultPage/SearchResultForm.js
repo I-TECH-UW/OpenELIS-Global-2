@@ -28,6 +28,7 @@ import SearchResultFormValues from "../formModel/innitialValues/SearchResultForm
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
 import SearchPatientForm from "../patient/SearchPatientForm";
+import ReferredOutTests from "./resultsReferredOut/ReferredOutTests";
 import { ConfigurationContext } from "../layout/Layout";
 import config from "../../config.json";
 import CustomDatePicker from "../common/CustomDatePicker";
@@ -695,6 +696,8 @@ export function SearchResultForm(props) {
           </Grid>
         </>
       )}
+
+      {searchBy.type === "ReferredOutTests" && <ReferredOutTests />}
 
       <>
         {pagination && (
@@ -1425,10 +1428,20 @@ export function SearchResults(props) {
         "testResult[" + rowId + "].referralItem.referredTestId",
         testId,
       );
+      jp.value(
+        form,
+        "testResult[" + rowId + "].referralItem.referredSendDate",
+        configurationProperties.currentDateAsText,
+      );
     } else {
       jp.value(
         form,
         "testResult[" + rowId + "].referralItem.referredTestId",
+        "",
+      );
+      jp.value(
+        form,
+        "testResult[" + rowId + "].referralItem.referredSendDate",
         "",
       );
     }

@@ -12,23 +12,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuditTrailReportRestController {
 
-  @GetMapping("/rest/AuditTrailReport")
-  public ResponseEntity<AuditTrailViewForm> getAuditTrailReport(
-      @RequestParam String accessionNumber) {
-    AuditTrailViewForm response = new AuditTrailViewForm();
-    AuditTrailViewWorker worker = new AuditTrailViewWorker(accessionNumber);
-    List<AuditTrailItem> items = worker.getAuditTrail();
+    @GetMapping("/rest/AuditTrailReport")
+    public ResponseEntity<AuditTrailViewForm> getAuditTrailReport(@RequestParam String accessionNumber) {
+        AuditTrailViewForm response = new AuditTrailViewForm();
+        AuditTrailViewWorker worker = new AuditTrailViewWorker(accessionNumber);
+        List<AuditTrailItem> items = worker.getAuditTrail();
 
-    if (items.size() == 0) {
-      // Set error message if accession number is not found
-      return ResponseEntity.ok(response);
+        if (items.size() == 0) {
+            // Set error message if accession number is not found
+            return ResponseEntity.ok(response);
+        }
+
+        // Populate the response object
+        response.setAccessionNumber(accessionNumber);
+        response.setLog(items);
+        response.setSampleOrderItems(worker.getSampleOrderSnapshot());
+        response.setPatientProperties(worker.getPatientSnapshot());
+        return ResponseEntity.ok(response);
     }
-
-    // Populate the response object
-    response.setAccessionNumber(accessionNumber);
-    response.setLog(items);
-    response.setSampleOrderItems(worker.getSampleOrderSnapshot());
-    response.setPatientProperties(worker.getPatientSnapshot());
-    return ResponseEntity.ok(response);
-  }
 }

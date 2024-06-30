@@ -7,7 +7,7 @@ import org.openelisglobal.qaevent.valueholder.NcEvent;
 
 public interface NCEventDAO extends BaseDAO<NcEvent, String> {
 
-  NcEvent getNCEvent(String id) throws LIMSRuntimeException;
+    NcEvent getNCEvent(String id) throws LIMSRuntimeException;
 
-  List<NcEvent> findByNCENumberOrLabOrderId(String nceNumber, String labOrderId);
+    List<NcEvent> findByNCENumberOrLabOrderId(String nceNumber, String labOrderId);
 }

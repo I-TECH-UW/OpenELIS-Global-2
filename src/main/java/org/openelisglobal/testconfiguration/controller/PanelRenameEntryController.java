@@ -24,87 +24,84 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class PanelRenameEntryController extends BaseController {
 
-  private static final String[] ALLOWED_FIELDS =
-      new String[] {"panelId", "nameEnglish", "nameFrench"};
+    private static final String[] ALLOWED_FIELDS = new String[] { "panelId", "nameEnglish", "nameFrench" };
 
-  @Autowired PanelService panelService;
-  @Autowired LocalizationService localizationService;
+    @Autowired
+    PanelService panelService;
+    @Autowired
+    LocalizationService localizationService;
 
-  @InitBinder
-  public void initBinder(WebDataBinder binder) {
-    binder.setAllowedFields(ALLOWED_FIELDS);
-  }
-
-  @RequestMapping(value = "/PanelRenameEntry", method = RequestMethod.GET)
-  public ModelAndView showPanelRenameEntry(HttpServletRequest request) {
-    PanelRenameEntryForm form = new PanelRenameEntryForm();
-    form.setPanelList(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
-
-    return findForward(FWD_SUCCESS, form);
-  }
-
-  @Override
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "panelRenameDefinition";
-    } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-      return "redirect:/PanelRenameEntry";
-    } else if (FWD_FAIL_INSERT.equals(forward)) {
-      return "panelRenameDefinition";
-    } else {
-      return "PageNotFound";
-    }
-  }
-
-  @RequestMapping(value = "/PanelRenameEntry", method = RequestMethod.POST)
-  public ModelAndView updatePanelRenameEntry(
-      HttpServletRequest request,
-      @ModelAttribute("form") @Valid PanelRenameEntryForm form,
-      BindingResult result) {
-    if (result.hasErrors()) {
-      saveErrors(result);
-      form.setPanelList(
-          DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
-      return findForward(FWD_FAIL_INSERT, form);
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
 
-    String panelId = form.getPanelId();
-    String nameEnglish = form.getNameEnglish();
-    String nameFrench = form.getNameFrench();
-    String userId = getSysUserId(request);
+    @RequestMapping(value = "/PanelRenameEntry", method = RequestMethod.GET)
+    public ModelAndView showPanelRenameEntry(HttpServletRequest request) {
+        PanelRenameEntryForm form = new PanelRenameEntryForm();
+        form.setPanelList(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
 
-    updatePanelNames(panelId, nameEnglish, nameFrench, userId);
-
-    return findForward(FWD_SUCCESS_INSERT, form);
-  }
-
-  private void updatePanelNames(
-      String panelId, String nameEnglish, String nameFrench, String userId) {
-    Panel panel = panelService.getPanelById(panelId);
-
-    if (panel != null) {
-
-      Localization name = panel.getLocalization();
-      name.setEnglish(nameEnglish.trim());
-      name.setFrench(nameFrench.trim());
-      name.setSysUserId(userId);
-
-      try {
-        localizationService.update(name);
-      } catch (LIMSRuntimeException e) {
-        LogEvent.logDebug(e);
-      }
+        return findForward(FWD_SUCCESS, form);
     }
-    DisplayListService.getInstance().getFreshList(DisplayListService.ListType.PANELS);
-  }
 
-  @Override
-  protected String getPageTitleKey() {
-    return null;
-  }
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "panelRenameDefinition";
+        } else if (FWD_SUCCESS_INSERT.equals(forward)) {
+            return "redirect:/PanelRenameEntry";
+        } else if (FWD_FAIL_INSERT.equals(forward)) {
+            return "panelRenameDefinition";
+        } else {
+            return "PageNotFound";
+        }
+    }
 
-  @Override
-  protected String getPageSubtitleKey() {
-    return null;
-  }
+    @RequestMapping(value = "/PanelRenameEntry", method = RequestMethod.POST)
+    public ModelAndView updatePanelRenameEntry(HttpServletRequest request,
+            @ModelAttribute("form") @Valid PanelRenameEntryForm form, BindingResult result) {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            form.setPanelList(DisplayListService.getInstance().getList(DisplayListService.ListType.PANELS));
+            return findForward(FWD_FAIL_INSERT, form);
+        }
+
+        String panelId = form.getPanelId();
+        String nameEnglish = form.getNameEnglish();
+        String nameFrench = form.getNameFrench();
+        String userId = getSysUserId(request);
+
+        updatePanelNames(panelId, nameEnglish, nameFrench, userId);
+
+        return findForward(FWD_SUCCESS_INSERT, form);
+    }
+
+    private void updatePanelNames(String panelId, String nameEnglish, String nameFrench, String userId) {
+        Panel panel = panelService.getPanelById(panelId);
+
+        if (panel != null) {
+
+            Localization name = panel.getLocalization();
+            name.setEnglish(nameEnglish.trim());
+            name.setFrench(nameFrench.trim());
+            name.setSysUserId(userId);
+
+            try {
+                localizationService.update(name);
+            } catch (LIMSRuntimeException e) {
+                LogEvent.logDebug(e);
+            }
+        }
+        DisplayListService.getInstance().getFreshList(DisplayListService.ListType.PANELS);
+    }
+
+    @Override
+    protected String getPageTitleKey() {
+        return null;
+    }
+
+    @Override
+    protected String getPageSubtitleKey() {
+        return null;
+    }
 }

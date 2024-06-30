@@ -5,15 +5,15 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.testtrailer.valueholder.TestTrailer;
 
 public interface TestTrailerService extends BaseObjectService<TestTrailer, String> {
-  void getData(TestTrailer testTrailer);
+    void getData(TestTrailer testTrailer);
 
-  List<TestTrailer> getPageOfTestTrailers(int startingRecNo);
+    List<TestTrailer> getPageOfTestTrailers(int startingRecNo);
 
-  Integer getTotalTestTrailerCount();
+    Integer getTotalTestTrailerCount();
 
-  TestTrailer getTestTrailerByName(TestTrailer testTrailer);
+    TestTrailer getTestTrailerByName(TestTrailer testTrailer);
 
-  List<TestTrailer> getAllTestTrailers();
+    List<TestTrailer> getAllTestTrailers();
 
-  List<TestTrailer> getTestTrailers(String filter);
+    List<TestTrailer> getTestTrailers(String filter);
 }

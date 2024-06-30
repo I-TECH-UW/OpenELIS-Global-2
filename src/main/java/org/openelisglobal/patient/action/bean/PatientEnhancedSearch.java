@@ -22,31 +22,30 @@ import org.openelisglobal.common.util.IdValuePair;
 
 /** */
 public class PatientEnhancedSearch {
-  private boolean loadFromServerWithPatient = false;
-  private String selectedPatientActionButtonText;
+    private boolean loadFromServerWithPatient = false;
+    private String selectedPatientActionButtonText;
 
-  public boolean isLoadFromServerWithPatient() {
-    return loadFromServerWithPatient;
-  }
+    public boolean isLoadFromServerWithPatient() {
+        return loadFromServerWithPatient;
+    }
 
-  public void setLoadFromServerWithPatient(boolean loadFromServerWithPatient) {
-    this.loadFromServerWithPatient = loadFromServerWithPatient;
-  }
+    public void setLoadFromServerWithPatient(boolean loadFromServerWithPatient) {
+        this.loadFromServerWithPatient = loadFromServerWithPatient;
+    }
 
-  public List<IdValuePair> getSearchCriteria() {
-    return DisplayListService.getInstance()
-        .getList(DisplayListService.ListType.PATIENT_SEARCH_CRITERIA);
-  }
+    public List<IdValuePair> getSearchCriteria() {
+        return DisplayListService.getInstance().getList(DisplayListService.ListType.PATIENT_SEARCH_CRITERIA);
+    }
 
-  public List<IdValuePair> getGenders() {
-    return DisplayListService.getInstance().getList(DisplayListService.ListType.GENDERS);
-  }
+    public List<IdValuePair> getGenders() {
+        return DisplayListService.getInstance().getList(DisplayListService.ListType.GENDERS);
+    }
 
-  public String getSelectedPatientActionButtonText() {
-    return selectedPatientActionButtonText;
-  }
+    public String getSelectedPatientActionButtonText() {
+        return selectedPatientActionButtonText;
+    }
 
-  public void setSelectedPatientActionButtonText(String selectedPatientActionButtonText) {
-    this.selectedPatientActionButtonText = selectedPatientActionButtonText;
-  }
+    public void setSelectedPatientActionButtonText(String selectedPatientActionButtonText) {
+        this.selectedPatientActionButtonText = selectedPatientActionButtonText;
+    }
 }

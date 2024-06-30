@@ -6,6 +6,5 @@ import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingExcepti
 
 public interface OrganizationImportService {
 
-  void importOrganizationList()
-      throws FhirLocalPersistingException, FhirGeneralException, IOException;
+    void importOrganizationList() throws FhirLocalPersistingException, FhirGeneralException, IOException;
 }

@@ -21,102 +21,102 @@ import org.openelisglobal.test.valueholder.Test;
 
 public class PanelItem extends EnumValueItemImpl {
 
-  private static final long serialVersionUID = 78313088562219465L;
+    private static final long serialVersionUID = 78313088562219465L;
 
-  private String id;
+    private String id;
 
-  private ValueHolderInterface panel;
-  private ValueHolderInterface test;
+    private ValueHolderInterface panel;
+    private ValueHolderInterface test;
 
-  private String panelName;
+    private String panelName;
 
-  private String selectedPanelId;
+    private String selectedPanelId;
 
-  private String sortOrder;
+    private String sortOrder;
 
-  private String methodName;
+    private String methodName;
 
-  private String testName;
+    private String testName;
 
-  public PanelItem() {
-    super();
-    this.panel = new ValueHolder();
-    this.test = new ValueHolder();
-  }
+    public PanelItem() {
+        super();
+        this.panel = new ValueHolder();
+        this.test = new ValueHolder();
+    }
 
-  @Override
-  public String getId() {
-    return this.id;
-  }
+    @Override
+    public String getId() {
+        return this.id;
+    }
 
-  public Panel getPanel() {
-    return (Panel) this.panel.getValue();
-  }
+    public Panel getPanel() {
+        return (Panel) this.panel.getValue();
+    }
 
-  public void setPanel(Panel panel) {
-    this.panel.setValue(panel);
-  }
+    public void setPanel(Panel panel) {
+        this.panel.setValue(panel);
+    }
 
-  protected ValueHolderInterface getPanelHolder() {
-    return this.panel;
-  }
+    protected ValueHolderInterface getPanelHolder() {
+        return this.panel;
+    }
 
-  public String getPanelName() {
-    return this.panelName;
-  }
+    public String getPanelName() {
+        return this.panelName;
+    }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  protected void setPanelHolder(ValueHolderInterface panel) {
-    this.panel = panel;
-  }
+    protected void setPanelHolder(ValueHolderInterface panel) {
+        this.panel = panel;
+    }
 
-  public void setPanelName(String panelName) {
-    this.panelName = panelName;
-  }
+    public void setPanelName(String panelName) {
+        this.panelName = panelName;
+    }
 
-  @Override
-  public String getSortOrder() {
-    return sortOrder;
-  }
+    @Override
+    public String getSortOrder() {
+        return sortOrder;
+    }
 
-  @Override
-  public void setSortOrder(String sortOrder) {
-    this.sortOrder = sortOrder;
-  }
+    @Override
+    public void setSortOrder(String sortOrder) {
+        this.sortOrder = sortOrder;
+    }
 
-  public String getTestName() {
-    return this.testName;
-  }
+    public String getTestName() {
+        return this.testName;
+    }
 
-  public void setTestName(String testName) {
-    this.testName = testName;
-  }
+    public void setTestName(String testName) {
+        this.testName = testName;
+    }
 
-  public String getMethodName() {
-    return this.methodName;
-  }
+    public String getMethodName() {
+        return this.methodName;
+    }
 
-  public void setMethodName(String methodName) {
-    this.methodName = methodName;
-  }
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
 
-  public void setSelectedPanelId(String selectedPanelId) {
-    this.selectedPanelId = selectedPanelId;
-  }
+    public void setSelectedPanelId(String selectedPanelId) {
+        this.selectedPanelId = selectedPanelId;
+    }
 
-  public String getSelectedPanelId() {
-    return this.selectedPanelId;
-  }
+    public String getSelectedPanelId() {
+        return this.selectedPanelId;
+    }
 
-  public Test getTest() {
-    return (Test) test.getValue();
-  }
+    public Test getTest() {
+        return (Test) test.getValue();
+    }
 
-  public void setTest(Test test) {
-    this.test.setValue(test);
-  }
+    public void setTest(Test test) {
+        this.test.setValue(test);
+    }
 }

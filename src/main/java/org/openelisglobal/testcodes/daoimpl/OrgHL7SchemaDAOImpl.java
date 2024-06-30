@@ -27,26 +27,25 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class OrgHL7SchemaDAOImpl extends BaseDAOImpl<OrganizationHL7Schema, OrganizationSchemaPK>
-    implements OrgHL7SchemaDAO {
+        implements OrgHL7SchemaDAO {
 
-  public OrgHL7SchemaDAOImpl() {
-    super(OrganizationHL7Schema.class);
-  }
-
-  @Override
-  public OrganizationHL7Schema getOrganizationHL7SchemaByOrgId(String orgId)
-      throws LIMSRuntimeException {
-    String sql = "from OrganizationHL7Schema hs where hs.compoundId.organizationId = :id";
-
-    try {
-      Query<OrganizationHL7Schema> query =
-          entityManager.unwrap(Session.class).createQuery(sql, OrganizationHL7Schema.class);
-      query.setParameter("id", orgId);
-      OrganizationHL7Schema hs = query.uniqueResult();
-      return hs;
-    } catch (HibernateException e) {
-      handleException(e, "getOrganizationHL7SchemaByOrgId");
+    public OrgHL7SchemaDAOImpl() {
+        super(OrganizationHL7Schema.class);
     }
-    return null;
-  }
+
+    @Override
+    public OrganizationHL7Schema getOrganizationHL7SchemaByOrgId(String orgId) throws LIMSRuntimeException {
+        String sql = "from OrganizationHL7Schema hs where hs.compoundId.organizationId = :id";
+
+        try {
+            Query<OrganizationHL7Schema> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    OrganizationHL7Schema.class);
+            query.setParameter("id", orgId);
+            OrganizationHL7Schema hs = query.uniqueResult();
+            return hs;
+        } catch (HibernateException e) {
+            handleException(e, "getOrganizationHL7SchemaByOrgId");
+        }
+        return null;
+    }
 }

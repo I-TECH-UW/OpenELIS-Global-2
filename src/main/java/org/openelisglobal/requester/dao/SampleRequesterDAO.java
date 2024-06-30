@@ -20,15 +20,16 @@ import org.openelisglobal.requester.valueholder.SampleRequester;
 
 public interface SampleRequesterDAO extends BaseDAO<SampleRequester, String> {
 
-  //	public boolean insertData(SampleRequester sampleRequester) throws LIMSRuntimeException;
+    // public boolean insertData(SampleRequester sampleRequester) throws
+    // LIMSRuntimeException;
 
-  public List<SampleRequester> getRequestersForSampleId(String sampleId)
-      throws LIMSRuntimeException;
+    public List<SampleRequester> getRequestersForSampleId(String sampleId) throws LIMSRuntimeException;
 
-  List<SampleRequester> getRequestersForRequesterId(String requesterId, String requesterTypeId);
+    List<SampleRequester> getRequestersForRequesterId(String requesterId, String requesterTypeId);
 
-  //	void updateData(SampleRequester sampleRequester) throws LIMSRuntimeException;
+    // void updateData(SampleRequester sampleRequester) throws LIMSRuntimeException;
 
-  //	void insertOrUpdateData(SampleRequester sampleRequester) throws LIMSRuntimeException;
+    // void insertOrUpdateData(SampleRequester sampleRequester) throws
+    // LIMSRuntimeException;
 
 }

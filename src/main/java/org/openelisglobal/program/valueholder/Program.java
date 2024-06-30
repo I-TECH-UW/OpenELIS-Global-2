@@ -22,85 +22,80 @@ import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.test.valueholder.TestSection;
 
-@JsonAutoDetect(
-    fieldVisibility = Visibility.NONE,
-    setterVisibility = Visibility.NONE,
-    getterVisibility = Visibility.NONE,
-    isGetterVisibility = Visibility.NONE,
-    creatorVisibility = Visibility.NONE)
+@JsonAutoDetect(fieldVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)
 public class Program extends BaseObject<String> {
 
-  @JsonProperty("code")
-  @Pattern(regexp = "(?i)^[a-z0-9_ ]*$")
-  private String code;
+    @JsonProperty("code")
+    @Pattern(regexp = "(?i)^[a-z0-9_ ]*$")
+    private String code;
 
-  @JsonProperty("id")
-  @Pattern(regexp = ValidationHelper.ID_REGEX)
-  private String id;
+    @JsonProperty("id")
+    @Pattern(regexp = ValidationHelper.ID_REGEX)
+    private String id;
 
-  @JsonProperty("programName")
-  @Pattern(regexp = "(?i)^[a-z0-9-_ ]*$")
-  private String programName;
+    @JsonProperty("programName")
+    @Pattern(regexp = "(?i)^[a-z0-9-_ ]*$")
+    private String programName;
 
-  @JsonProperty("questionnaireUUID")
-  private UUID questionnaireUUID;
+    @JsonProperty("questionnaireUUID")
+    private UUID questionnaireUUID;
 
-  private TestSection testSection;
+    private TestSection testSection;
 
-  @JsonProperty("manuallyChanged")
-  private Boolean manuallyChanged;
+    @JsonProperty("manuallyChanged")
+    private Boolean manuallyChanged;
 
-  public Program() {
-    super();
-  }
+    public Program() {
+        super();
+    }
 
-  public String getCode() {
-    return this.code;
-  }
+    public String getCode() {
+        return this.code;
+    }
 
-  @Override
-  public String getId() {
-    return this.id;
-  }
+    @Override
+    public String getId() {
+        return this.id;
+    }
 
-  public String getProgramName() {
-    return this.programName;
-  }
+    public String getProgramName() {
+        return this.programName;
+    }
 
-  public void setCode(String code) {
-    this.code = code;
-  }
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public void setProgramName(String programName) {
-    this.programName = programName;
-  }
+    public void setProgramName(String programName) {
+        this.programName = programName;
+    }
 
-  public UUID getQuestionnaireUUID() {
-    return questionnaireUUID;
-  }
+    public UUID getQuestionnaireUUID() {
+        return questionnaireUUID;
+    }
 
-  public void setQuestionnaireUUID(UUID questionnaireUUID) {
-    this.questionnaireUUID = questionnaireUUID;
-  }
+    public void setQuestionnaireUUID(UUID questionnaireUUID) {
+        this.questionnaireUUID = questionnaireUUID;
+    }
 
-  public TestSection getTestSection() {
-    return testSection;
-  }
+    public TestSection getTestSection() {
+        return testSection;
+    }
 
-  public void setTestSection(TestSection testSection) {
-    this.testSection = testSection;
-  }
+    public void setTestSection(TestSection testSection) {
+        this.testSection = testSection;
+    }
 
-  public Boolean getManuallyChanged() {
-    return manuallyChanged;
-  }
+    public Boolean getManuallyChanged() {
+        return manuallyChanged;
+    }
 
-  public void setManuallyChanged(Boolean manuallyChanged) {
-    this.manuallyChanged = manuallyChanged;
-  }
+    public void setManuallyChanged(Boolean manuallyChanged) {
+        this.manuallyChanged = manuallyChanged;
+    }
 }

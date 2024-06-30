@@ -34,132 +34,123 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Component
 @Transactional
-public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String>
-    implements SystemModuleDAO {
+public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> implements SystemModuleDAO {
 
-  public SystemModuleDAOImpl() {
-    super(SystemModule.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public void getData(SystemModule systemModule) throws LIMSRuntimeException {
-    try {
-      SystemModule sysModule =
-          entityManager.unwrap(Session.class).get(SystemModule.class, systemModule.getId());
-      if (sysModule != null) {
-        PropertyUtils.copyProperties(systemModule, sysModule);
-      } else {
-        systemModule.setId(null);
-      }
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SystemModule getData()", e);
-    }
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<SystemModule> getAllSystemModules() throws LIMSRuntimeException {
-    List<SystemModule> list;
-    try {
-      String sql = "from SystemModule";
-      Query<SystemModule> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
-      list = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SystemModule getAllSystemModules()", e);
+    public SystemModuleDAOImpl() {
+        super(SystemModule.class);
     }
 
-    return list;
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<SystemModule> getPageOfSystemModules(int startingRecNo) throws LIMSRuntimeException {
-    List<SystemModule> list;
-    try {
-      // calculate maxRow to be one more than the page size
-      int endingRecNo =
-          startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
-
-      String sql = "from SystemModule s order by s.systemModuleName";
-      Query<SystemModule> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
-      query.setFirstResult(startingRecNo - 1);
-      query.setMaxResults(endingRecNo - 1);
-
-      list = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SystemModule getPageOfSystemModules()", e);
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(SystemModule systemModule) throws LIMSRuntimeException {
+        try {
+            SystemModule sysModule = entityManager.unwrap(Session.class).get(SystemModule.class, systemModule.getId());
+            if (sysModule != null) {
+                PropertyUtils.copyProperties(systemModule, sysModule);
+            } else {
+                systemModule.setId(null);
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SystemModule getData()", e);
+        }
     }
 
-    return list;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<SystemModule> getAllSystemModules() throws LIMSRuntimeException {
+        List<SystemModule> list;
+        try {
+            String sql = "from SystemModule";
+            Query<SystemModule> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SystemModule getAllSystemModules()", e);
+        }
 
-  public SystemModule readSystemModule(String idString) {
-    SystemModule sysModule;
-    try {
-      sysModule = entityManager.unwrap(Session.class).get(SystemModule.class, idString);
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SystemModule readSystemModule(idString)", e);
+        return list;
     }
 
-    return sysModule;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<SystemModule> getPageOfSystemModules(int startingRecNo) throws LIMSRuntimeException {
+        List<SystemModule> list;
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
-  @Override
-  @Transactional(readOnly = true)
-  public Integer getTotalSystemModuleCount() throws LIMSRuntimeException {
-    return getCount();
-  }
+            String sql = "from SystemModule s order by s.systemModuleName";
+            Query<SystemModule> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
 
-  @Override
-  @Transactional(readOnly = true)
-  public SystemModule getSystemModuleByName(String name) throws LIMSRuntimeException {
-    String sql = "From SystemModule sm where sm.systemModuleName = :name";
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SystemModule getPageOfSystemModules()", e);
+        }
 
-    try {
-      Query<SystemModule> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
-      query.setParameter("name", name);
-      SystemModule module = query.uniqueResult();
-      return module;
-    } catch (HibernateException e) {
-      handleException(e, "getSystemModuleByName");
+        return list;
     }
-    return null;
-  }
 
-  @Override
-  public boolean duplicateSystemModuleExists(SystemModule systemModule)
-      throws LIMSRuntimeException {
-    try {
+    public SystemModule readSystemModule(String idString) {
+        SystemModule sysModule;
+        try {
+            sysModule = entityManager.unwrap(Session.class).get(SystemModule.class, idString);
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SystemModule readSystemModule(idString)", e);
+        }
 
-      List<SystemModule> list;
-
-      String sql =
-          "from SystemModule s where trim(s.systemModuleName) = :moduleName and s.id != :moduleId";
-      Query<SystemModule> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
-      query.setParameter("moduleName", systemModule.getSystemModuleName().trim());
-
-      String systemModuleId = "0";
-      if (!StringUtil.isNullorNill(systemModule.getId())) {
-        systemModuleId = systemModule.getId();
-      }
-      query.setParameter("moduleId", Integer.parseInt(systemModuleId));
-
-      list = query.list();
-
-      return list.size() > 0;
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in duplicateSystemModuleExists()", e);
+        return sysModule;
     }
-  }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getTotalSystemModuleCount() throws LIMSRuntimeException {
+        return getCount();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SystemModule getSystemModuleByName(String name) throws LIMSRuntimeException {
+        String sql = "From SystemModule sm where sm.systemModuleName = :name";
+
+        try {
+            Query<SystemModule> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
+            query.setParameter("name", name);
+            SystemModule module = query.uniqueResult();
+            return module;
+        } catch (HibernateException e) {
+            handleException(e, "getSystemModuleByName");
+        }
+        return null;
+    }
+
+    @Override
+    public boolean duplicateSystemModuleExists(SystemModule systemModule) throws LIMSRuntimeException {
+        try {
+
+            List<SystemModule> list;
+
+            String sql = "from SystemModule s where trim(s.systemModuleName) = :moduleName and s.id != :moduleId";
+            Query<SystemModule> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
+            query.setParameter("moduleName", systemModule.getSystemModuleName().trim());
+
+            String systemModuleId = "0";
+            if (!StringUtil.isNullorNill(systemModule.getId())) {
+                systemModuleId = systemModule.getId();
+            }
+            query.setParameter("moduleId", Integer.parseInt(systemModuleId));
+
+            list = query.list();
+
+            return list.size() > 0;
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in duplicateSystemModuleExists()", e);
+        }
+    }
 }

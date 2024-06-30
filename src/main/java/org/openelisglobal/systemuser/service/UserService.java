@@ -13,40 +13,31 @@ import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 
 public interface UserService {
 
-  void updateLoginUser(
-      LoginUser loginUser,
-      boolean loginUserNew,
-      SystemUser systemUser,
-      boolean systemUserNew,
-      List<String> selectedRoles,
-      String loggedOnUserId);
+    void updateLoginUser(LoginUser loginUser, boolean loginUserNew, SystemUser systemUser, boolean systemUserNew,
+            List<String> selectedRoles, String loggedOnUserId);
 
-  void saveUserLabUnitRoles(
-      SystemUser systemUser,
-      Map<String, Set<String>> selectedLabUnitRolesMap,
-      String loggedOnUserId);
+    void saveUserLabUnitRoles(SystemUser systemUser, Map<String, Set<String>> selectedLabUnitRolesMap,
+            String loggedOnUserId);
 
-  UserLabUnitRoles getUserLabUnitRoles(String systemUserId);
+    UserLabUnitRoles getUserLabUnitRoles(String systemUserId);
 
-  List<UserLabUnitRoles> getAllUserLabUnitRoles();
+    List<UserLabUnitRoles> getAllUserLabUnitRoles();
 
-  List<IdValuePair> getUserTestSections(String systemUserId, String userRole);
+    List<IdValuePair> getUserTestSections(String systemUserId, String userRole);
 
-  List<IdValuePair> getUserSampleTypes(String systemUserId, String userRole);
+    List<IdValuePair> getUserSampleTypes(String systemUserId, String userRole);
 
-  List<IdValuePair> getAllDisplayUserTestsByLabUnit(String SystemUserId, String roleName);
+    List<IdValuePair> getAllDisplayUserTestsByLabUnit(String SystemUserId, String roleName);
 
-  List<AnalysisItem> filterAnalysisResultsByLabUnitRoles(
-      String SystemUserId, List<AnalysisItem> results, String roleName);
+    List<AnalysisItem> filterAnalysisResultsByLabUnitRoles(String SystemUserId, List<AnalysisItem> results,
+            String roleName);
 
-  List<Analysis> filterAnalysesByLabUnitRoles(
-      String SystemUserId, List<Analysis> results, String roleName);
+    List<Analysis> filterAnalysesByLabUnitRoles(String SystemUserId, List<Analysis> results, String roleName);
 
-  List<TestResultItem> filterResultsByLabUnitRoles(
-      String SystemUserId, List<TestResultItem> results, String roleName);
+    List<TestResultItem> filterResultsByLabUnitRoles(String SystemUserId, List<TestResultItem> results,
+            String roleName);
 
-  List<IdValuePair> getUserPrograms(String systemUserId, String userRole);
+    List<IdValuePair> getUserPrograms(String systemUserId, String userRole);
 
-  List<IdValuePair> getUserSampleTypes(
-      String systemUserId, String roleName, String testSectionName);
+    List<IdValuePair> getUserSampleTypes(String systemUserId, String roleName, String testSectionName);
 }

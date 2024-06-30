@@ -20,37 +20,40 @@ import org.openelisglobal.panelitem.valueholder.PanelItem;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface PanelItemDAO extends BaseDAO<PanelItem, String> {
 
-  //	public boolean insertData(PanelItem panelItem) throws LIMSRuntimeException;
+    // public boolean insertData(PanelItem panelItem) throws LIMSRuntimeException;
 
-  //	public void deleteData(List panelItems) throws LIMSRuntimeException;
+    // public void deleteData(List panelItems) throws LIMSRuntimeException;
 
-  List<PanelItem> getAllPanelItems() throws LIMSRuntimeException;
+    List<PanelItem> getAllPanelItems() throws LIMSRuntimeException;
 
-  List<PanelItem> getPageOfPanelItems(int startingRecNo) throws LIMSRuntimeException;
+    List<PanelItem> getPageOfPanelItems(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(PanelItem panelItem) throws LIMSRuntimeException;
+    void getData(PanelItem panelItem) throws LIMSRuntimeException;
 
-  //	public void updateData(PanelItem panelItem) throws LIMSRuntimeException;
+    // public void updateData(PanelItem panelItem) throws LIMSRuntimeException;
 
-  List<PanelItem> getPanelItems(String filter) throws LIMSRuntimeException;
+    List<PanelItem> getPanelItems(String filter) throws LIMSRuntimeException;
 
-  Integer getTotalPanelItemCount() throws LIMSRuntimeException;
+    Integer getTotalPanelItemCount() throws LIMSRuntimeException;
 
-  boolean getDuplicateSortOrderForPanel(PanelItem panelItem);
+    boolean getDuplicateSortOrderForPanel(PanelItem panelItem);
 
-  //	public List getPanelItemByPanel(Panel panel, boolean onlyTestsFullySetup) throws
-  // LIMSRuntimeException;
+    // public List getPanelItemByPanel(Panel panel, boolean onlyTestsFullySetup)
+    // throws
+    // LIMSRuntimeException;
 
-  List<PanelItem> getPanelItemsForPanel(String panelId) throws LIMSRuntimeException;
+    List<PanelItem> getPanelItemsForPanel(String panelId) throws LIMSRuntimeException;
 
-  List<PanelItem> getPanelItemByTestId(String id) throws LIMSRuntimeException;
+    List<PanelItem> getPanelItemByTestId(String id) throws LIMSRuntimeException;
 
-  List<PanelItem> getPanelItemsForPanelAndItemList(String panelId, List<Integer> testList)
-      throws LIMSRuntimeException;
+    List<PanelItem> getPanelItemsForPanelAndItemList(String panelId, List<Integer> testList)
+            throws LIMSRuntimeException;
 }

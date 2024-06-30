@@ -130,7 +130,7 @@ export const RoutineReportsMenu = {
       icon: IbmWatsonNaturalLanguageUnderstanding,
       SideNavMenuItem: [
         {
-          link: "/RoutineReport?type=patient&report=CISampleRoutineExport",
+          link: "/RoutineReport?type=routine&report=CISampleRoutineExport",
           label: <FormattedMessage id="sideNav.label.exportcsvfile" />,
         },
       ],

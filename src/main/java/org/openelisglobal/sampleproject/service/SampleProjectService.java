@@ -6,12 +6,12 @@ import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.sampleproject.valueholder.SampleProject;
 
 public interface SampleProjectService extends BaseObjectService<SampleProject, String> {
-  void getData(SampleProject sampleProj);
+    void getData(SampleProject sampleProj);
 
-  List<SampleProject> getSampleProjectsByProjId(String projId);
+    List<SampleProject> getSampleProjectsByProjId(String projId);
 
-  SampleProject getSampleProjectBySampleId(String id);
+    SampleProject getSampleProjectBySampleId(String id);
 
-  List<SampleProject> getByOrganizationProjectAndReceivedOnRange(
-      String organizationId, String projectName, Date lowDate, Date highDate);
+    List<SampleProject> getByOrganizationProjectAndReceivedOnRange(String organizationId, String projectName,
+            Date lowDate, Date highDate);
 }

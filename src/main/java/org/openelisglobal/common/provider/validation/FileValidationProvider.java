@@ -26,41 +26,41 @@ import org.owasp.encoder.Encode;
 
 public class FileValidationProvider extends BaseValidationProvider {
 
-  protected SamplePdfService samplePdfService = SpringContext.getBean(SamplePdfService.class);
+    protected SamplePdfService samplePdfService = SpringContext.getBean(SamplePdfService.class);
 
-  int indentLevel = -1;
+    int indentLevel = -1;
 
-  public FileValidationProvider() {
-    super();
-  }
-
-  public FileValidationProvider(AjaxServlet ajaxServlet) {
-    this.ajaxServlet = ajaxServlet;
-  }
-
-  @Override
-  public void processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-
-    // get id from request
-    String targetId = request.getParameter("id");
-    String formField = request.getParameter("field");
-    String result = validate(targetId);
-    ajaxServlet.sendData(Encode.forXmlContent(formField), result, request, response);
-  }
-
-  public String validate(String targetId) throws LIMSRuntimeException {
-    String msg = INVALID;
-    boolean isFound = false;
-    if (!StringUtil.isNullorNill(targetId)) {
-      int x = Integer.parseInt(targetId);
-      isFound = samplePdfService.isAccessionNumberFound(x);
-      if (isFound) {
-        msg = VALID;
-      }
-    } else {
-      msg = VALID;
+    public FileValidationProvider() {
+        super();
     }
-    return msg;
-  }
+
+    public FileValidationProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
+
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // get id from request
+        String targetId = request.getParameter("id");
+        String formField = request.getParameter("field");
+        String result = validate(targetId);
+        ajaxServlet.sendData(Encode.forXmlContent(formField), result, request, response);
+    }
+
+    public String validate(String targetId) throws LIMSRuntimeException {
+        String msg = INVALID;
+        boolean isFound = false;
+        if (!StringUtil.isNullorNill(targetId)) {
+            int x = Integer.parseInt(targetId);
+            isFound = samplePdfService.isAccessionNumberFound(x);
+            if (isFound) {
+                msg = VALID;
+            }
+        } else {
+            msg = VALID;
+        }
+        return msg;
+    }
 }

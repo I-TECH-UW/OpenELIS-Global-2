@@ -4,6 +4,5 @@ import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationExceptio
 
 public interface OrganizationExportService {
 
-  String exportFhirOrganizationsFromOrganizations(boolean active)
-      throws FhirTransformationException;
+    String exportFhirOrganizationsFromOrganizations(boolean active) throws FhirTransformationException;
 }

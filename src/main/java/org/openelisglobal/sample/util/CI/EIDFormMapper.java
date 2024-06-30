@@ -24,63 +24,63 @@ import org.openelisglobal.test.valueholder.Test;
 
 public class EIDFormMapper extends BaseProjectFormMapper implements IProjectFormMapper {
 
-  private String projectCode = MessageUtil.getMessage("sample.entry.project.LDBS");
-  private final String projectName = "Early Infant Diagnosis for HIV Study";
+    private String projectCode = MessageUtil.getMessage("sample.entry.project.LDBS");
+    private final String projectName = "Early Infant Diagnosis for HIV Study";
 
-  public EIDFormMapper(String projectFormId, IProjectForm form) {
-    super(projectFormId, form);
-  }
-
-  public List<Test> getTests() {
-    List<Test> testList = new ArrayList<>();
-
-    if (projectData.getDnaPCR()) {
-      CollectionUtils.addIgnoreNull(testList, createTest("DNA PCR", true));
+    public EIDFormMapper(String projectFormId, IProjectForm form) {
+        super(projectFormId, form);
     }
 
-    return testList;
-  }
+    public List<Test> getTests() {
+        List<Test> testList = new ArrayList<>();
 
-  public String getProjectName() {
-    return projectName;
-  }
+        if (projectData.getDnaPCR()) {
+            CollectionUtils.addIgnoreNull(testList, createTest("DNA PCR", true));
+        }
 
-  @Override
-  public String getProjectCode() {
-    return projectCode;
-  }
-
-  @Override
-  public String getOrganizationId() {
-    return projectData.getEIDsiteCode();
-  }
-
-  @Override
-  public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
-    ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
-
-    // Check for DBS Tests
-    if (projectData.getDnaPCR()) {
-      if (projectData.getDbsTaken()) {
-        sItemTests.add(new TypeOfSampleTests(getTypeOfSample("DBS"), getTests()));
-      }
+        return testList;
     }
 
-    // Check for Dry Tube Tests
-    if (projectData.getDnaPCR()) {
-      if (projectData.getDryTubeTaken()) {
-        sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), getTests()));
-      }
+    public String getProjectName() {
+        return projectName;
     }
 
-    return sItemTests;
-  }
+    @Override
+    public String getProjectCode() {
+        return projectCode;
+    }
 
-  /**
-   * @see org.openelisglobal.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
-   */
-  @Override
-  public String getSampleCenterCode() {
-    return projectData.getEIDsiteCode();
-  }
+    @Override
+    public String getOrganizationId() {
+        return projectData.getEIDsiteCode();
+    }
+
+    @Override
+    public ArrayList<TypeOfSampleTests> getTypeOfSampleTests() {
+        ArrayList<TypeOfSampleTests> sItemTests = new ArrayList<>();
+
+        // Check for DBS Tests
+        if (projectData.getDnaPCR()) {
+            if (projectData.getDbsTaken()) {
+                sItemTests.add(new TypeOfSampleTests(getTypeOfSample("DBS"), getTests()));
+            }
+        }
+
+        // Check for Dry Tube Tests
+        if (projectData.getDnaPCR()) {
+            if (projectData.getDryTubeTaken()) {
+                sItemTests.add(new TypeOfSampleTests(getTypeOfSample("Dry Tube"), getTests()));
+            }
+        }
+
+        return sItemTests;
+    }
+
+    /**
+     * @see org.openelisglobal.sample.util.CI.BaseProjectFormMapper#getSampleCenterCode()
+     */
+    @Override
+    public String getSampleCenterCode() {
+        return projectData.getEIDsiteCode();
+    }
 }

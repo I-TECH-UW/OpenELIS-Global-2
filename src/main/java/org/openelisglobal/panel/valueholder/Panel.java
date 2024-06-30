@@ -22,76 +22,77 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class Panel extends EnumValueItemImpl {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String id;
-  private String panelName;
-  private String description;
-  private int sortOrderInt;
-  private ValueHolder localization = new ValueHolder();
+    private String id;
+    private String panelName;
+    private String description;
+    private int sortOrderInt;
+    private ValueHolder localization = new ValueHolder();
 
-  public Panel() {
-    super();
-  }
+    public Panel() {
+        super();
+    }
 
-  @Override
-  public String getId() {
-    return id;
-  }
+    @Override
+    public String getId() {
+        return id;
+    }
 
-  public String getPanelName() {
-    return panelName;
-  }
+    public String getPanelName() {
+        return panelName;
+    }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public void setPanelName(String panelName) {
-    this.panelName = panelName;
-  }
+    public void setPanelName(String panelName) {
+        this.panelName = panelName;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  @Override
-  protected String getDefaultLocalizedName() {
-    return SpringContext.getBean(LocalizationService.class)
-        .getLocalizedValueById(getLocalization().getId());
-  }
+    @Override
+    protected String getDefaultLocalizedName() {
+        return SpringContext.getBean(LocalizationService.class).getLocalizedValueById(getLocalization().getId());
+    }
 
-  public int getSortOrderInt() {
-    return sortOrderInt;
-  }
+    public int getSortOrderInt() {
+        return sortOrderInt;
+    }
 
-  public void setSortOrderInt(int sortOrderInt) {
-    this.sortOrderInt = sortOrderInt;
-  }
+    public void setSortOrderInt(int sortOrderInt) {
+        this.sortOrderInt = sortOrderInt;
+    }
 
-  public Localization getLocalization() {
-    return (Localization) localization.getValue();
-  }
+    public Localization getLocalization() {
+        return (Localization) localization.getValue();
+    }
 
-  public void setLocalization(Localization localization) {
-    this.localization.setValue(localization);
-  }
+    public void setLocalization(Localization localization) {
+        this.localization.setValue(localization);
+    }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Panel that = (Panel) o;
-    return id.equals(that.id);
-  }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Panel that = (Panel) o;
+        return id.equals(that.id);
+    }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(id);
-  }
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

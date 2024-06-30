@@ -11,24 +11,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class OrganizationAddressServiceImpl
-    extends AuditableBaseObjectServiceImpl<OrganizationAddress, AddressPK>
-    implements OrganizationAddressService {
-  @Autowired protected OrganizationAddressDAO baseObjectDAO;
+public class OrganizationAddressServiceImpl extends AuditableBaseObjectServiceImpl<OrganizationAddress, AddressPK>
+        implements OrganizationAddressService {
+    @Autowired
+    protected OrganizationAddressDAO baseObjectDAO;
 
-  OrganizationAddressServiceImpl() {
-    super(OrganizationAddress.class);
-    defaultSortOrder = new ArrayList<>();
-  }
+    OrganizationAddressServiceImpl() {
+        super(OrganizationAddress.class);
+        defaultSortOrder = new ArrayList<>();
+    }
 
-  @Override
-  protected OrganizationAddressDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected OrganizationAddressDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId) {
-    return baseObjectDAO.getAddressPartsByOrganizationId(organizationId);
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId) {
+        return baseObjectDAO.getAddressPartsByOrganizationId(organizationId);
+    }
 }

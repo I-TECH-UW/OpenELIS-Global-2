@@ -18,42 +18,44 @@ import java.util.Objects;
 
 public class OrganizationSchemaPK implements Serializable {
 
-  private static final long serialVersionUID = 3067673553215167728L;
+    private static final long serialVersionUID = 3067673553215167728L;
 
-  private String organizationId;
-  private String encodingTypeId;
+    private String organizationId;
+    private String encodingTypeId;
 
-  public String getOrganizationId() {
-    return organizationId;
-  }
+    public String getOrganizationId() {
+        return organizationId;
+    }
 
-  public void setOrganizationId(String organizationId) {
-    this.organizationId = organizationId;
-  }
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
+    }
 
-  public String getEncodingTypeId() {
-    return encodingTypeId;
-  }
+    public String getEncodingTypeId() {
+        return encodingTypeId;
+    }
 
-  public void setEncodingTypeId(String encodingTypeId) {
-    this.encodingTypeId = encodingTypeId;
-  }
+    public void setEncodingTypeId(String encodingTypeId) {
+        this.encodingTypeId = encodingTypeId;
+    }
 
-  public String toString() {
-    return organizationId + encodingTypeId;
-  }
+    public String toString() {
+        return organizationId + encodingTypeId;
+    }
 
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
-    OrganizationSchemaPK that = (OrganizationSchemaPK) o;
+        OrganizationSchemaPK that = (OrganizationSchemaPK) o;
 
-    return Objects.equals(this.organizationId, that.organizationId)
-        && Objects.equals(this.encodingTypeId, that.encodingTypeId);
-  }
+        return Objects.equals(this.organizationId, that.organizationId)
+                && Objects.equals(this.encodingTypeId, that.encodingTypeId);
+    }
 
-  public int hashCode() {
-    return Objects.hash(organizationId, encodingTypeId);
-  }
+    public int hashCode() {
+        return Objects.hash(organizationId, encodingTypeId);
+    }
 }

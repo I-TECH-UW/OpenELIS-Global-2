@@ -17,42 +17,42 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class ResultInventory extends BaseObject<String> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String id;
-  private String resultId;
-  private String inventoryLocationId;
-  private String description;
+    private String id;
+    private String resultId;
+    private String inventoryLocationId;
+    private String description;
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getId() {
-    return this.id;
-  }
+    public String getId() {
+        return this.id;
+    }
 
-  public String getResultId() {
-    return resultId;
-  }
+    public String getResultId() {
+        return resultId;
+    }
 
-  public void setResultId(String resultId) {
-    this.resultId = resultId;
-  }
+    public void setResultId(String resultId) {
+        this.resultId = resultId;
+    }
 
-  public String getInventoryLocationId() {
-    return inventoryLocationId;
-  }
+    public String getInventoryLocationId() {
+        return inventoryLocationId;
+    }
 
-  public void setInventoryLocationId(String inventoryLocationId) {
-    this.inventoryLocationId = inventoryLocationId;
-  }
+    public void setInventoryLocationId(String inventoryLocationId) {
+        this.inventoryLocationId = inventoryLocationId;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 }

@@ -20,32 +20,36 @@ import org.openelisglobal.renametestsection.valueholder.RenameTestSection;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface RenameTestSectionDAO extends BaseDAO<RenameTestSection, String> {
 
-  //	public boolean insertData(RenameTestSection testSection) throws LIMSRuntimeException;
+    // public boolean insertData(RenameTestSection testSection) throws
+    // LIMSRuntimeException;
 
-  //	public void deleteData(List testSections) throws LIMSRuntimeException;
+    // public void deleteData(List testSections) throws LIMSRuntimeException;
 
-  List<RenameTestSection> getAllTestSections() throws LIMSRuntimeException;
+    List<RenameTestSection> getAllTestSections() throws LIMSRuntimeException;
 
-  List<RenameTestSection> getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException;
+    List<RenameTestSection> getPageOfTestSections(int startingRecNo) throws LIMSRuntimeException;
 
-  void getData(RenameTestSection testSection) throws LIMSRuntimeException;
+    void getData(RenameTestSection testSection) throws LIMSRuntimeException;
 
-  //	public void updateData(RenameTestSection testSection) throws LIMSRuntimeException;
+    // public void updateData(RenameTestSection testSection) throws
+    // LIMSRuntimeException;
 
-  RenameTestSection getTestSectionByName(RenameTestSection testSection) throws LIMSRuntimeException;
+    RenameTestSection getTestSectionByName(RenameTestSection testSection) throws LIMSRuntimeException;
 
-  List<RenameTestSection> getTestSections(String filter) throws LIMSRuntimeException;
+    List<RenameTestSection> getTestSections(String filter) throws LIMSRuntimeException;
 
-  // bugzilla 1411
-  Integer getTotalTestSectionCount() throws LIMSRuntimeException;
+    // bugzilla 1411
+    Integer getTotalTestSectionCount() throws LIMSRuntimeException;
 
-  RenameTestSection getTestSectionById(String id);
+    RenameTestSection getTestSectionById(String id);
 
-  boolean duplicateTestSectionExists(RenameTestSection testSection) throws LIMSRuntimeException;
+    boolean duplicateTestSectionExists(RenameTestSection testSection) throws LIMSRuntimeException;
 }

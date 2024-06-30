@@ -31,30 +31,30 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class DatabaseChangeLogDAOImpl implements DatabaseChangeLogDAO {
 
-  @PersistenceContext EntityManager entityManager;
+    @PersistenceContext
+    EntityManager entityManager;
 
-  @Override
-  @Transactional(readOnly = true)
-  public DatabaseChangeLog getLastExecutedChange() throws LIMSRuntimeException {
-    List<DatabaseChangeLog> results;
+    @Override
+    @Transactional(readOnly = true)
+    public DatabaseChangeLog getLastExecutedChange() throws LIMSRuntimeException {
+        List<DatabaseChangeLog> results;
 
-    try {
-      String sql = "from DatabaseChangeLog dcl order by dcl.executed desc";
-      Query<DatabaseChangeLog> query =
-          entityManager.unwrap(Session.class).createQuery(sql, DatabaseChangeLog.class);
+        try {
+            String sql = "from DatabaseChangeLog dcl order by dcl.executed desc";
+            Query<DatabaseChangeLog> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    DatabaseChangeLog.class);
 
-      results = query.list();
+            results = query.list();
 
-      if (results != null && results.get(0) != null) {
-        return results.get(0);
-      }
+            if (results != null && results.get(0) != null) {
+                return results.get(0);
+            }
 
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException(
-          "Error in DatabaseChangeLogDAOImpl getLastExecutedChange()", e);
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in DatabaseChangeLogDAOImpl getLastExecutedChange()", e);
+        }
+
+        return null;
     }
-
-    return null;
-  }
 }

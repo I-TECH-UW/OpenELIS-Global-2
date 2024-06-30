@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class ActionDAOImpl extends BaseDAOImpl<Action, String> implements ActionDAO {
-  ActionDAOImpl() {
-    super(Action.class);
-  }
+    ActionDAOImpl() {
+        super(Action.class);
+    }
 }

@@ -29,71 +29,58 @@ import org.openelisglobal.search.service.SearchResultsService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.owasp.encoder.Encode;
 
-/** The QuickEntryAccessionNumberValidationProvider class is used to validate, via AJAX. */
+/**
+ * The QuickEntryAccessionNumberValidationProvider class is used to validate,
+ * via AJAX.
+ */
 public class SubjectNumberValidationProvider extends BaseValidationProvider {
 
-  protected SearchResultsService searchResultsService =
-      SpringContext.getBean(SearchResultsService.class);
+    protected SearchResultsService searchResultsService = SpringContext.getBean(SearchResultsService.class);
 
-  public SubjectNumberValidationProvider() {
-    super();
-  }
-
-  public SubjectNumberValidationProvider(AjaxServlet ajaxServlet) {
-    this.ajaxServlet = ajaxServlet;
-  }
-
-  @Override
-  public void processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-
-    String queryResponse = "valid";
-    String fieldId = request.getParameter("fieldId");
-    String number = request.getParameter("subjectNumber");
-    String numberType = request.getParameter("numberType");
-    String STNumber = numberType.equals("STnumber") ? number : null;
-    String subjectNumber = numberType.equals("subjectNumber") ? number : null;
-    String nationalId = numberType.equals("nationalId") ? number : null;
-
-    // We just care about duplicates but blank values do not count as duplicates
-    if (!(GenericValidator.isBlankOrNull(STNumber)
-        && GenericValidator.isBlankOrNull(subjectNumber)
-        && GenericValidator.isBlankOrNull(nationalId))) {
-      List<PatientSearchResults> results =
-          searchResultsService.getSearchResultsExact(
-              null, null, STNumber, subjectNumber, nationalId, null, null, null, null, null);
-
-      boolean allowDuplicateSubjectNumber =
-          ConfigurationProperties.getInstance()
-              .isPropertyValueEqual(
-                  ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "true");
-      boolean allowDuplicateNationalId =
-          ConfigurationProperties.getInstance()
-              .isPropertyValueEqual(
-                  ConfigurationProperties.Property.ALLOW_DUPLICATE_NATIONAL_IDS, "true");
-      if (!results.isEmpty() && !GenericValidator.isBlankOrNull(subjectNumber)) {
-        queryResponse =
-            (allowDuplicateSubjectNumber
-                    ? "warning#" + MessageUtil.getMessage("alert.warning")
-                    : "fail#" + MessageUtil.getMessage("alert.error"))
-                + ": "
-                + MessageUtil.getMessage("error.duplicate.subjectNumber.warning");
-      } else if (!results.isEmpty() && !GenericValidator.isBlankOrNull(nationalId)) {
-        queryResponse =
-            (allowDuplicateNationalId
-                    ? "warning#" + MessageUtil.getMessage("alert.warning")
-                    : "fail#" + MessageUtil.getMessage("alert.error"))
-                + ": "
-                + MessageUtil.getMessage("error.duplicate.subjectNumber.warning");
-      } else if (!results.isEmpty()) {
-        queryResponse =
-            "fail#"
-                + MessageUtil.getMessage("alert.error")
-                + ": "
-                + MessageUtil.getMessage("error.duplicate.subjectNumber.warning");
-      }
+    public SubjectNumberValidationProvider() {
+        super();
     }
-    response.setCharacterEncoding("UTF-8");
-    ajaxServlet.sendData(Encode.forXmlContent(fieldId), queryResponse, request, response);
-  }
+
+    public SubjectNumberValidationProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
+
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String queryResponse = "valid";
+        String fieldId = request.getParameter("fieldId");
+        String number = request.getParameter("subjectNumber");
+        String numberType = request.getParameter("numberType");
+        String STNumber = numberType.equals("STnumber") ? number : null;
+        String subjectNumber = numberType.equals("subjectNumber") ? number : null;
+        String nationalId = numberType.equals("nationalId") ? number : null;
+
+        // We just care about duplicates but blank values do not count as duplicates
+        if (!(GenericValidator.isBlankOrNull(STNumber) && GenericValidator.isBlankOrNull(subjectNumber)
+                && GenericValidator.isBlankOrNull(nationalId))) {
+            List<PatientSearchResults> results = searchResultsService.getSearchResultsExact(null, null, STNumber,
+                    subjectNumber, nationalId, null, null, null, null, null);
+
+            boolean allowDuplicateSubjectNumber = ConfigurationProperties.getInstance()
+                    .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_SUBJECT_NUMBERS, "true");
+            boolean allowDuplicateNationalId = ConfigurationProperties.getInstance()
+                    .isPropertyValueEqual(ConfigurationProperties.Property.ALLOW_DUPLICATE_NATIONAL_IDS, "true");
+            if (!results.isEmpty() && !GenericValidator.isBlankOrNull(subjectNumber)) {
+                queryResponse = (allowDuplicateSubjectNumber ? "warning#" + MessageUtil.getMessage("alert.warning")
+                        : "fail#" + MessageUtil.getMessage("alert.error")) + ": "
+                        + MessageUtil.getMessage("error.duplicate.subjectNumber.warning");
+            } else if (!results.isEmpty() && !GenericValidator.isBlankOrNull(nationalId)) {
+                queryResponse = (allowDuplicateNationalId ? "warning#" + MessageUtil.getMessage("alert.warning")
+                        : "fail#" + MessageUtil.getMessage("alert.error")) + ": "
+                        + MessageUtil.getMessage("error.duplicate.subjectNumber.warning");
+            } else if (!results.isEmpty()) {
+                queryResponse = "fail#" + MessageUtil.getMessage("alert.error") + ": "
+                        + MessageUtil.getMessage("error.duplicate.subjectNumber.warning");
+            }
+        }
+        response.setCharacterEncoding("UTF-8");
+        ajaxServlet.sendData(Encode.forXmlContent(fieldId), queryResponse, request, response);
+    }
 }

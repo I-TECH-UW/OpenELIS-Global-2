@@ -11,15 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OzekiMessageOutServiceImpl implements OzekiMessageOutService {
 
-  @Autowired private OzekiMessageOutDAO dao;
+    @Autowired
+    private OzekiMessageOutDAO dao;
 
-  @Override
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public void send(SMSNotification notification) {
-    OzekiMessageOut messageOut = new OzekiMessageOut();
-    messageOut.setMsg(notification.getMessage());
-    messageOut.setReceiver(notification.getReceiverPhoneNumber());
-    messageOut.setStatus("send");
-    dao.save(messageOut);
-  }
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void send(SMSNotification notification) {
+        OzekiMessageOut messageOut = new OzekiMessageOut();
+        messageOut.setMsg(notification.getMessage());
+        messageOut.setReceiver(notification.getReceiverPhoneNumber());
+        messageOut.setStatus("send");
+        dao.save(messageOut);
+    }
 }

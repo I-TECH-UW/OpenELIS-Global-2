@@ -26,52 +26,51 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.owasp.encoder.Encode;
 
 /**
- * @author benzd1 bugzilla 1765 changed to validate city only (combination of city/zip is validated
- *     elsewhere)
+ * @author benzd1 bugzilla 1765 changed to validate city only (combination of
+ *         city/zip is validated elsewhere)
  */
 public class CityValidationProvider extends BaseValidationProvider {
 
-  protected CityStateZipService cityStateZipService =
-      SpringContext.getBean(CityStateZipService.class);
+    protected CityStateZipService cityStateZipService = SpringContext.getBean(CityStateZipService.class);
 
-  public CityValidationProvider() {
-    super();
-  }
-
-  public CityValidationProvider(AjaxServlet ajaxServlet) {
-    this.ajaxServlet = ajaxServlet;
-  }
-
-  @Override
-  public void processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-
-    // get id from request
-    String city = request.getParameter("id");
-    String formField = request.getParameter("field");
-    String result = validate(city);
-    ajaxServlet.sendData(Encode.forXmlContent(formField), result, request, response);
-  }
-
-  public String validate(String city) throws LIMSRuntimeException {
-
-    StringBuffer s = new StringBuffer();
-
-    if (!StringUtil.isNullorNill(city)) {
-      // bugzilla 1545
-      CityStateZip cityStateZip = new CityStateZip();
-      cityStateZip.setCity(city.trim());
-      cityStateZip = cityStateZipService.getCity(cityStateZip);
-
-      if (cityStateZip == null) {
-        s.append(INVALID);
-      } else {
-        s.append(VALID);
-      }
-    } else {
-      s.append(VALID);
+    public CityValidationProvider() {
+        super();
     }
 
-    return s.toString();
-  }
+    public CityValidationProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
+
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // get id from request
+        String city = request.getParameter("id");
+        String formField = request.getParameter("field");
+        String result = validate(city);
+        ajaxServlet.sendData(Encode.forXmlContent(formField), result, request, response);
+    }
+
+    public String validate(String city) throws LIMSRuntimeException {
+
+        StringBuffer s = new StringBuffer();
+
+        if (!StringUtil.isNullorNill(city)) {
+            // bugzilla 1545
+            CityStateZip cityStateZip = new CityStateZip();
+            cityStateZip.setCity(city.trim());
+            cityStateZip = cityStateZipService.getCity(cityStateZip);
+
+            if (cityStateZip == null) {
+                s.append(INVALID);
+            } else {
+                s.append(VALID);
+            }
+        } else {
+            s.append(VALID);
+        }
+
+        return s.toString();
+    }
 }

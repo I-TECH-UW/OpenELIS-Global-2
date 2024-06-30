@@ -21,8 +21,8 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 
 public interface OrganizationAddressDAO extends BaseDAO<OrganizationAddress, AddressPK> {
 
-  List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId)
-      throws LIMSRuntimeException;
+    List<OrganizationAddress> getAddressPartsByOrganizationId(String organizationId) throws LIMSRuntimeException;
 
-  //	public Optional<OrganizationAddress> update(OrganizationAddress organizationAddress);
+    // public Optional<OrganizationAddress> update(OrganizationAddress
+    // organizationAddress);
 }

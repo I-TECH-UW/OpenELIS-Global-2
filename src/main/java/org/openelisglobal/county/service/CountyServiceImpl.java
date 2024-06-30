@@ -7,16 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CountyServiceImpl extends AuditableBaseObjectServiceImpl<County, String>
-    implements CountyService {
-  @Autowired protected CountyDAO baseObjectDAO;
+public class CountyServiceImpl extends AuditableBaseObjectServiceImpl<County, String> implements CountyService {
+    @Autowired
+    protected CountyDAO baseObjectDAO;
 
-  CountyServiceImpl() {
-    super(County.class);
-  }
+    CountyServiceImpl() {
+        super(County.class);
+    }
 
-  @Override
-  protected CountyDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected CountyDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

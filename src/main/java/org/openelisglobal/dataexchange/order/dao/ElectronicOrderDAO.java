@@ -23,39 +23,33 @@ import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder.SortOrd
 
 public interface ElectronicOrderDAO extends BaseDAO<ElectronicOrder, String> {
 
-  public List<ElectronicOrder> getElectronicOrdersByExternalId(String id)
-      throws LIMSRuntimeException;
+    public List<ElectronicOrder> getElectronicOrdersByExternalId(String id) throws LIMSRuntimeException;
 
-  //	public List<ElectronicOrder> getElectronicOrdersByPatientId(String id) throws
-  // LIMSRuntimeException;
+    // public List<ElectronicOrder> getElectronicOrdersByPatientId(String id) throws
+    // LIMSRuntimeException;
 
-  //	public void updateData(ElectronicOrder eOrder) throws LIMSRuntimeException;
+    // public void updateData(ElectronicOrder eOrder) throws LIMSRuntimeException;
 
-  //	public List<ElectronicOrder> getAllElectronicOrders();
+    // public List<ElectronicOrder> getAllElectronicOrders();
 
-  List<ElectronicOrder> getAllElectronicOrdersOrderedBy(ElectronicOrder.SortOrder order);
+    List<ElectronicOrder> getAllElectronicOrdersOrderedBy(ElectronicOrder.SortOrder order);
 
-  public List<ElectronicOrder> getAllElectronicOrdersContainingValueOrderedBy(
-      String searchValue, SortOrder order);
+    public List<ElectronicOrder> getAllElectronicOrdersContainingValueOrderedBy(String searchValue, SortOrder order);
 
-  List<ElectronicOrder> getAllElectronicOrdersContainingValuesOrderedBy(
-      String accessionNumber,
-      String patientLastName,
-      String patientFirstName,
-      String gender,
-      SortOrder order);
+    List<ElectronicOrder> getAllElectronicOrdersContainingValuesOrderedBy(String accessionNumber,
+            String patientLastName, String patientFirstName, String gender, SortOrder order);
 
-  public List<ElectronicOrder> getElectronicOrdersContainingValueExludedByOrderedBy(
-      String searchValue, List<Integer> exludedStatusIds, SortOrder sortOrder);
+    public List<ElectronicOrder> getElectronicOrdersContainingValueExludedByOrderedBy(String searchValue,
+            List<Integer> exludedStatusIds, SortOrder sortOrder);
 
-  List<ElectronicOrder> getAllElectronicOrdersByDateAndStatus(
-      Date startDate, Date endDate, String statusId, SortOrder sortOrder);
+    List<ElectronicOrder> getAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate, String statusId,
+            SortOrder sortOrder);
 
-  List<ElectronicOrder> getAllElectronicOrdersByTimestampAndStatus(
-      Timestamp startTimestamp, Timestamp endTimestamp, String statusId, SortOrder sortOrder);
+    List<ElectronicOrder> getAllElectronicOrdersByTimestampAndStatus(Timestamp startTimestamp, Timestamp endTimestamp,
+            String statusId, SortOrder sortOrder);
 
-  public List<ElectronicOrder> getAllElectronicOrdersMatchingAnyValue(
-      List<String> identifierValues, String patientValue, SortOrder order);
+    public List<ElectronicOrder> getAllElectronicOrdersMatchingAnyValue(List<String> identifierValues,
+            String patientValue, SortOrder order);
 
-  int getCountOfAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate, String statusId);
+    int getCountOfAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate, String statusId);
 }

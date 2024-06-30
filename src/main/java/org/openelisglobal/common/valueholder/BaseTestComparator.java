@@ -21,31 +21,30 @@ import org.openelisglobal.common.util.StringUtil;
  * @author Benzd1 bugzilla 1856
  */
 public class BaseTestComparator implements Comparable {
-  String name;
+    String name;
 
-  // You can put the default sorting capability here
-  public int compareTo(Object obj) {
-    Analysis analysis = (Analysis) obj;
-    return this.name.compareTo(analysis.getTest().getSortOrder());
-  }
+    // You can put the default sorting capability here
+    public int compareTo(Object obj) {
+        Analysis analysis = (Analysis) obj;
+        return this.name.compareTo(analysis.getTest().getSortOrder());
+    }
 
-  public static final Comparator SORT_ORDER_COMPARATOR =
-      new Comparator() {
+    public static final Comparator SORT_ORDER_COMPARATOR = new Comparator() {
         public int compare(Object a, Object b) {
-          Analysis analysis_a = (Analysis) a;
-          Analysis analysis_b = (Analysis) b;
-          String aValue = analysis_a.getTest().getSortOrder();
-          String bValue = analysis_b.getTest().getSortOrder();
+            Analysis analysis_a = (Analysis) a;
+            Analysis analysis_b = (Analysis) b;
+            String aValue = analysis_a.getTest().getSortOrder();
+            String bValue = analysis_b.getTest().getSortOrder();
 
-          if (StringUtil.isNullorNill(aValue)) {
-            aValue = "0";
-          }
+            if (StringUtil.isNullorNill(aValue)) {
+                aValue = "0";
+            }
 
-          if (StringUtil.isNullorNill(bValue)) {
-            bValue = "0";
-          }
+            if (StringUtil.isNullorNill(bValue)) {
+                bValue = "0";
+            }
 
-          return (aValue.compareTo(bValue));
+            return (aValue.compareTo(bValue));
         }
-      };
+    };
 }

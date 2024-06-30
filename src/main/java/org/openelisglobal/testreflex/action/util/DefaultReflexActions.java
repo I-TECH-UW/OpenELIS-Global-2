@@ -27,60 +27,58 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class DefaultReflexActions extends ReflexAction {
 
-  private static final String HIV_N_SCRIPT = "HIV N";
-  private static final String HIV_INDETERMINATE_SCRIPT = "HIV Indeterminate";
-  private static final String HIV_POSITIVE_SCRIPT = "HIV Positive";
+    private static final String HIV_N_SCRIPT = "HIV N";
+    private static final String HIV_INDETERMINATE_SCRIPT = "HIV Indeterminate";
+    private static final String HIV_POSITIVE_SCRIPT = "HIV Positive";
 
-  private static Analyte ANALYTE_CONCLUSION;
-  private static Map<String, String> hivStatusToDictionaryIDMap;
+    private static Analyte ANALYTE_CONCLUSION;
+    private static Map<String, String> hivStatusToDictionaryIDMap;
 
-  static {
-    hivStatusToDictionaryIDMap = new HashMap<>();
+    static {
+        hivStatusToDictionaryIDMap = new HashMap<>();
 
-    DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
+        DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 
-    List<Dictionary> dictionaryList =
-        dictionaryService.getDictionaryEntrysByCategoryNameLocalizedSort("HIVResult");
+        List<Dictionary> dictionaryList = dictionaryService.getDictionaryEntrysByCategoryNameLocalizedSort("HIVResult");
 
-    for (Dictionary dictionary : dictionaryList) {
-      if (dictionary.getDictEntry().equals("Positive")) {
-        hivStatusToDictionaryIDMap.put(HIV_POSITIVE_SCRIPT, dictionary.getId());
-      } else if (dictionary.getDictEntry().equals("Negative")) {
-        hivStatusToDictionaryIDMap.put(HIV_N_SCRIPT, dictionary.getId());
-      } else if (dictionary.getDictEntry().equals("Indeterminate")) {
-        hivStatusToDictionaryIDMap.put(HIV_INDETERMINATE_SCRIPT, dictionary.getId());
-      }
+        for (Dictionary dictionary : dictionaryList) {
+            if (dictionary.getDictEntry().equals("Positive")) {
+                hivStatusToDictionaryIDMap.put(HIV_POSITIVE_SCRIPT, dictionary.getId());
+            } else if (dictionary.getDictEntry().equals("Negative")) {
+                hivStatusToDictionaryIDMap.put(HIV_N_SCRIPT, dictionary.getId());
+            } else if (dictionary.getDictEntry().equals("Indeterminate")) {
+                hivStatusToDictionaryIDMap.put(HIV_INDETERMINATE_SCRIPT, dictionary.getId());
+            }
+        }
+
+        AnalyteService analyteService = SpringContext.getBean(AnalyteService.class);
+        Analyte analyte = new Analyte();
+        analyte.setAnalyteName("Conclusion");
+        ANALYTE_CONCLUSION = analyteService.getAnalyteByName(analyte, false);
     }
 
-    AnalyteService analyteService = SpringContext.getBean(AnalyteService.class);
-    Analyte analyte = new Analyte();
-    analyte.setAnalyteName("Conclusion");
-    ANALYTE_CONCLUSION = analyteService.getAnalyteByName(analyte, false);
-  }
+    @Override
+    protected void handleScriptletAction(Scriptlet scriptlet) {
+        if (scriptlet != null && INTERPERET_TYPE.equals(scriptlet.getCodeType())) {
+            String action = scriptlet.getCodeSource();
 
-  @Override
-  protected void handleScriptletAction(Scriptlet scriptlet) {
-    if (scriptlet != null && INTERPERET_TYPE.equals(scriptlet.getCodeType())) {
-      String action = scriptlet.getCodeSource();
+            if (GenericValidator.isBlankOrNull(action)) {
+                return;
+            }
 
-      if (GenericValidator.isBlankOrNull(action)) {
-        return;
-      }
-
-      if (action.equals(HIV_INDETERMINATE_SCRIPT)
-          || action.equals(HIV_N_SCRIPT)
-          || action.equals(HIV_POSITIVE_SCRIPT)) {
-        addHIVConclusion(action);
-      }
+            if (action.equals(HIV_INDETERMINATE_SCRIPT) || action.equals(HIV_N_SCRIPT)
+                    || action.equals(HIV_POSITIVE_SCRIPT)) {
+                addHIVConclusion(action);
+            }
+        }
     }
-  }
 
-  private void addHIVConclusion(String action) {
+    private void addHIVConclusion(String action) {
 
-    finalResult = new Result();
-    finalResult.setValue(hivStatusToDictionaryIDMap.get(action));
-    finalResult.setResultType("D");
-    finalResult.setIsReportable("T");
-    finalResult.setAnalyte(ANALYTE_CONCLUSION);
-  }
+        finalResult = new Result();
+        finalResult.setValue(hivStatusToDictionaryIDMap.get(action));
+        finalResult.setResultType("D");
+        finalResult.setIsReportable("T");
+        finalResult.setAnalyte(ANALYTE_CONCLUSION);
+    }
 }

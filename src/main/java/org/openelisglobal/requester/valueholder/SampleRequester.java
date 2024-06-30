@@ -17,82 +17,80 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class SampleRequester extends BaseObject<String> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String id;
-  private long sampleId;
-  private long requesterId;
-  private long requesterTypeId;
+    private String id;
+    private long sampleId;
+    private long requesterId;
+    private long requesterTypeId;
 
-  public long getSampleId() {
-    return sampleId;
-  }
-
-  public void setSampleId(long sampleId) {
-    this.sampleId = sampleId;
-  }
-
-  /*
-   * public void setSampleId(String sampleId) { this.sampleId =
-   * Long.parseLong(sampleId); }
-   */
-  public long getRequesterId() {
-    return requesterId;
-  }
-
-  public void setRequesterId(long requesterId) {
-    this.requesterId = requesterId;
-  }
-
-  public void setRequesterId(String requesterId) {
-    this.requesterId = Long.parseLong(requesterId);
-  }
-
-  public long getRequesterTypeId() {
-    return requesterTypeId;
-  }
-
-  public void setRequesterTypeId(long requesterTypeId) {
-    this.requesterTypeId = requesterTypeId;
-  }
-
-  public void setRequesterTypeId(String requesterTypeId) {
-    this.requesterTypeId = Long.parseLong(requesterTypeId);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
-      return true;
+    public long getSampleId() {
+        return sampleId;
     }
-    if (obj == null) {
-      return false;
+
+    public void setSampleId(long sampleId) {
+        this.sampleId = sampleId;
     }
-    if (!(obj instanceof SampleRequester)) {
-      return false;
+
+    /*
+     * public void setSampleId(String sampleId) { this.sampleId =
+     * Long.parseLong(sampleId); }
+     */
+    public long getRequesterId() {
+        return requesterId;
     }
-    SampleRequester sr = (SampleRequester) obj;
-    return sr.requesterId == requesterId
-        && sr.requesterTypeId == requesterTypeId
-        && sr.sampleId == sampleId;
-  }
 
-  @Override
-  public int hashCode() {
-    int hash = 0;
-    hash = 31 * hash + (int) requesterId;
-    hash = 31 * hash + (int) requesterTypeId;
-    hash = 31 * hash + (int) sampleId;
-    return hash;
-  }
+    public void setRequesterId(long requesterId) {
+        this.requesterId = requesterId;
+    }
 
-  @Override
-  public String getId() {
-    return id;
-  }
+    public void setRequesterId(String requesterId) {
+        this.requesterId = Long.parseLong(requesterId);
+    }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
+    public long getRequesterTypeId() {
+        return requesterTypeId;
+    }
+
+    public void setRequesterTypeId(long requesterTypeId) {
+        this.requesterTypeId = requesterTypeId;
+    }
+
+    public void setRequesterTypeId(String requesterTypeId) {
+        this.requesterTypeId = Long.parseLong(requesterTypeId);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof SampleRequester)) {
+            return false;
+        }
+        SampleRequester sr = (SampleRequester) obj;
+        return sr.requesterId == requesterId && sr.requesterTypeId == requesterTypeId && sr.sampleId == sampleId;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash = 31 * hash + (int) requesterId;
+        hash = 31 * hash + (int) requesterTypeId;
+        hash = 31 * hash + (int) sampleId;
+        return hash;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 }

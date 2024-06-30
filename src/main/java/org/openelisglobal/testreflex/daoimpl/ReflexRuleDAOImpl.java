@@ -14,24 +14,23 @@ import org.springframework.stereotype.Component;
 @Transactional
 public class ReflexRuleDAOImpl extends BaseDAOImpl<ReflexRule, Integer> implements ReflexRuleDAO {
 
-  public ReflexRuleDAOImpl() {
-    super(ReflexRule.class);
-  }
-
-  @Override
-  public ReflexRule getReflexRuleByAnalyteId(String analyteId) throws LIMSRuntimeException {
-    try {
-      String sql = "from ReflexRule r WHERE r.analyteId = :analyteId";
-      Query<ReflexRule> query =
-          entityManager.unwrap(Session.class).createQuery(sql, ReflexRule.class);
-      query.setParameter("analyteId", Integer.parseInt(analyteId));
-      List<ReflexRule> results = query.list();
-      if (results.size() > 0) {
-        return results.get(0);
-      }
-    } catch (RuntimeException e) {
-      handleException(e, "getReflexRuleByAnalyteId()");
+    public ReflexRuleDAOImpl() {
+        super(ReflexRule.class);
     }
-    return null;
-  }
+
+    @Override
+    public ReflexRule getReflexRuleByAnalyteId(String analyteId) throws LIMSRuntimeException {
+        try {
+            String sql = "from ReflexRule r WHERE r.analyteId = :analyteId";
+            Query<ReflexRule> query = entityManager.unwrap(Session.class).createQuery(sql, ReflexRule.class);
+            query.setParameter("analyteId", Integer.parseInt(analyteId));
+            List<ReflexRule> results = query.list();
+            if (results.size() > 0) {
+                return results.get(0);
+            }
+        } catch (RuntimeException e) {
+            handleException(e, "getReflexRuleByAnalyteId()");
+        }
+        return null;
+    }
 }

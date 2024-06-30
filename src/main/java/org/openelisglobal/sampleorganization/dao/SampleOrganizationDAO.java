@@ -27,15 +27,17 @@ import org.openelisglobal.sampleorganization.valueholder.SampleOrganization;
  */
 public interface SampleOrganizationDAO extends BaseDAO<SampleOrganization, String> {
 
-  //	public boolean insertData(SampleOrganization sampleOrg) throws LIMSRuntimeException;
+    // public boolean insertData(SampleOrganization sampleOrg) throws
+    // LIMSRuntimeException;
 
-  //	public void deleteData(List sampleOrgs) throws LIMSRuntimeException;
+    // public void deleteData(List sampleOrgs) throws LIMSRuntimeException;
 
-  public void getData(SampleOrganization sampleOrg) throws LIMSRuntimeException;
+    public void getData(SampleOrganization sampleOrg) throws LIMSRuntimeException;
 
-  //	public void updateData(SampleOrganization sampleOrg) throws LIMSRuntimeException;
+    // public void updateData(SampleOrganization sampleOrg) throws
+    // LIMSRuntimeException;
 
-  public void getDataBySample(SampleOrganization sampleOrg) throws LIMSRuntimeException;
+    public void getDataBySample(SampleOrganization sampleOrg) throws LIMSRuntimeException;
 
-  public SampleOrganization getDataBySample(Sample sample) throws LIMSRuntimeException;
+    public SampleOrganization getDataBySample(Sample sample) throws LIMSRuntimeException;
 }

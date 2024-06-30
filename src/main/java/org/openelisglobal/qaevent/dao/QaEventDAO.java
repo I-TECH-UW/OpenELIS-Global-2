@@ -20,29 +20,31 @@ import org.openelisglobal.qaevent.valueholder.QaEvent;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface QaEventDAO extends BaseDAO<QaEvent, String> {
 
-  //	public boolean insertData(QaEvent qaEvent) throws LIMSRuntimeException;
+    // public boolean insertData(QaEvent qaEvent) throws LIMSRuntimeException;
 
-  //	public void deleteData(List qaEvents) throws LIMSRuntimeException;
+    // public void deleteData(List qaEvents) throws LIMSRuntimeException;
 
-  List<QaEvent> getAllQaEvents() throws LIMSRuntimeException;
+    List<QaEvent> getAllQaEvents() throws LIMSRuntimeException;
 
-  List<QaEvent> getPageOfQaEvents(int startingRecNo) throws LIMSRuntimeException;
+    List<QaEvent> getPageOfQaEvents(int startingRecNo) throws LIMSRuntimeException;
 
-  List<QaEvent> getQaEvents(String filter) throws LIMSRuntimeException;
+    List<QaEvent> getQaEvents(String filter) throws LIMSRuntimeException;
 
-  void getData(QaEvent qaEvent) throws LIMSRuntimeException;
+    void getData(QaEvent qaEvent) throws LIMSRuntimeException;
 
-  //	public void updateData(QaEvent qaEvent) throws LIMSRuntimeException;
+    // public void updateData(QaEvent qaEvent) throws LIMSRuntimeException;
 
-  QaEvent getQaEventByName(QaEvent qaEvent) throws LIMSRuntimeException;
+    QaEvent getQaEventByName(QaEvent qaEvent) throws LIMSRuntimeException;
 
-  Integer getTotalQaEventCount() throws LIMSRuntimeException;
+    Integer getTotalQaEventCount() throws LIMSRuntimeException;
 
-  boolean duplicateQaEventExists(QaEvent qaEvent) throws LIMSRuntimeException;
+    boolean duplicateQaEventExists(QaEvent qaEvent) throws LIMSRuntimeException;
 }

@@ -7,11 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class ExternalConnectionContactDAOImpl
-    extends BaseDAOImpl<ExternalConnectionContact, Integer>
-    implements ExternalConnectionContactDAO {
+public class ExternalConnectionContactDAOImpl extends BaseDAOImpl<ExternalConnectionContact, Integer>
+        implements ExternalConnectionContactDAO {
 
-  public ExternalConnectionContactDAOImpl() {
-    super(ExternalConnectionContact.class);
-  }
+    public ExternalConnectionContactDAOImpl() {
+        super(ExternalConnectionContact.class);
+    }
 }

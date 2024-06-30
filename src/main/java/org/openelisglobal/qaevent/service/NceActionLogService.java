@@ -7,5 +7,5 @@ import org.openelisglobal.qaevent.valueholder.NceActionLog;
 
 public interface NceActionLogService extends BaseObjectService<NceActionLog, String> {
 
-  List<NceActionLog> getNceActionLogByNceId(String nceId) throws LIMSRuntimeException;
+    List<NceActionLog> getNceActionLogByNceId(String nceId) throws LIMSRuntimeException;
 }

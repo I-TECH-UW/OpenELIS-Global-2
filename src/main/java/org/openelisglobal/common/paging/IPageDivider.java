@@ -17,7 +17,7 @@ import java.util.List;
 import org.openelisglobal.common.util.IdValuePair;
 
 public interface IPageDivider<E> {
-  public void createPages(E tests, List<E> pagedResults);
+    public void createPages(E tests, List<E> pagedResults);
 
-  public List<IdValuePair> createSearchToPageMapping(List<E> allPages);
+    public List<IdValuePair> createSearchToPageMapping(List<E> allPages);
 }

@@ -47,174 +47,175 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController("WorkplanByPanelRestController")
 public class WorkplanByPanelRestController extends WorkplanRestController {
 
-  @Autowired SampleService sampleService;
+    @Autowired
+    SampleService sampleService;
 
-  @Autowired PatientService patientService;
+    @Autowired
+    PatientService patientService;
 
-  @Autowired PersonService personService;
+    @Autowired
+    PersonService personService;
 
-  @Autowired ObservationHistoryService observationHistoryService;
+    @Autowired
+    ObservationHistoryService observationHistoryService;
 
-  @Autowired SampleHumanService sampleHumanService;
+    @Autowired
+    SampleHumanService sampleHumanService;
 
-  @Autowired SearchResultsService searchResultsService;
+    @Autowired
+    SearchResultsService searchResultsService;
 
-  @Autowired private AnalysisService analysisService;
+    @Autowired
+    private AnalysisService analysisService;
 
-  @Autowired private PanelItemService panelItemService;
+    @Autowired
+    private PanelItemService panelItemService;
 
-  @Autowired private SampleQaEventService sampleQaEventService;
+    @Autowired
+    private SampleQaEventService sampleQaEventService;
 
-  @Autowired private UserService userService;
+    @Autowired
+    private UserService userService;
 
-  @GetMapping(value = "/rest/workplan-by-panel", produces = MediaType.APPLICATION_JSON_VALUE)
-  public WorkplanForm showWorkPlanByPanel(
-      HttpServletRequest request,
-      @RequestParam(name = "panel_id", defaultValue = "0") String panelID)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    @GetMapping(value = "/rest/workplan-by-panel", produces = MediaType.APPLICATION_JSON_VALUE)
+    public WorkplanForm showWorkPlanByPanel(HttpServletRequest request,
+            @RequestParam(name = "panel_id", defaultValue = "0") String panelID)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-    WorkplanForm form = new WorkplanForm();
-    WorkplanPaging paging = new WorkplanPaging();
-    List<TestResultItem> workplanTests = new ArrayList<TestResultItem>();
-    List<TestResultItem> filteredTests = new ArrayList<TestResultItem>();
+        WorkplanForm form = new WorkplanForm();
+        WorkplanPaging paging = new WorkplanPaging();
+        List<TestResultItem> workplanTests = new ArrayList<TestResultItem>();
+        List<TestResultItem> filteredTests = new ArrayList<TestResultItem>();
 
-    String requestedPage = request.getParameter("page");
-    if (GenericValidator.isBlankOrNull(requestedPage)) {
-      workplanTests = getWorkplanByPanel(panelID);
-      filteredTests =
-          userService.filterResultsByLabUnitRoles(
-              getSysUserId(request), workplanTests, Constants.ROLE_RESULTS);
-      paging.setDatabaseResults(request, form, filteredTests);
-    } else {
-      int requestedPageNumber = Integer.parseInt(requestedPage);
-      paging.page(request, form, requestedPageNumber);
+        String requestedPage = request.getParameter("page");
+        if (GenericValidator.isBlankOrNull(requestedPage)) {
+            workplanTests = getWorkplanByPanel(panelID);
+            filteredTests = userService.filterResultsByLabUnitRoles(getSysUserId(request), workplanTests,
+                    Constants.ROLE_RESULTS);
+            paging.setDatabaseResults(request, form, filteredTests);
+        } else {
+            int requestedPageNumber = Integer.parseInt(requestedPage);
+            paging.page(request, form, requestedPageNumber);
+        }
+
+        return form;
     }
 
-    return form;
-  }
+    private List<TestResultItem> getWorkplanByPanel(String panelId) {
 
-  private List<TestResultItem> getWorkplanByPanel(String panelId) {
+        List<TestResultItem> workplanTestList = new ArrayList<>();
+        // check for patient name addition
+        boolean addPatientName = isPatientNameAdded();
 
-    List<TestResultItem> workplanTestList = new ArrayList<>();
-    // check for patient name addition
-    boolean addPatientName = isPatientNameAdded();
+        if (!(GenericValidator.isBlankOrNull(panelId) || panelId.equals("0"))) {
 
-    if (!(GenericValidator.isBlankOrNull(panelId) || panelId.equals("0"))) {
+            List<PanelItem> panelItems = panelItemService.getPanelItemsForPanel(panelId);
 
-      List<PanelItem> panelItems = panelItemService.getPanelItemsForPanel(panelId);
+            for (PanelItem panelItem : panelItems) {
+                List<Analysis> analysisList = analysisService.getAllAnalysisByTestAndStatus(panelItem.getTest().getId(),
+                        statusList);
 
-      for (PanelItem panelItem : panelItems) {
-        List<Analysis> analysisList =
-            analysisService.getAllAnalysisByTestAndStatus(panelItem.getTest().getId(), statusList);
+                for (Analysis analysis : analysisList) {
+                    TestResultItem testResultItem = new TestResultItem();
+                    testResultItem.setTestId(analysis.getTest().getId());
+                    Sample sample = analysis.getSampleItem().getSample();
+                    testResultItem.setAccessionNumber(sample.getAccessionNumber());
+                    testResultItem.setPatientInfo(getSubjectNumber(analysis));
+                    testResultItem.setNextVisitDate(SpringContext.getBean(ObservationHistoryService.class)
+                            .getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId()));
+                    testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
+                    testResultItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
+                    boolean nonConforming = QAService.isAnalysisParentNonConforming(analysis);
+                    if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
+                        nonConforming = nonConforming || getQaEventByTestSection(analysis);
+                    }
+                    testResultItem.setNonconforming(nonConforming);
+                    if (addPatientName) {
+                        testResultItem.setPatientName(getPatientName(analysis));
+                    }
 
-        for (Analysis analysis : analysisList) {
-          TestResultItem testResultItem = new TestResultItem();
-          testResultItem.setTestId(analysis.getTest().getId());
-          Sample sample = analysis.getSampleItem().getSample();
-          testResultItem.setAccessionNumber(sample.getAccessionNumber());
-          testResultItem.setPatientInfo(getSubjectNumber(analysis));
-          testResultItem.setNextVisitDate(
-              SpringContext.getBean(ObservationHistoryService.class)
-                  .getValueForSample(ObservationType.NEXT_VISIT_DATE, sample.getId()));
-          testResultItem.setReceivedDate(getReceivedDateDisplay(sample));
-          testResultItem.setTestName(TestServiceImpl.getUserLocalizedTestName(analysis.getTest()));
-          boolean nonConforming = QAService.isAnalysisParentNonConforming(analysis);
-          if (FormFields.getInstance().useField(Field.QaEventsBySection)) {
-            nonConforming = nonConforming || getQaEventByTestSection(analysis);
-          }
-          testResultItem.setNonconforming(nonConforming);
-          if (addPatientName) {
-            testResultItem.setPatientName(getPatientName(analysis));
-          }
-
-          workplanTestList.add(testResultItem);
-        }
-      }
-
-      Collections.sort(
-          workplanTestList,
-          new Comparator<TestResultItem>() {
-
-            @Override
-            public int compare(TestResultItem o1, TestResultItem o2) {
-              return o1.getAccessionNumber().compareTo(o2.getAccessionNumber());
+                    workplanTestList.add(testResultItem);
+                }
             }
-          });
 
-      String currentAccessionNumber = null;
-      int sampleGroupingNumber = 0;
+            Collections.sort(workplanTestList, new Comparator<TestResultItem>() {
 
-      int newIndex = 0;
-      int newElementsAdded = 0;
-      int workplanTestListOrigSize = workplanTestList.size();
+                @Override
+                public int compare(TestResultItem o1, TestResultItem o2) {
+                    return o1.getAccessionNumber().compareTo(o2.getAccessionNumber());
+                }
+            });
 
-      for (int i = 0; newIndex < (workplanTestListOrigSize + newElementsAdded); i++) {
+            String currentAccessionNumber = null;
+            int sampleGroupingNumber = 0;
 
-        TestResultItem testResultItem = workplanTestList.get(newIndex);
+            int newIndex = 0;
+            int newElementsAdded = 0;
+            int workplanTestListOrigSize = workplanTestList.size();
 
-        if (!testResultItem.getAccessionNumber().equals(currentAccessionNumber)) {
-          sampleGroupingNumber++;
-          if (addPatientName) {
-            addPatientNameToList(testResultItem, workplanTestList, newIndex, sampleGroupingNumber);
-            newIndex++;
-            newElementsAdded++;
-          }
+            for (int i = 0; newIndex < (workplanTestListOrigSize + newElementsAdded); i++) {
 
-          currentAccessionNumber = testResultItem.getAccessionNumber();
+                TestResultItem testResultItem = workplanTestList.get(newIndex);
+
+                if (!testResultItem.getAccessionNumber().equals(currentAccessionNumber)) {
+                    sampleGroupingNumber++;
+                    if (addPatientName) {
+                        addPatientNameToList(testResultItem, workplanTestList, newIndex, sampleGroupingNumber);
+                        newIndex++;
+                        newElementsAdded++;
+                    }
+
+                    currentAccessionNumber = testResultItem.getAccessionNumber();
+                }
+                testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
+                newIndex++;
+            }
         }
+
+        return workplanTestList;
+    }
+
+    private void addPatientNameToList(TestResultItem firstTestResultItem, List<TestResultItem> workplanTestList,
+            int insertPosition, int sampleGroupingNumber) {
+        TestResultItem testResultItem = new TestResultItem();
+        testResultItem.setAccessionNumber(firstTestResultItem.getAccessionNumber());
+        testResultItem.setPatientInfo(firstTestResultItem.getPatientInfo());
+        testResultItem.setReceivedDate(firstTestResultItem.getReceivedDate());
+        // Add Patient Name to top of test list
+        testResultItem.setTestName(firstTestResultItem.getPatientName());
         testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
-        newIndex++;
-      }
+        testResultItem.setServingAsTestGroupIdentifier(true);
+        workplanTestList.add(insertPosition, testResultItem);
     }
 
-    return workplanTestList;
-  }
+    private boolean isPatientNameAdded() {
+        return ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName, "Haiti LNSP");
+    }
 
-  private void addPatientNameToList(
-      TestResultItem firstTestResultItem,
-      List<TestResultItem> workplanTestList,
-      int insertPosition,
-      int sampleGroupingNumber) {
-    TestResultItem testResultItem = new TestResultItem();
-    testResultItem.setAccessionNumber(firstTestResultItem.getAccessionNumber());
-    testResultItem.setPatientInfo(firstTestResultItem.getPatientInfo());
-    testResultItem.setReceivedDate(firstTestResultItem.getReceivedDate());
-    // Add Patient Name to top of test list
-    testResultItem.setTestName(firstTestResultItem.getPatientName());
-    testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
-    testResultItem.setServingAsTestGroupIdentifier(true);
-    workplanTestList.add(insertPosition, testResultItem);
-  }
+    private boolean getQaEventByTestSection(Analysis analysis) {
 
-  private boolean isPatientNameAdded() {
-    return ConfigurationProperties.getInstance()
-        .isPropertyValueEqual(Property.configurationName, "Haiti LNSP");
-  }
-
-  private boolean getQaEventByTestSection(Analysis analysis) {
-
-    if (analysis.getTestSection() != null && analysis.getSampleItem().getSample() != null) {
-      Sample sample = analysis.getSampleItem().getSample();
-      List<SampleQaEvent> sampleQaEventsList = getSampleQaEvents(sample);
-      for (SampleQaEvent event : sampleQaEventsList) {
-        QAService qa = new QAService(event);
-        if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
-            && qa.getObservationValue(QAObservationType.SECTION)
-                .equals(analysis.getTestSection().getNameKey())) {
-          return true;
+        if (analysis.getTestSection() != null && analysis.getSampleItem().getSample() != null) {
+            Sample sample = analysis.getSampleItem().getSample();
+            List<SampleQaEvent> sampleQaEventsList = getSampleQaEvents(sample);
+            for (SampleQaEvent event : sampleQaEventsList) {
+                QAService qa = new QAService(event);
+                if (!GenericValidator.isBlankOrNull(qa.getObservationValue(QAObservationType.SECTION))
+                        && qa.getObservationValue(QAObservationType.SECTION)
+                                .equals(analysis.getTestSection().getNameKey())) {
+                    return true;
+                }
+            }
         }
-      }
+        return false;
     }
-    return false;
-  }
 
-  public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
-    return sampleQaEventService.getSampleQaEventsBySample(sample);
-  }
+    public List<SampleQaEvent> getSampleQaEvents(Sample sample) {
+        return sampleQaEventService.getSampleQaEventsBySample(sample);
+    }
 
-  @GetMapping(value = "panels", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseBody
-  private List<IdValuePair> createPanelList() {
-    return DisplayListService.getInstance().getList(ListType.PANELS);
-  }
+    @GetMapping(value = "panels", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    private List<IdValuePair> createPanelList() {
+        return DisplayListService.getInstance().getList(ListType.PANELS);
+    }
 }

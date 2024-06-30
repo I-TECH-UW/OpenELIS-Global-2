@@ -20,50 +20,48 @@ import org.openelisglobal.common.util.StringUtil;
  * @author benzd1 bugzilla 2264
  */
 public class ResultsReportTestComparator implements Comparable<ResultsReportTest> {
-  String name;
+    String name;
 
-  // You can put the default sorting capability here
-  @Override
-  public int compareTo(ResultsReportTest test) {
-    return this.name.compareTo(test.getTestDescription());
-  }
+    // You can put the default sorting capability here
+    @Override
+    public int compareTo(ResultsReportTest test) {
+        return this.name.compareTo(test.getTestDescription());
+    }
 
-  public static final Comparator<ResultsReportTest> NAME_COMPARATOR =
-      new Comparator<ResultsReportTest>() {
+    public static final Comparator<ResultsReportTest> NAME_COMPARATOR = new Comparator<ResultsReportTest>() {
         @Override
         public int compare(ResultsReportTest a, ResultsReportTest b) {
 
-          // bugzilla 2184: handle null sort value
-          String aValue = "";
-          if (a != null && a.getTestDescription() != null) {
-            aValue = a.getTestDescription();
-          }
+            // bugzilla 2184: handle null sort value
+            String aValue = "";
+            if (a != null && a.getTestDescription() != null) {
+                aValue = a.getTestDescription();
+            }
 
-          String bValue = "";
-          if (b != null && b.getTestDescription() != null) {
-            bValue = b.getTestDescription();
-          }
-          return (aValue.toLowerCase().compareTo(bValue.toLowerCase()));
+            String bValue = "";
+            if (b != null && b.getTestDescription() != null) {
+                bValue = b.getTestDescription();
+            }
+            return (aValue.toLowerCase().compareTo(bValue.toLowerCase()));
         }
-      };
+    };
 
-  // bugzilla 1856
-  public static final Comparator<ResultsReportTest> SORT_ORDER_COMPARATOR =
-      new Comparator<ResultsReportTest>() {
+    // bugzilla 1856
+    public static final Comparator<ResultsReportTest> SORT_ORDER_COMPARATOR = new Comparator<ResultsReportTest>() {
         @Override
         public int compare(ResultsReportTest a, ResultsReportTest b) {
-          String aValue = a.getAnalysis().getTest().getSortOrder();
-          String bValue = b.getAnalysis().getTest().getSortOrder();
+            String aValue = a.getAnalysis().getTest().getSortOrder();
+            String bValue = b.getAnalysis().getTest().getSortOrder();
 
-          if (StringUtil.isNullorNill(aValue)) {
-            aValue = "0";
-          }
+            if (StringUtil.isNullorNill(aValue)) {
+                aValue = "0";
+            }
 
-          if (StringUtil.isNullorNill(bValue)) {
-            bValue = "0";
-          }
+            if (StringUtil.isNullorNill(bValue)) {
+                bValue = "0";
+            }
 
-          return (aValue.compareTo(bValue));
+            return (aValue.compareTo(bValue));
         }
-      };
+    };
 }

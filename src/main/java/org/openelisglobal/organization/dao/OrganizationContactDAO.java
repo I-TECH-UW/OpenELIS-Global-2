@@ -19,6 +19,5 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.organization.valueholder.OrganizationContact;
 
 public interface OrganizationContactDAO extends BaseDAO<OrganizationContact, String> {
-  public List<OrganizationContact> getListForOrganizationId(String orgId)
-      throws LIMSRuntimeException;
+    public List<OrganizationContact> getListForOrganizationId(String orgId) throws LIMSRuntimeException;
 }

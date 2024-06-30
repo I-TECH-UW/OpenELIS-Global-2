@@ -93,10 +93,13 @@ const ReportByDate = (props) => {
       props.report === "activityReportByTestSection"
     ) {
       baseParams = `type=indicator&report=${props.report}&selectList.selection=${reportFormValues.value}`;
+    } else if (props.report === "CISampleRoutineExport") {
+      baseParams = `report=${props.report}&type=routine`;
     } else {
       baseParams = `report=${props.report}&type=patient`;
     }
     const baseUrl = `${config.serverBaseUrl}/ReportPrint`;
+
     const url = `${baseUrl}?${baseParams}&upperDateRange=${reportFormValues.endDate}&lowerDateRange=${reportFormValues.startDate}`;
 
     window.open(url, "_blank");

@@ -29,34 +29,31 @@ import org.openelisglobal.spring.util.SpringContext;
 
 public class CodeForOrganizationProvider extends BaseQueryProvider {
 
-  protected OrganizationService organizationService =
-      SpringContext.getBean(OrganizationService.class);
+    protected OrganizationService organizationService = SpringContext.getBean(OrganizationService.class);
 
-  /**
-   * @throws LIMSInvalidConfigurationException
-   * @see
-   *     org.openelisglobal.common.provider.query.BaseQueryProvider#processRequest(javax.servlet.http.HttpServletRequest,
-   *     javax.servlet.http.HttpServletResponse)
-   */
-  @Override
-  public void processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+    /**
+     * @throws LIMSInvalidConfigurationException
+     * @see org.openelisglobal.common.provider.query.BaseQueryProvider#processRequest(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
+     */
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-    StringBuilder xml = new StringBuilder();
-    String result = VALID;
+        StringBuilder xml = new StringBuilder();
+        String result = VALID;
 
-    Organization organization =
-        organizationService.getOrganizationById(request.getParameter("organizationId"));
-    String code = organization != null ? organization.getCode() : "";
-    createXml(code, xml);
+        Organization organization = organizationService.getOrganizationById(request.getParameter("organizationId"));
+        String code = organization != null ? organization.getCode() : "";
+        createXml(code, xml);
 
-    ajaxServlet.sendData(xml.toString(), result, request, response);
-  }
+        ajaxServlet.sendData(xml.toString(), result, request, response);
+    }
 
-  private void createXml(String code, StringBuilder xml) {
+    private void createXml(String code, StringBuilder xml) {
 
-    xml.append("<code ");
-    XMLUtil.appendAttributeKeyValue("value", code, xml);
-    xml.append(" />");
-  }
+        xml.append("<code ");
+        XMLUtil.appendAttributeKeyValue("value", code, xml);
+        xml.append(" />");
+    }
 }

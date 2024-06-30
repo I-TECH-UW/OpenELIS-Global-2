@@ -31,74 +31,66 @@ import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 public class AjaxXMLServlet extends BaseAjaxServlet {
 
-  @Override
-  public String getXmlContent(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException, IllegalAccessException, InvocationTargetException,
-          NoSuchMethodException {
-    boolean unauthorized = false;
+    @Override
+    public String getXmlContent(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+            IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        boolean unauthorized = false;
 
-    // check for module authentication
-    UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
-    unauthorized |= userModuleService.isSessionExpired(request);
+        // check for module authentication
+        UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
+        unauthorized |= userModuleService.isSessionExpired(request);
 
-    // check for csrf token to prevent js hijacking since we employ callback
-    // functions
-    CsrfToken officialToken = new HttpSessionCsrfTokenRepository().loadToken(request);
-    String clientSuppliedToken = request.getHeader("X-CSRF-Token");
-    unauthorized |= !officialToken.getToken().equals(clientSuppliedToken);
+        // check for csrf token to prevent js hijacking since we employ callback
+        // functions
+        CsrfToken officialToken = new HttpSessionCsrfTokenRepository().loadToken(request);
+        String clientSuppliedToken = request.getHeader("X-CSRF-Token");
+        unauthorized |= !officialToken.getToken().equals(clientSuppliedToken);
 
-    if (unauthorized) {
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
-      return new AjaxXmlBuilderForSortableTests().toString();
+        if (unauthorized) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
+            return new AjaxXmlBuilderForSortableTests().toString();
+        }
+
+        String selectDropDownProvider = request.getParameter("provider");
+        String selectDropDownFieldName = request.getParameter("fieldName");
+        String selectDropDownId = request.getParameter("idName");
+
+        // bugzilla 1844 adding sorting ability
+        boolean sortable = false;
+        String selectDropDownSortFieldA = null;
+        String selectDropDownSortFieldB = null;
+        String selectDropDownAlternateLabel = null;
+        // this is sortable test target
+        if (request.getParameter("sortFieldA") != null && request.getParameter("sortFieldB") != null
+                && request.getParameter("alternateLabel") != null) {
+            selectDropDownSortFieldA = request.getParameter("sortFieldA");
+            selectDropDownSortFieldB = request.getParameter("sortFieldB");
+            selectDropDownAlternateLabel = request.getParameter("alternateLabel");
+            sortable = true;
+        }
+
+        BaseSelectDropDownProvider provider = SelectDropDownProviderFactory.getInstance()
+                .getSelectDropDownProvider(selectDropDownProvider);
+
+        provider.setServlet(this);
+        List list = provider.processRequest(request, response);
+
+        // bugzilla 1844 adding toggle sort and toggle label values
+        if (sortable) {
+            AjaxXmlBuilderForSortableTests axb = new AjaxXmlBuilderForSortableTests();
+            // add blank option!!
+            axb.addItemAsCData("", "", "", "", "");
+            axb.addItems(list, selectDropDownFieldName, selectDropDownId, selectDropDownSortFieldA,
+                    selectDropDownSortFieldB, selectDropDownAlternateLabel);
+            return axb.toString();
+
+        } else {
+            AjaxXmlBuilder axb = new AjaxXmlBuilder();
+            // add blank option!!
+            axb.addItemAsCData("", "");
+            axb.addItems(list, selectDropDownFieldName, selectDropDownId);
+            return axb.toString();
+        }
     }
-
-    String selectDropDownProvider = request.getParameter("provider");
-    String selectDropDownFieldName = request.getParameter("fieldName");
-    String selectDropDownId = request.getParameter("idName");
-
-    // bugzilla 1844 adding sorting ability
-    boolean sortable = false;
-    String selectDropDownSortFieldA = null;
-    String selectDropDownSortFieldB = null;
-    String selectDropDownAlternateLabel = null;
-    // this is sortable test target
-    if (request.getParameter("sortFieldA") != null
-        && request.getParameter("sortFieldB") != null
-        && request.getParameter("alternateLabel") != null) {
-      selectDropDownSortFieldA = request.getParameter("sortFieldA");
-      selectDropDownSortFieldB = request.getParameter("sortFieldB");
-      selectDropDownAlternateLabel = request.getParameter("alternateLabel");
-      sortable = true;
-    }
-
-    BaseSelectDropDownProvider provider =
-        SelectDropDownProviderFactory.getInstance()
-            .getSelectDropDownProvider(selectDropDownProvider);
-
-    provider.setServlet(this);
-    List list = provider.processRequest(request, response);
-
-    // bugzilla 1844 adding toggle sort and toggle label values
-    if (sortable) {
-      AjaxXmlBuilderForSortableTests axb = new AjaxXmlBuilderForSortableTests();
-      // add blank option!!
-      axb.addItemAsCData("", "", "", "", "");
-      axb.addItems(
-          list,
-          selectDropDownFieldName,
-          selectDropDownId,
-          selectDropDownSortFieldA,
-          selectDropDownSortFieldB,
-          selectDropDownAlternateLabel);
-      return axb.toString();
-
-    } else {
-      AjaxXmlBuilder axb = new AjaxXmlBuilder();
-      // add blank option!!
-      axb.addItemAsCData("", "");
-      axb.addItems(list, selectDropDownFieldName, selectDropDownId);
-      return axb.toString();
-    }
-  }
 }
