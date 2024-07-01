@@ -73,15 +73,12 @@ public class AnalyzerTestNameRestController extends BaseController {
         request.setAttribute(NEXT_DISABLED, "true");
 
         List<Analyzer> analyzerList = getAllAnalyzers();
-        List<Test> testList = getAllTests();
 
         newForm.setAnalyzerList(analyzerList);
-        newForm.setTestList(testList);
 
         if (request.getParameter("ID") != null && isValidID(request.getParameter("ID"))) {
             String[] splitId = request.getParameter("ID").split("#");
             newForm.setAnalyzerTestName(splitId[1]);
-            newForm.setTestId(splitId[2]);
             newForm.setAnalyzerId(splitId[0]);
         }
 
