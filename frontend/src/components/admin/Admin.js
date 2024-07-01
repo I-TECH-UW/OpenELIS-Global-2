@@ -36,6 +36,7 @@ import {
   SideNavMenu,
   SideNavMenuItem,
 } from "@carbon/react";
+import GenericHomeBreadCrumb from "../common/GenericBreadCrumb";
 import { CommonProperties } from "./menu/CommonProperties";
 import ConfigMenuDisplay from "./formEntry/common/ConfigMenuDisplay";
 import ProviderMenu from "./ProviderMenu/ProviderMenu";
@@ -68,6 +69,7 @@ function Admin() {
         defaultExpanded={true}
         isRail={isSmallScreen}
       >
+        <GenericHomeBreadCrumb/>
         <SideNavItems className="adminSideNav">
           <SideNavMenu
             renderIcon={Microscope}
