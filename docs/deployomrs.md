@@ -27,7 +27,7 @@ Start up the OpenELIS Update Task in `System Administration` → `Advanced Admin
 ![screen1](img/omrsoe1.png)
 
 ### OpenELIS Global 2.x
-1. Install OpenELIS Global 2.x using the instructions [HERE](https://openmrs.atlassian.net/wiki/spaces/projects/pages/26936930/O3+Implementer+Documentation+Set+Up+Configure+Deploy)
+1. Install OpenELIS Global 2.x using the instructions [HERE](../install)
 1. Navigate to the "results reporting" configuration: https://IPforyourserver:8443/OpenELIS-Global/ResultReportingConfiguration
 1. Move the radio button for Result Reporting to "Enable" and enter in the URL for the OpenMRS connection like in the example below. 
 	* Please note, the Test URL button may not respond to the FHIR module, so please disregard any errors if you click it.  
@@ -37,7 +37,7 @@ Start up the OpenELIS Update Task in `System Administration` → `Advanced Admin
 
 ## FHIR Based Intergration Between Openmrs 3.x and OPenELIS 2.6
 ### Openmrs 3.x
-1. Setup  OpenRMS 3.x on top an instance of the Refference Application see [more](https://wiki.openmrs.org/display/projects/3.x+Implementer+Documentation)
+1. Setup  OpenRMS 3.x on top an instance of the Refference Application see [more](https://openmrs.atlassian.net/wiki/spaces/projects/pages/26936930/O3+Implementer+Documentation+Set+Up+Configure+Deploy)
 
 2. Load the Following Modules
     * [FHIR2 module](https://github.com/openmrs/openmrs-module-fhir2) version  >= 1.4.0 
