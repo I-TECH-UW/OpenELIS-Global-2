@@ -40,8 +40,7 @@ import PrintBarcode from "./components/printBarcode/Index";
 import NonConformIndex from "./components/nonconform/index";
 import SampleBatchEntrySetup from "./components/batchOrderEntry/SampleBatchEntrySetup.js";
 import AuditTrailReportIndex from "./components/reports/auditTrailReport/Index.js";
-import OrganizationAddEdit from "./components/admin/OrganizationManagement/OrganizationAddModify.js";
-import NotificationTestPage from "./components/notifications/NotificationTestPage.jsx";
+import ReferredOutTests from "./components/resultPage/resultsReferredOut/ReferredOutTests.js";
 
 
 export default function App() {
@@ -242,12 +241,6 @@ export default function App() {
                   component={() => <PathologyCaseView />}
                   role=""
                   labUnitRole={{ Pathology: ["Results"] }}
-                />
-                <SecureRoute
-                  path="/NotificationTestPage"
-                  exact
-                  component={() => <NotificationTestPage />}
-                  role="Results"
                 />
                 <SecureRoute
                   path="/ImmunohistochemistryDashboard"
