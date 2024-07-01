@@ -92,6 +92,7 @@ const SlideOver = ({
               <div className="slide-over-title">{title}</div>
             </div>
             <div className="slide-over-body">{children}</div>
+            <div style={{ marginTop: "40px" }}></div>
           </div>
         )}
       </div>

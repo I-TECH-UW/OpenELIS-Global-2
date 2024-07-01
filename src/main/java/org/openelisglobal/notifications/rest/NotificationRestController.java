@@ -2,15 +2,20 @@ package org.openelisglobal.notifications.rest;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.notifications.dao.NotificationDAO;
 import org.openelisglobal.notifications.entity.Notification;
 import org.openelisglobal.systemuser.service.SystemUserService;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,8 +29,7 @@ public class NotificationRestController {
   private static final String USER_SESSION_DATA = "userSessionData";
 
   @Autowired
-  public NotificationRestController(
-      NotificationDAO notificationDAO, SystemUserService systemUserService) {
+  public NotificationRestController(NotificationDAO notificationDAO, SystemUserService systemUserService) {
     this.notificationDAO = notificationDAO;
     this.systemUserService = systemUserService;
   }
@@ -37,27 +41,34 @@ public class NotificationRestController {
 
   @GetMapping("/notifications")
   public List<Notification> getNotificationsByUserId(HttpServletRequest request) {
-
     String sysUserId = getSysUserId(request);
-
     return notificationDAO.getNotificationsByUserId(Long.parseLong(sysUserId));
   }
 
-  @PostMapping("/notification")
-  public ResponseEntity<?> saveNotification(
-      @RequestBody Notification notification, HttpServletRequest request) {
+  @PostMapping("/notification/{userId}")
+  public ResponseEntity<?> saveNotification(@PathVariable String userId, @RequestBody Notification notification) {
+    notification.setUser(systemUserService.getUserById(userId));
     notification.setCreatedDate(OffsetDateTime.now());
     notification.setReadAt(null);
-
-    String sysUserId = getSysUserId(request);
-    if (sysUserId == null) {
-      return ResponseEntity.status(400).body("User session data not found");
-    }
-
-    notification.setUser(systemUserService.getUserById(getSysUserId(request)));
     notificationDAO.save(notification);
-
     return ResponseEntity.ok().body("Notification saved successfully");
+  }
+
+  @PutMapping("/notification/markasread/{id}")
+  public ResponseEntity<?> markNotificationAsRead(@PathVariable String id) {
+    Notification notification = notificationDAO.getNotificationById(Long.parseLong(id));
+    notification.setReadAt(OffsetDateTime.now());
+    notificationDAO.updateNotification(notification);
+    return ResponseEntity.ok().body("Notification updated successfully");
+  }
+
+ 
+
+
+
+  @GetMapping("/systemusers")
+  public List<SystemUser> getSystemUsers() {
+    return notificationDAO.getSystemUsers();
   }
 
   protected String getSysUserId(HttpServletRequest request) {

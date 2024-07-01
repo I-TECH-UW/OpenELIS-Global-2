@@ -1,31 +1,68 @@
+import { Renew, NotificationFilled, Email, Filter } from "@carbon/icons-react";
+import { useEffect, useState } from "react";
 import {
-  Renew,
-  NotificationFilled,
-  Email,
-  Filter,
-  SidePanelOpenFilled,
-  Rotate,
-} from "@carbon/icons-react";
-
-const notifications = [
-  {
-    title: "Notification 1",
-    message: "This is the first message.",
-    time: "10:00 AM",
-  },
-  {
-    title: "Notification 2",
-    message: "This is the second message.",
-    time: "11:00 AM",
-  },
-  {
-    title: "Notification 3",
-    message: "This is the third message.",
-    time: "12:00 PM",
-  },
-];
+  formatTimestamp,
+  getFromOpenElisServer,
+  putToOpenElisServer,
+} from "../utils/Utils";
 
 export default function SlideOverNotifications() {
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    const getNotifications = async () => {
+      try {
+        getFromOpenElisServer("/rest/notifications", (data) => {
+          setNotifications(data);
+        });
+      } catch (error) {
+        console.error("Failed to fetch notifications", error);
+      }
+    };
+
+    getNotifications();
+  }, []);
+
+  const markNotificationAsRead = (notificationId) => {
+    console.log("Marking notification as read", notificationId);
+
+    putToOpenElisServer(
+      "/rest/notification/markasread/" + notificationId,
+      null,
+      (data) => {
+        {
+          console.log("Notification marked as read", data);
+        }
+      },
+    );
+  };
+
+  const NotificationButton = ({ icon, label, id }) => (
+    <button
+      onClick={() => {
+        markNotificationAsRead(id);
+      }}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "white",
+        padding: "0.5rem 0.8rem",
+        fontWeight: "600",
+        border: "none",
+        borderRadius: "0.3rem",
+        transition: "background-color 0.2s ease-in-out",
+        color: "#837994",
+        whiteSpace: "nowrap",
+      }}
+      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#DFDAE8")}
+      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "white")}
+    >
+      {icon}
+      <span style={{ fontSize: "0.75rem", marginLeft: "0.5rem" }}>{label}</span>
+    </button>
+  );
+
   return (
     <div
       style={{
@@ -47,42 +84,16 @@ export default function SlideOverNotifications() {
           }}
         >
           {[
-            { icon: <Renew className={`spin`} />, label: "Reload" },
+            { icon: <Renew className="spin" />, label: "Reload" },
             { icon: <NotificationFilled />, label: "Subscribe on this Device" },
             { icon: <Email />, label: "Mark all as Read" },
             { icon: <Filter />, label: "Show Unread" },
           ].map(({ icon, label }, index) => (
-            <button
-              key={index}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "white",
-                padding: "0.5rem 0.8rem",
-                fontWeight: "600",
-                border: "none",
-                borderRadius: "0.3rem",
-                transition: "background-color 0.2s ease-in-out",
-                color: "#837994",
-                whiteSpace: "nowrap",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = "#DFDAE8")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "white")
-              }
-            >
-              {icon}
-              <span style={{ fontSize: "0.75rem", marginLeft: "0.5rem" }}>
-                {label}
-              </span>
-            </button>
+            <NotificationButton key={index} icon={icon} label={label} />
           ))}
         </div>
 
-        {notifications.map((notification, index) => (
+        {notifications?.map((notification, index) => (
           <div
             key={index}
             style={{
@@ -104,12 +115,14 @@ export default function SlideOverNotifications() {
           >
             <div
               style={{ display: "flex", padding: "2px 0px", margin: "1px 0px" }}
+            ></div>
+            <div
+              style={{
+                paddingTop: "0.25rem",
+                fontSize: "0.9rem",
+                fontWeight: "500",
+              }}
             >
-              <div style={{ fontSize: "1.125rem", fontWeight: "bold" }}>
-                {notification.title}
-              </div>
-            </div>
-            <div style={{ paddingTop: "0.25rem", fontSize: "0.875rem" }}>
               {notification.message}
             </div>
             <div
@@ -128,7 +141,7 @@ export default function SlideOverNotifications() {
                   color: "#4b5563",
                 }}
               >
-                {notification.time}
+                {formatTimestamp(notification.createdDate)}
               </div>
               <div
                 style={{
@@ -137,32 +150,11 @@ export default function SlideOverNotifications() {
                   gap: "0.5rem",
                 }}
               >
-                <button
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "white",
-                    padding: "0.5rem 0.8rem",
-                    fontWeight: "600",
-                    border: "none",
-                    borderRadius: "0.3rem",
-                    transition: "background-color 0.2s ease-in-out",
-                    color: "#837994",
-                    whiteSpace: "nowrap",
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#DFDAE8")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor = "white")
-                  }
-                >
-                  <Email />
-                  <span style={{ fontSize: "0.75rem", marginLeft: "0.5rem" }}>
-                    Mark as Read
-                  </span>
-                </button>
+                <NotificationButton
+                id={notification.id}
+                  icon={<Email />}
+                  label="Mark as Read"
+                />
               </div>
             </div>
           </div>

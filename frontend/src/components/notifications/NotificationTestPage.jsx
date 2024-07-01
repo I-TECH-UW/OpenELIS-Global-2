@@ -1,88 +1,144 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
-import { Button, Column, Grid, Heading, Loading, Section } from "@carbon/react";
-import { AlertDialog } from "../common/CustomNotification";
+import {
+  Button,
+  Column,
+  Grid,
+  Heading,
+  Section,
+  TextArea,
+} from "@carbon/react";
+import { FormattedMessage, useIntl } from "react-intl";
+import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import PageBreadCrumb from "../common/PageBreadCrumb";
-import { FormattedMessage } from "react-intl";
+import { NotificationContext } from "../layout/Layout";
+import AutoComplete from "../common/AutoComplete";
 
 export default function NotificationTestPage() {
   const [data, setData] = useState({
     message: "",
   });
 
+  const intl = useIntl();
+
+  const { notificationVisible, addNotification, setNotificationVisible } =
+    useContext(NotificationContext);
+
+  const [userId, setUserId] = useState(undefined);
+
+  const [users, setUsers] = useState([]);
+
   const submit = () => {
-    if (data.message.trim() !== "") {
-      postToOpenElisServer("/rest/notification", JSON.stringify(data), () => {
-        console.log("Success");
-      }).catch((error) => {
-        console.error("Error posting notification:", error);
-      });
+    console.log(data);
+
+    if (data.message.trim() !== "" && userId !== undefined) {
+      postToOpenElisServer(
+        `/rest/notification/${userId}`,
+        JSON.stringify(data),
+        (_) => {
+          addNotification({
+            title: intl.formatMessage({
+              id: "notification.title",
+            }),
+            message: intl.formatMessage({
+              id: `notify.user.success.notification`,
+            }),
+            kind: NotificationKinds.success,
+          });
+          setNotificationVisible(true);
+          setData({ message: "" });
+        },
+      );
     } else {
-      console.error("Message cannot be empty");
+      console.error("Message and user must be selected");
     }
   };
 
-  const getAllNotifications = () => {
-    getFromOpenElisServer("/rest/notifications", (response) => {
-      console.log(response);
-    }).catch((error) => {
-      console.error("Error getting notifications:", error);
-    });
+  const getUsers = async () => {
+    try {
+      getFromOpenElisServer("/rest/systemusers", (data) => {
+        console.log(data);
+        setUsers(data);
+      });
+    } catch (error) {
+      console.error("Error getting users:", error);
+    }
+  };
+
+  useEffect(() => {
+    getUsers();
+  }, []);
+
+  const handleUserAutoCompleteChange = (e) => {
+    // setData({ ...data, userId: parseInt(e.target.value) });
+    setUserId(e.target.value);
+  };
+
+  const handleUserAutoCompleteSelect = (id) => {
+    // setData({ ...data, userId: parseInt(id) });
+    setUserId(id);
   };
 
   return (
-    // <div
-    //   className="adminPageContent"
-    //   style={{
-    //     display: "flex",
-    //     flexDirection: "column",
+    <div className="adminPageContent">
+      {notificationVisible === true ? <AlertDialog /> : ""}
+      <PageBreadCrumb breadcrumbs={[{ label: "home.label", link: "/" }]} />
+      <Grid fullWidth={true}>
+        <Column lg={16} md={8} sm={4}>
+          <Section>
+            <Heading>
+              <FormattedMessage id="notify.main.title" />
+            </Heading>
+          </Section>
+        </Column>
+      </Grid>
 
-    //     padding: "20px",
-    //   }}
-    // >
-    //   <div style={{ marginBottom: "10px" }}>
-    //     <h1>User Notification</h1>
-    //   </div>
-
-    //   <Button onClick={getAllNotifications} style={{ marginBottom: "10px" }}>
-    //     Get Request
-    //   </Button>
-
-    //   <input
-    //     type="text"
-    //     name="message"
-    //     id="message"
-    //     value={data.message}
-    //     onChange={(e) => setData({ ...data, message: e.target.value })}
-    //     style={{ marginBottom: "10px" }}
-    //   />
-
-    //   <Button onClick={submit} style={{ marginBottom: "10px" }}>
-    //     Submit
-    //   </Button>
-    // </div>
-    <>
-      <div className="adminPageContent">
-        {false === true ? <AlertDialog /> : ""}
-        <PageBreadCrumb breadcrumbs={[{ label: "home.label", link: "/" }]} />
-        <Grid fullWidth={true}>
-          <Column lg={16} md={8} sm={4}>
-            <Section>
-              <Heading>
-                <FormattedMessage id="notify.main.title" />
-              </Heading>
-            </Section>
+      <div className="orderLegendBody">
+        <Column lg={8} md={4} sm={4}>
+          <TextArea
+            type="text"
+            labelText="Message"
+            name="message"
+            id="message"
+            required
+            value={data.message}
+            onChange={(e) => setData({ ...data, message: e.target.value })}
+            style={{
+              padding: "10px",
+              boxSizing: "border-box",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              marginBottom: "20px",
+            }}
+          />
+        </Column>
+        <div style={{ marginBottom: "20px" }}>
+          <label
+            htmlFor="user"
+            style={{ display: "block", marginBottom: "5px" }}
+          >
+            <FormattedMessage id="notify.user.by" />
+            <span style={{ color: "red", marginLeft: "5px" }}>*</span>
+          </label>
+          <Column lg={8} md={4} sm={4}>
+            <AutoComplete
+              id="user"
+              name="user"
+              style={{ marginBottom: "20px" }}
+              suggestions={users.map((user) => ({
+                id: user.id,
+                value: user.displayName,
+              }))}
+              onChange={handleUserAutoCompleteChange}
+              onSelect={handleUserAutoCompleteSelect}
+              required
+            />
           </Column>
-        </Grid>
-        {false && <Loading />} {"" && <p>Error: {""}</p>}{" "}
-        <div className="orderLegendBody">
-          <div style={{ marginLeft: "2em" }} className="inlineDiv">
-            <Button type="submit" onClick={() => {}}>
-              <FormattedMessage id="button.send"   />
-            </Button>
-          </div>
         </div>
+        <Button onClick={submit} style={{ marginBottom: "20px" }}>
+          Submit
+        </Button>
       </div>
-    </>
+    </div>
   );
 }
