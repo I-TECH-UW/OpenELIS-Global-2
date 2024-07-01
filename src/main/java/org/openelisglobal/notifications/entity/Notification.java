@@ -26,7 +26,6 @@ public class Notification {
   @JoinColumn(name = "user_id", nullable = false)
   private SystemUser user;
 
-  // Getters and setters
   public Long getId() {
     return id;
   }

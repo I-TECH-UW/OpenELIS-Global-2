@@ -8,11 +8,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class NotifcationDAOImpl implements NotificationDAO {
+public class NotificationDAOImpl implements NotificationDAO {
 
   private final EntityManager entityManager;
 
-  public NotifcationDAOImpl(EntityManager entityManager) {
+  public NotificationDAOImpl(EntityManager entityManager) {
 
     this.entityManager = entityManager;
   }
@@ -32,6 +32,11 @@ public class NotifcationDAOImpl implements NotificationDAO {
   }
 
   @Override
+  public Notification getNotificationById(Long id) {
+    return entityManager.find(Notification.class, id);
+  }
+
+  @Override
   public List<Notification> getNotificationsByUserId(Long userId) {
     return entityManager
         .createQuery(
@@ -39,6 +44,17 @@ public class NotifcationDAOImpl implements NotificationDAO {
             Notification.class)
         .setParameter("userId", userId)
         .getResultList();
+  }
+
+  @Override
+  @Transactional
+  public void updateNotification(Notification notification) {
+    try {
+      entityManager.merge(notification);
+    } catch (Exception e) {
+      // TODO: handle exception
+
+    }
   }
 
   @Override

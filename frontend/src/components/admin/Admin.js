@@ -261,8 +261,7 @@ function Admin() {
         />
       </PathRoute>
       <PathRoute path="#NotifyUser">
-        <NotificationTestPage
-        />
+        <NotificationTestPage />
       </PathRoute>
       <PathRoute path="#PrintedReportsConfigurationMenu">
         <ConfigMenuDisplay

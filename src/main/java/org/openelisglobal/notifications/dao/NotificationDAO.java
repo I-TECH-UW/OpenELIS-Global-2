@@ -12,7 +12,9 @@ public interface NotificationDAO {
 
   List<Notification> getNotificationsByUserId(Long userId);
 
-  List<SystemUser> getSystemUsers();
+  Notification getNotificationById(Long id);
 
-  // Set<Notification> getNotificationsByUserId(Long userId);
+  void updateNotification(Notification notification);
+
+  List<SystemUser> getSystemUsers();
 }
