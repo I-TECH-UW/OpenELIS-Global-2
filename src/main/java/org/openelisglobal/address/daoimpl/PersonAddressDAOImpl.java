@@ -36,10 +36,11 @@ public class PersonAddressDAOImpl extends BaseDAOImpl<PersonAddress, AddressPK> 
     @Override
     public List<PersonAddress> getAddressPartsByPersonId(String personId) throws LIMSRuntimeException {
         String sql = "from PersonAddress pa where pa.compoundId.targetId = :personId";
-
+      
         try {
             Query<PersonAddress> query = entityManager.unwrap(Session.class).createQuery(sql, PersonAddress.class);
-            query.setParameter("personId", Integer.parseInt(personId));
+            query.setParameter("personId", personId);
+
             List<PersonAddress> addressPartList = query.list();
             return addressPartList;
         } catch (HibernateException e) {
