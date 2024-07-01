@@ -32,6 +32,7 @@ const PatientHeader = (props) => {
             {id ? (
               <div className={className}>
                 <Grid>
+                  GC
                   <Column lg={4} md={2} sm={2}>
                     <div
                       className={
