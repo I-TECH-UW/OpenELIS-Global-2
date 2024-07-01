@@ -60,9 +60,15 @@ public class CalculatedValueRestController {
     @PostMapping(value = "deactivate-test-calculation/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public void deactivateReflexRule(@PathVariable Integer id) {
-        Calculation calculation = testCalculationService.get(id);
-        calculation.setActive(false);
-        testCalculationService.update(calculation);
+        try {
+            Calculation calculation = testCalculationService.get(id);
+            calculation.setActive(false);
+            testCalculationService.update(calculation);
+
+        } catch (Exception e) {
+
+        }
+
     }
 
     @GetMapping(value = "test-calculations", produces = MediaType.APPLICATION_JSON_VALUE)

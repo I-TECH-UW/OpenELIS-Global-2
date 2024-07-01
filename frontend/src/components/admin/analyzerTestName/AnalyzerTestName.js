@@ -116,10 +116,18 @@ function AnalyzerTestName() {
     );
   };
 
+  const fetchDropdownDatatestlist = async () => {
+    getFromOpenElisServer("/rest/test-list", handleDropDownTestList);
+  };
+
+  function handleDropDownTestList(response) {
+    setTestList(response);
+  }
+
   function handleDropDown(response) {
     if (response) {
       setAnalyzerList(response.analyzerList || []);
-      setTestList(response.testList || []);
+      // setTestList(response.testList || []);
     }
   }
 
@@ -194,6 +202,7 @@ function AnalyzerTestName() {
     setSelectedTest(null);
     setSelectedTestId(null);
     fetchDropdownData();
+    fetchDropdownDatatestlist();
     setIsAddModalOpen(true);
   };
 
@@ -203,6 +212,7 @@ function AnalyzerTestName() {
 
   const openUpdateModal = (AnalyzerId) => {
     fetchDropdownData();
+    fetchDropdownDatatestlist();
     setIsUpdateModalOpen(true);
   };
 
@@ -375,7 +385,7 @@ function AnalyzerTestName() {
             id="test-dropdown"
             titleText={intl.formatMessage({ id: "label.actualTestName" })}
             items={testList}
-            itemToString={(item) => (item ? item.name : "")}
+            itemToString={(item) => (item ? item.value : "")}
             selectedItem={selectedTest}
             onChange={({ selectedItem }) => {
               setSelectedTest(selectedItem);
@@ -423,7 +433,7 @@ function AnalyzerTestName() {
             id="test-dropdown"
             titleText={intl.formatMessage({ id: "label.actualTestName" })}
             items={testList}
-            itemToString={(item) => (item ? item.name : "")}
+            itemToString={(item) => (item ? item.value : "")}
             selectedItem={selectedTest}
             onChange={({ selectedItem }) => {
               setSelectedTest(selectedItem);
