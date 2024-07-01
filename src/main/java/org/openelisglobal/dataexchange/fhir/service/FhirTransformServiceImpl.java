@@ -1,6 +1,9 @@
 package org.openelisglobal.dataexchange.fhir.service;
 
 import ca.uhn.fhir.model.api.TemporalPrecisionEnum;
+import ca.uhn.fhir.parser.DataFormatException;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.client.exceptions.FhirClientConnectionException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -109,6 +112,7 @@ import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
@@ -159,6 +163,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     private AddressPartService addressPartService;
     @Autowired
     private OrganizationService organizationService;
+    @Autowired
+    @Qualifier("clientRegistryFhirClient")
+    private IGenericClient crClient;
 
     private String ADDRESS_PART_VILLAGE_ID;
     private String ADDRESS_PART_COMMUNE_ID;
@@ -377,6 +384,18 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         FhirOperations fhirOperations = new FhirOperations();
         org.hl7.fhir.r4.model.Patient patient = transformToFhirPatient(patientInfo.getPatientPK());
         this.addToOperations(fhirOperations, tempIdGenerator, patient);
+
+        try {
+            crClient.create().resource(patient).execute();
+        } catch (FhirClientConnectionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof DataFormatException) {
+                LogEvent.logWarn(e.getMessage(), "create", "Client Registry responds with unsupported data format!");
+            } else {
+                throw e;
+            }
+        }
+
         Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
     }
 
