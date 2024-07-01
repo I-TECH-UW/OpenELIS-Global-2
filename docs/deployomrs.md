@@ -27,7 +27,7 @@ Start up the OpenELIS Update Task in `System Administration` → `Advanced Admin
 ![screen1](img/omrsoe1.png)
 
 ### OpenELIS Global 2.x
-1. Install OpenELIS Global 2.x using the instructions [HERE](../install)
+1. Install OpenELIS Global 2.x using the instructions [HERE](https://openmrs.atlassian.net/wiki/spaces/projects/pages/26936930/O3+Implementer+Documentation+Set+Up+Configure+Deploy)
 1. Navigate to the "results reporting" configuration: https://IPforyourserver:8443/OpenELIS-Global/ResultReportingConfiguration
 1. Move the radio button for Result Reporting to "Enable" and enter in the URL for the OpenMRS connection like in the example below. 
 	* Please note, the Test URL button may not respond to the FHIR module, so please disregard any errors if you click it.  
