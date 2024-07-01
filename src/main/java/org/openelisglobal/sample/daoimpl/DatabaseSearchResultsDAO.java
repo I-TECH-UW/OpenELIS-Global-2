@@ -27,29 +27,16 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.patientidentitytype.util.PatientIdentityTypeMap;
 import org.openelisglobal.sample.dao.SearchResultsDAO;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class SearchResultsDAOImp implements SearchResultsDAO {
+@Primary
+public class DatabaseSearchResultsDAO implements SearchResultsDAO {
 
     @PersistenceContext
     EntityManager entityManager;
-
-    private static final String FIRST_NAME_PARAM = "firstName";
-    private static final String LAST_NAME_PARAM = "lastName";
-    private static final String NATIONAL_ID_PARAM = "nationalID";
-    private static final String EXTERNAL_ID_PARAM = "externalID";
-    private static final String ST_NUMBER_PARAM = "stNumber";
-    private static final String SUBJECT_NUMBER_PARAM = "subjectNumber";
-    private static final String ID_PARAM = "id";
-    private static final String GUID = "guid";
-    private static final String DATE_OF_BIRTH = "dateOfBirth";
-    private static final String GENDER = "gender";
-
-    private static final String ID_TYPE_FOR_ST = "stNumberId";
-    private static final String ID_TYPE_FOR_SUBJECT_NUMBER = "subjectNumberId";
-    private static final String ID_TYPE_FOR_GUID = "guidId";
 
     @Override
     @SuppressWarnings("rawtypes")
