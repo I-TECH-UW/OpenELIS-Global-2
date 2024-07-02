@@ -18,6 +18,7 @@ const ActionPaginationButtonType = ({
   totalRecordCount,
   addButtonRedirectLink,
   modifyButtonRedirectLink,
+  otherParmsInLink,
   id,
   type,
 }) => {
@@ -60,7 +61,7 @@ const ActionPaginationButtonType = ({
                 <Button
                   onClick={() => {
                     if (selectedRowIds.length === 1) {
-                      const url = `${modifyButtonRedirectLink}${id}`;
+                      const url = `${modifyButtonRedirectLink}${id}${otherParmsInLink}`;
                       window.location.href = url;
                     }
                   }}
@@ -134,6 +135,7 @@ ActionPaginationButtonType.propTypes = {
   openUpdateModal: PropTypes.func,
   openAddModal: PropTypes.func,
   id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  otherParmsInLink: PropTypes.string,
   type: PropTypes.oneOf(["type1", "type2"]).isRequired,
 };
 

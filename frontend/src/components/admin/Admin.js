@@ -26,6 +26,7 @@ import {
   ContainerSoftware,
   BootVolumeAlt,
   Report,
+  User,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -40,11 +41,13 @@ import { CommonProperties } from "./menu/CommonProperties";
 import ConfigMenuDisplay from "./formEntry/common/ConfigMenuDisplay";
 import ProviderMenu from "./ProviderMenu/ProviderMenu";
 import BarcodeConfiguration from "./barcodeConfiguration/BarcodeConfiguration";
-import OrganizationManagament from "./OrganizationManagement/OrganizationManagement";
-import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModify.js";
 import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName.js";
 import PluginList from "./pluginFile/PluginFile.js";
 import ResultReportingConfiguration from "./ResultReportingConfiguration/ResultReportingConfiguration.js";
+import OrganizationManagement from "./OrganizationManagement/OrganizationManagement";
+import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModify";
+import UserManagement from "./userManagement/UserManagement";
+import UserAddModify from "./userManagement/UserAddModify";
 
 function Admin() {
   const intl = useIntl();
@@ -106,6 +109,9 @@ function Admin() {
           </SideNavLink>
           <SideNavLink renderIcon={Report} href="#resultReportingConfiguration">
             <FormattedMessage id="resultreporting.browse.title" />
+          </SideNavLink>
+          <SideNavLink renderIcon={User} href="#userManagement">
+            <FormattedMessage id="unifiedSystemUser.browser.title" />
           </SideNavLink>
           <SideNavMenu
             title={intl.formatMessage({ id: "sidenav.label.admin.menu" })}
@@ -196,13 +202,19 @@ function Admin() {
         <BarcodeConfiguration />
       </PathRoute>
       <PathRoute path="#organizationManagement">
-        <OrganizationManagament />
+        <OrganizationManagement />
       </PathRoute>
       <PathRoute path="#organizationEdit">
         <OrganizationAddModify />
       </PathRoute>
       <PathRoute path="#resultReportingConfiguration">
         <ResultReportingConfiguration />
+      </PathRoute>
+      <PathRoute path="#userManagement">
+        <UserManagement />
+      </PathRoute>
+      <PathRoute path="#userEdit">
+        <UserAddModify />
       </PathRoute>
       <PathRoute path="#globalMenuManagement">
         <GlobalMenuManagement />
