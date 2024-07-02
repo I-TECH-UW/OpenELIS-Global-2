@@ -1,7 +1,5 @@
 package org.openelisglobal.userrole.valueholder;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -57,9 +55,5 @@ public class LabUnitRoleMap {
 
     public void setRoles(Set<String> roles) {
         this.roles = roles;
-    }
-
-    public void setRoles(List<String> roles) {
-        this.roles = new HashSet<>(roles);
     }
 }

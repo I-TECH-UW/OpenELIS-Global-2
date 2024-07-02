@@ -109,41 +109,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void saveUserLabUnitRolesRest(SystemUser systemUser, Map<String, List<String>> selectedLabUnitRolesMap,
-            String loggedOnUserId) {
-        UserLabUnitRoles userLabUnitRoles = userRoleService.getUserLabUnitRoles(systemUser.getId());
-        Set<LabUnitRoleMap> labUnitRoleMaps;
-        if (userLabUnitRoles == null) {
-            userLabUnitRoles = new UserLabUnitRoles();
-            userLabUnitRoles.setId(Integer.valueOf(systemUser.getId()));
-            labUnitRoleMaps = new HashSet<>();
-        } else {
-            labUnitRoleMaps = userLabUnitRoles.getLabUnitRoleMap();
-            for (LabUnitRoleMap roleMap : labUnitRoleMaps) {
-                userRoleService.deleteLabUnitRoleMap(roleMap);
-            }
-            labUnitRoleMaps.clear();
-        }
-        Set<String> labUnitRoles = new HashSet<>();
-        for (String labUnit : selectedLabUnitRolesMap.keySet()) {
-            if (StringUtils.isNotEmpty(labUnit)) {
-                LabUnitRoleMap labUnitRoleMap = new LabUnitRoleMap();
-                labUnitRoleMap.setLabUnit(labUnit);
-                labUnitRoleMap.setRoles(new HashSet<>(selectedLabUnitRolesMap.get(labUnit)));
-                labUnitRoleMaps.add(labUnitRoleMap);
-                // for (String role : selectedLabUnitRolesMap.get(labUnit)) {
-                // labUnitRoles.add(role);
-                // }
-                labUnitRoles.addAll(selectedLabUnitRolesMap.get(labUnit));
-            }
-        }
-        userLabUnitRoles.setLabUnitRoleMap(labUnitRoleMaps);
-        userRoleService.saveOrUpdateUserLabUnitRoles(userLabUnitRoles);
-        updateUserRoles(labUnitRoles.stream().collect(Collectors.toList()), systemUser, loggedOnUserId, true);
-    }
-
-    @Override
-    @Transactional
     public UserLabUnitRoles getUserLabUnitRoles(String systemUserId) {
         return userRoleService.getUserLabUnitRoles(systemUserId);
     }
