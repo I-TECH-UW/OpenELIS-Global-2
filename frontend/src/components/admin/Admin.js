@@ -166,7 +166,7 @@ function Admin() {
           <SideNavLink href="#DictionaryMenu" renderIcon={CharacterWholeNumber}>
             <FormattedMessage id="dictionary.label.modify" />
           </SideNavLink>
-           <SideNavLink href="#NotifyUser" renderIcon={Bullhorn}>
+          <SideNavLink href="#NotifyUser" renderIcon={Bullhorn}>
             <FormattedMessage id="Notify User" />
           </SideNavLink>
           <SideNavLink
@@ -197,7 +197,7 @@ function Admin() {
       <PathRoute path="#providerMenu">
         <ProviderMenu />
       </PathRoute>
-        <PathRoute path="#NotifyUser">
+      <PathRoute path="#NotifyUser">
         <NotificationTestPage />
       </PathRoute>
       <PathRoute path="#barcodeConfiguration">

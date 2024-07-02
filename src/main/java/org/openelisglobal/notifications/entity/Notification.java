@@ -8,78 +8,67 @@ import org.openelisglobal.systemuser.valueholder.SystemUser;
 @Table(name = "notifications")
 public class Notification {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id")
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
-  @Column(name = "created_date", nullable = false)
-  private OffsetDateTime createdDate;
+    @Column(name = "created_date", nullable = false)
+    private OffsetDateTime createdDate;
 
-  @Column(name = "read_at")
-  private OffsetDateTime readAt;
+    @Column(name = "read_at")
+    private OffsetDateTime readAt;
 
-  @Column(name = "message", nullable = false)
-  private String message;
+    @Column(name = "message", nullable = false)
+    private String message;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
-  private SystemUser user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private SystemUser user;
 
-  public Long getId() {
-    return id;
-  }
+    public Long getId() {
+        return id;
+    }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-  public OffsetDateTime getCreatedDate() {
-    return createdDate;
-  }
+    public OffsetDateTime getCreatedDate() {
+        return createdDate;
+    }
 
-  public void setCreatedDate(OffsetDateTime createdDate) {
-    this.createdDate = createdDate;
-  }
+    public void setCreatedDate(OffsetDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
 
-  public OffsetDateTime getReadAt() {
-    return readAt;
-  }
+    public OffsetDateTime getReadAt() {
+        return readAt;
+    }
 
-  public void setReadAt(OffsetDateTime readAt) {
-    this.readAt = readAt;
-  }
+    public void setReadAt(OffsetDateTime readAt) {
+        this.readAt = readAt;
+    }
 
-  public String getMessage() {
-    return message;
-  }
+    public String getMessage() {
+        return message;
+    }
 
-  public void setMessage(String message) {
-    this.message = message;
-  }
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-  public SystemUser getUser() {
-    return user;
-  }
+    public SystemUser getUser() {
+        return user;
+    }
 
-  public void setUser(SystemUser user) {
-    this.user = user;
-  }
+    public void setUser(SystemUser user) {
+        this.user = user;
+    }
 
-  @Override
-  public String toString() {
-    return "Notification{"
-        + "id="
-        + id
-        + ", createdDate="
-        + createdDate
-        + ", readAt="
-        + readAt
-        + ", message='"
-        + message
-        + '\''
-        + ", user="
-        + (user != null ? user.toString() : "null")
-        + '}';
-  }
+    @Override
+    public String toString() {
+        return "Notification{" + "id=" + id + ", createdDate=" + createdDate + ", readAt=" + readAt + ", message='"
+                + message + '\'' + ", user=" + (user != null ? user.toString() : "null") + '}';
+    }
 }

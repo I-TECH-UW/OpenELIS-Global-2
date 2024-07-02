@@ -6,15 +6,15 @@ import org.openelisglobal.systemuser.valueholder.SystemUser;
 
 public interface NotificationDAO {
 
-  void save(Notification notification);
+    void save(Notification notification);
 
-  List<Notification> getNotifications();
+    List<Notification> getNotifications();
 
-  List<Notification> getNotificationsByUserId(Long userId);
+    List<Notification> getNotificationsByUserId(Long userId);
 
-  Notification getNotificationById(Long id);
+    Notification getNotificationById(Long id);
 
-  void updateNotification(Notification notification);
+    void updateNotification(Notification notification);
 
-  List<SystemUser> getSystemUsers();
+    List<SystemUser> getSystemUsers();
 }

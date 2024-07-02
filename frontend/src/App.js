@@ -256,7 +256,7 @@ export default function App() {
                   role=""
                   labUnitRole={{ Immunohistochemistry: ["Results"] }}
                 />
-                 <SecureRoute
+                <SecureRoute
                   path="/NotificationTestPage"
                   exact
                   component={() => <NotificationTestPage />}

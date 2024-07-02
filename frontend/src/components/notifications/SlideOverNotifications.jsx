@@ -151,7 +151,7 @@ export default function SlideOverNotifications() {
                 }}
               >
                 <NotificationButton
-                id={notification.id}
+                  id={notification.id}
                   icon={<Email />}
                   label="Mark as Read"
                 />

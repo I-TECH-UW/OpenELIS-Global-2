@@ -26,7 +26,7 @@ export const getFromOpenElisServer = (endPoint, callback) => {
     })
     .catch((error) => {
       console.error(error);
-    }); 
+    });
 };
 
 export const postToOpenElisServer = (
@@ -183,7 +183,6 @@ export const postToOpenElisServerForPDF = (endPoint, payLoad, callback) => {
     });
 };
 
-
 export const putToOpenElisServer = (endPoint, payLoad, callback) => {
   // Build the request options
   let options = {
@@ -210,10 +209,6 @@ export const putToOpenElisServer = (endPoint, payLoad, callback) => {
       console.error(error);
     });
 };
-
-
-
-
 
 export const hasRole = (userSessionDetails, role) => {
   return userSessionDetails.roles && userSessionDetails.roles.includes(role);
@@ -310,10 +305,9 @@ export function getDifferenceInDays(date1, date2) {
   return dayDifference;
 }
 
-
 export function formatTimestamp(timestamp) {
   // Convert the timestamp to milliseconds and create a Date object
-  const date = new Date(timestamp * 1000); 
+  const date = new Date(timestamp * 1000);
 
   // Extract and format components
   const hours = date.getUTCHours();
@@ -323,13 +317,13 @@ export function formatTimestamp(timestamp) {
   const year = date.getUTCFullYear();
 
   // Determine AM or PM and format hours
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  const formattedHours = (hours % 12 || 12).toString().padStart(2, '0');
-  const formattedMinutes = minutes.toString().padStart(2, '0');
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const formattedHours = (hours % 12 || 12).toString().padStart(2, "0");
+  const formattedMinutes = minutes.toString().padStart(2, "0");
 
   // Format day and month
-  const formattedDay = day.toString().padStart(2, '0');
-  const formattedMonth = month.toString().padStart(2, '0');
+  const formattedDay = day.toString().padStart(2, "0");
+  const formattedMonth = month.toString().padStart(2, "0");
 
   // Combine and return the formatted string
   return `${formattedHours}:${formattedMinutes} ${ampm}; ${formattedDay}/${formattedMonth}/${year}`;
