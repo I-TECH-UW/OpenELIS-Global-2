@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import org.json.JSONArray;
@@ -300,13 +301,13 @@ public class UnifiedSystemUserForm extends BaseForm {
         this.allowCopyUserRoles = allowCopyUserRoles;
     }
 
-    private Map<String, List<String>> selectedTestSectionLabUnits = new HashMap<>();
+    private Map<String, Set<String>> selectedTestSectionLabUnits = new HashMap<>();
 
-    public Map<String, List<String>> getSelectedTestSectionLabUnits() {
+    public Map<String, Set<String>> getSelectedTestSectionLabUnits() {
         return selectedTestSectionLabUnits;
     }
 
-    public void setSelectedTestSectionLabUnits(Map<String, List<String>> selectedTestSectionLabUnits) {
+    public void setSelectedTestSectionLabUnits(Map<String, Set<String>> selectedTestSectionLabUnits) {
         this.selectedTestSectionLabUnits = selectedTestSectionLabUnits;
     }
 }

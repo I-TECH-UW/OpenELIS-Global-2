@@ -652,12 +652,12 @@ public class UnifiedSystemUserRestController extends BaseController {
     }
 
     private void saveUserLabUnitRoles(SystemUser user, UnifiedSystemUserForm form, String loggedOnUserId) {
-        Map<String, List<String>> selectedLabUnitRolesMap = form.getSelectedTestSectionLabUnits();
+        Map<String, Set<String>> selectedLabUnitRolesMap = form.getSelectedTestSectionLabUnits();
         // parseUserLabRolesData(form, selectedLabUnitRolesMap);
 
         System.out.println("selectedLabUnitRolesMap" + selectedLabUnitRolesMap);
 
-        userService.saveUserLabUnitRolesRest(user, selectedLabUnitRolesMap, loggedOnUserId);
+        userService.saveUserLabUnitRoles(user, selectedLabUnitRolesMap, loggedOnUserId);
     }
 
     // private void setLabunitRolesForExistingUser(UnifiedSystemUserForm form) {
@@ -701,15 +701,15 @@ public class UnifiedSystemUserRestController extends BaseController {
             }
             form.setUserLabRoleData(userLabData);
 
-            Map<String, List<String>> userTestSectionLabUnits = new HashMap<>();
+            Map<String, Set<String>> userTestSectionLabUnits = new HashMap<>();
             if (userLabUnits.contains(ALL_LAB_UNITS)) {
                 roleMaps.stream().filter(map -> map.getLabUnit().equals(ALL_LAB_UNITS))
-                        .forEach(map -> userTestSectionLabUnits.put(map.getLabUnit(), map.getRoles().stream()
-                                .map(r -> roleService.getRoleById(r).getId().trim()).collect(Collectors.toList())));
+                        .forEach(map -> userTestSectionLabUnits.put(map.getLabUnit(), new HashSet<>(map.getRoles())));
             } else {
                 for (LabUnitRoleMap map : roleMaps) {
-                    userTestSectionLabUnits.put(testSectionService.get(map.getLabUnit()).getId(), map.getRoles()
-                            .stream().map(r -> roleService.getRoleById(r).getId().trim()).collect(Collectors.toList()));
+                    userTestSectionLabUnits.put(testSectionService.get(map.getLabUnit()).getId(),
+                            new HashSet<>(map.getRoles().stream().map(r -> roleService.getRoleById(r).getId().trim())
+                                    .collect(Collectors.toList())));
                 }
             }
 
