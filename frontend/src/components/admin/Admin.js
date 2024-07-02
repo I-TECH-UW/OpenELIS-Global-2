@@ -194,6 +194,9 @@ function Admin() {
       <PathRoute path="#providerMenu">
         <ProviderMenu />
       </PathRoute>
+        <PathRoute path="#NotifyUser">
+        <NotificationTestPage />
+      </PathRoute>
       <PathRoute path="#barcodeConfiguration">
         <BarcodeConfiguration />
       </PathRoute>

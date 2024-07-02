@@ -263,6 +263,12 @@ export default function App() {
                   role=""
                   labUnitRole={{ Immunohistochemistry: ["Results"] }}
                 />
+                 <SecureRoute
+                  path="/NotificationTestPage"
+                  exact
+                  component={() => <NotificationTestPage />}
+                  role="Results"
+                />
                 <SecureRoute
                   path="/CytologyDashboard"
                   exact
