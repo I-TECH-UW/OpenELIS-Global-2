@@ -724,11 +724,17 @@ public class UnifiedSystemUserRestController extends BaseController {
          * Roles Set to identify the distinct values for each set . This method parses
          * the data from the form ,and builds a Map ie <String testSectionId
          * ,Set<LabUnitRoles>> for each Lab Unit Role Set based on the suffix appended
-         * ie testSectionId = "1=2,2=5,2=6" ,selectedLabUnitRoles = [1=56, 2=36 ,3=44]
+         * ie testSectionId = "1=2,2=5,3=6" ,selectedLabUnitRoles = [1=56, 2=36 ,3=44]
          */
 
-        String labUnitEntryMapString = form.getTestSectionId();
-        List<String> labUnitsRolesEntryMaps = form.getSelectedLabUnitRoles();
+         String transformedLabUnitEntryMapString = transformLabUnitEntryMap(form.getSelectedTestSectionLabUnits());
+         List<String> transformedLabUnitsRolesEntryMaps = transformLabUnitsRolesEntryMaps(form.getSelectedTestSectionLabUnits());
+
+         System.out.println("transformedLabUnitEntryMapString" + transformedLabUnitEntryMapString);
+         System.out.println("transformedLabUnitsRolesEntryMaps" + transformedLabUnitsRolesEntryMaps);
+ 
+         String labUnitEntryMapString = transformedLabUnitEntryMapString;
+         List<String> labUnitsRolesEntryMaps = transformedLabUnitsRolesEntryMaps;
 
         List<String> entries = new ArrayList<>();
         List<String> labUnitsEntryMap = new ArrayList<>();
@@ -767,6 +773,32 @@ public class UnifiedSystemUserRestController extends BaseController {
                     .forEach(testScetion -> allTestSectionIds.add(testScetion.getId()));
             allTestSectionIds.forEach(testScetionId -> selectedLabUnitRolesMap.put(testScetionId, labRolesId));
         }
+    }
+
+    private String transformLabUnitEntryMap(Map<String, List<String>> labUnitEntryMap) {
+        StringBuilder labUnitEntryMapStringBuilder = new StringBuilder();
+        int sectionId = 1;
+        for (Map.Entry<String, List<String>> entry : labUnitEntryMap.entrySet()) {
+            List<String> labUnitRoles = entry.getValue();
+            for (String labUnitRole : labUnitRoles) {
+                labUnitEntryMapStringBuilder.append(sectionId).append("=").append(labUnitRole).append(",");
+            }
+            sectionId++;
+        }
+        if (labUnitEntryMapStringBuilder.length() > 0) {
+            labUnitEntryMapStringBuilder.setLength(labUnitEntryMapStringBuilder.length() - 1);
+        }
+        return labUnitEntryMapStringBuilder.toString();
+    }
+
+    private List<String> transformLabUnitsRolesEntryMaps(Map<String, List<String>> labUnitEntryMap) {
+        List<String> labUnitsRolesEntryMaps = new ArrayList<>();
+        int sectionId = 1;
+        for (String key : labUnitEntryMap.keySet()) {
+            labUnitsRolesEntryMaps.add(sectionId + "=" + key);
+            sectionId++;
+        }
+        return labUnitsRolesEntryMaps;
     }
 
     private JSONArray getDisplaySystemUsersJsonArray() {
