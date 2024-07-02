@@ -4,7 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+
+import org.junit.After;
 import org.junit.runner.RunWith;
+import org.openelisglobal.patient.service.PatientService;
+import org.openelisglobal.person.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.ActiveProfiles;
@@ -26,6 +30,13 @@ public abstract class BaseWebContextSensitiveTest {
     @Autowired
     protected WebApplicationContext webApplicationContext;
 
+    @Autowired
+    PatientService patientService;
+
+    @Autowired
+    PersonService personService;
+
+
     protected MockMvc mockMvc;
 
     protected void setUp() {
@@ -43,5 +54,12 @@ public abstract class BaseWebContextSensitiveTest {
         ObjectMapper objectMapper = jsonConverter.getObjectMapper();
         objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
         return objectMapper.readValue(json, clazz);
+    }
+
+
+    @After
+    public void tearDown() {
+        patientService.deleteAll(patientService.getAll());
+        personService.deleteAll(personService.getAll());
     }
 }
