@@ -15,33 +15,33 @@ package org.openelisglobal.reports.send.sample.valueholder;
 
 public class TestingFacilityXmit extends org.openelisglobal.provider.valueholder.Provider {
 
-  private String organizationName;
+    private String organizationName;
 
-  private String universalId;
+    private String universalId;
 
-  private String universalIdType;
+    private String universalIdType;
 
-  public String getOrganizationName() {
-    return organizationName;
-  }
+    public String getOrganizationName() {
+        return organizationName;
+    }
 
-  public void setOrganizationName(String organizationName) {
-    this.organizationName = organizationName;
-  }
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
 
-  public String getUniversalId() {
-    return universalId;
-  }
+    public String getUniversalId() {
+        return universalId;
+    }
 
-  public void setUniversalId(String universalId) {
-    this.universalId = universalId;
-  }
+    public void setUniversalId(String universalId) {
+        this.universalId = universalId;
+    }
 
-  public String getUniversalIdType() {
-    return universalIdType;
-  }
+    public String getUniversalIdType() {
+        return universalIdType;
+    }
 
-  public void setUniversalIdType(String universalIdType) {
-    this.universalIdType = universalIdType;
-  }
+    public void setUniversalIdType(String universalIdType) {
+        this.universalIdType = universalIdType;
+    }
 }

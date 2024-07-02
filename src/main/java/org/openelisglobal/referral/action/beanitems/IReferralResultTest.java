@@ -15,43 +15,43 @@ package org.openelisglobal.referral.action.beanitems;
 
 public interface IReferralResultTest {
 
-  public abstract void setReferredTestId(String referredTestId);
+    public abstract void setReferredTestId(String referredTestId);
 
-  public abstract String getReferredTestId();
+    public abstract String getReferredTestId();
 
-  public abstract String getReferredTestIdShadow();
+    public abstract String getReferredTestIdShadow();
 
-  public abstract void setReferredTestIdShadow(String referredTestIdShadow);
+    public abstract void setReferredTestIdShadow(String referredTestIdShadow);
 
-  public abstract String getReferredResult();
+    public abstract String getReferredResult();
 
-  public abstract void setReferredResult(String referredResult);
+    public abstract void setReferredResult(String referredResult);
 
-  public abstract String getReferredResultType();
+    public abstract String getReferredResultType();
 
-  public abstract void setReferredResultType(String referredResultType);
+    public abstract void setReferredResultType(String referredResultType);
 
-  public abstract String getReferredReportDate();
+    public abstract String getReferredReportDate();
 
-  public abstract void setReferredReportDate(String referredReportDate);
+    public abstract void setReferredReportDate(String referredReportDate);
 
-  public abstract String getReferralResultId();
+    public abstract String getReferralResultId();
 
-  public abstract void setReferralResultId(String id);
+    public abstract void setReferralResultId(String id);
 
-  public abstract void setReferredDictionaryResult(String id);
+    public abstract void setReferredDictionaryResult(String id);
 
-  public abstract String getReferredDictionaryResult();
+    public abstract String getReferredDictionaryResult();
 
-  public abstract String getReferredMultiDictionaryResult();
+    public abstract String getReferredMultiDictionaryResult();
 
-  public abstract void setReferredMultiDictionaryResult(String multiResultValue);
+    public abstract void setReferredMultiDictionaryResult(String multiResultValue);
 
-  public abstract String getReferralId();
+    public abstract String getReferralId();
 
-  public abstract void setReferralId(String referralId);
+    public abstract void setReferralId(String referralId);
 
-  public abstract String getMultiSelectResultValues();
+    public abstract String getMultiSelectResultValues();
 
-  public abstract void setMultiSelectResultValues(String multiSelectResultValues);
+    public abstract void setMultiSelectResultValues(String multiSelectResultValues);
 }

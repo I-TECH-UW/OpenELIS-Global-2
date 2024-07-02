@@ -17,47 +17,47 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class Scriptlet extends BaseObject<String> {
 
-  private String id;
+    private String id;
 
-  private String scriptletName;
+    private String scriptletName;
 
-  private String codeType;
+    private String codeType;
 
-  private String codeSource;
+    private String codeSource;
 
-  public Scriptlet() {
-    super();
-  }
+    public Scriptlet() {
+        super();
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public String getScriptletName() {
-    return scriptletName;
-  }
+    public String getScriptletName() {
+        return scriptletName;
+    }
 
-  public void setScriptletName(String scriptletName) {
-    this.scriptletName = scriptletName;
-  }
+    public void setScriptletName(String scriptletName) {
+        this.scriptletName = scriptletName;
+    }
 
-  public String getCodeSource() {
-    return codeSource;
-  }
+    public String getCodeSource() {
+        return codeSource;
+    }
 
-  public void setCodeSource(String codeSource) {
-    this.codeSource = codeSource;
-  }
+    public void setCodeSource(String codeSource) {
+        this.codeSource = codeSource;
+    }
 
-  public String getCodeType() {
-    return codeType;
-  }
+    public String getCodeType() {
+        return codeType;
+    }
 
-  public void setCodeType(String codeType) {
-    this.codeType = codeType;
-  }
+    public void setCodeType(String codeType) {
+        this.codeType = codeType;
+    }
 }

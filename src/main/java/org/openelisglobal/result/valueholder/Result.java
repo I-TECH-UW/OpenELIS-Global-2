@@ -27,197 +27,197 @@ import org.springframework.beans.factory.annotation.Value;
 
 public class Result extends EnumValueItemImpl {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String id;
-  private UUID fhirUuid;
-  private ValueHolderInterface analysis;
-  private ValueHolderInterface analyte;
-  private ValueHolderInterface testResult;
-  private String sortOrder;
-  private String isReportable;
-  private String resultType;
-  private String value;
-  private Double minNormal;
-  private Double maxNormal;
-  private int significantDigits;
-  private ValueHolder parentResult;
-  private int grouping;
+    private String id;
+    private UUID fhirUuid;
+    private ValueHolderInterface analysis;
+    private ValueHolderInterface analyte;
+    private ValueHolderInterface testResult;
+    private String sortOrder;
+    private String isReportable;
+    private String resultType;
+    private String value;
+    private Double minNormal;
+    private Double maxNormal;
+    private int significantDigits;
+    private ValueHolder parentResult;
+    private int grouping;
 
-  @Value("${viralload.limit.low:49}")
-  private Integer virralloadLowLimit;
+    @Value("${viralload.limit.low:49}")
+    private Integer virralloadLowLimit;
 
-  private Event resultEvent;
+    private Event resultEvent;
 
-  public Result() {
-    super();
-    analysis = new ValueHolder();
-    analyte = new ValueHolder();
-    testResult = new ValueHolder();
-    parentResult = new ValueHolder();
-  }
-
-  public Analysis getAnalysis() {
-    return (Analysis) this.analysis.getValue();
-  }
-
-  public void setAnalysis(Analysis analysis) {
-    this.analysis.setValue(analysis);
-  }
-
-  public Analyte getAnalyte() {
-    return (Analyte) this.analyte.getValue();
-  }
-
-  public void setAnalyte(Analyte analyte) {
-    this.analyte.setValue(analyte);
-  }
-
-  public String getIsReportable() {
-    return isReportable;
-  }
-
-  public void setIsReportable(String isReportable) {
-    this.isReportable = isReportable;
-  }
-
-  public String getResultType() {
-    return resultType;
-  }
-
-  public void setResultType(String resultType) {
-    this.resultType = resultType;
-  }
-
-  @Override
-  public String getSortOrder() {
-    return sortOrder;
-  }
-
-  @Override
-  public void setSortOrder(String sortOrder) {
-    this.sortOrder = sortOrder;
-  }
-
-  public TestResult getTestResult() {
-    return (TestResult) this.testResult.getValue();
-  }
-
-  public void setTestResult(TestResult testResult) {
-    this.testResult.setValue(testResult);
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  public String getValue(Boolean getActualNumericValue) {
-    if (getActualNumericValue) {
-      if ((this.resultType.equals("N")) && this.value != null) {
-        return StringUtil.getActualNumericValue(value);
-      }
-    }
-    return value;
-  }
-
-  @JsonIgnore
-  public long getVLValueAsNumber() {
-    long finalResult = 0;
-    String workingResult = value.split("\\(")[0].trim();
-    if (workingResult.toLowerCase().contains("log7") || workingResult.contains(">")) {
-      finalResult = 10000000;
-    } else if (workingResult.toUpperCase().contains("LL") || workingResult.contains("<")) {
-      finalResult = virralloadLowLimit;
-    } else {
-      try {
-        finalResult = Long.parseLong(workingResult.replaceAll("[^0-9]", ""));
-      } catch (Exception e) {
-        finalResult = -1;
-      }
+    public Result() {
+        super();
+        analysis = new ValueHolder();
+        analyte = new ValueHolder();
+        testResult = new ValueHolder();
+        parentResult = new ValueHolder();
     }
 
-    return finalResult;
-  }
+    public Analysis getAnalysis() {
+        return (Analysis) this.analysis.getValue();
+    }
 
-  public void setValue(String value) {
-    this.value = value;
-  }
+    public void setAnalysis(Analysis analysis) {
+        this.analysis.setValue(analysis);
+    }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
+    public Analyte getAnalyte() {
+        return (Analyte) this.analyte.getValue();
+    }
 
-  @Override
-  public String getId() {
-    return this.id;
-  }
+    public void setAnalyte(Analyte analyte) {
+        this.analyte.setValue(analyte);
+    }
 
-  public Double getMinNormal() {
-    return minNormal;
-  }
+    public String getIsReportable() {
+        return isReportable;
+    }
 
-  public void setMinNormal(Double minNormal) {
-    this.minNormal = minNormal;
-  }
+    public void setIsReportable(String isReportable) {
+        this.isReportable = isReportable;
+    }
 
-  public Double getMaxNormal() {
-    return maxNormal;
-  }
+    public String getResultType() {
+        return resultType;
+    }
 
-  public void setMaxNormal(Double maxNormal) {
-    this.maxNormal = maxNormal;
-  }
+    public void setResultType(String resultType) {
+        this.resultType = resultType;
+    }
 
-  public int getSignificantDigits() {
-    return significantDigits;
-  }
+    @Override
+    public String getSortOrder() {
+        return sortOrder;
+    }
 
-  public void setSignificantDigits(int significantDigits) {
-    this.significantDigits = significantDigits;
-  }
+    @Override
+    public void setSortOrder(String sortOrder) {
+        this.sortOrder = sortOrder;
+    }
 
-  public Result getParentResult() {
-    return (Result) parentResult.getValue();
-  }
+    public TestResult getTestResult() {
+        return (TestResult) this.testResult.getValue();
+    }
 
-  public void setParentResult(Result parentResult) {
-    this.parentResult.setValue(parentResult);
-  }
+    public void setTestResult(TestResult testResult) {
+        this.testResult.setValue(testResult);
+    }
 
-  public int getGrouping() {
-    return grouping;
-  }
+    public String getValue() {
+        return value;
+    }
 
-  public void setGrouping(int grouping) {
-    this.grouping = grouping;
-  }
+    public String getValue(Boolean getActualNumericValue) {
+        if (getActualNumericValue) {
+            if ((this.resultType.equals("N")) && this.value != null) {
+                return StringUtil.getActualNumericValue(value);
+            }
+        }
+        return value;
+    }
 
-  public Event getResultEvent() {
-    return resultEvent;
-  }
+    @JsonIgnore
+    public long getVLValueAsNumber() {
+        long finalResult = 0;
+        String workingResult = value.split("\\(")[0].trim();
+        if (workingResult.toLowerCase().contains("log7") || workingResult.contains(">")) {
+            finalResult = 10000000;
+        } else if (workingResult.toUpperCase().contains("LL") || workingResult.contains("<")) {
+            finalResult = virralloadLowLimit;
+        } else {
+            try {
+                finalResult = Long.parseLong(workingResult.replaceAll("[^0-9]", ""));
+            } catch (Exception e) {
+                finalResult = -1;
+            }
+        }
 
-  public void setResultEvent(Event resultEvent) {
-    this.resultEvent = resultEvent;
-  }
+        return finalResult;
+    }
 
-  public UUID getFhirUuid() {
-    return fhirUuid;
-  }
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-  public void setFhirUuid(UUID fhirUuid) {
-    this.fhirUuid = fhirUuid;
-  }
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getFhirUuidAsString() {
-    return fhirUuid == null ? "" : fhirUuid.toString();
-  }
+    @Override
+    public String getId() {
+        return this.id;
+    }
 
-  public Integer getVirralloadLowLimit() {
-    return virralloadLowLimit;
-  }
+    public Double getMinNormal() {
+        return minNormal;
+    }
 
-  public void setVirralloadLowLimit(Integer virralloadLowLimit) {
-    this.virralloadLowLimit = virralloadLowLimit;
-  }
+    public void setMinNormal(Double minNormal) {
+        this.minNormal = minNormal;
+    }
+
+    public Double getMaxNormal() {
+        return maxNormal;
+    }
+
+    public void setMaxNormal(Double maxNormal) {
+        this.maxNormal = maxNormal;
+    }
+
+    public int getSignificantDigits() {
+        return significantDigits;
+    }
+
+    public void setSignificantDigits(int significantDigits) {
+        this.significantDigits = significantDigits;
+    }
+
+    public Result getParentResult() {
+        return (Result) parentResult.getValue();
+    }
+
+    public void setParentResult(Result parentResult) {
+        this.parentResult.setValue(parentResult);
+    }
+
+    public int getGrouping() {
+        return grouping;
+    }
+
+    public void setGrouping(int grouping) {
+        this.grouping = grouping;
+    }
+
+    public Event getResultEvent() {
+        return resultEvent;
+    }
+
+    public void setResultEvent(Event resultEvent) {
+        this.resultEvent = resultEvent;
+    }
+
+    public UUID getFhirUuid() {
+        return fhirUuid;
+    }
+
+    public void setFhirUuid(UUID fhirUuid) {
+        this.fhirUuid = fhirUuid;
+    }
+
+    public String getFhirUuidAsString() {
+        return fhirUuid == null ? "" : fhirUuid.toString();
+    }
+
+    public Integer getVirralloadLowLimit() {
+        return virralloadLowLimit;
+    }
+
+    public void setVirralloadLowLimit(Integer virralloadLowLimit) {
+        this.virralloadLowLimit = virralloadLowLimit;
+    }
 }

@@ -6,5 +6,5 @@ import org.openelisglobal.qaevent.valueholder.NceType;
 
 public interface NceTypeService extends BaseObjectService<NceType, String> {
 
-  List<NceType> getAllNceTypes();
+    List<NceType> getAllNceTypes();
 }

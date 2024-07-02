@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import {
-  Form,
   Heading,
   Button,
   Loading,
@@ -37,10 +36,16 @@ import {
 } from "../../common/CustomNotification.js";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
+import { ArrowLeft, ArrowRight } from "@carbon/icons-react";
+import ActionPaginationButtonType from "../../common/ActionPaginationButtonType.js";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
-  // { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  {
+    label: "provider.browse.title",
+    link: "/MasterListsPage#providerMenu",
+  },
 ];
 function ProviderMenu() {
   const { notificationVisible, setNotificationVisible, addNotification } =
@@ -51,21 +56,23 @@ function ProviderMenu() {
 
   const componentMounted = useRef(false);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [modifyButton, setModifyButton] = useState(true);
+  const [deactivateButton, setDeactivateButton] = useState(true);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
-  const [isEveryRowIsChecked, setIsEveryRowIsChecked] = useState(false);
-  const [rowsIsPartiallyChecked, setRowsIsPartiallyChecked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
   const [panelSearchTerm, setPanelSearchTerm] = useState("");
   const [searchedProviderMenuList, setSearchedProviderMenuList] = useState([]);
   const [serachedProviderMenuListShow, setSearchedProviderMenuListShow] =
     useState([]);
-  // const [startingRecNo, setStartingRecNo] = useState(1);
-  const [providerMenuList, setProviderMenuList] = useState([]);
+  const [startingRecNo, setStartingRecNo] = useState(21);
+  const [providerMenuList, setProviderMenuList] = useState({});
   const [providerMenuListShow, setProviderMenuListShow] = useState([]);
-
+  const [fromRecordCount, setFromRecordCount] = useState("");
+  const [toRecordCount, setToRecordCount] = useState("");
+  const [totalRecordCount, setTotalRecordCount] = useState("");
+  const [paging, setPaging] = useState(1);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [currentProvider, setCurrentProvider] = useState(null);
@@ -80,6 +87,102 @@ function ProviderMenu() {
     { id: "yes", value: "Yes" },
     { id: "no", value: "No" },
   ];
+
+  const handleMenuItems = (res) => {
+    if (!res) {
+      setLoading(true);
+    } else {
+      setProviderMenuList(res);
+    }
+  };
+
+  useEffect(() => {
+    componentMounted.current = true;
+    setLoading(true);
+    getFromOpenElisServer(
+      `/rest/ProviderMenu?paging=${paging}&startingRecNo=${startingRecNo}`,
+      handleMenuItems,
+    );
+    return () => {
+      componentMounted.current = false;
+      setLoading(false);
+    };
+  }, [paging, startingRecNo]);
+
+  const handleSearchedProviderMenuList = (res) => {
+    if (res) {
+      setSearchedProviderMenuList(res);
+    }
+  };
+
+  useEffect(() => {
+    getFromOpenElisServer(
+      `/rest/SearchProviderMenu?search=Y&startingRecNo=${startingRecNo}&searchString=${panelSearchTerm}`,
+      handleSearchedProviderMenuList,
+    );
+  }, [panelSearchTerm]);
+
+  useEffect(() => {
+    if (providerMenuList.providers) {
+      const newProviderMenuList = providerMenuList.providers.map((item) => {
+        return {
+          id: item.id,
+          fhirUuid: item.fhirUuid,
+          lastName: item.person.lastName,
+          firstName: item.person.firstName,
+          active: item.active,
+          telephone: item.person.workPhone,
+          fax: item.person.fax,
+        };
+      });
+      setFromRecordCount(providerMenuList.fromRecordCount);
+      setToRecordCount(providerMenuList.toRecordCount);
+      setTotalRecordCount(providerMenuList.totalRecordCount);
+      setProviderMenuListShow(newProviderMenuList);
+    }
+  }, [providerMenuList]);
+
+  useEffect(() => {
+    if (searchedProviderMenuList.providers) {
+      const newProviderMenuList = searchedProviderMenuList.providers.map(
+        (item) => {
+          return {
+            id: item.id,
+            lastName: item.person.lastName,
+            firstName: item.person.firstName,
+            active: item.active,
+            telephone: item.person.telephone,
+            fax: item.person.fax,
+          };
+        },
+      );
+      setSearchedProviderMenuListShow(newProviderMenuList);
+    }
+  }, [searchedProviderMenuList]);
+
+  useEffect(() => {
+    if (selectedRowIds.length === 1) {
+      setModifyButton(false);
+    } else {
+      setModifyButton(true);
+    }
+  }, [selectedRowIds]);
+
+  useEffect(() => {
+    if (isSearching && panelSearchTerm === "") {
+      setIsSearching(false);
+      setPaging(1);
+      setStartingRecNo(1);
+    }
+  }, [isSearching, panelSearchTerm]);
+
+  useEffect(() => {
+    if (selectedRowIds.length === 0) {
+      setDeactivateButton(true);
+    } else {
+      setDeactivateButton(false);
+    }
+  }, [selectedRowIds]);
 
   async function displayStatus(res) {
     setNotificationVisible(true);
@@ -103,8 +206,8 @@ function ProviderMenu() {
     event.preventDefault();
     setLoading(true);
     postToOpenElisServerFullResponse(
-      `/DeleteProvider?ID=${selectedRowIds.join(",")}&startingRecNo=1`,
-      serachedProviderMenuListShow || providerMenuListShow, // need to check against the form of restController [mentor]
+      `/DeleteProvider?ID=${selectedRowIds.join(",")}&${startingRecNo}=1`,
+      serachedProviderMenuListShow || providerMenuListShow,
       setLoading(false),
       setTimeout(() => {
         window.location.reload();
@@ -118,134 +221,23 @@ function ProviderMenu() {
     setSelectedRowIds([]);
   };
 
-  const handleMenuItems = (res) => {
-    if (!res) {
-      setLoading(true);
-    } else {
-      setProviderMenuList(res);
-    }
+  const handleNextPage = () => {
+    setPaging((pager) => Math.max(pager, 2));
+    setStartingRecNo(fromRecordCount);
   };
 
-  useEffect(() => {
-    componentMounted.current = true;
-    setLoading(true);
-    getFromOpenElisServer(`/rest/ProviderMenu`, handleMenuItems);
-    return () => {
-      componentMounted.current = false;
-      setLoading(false);
-    };
-  }, []);
-
-  const handleSearchedProviderMenuList = (res) => {
-    if (res) {
-      setSearchedProviderMenuList(res);
-    }
-  };
-
-  useEffect(() => {
-    getFromOpenElisServer(
-      `/rest/SearchProviderMenu?search=Y&startingRecNo=1&searchString=${panelSearchTerm}`,
-      handleSearchedProviderMenuList,
-    );
-  }, [panelSearchTerm]);
-
-  useEffect(() => {
-    if (providerMenuList) {
-      const newProviderMenuList = providerMenuList.map((item) => {
-        return {
-          id: item.id,
-          fhirUuid: item.fhirUuid,
-          lastName: item.person.lastName,
-          firstName: item.person.firstName,
-          active: item.active,
-          telephone: item.person.workPhone,
-          fax: item.person.fax,
-        };
-      });
-      setProviderMenuListShow(newProviderMenuList);
-    }
-  }, [providerMenuList]);
-
-  useEffect(() => {
-    if (searchedProviderMenuList) {
-      const newProviderMenuList = searchedProviderMenuList.map((item) => {
-        return {
-          id: item.id,
-          lastName: item.person.lastName,
-          firstName: item.person.firstName,
-          active: item.active,
-          telephone: item.person.telephone,
-          fax: item.person.fax,
-        };
-      });
-      setSearchedProviderMenuListShow(newProviderMenuList);
-    }
-  }, [searchedProviderMenuList]);
-
-  useEffect(() => {
-    let currentPageIds;
-    if (searchedProviderMenuList) {
-      currentPageIds = searchedProviderMenuList
-        .slice((page - 1) * pageSize, page * pageSize)
-        .filter((row) => !row.disabled)
-        .map((row) => row.id);
-    } else {
-      currentPageIds = providerMenuListShow
-        .slice((page - 1) * pageSize, page * pageSize)
-        .filter((row) => !row.disabled)
-        .map((row) => row.id);
-    }
-
-    const currentPageSelectedIds = selectedRowIds.filter((id) =>
-      currentPageIds.includes(id),
-    );
-
-    setIsEveryRowIsChecked(
-      currentPageSelectedIds.length === currentPageIds.length,
-    );
-
-    setRowsIsPartiallyChecked(
-      currentPageSelectedIds.length > 0 &&
-        currentPageSelectedIds.length < currentPageIds.length,
-    );
-  }, [
-    selectedRowIds,
-    page,
-    pageSize,
-    providerMenuListShow,
-    serachedProviderMenuListShow,
-  ]);
-
-  const renderCell = (cell, row) => {
-    if (cell.info.header === "select") {
-      return (
-        <TableSelectRow
-          key={cell.id}
-          id={cell.id}
-          checked={selectedRowIds.includes(row.id)}
-          name="selectRowCheckbox"
-          ariaLabel="selectRows"
-          onSelect={() => {
-            setModifyButton(false);
-            if (selectedRowIds.includes(row.id)) {
-              setSelectedRowIds(selectedRowIds.filter((id) => id !== row.id));
-            } else {
-              setSelectedRowIds([...selectedRowIds, row.id]);
-            }
-          }}
-        />
-      );
-    } else if (cell.info.header === "active") {
-      return <TableCell key={cell.id}>{cell.value.toString()}</TableCell>;
-    } else {
-      return <TableCell key={cell.id}>{cell.value}</TableCell>;
-    }
+  const handlePreviousPage = () => {
+    setPaging((pager) => Math.max(pager - 1, 1));
+    setStartingRecNo(Math.max(fromRecordCount, 1));
   };
 
   const handlePanelSearchChange = (event) => {
     setIsSearching(true);
+    setPaging(1);
+    setStartingRecNo(1);
     const query = event.target.value.toLowerCase();
     setPanelSearchTerm(query);
+    setSelectedRowIds([]);
   };
 
   const openAddModal = () => {
@@ -319,6 +311,32 @@ function ProviderMenu() {
     window.location.reload();
   };
 
+  const renderCell = (cell, row) => {
+    if (cell.info.header === "select") {
+      return (
+        <TableSelectRow
+          key={cell.id}
+          id={cell.id}
+          checked={selectedRowIds.includes(row.id)}
+          name="selectRowCheckbox"
+          ariaLabel="selectRows"
+          onSelect={() => {
+            setDeactivateButton(false);
+            if (selectedRowIds.includes(row.id)) {
+              setSelectedRowIds(selectedRowIds.filter((id) => id !== row.id));
+            } else {
+              setSelectedRowIds([...selectedRowIds, row.id]);
+            }
+          }}
+        />
+      );
+    } else if (cell.info.header === "active") {
+      return <TableCell key={cell.id}>{cell.value.toString()}</TableCell>;
+    } else {
+      return <TableCell key={cell.id}>{cell.value}</TableCell>;
+    }
+  };
+
   if (!loading) {
     return (
       <>
@@ -332,37 +350,31 @@ function ProviderMenu() {
       {notificationVisible === true ? <AlertDialog /> : ""}
       <div className="adminPageContent">
         <PageBreadCrumb breadcrumbs={breadcrumbs} />
-        <Grid>
+        <Grid fullWidth={true}>
           <Column lg={16} md={8} sm={4}>
             <Section>
               <Heading>
                 <FormattedMessage id="provider.browse.title" />
               </Heading>
             </Section>
-            <br />
-            <Section>
-              <Form onSubmit={deleteDeactivateProvider}>
-                <Column lg={16} md={8} sm={4}>
-                  <Button
-                    onClick={() => openUpdateModal(selectedRowIds[0])}
-                    disabled={selectedRowIds.length !== 1}
-                  >
-                    <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.modify" />
-                  </Button>{" "}
-                  <Button disabled={modifyButton} type="submit">
-                    {" "}
-                    <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.deactivate" />
-                  </Button>{" "}
-                  <Button onClick={openAddModal}>
-                    {" "}
-                    <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.add" />
-                  </Button>
-                </Column>
-              </Form>
-            </Section>
           </Column>
         </Grid>
-
+        <br />
+        <ActionPaginationButtonType
+          selectedRowIds={selectedRowIds}
+          modifyButton={modifyButton}
+          deactivateButton={deactivateButton}
+          deleteDeactivate={deleteDeactivateProvider}
+          openUpdateModal={openUpdateModal}
+          openAddModal={openAddModal}
+          handlePreviousPage={handlePreviousPage}
+          handleNextPage={handleNextPage}
+          fromRecordCount={fromRecordCount}
+          toRecordCount={toRecordCount}
+          totalRecordCount={totalRecordCount}
+          type="type1"
+        />
+        <br />
         <Modal
           open={isAddModalOpen}
           modalHeading="Add Provider"
@@ -539,27 +551,31 @@ function ProviderMenu() {
                               <TableSelectAll
                                 id="table-select-all"
                                 {...getSelectionProps()}
-                                // checked={
-                                //   selectedRowIds.length === pageSize &&
-                                //   serachedProviderMenuListShow
-                                //     .slice((page - 1) * pageSize, page * pageSize)
-                                //     .filter(
-                                //       (row) =>
-                                //         !row.disabled &&
-                                //         selectedRowIds.includes(row.id),
-                                //     ).length === pageSize
-                                // }
-                                checked={isEveryRowIsChecked}
-                                // indeterminate={
-                                //   selectedRowIds.length > 0 &&
-                                //   selectedRowIds.length <
-                                //     serachedProviderMenuListShow
-                                //       .slice((page - 1) * pageSize, page * pageSize)
-                                //       .filter((row) => !row.disabled).length
-                                // }
-                                indeterminate={rowsIsPartiallyChecked}
+                                checked={
+                                  selectedRowIds.length === pageSize &&
+                                  serachedProviderMenuListShow
+                                    .slice(
+                                      (page - 1) * pageSize,
+                                      page * pageSize,
+                                    )
+                                    .filter(
+                                      (row) =>
+                                        !row.disabled &&
+                                        selectedRowIds.includes(row.id),
+                                    ).length === pageSize
+                                }
+                                indeterminate={
+                                  selectedRowIds.length > 0 &&
+                                  selectedRowIds.length <
+                                    serachedProviderMenuListShow
+                                      .slice(
+                                        (page - 1) * pageSize,
+                                        page * pageSize,
+                                      )
+                                      .filter((row) => !row.disabled).length
+                                }
                                 onSelect={() => {
-                                  setModifyButton(false);
+                                  setDeactivateButton(false);
                                   const currentPageIds =
                                     serachedProviderMenuListShow
                                       .slice(
@@ -635,7 +651,7 @@ function ProviderMenu() {
                     onChange={handlePageChange}
                     page={page}
                     pageSize={pageSize}
-                    pageSizes={[5, 10, 15, 20, 25, 30]}
+                    pageSizes={[10, 20]}
                     totalItems={serachedProviderMenuListShow.length}
                     forwardText={intl.formatMessage({
                       id: "pagination.forward",
@@ -740,27 +756,31 @@ function ProviderMenu() {
                               <TableSelectAll
                                 id="table-select-all"
                                 {...getSelectionProps()}
-                                // checked={
-                                //   selectedRowIds.length === pageSize &&
-                                //   providerMenuListShow
-                                //     .slice((page - 1) * pageSize, page * pageSize)
-                                //     .filter(
-                                //       (row) =>
-                                //         !row.disabled &&
-                                //         selectedRowIds.includes(row.id),
-                                //     ).length === pageSize
-                                // }
-                                checked={isEveryRowIsChecked}
-                                // indeterminate={
-                                //   selectedRowIds.length > 0 &&
-                                //   selectedRowIds.length <
-                                //     providerMenuListShow
-                                //       .slice((page - 1) * pageSize, page * pageSize)
-                                //       .filter((row) => !row.disabled).length
-                                // }
-                                indeterminate={rowsIsPartiallyChecked}
+                                checked={
+                                  selectedRowIds.length === pageSize &&
+                                  providerMenuListShow
+                                    .slice(
+                                      (page - 1) * pageSize,
+                                      page * pageSize,
+                                    )
+                                    .filter(
+                                      (row) =>
+                                        !row.disabled &&
+                                        selectedRowIds.includes(row.id),
+                                    ).length === pageSize
+                                }
+                                indeterminate={
+                                  selectedRowIds.length > 0 &&
+                                  selectedRowIds.length <
+                                    providerMenuListShow
+                                      .slice(
+                                        (page - 1) * pageSize,
+                                        page * pageSize,
+                                      )
+                                      .filter((row) => !row.disabled).length
+                                }
                                 onSelect={() => {
-                                  setModifyButton(false);
+                                  setDeactivateButton(false);
                                   const currentPageIds = providerMenuListShow
                                     .slice(
                                       (page - 1) * pageSize,
@@ -835,7 +855,7 @@ function ProviderMenu() {
                     onChange={handlePageChange}
                     page={page}
                     pageSize={pageSize}
-                    pageSizes={[5, 10, 15, 20, 25, 30]}
+                    pageSizes={[10, 20]}
                     totalItems={providerMenuListShow.length}
                     forwardText={intl.formatMessage({
                       id: "pagination.forward",

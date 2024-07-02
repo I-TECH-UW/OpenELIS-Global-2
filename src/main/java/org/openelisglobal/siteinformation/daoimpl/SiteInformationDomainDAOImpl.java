@@ -26,26 +26,26 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class SiteInformationDomainDAOImpl extends BaseDAOImpl<SiteInformationDomain, String>
-    implements SiteInformationDomainDAO {
+        implements SiteInformationDomainDAO {
 
-  public SiteInformationDomainDAOImpl() {
-    super(SiteInformationDomain.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public SiteInformationDomain getByName(String name) throws LIMSRuntimeException {
-    String sql = "from SiteInformationDomain sid where sid.name = :name";
-
-    try {
-      Query<SiteInformationDomain> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SiteInformationDomain.class);
-      query.setParameter("name", name);
-      SiteInformationDomain domain = query.uniqueResult();
-      return domain;
-    } catch (HibernateException e) {
-      handleException(e, "getByName");
+    public SiteInformationDomainDAOImpl() {
+        super(SiteInformationDomain.class);
     }
-    return null;
-  }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SiteInformationDomain getByName(String name) throws LIMSRuntimeException {
+        String sql = "from SiteInformationDomain sid where sid.name = :name";
+
+        try {
+            Query<SiteInformationDomain> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SiteInformationDomain.class);
+            query.setParameter("name", name);
+            SiteInformationDomain domain = query.uniqueResult();
+            return domain;
+        } catch (HibernateException e) {
+            handleException(e, "getByName");
+        }
+        return null;
+    }
 }

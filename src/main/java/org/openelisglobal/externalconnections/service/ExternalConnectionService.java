@@ -10,13 +10,9 @@ import org.openelisglobal.externalconnections.valueholder.ExternalConnectionCont
 
 public interface ExternalConnectionService extends BaseObjectService<ExternalConnection, Integer> {
 
-  void createNewExternalConnection(
-      Map<AuthType, ExternalConnectionAuthenticationData> externalConnectionAuthData,
-      List<ExternalConnectionContact> externalConnectionContacts,
-      ExternalConnection externalConnection);
+    void createNewExternalConnection(Map<AuthType, ExternalConnectionAuthenticationData> externalConnectionAuthData,
+            List<ExternalConnectionContact> externalConnectionContacts, ExternalConnection externalConnection);
 
-  void updateExternalConnection(
-      Map<AuthType, ExternalConnectionAuthenticationData> externalConnectionAuthData,
-      List<ExternalConnectionContact> externalConnectionContacts,
-      ExternalConnection externalConnection);
+    void updateExternalConnection(Map<AuthType, ExternalConnectionAuthenticationData> externalConnectionAuthData,
+            List<ExternalConnectionContact> externalConnectionContacts, ExternalConnection externalConnection);
 }

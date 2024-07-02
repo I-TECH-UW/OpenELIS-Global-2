@@ -21,43 +21,43 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
-public class DocumentTypeDAOImpl extends BaseDAOImpl<DocumentType, String>
-    implements DocumentTypeDAO {
+public class DocumentTypeDAOImpl extends BaseDAOImpl<DocumentType, String> implements DocumentTypeDAO {
 
-  public DocumentTypeDAOImpl() {
-    super(DocumentType.class);
-  }
+    public DocumentTypeDAOImpl() {
+        super(DocumentType.class);
+    }
 
-  //	@Override
-  //	public DocumentType getDocumentTypeByName(String name) throws LIMSRuntimeException {
-  //		String sql = "Select from DocumentType dt where name = :name";
-  //
-  //		try {
-  //			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-  //			query.setString("name", name);
-  //			DocumentType docType = (DocumentType) query.uniqueResult();
-  //			// closeSession(); // CSL remove old
-  //			return docType;
-  //		} catch (HibernateException e) {
-  //			handleException(e, "getDocumentTypeByName");
-  //		}
-  //		return null;
-  //	}
+    // @Override
+    // public DocumentType getDocumentTypeByName(String name) throws
+    // LIMSRuntimeException {
+    // String sql = "Select from DocumentType dt where name = :name";
+    //
+    // try {
+    // Query query = entityManager.unwrap(Session.class).createQuery(sql);
+    // query.setString("name", name);
+    // DocumentType docType = (DocumentType) query.uniqueResult();
+    // // closeSession(); // CSL remove old
+    // return docType;
+    // } catch (HibernateException e) {
+    // handleException(e, "getDocumentTypeByName");
+    // }
+    // return null;
+    // }
 
-  //	public DocumentType getByName(String name) {
-  //		String sql = "From DocumentType dt where dt.name = :name";
-  //
-  //		try {
-  //			Query query = entityManager.unwrap(Session.class).createQuery(sql);
-  //			query.setString("name", name);
-  //			DocumentType document = (DocumentType) query.setMaxResults(1).uniqueResult();
-  //			// closeSession(); // CSL remove old
-  //			return document;
-  //		} catch (HibernateException e) {
-  //			handleException(e, "getByName");
-  //		}
-  //
-  //		return null;
-  //	}
+    // public DocumentType getByName(String name) {
+    // String sql = "From DocumentType dt where dt.name = :name";
+    //
+    // try {
+    // Query query = entityManager.unwrap(Session.class).createQuery(sql);
+    // query.setString("name", name);
+    // DocumentType document = (DocumentType) query.setMaxResults(1).uniqueResult();
+    // // closeSession(); // CSL remove old
+    // return document;
+    // } catch (HibernateException e) {
+    // handleException(e, "getByName");
+    // }
+    //
+    // return null;
+    // }
 
 }

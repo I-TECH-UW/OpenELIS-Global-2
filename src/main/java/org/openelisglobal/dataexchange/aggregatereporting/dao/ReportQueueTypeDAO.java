@@ -18,5 +18,5 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.dataexchange.aggregatereporting.valueholder.ReportQueueType;
 
 public interface ReportQueueTypeDAO extends BaseDAO<ReportQueueType, String> {
-  public ReportQueueType getReportQueueTypeByName(String name) throws LIMSRuntimeException;
+    public ReportQueueType getReportQueueTypeByName(String name) throws LIMSRuntimeException;
 }

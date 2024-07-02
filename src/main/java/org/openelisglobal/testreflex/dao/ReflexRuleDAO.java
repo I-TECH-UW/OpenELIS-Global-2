@@ -6,5 +6,5 @@ import org.openelisglobal.testreflex.action.bean.ReflexRule;
 
 public interface ReflexRuleDAO extends BaseDAO<ReflexRule, Integer> {
 
-  ReflexRule getReflexRuleByAnalyteId(String analyteId) throws LIMSRuntimeException;
+    ReflexRule getReflexRuleByAnalyteId(String analyteId) throws LIMSRuntimeException;
 }

@@ -17,24 +17,24 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class TestCodeType extends BaseObject<String> {
 
-  private static final long serialVersionUID = -6491155195722574015L;
+    private static final long serialVersionUID = -6491155195722574015L;
 
-  private String id;
-  private String schemaName;
+    private String id;
+    private String schemaName;
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getSchemaName() {
-    return schemaName;
-  }
+    public String getSchemaName() {
+        return schemaName;
+    }
 
-  public void setSchemaName(String schemaName) {
-    this.schemaName = schemaName;
-  }
+    public void setSchemaName(String schemaName) {
+        this.schemaName = schemaName;
+    }
 }

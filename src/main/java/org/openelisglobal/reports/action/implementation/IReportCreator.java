@@ -25,29 +25,28 @@ import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.reports.form.ReportForm;
 
 public interface IReportCreator {
-  String INCOMPLETE_PARAMS = "Incompleate parameters";
-  String INVALID_PARAMS = "Invalid parameters";
-  String SUCCESS = IActionConstants.FWD_SUCCESS;
+    String INCOMPLETE_PARAMS = "Incompleate parameters";
+    String INVALID_PARAMS = "Invalid parameters";
+    String SUCCESS = IActionConstants.FWD_SUCCESS;
 
-  void initializeReport(ReportForm form);
+    void initializeReport(ReportForm form);
 
-  String getResponseHeaderName();
+    String getResponseHeaderName();
 
-  String getContentType();
+    String getContentType();
 
-  String getResponseHeaderContent();
+    String getResponseHeaderContent();
 
-  HashMap<String, ?> getReportParameters() throws IllegalStateException;
+    HashMap<String, ?> getReportParameters() throws IllegalStateException;
 
-  byte[] runReport()
-      throws UnsupportedEncodingException, IOException, SQLException, IllegalStateException,
-          JRException, DocumentException, ParseException;
+    byte[] runReport() throws UnsupportedEncodingException, IOException, SQLException, IllegalStateException,
+            JRException, DocumentException, ParseException;
 
-  void setReportPath(String path);
+    void setReportPath(String path);
 
-  void setRequestedReport(String report);
+    void setRequestedReport(String report);
 
-  List<String> getReportedOrders();
+    List<String> getReportedOrders();
 
-  void setSystemUserId(String id);
+    void setSystemUserId(String id);
 }

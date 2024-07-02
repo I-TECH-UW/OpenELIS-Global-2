@@ -36,164 +36,153 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class ResultReportingConfigurationController extends BaseController {
 
-  private static final String[] ALLOWED_FIELDS =
-      new String[] {
-        "reports*.enabledId",
-        "reports*.enabled",
-        "reports*.urlId",
-        "reports*.url",
-        "reports*.scheduleHours",
-        "reports*.scheduleMin",
-        "reports*.userName",
-        "reports*.password",
-      };
+    private static final String[] ALLOWED_FIELDS = new String[] { "reports*.enabledId", "reports*.enabled",
+            "reports*.urlId", "reports*.url", "reports*.scheduleHours", "reports*.scheduleMin", "reports*.userName",
+            "reports*.password", };
 
-  @Autowired private SiteInformationService siteInformationService;
-  @Autowired private CronSchedulerService schedulerService;
-  @Autowired private ResultReportingConfigurationService resultReportingConfigurationService;
-  private static final String NEVER = "never";
-  private static final String CRON_POSTFIX = "? * *";
-  private static final String CRON_PREFIX = "0 ";
+    @Autowired
+    private SiteInformationService siteInformationService;
+    @Autowired
+    private CronSchedulerService schedulerService;
+    @Autowired
+    private ResultReportingConfigurationService resultReportingConfigurationService;
+    private static final String NEVER = "never";
+    private static final String CRON_POSTFIX = "? * *";
+    private static final String CRON_PREFIX = "0 ";
 
-  @InitBinder
-  public void initBinder(WebDataBinder binder) {
-    binder.setAllowedFields(ALLOWED_FIELDS);
-  }
-
-  @RequestMapping(value = "/ResultReportingConfiguration", method = RequestMethod.GET)
-  public ModelAndView showResultReportingConfiguration(HttpServletRequest request)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    ResultReportingConfigurationForm form = new ResultReportingConfigurationForm();
-
-    request.setAttribute(ALLOW_EDITS_KEY, "true");
-    request.setAttribute(PREVIOUS_DISABLED, "true");
-    request.setAttribute(NEXT_DISABLED, "true");
-    request.getSession().setAttribute(SAVE_DISABLED, "false");
-
-    ExchangeConfigurationService configService =
-        new ExchangeConfigurationService(ConfigurationDomain.REPORT);
-
-    form.setReports(configService.getConfigurations());
-    form.setHourList(DisplayListService.getInstance().getList(ListType.HOURS));
-    form.setMinList(DisplayListService.getInstance().getList(ListType.MINS));
-
-    addFlashMsgsToRequest(request);
-    return findForward(FWD_SUCCESS, form);
-  }
-
-  @RequestMapping(value = "/ResultReportingConfiguration", method = RequestMethod.POST)
-  public ModelAndView showUpdateResultReportingConfiguration(
-      HttpServletRequest request,
-      @ModelAttribute("form") @Validated(ResultReportingConfigurationForm.ResultReportConfig.class)
-          ResultReportingConfigurationForm form,
-      BindingResult result,
-      RedirectAttributes redirectAttributes) {
-    if (result.hasErrors()) {
-      saveErrors(result);
-      return findForward(FWD_FAIL_INSERT, form);
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
-    List<SiteInformation> informationList = new ArrayList<>();
-    List<CronScheduler> scheduleList = new ArrayList<>();
-    List<ReportingConfiguration> reports = form.getReports();
 
-    for (ReportingConfiguration config : reports) {
-      informationList.add(setSiteInformationFor(config.getUrl(), config.getUrlId()));
-      informationList.add(setSiteInformationFor(config.getEnabled(), config.getEnabledId()));
+    @RequestMapping(value = "/ResultReportingConfiguration", method = RequestMethod.GET)
+    public ModelAndView showResultReportingConfiguration(HttpServletRequest request)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        ResultReportingConfigurationForm form = new ResultReportingConfigurationForm();
 
-      if (config.getIsScheduled()) {
-        CronScheduler scheduler = setScheduleInformationFor(config);
-        if (scheduler != null) {
-          scheduleList.add(scheduler);
+        request.setAttribute(ALLOW_EDITS_KEY, "true");
+        request.setAttribute(PREVIOUS_DISABLED, "true");
+        request.setAttribute(NEXT_DISABLED, "true");
+        request.getSession().setAttribute(SAVE_DISABLED, "false");
+
+        ExchangeConfigurationService configService = new ExchangeConfigurationService(ConfigurationDomain.REPORT);
+
+        form.setReports(configService.getConfigurations());
+        form.setHourList(DisplayListService.getInstance().getList(ListType.HOURS));
+        form.setMinList(DisplayListService.getInstance().getList(ListType.MINS));
+
+        addFlashMsgsToRequest(request);
+        return findForward(FWD_SUCCESS, form);
+    }
+
+    @RequestMapping(value = "/ResultReportingConfiguration", method = RequestMethod.POST)
+    public ModelAndView showUpdateResultReportingConfiguration(HttpServletRequest request,
+            @ModelAttribute("form") @Validated(ResultReportingConfigurationForm.ResultReportConfig.class) ResultReportingConfigurationForm form,
+            BindingResult result, RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            return findForward(FWD_FAIL_INSERT, form);
         }
-      }
+        List<SiteInformation> informationList = new ArrayList<>();
+        List<CronScheduler> scheduleList = new ArrayList<>();
+        List<ReportingConfiguration> reports = form.getReports();
+
+        for (ReportingConfiguration config : reports) {
+            informationList.add(setSiteInformationFor(config.getUrl(), config.getUrlId()));
+            informationList.add(setSiteInformationFor(config.getEnabled(), config.getEnabledId()));
+
+            if (config.getIsScheduled()) {
+                CronScheduler scheduler = setScheduleInformationFor(config);
+                if (scheduler != null) {
+                    scheduleList.add(scheduler);
+                }
+            }
+        }
+
+        try {
+            resultReportingConfigurationService.updateInformationAndSchedulers(informationList, scheduleList);
+        } catch (LIMSRuntimeException e) {
+            return findForward(FWD_FAIL_INSERT, form);
+        }
+
+        ConfigurationProperties.forceReload();
+        SpringContext.getBean(SchedulerConfig.class).reloadSchedules();
+
+        redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+        return findForward(FWD_SUCCESS_INSERT, form);
     }
 
-    try {
-      resultReportingConfigurationService.updateInformationAndSchedulers(
-          informationList, scheduleList);
-    } catch (LIMSRuntimeException e) {
-      return findForward(FWD_FAIL_INSERT, form);
+    private CronScheduler setScheduleInformationFor(ReportingConfiguration config) {
+        CronScheduler scheduler = schedulerService.get(config.getSchedulerId());
+
+        if (scheduler != null) {
+            String cronStatement = createCronStatement(config.getScheduleHours(), config.getScheduleMin(), false);
+            scheduler.setActive("enable".equals(config.getEnabled()));
+            scheduler.setCronStatement(cronStatement);
+            scheduler.setSysUserId(getSysUserId(request));
+        }
+        return scheduler;
     }
 
-    ConfigurationProperties.forceReload();
-    SpringContext.getBean(SchedulerConfig.class).reloadSchedules();
+    private String createCronStatement(String hour, String min, boolean tweak) {
+        int approxStringLength = 10;
+        StringBuilder cronBuilder = new StringBuilder(approxStringLength);
 
-    redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-    return findForward(FWD_SUCCESS_INSERT, form);
-  }
+        if (GenericValidator.isBlankOrNull(hour) || GenericValidator.isBlankOrNull(min)) {
+            cronBuilder.append(NEVER);
+        } else {
+            cronBuilder.append(CRON_PREFIX);
+            if (tweak) {
+                int minute = Math.min(Integer.parseInt(min) + (int) (Math.random() * 9.0), 59);
+                cronBuilder.append(String.valueOf(minute));
+            } else {
+                cronBuilder.append(min);
+            }
+            cronBuilder.append(" ");
+            cronBuilder.append(hour);
+            cronBuilder.append(" ");
+            cronBuilder.append(CRON_POSTFIX);
+        }
 
-  private CronScheduler setScheduleInformationFor(ReportingConfiguration config) {
-    CronScheduler scheduler = schedulerService.get(config.getSchedulerId());
-
-    if (scheduler != null) {
-      String cronStatement =
-          createCronStatement(config.getScheduleHours(), config.getScheduleMin(), false);
-      scheduler.setActive("enable".equals(config.getEnabled()));
-      scheduler.setCronStatement(cronStatement);
-      scheduler.setSysUserId(getSysUserId(request));
-    }
-    return scheduler;
-  }
-
-  private String createCronStatement(String hour, String min, boolean tweak) {
-    int approxStringLength = 10;
-    StringBuilder cronBuilder = new StringBuilder(approxStringLength);
-
-    if (GenericValidator.isBlankOrNull(hour) || GenericValidator.isBlankOrNull(min)) {
-      cronBuilder.append(NEVER);
-    } else {
-      cronBuilder.append(CRON_PREFIX);
-      if (tweak) {
-        int minute = Math.min(Integer.parseInt(min) + (int) (Math.random() * 9.0), 59);
-        cronBuilder.append(String.valueOf(minute));
-      } else {
-        cronBuilder.append(min);
-      }
-      cronBuilder.append(" ");
-      cronBuilder.append(hour);
-      cronBuilder.append(" ");
-      cronBuilder.append(CRON_POSTFIX);
+        return cronBuilder.toString();
     }
 
-    return cronBuilder.toString();
-  }
+    private SiteInformation setSiteInformationFor(String value, String id) {
+        SiteInformation siteInformation = siteInformationService.get(id);
 
-  private SiteInformation setSiteInformationFor(String value, String id) {
-    SiteInformation siteInformation = siteInformationService.get(id);
+        if (siteInformation.getId() != null) {
 
-    if (siteInformation.getId() != null) {
+            if ("boolean".equals(siteInformation.getValueType())) {
+                siteInformation.setValue("enable".equals(value) ? "true" : "false");
+            } else {
+                siteInformation.setValue(value);
+            }
 
-      if ("boolean".equals(siteInformation.getValueType())) {
-        siteInformation.setValue("enable".equals(value) ? "true" : "false");
-      } else {
-        siteInformation.setValue(value);
-      }
-
-      siteInformation.setSysUserId(getSysUserId(request));
+            siteInformation.setSysUserId(getSysUserId(request));
+        }
+        return siteInformation;
     }
-    return siteInformation;
-  }
 
-  @Override
-  protected String findLocalForward(String forward) {
-    if (FWD_SUCCESS.equals(forward)) {
-      return "resultReportingConfigurationDefinition";
-    } else if (FWD_SUCCESS_INSERT.equals(forward)) {
-      return "redirect:/MasterListsPage";
-    } else if (FWD_FAIL_INSERT.equals(forward)) {
-      return "resultReportingConfigurationDefinition";
-    } else {
-      return "PageNotFound";
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "resultReportingConfigurationDefinition";
+        } else if (FWD_SUCCESS_INSERT.equals(forward)) {
+            return "redirect:/MasterListsPage";
+        } else if (FWD_FAIL_INSERT.equals(forward)) {
+            return "resultReportingConfigurationDefinition";
+        } else {
+            return "PageNotFound";
+        }
     }
-  }
 
-  @Override
-  protected String getPageTitleKey() {
-    return "resultreporting.browse.title";
-  }
+    @Override
+    protected String getPageTitleKey() {
+        return "resultreporting.browse.title";
+    }
 
-  @Override
-  protected String getPageSubtitleKey() {
-    return "resultreporting.browse.title";
-  }
+    @Override
+    protected String getPageSubtitleKey() {
+        return "resultreporting.browse.title";
+    }
 }

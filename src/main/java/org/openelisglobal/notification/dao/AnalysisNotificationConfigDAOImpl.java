@@ -12,74 +12,65 @@ import org.openelisglobal.notification.valueholder.AnalysisNotificationConfig;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AnalysisNotificationConfigDAOImpl
-    extends BaseDAOImpl<AnalysisNotificationConfig, Integer>
-    implements AnalysisNotificationConfigDAO {
+public class AnalysisNotificationConfigDAOImpl extends BaseDAOImpl<AnalysisNotificationConfig, Integer>
+        implements AnalysisNotificationConfigDAO {
 
-  public AnalysisNotificationConfigDAOImpl() {
-    super(AnalysisNotificationConfig.class);
-  }
-
-  @Override
-  public Optional<AnalysisNotificationConfig> getAnalysisNotificationConfigForAnalysisId(
-      String analysisId) {
-    AnalysisNotificationConfig data;
-    try {
-      String sql = "From AnalysisNotificationConfig as anc where anc.analysis.id = :analysisId";
-      Query<AnalysisNotificationConfig> query =
-          entityManager.unwrap(Session.class).createQuery(sql, AnalysisNotificationConfig.class);
-      query.setParameter("analysisId", Integer.parseInt(analysisId));
-      data = query.uniqueResult();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException(
-          "Error in AnalysisNotificationConfigDAOImpl getAnalysisNotificationConfigForAnalysisId()",
-          e);
+    public AnalysisNotificationConfigDAOImpl() {
+        super(AnalysisNotificationConfig.class);
     }
 
-    return Optional.ofNullable(data);
-  }
+    @Override
+    public Optional<AnalysisNotificationConfig> getAnalysisNotificationConfigForAnalysisId(String analysisId) {
+        AnalysisNotificationConfig data;
+        try {
+            String sql = "From AnalysisNotificationConfig as anc where anc.analysis.id = :analysisId";
+            Query<AnalysisNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    AnalysisNotificationConfig.class);
+            query.setParameter("analysisId", Integer.parseInt(analysisId));
+            data = query.uniqueResult();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException(
+                    "Error in AnalysisNotificationConfigDAOImpl getAnalysisNotificationConfigForAnalysisId()", e);
+        }
 
-  @Override
-  public List<AnalysisNotificationConfig> getAnalysisNotificationConfigsForAnalysisIds(
-      List<String> analysisIds) {
-    List<AnalysisNotificationConfig> data;
-    try {
-      String sql = "From AnalysisNotificationConfig as anc where anc.analysis.id IN (:analysisIds)";
-      Query<AnalysisNotificationConfig> query =
-          entityManager.unwrap(Session.class).createQuery(sql, AnalysisNotificationConfig.class);
-      query.setParameterList(
-          "analysisIds",
-          analysisIds.stream().map(i -> Integer.parseInt(i)).collect(Collectors.toList()));
-      data = query.getResultList();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException(
-          "Error in AnalysisNotificationConfigDAOImpl"
-              + " getAnalysisNotificationConfigForAnalysisIds()",
-          e);
+        return Optional.ofNullable(data);
     }
 
-    return data;
-  }
+    @Override
+    public List<AnalysisNotificationConfig> getAnalysisNotificationConfigsForAnalysisIds(List<String> analysisIds) {
+        List<AnalysisNotificationConfig> data;
+        try {
+            String sql = "From AnalysisNotificationConfig as anc where anc.analysis.id IN (:analysisIds)";
+            Query<AnalysisNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    AnalysisNotificationConfig.class);
+            query.setParameterList("analysisIds",
+                    analysisIds.stream().map(i -> Integer.parseInt(i)).collect(Collectors.toList()));
+            data = query.getResultList();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException(
+                    "Error in AnalysisNotificationConfigDAOImpl" + " getAnalysisNotificationConfigForAnalysisIds()", e);
+        }
 
-  @Override
-  public AnalysisNotificationConfig getForConfigOption(Integer configOptionId) {
-    AnalysisNotificationConfig data;
-    try {
-      String sql =
-          "SELECT anc From AnalysisNotificationConfig as anc join anc.options as anco where anco.id"
-              + " = :configOptionId";
-      Query<AnalysisNotificationConfig> query =
-          entityManager.unwrap(Session.class).createQuery(sql, AnalysisNotificationConfig.class);
-      query.setParameter("configOptionId", configOptionId);
-      data = query.uniqueResult();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException(
-          "Error in AnalysisNotificationConfigDAOImpl getForConfigOption()", e);
+        return data;
     }
 
-    return data;
-  }
+    @Override
+    public AnalysisNotificationConfig getForConfigOption(Integer configOptionId) {
+        AnalysisNotificationConfig data;
+        try {
+            String sql = "SELECT anc From AnalysisNotificationConfig as anc join anc.options as anco where anco.id"
+                    + " = :configOptionId";
+            Query<AnalysisNotificationConfig> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    AnalysisNotificationConfig.class);
+            query.setParameter("configOptionId", configOptionId);
+            data = query.uniqueResult();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in AnalysisNotificationConfigDAOImpl getForConfigOption()", e);
+        }
+
+        return data;
+    }
 }

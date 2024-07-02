@@ -16,33 +16,33 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 public class HibernateConfig {
 
-  static JpaTransactionManager transactionManager;
-  static LocalContainerEntityManagerFactoryBean emf;
+    static JpaTransactionManager transactionManager;
+    static LocalContainerEntityManagerFactoryBean emf;
 
-  @Autowired private DataSource dataSource;
+    @Autowired
+    private DataSource dataSource;
 
-  @Bean
-  @DependsOn("liquibase")
-  public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-    if (emf == null) {
-      emf = new LocalContainerEntityManagerFactoryBean();
-      emf.setDataSource(dataSource);
-      emf.setPersistenceXmlLocation("classpath:persistence/persistence.xml");
-      //            activate this once we migrate away from hbm.xmls and persistence.xml
-      //            emf.setPackagesToScan("org.openelisglobal");
+    @Bean
+    @DependsOn("liquibase")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        if (emf == null) {
+            emf = new LocalContainerEntityManagerFactoryBean();
+            emf.setDataSource(dataSource);
+            emf.setPersistenceXmlLocation("classpath:persistence/persistence.xml");
+            // activate this once we migrate away from hbm.xmls and persistence.xml
+            // emf.setPackagesToScan("org.openelisglobal");
+        }
+
+        return emf;
     }
 
-    return emf;
-  }
-
-  @Bean("transactionManager")
-  @Primary
-  public PlatformTransactionManager getTransactionManager(
-      EntityManagerFactory entityManagerFactory) {
-    if (transactionManager == null) {
-      transactionManager = new JpaTransactionManager();
-      transactionManager.setEntityManagerFactory(entityManagerFactory);
+    @Bean("transactionManager")
+    @Primary
+    public PlatformTransactionManager getTransactionManager(EntityManagerFactory entityManagerFactory) {
+        if (transactionManager == null) {
+            transactionManager = new JpaTransactionManager();
+            transactionManager.setEntityManagerFactory(entityManagerFactory);
+        }
+        return transactionManager;
     }
-    return transactionManager;
-  }
 }

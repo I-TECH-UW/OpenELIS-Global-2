@@ -28,192 +28,180 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExport, String>
-    implements ReportExternalExportDAO {
-  public ReportExternalExportDAOImpl() {
-    super(ReportExternalExport.class);
-  }
-
-  private static final long DAY_IN_MILLSEC = 1000L * 60L * 60L * 24L;
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<ReportExternalExport> getRecalculateReportExports(String reportQueueTypeId)
-      throws LIMSRuntimeException {
-    String sql = "from ReportExternalExport rq where rq.recalculate = true and rq.typeId = :typeId";
-    try {
-      Query<ReportExternalExport> query =
-          entityManager.unwrap(Session.class).createQuery(sql, ReportExternalExport.class);
-      query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
-      List<ReportExternalExport> reports = query.list();
-
-      return reports;
-    } catch (HibernateException e) {
-      handleException(e, "getRecalculateReportExports");
-    }
-    return null;
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<ReportExternalExport> getUnsentReportExports(String reportQueueTypeId)
-      throws LIMSRuntimeException {
-    String sql = "from ReportExternalExport rq where rq.send = true and rq.typeId = :typeId";
-    try {
-      Query<ReportExternalExport> query =
-          entityManager.unwrap(Session.class).createQuery(sql, ReportExternalExport.class);
-      query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
-      List<ReportExternalExport> reports = query.list();
-
-      return reports;
-    } catch (HibernateException e) {
-      handleException(e, "getRecalculateReportExternalExports");
+        implements ReportExternalExportDAO {
+    public ReportExternalExportDAOImpl() {
+        super(ReportExternalExport.class);
     }
 
-    return null;
-  }
+    private static final long DAY_IN_MILLSEC = 1000L * 60L * 60L * 24L;
 
-  @Override
-  @Transactional(readOnly = true)
-  public ReportExternalExport getLatestSentReportExport(String reportQueueTypeId)
-      throws LIMSRuntimeException {
-    String sql =
-        "from ReportExternalExport rq where rq.send = false and rq.typeId = :typeId order by"
-            + " rq.sentDate desc";
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReportExternalExport> getRecalculateReportExports(String reportQueueTypeId)
+            throws LIMSRuntimeException {
+        String sql = "from ReportExternalExport rq where rq.recalculate = true and rq.typeId = :typeId";
+        try {
+            Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalExport.class);
+            query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
+            List<ReportExternalExport> reports = query.list();
 
-    try {
-      Query<ReportExternalExport> query =
-          entityManager.unwrap(Session.class).createQuery(sql, ReportExternalExport.class);
-      query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
-      ReportExternalExport report = query.setMaxResults(1).uniqueResult();
-
-      return report;
-    } catch (HibernateException e) {
-      handleException(e, "getLatestSentReportExternalExport");
+            return reports;
+        } catch (HibernateException e) {
+            handleException(e, "getRecalculateReportExports");
+        }
+        return null;
     }
 
-    return null;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReportExternalExport> getUnsentReportExports(String reportQueueTypeId) throws LIMSRuntimeException {
+        String sql = "from ReportExternalExport rq where rq.send = true and rq.typeId = :typeId";
+        try {
+            Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalExport.class);
+            query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
+            List<ReportExternalExport> reports = query.list();
 
-  @Override
-  @Transactional(readOnly = true)
-  public ReportExternalExport getLatestEventReportExport(String reportQueueTypeId)
-      throws LIMSRuntimeException {
-    String sql =
-        "from ReportExternalExport rq where rq.typeId = :typeId order by rq.eventDate desc";
+            return reports;
+        } catch (HibernateException e) {
+            handleException(e, "getRecalculateReportExternalExports");
+        }
 
-    try {
-      Query<ReportExternalExport> query =
-          entityManager.unwrap(Session.class).createQuery(sql, ReportExternalExport.class);
-      query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
-      ReportExternalExport report = query.setMaxResults(1).uniqueResult();
-
-      return report;
-    } catch (HibernateException e) {
-      handleException(e, "getLatestSentReportExternalExport");
+        return null;
     }
 
-    return null;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public ReportExternalExport getLatestSentReportExport(String reportQueueTypeId) throws LIMSRuntimeException {
+        String sql = "from ReportExternalExport rq where rq.send = false and rq.typeId = :typeId order by"
+                + " rq.sentDate desc";
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<ReportExternalExport> getReportsInDateRange(
-      Timestamp lower, Timestamp upper, String reportQueueTypeId) throws LIMSRuntimeException {
-    String sql =
-        "from ReportExternalExport rq where rq.sentDate >= :lower and rq.sentDate <= :upper";
+        try {
+            Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalExport.class);
+            query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
+            ReportExternalExport report = query.setMaxResults(1).uniqueResult();
 
-    try {
-      Query<ReportExternalExport> query =
-          entityManager.unwrap(Session.class).createQuery(sql, ReportExternalExport.class);
-      query.setParameter("lower", lower);
-      query.setParameter("upper", upper);
-      List<ReportExternalExport> reports = query.list();
+            return report;
+        } catch (HibernateException e) {
+            handleException(e, "getLatestSentReportExternalExport");
+        }
 
-      return reports;
-    } catch (HibernateException e) {
-      handleException(e, "getReportsInDateRange");
+        return null;
     }
 
-    return null;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public ReportExternalExport getLatestEventReportExport(String reportQueueTypeId) throws LIMSRuntimeException {
+        String sql = "from ReportExternalExport rq where rq.typeId = :typeId order by rq.eventDate desc";
 
-  @Override
-  public ReportExternalExport readReportExternalExport(String idString)
-      throws LIMSRuntimeException {
+        try {
+            Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalExport.class);
+            query.setParameter("typeId", Integer.parseInt(reportQueueTypeId));
+            ReportExternalExport report = query.setMaxResults(1).uniqueResult();
 
-    try {
-      ReportExternalExport data =
-          entityManager.unwrap(Session.class).get(ReportExternalExport.class, idString);
-      return data;
-    } catch (HibernateException e) {
-      handleException(e, "readReportExternalExport");
+            return report;
+        } catch (HibernateException e) {
+            handleException(e, "getLatestSentReportExternalExport");
+        }
+
+        return null;
     }
-    return null;
-  }
 
-  @Override
-  @Transactional(readOnly = true)
-  public Timestamp getLastSentTimestamp() throws LIMSRuntimeException {
-    String sql =
-        "From ReportExternalExport ree where ree.sentDate IS NOT NULL order by ree.sentDate DESC";
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReportExternalExport> getReportsInDateRange(Timestamp lower, Timestamp upper, String reportQueueTypeId)
+            throws LIMSRuntimeException {
+        String sql = "from ReportExternalExport rq where rq.sentDate >= :lower and rq.sentDate <= :upper";
 
-    try {
-      Query<ReportExternalExport> query =
-          entityManager.unwrap(Session.class).createQuery(sql, ReportExternalExport.class);
-      ReportExternalExport report = query.setMaxResults(1).uniqueResult();
-      if (report != null) {
-        return report.getSentDate();
-      }
-    } catch (HibernateException e) {
-      handleException(e, "getLastSentTimestamp");
+        try {
+            Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalExport.class);
+            query.setParameter("lower", lower);
+            query.setParameter("upper", upper);
+            List<ReportExternalExport> reports = query.list();
+
+            return reports;
+        } catch (HibernateException e) {
+            handleException(e, "getReportsInDateRange");
+        }
+
+        return null;
     }
-    return null;
-  }
 
-  @Override
-  @Transactional(readOnly = true)
-  public Timestamp getLastCollectedTimestamp() throws LIMSRuntimeException {
-    String sql = "From ReportExternalExport ree order by ree.collectionDate DESC";
+    @Override
+    public ReportExternalExport readReportExternalExport(String idString) throws LIMSRuntimeException {
 
-    try {
-      Query<ReportExternalExport> query =
-          entityManager.unwrap(Session.class).createQuery(sql, ReportExternalExport.class);
-      ReportExternalExport report = query.setMaxResults(1).uniqueResult();
-      if (report != null) {
-        return report.getCollectionDate();
-      }
-    } catch (HibernateException e) {
-      handleException(e, "getLastCollectedTimestamp");
+        try {
+            ReportExternalExport data = entityManager.unwrap(Session.class).get(ReportExternalExport.class, idString);
+            return data;
+        } catch (HibernateException e) {
+            handleException(e, "readReportExternalExport");
+        }
+        return null;
     }
-    return null;
-  }
 
-  @Override
-  @Transactional(readOnly = true)
-  public ReportExternalExport getReportByEventDateAndType(ReportExternalExport report)
-      throws LIMSRuntimeException {
-    String sql =
-        "From ReportExternalExport ree where ree.eventDate >= :eventDate and ree.eventDate <"
-            + " :nextDay and ree.typeId = :typeId";
+    @Override
+    @Transactional(readOnly = true)
+    public Timestamp getLastSentTimestamp() throws LIMSRuntimeException {
+        String sql = "From ReportExternalExport ree where ree.sentDate IS NOT NULL order by ree.sentDate DESC";
 
-    try {
-      Query<ReportExternalExport> query =
-          entityManager.unwrap(Session.class).createQuery(sql, ReportExternalExport.class);
-      query.setParameter("eventDate", report.getEventDate());
-      query.setParameter(
-          "nextDay", new Timestamp(report.getEventDate().getTime() + DAY_IN_MILLSEC));
-      query.setParameter("typeId", Integer.parseInt(report.getTypeId()));
-      ReportExternalExport foundReport = query.setMaxResults(1).uniqueResult();
-      return foundReport == null ? report : foundReport;
-
-    } catch (HibernateException e) {
-      handleException(e, "getReportByEventDateAndType");
+        try {
+            Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalExport.class);
+            ReportExternalExport report = query.setMaxResults(1).uniqueResult();
+            if (report != null) {
+                return report.getSentDate();
+            }
+        } catch (HibernateException e) {
+            handleException(e, "getLastSentTimestamp");
+        }
+        return null;
     }
-    return report;
-  }
 
-  @Override
-  public ReportExternalExport loadReport(ReportExternalExport report) throws LIMSRuntimeException {
-    return readReportExternalExport(report.getId());
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public Timestamp getLastCollectedTimestamp() throws LIMSRuntimeException {
+        String sql = "From ReportExternalExport ree order by ree.collectionDate DESC";
+
+        try {
+            Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalExport.class);
+            ReportExternalExport report = query.setMaxResults(1).uniqueResult();
+            if (report != null) {
+                return report.getCollectionDate();
+            }
+        } catch (HibernateException e) {
+            handleException(e, "getLastCollectedTimestamp");
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ReportExternalExport getReportByEventDateAndType(ReportExternalExport report) throws LIMSRuntimeException {
+        String sql = "From ReportExternalExport ree where ree.eventDate >= :eventDate and ree.eventDate <"
+                + " :nextDay and ree.typeId = :typeId";
+
+        try {
+            Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    ReportExternalExport.class);
+            query.setParameter("eventDate", report.getEventDate());
+            query.setParameter("nextDay", new Timestamp(report.getEventDate().getTime() + DAY_IN_MILLSEC));
+            query.setParameter("typeId", Integer.parseInt(report.getTypeId()));
+            ReportExternalExport foundReport = query.setMaxResults(1).uniqueResult();
+            return foundReport == null ? report : foundReport;
+
+        } catch (HibernateException e) {
+            handleException(e, "getReportByEventDateAndType");
+        }
+        return report;
+    }
+
+    @Override
+    public ReportExternalExport loadReport(ReportExternalExport report) throws LIMSRuntimeException {
+        return readReportExternalExport(report.getId());
+    }
 }

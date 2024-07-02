@@ -11,40 +11,34 @@ import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.spring.util.SpringContext;
 
 public class PatientPathologyReport extends PatientProgramReport {
-  protected PathologyDisplayService pathologyDisplayService =
-      SpringContext.getBean(PathologyDisplayService.class);
+    protected PathologyDisplayService pathologyDisplayService = SpringContext.getBean(PathologyDisplayService.class);
 
-  private PathologySample pathologySample;
+    private PathologySample pathologySample;
 
-  @Override
-  protected String getReportName() {
-    return "PatientPathologyReport";
-  }
+    @Override
+    protected String getReportName() {
+        return "PatientPathologyReport";
+    }
 
-  @Override
-  protected void setAdditionalReportItems() {
-    data.setGrossExam(pathologySample.getGrossExam());
-    data.setMicroExam(pathologySample.getMicroscopyExam());
-    pathologySample.getConclusions().size();
-    Optional<PathologyConclusion> conclusion =
-        pathologySample.getConclusions().stream()
-            .filter(e -> e.getType() == ConclusionType.TEXT)
-            .findFirst();
-    data.setTextConclusion(conclusion.isPresent() ? conclusion.get().getValue() : "");
+    @Override
+    protected void setAdditionalReportItems() {
+        data.setGrossExam(pathologySample.getGrossExam());
+        data.setMicroExam(pathologySample.getMicroscopyExam());
+        pathologySample.getConclusions().size();
+        Optional<PathologyConclusion> conclusion = pathologySample.getConclusions().stream()
+                .filter(e -> e.getType() == ConclusionType.TEXT).findFirst();
+        data.setTextConclusion(conclusion.isPresent() ? conclusion.get().getValue() : "");
 
-    List<String> codedConclusions =
-        pathologySample.getConclusions().stream()
-            .filter(e -> e.getType() == ConclusionType.DICTIONARY)
-            .map(e -> dictionaryService.get(e.getValue()).getLocalizedName())
-            .collect(Collectors.toList());
-    data.setCodedConclusion(codedConclusions);
-  }
+        List<String> codedConclusions = pathologySample.getConclusions().stream()
+                .filter(e -> e.getType() == ConclusionType.DICTIONARY)
+                .map(e -> dictionaryService.get(e.getValue()).getLocalizedName()).collect(Collectors.toList());
+        data.setCodedConclusion(codedConclusions);
+    }
 
-  @Override
-  protected void innitializeSample(ReportForm form) {
-    pathologySample =
-        pathologyDisplayService.getPathologySampleWithLoadedAtttributes(
-            Integer.valueOf(form.getProgramSampleId()));
-    sample = pathologySample.getSample();
-  }
+    @Override
+    protected void innitializeSample(ReportForm form) {
+        pathologySample = pathologyDisplayService
+                .getPathologySampleWithLoadedAtttributes(Integer.valueOf(form.getProgramSampleId()));
+        sample = pathologySample.getSample();
+    }
 }

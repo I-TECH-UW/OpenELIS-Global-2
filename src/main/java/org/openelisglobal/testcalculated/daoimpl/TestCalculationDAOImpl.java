@@ -8,10 +8,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Transactional
-public class TestCalculationDAOImpl extends BaseDAOImpl<Calculation, Integer>
-    implements TestCalculationDAO {
+public class TestCalculationDAOImpl extends BaseDAOImpl<Calculation, Integer> implements TestCalculationDAO {
 
-  public TestCalculationDAOImpl() {
-    super(Calculation.class);
-  }
+    public TestCalculationDAOImpl() {
+        super(Calculation.class);
+    }
 }

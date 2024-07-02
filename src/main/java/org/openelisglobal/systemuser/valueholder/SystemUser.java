@@ -20,99 +20,100 @@ import org.openelisglobal.systemusermodule.valueholder.PermissionAgent;
 
 public class SystemUser extends EnumValueItemImpl implements PermissionAgent {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String id;
+    private String id;
 
-  private String firstName;
+    private String firstName;
 
-  private String lastName;
+    private String lastName;
 
-  private String loginName;
+    private String loginName;
 
-  private String isActive;
+    private String isActive;
 
-  private String isEmployee;
+    private String isEmployee;
 
-  private String externalId;
+    private String externalId;
 
-  private String initials;
+    private String initials;
 
-  public SystemUser() {}
+    public SystemUser() {
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-  public String getFirstName() {
-    return firstName;
-  }
+    public String getFirstName() {
+        return firstName;
+    }
 
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
-  }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-  public String getLastName() {
-    return lastName;
-  }
+    public String getLastName() {
+        return lastName;
+    }
 
-  public void setLoginName(String loginName) {
-    this.loginName = loginName;
-  }
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
+    }
 
-  public String getLoginName() {
-    return loginName;
-  }
+    public String getLoginName() {
+        return loginName;
+    }
 
-  public void setExternalId(String externalId) {
-    this.externalId = externalId;
-  }
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
 
-  public String getExternalId() {
-    return externalId;
-  }
+    public String getExternalId() {
+        return externalId;
+    }
 
-  public void setInitials(String initials) {
-    this.initials = initials;
-  }
+    public void setInitials(String initials) {
+        this.initials = initials;
+    }
 
-  public String getInitials() {
-    return initials;
-  }
+    public String getInitials() {
+        return initials;
+    }
 
-  public void setIsActive(String isActive) {
-    this.isActive = isActive;
-  }
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
+    }
 
-  public String getIsActive() {
-    return isActive;
-  }
+    public String getIsActive() {
+        return isActive;
+    }
 
-  public void setIsEmployee(String isEmployee) {
-    this.isEmployee = isEmployee;
-  }
+    public void setIsEmployee(String isEmployee) {
+        this.isEmployee = isEmployee;
+    }
 
-  public String getIsEmployee() {
-    return isEmployee;
-  }
+    public String getIsEmployee() {
+        return isEmployee;
+    }
 
-  public String getNameForDisplay() {
-    return firstName + " " + lastName;
-  }
+    public String getNameForDisplay() {
+        return firstName + " " + lastName;
+    }
 
-  public String getDisplayName() {
-    return getLastName() + "," + getFirstName();
-  }
+    public String getDisplayName() {
+        return getLastName() + "," + getFirstName();
+    }
 
-  public String getShortNameForDisplay() {
-    return getNameForDisplay();
-  }
+    public String getShortNameForDisplay() {
+        return getNameForDisplay();
+    }
 }

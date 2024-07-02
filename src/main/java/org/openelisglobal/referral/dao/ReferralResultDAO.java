@@ -20,16 +20,18 @@ import org.openelisglobal.referral.valueholder.ReferralResult;
 
 public interface ReferralResultDAO extends BaseDAO<ReferralResult, String> {
 
-  //	public boolean insertData(ReferralResult referralResult) throws LIMSRuntimeException;
+    // public boolean insertData(ReferralResult referralResult) throws
+    // LIMSRuntimeException;
 
-  public ReferralResult getReferralResultById(String referralResultId) throws LIMSRuntimeException;
+    public ReferralResult getReferralResultById(String referralResultId) throws LIMSRuntimeException;
 
-  public List<ReferralResult> getReferralResultsForReferral(String referralId)
-      throws LIMSRuntimeException;
+    public List<ReferralResult> getReferralResultsForReferral(String referralId) throws LIMSRuntimeException;
 
-  //	public void updateData(ReferralResult referralResult) throws LIMSRuntimeException;
+    // public void updateData(ReferralResult referralResult) throws
+    // LIMSRuntimeException;
 
-  //	public void deleteData(ReferralResult referralResult) throws LIMSRuntimeException;
+    // public void deleteData(ReferralResult referralResult) throws
+    // LIMSRuntimeException;
 
-  public List<ReferralResult> getReferralsByResultId(String resultId) throws LIMSRuntimeException;
+    public List<ReferralResult> getReferralsByResultId(String resultId) throws LIMSRuntimeException;
 }

@@ -16,16 +16,9 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
 ADD ./pom.xml /build/pom.xml
 ADD ./tools /build/tools
 ADD ./src /build/src
-ADD ./dev /build/dev
+ADD ./dataexport /build/dataexport
 
 WORKDIR /build
-
-##
-# Checkout Dependencies
-#
-# this ensures caching isn't used if there's a change in the dataexport
-ADD https://api.github.com/repos/I-TECH-UW/dataexport/git/refs/heads/master version.json 
-RUN git clone https://github.com/I-TECH-UW/dataexport.git /build/dataexport
 
 # OE Default Password
 ARG DEFAULT_PW="adminADMIN!"

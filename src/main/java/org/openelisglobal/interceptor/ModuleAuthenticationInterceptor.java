@@ -27,92 +27,86 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 @Qualifier(value = "ModuleAuthenticationInterceptor")
 public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
-  private static final boolean USE_PARAMETERS = true;
+    private static final boolean USE_PARAMETERS = true;
 
-  // whether to reject access to protected pages if no modules are assigned
-  public static final boolean REQUIRE_MODULE = true;
+    // whether to reject access to protected pages if no modules are assigned
+    public static final boolean REQUIRE_MODULE = true;
 
-  private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-  @Autowired private UserModuleService userModuleService;
-  @Autowired private SystemModuleUrlService systemModuleUrlService;
+    @Autowired
+    private UserModuleService userModuleService;
+    @Autowired
+    private SystemModuleUrlService systemModuleUrlService;
 
-  @Override
-  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-      throws IOException {
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws IOException {
 
-    Errors errors = new BaseErrors();
-    if (!hasPermission(errors, request)) {
-      LogEvent.logInfo(
-          "ModuleAuthenticationInterceptor",
-          "preHandle()",
-          "======> NOT ALLOWED ACCESS TO THIS MODULE");
-      LogEvent.logInfo(this.getClass().getSimpleName(), "preHandle", "has no permission"); //
-      redirectStrategy.sendRedirect(request, response, "/Home?access=denied");
-      return false;
-    }
-
-    return true;
-  }
-
-  @Override
-  public void postHandle(
-      HttpServletRequest request,
-      HttpServletResponse response,
-      Object handler,
-      ModelAndView modelAndView) {}
-
-  protected boolean hasPermission(Errors errors, HttpServletRequest request) {
-    if (SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
-      return hasPermissionForUrl(request, USE_PARAMETERS) || userModuleService.isUserAdmin(request);
-    } else {
-      return userModuleService.isVerifyUserModule(request)
-          || userModuleService.isUserAdmin(request);
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  private boolean hasPermissionForUrl(HttpServletRequest request, boolean useParameters) {
-    HashSet<String> accessMap =
-        (HashSet<String>) request.getSession().getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
-    if (accessMap == null) {
-      accessMap = (HashSet<String>) request.getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
-    }
-    List<SystemModuleUrl> sysModsByUrl = systemModuleUrlService.getByRequest(request);
-
-    if (useParameters) {
-      sysModsByUrl = filterParamMatches(request, sysModsByUrl);
-    }
-    if (sysModsByUrl.isEmpty() && REQUIRE_MODULE) {
-      LogEvent.logWarn(
-          "ModuleAuthenticationInterceptor",
-          "hasPermissionForUrl()",
-          "This page has no modules assigned to it");
-      return false;
-    }
-    for (SystemModuleUrl sysModUrl : sysModsByUrl) {
-      if (accessMap.contains(sysModUrl.getSystemModule().getSystemModuleName())) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private List<SystemModuleUrl> filterParamMatches(
-      HttpServletRequest request, List<SystemModuleUrl> sysModsByUrl) {
-    List<SystemModuleUrl> filteredSysModsByUrl = new ArrayList<>();
-    for (SystemModuleUrl sysModUrl : sysModsByUrl) {
-      boolean matchAll = true;
-      SystemModuleParam param = sysModUrl.getParam();
-      if (param != null) {
-        if (!param.getValue().equals(request.getParameter(param.getName()))) {
-          matchAll = false;
+        Errors errors = new BaseErrors();
+        if (!hasPermission(errors, request)) {
+            LogEvent.logInfo("ModuleAuthenticationInterceptor", "preHandle()",
+                    "======> NOT ALLOWED ACCESS TO THIS MODULE");
+            LogEvent.logInfo(this.getClass().getSimpleName(), "preHandle", "has no permission"); //
+            redirectStrategy.sendRedirect(request, response, "/Home?access=denied");
+            return false;
         }
-      }
-      if (matchAll) {
-        filteredSysModsByUrl.add(sysModUrl);
-      }
+
+        return true;
     }
-    return filteredSysModsByUrl;
-  }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+            ModelAndView modelAndView) {
+    }
+
+    protected boolean hasPermission(Errors errors, HttpServletRequest request) {
+        if (SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
+            return hasPermissionForUrl(request, USE_PARAMETERS) || userModuleService.isUserAdmin(request);
+        } else {
+            return userModuleService.isVerifyUserModule(request) || userModuleService.isUserAdmin(request);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean hasPermissionForUrl(HttpServletRequest request, boolean useParameters) {
+        HashSet<String> accessMap = (HashSet<String>) request.getSession()
+                .getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
+        if (accessMap == null) {
+            accessMap = (HashSet<String>) request.getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
+        }
+        List<SystemModuleUrl> sysModsByUrl = systemModuleUrlService.getByRequest(request);
+
+        if (useParameters) {
+            sysModsByUrl = filterParamMatches(request, sysModsByUrl);
+        }
+        if (sysModsByUrl.isEmpty() && REQUIRE_MODULE) {
+            LogEvent.logWarn("ModuleAuthenticationInterceptor", "hasPermissionForUrl()",
+                    "This page has no modules assigned to it");
+            return false;
+        }
+        for (SystemModuleUrl sysModUrl : sysModsByUrl) {
+            if (accessMap.contains(sysModUrl.getSystemModule().getSystemModuleName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<SystemModuleUrl> filterParamMatches(HttpServletRequest request, List<SystemModuleUrl> sysModsByUrl) {
+        List<SystemModuleUrl> filteredSysModsByUrl = new ArrayList<>();
+        for (SystemModuleUrl sysModUrl : sysModsByUrl) {
+            boolean matchAll = true;
+            SystemModuleParam param = sysModUrl.getParam();
+            if (param != null) {
+                if (!param.getValue().equals(request.getParameter(param.getName()))) {
+                    matchAll = false;
+                }
+            }
+            if (matchAll) {
+                filteredSysModsByUrl.add(sysModUrl);
+            }
+        }
+        return filteredSysModsByUrl;
+    }
 }

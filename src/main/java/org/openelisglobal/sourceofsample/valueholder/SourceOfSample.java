@@ -17,37 +17,37 @@ import org.openelisglobal.common.valueholder.BaseObject;
 
 public class SourceOfSample extends BaseObject<String> {
 
-  private String id;
+    private String id;
 
-  private String description;
+    private String description;
 
-  private String domain;
+    private String domain;
 
-  public SourceOfSample() {
-    super();
-  }
+    public SourceOfSample() {
+        super();
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setDomain(String domain) {
-    this.domain = domain;
-  }
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 
-  public String getDomain() {
-    return domain;
-  }
+    public String getDomain() {
+        return domain;
+    }
 }

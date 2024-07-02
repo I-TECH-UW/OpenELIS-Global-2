@@ -30,25 +30,26 @@ import org.openelisglobal.sampleproject.valueholder.SampleProject;
  */
 public interface SampleProjectDAO extends BaseDAO<SampleProject, String> {
 
-  //	public boolean insertData(SampleProject sampleProj) throws LIMSRuntimeException;
+    // public boolean insertData(SampleProject sampleProj) throws
+    // LIMSRuntimeException;
 
-  //	public void deleteData(List sampleProjs) throws LIMSRuntimeException;
+    // public void deleteData(List sampleProjs) throws LIMSRuntimeException;
 
-  void getData(SampleProject sampleProj) throws LIMSRuntimeException;
+    void getData(SampleProject sampleProj) throws LIMSRuntimeException;
 
-  //	public void updateData(SampleProject sampleProj) throws LIMSRuntimeException;
+    // public void updateData(SampleProject sampleProj) throws LIMSRuntimeException;
 
-  List<SampleProject> getSampleProjectsByProjId(String projId) throws LIMSRuntimeException;
+    List<SampleProject> getSampleProjectsByProjId(String projId) throws LIMSRuntimeException;
 
-  SampleProject getSampleProjectBySampleId(String id) throws LIMSRuntimeException;
+    SampleProject getSampleProjectBySampleId(String id) throws LIMSRuntimeException;
 
-  /**
-   * @param locationId
-   * @param projectName
-   * @param lowDate
-   * @param highDate
-   * @return
-   */
-  List<SampleProject> getByOrganizationProjectAndReceivedOnRange(
-      String organizationId, String projectName, Date lowDate, Date highDate);
+    /**
+     * @param locationId
+     * @param projectName
+     * @param lowDate
+     * @param highDate
+     * @return
+     */
+    List<SampleProject> getByOrganizationProjectAndReceivedOnRange(String organizationId, String projectName,
+            Date lowDate, Date highDate);
 }

@@ -38,81 +38,81 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class SampleOrganizationDAOImpl extends BaseDAOImpl<SampleOrganization, String>
-    implements SampleOrganizationDAO {
+        implements SampleOrganizationDAO {
 
-  public SampleOrganizationDAOImpl() {
-    super(SampleOrganization.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public void getData(SampleOrganization sampleOrg) throws LIMSRuntimeException {
-    try {
-      SampleOrganization data =
-          entityManager.unwrap(Session.class).get(SampleOrganization.class, sampleOrg.getId());
-      if (data != null) {
-        PropertyUtils.copyProperties(sampleOrg, data);
-      } else {
-        sampleOrg.setId(null);
-      }
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SampleOrganization getData()", e);
-    }
-  }
-
-  public SampleOrganization readSampleOrganization(String idString) {
-    SampleOrganization so = null;
-    try {
-      so = entityManager.unwrap(Session.class).get(SampleOrganization.class, idString);
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SampleOrganization readSampleOrganization()", e);
+    public SampleOrganizationDAOImpl() {
+        super(SampleOrganization.class);
     }
 
-    return so;
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public void getDataBySample(SampleOrganization sampleOrganization) throws LIMSRuntimeException {
-
-    try {
-      String sql = "from SampleOrganization so where samp_id = :param";
-      Query<SampleOrganization> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SampleOrganization.class);
-      query.setParameter("param", Integer.valueOf(sampleOrganization.getSample().getId()));
-      List<SampleOrganization> list = query.list();
-      SampleOrganization so = null;
-      if (list.size() > 0) {
-        so = list.get(0);
-        PropertyUtils.copyProperties(sampleOrganization, so);
-      }
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in SampleOrganization getData()", e);
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(SampleOrganization sampleOrg) throws LIMSRuntimeException {
+        try {
+            SampleOrganization data = entityManager.unwrap(Session.class).get(SampleOrganization.class,
+                    sampleOrg.getId());
+            if (data != null) {
+                PropertyUtils.copyProperties(sampleOrg, data);
+            } else {
+                sampleOrg.setId(null);
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SampleOrganization getData()", e);
+        }
     }
-  }
 
-  @Override
-  @Transactional(readOnly = true)
-  public SampleOrganization getDataBySample(Sample sample) throws LIMSRuntimeException {
-    String sql = "From SampleOrganization so where so.sample.id = :sampleId";
-    try {
-      Query<SampleOrganization> query =
-          entityManager.unwrap(Session.class).createQuery(sql, SampleOrganization.class);
-      query.setParameter("sampleId", Integer.parseInt(sample.getId()));
-      List<SampleOrganization> sampleOrg = query.list();
-      // There was a bug that allowed the same sample id / organization id to be
-      // entered twice
-      return sampleOrg.isEmpty() ? null : sampleOrg.get(0);
+    public SampleOrganization readSampleOrganization(String idString) {
+        SampleOrganization so = null;
+        try {
+            so = entityManager.unwrap(Session.class).get(SampleOrganization.class, idString);
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SampleOrganization readSampleOrganization()", e);
+        }
 
-    } catch (HibernateException e) {
-      handleException(e, "getDataBySample");
+        return so;
     }
-    return null;
-  }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void getDataBySample(SampleOrganization sampleOrganization) throws LIMSRuntimeException {
+
+        try {
+            String sql = "from SampleOrganization so where samp_id = :param";
+            Query<SampleOrganization> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SampleOrganization.class);
+            query.setParameter("param", Integer.valueOf(sampleOrganization.getSample().getId()));
+            List<SampleOrganization> list = query.list();
+            SampleOrganization so = null;
+            if (list.size() > 0) {
+                so = list.get(0);
+                PropertyUtils.copyProperties(sampleOrganization, so);
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in SampleOrganization getData()", e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SampleOrganization getDataBySample(Sample sample) throws LIMSRuntimeException {
+        String sql = "From SampleOrganization so where so.sample.id = :sampleId";
+        try {
+            Query<SampleOrganization> query = entityManager.unwrap(Session.class).createQuery(sql,
+                    SampleOrganization.class);
+            query.setParameter("sampleId", Integer.parseInt(sample.getId()));
+            List<SampleOrganization> sampleOrg = query.list();
+            // There was a bug that allowed the same sample id / organization id to be
+            // entered twice
+            return sampleOrg.isEmpty() ? null : sampleOrg.get(0);
+
+        } catch (HibernateException e) {
+            handleException(e, "getDataBySample");
+        }
+        return null;
+    }
 }

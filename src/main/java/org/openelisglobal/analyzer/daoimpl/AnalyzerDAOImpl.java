@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AnalyzerDAOImpl extends BaseDAOImpl<Analyzer, String> implements AnalyzerDAO {
 
-  public AnalyzerDAOImpl() {
-    super(Analyzer.class);
-  }
+    public AnalyzerDAOImpl() {
+        super(Analyzer.class);
+    }
 }

@@ -21,102 +21,108 @@ import org.openelisglobal.common.action.IActionConstants;
  */
 public class TestManagementRoutingSwitchSessionHandler implements IActionConstants {
 
-  public static void switchOn(int routingSwitch, HttpSession session) {
-    TestManagementRoutingSwitch testManagementRoutingSwitch = null;
-    if (session.getAttribute(TEST_MANAGEMENT_ROUTING_SWITCH) != null) {
-      testManagementRoutingSwitch =
-          (TestManagementRoutingSwitch) session.getAttribute(TEST_MANAGEMENT_ROUTING_SWITCH);
-    } else {
-      testManagementRoutingSwitch = new TestManagementRoutingSwitch();
+    public static void switchOn(int routingSwitch, HttpSession session) {
+        TestManagementRoutingSwitch testManagementRoutingSwitch = null;
+        if (session.getAttribute(TEST_MANAGEMENT_ROUTING_SWITCH) != null) {
+            testManagementRoutingSwitch = (TestManagementRoutingSwitch) session
+                    .getAttribute(TEST_MANAGEMENT_ROUTING_SWITCH);
+        } else {
+            testManagementRoutingSwitch = new TestManagementRoutingSwitch();
+        }
+        switch (routingSwitch) {
+        case TEST_MANAGEMENT_ROUTING_FROM_RESULTS_ENTRY:
+            testManagementRoutingSwitch.setResultsEntrySwitch(true);
+            testManagementRoutingSwitch.setQaEntryEntrySwitch(false);
+            // bugzilla 2504
+            testManagementRoutingSwitch.setQaEntryEntryLineListingSwitch(false);
+            break;
+        case TEST_MANAGEMENT_ROUTING_FROM_QAEVENTS_ENTRY:
+            testManagementRoutingSwitch.setResultsEntrySwitch(false);
+            testManagementRoutingSwitch.setQaEntryEntrySwitch(true);
+            testManagementRoutingSwitch.setQaEntryEntryLineListingSwitch(false);
+            break;
+        case TEST_MANAGEMENT_ROUTING_FROM_QAEVENTS_ENTRY_LINELISTING:
+            testManagementRoutingSwitch.setResultsEntrySwitch(false);
+            testManagementRoutingSwitch.setQaEntryEntrySwitch(false);
+            testManagementRoutingSwitch.setQaEntryEntryLineListingSwitch(true);
+            break;
+        default: // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "An error
+            // occurred with QaEventRoutingSwitchSessionHandler
+            // switchOn(" + routingSwitch + ")");
+        }
+
+        session.setAttribute(TEST_MANAGEMENT_ROUTING_SWITCH, testManagementRoutingSwitch);
     }
-    switch (routingSwitch) {
-      case TEST_MANAGEMENT_ROUTING_FROM_RESULTS_ENTRY:
-        testManagementRoutingSwitch.setResultsEntrySwitch(true);
-        testManagementRoutingSwitch.setQaEntryEntrySwitch(false);
-        // bugzilla 2504
-        testManagementRoutingSwitch.setQaEntryEntryLineListingSwitch(false);
-        break;
-      case TEST_MANAGEMENT_ROUTING_FROM_QAEVENTS_ENTRY:
+
+    public static void switchOff(int routingSwitch, HttpSession session) {
+        TestManagementRoutingSwitch testManagementRoutingSwitch = null;
+        if (session.getAttribute(TEST_MANAGEMENT_ROUTING_SWITCH) != null) {
+            testManagementRoutingSwitch = (TestManagementRoutingSwitch) session
+                    .getAttribute(TEST_MANAGEMENT_ROUTING_SWITCH);
+        } else {
+            testManagementRoutingSwitch = new TestManagementRoutingSwitch();
+        }
+        switch (routingSwitch) {
+        case TEST_MANAGEMENT_ROUTING_FROM_RESULTS_ENTRY:
+            testManagementRoutingSwitch.setResultsEntrySwitch(false);
+            break;
+        case TEST_MANAGEMENT_ROUTING_FROM_QAEVENTS_ENTRY:
+            testManagementRoutingSwitch.setQaEntryEntrySwitch(false);
+            break;
+        case TEST_MANAGEMENT_ROUTING_FROM_QAEVENTS_ENTRY_LINELISTING:
+            testManagementRoutingSwitch.setQaEntryEntryLineListingSwitch(false);
+            break;
+        default: // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "An error
+            // occurred with QaEventRoutingSwitchSessionHandler
+            // switchOff(" + routingSwitch + ")");
+        }
+
+        session.setAttribute(TEST_MANAGEMENT_ROUTING_SWITCH, testManagementRoutingSwitch);
+    }
+
+    public static void switchAllOff(HttpSession session) {
+        TestManagementRoutingSwitch testManagementRoutingSwitch = null;
+        if (session.getAttribute(TEST_MANAGEMENT_ROUTING_SWITCH) != null) {
+            testManagementRoutingSwitch = (TestManagementRoutingSwitch) session
+                    .getAttribute(TEST_MANAGEMENT_ROUTING_SWITCH);
+        } else {
+            testManagementRoutingSwitch = new TestManagementRoutingSwitch();
+        }
         testManagementRoutingSwitch.setResultsEntrySwitch(false);
-        testManagementRoutingSwitch.setQaEntryEntrySwitch(true);
-        testManagementRoutingSwitch.setQaEntryEntryLineListingSwitch(false);
-        break;
-      case TEST_MANAGEMENT_ROUTING_FROM_QAEVENTS_ENTRY_LINELISTING:
-        testManagementRoutingSwitch.setResultsEntrySwitch(false);
         testManagementRoutingSwitch.setQaEntryEntrySwitch(false);
-        testManagementRoutingSwitch.setQaEntryEntryLineListingSwitch(true);
-        break;
-      default: // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "An error
-        // occurred with QaEventRoutingSwitchSessionHandler
-        // switchOn(" + routingSwitch + ")");
-    }
-
-    session.setAttribute(TEST_MANAGEMENT_ROUTING_SWITCH, testManagementRoutingSwitch);
-  }
-
-  public static void switchOff(int routingSwitch, HttpSession session) {
-    TestManagementRoutingSwitch testManagementRoutingSwitch = null;
-    if (session.getAttribute(TEST_MANAGEMENT_ROUTING_SWITCH) != null) {
-      testManagementRoutingSwitch =
-          (TestManagementRoutingSwitch) session.getAttribute(TEST_MANAGEMENT_ROUTING_SWITCH);
-    } else {
-      testManagementRoutingSwitch = new TestManagementRoutingSwitch();
-    }
-    switch (routingSwitch) {
-      case TEST_MANAGEMENT_ROUTING_FROM_RESULTS_ENTRY:
-        testManagementRoutingSwitch.setResultsEntrySwitch(false);
-        break;
-      case TEST_MANAGEMENT_ROUTING_FROM_QAEVENTS_ENTRY:
-        testManagementRoutingSwitch.setQaEntryEntrySwitch(false);
-        break;
-      case TEST_MANAGEMENT_ROUTING_FROM_QAEVENTS_ENTRY_LINELISTING:
         testManagementRoutingSwitch.setQaEntryEntryLineListingSwitch(false);
-        break;
-      default: // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "An error
-        // occurred with QaEventRoutingSwitchSessionHandler
-        // switchOff(" + routingSwitch + ")");
+
+        session.setAttribute(TEST_MANAGEMENT_ROUTING_SWITCH, testManagementRoutingSwitch);
     }
 
-    session.setAttribute(TEST_MANAGEMENT_ROUTING_SWITCH, testManagementRoutingSwitch);
-  }
-
-  public static void switchAllOff(HttpSession session) {
-    TestManagementRoutingSwitch testManagementRoutingSwitch = null;
-    if (session.getAttribute(TEST_MANAGEMENT_ROUTING_SWITCH) != null) {
-      testManagementRoutingSwitch =
-          (TestManagementRoutingSwitch) session.getAttribute(TEST_MANAGEMENT_ROUTING_SWITCH);
-    } else {
-      testManagementRoutingSwitch = new TestManagementRoutingSwitch();
+    public static boolean isSwitchOn(int routingSwitch, HttpSession session) {
+        TestManagementRoutingSwitch testManagementRoutingSwitch = null;
+        if (session.getAttribute(TEST_MANAGEMENT_ROUTING_SWITCH) != null) {
+            testManagementRoutingSwitch = (TestManagementRoutingSwitch) session
+                    .getAttribute(TEST_MANAGEMENT_ROUTING_SWITCH);
+        } else {
+            return false;
+        }
+        switch (routingSwitch) {
+        case TEST_MANAGEMENT_ROUTING_FROM_RESULTS_ENTRY:
+            if (testManagementRoutingSwitch.isResultsEntrySwitch())
+                return true;
+            else
+                return false;
+        case TEST_MANAGEMENT_ROUTING_FROM_QAEVENTS_ENTRY:
+            if (testManagementRoutingSwitch.isQaEntryEntrySwitch())
+                return true;
+            else
+                return false;
+        case TEST_MANAGEMENT_ROUTING_FROM_QAEVENTS_ENTRY_LINELISTING:
+            if (testManagementRoutingSwitch.isQaEntryEntryLineListingSwitch())
+                return true;
+            else
+                return false;
+        default: // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "An error
+            // occurred with QaEventRoutingSwitchSessionHandler
+            // isSwitchOn(" + routingSwitch + ")");
+            return false;
+        }
     }
-    testManagementRoutingSwitch.setResultsEntrySwitch(false);
-    testManagementRoutingSwitch.setQaEntryEntrySwitch(false);
-    testManagementRoutingSwitch.setQaEntryEntryLineListingSwitch(false);
-
-    session.setAttribute(TEST_MANAGEMENT_ROUTING_SWITCH, testManagementRoutingSwitch);
-  }
-
-  public static boolean isSwitchOn(int routingSwitch, HttpSession session) {
-    TestManagementRoutingSwitch testManagementRoutingSwitch = null;
-    if (session.getAttribute(TEST_MANAGEMENT_ROUTING_SWITCH) != null) {
-      testManagementRoutingSwitch =
-          (TestManagementRoutingSwitch) session.getAttribute(TEST_MANAGEMENT_ROUTING_SWITCH);
-    } else {
-      return false;
-    }
-    switch (routingSwitch) {
-      case TEST_MANAGEMENT_ROUTING_FROM_RESULTS_ENTRY:
-        if (testManagementRoutingSwitch.isResultsEntrySwitch()) return true;
-        else return false;
-      case TEST_MANAGEMENT_ROUTING_FROM_QAEVENTS_ENTRY:
-        if (testManagementRoutingSwitch.isQaEntryEntrySwitch()) return true;
-        else return false;
-      case TEST_MANAGEMENT_ROUTING_FROM_QAEVENTS_ENTRY_LINELISTING:
-        if (testManagementRoutingSwitch.isQaEntryEntryLineListingSwitch()) return true;
-        else return false;
-      default: // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "An error
-        // occurred with QaEventRoutingSwitchSessionHandler
-        // isSwitchOn(" + routingSwitch + ")");
-        return false;
-    }
-  }
 }

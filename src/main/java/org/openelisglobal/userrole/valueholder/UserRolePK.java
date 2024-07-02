@@ -23,42 +23,43 @@ import java.util.Objects;
  */
 public class UserRolePK implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String systemUserId;
-  private String roleId;
+    private String systemUserId;
+    private String roleId;
 
-  public String getSystemUserId() {
-    return systemUserId;
-  }
+    public String getSystemUserId() {
+        return systemUserId;
+    }
 
-  public void setSystemUserId(String systemUserId) {
-    this.systemUserId = systemUserId;
-  }
+    public void setSystemUserId(String systemUserId) {
+        this.systemUserId = systemUserId;
+    }
 
-  public String getRoleId() {
-    return roleId;
-  }
+    public String getRoleId() {
+        return roleId;
+    }
 
-  public void setRoleId(String roleId) {
-    this.roleId = roleId;
-  }
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
 
-  public String toString() {
-    return systemUserId + roleId;
-  }
+    public String toString() {
+        return systemUserId + roleId;
+    }
 
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
-    UserRolePK that = (UserRolePK) o;
+        UserRolePK that = (UserRolePK) o;
 
-    return Objects.equals(this.systemUserId, that.systemUserId)
-        && Objects.equals(this.roleId, that.roleId);
-  }
+        return Objects.equals(this.systemUserId, that.systemUserId) && Objects.equals(this.roleId, that.roleId);
+    }
 
-  public int hashCode() {
-    return Objects.hash(systemUserId, roleId);
-  }
+    public int hashCode() {
+        return Objects.hash(systemUserId, roleId);
+    }
 }

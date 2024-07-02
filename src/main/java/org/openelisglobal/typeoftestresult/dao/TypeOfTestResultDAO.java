@@ -19,33 +19,38 @@ import org.openelisglobal.typeoftestresult.valueholder.TypeOfTestResult;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface TypeOfTestResultDAO extends BaseDAO<TypeOfTestResult, String> {
 
-  //	public boolean insertData(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException;
+    // public boolean insertData(TypeOfTestResult typeOfTestResult) throws
+    // LIMSRuntimeException;
 
-  //	public void deleteData(List typeOfTestResults) throws LIMSRuntimeException;
+    // public void deleteData(List typeOfTestResults) throws LIMSRuntimeException;
 
-  //	public List getAllTypeOfTestResults() throws LIMSRuntimeException;
+    // public List getAllTypeOfTestResults() throws LIMSRuntimeException;
 
-  //	public List getPageOfTypeOfTestResults(int startingRecNo) throws LIMSRuntimeException;
+    // public List getPageOfTypeOfTestResults(int startingRecNo) throws
+    // LIMSRuntimeException;
 
-  //	public void getData(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException;
+    // public void getData(TypeOfTestResult typeOfTestResult) throws
+    // LIMSRuntimeException;
 
-  //	public void updateData(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException;
+    // public void updateData(TypeOfTestResult typeOfTestResult) throws
+    // LIMSRuntimeException;
 
-  //
+    //
 
-  //	public Integer getTotalTypeOfTestResultCount() throws LIMSRuntimeException;
+    // public Integer getTotalTypeOfTestResultCount() throws LIMSRuntimeException;
 
-  public TypeOfTestResult getTypeOfTestResultByType(TypeOfTestResult typeOfTestResult)
-      throws LIMSRuntimeException;
+    public TypeOfTestResult getTypeOfTestResultByType(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException;
 
-  //	public TypeOfTestResult getTypeOfTestResultByType(String type) throws LIMSRuntimeException;
+    // public TypeOfTestResult getTypeOfTestResultByType(String type) throws
+    // LIMSRuntimeException;
 
-  boolean duplicateTypeOfTestResultExists(TypeOfTestResult typeOfTestResult)
-      throws LIMSRuntimeException;
+    boolean duplicateTypeOfTestResultExists(TypeOfTestResult typeOfTestResult) throws LIMSRuntimeException;
 }

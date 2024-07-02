@@ -39,147 +39,138 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class AnalyzerExperimentController extends BaseController {
 
-  private static final String[] ALLOWED_FIELDS =
-      new String[] {
-        "id", "filename", "wellValues", "analyzerId", "previousRun",
-      };
+    private static final String[] ALLOWED_FIELDS = new String[] { "id", "filename", "wellValues", "analyzerId",
+            "previousRun", };
 
-  @Autowired private AnalyzerExperimentService analyzerExperimentService;
-  @Autowired private AnalyzerService analyzerService;
-  @Autowired private AnalyzerTestMappingService analyzerMappingService;
-  @Autowired private TestService testService;
+    @Autowired
+    private AnalyzerExperimentService analyzerExperimentService;
+    @Autowired
+    private AnalyzerService analyzerService;
+    @Autowired
+    private AnalyzerTestMappingService analyzerMappingService;
+    @Autowired
+    private TestService testService;
 
-  @ModelAttribute("form")
-  public AnalyzerSetupForm initForm() {
-    return new AnalyzerSetupForm();
-  }
-
-  @InitBinder
-  public void initBinder(WebDataBinder binder) {
-    binder.setAllowedFields(ALLOWED_FIELDS);
-  }
-
-  @GetMapping("/AnalyzerSetup")
-  public ModelAndView displayAnalyzerSetup() {
-    AnalyzerSetupForm form = new AnalyzerSetupForm();
-    PatientSearch patientSearch = new PatientSearch();
-    patientSearch.setLoadFromServerWithPatient(true);
-    patientSearch.setSelectedPatientActionButtonText(
-        MessageUtil.getMessage("label.patient.search.select.test"));
-    form.setPatientSearch(patientSearch);
-    List<Analyzer> analyzers = analyzerService.getAllMatching("hasSetupPage", true);
-    List<LabelValuePair> analyzerLabels = new ArrayList<>();
-    Map<String, List<LabelValuePair>> analyzersTests = new HashMap<>();
-    Map<String, WellInfo> analyzersWellInfo = new HashMap<>();
-    for (Analyzer analyzer : analyzers) {
-      analyzerLabels.add(
-          new LabelValuePair(analyzer.getDescription(), analyzer.getId().toString()));
-      analyzersWellInfo.put(analyzer.getId(), new WellInfo(12, 8));
-      analyzersTests.put(
-          analyzer.getId(),
-          analyzerMappingService.getAllForAnalyzer(analyzer.getId()).stream()
-              .map(
-                  e ->
-                      new LabelValuePair(
-                          testService.get(e.getTestId()).getLocalizedTestName().getLocalizedValue(),
-                          testService.get(e.getTestId()).getLoinc()))
-              .collect(Collectors.toList()));
-      //            analyzerTests.put(analyzer.getId(),
-      //                    analyzerMappingService.getAllForAnalyzer(analyzer.getId()).stream()
-      //                            .map(e -> new LabelValuePair(e.getAnalyzerTestName(),
-      // e.getTestId()))
-      //                            .collect(Collectors.toList()));
-
+    @ModelAttribute("form")
+    public AnalyzerSetupForm initForm() {
+        return new AnalyzerSetupForm();
     }
-    form.setAnalyzers(analyzerLabels);
-    form.setAnalyzersTests(analyzersTests);
-    form.setAnalyzersWellInfo(analyzersWellInfo);
-    //        form.setTests(analyzerService.getAllMatching("hasSetupPage", true).stream().map(e ->
-    // e.))
-    form.setPreviousRuns(
-        analyzerExperimentService.getAllOrdered("lastupdated", true).stream()
-            .map(e -> new LabelValuePair(e.getName(), e.getId().toString()))
-            .collect(Collectors.toList()));
-    return findForward(FWD_SUCCESS, form);
-  }
 
-  @GetMapping(path = "/AnalyzerSetup/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Map<String, String>> getSetup(@PathVariable Integer id) throws IOException {
-    Map<String, String> wellValues = analyzerExperimentService.getWellValuesForId(id);
-    return ResponseEntity.ok(wellValues);
-  }
-
-  @PostMapping(path = "/AnalyzerSetupAPI", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Integer> saveSetupFile(
-      @Valid AnalyzerSetupForm form, BindingResult result, RedirectAttributes redirectAttributes) {
-    if (result.hasErrors()) {
-      saveErrors(result);
-      return ResponseEntity.badRequest().build();
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
     }
-    try {
-      Integer id =
-          analyzerExperimentService.saveMapAsCSVFile(form.getFilename(), form.getWellValues());
-      redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-      return ResponseEntity.ok(id);
-    } catch (LIMSException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
-  }
 
-  @GetMapping(path = "/AnalyzerSetupFile/{id}", produces = MediaType.TEXT_PLAIN_VALUE)
-  public ResponseEntity<byte[]> getSetupFile(
-      @PathVariable Integer id,
-      @RequestParam("fileName") @Pattern(regexp = "^[\\w]+$") String fileName,
-      BindingResult result) {
-    if (result.hasErrors()) {
-      saveErrors(result);
-      return ResponseEntity.badRequest().build();
-    }
-    byte[] file = analyzerExperimentService.get(id).getFile();
-    return ResponseEntity.ok()
-        .header("Content-Disposition", "attachment; filename=" + fileName + ".csv")
-        .contentLength(file.length)
-        .body(file);
-  }
+    @GetMapping("/AnalyzerSetup")
+    public ModelAndView displayAnalyzerSetup() {
+        AnalyzerSetupForm form = new AnalyzerSetupForm();
+        PatientSearch patientSearch = new PatientSearch();
+        patientSearch.setLoadFromServerWithPatient(true);
+        patientSearch.setSelectedPatientActionButtonText(MessageUtil.getMessage("label.patient.search.select.test"));
+        form.setPatientSearch(patientSearch);
+        List<Analyzer> analyzers = analyzerService.getAllMatching("hasSetupPage", true);
+        List<LabelValuePair> analyzerLabels = new ArrayList<>();
+        Map<String, List<LabelValuePair>> analyzersTests = new HashMap<>();
+        Map<String, WellInfo> analyzersWellInfo = new HashMap<>();
+        for (Analyzer analyzer : analyzers) {
+            analyzerLabels.add(new LabelValuePair(analyzer.getDescription(), analyzer.getId().toString()));
+            analyzersWellInfo.put(analyzer.getId(), new WellInfo(12, 8));
+            analyzersTests.put(analyzer.getId(),
+                    analyzerMappingService.getAllForAnalyzer(analyzer.getId()).stream()
+                            .map(e -> new LabelValuePair(
+                                    testService.get(e.getTestId()).getLocalizedTestName().getLocalizedValue(),
+                                    testService.get(e.getTestId()).getLoinc()))
+                            .collect(Collectors.toList()));
+            // analyzerTests.put(analyzer.getId(),
+            // analyzerMappingService.getAllForAnalyzer(analyzer.getId()).stream()
+            // .map(e -> new LabelValuePair(e.getAnalyzerTestName(),
+            // e.getTestId()))
+            // .collect(Collectors.toList()));
 
-  @PostMapping("/AnalyzerSetup")
-  public ModelAndView showSaveSetupFile(
-      @Valid AnalyzerSetupForm form, BindingResult result, RedirectAttributes redirectAttributes) {
-    if (result.hasErrors()) {
-      saveErrors(result);
-      return findForward(FWD_FAIL_INSERT, form);
+        }
+        form.setAnalyzers(analyzerLabels);
+        form.setAnalyzersTests(analyzersTests);
+        form.setAnalyzersWellInfo(analyzersWellInfo);
+        // form.setTests(analyzerService.getAllMatching("hasSetupPage",
+        // true).stream().map(e ->
+        // e.))
+        form.setPreviousRuns(analyzerExperimentService.getAllOrdered("lastupdated", true).stream()
+                .map(e -> new LabelValuePair(e.getName(), e.getId().toString())).collect(Collectors.toList()));
+        return findForward(FWD_SUCCESS, form);
     }
-    try {
-      analyzerExperimentService.saveMapAsCSVFile(form.getFilename(), form.getWellValues());
-    } catch (LIMSException e) {
-      return findForward(FWD_FAIL_INSERT, form);
+
+    @GetMapping(path = "/AnalyzerSetup/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, String>> getSetup(@PathVariable Integer id) throws IOException {
+        Map<String, String> wellValues = analyzerExperimentService.getWellValuesForId(id);
+        return ResponseEntity.ok(wellValues);
     }
-    redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
-    return findForward(FWD_SUCCESS_INSERT, form);
-  }
 
-  @Override
-  protected String findLocalForward(String forward) {
-    switch (forward) {
-      case FWD_SUCCESS:
-        return "quantStudioSetupDefinition";
-      case FWD_SUCCESS_INSERT:
-        return "redirect:/AnalyzerSetup.dp";
-      case FWD_FAIL_INSERT:
-        return "quantStudioSetupDefinition";
+    @PostMapping(path = "/AnalyzerSetupAPI", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Integer> saveSetupFile(@Valid AnalyzerSetupForm form, BindingResult result,
+            RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            Integer id = analyzerExperimentService.saveMapAsCSVFile(form.getFilename(), form.getWellValues());
+            redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+            return ResponseEntity.ok(id);
+        } catch (LIMSException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
-    return null;
-  }
 
-  @Override
-  protected String getPageTitleKey() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+    @GetMapping(path = "/AnalyzerSetupFile/{id}", produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<byte[]> getSetupFile(@PathVariable Integer id,
+            @RequestParam("fileName") @Pattern(regexp = "^[\\w]+$") String fileName, BindingResult result) {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            return ResponseEntity.badRequest().build();
+        }
+        byte[] file = analyzerExperimentService.get(id).getFile();
+        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=" + fileName + ".csv")
+                .contentLength(file.length).body(file);
+    }
 
-  @Override
-  protected String getPageSubtitleKey() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+    @PostMapping("/AnalyzerSetup")
+    public ModelAndView showSaveSetupFile(@Valid AnalyzerSetupForm form, BindingResult result,
+            RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            return findForward(FWD_FAIL_INSERT, form);
+        }
+        try {
+            analyzerExperimentService.saveMapAsCSVFile(form.getFilename(), form.getWellValues());
+        } catch (LIMSException e) {
+            return findForward(FWD_FAIL_INSERT, form);
+        }
+        redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+        return findForward(FWD_SUCCESS_INSERT, form);
+    }
+
+    @Override
+    protected String findLocalForward(String forward) {
+        switch (forward) {
+        case FWD_SUCCESS:
+            return "quantStudioSetupDefinition";
+        case FWD_SUCCESS_INSERT:
+            return "redirect:/AnalyzerSetup.dp";
+        case FWD_FAIL_INSERT:
+            return "quantStudioSetupDefinition";
+        }
+        return null;
+    }
+
+    @Override
+    protected String getPageTitleKey() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected String getPageSubtitleKey() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

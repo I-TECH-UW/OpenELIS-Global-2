@@ -17,63 +17,63 @@ import java.util.Date;
 import java.util.List;
 
 public class ResultReportXmit {
-  public String version = "1";
+    public String version = "1";
 
-  private Date transmissionDate;
-  private String sendingSiteId;
-  private String sendingSiteName;
+    private Date transmissionDate;
+    private String sendingSiteId;
+    private String sendingSiteName;
 
-  private List<TestResultsXmit> testResults;
+    private List<TestResultsXmit> testResults;
 
-  public Date getTransmissionDate() {
-    return transmissionDate;
-  }
+    public Date getTransmissionDate() {
+        return transmissionDate;
+    }
 
-  public void setTransmissionDate(Date transmissionDate) {
-    this.transmissionDate = transmissionDate;
-  }
+    public void setTransmissionDate(Date transmissionDate) {
+        this.transmissionDate = transmissionDate;
+    }
 
-  public List<TestResultsXmit> getTestResults() {
-    return testResults;
-  }
+    public List<TestResultsXmit> getTestResults() {
+        return testResults;
+    }
 
-  public void setTestResults(List<TestResultsXmit> testResults) {
-    this.testResults = testResults;
-  }
+    public void setTestResults(List<TestResultsXmit> testResults) {
+        this.testResults = testResults;
+    }
 
-  public void setVersion(String version) {
-    this.version = version;
-  }
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-  public String getVersion() {
-    return version;
-  }
+    public String getVersion() {
+        return version;
+    }
 
-  public void setSendingSiteId(String sendingSiteId) {
-    this.sendingSiteId = sendingSiteId;
-  }
+    public void setSendingSiteId(String sendingSiteId) {
+        this.sendingSiteId = sendingSiteId;
+    }
 
-  public String getSendingSiteId() {
-    return sendingSiteId;
-  }
+    public String getSendingSiteId() {
+        return sendingSiteId;
+    }
 
-  public String getSendingSiteName() {
-    return sendingSiteName;
-  }
+    public String getSendingSiteName() {
+        return sendingSiteName;
+    }
 
-  public void setSendingSiteName(String sendingSiteName) {
-    this.sendingSiteName = sendingSiteName;
-  }
+    public void setSendingSiteName(String sendingSiteName) {
+        this.sendingSiteName = sendingSiteName;
+    }
 
-  /** Following elements are for malaria case reports only */
-  private String sendingSiteLanguage;
+    /** Following elements are for malaria case reports only */
+    private String sendingSiteLanguage;
 
-  public void setSendingSiteLanguage(String lang) {
-    this.sendingSiteLanguage = lang;
-  }
+    public void setSendingSiteLanguage(String lang) {
+        this.sendingSiteLanguage = lang;
+    }
 
-  public String getSendingSiteLanguage() {
-    return sendingSiteLanguage;
-  }
-  /** End malaria case report elements */
+    public String getSendingSiteLanguage() {
+        return sendingSiteLanguage;
+    }
+    /** End malaria case report elements */
 }

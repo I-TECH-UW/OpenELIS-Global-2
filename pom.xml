@@ -16,7 +16,7 @@
     <minor.version>8</minor.version>
     <state.version>1</state.version>
     <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-    <fix.version>35</fix.version>
+    <fix.version>37</fix.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <liquibase.propertyFile>${project.basedir}/liquibase/liquibase.properties</liquibase.propertyFile>
     <castor.version>1.4.1</castor.version>
@@ -672,43 +672,13 @@
 
             <removeUnusedImports />
 
-            <!-- apply a specific flavor of google-java-format and reflow long strings -->
-            <googleJavaFormat>
-              <version>1.15.0</version>
-              <style>GOOGLE</style>
-              <reflowLongStrings>true</reflowLongStrings>
-            </googleJavaFormat>
+            <eclipse>
+              <version>4.26</version>
+              <file>${project.basedir}/tools/OpenELIS_java_formatter.xml</file>
+            </eclipse>
           </java>
         </configuration>
-        <executions>
-          <execution>
-            <id>format</id>
-            <goals>
-              <goal>apply</goal>
-            </goals>
-            <phase>none</phase>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>format</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.diffplug.spotless</groupId>
-            <artifactId>spotless-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>format</id>
-                <phase>compile</phase>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

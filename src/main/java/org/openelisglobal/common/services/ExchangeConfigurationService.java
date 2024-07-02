@@ -34,188 +34,185 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Scope("prototype")
-@DependsOn({"springContext"})
+@DependsOn({ "springContext" })
 public class ExchangeConfigurationService {
 
-  private static String RESULT_REPORT_TYPE_ID;
-  private static String MALARIA_CASE_TYPE_ID;
+    private static String RESULT_REPORT_TYPE_ID;
+    private static String MALARIA_CASE_TYPE_ID;
 
-  public enum ConfigurationDomain {
-    REPORT("resultReporting");
+    public enum ConfigurationDomain {
+        REPORT("resultReporting");
 
-    private String domainName;
+        private String domainName;
 
-    ConfigurationDomain(String siteDomain) {
-      domainName = siteDomain;
+        ConfigurationDomain(String siteDomain) {
+            domainName = siteDomain;
+        }
+
+        public String getSiteDomain() {
+            return domainName;
+        }
     }
 
-    public String getSiteDomain() {
-      return domainName;
+    public enum ExchangeType {
+        RESULT_REPORT("Result Reporting", "resultReport", true, RESULT_REPORT_TYPE_ID),
+        MALARIA_SURVEILLANCE("Malaria Surveillance", "malariaSurvaeillance", false, null),
+        MALARIA_CASE("Malaria Case Report", "malariaCase", true, MALARIA_CASE_TYPE_ID);
+
+        private String title;
+        private boolean showbacklog = false;
+        private String backlogId = null;
+        private String urlTestToken;
+
+        private ExchangeType(String title, String urlTestToken, boolean showbacklog, String backlogId) {
+            this.title = title;
+            this.showbacklog = showbacklog;
+            this.backlogId = backlogId;
+            this.urlTestToken = urlTestToken;
+        }
+
+        public String getUrlTestToken() {
+            return urlTestToken;
+        }
+
+        public boolean isShowbacklog() {
+            return showbacklog;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getBacklogId() {
+            return backlogId;
+        }
     }
-  }
 
-  public enum ExchangeType {
-    RESULT_REPORT("Result Reporting", "resultReport", true, RESULT_REPORT_TYPE_ID),
-    MALARIA_SURVEILLANCE("Malaria Surveillance", "malariaSurvaeillance", false, null),
-    MALARIA_CASE("Malaria Case Report", "malariaCase", true, MALARIA_CASE_TYPE_ID);
+    private static ReportQueueTypeService reportQueueTypeService = SpringContext.getBean(ReportQueueTypeService.class);
+    private SiteInformationService siteInformationService = SpringContext.getBean(SiteInformationService.class);
+    private ReportExternalExportService reportExternalExportService = SpringContext
+            .getBean(ReportExternalExportService.class);
 
-    private String title;
-    private boolean showbacklog = false;
-    private String backlogId = null;
-    private String urlTestToken;
+    private ConfigurationDomain domain;
+    private ExchangeType exchangeType;
 
-    private ExchangeType(String title, String urlTestToken, boolean showbacklog, String backlogId) {
-      this.title = title;
-      this.showbacklog = showbacklog;
-      this.backlogId = backlogId;
-      this.urlTestToken = urlTestToken;
+    private static Map<String, ExchangeType> dbNameToExchangeTypeMap = new HashMap<>();
+    private static Map<String, ExchangeType> testTokenToExchangeTypeMap = new HashMap<>();
+    private static Map<String, ConfigurationDomain> testTokenToDomainMap = new HashMap<>();
+
+    static {
+        RESULT_REPORT_TYPE_ID = reportQueueTypeService.getReportQueueTypeByName("Results").getId();
+        MALARIA_CASE_TYPE_ID = reportQueueTypeService.getReportQueueTypeByName("malariaCase").getId();
+
+        dbNameToExchangeTypeMap.put("resultReporting", ExchangeType.RESULT_REPORT);
+        dbNameToExchangeTypeMap.put("malariaSurReport", ExchangeType.MALARIA_SURVEILLANCE);
+        dbNameToExchangeTypeMap.put("malariaCaseReport", ExchangeType.MALARIA_CASE);
+
+        if (ExchangeType.RESULT_REPORT.getUrlTestToken() != null) {
+            String token = ExchangeType.RESULT_REPORT.getUrlTestToken();
+            testTokenToExchangeTypeMap.put(token, ExchangeType.RESULT_REPORT);
+            testTokenToDomainMap.put(token, ConfigurationDomain.REPORT);
+        }
+        if (ExchangeType.MALARIA_CASE.getUrlTestToken() != null) {
+            String token = ExchangeType.MALARIA_CASE.getUrlTestToken();
+            testTokenToExchangeTypeMap.put(token, ExchangeType.MALARIA_CASE);
+            testTokenToDomainMap.put(token, ConfigurationDomain.REPORT);
+        }
+        if (ExchangeType.MALARIA_SURVEILLANCE.getUrlTestToken() != null) {
+            String token = ExchangeType.MALARIA_SURVEILLANCE.getUrlTestToken();
+            testTokenToExchangeTypeMap.put(token, ExchangeType.MALARIA_SURVEILLANCE);
+            testTokenToDomainMap.put(token, ConfigurationDomain.REPORT);
+        }
     }
 
-    public String getUrlTestToken() {
-      return urlTestToken;
+    public ExchangeConfigurationService() {
     }
 
-    public boolean isShowbacklog() {
-      return showbacklog;
+    public ExchangeConfigurationService(ConfigurationDomain domain) {
+        this.domain = domain;
     }
 
-    public String getTitle() {
-      return title;
+    public ExchangeConfigurationService(String urlTestToken) {
+        domain = testTokenToDomainMap.get(urlTestToken);
+        exchangeType = testTokenToExchangeTypeMap.get(urlTestToken);
     }
 
-    public String getBacklogId() {
-      return backlogId;
-    }
-  }
+    public List<ReportingConfiguration> getConfigurations() {
 
-  private static ReportQueueTypeService reportQueueTypeService =
-      SpringContext.getBean(ReportQueueTypeService.class);
-  private SiteInformationService siteInformationService =
-      SpringContext.getBean(SiteInformationService.class);
-  private ReportExternalExportService reportExternalExportService =
-      SpringContext.getBean(ReportExternalExportService.class);
+        List<SiteInformation> informationList = siteInformationService.getPageOfSiteInformationByDomainName(1,
+                domain.getSiteDomain());
 
-  private ConfigurationDomain domain;
-  private ExchangeType exchangeType;
-
-  private static Map<String, ExchangeType> dbNameToExchangeTypeMap = new HashMap<>();
-  private static Map<String, ExchangeType> testTokenToExchangeTypeMap = new HashMap<>();
-  private static Map<String, ConfigurationDomain> testTokenToDomainMap = new HashMap<>();
-
-  static {
-    RESULT_REPORT_TYPE_ID = reportQueueTypeService.getReportQueueTypeByName("Results").getId();
-    MALARIA_CASE_TYPE_ID = reportQueueTypeService.getReportQueueTypeByName("malariaCase").getId();
-
-    dbNameToExchangeTypeMap.put("resultReporting", ExchangeType.RESULT_REPORT);
-    dbNameToExchangeTypeMap.put("malariaSurReport", ExchangeType.MALARIA_SURVEILLANCE);
-    dbNameToExchangeTypeMap.put("malariaCaseReport", ExchangeType.MALARIA_CASE);
-
-    if (ExchangeType.RESULT_REPORT.getUrlTestToken() != null) {
-      String token = ExchangeType.RESULT_REPORT.getUrlTestToken();
-      testTokenToExchangeTypeMap.put(token, ExchangeType.RESULT_REPORT);
-      testTokenToDomainMap.put(token, ConfigurationDomain.REPORT);
-    }
-    if (ExchangeType.MALARIA_CASE.getUrlTestToken() != null) {
-      String token = ExchangeType.MALARIA_CASE.getUrlTestToken();
-      testTokenToExchangeTypeMap.put(token, ExchangeType.MALARIA_CASE);
-      testTokenToDomainMap.put(token, ConfigurationDomain.REPORT);
-    }
-    if (ExchangeType.MALARIA_SURVEILLANCE.getUrlTestToken() != null) {
-      String token = ExchangeType.MALARIA_SURVEILLANCE.getUrlTestToken();
-      testTokenToExchangeTypeMap.put(token, ExchangeType.MALARIA_SURVEILLANCE);
-      testTokenToDomainMap.put(token, ConfigurationDomain.REPORT);
-    }
-  }
-
-  public ExchangeConfigurationService() {}
-
-  public ExchangeConfigurationService(ConfigurationDomain domain) {
-    this.domain = domain;
-  }
-
-  public ExchangeConfigurationService(String urlTestToken) {
-    domain = testTokenToDomainMap.get(urlTestToken);
-    exchangeType = testTokenToExchangeTypeMap.get(urlTestToken);
-  }
-
-  public List<ReportingConfiguration> getConfigurations() {
-
-    List<SiteInformation> informationList =
-        siteInformationService.getPageOfSiteInformationByDomainName(1, domain.getSiteDomain());
-
-    Collections.sort(
-        informationList,
-        new Comparator<SiteInformation>() {
-          @Override
-          public int compare(SiteInformation o1, SiteInformation o2) {
-            return o1.getGroup() - o2.getGroup();
-          }
+        Collections.sort(informationList, new Comparator<SiteInformation>() {
+            @Override
+            public int compare(SiteInformation o1, SiteInformation o2) {
+                return o1.getGroup() - o2.getGroup();
+            }
         });
 
-    int group = informationList.get(0).getGroup();
-    List<ReportingConfiguration> reports = new ArrayList<>();
-    ReportingConfiguration configuration = new ReportingConfiguration();
-    reports.add(configuration);
-
-    for (SiteInformation information : informationList) {
-      if (group != information.getGroup()) {
-        group = information.getGroup();
-        configuration = new ReportingConfiguration();
+        int group = informationList.get(0).getGroup();
+        List<ReportingConfiguration> reports = new ArrayList<>();
+        ReportingConfiguration configuration = new ReportingConfiguration();
         reports.add(configuration);
-      }
-      if ("url".equals(information.getTag())) {
-        configuration.setUrl(information.getValue());
-        configuration.setUrlId(information.getId());
-      } else if ("enable".equals(information.getTag())) {
-        configuration.setEnabled(getReportingEnabled(information.getValue()));
-        configuration.setEnabledId(information.getId());
 
-        ExchangeType exchangeType = dbNameToExchangeTypeMap.get(information.getName());
-        if (exchangeType != null) {
-          // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown",
-          // information.getName());
-          configuration.setTitle(exchangeType.getTitle());
-          configuration.setConnectionTestIdentifier(exchangeType.getUrlTestToken());
-          if (exchangeType.isShowbacklog()) {
-            configuration.setShowBacklog(true);
-            configuration.setBacklogSize(getReportingBacklogSize(exchangeType.getBacklogId()));
-          }
+        for (SiteInformation information : informationList) {
+            if (group != information.getGroup()) {
+                group = information.getGroup();
+                configuration = new ReportingConfiguration();
+                reports.add(configuration);
+            }
+            if ("url".equals(information.getTag())) {
+                configuration.setUrl(information.getValue());
+                configuration.setUrlId(information.getId());
+            } else if ("enable".equals(information.getTag())) {
+                configuration.setEnabled(getReportingEnabled(information.getValue()));
+                configuration.setEnabledId(information.getId());
+
+                ExchangeType exchangeType = dbNameToExchangeTypeMap.get(information.getName());
+                if (exchangeType != null) {
+                    // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown",
+                    // information.getName());
+                    configuration.setTitle(exchangeType.getTitle());
+                    configuration.setConnectionTestIdentifier(exchangeType.getUrlTestToken());
+                    if (exchangeType.isShowbacklog()) {
+                        configuration.setShowBacklog(true);
+                        configuration.setBacklogSize(getReportingBacklogSize(exchangeType.getBacklogId()));
+                    }
+                }
+            }
+
+            if (information.getSchedule() != null) {
+                configuration.setIsScheduled(true);
+                configuration.setSchedulerId(information.getSchedule().getId());
+
+                String cronString = information.getSchedule().getCronStatement();
+
+                if (!"never".equals(cronString)) {
+                    String[] cronParts = cronString.split(" ");
+                    int minutes = Integer.parseInt(cronParts[1]);
+                    configuration.setScheduleHours(cronParts[2]);
+                    configuration.setScheduleMin(String.valueOf(minutes / 10 * 10));
+                }
+            }
         }
-      }
 
-      if (information.getSchedule() != null) {
-        configuration.setIsScheduled(true);
-        configuration.setSchedulerId(information.getSchedule().getId());
-
-        String cronString = information.getSchedule().getCronStatement();
-
-        if (!"never".equals(cronString)) {
-          String[] cronParts = cronString.split(" ");
-          int minutes = Integer.parseInt(cronParts[1]);
-          configuration.setScheduleHours(cronParts[2]);
-          configuration.setScheduleMin(String.valueOf(minutes / 10 * 10));
-        }
-      }
+        return reports;
     }
 
-    return reports;
-  }
-
-  private String getReportingBacklogSize(String reportType) {
-    int size = reportExternalExportService.getUnsentReportExports(reportType).size();
-    return String.valueOf(size);
-  }
-
-  private String getReportingEnabled(String value) {
-    return ("true".equals(value) || "enable".equals(value)) ? "enable" : "disable";
-  }
-
-  public String testConnection(String url) {
-    if (GenericValidator.isBlankOrNull(url)) {
-      return MessageUtil.getMessage("connection.test.error.missingURL");
+    private String getReportingBacklogSize(String reportType) {
+        int size = reportExternalExportService.getUnsentReportExports(reportType).size();
+        return String.valueOf(size);
     }
 
-    ConnectionTest connectionTest = new ConnectionTest();
-    return connectionTest.testURL(url);
-  }
+    private String getReportingEnabled(String value) {
+        return ("true".equals(value) || "enable".equals(value)) ? "enable" : "disable";
+    }
+
+    public String testConnection(String url) {
+        if (GenericValidator.isBlankOrNull(url)) {
+            return MessageUtil.getMessage("connection.test.error.missingURL");
+        }
+
+        ConnectionTest connectionTest = new ConnectionTest();
+        return connectionTest.testURL(url);
+    }
 }

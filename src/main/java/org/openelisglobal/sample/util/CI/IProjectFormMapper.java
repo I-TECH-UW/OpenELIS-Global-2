@@ -27,102 +27,103 @@ import org.openelisglobal.sample.util.CI.form.IProjectForm;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 
 /**
- * Provide information about mapping from the *entryByProject JSP forms and appropriate data
- * structures
+ * Provide information about mapping from the *entryByProject JSP forms and
+ * appropriate data structures
  *
  * @author Laura Nixon, Paul A. Hill (pahill@uw.edu)
  * @since June 20, 2010
  */
 public interface IProjectFormMapper {
 
-  /**
-   * Find all of the appropriate tests which have been requested
-   *
-   * @return list of Type Of Sample and the tests requested OR null if the right sample type was not
-   *     selected.
-   */
-  ArrayList<TypeOfSampleTests> getTypeOfSampleTests();
+    /**
+     * Find all of the appropriate tests which have been requested
+     *
+     * @return list of Type Of Sample and the tests requested OR null if the right
+     *         sample type was not selected.
+     */
+    ArrayList<TypeOfSampleTests> getTypeOfSampleTests();
 
-  String getProjectCode();
+    String getProjectCode();
 
-  ProjectForm getProjectForm();
+    ProjectForm getProjectForm();
 
-  String getOrganizationId();
+    String getOrganizationId();
 
-  String getSiteSubjectNumber();
+    String getSiteSubjectNumber();
 
-  /**
-   * @return a list of observation histories which occur on the form once.
-   */
-  List<ObservationHistory> readObservationHistories(ObservationData od);
+    /**
+     * @return a list of observation histories which occur on the form once.
+     */
+    List<ObservationHistory> readObservationHistories(ObservationData od);
 
-  /**
-   * A Map of lists of multi-valued observation history entities, so that even if a list is 100%
-   * empty, the key tells the caller what type was supposed to be in the list (so the caller can
-   * clean up old existing entities of this type from the DB.
-   *
-   * @return map<ObservationHistoryTypeId, List<ObservationHistory>>
-   */
-  Map<String, List<ObservationHistory>> readObservationHistoryLists(ObservationData od);
+    /**
+     * A Map of lists of multi-valued observation history entities, so that even if
+     * a list is 100% empty, the key tells the caller what type was supposed to be
+     * in the list (so the caller can clean up old existing entities of this type
+     * from the DB.
+     *
+     * @return map<ObservationHistoryTypeId, List<ObservationHistory>>
+     */
+    Map<String, List<ObservationHistory>> readObservationHistoryLists(ObservationData od);
 
-  /**
-   * Sometimes we want to push things into the patient record (and its children), but sometimes we
-   * don't. Override this to change that behavior.
-   *
-   * @return
-   */
-  boolean getShouldPopulatePatient();
+    /**
+     * Sometimes we want to push things into the patient record (and its children),
+     * but sometimes we don't. Override this to change that behavior.
+     *
+     * @return
+     */
+    boolean getShouldPopulatePatient();
 
-  /**
-   * Second Entry is a CI (RetroCI) procedure where data is always entered twice and verified to be
-   * the same.
-   *
-   * @param request
-   * @return
-   */
-  boolean isSecondEntry(HttpServletRequest request);
+    /**
+     * Second Entry is a CI (RetroCI) procedure where data is always entered twice
+     * and verified to be the same.
+     *
+     * @param request
+     * @return
+     */
+    boolean isSecondEntry(HttpServletRequest request);
 
-  /**
-   * @return the collection date from the form data.
-   */
-  String getCollectionDate();
+    /**
+     * @return the collection date from the form data.
+     */
+    String getCollectionDate();
 
-  /**
-   * @return the collection date from the form data.
-   */
-  String getCollectionTime();
+    /**
+     * @return the collection date from the form data.
+     */
+    String getCollectionTime();
 
-  /**
-   * @return the known DB id if any for the patient.
-   */
-  String getPatientId();
+    /**
+     * @return the known DB id if any for the patient.
+     */
+    String getPatientId();
 
-  /**
-   * @return the known DB id if any for the patient.
-   */
-  String getSampleId();
+    /**
+     * @return the known DB id if any for the patient.
+     */
+    String getSampleId();
 
-  /**
-   * @return the received date from the form data.
-   */
-  String getReceivedDate();
+    /**
+     * @return the received date from the form data.
+     */
+    String getReceivedDate();
 
-  /**
-   * @return the received time from the form data.
-   */
-  String getReceivedTime();
+    /**
+     * @return the received time from the form data.
+     */
+    String getReceivedTime();
 
-  /**
-   * @param b are we working with a patient form or a sample form?
-   */
-  void setPatientForm(boolean b);
+    /**
+     * @param b are we working with a patient form or a sample form?
+     */
+    void setPatientForm(boolean b);
 
-  void setProjectData(ProjectData projectData);
+    void setProjectData(ProjectData projectData);
 
-  TypeOfSample getTypeOfSample(String typeName);
+    TypeOfSample getTypeOfSample(String typeName);
 
-  ProjectData getProjectData();
+    ProjectData getProjectData();
 
-  /** */
-  IProjectForm getForm();
+    /** */
+    IProjectForm getForm();
 }

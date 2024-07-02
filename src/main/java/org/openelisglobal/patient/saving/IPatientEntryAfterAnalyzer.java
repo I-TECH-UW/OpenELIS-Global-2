@@ -1,3 +1,4 @@
 package org.openelisglobal.patient.saving;
 
-public interface IPatientEntryAfterAnalyzer extends IPatientEntry {}
+public interface IPatientEntryAfterAnalyzer extends IPatientEntry {
+}

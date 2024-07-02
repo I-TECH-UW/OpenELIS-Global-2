@@ -35,34 +35,33 @@ import org.springframework.stereotype.Service;
 @Scope("prototype")
 public class SampleSecondEntry extends SampleEntry implements ISampleSecondEntry, IActionConstants {
 
-  /**
-   * @param dynaBean
-   * @param sysUserId
-   */
-  public SampleSecondEntry(IAccessionerForm form, String sysUserId, HttpServletRequest request) {
-    this();
-    super.setFieldsFromForm(form);
-    super.setSysUserId(sysUserId);
-    super.setRequest(request);
-  }
+    /**
+     * @param dynaBean
+     * @param sysUserId
+     */
+    public SampleSecondEntry(IAccessionerForm form, String sysUserId, HttpServletRequest request) {
+        this();
+        super.setFieldsFromForm(form);
+        super.setSysUserId(sysUserId);
+        super.setRequest(request);
+    }
 
-  public SampleSecondEntry() {
-    super();
-    newPatientStatus = null; // no change
-    newSampleStatus = ValidationRegistration;
-  }
+    public SampleSecondEntry() {
+        super();
+        newPatientStatus = null; // no change
+        newSampleStatus = ValidationRegistration;
+    }
 
-  /**
-   * @see org.openelisglobal.patient.saving.PatientEntry#canAccession()
-   */
-  @Override
-  public boolean canAccession() {
-    return projectFormMapper.isSecondEntry(request)
-        && InitialRegistration == statusSet.getSampleRecordStatus();
-  }
+    /**
+     * @see org.openelisglobal.patient.saving.PatientEntry#canAccession()
+     */
+    @Override
+    public boolean canAccession() {
+        return projectFormMapper.isSecondEntry(request) && InitialRegistration == statusSet.getSampleRecordStatus();
+    }
 
-  @Override
-  protected String getActionLabel() {
-    return MessageUtil.getMessage("banner.menu.createSample.Verify");
-  }
+    @Override
+    protected String getActionLabel() {
+        return MessageUtil.getMessage("banner.menu.createSample.Verify");
+    }
 }

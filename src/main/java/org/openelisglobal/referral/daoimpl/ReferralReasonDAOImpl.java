@@ -28,26 +28,24 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Component
 @Transactional
-public class ReferralReasonDAOImpl extends BaseDAOImpl<ReferralReason, String>
-    implements ReferralReasonDAO {
-  public ReferralReasonDAOImpl() {
-    super(ReferralReason.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<ReferralReason> getAllReferralReasons() throws LIMSRuntimeException {
-    String sql = "from ReferralReason";
-
-    try {
-      Query<ReferralReason> query =
-          entityManager.unwrap(Session.class).createQuery(sql, ReferralReason.class);
-      List<ReferralReason> reasons = query.list();
-      return reasons;
-    } catch (HibernateException e) {
-      handleException(e, "getAllReferralReasons");
+public class ReferralReasonDAOImpl extends BaseDAOImpl<ReferralReason, String> implements ReferralReasonDAO {
+    public ReferralReasonDAOImpl() {
+        super(ReferralReason.class);
     }
 
-    return null;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReferralReason> getAllReferralReasons() throws LIMSRuntimeException {
+        String sql = "from ReferralReason";
+
+        try {
+            Query<ReferralReason> query = entityManager.unwrap(Session.class).createQuery(sql, ReferralReason.class);
+            List<ReferralReason> reasons = query.list();
+            return reasons;
+        } catch (HibernateException e) {
+            handleException(e, "getAllReferralReasons");
+        }
+
+        return null;
+    }
 }

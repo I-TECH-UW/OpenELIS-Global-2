@@ -38,7 +38,7 @@ export const RoutineReports = (props) => {
         />
       )}
 
-      {type === "patient" && report === "CISampleRoutineExport" && (
+      {type === "routine" && report === "CISampleRoutineExport" && (
         <ReportByDate
           report={"CISampleRoutineExport"}
           id={"sideNav.label.exportcsvfile"}
@@ -74,6 +74,13 @@ export const RoutineReports = (props) => {
         <ReportByDate
           report={"sampleRejectionReport"}
           id={"openreports.mgt.rejection"}
+        />
+      )}
+
+      {type === "patient" && report === "ExportWHONETReportByDate" && (
+        <ReportByDate
+          report={"ExportWHONETReportByDate"}
+          id={"header.label.study.ciexport"}
         />
       )}
 

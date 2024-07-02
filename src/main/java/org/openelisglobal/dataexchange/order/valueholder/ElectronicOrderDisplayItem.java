@@ -18,203 +18,203 @@ import org.openelisglobal.sample.valueholder.OrderPriority;
 
 public class ElectronicOrderDisplayItem {
 
-  private String electronicOrderId;
+    private String electronicOrderId;
 
-  private String externalOrderId;
+    private String externalOrderId;
 
-  private String patientUpid;
+    private String patientUpid;
 
-  private String requestDateDisplay;
+    private String requestDateDisplay;
 
-  private String collectionDateDisplay;
+    private String collectionDateDisplay;
 
-  private String patientLastName;
+    private String patientLastName;
 
-  private String patientFirstName;
+    private String patientFirstName;
 
-  private String patientNationalId;
+    private String patientNationalId;
 
-  private String requestingFacility;
+    private String requestingFacility;
 
-  private String status;
+    private String status;
 
-  private String testName;
+    private String testName;
 
-  private String referringLabNumber;
+    private String referringLabNumber;
 
-  private String passportNumber;
+    private String passportNumber;
 
-  private String subjectNumber;
+    private String subjectNumber;
 
-  private String labNumber;
+    private String labNumber;
 
-  private String birthDate;
+    private String birthDate;
 
-  private String gender;
+    private String gender;
 
-  private String qaEventId;
+    private String qaEventId;
 
-  public String getBirthDate() {
-    return birthDate;
-  }
+    public String getBirthDate() {
+        return birthDate;
+    }
 
-  public void setBirthDate(String birthDate) {
-    this.birthDate = birthDate;
-  }
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
+    }
 
-  public String getGender() {
-    return gender;
-  }
+    public String getGender() {
+        return gender;
+    }
 
-  public void setGender(String gender) {
-    this.gender = gender;
-  }
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
-  private List<String> warnings;
+    private List<String> warnings;
 
-  private OrderPriority priority;
+    private OrderPriority priority;
 
-  public String getElectronicOrderId() {
-    return electronicOrderId;
-  }
+    public String getElectronicOrderId() {
+        return electronicOrderId;
+    }
 
-  public void setElectronicOrderId(String electronicOrderId) {
-    this.electronicOrderId = electronicOrderId;
-  }
+    public void setElectronicOrderId(String electronicOrderId) {
+        this.electronicOrderId = electronicOrderId;
+    }
 
-  public String getRequestDateDisplay() {
-    return requestDateDisplay;
-  }
+    public String getRequestDateDisplay() {
+        return requestDateDisplay;
+    }
 
-  public void setRequestDateDisplay(String requestDateDisplay) {
-    this.requestDateDisplay = requestDateDisplay;
-  }
+    public void setRequestDateDisplay(String requestDateDisplay) {
+        this.requestDateDisplay = requestDateDisplay;
+    }
 
-  public String getPatientLastName() {
-    return patientLastName;
-  }
+    public String getPatientLastName() {
+        return patientLastName;
+    }
 
-  public void setPatientLastName(String patientLastName) {
-    this.patientLastName = patientLastName;
-  }
+    public void setPatientLastName(String patientLastName) {
+        this.patientLastName = patientLastName;
+    }
 
-  public String getPatientFirstName() {
-    return patientFirstName;
-  }
+    public String getPatientFirstName() {
+        return patientFirstName;
+    }
 
-  public void setPatientFirstName(String patientFirstName) {
-    this.patientFirstName = patientFirstName;
-  }
+    public void setPatientFirstName(String patientFirstName) {
+        this.patientFirstName = patientFirstName;
+    }
 
-  public String getPatientNationalId() {
-    return patientNationalId;
-  }
+    public String getPatientNationalId() {
+        return patientNationalId;
+    }
 
-  public void setPatientNationalId(String patientNationalId) {
-    this.patientNationalId = patientNationalId;
-  }
+    public void setPatientNationalId(String patientNationalId) {
+        this.patientNationalId = patientNationalId;
+    }
 
-  public String getRequestingFacility() {
-    return requestingFacility;
-  }
+    public String getRequestingFacility() {
+        return requestingFacility;
+    }
 
-  public void setRequestingFacility(String requestingFacility) {
-    this.requestingFacility = requestingFacility;
-  }
+    public void setRequestingFacility(String requestingFacility) {
+        this.requestingFacility = requestingFacility;
+    }
 
-  public String getStatus() {
-    return status;
-  }
+    public String getStatus() {
+        return status;
+    }
 
-  public void setStatus(String status) {
-    this.status = status;
-  }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-  public String getTestName() {
-    return testName;
-  }
+    public String getTestName() {
+        return testName;
+    }
 
-  public void setTestName(String testName) {
-    this.testName = testName;
-  }
+    public void setTestName(String testName) {
+        this.testName = testName;
+    }
 
-  public String getReferringLabNumber() {
-    return referringLabNumber;
-  }
+    public String getReferringLabNumber() {
+        return referringLabNumber;
+    }
 
-  public void setReferringLabNumber(String referringLabNumber) {
-    this.referringLabNumber = referringLabNumber;
-  }
+    public void setReferringLabNumber(String referringLabNumber) {
+        this.referringLabNumber = referringLabNumber;
+    }
 
-  public String getPassportNumber() {
-    return passportNumber;
-  }
+    public String getPassportNumber() {
+        return passportNumber;
+    }
 
-  public void setPassportNumber(String passportNumber) {
-    this.passportNumber = passportNumber;
-  }
+    public void setPassportNumber(String passportNumber) {
+        this.passportNumber = passportNumber;
+    }
 
-  public String getSubjectNumber() {
-    return subjectNumber;
-  }
+    public String getSubjectNumber() {
+        return subjectNumber;
+    }
 
-  public void setSubjectNumber(String subjectNumber) {
-    this.subjectNumber = subjectNumber;
-  }
+    public void setSubjectNumber(String subjectNumber) {
+        this.subjectNumber = subjectNumber;
+    }
 
-  public String getLabNumber() {
-    return labNumber;
-  }
+    public String getLabNumber() {
+        return labNumber;
+    }
 
-  public void setLabNumber(String labNumber) {
-    this.labNumber = labNumber;
-  }
+    public void setLabNumber(String labNumber) {
+        this.labNumber = labNumber;
+    }
 
-  public String getExternalOrderId() {
-    return externalOrderId;
-  }
+    public String getExternalOrderId() {
+        return externalOrderId;
+    }
 
-  public void setExternalOrderId(String externalOrderId) {
-    this.externalOrderId = externalOrderId;
-  }
+    public void setExternalOrderId(String externalOrderId) {
+        this.externalOrderId = externalOrderId;
+    }
 
-  public List<String> getWarnings() {
-    return warnings;
-  }
+    public List<String> getWarnings() {
+        return warnings;
+    }
 
-  public void setWarnings(List<String> warnings) {
-    this.warnings = warnings;
-  }
+    public void setWarnings(List<String> warnings) {
+        this.warnings = warnings;
+    }
 
-  public OrderPriority getPriority() {
-    return priority;
-  }
+    public OrderPriority getPriority() {
+        return priority;
+    }
 
-  public void setPriority(OrderPriority priority) {
-    this.priority = priority;
-  }
+    public void setPriority(OrderPriority priority) {
+        this.priority = priority;
+    }
 
-  public String getPatientUpid() {
-    return patientUpid;
-  }
+    public String getPatientUpid() {
+        return patientUpid;
+    }
 
-  public void setPatientUpid(String patientUpid) {
-    this.patientUpid = patientUpid;
-  }
+    public void setPatientUpid(String patientUpid) {
+        this.patientUpid = patientUpid;
+    }
 
-  public String getCollectionDateDisplay() {
-    return collectionDateDisplay;
-  }
+    public String getCollectionDateDisplay() {
+        return collectionDateDisplay;
+    }
 
-  public void setCollectionDateDisplay(String collectionDateDisplay) {
-    this.collectionDateDisplay = collectionDateDisplay;
-  }
+    public void setCollectionDateDisplay(String collectionDateDisplay) {
+        this.collectionDateDisplay = collectionDateDisplay;
+    }
 
-  public String getQaEventId() {
-    return qaEventId;
-  }
+    public String getQaEventId() {
+        return qaEventId;
+    }
 
-  public void setQaEventId(String qaEventId) {
-    this.qaEventId = qaEventId;
-  }
+    public void setQaEventId(String qaEventId) {
+        this.qaEventId = qaEventId;
+    }
 }

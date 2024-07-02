@@ -22,34 +22,33 @@ import org.openelisglobal.internationalization.MessageUtil;
 
 public class ConnectionTest {
 
-  public String testURL(String url) {
+    public String testURL(String url) {
 
-    boolean sendAsychronously = false;
-    TestFailHandler responseHandler = new TestFailHandler();
+        boolean sendAsychronously = false;
+        TestFailHandler responseHandler = new TestFailHandler();
 
-    new ReportTransmission()
-        .sendRawReport(null, url, sendAsychronously, responseHandler, HTTP_TYPE.GET);
+        new ReportTransmission().sendRawReport(null, url, sendAsychronously, responseHandler, HTTP_TYPE.GET);
 
-    return responseHandler.getResponse();
-  }
+        return responseHandler.getResponse();
+    }
 
-  public class TestFailHandler implements ITransmissionResponseHandler {
-    private String response;
+    public class TestFailHandler implements ITransmissionResponseHandler {
+        private String response;
 
-    @Override
-    public void handleResponse(int httpReturnStatus, List<String> errors, String msg) {
+        @Override
+        public void handleResponse(int httpReturnStatus, List<String> errors, String msg) {
 
-      if (httpReturnStatus == HttpServletResponse.SC_OK) {
-        response = MessageUtil.getMessage("http.success");
-      } else {
-        if (!errors.isEmpty()) {
-          response = errors.get(0);
+            if (httpReturnStatus == HttpServletResponse.SC_OK) {
+                response = MessageUtil.getMessage("http.success");
+            } else {
+                if (!errors.isEmpty()) {
+                    response = errors.get(0);
+                }
+            }
         }
-      }
-    }
 
-    public String getResponse() {
-      return response;
+        public String getResponse() {
+            return response;
+        }
     }
-  }
 }

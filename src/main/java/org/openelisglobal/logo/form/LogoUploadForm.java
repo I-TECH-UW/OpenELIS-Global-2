@@ -5,33 +5,33 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class LogoUploadForm extends BaseForm {
 
-  private MultipartFile logoFile;
+    private MultipartFile logoFile;
 
-  private Boolean removeImage;
+    private Boolean removeImage;
 
-  private String logoName;
+    private String logoName;
 
-  public MultipartFile getLogoFile() {
-    return logoFile;
-  }
+    public MultipartFile getLogoFile() {
+        return logoFile;
+    }
 
-  public void setLogoFile(MultipartFile logoFile) {
-    this.logoFile = logoFile;
-  }
+    public void setLogoFile(MultipartFile logoFile) {
+        this.logoFile = logoFile;
+    }
 
-  public String getLogoName() {
-    return logoName;
-  }
+    public String getLogoName() {
+        return logoName;
+    }
 
-  public void setLogoName(String logoName) {
-    this.logoName = logoName;
-  }
+    public void setLogoName(String logoName) {
+        this.logoName = logoName;
+    }
 
-  public Boolean getRemoveImage() {
-    return removeImage;
-  }
+    public Boolean getRemoveImage() {
+        return removeImage;
+    }
 
-  public void setRemoveImage(Boolean removeImage) {
-    this.removeImage = removeImage;
-  }
+    public void setRemoveImage(Boolean removeImage) {
+        this.removeImage = removeImage;
+    }
 }

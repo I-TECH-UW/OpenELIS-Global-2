@@ -236,12 +236,6 @@ export default function App() {
                   labUnitRole={{ Pathology: ["Results"] }}
                 />
                 <SecureRoute
-                  path="/NotificationTestPage"
-                  exact
-                  component={() => <NotificationTestPage />}
-                  role="Results"
-                />
-                <SecureRoute
                   path="/PathologyCaseView/:pathologySampleId"
                   exact
                   component={() => <PathologyCaseView />}
@@ -261,6 +255,12 @@ export default function App() {
                   component={() => <ImmunohistochemistryCaseView />}
                   role=""
                   labUnitRole={{ Immunohistochemistry: ["Results"] }}
+                />
+                 <SecureRoute
+                  path="/NotificationTestPage"
+                  exact
+                  component={() => <NotificationTestPage />}
+                  role="Results"
                 />
                 <SecureRoute
                   path="/CytologyDashboard"

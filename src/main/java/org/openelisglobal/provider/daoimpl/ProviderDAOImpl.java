@@ -36,148 +36,144 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements ProviderDAO {
 
-  public ProviderDAOImpl() {
-    super(Provider.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public void getData(Provider provider) throws LIMSRuntimeException {
-    try {
-      Provider prov = entityManager.unwrap(Session.class).get(Provider.class, provider.getId());
-      if (prov != null) {
-        PropertyUtils.copyProperties(provider, prov);
-      } else {
-        provider.setId(null);
-      }
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in ProviderDAOImpl getData()", e);
-    }
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<Provider> getAllProviders() throws LIMSRuntimeException {
-    List<Provider> list = new Vector<>();
-    try {
-      String sql = "from Provider";
-      Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
-      list = query.list();
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in ProviderDAOImpl getAllProviders()", e);
+    public ProviderDAOImpl() {
+        super(Provider.class);
     }
 
-    return list;
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<Provider> getPageOfProviders(int startingRecNo) throws LIMSRuntimeException {
-    List<Provider> list = new Vector<>();
-    try {
-      // calculate maxRow to be one more than the page size
-      int endingRecNo =
-          startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
-
-      String sql = "from Provider p order by p.id";
-      Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
-      query.setFirstResult(startingRecNo - 1);
-      query.setMaxResults(endingRecNo - 1);
-
-      list = query.list();
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in ProviderDAOImpl getPageOfProviders()", e);
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(Provider provider) throws LIMSRuntimeException {
+        try {
+            Provider prov = entityManager.unwrap(Session.class).get(Provider.class, provider.getId());
+            if (prov != null) {
+                PropertyUtils.copyProperties(provider, prov);
+            } else {
+                provider.setId(null);
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in ProviderDAOImpl getData()", e);
+        }
     }
 
-    return list;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<Provider> getAllProviders() throws LIMSRuntimeException {
+        List<Provider> list = new Vector<>();
+        try {
+            String sql = "from Provider";
+            Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
+            list = query.list();
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in ProviderDAOImpl getAllProviders()", e);
+        }
 
-  public Provider readProvider(String idString) {
-    Provider provider = null;
-    try {
-      provider = entityManager.unwrap(Session.class).get(Provider.class, idString);
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in ProviderDAOImpl readProvider()", e);
+        return list;
     }
 
-    return provider;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<Provider> getPageOfProviders(int startingRecNo) throws LIMSRuntimeException {
+        List<Provider> list = new Vector<>();
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
-  @Override
-  @Transactional(readOnly = true)
-  public Provider getProviderByPerson(Person person) throws LIMSRuntimeException {
-    List<Provider> list = null;
-    try {
-      String sql = "from Provider p where p.person.id = :personId";
-      Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
-      query.setParameter("personId", Integer.parseInt(person.getId()));
+            String sql = "from Provider p order by p.id";
+            Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
 
-      list = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in ProviderDAOImpl getProviderByPerson()", e);
+            list = query.list();
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in ProviderDAOImpl getPageOfProviders()", e);
+        }
+
+        return list;
     }
 
-    if (list.size() > 0) {
-      return list.get(0);
-    } else {
-      return null;
-    }
-  }
+    public Provider readProvider(String idString) {
+        Provider provider = null;
+        try {
+            provider = entityManager.unwrap(Session.class).get(Provider.class, idString);
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in ProviderDAOImpl readProvider()", e);
+        }
 
-  @Override
-  public int getTotalSearchedProviderCount(String parameter) {
-    List<Provider> list = null;
-    try {
-      String sql =
-          "from Provider p where lower(p.person.firstName) like concat('%', lower(:searchValue),"
-              + " '%') or lower(p.person.lastName) like concat('%', lower(:searchValue), '%') or"
-              + " lower(concat(p.person.firstName, ' ', p.person.lastName)) like concat('%',"
-              + " lower(:searchValue), '%')";
-      Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
-      query.setParameter("searchValue", parameter);
-
-      list = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in ProviderDAOImpl getTotalSearchedProviderCount()", e);
+        return provider;
     }
 
-    return list.size();
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public Provider getProviderByPerson(Person person) throws LIMSRuntimeException {
+        List<Provider> list = null;
+        try {
+            String sql = "from Provider p where p.person.id = :personId";
+            Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
+            query.setParameter("personId", Integer.parseInt(person.getId()));
 
-  @Override
-  public List<Provider> getPagesOfSearchedProviders(int startingRecNo, String parameter) {
-    List<Provider> list = new Vector<>();
-    try {
-      // calculate maxRow to be one more than the page size
-      int endingRecNo =
-          startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in ProviderDAOImpl getProviderByPerson()", e);
+        }
 
-      String sql =
-          "from Provider p where lower(p.person.firstName) like concat('%', lower(:searchValue),"
-              + " '%') or lower(p.person.lastName) like concat('%', lower(:searchValue), '%') or"
-              + " lower(concat(p.person.firstName, ' ', p.person.lastName)) like concat('%',"
-              + " lower(:searchValue), '%') ORDER BY p.active DESC, p.person.lastName";
-      Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
-      query.setParameter("searchValue", parameter);
-      query.setFirstResult(startingRecNo - 1);
-      query.setMaxResults(endingRecNo - 1);
-
-      list = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in ProviderDAOImpl getPagesOfSearchedProviders()", e);
+        if (list.size() > 0) {
+            return list.get(0);
+        } else {
+            return null;
+        }
     }
 
-    return list;
-  }
+    @Override
+    public int getTotalSearchedProviderCount(String parameter) {
+        List<Provider> list = null;
+        try {
+            String sql = "from Provider p where lower(p.person.firstName) like concat('%', lower(:searchValue),"
+                    + " '%') or lower(p.person.lastName) like concat('%', lower(:searchValue), '%') or"
+                    + " lower(concat(p.person.firstName, ' ', p.person.lastName)) like concat('%',"
+                    + " lower(:searchValue), '%')";
+            Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
+            query.setParameter("searchValue", parameter);
+
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in ProviderDAOImpl getTotalSearchedProviderCount()", e);
+        }
+
+        return list.size();
+    }
+
+    @Override
+    public List<Provider> getPagesOfSearchedProviders(int startingRecNo, String parameter) {
+        List<Provider> list = new Vector<>();
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+
+            String sql = "from Provider p where lower(p.person.firstName) like concat('%', lower(:searchValue),"
+                    + " '%') or lower(p.person.lastName) like concat('%', lower(:searchValue), '%') or"
+                    + " lower(concat(p.person.firstName, ' ', p.person.lastName)) like concat('%',"
+                    + " lower(:searchValue), '%') ORDER BY p.active DESC, p.person.lastName";
+            Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
+            query.setParameter("searchValue", parameter);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
+
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in ProviderDAOImpl getPagesOfSearchedProviders()", e);
+        }
+
+        return list;
+    }
 }

@@ -22,10 +22,12 @@ import org.openelisglobal.method.service.MethodService;
 import org.openelisglobal.spring.util.SpringContext;
 
 /**
- * An example servlet that responds to an ajax:autocomplete tag action. This servlet would be
- * referenced by the baseUrl attribute of the JSP tag.
+ * An example servlet that responds to an ajax:autocomplete tag action. This
+ * servlet would be referenced by the baseUrl attribute of the JSP tag.
  *
- * <p>This servlet should generate XML in the following format: <code><![CDATA[<?xml version="1.0"?>
+ * <p>
+ * This servlet should generate XML in the following format:
+ * <code><![CDATA[<?xml version="1.0"?>
  * <list>
  *   <item value="Item1">First Item</item>
  *   <item value="Item2">Second Item</item>
@@ -36,26 +38,25 @@ import org.openelisglobal.spring.util.SpringContext;
  */
 public class MethodAutocompleteProvider extends BaseAutocompleteProvider {
 
-  protected MethodService methodService = SpringContext.getBean(MethodService.class);
+    protected MethodService methodService = SpringContext.getBean(MethodService.class);
 
-  /**
-   * @see
-   *     org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
-   *     javax.servlet.http.HttpServletResponse)
-   */
-  public List processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+    /**
+     * @see org.ajaxtags.demo.servlet.BaseAjaxServlet#getXmlContent(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
+     */
+    public List processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-    // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "I am in
-    // MethodAutocompleteProvider "
-    // + request.getParameter("methodName"));
-    String methodName = request.getParameter("methodName");
-    // System.out
-    // .println("MethodAutocompleteProvider methodName " + methodName);
-    List list = methodService.getMethods(methodName);
-    // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown",
-    // "MethodAutocompleteProvider list " + list.size());
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "I am in
+        // MethodAutocompleteProvider "
+        // + request.getParameter("methodName"));
+        String methodName = request.getParameter("methodName");
+        // System.out
+        // .println("MethodAutocompleteProvider methodName " + methodName);
+        List list = methodService.getMethods(methodName);
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown",
+        // "MethodAutocompleteProvider list " + list.size());
 
-    return list;
-  }
+        return list;
+    }
 }

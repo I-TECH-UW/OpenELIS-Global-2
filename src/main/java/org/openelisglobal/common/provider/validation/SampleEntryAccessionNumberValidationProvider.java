@@ -23,101 +23,88 @@ import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sample.util.CI.ProjectForm;
 import org.owasp.encoder.Encode;
 
-/** The QuickEntryAccessionNumberValidationProvider class is used to validate, via AJAX. */
+/**
+ * The QuickEntryAccessionNumberValidationProvider class is used to validate,
+ * via AJAX.
+ */
 public class SampleEntryAccessionNumberValidationProvider extends BaseValidationProvider {
 
-  public SampleEntryAccessionNumberValidationProvider() {
-    super();
-  }
-
-  public SampleEntryAccessionNumberValidationProvider(AjaxServlet ajaxServlet) {
-    this.ajaxServlet = ajaxServlet;
-  }
-
-  @Override
-  public void processRequest(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-
-    String accessionNumber = request.getParameter("accessionNumber");
-    String field = request.getParameter("field");
-    String recordType = request.getParameter("recordType");
-    String isRequired = request.getParameter("isRequired");
-    String projectFormName = request.getParameter("projectFormName");
-    boolean altAccession = "true".equalsIgnoreCase(request.getParameter("altAccession"));
-    boolean parseForProjectFormName =
-        "true".equalsIgnoreCase(request.getParameter("parseForProjectFormName"));
-    boolean ignoreYear = "true".equals(request.getParameter("ignoreYear"));
-    boolean ignoreUsage = "true".equals(request.getParameter("ignoreUsage"));
-
-    ValidationResults result;
-
-    if (parseForProjectFormName) {
-      projectFormName = ProgramAccessionValidator.findStudyFormName(accessionNumber);
-    }
-    boolean projectFormNameUsed = ProjectForm.findProjectFormByFormId(projectFormName) != null;
-
-    if (ignoreYear || ignoreUsage) {
-      result =
-          projectFormNameUsed
-              ? new ProgramAccessionValidator().validFormat(accessionNumber, !ignoreYear)
-              : AccessionNumberUtil.getGeneralAccessionNumberValidator()
-                  .validFormat(accessionNumber, !ignoreYear);
-      if (result == ValidationResults.SUCCESS && !ignoreUsage) {
-        result =
-            AccessionNumberUtil.isUsed(accessionNumber)
-                ? ValidationResults.SAMPLE_FOUND
-                : ValidationResults.SAMPLE_NOT_FOUND;
-      }
-    } else {
-      // year matters and number must not be used
-      result =
-          projectFormNameUsed
-              ? new ProgramAccessionValidator()
-                  .checkAccessionNumberValidity(
-                      accessionNumber, recordType, isRequired, projectFormName)
-              : AccessionNumberUtil.getGeneralAccessionNumberValidator()
-                  .checkAccessionNumberValidity(
-                      accessionNumber, recordType, isRequired, projectFormName);
+    public SampleEntryAccessionNumberValidationProvider() {
+        super();
     }
 
-    String returnData;
+    public SampleEntryAccessionNumberValidationProvider(AjaxServlet ajaxServlet) {
+        this.ajaxServlet = ajaxServlet;
+    }
 
-    //       if( !Boolean.valueOf(ConfigurationProperties.getInstance()
-    //                .getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
-    //            result = ValidationResults.SUCCESS;
-    //        }
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-    switch (result) {
-      case SUCCESS:
-        returnData = VALID;
-        break;
-      case SAMPLE_FOUND:
-      case SAMPLE_NOT_FOUND:
-        returnData = result.name();
-        break;
-      default:
-        if (projectFormNameUsed) {
-          returnData =
-              !ignoreUsage
-                  ? new ProgramAccessionValidator().getInvalidMessage(result)
-                  : new ProgramAccessionValidator().getInvalidFormatMessage(result);
-        } else {
-          returnData =
-              !ignoreUsage
-                  ? altAccession //
-                      ? AccessionNumberUtil.getAltAccessionNumberValidator()
-                          .getInvalidMessage(result)
-                      : AccessionNumberUtil.getMainAccessionNumberValidator()
-                          .getInvalidMessage(result)
-                  : altAccession
-                      ? AccessionNumberUtil.getAltAccessionNumberValidator()
-                          .getInvalidFormatMessage(result)
-                      : AccessionNumberUtil.getMainAccessionNumberValidator()
-                          .getInvalidFormatMessage(result);
+        String accessionNumber = request.getParameter("accessionNumber");
+        String field = request.getParameter("field");
+        String recordType = request.getParameter("recordType");
+        String isRequired = request.getParameter("isRequired");
+        String projectFormName = request.getParameter("projectFormName");
+        boolean altAccession = "true".equalsIgnoreCase(request.getParameter("altAccession"));
+        boolean parseForProjectFormName = "true".equalsIgnoreCase(request.getParameter("parseForProjectFormName"));
+        boolean ignoreYear = "true".equals(request.getParameter("ignoreYear"));
+        boolean ignoreUsage = "true".equals(request.getParameter("ignoreUsage"));
+
+        ValidationResults result;
+
+        if (parseForProjectFormName) {
+            projectFormName = ProgramAccessionValidator.findStudyFormName(accessionNumber);
         }
-    }
+        boolean projectFormNameUsed = ProjectForm.findProjectFormByFormId(projectFormName) != null;
 
-    response.setCharacterEncoding("UTF-8");
-    ajaxServlet.sendData(Encode.forXmlContent(field), returnData, request, response);
-  }
+        if (ignoreYear || ignoreUsage) {
+            result = projectFormNameUsed ? new ProgramAccessionValidator().validFormat(accessionNumber, !ignoreYear)
+                    : AccessionNumberUtil.getGeneralAccessionNumberValidator().validFormat(accessionNumber,
+                            !ignoreYear);
+            if (result == ValidationResults.SUCCESS && !ignoreUsage) {
+                result = AccessionNumberUtil.isUsed(accessionNumber) ? ValidationResults.SAMPLE_FOUND
+                        : ValidationResults.SAMPLE_NOT_FOUND;
+            }
+        } else {
+            // year matters and number must not be used
+            result = projectFormNameUsed
+                    ? new ProgramAccessionValidator().checkAccessionNumberValidity(accessionNumber, recordType,
+                            isRequired, projectFormName)
+                    : AccessionNumberUtil.getGeneralAccessionNumberValidator()
+                            .checkAccessionNumberValidity(accessionNumber, recordType, isRequired, projectFormName);
+        }
+
+        String returnData;
+
+        // if( !Boolean.valueOf(ConfigurationProperties.getInstance()
+        // .getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
+        // result = ValidationResults.SUCCESS;
+        // }
+
+        switch (result) {
+        case SUCCESS:
+            returnData = VALID;
+            break;
+        case SAMPLE_FOUND:
+        case SAMPLE_NOT_FOUND:
+            returnData = result.name();
+            break;
+        default:
+            if (projectFormNameUsed) {
+                returnData = !ignoreUsage ? new ProgramAccessionValidator().getInvalidMessage(result)
+                        : new ProgramAccessionValidator().getInvalidFormatMessage(result);
+            } else {
+                returnData = !ignoreUsage ? altAccession //
+                        ? AccessionNumberUtil.getAltAccessionNumberValidator().getInvalidMessage(result)
+                        : AccessionNumberUtil.getMainAccessionNumberValidator().getInvalidMessage(result)
+                        : altAccession
+                                ? AccessionNumberUtil.getAltAccessionNumberValidator().getInvalidFormatMessage(result)
+                                : AccessionNumberUtil.getMainAccessionNumberValidator().getInvalidFormatMessage(result);
+            }
+        }
+
+        response.setCharacterEncoding("UTF-8");
+        ajaxServlet.sendData(Encode.forXmlContent(field), returnData, request, response);
+    }
 }

@@ -7,5 +7,5 @@ import org.openelisglobal.qaevent.valueholder.NceCategory;
 
 public interface NceCategoryDAO extends BaseDAO<NceCategory, String> {
 
-  List<NceCategory> getAllNceCategory() throws LIMSRuntimeException;
+    List<NceCategory> getAllNceCategory() throws LIMSRuntimeException;
 }

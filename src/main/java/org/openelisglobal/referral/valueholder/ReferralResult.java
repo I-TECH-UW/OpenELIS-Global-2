@@ -21,51 +21,51 @@ import org.openelisglobal.result.valueholder.Result;
 
 public class ReferralResult extends BaseObject<String> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String id;
-  private String referralId;
-  private String testId;
-  private Timestamp referralReportDate;
-  private ValueHolderInterface result = new ValueHolder();
+    private String id;
+    private String referralId;
+    private String testId;
+    private Timestamp referralReportDate;
+    private ValueHolderInterface result = new ValueHolder();
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getReferralId() {
-    return referralId;
-  }
+    public String getReferralId() {
+        return referralId;
+    }
 
-  public void setReferralId(String referralId) {
-    this.referralId = referralId;
-  }
+    public void setReferralId(String referralId) {
+        this.referralId = referralId;
+    }
 
-  public String getTestId() {
-    return testId;
-  }
+    public String getTestId() {
+        return testId;
+    }
 
-  public void setTestId(String testId) {
-    this.testId = testId;
-  }
+    public void setTestId(String testId) {
+        this.testId = testId;
+    }
 
-  public Timestamp getReferralReportDate() {
-    return referralReportDate;
-  }
+    public Timestamp getReferralReportDate() {
+        return referralReportDate;
+    }
 
-  public void setReferralReportDate(Timestamp referralReportDate) {
-    this.referralReportDate = referralReportDate;
-  }
+    public void setReferralReportDate(Timestamp referralReportDate) {
+        this.referralReportDate = referralReportDate;
+    }
 
-  public void setResult(Result result) {
-    this.result.setValue(result);
-  }
+    public void setResult(Result result) {
+        this.result.setValue(result);
+    }
 
-  public Result getResult() {
-    return (Result) result.getValue();
-  }
+    public Result getResult() {
+        return (Result) result.getValue();
+    }
 }

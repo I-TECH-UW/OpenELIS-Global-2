@@ -6,6 +6,5 @@ import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 
 public interface ResultReportingConfigurationService {
 
-  void updateInformationAndSchedulers(
-      List<SiteInformation> informationList, List<CronScheduler> scheduleList);
+    void updateInformationAndSchedulers(List<SiteInformation> informationList, List<CronScheduler> scheduleList);
 }

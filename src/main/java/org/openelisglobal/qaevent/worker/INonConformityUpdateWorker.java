@@ -4,9 +4,9 @@ import org.springframework.validation.Errors;
 
 public interface INonConformityUpdateWorker {
 
-  void setWebData(NonConformityUpdateData data);
+    void setWebData(NonConformityUpdateData data);
 
-  String update();
+    String update();
 
-  Errors getErrors();
+    Errors getErrors();
 }

@@ -20,76 +20,76 @@ import org.openelisglobal.scriptlet.valueholder.Scriptlet;
 
 public class Label extends EnumValueItemImpl {
 
-  private String id;
+    private String id;
 
-  private String labelName;
+    private String labelName;
 
-  private String description;
+    private String description;
 
-  private String printerType;
+    private String printerType;
 
-  private ValueHolderInterface scriptlet;
+    private ValueHolderInterface scriptlet;
 
-  private String scriptletName;
+    private String scriptletName;
 
-  public Label() {
-    super();
-    this.scriptlet = new ValueHolder();
-  }
+    public Label() {
+        super();
+        this.scriptlet = new ValueHolder();
+    }
 
-  public String getId() {
-    return this.id;
-  }
+    public String getId() {
+        return this.id;
+    }
 
-  public String getDescription() {
-    return this.description;
-  }
+    public String getDescription() {
+        return this.description;
+    }
 
-  public Scriptlet getScriptlet() {
-    return (Scriptlet) this.scriptlet.getValue();
-  }
+    public Scriptlet getScriptlet() {
+        return (Scriptlet) this.scriptlet.getValue();
+    }
 
-  protected ValueHolderInterface getScriptletHolder() {
-    return this.scriptlet;
-  }
+    protected ValueHolderInterface getScriptletHolder() {
+        return this.scriptlet;
+    }
 
-  public String getLabelName() {
-    return this.labelName;
-  }
+    public String getLabelName() {
+        return this.labelName;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public void setScriptlet(Scriptlet scriptlet) {
-    this.scriptlet.setValue(scriptlet);
-  }
+    public void setScriptlet(Scriptlet scriptlet) {
+        this.scriptlet.setValue(scriptlet);
+    }
 
-  protected void setScriptletHolder(ValueHolderInterface scriptlet) {
-    this.scriptlet = scriptlet;
-  }
+    protected void setScriptletHolder(ValueHolderInterface scriptlet) {
+        this.scriptlet = scriptlet;
+    }
 
-  public void setLabelName(String labelName) {
-    this.labelName = labelName;
-  }
+    public void setLabelName(String labelName) {
+        this.labelName = labelName;
+    }
 
-  public String getPrinterType() {
-    return printerType;
-  }
+    public String getPrinterType() {
+        return printerType;
+    }
 
-  public void setPrinterType(String printerType) {
-    this.printerType = printerType;
-  }
+    public void setPrinterType(String printerType) {
+        this.printerType = printerType;
+    }
 
-  public String getScriptletName() {
-    return scriptletName;
-  }
+    public String getScriptletName() {
+        return scriptletName;
+    }
 
-  public void setScriptletName(String scriptletName) {
-    this.scriptletName = scriptletName;
-  }
+    public void setScriptletName(String scriptletName) {
+        this.scriptletName = scriptletName;
+    }
 }

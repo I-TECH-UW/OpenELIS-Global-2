@@ -23,75 +23,78 @@ import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
 
 /**
  * @author diane benz
- *     <p>To change this generated comment edit the template variable "typecomment":
- *     Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
- *     Window>Preferences>Java>Code Generation.
+ *         <p>
+ *         To change this generated comment edit the template variable
+ *         "typecomment": Window>Preferences>Java>Templates. To enable and
+ *         disable the creation of type comments go to
+ *         Window>Preferences>Java>Code Generation.
  */
 public interface TestAnalyteDAO extends BaseDAO<TestAnalyte, String> {
 
-  //	public boolean insertData(TestAnalyte testAnalyte) throws LIMSRuntimeException;
+    // public boolean insertData(TestAnalyte testAnalyte) throws
+    // LIMSRuntimeException;
 
-  /**
-   * @param testAnalytes
-   * @throws LIMSRuntimeException
-   */
-  //	public void deleteData(List testAnalytes) throws LIMSRuntimeException;
+    /**
+     * @param testAnalytes
+     * @throws LIMSRuntimeException
+     */
+    // public void deleteData(List testAnalytes) throws LIMSRuntimeException;
 
-  /**
-   * @return
-   * @throws LIMSRuntimeException
-   */
-  List<TestAnalyte> getAllTestAnalytes() throws LIMSRuntimeException;
+    /**
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    List<TestAnalyte> getAllTestAnalytes() throws LIMSRuntimeException;
 
-  /**
-   * @param startingRecNo
-   * @return
-   * @throws LIMSRuntimeException
-   */
-  List<TestAnalyte> getPageOfTestAnalytes(int startingRecNo) throws LIMSRuntimeException;
+    /**
+     * @param startingRecNo
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    List<TestAnalyte> getPageOfTestAnalytes(int startingRecNo) throws LIMSRuntimeException;
 
-  /**
-   * @param testAnalyte
-   * @throws LIMSRuntimeException
-   */
-  TestAnalyte getData(TestAnalyte testAnalyte) throws LIMSRuntimeException;
+    /**
+     * @param testAnalyte
+     * @throws LIMSRuntimeException
+     */
+    TestAnalyte getData(TestAnalyte testAnalyte) throws LIMSRuntimeException;
 
-  /**
-   * @param testAnalyte
-   * @throws LIMSRuntimeException
-   */
-  //	public void updateData(TestAnalyte testAnalyte) throws LIMSRuntimeException;
+    /**
+     * @param testAnalyte
+     * @throws LIMSRuntimeException
+     */
+    // public void updateData(TestAnalyte testAnalyte) throws LIMSRuntimeException;
 
-  /**
-   * @param filter
-   * @return
-   * @throws LIMSRuntimeException
-   */
-  List<TestAnalyte> getTestAnalytes(String filter) throws LIMSRuntimeException;
+    /**
+     * @param filter
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    List<TestAnalyte> getTestAnalytes(String filter) throws LIMSRuntimeException;
 
-  /**
-   * @param id
-   * @return
-   * @throws LIMSRuntimeException
-   */
+    /**
+     * @param id
+     * @return
+     * @throws LIMSRuntimeException
+     */
 
-  /**
-   * @param id
-   * @return
-   * @throws LIMSRuntimeException
-   */
+    /**
+     * @param id
+     * @return
+     * @throws LIMSRuntimeException
+     */
 
-  /**
-   * @param testAnalyte
-   * @return
-   * @throws LIMSRuntimeException
-   */
-  TestAnalyte getTestAnalyteById(TestAnalyte testAnalyte) throws LIMSRuntimeException;
+    /**
+     * @param testAnalyte
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    TestAnalyte getTestAnalyteById(TestAnalyte testAnalyte) throws LIMSRuntimeException;
 
-  /**
-   * @param test
-   * @return
-   * @throws LIMSRuntimeException
-   */
-  List<TestAnalyte> getAllTestAnalytesPerTest(Test test) throws LIMSRuntimeException;
+    /**
+     * @param test
+     * @return
+     * @throws LIMSRuntimeException
+     */
+    List<TestAnalyte> getAllTestAnalytesPerTest(Test test) throws LIMSRuntimeException;
 }

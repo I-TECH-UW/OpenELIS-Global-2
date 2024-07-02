@@ -10,17 +10,17 @@ import org.openelisglobal.systemuser.valueholder.SystemUser;
 
 public interface PathologySampleService extends BaseObjectService<PathologySample, Integer> {
 
-  List<PathologySample> getWithStatus(List<PathologyStatus> statuses);
+    List<PathologySample> getWithStatus(List<PathologyStatus> statuses);
 
-  List<PathologySample> searchWithStatusAndTerm(List<PathologyStatus> statuses, String searchTerm);
+    List<PathologySample> searchWithStatusAndTerm(List<PathologyStatus> statuses, String searchTerm);
 
-  void assignTechnician(Integer pathologySampleId, SystemUser systemUser);
+    void assignTechnician(Integer pathologySampleId, SystemUser systemUser);
 
-  void assignPathologist(Integer pathologySampleId, SystemUser systemUser);
+    void assignPathologist(Integer pathologySampleId, SystemUser systemUser);
 
-  Long getCountWithStatus(List<PathologyStatus> statuses);
+    Long getCountWithStatus(List<PathologyStatus> statuses);
 
-  Long getCountWithStatusBetweenDates(List<PathologyStatus> statuses, Timestamp from, Timestamp to);
+    Long getCountWithStatusBetweenDates(List<PathologyStatus> statuses, Timestamp from, Timestamp to);
 
-  void updateWithFormValues(Integer pathologySampleId, PathologySampleForm form);
+    void updateWithFormValues(Integer pathologySampleId, PathologySampleForm form);
 }

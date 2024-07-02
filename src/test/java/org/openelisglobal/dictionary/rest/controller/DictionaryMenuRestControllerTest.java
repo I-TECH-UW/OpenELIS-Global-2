@@ -24,115 +24,96 @@ import org.springframework.test.web.servlet.MvcResult;
 
 public class DictionaryMenuRestControllerTest extends BaseWebContextSensitiveTest {
 
-  @Autowired DictionaryService dictionaryService;
+    @Autowired
+    DictionaryService dictionaryService;
 
-  @Autowired private DictionaryCategoryService dictionaryCategoryService;
+    @Autowired
+    private DictionaryCategoryService dictionaryCategoryService;
 
-  @Before
-  @Override
-  public void setUp() {
-    super.setUp();
-  }
+    @Before
+    @Override
+    public void setUp() {
+        super.setUp();
+    }
 
-  @Test
-  public void getDictionaryMenuList_shouldReturnDictionaryMenu() throws Exception {
-    MvcResult mvcResult =
-        super.mockMvc
-            .perform(
-                get("/rest/DictionaryMenu")
-                    .accept(MediaType.APPLICATION_JSON_VALUE)
-                    .contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andReturn();
+    @Test
+    public void getDictionaryMenuList_shouldReturnDictionaryMenu() throws Exception {
+        MvcResult mvcResult = super.mockMvc.perform(get("/rest/DictionaryMenu").accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)).andReturn();
 
-    int status = mvcResult.getResponse().getStatus();
-    assertEquals(200, status);
-    String content = mvcResult.getResponse().getContentAsString();
-    List<DictionaryMenuForm> menuList =
-        Arrays.asList(super.mapFromJson(content, DictionaryMenuForm[].class));
-    assertThat(menuList.get(0).getMenuList().get(0).getId(), is("1"));
-    assertThat(menuList.get(0).getMenuList().get(0).getIsActive(), is("Y"));
-    assertThat(
-        menuList.get(0).getMenuList().get(0).getDictEntry(), is("INFLUENZA VIRUS A RNA DETECTED"));
-    assertThat(menuList.get(0).getMenuList().get(0).getSortOrder(), is(100));
-    assertThat(
-        menuList.get(0).getMenuList().get(0).getDictionaryCategory().getCategoryName(), is("CG"));
-  }
+        int status = mvcResult.getResponse().getStatus();
+        assertEquals(200, status);
+        String content = mvcResult.getResponse().getContentAsString();
+        List<DictionaryMenuForm> menuList = Arrays.asList(super.mapFromJson(content, DictionaryMenuForm[].class));
+        assertThat(menuList.get(0).getMenuList().get(0).getId(), is("1"));
+        assertThat(menuList.get(0).getMenuList().get(0).getIsActive(), is("Y"));
+        assertThat(menuList.get(0).getMenuList().get(0).getDictEntry(), is("INFLUENZA VIRUS A RNA DETECTED"));
+        assertThat(menuList.get(0).getMenuList().get(0).getSortOrder(), is(100));
+        assertThat(menuList.get(0).getMenuList().get(0).getDictionaryCategory().getCategoryName(), is("CG"));
+    }
 
-  @Test
-  public void fetchDictionaryCategories_shouldFetchDictionaryDescriptions() throws Exception {
-    MvcResult mvcResult =
-        super.mockMvc
-            .perform(
-                get("/rest/dictionary-categories")
-                    .accept(MediaType.APPLICATION_JSON_VALUE)
-                    .contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andReturn();
+    @Test
+    public void fetchDictionaryCategories_shouldFetchDictionaryDescriptions() throws Exception {
+        MvcResult mvcResult = super.mockMvc.perform(get("/rest/dictionary-categories")
+                .accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE)).andReturn();
 
-    int status = mvcResult.getResponse().getStatus();
-    assertEquals(200, status);
-    String content = mvcResult.getResponse().getContentAsString();
-    List<DictionaryCategory> menuList =
-        Arrays.asList(super.mapFromJson(content, DictionaryCategory[].class));
-    assertThat(menuList, notNullValue());
-  }
+        int status = mvcResult.getResponse().getStatus();
+        assertEquals(200, status);
+        String content = mvcResult.getResponse().getContentAsString();
+        List<DictionaryCategory> menuList = Arrays.asList(super.mapFromJson(content, DictionaryCategory[].class));
+        assertThat(menuList, notNullValue());
+    }
 
-  // TODO: To be looked into later
+    // TODO: To be looked into later
 
-  //    @Test
-  //    public void createDictionary_shouldSuccessfullyCreateDictionary() throws Exception {
-  //        Dictionary dictionary = createDictionaryObject();
-  //        String toJson = super.mapToJson(dictionary);
-  //
-  //        MvcResult mvcResult = super.mockMvc.perform(
-  //                post("/rest/dictionary")
-  //                        .accept(MediaType.APPLICATION_JSON_VALUE)
-  //                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-  //                        .content(toJson)).andReturn();
-  //
-  //        int status = mvcResult.getResponse().getStatus();
-  //        assertEquals(201, status);
-  //        String content = mvcResult.getResponse().getContentAsString();
-  //        assertEquals(content, "Dictionary created successfully");
-  //    }
+    // @Test
+    // public void createDictionary_shouldSuccessfullyCreateDictionary() throws
+    // Exception {
+    // Dictionary dictionary = createDictionaryObject();
+    // String toJson = super.mapToJson(dictionary);
+    //
+    // MvcResult mvcResult = super.mockMvc.perform(
+    // post("/rest/dictionary")
+    // .accept(MediaType.APPLICATION_JSON_VALUE)
+    // .contentType(MediaType.APPLICATION_JSON_VALUE)
+    // .content(toJson)).andReturn();
+    //
+    // int status = mvcResult.getResponse().getStatus();
+    // assertEquals(201, status);
+    // String content = mvcResult.getResponse().getContentAsString();
+    // assertEquals(content, "Dictionary created successfully");
+    // }
 
-  @Test
-  public void showDeleteDictionary_shouldSuccessfullyDeleteDictionary() throws Exception {
-    MvcResult getMenu =
-        super.mockMvc
-            .perform(
-                get("/rest/DictionaryMenu")
-                    .accept(MediaType.APPLICATION_JSON_VALUE)
-                    .contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andReturn();
+    @Test
+    public void showDeleteDictionary_shouldSuccessfullyDeleteDictionary() throws Exception {
+        MvcResult getMenu = super.mockMvc.perform(get("/rest/DictionaryMenu").accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)).andReturn();
 
-    int status = getMenu.getResponse().getStatus();
-    assertEquals(200, status);
-    String content = getMenu.getResponse().getContentAsString();
-    List<DictionaryMenuForm> menuList =
-        Arrays.asList(super.mapFromJson(content, DictionaryMenuForm[].class));
-    String idToBeDeleted = menuList.get(0).getMenuList().get(10).getId();
+        int status = getMenu.getResponse().getStatus();
+        assertEquals(200, status);
+        String content = getMenu.getResponse().getContentAsString();
+        List<DictionaryMenuForm> menuList = Arrays.asList(super.mapFromJson(content, DictionaryMenuForm[].class));
+        String idToBeDeleted = menuList.get(0).getMenuList().get(10).getId();
 
-    // deleting the selected ID
-    MvcResult mvcResult =
-        super.mockMvc
-            .perform(post("/rest/delete-dictionary").param("selectedIDs", idToBeDeleted))
-            .andReturn();
+        // deleting the selected ID
+        MvcResult mvcResult = super.mockMvc.perform(post("/rest/delete-dictionary").param("selectedIDs", idToBeDeleted))
+                .andReturn();
 
-    status = mvcResult.getResponse().getStatus();
-    assertEquals(200, status);
-    content = mvcResult.getResponse().getContentAsString();
-    assertEquals(content, "Dictionary Menu deleted successfully");
-  }
+        status = mvcResult.getResponse().getStatus();
+        assertEquals(200, status);
+        content = mvcResult.getResponse().getContentAsString();
+        assertEquals(content, "Dictionary Menu deleted successfully");
+    }
 
-  private Dictionary createDictionaryObject() {
-    Random random = new Random();
-    Dictionary dictionary = new Dictionary();
-    dictionary.setId(String.valueOf(random.nextInt()));
-    dictionary.setSortOrder(random.nextInt(1000));
-    dictionary.setDictionaryCategory(dictionaryCategoryService.getDictionaryCategoryByName("CG"));
-    dictionary.setDictEntry("entry for test " + random.nextInt());
-    dictionary.setIsActive(random.nextBoolean() ? "Y" : "N");
-    dictionary.setLocalAbbreviation("HEC" + random.nextInt());
-    return dictionary;
-  }
+    private Dictionary createDictionaryObject() {
+        Random random = new Random();
+        Dictionary dictionary = new Dictionary();
+        dictionary.setId(String.valueOf(random.nextInt()));
+        dictionary.setSortOrder(random.nextInt(1000));
+        dictionary.setDictionaryCategory(dictionaryCategoryService.getDictionaryCategoryByName("CG"));
+        dictionary.setDictEntry("entry for test " + random.nextInt());
+        dictionary.setIsActive(random.nextBoolean() ? "Y" : "N");
+        dictionary.setLocalAbbreviation("HEC" + random.nextInt());
+        return dictionary;
+    }
 }

@@ -27,28 +27,26 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Component
 @Transactional
-public class RequesterTypeDAOImpl extends BaseDAOImpl<RequesterType, String>
-    implements RequesterTypeDAO {
+public class RequesterTypeDAOImpl extends BaseDAOImpl<RequesterType, String> implements RequesterTypeDAO {
 
-  public RequesterTypeDAOImpl() {
-    super(RequesterType.class);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public RequesterType getRequesterTypeByName(String typeName) throws LIMSRuntimeException {
-    String sql = "from RequesterType rt where rt.requesterType = :typeName";
-
-    try {
-      Query<RequesterType> query =
-          entityManager.unwrap(Session.class).createQuery(sql, RequesterType.class);
-      query.setParameter("typeName", typeName);
-      RequesterType type = query.uniqueResult();
-      return type;
-    } catch (HibernateException e) {
-      handleException(e, "getRequesterTypeByName");
+    public RequesterTypeDAOImpl() {
+        super(RequesterType.class);
     }
 
-    return null;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public RequesterType getRequesterTypeByName(String typeName) throws LIMSRuntimeException {
+        String sql = "from RequesterType rt where rt.requesterType = :typeName";
+
+        try {
+            Query<RequesterType> query = entityManager.unwrap(Session.class).createQuery(sql, RequesterType.class);
+            query.setParameter("typeName", typeName);
+            RequesterType type = query.uniqueResult();
+            return type;
+        } catch (HibernateException e) {
+            handleException(e, "getRequesterTypeByName");
+        }
+
+        return null;
+    }
 }

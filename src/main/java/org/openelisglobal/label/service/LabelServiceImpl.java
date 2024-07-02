@@ -7,16 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LabelServiceImpl extends AuditableBaseObjectServiceImpl<Label, String>
-    implements LabelService {
-  @Autowired protected LabelDAO baseObjectDAO;
+public class LabelServiceImpl extends AuditableBaseObjectServiceImpl<Label, String> implements LabelService {
+    @Autowired
+    protected LabelDAO baseObjectDAO;
 
-  LabelServiceImpl() {
-    super(Label.class);
-  }
+    LabelServiceImpl() {
+        super(Label.class);
+    }
 
-  @Override
-  protected LabelDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected LabelDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 }

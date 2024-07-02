@@ -17,14 +17,14 @@ package org.openelisglobal.common.provider.validation;
 
 public class CDIPasswordValidation implements ILoginPasswordValidation {
 
-  // This is just going to delegate to the HaitiPasswordValidation until they
-  // differ
-  // i.e. this is just a placeholder
-  public boolean passwordValid(String password) {
-    return new HaitiPasswordValidation().passwordValid(password);
-  }
+    // This is just going to delegate to the HaitiPasswordValidation until they
+    // differ
+    // i.e. this is just a placeholder
+    public boolean passwordValid(String password) {
+        return new HaitiPasswordValidation().passwordValid(password);
+    }
 
-  public String getInstructions() {
-    return new HaitiPasswordValidation().getInstructions();
-  }
+    public String getInstructions() {
+        return new HaitiPasswordValidation().getInstructions();
+    }
 }

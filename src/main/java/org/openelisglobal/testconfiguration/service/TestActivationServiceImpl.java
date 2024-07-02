@@ -13,38 +13,35 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TestActivationServiceImpl implements TestActivationService {
 
-  @Autowired private TypeOfSampleService typeOfSampleService;
-  @Autowired private TestService testService;
+    @Autowired
+    private TypeOfSampleService typeOfSampleService;
+    @Autowired
+    private TestService testService;
 
-  @Override
-  @Transactional
-  public void updateAll(
-      List<Test> deactivateTests,
-      List<Test> activateTests,
-      List<TypeOfSample> deactivateSampleTypes,
-      List<TypeOfSample> activateSampleTypes) {
+    @Override
+    @Transactional
+    public void updateAll(List<Test> deactivateTests, List<Test> activateTests,
+            List<TypeOfSample> deactivateSampleTypes, List<TypeOfSample> activateSampleTypes) {
 
-    for (Test test : deactivateTests) {
-      testService.update(test);
+        for (Test test : deactivateTests) {
+            testService.update(test);
+        }
+
+        for (Test test : activateTests) {
+            testService.update(test);
+        }
+
+        for (TypeOfSample typeOfSample : deactivateSampleTypes) {
+            typeOfSampleService.update(typeOfSample);
+        }
+
+        for (TypeOfSample typeOfSample : activateSampleTypes) {
+            typeOfSampleService.update(typeOfSample);
+        }
+
+        if (!deactivateSampleTypes.isEmpty() || !activateSampleTypes.isEmpty() || !deactivateTests.isEmpty()
+                || !activateTests.isEmpty()) {
+            SpringContext.getBean(TypeOfSampleService.class).clearCache();
+        }
     }
-
-    for (Test test : activateTests) {
-      testService.update(test);
-    }
-
-    for (TypeOfSample typeOfSample : deactivateSampleTypes) {
-      typeOfSampleService.update(typeOfSample);
-    }
-
-    for (TypeOfSample typeOfSample : activateSampleTypes) {
-      typeOfSampleService.update(typeOfSample);
-    }
-
-    if (!deactivateSampleTypes.isEmpty()
-        || !activateSampleTypes.isEmpty()
-        || !deactivateTests.isEmpty()
-        || !activateTests.isEmpty()) {
-      SpringContext.getBean(TypeOfSampleService.class).clearCache();
-    }
-  }
 }

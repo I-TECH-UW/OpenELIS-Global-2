@@ -8,24 +8,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BasicAuthenticationDataServiceImpl
-    extends AuditableBaseObjectServiceImpl<BasicAuthenticationData, Integer>
-    implements BasicAuthenticationDataService {
+public class BasicAuthenticationDataServiceImpl extends AuditableBaseObjectServiceImpl<BasicAuthenticationData, Integer>
+        implements BasicAuthenticationDataService {
 
-  @Autowired protected BasicAuthenticationDataDAO baseObjectDAO;
+    @Autowired
+    protected BasicAuthenticationDataDAO baseObjectDAO;
 
-  BasicAuthenticationDataServiceImpl() {
-    super(BasicAuthenticationData.class);
-    this.auditTrailLog = false;
-  }
+    BasicAuthenticationDataServiceImpl() {
+        super(BasicAuthenticationData.class);
+        this.auditTrailLog = false;
+    }
 
-  @Override
-  protected BasicAuthenticationDataDAO getBaseObjectDAO() {
-    return baseObjectDAO;
-  }
+    @Override
+    protected BasicAuthenticationDataDAO getBaseObjectDAO() {
+        return baseObjectDAO;
+    }
 
-  @Override
-  public Optional<BasicAuthenticationData> getByExternalConnection(Integer externalConnectionId) {
-    return baseObjectDAO.getByExternalConnection(externalConnectionId);
-  }
+    @Override
+    public Optional<BasicAuthenticationData> getByExternalConnection(Integer externalConnectionId) {
+        return baseObjectDAO.getByExternalConnection(externalConnectionId);
+    }
 }

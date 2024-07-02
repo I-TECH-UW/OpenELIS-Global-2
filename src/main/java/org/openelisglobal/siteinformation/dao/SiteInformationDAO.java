@@ -22,26 +22,27 @@ import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 
 public interface SiteInformationDAO extends BaseDAO<SiteInformation, String> {
 
-  //	public boolean insertData(SiteInformation siteInformation) throws LIMSRuntimeException;
+    // public boolean insertData(SiteInformation siteInformation) throws
+    // LIMSRuntimeException;
 
-  //	public void deleteData(String siteInformationId, String currentUserId) throws
-  // LIMSRuntimeException;
+    // public void deleteData(String siteInformationId, String currentUserId) throws
+    // LIMSRuntimeException;
 
-  public List<SiteInformation> getAllSiteInformation() throws LIMSRuntimeException;
+    public List<SiteInformation> getAllSiteInformation() throws LIMSRuntimeException;
 
-  public void getData(SiteInformation siteInformation) throws LIMSRuntimeException;
+    public void getData(SiteInformation siteInformation) throws LIMSRuntimeException;
 
-  //	public void updateData(SiteInformation siteInformation) throws LIMSRuntimeException;
+    // public void updateData(SiteInformation siteInformation) throws
+    // LIMSRuntimeException;
 
-  public SiteInformation getSiteInformationByName(String siteName) throws LIMSRuntimeException;
+    public SiteInformation getSiteInformationByName(String siteName) throws LIMSRuntimeException;
 
-  public int getCountForDomainName(String domainName) throws LIMSRuntimeException;
+    public int getCountForDomainName(String domainName) throws LIMSRuntimeException;
 
-  public List<SiteInformation> getPageOfSiteInformationByDomainName(
-      int startingRecNo, String domainName) throws LIMSRuntimeException;
+    public List<SiteInformation> getPageOfSiteInformationByDomainName(int startingRecNo, String domainName)
+            throws LIMSRuntimeException;
 
-  public SiteInformation getSiteInformationById(String urlId) throws LIMSRuntimeException;
+    public SiteInformation getSiteInformationById(String urlId) throws LIMSRuntimeException;
 
-  public List<SiteInformation> getSiteInformationByDomainName(String domainName)
-      throws LIMSRuntimeException;
+    public List<SiteInformation> getSiteInformationByDomainName(String domainName) throws LIMSRuntimeException;
 }

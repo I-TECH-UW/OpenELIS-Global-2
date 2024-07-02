@@ -16,30 +16,30 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class NCEventDAOImpl extends BaseDAOImpl<NcEvent, String> implements NCEventDAO {
 
-  public NCEventDAOImpl() {
-    super(NcEvent.class);
-  }
-
-  @Override
-  @Transactional
-  public List<NcEvent> findByNCENumberOrLabOrderId(String nceNumber, String labOrderId) {
-    List<NcEvent> list = new ArrayList();
-    try {
-      String sql = "from NcEvent where nceNumber = :nceNumber or labOrderNumber = :labOrderNumber";
-      Query<NcEvent> query = entityManager.unwrap(Session.class).createQuery(sql, NcEvent.class);
-      query.setParameter("nceNumber", nceNumber);
-      query.setParameter("labOrderNumber", labOrderId);
-      list = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in NceCategory getAllNceCategory()", e);
+    public NCEventDAOImpl() {
+        super(NcEvent.class);
     }
-    return list;
-  }
 
-  @Override
-  @Transactional
-  public NcEvent getNCEvent(String id) throws LIMSRuntimeException {
-    return null;
-  }
+    @Override
+    @Transactional
+    public List<NcEvent> findByNCENumberOrLabOrderId(String nceNumber, String labOrderId) {
+        List<NcEvent> list = new ArrayList();
+        try {
+            String sql = "from NcEvent where nceNumber = :nceNumber or labOrderNumber = :labOrderNumber";
+            Query<NcEvent> query = entityManager.unwrap(Session.class).createQuery(sql, NcEvent.class);
+            query.setParameter("nceNumber", nceNumber);
+            query.setParameter("labOrderNumber", labOrderId);
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in NceCategory getAllNceCategory()", e);
+        }
+        return list;
+    }
+
+    @Override
+    @Transactional
+    public NcEvent getNCEvent(String id) throws LIMSRuntimeException {
+        return null;
+    }
 }

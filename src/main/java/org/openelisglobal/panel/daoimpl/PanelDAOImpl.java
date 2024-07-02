@@ -39,278 +39,276 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO {
 
-  public PanelDAOImpl() {
-    super(Panel.class);
-  }
-
-  private static Map<String, String> ID_NAME_MAP = null;
-  private static Map<String, String> ID_DESCRIPTION_MAP = null;
-  private static Map<String, String> NAME_ID_MAP = null;
-
-  @Override
-  @Transactional(readOnly = true)
-  public void getData(Panel panel) throws LIMSRuntimeException {
-    try {
-      Panel pan = entityManager.unwrap(Session.class).get(Panel.class, panel.getId());
-      if (pan != null) {
-        PropertyUtils.copyProperties(panel, pan);
-      } else {
-        panel.setId(null);
-      }
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in Panel getData()", e);
-    }
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public Panel getPanelById(String panelId) throws LIMSRuntimeException {
-    try {
-      Panel panel = entityManager.unwrap(Session.class).get(Panel.class, panelId);
-      return panel;
-    } catch (HibernateException e) {
-      handleException(e, "getDataById");
+    public PanelDAOImpl() {
+        super(Panel.class);
     }
 
-    return null;
-  }
+    private static Map<String, String> ID_NAME_MAP = null;
+    private static Map<String, String> ID_DESCRIPTION_MAP = null;
+    private static Map<String, String> NAME_ID_MAP = null;
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<Panel> getAllActivePanels() throws LIMSRuntimeException {
-    try {
-      String sql = "from Panel p where p.isActive = 'Y' order by p.panelName";
-      Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
-
-      List<Panel> list = query.list();
-      return list;
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in Panel getAllActivePanels()", e);
-    }
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<Panel> getAllPanels() throws LIMSRuntimeException {
-    try {
-      String sql = "from Panel p order by p.sortOrderInt";
-      Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
-
-      List<Panel> list = query.list();
-      return list;
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in Panel getAllPanels()", e);
-    }
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<Panel> getPageOfPanels(int startingRecNo) throws LIMSRuntimeException {
-    List<Panel> list;
-    try {
-      // calculate maxRow to be one more than the page size
-      int endingRecNo =
-          startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
-
-      // bugzilla 1399
-      String sql = "from Panel p order by p.panelName";
-      Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
-      query.setFirstResult(startingRecNo - 1);
-      query.setMaxResults(endingRecNo - 1);
-
-      list = query.list();
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in Panel getPageOfPanels()", e);
+    @Override
+    @Transactional(readOnly = true)
+    public void getData(Panel panel) throws LIMSRuntimeException {
+        try {
+            Panel pan = entityManager.unwrap(Session.class).get(Panel.class, panel.getId());
+            if (pan != null) {
+                PropertyUtils.copyProperties(panel, pan);
+            } else {
+                panel.setId(null);
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in Panel getData()", e);
+        }
     }
 
-    return list;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public Panel getPanelById(String panelId) throws LIMSRuntimeException {
+        try {
+            Panel panel = entityManager.unwrap(Session.class).get(Panel.class, panelId);
+            return panel;
+        } catch (HibernateException e) {
+            handleException(e, "getDataById");
+        }
 
-  public Panel readPanel(String idString) {
-    Panel panel = null;
-    try {
-      panel = entityManager.unwrap(Session.class).get(Panel.class, idString);
-    } catch (RuntimeException e) {
-      // bugzilla 2154
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in Panel readPanel()", e);
+        return null;
     }
 
-    return panel;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<Panel> getAllActivePanels() throws LIMSRuntimeException {
+        try {
+            String sql = "from Panel p where p.isActive = 'Y' order by p.panelName";
+            Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
 
-  // this is for autocomplete
-  @Override
-  @Transactional(readOnly = true)
-  public List<Panel> getActivePanels(String filter) throws LIMSRuntimeException {
-    List<Panel> list = null;
-    try {
-      String sql =
-          "from Panel p where isActive = 'Y' and upper(p.panelName) like upper(:param) order by"
-              + " upper(p.panelName)";
-      Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
-      query.setParameter("param", filter + "%");
-
-      list = query.list();
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in Panel getPanels()", e);
-    }
-    return list;
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public Panel getPanelByName(Panel panel) throws LIMSRuntimeException {
-    return getPanelByName(panel.getPanelName());
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public Integer getTotalPanelCount() throws LIMSRuntimeException {
-    return getCount();
-  }
-
-  @Override
-  public boolean duplicatePanelExists(Panel panel) throws LIMSRuntimeException {
-    try {
-
-      List<Panel> list = new ArrayList<>();
-
-      // not case sensitive hemolysis and Hemolysis are considered
-      // duplicates
-      String sql = "from Panel t where trim(lower(t.panelName)) = :param and t.id != :panelId";
-      Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
-      query.setParameter("param", panel.getPanelName().toLowerCase().trim());
-
-      // initialize with 0 (for new records where no id has been generated
-      // yet
-      String panelId = "0";
-      if (!StringUtil.isNullorNill(panel.getId())) {
-        panelId = panel.getId();
-      }
-      query.setParameter("panelId", Integer.parseInt(panelId));
-
-      list = query.list();
-
-      if (list.size() > 0) {
-        return true;
-      } else {
-        return false;
-      }
-
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in duplicatePanelExists()", e);
-    }
-  }
-
-  @Override
-  public boolean duplicatePanelDescriptionExists(Panel panel) throws LIMSRuntimeException {
-    try {
-
-      List<Panel> list = new ArrayList<>();
-
-      // not case sensitive hemolysis and Hemolysis are considered
-      // duplicates
-      String sql = "from Panel t where trim(lower(t.description)) = :param and t.id != :panelId";
-      Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
-      query.setParameter("param", panel.getDescription().toLowerCase().trim());
-
-      // initialize with 0 (for new records where no id has been generated
-      // yet
-      String panelId = "0";
-      if (!StringUtil.isNullorNill(panel.getId())) {
-        panelId = panel.getId();
-      }
-      query.setParameter("panelId", Integer.parseInt(panelId));
-
-      list = query.list();
-
-      if (list.size() > 0) {
-        return true;
-      } else {
-        return false;
-      }
-
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in duplicatePanelDescriptionExists()", e);
-    }
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public String getNameForPanelId(String id) {
-    if (ID_NAME_MAP == null) {
-      loadMaps();
+            List<Panel> list = query.list();
+            return list;
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in Panel getAllActivePanels()", e);
+        }
     }
 
-    return ID_NAME_MAP != null ? ID_NAME_MAP.get(id) : id;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<Panel> getAllPanels() throws LIMSRuntimeException {
+        try {
+            String sql = "from Panel p order by p.sortOrderInt";
+            Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
 
-  @Override
-  @Transactional(readOnly = true)
-  public String getDescriptionForPanelId(String id) {
-    if (ID_DESCRIPTION_MAP == null) {
-      loadMaps();
+            List<Panel> list = query.list();
+            return list;
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in Panel getAllPanels()", e);
+        }
     }
 
-    return ID_DESCRIPTION_MAP != null ? ID_DESCRIPTION_MAP.get(id) : id;
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<Panel> getPageOfPanels(int startingRecNo) throws LIMSRuntimeException {
+        List<Panel> list;
+        try {
+            // calculate maxRow to be one more than the page size
+            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
-  @Override
-  @Transactional(readOnly = true)
-  public String getIdForPanelName(String name) {
-    if (NAME_ID_MAP == null) {
-      loadMaps();
+            // bugzilla 1399
+            String sql = "from Panel p order by p.panelName";
+            Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
+            query.setFirstResult(startingRecNo - 1);
+            query.setMaxResults(endingRecNo - 1);
+
+            list = query.list();
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in Panel getPageOfPanels()", e);
+        }
+
+        return list;
     }
 
-    return NAME_ID_MAP != null ? NAME_ID_MAP.get(name) : null;
-  }
+    public Panel readPanel(String idString) {
+        Panel panel = null;
+        try {
+            panel = entityManager.unwrap(Session.class).get(Panel.class, idString);
+        } catch (RuntimeException e) {
+            // bugzilla 2154
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in Panel readPanel()", e);
+        }
 
-  private void loadMaps() {
-    List<Panel> allPanels = getAllActivePanels();
-
-    if (allPanels != null) {
-      ID_NAME_MAP = new HashMap<>();
-      ID_DESCRIPTION_MAP = new HashMap<>();
-      NAME_ID_MAP = new HashMap<>();
-
-      for (Object panelObj : allPanels) {
-        Panel panel = (Panel) panelObj;
-        ID_NAME_MAP.put(panel.getId(), panel.getPanelName());
-        ID_DESCRIPTION_MAP.put(panel.getId(), panel.getDescription());
-        NAME_ID_MAP.put(panel.getPanelName(), panel.getId());
-      }
+        return panel;
     }
-  }
 
-  @Override
-  public void clearIDMaps() {
-    ID_NAME_MAP = null;
-    ID_DESCRIPTION_MAP = null;
-  }
+    // this is for autocomplete
+    @Override
+    @Transactional(readOnly = true)
+    public List<Panel> getActivePanels(String filter) throws LIMSRuntimeException {
+        List<Panel> list = null;
+        try {
+            String sql = "from Panel p where isActive = 'Y' and upper(p.panelName) like upper(:param) order by"
+                    + " upper(p.panelName)";
+            Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
+            query.setParameter("param", filter + "%");
 
-  @Override
-  @Transactional(readOnly = true)
-  public Panel getPanelByName(String panelName) {
-    try {
-      String sql = "from Panel p where p.panelName = :name";
-      Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
-      query.setParameter("name", panelName);
-
-      List<Panel> panelList = query.list();
-      return panelList.isEmpty() ? null : panelList.get(0);
-    } catch (RuntimeException e) {
-      LogEvent.logError(e);
-      throw new LIMSRuntimeException("Error in Panel getPanelByName()", e);
+            list = query.list();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in Panel getPanels()", e);
+        }
+        return list;
     }
-  }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Panel getPanelByName(Panel panel) throws LIMSRuntimeException {
+        return getPanelByName(panel.getPanelName());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getTotalPanelCount() throws LIMSRuntimeException {
+        return getCount();
+    }
+
+    @Override
+    public boolean duplicatePanelExists(Panel panel) throws LIMSRuntimeException {
+        try {
+
+            List<Panel> list = new ArrayList<>();
+
+            // not case sensitive hemolysis and Hemolysis are considered
+            // duplicates
+            String sql = "from Panel t where trim(lower(t.panelName)) = :param and t.id != :panelId";
+            Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
+            query.setParameter("param", panel.getPanelName().toLowerCase().trim());
+
+            // initialize with 0 (for new records where no id has been generated
+            // yet
+            String panelId = "0";
+            if (!StringUtil.isNullorNill(panel.getId())) {
+                panelId = panel.getId();
+            }
+            query.setParameter("panelId", Integer.parseInt(panelId));
+
+            list = query.list();
+
+            if (list.size() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in duplicatePanelExists()", e);
+        }
+    }
+
+    @Override
+    public boolean duplicatePanelDescriptionExists(Panel panel) throws LIMSRuntimeException {
+        try {
+
+            List<Panel> list = new ArrayList<>();
+
+            // not case sensitive hemolysis and Hemolysis are considered
+            // duplicates
+            String sql = "from Panel t where trim(lower(t.description)) = :param and t.id != :panelId";
+            Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
+            query.setParameter("param", panel.getDescription().toLowerCase().trim());
+
+            // initialize with 0 (for new records where no id has been generated
+            // yet
+            String panelId = "0";
+            if (!StringUtil.isNullorNill(panel.getId())) {
+                panelId = panel.getId();
+            }
+            query.setParameter("panelId", Integer.parseInt(panelId));
+
+            list = query.list();
+
+            if (list.size() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in duplicatePanelDescriptionExists()", e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getNameForPanelId(String id) {
+        if (ID_NAME_MAP == null) {
+            loadMaps();
+        }
+
+        return ID_NAME_MAP != null ? ID_NAME_MAP.get(id) : id;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getDescriptionForPanelId(String id) {
+        if (ID_DESCRIPTION_MAP == null) {
+            loadMaps();
+        }
+
+        return ID_DESCRIPTION_MAP != null ? ID_DESCRIPTION_MAP.get(id) : id;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getIdForPanelName(String name) {
+        if (NAME_ID_MAP == null) {
+            loadMaps();
+        }
+
+        return NAME_ID_MAP != null ? NAME_ID_MAP.get(name) : null;
+    }
+
+    private void loadMaps() {
+        List<Panel> allPanels = getAllActivePanels();
+
+        if (allPanels != null) {
+            ID_NAME_MAP = new HashMap<>();
+            ID_DESCRIPTION_MAP = new HashMap<>();
+            NAME_ID_MAP = new HashMap<>();
+
+            for (Object panelObj : allPanels) {
+                Panel panel = (Panel) panelObj;
+                ID_NAME_MAP.put(panel.getId(), panel.getPanelName());
+                ID_DESCRIPTION_MAP.put(panel.getId(), panel.getDescription());
+                NAME_ID_MAP.put(panel.getPanelName(), panel.getId());
+            }
+        }
+    }
+
+    @Override
+    public void clearIDMaps() {
+        ID_NAME_MAP = null;
+        ID_DESCRIPTION_MAP = null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Panel getPanelByName(String panelName) {
+        try {
+            String sql = "from Panel p where p.panelName = :name";
+            Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
+            query.setParameter("name", panelName);
+
+            List<Panel> panelList = query.list();
+            return panelList.isEmpty() ? null : panelList.get(0);
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in Panel getPanelByName()", e);
+        }
+    }
 }
