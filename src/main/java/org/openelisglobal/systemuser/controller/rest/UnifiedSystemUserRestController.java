@@ -652,9 +652,12 @@ public class UnifiedSystemUserRestController extends BaseController {
     }
 
     private void saveUserLabUnitRoles(SystemUser user, UnifiedSystemUserForm form, String loggedOnUserId) {
-        Map<String, Set<String>> selectedLabUnitRolesMap = new HashMap<>();
-        parseUserLabRolesData(form, selectedLabUnitRolesMap);
-        userService.saveUserLabUnitRoles(user, selectedLabUnitRolesMap, loggedOnUserId);
+        Map<String, List<String>> selectedLabUnitRolesMap = form.getSelectedTestSectionLabUnits();
+        // parseUserLabRolesData(form, selectedLabUnitRolesMap);
+
+        System.out.println("selectedLabUnitRolesMap" + selectedLabUnitRolesMap);
+
+        userService.saveUserLabUnitRolesRest(user, selectedLabUnitRolesMap, loggedOnUserId);
     }
 
     // private void setLabunitRolesForExistingUser(UnifiedSystemUserForm form) {
@@ -716,90 +719,59 @@ public class UnifiedSystemUserRestController extends BaseController {
         }
     }
 
-    private void parseUserLabRolesData(UnifiedSystemUserForm form, Map<String, Set<String>> selectedLabUnitRolesMap) {
-        /**
-         * The ui-form can dynamically render more fields that are mapped to the same
-         * field (ie for testSectionId ,selectedLabUnitRoles )of the form-backing
-         * object, so we append a common pre-fix to the values in every New lab Unit
-         * Roles Set to identify the distinct values for each set . This method parses
-         * the data from the form ,and builds a Map ie <String testSectionId
-         * ,Set<LabUnitRoles>> for each Lab Unit Role Set based on the suffix appended
-         * ie testSectionId = "1=2,2=5,3=6" ,selectedLabUnitRoles = [1=56, 2=36 ,3=44]
-         */
+    // private void parseUserLabRolesData(UnifiedSystemUserForm form, Map<String,
+    // Set<String>> selectedLabUnitRolesMap) {
+    // /**
+    // * The ui-form can dynamically render more fields that are mapped to the same
+    // * field (ie for testSectionId ,selectedLabUnitRoles )of the form-backing
+    // * object, so we append a common pre-fix to the values in every New lab Unit
+    // * Roles Set to identify the distinct values for each set . This method parses
+    // * the data from the form ,and builds a Map ie <String testSectionId
+    // * ,Set<LabUnitRoles>> for each Lab Unit Role Set based on the suffix appended
+    // * ie testSectionId = "1=2,2=5,3=6" ,selectedLabUnitRoles = [1=56, 2=36 ,3=44]
+    // */
+    // String labUnitEntryMapString = form.getTestSectionId();
+    // List<String> labUnitsRolesEntryMaps = form.getSelectedLabUnitRoles();
 
-         String transformedLabUnitEntryMapString = transformLabUnitEntryMap(form.getSelectedTestSectionLabUnits());
-         List<String> transformedLabUnitsRolesEntryMaps = transformLabUnitsRolesEntryMaps(form.getSelectedTestSectionLabUnits());
+    // List<String> entries = new ArrayList<>();
+    // List<String> labUnitsEntryMap = new ArrayList<>();
+    // String labUnitEntries[] = labUnitEntryMapString.split(",");
+    // for (String part : labUnitEntries) {
+    // if (part.contains("=")) {
+    // if (!part.contains("none")) {
+    // entries.add(part.split("=")[0]);
+    // labUnitsEntryMap.add(part);
+    // }
+    // }
+    // }
+    // for (String entry : entries) {
+    // for (String labUnit : labUnitsEntryMap) {
+    // if (labUnit.startsWith(entry)) {
+    // Set<String> labRolesId = new HashSet<>();
+    // String labUnitId = labUnit.split("=")[1];
+    // for (String labUnitsRolesEntryMap : labUnitsRolesEntryMaps) {
+    // if (labUnitsRolesEntryMap.startsWith(entry)) {
+    // labRolesId.add(labUnitsRolesEntryMap.split("=")[1]);
+    // }
+    // }
+    // if (labRolesId.size() > 0) {
+    // selectedLabUnitRolesMap.put(labUnitId, labRolesId);
+    // }
+    // }
+    // }
+    // }
 
-         System.out.println("transformedLabUnitEntryMapString" + transformedLabUnitEntryMapString);
-         System.out.println("transformedLabUnitsRolesEntryMaps" + transformedLabUnitsRolesEntryMaps);
- 
-         String labUnitEntryMapString = transformedLabUnitEntryMapString;
-         List<String> labUnitsRolesEntryMaps = transformedLabUnitsRolesEntryMaps;
-
-        List<String> entries = new ArrayList<>();
-        List<String> labUnitsEntryMap = new ArrayList<>();
-        String labUnitEntries[] = labUnitEntryMapString.split(",");
-        for (String part : labUnitEntries) {
-            if (part.contains("=")) {
-                if (!part.contains("none")) {
-                    entries.add(part.split("=")[0]);
-                    labUnitsEntryMap.add(part);
-                }
-            }
-        }
-        for (String entry : entries) {
-            for (String labUnit : labUnitsEntryMap) {
-                if (labUnit.startsWith(entry)) {
-                    Set<String> labRolesId = new HashSet<>();
-                    String labUnitId = labUnit.split("=")[1];
-                    for (String labUnitsRolesEntryMap : labUnitsRolesEntryMaps) {
-                        if (labUnitsRolesEntryMap.startsWith(entry)) {
-                            labRolesId.add(labUnitsRolesEntryMap.split("=")[1]);
-                        }
-                    }
-                    if (labRolesId.size() > 0) {
-                        selectedLabUnitRolesMap.put(labUnitId, labRolesId);
-                    }
-                }
-            }
-        }
-
-        if (selectedLabUnitRolesMap.containsKey(ALL_LAB_UNITS)) {
-            Set<String> labRolesId = selectedLabUnitRolesMap.get(ALL_LAB_UNITS);
-            selectedLabUnitRolesMap.clear();
-            selectedLabUnitRolesMap.put(ALL_LAB_UNITS, labRolesId);
-            List<String> allTestSectionIds = new ArrayList<>();
-            DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE)
-                    .forEach(testScetion -> allTestSectionIds.add(testScetion.getId()));
-            allTestSectionIds.forEach(testScetionId -> selectedLabUnitRolesMap.put(testScetionId, labRolesId));
-        }
-    }
-
-    private String transformLabUnitEntryMap(Map<String, List<String>> labUnitEntryMap) {
-        StringBuilder labUnitEntryMapStringBuilder = new StringBuilder();
-        int sectionId = 1;
-        for (Map.Entry<String, List<String>> entry : labUnitEntryMap.entrySet()) {
-            List<String> labUnitRoles = entry.getValue();
-            for (String labUnitRole : labUnitRoles) {
-                labUnitEntryMapStringBuilder.append(sectionId).append("=").append(labUnitRole).append(",");
-            }
-            sectionId++;
-        }
-        if (labUnitEntryMapStringBuilder.length() > 0) {
-            labUnitEntryMapStringBuilder.setLength(labUnitEntryMapStringBuilder.length() - 1);
-        }
-        return labUnitEntryMapStringBuilder.toString();
-    }
-
-    private List<String> transformLabUnitsRolesEntryMaps(Map<String, List<String>> labUnitEntryMap) {
-        List<String> labUnitsRolesEntryMaps = new ArrayList<>();
-        int sectionId = 1;
-        for (String key : labUnitEntryMap.keySet()) {
-            labUnitsRolesEntryMaps.add(sectionId + "=" + key);
-            sectionId++;
-        }
-        return labUnitsRolesEntryMaps;
-    }
+    // if (selectedLabUnitRolesMap.containsKey(ALL_LAB_UNITS)) {
+    // Set<String> labRolesId = selectedLabUnitRolesMap.get(ALL_LAB_UNITS);
+    // selectedLabUnitRolesMap.clear();
+    // selectedLabUnitRolesMap.put(ALL_LAB_UNITS, labRolesId);
+    // List<String> allTestSectionIds = new ArrayList<>();
+    // DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE)
+    // .forEach(testScetion -> allTestSectionIds.add(testScetion.getId()));
+    // allTestSectionIds.forEach(testScetionId ->
+    // selectedLabUnitRolesMap.put(testScetionId, labRolesId));
+    // }
+    // }
 
     private JSONArray getDisplaySystemUsersJsonArray() {
         JSONArray displayUsers = new JSONArray();

@@ -19,6 +19,9 @@ public interface UserService {
     void saveUserLabUnitRoles(SystemUser systemUser, Map<String, Set<String>> selectedLabUnitRolesMap,
             String loggedOnUserId);
 
+    void saveUserLabUnitRolesRest(SystemUser systemUser, Map<String, List<String>> selectedLabUnitRolesMap,
+            String loggedOnUserId);
+
     UserLabUnitRoles getUserLabUnitRoles(String systemUserId);
 
     List<UserLabUnitRoles> getAllUserLabUnitRoles();
