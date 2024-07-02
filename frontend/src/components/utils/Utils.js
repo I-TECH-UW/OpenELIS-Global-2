@@ -183,6 +183,33 @@ export const postToOpenElisServerForPDF = (endPoint, payLoad, callback) => {
     });
 };
 
+export const putToOpenElisServer = (endPoint, payLoad, callback) => {
+  // Build the request options
+  let options = {
+    // includes the browser sessionId in the Header for Authentication on the backend server
+    credentials: "include",
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRF-Token": localStorage.getItem("CSRF"),
+    },
+  };
+
+  // Include the body only if payLoad is provided
+  if (payLoad) {
+    options.body = payLoad;
+  }
+
+  fetch(config.serverBaseUrl + endPoint, options)
+    .then((response) => response.status)
+    .then((status) => {
+      callback(status);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
 export const hasRole = (userSessionDetails, role) => {
   return userSessionDetails.roles && userSessionDetails.roles.includes(role);
 };
@@ -276,4 +303,28 @@ export function getDifferenceInDays(date1, date2) {
 
   // Return the rounded difference in days
   return dayDifference;
+}
+
+export function formatTimestamp(timestamp) {
+  // Convert the timestamp to milliseconds and create a Date object
+  const date = new Date(timestamp * 1000);
+
+  // Extract and format components
+  const hours = date.getUTCHours();
+  const minutes = date.getUTCMinutes();
+  const day = date.getUTCDate();
+  const month = date.getUTCMonth() + 1; // Months are zero-based
+  const year = date.getUTCFullYear();
+
+  // Determine AM or PM and format hours
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const formattedHours = (hours % 12 || 12).toString().padStart(2, "0");
+  const formattedMinutes = minutes.toString().padStart(2, "0");
+
+  // Format day and month
+  const formattedDay = day.toString().padStart(2, "0");
+  const formattedMonth = month.toString().padStart(2, "0");
+
+  // Combine and return the formatted string
+  return `${formattedHours}:${formattedMinutes} ${ampm}; ${formattedDay}/${formattedMonth}/${year}`;
 }

@@ -212,7 +212,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "delete.success.msg" }),
       });
-      window.location.reload()
+      window.location.reload();
     } else {
       addNotification({
         kind: NotificationKinds.error,
