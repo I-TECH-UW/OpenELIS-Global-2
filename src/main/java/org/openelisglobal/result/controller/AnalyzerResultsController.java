@@ -39,6 +39,7 @@ import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.services.StatusSet;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -588,12 +589,8 @@ public class AnalyzerResultsController extends BaseController {
                 return result.getResult();
             }
 
-            if (significantDigits == 0) {
-                return String.valueOf(Math.round(results));
-            }
-
-            double power = Math.pow(10, significantDigits);
-            return String.valueOf(Math.round(results * power) / power);
+            // not truly significant digits, just decimal places
+            return StringUtil.doubleWithSignificantDigits(results, significantDigits);
         } else {
             return result.getResult();
         }

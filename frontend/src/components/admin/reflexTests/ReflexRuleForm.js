@@ -110,20 +110,41 @@ function ReflexRule() {
   }, [ruleList]);
 
   const loadDefaultTestResultList = () => {
+    var sampleList = [];
     ruleList.forEach(function (rule, index) {
       if (rule.conditions) {
         rule.conditions.forEach(function (condition, conditionIndex) {
           if (condition.sampleId) {
-            getFromOpenElisServer(
-              "/rest/test-display-beans?sampleType=" + condition.sampleId,
-              (resp) =>
-                fetchDeafultTests(
-                  resp,
-                  index,
-                  conditionIndex,
-                  FIELD.conditions,
-                  condition,
-                ),
+            sampleList.push(condition.sampleId);
+          }
+        });
+      }
+      if (rule.actions) {
+        rule.actions.forEach(function (action, actionIndex) {
+          if (action.sampleId) {
+            sampleList.push(action.sampleId);
+          }
+        });
+      }
+    });
+
+    getFromOpenElisServer(
+      "/rest/test-display-beans-map?samplesTypes=" + sampleList.join(","),
+      (resp) => buildSampleTests(resp),
+    );
+  };
+
+  const buildSampleTests = (sampleTestsMap) => {
+    ruleList.forEach(function (rule, index) {
+      if (rule.conditions) {
+        rule.conditions.forEach(function (condition, conditionIndex) {
+          if (condition.sampleId) {
+            fetchDeafultTests(
+              sampleTestsMap[condition.sampleId],
+              index,
+              conditionIndex,
+              FIELD.conditions,
+              condition,
             );
           }
         });
@@ -131,16 +152,12 @@ function ReflexRule() {
       if (rule.actions) {
         rule.actions.forEach(function (action, actionIndex) {
           if (action.sampleId) {
-            getFromOpenElisServer(
-              "/rest/test-display-beans?sampleType=" + action.sampleId,
-              (resp) =>
-                fetchDeafultTests(
-                  resp,
-                  index,
-                  actionIndex,
-                  FIELD.actions,
-                  null,
-                ),
+            fetchDeafultTests(
+              sampleTestsMap[action.sampleId],
+              index,
+              actionIndex,
+              FIELD.actions,
+              null,
             );
           }
         });
@@ -273,9 +290,6 @@ function ReflexRule() {
   };
 
   const handleRuleRemove = (index, id) => {
-    const list = [...ruleList];
-    list.splice(index, 1);
-    setRuleList(list);
     if (id) {
       postToOpenElisServer(
         "/rest/deactivate-reflexrule/" + id,
@@ -291,13 +305,14 @@ function ReflexRule() {
       addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "success.deleted.msg" }),
+        message: intl.formatMessage({ id: "delete.success.msg" }),
       });
+      window.location.reload()
     } else {
       addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "error.deleted.msg" }),
+        message: intl.formatMessage({ id: "delete.error.msg" }),
       });
     }
   };

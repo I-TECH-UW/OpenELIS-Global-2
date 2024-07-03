@@ -64,7 +64,7 @@ function PatientStatusReport(props) {
   const handleReportPrint = () => {
     let barcodesPdf =
       config.serverBaseUrl +
-      `/ReportPrint?report=${props.report}&type=patient&accessionDirect=${reportFormValues.form}&highAccessionDirect=${reportFormValues.to}&dateOfBirthSearchValue=&selPatient=${reportFormValues.selectedPatientId}&referringSiteId=${reportFormValues.referringSiteId}&referringSiteDepartmentId=${reportFormValues.referringSiteName}&onlyResults=${result}&_onlyResults=${checkbox}&dateType=${items}&lowerDateRange=${reportFormValues.startDate}&upperDateRange=${reportFormValues.endDate}`;
+      `/ReportPrint?report=${props.report}&type=patient&accessionDirect=${reportFormValues.form}&highAccessionDirect=${reportFormValues.to}&dateOfBirthSearchValue=&selPatient=${reportFormValues.selectedPatientId}&referringSiteId=${reportFormValues.referringSiteId}&referringSiteDepartmentId=${reportFormValues.referringSiteDepartmentId ? reportFormValues.referringSiteDepartmentId : ""}&onlyResults=${result}&_onlyResults=${checkbox}&dateType=${items}&lowerDateRange=${reportFormValues.startDate}&upperDateRange=${reportFormValues.endDate}`;
     window.open(barcodesPdf);
   };
 
@@ -343,22 +343,16 @@ function PatientStatusReport(props) {
                         </Select>
                       </Column>
                     </Grid>
-                  </AccordionItem>
-                </Accordion>
-                <Grid fullWidth={true}>
-                  <Column lg={16} md={8} sm={4}>
-                    <br />
-                  </Column>
-                  <Column lg={16} md={8} sm={4}>
-                    <h5>
-                      <FormattedMessage id="report.patient.site.description" />
-                    </h5>
-                  </Column>
-                </Grid>
-                <Accordion>
-                  <AccordionItem
-                    title={intl.formatMessage({ id: "report.labe.date" })}
-                  >
+                    <Grid fullWidth={true}>
+                      <Column lg={16} md={8} sm={4}>
+                        <br />
+                      </Column>
+                      <Column lg={16} md={8} sm={4}>
+                        <h6>
+                          <FormattedMessage id="report.patient.site.description" />
+                        </h6>
+                      </Column>
+                    </Grid>
                     <Grid fullWidth={true}>
                       <Column lg={4} md={8} sm={4}>
                         <Checkbox
