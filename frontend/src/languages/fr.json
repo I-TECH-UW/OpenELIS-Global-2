@@ -1005,5 +1005,11 @@
   "notify.message": "Message",
   "notify.error": "Utilisateur et message sont requis",
   "notification.slideover.empty.header": "Vous êtes à jour",
-  "notification.sliderover.empty.message": "Vous n'avez pas de notifications pour le moment."
+  "notification.sliderover.empty.message": "Vous n'avez pas de notifications pour le moment.",
+  "notification.slideover.button.reload": "Recharger",
+  "notification.slideover.button.subscribe": "S'abonner sur cet appareil",
+  "notification.slideover.button.markallasread": "Marquer tout comme lu",
+  "notification.slideover.button.hideread": "Masquer les lus",
+  "notification.slideover.button.showread": "Afficher les lus",
+  "notification.slideover.button.markasread": "Marquer comme lu"
 }

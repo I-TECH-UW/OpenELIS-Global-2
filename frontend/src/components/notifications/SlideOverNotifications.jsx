@@ -1,9 +1,11 @@
 import { Renew, NotificationFilled, Email, Filter } from "@carbon/icons-react";
 import { formatTimestamp } from "../utils/Utils";
 import Spinner from "../common/Sprinner";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export default function SlideOverNotifications(props) {
+  const intl = useIntl();
+
   const {
     loading,
     notifications,
@@ -66,26 +68,38 @@ export default function SlideOverNotifications(props) {
           {[
             {
               icon: <Renew />,
-              label: "Reload",
+              label: intl.formatMessage({
+                id: "notification.slideover.button.reload",
+              }),
               onClick: () => {
                 getNotifications();
               },
             },
             {
               icon: <NotificationFilled />,
-              label: "Subscribe on this Device",
+              label: intl.formatMessage({
+                id: "notification.slideover.button.subscribe",
+              }),
               onClick: () => {},
             },
             {
               icon: <Email />,
-              label: "Mark all as Read",
+              label: intl.formatMessage({
+                id: "notification.slideover.button.markallasread",
+              }),
               onClick: () => {
                 markAllNotificationsAsRead();
               },
             },
             {
               icon: <Filter />,
-              label: showRead ? "Hide read" : "Show read",
+              label: showRead
+                ? intl.formatMessage({
+                    id: "notification.slideover.button.hideread",
+                  })
+                : intl.formatMessage({
+                    id: "notification.slideover.button.showread",
+                  }),
               onClick: () => setShowRead(!showRead),
             },
           ].map(({ icon, label, onClick }, index) => (
@@ -139,7 +153,9 @@ export default function SlideOverNotifications(props) {
                 <div>{formatTimestamp(notification.createdDate)}</div>
                 <NotificationButton
                   icon={<Email />}
-                  label="Mark as Read"
+                  label={intl.formatMessage({
+                    id: "notification.slideover.button.markasread",
+                  })}
                   onClick={() => markNotificationAsRead(notification.id)}
                   disabled={!!notification.readAt}
                 />
