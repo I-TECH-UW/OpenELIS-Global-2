@@ -997,5 +997,19 @@
   "testnotification.patiententry.info": "Si OpenELIS n'est pas en mesure de se connecter au destinataire des résultats transmis, il les mettra en file d'attente. Une file d'attente grande et croissante est un signe qu'il faut entreprendre des actions correctives, y compris contacter la partie réceptrice.",
   "resultreporting.config.url": "URL du site vers lequel les résultats seront envoyés. Par exemple http://192.168.56.101/someSite",
   "resultreporting.config.url.placeholder": "https://nomdelorganisation.com/someSite",
-  "result.report.queue.size": "Taille de la file d'attente :"
+  "result.report.queue.size": "Taille de la file d'attente :",
+  "notify.main.title": "Notifier l'utilisateur",
+  "button.send": "Envoyer",
+  "notify.user.by": "Utilisateur à notifier",
+  "notify.user.success.notification": "Notification envoyée avec succès",
+  "notify.message": "Message",
+  "notify.error": "Utilisateur et message sont requis",
+  "notification.slideover.empty.header": "Vous êtes à jour",
+  "notification.sliderover.empty.message": "Vous n'avez pas de notifications pour le moment.",
+  "notification.slideover.button.reload": "Recharger",
+  "notification.slideover.button.subscribe": "S'abonner sur cet appareil",
+  "notification.slideover.button.markallasread": "Marquer tout comme lu",
+  "notification.slideover.button.hideread": "Masquer les lus",
+  "notification.slideover.button.showread": "Afficher les lus",
+  "notification.slideover.button.markasread": "Marquer comme lu"
 }
