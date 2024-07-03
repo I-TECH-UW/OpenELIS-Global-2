@@ -1,6 +1,13 @@
 package org.openelisglobal.person;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Set;
+
+import javax.transaction.Transactional;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -50,20 +57,34 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
+    @Transactional
+    @SuppressWarnings("unchecked")
     public void createPersonWithMultiplePatients_shouldLinkPatientsToPerson() throws Exception {
 
         Person person = new Person();
         String personId = personService.insert(person);
         Person savedPerson = personService.get(personId);
 
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = dateFormat.parse("12/12/1992");
+        long time = date.getTime();
+        Timestamp dob = new Timestamp(time);
+
         Patient patient1 = new Patient();
+        patient1.setPerson(person);
+        patient1.setBirthDate(dob);
+        patient1.setGender("M");
+        String patientId1 =  patientService.insert(patient1);
         Patient patient2 = new Patient();
-        savedPerson.addPatient(patient1);
-        savedPerson.addPatient(patient2);
-        String patientId1 = patientService.insert(patient1);
+        patient2.setPerson(person);
+        patient2.setBirthDate(dob);
+        patient2.setGender("M");
         String patientId2 = patientService.insert(patient2);
 
-        Set<Patient> patients = savedPerson.getPatients();
+        savedPerson.addPatient(patient1);
+        savedPerson.addPatient(patient2);
+
+        Set<Patient> patients = personService.get(savedPerson.getId()).getPatients();
         Assert.assertEquals(2, patients.size());
         Assert.assertTrue(patients.stream().anyMatch(p -> p.getId().equals(patientId1)));
         Assert.assertTrue(patients.stream().anyMatch(p -> p.getId().equals(patientId2)));

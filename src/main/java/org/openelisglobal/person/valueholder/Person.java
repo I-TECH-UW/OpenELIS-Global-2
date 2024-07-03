@@ -27,6 +27,8 @@ import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Person extends BaseObject<String> {
 
     @Pattern(regexp = ValidationHelper.ID_REGEX)
@@ -70,6 +72,7 @@ public class Person extends BaseObject<String> {
     @Email
     private String email;
 
+    @JsonIgnore
     @AssociationInverseSide(inversePath = @ObjectPath(@PropertyValue(propertyName = "person")))
     private Set<Patient> patients = new HashSet<>(0);
 
