@@ -13,6 +13,7 @@
  */
 package org.openelisglobal.person.valueholder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.HashSet;
 import java.util.Set;
 import javax.validation.constraints.Email;
@@ -26,8 +27,6 @@ import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Person extends BaseObject<String> {
 
