@@ -27,7 +27,7 @@ import {
 } from "@carbon/react";
 import { getFromOpenElisServer } from "../../utils/Utils.js";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -42,6 +42,7 @@ const TestCatalog = () => {
   const [showGuide, setShowGuide] = useState(false);
   const [testSectionList, setTestSectionList] = useState([]);
   const [data, setData] = useState([]);
+  const intl = useIntl();
 
   useEffect(() => {
     getFromOpenElisServer(`/rest/TestCatalog`, handleCatalog);
@@ -65,80 +66,83 @@ const TestCatalog = () => {
   const rows = [
     {
       id: "name",
-      field: "Name",
-      description:
-        "The name of the test as it will appear within openELIS. Both English and French are shown",
+      field: intl.formatMessage({ id: "field.name" }),
+      description: <FormattedMessage id="description.name" />,
     },
     {
       id: "reportName",
-      field: "Report Name",
-      description:
-        "The name of the test as it will appear in reports. Both English and French are shown",
+      field: intl.formatMessage({ id: "field.reportName" }),
+      description: <FormattedMessage id="description.reportName" />,
     },
     {
       id: "active",
-      field: "Active/Not Active",
-      description:
-        "If the test is active it can be ordered on the order form or as part of a test algorithm. If it is not active it cannot be ordered or be part of a test algorithm",
+      field: intl.formatMessage({ id: "field.active" }),
+      description: <FormattedMessage id="description.active" />,
     },
     {
       id: "orderable",
-      field: "Orderable/Not orderable",
-      description:
-        "If a test is active and orderable then it can be ordered on an order form. If it is active but not orderable then it will only be done if it is reflexed from another test",
+      field: intl.formatMessage({ id: "field.orderable" }),
+      description: <FormattedMessage id="description.orderable" />,
     },
     {
       id: "testUnit",
-      field: "Test Unit",
-      description:
-        "Which section of the lab performs the test. This is also known as a test section.",
+      field: intl.formatMessage({ id: "field.testUnit" }),
+      description: <FormattedMessage id="description.testUnit" />,
     },
     {
       id: "sampleType",
-      field: "Sample Type",
-      description:
-        "The type of sample on which the test can be done. If the intake technician is able to select the type of sample after they have ordered the test it will be marked as user to indicate that the user will select the type",
+      field: intl.formatMessage({ id: "field.sampleType" }),
+      description: <FormattedMessage id="description.sampleType" />,
     },
     {
       id: "panel",
-      field: "Panel",
-      description:
-        "If this test is part of a test panel then the panel will be named here.",
+      field: intl.formatMessage({ id: "field.panel" }),
+      description: <FormattedMessage id="description.panel" />,
     },
     {
       id: "resultType",
-      field: "Result type",
+      field: intl.formatMessage({ id: "field.resultType" }),
       description: (
         <>
-          <p>The kind of result for this test:</p>
+          <p>
+            <FormattedMessage id="description.resultType.kind" />
+          </p>
           <ul>
             <li>
-              <strong>N - Numeric:</strong> Accepts only numeric results in a
-              text box. Results can be evaluated as to being in a normal or a
-              valid range.
+              <strong>
+                <FormattedMessage id="description.resultType.numeric" />
+              </strong>
+              <FormattedMessage id="description.resultType.numericDesc" />
             </li>
             <li>
-              <strong>A - Alphanumeric:</strong> Accepts either numeric or text
-              in a text box. It will not be evaluated for being normal or valid.
+              <strong>
+                <FormattedMessage id="description.resultType.alphanumeric" />
+              </strong>
+              <FormattedMessage id="description.resultType.alphanumericDesc" />
             </li>
             <li>
-              <strong>R - Free text:</strong> Accepts up to 200 characters in a
-              text area. It will not be evaluated for being normal or valid.
+              <strong>
+                <FormattedMessage id="description.resultType.textArea" />
+              </strong>
+              <FormattedMessage id="description.resultType.textAreaDesc" />
             </li>
             <li>
-              <strong>D - Select list:</strong> User will be able to select from
-              a dropdown list. The normal value will be specified as the
-              reference value.
+              <strong>
+                <FormattedMessage id="description.resultType.selectList" />
+              </strong>
+              <FormattedMessage id="description.resultType.selectListDesc" />
             </li>
             <li>
-              <strong>M - Multi-select list:</strong> The user will be able to
-              select one or more values from a dropdown list. No reference value
-              will be specified.
+              <strong>
+                <FormattedMessage id="description.resultType.multiSelectList" />
+              </strong>
+              <FormattedMessage id="description.resultType.multiSelectListDesc" />
             </li>
             <li>
-              <strong>C - Cascading multi-select list:</strong> Similar to
-              multi-select but the user will be able to select multiple groups
-              from the dropdown list.
+              <strong>
+                <FormattedMessage id="description.resultType.cascadingMultiSelectList" />
+              </strong>
+              <FormattedMessage id="description.resultType.cascadingMultiSelectListDesc" />
             </li>
           </ul>
         </>
@@ -146,62 +150,53 @@ const TestCatalog = () => {
     },
     {
       id: "uom",
-      field: "uom",
-      description:
-        "Unit of measure for the test. This usually only applies to numeric or alphanumeric result types.",
+      field: intl.formatMessage({ id: "field.uom" }),
+      description: <FormattedMessage id="description.uom" />,
     },
     {
       id: "significantDigits",
-      field: "Significant digits",
-      description:
-        "The number of significant digits for numeric results. Entered results will be rounded or padded to the correct number of digits. The normal range will also be displayed with the correct number of significant digits.",
+      field: intl.formatMessage({ id: "field.significantDigits" }),
+      description: <FormattedMessage id="description.significantDigits" />,
     },
     {
       id: "selectValues",
-      field: "Select values",
-      description:
-        'Only specified for select, multi-select or cascading multi-select results. These are the available selections shown to the user. If the selection is marked as "qualifiable" then when the user selects that value they will be able to enter additional information in a text box.',
+      field: intl.formatMessage({ id: "field.selectValues" }),
+      description: <FormattedMessage id="description.selectValues" />,
     },
     {
       id: "referenceValue",
-      field: "Reference value",
-      description:
-        "The value of a selection for a healthy person. Only given for select list results.",
+      field: intl.formatMessage({ id: "field.referenceValue" }),
+      description: <FormattedMessage id="description.referenceValue" />,
     },
     {
       id: "resultLimits",
-      field: "Result limits",
-      description:
-        "The limits of normal and valid results for numeric tests. The values can depend on both the age and sex of the patient.",
+      field: intl.formatMessage({ id: "field.resultLimits" }),
+      description: <FormattedMessage id="description.resultLimits" />,
     },
     {
       id: "sex",
-      field: "Sex",
-      description:
-        "If the sex of the patient matters for the given values it will be specified here.",
+      field: intl.formatMessage({ id: "field.sex" }),
+      description: <FormattedMessage id="description.sex" />,
     },
     {
       id: "ageRange",
-      field: "Age range",
-      description:
-        "If the age range (in months) matters for the given values it will be specified here.",
+      field: intl.formatMessage({ id: "field.ageRange" }),
+      description: <FormattedMessage id="description.ageRange" />,
     },
     {
       id: "normalRange",
-      field: "Normal range",
-      description:
-        "Any numeric result within this range is what is expected in a healthy person.",
+      field: intl.formatMessage({ id: "field.normalRange" }),
+      description: <FormattedMessage id="description.normalRange" />,
     },
     {
       id: "validRange",
-      field: "Valid range",
-      description:
-        "Any numeric result not in this range is an indication that the test may not have been done correctly.",
+      field: intl.formatMessage({ id: "field.validRange" }),
+      description: <FormattedMessage id="description.validRange" />,
     },
     {
       id: "note",
-      field: "Note",
-      description: "n/a means not available. The value is not specified",
+      field: intl.formatMessage({ id: "field.note" }),
+      description: <FormattedMessage id="description.note" />,
     },
   ];
 
@@ -214,64 +209,62 @@ const TestCatalog = () => {
     const rows = [
       {
         id: `${item.id}-name`,
-        field: "Name",
+        field: intl.formatMessage({ id: "field.name" }),
         value: `en: ${item.localization.english},  fr: ${item.localization.french}`,
       },
       {
         id: `${item.id}-reportName`,
-        field: "Report Name",
+        field: intl.formatMessage({ id: "field.reportName" }),
         value: `en: ${item.reportLocalization.english},  fr: ${item.reportLocalization.french}`,
       },
       {
         id: `${item.id}-testUnit`,
-        field: "Test Unit",
+        field: intl.formatMessage({ id: "field.testUnit" }),
         value: item.testUnit,
       },
-
       {
         id: `${item.id}-sampleType`,
-        field: "Sample Type",
+        field: intl.formatMessage({ id: "field.sampleType" }),
         value: item.sampleType,
       },
       {
         id: `${item.id}-panel`,
-        field: "Panel",
+        field: intl.formatMessage({ id: "field.panel" }),
         value: item.panel,
       },
       {
         id: `${item.id}-resultType`,
-        field: "Result Type",
+        field: intl.formatMessage({ id: "field.resultType" }),
         value: item.resultType,
       },
       {
         id: `${item.id}-uom`,
-        field: "UOM",
+        field: intl.formatMessage({ id: "field.uom" }),
         value: item.uom,
       },
       {
         id: `${item.id}-significantDigits`,
-        field: "Significant Digits",
+        field: intl.formatMessage({ id: "field.significantDigits" }),
         value: item.significantDigits,
       },
       item.loinc && {
         id: `${item.id}-loinc`,
-        field: "Loinc",
+        field: intl.formatMessage({ id: "field.loinc" }),
         value: item.loinc,
       },
       {
         id: `${item.id}-active`,
-        field: "Active/Not Active",
+        field: intl.formatMessage({ id: "field.active" }),
         value: item.active,
       },
       {
         id: `${item.id}-orderable`,
-        field: "Orderable/ Not -Orderable",
+        field: intl.formatMessage({ id: "field.orderable" }),
         value: item.orderable,
       },
-
       item.hasDictionaryValues && {
         id: `${item.id}-dictionaryValues`,
-        field: "Dictionary Values",
+        field: intl.formatMessage({ id: "field.dictionaryValues" }),
         value: item.dictionaryValues.join(", "),
       },
     ].filter(Boolean);
@@ -352,13 +345,19 @@ const TestCatalog = () => {
         <Grid>
           <Column lg={11}>
             <br />
-            <h5>Select test section to view catalog for that section</h5>
+            <h5>
+              <FormattedMessage id="label.selectTestSectionCatalog" />
+            </h5>
           </Column>
           <Column lg={5}>
             <FilterableMultiSelect
               type="inline"
               id="carbon-multiselect-example-3"
-              items={[...testSectionList, "All"]}
+              items={
+                Array.isArray(testSectionList)
+                  ? [...testSectionList, "All"]
+                  : ["All"]
+              }
               itemToString={(item) => (typeof item === "string" ? item : "")}
               onChange={handleSectionChange}
               selectedItems={selectedSections}
