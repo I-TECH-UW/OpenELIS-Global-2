@@ -94,7 +94,9 @@ function UserManagement() {
         ",",
       )}&startingRecNo=1`,
       JSON.stringify(selectedRowCombinedUserIDPost),
-      deleteDeactivateUserManagementCallback(),
+      (res) => {
+        deleteDeactivateUserManagementCallback(res);
+      },
     );
   }
 
@@ -124,21 +126,33 @@ function UserManagement() {
     setSelectedRowCombinedUserIDPost(selectedRowCombinedUserIDObject);
   }, [selectedRowCombinedUserID, userManagementListShow]);
 
-  function deleteDeactivateUserManagementCallback() {
-    setLoading(false);
-    setNotificationVisible(true);
-    addNotification({
-      title: intl.formatMessage({
-        id: "notification.title",
-      }),
-      message: intl.formatMessage({
-        id: "notification.organization.post.delete.success",
-      }),
-      kind: NotificationKinds.success,
-    });
-    setTimeout(() => {
-      window.location.reload();
-    }, 2000);
+  function deleteDeactivateUserManagementCallback(res) {
+    if (res) {
+      setLoading(false);
+      setNotificationVisible(true);
+      addNotification({
+        title: intl.formatMessage({
+          id: "notification.title",
+        }),
+        message: intl.formatMessage({
+          id: "notification.user.post.delete.success",
+        }),
+        kind: NotificationKinds.success,
+      });
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } else {
+      addNotification({
+        kind: NotificationKinds.error,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "server.error.msg" }),
+      });
+      setNotificationVisible(true);
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    }
   }
 
   const handlePageChange = ({ page, pageSize }) => {

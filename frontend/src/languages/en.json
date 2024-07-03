@@ -1152,5 +1152,7 @@
   "systemuserrole.roles.labunit": "Lab Unit Roles",
   "systemuserrole.newpermissions": "Add New Permission",
   "systemuserrole.rmpermissions": "Remove Permission",
-  "barcode.notification.save": "BarCode Configurations has been saved."
+  "barcode.notification.save": "BarCode Configurations has been saved.",
+  "notification.user.post.save.success": "User Information Added Succesfully.",
+  "notification.user.post.delete.success": "User Deactivated Succesfully."
 }
