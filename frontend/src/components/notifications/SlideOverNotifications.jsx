@@ -1,6 +1,7 @@
 import { Renew, NotificationFilled, Email, Filter } from "@carbon/icons-react";
 import { formatTimestamp } from "../utils/Utils";
 import Spinner from "../common/Sprinner";
+import { FormattedMessage } from "react-intl";
 
 export default function SlideOverNotifications(props) {
   const {
@@ -165,8 +166,8 @@ export default function SlideOverNotifications(props) {
                   opacity="0.45"
                   d="M49.4233 71.0879L6.7079 30.1421"
                   stroke="#C8C6C4"
-                  stroke-width="0.6524"
-                  stroke-miterlimit="10"
+                  strokeWidth="0.6524"
+                  strokeMiterlimit="10"
                 ></path>
                 <path
                   opacity="0.45"
@@ -199,8 +200,8 @@ export default function SlideOverNotifications(props) {
                   opacity="0.45"
                   d="M65.5811 97.4627L93.2902 78.5083"
                   stroke="#C8C6C4"
-                  stroke-width="0.3695"
-                  stroke-miterlimit="10"
+                  strokeWidth="0.3695"
+                  strokeMiterlimit="10"
                 ></path>
                 <path
                   opacity="0.45"
@@ -346,10 +347,10 @@ export default function SlideOverNotifications(props) {
               <path
                 d="M25.6671 99.9999C25.6671 99.9999 43.5899 95.8092 58.0971 98.8465C72.6042 101.884 85.0004 96.6167 85.0004 96.6167"
                 stroke="#C0C0C0"
-                stroke-width="3.2"
-                stroke-miterlimit="10"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="3.2"
+                strokeMiterlimit="10"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               ></path>
               <path
                 d="M53.1458 28.5283C53.2993 31.9501 49.1927 35.641 45.777 35.7947C42.3613 35.9485 39.598 31.7964 39.4445 28.4131C39.291 24.9913 43.2823 22.7998 46.6596 22.6461C50.0753 22.4538 52.9923 25.1066 53.1458 28.5283Z"
@@ -410,8 +411,8 @@ export default function SlideOverNotifications(props) {
                   gradientUnits="userSpaceOnUse"
                   gradientTransform="translate(55.7637 33.0607) scale(12.1229 11.9404)"
                 >
-                  <stop stop-color="#886345"></stop>
-                  <stop offset="0.9974" stop-color="#BD8E67"></stop>
+                  <stop stopColor="#886345"></stop>
+                  <stop offset="0.9974" stopColor="#BD8E67"></stop>
                 </radialGradient>
                 <radialGradient
                   id="paint1_radial"
@@ -421,17 +422,17 @@ export default function SlideOverNotifications(props) {
                   gradientUnits="userSpaceOnUse"
                   gradientTransform="translate(53.9697 32.8024) scale(4.33929 4.23852)"
                 >
-                  <stop stop-color="#886345"></stop>
-                  <stop offset="0.9373" stop-color="#BD8E67"></stop>
+                  <stop stopColor="#886345"></stop>
+                  <stop offset="0.9373" stopColor="#BD8E67"></stop>
                 </radialGradient>
               </defs>
             </svg>
 
             <h4 style={{ fontSize: "1rem", marginBottom: "0.5rem" }}>
-              You're all caught up
+              <FormattedMessage id="notification.slideover.empty.header" />
             </h4>
             <p style={{ fontSize: "0.875rem" }}>
-              You don't have any new notifications at this time.
+              <FormattedMessage id="notification.sliderover.empty.message" />
             </p>
           </div>
         )}

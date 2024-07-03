@@ -46,8 +46,7 @@ import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModif
 import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName.js";
 import PluginList from "./pluginFile/PluginFile.js";
 import ResultReportingConfiguration from "./ResultReportingConfiguration/ResultReportingConfiguration.js";
-import NotificationTestPage from "../notifications/NotificationTestPage.jsx";
-
+import PushNotificationPage from "../notifications/PushNotificationPage.jsx";
 function Admin() {
   const intl = useIntl();
   const [isSmallScreen, setIsSmallScreen] = useState(false);
@@ -198,7 +197,7 @@ function Admin() {
         <ProviderMenu />
       </PathRoute>
       <PathRoute path="#NotifyUser">
-        <NotificationTestPage />
+        <PushNotificationPage />
       </PathRoute>
       <PathRoute path="#barcodeConfiguration">
         <BarcodeConfiguration />

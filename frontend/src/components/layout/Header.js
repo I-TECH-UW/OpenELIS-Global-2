@@ -102,7 +102,6 @@ function OEHeader(props) {
         setReadNotifications([]);
         setUnReadNotifications([]);
         data.forEach((element) => {
-
           if (element.readAt) {
             setReadNotifications((prev) => [...prev, element]);
           } else {
@@ -132,18 +131,20 @@ function OEHeader(props) {
     }
   };
 
-
   const markAllNotificationsAsRead = async () => {
     try {
-      putToOpenElisServer(`/rest/notification/markasread/all`, null, (response) => {
-        console.log("All Notifications marked as read", response);
-        getNotifications();
-      });
+      putToOpenElisServer(
+        `/rest/notification/markasread/all`,
+        null,
+        (response) => {
+          console.log("All Notifications marked as read", response);
+          getNotifications();
+        },
+      );
     } catch (error) {
       console.error("Failed to mark all notifications as read", error);
     }
-  
-  }
+  };
 
   useEffect(() => {
     getNotifications();
@@ -585,5 +586,3 @@ function OEHeader(props) {
 }
 
 export default withRouter(injectIntl(OEHeader));
-
-   
