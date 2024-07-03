@@ -1,47 +1,45 @@
+import {
+  ChevronDown,
+  ChevronUp,
+  Close,
+  Language,
+  Logout,
+  Notification,
+  Search,
+  UserAvatarFilledAlt,
+} from "@carbon/icons-react";
+import { Select, SelectItem } from "@carbon/react";
 import React, {
-  useContext,
-  useState,
   createRef,
-  useRef,
+  useContext,
   useEffect,
   useLayoutEffect,
+  useRef,
+  useState,
 } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import { withRouter } from "react-router-dom";
-import { ConfigurationContext } from "../layout/Layout";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import "../Style.css";
-import { Select, SelectItem } from "@carbon/react";
-import config from "../../config.json";
-import {
-  Search,
-  Notification,
-  Language,
-  UserAvatarFilledAlt,
-  Logout,
-  Close,
-  ChevronDown,
-  NotificationNew,
-  ChevronUp,
-} from "@carbon/icons-react";
+import { ConfigurationContext } from "../layout/Layout";
 import SlideOver from "../notifications/SlideOver";
 
 import {
-  HeaderContainer,
   Header,
-  HeaderMenuButton,
-  HeaderName,
+  HeaderContainer,
   HeaderGlobalAction,
   HeaderGlobalBar,
-  SideNavMenu,
-  SideNavMenuItem,
+  HeaderMenuButton,
+  HeaderName,
+  HeaderPanel,
   SideNav,
   SideNavItems,
+  SideNavMenu,
+  SideNavMenuItem,
   Theme,
-  HeaderPanel,
 } from "@carbon/react";
-import { getFromOpenElisServer } from "../utils/Utils";
 import SlideOverNotifications from "../notifications/SlideOverNotifications";
+import { getFromOpenElisServer, putToOpenElisServer } from "../utils/Utils";
 
 function OEHeader(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
@@ -60,6 +58,11 @@ function OEHeader(props) {
     menu_billing: { menu: {}, childMenus: [] },
     menu_nonconformity: { menu: {}, childMenus: [] },
   });
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showRead, setShowRead] = useState(false);
+  const [unReadNotifications, setUnReadNotifications] = useState([]);
+  const [readNotifications, setReadNotifications] = useState([]);
 
   scrollRef.current = window.scrollY;
   useLayoutEffect(() => {
@@ -91,6 +94,60 @@ function OEHeader(props) {
   const clickPanelSwitch = () => {
     setSwitchCollapsed(!switchCollapsed);
   };
+
+  const getNotifications = async () => {
+    setLoading(true);
+    try {
+      getFromOpenElisServer("/rest/notifications", (data) => {
+        setReadNotifications([]);
+        setUnReadNotifications([]);
+        data.forEach((element) => {
+
+          if (element.readAt) {
+            setReadNotifications((prev) => [...prev, element]);
+          } else {
+            setUnReadNotifications((prev) => [...prev, element]);
+          }
+        });
+      });
+    } catch (error) {
+      console.error("Failed to fetch notifications", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const markNotificationAsRead = async (notificationId) => {
+    try {
+      putToOpenElisServer(
+        `/rest/notification/markasread/${notificationId}`,
+        null,
+        (response) => {
+          console.log("Notification marked as read", response);
+          getNotifications();
+        },
+      );
+    } catch (error) {
+      console.error("Failed to mark notification as read", error);
+    }
+  };
+
+
+  const markAllNotificationsAsRead = async () => {
+    try {
+      putToOpenElisServer(`/rest/notification/markasread/all`, null, (response) => {
+        console.log("All Notifications marked as read", response);
+        getNotifications();
+      });
+    } catch (error) {
+      console.error("Failed to mark all notifications as read", error);
+    }
+  
+  }
+
+  useEffect(() => {
+    getNotifications();
+  }, []);
 
   const panelSwitchIcon = () => {
     return userSessionDetails.authenticated ? (
@@ -382,27 +439,30 @@ function OEHeader(props) {
                             }}
                           >
                             <Notification size={20} />
-                            <span
-                              style={{
-                                position: "absolute",
-                                top: "-5px",
-                                right: "-5px",
-                                backgroundColor: "#3A6B8D",
-                                color: "white",
-                                borderRadius: "50%",
-                                width: "16px",
-                                height: "16px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontSize: "10px",
-                                animation: "pulse 5s infinite",
-                                opacity: 1,
-                                transition: "background-color 0.3s ease-in-out",
-                              }}
-                            >
-                              {`5`}
-                            </span>
+                            {unReadNotifications?.length > 0 && (
+                              <span
+                                style={{
+                                  position: "absolute",
+                                  top: "-5px",
+                                  right: "-5px",
+                                  backgroundColor: "#3A6B8D",
+                                  color: "white",
+                                  borderRadius: "50%",
+                                  width: "16px",
+                                  height: "16px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontSize: "10px",
+                                  animation: "pulse 5s infinite",
+                                  opacity: 1,
+                                  transition:
+                                    "background-color 0.3s ease-in-out",
+                                }}
+                              >
+                                {unReadNotifications?.length}
+                              </span>
+                            )}
                           </div>
                         </HeaderGlobalAction>
                       </>
@@ -504,7 +564,17 @@ function OEHeader(props) {
                 slideFrom="right"
                 title="Notifications"
               >
-                <SlideOverNotifications />
+                <SlideOverNotifications
+                  loading={loading}
+                  notifications={
+                    showRead ? readNotifications : unReadNotifications
+                  }
+                  showRead={showRead}
+                  markNotificationAsRead={markNotificationAsRead}
+                  getNotifications={getNotifications}
+                  setShowRead={setShowRead}
+                  markAllNotificationsAsRead={markAllNotificationsAsRead}
+                />
               </SlideOver>
             </div>
           </div>
@@ -515,3 +585,5 @@ function OEHeader(props) {
 }
 
 export default withRouter(injectIntl(OEHeader));
+
+   

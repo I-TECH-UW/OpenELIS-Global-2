@@ -60,6 +60,13 @@ public class NotificationRestController {
         return ResponseEntity.ok().body("Notification updated successfully");
     }
 
+    @PutMapping("/notification/markasread/all")
+    public ResponseEntity<?> markAllNotificationsAsRead(HttpServletRequest request) {
+        String sysUserId = getSysUserId(request);
+        notificationDAO.setAllUserNotificationsToRead(Long.valueOf(sysUserId));
+        return ResponseEntity.ok().body("All notifications updated successfully");
+    }
+
     @GetMapping("/systemusers")
     public List<SystemUser> getSystemUsers() {
         return notificationDAO.getSystemUsers();

@@ -16,5 +16,7 @@ public interface NotificationDAO {
 
     void updateNotification(Notification notification);
 
+    void setAllUserNotificationsToRead(Long userId);
+
     List<SystemUser> getSystemUsers();
 }
