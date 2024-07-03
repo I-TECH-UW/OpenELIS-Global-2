@@ -26,6 +26,7 @@ import {
   ContainerSoftware,
   BootVolumeAlt,
   Report,
+  Bullhorn,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -45,7 +46,9 @@ import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModif
 import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName.js";
 import PluginList from "./pluginFile/PluginFile.js";
 import ResultReportingConfiguration from "./ResultReportingConfiguration/ResultReportingConfiguration.js";
+
 import TestCatalog from "./testManagement/ViewTestCatalog.js";
+import PushNotificationPage from "../notifications/PushNotificationPage.jsx";
 
 function Admin() {
   const intl = useIntl();
@@ -168,6 +171,9 @@ function Admin() {
           <SideNavLink href="#DictionaryMenu" renderIcon={CharacterWholeNumber}>
             <FormattedMessage id="dictionary.label.modify" />
           </SideNavLink>
+          <SideNavLink href="#NotifyUser" renderIcon={Bullhorn}>
+            <FormattedMessage id="Notify User" />
+          </SideNavLink>
           <SideNavLink
             renderIcon={Catalog}
             target="_blank"
@@ -198,6 +204,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#providerMenu">
         <ProviderMenu />
+      </PathRoute>
+      <PathRoute path="#NotifyUser">
+        <PushNotificationPage />
       </PathRoute>
       <PathRoute path="#barcodeConfiguration">
         <BarcodeConfiguration />
