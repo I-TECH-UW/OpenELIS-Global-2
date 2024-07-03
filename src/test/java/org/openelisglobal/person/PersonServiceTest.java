@@ -9,6 +9,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
+
+import javax.transaction.Transactional;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -79,7 +82,7 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
         patient1.setPerson(person);
         patient1.setBirthDate(dob);
         patient1.setGender("M");
-        String patientId1 =  patientService.insert(patient1);
+        String patientId1 = patientService.insert(patient1);
         Patient patient2 = new Patient();
         patient2.setPerson(person);
         patient2.setBirthDate(dob);
