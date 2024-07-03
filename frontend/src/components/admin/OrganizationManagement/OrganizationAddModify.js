@@ -72,38 +72,34 @@ function OrganizationAddModify() {
   const [saveButton, setSaveButton] = useState(true);
   const [typeOfActivity, setTypeOfActivity] = useState();
   const [typeOfActivityShow, setTypeOfActivityShow] = useState([]);
-  const [id, setId] = useState(null);
 
-  useEffect(() => {
-    const getIdFromUrl = () => {
-      const hash = window.location.hash;
-      if (hash.includes("?")) {
-        const queryParams = hash.split("?")[1];
-        const urlParams = new URLSearchParams(queryParams);
-        const id = urlParams.get("ID");
-
-        return id;
-      }
-      return null;
-    };
-
-    const extractedId = getIdFromUrl();
-    setId(extractedId);
-  }, []);
+  const ID = (() => {
+    const hash = window.location.hash;
+    if (hash.includes("?")) {
+      const queryParams = hash.split("?")[1];
+      const urlParams = new URLSearchParams(queryParams);
+      return urlParams.get("ID");
+    }
+    return "0";
+  })();
 
   useEffect(() => {
     componentMounted.current = true;
     setLoading(true);
-    if (id) {
+    if (ID) {
       getFromOpenElisServer(
-        `/rest/Organization?ID=${id}&startingRecNo=1`,
+        `/rest/Organization?ID=${ID}&startingRecNo=1`,
         handleMenuItems,
       );
+    } else {
+      setTimeout(() => {
+        window.location.assign("/MasterListsPage#organizationManagement");
+      }, 1000);
     }
     return () => {
       componentMounted.current = false;
     };
-  }, [id]);
+  }, [ID]);
 
   const handleMenuItems = (res) => {
     if (!res) {
@@ -178,7 +174,7 @@ function OrganizationAddModify() {
       setOrgInfoPost(organizationsManagementIdInfoPost);
       setSelectedRowIds(typeOfActivity.selectedTypes);
 
-      if (id !== "0") {
+      if (ID !== "0") {
         const organizationSelectedTypeOfActivity =
           typeOfActivity.selectedTypes.map((item) => {
             return {
@@ -195,7 +191,7 @@ function OrganizationAddModify() {
         setOrgSelectedTypeOfActivity([]);
       }
     }
-  }, [typeOfActivity, id]);
+  }, [typeOfActivity, ID]);
 
   useEffect(() => {
     setOrgInfoPost((prevOrgInfoPost) => ({
@@ -331,7 +327,7 @@ function OrganizationAddModify() {
   function submitAddUpdatedOrgInfo() {
     setLoading(true);
     postToOpenElisServerJsonResponse(
-      `/rest/Organization?ID=${id}&startingRecNo=1`,
+      `/rest/Organization?ID=${ID}&startingRecNo=1`,
       JSON.stringify(orgInfoPost),
       () => {
         submitAddUpdatedOrgInfoCallback();
@@ -399,7 +395,7 @@ function OrganizationAddModify() {
           <Column lg={16} md={8} sm={4}>
             <Section>
               <Heading>
-                {id === "0" ? (
+                {ID === "0" ? (
                   <FormattedMessage id="organization.add.title" />
                 ) : (
                   <FormattedMessage id="organization.edit.title" />
