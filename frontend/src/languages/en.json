@@ -1064,5 +1064,9 @@
   "notify.main.title": "Notify User",
   "button.send": "Send",
   "notify.user.by": "User to be notified",
-  "notify.user.success.notification": "Notification sent successfully"
+  "notify.user.success.notification": "Notification sent successfully",
+  "notify.message": "Message",
+  "notify.error": "User and Message are required",
+  "notification.slideover.empty.header": "You're all caught up",
+  "notification.sliderover.empty.message": "You don't have any notifications at this time."
 }
