@@ -1090,5 +1090,19 @@
   "testnotification.patiententry.info": "If OpenELIS is not able to connect to the recipient of the transmitted results it will queue them up. A large and growing queue is a sign that troubling shootingshould be done including contacting the receiving party.",
   "resultreporting.config.url": "URL for site to which the results will be sent. For example http://192.168.56.101/someSite",
   "resultreporting.config.url.placeholder": "https://orgname.com/someSite",
-  "result.report.queue.size": "Queue Size :"
+  "result.report.queue.size": "Queue Size :",
+  "notify.main.title": "Notify User",
+  "button.send": "Send",
+  "notify.user.by": "User to be notified",
+  "notify.user.success.notification": "Notification sent successfully",
+  "notify.message": "Message",
+  "notify.error": "User and Message are required",
+  "notification.slideover.empty.header": "You're all caught up",
+  "notification.sliderover.empty.message": "You don't have any notifications at this time.",
+  "notification.slideover.button.reload": "Reload",
+  "notification.slideover.button.subscribe": "Subscribe on this Device",
+  "notification.slideover.button.markallasread": "Mark all as Read",
+  "notification.slideover.button.hideread": "Hide read",
+  "notification.slideover.button.showread": "Show read",
+  "notification.slideover.button.markasread": "Mark as Read"
 }

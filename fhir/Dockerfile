@@ -1,7 +1,7 @@
 FROM hapiproject/hapi:v6.6.0-tomcat
 
 USER root
-RUN apt-get update && apt-get install -y curl=7.74.0-1.3+deb11u7
+RUN apt-get update && apt-get install -y curl
 
 RUN groupadd tomcat; \
     groupadd tomcat-ssl-cert -g 8443; \ 
