@@ -46,8 +46,6 @@ import BarcodeConfiguration from "./barcodeConfiguration/BarcodeConfiguration";
 import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName.js";
 import PluginList from "./pluginFile/PluginFile.js";
 import ResultReportingConfiguration from "./ResultReportingConfiguration/ResultReportingConfiguration.js";
-import PushNotificationPage from "../notifications/PushNotificationPage.jsx";
-import UserManagement from "./userManagement/UserManagement";
 
 function Admin() {
   const intl = useIntl();
@@ -81,6 +79,9 @@ function Admin() {
             </SideNavMenuItem>
             <SideNavMenuItem href="#calculatedValue">
               <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#TestCatalog">
+              <FormattedMessage id="sidenav.label.admin.testmgt.ViewtestCatalog" />
             </SideNavMenuItem>
           </SideNavMenu>
           <SideNavLink href="#AnalyzerTestName" renderIcon={ListDropdown}>
@@ -188,6 +189,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#calculatedValue">
         <CalculatedValue />
+      </PathRoute>
+      <PathRoute path="#TestCatalog">
+        <TestCatalog />
       </PathRoute>
       <PathRoute path="#AnalyzerTestName">
         <AnalyzerTestName />
