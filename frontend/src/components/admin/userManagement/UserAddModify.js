@@ -278,14 +278,14 @@ function UserAddModify() {
           id: "notification.title",
         }),
         message: intl.formatMessage({
-          id: "notification.organization.post.save.success",
+          id: "notification.user.post.save.success",
         }),
         kind: NotificationKinds.success,
       });
       setNotificationVisible(true);
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 2000);
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } else {
       addNotification({
         kind: NotificationKinds.error,
@@ -293,9 +293,9 @@ function UserAddModify() {
         message: intl.formatMessage({ id: "server.error.msg" }),
       });
       setNotificationVisible(true);
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 2000);
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     }
   }
 

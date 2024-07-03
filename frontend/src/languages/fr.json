@@ -1058,5 +1058,7 @@
   "systemuserrole.roles.labunit": "Rôles Unité de Laboratoire",
   "systemuserrole.newpermissions": "Ajouter une nouvelle permission",
   "systemuserrole.rmpermissions": "Supprimer la permission",
-  "barcode.notification.save": "Les configurations de code-barres ont été enregistrées."
+  "barcode.notification.save": "Les configurations de code-barres ont été enregistrées.",
+  "notification.user.post.save.success": "Informations utilisateur ajoutées avec succès.",
+  "notification.user.post.delete.success": "Utilisateur désactivé avec succès."
 }
