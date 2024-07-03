@@ -424,7 +424,7 @@ function UserAddModify() {
     setSaveButton(false);
   }
 
-  function handleCopyUserPermissionsChangeClick() {
+  useEffect(() => {
     setUserDataPost((prevUserDataPost) => ({
       ...prevUserDataPost,
       systemUserIdToCopy: copyUserPermission,
@@ -441,6 +441,10 @@ function UserAddModify() {
       allowCopyUserRoles: "Y",
     }));
     setSaveButton(false);
+  }, [copyUserPermission]);
+
+  function handleCopyUserPermissionsChangeClick() {
+    setSelectedTestSectionLabUnits([]);
     userSavePostCall();
   }
 
