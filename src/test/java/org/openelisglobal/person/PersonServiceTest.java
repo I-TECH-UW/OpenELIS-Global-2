@@ -86,7 +86,6 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
         return person;
     }
 
-
     @Test
     public void getLastName_shouldReturnEmptyStringForNullPerson() {
         String retrievedLastName = personService.getLastName(null);
@@ -176,6 +175,7 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
         String phoneNumber = personService.getPhone(savedPerson);
         Assert.assertEquals("123-456-7890", phoneNumber);
     }
+
     @Test
     public void getPersonByLastName_shouldReturnCorrectPerson() throws Exception {
         String firstName = "Jane";
@@ -191,5 +191,3 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
     }
 
 }
-
-
