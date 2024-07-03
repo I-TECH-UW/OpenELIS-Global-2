@@ -43,7 +43,6 @@ import AuditTrailReportIndex from "./components/reports/auditTrailReport/Index.j
 import ReferredOutTests from "./components/resultPage/resultsReferredOut/ReferredOutTests.js";
 import NotificationTestPage from "./components/notifications/NotificationTestPage.jsx";
 
-
 export default function App() {
   let i18nConfig = {
     locale: navigator.language.split(/[-_]/)[0],
@@ -263,7 +262,7 @@ export default function App() {
                   role=""
                   labUnitRole={{ Immunohistochemistry: ["Results"] }}
                 />
-                 <SecureRoute
+                <SecureRoute
                   path="/NotificationTestPage"
                   exact
                   component={() => <NotificationTestPage />}

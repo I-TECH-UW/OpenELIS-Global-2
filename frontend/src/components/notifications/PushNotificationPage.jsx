@@ -14,7 +14,7 @@ import PageBreadCrumb from "../common/PageBreadCrumb";
 import { NotificationContext } from "../layout/Layout";
 import AutoComplete from "../common/AutoComplete";
 
-export default function NotificationTestPage() {
+export default function PushNotificationPage() {
   const [data, setData] = useState({
     message: "",
   });
@@ -25,12 +25,11 @@ export default function NotificationTestPage() {
     useContext(NotificationContext);
 
   const [userId, setUserId] = useState(undefined);
+  const [error, setError] = useState("");
 
   const [users, setUsers] = useState([]);
 
   const submit = () => {
-    console.log(data);
-
     if (data.message.trim() !== "" && userId !== undefined) {
       postToOpenElisServer(
         `/rest/notification/${userId}`,
@@ -47,17 +46,17 @@ export default function NotificationTestPage() {
           });
           setNotificationVisible(true);
           setData({ message: "" });
+          setError("");
         },
       );
     } else {
-      console.error("Message and user must be selected");
+      setError(intl.formatMessage({ id: "notify.error" }));
     }
   };
 
   const getUsers = async () => {
     try {
       getFromOpenElisServer("/rest/systemusers", (data) => {
-        console.log(data);
         setUsers(data);
       });
     } catch (error) {
@@ -97,7 +96,7 @@ export default function NotificationTestPage() {
         <Column lg={8} md={4} sm={4}>
           <TextArea
             type="text"
-            labelText="Message"
+            labelText={intl.formatMessage({ id: "notify.message" })}
             name="message"
             id="message"
             required
@@ -135,6 +134,10 @@ export default function NotificationTestPage() {
             />
           </Column>
         </div>
+        <br />
+        {error !== "" && (
+          <div style={{ color: "#c62828", margin: 4 }}>{error}</div>
+        )}
         <Button onClick={submit} style={{ marginBottom: "20px" }}>
           Submit
         </Button>

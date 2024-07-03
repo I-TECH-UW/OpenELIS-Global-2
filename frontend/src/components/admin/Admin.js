@@ -44,6 +44,10 @@ import ProviderMenu from "./ProviderMenu/ProviderMenu";
 import BarcodeConfiguration from "./barcodeConfiguration/BarcodeConfiguration";
 import OrganizationManagament from "./OrganizationManagement/OrganizationManagement";
 import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModify.js";
+import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName.js";
+import PluginList from "./pluginFile/PluginFile.js";
+import ResultReportingConfiguration from "./ResultReportingConfiguration/ResultReportingConfiguration.js";
+import NotificationTestPage from "../notifications/NotificationTestPage.jsx";
 
 function Admin() {
   const intl = useIntl();
@@ -194,7 +198,7 @@ function Admin() {
       <PathRoute path="#providerMenu">
         <ProviderMenu />
       </PathRoute>
-        <PathRoute path="#NotifyUser">
+      <PathRoute path="#NotifyUser">
         <NotificationTestPage />
       </PathRoute>
       <PathRoute path="#barcodeConfiguration">

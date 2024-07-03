@@ -1062,5 +1062,7 @@
   "showing": "Showing",
   "of": "of",
   "notify.main.title": "Notify User",
-  "button.send" : "Send"
+  "button.send": "Send",
+  "notify.user.by": "User to be notified",
+  "notify.user.success.notification": "Notification sent successfully"
 }

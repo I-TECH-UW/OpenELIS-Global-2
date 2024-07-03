@@ -2,11 +2,9 @@ package org.openelisglobal.notifications.dao;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-
 import org.openelisglobal.notifications.entity.Notification;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.springframework.stereotype.Repository;
@@ -26,8 +24,8 @@ public class NotificationDAOImpl implements NotificationDAO {
 
     @Override
     public List<Notification> getNotifications() {
-        TypedQuery<Notification> query = entityManager.createQuery(
-                "SELECT n FROM Notification n LEFT JOIN FETCH n.user", Notification.class);
+        TypedQuery<Notification> query = entityManager
+                .createQuery("SELECT n FROM Notification n LEFT JOIN FETCH n.user", Notification.class);
         return query.getResultList();
     }
 
@@ -48,11 +46,10 @@ public class NotificationDAOImpl implements NotificationDAO {
     @Override
     @Transactional
     public void setAllUserNotificationsToRead(Long userId) {
-        entityManager.createNativeQuery("UPDATE Notifications " +
-                "SET read_at = :time " + // Remove alias 'n' and directly specify column name
-                "WHERE user_id = :userId")
-                .setParameter("time", OffsetDateTime.now())
-                .setParameter("userId", userId)
+        entityManager.createNativeQuery("UPDATE Notifications " + "SET read_at = :time " + // Remove alias 'n' and
+                                                                                           // directly specify column
+                                                                                           // name
+                "WHERE user_id = :userId").setParameter("time", OffsetDateTime.now()).setParameter("userId", userId)
                 .executeUpdate();
     }
 
@@ -64,8 +61,7 @@ public class NotificationDAOImpl implements NotificationDAO {
 
     @Override
     public List<SystemUser> getSystemUsers() {
-        TypedQuery<SystemUser> query = entityManager.createQuery(
-                "SELECT u FROM SystemUser u", SystemUser.class);
+        TypedQuery<SystemUser> query = entityManager.createQuery("SELECT u FROM SystemUser u", SystemUser.class);
         return query.getResultList();
     }
 }
