@@ -169,15 +169,3 @@ code {
   }
 }
 
-#profileImage {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  font-size: 16px; /*ddsfdf*/
-  font-weight: bold;
-  color: #333; /*ddsfdf*/
-  text-align: center;
-  line-height: 25px;
-  background-color: #e0e0e0;
-  margin: 1px 0;
-}
