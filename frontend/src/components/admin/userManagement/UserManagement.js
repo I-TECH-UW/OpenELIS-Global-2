@@ -938,50 +938,6 @@ function UserManagement() {
           )}
         </div>
       </div>
-      <div>
-        <button
-          onClick={() => {
-            console.error(userManagementList);
-          }}
-        >
-          gotData
-        </button>
-        <button
-          onClick={() => {
-            console.error(testSectionsSelect);
-          }}
-        >
-          testSectionsSelect
-        </button>
-        <button
-          onClick={() => {
-            console.error(filters);
-          }}
-        >
-          filters
-        </button>
-        <button
-          onClick={() => {
-            console.error(selectedRowIds);
-          }}
-        >
-          selectedRowIds
-        </button>
-        <button
-          onClick={() => {
-            console.error(selectedRowCombinedUserIDPost);
-          }}
-        >
-          selectedRowCombinedUserIDPost
-        </button>
-        <button
-          onClick={() => {
-            console.error(selectedRowIdsPost);
-          }}
-        >
-          selectedRowIdsPost
-        </button>
-      </div>
     </>
   );
 }
