@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import {
+  Form,
   Heading,
   Button,
   Loading,
@@ -18,6 +19,9 @@ import {
   TableContainer,
   Pagination,
   Search,
+  Select,
+  SelectItem,
+  Stack,
 } from "@carbon/react";
 import {
   getFromOpenElisServer,
@@ -33,18 +37,19 @@ import {
 } from "../../common/CustomNotification.js";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
+import CustomCheckBox from "../../common/CustomCheckBox.js";
 import ActionPaginationButtonType from "../../common/ActionPaginationButtonType.js";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
   { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
   {
-    label: "organization.main.title",
-    link: "/MasterListsPage#organizationManagement",
+    label: "unifiedSystemUser.browser.title",
+    link: "/MasterListsPage#userManagement",
   },
 ];
 
-function OrganizationManagement() {
+function UserManagement() {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
@@ -56,36 +61,41 @@ function OrganizationManagement() {
   const [deactivateButton, setDeactivateButton] = useState(true);
   const [modifyButton, setModifyButton] = useState(true);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
-  const [selectedRowIdsPost, setSelectedRowIdsPost] = useState([]);
+  const [selectedRowCombinedUserID, setSelectedRowCombinedUserID] = useState(
+    [],
+  );
+  const [selectedRowCombinedUserIDPost, setSelectedRowCombinedUserIDPost] =
+    useState([]);
+  const [selectedRowIdsPost, setSelectedRowIdsPost] = useState();
   const [loading, setLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
   const [panelSearchTerm, setPanelSearchTerm] = useState("");
-  const [totalRecordCount, setTotalRecordCount] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
+  const [filters, setFilters] = useState([]);
   const [startingRecNo, setStartingRecNo] = useState(1);
+  const [totalRecordCount, setTotalRecordCount] = useState("");
+  const [paging, setPaging] = useState(1);
   const [fromRecordCount, setFromRecordCount] = useState("");
   const [toRecordCount, setToRecordCount] = useState("");
-  const [paging, setPaging] = useState(1);
-  const [
-    searchedOrganizationManagamentList,
-    setSearchedOrganizationManagamentList,
-  ] = useState();
-  const [
-    searchedOrganizationManagamentListShow,
-    setSearchedOrganizationManagamentListShow,
-  ] = useState([]);
-  const [organizationsManagmentList, setOrganizationsManagmentList] =
+  const [searchedUserManagementList, setSearchedUserManagementList] =
     useState();
-  const [organizationsManagmentListShow, setOrganizationsManagmentListShow] =
+  const [searchedUserManagementListShow, setSearchedUserManagementListShow] =
     useState([]);
+  const [userManagementList, setUserManagementList] = useState();
+  const [userManagementListShow, setUserManagementListShow] = useState([]);
+  const [testSectionsSelect, setTestSectionsSelect] = useState("");
+  const [testSectionsShow, setTestSectionsShow] = useState({});
 
-  function deleteDeactivateOrganizationManagament(event) {
+  function deleteDeactivateUserManagement(event) {
     event.preventDefault();
     setLoading(true);
     postToOpenElisServerJsonResponse(
-      `/rest/DeleteOrganization?ID=${selectedRowIds.join(",")}&startingRecNo=1`,
-      JSON.stringify(selectedRowIdsPost),
-      () => {
-        deleteDeactivateOrganizationManagamentCallback();
+      `/rest/DeleteUnifiedSystemUser?ID=${selectedRowCombinedUserID.join(
+        ",",
+      )}&startingRecNo=1`,
+      JSON.stringify(selectedRowCombinedUserIDPost),
+      (res) => {
+        deleteDeactivateUserManagementCallback(res);
       },
     );
   }
@@ -100,43 +110,63 @@ function OrganizationManagement() {
     setStartingRecNo(Math.max(fromRecordCount, 1));
   };
 
-  const handlePanelSearchChange = (event) => {
-    setIsSearching(true);
-    setPaging(1);
-    setStartingRecNo(1);
-    const query = event.target.value;
-    setPanelSearchTerm(query);
-    setSelectedRowIds([]);
-  };
+  useEffect(() => {
+    const selectedIDsObject = {
+      selectedIDs: selectedRowIds,
+    };
 
-  const deleteDeactivateOrganizationManagamentCallback = () => {
-    setLoading(false);
-    setNotificationVisible(true);
-    addNotification({
-      title: intl.formatMessage({
-        id: "notification.title",
-      }),
-      message: intl.formatMessage({
-        id: "notification.organization.post.delete.success",
-      }),
-      kind: NotificationKinds.success,
-    });
-    setTimeout(() => {
-      window.location.reload();
-    }, 2000);
-  };
+    setSelectedRowIdsPost(selectedIDsObject);
+  }, [selectedRowIds, userManagementListShow]);
+
+  useEffect(() => {
+    const selectedRowCombinedUserIDObject = {
+      selectedIDs: selectedRowCombinedUserID,
+    };
+
+    setSelectedRowCombinedUserIDPost(selectedRowCombinedUserIDObject);
+  }, [selectedRowCombinedUserID, userManagementListShow]);
+
+  function deleteDeactivateUserManagementCallback(res) {
+    if (res) {
+      setLoading(false);
+      setNotificationVisible(true);
+      addNotification({
+        title: intl.formatMessage({
+          id: "notification.title",
+        }),
+        message: intl.formatMessage({
+          id: "notification.user.post.delete.success",
+        }),
+        kind: NotificationKinds.success,
+      });
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } else {
+      addNotification({
+        kind: NotificationKinds.error,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "server.error.msg" }),
+      });
+      setNotificationVisible(true);
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    }
+  }
 
   const handlePageChange = ({ page, pageSize }) => {
     setPage(page);
     setPageSize(pageSize);
     setSelectedRowIds([]);
+    setSelectedRowCombinedUserID([]);
   };
 
   const handleMenuItems = (res) => {
     if (!res) {
       setLoading(true);
     } else {
-      setOrganizationsManagmentList(res);
+      setUserManagementList(res);
     }
   };
 
@@ -144,118 +174,117 @@ function OrganizationManagement() {
     componentMounted.current = true;
     setLoading(true);
     getFromOpenElisServer(
-      `/rest/OrganizationMenu?paging=${paging}&startingRecNo=${startingRecNo}`,
+      `/rest/SearchUnifiedSystemUserMenu?search=N&startingRecNo=${startingRecNo}&filter=${filters.join(
+        ",",
+      )}&roleFilter=${roleFilter}`,
       handleMenuItems,
     );
     return () => {
       componentMounted.current = false;
       setLoading(false);
     };
-  }, [paging, startingRecNo]);
+  }, [roleFilter, filters, startingRecNo]);
 
   const handleSearchedProviderMenuList = (res) => {
     if (!res) {
       setLoading(true);
     } else {
-      setSearchedOrganizationManagamentList(res);
+      setSearchedUserManagementList(res);
     }
   };
 
   useEffect(() => {
     getFromOpenElisServer(
-      `/rest/SearchOrganizationMenu?search=Y&startingRecNo=${startingRecNo}&searchString=${panelSearchTerm}`,
+      `/rest/SearchUnifiedSystemUserMenu?search=Y&startingRecNo=${startingRecNo}&searchString=${panelSearchTerm}&filter=${filters.join(
+        ",",
+      )}&roleFilter=${roleFilter}`,
       handleSearchedProviderMenuList,
     );
-  }, [panelSearchTerm]);
+  }, [panelSearchTerm, roleFilter, filters, startingRecNo]);
 
   useEffect(() => {
-    if (organizationsManagmentList) {
-      const newOrganizationsManagementList =
-        organizationsManagmentList.modelMap.form.menuList.map((item) => {
-          return {
-            id: item.id,
-            orgName: item.organizationName,
-            parentOrg: item.organization
-              ? item.organization.organizationName
-              : "",
-            orgPrefix: item.shortName || "",
-            active: item.isActive || "",
-            streetAddress: item.internetAddress || "",
-            city: item.state || "",
-            cliaNumber: item.cliaNumber || "",
-          };
+    if (userManagementListShow) {
+      if (selectedRowIds.length > 0) {
+        const combinedIds = selectedRowIds.map((id) => {
+          const selectedRow = userManagementListShow.find(
+            (row) => row.id === id,
+          );
+          return selectedRow.combinedUserID;
         });
-      const newOrganizationsManagementListArray = Object.values(
-        newOrganizationsManagementList,
-      );
-      setFromRecordCount(
-        organizationsManagmentList.modelMap.form.fromRecordCount,
-      );
-      setToRecordCount(organizationsManagmentList.modelMap.form.toRecordCount);
-      setTotalRecordCount(
-        organizationsManagmentList.modelMap.form.totalRecordCount,
-      );
-      setOrganizationsManagmentListShow(newOrganizationsManagementListArray);
+        setSelectedRowCombinedUserID(combinedIds);
+      } else {
+        setSelectedRowCombinedUserID([]);
+      }
     }
-  }, [organizationsManagmentList]);
+  }, [selectedRowIds, userManagementListShow]);
 
   useEffect(() => {
-    if (searchedOrganizationManagamentList) {
-      const newOrganizationsManagementList =
-        searchedOrganizationManagamentList.modelMap.form.menuList.map(
-          (item) => {
-            return {
-              id: item.id,
-              orgName: item.organizationName,
-              parentOrg: item.organization
-                ? item.organization.organizationName
-                : "",
-              orgPrefix: item.shortName || "",
-              active: item.isActive || "",
-              streetAddress: item.internetAddress || "",
-              city: item.state || "",
-              cliaNumber: item.cliaNumber || "",
-            };
-          },
-        );
-      const newOrganizationsManagementListArray = Object.values(
-        newOrganizationsManagementList,
-      );
-      setSearchedOrganizationManagamentListShow(
-        newOrganizationsManagementListArray,
-      );
+    if (userManagementList) {
+      const pagination = {
+        totalRecordCount: userManagementList.totalRecordCount,
+        fromRecordCount: userManagementList.fromRecordCount,
+        toRecordCount: userManagementList.toRecordCount,
+      };
+      setFromRecordCount(pagination.fromRecordCount);
+      setToRecordCount(pagination.toRecordCount);
+      setTotalRecordCount(pagination.totalRecordCount);
+
+      const newUserManagementList = userManagementList.menuList.map((item) => {
+        return {
+          id: item.systemUserId,
+          combinedUserID: item.combinedUserID,
+          firstName: item.firstName,
+          lastName: item.lastName,
+          loginName: item.loginName,
+          expDate: item.expDate,
+          locked: item.locked,
+          disabled: item.disabled,
+          active: item.active,
+          timeout: item.timeout,
+        };
+      });
+      const newUserManagementListArray = Object.values(newUserManagementList);
+      setUserManagementListShow(newUserManagementListArray);
+
+      const testSections = userManagementList.testSections.map((item) => {
+        return {
+          id: item.id,
+          value: item.value,
+        };
+      });
+
+      setTestSectionsShow(testSections);
     }
-  }, [searchedOrganizationManagamentList]);
+  }, [userManagementList]);
 
   useEffect(() => {
-    const selectedIDsObject = {
-      selectedIDs: selectedRowIds,
-    };
-
-    setSelectedRowIdsPost(selectedIDsObject);
-  }, [selectedRowIds, organizationsManagmentListShow]);
+    if (searchedUserManagementList) {
+      const newUserManagementList = searchedUserManagementList.menuList.map(
+        (item) => {
+          return {
+            id: item.systemUserId,
+            combinedUserID: item.combinedUserID,
+            firstName: item.firstName,
+            lastName: item.lastName,
+            loginName: item.loginName,
+            expDate: item.expDate,
+            locked: item.locked,
+            disabled: item.disabled,
+            active: item.active,
+            timeout: item.timeout,
+          };
+        },
+      );
+      const newUserManagementListArray = Object.values(newUserManagementList);
+      setSearchedUserManagementListShow(newUserManagementListArray);
+    }
+  }, [searchedUserManagementList]);
 
   useEffect(() => {
     if (selectedRowIds.length === 1) {
       setModifyButton(false);
     } else {
       setModifyButton(true);
-    }
-  }, [selectedRowIds]);
-
-  useEffect(() => {
-    if (isSearching && panelSearchTerm === "") {
-      setIsSearching(false);
-      setPaging(1);
-      setStartingRecNo(1);
-    }
-  }, [isSearching, panelSearchTerm]);
-
-  useEffect(() => {
-    if (selectedRowIds.length === 0) {
-      setDeactivateButton(true);
-    } else {
-      setDeactivateButton(false);
     }
   }, [selectedRowIds]);
 
@@ -278,12 +307,38 @@ function OrganizationManagement() {
           }}
         />
       );
-    } else if (cell.info.header === "active") {
-      return <TableCell key={cell.id}>{cell.value.toString()}</TableCell>;
     } else {
       return <TableCell key={cell.id}>{cell.value}</TableCell>;
     }
   };
+
+  const handlePanelSearchChange = (event) => {
+    setIsSearching(true);
+    setPaging(1);
+    setStartingRecNo(1);
+    const query = event.target.value;
+    setPanelSearchTerm(query);
+    setSelectedRowIds([]);
+  };
+
+  useEffect(() => {
+    if (isSearching && panelSearchTerm === "") {
+      setIsSearching(false);
+      setPaging(1);
+      setStartingRecNo(1);
+    }
+  }, [isSearching, panelSearchTerm]);
+
+  useEffect(() => {
+    if (selectedRowIds.length === 0) {
+      setDeactivateButton(true);
+    }
+  }, [selectedRowIds]);
+
+  function handleTestSectionsSelectChange(e) {
+    setTestSectionsSelect(e.target.value);
+    setRoleFilter(e.target.value);
+  }
 
   if (!loading) {
     return (
@@ -298,45 +353,62 @@ function OrganizationManagement() {
       {notificationVisible === true ? <AlertDialog /> : ""}
       <div className="adminPageContent">
         <PageBreadCrumb breadcrumbs={breadcrumbs} />
-        <Grid fullWidth={true}>
+        <Grid>
           <Column lg={16} md={8} sm={4}>
             <Section>
               <Heading>
-                <FormattedMessage id="organization.main.title" />
+                <FormattedMessage id="unifiedSystemUser.browser.title" />
               </Heading>
+            </Section>
+            <br />
+            <Section>
+              <Section>
+                <Section>
+                  <Section>
+                    <Heading>
+                      <FormattedMessage id="user.select.instruction" />
+                    </Heading>
+                  </Section>
+                </Section>
+              </Section>
+            </Section>
+            <br />
+            <Section>
+              <Column lg={16} md={8} sm={4}>
+                <br />
+                <ActionPaginationButtonType
+                  selectedRowIds={selectedRowIds}
+                  modifyButton={modifyButton}
+                  deactivateButton={deactivateButton}
+                  fromRecordCount={fromRecordCount}
+                  toRecordCount={toRecordCount}
+                  totalRecordCount={totalRecordCount}
+                  handlePreviousPage={handlePreviousPage}
+                  handleNextPage={handleNextPage}
+                  deleteDeactivate={deleteDeactivateUserManagement}
+                  id={selectedRowCombinedUserID[0]}
+                  otherParmsInLink={`&startingRecNo=1&roleFilter=`}
+                  addButtonRedirectLink={`/MasterListsPage#userEdit?ID=0&startingRecNo=1&roleFilter=`}
+                  modifyButtonRedirectLink={`/MasterListsPage#userEdit?ID=`}
+                  type="type2"
+                />
+                <br />
+              </Column>
             </Section>
           </Column>
         </Grid>
-        <br />
-        <ActionPaginationButtonType
-          selectedRowIds={selectedRowIds}
-          modifyButton={modifyButton}
-          deactivateButton={deactivateButton}
-          fromRecordCount={fromRecordCount}
-          toRecordCount={toRecordCount}
-          totalRecordCount={totalRecordCount}
-          handlePreviousPage={handlePreviousPage}
-          handleNextPage={handleNextPage}
-          deleteDeactivate={deleteDeactivateOrganizationManagament}
-          id={selectedRowIds[0]}
-          otherParmsInLink={`&startingRecNo=1`}
-          addButtonRedirectLink={`/MasterListsPage#organizationEdit?ID=0`}
-          modifyButtonRedirectLink={`/MasterListsPage#organizationEdit?ID=`}
-          type="type2"
-        />
-        <br />
         <div className="orderLegendBody">
           <Grid>
             <Column lg={16} md={8} sm={4}>
               <Section>
                 <Search
                   size="lg"
-                  id="org-name-search-bar"
+                  id="user-name-search-bar"
                   labelText={
-                    <FormattedMessage id="organization.search.byorgname" />
+                    <FormattedMessage id="unifiedSystemUser.browser.search" />
                   }
                   placeholder={intl.formatMessage({
-                    id: "organization.search.placeHolder",
+                    id: "unifiedSystemUser.browser.search.placeholder",
                   })}
                   onChange={handlePanelSearchChange}
                   value={(() => {
@@ -350,13 +422,79 @@ function OrganizationManagement() {
             </Column>
           </Grid>
           <br />
+          <Grid fullWidth={true}>
+            <Column lg={2} md={2} sm={1}>
+              <FormattedMessage id="menu.label.filter" />
+            </Column>
+            <Column lg={6} md={6} sm={3}>
+              <Select
+                id="filters"
+                noLabel={true}
+                defaultValue={
+                  testSectionsShow && testSectionsShow.length > 0
+                    ? testSectionsShow[0].id
+                    : ""
+                }
+                onChange={handleTestSectionsSelectChange}
+              >
+                <SelectItem key="" value="" text="Not Selected" />
+                {testSectionsShow && testSectionsShow.length > 0 ? (
+                  testSectionsShow.map((section) => (
+                    <SelectItem
+                      key={section.id}
+                      value={section.id}
+                      text={section.value}
+                    />
+                  ))
+                ) : (
+                  <SelectItem
+                    key="no-option-available"
+                    value=""
+                    text="No options available"
+                  />
+                )}
+              </Select>
+              <br />
+              <FormattedMessage id="menu.label.filter.role" />
+            </Column>
+            <Column lg={8} md={8} sm={4}>
+              <CustomCheckBox
+                id="only-active"
+                label={<FormattedMessage id="menu.label.filter.active" />}
+                onChange={(isChecked) => {
+                  if (isChecked) {
+                    setFilters([...filters, "isActive"]);
+                  } else {
+                    setFilters(
+                      filters.filter((filter) => filter !== "isActive"),
+                    );
+                  }
+                }}
+              />
+              <br />
+              <CustomCheckBox
+                id="only-administrator"
+                label={<FormattedMessage id="menu.label.filter.admin" />}
+                onChange={(isChecked) => {
+                  if (isChecked) {
+                    setFilters([...filters, "isAdmin"]);
+                  } else {
+                    setFilters(
+                      filters.filter((filter) => filter !== "isAdmin"),
+                    );
+                  }
+                }}
+              />
+            </Column>
+          </Grid>
+          <br />
           {isSearching ? (
             <>
               <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={16} md={8} sm={4}>
                   <br />
                   <DataTable
-                    rows={searchedOrganizationManagamentListShow.slice(
+                    rows={searchedUserManagementListShow.slice(
                       (page - 1) * pageSize,
                       page * pageSize,
                     )}
@@ -364,51 +502,55 @@ function OrganizationManagement() {
                       {
                         key: "select",
                         header: intl.formatMessage({
-                          id: "organization.select",
+                          id: "unifiedSystemUser.select",
                         }),
                       },
                       {
-                        key: "orgName",
+                        key: "firstName",
                         header: intl.formatMessage({
-                          id: "organization.organizationName",
+                          id: "systemuser.firstName",
                         }),
                       },
-
                       {
-                        key: "parentOrg",
+                        key: "lastName",
                         header: intl.formatMessage({
-                          id: "organization.parent",
+                          id: "systemuser.lastName",
                         }),
                       },
-
                       {
-                        key: "orgPrefix",
+                        key: "loginName",
                         header: intl.formatMessage({
-                          id: "organization.short.CI",
+                          id: "systemuser.loginName",
+                        }),
+                      },
+                      {
+                        key: "expDate",
+                        header: intl.formatMessage({
+                          id: "login.password.expired.date",
+                        }),
+                      },
+                      {
+                        key: "locked",
+                        header: intl.formatMessage({
+                          id: "login.account.locked",
+                        }),
+                      },
+                      {
+                        key: "disabled",
+                        header: intl.formatMessage({
+                          id: "login.account.disabled",
                         }),
                       },
                       {
                         key: "active",
                         header: intl.formatMessage({
-                          id: "organization.isActive",
+                          id: "systemuser.isActive",
                         }),
                       },
                       {
-                        key: "streetAddress",
+                        key: "timeout",
                         header: intl.formatMessage({
-                          id: "organization.streetAddress",
-                        }),
-                      },
-                      {
-                        key: "city",
-                        header: intl.formatMessage({
-                          id: "organization.city",
-                        }),
-                      },
-                      {
-                        key: "cliaNumber",
-                        header: intl.formatMessage({
-                          id: "organization.clia.number",
+                          id: "login.timeout",
                         }),
                       },
                     ]}
@@ -429,7 +571,7 @@ function OrganizationManagement() {
                                 {...getSelectionProps()}
                                 checked={
                                   selectedRowIds.length === pageSize &&
-                                  searchedOrganizationManagamentListShow
+                                  searchedUserManagementListShow
                                     .slice(
                                       (page - 1) * pageSize,
                                       page * pageSize,
@@ -443,7 +585,7 @@ function OrganizationManagement() {
                                 indeterminate={
                                   selectedRowIds.length > 0 &&
                                   selectedRowIds.length <
-                                    searchedOrganizationManagamentListShow
+                                    searchedUserManagementListShow
                                       .slice(
                                         (page - 1) * pageSize,
                                         page * pageSize,
@@ -453,7 +595,7 @@ function OrganizationManagement() {
                                 onSelect={() => {
                                   setDeactivateButton(false);
                                   const currentPageIds =
-                                    searchedOrganizationManagamentListShow
+                                    searchedUserManagementListShow
                                       .slice(
                                         (page - 1) * pageSize,
                                         page * pageSize,
@@ -496,6 +638,7 @@ function OrganizationManagement() {
                                   key={row.id}
                                   onClick={() => {
                                     const id = row.id;
+                                    const CombinedUserID = row.combinedUserID;
                                     const isSelected =
                                       selectedRowIds.includes(id);
                                     if (isSelected) {
@@ -527,8 +670,8 @@ function OrganizationManagement() {
                     onChange={handlePageChange}
                     page={page}
                     pageSize={pageSize}
-                    pageSizes={[10, 20]}
-                    totalItems={searchedOrganizationManagamentListShow.length}
+                    pageSizes={[5, 10, 15, 20]}
+                    totalItems={searchedUserManagementListShow.length}
                     forwardText={intl.formatMessage({
                       id: "pagination.forward",
                     })}
@@ -575,7 +718,7 @@ function OrganizationManagement() {
               <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={16} md={8} sm={4}>
                   <DataTable
-                    rows={organizationsManagmentListShow.slice(
+                    rows={userManagementListShow.slice(
                       (page - 1) * pageSize,
                       page * pageSize,
                     )}
@@ -583,51 +726,55 @@ function OrganizationManagement() {
                       {
                         key: "select",
                         header: intl.formatMessage({
-                          id: "organization.select",
+                          id: "unifiedSystemUser.select",
                         }),
                       },
                       {
-                        key: "orgName",
+                        key: "firstName",
                         header: intl.formatMessage({
-                          id: "organization.organizationName",
+                          id: "systemuser.firstName",
                         }),
                       },
-
                       {
-                        key: "parentOrg",
+                        key: "lastName",
                         header: intl.formatMessage({
-                          id: "organization.parent",
+                          id: "systemuser.lastName",
                         }),
                       },
-
                       {
-                        key: "orgPrefix",
+                        key: "loginName",
                         header: intl.formatMessage({
-                          id: "organization.short.CI",
+                          id: "systemuser.loginName",
+                        }),
+                      },
+                      {
+                        key: "expDate",
+                        header: intl.formatMessage({
+                          id: "login.password.expired.date",
+                        }),
+                      },
+                      {
+                        key: "locked",
+                        header: intl.formatMessage({
+                          id: "login.account.locked",
+                        }),
+                      },
+                      {
+                        key: "disabled",
+                        header: intl.formatMessage({
+                          id: "login.account.disabled",
                         }),
                       },
                       {
                         key: "active",
                         header: intl.formatMessage({
-                          id: "organization.isActive",
+                          id: "systemuser.isActive",
                         }),
                       },
                       {
-                        key: "streetAddress",
+                        key: "timeout",
                         header: intl.formatMessage({
-                          id: "organization.streetAddress",
-                        }),
-                      },
-                      {
-                        key: "city",
-                        header: intl.formatMessage({
-                          id: "organization.city",
-                        }),
-                      },
-                      {
-                        key: "cliaNumber",
-                        header: intl.formatMessage({
-                          id: "organization.clia.number",
+                          id: "login.timeout",
                         }),
                       },
                     ]}
@@ -648,7 +795,7 @@ function OrganizationManagement() {
                                 {...getSelectionProps()}
                                 checked={
                                   selectedRowIds.length === pageSize &&
-                                  organizationsManagmentListShow
+                                  userManagementListShow
                                     .slice(
                                       (page - 1) * pageSize,
                                       page * pageSize,
@@ -662,7 +809,7 @@ function OrganizationManagement() {
                                 indeterminate={
                                   selectedRowIds.length > 0 &&
                                   selectedRowIds.length <
-                                    organizationsManagmentListShow
+                                    userManagementListShow
                                       .slice(
                                         (page - 1) * pageSize,
                                         page * pageSize,
@@ -671,14 +818,13 @@ function OrganizationManagement() {
                                 }
                                 onSelect={() => {
                                   setDeactivateButton(false);
-                                  const currentPageIds =
-                                    organizationsManagmentListShow
-                                      .slice(
-                                        (page - 1) * pageSize,
-                                        page * pageSize,
-                                      )
-                                      .filter((row) => !row.disabled)
-                                      .map((row) => row.id);
+                                  const currentPageIds = userManagementListShow
+                                    .slice(
+                                      (page - 1) * pageSize,
+                                      page * pageSize,
+                                    )
+                                    .filter((row) => !row.disabled)
+                                    .map((row) => row.id);
                                   if (
                                     selectedRowIds.length === pageSize &&
                                     currentPageIds.every((id) =>
@@ -715,6 +861,7 @@ function OrganizationManagement() {
                                   key={row.id}
                                   onClick={() => {
                                     const id = row.id;
+                                    const CombinedUserID = row.combinedUserID;
                                     const isSelected =
                                       selectedRowIds.includes(id);
                                     if (isSelected) {
@@ -747,7 +894,7 @@ function OrganizationManagement() {
                     page={page}
                     pageSize={pageSize}
                     pageSizes={[10, 20]}
-                    totalItems={organizationsManagmentListShow.length}
+                    totalItems={userManagementListShow.length}
                     forwardText={intl.formatMessage({
                       id: "pagination.forward",
                     })}
@@ -791,8 +938,52 @@ function OrganizationManagement() {
           )}
         </div>
       </div>
+      <div>
+        <button
+          onClick={() => {
+            console.error(userManagementList);
+          }}
+        >
+          gotData
+        </button>
+        <button
+          onClick={() => {
+            console.error(testSectionsSelect);
+          }}
+        >
+          testSectionsSelect
+        </button>
+        <button
+          onClick={() => {
+            console.error(filters);
+          }}
+        >
+          filters
+        </button>
+        <button
+          onClick={() => {
+            console.error(selectedRowIds);
+          }}
+        >
+          selectedRowIds
+        </button>
+        <button
+          onClick={() => {
+            console.error(selectedRowCombinedUserIDPost);
+          }}
+        >
+          selectedRowCombinedUserIDPost
+        </button>
+        <button
+          onClick={() => {
+            console.error(selectedRowIdsPost);
+          }}
+        >
+          selectedRowIdsPost
+        </button>
+      </div>
     </>
   );
 }
 
-export default injectIntl(OrganizationManagement);
+export default injectIntl(UserManagement);

@@ -13,6 +13,7 @@
  */
 package org.openelisglobal.person.valueholder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.HashSet;
 import java.util.Set;
 import javax.validation.constraints.Email;
@@ -70,6 +71,7 @@ public class Person extends BaseObject<String> {
     @Email
     private String email;
 
+    @JsonIgnore
     @AssociationInverseSide(inversePath = @ObjectPath(@PropertyValue(propertyName = "person")))
     private Set<Patient> patients = new HashSet<>(0);
 
