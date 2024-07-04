@@ -23,12 +23,16 @@ import {
   AlertDialog,
   NotificationKinds,
 } from "../../common/CustomNotification.js";
-import { NotificationContext } from "../../layout/Layout.js";
+import {
+  ConfigurationContext,
+  NotificationContext,
+} from "../../layout/Layout.js";
 import {
   getFromOpenElisServer,
   postToOpenElisServer,
   postToOpenElisServerJsonResponse,
 } from "../../utils/Utils.js";
+import AutoComplete from "../../common/AutoComplete.js";
 
 const breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -42,6 +46,7 @@ const breadcrumbs = [
 function UserAddModify() {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
 
   const componentMounted = useRef(false);
   const intl = useIntl();
@@ -419,8 +424,14 @@ function UserAddModify() {
     }));
   }
 
-  function handleCopyUserPermissionsChange(e) {
-    setCopyUserPermission(e.target.value);
+  function handleCopyUserPermissionsChange() {
+    if (copyUserPermission.length > 0) {
+      setSaveButton(false);
+    }
+  }
+
+  function handleAutoCompleteCopyUserPermissionsChange(selectedUserId) {
+    setCopyUserPermission(selectedUserId);
     setSaveButton(false);
   }
 
@@ -535,17 +546,16 @@ function UserAddModify() {
   };
 
   const addNewSection = () => {
-    const newIds = userDataShow.testSections
-      .filter(
-        (section) =>
-          !Object.keys(selectedTestSectionLabUnits).includes(section.id),
-      )
-      .map((section) => section.id);
+    const newSectionsToAdd = userDataShow.testSections.filter(
+      (section) =>
+        !Object.keys(selectedTestSectionLabUnits).includes(section.id),
+    );
 
-    if (newIds.length > 0) {
+    if (newSectionsToAdd.length > 0) {
+      const nextSectionToAdd = newSectionsToAdd[0];
       setSelectedTestSectionLabUnits((prev) => ({
         ...prev,
-        [newIds[0]]: [],
+        [nextSectionToAdd.id]: [],
       }));
     }
   };
@@ -972,35 +982,24 @@ function UserAddModify() {
                     </>
                   </Column>
                   <Column lg={8} md={4} sm={4}>
-                    <Select
+                    <AutoComplete
+                      name="copy-permissions"
                       id="copy-permissions"
-                      noLabel={true}
-                      defaultValue={
-                        copyUserPermissionList &&
-                        copyUserPermissionList.length > 0
-                          ? copyUserPermissionList[0].id
-                          : ""
+                      allowFreeText={
+                        !(
+                          configurationProperties.restrictFreeTextProviderEntry ===
+                          "true"
+                        )
                       }
-                      onChange={(e) => handleCopyUserPermissionsChange(e)}
-                    >
-                      <SelectItem key="0" value="0" text="Select User..." />
-                      {copyUserPermissionList &&
-                      copyUserPermissionList.length > 0 ? (
-                        copyUserPermissionList.map((section) => (
-                          <SelectItem
-                            key={section.id}
-                            value={section.id}
-                            text={section.value}
-                          />
-                        ))
-                      ) : (
-                        <SelectItem
-                          key=""
-                          value=""
-                          text="No options available"
-                        />
-                      )}
-                    </Select>
+                      onChange={handleCopyUserPermissionsChange}
+                      onSelect={handleAutoCompleteCopyUserPermissionsChange}
+                      suggestions={
+                        copyUserPermissionList?.length > 0
+                          ? copyUserPermissionList
+                          : []
+                      }
+                      required
+                    />
                   </Column>
                   <br />
                   <Button
@@ -1229,69 +1228,6 @@ function UserAddModify() {
             </Column>
           </Grid>
         </div>
-        <button
-          onClick={() => {
-            console.error(userData);
-          }}
-        >
-          userData
-        </button>
-        <button
-          onClick={() => {
-            console.error(userDataShow);
-          }}
-        >
-          userDataShow
-        </button>
-        <button
-          onClick={() => {
-            console.error(userDataShow.testSections);
-          }}
-        >
-          userDataShow.testSections
-        </button>
-        <button
-          onClick={() => {
-            console.error(selectedGlobalLabUnitRoles);
-          }}
-        >
-          selectedGlobalLabUniRoles
-        </button>
-        <button
-          onClick={() => {
-            console.error(selectedTestSectionLabUnits);
-          }}
-        >
-          selectedTestSectionLabUnits
-        </button>
-        <button
-          onClick={() => {
-            console.error(userDataPost);
-          }}
-        >
-          userDataPost
-        </button>
-        <button
-          onClick={() => {
-            console.error(copyUserPermissionList);
-          }}
-        >
-          copyPermissionUserList
-        </button>
-        <button
-          onClick={() => {
-            console.error(copyUserPermission);
-          }}
-        >
-          copyPermissionUser
-        </button>
-        <button
-          onClick={() => {
-            console.error(testSectionsSelect);
-          }}
-        >
-          testSectionsSelect
-        </button>
       </div>
     </>
   );
