@@ -348,7 +348,7 @@ function OrganizationAddModify() {
     });
     setTimeout(() => {
       window.location.assign("/MasterListsPage#organizationManagement");
-    }, 2000);
+    }, 200);
     setNotificationVisible(true);
   };
 
