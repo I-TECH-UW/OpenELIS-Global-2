@@ -141,7 +141,7 @@ function UserManagement() {
       });
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 200);
     } else {
       addNotification({
         kind: NotificationKinds.error,
@@ -151,7 +151,7 @@ function UserManagement() {
       setNotificationVisible(true);
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 200);
     }
   }
 
@@ -429,7 +429,7 @@ function UserManagement() {
             <Column lg={6} md={6} sm={3}>
               <Select
                 id="filters"
-                noLabel={true}
+                labelText={<FormattedMessage id="menu.label.filter.role" />}
                 defaultValue={
                   testSectionsShow && testSectionsShow.length > 0
                     ? testSectionsShow[0].id
@@ -437,7 +437,7 @@ function UserManagement() {
                 }
                 onChange={handleTestSectionsSelectChange}
               >
-                <SelectItem key="" value="" text="Not Selected" />
+                <SelectItem key="" value="" text="" />
                 {testSectionsShow && testSectionsShow.length > 0 ? (
                   testSectionsShow.map((section) => (
                     <SelectItem
@@ -454,8 +454,6 @@ function UserManagement() {
                   />
                 )}
               </Select>
-              <br />
-              <FormattedMessage id="menu.label.filter.role" />
             </Column>
             <Column lg={8} md={8} sm={4}>
               <CustomCheckBox
