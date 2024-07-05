@@ -68,7 +68,7 @@ function UserAddModify() {
   const [selectedTestSectionLabUnits, setSelectedTestSectionLabUnits] =
     useState({});
 
-  // this keeps the order of the test section lab roles 
+  // this keeps the order of the test section lab roles
   const [selectedTestSectionList, setSelectedTestSectionList] = useState([]);
 
   const ID = (() => {
