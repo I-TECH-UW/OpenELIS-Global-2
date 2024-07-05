@@ -68,6 +68,9 @@ function UserAddModify() {
   const [selectedTestSectionLabUnits, setSelectedTestSectionLabUnits] =
     useState({});
 
+  // this keeps the order of the test section lab roles 
+  const [selectedTestSectionList, setSelectedTestSectionList] = useState([]);
+
   const ID = (() => {
     const hash = window.location.hash;
     if (hash.includes("?")) {
@@ -102,6 +105,11 @@ function UserAddModify() {
       setIsLoading(true);
     } else {
       setUserData(res);
+      var KeyList = [];
+      Object.keys(res.selectedTestSectionLabUnits).map((key) =>
+        KeyList.push(key),
+      );
+      setSelectedTestSectionList(KeyList);
     }
   };
 
@@ -249,6 +257,7 @@ function UserAddModify() {
           setSelectedTestSectionLabUnits(userData.selectedTestSectionLabUnits);
         } else {
           setSelectedTestSectionLabUnits({});
+          setSelectedTestSectionList([]);
         }
       }
     }
@@ -290,7 +299,7 @@ function UserAddModify() {
       setNotificationVisible(true);
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 200);
     } else {
       addNotification({
         kind: NotificationKinds.error,
@@ -300,7 +309,7 @@ function UserAddModify() {
       setNotificationVisible(true);
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 200);
     }
   }
 
@@ -456,6 +465,7 @@ function UserAddModify() {
 
   function handleCopyUserPermissionsChangeClick() {
     setSelectedTestSectionLabUnits([]);
+    setSelectedTestSectionList([]);
     userSavePostCall();
   }
 
@@ -493,6 +503,12 @@ function UserAddModify() {
 
   function handleTestSectionsSelectChange(e, key) {
     const selectedValue = e.target.value;
+    const index = selectedTestSectionList.indexOf(key);
+    if (index != -1) {
+      const testSectionList = [...selectedTestSectionList];
+      testSectionList[index] = selectedValue;
+      setSelectedTestSectionList(testSectionList);
+    }
 
     if (Object.keys(selectedTestSectionLabUnits).includes(selectedValue)) {
       alert(`Section ${selectedValue} is already selected.`);
@@ -557,6 +573,9 @@ function UserAddModify() {
         ...prev,
         [nextSectionToAdd.id]: [],
       }));
+      const testSectionList = [...selectedTestSectionList];
+      testSectionList.push(nextSectionToAdd.id);
+      setSelectedTestSectionList(testSectionList);
     }
   };
 
@@ -564,6 +583,12 @@ function UserAddModify() {
     const updatedSections = { ...selectedTestSectionLabUnits };
     delete updatedSections[keyToRemove];
     setSelectedTestSectionLabUnits(updatedSections);
+    const index = selectedTestSectionList.indexOf(keyToRemove);
+    if (index != -1) {
+      const testSectionList = [...selectedTestSectionList];
+      testSectionList.splice(index, 1);
+      setSelectedTestSectionList(testSectionList);
+    }
   };
 
   useEffect(() => {
@@ -1054,13 +1079,13 @@ function UserAddModify() {
                 </Grid>
                 <br />
                 <>
-                  {Object.keys(selectedTestSectionLabUnits).map((key) => (
+                  {selectedTestSectionList.map((key) => (
                     <Grid
                       fullWidth={true}
                       key={key}
                       style={{ paddingBottom: "10px" }}
                     >
-                      <Column lg={8} md={4} sm={4}>
+                      <Column lg={4} md={4} sm={4}>
                         <Select
                           id={`select-${key}`}
                           noLabel={true}
@@ -1182,6 +1207,8 @@ function UserAddModify() {
                             />
                           )}
                         </FormGroup>
+                      </Column>
+                      <Column lg={4} md={4} sm={4}>
                         <Button
                           onClick={() => removeSection(key)}
                           kind="tertiary"

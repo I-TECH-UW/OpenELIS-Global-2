@@ -52,7 +52,6 @@ import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModif
 import UserManagement from "./userManagement/UserManagement";
 import UserAddModify from "./userManagement/UserAddModify";
 
-
 function Admin() {
   const intl = useIntl();
   const [isSmallScreen, setIsSmallScreen] = useState(false);
