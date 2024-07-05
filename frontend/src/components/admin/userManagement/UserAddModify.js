@@ -481,10 +481,16 @@ function UserAddModify() {
   }
 
   function handleCheckboxChange(roleId) {
-    const numberToUpdate = ["71", "72", "73", "11", "2"];
+    const numberToUpdate = userDataShow.globalRoles
+      .filter((role) => role.roleName !== "Global Administrator")
+      .map((role) => role.roleId);
     let updatedRoles = [...selectedGlobalLabUnitRoles];
 
-    if (roleId === "1") {
+    const globalAdminRoleId = userDataShow.globalRoles.find(
+      (role) => role.roleName === "Global Administrator",
+    )?.roleId;
+
+    if (globalAdminRoleId && roleId === globalAdminRoleId) {
       if (selectedGlobalLabUnitRoles.includes(roleId)) {
         updatedRoles = updatedRoles.filter((role) => role !== roleId);
       } else {
