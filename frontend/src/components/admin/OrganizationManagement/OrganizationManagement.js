@@ -123,7 +123,7 @@ function OrganizationManagement() {
     });
     setTimeout(() => {
       window.location.reload();
-    }, 2000);
+    }, 200);
   };
 
   const handlePageChange = ({ page, pageSize }) => {
