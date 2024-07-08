@@ -554,7 +554,7 @@
   "immunohistochemistry.label.cellIntensity": "d'intensité. Score Allred",
   "immunohistochemistry.label.outOf8": "sur 8",
   "immunohistochemistry.label.mibName": "MiB 1 (ki-67) (Indice de prolifération) :",
-  "immunohistochemistry.label.tumorCells": "des cellules tumorales sont positives (seuil de 20 %)",
+  "immunohistochemistry.label.tumorCells": "des cellules tumorales sont positives (couper 20%)",
   "immunohistochemistry.label.her2Assesment": "L'évaluation de la protéine HER2 est de",
   "immunohistochemistry.label.her2ScoreOf": "Avec un score de",
   "configure.labNumber.title": "Gestion des Numéro de Laboratoire",
