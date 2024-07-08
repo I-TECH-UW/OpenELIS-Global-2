@@ -74,16 +74,6 @@ public class DictionaryMenuRestController extends BaseMenuController<Dictionary>
         return dictionaryCategoryService.getAll();
     }
 
-    @RequestMapping(value = "/dictionary", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> createDictionaryEntry(@RequestBody Dictionary dictionary) {
-        try {
-            dictionaryService.save(dictionary);
-            return new ResponseEntity<>("Dictionary created successfully", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error creating dictionary: " + e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
     @RequestMapping(value = "/delete-dictionary", method = RequestMethod.POST)
     public ResponseEntity<?> showDeleteDictionary(HttpServletRequest request,
             @ModelAttribute("form") @Valid DictionaryMenuForm form, BindingResult result,
