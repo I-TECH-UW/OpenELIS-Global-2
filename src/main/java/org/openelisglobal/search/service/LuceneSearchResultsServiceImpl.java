@@ -1,18 +1,18 @@
 package org.openelisglobal.search.service;
 
 import java.util.List;
+import javax.transaction.Transactional;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.sample.dao.SearchResultsDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Primary
-public class DatabaseSearchResultsService implements SearchResultsService {
+public class LuceneSearchResultsServiceImpl implements SearchResultsService {
 
     @Autowired
+    @Qualifier("luceneSearchResultsDAOImpl")
     SearchResultsDAO searchResultsDAO;
 
     @Override
