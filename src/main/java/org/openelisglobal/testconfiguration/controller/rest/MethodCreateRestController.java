@@ -19,6 +19,9 @@ import org.openelisglobal.systemusermodule.valueholder.RoleModule;
 import org.openelisglobal.testconfiguration.form.MethodCreateForm;
 import org.openelisglobal.testconfiguration.service.MethodCreateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,9 +30,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/rest")
@@ -56,7 +56,7 @@ public class MethodCreateRestController extends BaseController {
 
         setupDisplayMethods(form);
 
-       return ResponseEntity.ok(form);
+        return ResponseEntity.ok(form);
     }
 
     private void setupDisplayMethods(MethodCreateForm form) {
@@ -82,9 +82,9 @@ public class MethodCreateRestController extends BaseController {
         return builder.toString();
     }
 
-    @PostMapping(value = "/MethodCreate", consumes =   MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?>  postMethodCreate(HttpServletRequest request,
-         @RequestBody @Valid MethodCreateForm form, BindingResult result) {
+    @PostMapping(value = "/MethodCreate", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> postMethodCreate(HttpServletRequest request, @RequestBody @Valid MethodCreateForm form,
+            BindingResult result) {
         if (result.hasErrors()) {
             saveErrors(result);
             setupDisplayMethods(form);
@@ -119,7 +119,7 @@ public class MethodCreateRestController extends BaseController {
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.METHODS);
         DisplayListService.getInstance().refreshList(DisplayListService.ListType.METHODS_INACTIVE);
 
-         return ResponseEntity.ok(form);
+        return ResponseEntity.ok(form);
     }
 
     private Localization createLocalization(String french, String english, String currentUserId) {
