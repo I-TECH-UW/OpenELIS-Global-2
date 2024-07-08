@@ -89,7 +89,7 @@ function UserAddModify() {
     } else {
       setTimeout(() => {
         window.location.assign("/MasterListsPage#userManagement");
-      }, 1000);
+      }, 200);
     }
     return () => {
       componentMounted.current = false;
