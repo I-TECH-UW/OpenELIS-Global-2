@@ -92,7 +92,7 @@ function ManageMethod() {
         methodEnglishName: englishLabel,
         methodFrenchName: frenchLabel,
       };
-      postToOpenElisServer(
+      postToOpenElisServerFullResponse(
         "/rest/MethodCreate",
         JSON.stringify(newMethod),
         displayStatus,
