@@ -3,16 +3,16 @@ package org.openelisglobal.common.management.controller.rest;
 import javax.servlet.http.HttpServletRequest;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.management.form.MethodManagementForm;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/rest")
 public class MethodManagementRestController extends BaseController {
-    @RequestMapping(value = "/MethodManagement", produces = MediaType.APPLICATION_JSON_VALUE )
-    public ResponseEntity< MethodManagementForm> showMethodManagement(HttpServletRequest request) {
+    @RequestMapping(value = "/MethodManagement", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MethodManagementForm> showMethodManagement(HttpServletRequest request) {
         MethodManagementForm form = new MethodManagementForm();
 
         return ResponseEntity.ok(form);
