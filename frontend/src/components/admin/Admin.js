@@ -52,6 +52,7 @@ import OrganizationManagement from "./OrganizationManagement/OrganizationManagem
 import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModify";
 import UserManagement from "./userManagement/UserManagement";
 import UserAddModify from "./userManagement/UserAddModify";
+import ManageMethod from "./testManagement/ManageMethod.js";
 
 
 function Admin() {
@@ -89,6 +90,9 @@ function Admin() {
             </SideNavMenuItem>
             <SideNavMenuItem href="#TestCatalog">
               <FormattedMessage id="sidenav.label.admin.testmgt.ViewtestCatalog" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#MethodManagment">
+              <FormattedMessage id="sidenav.label.admin.testmgt.ManageMethod" />
             </SideNavMenuItem>
           </SideNavMenu>
           <SideNavLink href="#AnalyzerTestName" renderIcon={ListDropdown}>
@@ -199,6 +203,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#TestCatalog">
         <TestCatalog />
+      </PathRoute>
+      <PathRoute path="#MethodManagment">
+        <ManageMethod />
       </PathRoute>
       <PathRoute path="#AnalyzerTestName">
         <AnalyzerTestName />
