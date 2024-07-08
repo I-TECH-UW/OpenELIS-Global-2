@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Primary
-public class DatabaseSearchResultsDAO implements SearchResultsDAO {
+public class DBSearchResultsDAOImpl implements SearchResultsDAO {
 
     @PersistenceContext
     EntityManager entityManager;

@@ -9,7 +9,7 @@ import org.openelisglobal.sample.dao.SearchResultsDAO;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LuceneSearchResultsDAO implements SearchResultsDAO {
+public class LuceneSearchResultsDAOImpl implements SearchResultsDAO {
 
     @Override
     @Transactional
