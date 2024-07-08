@@ -58,7 +58,6 @@ function UserAddModify() {
   const [isActive, setIsActive] = useState("radio-6");
   const [copyUserPermission, setCopyUserPermission] = useState("0");
   const [copyUserPermissionList, setCopyUserPermissionList] = useState(null);
-  const [testSectionsSelect, setTestSectionsSelect] = useState("AllLabUnits");
   const [userData, setUserData] = useState(null);
   const [userDataShow, setUserDataShow] = useState({});
   const [userDataPost, setUserDataPost] = useState(null);
@@ -67,8 +66,6 @@ function UserAddModify() {
   );
   const [selectedTestSectionLabUnits, setSelectedTestSectionLabUnits] =
     useState({});
-
-  // this keeps the order of the test section lab roles
   const [selectedTestSectionList, setSelectedTestSectionList] = useState([]);
 
   const ID = (() => {
@@ -241,15 +238,17 @@ function UserAddModify() {
         }));
       }
 
-      if (userData.selectedRoles) {
+      if (userData.selectedRoles !== undefined) {
         if (ID !== "0") {
-          const selectedGlobalLabUniRoles = userData.selectedRoles.map(
+          const selectedGlobalLabUnitRoles = userData.selectedRoles.map(
             (item) => item,
           );
-          setSelectedGlobalLabUnitRoles(selectedGlobalLabUniRoles);
+          setSelectedGlobalLabUnitRoles(selectedGlobalLabUnitRoles);
         } else {
           setSelectedGlobalLabUnitRoles([]);
         }
+      } else {
+        setSelectedGlobalLabUnitRoles([]);
       }
 
       if (userData.selectedTestSectionLabUnits) {
@@ -261,7 +260,7 @@ function UserAddModify() {
         }
       }
     }
-  }, [userData]);
+  }, [userData, ID]);
 
   useEffect(() => {
     if (userDataShow) {
@@ -272,6 +271,37 @@ function UserAddModify() {
       setIsActive(userDataShow.accountActive === "Y" ? "radio-5" : "radio-6");
     }
   }, [userDataShow]);
+
+  useEffect(() => {
+    if (copyUserPermission) {
+      setUserDataPost((prevUserDataPost) => ({
+        ...prevUserDataPost,
+        systemUserIdToCopy: copyUserPermission,
+        allowCopyUserRoles: "Y",
+      }));
+      setUserDataShow((prevUserData) => ({
+        ...prevUserData,
+        systemUserIdToCopy: copyUserPermission,
+        allowCopyUserRoles: "Y",
+      }));
+      setSaveButton(false);
+    }
+  }, [copyUserPermission]);
+
+  useEffect(() => {
+    if (selectedTestSectionLabUnits) {
+      setUserDataPost((prevUserDataPost) => ({
+        ...prevUserDataPost,
+        selectedTestSectionLabUnits: selectedTestSectionLabUnits,
+      }));
+
+      setUserDataShow((prevUserData) => ({
+        ...prevUserData,
+        selectedTestSectionLabUnits: selectedTestSectionLabUnits,
+      }));
+      setSaveButton(false);
+    }
+  }, [selectedTestSectionLabUnits]);
 
   function userSavePostCall() {
     setIsLoading(true);
@@ -319,7 +349,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       userLoginName: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       userLoginName: e.target.value,
     }));
@@ -331,7 +361,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       userPassword: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       userPassword: e.target.value,
     }));
@@ -343,7 +373,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       confirmPassword: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       confirmPassword: e.target.value,
     }));
@@ -355,7 +385,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       userFirstName: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       userFirstName: e.target.value,
     }));
@@ -367,7 +397,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       userLastName: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       userLastName: e.target.value,
     }));
@@ -379,7 +409,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       expirationDate: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       expirationDate: e.target.value,
     }));
@@ -391,7 +421,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       timeout: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       timeout: e.target.value,
     }));
@@ -403,7 +433,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       accountActive: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       accountActive: e.target.value,
     }));
@@ -415,7 +445,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       accountDisabled: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       accountDisabled: e.target.value,
     }));
@@ -427,7 +457,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       accountLocked: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       accountLocked: e.target.value,
     }));
@@ -444,25 +474,6 @@ function UserAddModify() {
     setSaveButton(false);
   }
 
-  useEffect(() => {
-    setUserDataPost((prevUserDataPost) => ({
-      ...prevUserDataPost,
-      systemUserIdToCopy: copyUserPermission,
-      allowCopyUserRoles: "Y",
-    }));
-    setUserDataShow((prevUserData) => ({
-      ...prevUserData,
-      systemUserIdToCopy: copyUserPermission,
-      allowCopyUserRoles: "Y",
-    }));
-    setUserData((prevUserData) => ({
-      ...prevUserData,
-      systemUserIdToCopy: copyUserPermission,
-      allowCopyUserRoles: "Y",
-    }));
-    setSaveButton(false);
-  }, [copyUserPermission]);
-
   function handleCopyUserPermissionsChangeClick() {
     setSelectedTestSectionLabUnits([]);
     setSelectedTestSectionList([]);
@@ -470,10 +481,16 @@ function UserAddModify() {
   }
 
   function handleCheckboxChange(roleId) {
-    const numberToUpdate = ["71", "72", "73", "11", "2"];
+    const numberToUpdate = userDataShow.globalRoles
+      .filter((role) => role.roleName !== "Global Administrator")
+      .map((role) => role.roleId);
     let updatedRoles = [...selectedGlobalLabUnitRoles];
 
-    if (roleId === "1") {
+    const globalAdminRoleId = userDataShow.globalRoles.find(
+      (role) => role.roleName === "Global Administrator",
+    )?.roleId;
+
+    if (globalAdminRoleId && roleId === globalAdminRoleId) {
       if (selectedGlobalLabUnitRoles.includes(roleId)) {
         updatedRoles = updatedRoles.filter((role) => role !== roleId);
       } else {
@@ -494,8 +511,8 @@ function UserAddModify() {
       ...prevUserDataPost,
       selectedRoles: updatedRoles,
     }));
-    setUserData((prevUserData) => ({
-      ...prevUserData,
+    setUserDataShow((prevUserDataPost) => ({
+      ...prevUserDataPost,
       selectedRoles: updatedRoles,
     }));
     setSaveButton(false);
@@ -531,8 +548,6 @@ function UserAddModify() {
     }
 
     setSelectedTestSectionLabUnits(updatedTestSectionLabUnits);
-
-    setTestSectionsSelect(selectedValue);
     setSaveButton(false);
   }
 
@@ -591,25 +606,6 @@ function UserAddModify() {
     }
   };
 
-  useEffect(() => {
-    if (selectedTestSectionLabUnits) {
-      setUserDataPost((prevUserDataPost) => ({
-        ...prevUserDataPost,
-        selectedTestSectionLabUnits: selectedTestSectionLabUnits,
-      }));
-
-      setUserDataShow((prevUserData) => ({
-        ...prevUserData,
-        selectedTestSectionLabUnits: selectedTestSectionLabUnits,
-      }));
-
-      setUserData((prevUserData) => ({
-        ...prevUserData,
-        selectedTestSectionLabUnits: selectedTestSectionLabUnits,
-      }));
-    }
-  }, [selectedTestSectionLabUnits]);
-
   if (!isLoading) {
     return (
       <>
@@ -664,8 +660,8 @@ function UserAddModify() {
                       })}
                       required={true}
                       value={
-                        userData && userData.userLoginName
-                          ? userData.userLoginName
+                        userDataShow && userDataShow.userLoginName
+                          ? userDataShow.userLoginName
                           : ""
                       }
                       onChange={(e) => handleUserLoginNameChange(e)}
@@ -719,8 +715,8 @@ function UserAddModify() {
                       // invalid={errors.order && touched.order}
                       // invalidText={errors.order}
                       value={
-                        userData && userData.userPassword
-                          ? userData.userPassword
+                        userDataShow && userDataShow.userPassword
+                          ? userDataShow.userPassword
                           : ""
                       }
                       onChange={(e) => handleUserPasswordChange(e)}
@@ -747,8 +743,8 @@ function UserAddModify() {
                       // invalid={errors.order && touched.order}
                       // invalidText={errors.order}
                       value={
-                        userData && userData.confirmPassword
-                          ? userData.confirmPassword
+                        userDataShow && userDataShow.confirmPassword
+                          ? userDataShow.confirmPassword
                           : ""
                       }
                       onChange={(e) => handleConfirmPasswordChange(e)}
@@ -777,8 +773,8 @@ function UserAddModify() {
                       // invalid={errors.order && touched.order}
                       // invalidText={errors.order}
                       value={
-                        userData && userData.userFirstName
-                          ? userData.userFirstName
+                        userDataShow && userDataShow.userFirstName
+                          ? userDataShow.userFirstName
                           : ""
                       }
                       onChange={(e) => handleUserFirstNameChange(e)}
@@ -805,8 +801,8 @@ function UserAddModify() {
                       // invalid={errors.order && touched.order}
                       // invalidText={errors.order}
                       value={
-                        userData && userData.userLastName
-                          ? userData.userLastName
+                        userDataShow && userDataShow.userLastName
+                          ? userDataShow.userLastName
                           : ""
                       }
                       onChange={(e) => handleUserLastNameChange(e)}
@@ -833,8 +829,8 @@ function UserAddModify() {
                       // invalid={errors.order && touched.order}
                       // invalidText={errors.order}
                       value={
-                        userData && userData.expirationDate
-                          ? userData.expirationDate
+                        userDataShow && userDataShow.expirationDate
+                          ? userDataShow.expirationDate
                           : ""
                       }
                       onChange={(e) => handleExpirationDateChange(e)}
@@ -861,7 +857,9 @@ function UserAddModify() {
                       // invalid={errors.order && touched.order}
                       // invalidText={errors.order}
                       value={
-                        userData && userData.timeout ? userData.timeout : ""
+                        userDataShow && userDataShow.timeout
+                          ? userDataShow.timeout
+                          : ""
                       }
                       onChange={(e) => handleTimeoutChange(e)}
                     />
@@ -1063,7 +1061,7 @@ function UserAddModify() {
                         ))
                       ) : (
                         <Checkbox
-                          id="no-options"
+                          id="no-options-global-roles"
                           value=""
                           labelText="No options available"
                         />
@@ -1121,7 +1119,7 @@ function UserAddModify() {
                               ))
                           ) : (
                             <SelectItem
-                              key=""
+                              key="no-option-test-section"
                               value=""
                               text="No options available"
                             />
@@ -1201,7 +1199,7 @@ function UserAddModify() {
                             ))
                           ) : (
                             <Checkbox
-                              id={`no-options-${key}`}
+                              id="no-options-lab-units"
                               value=""
                               labelText="No options available"
                             />
