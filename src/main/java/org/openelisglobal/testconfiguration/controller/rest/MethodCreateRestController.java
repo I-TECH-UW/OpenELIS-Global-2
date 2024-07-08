@@ -24,6 +24,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
@@ -83,7 +84,7 @@ public class MethodCreateRestController extends BaseController {
 
     @PostMapping(value = "/MethodCreate", consumes =   MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?>  postMethodCreate(HttpServletRequest request,
-             @Valid MethodCreateForm form, BindingResult result) {
+         @RequestBody @Valid MethodCreateForm form, BindingResult result) {
         if (result.hasErrors()) {
             saveErrors(result);
             setupDisplayMethods(form);
