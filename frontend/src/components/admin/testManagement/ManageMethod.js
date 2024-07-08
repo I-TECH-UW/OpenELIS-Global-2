@@ -23,13 +23,13 @@ import {
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 
 let breadcrumbs = [
-    { label: "home.label", link: "/" },
-    { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
-    {
-      label: "sidenav.label.admin.testmgt.ManageMethod",
-      link: "/MasterListsPage#MethodManagment" 
-    },
-  ];
+  { label: "home.label", link: "/" },
+  { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  {
+    label: "sidenav.label.admin.testmgt.ManageMethod",
+    link: "/MasterListsPage#MethodManagment",
+  },
+];
 
 function ManageMethod() {
   const { notificationVisible, setNotificationVisible, addNotification } =
@@ -90,8 +90,8 @@ function ManageMethod() {
     if (confirmationStep) {
       const newMethod = {
         methodEnglishName: englishLabel,
-        methodFrenchName: frenchLabel
-      }; 
+        methodFrenchName: frenchLabel,
+      };
       postToOpenElisServer(
         "/rest/MethodCreate",
         JSON.stringify(newMethod),
@@ -114,8 +114,11 @@ function ManageMethod() {
               <Heading>
                 <FormattedMessage id="sidenav.label.admin.testmgt.ManageMethod" />
               </Heading>
-              <br/>
-              <Button onClick={openAddModal}>Add New Method</Button>
+              <br />
+              <Button onClick={openAddModal}>
+                {" "}
+                <FormattedMessage id="modal.add.method" />
+              </Button>
             </Section>
           </Column>
         </Grid>
@@ -154,17 +157,15 @@ function ManageMethod() {
           />
           {confirmationStep && (
             <p style={{ color: "#3366B3", marginTop: "1rem" }}>
-              This method unit will not be active until at least one test has
-              been assigned to it.
+              <FormattedMessage id="message.method.activation" />
             </p>
           )}
         </Modal>
 
         <div className="orderLegendBody">
-          <h4 style={{ color: "#3366B3"}}>
-            Existing Methods
+          <h4 style={{ color: "#3366B3" }}>
+            <FormattedMessage id="label.existing.methods" />
           </h4>
-          {/* <hr/> */}
           <div style={{ display: "flex", flexWrap: "wrap", marginTop: "1rem" }}>
             {existingMethods.map((method) => (
               <div
@@ -177,7 +178,7 @@ function ManageMethod() {
           </div>
           <hr />
           <h4 style={{ color: "#3366B3" }}>
-            Inactive Methods. Assign tests to activate.
+            <FormattedMessage id="label.inactive.methods" />
           </h4>
           <div style={{ display: "flex", flexWrap: "wrap", marginTop: "1rem" }}>
             {inactiveMethods.map((method) => (
