@@ -26,7 +26,7 @@ describe("Report Non-Conforming Event", function () {
       nonConform.selectSearchType('Last Name');
       nonConform.enterSearchField(patient.lastName);
       nonConform.clickSearchButton();
-      cy.fixture("Order").then((order) => {
+      cy.fixture("EnteredOrder").then((order) => {
         nonConform.validateSearchResult(order.labNo);
       });
     });
@@ -37,14 +37,14 @@ describe("Report Non-Conforming Event", function () {
       nonConform.selectSearchType('First Name');
       nonConform.enterSearchField(patient.firstName);
       nonConform.clickSearchButton();
-      cy.fixture("Order").then((order) => {
+      cy.fixture("EnteredOrder").then((order) => {
         nonConform.validateSearchResult(order.labNo);
       });
     });
   });
 
   it("Should Search by Lab Number and Submit the NCE Reporting Form", function () {
-    cy.fixture("Order").then((order) => {
+    cy.fixture("EnteredOrder").then((order) => {
       nonConform.selectSearchType('Lab Number');
       nonConform.enterSearchField(order.labNo);
       nonConform.clickSearchButton();
