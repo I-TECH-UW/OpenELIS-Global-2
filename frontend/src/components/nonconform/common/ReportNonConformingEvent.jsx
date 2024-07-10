@@ -85,9 +85,19 @@ export const ReportNonConformingEvent = () => {
       getFromOpenElisServer(
         `/rest/nonconformevents?${reportFormValues.type}=${reportFormValues.value}`,
         (data) => {
-          setReportFormValues(initialReportFormValues);
           if (data) {
-            setLData(data);
+            if (data.length > 0) {
+              setLData(data);
+            } else {
+              setLData(null);
+              setReportFormValues({
+                ...reportFormValues,
+                error: intl.formatMessage({
+                  id: "error.nonconform.report.data.found",
+                  defaultMessage: "No data found",
+                }),
+              });
+            }
           } else {
             setReportFormValues({
               ...reportFormValues,
