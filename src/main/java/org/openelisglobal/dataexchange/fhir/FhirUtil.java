@@ -18,30 +18,29 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.hl7.fhir.r4.model.CapabilityStatement;
 import org.itech.fhir.dataexport.core.service.FhirClientFetcher;
-import org.openelisglobal.common.log.LogEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 @Component
 public class FhirUtil implements FhirClientFetcher {
 
-    @Autowired
-    private FhirConfig fhirConfig;
-    @Autowired
-    private FhirContext fhirContext;
-    @Autowired
-    private CloseableHttpClient closeableHttpClient;
-    private final ConfigurableApplicationContext applicationContext;
+    private static final Logger logger = LoggerFactory.getLogger(FhirUtil.class);
+
+    private static final int MAX_RETRY_ATTEMPTS = 3;
+
+    private static final int RETRY_DELAY_MS = 10000;
 
     @Autowired
-    public FhirUtil(ApplicationContext context) {
-        this.applicationContext = (ConfigurableApplicationContext) context;
-    }
+    private FhirConfig fhirConfig;
+
+    @Autowired
+    private FhirContext fhirContext;
+
+    @Autowired
+    private CloseableHttpClient closeableHttpClient;
 
     @Override
     public IGenericClient getFhirClient(String fhirStorePath) {
@@ -58,17 +57,63 @@ public class FhirUtil implements FhirClientFetcher {
 
     @Bean(name = "clientRegistryFhirClient")
     public IGenericClient getCRFhirClient() throws Exception {
-        IGenericClient fhirClient = fhirContext.newRestfulGenericClient(fhirConfig.getClientRegistryServerUrl());
-        if (isClientConnected(fhirClient)) {
-            recreateFhirClient();
+        IGenericClient fhirClient = createCRFhirClient();
+        validateFhirClient(fhirClient);
+        return fhirClient;
+    }
+
+    private IGenericClient createCRFhirClient() throws Exception {
+        Exception lastException = null;
+
+        for (int attempts = 0; attempts < MAX_RETRY_ATTEMPTS; attempts++) {
+            try {
+                IGenericClient fhirClient = fhirContext
+                        .newRestfulGenericClient(fhirConfig.getClientRegistryServerUrl());
+                if (!fhirConfig.getClientRegistryUserName().isEmpty()
+                        && !fhirConfig.getClientRegistryPassword().isEmpty()
+                        && !fhirConfig.getClientRegistryServerUrl().isEmpty()) {
+                    logger.info("CR Server - Url: {}", fhirConfig.getClientRegistryServerUrl());
+                    logger.info("CR Server - Username : {}", fhirConfig.getClientRegistryUserName());
+                    logger.info("CR Server - Password: {}", fhirConfig.getClientRegistryPassword());
+
+                    BasicAuthInterceptor authInterceptor = new BasicAuthInterceptor(
+                            fhirConfig.getClientRegistryUserName(), fhirConfig.getClientRegistryPassword());
+                    fhirClient.registerInterceptor(authInterceptor);
+                }
+
+                return fhirClient;
+            } catch (Exception e) {
+                lastException = e;
+                logger.error("Failed to connect to FHIR server (Attempt {}): {}", attempts + 1, e.getMessage(), e);
+                Thread.sleep(RETRY_DELAY_MS);
+            }
         }
 
-        if (!fhirConfig.getClientRegistryUserName().isEmpty()) {
-            BasicAuthInterceptor authInterceptor = new BasicAuthInterceptor(fhirConfig.getClientRegistryUserName(),
-                    fhirConfig.getClientRegistryPassword());
-            fhirClient.registerInterceptor(authInterceptor);
+        logger.error("Last exception details:", lastException);
+        throw new Exception("Failed to connect to FHIR server after " + MAX_RETRY_ATTEMPTS + " attempts.",
+                lastException);
+    }
+
+    private void validateFhirClient(IGenericClient fhirClient) throws Exception {
+        try {
+            CapabilityStatement capabilityStatement = retrieveCapabilityStatement(fhirClient);
+            logServerInfo(capabilityStatement, fhirConfig.getClientRegistryServerUrl());
+        } catch (Exception e) {
+            logger.error("Failed to retrieve CapabilityStatement: {}", e.getMessage(), e);
+            throw e;
         }
-        return fhirClient;
+    }
+
+    private CapabilityStatement retrieveCapabilityStatement(IGenericClient fhirClient) {
+        return fhirClient.capabilities().ofType(CapabilityStatement.class).execute();
+    }
+
+    private void logServerInfo(CapabilityStatement capabilityStatement, String serverUrl) {
+        logger.info("FHIR client connected successfully to {}", serverUrl);
+        if (capabilityStatement != null) {
+            logger.info("Server name: {}", capabilityStatement.getSoftware().getName());
+            logger.info("Server version: {}", capabilityStatement.getSoftware().getVersion());
+        }
     }
 
     public IGenericClient getLocalFhirClient() {
@@ -109,36 +154,5 @@ public class FhirUtil implements FhirClientFetcher {
             }
         }
         return response.get("access_token").asText();
-    }
-
-    private boolean isClientConnected(IGenericClient fhirClient) {
-        try {
-            fhirClient.capabilities().ofType(CapabilityStatement.class).execute();
-            LogEvent.logWarn(fhirClient.capabilities().ofType(CapabilityStatement.class).toString(),
-                    fhirClient.capabilities().toString(), "fhir client connected successfully!");
-            return true;
-        } catch (Exception e) {
-            LogEvent.logError(e.getMessage(), fhirClient.capabilities().toString(), "fhir client not connected!");
-            return false;
-        }
-    }
-
-    private void recreateFhirClient() throws Exception {
-        removeBean("clientRegistryFhirClient");
-        IGenericClient newClient = getCRFhirClient();
-        registerBean(newClient);
-    }
-
-    private void removeBean(String fhirClient) {
-        DefaultSingletonBeanRegistry registry = (DefaultSingletonBeanRegistry) applicationContext
-                .getAutowireCapableBeanFactory();
-        if (registry.containsSingleton(fhirClient)) {
-            registry.destroySingleton(fhirClient);
-        }
-    }
-
-    private void registerBean(IGenericClient newClient) {
-        ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
-        beanFactory.registerSingleton("clientRegistryFhirClient", newClient);
     }
 }
