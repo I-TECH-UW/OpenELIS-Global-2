@@ -3,6 +3,7 @@ import PatientEntryPage from "./PatientEntryPage";
 import OrderEntityPage from "./OrderEntityPage";
 import ModifyOrderPage from "./ModifyOrderPage";
 import WorkPlan from "./WorkPlan";
+import NonConform from "./NonConformPage";
 
 class HomePage {
   constructor() {}
@@ -95,6 +96,18 @@ class HomePage {
       ':nth-child(4) > .cds--side-nav__item > .cds--side-nav__menu > :nth-child(4) > .cds--side-nav__link > .cds--side-nav__link-text > [style="display: flex; width: 100%;"] > .custom-sidenav-button',
     ).click();
     return new WorkPlan();
+  }
+
+  goToReportNCE(){
+    this.openNavigationMenu();
+    cy.get(
+      ":nth-child(3) > .cds--side-nav__item > .cds--side-nav__submenu",
+    ).click();
+    cy.get(
+      ':nth-child(3) > .cds--side-nav__item > .cds--side-nav__menu > :nth-child(1) > .cds--side-nav__link > .cds--side-nav__link-text > [style="display: flex; width: 100%;"] > .custom-sidenav-button',
+    ).click();
+    return new NonConform();
+
   }
 }
 
