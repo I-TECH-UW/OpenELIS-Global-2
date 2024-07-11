@@ -62,9 +62,8 @@ public class ResultsTreeProviderRestController {
 
         for (Result result : results) {
             analyses.add(result.getAnalysis());
-            TestSection testSection = result.getAnalysis().getTestSection();
+            TestSection testSection = result.getAnalysis().getTest().getTestSection();
             TypeOfSample sampleType = result.getAnalysis().getSampleItem().getTypeOfSample();
-
             if (testSectionPanelMap.containsKey(testSection)) {
                 testSectionPanelMap.get(testSection).add(sampleType);
             } else {
