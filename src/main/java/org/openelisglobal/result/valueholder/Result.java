@@ -14,7 +14,6 @@
 package org.openelisglobal.result.valueholder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.Objects;
 import java.util.UUID;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -223,7 +222,7 @@ public class Result extends EnumValueItemImpl {
         this.virralloadLowLimit = virralloadLowLimit;
     }
 
-     @Override
+    @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;
