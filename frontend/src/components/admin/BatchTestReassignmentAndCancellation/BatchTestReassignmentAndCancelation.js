@@ -38,8 +38,8 @@ const breadcrumbs = [
   { label: "home.label", link: "/" },
   { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
   {
-    label: "unifiedSystemUser.browser.title",
-    link: "/MasterListsPage#userManagement",
+    label: "configuration.batch.test.reassignment",
+    link: "/MasterListsPage#batchTestReassignment",
   },
 ];
 
@@ -56,6 +56,14 @@ function BatchTestReassignmentAndCancelation() {
   const [sampleTypeList, setSampleTypeList] = useState(null);
   const [sampleTypeListShow, setSampleTypeListShow] = useState([]);
   const [sampleTypeListPost, setSampleTypeListPost] = useState(null);
+  const [sampleTypeToGetId, setSampleTypeToGetId] = useState(null);
+  const [sampleTypeToGetIdData, setSampleTypeToGetIdData] = useState([]);
+  const [sampleTypeTestIdToGetIdPending, setSampleTestTypeToGetPending] =
+    useState(null);
+  const [
+    sampleTypeTestIdToGetIdPendingData,
+    setSampleTestTypeToGetPendingData,
+  ] = useState({});
 
   useEffect(() => {
     componentMounted.current = true;
@@ -79,6 +87,36 @@ function BatchTestReassignmentAndCancelation() {
   };
 
   useEffect(() => {
+    const handleBatchTestReassignmentSampleTypeHandle = (res) => {
+      if (!res) {
+        setIsLoading(true);
+      } else {
+        setSampleTypeToGetIdData(res);
+      }
+    };
+
+    getFromOpenElisServer(
+      `/rest/AllTestsForSampleTypeProvider?sampleTypeId=${sampleTypeToGetId}`,
+      handleBatchTestReassignmentSampleTypeHandle,
+    );
+  }, [sampleTypeToGetId]);
+
+  useEffect(() => {
+    const handleBatchTestReassignmentSampleTypeTestHandle = (res) => {
+      if (!res) {
+        setIsLoading(true);
+      } else {
+        setSampleTestTypeToGetPendingData(res);
+      }
+    };
+
+    getFromOpenElisServer(
+      `/rest/getPendingAnalysisForTestProvider?testId=${sampleTypeTestIdToGetIdPending}`,
+      handleBatchTestReassignmentSampleTypeTestHandle,
+    );
+  }, [sampleTypeTestIdToGetIdPending]);
+
+  useEffect(() => {
     if (sampleTypeList) {
       const BatchTestReassignmentInfoToPost = {
         formName: sampleTypeList.formName,
@@ -92,7 +130,11 @@ function BatchTestReassignmentAndCancelation() {
         statusChangedNextTest: sampleTypeList.statusChangedNextTest,
         jsonWad: sampleTypeList.jsonWad,
       };
-      setSampleTypeListShow(sampleTypeList.sampleList);
+      setSampleTypeListShow((prevSampleTypeListShow) => [
+        ...prevSampleTypeListShow,
+        { id: "0", value: "Select SampleType" },
+        ...sampleTypeList.sampleList,
+      ]);
       setSampleTypeListPost(BatchTestReassignmentInfoToPost);
     }
   }, [sampleTypeList]);
@@ -148,6 +190,21 @@ function BatchTestReassignmentAndCancelation() {
     }));
   }
 
+  function handleCheckboxChange(id) {
+    setSaveButton(false);
+    setSampleTypeListPost();
+  }
+
+  function handleSampleTypeListSelectId(e) {
+    setSaveButton(false);
+    setSampleTypeToGetId(e.target.value);
+  }
+
+  function handleSampleTypeListSelectIdTest(e) {
+    setSaveButton(false);
+    setSampleTestTypeToGetPending(e.target.value);
+  }
+
   if (!isLoading) {
     return (
       <>
@@ -193,15 +250,19 @@ function BatchTestReassignmentAndCancelation() {
               <Select
                 id={`selectSampleType`}
                 labelText={intl.formatMessage({ id: "sample.type" })}
-                defaultValue={sampleTypeListShow ? sampleTypeListShow : ""}
-                // onChange={(e) => handleTestSectionsSelectChange(e, key)}
+                defaultValue={sampleTypeListShow ? sampleTypeListShow[0] : ""}
+                onChange={(e) => handleSampleTypeListSelectId(e)}
               >
                 {sampleTypeListShow && sampleTypeListShow.length > 0 ? (
                   sampleTypeListShow.map((section) => (
-                    <SelectItem value={section.id} text={section.value} />
+                    <SelectItem
+                      key={section.id}
+                      value={section.id}
+                      text={section.value}
+                    />
                   ))
                 ) : (
-                  <SelectItem value="" text="No options available" />
+                  <SelectItem key={``} value="" text="No options available" />
                 )}
               </Select>
             </Column>
@@ -224,17 +285,30 @@ function BatchTestReassignmentAndCancelation() {
               />
               <br />
               <Select
-                id={`selectSampleType`}
-                labelText={intl.formatMessage({ id: "sample.type" })}
-                defaultValue={sampleTypeListShow ? sampleTypeListShow : ""}
-                // onChange={(e) => handleTestSectionsSelectChange(e, key)}
+                key={`selectSampleType1`}
+                id={`selectSampleType1`}
+                hideLabel={true}
+                defaultValue={
+                  sampleTypeToGetIdData ? sampleTypeToGetIdData[0] : ""
+                }
+                onChange={(e) => handleSampleTypeListSelectIdTest(e)}
               >
-                {sampleTypeListShow && sampleTypeListShow.length > 0 ? (
-                  sampleTypeListShow.map((section) => (
-                    <SelectItem value={section.id} text={section.value} />
+                {sampleTypeToGetIdData &&
+                sampleTypeToGetIdData.tests &&
+                sampleTypeToGetIdData.tests.length > 0 ? (
+                  sampleTypeToGetIdData.tests.map((section) => (
+                    <SelectItem
+                      key={section.id}
+                      value={section.id}
+                      text={section.name}
+                    />
                   ))
                 ) : (
-                  <SelectItem value="" text="No options available" />
+                  <SelectItem
+                    key="no-option-available-selectSampleType"
+                    value=""
+                    text="No options available"
+                  />
                 )}
               </Select>
             </Column>
@@ -254,17 +328,32 @@ function BatchTestReassignmentAndCancelation() {
               />
               <br />
               <Select
-                id={`selectSampleType`}
-                labelText={intl.formatMessage({ id: "sample.type" })}
-                defaultValue={sampleTypeListShow ? sampleTypeListShow : ""}
-                // onChange={(e) => handleTestSectionsSelectChange(e, key)}
+                key={`selectSampleType0`}
+                id={`selectSampleType0`}
+                hideLabel={true}
+                defaultValue={
+                  sampleTypeToGetIdData && sampleTypeToGetIdData.tests
+                    ? sampleTypeToGetIdData.tests[0]
+                    : ""
+                }
+                onChange={(e) => handleSampleTypeListSelectIdTest(e)}
               >
-                {sampleTypeListShow && sampleTypeListShow.length > 0 ? (
-                  sampleTypeListShow.map((section) => (
-                    <SelectItem value={section.id} text={section.value} />
+                {sampleTypeToGetIdData &&
+                sampleTypeToGetIdData.tests &&
+                sampleTypeToGetIdData.tests.length > 0 ? (
+                  sampleTypeToGetIdData.tests.map((section) => (
+                    <SelectItem
+                      key={section.id}
+                      value={section.id}
+                      text={section.name}
+                    />
                   ))
                 ) : (
-                  <SelectItem value="" text="No options available" />
+                  <SelectItem
+                    key="no-option-available-selectSampleType0"
+                    value=""
+                    text="No options available"
+                  />
                 )}
               </Select>
             </Column>
@@ -291,22 +380,25 @@ function BatchTestReassignmentAndCancelation() {
                 //   handleCheckboxChange(section.roleId);
                 // }}
               />
-              <br />
-            </Column>
-            <Column lg={4} md={2} sm={1}>
-              <FormattedMessage id="label.rejectedByBiologist" />
-              <br />
-              <Checkbox
-                id={`selectAll1`}
-                value={`1`}
-                labelText={intl.formatMessage({
-                  id: "referral.print.selected.patient.reports.selectall.button",
-                })}
-                checked={false}
-                // onChange={() => {
-                //   handleCheckboxChange(section.roleId);
-                // }}
-              />
+              {sampleTypeTestIdToGetIdPendingData &&
+                sampleTypeTestIdToGetIdPendingData.notStarted &&
+                sampleTypeTestIdToGetIdPendingData.notStarted.map(
+                  (item, index) => (
+                    <div key={index}>
+                      <Checkbox
+                        id={`notStartedCheckbox_${index}`}
+                        value={item.id}
+                        labelText={intl.formatMessage({
+                          id: item.labNo,
+                        })}
+                        checked={false}
+                        onChange={() => {
+                          handleCheckboxChange(item.id);
+                        }}
+                      />
+                    </div>
+                  ),
+                )}
               <br />
             </Column>
             <Column lg={4} md={2} sm={1}>
@@ -323,6 +415,60 @@ function BatchTestReassignmentAndCancelation() {
                 //   handleCheckboxChange(section.roleId);
                 // }}
               />
+              {sampleTypeTestIdToGetIdPendingData &&
+                sampleTypeTestIdToGetIdPendingData.technicianRejection &&
+                sampleTypeTestIdToGetIdPendingData.technicianRejection.map(
+                  (item, index) => (
+                    <div key={index}>
+                      <Checkbox
+                        id={`technicianRejectionCheckbox_${index}`}
+                        value={item.id}
+                        labelText={intl.formatMessage({
+                          id: item.labNo,
+                        })}
+                        checked={false}
+                        onChange={() => {
+                          handleCheckboxChange(item.id);
+                        }}
+                      />
+                    </div>
+                  ),
+                )}
+              <br />
+            </Column>
+            <Column lg={4} md={2} sm={1}>
+              <FormattedMessage id="label.rejectedByBiologist" />
+              <br />
+              <Checkbox
+                id={`selectAll1`}
+                value={`1`}
+                labelText={intl.formatMessage({
+                  id: "referral.print.selected.patient.reports.selectall.button",
+                })}
+                checked={false}
+                // onChange={() => {
+                //   handleCheckboxChange(section.roleId);
+                // }}
+              />
+              {sampleTypeTestIdToGetIdPendingData &&
+                sampleTypeTestIdToGetIdPendingData.biologistRejection &&
+                sampleTypeTestIdToGetIdPendingData.biologistRejection.map(
+                  (item, index) => (
+                    <div key={index}>
+                      <Checkbox
+                        id={`biologistRejectionCheckbox_${index}`}
+                        value={item.id}
+                        labelText={intl.formatMessage({
+                          id: item.labNo,
+                        })}
+                        checked={false}
+                        onChange={() => {
+                          handleCheckboxChange(item.id);
+                        }}
+                      />
+                    </div>
+                  ),
+                )}
               <br />
             </Column>
             <Column lg={4} md={2} sm={1}>
@@ -339,6 +485,25 @@ function BatchTestReassignmentAndCancelation() {
                 //   handleCheckboxChange(section.roleId);
                 // }}
               />
+              {sampleTypeTestIdToGetIdPendingData &&
+                sampleTypeTestIdToGetIdPendingData.notValidated &&
+                sampleTypeTestIdToGetIdPendingData.notValidated.map(
+                  (item, index) => (
+                    <div key={index}>
+                      <Checkbox
+                        id={`notValidatedCheckbox_${index}`}
+                        value={item.id}
+                        labelText={intl.formatMessage({
+                          id: item.labNo,
+                        })}
+                        checked={false}
+                        onChange={() => {
+                          handleCheckboxChange(item.id);
+                        }}
+                      />
+                    </div>
+                  ),
+                )}
               <br />
             </Column>
           </Grid>
@@ -366,6 +531,41 @@ function BatchTestReassignmentAndCancelation() {
             </Column>
           </Grid>
         </div>
+        <button
+          onClick={() => {
+            console.log(sampleTypeList.sampleList);
+          }}
+        >
+          sampleTypeList.sampleList
+        </button>
+        <button
+          onClick={() => {
+            console.log(sampleTypeListPost);
+          }}
+        >
+          sampleTypeListPost
+        </button>
+        <button
+          onClick={() => {
+            console.log(sampleTypeToGetId);
+          }}
+        >
+          sampleTypeToGetId
+        </button>
+        <button
+          onClick={() => {
+            console.log(sampleTypeToGetIdData);
+          }}
+        >
+          sampleTypeToGetIdData
+        </button>
+        <button
+          onClick={() => {
+            console.log(sampleTypeTestIdToGetIdPendingData);
+          }}
+        >
+          sampleTypeTestIdToGetIdPendingData
+        </button>
       </div>
     </>
   );
@@ -373,7 +573,8 @@ function BatchTestReassignmentAndCancelation() {
 
 export default injectIntl(BatchTestReassignmentAndCancelation);
 
-// labNumbers rendering according to there type
+// selectAll CheckBox fix needed
+// single labNo selection fix needed
 // SelectAll function fix
 // post call checkup
-// AJAX call handeling
+// defaultValues CONSOLE.error fix values fix
