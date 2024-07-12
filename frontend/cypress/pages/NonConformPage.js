@@ -33,9 +33,41 @@ class NonConform {
     cy.get(".cds--date-picker-input__wrapper > #startDate").type(date);
   }
 
-  submitForm() {
-    cy.get(":nth-child(16) > .cds--btn").click();
+  enterReportingUnit(unit) {
+    cy.get("#reportingUnits").select(unit);
   }
+
+  enterDescription(description) {
+    cy.get('#text-area-1').type(description);
+  
+  }
+  enterSuspectedCause(SuspectedCause) {
+    cy.get('#text-area-2').type(SuspectedCause);
+  
+  }
+  enterCorrectiveAction(correctiveaction) {
+    cy.get('#text-area-3').type(correctiveaction);
+  
+  }
+
+  submitForm() {
+    cy.get(":nth-child(14) > .cds--btn").click();
+  }
+
+  getAndSaveNceNumber() {
+    cy.get(".orderLegendBody > :nth-child(2) > :nth-child(3) > :nth-child(2)")
+      .invoke("text")
+      .then((text) => {
+        cy.readFile("cypress/fixtures/NonConform.json").then((existingData) => {
+          const newData = {
+            ...existingData,
+            NceNumber: text.trim(),
+          };
+          cy.writeFile("cypress/fixtures/NonConform.json", newData);
+        });
+      });
+  }
+  
 }
 
 export default NonConform;
