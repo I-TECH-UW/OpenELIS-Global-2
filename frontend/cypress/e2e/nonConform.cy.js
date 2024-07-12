@@ -5,6 +5,7 @@ import NonConform from "../pages/NonConformPage";
 let homePage = null;
 let loginPage = null;
 let nonConform = null;
+let skipBeforeEach = false;
 
 before("login", () => {
   loginPage = new LoginPage();
@@ -13,8 +14,10 @@ before("login", () => {
 
 describe("Report Non-Conforming Event", function () {
   beforeEach("navigate to Report Non-Conforming Event Page", function () {
-    homePage = loginPage.goToHomePage();
-    nonConform = homePage.goToReportNCE();
+    if (!skipBeforeEach) {
+      homePage = loginPage.goToHomePage();
+      nonConform = homePage.goToReportNCE();
+    }
   });
 
   it("User visits Report Non-Conforming Event Page", function () {
@@ -56,7 +59,7 @@ describe("Report Non-Conforming Event", function () {
     });
   });
 
-  it("Should Search by Lab Number and Submit the NCE Reporting Form", function () {
+  it("Should Search by Lab Number ", function () {
     cy.fixture("EnteredOrder").then((order) => {
       nonConform.selectSearchType("Lab Number");
       nonConform.enterSearchField(order.labNo);
@@ -66,8 +69,17 @@ describe("Report Non-Conforming Event", function () {
       nonConform.clickGoToNceFormButton();
     });
 
+    nonConform.getAndSaveNceNumber();
+  });
+
+  it("Should enter the details and Submit the NCE Reporting Form", function () {
+    skipBeforeEach = true; 
     cy.fixture("NonConform").then((nonConformData) => {
       nonConform.enterStartDate(nonConformData.dateOfEvent);
+      nonConform.enterReportingUnit(nonConformData.reportingUnit);
+      nonConform.enterDescription(nonConformData.description);
+      nonConform.enterSuspectedCause(nonConformData.suspectedCause);
+      nonConform.enterCorrectiveAction(nonConformData.proposedCorrectiveAction);
       nonConform.submitForm();
     });
   });

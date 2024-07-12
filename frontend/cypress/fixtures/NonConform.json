@@ -1,3 +1,8 @@
 {
-  "dateOfEvent": "10/07/2024"
+  "dateOfEvent": "10/07/2024",
+  "reportingUnit": "Serology-Immunology",
+  "description": "Incorrect blood sample test results  recorded",
+  "suspectedCause": "A software bug ",
+  "proposedCorrectiveAction": "Fix the software bug and add validation checks.",
+  "NceNumber": "1720773512939"
 }
