@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
@@ -223,7 +224,7 @@ public class DictionaryRestController extends BaseController {
     private Dictionary setupDictionary(DictionaryForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Dictionary dictionary;
-        if (form.getId() != null && !form.getId().equals("0")) {
+        if (StringUtils.isNotBlank(form.getId()) && !form.getId().equals("0")) {
             dictionary = dictionaryService.get(form.getId());
         } else {
             dictionary = new Dictionary();

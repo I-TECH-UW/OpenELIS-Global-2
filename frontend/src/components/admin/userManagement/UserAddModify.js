@@ -23,12 +23,16 @@ import {
   AlertDialog,
   NotificationKinds,
 } from "../../common/CustomNotification.js";
-import { NotificationContext } from "../../layout/Layout.js";
+import {
+  ConfigurationContext,
+  NotificationContext,
+} from "../../layout/Layout.js";
 import {
   getFromOpenElisServer,
   postToOpenElisServer,
   postToOpenElisServerJsonResponse,
 } from "../../utils/Utils.js";
+import AutoComplete from "../../common/AutoComplete.js";
 
 const breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -42,6 +46,7 @@ const breadcrumbs = [
 function UserAddModify() {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
+  const { configurationProperties } = useContext(ConfigurationContext);
 
   const componentMounted = useRef(false);
   const intl = useIntl();
@@ -53,7 +58,6 @@ function UserAddModify() {
   const [isActive, setIsActive] = useState("radio-6");
   const [copyUserPermission, setCopyUserPermission] = useState("0");
   const [copyUserPermissionList, setCopyUserPermissionList] = useState(null);
-  const [testSectionsSelect, setTestSectionsSelect] = useState("AllLabUnits");
   const [userData, setUserData] = useState(null);
   const [userDataShow, setUserDataShow] = useState({});
   const [userDataPost, setUserDataPost] = useState(null);
@@ -62,6 +66,7 @@ function UserAddModify() {
   );
   const [selectedTestSectionLabUnits, setSelectedTestSectionLabUnits] =
     useState({});
+  const [selectedTestSectionList, setSelectedTestSectionList] = useState([]);
 
   const ID = (() => {
     const hash = window.location.hash;
@@ -84,7 +89,7 @@ function UserAddModify() {
     } else {
       setTimeout(() => {
         window.location.assign("/MasterListsPage#userManagement");
-      }, 1000);
+      }, 200);
     }
     return () => {
       componentMounted.current = false;
@@ -97,6 +102,11 @@ function UserAddModify() {
       setIsLoading(true);
     } else {
       setUserData(res);
+      var KeyList = [];
+      Object.keys(res.selectedTestSectionLabUnits).map((key) =>
+        KeyList.push(key),
+      );
+      setSelectedTestSectionList(KeyList);
     }
   };
 
@@ -228,15 +238,17 @@ function UserAddModify() {
         }));
       }
 
-      if (userData.selectedRoles) {
+      if (userData.selectedRoles !== undefined) {
         if (ID !== "0") {
-          const selectedGlobalLabUniRoles = userData.selectedRoles.map(
+          const selectedGlobalLabUnitRoles = userData.selectedRoles.map(
             (item) => item,
           );
-          setSelectedGlobalLabUnitRoles(selectedGlobalLabUniRoles);
+          setSelectedGlobalLabUnitRoles(selectedGlobalLabUnitRoles);
         } else {
           setSelectedGlobalLabUnitRoles([]);
         }
+      } else {
+        setSelectedGlobalLabUnitRoles([]);
       }
 
       if (userData.selectedTestSectionLabUnits) {
@@ -244,10 +256,11 @@ function UserAddModify() {
           setSelectedTestSectionLabUnits(userData.selectedTestSectionLabUnits);
         } else {
           setSelectedTestSectionLabUnits({});
+          setSelectedTestSectionList([]);
         }
       }
     }
-  }, [userData]);
+  }, [userData, ID]);
 
   useEffect(() => {
     if (userDataShow) {
@@ -258,6 +271,37 @@ function UserAddModify() {
       setIsActive(userDataShow.accountActive === "Y" ? "radio-5" : "radio-6");
     }
   }, [userDataShow]);
+
+  useEffect(() => {
+    if (copyUserPermission) {
+      setUserDataPost((prevUserDataPost) => ({
+        ...prevUserDataPost,
+        systemUserIdToCopy: copyUserPermission,
+        allowCopyUserRoles: "Y",
+      }));
+      setUserDataShow((prevUserData) => ({
+        ...prevUserData,
+        systemUserIdToCopy: copyUserPermission,
+        allowCopyUserRoles: "Y",
+      }));
+      setSaveButton(false);
+    }
+  }, [copyUserPermission]);
+
+  useEffect(() => {
+    if (selectedTestSectionLabUnits) {
+      setUserDataPost((prevUserDataPost) => ({
+        ...prevUserDataPost,
+        selectedTestSectionLabUnits: selectedTestSectionLabUnits,
+      }));
+
+      setUserDataShow((prevUserData) => ({
+        ...prevUserData,
+        selectedTestSectionLabUnits: selectedTestSectionLabUnits,
+      }));
+      setSaveButton(false);
+    }
+  }, [selectedTestSectionLabUnits]);
 
   function userSavePostCall() {
     setIsLoading(true);
@@ -285,7 +329,7 @@ function UserAddModify() {
       setNotificationVisible(true);
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 200);
     } else {
       addNotification({
         kind: NotificationKinds.error,
@@ -295,7 +339,7 @@ function UserAddModify() {
       setNotificationVisible(true);
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 200);
     }
   }
 
@@ -305,7 +349,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       userLoginName: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       userLoginName: e.target.value,
     }));
@@ -317,7 +361,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       userPassword: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       userPassword: e.target.value,
     }));
@@ -329,7 +373,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       confirmPassword: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       confirmPassword: e.target.value,
     }));
@@ -341,7 +385,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       userFirstName: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       userFirstName: e.target.value,
     }));
@@ -353,7 +397,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       userLastName: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       userLastName: e.target.value,
     }));
@@ -365,7 +409,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       expirationDate: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       expirationDate: e.target.value,
     }));
@@ -377,7 +421,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       timeout: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       timeout: e.target.value,
     }));
@@ -389,7 +433,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       accountActive: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       accountActive: e.target.value,
     }));
@@ -401,7 +445,7 @@ function UserAddModify() {
       ...prevUserDataPost,
       accountDisabled: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       accountDisabled: e.target.value,
     }));
@@ -413,46 +457,40 @@ function UserAddModify() {
       ...prevUserDataPost,
       accountLocked: e.target.value,
     }));
-    setUserData((prevUserData) => ({
+    setUserDataShow((prevUserData) => ({
       ...prevUserData,
       accountLocked: e.target.value,
     }));
   }
 
-  function handleCopyUserPermissionsChange(e) {
-    setCopyUserPermission(e.target.value);
+  function handleCopyUserPermissionsChange() {
+    if (copyUserPermission.length > 0) {
+      setSaveButton(false);
+    }
+  }
+
+  function handleAutoCompleteCopyUserPermissionsChange(selectedUserId) {
+    setCopyUserPermission(selectedUserId);
     setSaveButton(false);
   }
 
-  useEffect(() => {
-    setUserDataPost((prevUserDataPost) => ({
-      ...prevUserDataPost,
-      systemUserIdToCopy: copyUserPermission,
-      allowCopyUserRoles: "Y",
-    }));
-    setUserDataShow((prevUserData) => ({
-      ...prevUserData,
-      systemUserIdToCopy: copyUserPermission,
-      allowCopyUserRoles: "Y",
-    }));
-    setUserData((prevUserData) => ({
-      ...prevUserData,
-      systemUserIdToCopy: copyUserPermission,
-      allowCopyUserRoles: "Y",
-    }));
-    setSaveButton(false);
-  }, [copyUserPermission]);
-
   function handleCopyUserPermissionsChangeClick() {
     setSelectedTestSectionLabUnits([]);
+    setSelectedTestSectionList([]);
     userSavePostCall();
   }
 
   function handleCheckboxChange(roleId) {
-    const numberToUpdate = ["71", "72", "73", "11", "2"];
+    const numberToUpdate = userDataShow.globalRoles
+      .filter((role) => role.roleName !== "Global Administrator")
+      .map((role) => role.roleId);
     let updatedRoles = [...selectedGlobalLabUnitRoles];
 
-    if (roleId === "1") {
+    const globalAdminRoleId = userDataShow.globalRoles.find(
+      (role) => role.roleName === "Global Administrator",
+    )?.roleId;
+
+    if (globalAdminRoleId && roleId === globalAdminRoleId) {
       if (selectedGlobalLabUnitRoles.includes(roleId)) {
         updatedRoles = updatedRoles.filter((role) => role !== roleId);
       } else {
@@ -473,8 +511,8 @@ function UserAddModify() {
       ...prevUserDataPost,
       selectedRoles: updatedRoles,
     }));
-    setUserData((prevUserData) => ({
-      ...prevUserData,
+    setUserDataShow((prevUserDataPost) => ({
+      ...prevUserDataPost,
       selectedRoles: updatedRoles,
     }));
     setSaveButton(false);
@@ -482,6 +520,12 @@ function UserAddModify() {
 
   function handleTestSectionsSelectChange(e, key) {
     const selectedValue = e.target.value;
+    const index = selectedTestSectionList.indexOf(key);
+    if (index != -1) {
+      const testSectionList = [...selectedTestSectionList];
+      testSectionList[index] = selectedValue;
+      setSelectedTestSectionList(testSectionList);
+    }
 
     if (Object.keys(selectedTestSectionLabUnits).includes(selectedValue)) {
       alert(`Section ${selectedValue} is already selected.`);
@@ -504,8 +548,6 @@ function UserAddModify() {
     }
 
     setSelectedTestSectionLabUnits(updatedTestSectionLabUnits);
-
-    setTestSectionsSelect(selectedValue);
     setSaveButton(false);
   }
 
@@ -535,18 +577,20 @@ function UserAddModify() {
   };
 
   const addNewSection = () => {
-    const newIds = userDataShow.testSections
-      .filter(
-        (section) =>
-          !Object.keys(selectedTestSectionLabUnits).includes(section.id),
-      )
-      .map((section) => section.id);
+    const newSectionsToAdd = userDataShow.testSections.filter(
+      (section) =>
+        !Object.keys(selectedTestSectionLabUnits).includes(section.id),
+    );
 
-    if (newIds.length > 0) {
+    if (newSectionsToAdd.length > 0) {
+      const nextSectionToAdd = newSectionsToAdd[0];
       setSelectedTestSectionLabUnits((prev) => ({
         ...prev,
-        [newIds[0]]: [],
+        [nextSectionToAdd.id]: [],
       }));
+      const testSectionList = [...selectedTestSectionList];
+      testSectionList.push(nextSectionToAdd.id);
+      setSelectedTestSectionList(testSectionList);
     }
   };
 
@@ -554,26 +598,13 @@ function UserAddModify() {
     const updatedSections = { ...selectedTestSectionLabUnits };
     delete updatedSections[keyToRemove];
     setSelectedTestSectionLabUnits(updatedSections);
-  };
-
-  useEffect(() => {
-    if (selectedTestSectionLabUnits) {
-      setUserDataPost((prevUserDataPost) => ({
-        ...prevUserDataPost,
-        selectedTestSectionLabUnits: selectedTestSectionLabUnits,
-      }));
-
-      setUserDataShow((prevUserData) => ({
-        ...prevUserData,
-        selectedTestSectionLabUnits: selectedTestSectionLabUnits,
-      }));
-
-      setUserData((prevUserData) => ({
-        ...prevUserData,
-        selectedTestSectionLabUnits: selectedTestSectionLabUnits,
-      }));
+    const index = selectedTestSectionList.indexOf(keyToRemove);
+    if (index != -1) {
+      const testSectionList = [...selectedTestSectionList];
+      testSectionList.splice(index, 1);
+      setSelectedTestSectionList(testSectionList);
     }
-  }, [selectedTestSectionLabUnits]);
+  };
 
   if (!isLoading) {
     return (
@@ -629,8 +660,8 @@ function UserAddModify() {
                       })}
                       required={true}
                       value={
-                        userData && userData.userLoginName
-                          ? userData.userLoginName
+                        userDataShow && userDataShow.userLoginName
+                          ? userDataShow.userLoginName
                           : ""
                       }
                       onChange={(e) => handleUserLoginNameChange(e)}
@@ -684,8 +715,8 @@ function UserAddModify() {
                       // invalid={errors.order && touched.order}
                       // invalidText={errors.order}
                       value={
-                        userData && userData.userPassword
-                          ? userData.userPassword
+                        userDataShow && userDataShow.userPassword
+                          ? userDataShow.userPassword
                           : ""
                       }
                       onChange={(e) => handleUserPasswordChange(e)}
@@ -712,8 +743,8 @@ function UserAddModify() {
                       // invalid={errors.order && touched.order}
                       // invalidText={errors.order}
                       value={
-                        userData && userData.confirmPassword
-                          ? userData.confirmPassword
+                        userDataShow && userDataShow.confirmPassword
+                          ? userDataShow.confirmPassword
                           : ""
                       }
                       onChange={(e) => handleConfirmPasswordChange(e)}
@@ -742,8 +773,8 @@ function UserAddModify() {
                       // invalid={errors.order && touched.order}
                       // invalidText={errors.order}
                       value={
-                        userData && userData.userFirstName
-                          ? userData.userFirstName
+                        userDataShow && userDataShow.userFirstName
+                          ? userDataShow.userFirstName
                           : ""
                       }
                       onChange={(e) => handleUserFirstNameChange(e)}
@@ -770,8 +801,8 @@ function UserAddModify() {
                       // invalid={errors.order && touched.order}
                       // invalidText={errors.order}
                       value={
-                        userData && userData.userLastName
-                          ? userData.userLastName
+                        userDataShow && userDataShow.userLastName
+                          ? userDataShow.userLastName
                           : ""
                       }
                       onChange={(e) => handleUserLastNameChange(e)}
@@ -798,8 +829,8 @@ function UserAddModify() {
                       // invalid={errors.order && touched.order}
                       // invalidText={errors.order}
                       value={
-                        userData && userData.expirationDate
-                          ? userData.expirationDate
+                        userDataShow && userDataShow.expirationDate
+                          ? userDataShow.expirationDate
                           : ""
                       }
                       onChange={(e) => handleExpirationDateChange(e)}
@@ -826,7 +857,9 @@ function UserAddModify() {
                       // invalid={errors.order && touched.order}
                       // invalidText={errors.order}
                       value={
-                        userData && userData.timeout ? userData.timeout : ""
+                        userDataShow && userDataShow.timeout
+                          ? userDataShow.timeout
+                          : ""
                       }
                       onChange={(e) => handleTimeoutChange(e)}
                     />
@@ -972,35 +1005,24 @@ function UserAddModify() {
                     </>
                   </Column>
                   <Column lg={8} md={4} sm={4}>
-                    <Select
+                    <AutoComplete
+                      name="copy-permissions"
                       id="copy-permissions"
-                      noLabel={true}
-                      defaultValue={
-                        copyUserPermissionList &&
-                        copyUserPermissionList.length > 0
-                          ? copyUserPermissionList[0].id
-                          : ""
+                      allowFreeText={
+                        !(
+                          configurationProperties.restrictFreeTextProviderEntry ===
+                          "true"
+                        )
                       }
-                      onChange={(e) => handleCopyUserPermissionsChange(e)}
-                    >
-                      <SelectItem key="0" value="0" text="Select User..." />
-                      {copyUserPermissionList &&
-                      copyUserPermissionList.length > 0 ? (
-                        copyUserPermissionList.map((section) => (
-                          <SelectItem
-                            key={section.id}
-                            value={section.id}
-                            text={section.value}
-                          />
-                        ))
-                      ) : (
-                        <SelectItem
-                          key=""
-                          value=""
-                          text="No options available"
-                        />
-                      )}
-                    </Select>
+                      onChange={handleCopyUserPermissionsChange}
+                      onSelect={handleAutoCompleteCopyUserPermissionsChange}
+                      suggestions={
+                        copyUserPermissionList?.length > 0
+                          ? copyUserPermissionList
+                          : []
+                      }
+                      required
+                    />
                   </Column>
                   <br />
                   <Button
@@ -1039,7 +1061,7 @@ function UserAddModify() {
                         ))
                       ) : (
                         <Checkbox
-                          id="no-options"
+                          id="no-options-global-roles"
                           value=""
                           labelText="No options available"
                         />
@@ -1055,13 +1077,13 @@ function UserAddModify() {
                 </Grid>
                 <br />
                 <>
-                  {Object.keys(selectedTestSectionLabUnits).map((key) => (
+                  {selectedTestSectionList.map((key) => (
                     <Grid
                       fullWidth={true}
                       key={key}
                       style={{ paddingBottom: "10px" }}
                     >
-                      <Column lg={8} md={4} sm={4}>
+                      <Column lg={4} md={4} sm={4}>
                         <Select
                           id={`select-${key}`}
                           noLabel={true}
@@ -1097,7 +1119,7 @@ function UserAddModify() {
                               ))
                           ) : (
                             <SelectItem
-                              key=""
+                              key="no-option-test-section"
                               value=""
                               text="No options available"
                             />
@@ -1177,12 +1199,14 @@ function UserAddModify() {
                             ))
                           ) : (
                             <Checkbox
-                              id={`no-options-${key}`}
+                              id="no-options-lab-units"
                               value=""
                               labelText="No options available"
                             />
                           )}
                         </FormGroup>
+                      </Column>
+                      <Column lg={4} md={4} sm={4}>
                         <Button
                           onClick={() => removeSection(key)}
                           kind="tertiary"
@@ -1229,69 +1253,6 @@ function UserAddModify() {
             </Column>
           </Grid>
         </div>
-        <button
-          onClick={() => {
-            console.error(userData);
-          }}
-        >
-          userData
-        </button>
-        <button
-          onClick={() => {
-            console.error(userDataShow);
-          }}
-        >
-          userDataShow
-        </button>
-        <button
-          onClick={() => {
-            console.error(userDataShow.testSections);
-          }}
-        >
-          userDataShow.testSections
-        </button>
-        <button
-          onClick={() => {
-            console.error(selectedGlobalLabUnitRoles);
-          }}
-        >
-          selectedGlobalLabUniRoles
-        </button>
-        <button
-          onClick={() => {
-            console.error(selectedTestSectionLabUnits);
-          }}
-        >
-          selectedTestSectionLabUnits
-        </button>
-        <button
-          onClick={() => {
-            console.error(userDataPost);
-          }}
-        >
-          userDataPost
-        </button>
-        <button
-          onClick={() => {
-            console.error(copyUserPermissionList);
-          }}
-        >
-          copyPermissionUserList
-        </button>
-        <button
-          onClick={() => {
-            console.error(copyUserPermission);
-          }}
-        >
-          copyPermissionUser
-        </button>
-        <button
-          onClick={() => {
-            console.error(testSectionsSelect);
-          }}
-        >
-          testSectionsSelect
-        </button>
       </div>
     </>
   );

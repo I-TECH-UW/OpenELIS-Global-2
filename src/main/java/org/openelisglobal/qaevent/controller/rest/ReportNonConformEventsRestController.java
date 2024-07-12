@@ -69,7 +69,7 @@ public class ReportNonConformEventsRestController {
                 searchResults = sample != null ? List.of(sample) : List.of();
             } else {
                 List<PatientSearchResults> results = searchResultsService.getSearchResults(lastName, firstName,
-                        STNumber, "", "", "", "", "", "", "");
+                        STNumber, STNumber, STNumber, "", "", "", "", "");
                 searchResults = results.stream()
                         .flatMap(patientSearchResults -> sampleService
                                 .getSamplesForPatient(patientSearchResults.getPatientID()).stream())
@@ -77,7 +77,7 @@ public class ReportNonConformEventsRestController {
             }
 
             if (searchResults.isEmpty()) {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.ok().body(new ArrayList<>());
             } else {
                 List<NceSampleInfo> temp = new ArrayList<>();
                 for (Sample sample : searchResults) {
