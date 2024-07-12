@@ -70,6 +70,7 @@ import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceServiceImpl.FhirOperations;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
@@ -113,7 +114,6 @@ import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
@@ -165,8 +165,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Autowired
     private OrganizationService organizationService;
     @Autowired
-    @Qualifier("clientRegistryFhirClient")
-    private IGenericClient crClient;
+    private FhirUtil fhirUtil;
 
     private String ADDRESS_PART_VILLAGE_ID;
     private String ADDRESS_PART_COMMUNE_ID;
@@ -387,13 +386,12 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         this.addToOperations(fhirOperations, tempIdGenerator, patient);
 
         try {
-            if (patientInfo.getPatientUpdateStatus() == IPatientUpdate.PatientUpdateStatus.UPDATE) {
-                crClient.update().resource(patient).execute();
-            } else {
-                crClient.create().resource(patient).execute();
-            }
+            IGenericClient crClient = fhirUtil.getCRFhirClient();
+            crClient.create().resource(patient).execute();
         } catch (FhirClientConnectionException e) {
             handleException(e, patientInfo.getPatientUpdateStatus());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
         Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
