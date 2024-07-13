@@ -71,8 +71,6 @@ public class FhirUtil implements FhirClientFetcher {
                         && !fhirConfig.getClientRegistryPassword().isEmpty()
                         && !fhirConfig.getClientRegistryServerUrl().isEmpty()) {
                     logger.info("CR Server - Url: {}", fhirConfig.getClientRegistryServerUrl());
-                    logger.info("CR Server - Username : {}", fhirConfig.getClientRegistryUserName());
-                    logger.info("CR Server - Password: {}", fhirConfig.getClientRegistryPassword());
 
                     BasicAuthInterceptor authInterceptor = new BasicAuthInterceptor(
                             fhirConfig.getClientRegistryUserName(), fhirConfig.getClientRegistryPassword());
