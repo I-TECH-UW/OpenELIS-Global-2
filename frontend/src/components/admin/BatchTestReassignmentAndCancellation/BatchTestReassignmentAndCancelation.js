@@ -16,6 +16,7 @@ import {
   PasswordInput,
   Checkbox,
   FormGroup,
+  Tag,
 } from "@carbon/react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
@@ -53,9 +54,11 @@ function BatchTestReassignmentAndCancelation() {
 
   const [saveButton, setSaveButton] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
-  const [sampleTypeList, setSampleTypeList] = useState(null);
+  const [currentTest, setCurrentTest] = useState(true);
+  const [replaceWith, setReplaceWith] = useState(false);
+  const [batchTestGet, setBatchTestGet] = useState(null);
+  const [batchTestPost, setBatchTestPost] = useState(null);
   const [sampleTypeListShow, setSampleTypeListShow] = useState([]);
-  const [sampleTypeListPost, setSampleTypeListPost] = useState(null);
   const [sampleTypeToGetId, setSampleTypeToGetId] = useState(null);
   const [sampleTypeToGetIdData, setSampleTypeToGetIdData] = useState([]);
   const [sampleTypeTestIdToGetIdPending, setSampleTestTypeToGetPending] =
@@ -64,6 +67,10 @@ function BatchTestReassignmentAndCancelation() {
     sampleTypeTestIdToGetIdPendingData,
     setSampleTestTypeToGetPendingData,
   ] = useState({});
+  const [sampleTestTypeToGetTagList, setSampleTestTypeToGetTagList] = useState(
+    [],
+  );
+  const [jsonWad, setJsonWad] = useState({});
 
   useEffect(() => {
     componentMounted.current = true;
@@ -82,7 +89,7 @@ function BatchTestReassignmentAndCancelation() {
     if (!res) {
       setIsLoading(true);
     } else {
-      setSampleTypeList(res);
+      setBatchTestGet(res);
     }
   };
 
@@ -117,33 +124,33 @@ function BatchTestReassignmentAndCancelation() {
   }, [sampleTypeTestIdToGetIdPending]);
 
   useEffect(() => {
-    if (sampleTypeList) {
+    if (batchTestGet) {
       const BatchTestReassignmentInfoToPost = {
-        formName: sampleTypeList.formName,
-        formMethod: sampleTypeList.formMethod,
-        cancelAction: sampleTypeList.cancelAction,
-        submitOnCancel: sampleTypeList.submitOnCancel,
-        cancelMethod: sampleTypeList.cancelMethod,
-        sampleList: sampleTypeList.sampleList,
-        statusChangedSampleType: sampleTypeList.statusChangedSampleType,
-        statusChangedCurrentTest: sampleTypeList.statusChangedCurrentTest,
-        statusChangedNextTest: sampleTypeList.statusChangedNextTest,
-        jsonWad: sampleTypeList.jsonWad,
+        formName: batchTestGet.formName,
+        formMethod: batchTestGet.formMethod,
+        cancelAction: batchTestGet.cancelAction,
+        submitOnCancel: batchTestGet.submitOnCancel,
+        cancelMethod: batchTestGet.cancelMethod,
+        sampleList: batchTestGet.sampleList,
+        statusChangedSampleType: batchTestGet.statusChangedSampleType,
+        statusChangedCurrentTest: batchTestGet.statusChangedCurrentTest,
+        statusChangedNextTest: batchTestGet.statusChangedNextTest,
+        jsonWad: batchTestGet.jsonWad,
       };
+      setBatchTestPost(BatchTestReassignmentInfoToPost);
       setSampleTypeListShow((prevSampleTypeListShow) => [
         ...prevSampleTypeListShow,
         { id: "0", value: "Select SampleType" },
-        ...sampleTypeList.sampleList,
+        ...batchTestGet.sampleList,
       ]);
-      setSampleTypeListPost(BatchTestReassignmentInfoToPost);
     }
-  }, [sampleTypeList]);
+  }, [batchTestGet]);
 
   function batchTestReassignmentPostCall() {
     setIsLoading(true);
     postToOpenElisServerJsonResponse(
       `/rest/BatchTestReassignment`,
-      JSON.stringify(sampleTypeListPost),
+      JSON.stringify(batchTestPost),
       (res) => {
         sampleTypeListPostCallback(res);
       },
@@ -179,30 +186,57 @@ function BatchTestReassignmentAndCancelation() {
     }
   }
 
-  function handleStatusChange(e) {
+  function handleCheckboxChange(id, index) {
     setSaveButton(false);
-    setSampleTypeListPost((prevUserDataPost) => ({
-      ...prevUserDataPost,
-      statusChangedSampleType: e.target.value,
-      statusChangedCurrentTest: e.target.value,
-      statusChangedNextTest: e.target.value,
-      jsonWad: e.target.value,
-    }));
-  }
-
-  function handleCheckboxChange(id) {
-    setSaveButton(false);
-    setSampleTypeListPost();
+    setJsonWad({});
   }
 
   function handleSampleTypeListSelectId(e) {
     setSaveButton(false);
     setSampleTypeToGetId(e.target.value);
+    setBatchTestPost((prevUserDataPost) => ({
+      ...prevUserDataPost,
+      statusChangedSampleType: e.target.value,
+    }));
   }
 
   function handleSampleTypeListSelectIdTest(e) {
     setSaveButton(false);
     setSampleTestTypeToGetPending(e.target.value);
+    setBatchTestPost((prevUserDataPost) => ({
+      ...prevUserDataPost,
+      statusChangedCurrentTest: e.target.value,
+    }));
+  }
+
+  const handleSampleTypeListSelectIdTestTag = (e) => {
+    const selectedTestId = e.target.value;
+    const testName = e.target.options[e.target.selectedIndex].text;
+
+    const existingIndex = sampleTestTypeToGetTagList.findIndex(
+      (item) => item.id === selectedTestId,
+    );
+
+    if (existingIndex !== -1) {
+      const updatedList = [...sampleTestTypeToGetTagList];
+      updatedList.splice(existingIndex, 1);
+      setSampleTestTypeToGetTagList(updatedList);
+    } else {
+      const selectedTest = {
+        id: selectedTestId,
+        name: testName,
+      };
+      setSampleTestTypeToGetTagList([
+        ...sampleTestTypeToGetTagList,
+        selectedTest,
+      ]);
+    }
+  };
+
+  function handleRemoveSampleTypeListSelectIdTestTag(indexToRemove) {
+    setSampleTestTypeToGetTagList((prevTags) =>
+      prevTags.filter((_, index) => index !== indexToRemove),
+    );
   }
 
   if (!isLoading) {
@@ -278,10 +312,10 @@ function BatchTestReassignmentAndCancelation() {
                 labelText={intl.formatMessage({
                   id: "label.includeInactiveTests",
                 })}
-                checked={true}
-                // onChange={() => {
-                //   handleCheckboxChange(section.roleId);
-                // }}
+                checked={currentTest}
+                onChange={() => {
+                  setCurrentTest(!currentTest);
+                }}
               />
               <br />
               <Select
@@ -321,10 +355,10 @@ function BatchTestReassignmentAndCancelation() {
                 labelText={intl.formatMessage({
                   id: "label.cancel.test.no.replace",
                 })}
-                checked={false}
-                // onChange={() => {
-                //   handleCheckboxChange(section.roleId);
-                // }}
+                checked={replaceWith}
+                onChange={() => {
+                  setReplaceWith(!replaceWith);
+                }}
               />
               <br />
               <Select
@@ -336,7 +370,8 @@ function BatchTestReassignmentAndCancelation() {
                     ? sampleTypeToGetIdData.tests[0]
                     : ""
                 }
-                onChange={(e) => handleSampleTypeListSelectIdTest(e)}
+                disabled={replaceWith}
+                onChange={(e) => handleSampleTypeListSelectIdTestTag(e)}
               >
                 {sampleTypeToGetIdData &&
                 sampleTypeToGetIdData.tests &&
@@ -356,6 +391,31 @@ function BatchTestReassignmentAndCancelation() {
                   />
                 )}
               </Select>
+              <div
+                className={"searchTestText"}
+                style={{ marginBottom: "1.188rem" }}
+              >
+                {sampleTestTypeToGetTagList &&
+                sampleTestTypeToGetTagList.length ? (
+                  <>
+                    {sampleTestTypeToGetTagList.map((section, index) => (
+                      <Tag
+                        filter
+                        key={`testTags_` + index}
+                        onClose={() =>
+                          handleRemoveSampleTypeListSelectIdTestTag(index)
+                        }
+                        style={{ marginRight: "0.5rem" }}
+                        type={"red"}
+                      >
+                        {section.name}
+                      </Tag>
+                    ))}
+                  </>
+                ) : (
+                  <></>
+                )}
+              </div>
             </Column>
           </Grid>
           <br />
@@ -393,7 +453,7 @@ function BatchTestReassignmentAndCancelation() {
                         })}
                         checked={false}
                         onChange={() => {
-                          handleCheckboxChange(item.id);
+                          handleCheckboxChange(item.id, index);
                         }}
                       />
                     </div>
@@ -428,7 +488,7 @@ function BatchTestReassignmentAndCancelation() {
                         })}
                         checked={false}
                         onChange={() => {
-                          handleCheckboxChange(item.id);
+                          handleCheckboxChange(item.id, index);
                         }}
                       />
                     </div>
@@ -463,7 +523,7 @@ function BatchTestReassignmentAndCancelation() {
                         })}
                         checked={false}
                         onChange={() => {
-                          handleCheckboxChange(item.id);
+                          handleCheckboxChange(item.id, index);
                         }}
                       />
                     </div>
@@ -498,7 +558,7 @@ function BatchTestReassignmentAndCancelation() {
                         })}
                         checked={false}
                         onChange={() => {
-                          handleCheckboxChange(item.id);
+                          handleCheckboxChange(item.id, index);
                         }}
                       />
                     </div>
@@ -533,17 +593,17 @@ function BatchTestReassignmentAndCancelation() {
         </div>
         <button
           onClick={() => {
-            console.log(sampleTypeList.sampleList);
+            console.log(batchTestGet.sampleList);
           }}
         >
-          sampleTypeList.sampleList
+          batchTestGet.sampleList
         </button>
         <button
           onClick={() => {
-            console.log(sampleTypeListPost);
+            console.log(batchTestPost);
           }}
         >
-          sampleTypeListPost
+          batchTestPost
         </button>
         <button
           onClick={() => {
@@ -566,6 +626,13 @@ function BatchTestReassignmentAndCancelation() {
         >
           sampleTypeTestIdToGetIdPendingData
         </button>
+        <button
+          onClick={() => {
+            console.log(jsonWad);
+          }}
+        >
+          jsonWad
+        </button>
       </div>
     </>
   );
@@ -577,4 +644,4 @@ export default injectIntl(BatchTestReassignmentAndCancelation);
 // single labNo selection fix needed
 // SelectAll function fix
 // post call checkup
-// defaultValues CONSOLE.error fix values fix
+// multi-select need to implement
