@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -545,9 +546,19 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     private List<ContactPoint> transformToTelecom(Person person) {
         List<ContactPoint> contactPoints = new ArrayList<>();
-        contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.PHONE).setValue(person.getPrimaryPhone()));
-        contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.EMAIL).setValue(person.getEmail()));
-        contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.FAX).setValue(person.getFax()));
+        if (person.getPrimaryPhone() != null) {
+            contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.PHONE).setValue(person.getPrimaryPhone())
+                    .setUse(ContactPointUse.MOBILE));
+        }
+
+        if (person.getEmail() != null) {
+            contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.EMAIL).setValue(person.getEmail()));
+        }
+
+        if (person.getFax() != null) {
+            contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.FAX).setValue(person.getFax()));
+        }
+
         return contactPoints;
     }
 
@@ -650,6 +661,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         humanName.addGiven(patient.getPerson().getFirstName());
         humanNameList.add(humanName);
         fhirPatient.setName(humanNameList);
+        fhirPatient.getNameFirstRep().setUse(HumanName.NameUse.OFFICIAL);
 
         try {
             if (patient.getBirthDateForDisplay() != null) {
@@ -1349,8 +1361,15 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Override
     public Identifier createIdentifier(String system, String value) {
         Identifier identifier = new Identifier();
-        identifier.setSystem(system);
         identifier.setValue(value);
+
+        if (Objects.equals(system, fhirConfig.getOeFhirSystem() + "/pat_nationalId")) {
+            identifier.setUse(Identifier.IdentifierUse.OFFICIAL);
+        } else {
+            identifier.setUse(Identifier.IdentifierUse.USUAL);
+        }
+
+        identifier.setSystem(system);
         return identifier;
     }
 
