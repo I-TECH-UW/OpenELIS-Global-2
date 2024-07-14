@@ -379,7 +379,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Override
     @Async
     @Transactional(readOnly = true)
-    public void transformPersistPatient(PatientManagementInfo patientInfo, boolean isCreate) throws FhirLocalPersistingException {
+    public void transformPersistPatient(PatientManagementInfo patientInfo, boolean isCreate)
+            throws FhirLocalPersistingException {
         CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
         FhirOperations fhirOperations = new FhirOperations();
         org.hl7.fhir.r4.model.Patient patient = transformToFhirPatient(patientInfo.getPatientPK());
@@ -400,7 +401,6 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
         fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
     }
-
 
     @Transactional
     @Async
