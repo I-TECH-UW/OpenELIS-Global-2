@@ -51,7 +51,7 @@ public class FhirConfig {
 
     @Bean
     public FhirContext fhirContext() {
-        FhirContext fhirContext = new FhirContext(FhirVersionEnum.R4);
+       FhirContext fhirContext = FhirContext.forR4();
         configureFhirHttpClient(fhirContext);
         return fhirContext;
     }

@@ -123,7 +123,8 @@ public class PatientManagementController extends BaseController {
             }
             try {
                 patientService.persistPatientData(patientInfo, patient, getSysUserId(request));
-                fhirTransformService.transformPersistPatient(patientInfo);
+                // Determine if it's a create or update operation
+                fhirTransformService.transformPersistPatient(patientInfo, (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD));
             } catch (LIMSRuntimeException e) {
 
                 if (e.getCause() instanceof StaleObjectStateException) {
