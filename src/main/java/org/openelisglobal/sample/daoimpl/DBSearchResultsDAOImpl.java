@@ -321,57 +321,29 @@ public class DBSearchResultsDAOImpl implements SearchResultsDAO {
         queryBuilder.append(ID_TYPE_FOR_GUID);
         queryBuilder.append(" where ");
 
-        if (anyID) {
-            queryBuilder.append(" ( false or ");
-            if (subjectNumber) {
-                queryBuilder.append(" piSN.identity_data ilike :");
-                queryBuilder.append(SUBJECT_NUMBER_PARAM);
-                queryBuilder.append(" or");
-            }
+        queryBuilder.append(" ( false or ");
+        if (subjectNumber) {
+            queryBuilder.append(" piSN.identity_data ilike :");
+            queryBuilder.append(SUBJECT_NUMBER_PARAM);
+            queryBuilder.append(" or");
+        }
 
-            if (nationalID) {
-                queryBuilder.append(" p.national_id ilike :");
-                queryBuilder.append(NATIONAL_ID_PARAM);
-                queryBuilder.append(" or");
-            }
+        if (nationalID) {
+            queryBuilder.append(" p.national_id ilike :");
+            queryBuilder.append(NATIONAL_ID_PARAM);
+            queryBuilder.append(" or");
+        }
 
-            if (externalID) {
-                queryBuilder.append(" p.external_id ilike :");
-                queryBuilder.append(EXTERNAL_ID_PARAM);
-                queryBuilder.append(" or");
-            }
+        if (externalID) {
+            queryBuilder.append(" p.external_id ilike :");
+            queryBuilder.append(EXTERNAL_ID_PARAM);
+            queryBuilder.append(" or");
+        }
 
-            if (STNumber) {
-                queryBuilder.append(" pi.identity_data ilike :");
-                queryBuilder.append(ST_NUMBER_PARAM);
-                queryBuilder.append(" and");
-            }
-
-        } else {
-            queryBuilder.append(" ( false or ");
-            if (subjectNumber) {
-                queryBuilder.append(" piSN.identity_data ilike :");
-                queryBuilder.append(SUBJECT_NUMBER_PARAM);
-                queryBuilder.append(" or");
-            }
-
-            if (nationalID) {
-                queryBuilder.append(" p.national_id ilike :");
-                queryBuilder.append(NATIONAL_ID_PARAM);
-                queryBuilder.append(" or");
-            }
-
-            if (externalID) {
-                queryBuilder.append(" p.external_id ilike :");
-                queryBuilder.append(EXTERNAL_ID_PARAM);
-                queryBuilder.append(" or");
-            }
-
-            if (STNumber) {
-                queryBuilder.append(" pi.identity_data ilike :");
-                queryBuilder.append(ST_NUMBER_PARAM);
-                queryBuilder.append(" and");
-            }
+        if (STNumber) {
+            queryBuilder.append(" pi.identity_data ilike :");
+            queryBuilder.append(ST_NUMBER_PARAM);
+            queryBuilder.append(" and");
         }
 
         // Need to close paren before dangling AND/OR.
