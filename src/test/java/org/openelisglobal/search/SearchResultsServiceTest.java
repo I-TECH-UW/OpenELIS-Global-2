@@ -99,12 +99,18 @@ public class SearchResultsServiceTest extends BaseWebContextSensitiveTest {
         Patient pat = createPatient(firstName, lastname, dob, gender);
         String patientId = patientService.insert(pat);
 
-        List<PatientSearchResults> searchResults = luceneSearchResultsServiceImpl.getSearchResults(lastname, firstName,
-                null, null, null, null, null, null, dob, gender);
+        String searchFirstName = "Johm";
+        String searchLastName = "Doee";
 
-        // The search results are currently expected to be empty because the method has
-        // not been implemented yet
-        Assert.assertEquals(0, searchResults.size());
+        List<PatientSearchResults> searchResults = luceneSearchResultsServiceImpl.getSearchResults(searchLastName,
+                searchFirstName, null, null, null, null, null, null, dob, gender);
+
+        Assert.assertEquals(1, searchResults.size());
+        PatientSearchResults result = searchResults.get(0);
+        Assert.assertEquals(patientId, result.getPatientID());
+        Assert.assertEquals(firstName, result.getFirstName());
+        Assert.assertEquals(lastname, result.getLastName());
+        Assert.assertEquals(dob, result.getBirthdate());
     }
 
     @Test
@@ -119,9 +125,12 @@ public class SearchResultsServiceTest extends BaseWebContextSensitiveTest {
         List<PatientSearchResults> searchResults = luceneSearchResultsServiceImpl.getSearchResultsExact(lastname,
                 firstName, null, null, null, null, null, null, dob, gender);
 
-        // The search results are currently expected to be empty because the method has
-        // not been implemented yet
-        Assert.assertEquals(0, searchResults.size());
+        Assert.assertEquals(1, searchResults.size());
+        PatientSearchResults result = searchResults.get(0);
+        Assert.assertEquals(patientId, result.getPatientID());
+        Assert.assertEquals(firstName, result.getFirstName());
+        Assert.assertEquals(lastname, result.getLastName());
+        Assert.assertEquals(dob, result.getBirthdate());
     }
 
     private Patient createPatient(String firstName, String LastName, String birthDate, String gender)
