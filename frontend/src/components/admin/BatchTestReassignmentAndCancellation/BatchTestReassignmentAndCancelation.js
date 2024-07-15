@@ -77,14 +77,15 @@ function BatchTestReassignmentAndCancelation() {
     current: "",
     sampleType: "",
     changeNotStarted: [],
-    noChangeNotStarted: [],
     changeTechReject: [],
-    noChangeTechReject: [],
     changeBioReject: [],
-    noChangeBioReject: [],
     changeNotValidated: [],
+    noChangeNotStarted: [],
+    noChangeTechReject: [],
+    noChangeBioReject: [],
     noChangeNotValidated: [],
   });
+  const [changesToShow, setChangesToShow] = useState(false);
 
   useEffect(() => {
     componentMounted.current = true;
@@ -158,35 +159,19 @@ function BatchTestReassignmentAndCancelation() {
       setJsonWad((prevJsonWad) => ({
         ...prevJsonWad,
         changeNotStarted: notStarted ? notStarted.map((item) => item.id) : [],
-        noChangeNotStarted: notStarted
-          ? sampleTypeTestIdToGetIdPendingData.notStarted
-              .filter((item) => !item.checked)
-              .map((item) => item.id)
-          : [],
+        noChangeNotStarted: [],
         changeTechReject: technicianRejection
           ? technicianRejection.map((item) => item.id)
           : [],
-        noChangeTechReject: technicianRejection
-          ? sampleTypeTestIdToGetIdPendingData.technicianRejection
-              .filter((item) => !item.checked)
-              .map((item) => item.id)
-          : [],
+        noChangeTechReject: [],
         changeBioReject: biologistRejection
           ? biologistRejection.map((item) => item.id)
           : [],
-        noChangeBioReject: biologistRejection
-          ? sampleTypeTestIdToGetIdPendingData.biologistRejection
-              .filter((item) => !item.checked)
-              .map((item) => item.id)
-          : [],
+        noChangeBioReject: [],
         changeNotValidated: notValidated
           ? notValidated.map((item) => item.id)
           : [],
-        noChangeNotValidated: notValidated
-          ? sampleTypeTestIdToGetIdPendingData.notValidated
-              .filter((item) => !item.checked)
-              .map((item) => item.id)
-          : [],
+        noChangeNotValidated: [],
       }));
     }
   }, [sampleTypeTestIdToGetIdPendingData]);
@@ -258,21 +243,30 @@ function BatchTestReassignmentAndCancelation() {
   };
 
   const handleSelectAll = (sectionKey) => {
-    let allIds = sampleTypeTestIdToGetIdPendingData[sectionKey].map(
+    const sectionMap = {
+      bioReject: "biologistRejection",
+      techReject: "technicianRejection",
+    };
+
+    const fullSectionKey = sectionMap[sectionKey] || sectionKey;
+    const allIds = sampleTypeTestIdToGetIdPendingData[fullSectionKey].map(
       (item) => item.id,
     );
-    if (
+    const isAllChecked =
       jsonWad[`change${capitalizeFirstLetter(sectionKey)}`].length ===
-      allIds.length
-    ) {
+      allIds.length;
+
+    if (isAllChecked) {
       setJsonWad((prevJsonWad) => ({
         ...prevJsonWad,
+        [`noChange${capitalizeFirstLetter(sectionKey)}`]: allIds,
         [`change${capitalizeFirstLetter(sectionKey)}`]: [],
       }));
     } else {
       setJsonWad((prevJsonWad) => ({
         ...prevJsonWad,
         [`change${capitalizeFirstLetter(sectionKey)}`]: allIds,
+        [`noChange${capitalizeFirstLetter(sectionKey)}`]: [],
       }));
     }
     setSaveButton(false);
@@ -288,15 +282,26 @@ function BatchTestReassignmentAndCancelation() {
       } else {
         updatedArray.splice(index, 1);
       }
+      const isChecked = updatedArray.includes(id);
+      const noChangeArray =
+        prevJsonWad[`noChange${capitalizeFirstLetter(sectionKey)}`];
+      const noChangeIndex = noChangeArray.indexOf(id);
+
+      if (isChecked && noChangeIndex !== -1) {
+        noChangeArray.splice(noChangeIndex, 1);
+      } else if (!isChecked && noChangeIndex === -1) {
+        noChangeArray.push(id);
+      }
+
       return {
         ...prevJsonWad,
         [`change${capitalizeFirstLetter(sectionKey)}`]: updatedArray,
+        [`noChange${capitalizeFirstLetter(sectionKey)}`]: noChangeArray,
       };
     });
   };
 
   function handleSampleTypeListSelectId(e) {
-    setSaveButton(false);
     setSampleTypeToGetId(e.target.value);
     setBatchTestPost((prevUserDataPost) => ({
       ...prevUserDataPost,
@@ -528,7 +533,7 @@ function BatchTestReassignmentAndCancelation() {
           </Grid>
           <br />
           <Grid fullWidth={true}>
-            <Column lg={4} md={2} sm={1}>
+            <Column lg={4} md={4} sm={2}>
               {sampleTypeTestIdToGetIdPendingData &&
               sampleTypeTestIdToGetIdPendingData.notStarted ? (
                 <>
@@ -571,7 +576,7 @@ function BatchTestReassignmentAndCancelation() {
                 )}
               <br />
             </Column>
-            <Column lg={4} md={2} sm={1}>
+            <Column lg={4} md={4} sm={2}>
               {sampleTypeTestIdToGetIdPendingData &&
               sampleTypeTestIdToGetIdPendingData.technicianRejection ? (
                 <>
@@ -614,7 +619,7 @@ function BatchTestReassignmentAndCancelation() {
                 )}
               <br />
             </Column>
-            <Column lg={4} md={2} sm={1}>
+            <Column lg={4} md={4} sm={2}>
               {sampleTypeTestIdToGetIdPendingData &&
               sampleTypeTestIdToGetIdPendingData.biologistRejection ? (
                 <>
@@ -657,7 +662,7 @@ function BatchTestReassignmentAndCancelation() {
                 )}
               <br />
             </Column>
-            <Column lg={4} md={2} sm={1}>
+            <Column lg={4} md={4} sm={2}>
               {sampleTypeTestIdToGetIdPendingData &&
               sampleTypeTestIdToGetIdPendingData.notValidated ? (
                 <>
@@ -708,14 +713,18 @@ function BatchTestReassignmentAndCancelation() {
             <Column lg={16} md={8} sm={4}>
               <Button
                 disabled={saveButton}
-                onClick={batchTestReassignmentPostCall}
+                onClick={() => {
+                  setChangesToShow(true);
+                }}
                 type="button"
               >
                 <FormattedMessage id="label.button.ok" />
               </Button>{" "}
               <Button
                 onClick={() =>
-                  window.location.assign("/MasterListsPage#userManagement")
+                  window.location.assign(
+                    "/MasterListsPage#batchTestReassignment",
+                  )
                 }
                 kind="tertiary"
                 type="button"
@@ -724,6 +733,205 @@ function BatchTestReassignmentAndCancelation() {
               </Button>
             </Column>
           </Grid>
+          {changesToShow ? (
+            <>
+              <br />
+              <hr />
+              <br />
+              <Grid fullWidth={true} className="gridBoundary">
+                <Column lg={16} md={8} sm={4}>
+                  <FormattedMessage id="field.sampleType" /> :{" "}
+                  {jsonWad.sampleType}
+                  <br />
+                  <br />
+                  <FormattedMessage id="label.test.batch.cancel.start" />{" "}
+                  {jsonWad.current}{" "}
+                  <FormattedMessage id="label.test.batch.cancel.finish" />
+                  <br />
+                  <br />
+                  <hr />
+                </Column>
+                <Column lg={4} md={4} sm={2}>
+                  <FormattedMessage id="label.analysisNotStarted" />
+                  {jsonWad.changeNotStarted.map((id) => {
+                    const item =
+                      sampleTypeTestIdToGetIdPendingData.notStarted.find(
+                        (data) => data.id === id,
+                      );
+                    return (
+                      item && (
+                        <div key={id}>
+                          <br />
+                          <FormattedMessage id={item.labNo} />
+                          <br />
+                        </div>
+                      )
+                    );
+                  })}
+                </Column>
+                <Column lg={4} md={4} sm={2}>
+                  <FormattedMessage id="label.rejectedByTechnician" />
+                  {jsonWad.changeTechReject.map((id) => {
+                    const item =
+                      sampleTypeTestIdToGetIdPendingData.technicianRejection.find(
+                        (data) => data.id === id,
+                      );
+                    return (
+                      item && (
+                        <div key={id}>
+                          <br />
+                          <FormattedMessage id={item.labNo} />
+                          <br />
+                        </div>
+                      )
+                    );
+                  })}
+                </Column>
+                <Column lg={4} md={4} sm={2}>
+                  <FormattedMessage id="label.rejectedByBiologist" />
+                  {jsonWad.changeBioReject.map((id) => {
+                    const item =
+                      sampleTypeTestIdToGetIdPendingData.biologistRejection.find(
+                        (data) => data.id === id,
+                      );
+                    return (
+                      item && (
+                        <div key={id}>
+                          <br />
+                          <FormattedMessage id={item.labNo} />
+                          <br />
+                        </div>
+                      )
+                    );
+                  })}
+                </Column>
+                <Column lg={4} md={4} sm={2}>
+                  <FormattedMessage id="label.notValidated" />
+                  {jsonWad.changeNotValidated.map((id) => {
+                    const item =
+                      sampleTypeTestIdToGetIdPendingData.notValidated.find(
+                        (data) => data.id === id,
+                      );
+                    return (
+                      item && (
+                        <div key={id}>
+                          <br />
+                          <FormattedMessage id={item.labNo} />
+                          <br />
+                        </div>
+                      )
+                    );
+                  })}
+                </Column>
+                <Column lg={16} md={8} sm={4}>
+                  <br />
+                  <hr />
+                  <FormattedMessage id="label.test.batch.replace.start" />{" "}
+                  {jsonWad.current}{" "}
+                  <FormattedMessage id="label.test.batch.no.change.finish" />
+                  <br />
+                  <br />
+                </Column>
+                <Column lg={4} md={4} sm={2}>
+                  <FormattedMessage id="label.analysisNotStarted" />
+                  {jsonWad.noChangeNotStarted.map((id) => {
+                    const item =
+                      sampleTypeTestIdToGetIdPendingData.notStarted.find(
+                        (data) => data.id === id,
+                      );
+                    return (
+                      item && (
+                        <div key={id}>
+                          <br />
+                          <FormattedMessage id={item.labNo} />
+                          <br />
+                        </div>
+                      )
+                    );
+                  })}
+                </Column>
+                <Column lg={4} md={4} sm={2}>
+                  <FormattedMessage id="label.rejectedByTechnician" />
+                  {jsonWad.noChangeTechReject.map((id) => {
+                    const item =
+                      sampleTypeTestIdToGetIdPendingData.technicianRejection.find(
+                        (data) => data.id === id,
+                      );
+                    return (
+                      item && (
+                        <div key={id}>
+                          <br />
+                          <FormattedMessage id={item.labNo} />
+                          <br />
+                        </div>
+                      )
+                    );
+                  })}
+                </Column>
+                <Column lg={4} md={4} sm={2}>
+                  <FormattedMessage id="label.rejectedByBiologist" />
+                  {jsonWad.noChangeBioReject.map((id) => {
+                    const item =
+                      sampleTypeTestIdToGetIdPendingData.biologistRejection.find(
+                        (data) => data.id === id,
+                      );
+                    return (
+                      item && (
+                        <div key={id}>
+                          <br />
+                          <FormattedMessage id={item.labNo} />
+                          <br />
+                        </div>
+                      )
+                    );
+                  })}
+                </Column>
+                <Column lg={4} md={4} sm={2}>
+                  <FormattedMessage id="label.notValidated" />
+                  {jsonWad.noChangeNotValidated.map((id) => {
+                    const item =
+                      sampleTypeTestIdToGetIdPendingData.notValidated.find(
+                        (data) => data.id === id,
+                      );
+                    return (
+                      item && (
+                        <div key={id}>
+                          <br />
+                          <FormattedMessage id={item.labNo} />
+                          <br />
+                        </div>
+                      )
+                    );
+                  })}
+                </Column>
+                <Column lg={16} md={8} sm={4}>
+                  <br />
+                  <br />
+                  <hr />
+                  <Button
+                    disabled={saveButton}
+                    onClick={batchTestReassignmentPostCall}
+                    type="button"
+                  >
+                    <FormattedMessage id="column.name.accept" />
+                  </Button>{" "}
+                  <Button
+                    onClick={() =>
+                      window.location.assign(
+                        "/MasterListsPage#batchTestReassignment",
+                      )
+                    }
+                    kind="tertiary"
+                    type="button"
+                  >
+                    <FormattedMessage id="column.name.reject" />
+                  </Button>
+                </Column>
+              </Grid>
+            </>
+          ) : (
+            <></>
+          )}
         </div>
         <button
           onClick={() => {
@@ -781,8 +989,5 @@ function BatchTestReassignmentAndCancelation() {
 
 export default injectIntl(BatchTestReassignmentAndCancelation);
 
-// selectAll CheckBox fix needed
-// single labNo selection fix needed
-// SelectAll function fix
 // post call checkup
-// multi-select need to implement
+// batchTestReassignmentPostCall final call pending

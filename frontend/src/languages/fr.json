@@ -1134,5 +1134,9 @@
   "label.analysisNotStarted": "Analyse non commencée",
   "label.rejectedByBiologist": "Rejeté par le biologiste",
   "label.rejectedByTechnician": "Rejeté par le technicien",
-  "label.notValidated": "Non validé"
+  "label.notValidated": "Non validé",
+  "label.test.batch.cancel.start": "Vous avez choisi d'annuler le test",
+  "label.test.batch.cancel.finish": "Cette action est irréversible.",
+  "label.test.batch.replace.start": "Les tests suivants",
+  "label.test.batch.no.change.finish": "ne seront pas modifiés."
 }
