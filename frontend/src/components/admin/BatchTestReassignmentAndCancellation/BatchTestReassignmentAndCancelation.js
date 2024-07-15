@@ -61,16 +61,30 @@ function BatchTestReassignmentAndCancelation() {
   const [sampleTypeListShow, setSampleTypeListShow] = useState([]);
   const [sampleTypeToGetId, setSampleTypeToGetId] = useState(null);
   const [sampleTypeToGetIdData, setSampleTypeToGetIdData] = useState([]);
+  const [sampleTypeToGetIdDataTag, setSampleTypeToGetIdDataTag] = useState([]);
   const [sampleTypeTestIdToGetIdPending, setSampleTestTypeToGetPending] =
     useState(null);
   const [
     sampleTypeTestIdToGetIdPendingData,
-    setSampleTestTypeToGetPendingData,
+    setSampleTypeTestIdToGetIdPendingData,
   ] = useState({});
   const [sampleTestTypeToGetTagList, setSampleTestTypeToGetTagList] = useState(
     [],
   );
-  const [jsonWad, setJsonWad] = useState({});
+  const [jsonWad, setJsonWad] = useState({
+    // current: "HIV+rapid+test+HIV",
+    // sampleType: "Plasma",
+    current: "",
+    sampleType: "",
+    changeNotStarted: [],
+    noChangeNotStarted: [],
+    changeTechReject: [],
+    noChangeTechReject: [],
+    changeBioReject: [],
+    noChangeBioReject: [],
+    changeNotValidated: [],
+    noChangeNotValidated: [],
+  });
 
   useEffect(() => {
     componentMounted.current = true;
@@ -99,6 +113,15 @@ function BatchTestReassignmentAndCancelation() {
         setIsLoading(true);
       } else {
         setSampleTypeToGetIdData(res);
+        const extraObject = {
+          name: "Select Multi Tests",
+          id: "",
+          isActive: "",
+        };
+        setSampleTypeToGetIdDataTag((sampleTypeToGetIdDataTag) => ({
+          ...sampleTypeToGetIdDataTag,
+          tests: [extraObject, ...(res.tests || [])],
+        }));
       }
     };
 
@@ -113,7 +136,7 @@ function BatchTestReassignmentAndCancelation() {
       if (!res) {
         setIsLoading(true);
       } else {
-        setSampleTestTypeToGetPendingData(res);
+        setSampleTypeTestIdToGetIdPendingData(res);
       }
     };
 
@@ -122,6 +145,51 @@ function BatchTestReassignmentAndCancelation() {
       handleBatchTestReassignmentSampleTypeTestHandle,
     );
   }, [sampleTypeTestIdToGetIdPending]);
+
+  useEffect(() => {
+    if (sampleTypeTestIdToGetIdPendingData) {
+      const {
+        notStarted,
+        technicianRejection,
+        biologistRejection,
+        notValidated,
+      } = sampleTypeTestIdToGetIdPendingData;
+
+      setJsonWad((prevJsonWad) => ({
+        ...prevJsonWad,
+        changeNotStarted: notStarted ? notStarted.map((item) => item.id) : [],
+        noChangeNotStarted: notStarted
+          ? sampleTypeTestIdToGetIdPendingData.notStarted
+              .filter((item) => !item.checked)
+              .map((item) => item.id)
+          : [],
+        changeTechReject: technicianRejection
+          ? technicianRejection.map((item) => item.id)
+          : [],
+        noChangeTechReject: technicianRejection
+          ? sampleTypeTestIdToGetIdPendingData.technicianRejection
+              .filter((item) => !item.checked)
+              .map((item) => item.id)
+          : [],
+        changeBioReject: biologistRejection
+          ? biologistRejection.map((item) => item.id)
+          : [],
+        noChangeBioReject: biologistRejection
+          ? sampleTypeTestIdToGetIdPendingData.biologistRejection
+              .filter((item) => !item.checked)
+              .map((item) => item.id)
+          : [],
+        changeNotValidated: notValidated
+          ? notValidated.map((item) => item.id)
+          : [],
+        noChangeNotValidated: notValidated
+          ? sampleTypeTestIdToGetIdPendingData.notValidated
+              .filter((item) => !item.checked)
+              .map((item) => item.id)
+          : [],
+      }));
+    }
+  }, [sampleTypeTestIdToGetIdPendingData]);
 
   useEffect(() => {
     if (batchTestGet) {
@@ -185,11 +253,47 @@ function BatchTestReassignmentAndCancelation() {
       }, 200);
     }
   }
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
 
-  function handleCheckboxChange(id, index) {
+  const handleSelectAll = (sectionKey) => {
+    let allIds = sampleTypeTestIdToGetIdPendingData[sectionKey].map(
+      (item) => item.id,
+    );
+    if (
+      jsonWad[`change${capitalizeFirstLetter(sectionKey)}`].length ===
+      allIds.length
+    ) {
+      setJsonWad((prevJsonWad) => ({
+        ...prevJsonWad,
+        [`change${capitalizeFirstLetter(sectionKey)}`]: [],
+      }));
+    } else {
+      setJsonWad((prevJsonWad) => ({
+        ...prevJsonWad,
+        [`change${capitalizeFirstLetter(sectionKey)}`]: allIds,
+      }));
+    }
     setSaveButton(false);
-    setJsonWad({});
-  }
+  };
+
+  const handleCheckboxChange = (id, sectionKey) => {
+    setJsonWad((prevJsonWad) => {
+      let updatedArray =
+        prevJsonWad[`change${capitalizeFirstLetter(sectionKey)}`].slice();
+      const index = updatedArray.indexOf(id);
+      if (index === -1) {
+        updatedArray.push(id);
+      } else {
+        updatedArray.splice(index, 1);
+      }
+      return {
+        ...prevJsonWad,
+        [`change${capitalizeFirstLetter(sectionKey)}`]: updatedArray,
+      };
+    });
+  };
 
   function handleSampleTypeListSelectId(e) {
     setSaveButton(false);
@@ -308,7 +412,6 @@ function BatchTestReassignmentAndCancelation() {
               <br />
               <Checkbox
                 id={`currentTest`}
-                value={`0`}
                 labelText={intl.formatMessage({
                   id: "label.includeInactiveTests",
                 })}
@@ -351,7 +454,6 @@ function BatchTestReassignmentAndCancelation() {
               <br />
               <Checkbox
                 id={`replaceWith`}
-                value={`1`}
                 labelText={intl.formatMessage({
                   id: "label.cancel.test.no.replace",
                 })}
@@ -366,17 +468,17 @@ function BatchTestReassignmentAndCancelation() {
                 id={`selectSampleType0`}
                 hideLabel={true}
                 defaultValue={
-                  sampleTypeToGetIdData && sampleTypeToGetIdData.tests
-                    ? sampleTypeToGetIdData.tests[0]
+                  sampleTypeToGetIdDataTag && sampleTypeToGetIdDataTag.tests
+                    ? sampleTypeToGetIdDataTag.tests[0]
                     : ""
                 }
                 disabled={replaceWith}
                 onChange={(e) => handleSampleTypeListSelectIdTestTag(e)}
               >
-                {sampleTypeToGetIdData &&
-                sampleTypeToGetIdData.tests &&
-                sampleTypeToGetIdData.tests.length > 0 ? (
-                  sampleTypeToGetIdData.tests.map((section) => (
+                {sampleTypeToGetIdDataTag &&
+                sampleTypeToGetIdDataTag.tests &&
+                sampleTypeToGetIdDataTag.tests.length > 0 ? (
+                  sampleTypeToGetIdDataTag.tests.map((section) => (
                     <SelectItem
                       key={section.id}
                       value={section.id}
@@ -427,19 +529,27 @@ function BatchTestReassignmentAndCancelation() {
           <br />
           <Grid fullWidth={true}>
             <Column lg={4} md={2} sm={1}>
-              <FormattedMessage id="label.analysisNotStarted" />
-              <br />
-              <Checkbox
-                id={`selectAll0`}
-                value={`1`}
-                labelText={intl.formatMessage({
-                  id: "referral.print.selected.patient.reports.selectall.button",
-                })}
-                checked={false}
-                // onChange={() => {
-                //   handleCheckboxChange(section.roleId);
-                // }}
-              />
+              {sampleTypeTestIdToGetIdPendingData &&
+              sampleTypeTestIdToGetIdPendingData.notStarted ? (
+                <>
+                  <FormattedMessage id="label.analysisNotStarted" />
+                  <br />
+                  <Checkbox
+                    id={`selectAll0`}
+                    labelText={intl.formatMessage({
+                      id: "referral.print.selected.patient.reports.selectall.button",
+                    })}
+                    checked={sampleTypeTestIdToGetIdPendingData.notStarted.every(
+                      (item) => jsonWad.changeNotStarted.includes(item.id),
+                    )}
+                    onChange={() => {
+                      handleSelectAll("notStarted");
+                    }}
+                  />
+                </>
+              ) : (
+                <></>
+              )}
               {sampleTypeTestIdToGetIdPendingData &&
                 sampleTypeTestIdToGetIdPendingData.notStarted &&
                 sampleTypeTestIdToGetIdPendingData.notStarted.map(
@@ -451,9 +561,9 @@ function BatchTestReassignmentAndCancelation() {
                         labelText={intl.formatMessage({
                           id: item.labNo,
                         })}
-                        checked={false}
+                        checked={jsonWad.changeNotStarted.includes(item.id)}
                         onChange={() => {
-                          handleCheckboxChange(item.id, index);
+                          handleCheckboxChange(item.id, "notStarted");
                         }}
                       />
                     </div>
@@ -462,19 +572,27 @@ function BatchTestReassignmentAndCancelation() {
               <br />
             </Column>
             <Column lg={4} md={2} sm={1}>
-              <FormattedMessage id="label.rejectedByTechnician" />
-              <br />
-              <Checkbox
-                id={`selectAll2`}
-                value={`1`}
-                labelText={intl.formatMessage({
-                  id: "referral.print.selected.patient.reports.selectall.button",
-                })}
-                checked={false}
-                // onChange={() => {
-                //   handleCheckboxChange(section.roleId);
-                // }}
-              />
+              {sampleTypeTestIdToGetIdPendingData &&
+              sampleTypeTestIdToGetIdPendingData.technicianRejection ? (
+                <>
+                  <FormattedMessage id="label.rejectedByTechnician" />
+                  <br />
+                  <Checkbox
+                    id={`selectAll1`}
+                    labelText={intl.formatMessage({
+                      id: "referral.print.selected.patient.reports.selectall.button",
+                    })}
+                    checked={sampleTypeTestIdToGetIdPendingData.technicianRejection.every(
+                      (item) => jsonWad.changeTechReject.includes(item.id),
+                    )}
+                    onChange={() => {
+                      handleSelectAll("techReject");
+                    }}
+                  />
+                </>
+              ) : (
+                <></>
+              )}
               {sampleTypeTestIdToGetIdPendingData &&
                 sampleTypeTestIdToGetIdPendingData.technicianRejection &&
                 sampleTypeTestIdToGetIdPendingData.technicianRejection.map(
@@ -486,9 +604,9 @@ function BatchTestReassignmentAndCancelation() {
                         labelText={intl.formatMessage({
                           id: item.labNo,
                         })}
-                        checked={false}
+                        checked={jsonWad.changeTechReject.includes(item.id)}
                         onChange={() => {
-                          handleCheckboxChange(item.id, index);
+                          handleCheckboxChange(item.id, "techReject");
                         }}
                       />
                     </div>
@@ -497,19 +615,27 @@ function BatchTestReassignmentAndCancelation() {
               <br />
             </Column>
             <Column lg={4} md={2} sm={1}>
-              <FormattedMessage id="label.rejectedByBiologist" />
-              <br />
-              <Checkbox
-                id={`selectAll1`}
-                value={`1`}
-                labelText={intl.formatMessage({
-                  id: "referral.print.selected.patient.reports.selectall.button",
-                })}
-                checked={false}
-                // onChange={() => {
-                //   handleCheckboxChange(section.roleId);
-                // }}
-              />
+              {sampleTypeTestIdToGetIdPendingData &&
+              sampleTypeTestIdToGetIdPendingData.biologistRejection ? (
+                <>
+                  <FormattedMessage id="label.rejectedByBiologist" />
+                  <br />
+                  <Checkbox
+                    id={`selectAll2`}
+                    labelText={intl.formatMessage({
+                      id: "referral.print.selected.patient.reports.selectall.button",
+                    })}
+                    checked={sampleTypeTestIdToGetIdPendingData.biologistRejection.every(
+                      (item) => jsonWad.changeBioReject.includes(item.id),
+                    )}
+                    onChange={() => {
+                      handleSelectAll("bioReject");
+                    }}
+                  />
+                </>
+              ) : (
+                <></>
+              )}
               {sampleTypeTestIdToGetIdPendingData &&
                 sampleTypeTestIdToGetIdPendingData.biologistRejection &&
                 sampleTypeTestIdToGetIdPendingData.biologistRejection.map(
@@ -521,9 +647,9 @@ function BatchTestReassignmentAndCancelation() {
                         labelText={intl.formatMessage({
                           id: item.labNo,
                         })}
-                        checked={false}
+                        checked={jsonWad.changeBioReject.includes(item.id)}
                         onChange={() => {
-                          handleCheckboxChange(item.id, index);
+                          handleCheckboxChange(item.id, "bioReject");
                         }}
                       />
                     </div>
@@ -532,19 +658,27 @@ function BatchTestReassignmentAndCancelation() {
               <br />
             </Column>
             <Column lg={4} md={2} sm={1}>
-              <FormattedMessage id="label.notValidated" />
-              <br />
-              <Checkbox
-                id={`selectAll3`}
-                value={`1`}
-                labelText={intl.formatMessage({
-                  id: "referral.print.selected.patient.reports.selectall.button",
-                })}
-                checked={false}
-                // onChange={() => {
-                //   handleCheckboxChange(section.roleId);
-                // }}
-              />
+              {sampleTypeTestIdToGetIdPendingData &&
+              sampleTypeTestIdToGetIdPendingData.notValidated ? (
+                <>
+                  <FormattedMessage id="label.notValidated" />
+                  <br />
+                  <Checkbox
+                    id={`selectAll3`}
+                    labelText={intl.formatMessage({
+                      id: "referral.print.selected.patient.reports.selectall.button",
+                    })}
+                    checked={sampleTypeTestIdToGetIdPendingData.notValidated.every(
+                      (item) => jsonWad.changeNotValidated.includes(item.id),
+                    )}
+                    onChange={() => {
+                      handleSelectAll("notValidated");
+                    }}
+                  />
+                </>
+              ) : (
+                <></>
+              )}
               {sampleTypeTestIdToGetIdPendingData &&
                 sampleTypeTestIdToGetIdPendingData.notValidated &&
                 sampleTypeTestIdToGetIdPendingData.notValidated.map(
@@ -556,9 +690,9 @@ function BatchTestReassignmentAndCancelation() {
                         labelText={intl.formatMessage({
                           id: item.labNo,
                         })}
-                        checked={false}
+                        checked={jsonWad.changeNotValidated.includes(item.id)}
                         onChange={() => {
-                          handleCheckboxChange(item.id, index);
+                          handleCheckboxChange(item.id, "notValidated");
                         }}
                       />
                     </div>
@@ -618,6 +752,13 @@ function BatchTestReassignmentAndCancelation() {
           }}
         >
           sampleTypeToGetIdData
+        </button>
+        <button
+          onClick={() => {
+            console.log(sampleTypeToGetIdDataTag);
+          }}
+        >
+          sampleTypeToGetIdDataTag
         </button>
         <button
           onClick={() => {
