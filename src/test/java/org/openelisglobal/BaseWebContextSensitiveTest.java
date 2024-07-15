@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-
 import org.junit.After;
 import org.junit.runner.RunWith;
 import org.openelisglobal.patient.service.PatientService;
@@ -36,7 +35,6 @@ public abstract class BaseWebContextSensitiveTest {
     @Autowired
     PersonService personService;
 
-
     protected MockMvc mockMvc;
 
     protected void setUp() {
@@ -55,7 +53,6 @@ public abstract class BaseWebContextSensitiveTest {
         objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
         return objectMapper.readValue(json, clazz);
     }
-
 
     @After
     public void tearDown() {
