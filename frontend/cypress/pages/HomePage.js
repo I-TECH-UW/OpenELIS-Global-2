@@ -98,7 +98,7 @@ class HomePage {
     return new WorkPlan();
   }
 
-  goToReportNCE(){
+  goToReportNCE() {
     this.openNavigationMenu();
     cy.get(
       ":nth-child(3) > .cds--side-nav__item > .cds--side-nav__submenu",
@@ -107,7 +107,27 @@ class HomePage {
       ':nth-child(3) > .cds--side-nav__item > .cds--side-nav__menu > :nth-child(1) > .cds--side-nav__link > .cds--side-nav__link-text > [style="display: flex; width: 100%;"] > .custom-sidenav-button',
     ).click();
     return new NonConform();
+  }
 
+  goToViewNCE() {
+    this.openNavigationMenu();
+    cy.get(
+      ":nth-child(3) > .cds--side-nav__item > .cds--side-nav__submenu",
+    ).click();
+    cy.get(
+      ':nth-child(3) > .cds--side-nav__item > .cds--side-nav__menu > :nth-child(2) > .cds--side-nav__link > .cds--side-nav__link-text > [style="display: flex; width: 100%;"] > .custom-sidenav-button',
+    ).click();
+    return new NonConform();
+  }
+  goToCorrectiveActions() {
+    this.openNavigationMenu();
+    cy.get(
+      ":nth-child(3) > .cds--side-nav__item > .cds--side-nav__submenu",
+    ).click();
+    cy.get(
+      ':nth-child(3) > .cds--side-nav__item > .cds--side-nav__menu > :nth-child(3) > .cds--side-nav__link > .cds--side-nav__link-text > [style="display: flex; width: 100%;"] > .custom-sidenav-button',
+    ).click();
+    return new NonConform();
   }
 }
 

@@ -77,7 +77,7 @@ public class ReportNonConformEventsRestController {
             }
 
             if (searchResults.isEmpty()) {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.ok().body(new ArrayList<>());
             } else {
                 List<NceSampleInfo> temp = new ArrayList<>();
                 for (Sample sample : searchResults) {

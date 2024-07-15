@@ -139,7 +139,10 @@ public class TestModifyEntryController extends BaseController {
             bean.setId(test.getId());
             bean.setLocalization(test.getLocalizedTestName());
             bean.setReportLocalization(test.getLocalizedReportingName());
-            bean.setTestSortOrder(Integer.parseInt(test.getSortOrder()));
+            if (test.getSortOrder() != null) {
+                bean.setTestSortOrder(Integer.parseInt(test.getSortOrder()));
+            }
+
             bean.setTestUnit(testService.getTestSectionName(test));
             bean.setPanel(createPanelList(testService, test));
             bean.setResultType(resultType);
