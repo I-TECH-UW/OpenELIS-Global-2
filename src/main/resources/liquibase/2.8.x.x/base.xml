@@ -18,5 +18,7 @@
   <include relativeToChangelogFile="true" file="update_default_setting.xml" />
   <include relativeToChangelogFile="true" file="rename_test_for_csv_export.xml" />
   <include relativeToChangelogFile="true" file="loinc.xml" />
+  <include relativeToChangelogFile="true" file="notifications.xml" />
   <include relativeToChangelogFile="true" file="sample_program_audit_trail.xml" />
+
 </databaseChangeLog>

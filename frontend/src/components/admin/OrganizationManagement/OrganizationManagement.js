@@ -33,7 +33,6 @@ import {
 } from "../../common/CustomNotification.js";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
-import { ArrowLeft, ArrowRight } from "@carbon/icons-react";
 import ActionPaginationButtonType from "../../common/ActionPaginationButtonType.js";
 
 let breadcrumbs = [
@@ -45,7 +44,7 @@ let breadcrumbs = [
   },
 ];
 
-function OrganizationManagament() {
+function OrganizationManagement() {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
@@ -124,7 +123,7 @@ function OrganizationManagament() {
     });
     setTimeout(() => {
       window.location.reload();
-    }, 2000);
+    }, 200);
   };
 
   const handlePageChange = ({ page, pageSize }) => {
@@ -320,6 +319,7 @@ function OrganizationManagament() {
           handleNextPage={handleNextPage}
           deleteDeactivate={deleteDeactivateOrganizationManagament}
           id={selectedRowIds[0]}
+          otherParmsInLink={`&startingRecNo=1`}
           addButtonRedirectLink={`/MasterListsPage#organizationEdit?ID=0`}
           modifyButtonRedirectLink={`/MasterListsPage#organizationEdit?ID=`}
           type="type2"
@@ -795,4 +795,4 @@ function OrganizationManagament() {
   );
 }
 
-export default injectIntl(OrganizationManagament);
+export default injectIntl(OrganizationManagement);
