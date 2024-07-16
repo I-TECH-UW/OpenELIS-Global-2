@@ -33,7 +33,6 @@ import {
   postToOpenElisServer,
   postToOpenElisServerJsonResponse,
 } from "../../utils/Utils.js";
-import AutoComplete from "../../common/AutoComplete.js";
 
 const breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -60,8 +59,8 @@ function BatchTestReassignmentAndCancelation() {
   const [batchTestPost, setBatchTestPost] = useState(null);
   const [sampleTypeListShow, setSampleTypeListShow] = useState([]);
   const [sampleTypeToGetId, setSampleTypeToGetId] = useState(null);
-  const [sampleTypeToGetIdData, setSampleTypeToGetIdData] = useState([]);
-  const [sampleTypeToGetIdDataTag, setSampleTypeToGetIdDataTag] = useState([]);
+  const [sampleTypeToGetIdData, setSampleTypeToGetIdData] = useState({});
+  const [sampleTypeToGetIdDataTag, setSampleTypeToGetIdDataTag] = useState({});
   const [sampleTypeTestIdToGetIdPending, setSampleTestTypeToGetPending] =
     useState(null);
   const [
@@ -113,14 +112,22 @@ function BatchTestReassignmentAndCancelation() {
       if (!res) {
         setIsLoading(true);
       } else {
-        setSampleTypeToGetIdData(res);
+        const extraCurrentTestObject = {
+          name: "Select Current Test",
+          id: "",
+          isActive: "",
+        };
+        setSampleTypeToGetIdData((prevSampleTypeToGetIdData) => ({
+          ...prevSampleTypeToGetIdData,
+          tests: [extraCurrentTestObject, ...(res.tests || [])],
+        }));
         const extraObject = {
           name: "Select Multi Tests",
           id: "",
           isActive: "",
         };
-        setSampleTypeToGetIdDataTag((sampleTypeToGetIdDataTag) => ({
-          ...sampleTypeToGetIdDataTag,
+        setSampleTypeToGetIdDataTag((prevSampleTypeToGetIdDataTag) => ({
+          ...prevSampleTypeToGetIdDataTag,
           tests: [extraObject, ...(res.tests || [])],
         }));
       }
@@ -348,6 +355,32 @@ function BatchTestReassignmentAndCancelation() {
     );
   }
 
+  useEffect(() => {
+    if (
+      batchTestPost &&
+      sampleTypeToGetIdDataTag &&
+      sampleTypeToGetIdDataTag.tests &&
+      sampleTypeListShow
+    ) {
+      const sampleTypeValue = batchTestPost.statusChangedSampleType || "";
+      const currentTest = batchTestPost.statusChangedCurrentTest || "";
+      const sampleTypeItem = sampleTypeListShow.find(
+        (item) => item.id === sampleTypeValue.toString(),
+      );
+      const sampleTypeValueToSet = sampleTypeItem ? sampleTypeItem.value : "";
+      const currentTestItem = sampleTypeToGetIdDataTag.tests.find(
+        (test) => test.id === currentTest.toString(),
+      );
+      const currentTestNameToSet = currentTestItem ? currentTestItem.name : "";
+
+      setJsonWad((prevJsonWad) => ({
+        ...prevJsonWad,
+        sampleType: sampleTypeValueToSet,
+        current: currentTestNameToSet,
+      }));
+    }
+  }, [batchTestPost, sampleTypeToGetIdDataTag, sampleTypeListShow]);
+
   if (!isLoading) {
     return (
       <>
@@ -431,7 +464,9 @@ function BatchTestReassignmentAndCancelation() {
                 id={`selectSampleType1`}
                 hideLabel={true}
                 defaultValue={
-                  sampleTypeToGetIdData ? sampleTypeToGetIdData[0] : ""
+                  sampleTypeToGetIdData && sampleTypeToGetIdData.tests
+                    ? sampleTypeToGetIdData.tests[0]
+                    : ""
                 }
                 onChange={(e) => handleSampleTypeListSelectIdTest(e)}
               >
@@ -715,6 +750,10 @@ function BatchTestReassignmentAndCancelation() {
                 disabled={saveButton}
                 onClick={() => {
                   setChangesToShow(true);
+                  setBatchTestPost((prevBatchTestPost) => ({
+                    ...prevBatchTestPost,
+                    jsonWad: jsonWad,
+                  }));
                 }}
                 type="button"
               >
@@ -752,6 +791,7 @@ function BatchTestReassignmentAndCancelation() {
                   <hr />
                 </Column>
                 <Column lg={4} md={4} sm={2}>
+                  <br />
                   <FormattedMessage id="label.analysisNotStarted" />
                   {jsonWad.changeNotStarted.map((id) => {
                     const item =
@@ -770,6 +810,7 @@ function BatchTestReassignmentAndCancelation() {
                   })}
                 </Column>
                 <Column lg={4} md={4} sm={2}>
+                  <br />
                   <FormattedMessage id="label.rejectedByTechnician" />
                   {jsonWad.changeTechReject.map((id) => {
                     const item =
@@ -788,6 +829,7 @@ function BatchTestReassignmentAndCancelation() {
                   })}
                 </Column>
                 <Column lg={4} md={4} sm={2}>
+                  <br />
                   <FormattedMessage id="label.rejectedByBiologist" />
                   {jsonWad.changeBioReject.map((id) => {
                     const item =
@@ -806,6 +848,7 @@ function BatchTestReassignmentAndCancelation() {
                   })}
                 </Column>
                 <Column lg={4} md={4} sm={2}>
+                  <br />
                   <FormattedMessage id="label.notValidated" />
                   {jsonWad.changeNotValidated.map((id) => {
                     const item =
@@ -833,6 +876,7 @@ function BatchTestReassignmentAndCancelation() {
                   <br />
                 </Column>
                 <Column lg={4} md={4} sm={2}>
+                  <br />
                   <FormattedMessage id="label.analysisNotStarted" />
                   {jsonWad.noChangeNotStarted.map((id) => {
                     const item =
@@ -851,6 +895,7 @@ function BatchTestReassignmentAndCancelation() {
                   })}
                 </Column>
                 <Column lg={4} md={4} sm={2}>
+                  <br />
                   <FormattedMessage id="label.rejectedByTechnician" />
                   {jsonWad.noChangeTechReject.map((id) => {
                     const item =
@@ -869,6 +914,7 @@ function BatchTestReassignmentAndCancelation() {
                   })}
                 </Column>
                 <Column lg={4} md={4} sm={2}>
+                  <br />
                   <FormattedMessage id="label.rejectedByBiologist" />
                   {jsonWad.noChangeBioReject.map((id) => {
                     const item =
@@ -887,6 +933,7 @@ function BatchTestReassignmentAndCancelation() {
                   })}
                 </Column>
                 <Column lg={4} md={4} sm={2}>
+                  <br />
                   <FormattedMessage id="label.notValidated" />
                   {jsonWad.noChangeNotValidated.map((id) => {
                     const item =
