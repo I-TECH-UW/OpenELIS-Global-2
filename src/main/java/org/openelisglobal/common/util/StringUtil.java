@@ -680,4 +680,8 @@ public class StringUtil {
     public static String repeat(String s, int times) {
         return IntStream.range(0, times).mapToObj(i -> s).collect(Collectors.joining(""));
     }
+
+    public static String capitalize(String s) {
+        return s.substring(0, 1).toUpperCase() + s.substring(1); // J + avatpoint
+    }
 }
