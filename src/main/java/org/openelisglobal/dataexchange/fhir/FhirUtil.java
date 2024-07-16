@@ -74,6 +74,8 @@ public class FhirUtil implements FhirClientFetcher {
     private IGenericClient createCRFhirClient() throws Exception {
         Exception lastException = null;
 
+        Thread.sleep(20000);
+
         for (int attempts = 0; attempts < MAX_RETRY_ATTEMPTS; attempts++) {
             try {
                 IGenericClient fhirClient = fhirContext
