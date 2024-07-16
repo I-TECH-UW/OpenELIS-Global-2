@@ -122,7 +122,7 @@ public class SecurityConfig {
 
     @Configuration
     @Order(2)
-    @ConditionalOnProperty(property = "org.itech.login.basic", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(properties = "org.itech.login.basic", havingValues = "true", matchIfMissing = true)
     public static class httpBasicServletSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         @Override
@@ -150,7 +150,7 @@ public class SecurityConfig {
 
     @Configuration
     @Order(3)
-    @ConditionalOnProperty(property = "org.itech.login.saml", havingValue = "true")
+    @ConditionalOnProperty(properties = "org.itech.login.saml", havingValues = "true")
     public static class samlSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         @Value("${org.itech.login.saml.registrationId:keycloak}")
@@ -249,7 +249,7 @@ public class SecurityConfig {
 
     @Configuration
     @Order(4)
-    @ConditionalOnProperty(property = "org.itech.login.oauth", havingValue = "true")
+    @ConditionalOnProperty(properties = "org.itech.login.oauth", havingValues = "true")
     public static class openidSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         @Value("${org.itech.login.oauth.config:}")
@@ -322,7 +322,7 @@ public class SecurityConfig {
 
     @Configuration
     @Order(5)
-    @ConditionalOnProperty(property = "org.itech.login.certificate", havingValue = "true")
+    @ConditionalOnProperty(properties = "org.itech.login.certificate", havingValues = "true")
     public static class clientCertificateSecurityConfiguration extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {

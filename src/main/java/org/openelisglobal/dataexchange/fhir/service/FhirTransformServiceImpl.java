@@ -70,7 +70,6 @@ import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
-import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceServiceImpl.FhirOperations;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
@@ -114,6 +113,7 @@ import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
@@ -164,8 +164,10 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     private AddressPartService addressPartService;
     @Autowired
     private OrganizationService organizationService;
+
     @Autowired
-    private FhirUtil fhirUtil;
+    @Qualifier("clientRegistryFhirClient")
+    private IGenericClient crClient;
 
     private String ADDRESS_PART_VILLAGE_ID;
     private String ADDRESS_PART_COMMUNE_ID;
@@ -387,7 +389,6 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         this.addToOperations(fhirOperations, tempIdGenerator, patient);
 
         try {
-            IGenericClient crClient = fhirUtil.getCRFhirClient();
             if (isCreate) {
                 crClient.create().resource(patient).execute();
             } else {

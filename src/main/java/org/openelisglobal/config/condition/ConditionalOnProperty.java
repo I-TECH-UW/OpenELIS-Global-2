@@ -11,9 +11,12 @@ import org.springframework.context.annotation.Conditional;
 @Conditional(PropertyCondition.class)
 public @interface ConditionalOnProperty {
     /** The name of the property. If not found, it will evaluate to false. */
-    String property();
+    String[] properties();
 
-    String havingValue() default "true";
+    String[] havingValues() default {};
+
+    /** If true, the property value should not be empty or null. */
+    boolean[] nonEmpty() default {};
 
     /** if the property is missing what value should this default to */
     boolean matchIfMissing() default false;

@@ -18,9 +18,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.hl7.fhir.r4.model.CapabilityStatement;
 import org.itech.fhir.dataexport.core.service.FhirClientFetcher;
+import org.openelisglobal.config.condition.ConditionalOnProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -54,7 +56,16 @@ public class FhirUtil implements FhirClientFetcher {
         return fhirClient;
     }
 
+    @Bean(name = "clientRegistryFhirClient")
+    @ConditionalOnProperty(properties = { "org.openelisglobal.crserver.uri", "org.openelisglobal.crserver.username",
+            "org.openelisglobal.crserver.password" }, nonEmpty = { false, false, false })
     public IGenericClient getCRFhirClient() throws Exception {
+        if (fhirConfig.getClientRegistryServerUrl() == null || fhirConfig.getClientRegistryServerUrl().isEmpty()
+                || fhirConfig.getClientRegistryUserName() == null || fhirConfig.getClientRegistryUserName().isEmpty()
+                || fhirConfig.getClientRegistryPassword() == null || fhirConfig.getClientRegistryPassword().isEmpty()) {
+            logger.warn("Required properties for clientRegistryFhirClient are missing. Skipping bean creation.");
+            return NoOpFhirClientFactory.create();
+        }
         IGenericClient fhirClient = createCRFhirClient();
         validateFhirClient(fhirClient);
         return fhirClient;
