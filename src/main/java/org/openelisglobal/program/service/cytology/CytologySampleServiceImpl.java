@@ -64,6 +64,7 @@ public class CytologySampleServiceImpl extends AuditableBaseObjectServiceImpl<Cy
 
     CytologySampleServiceImpl() {
         super(CytologySample.class);
+        this.auditTrailLog = true;
     }
 
     @Override
