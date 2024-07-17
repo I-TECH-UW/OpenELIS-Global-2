@@ -183,11 +183,7 @@ function OEHeader(props) {
       if (level === 0 && menuItem.childMenus.length > 0) {
         return (
           <React.Fragment key={path}>
-            <span
-              onClick={(e) => {
-                setMenuItemExpanded(e, menuItem, path);
-              }}
-            >
+            <span id={menuItem.menu.elementId}>
               <SideNavMenu
                 aria-label={intl.formatMessage({
                   id: menuItem.menu.displayKey,
@@ -197,6 +193,9 @@ function OEHeader(props) {
                 })}
                 key={"menu_" + index + "_" + level}
                 defaultExpanded={menuItem.expanded}
+                onClick={(e) => {
+                  setMenuItemExpanded(e, menuItem, path);
+                }}
               >
                 {menuItem.childMenus.map((childMenuItem, index) => {
                   return generateMenuItems(
@@ -214,6 +213,7 @@ function OEHeader(props) {
         return (
           <React.Fragment key={path}>
             <SideNavMenuItem
+              id={menuItem.menu.elementId}
               href={menuItem.menu.actionURL}
               target={menuItem.menu.openInNewWindow ? "_blank" : ""}
             >
@@ -277,7 +277,13 @@ function OEHeader(props) {
   const renderSingleNavButton = (menuItem, index, level, path) => {
     const marginValue = (level - 1) * 0.5 + "rem";
     return (
-      <a href={menuItem.menu.actionURL} style={{ width: "100%" }}>
+      <a
+        id={menuItem.menu.elementId}
+        href={menuItem.menu.actionURL}
+        target={menuItem.menu.openInNewWindow ? "_blank" : ""}
+        style={{ width: "100%" }}
+        rel="noreferrer"
+      >
         <button
           className={"custom-sidenav-button"}
           style={{ marginLeft: marginValue }}
@@ -299,6 +305,7 @@ function OEHeader(props) {
     const marginValue = (level - 1) * 0.5 + "rem";
     return (
       <button
+        id={menuItem.menu.displayKey + "_dropdown"}
         className={"custom-sidenav-button"}
         style={{ marginLeft: marginValue }}
         onClick={(e) => {
@@ -315,7 +322,13 @@ function OEHeader(props) {
     const marginValue = (level - 1) * 0.5 + "rem";
     return (
       <>
-        <a href={menuItem.menu.actionURL} style={{ width: "100%" }}>
+        <a
+          id={menuItem.menu.elementId}
+          href={menuItem.menu.actionURL}
+          target={menuItem.menu.openInNewWindow ? "_blank" : ""}
+          style={{ width: "100%" }}
+          rel="noreferrer"
+        >
           <button
             className={
               menuItem.menu.actionURL
@@ -336,6 +349,7 @@ function OEHeader(props) {
         </a>
         {menuItem.childMenus.length > 0 && (
           <button
+            id={menuItem.menu.displayKey + "_dropdown"}
             className="custom-sidenav-button"
             onClick={(e) => {
               onClickSideNavItem(e, menuItem, path);
