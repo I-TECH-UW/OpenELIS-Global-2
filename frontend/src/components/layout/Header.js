@@ -40,7 +40,7 @@ import {
 } from "@carbon/react";
 import SlideOverNotifications from "../notifications/SlideOverNotifications";
 import { getFromOpenElisServer, putToOpenElisServer } from "../utils/Utils";
-
+import SearchBar from "./search/searchBar";
 function OEHeader(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
   const { userSessionDetails, logout } = useContext(UserSessionDetailsContext);
@@ -63,6 +63,7 @@ function OEHeader(props) {
   const [showRead, setShowRead] = useState(false);
   const [unReadNotifications, setUnReadNotifications] = useState([]);
   const [readNotifications, setReadNotifications] = useState([]);
+  const [searchBar, setSearchBar] = useState(false);
 
   scrollRef.current = window.scrollY;
   useLayoutEffect(() => {
@@ -74,7 +75,9 @@ function OEHeader(props) {
       handleMenuItems("menu", res);
     });
   }, []);
-
+  const handleSearchBar = () => {
+    setSearchBar(!searchBar);
+  };
   const panelSwitchLabel = () => {
     return userSessionDetails.authenticated ? "User" : "Lang";
   };
@@ -439,13 +442,16 @@ function OEHeader(props) {
                   <HeaderGlobalBar>
                     {userSessionDetails.authenticated && (
                       <>
+                        {searchBar && <SearchBar />}
                         <HeaderGlobalAction
                           aria-label="Search"
-                          onClick={() => {
-                            /*TODO add search functionality*/
-                          }}
+                          onClick={handleSearchBar}
                         >
-                          <Search size={20} />
+                          {!searchBar ? (
+                            <Search size={20} />
+                          ) : (
+                            <Close size={20} />
+                          )}
                         </HeaderGlobalAction>
                         <HeaderGlobalAction
                           aria-label="Notifications"

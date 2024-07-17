@@ -1,0 +1,127 @@
+.main {
+  position: absolute;
+  right: 175px;
+  width: 420px;
+}
+
+.search-bar-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 420px;
+  top: 10px;
+  margin-bottom: 10px;
+  left: 0px;
+}
+
+.search-input {
+  width: 100%;
+  position: relative;
+  border: 2px solid #ddd;
+  background-color: #030303;
+}
+
+.search-input:hover {
+  border: 2px solid #5453b3;
+}
+
+.suggestions {
+  margin: 20;
+  top: 40px;
+  padding: 0;
+  width: fit-content;
+  background: white;
+  position: relative;
+  overflow-y: auto;
+}
+
+.suggestions li {
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.suggestions li.suggestion-active {
+  background-color: #e5e5e5;
+}
+
+.suggestions li:hover {
+  background-color: #f5f5f5;
+}
+
+.delete-button {
+  background: transparent;
+  border: none;
+  color: rgb(5, 5, 5);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.patients {
+  overflow-y: auto;
+  width: 420px;
+  max-height: 250px;
+  position: relative;
+  background-color: black;
+}
+
+.patientHead {
+  padding: 1px;
+  width: 405px;
+  position: relative;
+  border-bottom: 2px solid #ddd;
+  background-color: black;
+}
+
+.patientHead:hover {
+  background-color: #0f0f0f;
+  cursor: pointer;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  .main {
+    right: 150px; /* Maintain the same size */
+    width: 450px; /* Maintain the same size */
+  }
+
+  .search-bar-container {
+    width: 430px; /* Maintain the same size */
+  }
+
+  .patients {
+    width: 450px; /* Maintain the same size */
+  }
+
+  .patientHead {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    right: 150px; /* Maintain the same size */
+    width: 450px; /* Maintain the same size */
+  }
+
+  .search-bar-container {
+    flex-direction: column;
+    align-items: stretch;
+    width: 430px; /* Maintain the same size */
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  .patients {
+    width: 450px; /* Maintain the same size */
+    max-height: 200px;
+  }
+
+  .patientHead {
+    width: 100%;
+  }
+}
