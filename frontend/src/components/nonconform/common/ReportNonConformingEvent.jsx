@@ -58,12 +58,34 @@ export const ReportNonConformingEvent = () => {
   );
   const [ldata, setLData] = useState(null);
   const [selectedSample, setSelectedSample] = useState(initialSelected);
-  const [nceForm, setnceForm] = useState(initialNCEForm);
+  // const [nceForm, setnceForm] = useState(initialNCEForm);
   const [orderSampleMap, setOrderSampleMap] = useState({});
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
   const intl = useIntl();
+
+  const [nceForm, setnceForm] = useState({
+    data: {
+      reporterName: '',
+      dateOfEvent: null,
+      reportingUnit: '',
+      description: '',
+      suspectedCauses: '',
+      proposedAction: '',
+      reportingUnits: [],
+    },
+    errors: {
+      reporterName: '',
+      dateOfEvent: '',
+      reportingUnit: '',
+      description: '',
+      suspectedCauses: '',
+      proposedAction: '',
+    },
+  });
+  
+
 
   const handleSubmit = () => {
     if (reportFormValues.type === undefined || reportFormValues.value === "") {
@@ -170,18 +192,28 @@ export const ReportNonConformingEvent = () => {
 
   const handleNCEFormSubmit = () => {
     console.log("nceForm.data", nceForm.data);
-
+    const newErrors = {};
     if (!nceForm.data.dateOfEvent) {
-      setnceForm({
-        ...nceForm,
-        error: intl.formatMessage({
-          id: "error.nonconform.report.data.found",
-          defaultMessage: "Please select a date",
-        }),
-      });
-      return;
+      newErrors.dateOfEvent = 'Date of event is required';
     }
-
+    if (!nceForm.data.reportingUnit) {
+      newErrors.reportingUnit = 'Reporting unit is required';
+    }
+    if (!nceForm.data.description) {
+      newErrors.description = 'Description is required';
+    }
+    if (!nceForm.data.suspectedCauses) {
+      newErrors.suspectedCauses = 'Suspected causes are required';
+    }
+    if (!nceForm.data.proposedAction) {
+      newErrors.proposedAction = 'Proposed action is required';
+    }
+    if (Object.keys(newErrors).length > 0) {
+      setnceForm((prev) => ({
+        ...prev,
+        errors: newErrors,
+      }));
+    }else{
     let body = {
       currentUserId: parseInt(nceForm.data.currentUserId),
       id: parseInt(nceForm.data.id),
@@ -223,7 +255,7 @@ export const ReportNonConformingEvent = () => {
           });
         }
       },
-    );
+    );}
   };
 
   return (
@@ -453,131 +485,148 @@ export const ReportNonConformingEvent = () => {
             <br></br>
           </Column>
           <Column lg={8} md={4} sm={4}>
-            <TextInput
-              labelText={
-                <FormattedMessage id="nonconform.person.reporting.different" />
-              }
-              value={nceForm.data.reporterName}
-              onChange={(e) => {
-                setnceForm({
-                  ...nceForm,
-                  data: {
-                    ...nceForm.data,
-                    reporterName: e.target.value,
-                  },
-                });
-              }}
-              id={`field.name`}
-            />
-          </Column>
+  <TextInput
+    labelText={<FormattedMessage id="nonconform.person.reporting.different" />}
+    value={nceForm.data.reporterName}
+    onChange={(e) => {
+      setnceForm((prev) => ({
+        ...prev,
+        data: {
+          ...prev.data,
+          reporterName: e.target.value,
+        },
+      }));
+    }}
+    id={`field.name`}
+  />
+</Column>
 
-          <Column lg={8} md={4} sm={4}>
-            <CustomDatePicker
-              key="startDate"
-              id={"startDate"}
-              labelText={<FormattedMessage id="nonconform.date.event" />}
-              disallowFutureDate={true}
-              autofillDate={true}
-              value={nceForm.data.dateOfEvent}
-              onChange={(date) =>
-                setnceForm({
-                  ...nceForm,
-                  data: {
-                    ...nceForm.data,
-                    dateOfEvent: date,
-                  },
-                })
-              }
-            />
-          </Column>
-          <Column lg={16} md={8} sm={4}>
-            <br></br>
-          </Column>
-          <Column lg={8} md={4} sm={4}>
-            <Select
-              labelText={
-                <FormattedMessage id="nonconform.label.reportingunit" />
-              }
-              id="reportingUnits"
-              value={nceForm.data.reportingUnit}
-              onChange={(e) => {
-                setnceForm({
-                  ...nceForm,
-                  data: {
-                    ...nceForm.data,
-                    reportingUnit: e.target.value,
-                  },
-                });
-              }}
-            >
-              <SelectItem key={"emptyselect"} value={""} text={""} />
-              {nceForm.data.reportingUnits.map((option) => (
-                <SelectItem
-                  key={option.value}
-                  value={option.id}
-                  text={option.value}
-                />
-              ))}
-            </Select>
-          </Column>
-          <Column lg={8} md={4} sm={4}>
-            <TextArea
-              labelText={<FormattedMessage id="nonconform.description.nce" />}
-              value={nceForm.data.description}
-              onChange={(e) => {
-                setnceForm({
-                  ...nceForm,
-                  data: {
-                    ...nceForm.data,
-                    description: e.target.value,
-                  },
-                });
-              }}
-              rows={2}
-              id="text-area-1"
-            />
-          </Column>
-          <Column lg={16} md={8} sm={4}>
-            <br></br>
-          </Column>
-          <Column lg={8} md={4} sm={4}>
-            <TextArea
-              labelText={
-                <FormattedMessage id="nonconform.label.suspected.cause.nce" />
-              }
-              value={nceForm.data.suspectedCauses}
-              onChange={(e) => {
-                setnceForm({
-                  ...nceForm,
-                  data: {
-                    ...nceForm.data,
-                    suspectedCauses: e.target.value,
-                  },
-                });
-              }}
-              rows={2}
-              id="text-area-1"
-            />
-          </Column>
-          <Column lg={8} md={4} sm={4}>
-            <TextArea
-              labelText={
-                <FormattedMessage id="nonconform.label.proposed.action" />
-              }
-              value={nceForm.data.proposedAction}
-              onChange={(e) => {
-                setnceForm({
-                  ...nceForm,
-                  data: {
-                    ...nceForm.data,
-                    proposedAction: e.target.value,
-                  },
-                });
-              }}
-              rows={2}
-              id="text-area-1"
-            />
-          </Column>
+<Column lg={8} md={4} sm={4}>
+  <CustomDatePicker
+    key="startDate"
+    id={"startDate"}
+    labelText={<FormattedMessage id="nonconform.date.event" />}
+    disallowFutureDate={true}
+    autofillDate={true}
+    value={nceForm.data.dateOfEvent}
+    onChange={(date) =>
+      setnceForm((prev) => ({
+        ...prev,
+        data: {
+          ...prev.data,
+          dateOfEvent: date,
+        },
+        errors: {
+          ...prev.errors,
+          dateOfEvent: '',
+        },
+      }))
+    }
+    invalid={!!nceForm.errors.dateOfEvent}
+    invalidText={nceForm.errors.dateOfEvent}
+  />
+</Column>
+
+<Column lg={8} md={4} sm={4}>
+  <Select
+    labelText={<FormattedMessage id="nonconform.label.reportingunit" />}
+    id="reportingUnits"
+    value={nceForm.data.reportingUnit}
+    onChange={(e) => {
+      setnceForm((prev) => ({
+        ...prev,
+        data: {
+          ...prev.data,
+          reportingUnit: e.target.value,
+        },
+        errors: {
+          ...prev.errors,
+          reportingUnit: '',
+        },
+      }));
+    }}
+    invalid={!!nceForm.errors.reportingUnit}
+    invalidText={nceForm.errors.reportingUnit}
+  >
+    <SelectItem key={"emptyselect"} value={""} text={""} />
+    {nceForm.data.reportingUnits.map((option) => (
+      <SelectItem key={option.value} value={option.id} text={option.value} />
+    ))}
+  </Select>
+</Column>
+
+<Column lg={8} md={4} sm={4}>
+  <TextArea
+    labelText={<FormattedMessage id="nonconform.description.nce" />}
+    value={nceForm.data.description}
+    onChange={(e) => {
+      setnceForm((prev) => ({
+        ...prev,
+        data: {
+          ...prev.data,
+          description: e.target.value,
+        },
+        errors: {
+          ...prev.errors,
+          description: '',
+        },
+      }));
+    }}
+    rows={2}
+    id="text-area-1"
+    invalid={!!nceForm.errors.description}
+    invalidText={nceForm.errors.description}
+  />
+</Column>
+
+<Column lg={8} md={4} sm={4}>
+  <TextArea
+    labelText={<FormattedMessage id="nonconform.label.suspected.cause.nce" />}
+    value={nceForm.data.suspectedCauses}
+    onChange={(e) => {
+      setnceForm((prev) => ({
+        ...prev,
+        data: {
+          ...prev.data,
+          suspectedCauses: e.target.value,
+        },
+        errors: {
+          ...prev.errors,
+          suspectedCauses: '',
+        },
+      }));
+    }}
+    rows={2}
+    id="text-area-2"
+    invalid={!!nceForm.errors.suspectedCauses}
+    invalidText={nceForm.errors.suspectedCauses}
+  />
+</Column>
+
+<Column lg={8} md={4} sm={4}>
+  <TextArea
+    labelText={<FormattedMessage id="nonconform.label.proposed.action" />}
+    value={nceForm.data.proposedAction}
+    onChange={(e) => {
+      setnceForm((prev) => ({
+        ...prev,
+        data: {
+          ...prev.data,
+          proposedAction: e.target.value,
+        },
+        errors: {
+          ...prev.errors,
+          proposedAction: '',
+        },
+      }));
+    }}
+    rows={2}
+    id="text-area-3"
+    invalid={!!nceForm.errors.proposedAction}
+    invalidText={nceForm.errors.proposedAction}
+  />
+</Column>
+
           <Column lg={16} md={8} sm={4}>
             <br></br>
           </Column>
