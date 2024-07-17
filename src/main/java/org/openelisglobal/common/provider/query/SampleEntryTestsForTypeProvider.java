@@ -164,6 +164,9 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
 
     private void addVariableSampleTypes(Test test, StringBuilder xml) {
         TestDictionary testDictionary = testDictionaryService.getTestDictionaryForTestId(test.getId());
+        if (testDictionary == null) {
+            return;
+        }
         List<IdValuePair> pairs = DisplayListService.getInstance()
                 .getDictionaryListByCategory(testDictionary.getDictionaryCategory().getCategoryName());
         xml.append("<variableSampleTypes ");
