@@ -43,6 +43,10 @@ const breadcrumbs = [
   },
 ];
 
+const passwordPatternRegex = /^(?=.*[*$#!])(?=.*[a-zA-Z0-9]).{7,}$/;
+const loginNameRegex = /^[a-zA-Z]+$/;
+const nameRegex = /^(?=.*[a-zA-Z])[a-zA-Z .'_@-]*$/;
+
 function UserAddModify() {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
@@ -345,61 +349,151 @@ function UserAddModify() {
 
   function handleUserLoginNameChange(e) {
     setSaveButton(false);
+    const value = e.target.value.trim();
+    const isValid = loginNameRegex.test(value);
+
+    if (value && !isValid) {
+      if (!notificationVisible) {
+        setNotificationVisible(true);
+        addNotification({
+          title: intl.formatMessage({ id: "notification.title" }),
+          message: intl.formatMessage({
+            id: "notification.invalid.loginName",
+          }),
+          kind: NotificationKinds.info,
+        });
+      }
+    } else {
+      setNotificationVisible(false);
+    }
+
     setUserDataPost((prevUserDataPost) => ({
       ...prevUserDataPost,
-      userLoginName: e.target.value,
+      userLoginName: value,
     }));
     setUserDataShow((prevUserData) => ({
       ...prevUserData,
-      userLoginName: e.target.value,
+      userLoginName: value,
     }));
   }
 
   function handleUserPasswordChange(e) {
     setSaveButton(false);
+    const value = e.target.value.trim();
+    const isValid = passwordPatternRegex.test(value);
+
+    if (value && !isValid) {
+      if (!notificationVisible) {
+        setNotificationVisible(true);
+        addNotification({
+          title: intl.formatMessage({ id: "notification.title" }),
+          message: intl.formatMessage({
+            id: "notification.invalid.password",
+          }),
+          kind: NotificationKinds.info,
+        });
+      }
+    } else {
+      setNotificationVisible(false);
+    }
+
     setUserDataPost((prevUserDataPost) => ({
       ...prevUserDataPost,
-      userPassword: e.target.value,
+      userPassword: value,
     }));
     setUserDataShow((prevUserData) => ({
       ...prevUserData,
-      userPassword: e.target.value,
+      userPassword: value,
     }));
   }
 
   function handleConfirmPasswordChange(e) {
+    const value = e.target.value.trim();
+    const isValid = passwordPatternRegex.test(value);
     setSaveButton(false);
+
+    if (value && !isValid) {
+      if (!notificationVisible) {
+        setNotificationVisible(true);
+        addNotification({
+          title: intl.formatMessage({ id: "notification.title" }),
+          message: intl.formatMessage({
+            id: "notification.invalid.confirm.password",
+          }),
+          kind: NotificationKinds.info,
+        });
+      }
+    } else {
+      setNotificationVisible(false);
+    }
+
     setUserDataPost((prevUserDataPost) => ({
       ...prevUserDataPost,
-      confirmPassword: e.target.value,
+      confirmPassword: value,
     }));
     setUserDataShow((prevUserData) => ({
       ...prevUserData,
-      confirmPassword: e.target.value,
+      confirmPassword: value,
     }));
   }
 
   function handleUserFirstNameChange(e) {
+    const value = e.target.value;
+    const isValid = nameRegex.test(value);
     setSaveButton(false);
+
+    if (value && !isValid) {
+      if (!notificationVisible) {
+        setNotificationVisible(true);
+        addNotification({
+          title: intl.formatMessage({ id: "notification.title" }),
+          message: intl.formatMessage({
+            id: "notification.invalid.name",
+          }),
+          kind: NotificationKinds.info,
+        });
+      }
+    } else {
+      setNotificationVisible(false);
+    }
+
     setUserDataPost((prevUserDataPost) => ({
       ...prevUserDataPost,
-      userFirstName: e.target.value,
+      userFirstName: value,
     }));
     setUserDataShow((prevUserData) => ({
       ...prevUserData,
-      userFirstName: e.target.value,
+      userFirstName: value,
     }));
   }
 
   function handleUserLastNameChange(e) {
+    const value = e.target.value;
+    const isValid = nameRegex.test(value);
     setSaveButton(false);
+
+    if (value && !isValid) {
+      if (!notificationVisible) {
+        setNotificationVisible(true);
+        addNotification({
+          title: intl.formatMessage({ id: "notification.title" }),
+          message: intl.formatMessage({
+            id: "notification.invalid.name",
+          }),
+          kind: NotificationKinds.info,
+        });
+      }
+    } else {
+      setNotificationVisible(false);
+    }
+
     setUserDataPost((prevUserDataPost) => ({
       ...prevUserDataPost,
-      userLastName: e.target.value,
+      userLastName: value,
     }));
     setUserDataShow((prevUserData) => ({
       ...prevUserData,
-      userLastName: e.target.value,
+      userLastName: value,
     }));
   }
 
@@ -658,6 +752,12 @@ function UserAddModify() {
                       placeholder={intl.formatMessage({
                         id: "login.login.name",
                       })}
+                      invalid={
+                        userDataShow &&
+                        userDataShow.userLoginName &&
+                        !loginNameRegex.test(userDataShow.userLoginName)
+                      }
+                      // invalidText={errors.order}
                       required={true}
                       value={
                         userDataShow && userDataShow.userLoginName
@@ -712,7 +812,11 @@ function UserAddModify() {
                         id: "login.login.password",
                       })}
                       required={true}
-                      // invalid={errors.order && touched.order}
+                      invalid={
+                        userDataShow &&
+                        userDataShow.userPassword &&
+                        !passwordPatternRegex.test(userDataShow.userPassword)
+                      }
                       // invalidText={errors.order}
                       value={
                         userDataShow && userDataShow.userPassword
@@ -740,7 +844,16 @@ function UserAddModify() {
                         id: "login.login.repeat.password",
                       })}
                       required={true}
-                      // invalid={errors.order && touched.order}
+                      invalid={
+                        (userDataShow &&
+                          userDataShow.userPassword &&
+                          userDataShow.confirmPassword &&
+                          !passwordPatternRegex.test(
+                            userDataShow.confirmPassword,
+                          )) ||
+                        userDataShow.confirmPassword !==
+                          userDataShow.userPassword
+                      }
                       // invalidText={errors.order}
                       value={
                         userDataShow && userDataShow.confirmPassword
@@ -770,7 +883,11 @@ function UserAddModify() {
                         id: "login.login.first",
                       })}
                       required={true}
-                      // invalid={errors.order && touched.order}
+                      invalid={
+                        userDataShow &&
+                        userDataShow.userFirstName &&
+                        !nameRegex.test(userDataShow.userFirstName)
+                      }
                       // invalidText={errors.order}
                       value={
                         userDataShow && userDataShow.userFirstName
@@ -798,7 +915,11 @@ function UserAddModify() {
                         id: "login.login.last",
                       })}
                       required={true}
-                      // invalid={errors.order && touched.order}
+                      invalid={
+                        userDataShow &&
+                        userDataShow.userLastName &&
+                        !nameRegex.test(userDataShow.userLastName)
+                      }
                       // invalidText={errors.order}
                       value={
                         userDataShow && userDataShow.userLastName
@@ -1021,7 +1142,6 @@ function UserAddModify() {
                           ? copyUserPermissionList
                           : []
                       }
-                      required
                     />
                   </Column>
                   <br />
