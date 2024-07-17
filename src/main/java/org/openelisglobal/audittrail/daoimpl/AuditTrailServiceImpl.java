@@ -64,7 +64,8 @@ public class AuditTrailServiceImpl implements AuditTrailService {
         // if logging failes an exception should be thrown so that INSERT/UPDATE is
         // rolled back
         if (referenceTable == null) {
-            LogEvent.logError("AuditTrailDAOImpl", "saveNewHistory()", "NO CHANGES: REF TABLE IS NULL");
+            LogEvent.logError("AuditTrailDAOImpl", "saveNewHistory()",
+                    "NO CHANGES: REF TABLE IS NULL tableName: " + tableName);
             throw new LIMSRuntimeException("Reference Table is null in AuditTrailDAOImpl saveNewHistory()");
         }
 
@@ -119,7 +120,8 @@ public class AuditTrailServiceImpl implements AuditTrailService {
         }
         if (rt == null) {
             // bugzilla 2154
-            LogEvent.logError("AuditTrailDAOImpl", "saveHistory()", "NO CHANGES: REF TABLE IS NULL");
+            LogEvent.logError("AuditTrailDAOImpl", "saveHistory()",
+                    "NO CHANGES: REF TABLE IS NULL" + "tableName: " + tableName);
             // bugzilla 1926
             throw new LIMSRuntimeException("Reference Table is null in AuditTrailDAOImpl saveHistory()");
         }
