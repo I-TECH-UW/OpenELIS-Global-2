@@ -1121,8 +1121,7 @@ function UserAddModify() {
                 <Grid fullWidth={true}>
                   <Column lg={8} md={4} sm={4}>
                     <>
-                      <FormattedMessage id="systemuserrole.copypermisions" />
-                      <span className="requiredlabel">*</span> :
+                      <FormattedMessage id="systemuserrole.copypermisions" /> :
                     </>
                   </Column>
                   <Column lg={8} md={4} sm={4}>
