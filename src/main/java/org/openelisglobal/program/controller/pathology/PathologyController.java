@@ -70,7 +70,7 @@ public class PathologyController extends BaseRestController {
     public ResponseEntity<String> assignTechnician(@RequestParam Integer pathologySampleId,
             HttpServletRequest request) {
         String currentUserId = getSysUserId(request);
-        pathologySampleService.assignTechnician(pathologySampleId, systemUserService.get(currentUserId), currentUserId);
+        pathologySampleService.assignTechnician(pathologySampleId, systemUserService.get(currentUserId));
         return ResponseEntity.ok("ok");
     }
 
@@ -79,8 +79,7 @@ public class PathologyController extends BaseRestController {
     public ResponseEntity<String> assignPathologist(@RequestParam Integer pathologySampleId,
             HttpServletRequest request) {
         String currentUserId = getSysUserId(request);
-        pathologySampleService.assignPathologist(pathologySampleId, systemUserService.get(currentUserId),
-                currentUserId);
+        pathologySampleService.assignPathologist(pathologySampleId, systemUserService.get(currentUserId));
         return ResponseEntity.ok("ok");
     }
 

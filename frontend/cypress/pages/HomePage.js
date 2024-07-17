@@ -18,8 +18,12 @@ class HomePage {
 
   goToOrderPage() {
     this.openNavigationMenu();
-    cy.get("#menu_sample").click();
-    cy.get("#menu_sample_add").click();
+    cy.getElement(
+      ":nth-child(1) > .cds--side-nav__item > .cds--side-nav__submenu",
+    ).click();
+    cy.getElement(
+      ':nth-child(1) > .cds--side-nav__item > .cds--side-nav__menu > :nth-child(1) > .cds--side-nav__link > .cds--side-nav__link-text > [style="display: flex; width: 100%;"] > .custom-sidenav-button',
+    ).click();
     return new OrderEntityPage();
   }
 
@@ -31,62 +35,98 @@ class HomePage {
 
   goToPatientEntry() {
     this.openNavigationMenu();
-    cy.get("#menu_patient").click();
-    cy.get("#menu_patient_add_or_edit").click();
+    cy.get(
+      ":nth-child(2) > .cds--side-nav__item > .cds--side-nav__submenu",
+    ).click();
+    cy.get(
+      ':nth-child(2) > .cds--side-nav__item > .cds--side-nav__menu > :nth-child(1) > .cds--side-nav__link > .cds--side-nav__link-text > [style="display: flex; width: 100%;"] > .custom-sidenav-button',
+    ).click();
     return new PatientEntryPage();
   }
 
   goToModifyOrderPage() {
     this.openNavigationMenu();
-    cy.get("#menu_sample").click();
-    cy.get("#menu_sample_edit").click();
+    cy.getElement(
+      ":nth-child(1) > .cds--side-nav__item > .cds--side-nav__submenu",
+    ).click();
+    cy.get(
+      ':nth-child(1) > .cds--side-nav__item > .cds--side-nav__menu > :nth-child(7) > .cds--side-nav__link > .cds--side-nav__link-text > [style="display: flex; width: 100%;"] > .custom-sidenav-button',
+    ).click();
     return new ModifyOrderPage();
   }
   goToWorkPlanPlanByTest() {
     this.openNavigationMenu();
-    cy.get("#menu_workplan").click();
-    cy.get("#menu_workplan_test").click();
+    cy.get(
+      ":nth-child(4) > .cds--side-nav__item > .cds--side-nav__submenu",
+    ).click();
+    cy.get(
+      ':nth-child(4) > .cds--side-nav__item > .cds--side-nav__menu > :nth-child(1) > .cds--side-nav__link > .cds--side-nav__link-text > [style="display: flex; width: 100%;"] > .custom-sidenav-button',
+    ).click();
     return new WorkPlan();
   }
 
   goToWorkPlanPlanByPanel() {
     this.openNavigationMenu();
-    cy.get("#menu_workplan").click();
-    cy.get("#menu_workplan_panel").click();
+    cy.get(
+      ":nth-child(4) > .cds--side-nav__item > .cds--side-nav__submenu",
+    ).click();
+    cy.get(
+      ':nth-child(4) > .cds--side-nav__item > .cds--side-nav__menu > :nth-child(2) > .cds--side-nav__link > .cds--side-nav__link-text > [style="display: flex; width: 100%;"] > .custom-sidenav-button',
+    ).click();
     return new WorkPlan();
   }
 
   goToWorkPlanPlanByUnit() {
     this.openNavigationMenu();
-    cy.get("#menu_workplan").click();
-    cy.get("#menu_workplan_bench").click();
+    cy.get(
+      ":nth-child(4) > .cds--side-nav__item > .cds--side-nav__submenu",
+    ).click();
+    cy.get(
+      ':nth-child(4) > .cds--side-nav__item > .cds--side-nav__menu > :nth-child(3) > .cds--side-nav__link > .cds--side-nav__link-text > [style="display: flex; width: 100%;"] > .custom-sidenav-button',
+    ).click();
     return new WorkPlan();
   }
 
   goToWorkPlanPlanByPriority() {
     this.openNavigationMenu();
-    cy.get("#menu_workplan").click();
-    cy.get("#menu_workplan_priority").click();
+    cy.get(
+      ":nth-child(4) > .cds--side-nav__item > .cds--side-nav__submenu",
+    ).click();
+    cy.get(
+      ':nth-child(4) > .cds--side-nav__item > .cds--side-nav__menu > :nth-child(4) > .cds--side-nav__link > .cds--side-nav__link-text > [style="display: flex; width: 100%;"] > .custom-sidenav-button',
+    ).click();
     return new WorkPlan();
   }
 
   goToReportNCE() {
     this.openNavigationMenu();
-    cy.get("#menu_non_conforming").click();
-    cy.get("#menu_non_conforming_report").click();
+    cy.get(
+      ":nth-child(3) > .cds--side-nav__item > .cds--side-nav__submenu",
+    ).click();
+    cy.get(
+      ':nth-child(3) > .cds--side-nav__item > .cds--side-nav__menu > :nth-child(1) > .cds--side-nav__link > .cds--side-nav__link-text > [style="display: flex; width: 100%;"] > .custom-sidenav-button',
+    ).click();
     return new NonConform();
   }
 
   goToViewNCE() {
     this.openNavigationMenu();
-    cy.get("#menu_non_conforming").click();
-    cy.get("#menu_non_conforming_view").click();
+    cy.get(
+      ":nth-child(3) > .cds--side-nav__item > .cds--side-nav__submenu",
+    ).click();
+    cy.get(
+      ':nth-child(3) > .cds--side-nav__item > .cds--side-nav__menu > :nth-child(2) > .cds--side-nav__link > .cds--side-nav__link-text > [style="display: flex; width: 100%;"] > .custom-sidenav-button',
+    ).click();
     return new NonConform();
   }
   goToCorrectiveActions() {
     this.openNavigationMenu();
-    cy.get("#menu_non_conforming").click();
-    cy.get("#menu_non_conforming_corrective_actions").click();
+    cy.get(
+      ":nth-child(3) > .cds--side-nav__item > .cds--side-nav__submenu",
+    ).click();
+    cy.get(
+      ':nth-child(3) > .cds--side-nav__item > .cds--side-nav__menu > :nth-child(3) > .cds--side-nav__link > .cds--side-nav__link-text > [style="display: flex; width: 100%;"] > .custom-sidenav-button',
+    ).click();
     return new NonConform();
   }
 }

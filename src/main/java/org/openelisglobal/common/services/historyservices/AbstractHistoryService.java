@@ -164,11 +164,8 @@ public abstract class AbstractHistoryService {
 
     protected void simpleChange(Map<String, String> changeMap, String changesString, String attribute) {
         String value = extractSimple(changesString, attribute);
-
         if (value != null) {
             changeMap.put(attribute, value);
-            // TODO should we call something to trigger addInsertion here if the value is
-            // null?
         }
     }
 

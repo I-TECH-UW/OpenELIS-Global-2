@@ -12,7 +12,6 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.ResultSaveService;
@@ -93,7 +92,6 @@ public class PathologySampleServiceImpl extends AuditableBaseObjectServiceImpl<P
 
     PathologySampleServiceImpl() {
         super(PathologySample.class);
-        this.auditTrailLog = true;
     }
 
     @Override
@@ -108,20 +106,16 @@ public class PathologySampleServiceImpl extends AuditableBaseObjectServiceImpl<P
 
     @Transactional
     @Override
-    public void assignTechnician(Integer pathologySampleId, SystemUser systemUser, String curUserId) {
-        PathologySample pathologySample = copyPathologySample(get(pathologySampleId));
+    public void assignTechnician(Integer pathologySampleId, SystemUser systemUser) {
+        PathologySample pathologySample = get(pathologySampleId);
         pathologySample.setTechnician(systemUser);
-        pathologySample.setSysUserId(curUserId);
-        update(pathologySample);
     }
 
     @Transactional
     @Override
-    public void assignPathologist(Integer pathologySampleId, SystemUser systemUser, String curUserId) {
-        PathologySample pathologySample = copyPathologySample(get(pathologySampleId));
+    public void assignPathologist(Integer pathologySampleId, SystemUser systemUser) {
+        PathologySample pathologySample = get(pathologySampleId);
         pathologySample.setPathologist(systemUser);
-        pathologySample.setSysUserId(curUserId);
-        update(pathologySample);
     }
 
     @Override
@@ -129,33 +123,10 @@ public class PathologySampleServiceImpl extends AuditableBaseObjectServiceImpl<P
         return baseObjectDAO.getCountWithStatus(statuses);
     }
 
-    private PathologySample copyPathologySample(PathologySample oldPathologySample) {
-        PathologySample pathologySample = new PathologySample();
-        pathologySample.setBlocks(new ArrayList<>(oldPathologySample.getBlocks()));
-        pathologySample.setConclusions(new ArrayList<>(oldPathologySample.getConclusions()));
-        pathologySample.setGrossExam(oldPathologySample.getGrossExam());
-        pathologySample.setId(oldPathologySample.getId());
-        pathologySample.setLastupdated(oldPathologySample.getLastupdated());
-        pathologySample.setMicroscopyExam(oldPathologySample.getMicroscopyExam());
-        pathologySample.setPathologist(oldPathologySample.getPathologist());
-        pathologySample.setProgram(oldPathologySample.getProgram());
-        pathologySample.setQuestionnaireResponseUuid(oldPathologySample.getQuestionnaireResponseUuid());
-        pathologySample.setReports(new ArrayList<>(oldPathologySample.getReports()));
-        pathologySample.setRequests(new ArrayList<>(oldPathologySample.getRequests()));
-        pathologySample.setSample(oldPathologySample.getSample());
-        pathologySample.setSlides(new ArrayList<>(oldPathologySample.getSlides()));
-        pathologySample.setStatus(oldPathologySample.getStatus());
-        pathologySample.setTechnician(oldPathologySample.getTechnician());
-        pathologySample.setTechniques(new ArrayList<>(oldPathologySample.getTechniques()));
-        return pathologySample;
-    }
-
     @Transactional
     @Override
     public void updateWithFormValues(Integer pathologySampleId, PathologySampleForm form) {
-        // copying is so we get an object that is detached from hibernate
-        PathologySample pathologySample = copyPathologySample(get(pathologySampleId));
-        pathologySample.setSysUserId(form.getSystemUserId());
+        PathologySample pathologySample = get(pathologySampleId);
         if (!GenericValidator.isBlankOrNull(form.getAssignedPathologistId())) {
             pathologySample.setPathologist(systemUserService.get(form.getAssignedPathologistId()));
         }
@@ -198,12 +169,6 @@ public class PathologySampleServiceImpl extends AuditableBaseObjectServiceImpl<P
         }
         if (form.getReferToImmunoHistoChemistry()) {
             referToImmunoHistoChemistry(pathologySample, form);
-        }
-        try {
-            update(pathologySample);
-        } catch (RuntimeException e) {
-            LogEvent.logError(e);
-            throw e;
         }
     }
 

@@ -60,7 +60,6 @@ public class ImmunohistochemistrySampleServiceImpl
 
     ImmunohistochemistrySampleServiceImpl() {
         super(ImmunohistochemistrySample.class);
-        this.auditTrailLog = true;
     }
 
     @Override
