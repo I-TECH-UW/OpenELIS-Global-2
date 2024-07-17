@@ -592,7 +592,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             strDate = strDate.replaceFirst(DateUtil.AMBIGUOUS_DATE_SEGMENT, "01");
             monthAmbiguous = true;
         }
-        Date birthDate = new SimpleDateFormat("dd/MM/yyyy").parse(strDate);
+        Date birthDate = new SimpleDateFormat(DateUtil.getDateFormat()).parse(strDate);
+
         DateType dateType = new DateType();
         if (monthAmbiguous) {
             dateType.setValue(birthDate, TemporalPrecisionEnum.YEAR);
@@ -632,7 +633,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                 fhirPatient.setBirthDateElement(transformToDateElement(patient.getBirthDateForDisplay()));
             }
         } catch (ParseException e) {
-            LogEvent.logError("patient date unparseable", e);
+            LogEvent.logError("patient date unparseable " + patient.getBirthDateForDisplay(), e);
         }
         if (GenericValidator.isBlankOrNull(patient.getGender())) {
             fhirPatient.setGender(AdministrativeGender.UNKNOWN);
