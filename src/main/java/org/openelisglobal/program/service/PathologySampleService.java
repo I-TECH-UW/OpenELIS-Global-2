@@ -14,9 +14,9 @@ public interface PathologySampleService extends BaseObjectService<PathologySampl
 
     List<PathologySample> searchWithStatusAndTerm(List<PathologyStatus> statuses, String searchTerm);
 
-    void assignTechnician(Integer pathologySampleId, SystemUser systemUser, String curUserId);
+    void assignTechnician(Integer pathologySampleId, SystemUser systemUser);
 
-    void assignPathologist(Integer pathologySampleId, SystemUser systemUser, String curUserId);
+    void assignPathologist(Integer pathologySampleId, SystemUser systemUser);
 
     Long getCountWithStatus(List<PathologyStatus> statuses);
 

@@ -20,7 +20,6 @@ import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,11 +39,6 @@ public class FhirTransformationController extends BaseController {
     private DataExportTaskService dataExportTaskService;
 
     private static boolean running = false;
-
-    @Scheduled(initialDelay = 10 * 1000, fixedRate = Long.MAX_VALUE)
-    private void transformOEObjectsOnBoot() {
-        transformPersistFhirObjects(false, 100, 1);
-    }
 
     @GetMapping("/PatientToFhir")
     public void transformPersistFhirPatients(@RequestParam(defaultValue = "false") Boolean checkAll,
@@ -110,14 +104,6 @@ public class FhirTransformationController extends BaseController {
             response.getWriter().println("processs already running");
             return;
         }
-        BatchResult result = transformPersistFhirObjects(checkAll, batchSize, threads);
-
-        response.getWriter().println("sample batches total: " + result.batches);
-        response.getWriter().println("sample batches failed: " + result.batchFailure);
-
-    }
-
-    private BatchResult transformPersistFhirObjects(Boolean checkAll, int batchSize, int threads) {
         try {
             List<Patient> patients;
             if (checkAll) {
@@ -193,10 +179,8 @@ public class FhirTransformationController extends BaseController {
             LogEvent.logDebug(this.getClass().getSimpleName(), "transformPersistMissingFhirObjects",
                     "finished all batches");
 
-            BatchResult result = new BatchResult();
-            result.batchFailure = batchFailure;
-            result.batches = batches;
-            return result;
+            response.getWriter().println("sample batches total: " + batches);
+            response.getWriter().println("sample batches failed: " + batchFailure);
         } catch (RuntimeException e) {
             throw e;
         } finally {
@@ -253,10 +237,5 @@ public class FhirTransformationController extends BaseController {
 
     private synchronized void endProcess() {
         running = false;
-    }
-
-    class BatchResult {
-        public int batches;
-        public int batchFailure;
     }
 }

@@ -127,14 +127,6 @@ public class Dictionary extends BaseObject<String> {
         this.selectedDictionaryCategoryId = selectedDictionaryCategoryId;
     }
 
-    public String getDisplayValue() {
-        if (localizedDictionaryName == null || localizedDictionaryName.getValue() == null) {
-            return getDictEntry();
-        } else {
-            return getLocalizedDictionaryName().getLocalizedValue();
-        }
-    }
-
     public Localization getLocalizedDictionaryName() {
         return (Localization) localizedDictionaryName.getValue();
     }
