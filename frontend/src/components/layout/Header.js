@@ -183,11 +183,7 @@ function OEHeader(props) {
       if (level === 0 && menuItem.childMenus.length > 0) {
         return (
           <React.Fragment key={path}>
-            <span
-              onClick={(e) => {
-                setMenuItemExpanded(e, menuItem, path);
-              }}
-            >
+            <span id={menuItem.menu.elementId}>
               <SideNavMenu
                 aria-label={intl.formatMessage({
                   id: menuItem.menu.displayKey,
@@ -197,6 +193,9 @@ function OEHeader(props) {
                 })}
                 key={"menu_" + index + "_" + level}
                 defaultExpanded={menuItem.expanded}
+                onClick={(e) => {
+                  setMenuItemExpanded(e, menuItem, path);
+                }}
               >
                 {menuItem.childMenus.map((childMenuItem, index) => {
                   return generateMenuItems(
@@ -214,6 +213,7 @@ function OEHeader(props) {
         return (
           <React.Fragment key={path}>
             <SideNavMenuItem
+              id={menuItem.menu.elementId}
               href={menuItem.menu.actionURL}
               target={menuItem.menu.openInNewWindow ? "_blank" : ""}
             >
@@ -277,19 +277,27 @@ function OEHeader(props) {
   const renderSingleNavButton = (menuItem, index, level, path) => {
     const marginValue = (level - 1) * 0.5 + "rem";
     return (
-      <button
-        className={"custom-sidenav-button"}
-        style={{ marginLeft: marginValue }}
-        onClick={() => {
-          if (menuItem.menu.openInNewWindow) {
-            window.open(menuItem.menu.actionURL);
-          } else {
-            window.location.href = menuItem.menu.actionURL;
-          }
-        }}
+      <a
+        id={menuItem.menu.elementId}
+        href={menuItem.menu.actionURL}
+        target={menuItem.menu.openInNewWindow ? "_blank" : ""}
+        style={{ width: "100%" }}
+        rel="noreferrer"
       >
-        {renderSideNavMenuItemLabel(menuItem, level)}
-      </button>
+        <button
+          className={"custom-sidenav-button"}
+          style={{ marginLeft: marginValue }}
+          onClick={() => {
+            if (menuItem.menu.openInNewWindow) {
+              window.open(menuItem.menu.actionURL);
+            } else {
+              window.location.href = menuItem.menu.actionURL;
+            }
+          }}
+        >
+          {renderSideNavMenuItemLabel(menuItem, level)}
+        </button>
+      </a>
     );
   };
 
@@ -297,6 +305,7 @@ function OEHeader(props) {
     const marginValue = (level - 1) * 0.5 + "rem";
     return (
       <button
+        id={menuItem.menu.displayKey + "_dropdown"}
         className={"custom-sidenav-button"}
         style={{ marginLeft: marginValue }}
         onClick={(e) => {
@@ -313,25 +322,34 @@ function OEHeader(props) {
     const marginValue = (level - 1) * 0.5 + "rem";
     return (
       <>
-        <button
-          className={
-            menuItem.menu.actionURL
-              ? "custom-sidenav-button"
-              : "custom-sidenav-button-unclickable"
-          }
-          style={{ marginLeft: marginValue }}
-          onClick={() => {
-            if (menuItem.menu.openInNewWindow) {
-              window.open(menuItem.menu.actionURL);
-            } else {
-              window.location.href = menuItem.menu.actionURL;
-            }
-          }}
+        <a
+          id={menuItem.menu.elementId}
+          href={menuItem.menu.actionURL}
+          target={menuItem.menu.openInNewWindow ? "_blank" : ""}
+          style={{ width: "100%" }}
+          rel="noreferrer"
         >
-          {renderSideNavMenuItemLabel(menuItem, level)}
-        </button>
+          <button
+            className={
+              menuItem.menu.actionURL
+                ? "custom-sidenav-button"
+                : "custom-sidenav-button-unclickable"
+            }
+            style={{ marginLeft: marginValue }}
+            onClick={() => {
+              if (menuItem.menu.openInNewWindow) {
+                window.open(menuItem.menu.actionURL);
+              } else {
+                window.location.href = menuItem.menu.actionURL;
+              }
+            }}
+          >
+            {renderSideNavMenuItemLabel(menuItem, level)}
+          </button>
+        </a>
         {menuItem.childMenus.length > 0 && (
           <button
+            id={menuItem.menu.displayKey + "_dropdown"}
             className="custom-sidenav-button"
             onClick={(e) => {
               onClickSideNavItem(e, menuItem, path);
