@@ -1213,5 +1213,9 @@
   "systemuserrole.rmpermissions": "Remove Permission",
   "barcode.notification.save": "BarCode Configurations has been saved.",
   "notification.user.post.save.success": "User Information Added Succesfully.",
-  "notification.user.post.delete.success": "User Deactivated Succesfully."
+  "notification.user.post.delete.success": "User Deactivated Succesfully.",
+  "notification.invalid.loginName": "Please enter AlphaNumeric values without spaces only.",
+  "notification.invalid.password": "Please enter password according to instructions.",
+  "notification.invalid.confirm.password": "Your entered password is not same as above password.",
+  "notification.invalid.name": "Please enter Alphanumeric values only."
 }

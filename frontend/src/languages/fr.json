@@ -1117,5 +1117,9 @@
   "systemuserrole.rmpermissions": "Supprimer la permission",
   "barcode.notification.save": "Les configurations de code-barres ont été enregistrées.",
   "notification.user.post.save.success": "Informations utilisateur ajoutées avec succès.",
-  "notification.user.post.delete.success": "Utilisateur désactivé avec succès."
+  "notification.user.post.delete.success": "Utilisateur désactivé avec succès.",
+  "notification.invalid.loginName": "Veuillez saisir des valeurs alphanumériques sans espaces uniquement.",
+  "notification.invalid.password": "Veuillez entrer le mot de passe selon les instructions.",
+  "notification.invalid.confirm.password": "Votre mot de passe saisi n'est pas identique au mot de passe ci-dessus.",
+  "notification.invalid.name": "Veuillez saisir des valeurs alphanumériques uniquement."
 }
