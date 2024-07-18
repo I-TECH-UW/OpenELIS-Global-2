@@ -280,7 +280,9 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
             LogEvent.logInfo(this.getClass().getSimpleName(), "samplePatientEntrySave", result.toString());
 
             // errors.add(ActionMessages.GLOBAL_MESSAGE, error);
-            saveErrors(result);
+            saveErrors(result);// TODO theses errors are not communicated to the frontend return an error code
+                               // if svae is not successful
+
             setupForm(form, request, "");
             request.setAttribute(ALLOW_EDITS_KEY, "false");
         }

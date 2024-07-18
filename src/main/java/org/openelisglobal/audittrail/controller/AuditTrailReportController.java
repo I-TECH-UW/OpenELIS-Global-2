@@ -9,6 +9,7 @@ import org.openelisglobal.audittrail.action.workers.AuditTrailItem;
 import org.openelisglobal.audittrail.action.workers.AuditTrailViewWorker;
 import org.openelisglobal.audittrail.form.AuditTrailViewForm;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -35,7 +36,8 @@ public class AuditTrailReportController extends BaseController {
 
         String accessionNumber = form.getAccessionNumberSearch();
         if (!GenericValidator.isBlankOrNull(accessionNumber)) {
-            AuditTrailViewWorker worker = new AuditTrailViewWorker(accessionNumber);
+            AuditTrailViewWorker worker = SpringContext.getBean(AuditTrailViewWorker.class);
+            worker.setAccessionNumber(accessionNumber);
             List<AuditTrailItem> items = worker.getAuditTrail();
             form.setLog(items);
             form.setAccessionNumber(accessionNumber);
