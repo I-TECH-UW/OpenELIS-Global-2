@@ -502,9 +502,9 @@ button {
   background-color: var(--cds-background-hover, #072655);
 }
 
-.cds--side-nav__link {
+/* .cds--side-nav__link {
   pointer-events: none
-}
+} */
 
 @media screen and (max-width: 792px) {
   .banner h5 {
