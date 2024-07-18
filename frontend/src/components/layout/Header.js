@@ -183,7 +183,11 @@ function OEHeader(props) {
       if (level === 0 && menuItem.childMenus.length > 0) {
         return (
           <React.Fragment key={path}>
-            <span id={menuItem.menu.elementId}>
+            <span id={menuItem.menu.elementId}
+             onClick={(e) => {
+              setMenuItemExpanded(e, menuItem, path);
+            }}
+            >
               <SideNavMenu
                 aria-label={intl.formatMessage({
                   id: menuItem.menu.displayKey,
