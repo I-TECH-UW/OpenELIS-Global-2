@@ -71,6 +71,10 @@ function UserAddModify() {
   const [selectedTestSectionLabUnits, setSelectedTestSectionLabUnits] =
     useState({});
   const [selectedTestSectionList, setSelectedTestSectionList] = useState([]);
+  const [passwordTouched, setPasswordTouched] = useState({
+    userPassword: false,
+    confirmPassword: false,
+  });
 
   const ID = (() => {
     const hash = window.location.hash;
@@ -348,7 +352,6 @@ function UserAddModify() {
   }
 
   function handleUserLoginNameChange(e) {
-    setSaveButton(false);
     const value = e.target.value.trim();
     const isValid = loginNameRegex.test(value);
 
@@ -363,14 +366,16 @@ function UserAddModify() {
           kind: NotificationKinds.info,
         });
       }
+      setSaveButton(true);
     } else {
       setNotificationVisible(false);
+      setSaveButton(false);
+      setUserDataPost((prevUserDataPost) => ({
+        ...prevUserDataPost,
+        userLoginName: value,
+      }));
     }
 
-    setUserDataPost((prevUserDataPost) => ({
-      ...prevUserDataPost,
-      userLoginName: value,
-    }));
     setUserDataShow((prevUserData) => ({
       ...prevUserData,
       userLoginName: value,
@@ -378,7 +383,10 @@ function UserAddModify() {
   }
 
   function handleUserPasswordChange(e) {
-    setSaveButton(false);
+    setPasswordTouched((prev) => ({
+      ...prev,
+      userPassword: true,
+    }));
     const value = e.target.value.trim();
     const isValid = passwordPatternRegex.test(value);
 
@@ -393,14 +401,16 @@ function UserAddModify() {
           kind: NotificationKinds.info,
         });
       }
+      setSaveButton(true);
     } else {
       setNotificationVisible(false);
+      setSaveButton(false);
+      setUserDataPost((prevUserDataPost) => ({
+        ...prevUserDataPost,
+        userPassword: value,
+      }));
     }
 
-    setUserDataPost((prevUserDataPost) => ({
-      ...prevUserDataPost,
-      userPassword: value,
-    }));
     setUserDataShow((prevUserData) => ({
       ...prevUserData,
       userPassword: value,
@@ -408,9 +418,12 @@ function UserAddModify() {
   }
 
   function handleConfirmPasswordChange(e) {
+    setPasswordTouched((prev) => ({
+      ...prev,
+      confirmPassword: true,
+    }));
     const value = e.target.value.trim();
     const isValid = passwordPatternRegex.test(value);
-    setSaveButton(false);
 
     if (value && !isValid) {
       if (!notificationVisible) {
@@ -423,14 +436,16 @@ function UserAddModify() {
           kind: NotificationKinds.info,
         });
       }
+      setSaveButton(true);
     } else {
       setNotificationVisible(false);
+      setSaveButton(false);
+      setUserDataPost((prevUserDataPost) => ({
+        ...prevUserDataPost,
+        confirmPassword: value,
+      }));
     }
 
-    setUserDataPost((prevUserDataPost) => ({
-      ...prevUserDataPost,
-      confirmPassword: value,
-    }));
     setUserDataShow((prevUserData) => ({
       ...prevUserData,
       confirmPassword: value,
@@ -440,7 +455,6 @@ function UserAddModify() {
   function handleUserFirstNameChange(e) {
     const value = e.target.value;
     const isValid = nameRegex.test(value);
-    setSaveButton(false);
 
     if (value && !isValid) {
       if (!notificationVisible) {
@@ -453,14 +467,16 @@ function UserAddModify() {
           kind: NotificationKinds.info,
         });
       }
+      setSaveButton(true);
     } else {
       setNotificationVisible(false);
+      setSaveButton(false);
+      setUserDataPost((prevUserDataPost) => ({
+        ...prevUserDataPost,
+        userFirstName: value,
+      }));
     }
 
-    setUserDataPost((prevUserDataPost) => ({
-      ...prevUserDataPost,
-      userFirstName: value,
-    }));
     setUserDataShow((prevUserData) => ({
       ...prevUserData,
       userFirstName: value,
@@ -470,7 +486,6 @@ function UserAddModify() {
   function handleUserLastNameChange(e) {
     const value = e.target.value;
     const isValid = nameRegex.test(value);
-    setSaveButton(false);
 
     if (value && !isValid) {
       if (!notificationVisible) {
@@ -483,14 +498,16 @@ function UserAddModify() {
           kind: NotificationKinds.info,
         });
       }
+      setSaveButton(true);
     } else {
       setNotificationVisible(false);
+      setUserDataPost((prevUserDataPost) => ({
+        ...prevUserDataPost,
+        userLastName: value,
+      }));
+      setSaveButton(false);
     }
 
-    setUserDataPost((prevUserDataPost) => ({
-      ...prevUserDataPost,
-      userLastName: value,
-    }));
     setUserDataShow((prevUserData) => ({
       ...prevUserData,
       userLastName: value,
@@ -813,6 +830,7 @@ function UserAddModify() {
                       })}
                       required={true}
                       invalid={
+                        passwordTouched.userPassword &&
                         userDataShow &&
                         userDataShow.userPassword &&
                         !passwordPatternRegex.test(userDataShow.userPassword)
@@ -845,7 +863,8 @@ function UserAddModify() {
                       })}
                       required={true}
                       invalid={
-                        (userDataShow &&
+                        (passwordTouched.confirmPassword &&
+                          userDataShow &&
                           userDataShow.userPassword &&
                           userDataShow.confirmPassword &&
                           !passwordPatternRegex.test(
