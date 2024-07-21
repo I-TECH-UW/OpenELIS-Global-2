@@ -5,7 +5,7 @@ export const fetchPatientData = async (query, callback) => {
   const [firstName, lastName] = query.split(" ");
   const queryParams = {
     firstName: firstName || query,
-    lastName: lastName || (firstName ? "" : query),
+    lastName: lastName || query,
     dateOfBirth: query,
     nationalID: query,
     patientID: query,

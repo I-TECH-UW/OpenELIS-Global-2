@@ -60,11 +60,11 @@
 }
 
 .patientHead {
-  padding-left: 2px;
-  width: 595px;
+  width: 585px;
   position: relative;
   border-bottom: 2px solid #eee3e3;
   background-color: #fcfbfb;
+  height: 83px;
 }
 
 .patientHead:hover {
@@ -84,7 +84,7 @@
   }
 
   .patients {
-    width: 450px; /* Maintain the same size */
+    width: 450px;
   }
 
   .patientHead {
@@ -94,14 +94,14 @@
 
 @media (max-width: 480px) {
   .main {
-    right: 150px; /* Maintain the same size */
-    width: 450px; /* Maintain the same size */
+    right: 150px;
+    width: 450px;
   }
 
   .search-bar-container {
     flex-direction: column;
     align-items: stretch;
-    width: 430px; /* Maintain the same size */
+    width: 430px;
   }
 
   .search-input {
@@ -109,7 +109,7 @@
   }
 
   .patients {
-    width: 450px; /* Maintain the same size */
+    width: 450px;
     max-height: 200px;
   }
 
