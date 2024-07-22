@@ -284,6 +284,8 @@
   "sidenav.label.admin.usermgt": "User Management",
   "sidenav.label.admin.labNumber": "Lab Number Management",
   "sidenav.label.admin.commonproperties": "Application Properties",
+  "sidenav.label.admin.formEntry.nonconformityconfig": "NonConformity Configuration",
+  "sidenav.label.admin.formEntry.menustatementconfig": "MenuStatement Configuration",
   "sidenav.label.admin.formEntry.validationconfig": "Validation Configuration",
   "sidenav.label.admin.formEntry.sampleEntryconfig": "Order Entry Configuration",
   "sidenav.label.admin.formEntry.Workplanconfig": "WorkPlan Configuration",
