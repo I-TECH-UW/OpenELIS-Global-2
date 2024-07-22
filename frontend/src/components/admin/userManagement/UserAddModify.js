@@ -292,7 +292,6 @@ function UserAddModify() {
         systemUserIdToCopy: copyUserPermission,
         allowCopyUserRoles: "Y",
       }));
-      setSaveButton(false);
     }
   }, [copyUserPermission]);
 
@@ -307,7 +306,6 @@ function UserAddModify() {
         ...prevUserData,
         selectedTestSectionLabUnits: selectedTestSectionLabUnits,
       }));
-      setSaveButton(false);
     }
   }, [selectedTestSectionLabUnits]);
 
