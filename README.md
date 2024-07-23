@@ -15,8 +15,9 @@ You can find more information on how to set up OpenELIS at our
 
 [![End to End QA Tests Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/frontend-qa.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/frontend-qa.yml)
 
-### For Implementers who Just want to run OpenELIS without Making any Code Changes 
-see [OpenELIS-Docker setup](https://github.com/I-TECH-UW/openelis-docker) 
+### For Implementers who Just want to run OpenELIS without Making any Code Changes
+
+see [OpenELIS-Docker setup](https://github.com/I-TECH-UW/openelis-docker)
 
 ### Running OpenELIS in Docker For Devlopers with Intention of Making code Changes
 
@@ -95,6 +96,6 @@ accessing any of these links, simply follow these steps:
 
         mvn spotless:apply
 
-https://localhost/api/OpenELIS-Global/ReportPrint?report=patientCILNSP_vreduit&type=patient&accessionDirect=&highAccessionDirect=&dateOfBirthSearchValue=&referringSiteId=1367&referringSiteDepartmentId=&onlyResults=true&_onlyResults=on&dateType=ORDER_DATE&lowerDateRange=12%2F12%2F2020&upperDateRange=12%2F12%2F2030
+https://localhost/api/OpenELIS-Global/ReportPrint?report=patientCILNSP_vreduit&type=patient&accessionDirect=&highAccessionDirect=&dateOfBirthSearchValue=&referringSiteId=1367&referringSiteDepartmentId=&onlyResults=true&\_onlyResults=on&dateType=ORDER_DATE&lowerDateRange=12%2F12%2F2020&upperDateRange=12%2F12%2F2030
 
-https://localhost/api/OpenELIS-Global/ReportPrint?report=patientCILNSP_vreduit&type=patient&accessionDirect=&highAccessionDirect=&dateOfBirthSearchValue=&referringSiteId=1367&referringSiteDepartmentId=&_onlyResults=on&dateType=RESULT_DATE&lowerDateRange=12%2F12%2F2020&upperDateRange=12%2F12%2F2030
+https://localhost/api/OpenELIS-Global/ReportPrint?report=patientCILNSP_vreduit&type=patient&accessionDirect=&highAccessionDirect=&dateOfBirthSearchValue=&referringSiteId=1367&referringSiteDepartmentId=&\_onlyResults=on&dateType=RESULT_DATE&lowerDateRange=12%2F12%2F2020&upperDateRange=12%2F12%2F2030
