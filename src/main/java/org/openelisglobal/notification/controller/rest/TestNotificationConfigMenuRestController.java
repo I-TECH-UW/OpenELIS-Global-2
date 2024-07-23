@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/rest")
 public class TestNotificationConfigMenuRestController extends BaseMenuController<TestNotificationConfig> {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "menuList*.id", "menuList*.test.id",
@@ -57,12 +59,11 @@ public class TestNotificationConfigMenuRestController extends BaseMenuController
     }
 
     @PostMapping("/TestNotificationConfigMenu")
-    public TestNotificationConfigMenuForm updateNotificationConfig(HttpServletRequest request,
-            @RequestBody @Valid TestNotificationConfigMenuForm form, BindingResult result)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public TestNotificationConfigMenuForm updateNotificationConfig(@RequestBody @Valid TestNotificationConfigMenuForm form, BindingResult result){
         if (result.hasErrors()) {
-            saveErrors(result);
-            return displayNotificationConfig();
+            // saveErrors(result);
+            // return displayNotificationConfig();
+            throw new RuntimeException("Validation errors occurred");
         }
         try {
             testNotificationConfigService.saveTestNotificationConfigsActiveStatuses(form.getMenuList(),
@@ -71,8 +72,9 @@ public class TestNotificationConfigMenuRestController extends BaseMenuController
             LogEvent.logError("could not save result notification configs", e);
             Errors errors = new BaseErrors();
             errors.reject("alert.error", "An error occured while saving");
-            saveErrors(errors);
-            return displayNotificationConfig();
+            // saveErrors(errors);
+            // return displayNotificationConfig();
+            throw new RuntimeException("An error occurred while saving");
         }
 
         // redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);

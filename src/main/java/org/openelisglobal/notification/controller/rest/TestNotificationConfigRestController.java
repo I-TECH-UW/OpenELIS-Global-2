@@ -1,7 +1,6 @@
 package org.openelisglobal.notification.controller.rest;
 
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
@@ -19,11 +18,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/rest")
 public class TestNotificationConfigRestController extends BaseController {
 
     private static final String[] ALLOWED_FIELDS = new String[] { "config*", "editSystemDefaultPayloadTemplate",
@@ -60,7 +60,6 @@ public class TestNotificationConfigRestController extends BaseController {
     }
 
     @GetMapping(value = "/TestNotificationConfig/raw/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
     public List<TestNotificationConfig> getNotificationConfigs(
             @RequestParam(name = "testIds", required = false) List<String> testIds) {
         List<TestNotificationConfig> configs = testNotificationConfigService
@@ -69,11 +68,11 @@ public class TestNotificationConfigRestController extends BaseController {
     }
 
     @PostMapping("/TestNotificationConfig")
-    public TestNotificationConfigForm updateNotificationConfig(HttpServletRequest request,
-            @RequestBody @Valid TestNotificationConfigForm form, BindingResult result) {
+    public TestNotificationConfigForm updateNotificationConfig(@RequestBody @Valid TestNotificationConfigForm form, BindingResult result) {
         if (result.hasErrors()) {
-            saveErrors(result);
-            return displayNotificationConfig(form.getConfig().getTest().getId());
+            // saveErrors(result);
+            // return displayNotificationConfig(form.getConfig().getTest().getId());
+            throw new RuntimeException("Validation errors occurred");
         }
         String sysUserId = this.getSysUserId(request);
 
