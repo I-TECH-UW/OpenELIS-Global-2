@@ -148,6 +148,12 @@ function Admin() {
             title={intl.formatMessage({ id: "admin.formEntryConfig" })}
             renderIcon={ListDropdown}
           >
+            <SideNavMenuItem href="#NonConformityConfigurationMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.nonconformityconfig" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#MenuStatementConfigMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.menustatementconfig" />
+            </SideNavMenuItem>
             <SideNavMenuItem href="#WorkPlanConfigurationMenu">
               <FormattedMessage id="sidenav.label.admin.formEntry.Workplanconfig" />
             </SideNavMenuItem>
@@ -257,6 +263,18 @@ function Admin() {
         <CommonProperties />
       </PathRoute>
 
+      <PathRoute path="#NonConformityConfigurationMenu">
+        <ConfigMenuDisplay
+          menuType="NonConformityConfigurationMenu"
+          id="sidenav.label.admin.formEntry.nonconformityconfig"
+        />
+      </PathRoute>
+      <PathRoute path="#MenuStatementConfigMenu">
+        <ConfigMenuDisplay
+          menuType="MenuStatementConfigMenu"
+          id="sidenav.label.admin.formEntry.menustatementconfig"
+        />
+      </PathRoute>
       <PathRoute path="#ValidationConfigurationMenu">
         <ConfigMenuDisplay
           menuType="ValidationConfigurationMenu"
