@@ -263,6 +263,8 @@
   "sidenav.label.admin.usermgt": "Gestion des Utilisateurs",
   "sidenav.label.admin.labNumber": "Gestion des Numéro de Laboratoire",
   "sidenav.label.admin.commonproperties": "Propriétés de l'application",
+  "sidenav.label.admin.formEntry.nonconformityconfig": "Configuration de Non-Conformité",
+  "sidenav.label.admin.formEntry.menustatementconfig": "Configuration de MenuStatement",
   "sidenav.label.admin.formEntry.validationconfig": "Configuration de validation",
   "sidenav.label.admin.formEntry.sampleEntryconfig": "Configuration de saisie de commande",
   "sidenav.label.admin.formEntry.Workplanconfig": "Configuration du plan de travail",
