@@ -95,7 +95,3 @@ accessing any of these links, simply follow these steps:
     to properly format the Java code
 
         mvn spotless:apply
-
-https://localhost/api/OpenELIS-Global/ReportPrint?report=patientCILNSP_vreduit&type=patient&accessionDirect=&highAccessionDirect=&dateOfBirthSearchValue=&referringSiteId=1367&referringSiteDepartmentId=&onlyResults=true&\_onlyResults=on&dateType=ORDER_DATE&lowerDateRange=12%2F12%2F2020&upperDateRange=12%2F12%2F2030
-
-https://localhost/api/OpenELIS-Global/ReportPrint?report=patientCILNSP_vreduit&type=patient&accessionDirect=&highAccessionDirect=&dateOfBirthSearchValue=&referringSiteId=1367&referringSiteDepartmentId=&\_onlyResults=on&dateType=RESULT_DATE&lowerDateRange=12%2F12%2F2020&upperDateRange=12%2F12%2F2030
