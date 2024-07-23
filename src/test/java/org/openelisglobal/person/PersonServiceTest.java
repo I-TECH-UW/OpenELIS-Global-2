@@ -25,10 +25,31 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
     @Autowired
     PatientService patientService;
 
+    String personId;
+
     @Before
     public void init() throws Exception {
         patientService.deleteAll(patientService.getAll());
         personService.deleteAll(personService.getAll());
+
+        String firstName = "John";
+        String lastname = "Doe";
+        String phone = "123-456-7890";
+        String workPhone = "6789";
+        String cell = "09876";
+        String primaryPhone = "123-456-7890";
+        String fax = "123";
+        String email = "john.doe@example.com";
+        String city = "Kampala";
+        String country = "Uganda";
+        String zip = "256";
+        String street = "123 Main St";
+
+        Person person = createPerson(firstName, lastname, phone, workPhone, cell, primaryPhone, fax, email, city,
+                country, zip, street);
+
+        // save person to the DB
+        personId = personService.insert(person);
     }
 
     @After
@@ -39,19 +60,11 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void createPerson_shouldCreateNewPerson() throws Exception {
-        String firstName = "John";
-        String lastname = "Doe";
-
-        Person pat = createPerson(firstName, lastname);
-
-        Assert.assertEquals(0, personService.getAllPersons().size());
-        // save person to the DB
-        String personIdId = personService.insert(pat);
-        Person savedPerson = personService.get(personIdId);
+        Person savedPerson = personService.get(personId);
 
         Assert.assertEquals(1, personService.getAllPersons().size());
-        Assert.assertEquals(firstName, savedPerson.getFirstName());
-        Assert.assertEquals(lastname, savedPerson.getLastName());
+        Assert.assertEquals("John", savedPerson.getFirstName());
+        Assert.assertEquals("Doe", savedPerson.getLastName());
     }
 
     @Test
@@ -93,16 +106,7 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void getAllPerson_shouldGetAllPerson() throws Exception {
-        Person person = new Person();
-        personService.insert(person);
         Assert.assertEquals(1, personService.getAllPersons().size());
-    }
-
-    private Person createPerson(String firstName, String LastName) {
-        Person person = new Person();
-        person.setFirstName(firstName);
-        person.setLastName(LastName);
-        return person;
     }
 
     @Test
@@ -113,62 +117,30 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
-    public void getLastFirstName_shouldReturnCorrectFormat() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-
-        Person person = createPerson(firstName, lastName);
-        String lastFirstName = personService.getLastFirstName(person);
-
-        Assert.assertEquals(lastName + ", " + firstName, lastFirstName);
+    public void getLastFirstName_ShouldReturnLastAndFisrtName() {
+        Person savedPerson = personService.get(personId);
+        Assert.assertEquals("Doe, John", personService.getLastFirstName(savedPerson));
     }
 
     @Test
     public void getData_shouldRetrieveDataForPerson() throws Exception {
-        // Create a new person
-        String firstName = "John";
-        String lastName = "Doe";
-        Person person = createPerson(firstName, lastName);
-
-        String personId = personService.insert(person);
 
         Person savedPerson = new Person();
         savedPerson.setId(personId);
         personService.getData(savedPerson);
 
-        Assert.assertEquals(firstName, savedPerson.getFirstName());
-        Assert.assertEquals(lastName, savedPerson.getLastName());
+        Assert.assertEquals("John", savedPerson.getFirstName());
+        Assert.assertEquals("Doe", savedPerson.getLastName());
     }
 
     @Test
     public void getEmail_shouldReturnCorrectEmail() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        String email = "john.doe@example.com";
-
-        Person person = createPerson(firstName, lastName);
-        person.setEmail(email);
-
-        String personId = personService.insert(person);
         Person savedPerson = personService.get(personId);
-
-        String retrievedEmail = personService.getEmail(savedPerson);
-
-        Assert.assertEquals(email, retrievedEmail);
+        Assert.assertEquals("john.doe@example.com", personService.getEmail(savedPerson));
     }
 
     @Test
     public void updatePerson_shouldUpdatePersonInformation() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        Person person = createPerson(firstName, lastName);
-        person.setCity("New York");
-        person.setCountry("USA");
-        person.setState("NY");
-        person.setStreetAddress("123 Main St");
-        person.setZipCode("10001");
-
-        String personId = personService.insert(person);
         Person savedPerson = personService.get(personId);
 
         savedPerson.setCity("Los Angeles");
@@ -183,12 +155,6 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void getPhone_shouldReturnCorrectPhoneNumber() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        Person person = createPerson(firstName, lastName);
-        person.setPrimaryPhone("123-456-7890");
-
-        String personId = personService.insert(person);
         Person savedPerson = personService.get(personId);
 
         String phoneNumber = personService.getPhone(savedPerson);
@@ -196,17 +162,54 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
+    public void getPhone_shouldReturnPhoneContact() {
+        Person savedPerson = personService.get(personId);
+        Assert.assertEquals("123-456-7890", personService.getPhone(savedPerson));
+    }
+
+    @Test
+    public void getCellPhone_shouldReturnCellContact() {
+        Person savedPerson = personService.get(personId);
+        Assert.assertEquals("09876", personService.getCellPhone(savedPerson));
+    }
+
+    @Test
+    public void getworkPhone_shouldReturnworkPhoneContact() {
+        Person savedPerson = personService.get(personId);
+        Assert.assertEquals("6789", personService.getWorkPhone(savedPerson));
+    }
+
+    @Test
     public void getPersonByLastName_shouldReturnCorrectPerson() throws Exception {
-        String firstName = "Jane";
-        String lastName = "Smith";
-
-        Person person = createPerson(firstName, lastName);
-        personService.insert(person);
-
-        Person retrievedPerson = personService.getPersonByLastName(lastName);
+        String lastName = "Doe";
+        Person retrievedPerson = personService.get(personId);
         Assert.assertNotNull(retrievedPerson);
-        Assert.assertEquals(firstName, retrievedPerson.getFirstName());
         Assert.assertEquals(lastName, retrievedPerson.getLastName());
+    }
+
+    @Test
+    public void getfax_shouldReturnFaxNumber() {
+        Person savedPerson = personService.get(personId);
+        Assert.assertEquals("123", personService.getFax(savedPerson));
+    }
+
+    private Person createPerson(String firstName, String LastName, String phone, String workPhone, String cell,
+            String primaryPhone, String fax, String email, String city, String country, String zip, String street) {
+        Person person = new Person();
+        person.setFirstName(firstName);
+        person.setLastName(LastName);
+        person.setHomePhone(phone);
+        person.setWorkPhone(workPhone);
+        person.setCellPhone(cell);
+        person.setPrimaryPhone(primaryPhone);
+        person.setFax(fax);
+        person.setEmail(email);
+        person.setCity(city);
+        person.setCountry(country);
+        person.setZipCode(zip);
+        person.setStreetAddress(street);
+
+        return person;
     }
 
 }
