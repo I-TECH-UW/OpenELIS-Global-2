@@ -5,11 +5,13 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
+import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.service.PatientTypeService;
 import org.openelisglobal.patient.valueholder.Patient;
@@ -258,6 +260,34 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
         String localizedGender = patientService.getLocalizedGender(pat);
 
         Assert.assertEquals("MALE", localizedGender);
+    }
+
+    @Test
+    public void getPageOfPatients_shouldReturnCorrectPatients() throws Exception {
+        String firstName1 = "Josh";
+        String lastName1 = "Nsereko";
+        String dob1 = "20/03/1980";
+        String gender1 = "M";
+        Patient pat1 = createPatient(firstName1, lastName1, dob1, gender1);
+
+        String firstName2 = "John";
+        String lastName2 = "Stewart";
+        String dob2 = "22/04/1982";
+        String gender2 = "M";
+        Patient pat2 = createPatient(firstName2, lastName2, dob2, gender2);
+
+        patientService.insert(pat1);
+        patientService.insert(pat2);
+
+        List<Patient> patientsPage = patientService.getPageOfPatients(1);
+
+        int expectedPageSize = SystemConfiguration.getInstance().getDefaultPageSize();
+        Assert.assertTrue(patientsPage.size() <= expectedPageSize);
+
+        if (expectedPageSize >= 2) {
+            Assert.assertTrue(patientsPage.stream().anyMatch(p -> p.getPerson().getFirstName().equals(firstName1)));
+            Assert.assertTrue(patientsPage.stream().anyMatch(p -> p.getPerson().getFirstName().equals(firstName2)));
+        }
     }
 
 }
