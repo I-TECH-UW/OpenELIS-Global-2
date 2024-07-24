@@ -143,8 +143,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache
-          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache,mode=max
+          # cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache-test
+          # cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache-test,mode=max
           build-args: SKIP_SPOTLESS=true
 
   build-and-push-test-image-frontend:
@@ -186,8 +186,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache
-          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache,mode=max
+          cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache-test
+          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache-test,mode=max
 
   run-e2e-qa:
     needs:
@@ -256,8 +256,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache
-          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache,mode=max
+          # cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache-prod
+          # cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache-prod,mode=max
           build-args: SKIP_SPOTLESS=true
 
   build-and-push-image-frontend:
@@ -300,5 +300,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache
-          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache,mode=max
+          cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache-prod
+          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache-prod,mode=max
