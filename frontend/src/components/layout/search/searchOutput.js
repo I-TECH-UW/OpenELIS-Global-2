@@ -25,7 +25,7 @@ const SearchOutput = ({ patientData, className = "patientHead" }) => {
                         color="rgba(0,0,0,0)"
                         name={`${patient.lastName} ${patient.firstName}`}
                         src={""}
-                        size={patient.referringFacility ? "70" : "60"}
+                        size={patient.referringFacility ? "50" : "40"}
                         textSizeRatio={2}
                         style={{
                           backgroundImage: `url(${patternUrl})`,
@@ -36,8 +36,9 @@ const SearchOutput = ({ patientData, className = "patientHead" }) => {
                     </div>
                   </Column>
                   <Column lg={10} md={5} sm={2}>
-                    <div>{`${patient.lastName} ${patient.firstName}`}</div>
-                    <div>
+                    <div className="tags">
+                      {`${patient.lastName} ${patient.firstName}`}
+
                       <Tag size="sm" type="blue">
                         <FormattedMessage id="patient.label.sex" /> :
                       </Tag>
@@ -46,6 +47,8 @@ const SearchOutput = ({ patientData, className = "patientHead" }) => {
                       ) : (
                         <FormattedMessage id="patient.female" />
                       )}
+                    </div>
+                    <div className="tags">
                       <Tag size="sm" type="blue">
                         {patient.age ? (
                           <FormattedMessage id="patient.label.age" />
@@ -55,15 +58,12 @@ const SearchOutput = ({ patientData, className = "patientHead" }) => {
                         :
                       </Tag>
                       {patient.age || patient.dob}
+
+                      <Tag size="sm" type="blue">
+                        <FormattedMessage id="patient.natioanalid" /> :
+                      </Tag>
+                      {patient.nationalId}
                     </div>
-                    {patient.nationalId && (
-                      <div>
-                        <Tag size="sm" type="blue">
-                          <FormattedMessage id="patient.natioanalid" /> :
-                        </Tag>
-                        {patient.nationalId}
-                      </div>
-                    )}
                   </Column>
                 </Grid>
               </div>
