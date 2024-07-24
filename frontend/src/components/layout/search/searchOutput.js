@@ -7,7 +7,7 @@ import { openPatientResults } from "./searchService";
 
 const SearchOutput = ({ patientData, className = "patientHead" }) => {
   return (
-    <Grid fullWidth>
+    <div>
       {patientData.map((patient) => {
         const patternUrl = GeoPattern.generate(patient.id).toDataUri();
         return (
@@ -30,7 +30,7 @@ const SearchOutput = ({ patientData, className = "patientHead" }) => {
                         style={{
                           backgroundImage: `url(${patternUrl})`,
 
-                          marginTop: "11px",
+                          marginTop: "5px",
                         }}
                       />
                     </div>
@@ -38,7 +38,7 @@ const SearchOutput = ({ patientData, className = "patientHead" }) => {
                   <Column lg={10} md={5} sm={2}>
                     <div>{`${patient.lastName} ${patient.firstName}`}</div>
                     <div>
-                      <Tag type="blue">
+                      <Tag size="sm" type="blue">
                         <FormattedMessage id="patient.label.sex" /> :
                       </Tag>
                       {patient.gender === "M" ? (
@@ -46,7 +46,7 @@ const SearchOutput = ({ patientData, className = "patientHead" }) => {
                       ) : (
                         <FormattedMessage id="patient.female" />
                       )}
-                      <Tag type="blue">
+                      <Tag size="sm" type="blue">
                         {patient.age ? (
                           <FormattedMessage id="patient.label.age" />
                         ) : (
@@ -58,7 +58,7 @@ const SearchOutput = ({ patientData, className = "patientHead" }) => {
                     </div>
                     {patient.nationalId && (
                       <div>
-                        <Tag type="blue">
+                        <Tag size="sm" type="blue">
                           <FormattedMessage id="patient.natioanalid" /> :
                         </Tag>
                         {patient.nationalId}
@@ -71,7 +71,7 @@ const SearchOutput = ({ patientData, className = "patientHead" }) => {
           </Column>
         );
       })}
-    </Grid>
+    </div>
   );
 };
 

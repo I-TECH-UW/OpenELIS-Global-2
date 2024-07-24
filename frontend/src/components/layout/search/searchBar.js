@@ -7,6 +7,7 @@ import {
   Grid,
   Column,
   Loading,
+  Tag,
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
 import SearchOutput from "./searchOutput";
@@ -152,18 +153,35 @@ const SearchBar = (props) => {
             </ul>
           )}
         </Column>
+
         <Column sm={4} md={6} lg={12}>
           {(loading || patientData.length > 0) && (
-            <Tile className="patients" light>
+            <div className="patients">
               {loading ? (
                 <Loading
                   description={intl.formatMessage({ id: "label.loading" })}
                   withOverlay={false}
                 />
               ) : (
-                <SearchOutput loading={loading} patientData={patientData} />
+                <>
+                  <div>
+                    <em
+                      style={{
+                        fontFamily: "serif",
+                        color: "#000",
+                        marginLeft: "10px",
+                      }}
+                    >
+                      <FormattedMessage id="sidenav.label.results" />:
+                    </em>{" "}
+                    <Tag size="sm" type="blue">
+                      {patientData.length}
+                    </Tag>
+                  </div>
+                  <SearchOutput loading={loading} patientData={patientData} />
+                </>
               )}
-            </Tile>
+            </div>
           )}
         </Column>
       </Grid>
