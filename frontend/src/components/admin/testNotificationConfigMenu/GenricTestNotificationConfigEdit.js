@@ -48,7 +48,7 @@ let breadcrumbs = [
   },
 ];
 
-function TestNotificationConfigMenu() {
+function GenricTestNotificationConfigEdit() {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
@@ -71,10 +71,49 @@ function TestNotificationConfigMenu() {
             </Section>
           </Column>
         </Grid>
-        <div className="orderLegendBody"></div>
+        <div className="orderLegendBody">
+          <Grid fullWidth={true} className="gridBoundary">
+            <Column lg={16} md={8} sm={4}>
+              <Section>
+                <Section>
+                  <Heading>
+                    <FormattedMessage id="testnotification.instructions.header" />
+                  </Heading>
+                </Section>
+              </Section>
+              <br />
+              <FormattedMessage id="testnotification.instructions.body" />
+              <br />
+              <FormattedMessage id="testnotification.instructions.body.0" />
+              <br />
+              <FormattedMessage id="testnotification.instructions.body.1" />
+              <br />
+              <FormattedMessage id="testnotification.instructions.body.2" />
+              <br />
+              <FormattedMessage id="testnotification.instructions.body.3" />
+              <br />
+              <Section>
+                <Section>
+                  <Section>
+                    <Heading id="testnotification.instructionis.variables.header" />
+                  </Section>
+                </Section>
+              </Section>
+              <br />
+              <FormattedMessage id="testnotification.instructionis.variables.body" />
+              <br />
+              <FormattedMessage id="testnotification.instructionis.variables.body.0" />
+              <br />
+              <FormattedMessage id="testnotification.instructionis.variables.body.1" />
+              <br />
+              <FormattedMessage id="testnotification.instructionis.variables.body.2" />
+              <br />
+            </Column>
+          </Grid>
+        </div>
       </div>
     </>
   );
 }
 
-export default injectIntl(TestNotificationConfigMenu);
+export default injectIntl(GenricTestNotificationConfigEdit);

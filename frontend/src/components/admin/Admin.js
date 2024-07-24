@@ -29,6 +29,7 @@ import {
   Bullhorn,
   User,
   BatchJob,
+  Popup,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -54,6 +55,7 @@ import UserManagement from "./userManagement/UserManagement";
 import UserAddModify from "./userManagement/UserAddModify";
 import ManageMethod from "./testManagement/ManageMethod.js";
 import BatchTestReassignmentAndCancelation from "./BatchTestReassignmentAndCancellation/BatchTestReassignmentAndCancelation.js";
+import TestNotificationConfigMenu from "./testNotificationConfigMenu/TestNotificationConfigMenu.js";
 
 function Admin() {
   const intl = useIntl();
@@ -187,6 +189,9 @@ function Admin() {
               id="sidenav.label.admin.commonproperties"
               defaultMessage={"Common Properties"}
             />
+          </SideNavLink>
+          <SideNavLink href="#testNotificationConfigMenu" renderIcon={Popup}>
+            <FormattedMessage id="testnotificationconfig.browse.title" />
           </SideNavLink>
           <SideNavLink href="#DictionaryMenu" renderIcon={CharacterWholeNumber}>
             <FormattedMessage id="dictionary.label.modify" />
@@ -324,6 +329,9 @@ function Admin() {
           menuType="PrintedReportsConfigurationMenu"
           id="sidenav.label.admin.formEntry.PrintedReportsconfig"
         />
+      </PathRoute>
+      <PathRoute path="#testNotificationConfigMenu">
+        <TestNotificationConfigMenu />
       </PathRoute>
       <PathRoute path="#DictionaryMenu">
         <DictionaryManagement />
