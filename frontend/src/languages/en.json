@@ -1262,5 +1262,6 @@
   "testnotification.provider.sms": "Provider SMS",
   "testnotification.subjecttemplate": "Subject",
   "testnotification.systemdefault.template": "System Default Message",
-  "testnotification.testdefault.template": "Default Message for Test"
+  "testnotification.testdefault.template": "Default Message for Test",
+  "testnotification.bcc": "BCC"
 }

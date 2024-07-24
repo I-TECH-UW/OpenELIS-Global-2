@@ -68,7 +68,8 @@ public class TestNotificationConfigRestController extends BaseController {
     }
 
     @PostMapping("/TestNotificationConfig")
-    public TestNotificationConfigForm updateNotificationConfig(@RequestBody @Valid TestNotificationConfigForm form, BindingResult result) {
+    public TestNotificationConfigForm updateNotificationConfig(@RequestBody @Valid TestNotificationConfigForm form,
+            BindingResult result) {
         if (result.hasErrors()) {
             // saveErrors(result);
             // return displayNotificationConfig(form.getConfig().getTest().getId());
