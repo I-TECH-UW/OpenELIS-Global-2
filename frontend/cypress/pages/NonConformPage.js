@@ -3,7 +3,7 @@ class NonConform {
     return cy.get("h2");
   }
 
-  getViewNonConformTitle(){
+  getViewNonConformTitle() {
     return cy.get("h2");
   }
 
@@ -25,16 +25,22 @@ class NonConform {
       .should("eq", expectedValue);
   }
 
-  validateLabNoSearchResult(labNo){
-    cy.get('.orderLegendBody > :nth-child(2) > :nth-child(7) > :nth-child(2)').invoke('text').should('eq', labNo);
+  validateLabNoSearchResult(labNo) {
+    cy.get(".orderLegendBody > :nth-child(2) > :nth-child(7) > :nth-child(2)")
+      .invoke("text")
+      .should("eq", labNo);
   }
 
-  validateNCESearchResult(NCENo){
-    cy.get('[style="margin-bottom: 10px; color: rgb(85, 85, 85);"]').invoke('text').should('eq', NCENo);
+  validateNCESearchResult(NCENo) {
+    cy.get('[style="margin-bottom: 10px; color: rgb(85, 85, 85);"]')
+      .invoke("text")
+      .should("eq", NCENo);
   }
 
-  validateLabNoSearchResultCorective(labNo){
-    cy.get('.cds--subgrid > :nth-child(7) > :nth-child(2)').invoke('text').should('eq', labNo);
+  validateLabNoSearchResultCorective(labNo) {
+    cy.get(".cds--subgrid > :nth-child(7) > :nth-child(2)")
+      .invoke("text")
+      .should("eq", labNo);
   }
 
   clickCheckbox() {
@@ -54,78 +60,77 @@ class NonConform {
   }
 
   enterDescription(description) {
-    cy.get('#text-area-1').type(description);
+    cy.get("#text-area-1").type(description);
   }
 
   enterSuspectedCause(SuspectedCause) {
-    cy.get('#text-area-2').type(SuspectedCause);
+    cy.get("#text-area-2").type(SuspectedCause);
   }
 
   enterCorrectiveAction(correctiveaction) {
-    cy.get('#text-area-3').type(correctiveaction);
+    cy.get("#text-area-3").type(correctiveaction);
   }
 
   enterNceCategory(nceCategory) {
-    cy.get('#nceCategory').select(nceCategory);
+    cy.get("#nceCategory").select(nceCategory);
   }
 
   enterNceType(nceType) {
-    cy.get('#nceType').select(nceType);
+    cy.get("#nceType").select(nceType);
   }
 
   enterConsequences(consequences) {
-    cy.get('#consequences').select(consequences);
+    cy.get("#consequences").select(consequences);
   }
 
   enterRecurrence(recurrence) {
-    cy.get('#recurrence').select(recurrence);
+    cy.get("#recurrence").select(recurrence);
   }
 
   enterLabComponent(labComponent) {
-    cy.get('#labComponent').select(labComponent);
+    cy.get("#labComponent").select(labComponent);
   }
 
   enterDescriptionAndComments(testText) {
-    cy.get('#text-area-10').type(testText);
-    cy.get('#text-area-3').type(testText);
-    cy.get('#text-area-2').type(testText);
+    cy.get("#text-area-10").type(testText);
+    cy.get("#text-area-3").type(testText);
+    cy.get("#text-area-2").type(testText);
   }
 
   submitForm() {
-    cy.get(':nth-child(28) > .cds--btn').click();
+    cy.get(":nth-child(28) > .cds--btn").click();
   }
 
-  submitFormNce(){
-    cy.get(':nth-child(14) > .cds--btn').click();
+  submitFormNce() {
+    cy.get(":nth-child(14) > .cds--btn").click();
   }
-
 
   enterDiscussionDate(date) {
-    cy.get('.cds--date-picker-input__wrapper > #tdiscussionDate').type(date);
+    cy.get(".cds--date-picker-input__wrapper > #tdiscussionDate").type(date);
   }
-  
+
   enterProposedCorrectiveAction(action) {
-    cy.get('#text-area-corrective').type(action, { force: true });
+    cy.get("#text-area-corrective").type(action, { force: true });
   }
-  
+
   enterDateCompleted(date) {
-    cy.get('.cds--date-picker-input__wrapper > #dateCompleted').type(date);
+    cy.get(".cds--date-picker-input__wrapper > #dateCompleted").type(date);
   }
-  
+
   selectActionType() {
-    cy.get(':nth-child(1) > .cds--checkbox-label').click();
+    cy.get(":nth-child(1) > .cds--checkbox-label").click();
   }
-  
+
   selectResolution() {
-    cy.get(':nth-child(1) > .cds--radio-button__label').click();
+    cy.get(":nth-child(1) > .cds--radio-button__label").click();
   }
-  
+
   enterDateCompleted0(date) {
-    cy.get('.cds--date-picker-input__wrapper > #dateCompleted-0').type(date);
+    cy.get(".cds--date-picker-input__wrapper > #dateCompleted-0").type(date);
   }
-  
+
   clickSubmitButton() {
-    cy.get(':nth-child(38) > .cds--btn').click();
+    cy.get(":nth-child(38) > .cds--btn").click();
   }
 
   getAndSaveNceNumber() {
@@ -141,7 +146,6 @@ class NonConform {
         });
       });
   }
-  
 }
 
 export default NonConform;
