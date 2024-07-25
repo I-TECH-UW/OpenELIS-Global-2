@@ -53,7 +53,7 @@ export const fetchPatientData = async (query, callback) => {
 
 export const openPatientResults = (patientId) => {
   if (patientId) {
-    window.location.href = "/ModifyOrder?patientId=" + patientId;
+    window.location.href = "/PatientResults/" + patientId;
   }
 };
 
