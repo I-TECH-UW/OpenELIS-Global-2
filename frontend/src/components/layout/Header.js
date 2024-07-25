@@ -40,7 +40,7 @@ import {
 } from "@carbon/react";
 import SlideOverNotifications from "../notifications/SlideOverNotifications";
 import { getFromOpenElisServer, putToOpenElisServer } from "../utils/Utils";
-
+import SearchBar from "./search/searchBar";
 function OEHeader(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
   const { userSessionDetails, logout } = useContext(UserSessionDetailsContext);
@@ -63,7 +63,7 @@ function OEHeader(props) {
   const [showRead, setShowRead] = useState(false);
   const [unReadNotifications, setUnReadNotifications] = useState([]);
   const [readNotifications, setReadNotifications] = useState([]);
-
+  const [searchBar, setSearchBar] = useState(false);
   scrollRef.current = window.scrollY;
   useLayoutEffect(() => {
     window.scrollTo(0, scrollRef.current);
@@ -177,16 +177,19 @@ function OEHeader(props) {
       </>
     );
   };
-
+  const handleSearch = () => {
+    setSearchBar(!searchBar);
+  };
   const generateMenuItems = (menuItem, index, level, path) => {
     if (menuItem.menu.isActive) {
       if (level === 0 && menuItem.childMenus.length > 0) {
         return (
           <React.Fragment key={path}>
-            <span id={menuItem.menu.elementId}
-             onClick={(e) => {
-              setMenuItemExpanded(e, menuItem, path);
-            }}
+            <span
+              id={menuItem.menu.elementId}
+              onClick={(e) => {
+                setMenuItemExpanded(e, menuItem, path);
+              }}
             >
               <SideNavMenu
                 aria-label={intl.formatMessage({
@@ -443,13 +446,16 @@ function OEHeader(props) {
                   <HeaderGlobalBar>
                     {userSessionDetails.authenticated && (
                       <>
+                        {searchBar && <SearchBar />}
                         <HeaderGlobalAction
                           aria-label="Search"
-                          onClick={() => {
-                            /*TODO add search functionality*/
-                          }}
+                          onClick={handleSearch}
                         >
-                          <Search size={20} />
+                          {!searchBar ? (
+                            <Search size={20} />
+                          ) : (
+                            <Close size={20} />
+                          )}
                         </HeaderGlobalAction>
                         <HeaderGlobalAction
                           aria-label="Notifications"
