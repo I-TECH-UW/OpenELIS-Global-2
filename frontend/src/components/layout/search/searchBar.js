@@ -77,6 +77,7 @@ const SearchBar = (props) => {
         setLoading(false);
       });
     } else {
+      setPatientData([]);
       setLoading(false);
     }
   };
