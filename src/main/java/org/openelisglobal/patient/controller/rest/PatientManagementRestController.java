@@ -72,7 +72,8 @@ public class PatientManagementRestController extends BaseRestController {
             }
             try {
                 patientService.persistPatientData(patientInfo, patient, getSysUserId(request));
-                fhirTransformService.transformPersistPatient(patientInfo);
+                fhirTransformService.transformPersistPatient(patientInfo,
+                        (patientInfo.getPatientUpdateStatus() == PatientUpdateStatus.ADD));
             } catch (LIMSRuntimeException e) {
 
                 if (e.getCause() instanceof StaleObjectStateException) {

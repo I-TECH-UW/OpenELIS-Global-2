@@ -1,6 +1,9 @@
 package org.openelisglobal.dataexchange.fhir.service;
 
 import ca.uhn.fhir.model.api.TemporalPrecisionEnum;
+import ca.uhn.fhir.parser.DataFormatException;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.client.exceptions.FhirClientConnectionException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -11,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -67,6 +71,7 @@ import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceServiceImpl.FhirOperations;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
@@ -84,6 +89,7 @@ import org.openelisglobal.observationhistory.valueholder.ObservationHistory.Valu
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.organization.valueholder.OrganizationType;
+import org.openelisglobal.patient.action.IPatientUpdate;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
@@ -109,6 +115,7 @@ import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
@@ -116,6 +123,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FhirTransformServiceImpl implements FhirTransformService {
+
+    @Value("${org.openelisglobal.crserver.uri:}")
+    private String clientRegistryServerUrl;
+    @Value("${org.openelisglobal.crserver.username:}")
+    private String clientRegistryUserName;
+    @Value("${org.openelisglobal.crserver.password:}")
+    private String clientRegistryPassword;
 
     @Autowired
     private FhirConfig fhirConfig;
@@ -159,6 +173,9 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     private AddressPartService addressPartService;
     @Autowired
     private OrganizationService organizationService;
+
+    @Autowired
+    private FhirUtil fhirUtil;
 
     private String ADDRESS_PART_VILLAGE_ID;
     private String ADDRESS_PART_COMMUNE_ID;
@@ -372,12 +389,32 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Override
     @Async
     @Transactional(readOnly = true)
-    public void transformPersistPatient(PatientManagementInfo patientInfo) throws FhirLocalPersistingException {
+    public void transformPersistPatient(PatientManagementInfo patientInfo, boolean isCreate)
+            throws FhirLocalPersistingException {
         CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
         FhirOperations fhirOperations = new FhirOperations();
         org.hl7.fhir.r4.model.Patient patient = transformToFhirPatient(patientInfo.getPatientPK());
         this.addToOperations(fhirOperations, tempIdGenerator, patient);
-        Bundle responseBundle = fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
+
+        if (!GenericValidator.isBlankOrNull(clientRegistryServerUrl)
+                && !GenericValidator.isBlankOrNull(clientRegistryUserName)
+                && !GenericValidator.isBlankOrNull(clientRegistryPassword)) {
+            IGenericClient clientRegistry = fhirUtil.getFhirClient(clientRegistryServerUrl, clientRegistryUserName,
+                    clientRegistryPassword);
+            try {
+                if (isCreate) {
+                    clientRegistry.create().resource(patient).execute();
+                } else {
+                    clientRegistry.update().resource(patient).execute();
+                }
+            } catch (FhirClientConnectionException e) {
+                handleException(e, patientInfo.getPatientUpdateStatus());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
     }
 
     @Transactional
@@ -522,9 +559,19 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     private List<ContactPoint> transformToTelecom(Person person) {
         List<ContactPoint> contactPoints = new ArrayList<>();
-        contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.PHONE).setValue(person.getPrimaryPhone()));
-        contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.EMAIL).setValue(person.getEmail()));
-        contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.FAX).setValue(person.getFax()));
+        if (person.getPrimaryPhone() != null) {
+            contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.PHONE).setValue(person.getPrimaryPhone())
+                    .setUse(ContactPointUse.MOBILE));
+        }
+
+        if (person.getEmail() != null) {
+            contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.EMAIL).setValue(person.getEmail()));
+        }
+
+        if (person.getFax() != null) {
+            contactPoints.add(new ContactPoint().setSystem(ContactPointSystem.FAX).setValue(person.getFax()));
+        }
+
         return contactPoints;
     }
 
@@ -627,6 +674,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         humanName.addGiven(patient.getPerson().getFirstName());
         humanNameList.add(humanName);
         fhirPatient.setName(humanNameList);
+        fhirPatient.getNameFirstRep().setUse(HumanName.NameUse.OFFICIAL);
 
         try {
             if (patient.getBirthDateForDisplay() != null) {
@@ -1326,8 +1374,15 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Override
     public Identifier createIdentifier(String system, String value) {
         Identifier identifier = new Identifier();
-        identifier.setSystem(system);
         identifier.setValue(value);
+
+        if (Objects.equals(system, fhirConfig.getOeFhirSystem() + "/pat_nationalId")) {
+            identifier.setUse(Identifier.IdentifierUse.OFFICIAL);
+        } else {
+            identifier.setUse(Identifier.IdentifierUse.USUAL);
+        }
+
+        identifier.setSystem(system);
         return identifier;
     }
 
@@ -1389,5 +1444,16 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         addTelecomToPerson(practitioner.getTelecom(), provider.getPerson());
 
         return provider;
+    }
+
+    private void handleException(FhirClientConnectionException e, IPatientUpdate.PatientUpdateStatus status)
+            throws FhirClientConnectionException {
+        Throwable cause = e.getCause();
+        if (cause instanceof DataFormatException) {
+            LogEvent.logWarn(e.getMessage(), status.name().toLowerCase(),
+                    "Client Registry responds with unsupported data format!");
+        } else {
+            throw e;
+        }
     }
 }
