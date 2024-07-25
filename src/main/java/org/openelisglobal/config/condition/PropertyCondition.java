@@ -9,40 +9,14 @@ public class PropertyCondition implements ConfigurationCondition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        Map<String, Object> attributes = metadata.getAnnotationAttributes(ConditionalOnProperty.class.getName());
-        if (attributes == null)
-            return false;
-        String[] properties = (String[]) attributes.get("properties");
-        String[] havingValues = (String[]) attributes.get("havingValues");
-        boolean[] nonEmpty = (boolean[]) attributes.get("nonEmpty");
-        boolean matchIfMissing = (boolean) attributes.get("matchIfMissing");
+        final Map<String, Object> attributes = metadata.getAnnotationAttributes(ConditionalOnProperty.class.getName());
+        final String propertyName = (String) attributes.get("property");
+        final String havingValue = (String) attributes.get("havingValue");
+        final boolean matchIfMissing = (boolean) attributes.get("matchIfMissing");
 
-        if (properties == null || properties.length == 0) {
-            return matchIfMissing;
-        }
+        String propertyValue = context.getEnvironment().getProperty(propertyName);
 
-        for (int i = 0; i < properties.length; i++) {
-            String property = properties[i];
-            String propertyValue = context.getEnvironment().getProperty(property);
-
-            boolean valueCheck = (havingValues.length > i && propertyValue != null)
-                    ? propertyValue.equals(havingValues[i])
-                    : true;
-
-            boolean nonEmptyCheck = (nonEmpty.length > i) ? nonEmpty[i] : false;
-
-            if (propertyValue == null) {
-                if (!matchIfMissing) {
-                    return false;
-                }
-            } else if (nonEmptyCheck && propertyValue.isEmpty()) {
-                return false;
-            } else if (!valueCheck) {
-                return false;
-            }
-        }
-
-        return true;
+        return propertyValue == null ? matchIfMissing : propertyValue.equals(havingValue);
     }
 
     @Override

@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.Annotation;
@@ -71,6 +72,7 @@ import org.openelisglobal.common.services.TableIdService;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceServiceImpl.FhirOperations;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
@@ -114,7 +116,7 @@ import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
@@ -122,6 +124,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FhirTransformServiceImpl implements FhirTransformService {
+
+    @Value("${org.openelisglobal.crserver.uri:}")
+    private String clientRegistryServerUrl;
+    @Value("${org.openelisglobal.crserver.username:}")
+    private String clientRegistryUserName;
+    @Value("${org.openelisglobal.crserver.password:}")
+    private String clientRegistryPassword;
 
     @Autowired
     private FhirConfig fhirConfig;
@@ -167,8 +176,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     private OrganizationService organizationService;
 
     @Autowired
-    @Qualifier("clientRegistryFhirClient")
-    private IGenericClient crClient;
+    private FhirUtil fhirUtil;
 
     private String ADDRESS_PART_VILLAGE_ID;
     private String ADDRESS_PART_COMMUNE_ID;
@@ -389,20 +397,26 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         org.hl7.fhir.r4.model.Patient patient = transformToFhirPatient(patientInfo.getPatientPK());
         this.addToOperations(fhirOperations, tempIdGenerator, patient);
 
-        try {
-            if (isCreate) {
-                crClient.create().resource(patient).execute();
-            } else {
-                crClient.update().resource(patient).execute();
+        if (!GenericValidator.isBlankOrNull(clientRegistryServerUrl) &&
+                !GenericValidator.isBlankOrNull(clientRegistryUserName) &&
+                !GenericValidator.isBlankOrNull(clientRegistryPassword)) {
+            IGenericClient clientRegistry = fhirUtil.getFhirClient(clientRegistryServerUrl, clientRegistryUserName, clientRegistryPassword);
+            try {
+                if (isCreate) {
+                    clientRegistry.create().resource(patient).execute();
+                } else {
+                    clientRegistry.update().resource(patient).execute();
+                }
+            } catch (FhirClientConnectionException e) {
+                handleException(e, patientInfo.getPatientUpdateStatus());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
-        } catch (FhirClientConnectionException e) {
-            handleException(e, patientInfo.getPatientUpdateStatus());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
 
         fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
     }
+
 
     @Transactional
     @Async
