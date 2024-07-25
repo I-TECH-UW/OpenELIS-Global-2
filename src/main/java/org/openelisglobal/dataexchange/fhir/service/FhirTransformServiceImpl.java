@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.Annotation;
@@ -397,10 +396,11 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         org.hl7.fhir.r4.model.Patient patient = transformToFhirPatient(patientInfo.getPatientPK());
         this.addToOperations(fhirOperations, tempIdGenerator, patient);
 
-        if (!GenericValidator.isBlankOrNull(clientRegistryServerUrl) &&
-                !GenericValidator.isBlankOrNull(clientRegistryUserName) &&
-                !GenericValidator.isBlankOrNull(clientRegistryPassword)) {
-            IGenericClient clientRegistry = fhirUtil.getFhirClient(clientRegistryServerUrl, clientRegistryUserName, clientRegistryPassword);
+        if (!GenericValidator.isBlankOrNull(clientRegistryServerUrl)
+                && !GenericValidator.isBlankOrNull(clientRegistryUserName)
+                && !GenericValidator.isBlankOrNull(clientRegistryPassword)) {
+            IGenericClient clientRegistry = fhirUtil.getFhirClient(clientRegistryServerUrl, clientRegistryUserName,
+                    clientRegistryPassword);
             try {
                 if (isCreate) {
                     clientRegistry.create().resource(patient).execute();
@@ -416,7 +416,6 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
         fhirPersistanceService.createUpdateFhirResourcesInFhirStore(fhirOperations);
     }
-
 
     @Transactional
     @Async
