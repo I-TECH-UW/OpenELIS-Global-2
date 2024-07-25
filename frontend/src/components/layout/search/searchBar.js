@@ -36,10 +36,7 @@ const SearchBar = (props) => {
     setTextValue,
   } = useAutocomplete({
     value: searchInput,
-    suggestions: validPatients.map((patient) => ({
-      id: patient.patientID,
-      value: `${patient.firstName} ${patient.lastName}`,
-    })),
+    suggestions: [],
     allowFreeText: true,
     onDelete: (id) => {
       setPatientData((prevData) =>

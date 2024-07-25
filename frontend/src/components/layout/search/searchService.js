@@ -8,10 +8,7 @@ export const fetchPatientData = async (query, callback) => {
     lastName: lastName || query,
     dateOfBirth: query,
     nationalID: query,
-    patientID: query,
-    guid: query,
     subjectNumber: query,
-    gender: query,
   };
 
   const createEndpoint = (param, value) =>
