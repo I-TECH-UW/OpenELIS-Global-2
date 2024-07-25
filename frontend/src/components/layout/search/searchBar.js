@@ -106,7 +106,7 @@ const SearchBar = (props) => {
   return (
     <Layer className="main">
       <Grid>
-        <Column sm={4} md={6} lg={12}>
+        <Column sm={4} md={6} lg={8} xlg={12}>
           <div className="search-bar-container">
             <Search
               size="sm"
@@ -154,7 +154,7 @@ const SearchBar = (props) => {
           )}
         </Column>
 
-        <Column sm={4} md={6} lg={12}>
+        <Column sm={4} md={6} lg={8} xlg={12}>
           {(loading || patientData.length > 0) && (
             <div className="patients">
               {loading ? (

@@ -1,7 +1,7 @@
 .main {
   position: absolute;
   right: 175px;
-  width: 600px;
+  width: 700px;
 }
 
 .search-bar-container {
@@ -30,7 +30,7 @@
 
 .patients {
   overflow-y: auto;
-  width: 600px;
+  width: 700px;
   max-height: 250px;
   position: relative;
   background-color: #f0e7e7;
@@ -39,7 +39,7 @@
 }
 
 .patientHead {
-  width: 580px;
+  width: 680px;
   position: relative;
   border-bottom: 2px solid #eee3e3;
   background-color: #fcfbfb;
@@ -55,46 +55,39 @@
 }
 
 @media (max-width: 768px) {
-  .main {
-    right: 150px;
-    width: 450px;
-  }
-
-  .search-bar-container {
-    width: 430px;
-  }
-
-  .patients {
-    width: 450px;
-  }
-
   .patientHead {
-    width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .main {
-    right: 150px;
-    width: 450px;
+    flex-direction: column;
   }
 
   .search-bar-container {
     flex-direction: column;
     align-items: stretch;
-    width: 430px;
   }
 
   .search-input {
     width: 100%;
   }
 
-  .patients {
-    width: 450px;
-    max-height: 200px;
+  .suggestions {
+    width: 100%;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .patientHead {
+    flex-direction: row;
   }
 
-  .patientHead {
-    width: 100%;
+  .search-bar-container {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .search-input {
+    width: 75%;
+  }
+
+  .suggestions {
+    width: 75%;
   }
 }

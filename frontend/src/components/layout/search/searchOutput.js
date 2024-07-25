@@ -29,7 +29,6 @@ const SearchOutput = ({ patientData, className = "patientHead" }) => {
                         textSizeRatio={2}
                         style={{
                           backgroundImage: `url(${patternUrl})`,
-
                           marginTop: "5px",
                         }}
                       />
@@ -38,7 +37,6 @@ const SearchOutput = ({ patientData, className = "patientHead" }) => {
                   <Column lg={10} md={5} sm={2}>
                     <div className="tags">
                       {`${patient.lastName} ${patient.firstName}`}
-
                       <Tag size="sm" type="blue">
                         <FormattedMessage id="patient.label.sex" /> :
                       </Tag>
@@ -58,7 +56,6 @@ const SearchOutput = ({ patientData, className = "patientHead" }) => {
                         :
                       </Tag>
                       {patient.age || patient.dob}
-
                       <Tag size="sm" type="blue">
                         <FormattedMessage id="patient.natioanalid" /> :
                       </Tag>
