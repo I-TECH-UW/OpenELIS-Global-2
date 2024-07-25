@@ -19,20 +19,10 @@ const SearchBar = (props) => {
   const [loading, setLoading] = useState(false);
   const [patientData, setPatientData] = useState([]);
   const intl = useIntl();
-
-  const validPatients = patientData.filter(
-    (patient) => patient.patientID && patient.firstName && patient.lastName,
-  );
-
   const {
     textValue,
-    filteredSuggestions,
-    showSuggestions,
     onChange: handleAutocompleteChange,
-    onClick: handleAutocompleteClick,
     onKeyDown: handleAutocompleteKeyDown,
-    activeSuggestion,
-    onDelete: handleAutocompleteDelete,
     setTextValue,
   } = useAutocomplete({
     value: searchInput,
@@ -91,14 +81,6 @@ const SearchBar = (props) => {
     }
   };
 
-  const handleSuggestionClick = (e, id, suggestion) => {
-    setSearchInput(suggestion.value);
-    handleAutocompleteClick(e, id, suggestion);
-  };
-
-  const handleSuggestionDelete = (id) => {
-    handleAutocompleteDelete(id);
-  };
 
   return (
     <Layer className="main">
@@ -129,26 +111,6 @@ const SearchBar = (props) => {
               <FormattedMessage id="label.button.search" />
             </Button>
           </div>
-          {showSuggestions && (
-            <ul className="suggestions">
-              {filteredSuggestions.map((suggestion, index) => (
-                <p
-                  key={suggestion.id}
-                  className={
-                    index === activeSuggestion ? "suggestion-active" : ""
-                  }
-                >
-                  <span
-                    onClick={(e) =>
-                      handleSuggestionClick(e, suggestion.id, suggestion)
-                    }
-                  >
-                    {suggestion.value}
-                  </span>
-                </p>
-              ))}
-            </ul>
-          )}
         </Column>
 
         <Column sm={4} md={6} lg={8} xlg={12}>
