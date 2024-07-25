@@ -22,11 +22,6 @@
   border: 2px solid #110f74;
 }
 
-.suggestions {
-  right: -10px;
-  position: relative;
-  top: 45px;
-}
 
 .patients {
   overflow-y: auto;
@@ -68,9 +63,7 @@
     width: 100%;
   }
 
-  .suggestions {
-    width: 100%;
-  }
+  
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
@@ -84,10 +77,6 @@
   }
 
   .search-input {
-    width: 75%;
-  }
-
-  .suggestions {
     width: 75%;
   }
 }
