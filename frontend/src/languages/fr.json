@@ -1167,5 +1167,6 @@
   "testnotification.subjecttemplate": "Objet",
   "testnotification.systemdefault.template": "Message par défaut du système",
   "testnotification.testdefault.template": "Message par défaut pour le test",
-  "testnotification.bcc": "BCC"
+  "testnotification.bcc": "BCC",
+  "column.name.testId": "Id du Test"
 }

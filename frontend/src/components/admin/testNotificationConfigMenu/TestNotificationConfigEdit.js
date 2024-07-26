@@ -56,8 +56,94 @@ function TestNotificationConfigEdit() {
 
   const intl = useIntl();
 
+  const ID = (() => {
+    const hash = window.location.hash;
+    if (hash.includes("?")) {
+      const queryParams = hash.split("?")[1];
+      const urlParams = new URLSearchParams(queryParams);
+      return urlParams.get("testId");
+    }
+    return "0";
+  })();
+
   const componentMounted = useRef(false);
   const [indMsg, setIndMsg] = useState("0");
+  const [loading, setLoading] = useState(false);
+  const [testNotificationConfigMenuData, setTestNotificationConfigMenuData] =
+    useState({});
+  const [
+    testNotificationConfigMenuDataPost,
+    setTestNotificationConfigMenuDataPost,
+  ] = useState({});
+  const [testNamesList, setTestNamesList] = useState([]);
+  const [testNotificationConfigMenuList, setTestNotificationConfigMenuList] =
+    useState([]);
+
+  useEffect(() => {
+    if (
+      testNotificationConfigMenuData &&
+      testNotificationConfigMenuData.menuList
+    ) {
+      setTestNotificationConfigMenuList(
+        testNotificationConfigMenuData.menuList,
+      );
+      setTestNotificationConfigMenuDataPost(
+        (prevSetTestNotificationConfigDataPost) => ({
+          ...prevSetTestNotificationConfigDataPost,
+          formMethod: testNotificationConfigMenuData.formMethod,
+          cancelAction: testNotificationConfigMenuData.cancelAction,
+          submitOnCancel: testNotificationConfigMenuData.submitOnCancel,
+          cancelMethod: testNotificationConfigMenuData.cancelMethod,
+          adminMenuItems: testNotificationConfigMenuData.adminMenuItems,
+          totalRecordCount: testNotificationConfigMenuData.totalRecordCount,
+          fromRecordCount: testNotificationConfigMenuData.fromRecordCount,
+          toRecordCount: testNotificationConfigMenuData.toRecordCount,
+          selectedIDs: testNotificationConfigMenuData.selectedIDs,
+          menuList: testNotificationConfigMenuData.menuList,
+        }),
+      );
+    }
+  }, [testNotificationConfigMenuData]);
+
+  const handleMenuItems = (res) => {
+    console.log(res);
+    if (!res) {
+      setLoading(true);
+    } else {
+      setTestNotificationConfigMenuData(res);
+    }
+  };
+
+  const handleTestNamesList = (res) => {
+    console.log(res);
+    if (!res) {
+      setLoading(true);
+    } else {
+      setTestNamesList(res);
+    }
+  };
+
+  useEffect(() => {
+    componentMounted.current = true;
+    setLoading(true);
+    getFromOpenElisServer(
+      `/rest/TestNotificationConfig?testId=${ID}`,
+      handleMenuItems,
+    );
+    getFromOpenElisServer(`/rest/test-list`, handleTestNamesList);
+    return () => {
+      componentMounted.current = false;
+      setLoading(false);
+    };
+  }, [ID]);
+
+  if (!loading) {
+    return (
+      <>
+        <Loading />
+      </>
+    );
+  }
 
   return (
     <>
@@ -253,7 +339,7 @@ function TestNotificationConfigEdit() {
           <br />
           <div>
             <Grid fullWidth={true}>
-              <Column lg={14} md={6} sm={2}>
+              <Column lg={16} md={8} sm={4}>
                 <Section>
                   <Section>
                     <Section>
@@ -545,6 +631,34 @@ function TestNotificationConfigEdit() {
             )}
           </div>
         </div>
+        <button
+          onClick={() => {
+            console.log(testNamesList);
+          }}
+        >
+          testNamesList
+        </button>
+        <button
+          onClick={() => {
+            console.log(testNotificationConfigMenuData);
+          }}
+        >
+          testNotificationConfigMenuData
+        </button>
+        <button
+          onClick={() => {
+            console.log(testNotificationConfigMenuDataPost);
+          }}
+        >
+          testNotificationConfigMenuDataPost
+        </button>
+        <button
+          onClick={() => {
+            console.log(testNotificationConfigMenuList);
+          }}
+        >
+          testNotificationConfigMenuList
+        </button>
       </div>
     </>
   );
