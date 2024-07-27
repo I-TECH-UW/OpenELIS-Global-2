@@ -69,53 +69,47 @@ function TestNotificationConfigEdit() {
   const componentMounted = useRef(false);
   const [indMsg, setIndMsg] = useState("0");
   const [loading, setLoading] = useState(false);
-  const [testNotificationConfigMenuData, setTestNotificationConfigMenuData] =
+  const [sysDefaultMsg, setSysDefaultMsg] = useState(true);
+  const [testNotificationConfigEditData, setTestNotificationConfigEditData] =
     useState({});
   const [
-    testNotificationConfigMenuDataPost,
-    setTestNotificationConfigMenuDataPost,
+    testNotificationConfigEditDataPost,
+    setTestNotificationConfigEditDataPost,
   ] = useState({});
   const [testNamesList, setTestNamesList] = useState([]);
+  const [testName, setTestName] = useState("");
   const [testNotificationConfigMenuList, setTestNotificationConfigMenuList] =
     useState([]);
 
   useEffect(() => {
-    if (
-      testNotificationConfigMenuData &&
-      testNotificationConfigMenuData.menuList
-    ) {
-      setTestNotificationConfigMenuList(
-        testNotificationConfigMenuData.menuList,
-      );
-      setTestNotificationConfigMenuDataPost(
+    if (testNotificationConfigEditData) {
+      setTestNotificationConfigEditDataPost(
         (prevSetTestNotificationConfigDataPost) => ({
           ...prevSetTestNotificationConfigDataPost,
-          formMethod: testNotificationConfigMenuData.formMethod,
-          cancelAction: testNotificationConfigMenuData.cancelAction,
-          submitOnCancel: testNotificationConfigMenuData.submitOnCancel,
-          cancelMethod: testNotificationConfigMenuData.cancelMethod,
-          adminMenuItems: testNotificationConfigMenuData.adminMenuItems,
-          totalRecordCount: testNotificationConfigMenuData.totalRecordCount,
-          fromRecordCount: testNotificationConfigMenuData.fromRecordCount,
-          toRecordCount: testNotificationConfigMenuData.toRecordCount,
-          selectedIDs: testNotificationConfigMenuData.selectedIDs,
-          menuList: testNotificationConfigMenuData.menuList,
+          formName: testNotificationConfigEditData.formName,
+          formMethod: testNotificationConfigEditData.formMethod,
+          cancelAction: testNotificationConfigEditData.cancelAction,
+          submitOnCancel: testNotificationConfigEditData.submitOnCancel,
+          cancelMethod: testNotificationConfigEditData.cancelMethod,
+          config: testNotificationConfigEditData.config,
+          systemDefaultPayloadTemplate:
+            testNotificationConfigEditData.systemDefaultPayloadTemplate,
+          editSystemDefaultPayloadTemplate:
+            testNotificationConfigEditData.editSystemDefaultPayloadTemplate,
         }),
       );
     }
-  }, [testNotificationConfigMenuData]);
+  }, [testNotificationConfigEditData]);
 
   const handleMenuItems = (res) => {
-    console.log(res);
     if (!res) {
       setLoading(true);
     } else {
-      setTestNotificationConfigMenuData(res);
+      setTestNotificationConfigEditData(res);
     }
   };
 
   const handleTestNamesList = (res) => {
-    console.log(res);
     if (!res) {
       setLoading(true);
     } else {
@@ -136,6 +130,16 @@ function TestNotificationConfigEdit() {
       setLoading(false);
     };
   }, [ID]);
+
+  useEffect(() => {
+    const testId = testNotificationConfigEditData?.config?.testId;
+    if (testNamesList && testId) {
+      const test = testNamesList.find((item) => item.id === testId);
+      if (test) {
+        setTestName(test.value);
+      }
+    }
+  }, [testNamesList, testNotificationConfigEditData]);
 
   if (!loading) {
     return (
@@ -166,36 +170,74 @@ function TestNotificationConfigEdit() {
               <Section>
                 <Section>
                   <Heading>
-                    <FormattedMessage id="props.name" />
+                    {testName && <FormattedMessage id={`${testName}`} />}
                   </Heading>
                 </Section>
               </Section>
             </Column>
           </Grid>
+          <hr />
           <br />
-          <Grid fullWidth={true}>
-            <Column lg={4} md={2} sm={2}>
-              <Checkbox
-              // key={section.elementID}
-              // id={section.elementID}
-              // value={section.roleId}
-              // labelText={section.roleName}
-              // checked={selectedGlobalLabUnitRoles.includes(section.roleId)}
-              // onChange={() => {
-              //   handleCheckboxChange(section.roleId);
-              // }}
-              />
-            </Column>
-            <Column lg={4} md={2} sm={2}>
-              <Checkbox />
-            </Column>
-            <Column lg={4} md={2} sm={2}>
-              <Checkbox />
-            </Column>
-            <Column lg={4} md={2} sm={2}>
-              <Checkbox />
-            </Column>
-          </Grid>
+          {testNotificationConfigEditDataPost?.config && (
+            <Grid fullWidth={true}>
+              <Column lg={4} md={2} sm={2}>
+                <Checkbox
+                  // key={section.elementID}
+                  // id={section.elementID}
+                  // value={section.roleId}
+                  // labelText={section.roleName}
+                  // checked={selectedGlobalLabUnitRoles.includes(section.roleId)}
+                  // onChange={() => {
+                  //   handleCheckboxChange(section.roleId);
+                  // }}
+                  id="providerEmail"
+                  labelText={
+                    <FormattedMessage id="testnotification.provider.email" />
+                  }
+                  checked={
+                    testNotificationConfigEditDataPost.config.providerEmail
+                      ?.active ?? false
+                  }
+                />
+              </Column>
+              <Column lg={4} md={2} sm={2}>
+                <Checkbox
+                  id="patientEmail"
+                  labelText={
+                    <FormattedMessage id="testnotification.patient.email" />
+                  }
+                  checked={
+                    testNotificationConfigEditDataPost.config.patientEmail
+                      ?.active ?? false
+                  }
+                />
+              </Column>
+              <Column lg={4} md={2} sm={2}>
+                <Checkbox
+                  id="providerSMS"
+                  labelText={
+                    <FormattedMessage id="testnotification.provider.sms" />
+                  }
+                  checked={
+                    testNotificationConfigEditDataPost.config.providerSMS
+                      ?.active ?? false
+                  }
+                />
+              </Column>
+              <Column lg={4} md={2} sm={2}>
+                <Checkbox
+                  id="patientSMS"
+                  labelText={
+                    <FormattedMessage id="testnotification.patient.sms" />
+                  }
+                  checked={
+                    testNotificationConfigEditDataPost.config.patientSMS
+                      ?.active ?? false
+                  }
+                />
+              </Column>
+            </Grid>
+          )}
           <br />
           <hr />
           <br />
@@ -265,7 +307,7 @@ function TestNotificationConfigEdit() {
               <Column lg={2} md={2} sm={2}>
                 <Button
                   onClick={() => {
-                    console.log("Edit");
+                    setSysDefaultMsg(!sysDefaultMsg);
                   }}
                 >
                   Edit
@@ -282,6 +324,8 @@ function TestNotificationConfigEdit() {
                   id="subject"
                   type="text"
                   labelText=""
+                  hideLabel={true}
+                  disabled={sysDefaultMsg}
                   placeholder={intl.formatMessage({
                     id: "systemDefaultPayloadTemplate.subjectTemplate",
                   })}
@@ -292,11 +336,15 @@ function TestNotificationConfigEdit() {
                   // }
                   // // invalidText={errors.order}
                   // required={true}
-                  // value={
-                  //   userDataShow && userDataShow.userLoginName
-                  //     ? userDataShow.userLoginName
-                  //     : ""
-                  // }
+                  value={
+                    testNotificationConfigEditDataPost &&
+                    testNotificationConfigEditDataPost.systemDefaultPayloadTemplate &&
+                    testNotificationConfigEditDataPost
+                      .systemDefaultPayloadTemplate.subjectTemplate
+                      ? testNotificationConfigEditDataPost
+                          .systemDefaultPayloadTemplate.subjectTemplate
+                      : ""
+                  }
                   // onChange={(e) => handleUserLoginNameChange(e)}
                 />
               </Column>
@@ -314,6 +362,8 @@ function TestNotificationConfigEdit() {
                   id="message"
                   type="text"
                   labelText=""
+                  hideLabel={true}
+                  disabled={sysDefaultMsg}
                   placeholder={intl.formatMessage({
                     id: "systemDefaultPayloadTemplate.messageTemplate",
                   })}
@@ -324,11 +374,15 @@ function TestNotificationConfigEdit() {
                   // }
                   // // invalidText={errors.order}
                   // required={true}
-                  // value={
-                  //   userDataShow && userDataShow.userLoginName
-                  //     ? userDataShow.userLoginName
-                  //     : ""
-                  // }
+                  value={
+                    testNotificationConfigEditDataPost &&
+                    testNotificationConfigEditDataPost.systemDefaultPayloadTemplate &&
+                    testNotificationConfigEditDataPost
+                      .systemDefaultPayloadTemplate.messageTemplate
+                      ? testNotificationConfigEditDataPost
+                          .systemDefaultPayloadTemplate.messageTemplate
+                      : ""
+                  }
                   // onChange={(e) => handleUserLoginNameChange(e)}
                 />
               </Column>
@@ -640,17 +694,17 @@ function TestNotificationConfigEdit() {
         </button>
         <button
           onClick={() => {
-            console.log(testNotificationConfigMenuData);
+            console.log(testNotificationConfigEditData);
           }}
         >
-          testNotificationConfigMenuData
+          testNotificationConfigEditData
         </button>
         <button
           onClick={() => {
-            console.log(testNotificationConfigMenuDataPost);
+            console.log(testNotificationConfigEditDataPost);
           }}
         >
-          testNotificationConfigMenuDataPost
+          testNotificationConfigEditDataPost
         </button>
         <button
           onClick={() => {
@@ -658,6 +712,13 @@ function TestNotificationConfigEdit() {
           }}
         >
           testNotificationConfigMenuList
+        </button>
+        <button
+          onClick={() => {
+            console.log(testName);
+          }}
+        >
+          testName
         </button>
       </div>
     </>
