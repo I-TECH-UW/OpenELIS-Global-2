@@ -27,6 +27,7 @@ import {
 import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
+  postToOpenElisServerJsonResponse,
 } from "../../utils/Utils.js";
 import {
   ConfigurationContext,
@@ -69,6 +70,7 @@ function TestNotificationConfigEdit() {
   const componentMounted = useRef(false);
   const [indMsg, setIndMsg] = useState("0");
   const [loading, setLoading] = useState(false);
+  const [saveButton, setSaveButton] = useState(false);
   const [sysDefaultMsg, setSysDefaultMsg] = useState(true);
   const [testNotificationConfigEditData, setTestNotificationConfigEditData] =
     useState({});
@@ -141,6 +143,104 @@ function TestNotificationConfigEdit() {
     }
   }, [testNamesList, testNotificationConfigEditData]);
 
+  function handleSubjectTemplateChange(e) {
+    setTestNotificationConfigEditDataPost((prev) => ({
+      ...prev,
+      editSystemDefaultPayloadTemplate: true,
+    }));
+    setTestNotificationConfigEditDataPost((prev) => ({
+      ...prev,
+      systemDefaultPayloadTemplate: {
+        ...prev.systemDefaultPayloadTemplate,
+        subjectTemplate: e.target.value,
+      },
+    }));
+  }
+
+  function handleMessageTemplateChange(e) {
+    setTestNotificationConfigEditDataPost((prev) => ({
+      ...prev,
+      editSystemDefaultPayloadTemplate: true,
+    }));
+    setTestNotificationConfigEditDataPost((prev) => ({
+      ...prev,
+      systemDefaultPayloadTemplate: {
+        ...prev.systemDefaultPayloadTemplate,
+        messageTemplate: e.target.value,
+      },
+    }));
+  }
+
+  const handleCheckboxChange = (e) => {
+    const { id, checked } = e.target;
+
+    setTestNotificationConfigEditDataPost((prev) => {
+      const updatedConfig = { ...prev.config };
+
+      switch (id) {
+        case "providerEmail":
+          updatedConfig.providerEmail.active = checked;
+          break;
+        case "patientEmail":
+          updatedConfig.patientEmail.active = checked;
+          break;
+        case "patientSMS":
+          updatedConfig.patientSMS.active = checked;
+          break;
+        case "providerSMS":
+          updatedConfig.providerSMS.active = checked;
+          break;
+        default:
+          break;
+      }
+
+      return {
+        ...prev,
+        config: updatedConfig,
+      };
+    });
+  };
+
+  function testNotificationConfigEditSavePostCall() {
+    setLoading(true);
+    postToOpenElisServerJsonResponse(
+      `/rest/TestNotificationConfig`,
+      JSON.stringify(testNotificationConfigEditDataPost),
+      (res) => {
+        testNotificationConfigEditSavePostCallBack(res);
+      },
+    );
+  }
+
+  function testNotificationConfigEditSavePostCallBack(res) {
+    if (res) {
+      setLoading(false);
+      addNotification({
+        title: intl.formatMessage({
+          id: "notification.title",
+        }),
+        message: intl.formatMessage({
+          id: "notification.user.post.save.success",
+        }),
+        kind: NotificationKinds.success,
+      });
+      setNotificationVisible(true);
+      setTimeout(() => {
+        window.location.reload();
+      }, 200);
+    } else {
+      addNotification({
+        kind: NotificationKinds.error,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "server.error.msg" }),
+      });
+      setNotificationVisible(true);
+      setTimeout(() => {
+        window.location.reload();
+      }, 200);
+    }
+  }
+
   if (!loading) {
     return (
       <>
@@ -182,26 +282,6 @@ function TestNotificationConfigEdit() {
             <Grid fullWidth={true}>
               <Column lg={4} md={2} sm={2}>
                 <Checkbox
-                  // key={section.elementID}
-                  // id={section.elementID}
-                  // value={section.roleId}
-                  // labelText={section.roleName}
-                  // checked={selectedGlobalLabUnitRoles.includes(section.roleId)}
-                  // onChange={() => {
-                  //   handleCheckboxChange(section.roleId);
-                  // }}
-                  id="providerEmail"
-                  labelText={
-                    <FormattedMessage id="testnotification.provider.email" />
-                  }
-                  checked={
-                    testNotificationConfigEditDataPost.config.providerEmail
-                      ?.active ?? false
-                  }
-                />
-              </Column>
-              <Column lg={4} md={2} sm={2}>
-                <Checkbox
                   id="patientEmail"
                   labelText={
                     <FormattedMessage id="testnotification.patient.email" />
@@ -210,18 +290,7 @@ function TestNotificationConfigEdit() {
                     testNotificationConfigEditDataPost.config.patientEmail
                       ?.active ?? false
                   }
-                />
-              </Column>
-              <Column lg={4} md={2} sm={2}>
-                <Checkbox
-                  id="providerSMS"
-                  labelText={
-                    <FormattedMessage id="testnotification.provider.sms" />
-                  }
-                  checked={
-                    testNotificationConfigEditDataPost.config.providerSMS
-                      ?.active ?? false
-                  }
+                  onChange={handleCheckboxChange}
                 />
               </Column>
               <Column lg={4} md={2} sm={2}>
@@ -234,6 +303,38 @@ function TestNotificationConfigEdit() {
                     testNotificationConfigEditDataPost.config.patientSMS
                       ?.active ?? false
                   }
+                  onChange={handleCheckboxChange}
+                />
+              </Column>
+              <Column lg={4} md={2} sm={2}>
+                <Checkbox
+                  id="providerSMS"
+                  labelText={
+                    <FormattedMessage id="testnotification.provider.sms" />
+                  }
+                  checked={
+                    testNotificationConfigEditDataPost.config.providerSMS
+                      ?.active ?? false
+                  }
+                  onChange={handleCheckboxChange}
+                />
+              </Column>
+              <Column lg={4} md={2} sm={2}>
+                <Checkbox
+                  // key={section.elementID}
+                  // id={section.elementID}
+                  // value={section.roleId}
+                  // labelText={section.roleName}
+                  // checked={selectedGlobalLabUnitRoles.includes(section.roleId)}
+                  id="providerEmail"
+                  labelText={
+                    <FormattedMessage id="testnotification.provider.email" />
+                  }
+                  checked={
+                    testNotificationConfigEditDataPost.config.providerEmail
+                      ?.active ?? false
+                  }
+                  onChange={handleCheckboxChange}
                 />
               </Column>
             </Grid>
@@ -345,7 +446,7 @@ function TestNotificationConfigEdit() {
                           .systemDefaultPayloadTemplate.subjectTemplate
                       : ""
                   }
-                  // onChange={(e) => handleUserLoginNameChange(e)}
+                  onChange={(e) => handleSubjectTemplateChange(e)}
                 />
               </Column>
             </Grid>
@@ -383,7 +484,7 @@ function TestNotificationConfigEdit() {
                           .systemDefaultPayloadTemplate.messageTemplate
                       : ""
                   }
-                  // onChange={(e) => handleUserLoginNameChange(e)}
+                  onChange={(e) => handleMessageTemplateChange(e)}
                 />
               </Column>
             </Grid>
@@ -683,6 +784,31 @@ function TestNotificationConfigEdit() {
                 </Grid>
               </>
             )}
+            <br />
+            <hr />
+            <br />
+            <Grid fullWidth={true}>
+              <Column lg={16} md={8} sm={4}>
+                <Button
+                  disabled={saveButton}
+                  onClick={testNotificationConfigEditSavePostCall}
+                  type="button"
+                >
+                  <FormattedMessage id="label.button.save" />
+                </Button>{" "}
+                <Button
+                  onClick={() =>
+                    window.location.assign(
+                      "/MasterListsPage#testNotificationConfigMenu",
+                    )
+                  }
+                  kind="tertiary"
+                  type="button"
+                >
+                  <FormattedMessage id="label.button.exit" />
+                </Button>
+              </Column>
+            </Grid>
           </div>
         </div>
         <button

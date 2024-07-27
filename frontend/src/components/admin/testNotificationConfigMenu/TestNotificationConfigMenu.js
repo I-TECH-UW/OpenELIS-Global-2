@@ -26,6 +26,7 @@ import {
 import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
+  postToOpenElisServerJsonResponse,
 } from "../../utils/Utils.js";
 import {
   ConfigurationContext,
@@ -57,19 +58,16 @@ function TestNotificationConfigMenu() {
 
   const componentMounted = useRef(false);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
   const [loading, setLoading] = useState(true);
+  const [saveButton, setSaveButton] = useState(true);
   const [testNamesList, setTestNamesList] = useState([]);
   const [testNotificationConfigMenuData, setTestNotificationConfigMenuData] =
     useState({});
   const [
     testNotificationConfigMenuDataPost,
     setTestNotificationConfigMenuDataPost,
-  ] = useState({});
-  const [
-    testNotificationConfigMenuDataMenuList,
-    setTestNotificationConfigMenuDataMenuList,
-  ] = useState([]);
+  ] = useState({ menuList: [] });
   const [testNamesMap, setTestNamesMap] = useState({});
 
   const handleMenuItems = (res) => {
@@ -104,9 +102,6 @@ function TestNotificationConfigMenu() {
       testNotificationConfigMenuData &&
       testNotificationConfigMenuData.menuList
     ) {
-      setTestNotificationConfigMenuDataMenuList(
-        testNotificationConfigMenuData.menuList,
-      );
       setTestNotificationConfigMenuDataPost((prevTestNotificationDataPost) => ({
         ...prevTestNotificationDataPost,
         formMethod: testNotificationConfigMenuData.formMethod,
@@ -135,6 +130,92 @@ function TestNotificationConfigMenu() {
     window.location.assign(
       `/MasterListsPage#testNotificationConfig?testId=${id}`,
     );
+  };
+
+  function testNotificationConfigMenuSavePostCall() {
+    setLoading(true);
+    postToOpenElisServerJsonResponse(
+      `/rest/TestNotificationConfig`,
+      JSON.stringify(testNotificationConfigMenuDataPost),
+      (res) => {
+        testNotificationConfigMenuSavePostCallBack(res);
+      },
+    );
+  }
+
+  function testNotificationConfigMenuSavePostCallBack(res) {
+    if (res) {
+      setLoading(false);
+      addNotification({
+        title: intl.formatMessage({
+          id: "notification.title",
+        }),
+        message: intl.formatMessage({
+          id: "notification.user.post.save.success",
+        }),
+        kind: NotificationKinds.success,
+      });
+      setNotificationVisible(true);
+      setTimeout(() => {
+        window.location.reload();
+      }, 200);
+    } else {
+      addNotification({
+        kind: NotificationKinds.error,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "server.error.msg" }),
+      });
+      setNotificationVisible(true);
+      setTimeout(() => {
+        window.location.reload();
+      }, 200);
+    }
+  }
+
+  const handleCheckboxChange = (e, rowId, header) => {
+    const isChecked = e.target.checked;
+
+    setTestNotificationConfigMenuDataPost((prevData) => {
+      const updatedMenuList = prevData.menuList.map((item) => {
+        if (item.id === rowId) {
+          switch (header) {
+            case "patientEmail":
+              return {
+                ...item,
+                patientEmail: { ...item.patientEmail, active: isChecked },
+              };
+            case "patientSMS":
+              return {
+                ...item,
+                patientSMS: { ...item.patientSMS, active: isChecked },
+              };
+            case "providerEmail":
+              return {
+                ...item,
+                providerEmail: { ...item.providerEmail, active: isChecked },
+              };
+            case "providerSMS":
+              return {
+                ...item,
+                providerSMS: { ...item.providerSMS, active: isChecked },
+              };
+            default:
+              return item;
+          }
+        }
+        return item;
+      });
+
+      return {
+        ...prevData,
+        menuList: updatedMenuList,
+      };
+    });
+  };
+
+  const handlePageChange = ({ page, pageSize }) => {
+    setPage(page);
+    setPageSize(pageSize);
   };
 
   const renderCell = (cell, row) => {
@@ -170,7 +251,15 @@ function TestNotificationConfigMenu() {
     ) {
       return (
         <TableCell key={cell.id}>
-          <Checkbox id={cell.id} labelText="" checked={cell.value === "true"} />
+          <Checkbox
+            id={cell.id}
+            labelText=""
+            checked={cell.value === "true"}
+            onChange={(e) => {
+              setSaveButton(false);
+              handleCheckboxChange(e, row.id, cell.info.header);
+            }}
+          />
         </TableCell>
       );
     } else if (cell.info.header === "edit") {
@@ -178,7 +267,9 @@ function TestNotificationConfigMenu() {
         <TableCell key={cell.id}>
           <Button
             hasIconOnly
-            iconDescription="Edit Test Notification"
+            iconDescription={intl.formatMessage({
+              id: "testnotification.testdefault.editIcon",
+            })}
             onClick={() => handleEditButtonClick(row.cells[0].value)}
             renderIcon={Settings}
             kind="tertiary"
@@ -200,6 +291,7 @@ function TestNotificationConfigMenu() {
 
   return (
     <>
+      {notificationVisible === true ? <AlertDialog /> : ""}
       <div className="adminPageContent">
         <PageBreadCrumb breadcrumbs={breadcrumbs} />
         <Grid fullWidth={true}>
@@ -214,6 +306,30 @@ function TestNotificationConfigMenu() {
           </Column>
         </Grid>
         <div className="orderLegendBody">
+          <br />
+          <Grid fullWidth={true}>
+            <Column lg={16} md={8} sm={4}>
+              <Button
+                disabled={saveButton}
+                onClick={testNotificationConfigMenuSavePostCall}
+                type="button"
+              >
+                <FormattedMessage id="label.button.save" />
+              </Button>{" "}
+              <Button
+                onClick={() =>
+                  window.location.assign(
+                    "/MasterListsPage#testNotificationConfigMenu",
+                  )
+                }
+                kind="tertiary"
+                type="button"
+              >
+                <FormattedMessage id="label.button.exit" />
+              </Button>
+            </Column>
+          </Grid>
+          <br />
           <Grid fullWidth={true}>
             <Column lg={16} md={8} sm={4}>
               <br />
@@ -222,15 +338,21 @@ function TestNotificationConfigMenu() {
                 //   (page - 1) * pageSize,
                 //   page * pageSize,
                 // )}
-                rows={testNotificationConfigMenuDataMenuList.map((item) => ({
-                  id: item.id,
-                  testId: item.testId,
-                  patientEmail: item.patientEmail.active ? "true" : "false",
-                  patientSMS: item.patientSMS.active ? "true" : "false",
-                  providerEmail: item.providerEmail.active ? "true" : "false",
-                  providerSMS: item.providerSMS.active ? "true" : "false",
-                  testName: testNamesMap[item.testId] || item.testId,
-                }))}
+                rows={
+                  testNotificationConfigMenuDataPost?.menuList
+                    ?.slice((page - 1) * pageSize, page * pageSize)
+                    ?.map((item) => ({
+                      id: item.id,
+                      testId: item.testId,
+                      patientEmail: item.patientEmail.active ? "true" : "false",
+                      patientSMS: item.patientSMS.active ? "true" : "false",
+                      providerEmail: item.providerEmail.active
+                        ? "true"
+                        : "false",
+                      providerSMS: item.providerSMS.active ? "true" : "false",
+                      testName: testNamesMap[item.testId] || item.testId,
+                    })) || []
+                }
                 headers={[
                   {
                     key: "testId",
@@ -370,12 +492,12 @@ function TestNotificationConfigMenu() {
                   </TableContainer>
                 )}
               </DataTable>
-              {/* <Pagination
+              <Pagination
                 onChange={handlePageChange}
                 page={page}
                 pageSize={pageSize}
-                pageSizes={[5, 10, 15, 20]}
-                totalItems={testNamesList.length}
+                pageSizes={[25, 50]}
+                totalItems={testNotificationConfigMenuDataPost?.menuList.length}
                 forwardText={intl.formatMessage({
                   id: "pagination.forward",
                 })}
@@ -412,8 +534,31 @@ function TestNotificationConfigMenu() {
                     { page: pagesUnknown ? "" : page },
                   )
                 }
-              /> */}
+              />
               <br />
+            </Column>
+          </Grid>
+          <br />
+          <Grid fullWidth={true}>
+            <Column lg={16} md={8} sm={4}>
+              <Button
+                disabled={saveButton}
+                onClick={testNotificationConfigMenuSavePostCall}
+                type="button"
+              >
+                <FormattedMessage id="label.button.save" />
+              </Button>{" "}
+              <Button
+                onClick={() =>
+                  window.location.assign(
+                    "/MasterListsPage#testNotificationConfigMenu",
+                  )
+                }
+                kind="tertiary"
+                type="button"
+              >
+                <FormattedMessage id="label.button.exit" />
+              </Button>
             </Column>
           </Grid>
           <button
@@ -429,13 +574,6 @@ function TestNotificationConfigMenu() {
             }}
           >
             testNotificationConfigMenuDataPost
-          </button>
-          <button
-            onClick={() => {
-              console.log(testNotificationConfigMenuDataMenuList);
-            }}
-          >
-            testNotificationConfigMenuDataMenuList
           </button>
           <button
             onClick={() => {

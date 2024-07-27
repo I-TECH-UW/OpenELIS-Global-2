@@ -1263,6 +1263,7 @@
   "testnotification.subjecttemplate": "Subject",
   "testnotification.systemdefault.template": "System Default Message",
   "testnotification.testdefault.template": "Default Message for Test",
+  "testnotification.testdefault.editIcon": "Edit Test Notification",
   "testnotification.bcc": "BCC",
   "column.name.testId": "Test Id"
 }
