@@ -3,8 +3,49 @@ import { formatTimestamp } from "../utils/Utils";
 import Spinner from "../common/Sprinner";
 import { FormattedMessage, useIntl } from "react-intl";
 
+
+
+
+
 export default function SlideOverNotifications(props) {
   const intl = useIntl();
+
+  async function subscribe() {
+
+
+    const public_key = "BJDIyXHWK_o9fYNwD3fUie2Ed04-yx5fxz9-GUT1c0QhfdDiGMvVbJwvB_On3XapXqIRR471uh7Snw3bfPt9niw";
+    const sw = await navigator.serviceWorker.ready;
+    const push = await sw.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: public_key,
+    });
+    const p256dh = btoa(
+      String.fromCharCode.apply(
+        null,
+        new Uint8Array(push.getKey("p256dh")),
+      ),
+    );
+    const auth = btoa(
+      String.fromCharCode.apply(
+        null,
+        new Uint8Array(push.getKey("auth")),
+      ),
+    );
+
+    const data = {
+      pf_endpoint: push.endpoint,
+      pf_p256dh: p256dh,
+      pf_auth: auth,
+    };
+
+    console.log("subsription details", data)
+
+
+
+
+
+  }
+
 
   const {
     loading,
@@ -80,13 +121,13 @@ export default function SlideOverNotifications(props) {
               label: intl.formatMessage({
                 id: "notification.slideover.button.subscribe",
               }),
-              onClick: () => {},
+              onClick: () => subscribe(),
             },
             {
               icon: <Email />,
               label: intl.formatMessage({
                 id: "notification.slideover.button.markallasread",
-              }),
+              }), 
               onClick: () => {
                 markAllNotificationsAsRead();
               },
@@ -95,11 +136,11 @@ export default function SlideOverNotifications(props) {
               icon: <Filter />,
               label: showRead
                 ? intl.formatMessage({
-                    id: "notification.slideover.button.hideread",
-                  })
+                  id: "notification.slideover.button.hideread",
+                })
                 : intl.formatMessage({
-                    id: "notification.slideover.button.showread",
-                  }),
+                  id: "notification.slideover.button.showread",
+                }),
               onClick: () => setShowRead(!showRead),
             },
           ].map(({ icon, label, onClick }, index) => (
