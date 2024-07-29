@@ -36,7 +36,7 @@ describe("Result By Unit", function () {
       result.acceptSample();
       result.expandSampleDetails();
       result.selectTestMethod(0, res.pcrTestMethod);
-      cy.get(':nth-child(3) > .cds--form-item > .cds--checkbox-label').click();
+      cy.get(":nth-child(3) > .cds--form-item > .cds--checkbox-label").click();
       result.referSample(0, res.testNotPerformed, res.cedres);
       result.setResultValue(0, res.positiveResult);
       result.submitResults();
@@ -59,7 +59,7 @@ describe("Result By Patient", function () {
     cy.fixture("Patient").then((patient) => {
       patientPage.searchPatientByFirstAndLastName(
         patient.firstName,
-        patient.lastName
+        patient.lastName,
       );
       patientPage.getFirstName().should("have.value", patient.firstName);
       patientPage.getLastName().should("have.value", patient.lastName);
@@ -67,7 +67,7 @@ describe("Result By Patient", function () {
       patientPage.clickSearchPatientButton();
       patientPage.validatePatientSearchTable(
         patient.firstName,
-        patient.inValidName
+        patient.inValidName,
       );
     });
     cy.reload();
@@ -79,7 +79,7 @@ describe("Result By Patient", function () {
       patientPage.clickSearchPatientButton();
       patientPage.validatePatientSearchTable(
         patient.firstName,
-        patient.inValidName
+        patient.inValidName,
       );
     });
     cy.reload();
@@ -87,7 +87,7 @@ describe("Result By Patient", function () {
 
   it("should search patient By Lab Number and validate", function () {
     cy.fixture("EnteredOrder").then((patient) => {
-      cy.get('#labNumber').type(patient.labNo);
+      cy.get("#labNumber").type(patient.labNo);
       patientPage.clickSearchPatientButton();
     });
   });
@@ -150,14 +150,14 @@ describe("Result By Referred Out Tests", function () {
       patientPage.searchPatientByPatientId(patient.nationalId);
       patientPage.searchPatientByFirstAndLastName(
         patient.firstName,
-        patient.lastName
+        patient.lastName,
       );
       patientPage.getFirstName().should("have.value", patient.firstName);
       patientPage.getLastName().should("have.value", patient.lastName);
       patientPage.clickSearchPatientButton();
       patientPage.validatePatientSearchTable(
         patient.firstName,
-        patient.inValidName
+        patient.inValidName,
       );
     });
   });
@@ -185,7 +185,7 @@ describe("Result By Referred Out Tests", function () {
     cy.fixture("result").then((res) => {
       cy.get("tbody > tr > :nth-child(8)").should(
         "contain.text",
-        res.westernBlotHiv
+        res.westernBlotHiv,
       );
     });
     cy.reload();
@@ -201,7 +201,7 @@ describe("Result By Referred Out Tests", function () {
     cy.fixture("EnteredOrder").then((patient) => {
       cy.get("tbody > tr > :nth-child(3)").should(
         "contain.text",
-        patient.labNo
+        patient.labNo,
       );
     });
   });
@@ -244,7 +244,7 @@ describe("Result By Range Of Order", function () {
 
 describe("Result By Test And Status", function () {
   before("navigate to Result By Test And Status", function () {
-    homePage = loginPage.goToHomePage()
+    homePage = loginPage.goToHomePage();
     result = homePage.goToResultsByTestAndStatus();
   });
 
@@ -268,7 +268,7 @@ describe("Result By Test And Status", function () {
     cy.fixture("workplan").then((order) => {
       cy.get("#cell-testName-0 > .sampleInfo").should(
         "contain.text",
-        order.testName
+        order.testName,
       );
     });
     cy.fixture("result").then((res) => {

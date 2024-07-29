@@ -91,45 +91,45 @@ class HomePage {
     return new NonConform();
   }
 
-  goToResultsByUnit(){
+  goToResultsByUnit() {
     this.openNavigationMenu();
-    cy.get('#menu_results').click();
-    cy.get('#menu_results_logbook').click();
+    cy.get("#menu_results").click();
+    cy.get("#menu_results_logbook").click();
     return new Result();
   }
 
-  goToResultsByOrder(){
+  goToResultsByOrder() {
     this.openNavigationMenu();
-    cy.get('#menu_results').click();
-    cy.get('#menu_results_accession').click();
+    cy.get("#menu_results").click();
+    cy.get("#menu_results_accession").click();
     return new Result();
   }
 
-  goToResultsByPatient(){
+  goToResultsByPatient() {
     this.openNavigationMenu();
-    cy.get('#menu_results').click();
-    cy.get('#menu_results_patient').click();
+    cy.get("#menu_results").click();
+    cy.get("#menu_results_patient").click();
     return new Result();
   }
 
-  goToResultsForRefferedOut(){
+  goToResultsForRefferedOut() {
     this.openNavigationMenu();
-    cy.get('#menu_results').click();
-    cy.get('#menu_results_referred ').click();
+    cy.get("#menu_results").click();
+    cy.get("#menu_results_referred ").click();
     return new Result();
   }
 
-  goToResultsByRangeOrder(){
+  goToResultsByRangeOrder() {
     this.openNavigationMenu();
-    cy.get('#menu_results').click();
-    cy.get('#menu_results_range').click();
+    cy.get("#menu_results").click();
+    cy.get("#menu_results_range").click();
     return new Result();
   }
 
-  goToResultsByTestAndStatus(){
+  goToResultsByTestAndStatus() {
     this.openNavigationMenu();
-    cy.get('#menu_results').click();
-    cy.get('#menu_results_status').click();
+    cy.get("#menu_results").click();
+    cy.get("#menu_results_status").click();
     return new Result();
   }
 }
