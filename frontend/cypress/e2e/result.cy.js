@@ -46,7 +46,6 @@ describe("Result By Unit", function () {
 
 describe("Result By Patient", function () {
   before("navigate to Result By Patient", function () {
-    homePage = loginPage.goToHomePage();
     result = homePage.goToResultsByPatient();
   });
 
