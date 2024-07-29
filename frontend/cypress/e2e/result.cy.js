@@ -4,11 +4,12 @@ import Result from "../pages/ResultsPage";
 import PatientEntryPage from "../pages/PatientEntryPage";
 
 let homePage = null;
-let loginPage = new LoginPage();
+let loginPage = null;
 let result = null;
 let patientPage = new PatientEntryPage();
 
 before("login", () => {
+  loginPage = new LoginPage();
   loginPage.visit();
 });
 
@@ -85,6 +86,7 @@ describe("Result By Patient", function () {
   });
 
   it("Should be able to search by respective patient and accept the result", function () {
+    cy.wait(1000);
     cy.fixture("result").then((res) => {
       result.selectPatient();
       result.acceptResult();
@@ -153,6 +155,7 @@ describe("Result By Referred Out Tests", function () {
   });
 
   it("should validate the results", function () {
+    cy.wait(1000);
     cy.fixture("Patient").then((patient) => {
       result.validatePatientResult(patient);
     });
@@ -198,6 +201,7 @@ describe("Result By Referred Out Tests", function () {
 
 describe("Result By Range Of Order", function () {
   before("navigate to Result By Range Of Order", function () {
+    homePage = loginPage.goToHomePage();
     result = homePage.goToResultsByRangeOrder();
   });
 
@@ -215,6 +219,7 @@ describe("Result By Range Of Order", function () {
   });
 
   it("Should Accept And Save the result", function () {
+    cy.wait(1000);
     cy.fixture("result").then((res) => {
       result.acceptSample();
       result.expandSampleDetails();
@@ -226,6 +231,7 @@ describe("Result By Range Of Order", function () {
 
 describe("Result By Test And Status", function () {
   before("navigate to Result By Test And Status", function () {
+    homePage = loginPage.goToHomePage()
     result = homePage.goToResultsByTestAndStatus();
   });
 
