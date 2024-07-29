@@ -4,6 +4,7 @@ import OrderEntityPage from "./OrderEntityPage";
 import ModifyOrderPage from "./ModifyOrderPage";
 import WorkPlan from "./WorkPlan";
 import NonConform from "./NonConformPage";
+import Result from "./ResultsPage";
 
 class HomePage {
   constructor() {}
@@ -88,6 +89,48 @@ class HomePage {
     cy.get("#menu_nonconformity").click();
     cy.get("#menu_non_conforming_corrective_actions").click();
     return new NonConform();
+  }
+
+  goToResultsByUnit(){
+    this.openNavigationMenu();
+    cy.get('#menu_results').click();
+    cy.get('#menu_results_logbook').click();
+    return new Result();
+  }
+
+  goToResultsByOrder(){
+    this.openNavigationMenu();
+    cy.get('#menu_results').click();
+    cy.get('#menu_results_accession').click();
+    return new Result();
+  }
+
+  goToResultsByPatient(){
+    this.openNavigationMenu();
+    cy.get('#menu_results').click();
+    cy.get('#menu_results_patient').click();
+    return new Result();
+  }
+
+  goToResultsForRefferedOut(){
+    this.openNavigationMenu();
+    cy.get('#menu_results').click();
+    cy.get('#menu_results_referred ').click();
+    return new Result();
+  }
+
+  goToResultsByRangeOrder(){
+    this.openNavigationMenu();
+    cy.get('#menu_results').click();
+    cy.get('#menu_results_range').click();
+    return new Result();
+  }
+
+  goToResultsByTestAndStatus(){
+    this.openNavigationMenu();
+    cy.get('#menu_results').click();
+    cy.get('#menu_results_status').click();
+    return new Result();
   }
 }
 
