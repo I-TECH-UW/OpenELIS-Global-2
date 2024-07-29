@@ -82,12 +82,20 @@ describe("Result By Patient", function () {
         patient.inValidName
       );
     });
+    cy.reload();
+  });
+
+  it("should search patient By Lab Number and validate", function () {
+    cy.fixture("EnteredOrder").then((patient) => {
+      cy.get('#labNumber').type(patient.labNo);
+      patientPage.clickSearchPatientButton();
+    });
   });
 
   it("Should be able to search by respective patient and accept the result", function () {
     cy.wait(1000);
+    result.selectPatient();
     cy.fixture("result").then((res) => {
-      result.selectPatient();
       result.acceptResult();
       result.expandSampleDetails();
       result.selectTestMethod(0, res.stainTestMethod);
@@ -137,9 +145,15 @@ describe("Result By Referred Out Tests", function () {
     });
   });
 
-  it("should search Referrals By PatientId and validate", function () {
+  it("should search Referrals By Patient and validate", function () {
     cy.fixture("Patient").then((patient) => {
       patientPage.searchPatientByPatientId(patient.nationalId);
+      patientPage.searchPatientByFirstAndLastName(
+        patient.firstName,
+        patient.lastName
+      );
+      patientPage.getFirstName().should("have.value", patient.firstName);
+      patientPage.getLastName().should("have.value", patient.lastName);
       patientPage.clickSearchPatientButton();
       patientPage.validatePatientSearchTable(
         patient.firstName,
@@ -222,7 +236,7 @@ describe("Result By Range Of Order", function () {
     cy.fixture("result").then((res) => {
       result.acceptSample();
       result.expandSampleDetails();
-      result.selectTestMethod(0, res.invalidTestMethod);
+      result.selectTestMethod(0, res.eiaTestMethod);
       result.submitResults();
     });
   });
