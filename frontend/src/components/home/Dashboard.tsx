@@ -1,3 +1,4 @@
+// components/home/Dashboard.js
 import React from "react";
 import {
   Tile,

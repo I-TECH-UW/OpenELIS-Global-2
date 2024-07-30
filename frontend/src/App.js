@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { confirmAlert } from "react-confirm-alert";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from "react-router-dom";
 import { IntlProvider } from "react-intl";
 import Layout from "./components/layout/Layout";
 import Home from "./components/Home";
 import Login from "./components/Login";
+import LandingPage from "./components/home/LandingPage";
+import HomeDashBoard from "./components/home/Dashboard";
 import { Admin } from "./components";
 import ResultSearch from "./components/resultPage/ResultSearch";
 import UserSessionDetailsContext from "./UserSessionDetailsContext";
@@ -209,10 +215,25 @@ export default function App() {
             <Layout onChangeLanguage={onChangeLanguage}>
               <Switch>
                 <Route path="/login" exact component={() => <Login />} />
+                <Route
+                  path="/landing"
+                  exact
+                  component={() => <LandingPage />}
+                />
+                <Route
+                  path="/dashboard"
+                  exact
+                  component={() => <HomeDashBoard />}
+                />
                 <SecureRoute
                   path="/"
                   exact
-                  component={() => <Home />}
+                  component={() => {
+                    if (!userSessionDetails.unitSelected) {
+                      return <Redirect to="/landing" />;
+                    }
+                    return <Home />;
+                  }}
                   role=""
                 />
                 <SecureRoute

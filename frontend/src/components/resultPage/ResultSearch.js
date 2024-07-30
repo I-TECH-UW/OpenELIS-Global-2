@@ -7,9 +7,10 @@ import PageBreadCrumb from "../common/PageBreadCrumb";
 
 function ResultSearch() {
   const [source, setSource] = useState("");
+  const [selectedLab, setSelectedLab] = useState("");
   useEffect(() => {
     let sourceFromUrl = new URLSearchParams(window.location.search).get(
-      "source",
+      "source"
     );
     let sources = [
       "WorkPlanByTest",
@@ -19,6 +20,10 @@ function ResultSearch() {
     ];
     sourceFromUrl = sources.includes(sourceFromUrl) ? sourceFromUrl : "";
     setSource(sourceFromUrl);
+
+    // Retrieve the selected lab from localStorage
+    const selectedDepartment = localStorage.getItem("selectedDepartment");
+    setSelectedLab(selectedDepartment);
   }, []);
   return (
     <>
@@ -48,7 +53,7 @@ function ResultSearch() {
         </Column>
       </Grid>
       <div className="orderLegendBody">
-        <ResultSearchPage />
+        <ResultSearchPage selectedLab={selectedLab} />
       </div>
     </>
   );

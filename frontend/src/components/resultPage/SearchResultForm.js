@@ -85,7 +85,7 @@ export function SearchResultForm(props) {
   const [defaultAnalysisStatusLabel, setDefaultAnalysisStatusLabel] =
     useState("");
   const [searchFormValues, setSearchFormValues] = useState(
-    SearchResultFormValues,
+    SearchResultFormValues
   );
   const [nextPage, setNextPage] = useState(null);
   const [previousPage, setPreviousPage] = useState(null);
@@ -210,12 +210,12 @@ export function SearchResultForm(props) {
             "&collectionDate=" +
             values.collectionDate +
             "&recievedDate=" +
-            values.recievedDate,
+            values.recievedDate
         );
         break;
       case "range":
         props.setParam(
-          "&accessionNumber=" + labNo + "&upperAccessionNumber=" + endLabNo,
+          "&accessionNumber=" + labNo + "&upperAccessionNumber=" + endLabNo
         );
         break;
     }
@@ -262,9 +262,7 @@ export function SearchResultForm(props) {
 
   useEffect(() => {
     componentMounted.current = true;
-    let testId = new URLSearchParams(window.location.search).get(
-      "selectedTest",
-    );
+    let testId = new URLSearchParams(window.location.search).get("selectedTest");
     testId = testId ? testId : "";
     getFromOpenElisServer("/rest/test-list", (fetchedTests) => {
       let test = fetchedTests.find((test) => test.id === testId);
@@ -275,46 +273,50 @@ export function SearchResultForm(props) {
     });
 
     let sampleStatusId = new URLSearchParams(window.location.search).get(
-      "selectedSampleStatus",
+      "selectedSampleStatus"
     );
     sampleStatusId = sampleStatusId ? sampleStatusId : "";
     getFromOpenElisServer(
       "/rest/sample-status-types",
       (fetchedSampleStatusTypes) => {
         let sampleStatus = fetchedSampleStatusTypes.find(
-          (sampleStatus) => sampleStatus.id === sampleStatusId,
+          (sampleStatus) => sampleStatus.id === sampleStatusId
         );
         let sampleStatusLabel = sampleStatus ? sampleStatus.value : "";
         setDefaultSampleStatusId(sampleStatusId);
         setDefaultSampleStatusLabel(sampleStatusLabel);
         getSampleStatusTypes(fetchedSampleStatusTypes);
-      },
+      }
     );
 
     let analysisStatusId = new URLSearchParams(window.location.search).get(
-      "selectedAnalysisStatus",
+      "selectedAnalysisStatus"
     );
     analysisStatusId = analysisStatusId ? analysisStatusId : "";
     getFromOpenElisServer(
       "/rest/analysis-status-types",
       (fetchedAnalysisStatusTypes) => {
         let analysisStatus = fetchedAnalysisStatusTypes.find(
-          (analysisStatus) => analysisStatus.id === analysisStatusId,
+          (analysisStatus) => analysisStatus.id === analysisStatusId
         );
         let analysisStatusLabel = analysisStatus ? analysisStatus.value : "";
         setDefaultAnalysisStatusId(analysisStatusId);
         setDefaultAnalysisStatusLabel(analysisStatusLabel);
         getAnalysisStatusTypes(fetchedAnalysisStatusTypes);
-      },
+      }
     );
 
     let testSectionId = new URLSearchParams(window.location.search).get(
-      "testSectionId",
+      "testSectionId"
     );
     testSectionId = testSectionId ? testSectionId : "";
+    let selectedDepartment = localStorage.getItem("selectedDepartment");
+    if (selectedDepartment) {
+      testSectionId = selectedDepartment;
+    }
     getFromOpenElisServer("/rest/user-test-sections", (fetchedTestSections) => {
       let testSection = fetchedTestSections.find(
-        (testSection) => testSection.id === testSectionId,
+        (testSection) => testSection.id === testSectionId
       );
       let testSectionLabel = testSection ? testSection.value : "";
       setDefaultTestSectionId(testSectionId);
@@ -355,10 +357,10 @@ export function SearchResultForm(props) {
 
   useEffect(() => {
     let accessionNumber = new URLSearchParams(window.location.search).get(
-      "accessionNumber",
+      "accessionNumber"
     );
     let upperAccessionNumber = new URLSearchParams(window.location.search).get(
-      "upperAccessionNumber",
+      "upperAccessionNumber"
     );
     if (accessionNumber) {
       let searchValues = {
@@ -378,19 +380,19 @@ export function SearchResultForm(props) {
       querySearch(searchValues);
     }
     let collectionDate = new URLSearchParams(window.location.search).get(
-      "collectionDate",
+      "collectionDate"
     );
     let recievedDate = new URLSearchParams(window.location.search).get(
-      "recievedDate",
+      "recievedDate"
     );
     let selectedTest = new URLSearchParams(window.location.search).get(
-      "selectedTest",
+      "selectedTest"
     );
     let selectedSampleStatus = new URLSearchParams(window.location.search).get(
-      "selectedSampleStatus",
+      "selectedSampleStatus"
     );
     let selectedAnalysisStatus = new URLSearchParams(
-      window.location.search,
+      window.location.search
     ).get("selectedAnalysisStatus");
 
     if (
@@ -589,7 +591,7 @@ export function SearchResultForm(props) {
                             />
                             {analysisStatusTypes
                               .filter(
-                                (item) => item.id !== defaultAnalysisStatusId,
+                                (item) => item.id !== defaultAnalysisStatusId
                               )
                               .map((test, index) => {
                                 return (
@@ -620,7 +622,7 @@ export function SearchResultForm(props) {
                             />
                             {sampleStatusTypes
                               .filter(
-                                (item) => item.id !== defaultSampleStatusId,
+                                (item) => item.id !== defaultSampleStatusId
                               )
                               .map((test, index) => {
                                 return (
@@ -756,16 +758,16 @@ export function SearchResults(props) {
 
     getFromOpenElisServer(
       "/rest/displayList/REFERRAL_ORGANIZATIONS",
-      loadReferalOrganizations,
+      loadReferalOrganizations
     );
     getFromOpenElisServer("/rest/displayList/METHODS", loadMethods);
     getFromOpenElisServer(
       "/rest/displayList/REFERRAL_REASONS",
-      loadReferalReasons,
+      loadReferalReasons
     );
     getFromOpenElisServer(
       "/rest/displayList/REJECTION_REASONS",
-      loadRejectReasons,
+      loadRejectReasons
     );
     if (props.results.testResult.length > 0) {
       var defaultRejectedItems = {};
@@ -920,13 +922,13 @@ export function SearchResults(props) {
                 onClick={async () => {
                   if ("clipboard" in navigator) {
                     return await navigator.clipboard.writeText(
-                      row.accessionNumber,
+                      row.accessionNumber
                     );
                   } else {
                     return document.execCommand(
                       "copy",
                       true,
-                      row.accessionNumber,
+                      row.accessionNumber
                     );
                   }
                 }}
@@ -1071,7 +1073,7 @@ export function SearchResults(props) {
                       value={dictionaryResult.id}
                       key={dictionaryResult_index}
                     />
-                  ),
+                  )
                 )}
               </Select>
             );
@@ -1100,13 +1102,13 @@ export function SearchResults(props) {
                     borderColor: validation.isCritical
                       ? "orange"
                       : validation.isInvalid
-                        ? "red"
-                        : "",
+                      ? "red"
+                      : "",
                     background: validation.outsideValid
                       ? "#ffa0a0"
                       : validation.outsideNormal
-                        ? "#ffffa0"
-                        : "var(--cds-field)",
+                      ? "#ffffa0"
+                      : "var(--cds-field)",
                   };
 
                   setValidationState(newValidationState);
@@ -1118,7 +1120,7 @@ export function SearchResults(props) {
                     alert(
                       intl.formatMessage({
                         id: "result.outOfValidRange.msg",
-                      }),
+                      })
                     );
                   }
                 }}
@@ -1165,7 +1167,7 @@ export function SearchResults(props) {
               <>
                 {
                   row.dictionaryResults.find(
-                    (result) => result.id == row.shadowResultValue,
+                    (result) => result.id == row.shadowResultValue
                   )?.value
                 }
               </>
@@ -1301,6 +1303,7 @@ export function SearchResults(props) {
       greaterThanOrLessThan = value.charAt(0);
     }
     var actualValue = ("" + value).replace(/[<>]/g, "");
+
     let validation = {
       isInvalid: false,
       outsideNormal: false,
@@ -1410,7 +1413,7 @@ export function SearchResults(props) {
   const handleChange = (e, rowId) => {
     const { name, id, value } = e.target;
     console.debug(
-      "handleChange:" + id + ":" + name + ":" + value + ":" + rowId,
+      "handleChange:" + id + ":" + name + ":" + value + ":" + rowId
     );
     // setState({value: e.target.value})
     console.debug("State updated to ", e.target.value);
@@ -1426,23 +1429,23 @@ export function SearchResults(props) {
       jp.value(
         form,
         "testResult[" + rowId + "].referralItem.referredTestId",
-        testId,
+        testId
       );
       jp.value(
         form,
         "testResult[" + rowId + "].referralItem.referredSendDate",
-        configurationProperties.currentDateAsText,
+        configurationProperties.currentDateAsText
       );
     } else {
       jp.value(
         form,
         "testResult[" + rowId + "].referralItem.referredTestId",
-        "",
+        ""
       );
       jp.value(
         form,
         "testResult[" + rowId + "].referralItem.referredSendDate",
-        "",
+        ""
       );
     }
     var isModified = "testResult[" + rowId + "].isModified";
@@ -1483,7 +1486,7 @@ export function SearchResults(props) {
         jp.value(
           form,
           "testResult[" + rowId + "].referralItem.referredSendDate",
-          date,
+          date
         );
         var isModified = "testResult[" + rowId + "].isModified";
         jp.value(form, isModified, "true");
@@ -1520,7 +1523,7 @@ export function SearchResults(props) {
     postToOpenElisServerJsonResponse(
       searchEndPoint,
       JSON.stringify(props.results),
-      setResponse,
+      setResponse
     );
   };
 
@@ -1624,7 +1627,7 @@ export function SearchResults(props) {
               <DataTable
                 data={props.results?.testResult?.slice(
                   (page - 1) * pageSize,
-                  page * pageSize,
+                  page * pageSize
                 )}
                 columns={columns}
                 isSortable
@@ -1642,7 +1645,7 @@ export function SearchResults(props) {
                 itemRangeText={(min, max, total) =>
                   intl.formatMessage(
                     { id: "pagination.item-range" },
-                    { min: min, max: max, total: total },
+                    { min: min, max: max, total: total }
                   )
                 }
                 itemsPerPageText={intl.formatMessage({
@@ -1651,7 +1654,7 @@ export function SearchResults(props) {
                 itemText={(min, max) =>
                   intl.formatMessage(
                     { id: "pagination.item" },
-                    { min: min, max: max },
+                    { min: min, max: max }
                   )
                 }
                 pageNumberText={intl.formatMessage({
@@ -1660,13 +1663,13 @@ export function SearchResults(props) {
                 pageRangeText={(_current, total) =>
                   intl.formatMessage(
                     { id: "pagination.page-range" },
-                    { total: total },
+                    { total: total }
                   )
                 }
                 pageText={(page, pagesUnknown) =>
                   intl.formatMessage(
                     { id: "pagination.page" },
-                    { page: pagesUnknown ? "" : page },
+                    { page: pagesUnknown ? "" : page }
                   )
                 }
               />

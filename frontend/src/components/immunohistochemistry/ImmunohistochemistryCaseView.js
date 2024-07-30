@@ -39,11 +39,14 @@ import "./../pathology/PathologyDashboard.css";
 import PageBreadCrumb from "../common/PageBreadCrumb";
 
 //import the page PathologyCaseViews to this project
-import {pathologySampleInfo, conclusions,setPathologySampleInfo }from "../pathology/PathologyCaseView";
+import {
+  pathologySampleInfo,
+  conclusions,
+  setPathologySampleInfo,
+} from "../pathology/PathologyCaseView";
 
-//declaration du conclusion 
+//declaration du conclusion
 // const [conclusions, setConclusions] = useState([]);
-
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -654,48 +657,42 @@ function ImmunohistochemistryCaseView() {
           </>
         );
 
-
-
-
-        
-
       case "IMMUNOHISTOCHEMISTRY":
         return (
           <>
-            
             <Column lg={16} md={8} sm={4}>
               <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={3} md={8} sm={4}>
                   <FormattedMessage id="pathology.label.conclusion" />
-                    </Column>
-                      <Column lg={13} md={8} sm={4}>
-
-
-                      <Select
-                          id={`pattern_${index}`}
-                          name="pattern"
-                          labelText=""
-                          value={reportParams[index]?.pattern || ''}
-                          onChange={(e) => {
-                            const params = { ...reportParams };
-                            if (!params[index]) {
-                              params[index] = {};
-                            }
-                            params[index].pattern = e.target.value;
-                            setReportParams(params);
-                          }}
-                        >
+                </Column>
+                <Column lg={13} md={8} sm={4}>
+                  <Select
+                    id={`pattern_${index}`}
+                    name="pattern"
+                    labelText=""
+                    value={reportParams[index]?.pattern || ""}
+                    onChange={(e) => {
+                      const params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].pattern = e.target.value;
+                      setReportParams(params);
+                    }}
+                  >
                     {/* <SelectItem disabled value="placeholder" text="" /> */}
-                    
-                  <SelectItem value="KEV TEST" text="KEV TEST" />
-                  <SelectItem value="TEST IMMUNO" text="TEST IMMUNO" />
-                  <SelectItem value="KEV VALUE" text="KEV VALUE" />
-                {cerbB2PatternList.map((status, idx) => (
-              <SelectItem key={idx} text={status.value} value={status.value} />
-            ))}
-          </Select> 
 
-
+                    <SelectItem value="KEV TEST" text="KEV TEST" />
+                    <SelectItem value="TEST IMMUNO" text="TEST IMMUNO" />
+                    <SelectItem value="KEV VALUE" text="KEV VALUE" />
+                    {cerbB2PatternList.map((status, idx) => (
+                      <SelectItem
+                        key={idx}
+                        text={status.value}
+                        value={status.value}
+                      />
+                    ))}
+                  </Select>
                 </Column>
               </Grid>
             </Column>
@@ -705,9 +702,7 @@ function ImmunohistochemistryCaseView() {
                   <FormattedMessage id="pathology.label.tconclusion" />
                 </Column>
                 <Column lg={13} md={8} sm={4}>
-                
-
-                <TextArea
+                  <TextArea
                     id={"conclusion_" + index}
                     labelText=""
                     hideLabel={true}
@@ -721,17 +716,13 @@ function ImmunohistochemistryCaseView() {
                       setReportParams(params);
                     }}
                   />
-                      
                 </Column>
               </Grid>
             </Column>
-          </>   
-      );
+          </>
+        );
     }
   };
-
-
-
 
   const setResultsWithId = (results) => {
     if (results) {
@@ -841,9 +832,6 @@ function ImmunohistochemistryCaseView() {
       setMolecularSubTypeList,
     );
 
-
-
-
     //TODO make conclusions list instead of reusing pathrequest
     getFromOpenElisServer("/rest/users", setTechnicianUsers);
     getFromOpenElisServer("/rest/users/Pathologist", setPathologistUsers);
@@ -851,11 +839,6 @@ function ImmunohistochemistryCaseView() {
       "/rest/immunohistochemistry/caseView/" + immunohistochemistrySampleId,
       setInitialImmunohistochemistrySampleInfo,
     );
-    
-
-
-
-
 
     return () => {
       componentMounted.current = false;

@@ -196,33 +196,6 @@ function ReferredOutTests(props) {
   };
 
   useEffect(() => {
-    if (testNames.testNames) {
-      var testNamesIdList = testNames.testNames.map((test) => test.id);
-      setTestNamesIdList(testNamesIdList);
-      var testNamesValueList = testNames.testNames.map((test) => test.value);
-      setTestNamesValuesList(testNamesValueList);
-      var testNamesPair = testNames.testNames.map((test) => ({
-        id: test.id,
-        value: test.value,
-      }));
-      setTestNamesPair(testNamesPair);
-      setSearchByUnit(false);
-    }
-    if (testUnits.testUnits) {
-      var testUnitsIdList = testUnits.testUnits.map((test) => test.id);
-      setTestUnitsIdList(testUnitsIdList);
-      var testUnitsValueList = testUnits.testUnits.map((test) => test.value);
-      setTestUnitsValuesList(testUnitsValueList);
-      var testUnitsPair = testUnits.testUnits.map((test) => ({
-        id: test.id,
-        value: test.value,
-      }));
-      setTestUnitsPair(testUnitsPair);
-      setSearchByUnit(false);
-    }
-  }, [testNames, testUnits]);
-
-  useEffect(() => {
     componentMounted.current = true;
     let testId = new URLSearchParams(window.location.search).get(
       "selectedTest",
@@ -246,6 +219,12 @@ function ReferredOutTests(props) {
       let testSectionLabel = testSection ? testSection.value : "";
       setTestNames(testSectionLabel);
       fetchTestSections(fetchedTestSections);
+
+      // Preselect the saved department
+      const savedDepartment = localStorage.getItem("selectedDepartment");
+      if (savedDepartment) {
+        setTestUnitsIdList([savedDepartment]);
+      }
     });
   }, []);
 
@@ -466,6 +445,11 @@ function ReferredOutTests(props) {
                       defaultMessage: "Select Test Unit",
                     })}
                     items={testSections}
+                    initialSelectedItems={testSections.filter(
+                      (section) =>
+                        section.id ===
+                        localStorage.getItem("selectedDepartment"),
+                    )}
                     itemToString={(item) => (item ? item.value : "")}
                     onChange={(changes) => {
                       setTestUnits({

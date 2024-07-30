@@ -166,9 +166,8 @@
   "pathology.label.grossexam": "Gross Exam",
   "pathology.label.microexam": "Microscopy Exam",
   "pathology.label.conclusion": "Conclusion",
-  
-  "pathology.label.tconclusion": "Text Conclusion",
 
+  "pathology.label.tconclusion": "Text Conclusion",
 
   "pathology.label.textconclusion": "Text Conclusion",
   "pathology.label.release": "Ready For release",
@@ -532,7 +531,7 @@
   "label.button.start": "Start",
   "label.button.sample": "Sample",
   "search.label.accession": "Enter Accession Number",
-  "search.label.testunit": "Select Test Unit",
+  "search.label.testunit": "Selected Test Lab",
   "search.label.testdate": "Enter Test Date",
   "search.label.collectiondate": "Enter Collection Date",
   "search.label.recieveddate": "Enter Recieved Date",
