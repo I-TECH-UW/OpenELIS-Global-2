@@ -166,6 +166,10 @@
   "pathology.label.grossexam": "Gross Exam",
   "pathology.label.microexam": "Microscopy Exam",
   "pathology.label.conclusion": "Conclusion",
+  
+  "pathology.label.tconclusion": "Text Conclusion",
+
+
   "pathology.label.textconclusion": "Text Conclusion",
   "pathology.label.release": "Ready For release",
   "pathology.label.refer": "Refer to ImmunoHistoChemistry",

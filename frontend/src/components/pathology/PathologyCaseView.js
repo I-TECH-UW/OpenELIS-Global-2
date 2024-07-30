@@ -54,7 +54,13 @@ function PathologyCaseView() {
   const [techniques, setTechniques] = useState([]);
   const [requests, setRequests] = useState([]);
   const [requestStatuses, setRequestStatuses] = useState([]);
+
+
+  //declaration du conclusion 
   const [conclusions, setConclusions] = useState([]);
+
+
+
   const [immunoHistoChemistryTests, setImmunoHistoChemistryTests] = useState(
     [],
   );
@@ -1038,6 +1044,12 @@ function PathologyCaseView() {
                 </Column>
               </Grid>
             </Column>
+
+
+
+
+
+
             <Column lg={16} md={8} sm={4}>
               <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={4} md={8} sm={4}>
@@ -1097,6 +1109,13 @@ function PathologyCaseView() {
               </Grid>
             </Column>
           </>
+
+
+
+
+
+
+
         )}
         <Column lg={16} md={8} sm={4}>
           <Grid fullWidth={true} className="gridBoundary">
