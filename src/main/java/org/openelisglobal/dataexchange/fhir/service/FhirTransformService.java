@@ -26,7 +26,7 @@ import org.openelisglobal.sample.valueholder.Sample;
 
 public interface FhirTransformService {
 
-    void transformPersistPatient(PatientManagementInfo patientInfo)
+    void transformPersistPatient(PatientManagementInfo patientInfo, boolean isCreate)
             throws FhirTransformationException, FhirPersistanceException;
 
     void transformPersistOrganization(Organization organization)
