@@ -498,13 +498,18 @@ button {
   padding-left: 1rem !important;
 }
 
-.cds--side-nav__link:hover {
+.top-level-menu-item > a {
+  pointer-events: auto !important;
+  text-decoration: none !important;
+}
+
+.top-level-menu-item > a:hover {
   background-color: var(--cds-background-hover, #072655);
 }
 
-/* .cds--side-nav__link {
+#mainHeader .cds--side-nav__link {
   pointer-events: none
-} */
+}
 
 @media screen and (max-width: 792px) {
   .banner h5 {

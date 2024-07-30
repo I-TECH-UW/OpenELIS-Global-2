@@ -192,6 +192,7 @@ function OEHeader(props) {
               }}
             >
               <SideNavMenu
+                className="top-level-menu-item"
                 aria-label={intl.formatMessage({
                   id: menuItem.menu.displayKey,
                 })}
@@ -200,18 +201,25 @@ function OEHeader(props) {
                 })}
                 key={"menu_" + index + "_" + level}
                 defaultExpanded={menuItem.expanded}
-                onClick={(e) => {
-                  setMenuItemExpanded(e, menuItem, path);
-                }}
+                // onClick={(e) => { // not supported yet, but if it becomes so we can simplify the functionality here by having this here and not have a span around it
+                //   setMenuItemExpanded(e, menuItem, path);
+                // }}
               >
-                {menuItem.childMenus.map((childMenuItem, index) => {
-                  return generateMenuItems(
-                    childMenuItem,
-                    index,
-                    level + 1,
-                    path + ".childMenus[" + index + "]",
-                  );
-                })}
+                <span
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                >
+                  {menuItem.childMenus.map((childMenuItem, index) => {
+                    return generateMenuItems(
+                      childMenuItem,
+                      index,
+                      level + 1,
+                      path + ".childMenus[" + index + "]",
+                    );
+                  })}
+                </span>
               </SideNavMenu>
             </span>
           </React.Fragment>
@@ -223,6 +231,7 @@ function OEHeader(props) {
               id={menuItem.menu.elementId}
               href={menuItem.menu.actionURL}
               target={menuItem.menu.openInNewWindow ? "_blank" : ""}
+              className="top-level-menu-item"
             >
               {renderSideNavMenuItemLabel(menuItem, level)}
             </SideNavMenuItem>
@@ -231,7 +240,14 @@ function OEHeader(props) {
       } else {
         return (
           <React.Fragment key={path}>
-            <SideNavMenuItem className="reduced-padding-nav-menu-item">
+            <SideNavMenuItem
+              className="reduced-padding-nav-menu-item"
+              id={menuItem.menu.elementId}
+              href={menuItem.menu.actionURL}
+              target={menuItem.menu.openInNewWindow ? "_blank" : ""}
+              style={{ width: "100%" }}
+              rel="noreferrer"
+            >
               <span style={{ display: "flex", width: "100%" }}>
                 {!menuItem.menu.actionURL &&
                   !hasActiveChildMenu(menuItem) &&
@@ -284,27 +300,19 @@ function OEHeader(props) {
   const renderSingleNavButton = (menuItem, index, level, path) => {
     const marginValue = (level - 1) * 0.5 + "rem";
     return (
-      <a
-        id={menuItem.menu.elementId}
-        href={menuItem.menu.actionURL}
-        target={menuItem.menu.openInNewWindow ? "_blank" : ""}
-        style={{ width: "100%" }}
-        rel="noreferrer"
+      <button
+        className={"custom-sidenav-button"}
+        style={{ width: "100%", marginLeft: marginValue }}
+        onClick={() => {
+          if (menuItem.menu.openInNewWindow) {
+            window.open(menuItem.menu.actionURL);
+          } else {
+            window.location.href = menuItem.menu.actionURL;
+          }
+        }}
       >
-        <button
-          className={"custom-sidenav-button"}
-          style={{ marginLeft: marginValue }}
-          onClick={() => {
-            if (menuItem.menu.openInNewWindow) {
-              window.open(menuItem.menu.actionURL);
-            } else {
-              window.location.href = menuItem.menu.actionURL;
-            }
-          }}
-        >
-          {renderSideNavMenuItemLabel(menuItem, level)}
-        </button>
-      </a>
+        {renderSideNavMenuItemLabel(menuItem, level)}
+      </button>
     );
   };
 
@@ -329,31 +337,23 @@ function OEHeader(props) {
     const marginValue = (level - 1) * 0.5 + "rem";
     return (
       <>
-        <a
-          id={menuItem.menu.elementId}
-          href={menuItem.menu.actionURL}
-          target={menuItem.menu.openInNewWindow ? "_blank" : ""}
-          style={{ width: "100%" }}
-          rel="noreferrer"
-        >
-          <button
-            className={
-              menuItem.menu.actionURL
-                ? "custom-sidenav-button"
-                : "custom-sidenav-button-unclickable"
+        <button
+          className={
+            menuItem.menu.actionURL
+              ? "custom-sidenav-button"
+              : "custom-sidenav-button-unclickable"
+          }
+          style={{ marginLeft: marginValue }}
+          onClick={() => {
+            if (menuItem.menu.openInNewWindow) {
+              window.open(menuItem.menu.actionURL);
+            } else {
+              window.location.href = menuItem.menu.actionURL;
             }
-            style={{ marginLeft: marginValue }}
-            onClick={() => {
-              if (menuItem.menu.openInNewWindow) {
-                window.open(menuItem.menu.actionURL);
-              } else {
-                window.location.href = menuItem.menu.actionURL;
-              }
-            }}
-          >
-            {renderSideNavMenuItemLabel(menuItem, level)}
-          </button>
-        </a>
+          }}
+        >
+          {renderSideNavMenuItemLabel(menuItem, level)}
+        </button>
         {menuItem.childMenus.length > 0 && (
           <button
             id={menuItem.menu.displayKey + "_dropdown"}
