@@ -663,38 +663,43 @@ function ImmunohistochemistryCaseView() {
         return (
           <>
             
+            
             <Column lg={16} md={8} sm={4}>
               <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={3} md={8} sm={4}>
-                  <FormattedMessage id="pathology.label.conclusion" />
+                  <FormattedMessage id="immunohistochemistry.label.conclusion" />
                     </Column>
                       <Column lg={13} md={8} sm={4}>
 
 
                       <Select
-                          id={`pattern_${index}`}
-                          name="pattern"
-                          labelText=""
-                          value={reportParams[index]?.pattern || ''}
-                          onChange={(e) => {
-                            const params = { ...reportParams };
-                            if (!params[index]) {
-                              params[index] = {};
-                            }
-                            params[index].pattern = e.target.value;
-                            setReportParams(params);
-                          }}
+                      //     items = {conclusions}
+                      //     itemToString={(item) => (item ? item.value : "")}
+                      //     initialSelectedItems={immunohistochemistrySampleInfo.conclusions}
+                      // onChange={(changes) => {
+                      //   set.immunohistochemistrySampleInfo({
+                      //     ...immunohistochemistrySampleInfo,
+                      //     conclusions: changes.selectedItems,
+                      //   })}}
                         >
-                    {/* <SelectItem disabled value="placeholder" text="" /> */}
-                    
-                  <SelectItem value="KEV TEST" text="KEV TEST" />
-                  <SelectItem value="TEST IMMUNO" text="TEST IMMUNO" />
-                  <SelectItem value="KEV VALUE" text="KEV VALUE" />
-                {cerbB2PatternList.map((status, idx) => (
-              <SelectItem key={idx} text={status.value} value={status.value} />
-            ))}
-          </Select> 
-
+                          
+                          <SelectItem value="" text="" />
+                    {molecularSubTypeList.map((status, index) => {
+                      return (
+                        <SelectItem
+                          key={index}
+                          text={status.value}
+                          value={status.value}
+                        />
+                        
+                          
+                          
+            
+                      );
+                      
+                  })}
+                  
+                      </Select>
 
                 </Column>
               </Grid>
@@ -702,11 +707,9 @@ function ImmunohistochemistryCaseView() {
             <Column lg={16} md={8} sm={4}>
               <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={3} md={8} sm={4}>
-                  <FormattedMessage id="pathology.label.tconclusion" />
+                  <FormattedMessage id="immunohistochemistry.label.textconclusion" />
                 </Column>
                 <Column lg={13} md={8} sm={4}>
-                
-
                 <TextArea
                     id={"conclusion_" + index}
                     labelText=""
@@ -720,15 +723,15 @@ function ImmunohistochemistryCaseView() {
                       params[index].conclusion = e.target.value;
                       setReportParams(params);
                     }}
-                  />
-                      
+                  />     
                 </Column>
               </Grid>
             </Column>
           </>   
       );
     }
-  };
+  }
+
 
 
 
