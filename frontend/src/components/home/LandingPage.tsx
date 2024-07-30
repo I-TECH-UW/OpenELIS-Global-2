@@ -28,6 +28,7 @@ const LandingPage: React.FC = () => {
     );
   };
 
+
   const handleDepartmentSelect = (department) => {
     setSelectedDepartment(department);
   };
@@ -41,7 +42,7 @@ const LandingPage: React.FC = () => {
   };
 
   return (
-    <Grid fullWidth className="landing-page">
+    <div className="landing-page">
       <Column lg={8} md={6} sm={4} className="landing-page-column">
         <Tile className="landing-page-card">
           <h2>Welcome!</h2>
@@ -58,13 +59,24 @@ const LandingPage: React.FC = () => {
               <div
                 key={dept.id}
                 className={`department-item ${
-                  selectedDepartment === dept.id ? "selected" : ""
+                  (selectedDepartment === dept.id) ? "selected" : ""
                 }`}
                 onClick={() => handleDepartmentSelect(dept.id)}
               >
                 {dept.value}
               </div>
             ))}
+            
+            {/* 
+            TODO: Check if the backend can accept multiple values for the department
+            <div
+                className={`department-item ${
+                  selectedDepartment === 'all' ? "selected" : ""
+                }`}
+                onClick={() => handleDepartmentSelect('all')}
+              >
+                All labs
+              </div> */}
           </div>
           <Checkbox
             id="remember-choice"
@@ -81,7 +93,7 @@ const LandingPage: React.FC = () => {
           </Button>
         </Tile>
       </Column>
-    </Grid>
+    </div>
   );
 };
 

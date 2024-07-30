@@ -15,6 +15,7 @@
   justify-content: center;
   align-items: center;
   width: 100%;
+  max-width: 500px !important;
 }
 
 /* Card styling */
@@ -26,11 +27,12 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 500px;
+  height: 70vh;
 }
 
 /* Department list container */
 .department-list {
-  max-height: 200px;
+  max-height: 400px;
   overflow-y: auto;
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -67,5 +69,7 @@
 /* Continue button styling */
 .continue-button {
   margin-top: 1rem;
-  width: 100%;
+  width: 100% !important;
+  max-width: 100% !important;
+  justify-content: center !important;
 }

@@ -643,13 +643,13 @@ export function SearchResultForm(props) {
 
                 {searchBy.type !== "patient" && searchBy.type !== "unit" && (
                   <Column lg={16} md={8} sm={4}>
-                    <Button
+                    {/* <Button
                       style={{ marginTop: "16px" }}
                       type="submit"
                       id="submit"
                     >
                       <FormattedMessage id="label.button.search" />
-                    </Button>
+                    </Button> */}
                   </Column>
                 )}
               </Grid>
@@ -676,12 +676,13 @@ export function SearchResultForm(props) {
                 name="unitType"
                 id="unitType"
                 onChange={submitOnSelect}
+                
               >
                 <SelectItem
                   text={defaultTestSectionLabel}
                   value={defaultTestSectionId}
                 />
-                {testSections
+                {/* {testSections
                   .filter((item) => item.id !== defaultTestSectionId)
                   .map((test, index) => {
                     return (
@@ -691,7 +692,7 @@ export function SearchResultForm(props) {
                         value={test.id}
                       />
                     );
-                  })}
+                  })} */}
               </Select>
             </Column>
             <Column lg={10} />
