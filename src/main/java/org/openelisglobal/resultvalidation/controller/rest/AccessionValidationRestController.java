@@ -26,6 +26,8 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.orderresult.OrderResponseWorker.Event;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.note.service.NoteService;
@@ -98,6 +100,7 @@ public class AccessionValidationRestController extends BaseResultValidationContr
     private SystemUserService systemUserService;
     private ResultValidationService resultValidationService;
     private NoteService noteService;
+    private FhirTransformService fhirTransformService;
 
     private final String RESULT_SUBJECT = "Result Note";
     private final String RESULT_TABLE_ID;
@@ -107,7 +110,8 @@ public class AccessionValidationRestController extends BaseResultValidationContr
             SampleHumanService sampleHumanService, DocumentTrackService documentTrackService,
             TestSectionService testSectionService, SystemUserService systemUserService,
             ReferenceTablesService referenceTablesService, DocumentTypeService documentTypeService,
-            ResultValidationService resultValidationService, NoteService noteService) {
+            ResultValidationService resultValidationService, NoteService noteService,
+            FhirTransformService fhirTransformService) {
 
         this.analysisService = analysisService;
         this.testResultService = testResultService;
@@ -117,6 +121,7 @@ public class AccessionValidationRestController extends BaseResultValidationContr
         this.systemUserService = systemUserService;
         this.resultValidationService = resultValidationService;
         this.noteService = noteService;
+        this.fhirTransformService = fhirTransformService;
 
         RESULT_TABLE_ID = referenceTablesService.getReferenceTableByName("RESULT").getId();
         RESULT_REPORT_ID = documentTypeService.getDocumentTypeByName("resultExport").getId();
@@ -302,6 +307,13 @@ public class AccessionValidationRestController extends BaseResultValidationContr
         try {
             resultValidationService.persistdata(deletableList, analysisUpdateList, resultUpdateList, resultItemList,
                     sampleUpdateList, noteUpdateList, resultSaveService, updaters, getSysUserId(request));
+
+            try {
+                fhirTransformService.transformPersistResultValidationFhirObjects(deletableList, analysisUpdateList,
+                        resultUpdateList, resultItemList, sampleUpdateList, noteUpdateList);
+            } catch (FhirLocalPersistingException e) {
+                LogEvent.logError(e);
+            }
         } catch (LIMSRuntimeException e) {
             LogEvent.logError(e);
         }

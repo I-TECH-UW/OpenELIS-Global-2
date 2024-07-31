@@ -116,6 +116,13 @@ public class ElectronicOrderServiceImpl extends AuditableBaseObjectServiceImpl<E
     }
 
     @Override
+    public int getCountOfElectronicOrdersByTimestampAndStatus(Timestamp startTimestamp, Timestamp endTimestamp,
+            String statusId) {
+        return getBaseObjectDAO().getCountOfElectronicOrdersByTimestampAndStatus(startTimestamp, endTimestamp,
+                statusId);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<ElectronicOrder> searchForElectronicOrders(ElectronicOrderViewForm form) {
         switch (form.getSearchType()) {

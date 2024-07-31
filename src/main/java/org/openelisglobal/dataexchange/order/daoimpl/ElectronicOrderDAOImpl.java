@@ -405,6 +405,34 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
     }
 
     @Override
+    public int getCountOfElectronicOrdersByTimestampAndStatus(java.sql.Timestamp startTimestamp,
+            java.sql.Timestamp endTimestamp, String statusId) {
+        String hql = "SELECT COUNT(*) From ElectronicOrder eo WHERE 1 = 1 ";
+        if (startTimestamp != null) {
+            hql += "AND eo.orderTimestamp BETWEEN :startDate AND :endDate ";
+        }
+        if (!GenericValidator.isBlankOrNull(statusId)) {
+            hql += "AND eo.statusId = :statusId ";
+        }
+
+        try {
+            Query<Long> query = entityManager.unwrap(Session.class).createQuery(hql, Long.class);
+            if (startTimestamp != null) {
+                query.setParameter("startDate", startTimestamp);
+                query.setParameter("endDate", endTimestamp);
+            }
+            if (!GenericValidator.isBlankOrNull(statusId)) {
+                query.setParameter("statusId", Integer.parseInt(statusId));
+            }
+            Long count = query.uniqueResult();
+            return count.intValue();
+        } catch (HibernateException e) {
+            handleException(e, "getAllElectronicOrdersByDateAndStatus");
+        }
+        return 0;
+    }
+
+    @Override
     public int getCountOfAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate, String statusId) {
         String hql = "SELECT COUNT(*) From ElectronicOrder eo WHERE 1 = 1 ";
         if (startDate != null) {
@@ -424,7 +452,7 @@ public class ElectronicOrderDAOImpl extends BaseDAOImpl<ElectronicOrder, String>
                 query.setParameter("statusId", Integer.parseInt(statusId));
             }
             Long count = query.uniqueResult();
-            count.intValue();
+            return count.intValue();
         } catch (HibernateException e) {
             handleException(e, "getCountOfAllElectronicOrdersByDateAndStatus");
         }
