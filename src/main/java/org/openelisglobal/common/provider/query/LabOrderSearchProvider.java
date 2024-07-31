@@ -467,12 +467,18 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             }
         }
         if (test == null) {
-            test = testService.getActiveTestsByLoinc(loinc).get(0);
+            List<Test> alltests = testService.getActiveTestsByLoinc(loinc);
+            if (alltests != null && alltests.size() > 0) {
+                test = alltests.get(0);
+            }
         }
-        if (typeOfSample == null) {
-            typeOfSample = typeOfSampleService.getTypeOfSampleForTest(test.getId()).get(0);
+        if (test != null) {
+            if (typeOfSample == null) {
+                typeOfSample = typeOfSampleService.getTypeOfSampleForTest(test.getId()).get(0);
+            }
+            tests.add(new Request(test.getName(), loinc, typeOfSample.getLocalizedName()));
         }
-        tests.add(new Request(test.getName(), loinc, typeOfSample.getLocalizedName()));
+
     }
 
     private void createMaps(List<Request> testRequests, List<Request> panelNames) {

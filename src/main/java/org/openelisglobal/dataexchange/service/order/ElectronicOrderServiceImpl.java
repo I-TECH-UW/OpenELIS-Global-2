@@ -214,4 +214,14 @@ public class ElectronicOrderServiceImpl extends AuditableBaseObjectServiceImpl<E
     public int getCountOfAllElectronicOrdersByDateAndStatus(Date startDate, Date endDate, String statusId) {
         return getBaseObjectDAO().getCountOfAllElectronicOrdersByDateAndStatus(startDate, endDate, statusId);
     }
+
+    @Override
+    public List<ElectronicOrder> getAllElectronicOrdersByStatusList(List<Integer> statusIds, SortOrder sortOrder) {
+        return getBaseObjectDAO().getAllElectronicOrdersByStatusList(statusIds, sortOrder);
+    }
+
+    @Override
+    public int getCountOfElectronicOrdersByStatusList(List<Integer> statusIds) {
+        return getBaseObjectDAO().getCountOfElectronicOrdersByStatusList(statusIds);
+    }
 }
