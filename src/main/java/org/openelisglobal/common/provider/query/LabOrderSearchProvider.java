@@ -338,11 +338,20 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
     private void addRequestingOrg(StringBuilder xml) {
         xml.append("<requestingOrg>");
+        org.openelisglobal.organization.valueholder.Organization organization = null;
         if (referringOrganization != null) {
-            org.openelisglobal.organization.valueholder.Organization organization = organizationService
+            organization = organizationService
                     .getOrganizationByFhirId(referringOrganization.getIdElement().getIdPart());
-            XMLUtil.appendKeyValue("fhir-id", referringOrganization.getIdElement().getIdPart(), xml);
+        }
+        if (organization == null && task.getLocation() != null) {
+            organization = organizationService
+                    .getOrganizationByFhirId(task.getLocation().getReferenceElement().getIdPart());
+        }
+
+        if (organization != null) {
+            XMLUtil.appendKeyValue("fhir-id", organization.getFhirUuidAsString(), xml);
             XMLUtil.appendKeyValue("id", organization.getId(), xml);
+            XMLUtil.appendKeyValue("name", organization.getOrganizationName(), xml);
         }
         xml.append("</requestingOrg>");
     }
