@@ -21,6 +21,7 @@ const Index = () => {
           <Section>
             <Section>
               <Heading>
+                <GenericHomeBreadCrumb/>
                 <FormattedMessage id="sidenav.label.validation" />
               </Heading>
             </Section>
