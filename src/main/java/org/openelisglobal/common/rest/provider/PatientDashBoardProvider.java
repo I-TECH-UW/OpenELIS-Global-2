@@ -347,8 +347,10 @@ public class PatientDashBoardProvider {
                 metrics.setUnPritendResults(unprintedResults().size());
                 break;
             case INCOMING_ORDERS:
-                metrics.setIncomigOrders(electronicOrderService.getCountOfElectronicOrdersByTimestampAndStatus(
-                        startTimestamp, endTimestamp, iStatusService.getStatusID(ExternalOrderStatus.Entered)));
+                List<Integer> estausIds = new ArrayList<>();
+                estausIds.add(Integer.parseInt(iStatusService.getStatusID(ExternalOrderStatus.Entered)));
+                estausIds.add(Integer.parseInt(iStatusService.getStatusID(ExternalOrderStatus.NonConforming)));
+                metrics.setIncomigOrders(electronicOrderService.getCountOfElectronicOrdersByStatusList(estausIds));
                 break;
             case AVERAGE_TURN_AROUND_TIME:
                 metrics.setAverageTurnAroudTime(calculateAverageReceptionToValidationTime());
@@ -436,8 +438,10 @@ public class PatientDashBoardProvider {
         case UN_PRINTED_RESULTS:
             return convertAnalysesToOrderBean(unprintedResults());
         case INCOMING_ORDERS:
-            List<ElectronicOrder> eOrders = electronicOrderService.getAllElectronicOrdersByTimestampAndStatus(
-                    startTimestamp, endTimestamp, iStatusService.getStatusID(ExternalOrderStatus.Entered),
+            List<Integer> estausIds = new ArrayList<>();
+            estausIds.add(Integer.parseInt(iStatusService.getStatusID(ExternalOrderStatus.Entered)));
+            estausIds.add(Integer.parseInt(iStatusService.getStatusID(ExternalOrderStatus.NonConforming)));
+            List<ElectronicOrder> eOrders = electronicOrderService.getAllElectronicOrdersByStatusList(estausIds,
                     ElectronicOrder.SortOrder.STATUS_ID);
             return convertElectronicToOrderBean(eOrders);
         case AVERAGE_TURN_AROUND_TIME:
