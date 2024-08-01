@@ -29,6 +29,7 @@ import {
   Bullhorn,
   User,
   BatchJob,
+  ResultNew,
   Popup,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
@@ -57,6 +58,11 @@ import ManageMethod from "./testManagement/ManageMethod.js";
 import BatchTestReassignmentAndCancelation from "./BatchTestReassignmentAndCancellation/BatchTestReassignmentAndCancelation.js";
 import TestNotificationConfigMenu from "./testNotificationConfigMenu/TestNotificationConfigMenu.js";
 import TestNotificationConfigEdit from "./testNotificationConfigMenu/TestNotificationConfigEdit.js";
+import TestManagementConfigMenu from "./testManagementConfigMenu/TestManagementConfigMenu.js";
+import ResultSelectListAdd from "./testManagementConfigMenu/ResultSelectListAdd.js";
+import TestAdd from "./testManagementConfigMenu/TestAdd.js";
+import TestModifyEntry from "./testManagementConfigMenu/TestModifyEntry.js";
+import TestOrderability from "./testManagementConfigMenu/TestOrderability.js";
 
 function Admin() {
   const intl = useIntl();
@@ -130,6 +136,9 @@ function Admin() {
           </SideNavLink>
           <SideNavLink renderIcon={BatchJob} href="#batchTestReassignment">
             <FormattedMessage id="configuration.batch.test.reassignment" />
+          </SideNavLink>
+          <SideNavLink renderIcon={ResultNew} href="#testManagementConfigMenu">
+            <FormattedMessage id="master.lists.page.test.management" />
           </SideNavLink>
           <SideNavMenu
             title={intl.formatMessage({ id: "sidenav.label.admin.menu" })}
@@ -275,6 +284,21 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#commonproperties">
         <CommonProperties />
+      </PathRoute>
+      <PathRoute path="#testManagementConfigMenu">
+        <TestManagementConfigMenu />
+      </PathRoute>
+      <PathRoute path="#ResultSelectListAdd">
+        <ResultSelectListAdd />
+      </PathRoute>
+      <PathRoute path="#TestAdd">
+        <TestAdd />
+      </PathRoute>
+      <PathRoute path="#TestModifyEntry">
+        <TestModifyEntry />
+      </PathRoute>
+      <PathRoute path="#TestOrderability">
+        <TestOrderability />
       </PathRoute>
 
       <PathRoute path="#NonConformityConfigurationMenu">
