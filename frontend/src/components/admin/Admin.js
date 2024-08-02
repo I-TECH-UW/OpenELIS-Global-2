@@ -79,6 +79,7 @@ import PanelManagement from "./testManagementConfigMenu/PanelManagement.js";
 import PanelCreate from "./testManagementConfigMenu/PanelCreate.js";
 import PanelOrder from "./testManagementConfigMenu/PanelOrder.js";
 import PanelTestAssign from "./testManagementConfigMenu/PanelTestAssign.js";
+import TestActivation from "./testManagementConfigMenu/TestActivation.js";
 
 function Admin() {
   const intl = useIntl();
@@ -363,6 +364,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#PanelTestAssign">
         <PanelTestAssign />
+      </PathRoute>
+      <PathRoute path="#TestActivation">
+        <TestActivation />
       </PathRoute>
 
       <PathRoute path="#NonConformityConfigurationMenu">

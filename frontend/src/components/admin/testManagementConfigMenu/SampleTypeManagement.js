@@ -83,34 +83,30 @@ function TestSectionManagement() {
         <Grid fullWidth={true}>
           <Column lg={16} md={8} sm={4}>
             <UnorderedList>
-              <ListItem>
-                <a
-                  onClick={() => {
-                    window.location.assign("/MasterListsPage#SampleTypeCreate");
-                  }}
-                >
-                  <FormattedMessage id="configuration.sampleType.create" />
-                </a>
+              <ListItem
+                onClick={() => {
+                  window.location.assign("/MasterListsPage#SampleTypeCreate");
+                }}
+              >
+                <FormattedMessage id="configuration.sampleType.create" />
               </ListItem>
-              <ListItem>
-                <a
-                  onClick={() => {
-                    window.location.assign("/MasterListsPage#SampleTypeOrder");
-                  }}
-                >
-                  <FormattedMessage id="configuration.sampleType.order" />
-                </a>
+              <br />
+              <ListItem
+                onClick={() => {
+                  window.location.assign("/MasterListsPage#SampleTypeOrder");
+                }}
+              >
+                <FormattedMessage id="configuration.sampleType.order" />
               </ListItem>
-              <ListItem>
-                <a
-                  onClick={() => {
-                    window.location.assign(
-                      "/MasterListsPage#SampleTypeTestAssign",
-                    );
-                  }}
-                >
-                  <FormattedMessage id="configuration.panel.assign" />
-                </a>
+              <br />
+              <ListItem
+                onClick={() => {
+                  window.location.assign(
+                    "/MasterListsPage#SampleTypeTestAssign",
+                  );
+                }}
+              >
+                <FormattedMessage id="configuration.panel.assign" />
               </ListItem>
             </UnorderedList>
           </Column>

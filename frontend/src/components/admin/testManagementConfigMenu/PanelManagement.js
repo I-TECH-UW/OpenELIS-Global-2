@@ -83,32 +83,28 @@ function PanelManagement() {
         <Grid fullWidth={true}>
           <Column lg={16} md={8} sm={4}>
             <UnorderedList>
-              <ListItem>
-                <a
-                  onClick={() => {
-                    window.location.assign("/MasterListsPage#PanelCreate");
-                  }}
-                >
-                  <FormattedMessage id="configuration.panel.create" />
-                </a>
+              <ListItem
+                onClick={() => {
+                  window.location.assign("/MasterListsPage#PanelCreate");
+                }}
+              >
+                <FormattedMessage id="configuration.panel.create" />
               </ListItem>
-              <ListItem>
-                <a
-                  onClick={() => {
-                    window.location.assign("/MasterListsPage#PanelOrder");
-                  }}
-                >
-                  <FormattedMessage id="configuration.panel.order" />
-                </a>
+              <br />
+              <ListItem
+                onClick={() => {
+                  window.location.assign("/MasterListsPage#PanelOrder");
+                }}
+              >
+                <FormattedMessage id="configuration.panel.order" />
               </ListItem>
-              <ListItem>
-                <a
-                  onClick={() => {
-                    window.location.assign("/MasterListsPage#PanelTestAssign");
-                  }}
-                >
-                  <FormattedMessage id="configuration.panel.assign" />
-                </a>
+              <br />
+              <ListItem
+                onClick={() => {
+                  window.location.assign("/MasterListsPage#PanelTestAssign");
+                }}
+              >
+                <FormattedMessage id="configuration.panel.assign" />
               </ListItem>
             </UnorderedList>
           </Column>
