@@ -63,6 +63,22 @@ import ResultSelectListAdd from "./testManagementConfigMenu/ResultSelectListAdd.
 import TestAdd from "./testManagementConfigMenu/TestAdd.js";
 import TestModifyEntry from "./testManagementConfigMenu/TestModifyEntry.js";
 import TestOrderability from "./testManagementConfigMenu/TestOrderability.js";
+import MethodManagement from "./testManagementConfigMenu/MethodManagement.js";
+import MethodCreate from "./testManagementConfigMenu/MethodCreate.js";
+import TestSectionManagement from "./testManagementConfigMenu/TestSectionManagement.js";
+import TestSectionCreate from "./testManagementConfigMenu/TestSectionCreate.js";
+import TestSectionOrder from "./testManagementConfigMenu/TestSectionOrder.js";
+import SampleTypeManagement from "./testManagementConfigMenu/SampleTypeManagement.js";
+import TestSectionTestAssign from "./testManagementConfigMenu/TestSectionTestAssign.js";
+import SampleTypeOrder from "./testManagementConfigMenu/SampleTypeOrder.js";
+import SampleTypeCreate from "./testManagementConfigMenu/SampleTypeCreate.js";
+import SampleTypeTestAssign from "./testManagementConfigMenu/SampleTypeTestAssign.js";
+import UomManagement from "./testManagementConfigMenu/UomManagement.js";
+import UomCreate from "./testManagementConfigMenu/UomCreate.js";
+import PanelManagement from "./testManagementConfigMenu/PanelManagement.js";
+import PanelCreate from "./testManagementConfigMenu/PanelCreate.js";
+import PanelOrder from "./testManagementConfigMenu/PanelOrder.js";
+import PanelTestAssign from "./testManagementConfigMenu/PanelTestAssign.js";
 
 function Admin() {
   const intl = useIntl();
@@ -299,6 +315,54 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#TestOrderability">
         <TestOrderability />
+      </PathRoute>
+      <PathRoute path="#MethodManagement">
+        <MethodManagement />
+      </PathRoute>
+      <PathRoute path="#MethodCreate">
+        <MethodCreate />
+      </PathRoute>
+      <PathRoute path="#TestSectionManagement">
+        <TestSectionManagement />
+      </PathRoute>
+      <PathRoute path="#TestSectionCreate">
+        <TestSectionCreate />
+      </PathRoute>
+      <PathRoute path="#TestSectionOrder">
+        <TestSectionOrder />
+      </PathRoute>
+      <PathRoute path="#TestSectionTestAssign">
+        <TestSectionTestAssign />
+      </PathRoute>
+      <PathRoute path="#SampleTypeManagement">
+        <SampleTypeManagement />
+      </PathRoute>
+      <PathRoute path="#SampleTypeCreate">
+        <SampleTypeCreate />
+      </PathRoute>
+      <PathRoute path="#SampleTypeOrder">
+        <SampleTypeOrder />
+      </PathRoute>
+      <PathRoute path="#SampleTypeTestAssign">
+        <SampleTypeTestAssign />
+      </PathRoute>
+      <PathRoute path="#UomManagement">
+        <UomManagement />
+      </PathRoute>
+      <PathRoute path="#UomCreate">
+        <UomCreate />
+      </PathRoute>
+      <PathRoute path="#PanelManagement">
+        <PanelManagement />
+      </PathRoute>
+      <PathRoute path="#PanelCreate">
+        <PanelCreate />
+      </PathRoute>
+      <PathRoute path="#PanelOrder">
+        <PanelOrder />
+      </PathRoute>
+      <PathRoute path="#PanelTestAssign">
+        <PanelTestAssign />
       </PathRoute>
 
       <PathRoute path="#NonConformityConfigurationMenu">
