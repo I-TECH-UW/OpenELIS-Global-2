@@ -49,9 +49,13 @@ let breadcrumbs = [
     label: "master.lists.page.test.management",
     link: "/MasterListsPage#testManagementConfigMenu",
   },
+  {
+    label: "configuration.sampleType.manage",
+    link: "/MasterListsPage#SampleTypeManagement",
+  },
 ];
 
-function TestManagementConfigMenu() {
+function TestSectionManagement() {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
@@ -68,74 +72,52 @@ function TestManagementConfigMenu() {
           <Column lg={16} md={8} sm={4}>
             <Section>
               <Heading>
-                <FormattedMessage id="master.lists.page.test.management" />
+                <FormattedMessage id="configuration.sampleType.manage" />
               </Heading>
             </Section>
           </Column>
         </Grid>
         <br />
-        <div className="orderLegendBody">
-          <Grid fullWidth={true}>
-            <Column lg={16} md={8} sm={4}>
-              <Section>
-                <Section>
-                  <Section>
-                    <Heading>
-                      <FormattedMessage id="configuration.test.management.spelling" />
-                    </Heading>
-                  </Section>
-                </Section>
-              </Section>
-            </Column>
-          </Grid>
-          <br />
-          <hr />
-          <br />
-          <Grid fullWidth={true}>
-            <Column lg={16} md={8} sm={4}>
-              <UnorderedList>
-                <ListItem></ListItem>
-              </UnorderedList>
-            </Column>
-          </Grid>
-          <br />
-          <hr />
-          <br />
-          <Grid fullWidth={true}>
-            <Column lg={16} md={8} sm={4}>
-              <Section>
-                <Section>
-                  <Section>
-                    <Heading>
-                      <FormattedMessage id="configuration.test.management.organization" />
-                    </Heading>
-                  </Section>
-                </Section>
-              </Section>
-            </Column>
-          </Grid>
-          <br />
-          <hr />
-          <br />
-          <Grid fullWidth={true}>
-            <Column lg={16} md={8} sm={4}>
-              <UnorderedList>
+        <hr />
+        <br />
+        <Grid fullWidth={true}>
+          <Column lg={16} md={8} sm={4}>
+            <UnorderedList>
+              <ListItem>
                 <a
                   onClick={() => {
-                    window.location.assign("/admin");
+                    window.location.assign("/MasterListsPage#SampleTypeCreate");
                   }}
                 >
-                  <ListItem>
-                    <FormattedMessage id="manage.testing.algorithms.add.reflex.tests" />
-                  </ListItem>
+                  <FormattedMessage id="configuration.sampleType.create" />
                 </a>
-              </UnorderedList>
-            </Column>
-          </Grid>
-        </div>
+              </ListItem>
+              <ListItem>
+                <a
+                  onClick={() => {
+                    window.location.assign("/MasterListsPage#SampleTypeOrder");
+                  }}
+                >
+                  <FormattedMessage id="configuration.sampleType.order" />
+                </a>
+              </ListItem>
+              <ListItem>
+                <a
+                  onClick={() => {
+                    window.location.assign(
+                      "/MasterListsPage#SampleTypeTestAssign",
+                    );
+                  }}
+                >
+                  <FormattedMessage id="configuration.panel.assign" />
+                </a>
+              </ListItem>
+            </UnorderedList>
+          </Column>
+        </Grid>
       </div>
     </>
   );
 }
 
-export default injectIntl(TestManagementConfigMenu);
+export default injectIntl(TestSectionManagement);
