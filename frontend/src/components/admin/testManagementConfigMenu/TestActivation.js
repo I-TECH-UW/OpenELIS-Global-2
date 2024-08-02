@@ -22,8 +22,6 @@ import {
   Select,
   SelectItem,
   Stack,
-  UnorderedList,
-  ListItem,
 } from "@carbon/react";
 import {
   getFromOpenElisServer,
@@ -51,11 +49,15 @@ let breadcrumbs = [
   },
   {
     label: "configuration.testUnit.manage",
-    link: "/MasterListsPage#MethodManagement",
+    link: "/MasterListsPage#TestSectionManagement",
+  },
+  {
+    label: "configuration.testUnit.create",
+    link: "/MasterListsPage#TestActivation",
   },
 ];
 
-function MethodManagement() {
+function TestActivation() {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
@@ -72,7 +74,7 @@ function MethodManagement() {
           <Column lg={16} md={8} sm={4}>
             <Section>
               <Heading>
-                <FormattedMessage id="configuration.testUnit.manage" />
+                <FormattedMessage id="label.testActivate" />
               </Heading>
             </Section>
           </Column>
@@ -82,15 +84,13 @@ function MethodManagement() {
         <br />
         <Grid fullWidth={true}>
           <Column lg={16} md={8} sm={4}>
-            <UnorderedList>
-              <ListItem
-                onClick={() => {
-                  window.location.assign("/MasterListsPage#MethodCreate");
-                }}
-              >
-                <FormattedMessage id="configuration.method.create" />
-              </ListItem>
-            </UnorderedList>
+            <Section>
+              <Section>
+                <Heading>
+                  <FormattedMessage id="instructions.test.activation" />
+                </Heading>
+              </Section>
+            </Section>
           </Column>
         </Grid>
       </div>
@@ -98,4 +98,4 @@ function MethodManagement() {
   );
 }
 
-export default injectIntl(MethodManagement);
+export default injectIntl(TestActivation);

@@ -83,36 +83,30 @@ function TestSectionManagement() {
         <Grid fullWidth={true}>
           <Column lg={16} md={8} sm={4}>
             <UnorderedList>
-              <ListItem>
-                <a
-                  onClick={() => {
-                    window.location.assign(
-                      "/MasterListsPage#TestSectionCreate",
-                    );
-                  }}
-                >
-                  <FormattedMessage id="configuration.method.create" />
-                </a>
+              <ListItem
+                onClick={() => {
+                  window.location.assign("/MasterListsPage#TestSectionCreate");
+                }}
+              >
+                <FormattedMessage id="configuration.method.create" />
               </ListItem>
-              <ListItem>
-                <a
-                  onClick={() => {
-                    window.location.assign("/MasterListsPage#TestSectionOrder");
-                  }}
-                >
-                  <FormattedMessage id="configuration.testUnit.order" />
-                </a>
+              <br />
+              <ListItem
+                onClick={() => {
+                  window.location.assign("/MasterListsPage#TestSectionOrder");
+                }}
+              >
+                <FormattedMessage id="configuration.testUnit.order" />
               </ListItem>
-              <ListItem>
-                <a
-                  onClick={() => {
-                    window.location.assign(
-                      "/MasterListsPage#TestSectionTestAssign",
-                    );
-                  }}
-                >
-                  <FormattedMessage id="configuration.panel.assign" />
-                </a>
+              <br />
+              <ListItem
+                onClick={() => {
+                  window.location.assign(
+                    "/MasterListsPage#TestSectionTestAssign",
+                  );
+                }}
+              >
+                <FormattedMessage id="configuration.panel.assign" />
               </ListItem>
             </UnorderedList>
           </Column>
