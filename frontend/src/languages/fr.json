@@ -1199,6 +1199,8 @@
   "configuration.selectList.add.explain": "Utilisez pour créer une liste de sélection des résultats pour les résultats de test",
   "label.testActivate": "Activation des tests",
   "instructions.test.activation": "Tests actifs: une case cochée indique un test déjà actif. Pour activer un test, cochez la case; pour désactiver, décochez la case. Tous les types d'échantillons sans test actif existant sont désactivés et apparaissent en bas, sous 'Types d'échantillons inactifs'. Si l'un des tests est activé, le type d'échantillon sera activé.",
+  "label.button.finished": "Terminé",
+  "panel.panelName": "Nom du panel",
   "notification.slideover.button.unsubscribe": "Se désabonner",
   "notification.slideover.button.unsubscribe.success": "Désabonnement réussi",
   "notification.slideover.button.unsubscribe.fail": "Échec de l'annulation de l'abonnement",

@@ -80,6 +80,13 @@ import PanelCreate from "./testManagementConfigMenu/PanelCreate.js";
 import PanelOrder from "./testManagementConfigMenu/PanelOrder.js";
 import PanelTestAssign from "./testManagementConfigMenu/PanelTestAssign.js";
 import TestActivation from "./testManagementConfigMenu/TestActivation.js";
+import TestRenameEntry from "./testManagementConfigMenu/TestRenameEntry.js";
+import PanelRenameEntry from "./testManagementConfigMenu/PanelRenameEntry.js";
+import SampleTypeRenameEntry from "./testManagementConfigMenu/SampleTypeRenameEntry.js";
+import TestSectionRenameEntry from "./testManagementConfigMenu/TestSectionRenameEntry.js";
+import UomRenameEntry from "./testManagementConfigMenu/UomRenameEntry.js";
+import SelectListRenameEntry from "./testManagementConfigMenu/SelectListRenameEntry.js";
+import MethodRenameEntry from "./testManagementConfigMenu/MethodRenameEntry.js";
 
 function Admin() {
   const intl = useIntl();
@@ -367,6 +374,27 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#TestActivation">
         <TestActivation />
+      </PathRoute>
+      <PathRoute path="#TestRenameEntry">
+        <TestRenameEntry />
+      </PathRoute>
+      <PathRoute path="#PanelRenameEntry">
+        <PanelRenameEntry />
+      </PathRoute>
+      <PathRoute path="#SampleTypeRenameEntry">
+        <SampleTypeRenameEntry />
+      </PathRoute>
+      <PathRoute path="#TestSectionRenameEntry">
+        <TestSectionRenameEntry />
+      </PathRoute>
+      <PathRoute path="#UomRenameEntry">
+        <UomRenameEntry />
+      </PathRoute>
+      <PathRoute path="#SelectListRenameEntry">
+        <SelectListRenameEntry />
+      </PathRoute>
+      <PathRoute path="#MethodRenameEntry">
+        <MethodRenameEntry />
       </PathRoute>
 
       <PathRoute path="#NonConformityConfigurationMenu">
