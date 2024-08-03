@@ -96,7 +96,7 @@ function TestManagementConfigMenu() {
               <UnorderedList>
                 <ListItem
                   onClick={() => {
-                    window.location.assign("/TestRenameEntry");
+                    window.location.assign("/admin#TestRenameEntry");
                   }}
                 >
                   <FormattedMessage id="configuration.test.rename" />
@@ -109,7 +109,7 @@ function TestManagementConfigMenu() {
                 <br />
                 <ListItem
                   onClick={() => {
-                    window.location.assign("/PanelRenameEntry");
+                    window.location.assign("/admin#PanelRenameEntry");
                   }}
                 >
                   <FormattedMessage id="configuration.panel.rename" />
@@ -122,7 +122,7 @@ function TestManagementConfigMenu() {
                 <br />
                 <ListItem
                   onClick={() => {
-                    window.location.assign("/SampleTypeRenameEntry");
+                    window.location.assign("/admin#SampleTypeRenameEntry");
                   }}
                 >
                   <FormattedMessage id="configuration.type.rename" />
@@ -135,7 +135,7 @@ function TestManagementConfigMenu() {
                 <br />
                 <ListItem
                   onClick={() => {
-                    window.location.assign("/TestSectionRenameEntry");
+                    window.location.assign("/admin#TestSectionRenameEntry");
                   }}
                 >
                   <FormattedMessage id="configuration.testSection.rename" />
@@ -148,7 +148,7 @@ function TestManagementConfigMenu() {
                 <br />
                 <ListItem
                   onClick={() => {
-                    window.location.assign("/UomRenameEntry");
+                    window.location.assign("/admin#UomRenameEntry");
                   }}
                 >
                   <FormattedMessage id="configuration.uom.rename" />
@@ -161,7 +161,7 @@ function TestManagementConfigMenu() {
                 <br />
                 <ListItem
                   onClick={() => {
-                    window.location.assign("/SelectListRenameEntry");
+                    window.location.assign("/admin#SelectListRenameEntry");
                   }}
                 >
                   <FormattedMessage id="configuration.selectList.rename" />
@@ -174,7 +174,7 @@ function TestManagementConfigMenu() {
                 <br />
                 <ListItem
                   onClick={() => {
-                    window.location.assign("/MethodRenameEntry");
+                    window.location.assign("/admin#MethodRenameEntry");
                   }}
                 >
                   <FormattedMessage id="configuration.method.rename" />
