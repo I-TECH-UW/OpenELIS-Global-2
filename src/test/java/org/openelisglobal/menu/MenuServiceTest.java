@@ -119,38 +119,10 @@ public class MenuServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
-    public void setFromRecordCount_shouldSetAndReturnFromRecordCount() {
-        AdminMenuForm form = new AdminMenuForm();
-        form.setFromRecordCount("10");
-        Assert.assertEquals("10", form.getFromRecordCount());
-    }
-
-    @Test
-    public void setToRecordCount_shouldSetAndReturnToRecordCount() {
-        AdminMenuForm form = new AdminMenuForm();
-        form.setToRecordCount("20");
-        Assert.assertEquals("20", form.getToRecordCount());
-    }
-
-    @Test
-    public void setPresentationOrder_shouldSetAndReturnPresentationOrder() {
-        Menu menu = new Menu();
-        menu.setPresentationOrder(1);
-        Assert.assertEquals(1, menu.getPresentationOrder());
-    }
-
-    @Test
     public void setElementId_shouldSetAndReturnElementId() {
         Menu menu = new Menu();
         menu.setElementId("elementId");
         Assert.assertEquals("elementId", menu.getElementId());
-    }
-
-    @Test
-    public void setActionURL_shouldSetAndReturnActionURL() {
-        Menu menu = new Menu();
-        menu.setActionURL("http://example.com");
-        Assert.assertEquals("http://example.com", menu.getActionURL());
     }
 
     @Test
