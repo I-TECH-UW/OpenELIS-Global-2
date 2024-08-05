@@ -30,7 +30,6 @@ public class MenuServiceTest extends BaseWebContextSensitiveTest {
     @Test
     @Transactional
     public void saveSingleMenuItem_shouldSaveAndReturnMenuItem() {
-        // Create and save a MenuItem
         MenuItem menuItem = new MenuItem();
         Menu menu = new Menu();
         menu.setElementId("testElement");
@@ -44,7 +43,6 @@ public class MenuServiceTest extends BaseWebContextSensitiveTest {
     @Test
     @Transactional
     public void saveMultipleMenuItems_shouldSaveAndReturnMenuItems() {
-        // Create and save multiple MenuItems
         MenuItem menuItem1 = new MenuItem();
         Menu menu1 = new Menu();
         menu1.setElementId("testElement1");
@@ -59,7 +57,6 @@ public class MenuServiceTest extends BaseWebContextSensitiveTest {
 
         List<MenuItem> savedItems = menuService.save(menuItems);
 
-        // Assertions
         Assert.assertNotNull(savedItems);
         Assert.assertEquals(2, savedItems.size());
     }
@@ -67,7 +64,6 @@ public class MenuServiceTest extends BaseWebContextSensitiveTest {
     @Test
     @Transactional
     public void getAllActiveMenus_shouldReturnOnlyActiveMenus() {
-        // Create and save active and inactive MenuItems
         MenuItem activeItem = new MenuItem();
         Menu activeMenu = new Menu();
         activeMenu.setElementId("activeElement");
@@ -82,7 +78,6 @@ public class MenuServiceTest extends BaseWebContextSensitiveTest {
         inactiveItem.setMenu(inactiveMenu);
         menuService.save(inactiveItem);
 
-        // Retrieve all active menus
         List<Menu> activeMenus = menuService.getAllActiveMenus();
 
         Assert.assertNotNull(activeMenus);
@@ -184,5 +179,5 @@ public class MenuServiceTest extends BaseWebContextSensitiveTest {
         Menu menu = new Menu();
         menu.setHideInOldUI(true);
         Assert.assertTrue(menu.isHideInOldUI());
-   }
+    }
 }
