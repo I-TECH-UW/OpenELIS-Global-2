@@ -259,6 +259,7 @@ public class PatientDashBoardProvider {
         List<OrderDisplayBean> orderBeanList = new ArrayList<>();
         eOrders.forEach(eOrder -> {
             OrderDisplayBean orderBean = new OrderDisplayBean();
+            orderBean.setId(eOrder.getId());
             orderBean.setPriority(eOrder.getPriority().toString());
             orderBean.setOrderDate(DateUtil.convertTimestampToStringDate(eOrder.getOrderTimestamp()));
             Sample sample = sampleService.getSampleByReferringId(eOrder.getExternalId());
@@ -298,6 +299,10 @@ public class PatientDashBoardProvider {
     public DashBoardMetrics getDasBoardTiles() {
 
         DashBoardMetrics metrics = new DashBoardMetrics();
+        java.sql.Timestamp startTimestamp = DateUtil
+                .convertStringDateStringTimeToTimestamp(DateUtil.getCurrentDateAsText(), "00:00:00.0");
+        java.sql.Timestamp endTimestamp = DateUtil
+                .convertStringDateStringTimeToTimestamp(DateUtil.getCurrentDateAsText(), "23:59:59");
         DashBoardTile.TileType.stream().forEach(type -> {
             List<Integer> statusIdList;
             Set<Integer> statusIdSet;
@@ -342,8 +347,10 @@ public class PatientDashBoardProvider {
                 metrics.setUnPritendResults(unprintedResults().size());
                 break;
             case INCOMING_ORDERS:
-                metrics.setIncomigOrders(electronicOrderService.getCountOfAllElectronicOrdersByDateAndStatus(null, null,
-                        iStatusService.getStatusID(ExternalOrderStatus.Entered)));
+                List<Integer> estausIds = new ArrayList<>();
+                estausIds.add(Integer.parseInt(iStatusService.getStatusID(ExternalOrderStatus.Entered)));
+                estausIds.add(Integer.parseInt(iStatusService.getStatusID(ExternalOrderStatus.NonConforming)));
+                metrics.setIncomigOrders(electronicOrderService.getCountOfElectronicOrdersByStatusList(estausIds));
                 break;
             case AVERAGE_TURN_AROUND_TIME:
                 metrics.setAverageTurnAroudTime(calculateAverageReceptionToValidationTime());
@@ -397,7 +404,10 @@ public class PatientDashBoardProvider {
     private List<OrderDisplayBean> retreiveOrders(DashBoardTile.TileType listType, String systemUserId) {
         Set<Integer> statusIdSet;
         List<Analysis> analyses;
-
+        java.sql.Timestamp startTimestamp = DateUtil
+                .convertStringDateStringTimeToTimestamp(DateUtil.getCurrentDateAsText(), "00:00:00.0");
+        java.sql.Timestamp endTimestamp = DateUtil
+                .convertStringDateStringTimeToTimestamp(DateUtil.getCurrentDateAsText(), "23:59:59");
         switch (listType) {
         case ORDERS_IN_PROGRESS:
             analyses = analysisService.getAnalysesForStatusId(iStatusService.getStatusID(AnalysisStatus.NotStarted));
@@ -428,8 +438,11 @@ public class PatientDashBoardProvider {
         case UN_PRINTED_RESULTS:
             return convertAnalysesToOrderBean(unprintedResults());
         case INCOMING_ORDERS:
-            List<ElectronicOrder> eOrders = electronicOrderService.getAllElectronicOrdersByDateAndStatus(null, null,
-                    iStatusService.getStatusID(ExternalOrderStatus.Entered), ElectronicOrder.SortOrder.EXTERNAL_ID);
+            List<Integer> estausIds = new ArrayList<>();
+            estausIds.add(Integer.parseInt(iStatusService.getStatusID(ExternalOrderStatus.Entered)));
+            estausIds.add(Integer.parseInt(iStatusService.getStatusID(ExternalOrderStatus.NonConforming)));
+            List<ElectronicOrder> eOrders = electronicOrderService.getAllElectronicOrdersByStatusList(estausIds,
+                    ElectronicOrder.SortOrder.STATUS_ID);
             return convertElectronicToOrderBean(eOrders);
         case AVERAGE_TURN_AROUND_TIME:
             return new ArrayList<>();

@@ -1173,7 +1173,11 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         observation.setIssued(analysis.getReleasedDate()); // update to get Released Date instead of commpleted date
         // observation.setEffective(new
         // DateTimeType(result.getLastupdated()));
-        observation.setEffective(new DateTimeType(analysis.getReleasedDate()));
+        if (analysis.getReleasedDate() != null) {
+            observation.setEffective(new DateTimeType(analysis.getReleasedDate()));
+        } else {
+            observation.setEffective(new DateTimeType(analysis.getStartedDate()));
+        }
         // observation.setIssued(new Date());
         return observation;
     }
