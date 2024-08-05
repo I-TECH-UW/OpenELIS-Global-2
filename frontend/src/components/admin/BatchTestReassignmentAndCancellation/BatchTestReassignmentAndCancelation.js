@@ -71,8 +71,6 @@ function BatchTestReassignmentAndCancelation() {
     [],
   );
   const [jsonWad, setJsonWad] = useState({
-    // current: "HIV+rapid+test+HIV",
-    // sampleType: "Plasma",
     current: "",
     sampleType: "",
     changeNotStarted: [],
@@ -83,6 +81,7 @@ function BatchTestReassignmentAndCancelation() {
     noChangeTechReject: [],
     noChangeBioReject: [],
     noChangeNotValidated: [],
+    replace: "",
   });
   const [changesToShow, setChangesToShow] = useState(false);
 
@@ -289,8 +288,8 @@ function BatchTestReassignmentAndCancelation() {
       } else {
         updatedArray.splice(index, 1);
       }
-      const isChecked = updatedArray.includes(id);
-      const noChangeArray =
+      let isChecked = updatedArray.includes(id);
+      let noChangeArray =
         prevJsonWad[`noChange${capitalizeFirstLetter(sectionKey)}`];
       const noChangeIndex = noChangeArray.indexOf(id);
 
@@ -333,8 +332,9 @@ function BatchTestReassignmentAndCancelation() {
       (item) => item.id === selectedTestId,
     );
 
+    let updatedList;
     if (existingIndex !== -1) {
-      const updatedList = [...sampleTestTypeToGetTagList];
+      updatedList = [...sampleTestTypeToGetTagList];
       updatedList.splice(existingIndex, 1);
       setSampleTestTypeToGetTagList(updatedList);
     } else {
@@ -342,17 +342,31 @@ function BatchTestReassignmentAndCancelation() {
         id: selectedTestId,
         name: testName,
       };
-      setSampleTestTypeToGetTagList([
-        ...sampleTestTypeToGetTagList,
-        selectedTest,
-      ]);
+      updatedList = [...sampleTestTypeToGetTagList, selectedTest];
+      setSampleTestTypeToGetTagList(updatedList);
     }
+
+    const updatedReplace = updatedList.map((item) => item.id).join(",");
+    setJsonWad((prevJsonWad) => ({
+      ...prevJsonWad,
+      replace: updatedReplace,
+    }));
   };
 
   function handleRemoveSampleTypeListSelectIdTestTag(indexToRemove) {
-    setSampleTestTypeToGetTagList((prevTags) =>
-      prevTags.filter((_, index) => index !== indexToRemove),
-    );
+    setSampleTestTypeToGetTagList((prevTags) => {
+      const updatedTags = prevTags.filter(
+        (_, index) => index !== indexToRemove,
+      );
+
+      const updatedReplace = updatedTags.map((item) => item.id).join(",");
+      setJsonWad((prevJsonWad) => ({
+        ...prevJsonWad,
+        replace: updatedReplace,
+      }));
+
+      return updatedTags;
+    });
   }
 
   useEffect(() => {
@@ -500,6 +514,20 @@ function BatchTestReassignmentAndCancelation() {
                 checked={replaceWith}
                 onChange={() => {
                   setReplaceWith(!replaceWith);
+                  if (replaceWith) {
+                    setJsonWad((prevJsonWad) => ({
+                      ...prevJsonWad,
+                      replace: "",
+                    }));
+                  } else {
+                    const selectedTestIds = sampleTestTypeToGetTagList
+                      .map((item) => item.id)
+                      .join(",");
+                    setJsonWad((prevJsonWad) => ({
+                      ...prevJsonWad,
+                      replace: selectedTestIds,
+                    }));
+                  }
                 }}
               />
               <br />
@@ -598,9 +626,7 @@ function BatchTestReassignmentAndCancelation() {
                       <Checkbox
                         id={`notStartedCheckbox_${index}`}
                         value={item.id}
-                        labelText={intl.formatMessage({
-                          id: item.labNo,
-                        })}
+                        labelText={item.labNo}
                         checked={jsonWad.changeNotStarted.includes(item.id)}
                         onChange={() => {
                           handleCheckboxChange(item.id, "notStarted");
@@ -641,9 +667,7 @@ function BatchTestReassignmentAndCancelation() {
                       <Checkbox
                         id={`technicianRejectionCheckbox_${index}`}
                         value={item.id}
-                        labelText={intl.formatMessage({
-                          id: item.labNo,
-                        })}
+                        labelText={item.labNo}
                         checked={jsonWad.changeTechReject.includes(item.id)}
                         onChange={() => {
                           handleCheckboxChange(item.id, "techReject");
@@ -684,9 +708,7 @@ function BatchTestReassignmentAndCancelation() {
                       <Checkbox
                         id={`biologistRejectionCheckbox_${index}`}
                         value={item.id}
-                        labelText={intl.formatMessage({
-                          id: item.labNo,
-                        })}
+                        labelText={item.labNo}
                         checked={jsonWad.changeBioReject.includes(item.id)}
                         onChange={() => {
                           handleCheckboxChange(item.id, "bioReject");
@@ -727,9 +749,7 @@ function BatchTestReassignmentAndCancelation() {
                       <Checkbox
                         id={`notValidatedCheckbox_${index}`}
                         value={item.id}
-                        labelText={intl.formatMessage({
-                          id: item.labNo,
-                        })}
+                        labelText={item.labNo}
                         checked={jsonWad.changeNotValidated.includes(item.id)}
                         onChange={() => {
                           handleCheckboxChange(item.id, "notValidated");
@@ -752,7 +772,7 @@ function BatchTestReassignmentAndCancelation() {
                   setChangesToShow(true);
                   setBatchTestPost((prevBatchTestPost) => ({
                     ...prevBatchTestPost,
-                    jsonWad: jsonWad,
+                    jsonWad: JSON.stringify(jsonWad),
                   }));
                 }}
                 type="button"
@@ -802,7 +822,7 @@ function BatchTestReassignmentAndCancelation() {
                       item && (
                         <div key={id}>
                           <br />
-                          <FormattedMessage id={item.labNo} />
+                          {item.labNo}
                           <br />
                         </div>
                       )
@@ -821,7 +841,7 @@ function BatchTestReassignmentAndCancelation() {
                       item && (
                         <div key={id}>
                           <br />
-                          <FormattedMessage id={item.labNo} />
+                          {item.labNo}
                           <br />
                         </div>
                       )
@@ -840,7 +860,7 @@ function BatchTestReassignmentAndCancelation() {
                       item && (
                         <div key={id}>
                           <br />
-                          <FormattedMessage id={item.labNo} />
+                          {item.labNo}
                           <br />
                         </div>
                       )
@@ -859,7 +879,7 @@ function BatchTestReassignmentAndCancelation() {
                       item && (
                         <div key={id}>
                           <br />
-                          <FormattedMessage id={item.labNo} />
+                          {item.labNo}
                           <br />
                         </div>
                       )
@@ -887,7 +907,7 @@ function BatchTestReassignmentAndCancelation() {
                       item && (
                         <div key={id}>
                           <br />
-                          <FormattedMessage id={item.labNo} />
+                          {item.labNo}
                           <br />
                         </div>
                       )
@@ -906,7 +926,7 @@ function BatchTestReassignmentAndCancelation() {
                       item && (
                         <div key={id}>
                           <br />
-                          <FormattedMessage id={item.labNo} />
+                          {item.labNo}
                           <br />
                         </div>
                       )
@@ -925,7 +945,7 @@ function BatchTestReassignmentAndCancelation() {
                       item && (
                         <div key={id}>
                           <br />
-                          <FormattedMessage id={item.labNo} />
+                          {item.labNo}
                           <br />
                         </div>
                       )
@@ -944,7 +964,7 @@ function BatchTestReassignmentAndCancelation() {
                       item && (
                         <div key={id}>
                           <br />
-                          <FormattedMessage id={item.labNo} />
+                          {item.labNo}
                           <br />
                         </div>
                       )
@@ -957,7 +977,13 @@ function BatchTestReassignmentAndCancelation() {
                   <hr />
                   <Button
                     disabled={saveButton}
-                    onClick={batchTestReassignmentPostCall}
+                    onClick={() => {
+                      setBatchTestPost((prevBatchTestPost) => ({
+                        ...prevBatchTestPost,
+                        jsonWad: JSON.stringify(jsonWad),
+                      }));
+                      batchTestReassignmentPostCall();
+                    }}
                     type="button"
                   >
                     <FormattedMessage id="column.name.accept" />
@@ -1029,12 +1055,16 @@ function BatchTestReassignmentAndCancelation() {
         >
           jsonWad
         </button>
+        <button
+          onClick={() => {
+            console.log(sampleTestTypeToGetTagList);
+          }}
+        >
+          sampleTestTypeToGetTagList
+        </button>
       </div>
     </>
   );
 }
 
 export default injectIntl(BatchTestReassignmentAndCancelation);
-
-// post call checkup
-// batchTestReassignmentPostCall final call pending

@@ -71,7 +71,7 @@ public class BatchTestReassignmentRestController extends BaseController {
 
         formValidator.validate(form, result);
         if (result.hasErrors()) {
-            saveErrors(result);
+            // saveErrors(result);
             // return findForward(FWD_FAIL_INSERT, form);
             return form;
         }
