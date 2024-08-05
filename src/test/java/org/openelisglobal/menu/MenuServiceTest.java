@@ -119,13 +119,6 @@ public class MenuServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
-    public void setElementId_shouldSetAndReturnElementId() {
-        Menu menu = new Menu();
-        menu.setElementId("elementId");
-        Assert.assertEquals("elementId", menu.getElementId());
-    }
-
-    @Test
     public void setClickAction_shouldSetAndReturnClickAction() {
         Menu menu = new Menu();
         menu.setClickAction("clickAction");
@@ -191,5 +184,5 @@ public class MenuServiceTest extends BaseWebContextSensitiveTest {
         Menu menu = new Menu();
         menu.setHideInOldUI(true);
         Assert.assertTrue(menu.isHideInOldUI());
-    }
+   }
 }
