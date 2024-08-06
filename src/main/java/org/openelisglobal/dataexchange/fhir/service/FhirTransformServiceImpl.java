@@ -115,7 +115,6 @@ import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
@@ -123,13 +122,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FhirTransformServiceImpl implements FhirTransformService {
-
-    @Value("${org.openelisglobal.crserver.uri:}")
-    private String clientRegistryServerUrl;
-    @Value("${org.openelisglobal.crserver.username:}")
-    private String clientRegistryUserName;
-    @Value("${org.openelisglobal.crserver.password:}")
-    private String clientRegistryPassword;
 
     @Autowired
     private FhirConfig fhirConfig;
@@ -173,7 +165,6 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     private AddressPartService addressPartService;
     @Autowired
     private OrganizationService organizationService;
-
     @Autowired
     private FhirUtil fhirUtil;
 
@@ -396,11 +387,11 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         org.hl7.fhir.r4.model.Patient patient = transformToFhirPatient(patientInfo.getPatientPK());
         this.addToOperations(fhirOperations, tempIdGenerator, patient);
 
-        if (!GenericValidator.isBlankOrNull(clientRegistryServerUrl)
-                && !GenericValidator.isBlankOrNull(clientRegistryUserName)
-                && !GenericValidator.isBlankOrNull(clientRegistryPassword)) {
-            IGenericClient clientRegistry = fhirUtil.getFhirClient(clientRegistryServerUrl, clientRegistryUserName,
-                    clientRegistryPassword);
+        if (!GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryServerUrl())
+                && !GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryUserName())
+                && !GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryPassword())) {
+            IGenericClient clientRegistry = fhirUtil.getFhirClient(fhirConfig.getClientRegistryServerUrl(),
+                    fhirConfig.getClientRegistryUserName(), fhirConfig.getClientRegistryPassword());
             try {
                 if (isCreate) {
                     clientRegistry.create().resource(patient).execute();
