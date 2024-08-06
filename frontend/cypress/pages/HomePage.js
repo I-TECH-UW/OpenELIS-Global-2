@@ -4,6 +4,7 @@ import OrderEntityPage from "./OrderEntityPage";
 import ModifyOrderPage from "./ModifyOrderPage";
 import WorkPlan from "./WorkPlan";
 import NonConform from "./NonConformPage";
+import BatchOrderEntry from "./BatchOrderEntryPage";
 
 class HomePage {
   constructor() {}
@@ -27,6 +28,13 @@ class HomePage {
     cy.get("header#mainHeader > button[title='Open menu']", {
       timeout: 30000,
     }).click();
+  }
+
+  goToBatchOrderEntry() {
+    this.openNavigationMenu();
+    cy.get("#menu_sample").click();
+    cy.get('#menu_sample_batch_entry').click();
+    return new BatchOrderEntry();
   }
 
   goToPatientEntry() {
