@@ -17,9 +17,11 @@ import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.patientidentitytype.util.PatientIdentityTypeMap;
 import org.openelisglobal.sample.dao.SearchResultsDAO;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Component
+@Primary
 public class LuceneSearchResultsDAOImpl implements SearchResultsDAO {
 
     @PersistenceContext
