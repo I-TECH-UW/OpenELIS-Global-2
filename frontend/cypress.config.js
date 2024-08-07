@@ -15,6 +15,7 @@ module.exports = defineConfig({
         "cypress/e2e/workplan.cy.js",
         "cypress/e2e/nonConform.cy.js",
         "cypress/e2e/result.cy.js",
+        "cypress/e2e/validation.cy.js",
         "cypress/e2e/modifyOrder.cy.js",
       ];
       return config;

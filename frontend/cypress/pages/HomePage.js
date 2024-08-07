@@ -5,6 +5,7 @@ import ModifyOrderPage from "./ModifyOrderPage";
 import WorkPlan from "./WorkPlan";
 import NonConform from "./NonConformPage";
 import Result from "./ResultsPage";
+import Validation from "./Validation";
 
 class HomePage {
   constructor() {}
@@ -131,6 +132,25 @@ class HomePage {
     cy.get("#menu_results").click();
     cy.get("#menu_results_status").click();
     return new Result();
+  }
+
+  goToValidationByRoutine() {
+    this.openNavigationMenu();
+    cy.get('#menu_resultvalidation').click();
+    cy.get('#menu_resultvalidation_routine ').click();
+    return new Validation();
+  }
+  goToValidationByOrder() {
+    this.openNavigationMenu();
+    cy.get("#menu_resultvalidation").click();
+    cy.get('#menu_accession_validation ').click();
+    return new Validation();
+  }
+  goToValidationByRangeOrder() {
+    this.openNavigationMenu();
+    cy.get("#menu_resultvalidation").click();
+    cy.get('#menu_accession_validation_range ').click();
+    return new Validation();
   }
 }
 
