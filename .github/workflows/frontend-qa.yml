@@ -51,7 +51,7 @@ jobs:
           submodules: recursive
 
       - name: Run OpenELS image
-        run: docker-compose -f build.docker-compose.yml up -d
+        run: docker compose -f build.docker-compose.yml up -d
 
       - name: Sleep for 2 minutes
         run: sleep 2m
