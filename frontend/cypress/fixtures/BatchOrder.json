@@ -1,11 +1,9 @@
-
 {
-    "formTypeRoutine": "Routine",
-    "sampleType": "Serum",
-    "methodOnDemand": "On Demand",
-    "methodPrePrinted": "Pre-Printed",
-    "siteName": "CAMES",
-    "panel": "Western blot HIV",
-    "facility": "279 - CAMES MAN"
-  }
-  
+  "formTypeRoutine": "Routine",
+  "sampleType": "Serum",
+  "methodOnDemand": "On Demand",
+  "methodPrePrinted": "Pre-Printed",
+  "siteName": "CAMES",
+  "panel": "Western blot HIV",
+  "facility": "279 - CAMES MAN"
+}

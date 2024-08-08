@@ -33,7 +33,7 @@ class HomePage {
   goToBatchOrderEntry() {
     this.openNavigationMenu();
     cy.get("#menu_sample").click();
-    cy.get('#menu_sample_batch_entry').click();
+    cy.get("#menu_sample_batch_entry").click();
     return new BatchOrderEntry();
   }
 
