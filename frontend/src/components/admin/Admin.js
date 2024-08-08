@@ -26,6 +26,8 @@ import {
   ContainerSoftware,
   BootVolumeAlt,
   Report,
+  Bullhorn,
+  User,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -40,11 +42,16 @@ import { CommonProperties } from "./menu/CommonProperties";
 import ConfigMenuDisplay from "./formEntry/common/ConfigMenuDisplay";
 import ProviderMenu from "./ProviderMenu/ProviderMenu";
 import BarcodeConfiguration from "./barcodeConfiguration/BarcodeConfiguration";
-import OrganizationManagament from "./OrganizationManagement/OrganizationManagement";
-import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModify.js";
 import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName.js";
 import PluginList from "./pluginFile/PluginFile.js";
 import ResultReportingConfiguration from "./ResultReportingConfiguration/ResultReportingConfiguration.js";
+import TestCatalog from "./testManagement/ViewTestCatalog.js";
+import PushNotificationPage from "../notifications/PushNotificationPage.jsx";
+import OrganizationManagement from "./OrganizationManagement/OrganizationManagement";
+import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModify";
+import UserManagement from "./userManagement/UserManagement";
+import UserAddModify from "./userManagement/UserAddModify";
+import ManageMethod from "./testManagement/ManageMethod.js";
 
 function Admin() {
   const intl = useIntl();
@@ -79,6 +86,12 @@ function Admin() {
             <SideNavMenuItem href="#calculatedValue">
               <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
             </SideNavMenuItem>
+            <SideNavMenuItem href="#TestCatalog">
+              <FormattedMessage id="sidenav.label.admin.testmgt.ViewtestCatalog" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#MethodManagment">
+              <FormattedMessage id="sidenav.label.admin.testmgt.ManageMethod" />
+            </SideNavMenuItem>
           </SideNavMenu>
           <SideNavLink href="#AnalyzerTestName" renderIcon={ListDropdown}>
             <FormattedMessage id="sidenav.label.admin.analyzerTest" />
@@ -107,6 +120,9 @@ function Admin() {
           <SideNavLink renderIcon={Report} href="#resultReportingConfiguration">
             <FormattedMessage id="resultreporting.browse.title" />
           </SideNavLink>
+          <SideNavLink renderIcon={User} href="#userManagement">
+            <FormattedMessage id="unifiedSystemUser.browser.title" />
+          </SideNavLink>
           <SideNavMenu
             title={intl.formatMessage({ id: "sidenav.label.admin.menu" })}
             renderIcon={TableOfContents}
@@ -132,6 +148,12 @@ function Admin() {
             title={intl.formatMessage({ id: "admin.formEntryConfig" })}
             renderIcon={ListDropdown}
           >
+            <SideNavMenuItem href="#NonConformityConfigurationMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.nonconformityconfig" />
+            </SideNavMenuItem>
+            <SideNavMenuItem href="#MenuStatementConfigMenu">
+              <FormattedMessage id="sidenav.label.admin.formEntry.menustatementconfig" />
+            </SideNavMenuItem>
             <SideNavMenuItem href="#WorkPlanConfigurationMenu">
               <FormattedMessage id="sidenav.label.admin.formEntry.Workplanconfig" />
             </SideNavMenuItem>
@@ -164,6 +186,9 @@ function Admin() {
           <SideNavLink href="#DictionaryMenu" renderIcon={CharacterWholeNumber}>
             <FormattedMessage id="dictionary.label.modify" />
           </SideNavLink>
+          <SideNavLink href="#NotifyUser" renderIcon={Bullhorn}>
+            <FormattedMessage id="Notify User" />
+          </SideNavLink>
           <SideNavLink
             renderIcon={Catalog}
             target="_blank"
@@ -180,6 +205,12 @@ function Admin() {
       <PathRoute path="#calculatedValue">
         <CalculatedValue />
       </PathRoute>
+      <PathRoute path="#TestCatalog">
+        <TestCatalog />
+      </PathRoute>
+      <PathRoute path="#MethodManagment">
+        <ManageMethod />
+      </PathRoute>
       <PathRoute path="#AnalyzerTestName">
         <AnalyzerTestName />
       </PathRoute>
@@ -192,17 +223,26 @@ function Admin() {
       <PathRoute path="#providerMenu">
         <ProviderMenu />
       </PathRoute>
+      <PathRoute path="#NotifyUser">
+        <PushNotificationPage />
+      </PathRoute>
       <PathRoute path="#barcodeConfiguration">
         <BarcodeConfiguration />
       </PathRoute>
       <PathRoute path="#organizationManagement">
-        <OrganizationManagament />
+        <OrganizationManagement />
       </PathRoute>
       <PathRoute path="#organizationEdit">
         <OrganizationAddModify />
       </PathRoute>
       <PathRoute path="#resultReportingConfiguration">
         <ResultReportingConfiguration />
+      </PathRoute>
+      <PathRoute path="#userManagement">
+        <UserManagement />
+      </PathRoute>
+      <PathRoute path="#userEdit">
+        <UserAddModify />
       </PathRoute>
       <PathRoute path="#globalMenuManagement">
         <GlobalMenuManagement />
@@ -223,6 +263,18 @@ function Admin() {
         <CommonProperties />
       </PathRoute>
 
+      <PathRoute path="#NonConformityConfigurationMenu">
+        <ConfigMenuDisplay
+          menuType="NonConformityConfigurationMenu"
+          id="sidenav.label.admin.formEntry.nonconformityconfig"
+        />
+      </PathRoute>
+      <PathRoute path="#MenuStatementConfigMenu">
+        <ConfigMenuDisplay
+          menuType="MenuStatementConfigMenu"
+          id="sidenav.label.admin.formEntry.menustatementconfig"
+        />
+      </PathRoute>
       <PathRoute path="#ValidationConfigurationMenu">
         <ConfigMenuDisplay
           menuType="ValidationConfigurationMenu"

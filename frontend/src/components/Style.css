@@ -40,7 +40,7 @@ li.clickableUserDetails:hover {
 }
 
 .adminPageContent {
-  margin-left: 16%;
+  margin-left: 17%;
   margin-right: 1%;
 }
 
@@ -477,7 +477,20 @@ button {
   width: 100%;
 }
 
+.custom-sidenav-button {
+  pointer-events: auto;
+}
+
 .custom-sidenav-button:hover {
+  background-color: var(--cds-background, #295785);
+}
+
+.cds--side-nav__link a {
+  pointer-events: auto;
+  text-decoration: none !important;
+}
+
+.cds--side-nav__link a:hover {
   background-color: var(--cds-background, #295785);
 }
 
@@ -488,6 +501,10 @@ button {
 .cds--side-nav__link:hover {
   background-color: var(--cds-background-hover, #072655);
 }
+
+/* .cds--side-nav__link {
+  pointer-events: none
+} */
 
 @media screen and (max-width: 792px) {
   .banner h5 {

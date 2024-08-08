@@ -169,13 +169,15 @@ const Index = () => {
       crossSampleTypeMap = {};
       crossSampleTypeOrderMap = {};
 
-      parseSampletypes(
-        newOrderFormValues,
-        order.sampleTypes instanceof Array
-          ? order.sampleTypes
-          : [{ sampleType: order.sampleTypes.sampleType }],
-        SampleTypes,
-      );
+      if (order.sampleTypes != "") {
+        parseSampletypes(
+          newOrderFormValues,
+          order.sampleTypes instanceof Array
+            ? order.sampleTypes
+            : [{ sampleType: order.sampleTypes.sampleType }],
+          SampleTypes,
+        );
+      }
 
       const urlParams = new URLSearchParams(window.location.search);
       const externalId = urlParams.get("ID");

@@ -1,45 +1,46 @@
+import {
+  ChevronDown,
+  ChevronUp,
+  Close,
+  Language,
+  Logout,
+  Notification,
+  Search,
+  UserAvatarFilledAlt,
+} from "@carbon/icons-react";
+import { Select, SelectItem } from "@carbon/react";
 import React, {
-  useContext,
-  useState,
   createRef,
-  useRef,
+  useContext,
   useEffect,
   useLayoutEffect,
+  useRef,
+  useState,
 } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import { withRouter } from "react-router-dom";
-import { ConfigurationContext } from "../layout/Layout";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import "../Style.css";
-import { Select, SelectItem } from "@carbon/react";
-import config from "../../config.json";
-import {
-  Search,
-  Notification,
-  Language,
-  UserAvatarFilledAlt,
-  Logout,
-  Close,
-  ChevronDown,
-  ChevronUp,
-} from "@carbon/icons-react";
+import { ConfigurationContext } from "../layout/Layout";
+import SlideOver from "../notifications/SlideOver";
 
 import {
-  HeaderContainer,
   Header,
-  HeaderMenuButton,
-  HeaderName,
+  HeaderContainer,
   HeaderGlobalAction,
   HeaderGlobalBar,
-  SideNavMenu,
-  SideNavMenuItem,
+  HeaderMenuButton,
+  HeaderName,
+  HeaderPanel,
   SideNav,
   SideNavItems,
+  SideNavMenu,
+  SideNavMenuItem,
   Theme,
-  HeaderPanel,
 } from "@carbon/react";
-import { getFromOpenElisServer } from "../utils/Utils";
-
+import SlideOverNotifications from "../notifications/SlideOverNotifications";
+import { getFromOpenElisServer, putToOpenElisServer } from "../utils/Utils";
+import SearchBar from "./search/searchBar";
 function OEHeader(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
   const { userSessionDetails, logout } = useContext(UserSessionDetailsContext);
@@ -47,6 +48,7 @@ function OEHeader(props) {
   const userSwitchRef = createRef();
   const headerPanelRef = createRef();
   const scrollRef = useRef(window.scrollY);
+  const [isOpen, setIsOpen] = useState(false);
 
   const intl = useIntl();
 
@@ -56,7 +58,12 @@ function OEHeader(props) {
     menu_billing: { menu: {}, childMenus: [] },
     menu_nonconformity: { menu: {}, childMenus: [] },
   });
-
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showRead, setShowRead] = useState(false);
+  const [unReadNotifications, setUnReadNotifications] = useState([]);
+  const [readNotifications, setReadNotifications] = useState([]);
+  const [searchBar, setSearchBar] = useState(false);
   scrollRef.current = window.scrollY;
   useLayoutEffect(() => {
     window.scrollTo(0, scrollRef.current);
@@ -80,9 +87,68 @@ function OEHeader(props) {
     }
   };
 
+  const toggleSlideOver = () => {
+    setIsOpen(!isOpen);
+  };
+
   const clickPanelSwitch = () => {
     setSwitchCollapsed(!switchCollapsed);
   };
+
+  const getNotifications = async () => {
+    setLoading(true);
+    try {
+      getFromOpenElisServer("/rest/notifications", (data) => {
+        setReadNotifications([]);
+        setUnReadNotifications([]);
+        data.forEach((element) => {
+          if (element.readAt) {
+            setReadNotifications((prev) => [...prev, element]);
+          } else {
+            setUnReadNotifications((prev) => [...prev, element]);
+          }
+        });
+      });
+    } catch (error) {
+      console.error("Failed to fetch notifications", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const markNotificationAsRead = async (notificationId) => {
+    try {
+      putToOpenElisServer(
+        `/rest/notification/markasread/${notificationId}`,
+        null,
+        (response) => {
+          console.log("Notification marked as read", response);
+          getNotifications();
+        },
+      );
+    } catch (error) {
+      console.error("Failed to mark notification as read", error);
+    }
+  };
+
+  const markAllNotificationsAsRead = async () => {
+    try {
+      putToOpenElisServer(
+        `/rest/notification/markasread/all`,
+        null,
+        (response) => {
+          console.log("All Notifications marked as read", response);
+          getNotifications();
+        },
+      );
+    } catch (error) {
+      console.error("Failed to mark all notifications as read", error);
+    }
+  };
+
+  useEffect(() => {
+    getNotifications();
+  }, []);
 
   const panelSwitchIcon = () => {
     return userSessionDetails.authenticated ? (
@@ -111,13 +177,16 @@ function OEHeader(props) {
       </>
     );
   };
-
+  const handleSearch = () => {
+    setSearchBar(!searchBar);
+  };
   const generateMenuItems = (menuItem, index, level, path) => {
     if (menuItem.menu.isActive) {
       if (level === 0 && menuItem.childMenus.length > 0) {
         return (
           <React.Fragment key={path}>
             <span
+              id={menuItem.menu.elementId}
               onClick={(e) => {
                 setMenuItemExpanded(e, menuItem, path);
               }}
@@ -131,6 +200,9 @@ function OEHeader(props) {
                 })}
                 key={"menu_" + index + "_" + level}
                 defaultExpanded={menuItem.expanded}
+                onClick={(e) => {
+                  setMenuItemExpanded(e, menuItem, path);
+                }}
               >
                 {menuItem.childMenus.map((childMenuItem, index) => {
                   return generateMenuItems(
@@ -148,6 +220,7 @@ function OEHeader(props) {
         return (
           <React.Fragment key={path}>
             <SideNavMenuItem
+              id={menuItem.menu.elementId}
               href={menuItem.menu.actionURL}
               target={menuItem.menu.openInNewWindow ? "_blank" : ""}
             >
@@ -211,19 +284,27 @@ function OEHeader(props) {
   const renderSingleNavButton = (menuItem, index, level, path) => {
     const marginValue = (level - 1) * 0.5 + "rem";
     return (
-      <button
-        className={"custom-sidenav-button"}
-        style={{ marginLeft: marginValue }}
-        onClick={() => {
-          if (menuItem.menu.openInNewWindow) {
-            window.open(menuItem.menu.actionURL);
-          } else {
-            window.location.href = menuItem.menu.actionURL;
-          }
-        }}
+      <a
+        id={menuItem.menu.elementId}
+        href={menuItem.menu.actionURL}
+        target={menuItem.menu.openInNewWindow ? "_blank" : ""}
+        style={{ width: "100%" }}
+        rel="noreferrer"
       >
-        {renderSideNavMenuItemLabel(menuItem, level)}
-      </button>
+        <button
+          className={"custom-sidenav-button"}
+          style={{ marginLeft: marginValue }}
+          onClick={() => {
+            if (menuItem.menu.openInNewWindow) {
+              window.open(menuItem.menu.actionURL);
+            } else {
+              window.location.href = menuItem.menu.actionURL;
+            }
+          }}
+        >
+          {renderSideNavMenuItemLabel(menuItem, level)}
+        </button>
+      </a>
     );
   };
 
@@ -231,6 +312,7 @@ function OEHeader(props) {
     const marginValue = (level - 1) * 0.5 + "rem";
     return (
       <button
+        id={menuItem.menu.displayKey + "_dropdown"}
         className={"custom-sidenav-button"}
         style={{ marginLeft: marginValue }}
         onClick={(e) => {
@@ -247,25 +329,34 @@ function OEHeader(props) {
     const marginValue = (level - 1) * 0.5 + "rem";
     return (
       <>
-        <button
-          className={
-            menuItem.menu.actionURL
-              ? "custom-sidenav-button"
-              : "custom-sidenav-button-unclickable"
-          }
-          style={{ marginLeft: marginValue }}
-          onClick={() => {
-            if (menuItem.menu.openInNewWindow) {
-              window.open(menuItem.menu.actionURL);
-            } else {
-              window.location.href = menuItem.menu.actionURL;
-            }
-          }}
+        <a
+          id={menuItem.menu.elementId}
+          href={menuItem.menu.actionURL}
+          target={menuItem.menu.openInNewWindow ? "_blank" : ""}
+          style={{ width: "100%" }}
+          rel="noreferrer"
         >
-          {renderSideNavMenuItemLabel(menuItem, level)}
-        </button>
+          <button
+            className={
+              menuItem.menu.actionURL
+                ? "custom-sidenav-button"
+                : "custom-sidenav-button-unclickable"
+            }
+            style={{ marginLeft: marginValue }}
+            onClick={() => {
+              if (menuItem.menu.openInNewWindow) {
+                window.open(menuItem.menu.actionURL);
+              } else {
+                window.location.href = menuItem.menu.actionURL;
+              }
+            }}
+          >
+            {renderSideNavMenuItemLabel(menuItem, level)}
+          </button>
+        </a>
         {menuItem.childMenus.length > 0 && (
           <button
+            id={menuItem.menu.displayKey + "_dropdown"}
             className="custom-sidenav-button"
             onClick={(e) => {
               onClickSideNavItem(e, menuItem, path);
@@ -321,141 +412,201 @@ function OEHeader(props) {
 
   return (
     <>
-      {/* TODO make this generate from Menu table like it did before */}
       <div className="container">
         <Theme>
-          <HeaderContainer
-            render={({ isSideNavExpanded, onClickSideNavExpand }) => (
-              <Header id="mainHeader" className="mainHeader" aria-label="">
-                {userSessionDetails.authenticated && (
-                  <HeaderMenuButton
-                    aria-label={isSideNavExpanded ? "Close menu" : "Open menu"}
-                    onClick={onClickSideNavExpand}
-                    isActive={isSideNavExpanded}
-                    isCollapsible={true}
-                  />
-                )}
-                <HeaderName href="/" prefix="" style={{ padding: "0px" }}>
-                  <span id="header-logo">{logo()}</span>
-                  <div className="banner">
-                    <h5>{configurationProperties?.BANNER_TEXT}</h5>
-                    <p>
-                      <FormattedMessage id="header.label.version" /> &nbsp;{" "}
-                      {configurationProperties?.releaseNumber}
-                    </p>
-                  </div>
-                </HeaderName>
-                <HeaderGlobalBar>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <HeaderContainer
+              render={({ isSideNavExpanded, onClickSideNavExpand }) => (
+                <Header id="mainHeader" className="mainHeader" aria-label="">
                   {userSessionDetails.authenticated && (
-                    <>
-                      <HeaderGlobalAction
-                        aria-label="Search"
-                        onClick={() => {
-                          /*TODO add search functionality*/
-                        }}
-                      >
-                        <Search size={20} />
-                      </HeaderGlobalAction>
-                      <HeaderGlobalAction
-                        aria-label="Notifications"
-                        onClick={() => {
-                          /*TODO add notification functionality*/
-                        }}
-                      >
-                        <Notification size={20} />
-                      </HeaderGlobalAction>
-                    </>
+                    <HeaderMenuButton
+                      aria-label={
+                        isSideNavExpanded ? "Close menu" : "Open menu"
+                      }
+                      onClick={onClickSideNavExpand}
+                      isActive={isSideNavExpanded}
+                      isCollapsible={true}
+                    />
                   )}
-                  <HeaderGlobalAction
-                    aria-label={panelSwitchLabel()}
-                    onClick={clickPanelSwitch}
-                    ref={userSwitchRef}
-                  >
-                    {panelSwitchIcon()}
-                  </HeaderGlobalAction>
-                </HeaderGlobalBar>
-                <HeaderPanel
-                  aria-label="Header Panel"
-                  expanded={!switchCollapsed}
-                  className="headerPanel"
-                  ref={headerPanelRef}
-                >
-                  <ul>
+                  <HeaderName href="/" prefix="" style={{ padding: "0px" }}>
+                    <span id="header-logo">{logo()}</span>
+                    <div className="banner">
+                      <h5>{configurationProperties?.BANNER_TEXT}</h5>
+                      <p>
+                        <FormattedMessage id="header.label.version" /> &nbsp;{" "}
+                        {configurationProperties?.releaseNumber}
+                      </p>
+                    </div>
+                  </HeaderName>
+                  <HeaderGlobalBar>
                     {userSessionDetails.authenticated && (
                       <>
-                        <li className="userDetails">
-                          <UserAvatarFilledAlt
-                            size={18}
-                            style={{ marginRight: "4px" }}
-                          />
-                          {userSessionDetails.firstName}{" "}
-                          {userSessionDetails.lastName}
-                        </li>
-                        <li
-                          className="userDetails clickableUserDetails"
-                          onClick={logout}
+                        {searchBar && <SearchBar />}
+                        <HeaderGlobalAction
+                          aria-label="Search"
+                          onClick={handleSearch}
                         >
-                          <Logout
-                            id="sign-out"
-                            style={{ marginRight: "3px" }}
-                          />
-                          <FormattedMessage id="header.label.logout" />
-                        </li>
+                          {!searchBar ? (
+                            <Search size={20} />
+                          ) : (
+                            <Close size={20} />
+                          )}
+                        </HeaderGlobalAction>
+                        <HeaderGlobalAction
+                          aria-label="Notifications"
+                          onClick={toggleSlideOver}
+                        >
+                          <div
+                            style={{
+                              position: "relative",
+                              display: "inline-block",
+                            }}
+                          >
+                            <Notification size={20} />
+                            {unReadNotifications?.length > 0 && (
+                              <span
+                                style={{
+                                  position: "absolute",
+                                  top: "-5px",
+                                  right: "-5px",
+                                  backgroundColor: "#3A6B8D",
+                                  color: "white",
+                                  borderRadius: "50%",
+                                  width: "16px",
+                                  height: "16px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontSize: "10px",
+                                  animation: "pulse 5s infinite",
+                                  opacity: 1,
+                                  transition:
+                                    "background-color 0.3s ease-in-out",
+                                }}
+                              >
+                                {unReadNotifications?.length}
+                              </span>
+                            )}
+                          </div>
+                        </HeaderGlobalAction>
                       </>
                     )}
-                    <li className="userDetails">
-                      <Select
-                        id="selector"
-                        name="selectLocale"
-                        className="selectLocale"
-                        invalidText="A valid locale value is required"
-                        labelText={
-                          <FormattedMessage id="header.label.selectlocale" />
-                        }
-                        onChange={(event) => {
-                          props.onChangeLanguage(event.target.value);
-                        }}
-                        value={props.intl.locale}
-                      >
-                        <SelectItem text="English" value="en" />
-                        <SelectItem text="French" value="fr" />
-                      </Select>
-                    </li>
-                    <li className="userDetails">
-                      <label className="cds--label">
-                        {" "}
-                        <FormattedMessage id="header.label.version" />:{" "}
-                        {configurationProperties?.releaseNumber}
-                      </label>
-                    </li>
-                  </ul>
-                </HeaderPanel>
-                {userSessionDetails.authenticated && (
-                  <>
-                    <SideNav
-                      aria-label="Side navigation"
-                      expanded={isSideNavExpanded}
-                      isPersistent={false}
+                    <HeaderGlobalAction
+                      aria-label={panelSwitchLabel()}
+                      onClick={clickPanelSwitch}
+                      ref={userSwitchRef}
                     >
-                      <SideNavItems>
-                        {menus["menu"].map((childMenuItem, index) => {
-                          // ignore the Home Menu in the new UI
-                          if (childMenuItem.menu.elementId != "menu_home") {
-                            return generateMenuItems(
-                              childMenuItem,
-                              index,
-                              0,
-                              "$.menu[" + index + "]",
-                            );
+                      {panelSwitchIcon()}
+                    </HeaderGlobalAction>
+                  </HeaderGlobalBar>
+                  <HeaderPanel
+                    aria-label="Header Panel"
+                    expanded={!switchCollapsed}
+                    className="headerPanel"
+                    ref={headerPanelRef}
+                  >
+                    <ul>
+                      {userSessionDetails.authenticated && (
+                        <>
+                          <li className="userDetails">
+                            <UserAvatarFilledAlt
+                              size={18}
+                              style={{ marginRight: "4px" }}
+                            />
+                            {userSessionDetails.firstName}{" "}
+                            {userSessionDetails.lastName}
+                          </li>
+                          <li
+                            className="userDetails clickableUserDetails"
+                            onClick={logout}
+                          >
+                            <Logout
+                              id="sign-out"
+                              style={{ marginRight: "3px" }}
+                            />
+                            <FormattedMessage id="header.label.logout" />
+                          </li>
+                        </>
+                      )}
+                      <li className="userDetails">
+                        <Select
+                          id="selector"
+                          name="selectLocale"
+                          className="selectLocale"
+                          invalidText="A valid locale value is required"
+                          labelText={
+                            <FormattedMessage id="header.label.selectlocale" />
                           }
-                        })}
-                      </SideNavItems>
-                    </SideNav>
-                  </>
-                )}
-              </Header>
-            )}
-          />
+                          onChange={(event) => {
+                            props.onChangeLanguage(event.target.value);
+                          }}
+                          value={props.intl.locale}
+                        >
+                          <SelectItem text="English" value="en" />
+                          <SelectItem text="French" value="fr" />
+                        </Select>
+                      </li>
+                      <li className="userDetails">
+                        <label className="cds--label">
+                          {" "}
+                          <FormattedMessage id="header.label.version" />:{" "}
+                          {configurationProperties?.releaseNumber}
+                        </label>
+                      </li>
+                    </ul>
+                  </HeaderPanel>
+                  {userSessionDetails.authenticated && (
+                    <>
+                      <SideNav
+                        aria-label="Side navigation"
+                        expanded={isSideNavExpanded}
+                        isPersistent={false}
+                      >
+                        <SideNavItems>
+                          {menus["menu"].map((childMenuItem, index) => {
+                            // ignore the Home Menu in the new UI
+                            if (childMenuItem.menu.elementId != "menu_home") {
+                              return generateMenuItems(
+                                childMenuItem,
+                                index,
+                                0,
+                                "$.menu[" + index + "]",
+                              );
+                            }
+                          })}
+                        </SideNavItems>
+                      </SideNav>
+                    </>
+                  )}
+                </Header>
+              )}
+            />
+            <div style={{ flex: 1 }}>
+              <SlideOver
+                open={isOpen}
+                setOpen={setIsOpen}
+                slideFrom="right"
+                title="Notifications"
+              >
+                <SlideOverNotifications
+                  loading={loading}
+                  notifications={
+                    showRead ? readNotifications : unReadNotifications
+                  }
+                  showRead={showRead}
+                  markNotificationAsRead={markNotificationAsRead}
+                  getNotifications={getNotifications}
+                  setShowRead={setShowRead}
+                  markAllNotificationsAsRead={markAllNotificationsAsRead}
+                />
+              </SlideOver>
+            </div>
+          </div>
         </Theme>
       </div>
     </>

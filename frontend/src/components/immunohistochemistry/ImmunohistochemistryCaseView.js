@@ -347,7 +347,7 @@ function ImmunohistochemistryCaseView() {
                     id={"mib_" + index}
                     labelText=""
                     hideLabel={true}
-                    type="number"
+                    //type="number"
                     value={reportParams[index]?.mib}
                     onChange={(e) => {
                       var params = { ...reportParams };
@@ -370,7 +370,7 @@ function ImmunohistochemistryCaseView() {
                   <FormattedMessage id="immunohistochemistry.label.her2Pattern" />
                 </Column>
                 <Column lg={13} md={8} sm={4}>
-                  <Select
+                  {/* <Select
                     id={"pattern_" + index}
                     name="pattern"
                     labelText=""
@@ -384,7 +384,7 @@ function ImmunohistochemistryCaseView() {
                       setReportParams(params);
                     }}
                   >
-                    <SelectItem disabled value="placeholder" text="Intensity" />
+                    <SelectItem disabled value="placeholder" text="" />
                     <SelectItem value="" text="" />
                     {cerbB2PatternList.map((status, index) => {
                       return (
@@ -395,7 +395,22 @@ function ImmunohistochemistryCaseView() {
                         />
                       );
                     })}
-                  </Select>
+                  </Select> */}
+                  <TextInput
+                    id={"pattern_" + index}
+                    labelText=""
+                    hideLabel={true}
+                    //type="number"
+                    value={reportParams[index]?.pattern}
+                    onChange={(e) => {
+                      var params = { ...reportParams };
+                      if (!params[index]) {
+                        params[index] = {};
+                      }
+                      params[index].pattern = e.target.value;
+                      setReportParams(params);
+                    }}
+                  />
                 </Column>
 
                 <Column lg={16} md={8} sm={4}>
@@ -485,7 +500,7 @@ function ImmunohistochemistryCaseView() {
                       setReportParams(params);
                     }}
                   >
-                    <SelectItem disabled value="placeholder" text="Intensity" />
+                    <SelectItem disabled value="placeholder" text="" />
                     <SelectItem value="" text="" />
                     {molecularSubTypeList.map((status, index) => {
                       return (

@@ -238,7 +238,7 @@ function DictionaryManagement() {
   const handleSubmitModal = (e) => {
     e.preventDefault();
     postToOpenElisServerFullResponse(
-      "/rest/dictionary",
+      "/rest/Dictionary",
       JSON.stringify(postData),
       displayStatus,
     );

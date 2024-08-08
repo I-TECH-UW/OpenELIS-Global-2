@@ -338,11 +338,20 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
 
     private void addRequestingOrg(StringBuilder xml) {
         xml.append("<requestingOrg>");
+        org.openelisglobal.organization.valueholder.Organization organization = null;
         if (referringOrganization != null) {
-            org.openelisglobal.organization.valueholder.Organization organization = organizationService
+            organization = organizationService
                     .getOrganizationByFhirId(referringOrganization.getIdElement().getIdPart());
-            XMLUtil.appendKeyValue("fhir-id", referringOrganization.getIdElement().getIdPart(), xml);
+        }
+        if (organization == null && task.getLocation() != null) {
+            organization = organizationService
+                    .getOrganizationByFhirId(task.getLocation().getReferenceElement().getIdPart());
+        }
+
+        if (organization != null) {
+            XMLUtil.appendKeyValue("fhir-id", organization.getFhirUuidAsString(), xml);
             XMLUtil.appendKeyValue("id", organization.getId(), xml);
+            XMLUtil.appendKeyValue("name", organization.getOrganizationName(), xml);
         }
         xml.append("</requestingOrg>");
     }
@@ -458,12 +467,18 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             }
         }
         if (test == null) {
-            test = testService.getActiveTestsByLoinc(loinc).get(0);
+            List<Test> alltests = testService.getActiveTestsByLoinc(loinc);
+            if (alltests != null && alltests.size() > 0) {
+                test = alltests.get(0);
+            }
         }
-        if (typeOfSample == null) {
-            typeOfSample = typeOfSampleService.getTypeOfSampleForTest(test.getId()).get(0);
+        if (test != null) {
+            if (typeOfSample == null) {
+                typeOfSample = typeOfSampleService.getTypeOfSampleForTest(test.getId()).get(0);
+            }
+            tests.add(new Request(test.getName(), loinc, typeOfSample.getLocalizedName()));
         }
-        tests.add(new Request(test.getName(), loinc, typeOfSample.getLocalizedName()));
+
     }
 
     private void createMaps(List<Request> testRequests, List<Request> panelNames) {

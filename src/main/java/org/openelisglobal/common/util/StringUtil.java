@@ -560,6 +560,7 @@ public class StringUtil {
         return value.substring(0, value.length() - tail.length()) + tail;
     }
 
+    // not truly significant digits, just decimal places
     public static String doubleWithSignificantDigits(double value, String significantDigits) {
         if (GenericValidator.isBlankOrNull(significantDigits) || significantDigits.equals("-1")) {
             return String.valueOf(value);
@@ -569,6 +570,7 @@ public class StringUtil {
         return String.format(format, value);
     }
 
+    // not truly significant digits, just decimal places
     public static String doubleWithSignificantDigits(double value, int significantDigits) {
         String format = "%1$." + significantDigits + "f";
         return String.format(format, value);
@@ -677,5 +679,9 @@ public class StringUtil {
 
     public static String repeat(String s, int times) {
         return IntStream.range(0, times).mapToObj(i -> s).collect(Collectors.joining(""));
+    }
+
+    public static String capitalize(String s) {
+        return s.substring(0, 1).toUpperCase() + s.substring(1); // J + avatpoint
     }
 }

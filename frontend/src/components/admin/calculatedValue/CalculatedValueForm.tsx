@@ -107,28 +107,56 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   const loadCalculationList = (calculations) => {
     if (componentMounted.current) {
       // console.log(JSON.stringify(reflexRuleList))
+      const sampleList = [];
       if (calculations.length > 0) {
         setCalculationList(calculations);
 
         calculations.forEach((calculation, index) => {
           if (calculation.sampleId) {
-            getFromOpenElisServer(
-              "/rest/test-display-beans?sampleType=" + calculation.sampleId,
-              (resp) => fetchTests(resp, "FINAL_RESULT", index, 0),
-            );
+            sampleList.push(calculation.sampleId);
           }
 
           calculation.operations.forEach((operation, opeartionIdex) => {
             if (operation.sampleId) {
-              getFromOpenElisServer(
-                "/rest/test-display-beans?sampleType=" + operation.sampleId,
-                (resp) => fetchTests(resp, "TEST_RESULT", index, opeartionIdex),
-              );
+              sampleList.push(operation.sampleId);
             }
           });
         });
+        getFromOpenElisServer(
+          "/rest/test-display-beans-map?samplesTypes=" + sampleList.join(","),
+          (resp) => buildSampleTests(resp, calculations),
+        );
       }
       setLoading(false);
+    }
+  };
+
+  const buildSampleTests = (sampleTestsMap, calculations) => {
+    if (calculations.length > 0) {
+      setCalculationList(calculations);
+
+      calculations.forEach((calculation, index) => {
+        if (calculation.sampleId) {
+          sampleList.push(calculation.sampleId);
+          fetchTests(
+            sampleTestsMap[calculation.sampleId],
+            "FINAL_RESULT",
+            index,
+            0,
+          );
+        }
+
+        calculation.operations.forEach((operation, opeartionIdex) => {
+          if (operation.sampleId) {
+            fetchTests(
+              sampleTestsMap[operation.sampleId],
+              "TEST_RESULT",
+              index,
+              opeartionIdex,
+            );
+          }
+        });
+      });
     }
   };
 
@@ -167,9 +195,6 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
   };
 
   const handleRuleRemove = (index, id) => {
-    const list = [...calculationList];
-    list.splice(index, 1);
-    setCalculationList(list);
     if (id) {
       postToOpenElisServer(
         "/rest/deactivate-test-calculation/" + id,
@@ -187,6 +212,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "delete.success.msg" }),
       });
+      window.location.reload();
     } else {
       addNotification({
         kind: NotificationKinds.error,
