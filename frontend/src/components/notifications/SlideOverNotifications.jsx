@@ -1,51 +1,62 @@
 import { Renew, NotificationFilled, Email, Filter } from "@carbon/icons-react";
-import { formatTimestamp } from "../utils/Utils";
+import { formatTimestamp, getFromOpenElisServer, getFromOpenElisServerV2, postToOpenElisServer } from "../utils/Utils";
 import Spinner from "../common/Sprinner";
 import { FormattedMessage, useIntl } from "react-intl";
-
-
-
-
-
+import { useState } from "react";
+ 
 export default function SlideOverNotifications(props) {
   const intl = useIntl();
+  const [iconLoading, setIconLoading] = useState({
+    icon: null,
+    loading: false,
+  });
 
   async function subscribe() {
+    try {
+      setIconLoading({ icon: "NOTIFICATION", loading: true });
+  
+      // Attempt to retrieve the public key from the server
+      let pbKeyData = await getFromOpenElisServerV2("/rest/notification/public_key");
+  
+      // Attempt to get the service worker registration
+      const sw = await navigator.serviceWorker.ready;
+  
+      // Attempt to subscribe to push notifications
+      const push = await sw.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: pbKeyData.publicKey,
+      });
+  
+      // Encode the subscription keys
+      const p256dh = btoa(
+        String.fromCharCode.apply(null, new Uint8Array(push.getKey("p256dh"))),
+      );
+      const auth = btoa(
+        String.fromCharCode.apply(null, new Uint8Array(push.getKey("auth"))),
+      );
+  
+      // Construct the data object
+      const data = {
+        pfEndpoint: push.endpoint,
+        pfP256dh: p256dh,
+        pfAuth  : auth,
+      };
 
+      console.log("data",data)
 
-    const public_key = "BJDIyXHWK_o9fYNwD3fUie2Ed04-yx5fxz9-GUT1c0QhfdDiGMvVbJwvB_On3XapXqIRR471uh7Snw3bfPt9niw";
-    const sw = await navigator.serviceWorker.ready;
-    const push = await sw.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: public_key,
-    });
-    const p256dh = btoa(
-      String.fromCharCode.apply(
-        null,
-        new Uint8Array(push.getKey("p256dh")),
-      ),
-    );
-    const auth = btoa(
-      String.fromCharCode.apply(
-        null,
-        new Uint8Array(push.getKey("auth")),
-      ),
-    );
+      postToOpenElisServer("/rest/notification/subscribe", JSON.stringify(data),(res)=>{
+        console.log("res",res);
+      });
 
-    const data = {
-      pf_endpoint: push.endpoint,
-      pf_p256dh: p256dh,
-      pf_auth: auth,
-    };
-
-    console.log("subsription details", data)
-
-
-
-
-
+      setIconLoading({ icon: null, loading: false });
+    } catch (error) {
+      // Handle any errors that occurred during the process
+      console.error("An error occurred during the subscription process:", error);
+      setIconLoading({ icon: null, loading: false });
+      // You can also set an error state here if needed
+    }
   }
-
+  
 
   const {
     loading,
@@ -99,6 +110,9 @@ export default function SlideOverNotifications(props) {
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+ 
+      <br />
+    
         <div
           style={{
             display: "flex",
@@ -108,39 +122,48 @@ export default function SlideOverNotifications(props) {
         >
           {[
             {
-              icon: <Renew />,
+              icon: iconLoading.loading == true && iconLoading.icon =="RELOAD" ? <Spinner/>:<Renew />,
               label: intl.formatMessage({
                 id: "notification.slideover.button.reload",
               }),
-              onClick: () => {
-                getNotifications();
+              onClick: async () => {
+                setIconLoading({ icon: "RELOAD", loading: true });
+                await getNotifications();
+                setIconLoading({ icon: null, loading: false });
+
               },
             },
             {
-              icon: <NotificationFilled />,
+              icon: iconLoading.loading == true && iconLoading.icon =="NOTIFICATION" ? <Spinner/>:<NotificationFilled />,
               label: intl.formatMessage({
                 id: "notification.slideover.button.subscribe",
               }),
-              onClick: () => subscribe(),
+              onClick: async () => {
+
+                await subscribe()
+
+              }
             },
             {
-              icon: <Email />,
+              icon: iconLoading.loading == true && iconLoading.icon =="EMAIL" ? <Spinner/>:<Email />,
               label: intl.formatMessage({
                 id: "notification.slideover.button.markallasread",
-              }), 
-              onClick: () => {
-                markAllNotificationsAsRead();
+              }),
+              onClick:async () => {
+                setIconLoading({ icon: "EMAIL", loading: true });
+                await markAllNotificationsAsRead();
+                setIconLoading({ icon: null, loading: false });
               },
             },
             {
               icon: <Filter />,
               label: showRead
                 ? intl.formatMessage({
-                  id: "notification.slideover.button.hideread",
-                })
+                    id: "notification.slideover.button.hideread",
+                  })
                 : intl.formatMessage({
-                  id: "notification.slideover.button.showread",
-                }),
+                    id: "notification.slideover.button.showread",
+                  }),
               onClick: () => setShowRead(!showRead),
             },
           ].map(({ icon, label, onClick }, index) => (
@@ -150,6 +173,7 @@ export default function SlideOverNotifications(props) {
               label={label}
               onClick={onClick}
             />
+
           ))}
         </div>
       </div>

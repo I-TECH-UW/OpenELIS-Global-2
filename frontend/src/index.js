@@ -3,9 +3,9 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import * as ServiceWorker from "./serviceWorkerRegistration"
+import * as ServiceWorker from "./serviceWorkerRegistration";
 
-ServiceWorker.registerServiceWorker()
+ServiceWorker.registerServiceWorker();
 
 ReactDOM.render(
   <React.StrictMode>
