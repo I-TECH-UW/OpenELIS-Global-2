@@ -490,7 +490,9 @@ const SampleBatchEntry = (props) => {
               )}
               <Grid>
                 <Button
-                  onClick={() => window.location.href("/SampleBatchEntrySetup")}
+                  onClick={() =>
+                    (window.location.href = "/SampleBatchEntrySetup")
+                  }
                 >
                   <FormattedMessage id="label.button.finish" />
                 </Button>
