@@ -16,11 +16,11 @@ public class NotificationSubscriptionDAOImpl implements NotificationSubscription
     @Override
     @Transactional
     public void save(NotificationSubscriptions notificationSubscription) {
-        entityManager.merge(notificationSubscription);
+        entityManager.persist(notificationSubscription);
     }
 
     @Override
-    public NotificationSubscriptions getNotificationSubscriptionById(String id) {
+    public NotificationSubscriptions getNotificationSubscriptionById(Long id) {
         try {
             return entityManager.find(NotificationSubscriptions.class, id);
         } catch (NoResultException e) {
@@ -37,11 +37,9 @@ public class NotificationSubscriptionDAOImpl implements NotificationSubscription
     // Update saveOrUpdate method
 @Transactional
 public void saveOrUpdate(NotificationSubscriptions notificationSubscription) {
-    if (notificationSubscription.getUser() == null) {
-        throw new IllegalArgumentException("UserId must be provided");
-    }
+     
 
-    NotificationSubscriptions existingSubscription = getNotificationSubscriptionById(notificationSubscription.getUser().getId());
+    NotificationSubscriptions existingSubscription = getNotificationSubscriptionById(Long.valueOf(notificationSubscription.getUser().getId()));
 
     if (existingSubscription == null) {
         // Create a new subscription

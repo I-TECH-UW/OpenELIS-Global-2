@@ -14,6 +14,7 @@ import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -94,26 +95,33 @@ public class NotificationRestController {
     }
 
     @PostMapping("/notification/subscribe")
-    public ResponseEntity<?> subscribe(@RequestBody NotificationSubscriptions notificationSubscription,
-            HttpServletRequest request) {
+public ResponseEntity<?> subscribe(@RequestBody NotificationSubscriptions notificationSubscription,
+        HttpServletRequest request) {
 
-        String sysUserId = getSysUserId(request);
+    String sysUserId = getSysUserId(request);
 
-        notificationSubscription.setUserId(systemUserService.getUserById(sysUserId).getSysUserId());
+    // Fetch the user object
+    SystemUser user = systemUserService.getUserById(sysUserId);
 
-        System.out.println("userId 1" + sysUserId);
-        System.out.println("User ID 2: " + systemUserService.getUserById(sysUserId).getSysUserId());
-        System.out.println("User ID 3 " + systemUserService.getUserById(sysUserId).getId());
-
-        System.out.println("Endpoint: " + notificationSubscription.getPfEndpoint());
-        System.out.println("P256dh: " + notificationSubscription.getPfP256dh());
-        System.out.println("Auth: " + notificationSubscription.getPfAuth());
-        System.out.println("User: " + notificationSubscription.getUser());
-        System.out.println("User ID: " + notificationSubscription.toString());
-        notificationSubscriptionDAO.saveOrUpdate(notificationSubscription);
-
-        return ResponseEntity.ok().body("Subscribed successfully");
+    // Ensure user object is not null
+    if (user == null) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
     }
+
+    // Set the user entity directly
+    notificationSubscription.setUser(user);
+    
+    System.out.println("userId 1 " + sysUserId);
+    System.out.println("User ID 3 " + user.getId());
+    System.out.println("User ID 4 from notification " + notificationSubscription.getUser().getId());
+
+    notificationSubscriptionDAO.saveOrUpdate(notificationSubscription);
+
+    return ResponseEntity.ok().body("Subscribed successfully");
+}
+
+
+    
 
     protected String getSysUserId(HttpServletRequest request) {
         UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);

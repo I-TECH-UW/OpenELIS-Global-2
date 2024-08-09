@@ -8,8 +8,9 @@ import org.openelisglobal.systemuser.valueholder.SystemUser;
 public class NotificationSubscriptions {
 
     @Id
-    @Column(name = "user_id")
-    private String userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "pf_endpoint", nullable = false)
     private String pfEndpoint;
@@ -21,16 +22,23 @@ public class NotificationSubscriptions {
     private String pfAuth;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
     @JoinColumn(name = "user_id", nullable = false)
     private SystemUser user;
 
-    public String getUserId() {
-        return userId;
+    public Long getId() {
+        return id;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public SystemUser getUser() {
+        return user;
+    }
+
+    public void setUser(SystemUser user) {
+        this.user = user;
     }
 
     public String getPfEndpoint() {
@@ -57,17 +65,11 @@ public class NotificationSubscriptions {
         this.pfAuth = pfAuth;
     }
 
-    public SystemUser getUser() {
-        return user;
-    }
-
-    public void setUser(SystemUser user) {
-        this.user = user;
-    }
+ 
 
     @Override
     public String toString() {
-        return "NotificationSubscription{" + "userId=" + userId + ", pfEndpoint='" + pfEndpoint + '\'' + ", pfP256dh='"
+        return "NotificationSubscription{" + "userId="  + ", pfEndpoint='" + pfEndpoint + '\'' + ", pfP256dh='"
                 + pfP256dh + '\'' + ", pfAuth='" + pfAuth + '\'' + ", user=" + (user != null ? user.toString() : "null")
                 + '}';
     }

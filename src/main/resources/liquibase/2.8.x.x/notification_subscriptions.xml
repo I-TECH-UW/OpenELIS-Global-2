@@ -5,8 +5,8 @@
 
     <changeSet id="create_notification_subscriptions_table" author="clinlims">
         <createTable tableName="notification_subscriptions">
-            <column name="user_id" type="NUMERIC(10,0)">
-                <constraints primaryKey="true" nullable="false"/>
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
             </column>
             <column name="pf_endpoint" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -15,6 +15,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="pf_auth" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="NUMERIC(10,0)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
