@@ -1294,5 +1294,10 @@
   "instructions.test.activation": "Active Tests: a checked box indicates an already active test. To activate a test, check the box; to deactivate, uncheck the box. Any sample types without an existing active test are deactivated and appear at the bottom, under 'Inactive Sample Types'. If one of the tests is activated, the sample type will be activated.",
   "label.button.finished": "Finished",
   "panel.panelName": "Panel Name",
-  "label.testName": "Test names"
+  "label.testName": "Test names",
+  "reporting.label.testName": "Reporting Test Name",
+  "french.current": "FRENCH current",
+  "english.current": "ENGLISH current",
+  "required.invalidtext": "This field is required",
+  "confirmation.rename": "Confirm Changes above you made."
 }
