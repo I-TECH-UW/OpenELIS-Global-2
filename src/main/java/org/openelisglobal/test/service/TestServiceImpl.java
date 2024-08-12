@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Vector;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import org.openelisglobal.common.action.IActionConstants;
@@ -33,6 +34,7 @@ import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.testanalyte.service.TestAnalyteService;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
+import org.openelisglobal.testreflex.action.util.TestReflexUtil;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
@@ -741,5 +743,11 @@ public class TestServiceImpl extends AuditableBaseObjectServiceImpl<Test, String
     @Override
     public List<Panel> getTbPanelsByMethod(String method) {
         return getBaseObjectDAO().getTbPanelsByMethod(method);
+    }
+
+    @Override
+    public List<Test> getTriggeringAntimicrobialResistanceTests() {
+        return getAllMatching("antimicrobialResistance", Boolean.TRUE).stream()
+                .filter(e -> TestReflexUtil.isTriggeringReflexTestId(e.getId())).collect(Collectors.toList());
     }
 }
