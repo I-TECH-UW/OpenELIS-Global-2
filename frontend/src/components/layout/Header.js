@@ -184,9 +184,9 @@ function OEHeader(props) {
     if (menuItem.menu.isActive) {
       if (level === 0 && menuItem.childMenus.length > 0) {
         return (
-          <React.Fragment key={path}>
+          <span id={menuItem.menu.elementId} key={path}>
             <span
-              id={menuItem.menu.elementId}
+              id={menuItem.menu.elementId + "_dropdown"}
               onClick={(e) => {
                 setMenuItemExpanded(e, menuItem, path);
               }}
@@ -222,27 +222,26 @@ function OEHeader(props) {
                 </span>
               </SideNavMenu>
             </span>
-          </React.Fragment>
+          </span>
         );
       } else if (level === 0) {
         return (
-          <React.Fragment key={path}>
+          <span key={path} id={menuItem.menu.elementId}>
             <SideNavMenuItem
-              id={menuItem.menu.elementId}
+              id={menuItem.menu.elementId + "_nav"}
               href={menuItem.menu.actionURL}
               target={menuItem.menu.openInNewWindow ? "_blank" : ""}
               className="top-level-menu-item"
             >
               {renderSideNavMenuItemLabel(menuItem, level)}
             </SideNavMenuItem>
-          </React.Fragment>
+          </span>
         );
       } else {
         return (
-          <React.Fragment key={path}>
+          <span id={menuItem.menu.elementId} key={path}>
             <SideNavMenuItem
               className="reduced-padding-nav-menu-item"
-              id={menuItem.menu.elementId}
               href={menuItem.menu.actionURL}
               target={menuItem.menu.openInNewWindow ? "_blank" : ""}
               style={{ width: "100%" }}
@@ -277,7 +276,7 @@ function OEHeader(props) {
                 </span>
               );
             })}
-          </React.Fragment>
+          </span>
         );
       }
     } else {
@@ -303,6 +302,7 @@ function OEHeader(props) {
       <button
         className={"custom-sidenav-button"}
         style={{ width: "100%", marginLeft: marginValue }}
+        id={menuItem.menu.elementId + "_nav"}
         onClick={() => {
           if (menuItem.menu.openInNewWindow) {
             window.open(menuItem.menu.actionURL);
@@ -338,6 +338,7 @@ function OEHeader(props) {
     return (
       <>
         <button
+          id={menuItem.menu.elementId + "_nav"}
           className={
             menuItem.menu.actionURL
               ? "custom-sidenav-button"
