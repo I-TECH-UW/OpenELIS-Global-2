@@ -82,7 +82,6 @@ const SearchBar = (props) => {
     }
   };
 
-
   return (
     <Layer className="main">
       <Grid>
